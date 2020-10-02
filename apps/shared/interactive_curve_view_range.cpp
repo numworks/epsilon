@@ -76,17 +76,6 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
   MemoizedCurveViewRange::protectedSetYMin(yMin() + y, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
-void InteractiveCurveViewRange::roundAbscissa() {
-  // Set x range
-  float newXMin = std::round(xCenter()) - (float)Ion::Display::Width/2.0f;
-  float newXMax = std::round(xCenter()) + (float)Ion::Display::Width/2.0f-1.0f;
-  if (std::isnan(newXMin) || std::isnan(newXMax)) {
-    return;
-  }
-  m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-  setXMin(newXMin);
-}
-
 void InteractiveCurveViewRange::normalize() {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
@@ -114,18 +103,6 @@ void InteractiveCurveViewRange::normalize() {
     m_yRange.setMin(yMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMax(yMax()+delta, k_lowerMaxFloat, k_upperMaxFloat);
   }
-}
-
-void InteractiveCurveViewRange::setTrigonometric() {
-  m_yAuto = false;
-  // Set x range
-  float x = (Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Degree) ? 600.0f : 10.5f;
-  m_xRange.setMax(x, k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetXMin(-x, k_lowerMaxFloat, k_upperMaxFloat);
-  // Set y range
-  float y = 1.6f;
-  m_yRange.setMax(y, k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetYMin(-y, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
 void InteractiveCurveViewRange::setDefault() {

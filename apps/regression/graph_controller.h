@@ -5,7 +5,6 @@
 #include "store.h"
 #include "graph_options_controller.h"
 #include "graph_view.h"
-#include "initialisation_parameter_controller.h"
 #include "../shared/interactive_curve_view_controller.h"
 #include "../shared/curve_view_cursor.h"
 #include "../shared/cursor_view.h"
@@ -17,7 +16,6 @@ class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
   GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
-  ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
@@ -63,7 +61,6 @@ private:
   BannerView m_bannerView;
   GraphView m_view;
   Store * m_store;
-  InitialisationParameterController m_initialisationParameterController;
   GraphOptionsController m_graphOptionsController;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */

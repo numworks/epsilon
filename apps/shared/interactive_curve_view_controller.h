@@ -66,10 +66,19 @@ private:
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) override;
 
+  void setCurveViewAsMainView();
+
+  /* Those methods return the new status for the button, ie either
+   * m_interactiveRange->m_zoomAuto or m_zoomNormalize respectively. */
+  bool autoButtonAction();
+  bool normalizeButtonAction();
+
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
   ZoomParameterController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;
+  Button m_autoButton;
+  Button m_normalizeButton;
   Button m_rangeButton;
   Button m_zoomButton;
 };

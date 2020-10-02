@@ -93,9 +93,6 @@ void FunctionGraphController::initCursorParameters() {
     functionIndex = 0;
   }
   m_cursor->moveTo(t, xy.x1(), xy.x2());
-  if (interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
-  }
   selectFunctionWithCursor(functionIndex);
 }
 
@@ -153,7 +150,6 @@ void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * rang
 
 Shared::InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) {
   InteractiveCurveViewRange tempRange = *interactiveCurveViewRange;
-  tempRange.setYAuto(false);
   privateComputeRanges(false, &tempRange);
   return Shared::InteractiveCurveViewRangeDelegate::Range{.min = tempRange.yMin(), .max = tempRange.yMax()};
 }

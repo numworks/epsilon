@@ -31,7 +31,6 @@ app_regression_src = $(addprefix apps/regression/,\
   graph_options_controller.cpp \
   graph_view.cpp \
   go_to_parameter_controller.cpp \
-  initialisation_parameter_controller.cpp \
   regression_controller.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \

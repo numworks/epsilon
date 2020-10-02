@@ -30,15 +30,12 @@ public:
     Shared::CurveViewCursor * cursor() { return &m_cursor; }
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
-    uint32_t * modelVersion() { return &m_modelVersion; }
-    uint32_t * previousModelsVersions() { return m_store.seriesChecksum(); }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
   private:
     void tidy() override;
     Store m_store;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
-    uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
     int m_selectedSeriesIndex;
   };

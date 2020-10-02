@@ -28,47 +28,47 @@ public:
   int m_numberOfEvents;
 };
 
-static constexpr Event scenariCalculation[] = {
+static constexpr Event scenarioCalculation[] = {
   OK, Pi, Plus, One, Division, Two, OK, OK, Sqrt, Zero, Dot, Two, OK, OK, Up, Up, Up, Up, Down, Down, Down, Down, Home, Home
 };
 
-static constexpr Event scenariFunctionCosSin[] = { Right, OK, OK, Cosine, XNT, OK, Down, OK, Sine, XNT, OK, Down, Down, OK, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Home, Home
+static constexpr Event scenarioFunctionCosSin[] = { Right, OK, OK, Cosine, XNT, OK, Down, OK, Sine, XNT, OK, Down, Down, OK, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Home, Home
 };
 
-static constexpr Event scenariPythonMandelbrot[] = { Right, Right, OK, Down, Down, Down, Down, OK, Var, Down, OK, One, Five, OK, Home, Home
+static constexpr Event scenarioPythonMandelbrot[] = { Right, Right, OK, Down, Down, Down, Down, OK, Var, Down, OK, One, Five, OK, Home, Home
 };
 
-static constexpr Event scenariStatistics[] = { Down, OK, One, OK, Two, OK, Right, Five, OK, One, Zero, OK, Back, Right, OK, Right, Right, Right, OK, One, OK, Down, OK, Back, Right, OK, Back, Right, OK, Down, Down, Down, Down, Down, Down, Down, Down, Down, Down, Up, Up, Up, Up, Up, Up, Up, Up, Up, Home, Home
+static constexpr Event scenarioStatistics[] = { Down, OK, One, OK, Two, OK, Right, Five, OK, One, Zero, OK, Back, Right, OK, Right, Right, Right, OK, One, OK, Down, OK, Back, Right, OK, Back, Right, OK, Down, Down, Down, Down, Down, Down, Down, Down, Down, Down, Up, Up, Up, Up, Up, Up, Up, Up, Up, Home, Home
 };
 
-static constexpr Event scenaryProbability[] = { Down, Right, OK, Down, Down, Down, OK, Two, OK, Zero, Dot, Three, OK, OK, Left, Down, Down, OK, Right, Right, Right, Zero, Dot, Eight, OK, Home, Home
+static constexpr Event scenarioProbability[] = { Down, Right, OK, Down, Down, Down, OK, Two, OK, Zero, Dot, Three, OK, OK, Left, Down, Down, OK, Right, Right, Right, Zero, Dot, Eight, OK, Home, Home
 };
 
-static constexpr Event scenaryEquation[] = { Down, Right, Right, OK, OK, Down, Down, OK, Six, OK, Down, Down, OK, Left, Left, Left, Down, Down, Home, Home
+static constexpr Event scenarioEquation[] = { Down, Right, Right, OK, OK, Down, Down, OK, Six, OK, Down, Down, OK, Left, Left, Left, Down, Down, Home, Home
 };
 
-static constexpr Scenario scenari[] = {
-  Scenario::build("Calc scrolling", scenariCalculation),
-  Scenario::build("Sin/Cos graph", scenariFunctionCosSin),
-  Scenario::build("Mandelbrot(15)", scenariPythonMandelbrot),
-  Scenario::build("Statistics", scenariStatistics),
-  Scenario::build("Probability", scenaryProbability),
-  Scenario::build("Equation", scenaryEquation)
+static constexpr Scenario scenarios[] = {
+  Scenario::build("Calc scrolling", scenarioCalculation),
+  Scenario::build("Sin/Cos graph", scenarioFunctionCosSin),
+  Scenario::build("Mandelbrot(15)", scenarioPythonMandelbrot),
+  Scenario::build("Statistics", scenarioStatistics),
+  Scenario::build("Probability", scenarioProbability),
+  Scenario::build("Equation", scenarioEquation)
 };
 
-constexpr static int numberOfScenari = sizeof(scenari)/sizeof(Scenario);
+constexpr static int numberOfScenari = sizeof(scenarios)/sizeof(Scenario);
 
 Event getEvent(int * timeout) {
-  static int scenariIndex = 0;
+  static int scenarioIndex = 0;
   static int eventIndex = 0;
   static uint64_t startTime = Ion::Timing::millis();
   static int timings[numberOfScenari];
-  if (eventIndex >= scenari[scenariIndex].numberOfEvents()) {
-    timings[scenariIndex++] = Ion::Timing::millis() - startTime;
+  if (eventIndex >= scenarios[scenarioIndex].numberOfEvents()) {
+    timings[scenarioIndex++] = Ion::Timing::millis() - startTime;
     eventIndex = 0;
     startTime = Ion::Timing::millis();
   }
-  if (scenariIndex >= numberOfScenari) {
+  if (scenarioIndex >= numberOfScenari) {
     // Display results
     int line_y = 1;
     KDContext * ctx = KDIonContext::sharedContext();
@@ -82,14 +82,14 @@ Event getEvent(int * timeout) {
       char buffer[bufferLength];
       Poincare::PrintInt::Left(timings[i], buffer, bufferLength);
       //buffer[50-1-3] = 0; // convert from ms to s without generating _udivmoddi4 (long long division)
-      ctx->drawString(scenari[i].name(), KDPoint(0, line_y), font);
+      ctx->drawString(scenarios[i].name(), KDPoint(0, line_y), font);
       ctx->drawString(buffer, KDPoint(200, line_y), font);
       line_y += line_height;
     }
     while (1) {
     }
   }
-  return scenari[scenariIndex].eventAtIndex(eventIndex++);
+  return scenarios[scenarioIndex].eventAtIndex(eventIndex++);
 }
 
 }

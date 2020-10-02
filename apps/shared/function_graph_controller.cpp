@@ -140,12 +140,6 @@ void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * rang
   privateComputeRanges(true, range);
 }
 
-Shared::InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) {
-  InteractiveCurveViewRange tempRange = *interactiveCurveViewRange;
-  privateComputeRanges(false, &tempRange);
-  return Shared::InteractiveCurveViewRangeDelegate::Range{.min = tempRange.yMin(), .max = tempRange.yMax()};
-}
-
 void FunctionGraphController::privateComputeRanges(bool tuneXRange, InteractiveCurveViewRange * range) const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   float resultXMin = tuneXRange ? FLT_MAX : range->xMin();

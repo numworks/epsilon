@@ -81,13 +81,13 @@ void InteractiveCurveViewRange::normalize() {
   float normalizedXYRatio = newXHalfRange/newYHalfRange;
   if (xyRatio < normalizedXYRatio) {
     float newXRange = normalizedXYRatio * yRange;
-    assert(newXRange > xRange);
+    assert(newXRange >= xRange);
     float delta = (newXRange - xRange) / 2.0f;
     m_xRange.setMin(xMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetXMax(xMax()+delta, k_lowerMaxFloat, k_upperMaxFloat);
   } else if (xyRatio > normalizedXYRatio) {
     float newYRange = newYHalfRange/newXHalfRange * xRange;
-    assert(newYRange > yRange);
+    assert(newYRange >= yRange);
     float delta = (newYRange - yRange) / 2.0f;
     m_yRange.setMin(yMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMax(yMax()+delta, k_lowerMaxFloat, k_upperMaxFloat);

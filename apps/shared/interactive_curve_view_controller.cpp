@@ -29,12 +29,6 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->zoomParameterController());
     return true;
-  }, this), KDFont::SmallFont),
-  m_defaultInitialisationButton(this, I18n::Message::Initialization, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
-    StackViewController * stack = graphController->stackController();
-    stack->push(graphController->initialisationParameterController());
-    return true;
   }, this), KDFont::SmallFont)
 {
 }
@@ -129,11 +123,11 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
   if (isEmpty()) {
     return 0;
   }
-  return 3;
+  return 2;
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[3] = {&m_rangeButton, &m_zoomButton, &m_defaultInitialisationButton};
+  const Button * buttons[] = {&m_rangeButton, &m_zoomButton};
   return (Button *)buttons[index];
 }
 

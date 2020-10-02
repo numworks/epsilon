@@ -15,7 +15,7 @@ namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController, public GraphControllerHelper {
 public:
-  GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
+  GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
   bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
@@ -34,7 +34,6 @@ private:
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool defaultRangeIsNormalized() const override;
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
-  bool shouldSetDefaultOnModelChange() const override;
   void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
 
   Shared::RoundCursorView m_cursorView;

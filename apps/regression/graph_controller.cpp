@@ -11,8 +11,8 @@ using namespace Shared;
 
 namespace Regression {
 
-GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, modelVersion, previousModelsVersions, rangeVersion),
+GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, rangeVersion),
   m_crossCursorView(),
   m_roundCursorView(),
   m_bannerView(this, inputEventHandlerDelegate, this),
@@ -336,15 +336,6 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // There was no suitable selection
   return false;
-}
-
-uint32_t GraphController::modelVersion() {
-  return m_store->storeChecksum();
-}
-
-uint32_t GraphController::modelVersionAtIndex(int i) {
-  assert(i < numberOfMemoizedVersions());
-  return *(m_store->seriesChecksum() + i);
 }
 
 uint32_t GraphController::rangeVersion() {

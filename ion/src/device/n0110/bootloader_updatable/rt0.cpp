@@ -150,8 +150,9 @@ static void __attribute__((noinline)) jump_to_external_flash() {
   /* Re-configurate the MPU to forbid access to blue LED if required */
   if (!authenticated) {
     // TODO EMILIE
-    // Shutdown the LED
+    // Shutdown the LED (blue and green)
     Ion::Device::Regs::AFGPIOPin(Ion::Device::Regs::GPIOB, 0,  Ion::Device::Regs::GPIO::AFR::AlternateFunction::AF2, Ion::Device::Regs::GPIO::PUPDR::Pull::None, Ion::Device::Regs::GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
+    Ion::Device::Regs::AFGPIOPin(Ion::Device::Regs::GPIOB, 5,  Ion::Device::Regs::GPIO::AFR::AlternateFunction::AF2, Ion::Device::Regs::GPIO::PUPDR::Pull::None, Ion::Device::Regs::GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
     // MPU on Blue LED
     Ion::Device::Cache::dmb();
     Ion::Device::Regs::MPU.RNR()->setREGION(7);

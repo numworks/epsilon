@@ -113,7 +113,7 @@ int main(int argc, char * argv[]) {
   ion_main(args.argc(), args.argv());
   if (!headless) {
     Haptics::shutdown();
-    Window::quit();
+    Window::shutdown();
 #if EPSILON_TELEMETRY
     Telemetry::shutdown();
 #endif

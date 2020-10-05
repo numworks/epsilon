@@ -86,8 +86,8 @@ constexpr static const char * sMessages[sNumberOfMessages] = {
   "unofficial software version.",
   "NumWorks can't be held responsible",
   "for any resulting damage.",
-  " Some features (blue LED) might be",
-  "unavailable."
+  "Some features (blue and green LED)",
+  "are unavailable."
 };
 
 void displayWarningMessage() {

@@ -50,9 +50,8 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  Arithmetic arithmetic = Arithmetic();
+  int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
   if (numberOfPrimeFactors == 0) {
     m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
     return m;
@@ -62,9 +61,9 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
     return m;
   }
   for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Expression factor = Rational::Builder(factors[index]);
-    if (!coefficients[index].isOne()) {
-      factor = Power::Builder(factor, Rational::Builder(coefficients[index]));
+    Expression factor = Rational::Builder(*arithmetic.getFactorizationFactor(index));
+    if (!arithmetic.getFactorizationCoefficient(index)->isOne()) {
+      factor = Power::Builder(factor, Rational::Builder(*arithmetic.getFactorizationCoefficient(index)));
     }
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }

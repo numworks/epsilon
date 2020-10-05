@@ -1138,23 +1138,25 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   if (i.isOne()) {
     return Rational::Builder(1);
   }
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  if (numberOfPrimeFactors < 0) {
-    /* We could not break i in prime factors (it might take either too many
-     * factors or too much time). */
-    Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, reductionContext);
-    return Power::Builder(Rational::Builder(i), rClone);
-  }
-
   Integer r1(1);
   Integer r2(1);
-  for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Integer n = Integer::Multiplication(coefficients[index], r.signedIntegerNumerator());
-    IntegerDivision div = Integer::Division(n, r.integerDenominator());
-    r1 = Integer::Multiplication(r1, Integer::Power(factors[index], div.quotient));
-    r2 = Integer::Multiplication(r2, Integer::Power(factors[index], div.remainder));
+  {
+    // Performing PrimeFactorization in this scope to free resources earlier.
+    Arithmetic arithmetic = Arithmetic();
+    int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
+    if (numberOfPrimeFactors < 0) {
+      /* We could not break i in prime factors (it might take either too many
+       * factors or too much time). */
+      Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, reductionContext);
+      return Power::Builder(Rational::Builder(i), rClone);
+    }
+
+    for (int index = 0; index < numberOfPrimeFactors; index++) {
+      Integer n = Integer::Multiplication(*arithmetic.getFactorizationCoefficient(index), r.signedIntegerNumerator());
+      IntegerDivision div = Integer::Division(n, r.integerDenominator());
+      r1 = Integer::Multiplication(r1, Integer::Power(*arithmetic.getFactorizationFactor(index), div.quotient));
+      r2 = Integer::Multiplication(r2, Integer::Power(*arithmetic.getFactorizationFactor(index), div.remainder));
+    }
   }
   if (r2.isOverflow() || r1.isOverflow()) {
     // we overflow Integer at one point: we abort

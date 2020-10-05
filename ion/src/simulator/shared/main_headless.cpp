@@ -15,7 +15,9 @@
 
 constexpr int kHeapSize = 131072;
 #ifdef NDEBUG
-constexpr int kStackSize = 32768;
+/* TODO : Reduce stack memory cost in prime factorization to allow running
+ * tests with the actual stack size */
+constexpr int kStackSize = 32768*10;
 #else
 constexpr int kStackSize = 32768*10; // In DEBUG mode, we increase the stack to be able to pass the tests
 #endif

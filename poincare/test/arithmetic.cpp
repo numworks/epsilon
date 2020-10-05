@@ -48,19 +48,19 @@ void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {
-  Integer outputFactors[100];
-  Integer outputCoefficients[100];
-  Arithmetic::PrimeFactorization(a, outputFactors, outputCoefficients, 10);
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
+  Arithmetic arithmetic = Arithmetic();
+  int n = arithmetic.PrimeFactorization(a);
+  quiz_assert_print_if_failure(n == length, failInformationBuffer);
   for (int index = 0; index < length; index++) {
     /* Cheat: instead of comparing to integers, we compare their approximations
      * (the relation between integers and their approximation is a surjection,
      * however different integers are really likely to have different
      * approximations... */
-    quiz_assert_print_if_failure(outputFactors[index].approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
-    quiz_assert_print_if_failure(outputCoefficients[index].approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
+    quiz_assert_print_if_failure(arithmetic.getFactorizationFactor(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
+    quiz_assert_print_if_failure(arithmetic.getFactorizationCoefficient(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
   }
 }
 
@@ -93,4 +93,16 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
   int factors3[7] = {3,7,11, 13, 19, 3607, 3803};
   int coefficients3[7] = {4,2,2,2,2,2,2};
   assert_prime_factorization_equals_to(Integer("5513219850886344455940081"), factors3, coefficients3, 7);
+  int factors4[2] = {8017,8039};
+  int coefficients4[2] = {1,1};
+  assert_prime_factorization_equals_to(Integer(8017*8039), factors4, coefficients4, 2);
+  int factors5[1] = {10007};
+  int coefficients5[1] = {1};
+  assert_prime_factorization_equals_to(Integer(10007), factors5, coefficients5, 1);
+  int factors6[0] = {};
+  int coefficients6[0] = {};
+  assert_prime_factorization_equals_to(Integer(10007*10007), factors6, coefficients6, -2);
+  int factors7[0] = {};
+  int coefficients7[0] = {};
+  assert_prime_factorization_equals_to(Integer(1), factors7, coefficients7, 0);
 }

@@ -36,6 +36,9 @@ public:
   bool isDefined() const;
   static constexpr int PageSize = Keyboard::NumberOfKeys;
 private:
+  bool defaultIsDefined() const;
+  const char * defaultText() const;
+
   uint8_t m_id;
 };
 

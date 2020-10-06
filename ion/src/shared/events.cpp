@@ -52,5 +52,20 @@ bool Event::hasText() const {
   return text() != nullptr;
 }
 
+bool Event::defaultIsDefined() const  {
+  if (isKeyboardEvent()) {
+    return s_dataForEvent[m_id].isDefined();
+  } else {
+    return (*this == None || *this == Termination || *this == USBEnumeration || *this == USBPlug || *this == BatteryCharging);
+  }
+}
+
+const char * Event::defaultText() const {
+  if (m_id >= 4*PageSize) {
+    return nullptr;
+  }
+  return s_dataForEvent[m_id].text();
+}
+
 }
 }

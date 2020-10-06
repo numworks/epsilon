@@ -33,6 +33,22 @@ void InteractiveCurveViewRange::setYMax(float yMax) {
   MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
+float InteractiveCurveViewRange::yGridUnit() const {
+  float res = MemoizedCurveViewRange::yGridUnit();
+  if (m_zoomNormalize) {
+    /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be the
+     * same. To declutter the X axis, we try a unit twice as large. We check
+     * that it allows enough graduations on the Y axis, but if the standard
+     * unit would lead to too many graduations on the X axis, we force the
+     * larger unit anyways. */
+    float numberOfUnits = (yMax() - yMin()) / res;
+    if (numberOfUnits > k_maxNumberOfXGridUnits || numberOfUnits / 2.f > k_minNumberOfYGridUnits) {
+      return 2 * res;
+    }
+  }
+  return res;
+}
+
 void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float xMi = xMin();
   float xMa = xMax();

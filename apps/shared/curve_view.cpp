@@ -426,6 +426,10 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
     if (rect.intersects(lineRect)) {
       ctx->fillRect(lineRect, color);
     }
+    if (i > KDCOORDINATE_MAX - 2*dashSize) {
+      // Avoid overflowing KDCoordinate
+      break;
+    }
   }
 }
 

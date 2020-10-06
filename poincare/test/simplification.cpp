@@ -1048,11 +1048,14 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("ref([[1,0,√(4)][0,1,1/√(2)][0,0,1]])", "[[1,0,2][0,1,√(2)/2][0,0,1]]");
   assert_parsed_expression_simplify_to("rref([[1,0,√(4)][0,1,1/√(2)][0,0,0]])", "[[1,0,2][0,1,√(2)/2][0,0,0]]");
   assert_parsed_expression_simplify_to("ref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,7/5,6/5,8/5][0,1,11/10,6/5][0,0,1,204/167]]");
+  assert_parsed_expression_simplify_to("rref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,0,0,56/167][0,1,0,-24/167][0,0,1,204/167]]");
   assert_parsed_expression_simplify_to("ref([[1,0][5,6][0,10]])", "[[1,6/5][0,1][0,0]]");
   assert_parsed_expression_simplify_to("rref([[1,0][5,6][0,10]])", "[[1,0][0,1][0,0]]");
   assert_parsed_expression_simplify_to("ref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
   assert_parsed_expression_simplify_to("rref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
   assert_parsed_expression_simplify_to("rref([[0,1][1ᴇ-100,1]])", "[[1,0][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[0,2,-1][5,6,7][12,11,10]])", "[[1,11/12,5/6][0,1,-1/2][0,0,1]]");
+  assert_parsed_expression_simplify_to("rref([[0,2,-1][5,6,7][12,11,10]])", "[[1,0,0][0,1,0][0,0,1]]");
   /* Results for ref depend on the implementation. In any case :
    * - Rows with only zeros must be at the bottom.
    * - Leading coefficient of other rows must be to the right (strictly) of the

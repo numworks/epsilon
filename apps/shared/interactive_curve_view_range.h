@@ -26,6 +26,10 @@ public:
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v) { m_zoomNormalize = v; }
 
+  // MemoizedCurveViewRange
+  float xGridUnit() const override { return m_zoomNormalize ? yGridUnit() : MemoizedCurveViewRange::xGridUnit(); }
+  float yGridUnit() const override;
+
   // CurveViewWindow
   void setXMin(float f) override;
   void setXMax(float f) override;

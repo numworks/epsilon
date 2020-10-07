@@ -150,6 +150,20 @@ void Store::setDefault() {
   float range = maxX - minX;
   setXMin(minX - k_displayHorizontalMarginRatio * range);
   setXMax(maxX + k_displayHorizontalMarginRatio * range);
+
+  float minY = FLT_MAX;
+  float maxY = -FLT_MAX;
+  for (int series = 0; series < k_numberOfSeries; series++) {
+    for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+      if (xMin() <= get(series, 0, k) && get(series, 0, k) <= xMax()) {
+        minY = std::min<float>(minY, get(series, 1, k));
+        maxY = std::max<float>(maxY, get(series, 1, k));
+      }
+    }
+  }
+  range = maxY - minY;
+  setYMin(m_delegate->addMargin(minY, range, true, true));
+  setYMax(m_delegate->addMargin(maxY, range, true, false));
 }
 
 /* Series */

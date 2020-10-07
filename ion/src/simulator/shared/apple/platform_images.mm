@@ -1,10 +1,11 @@
 #include "../platform.h"
 #include <SDL.h>
 #include <TargetConditionals.h>
-#if TARGET_OS_MAC
+#if TARGET_OS_OSX
 #include <AppKit/AppKit.h>
 #else
 #include <UIKit/UIKit.h>
+#include <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 namespace Ion {
@@ -31,7 +32,7 @@ static CGContextRef createABGR8888Context(size_t width, size_t height) {
 
 SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   CGImageRef image = nullptr;
-#if TARGET_OS_MAC
+#if TARGET_OS_OSX
   //http://lists.libsdl.org/pipermail/commits-libsdl.org/2016-December/001235.html
   [[[NSApp windows] firstObject] setColorSpace:[NSColorSpace sRGBColorSpace]];
 

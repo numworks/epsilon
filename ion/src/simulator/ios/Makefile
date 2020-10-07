@@ -30,6 +30,9 @@ LDFLAGS += -framework CoreData
 LDFLAGS += -Lion/src/simulator/ios/GoogleAnalyticsServices
 endif
 
+LDFLAGS += -framework MobileCoreServices
+LDFLAGS += -framework ImageIO
+
 ifndef ARCH
 
 # App resources

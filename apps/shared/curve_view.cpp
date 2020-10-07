@@ -412,6 +412,10 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
   if (dashSize < 0) {
     // Continuous segment is equivalent to one big dash
     dashSize = end - start;
+    if (dashSize < 0) {
+      // end-start overflowed
+      dashSize = KDCOORDINATE_MAX;
+    }
   }
   KDRect lineRect = KDRectZero;
   for (KDCoordinate i = start; i < end; i += 2*dashSize) {

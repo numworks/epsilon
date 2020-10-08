@@ -39,7 +39,6 @@ protected:
   void initCursorParameters() override;
   CurveView * curveView() override;
 
-  void privateComputeRanges(bool tuneXRange, Shared::InteractiveCurveViewRange * range) const;
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
 private:

@@ -70,7 +70,7 @@ public:
   void setTMax(float tMax);
   float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
 
-  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange = true) const override;
+  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const override;
 
   // Extremum
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;

@@ -7,6 +7,7 @@ escher_src += $(addprefix escher/src/,\
   bordered.cpp \
   buffer_text_view.cpp \
   button.cpp \
+  button_state.cpp \
   button_row_controller.cpp \
   chevron_view.cpp \
   clipboard.cpp \
@@ -81,6 +82,8 @@ escher_src += $(addprefix escher/src/,\
   text_view.cpp \
   tiled_view.cpp \
   timer.cpp \
+  toggleable_dot_view.cpp \
+  toggleable_view.cpp \
   toolbox.cpp \
   transparent_view.cpp \
   view.cpp \

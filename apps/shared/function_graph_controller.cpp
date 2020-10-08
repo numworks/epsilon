@@ -137,20 +137,16 @@ int FunctionGraphController::numberOfCurves() const {
 }
 
 void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) const {
-  privateComputeRanges(true, range);
-}
-
-void FunctionGraphController::privateComputeRanges(bool tuneXRange, InteractiveCurveViewRange * range) const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  float resultXMin = tuneXRange ? FLT_MAX : range->xMin();
-  float resultXMax = tuneXRange ? -FLT_MAX : range->xMax();
+  float resultXMin = FLT_MAX;
+  float resultXMax = -FLT_MAX;
   float resultYMin = FLT_MAX;
   float resultYMax = -FLT_MAX;
   assert(functionStore()->numberOfActiveFunctions() > 0);
   int functionsCount = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < functionsCount; i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    f->rangeForDisplay(&resultXMin, &resultXMax, &resultYMin, &resultYMax, context, tuneXRange);
+    f->rangeForDisplay(&resultXMin, &resultXMax, &resultYMin, &resultYMax, context);
   }
 
   range->setXMin(resultXMin);

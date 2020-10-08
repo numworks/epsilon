@@ -74,11 +74,11 @@ protected:
     KDColor color, bool thick = true
   ) const;
   enum class Size : uint8_t {
+    Tiny,
     Small,
-    Medium,
     Large
   };
-  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
+  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Tiny) const;
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).
    * The parameters defining the shape of the arrow are the length of

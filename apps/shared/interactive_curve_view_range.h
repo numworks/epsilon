@@ -13,21 +13,25 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
-    m_delegate(delegate),
+    m_delegate(nullptr),
     m_zoomAuto(true),
     m_zoomNormalize(false)
-  {}
+  {
+    if (delegate) {
+      setDelegate(delegate);
+    }
+  }
 
   static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
   bool isOrthonormal(float tolerance = 2 * FLT_EPSILON) const;
 
-  void setDelegate(InteractiveCurveViewRangeDelegate * delegate) { m_delegate = delegate; }
+  void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
   uint32_t rangeChecksum() override;
 
   bool zoomAuto() const { return m_zoomAuto; }
-  void setZoomAuto(bool v) { m_zoomAuto = v; }
+  void setZoomAuto(bool v);
   bool zoomNormalize() const { return m_zoomNormalize; }
-  void setZoomNormalize(bool v) { m_zoomNormalize = v; }
+  void setZoomNormalize(bool v);
 
   // MemoizedCurveViewRange
   float xGridUnit() const override { return m_zoomNormalize ? yGridUnit() : MemoizedCurveViewRange::xGridUnit(); }

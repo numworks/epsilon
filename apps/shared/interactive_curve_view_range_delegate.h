@@ -14,6 +14,7 @@ public:
   virtual bool defaultRangeIsNormalized() const { return false; }
   virtual void interestingRanges(InteractiveCurveViewRange * range) const { assert(false); }
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;
+  virtual void updateZoomButtons() = 0;
 };
 
 }

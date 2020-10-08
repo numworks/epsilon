@@ -12,7 +12,7 @@ public:
 
   typedef float (*ValueAtAbscissa)(float abscissa, Context * context, const void * auxiliary);
 
-  static void InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary, bool tuneXRange = false);
+  static void InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary);
   static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary, bool boundByMagnitude = false);
 
 private:

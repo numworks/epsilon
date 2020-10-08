@@ -1,4 +1,5 @@
 #include "function.h"
+#include "interactive_curve_view_range.h"
 #include "range_1D.h"
 #include "poincare_helpers.h"
 #include "poincare/src/parsing/parser.h"
@@ -89,11 +90,16 @@ void Function::protectedRangeForDisplay(float * xMin, float * xMax, float * yMin
     constexpr float precision = 1e-5;
     return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
   };
-  Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
+  bool fullyComputed = Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
 
   evaluation = [](float x, Context * context, const void * auxiliary) {
     return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
   };
-  Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this, boundByMagnitude);
+
+  if (fullyComputed) {
+    Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this, boundByMagnitude);
+  } else {
+    Zoom::RangeWithRatioForDisplay(evaluation, InteractiveCurveViewRange::NormalYXRatio(), xMin, xMax, yMin, yMax, context, this);
+  }
 }
 }

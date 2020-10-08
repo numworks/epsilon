@@ -141,9 +141,6 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     float xRange = resultX[1] - resultX[0];
     resultX[0] -= k_breathingRoom * xRange;
     resultX[1] += k_breathingRoom * xRange;
-    /* Round to the next integer. */
-    resultX[0] = std::floor(resultX[0]);
-    resultX[1] = std::ceil(resultX[1]);
   }
   *xMin = std::min(resultX[0], *xMin);
   *xMax = std::max(resultX[1], *xMax);

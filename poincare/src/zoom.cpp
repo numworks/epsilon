@@ -8,7 +8,7 @@ constexpr int
   Zoom::k_peakNumberOfPointsOfInterest,
   Zoom::k_sampleSize;
 constexpr float
-  Zoom::k_defaultMaxInterval,
+  Zoom::k_maximalDistance,
   Zoom::k_minimalDistance,
   Zoom::k_asymptoteThreshold,
   Zoom::k_stepFactor,
@@ -27,7 +27,7 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     maxDistance = (tMax - tMin) / 2.f;
   } else {
     center = 0.f;
-    maxDistance = k_defaultMaxInterval / 2.f;
+    maxDistance = k_maximalDistance;
   }
 
   float resultX[2] = {FLT_MAX, - FLT_MAX};

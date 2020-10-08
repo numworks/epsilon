@@ -189,9 +189,12 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
 }
 
 void InteractiveCurveViewRange::checkForNormalizedRange() {
-  float pixelHeight = std::round(Ion::Display::Height * (NormalizedYHalfRange(100.f) / Ion::Display::HeightInTenthOfMillimeter));
-  float pixelWidth = std::round(Ion::Display::Width * (NormalizedXHalfRange(100.f) / Ion::Display::WidthInTenthOfMillimeter));
-  m_zoomNormalize = std::round(pixelHeight * (xMax() - xMin())) == std::round(pixelWidth * (yMax() - yMin()));
+  m_zoomNormalize = isOrthonormal();
 }
 
+bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {
+  float pixelHeight = std::round(Ion::Display::Height * (NormalizedYHalfRange(100.f) / Ion::Display::HeightInTenthOfMillimeter));
+  float pixelWidth = std::round(Ion::Display::Width * (NormalizedXHalfRange(100.f) / Ion::Display::WidthInTenthOfMillimeter));
+  return std::fabs(std::round(pixelHeight * (xMax() - xMin())) - std::round(pixelWidth * (yMax() - yMin()))) <= tolerance;
+}
 }

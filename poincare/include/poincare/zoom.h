@@ -15,6 +15,10 @@ public:
   static void InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary);
   static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary, bool boundByMagnitude = false);
 
+  /* If shrink is false, the range will be set to ratio by increasing the size
+   * of the smallest axis. If it is true, the longest axis will be reduced.*/
+  static void SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink = false);
+
 private:
   static constexpr int k_peakNumberOfPointsOfInterest = 3;
   static constexpr int k_sampleSize = Ion::Display::Width / 4;

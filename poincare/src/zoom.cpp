@@ -199,6 +199,29 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   }
 }
 
+void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink) {
+  float currentRatio = (*yMax - *yMin) / (*xMax - *xMin);
+
+  float * tMin;
+  float * tMax;
+  float newRange;
+  if ((currentRatio < yxRatio) == shrink) {
+    /* Y axis too small and shrink, or Y axis too large and do not shrink
+     * --> we change the X axis*/
+    tMin = xMin;
+    tMax = xMax;
+    newRange = (*yMax - *yMin) / yxRatio;
+  } else {
+    tMin = yMin;
+    tMax = yMax;
+    newRange = (*xMax - *xMin) * yxRatio;
+  }
+
+  float center = (*tMax + *tMin) / 2.f;
+  *tMax = center + newRange / 2.f;
+  *tMin = center - newRange / 2.f;
+}
+
 bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations) {
   if (iterations <= 0) {
     return false;

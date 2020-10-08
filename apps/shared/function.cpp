@@ -79,7 +79,7 @@ Function::RecordDataBuffer * Function::recordData() const {
   return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
-void Function::protectedRangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange, bool boundByMagnitude) const {
+void Function::protectedRangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool boundByMagnitude) const {
   Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
   /* When evaluating sin(x)/x close to zero using the standard sine function,
    * one can detect small variations, while the cardinal sine is supposed to be
@@ -89,7 +89,7 @@ void Function::protectedRangeForDisplay(float * xMin, float * xMax, float * yMin
     constexpr float precision = 1e-5;
     return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
   };
-  Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this, tuneXRange);
+  Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
 
   evaluation = [](float x, Context * context, const void * auxiliary) {
     return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();

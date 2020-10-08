@@ -17,15 +17,12 @@ constexpr float
   Zoom::k_defaultHalfRange,
   Zoom::k_maxRatioBetweenPointsOfInterest;
 
-void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary, bool tuneXRange) {
+void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
 
   const bool hasIntervalOfDefinition = std::isfinite(tMin) && std::isfinite(tMax);
   float center, maxDistance;
-  if (!tuneXRange) {
-    center = (*xMax + *xMin) / 2.f;
-    maxDistance = (*xMax - *xMin) / 2.f;
-  } else if (hasIntervalOfDefinition) {
+  if (hasIntervalOfDefinition) {
     center = (tMax + tMin) / 2.f;
     maxDistance = (tMax - tMin) / 2.f;
   } else {
@@ -132,26 +129,25 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     }
   }
 
-  if (tuneXRange) {
-    /* Cut after horizontal asymptotes. */
-    resultX[0] = std::min(resultX[0], asymptote[0]);
-    resultX[1] = std::max(resultX[1], asymptote[1]);
-    if (resultX[0] >= resultX[1]) {
-      /* Fallback to default range. */
-      resultX[0] = - k_defaultHalfRange;
-      resultX[1] = k_defaultHalfRange;
-    } else {
-      /* Add breathing room around points of interest. */
-      float xRange = resultX[1] - resultX[0];
-      resultX[0] -= k_breathingRoom * xRange;
-      resultX[1] += k_breathingRoom * xRange;
-      /* Round to the next integer. */
-      resultX[0] = std::floor(resultX[0]);
-      resultX[1] = std::ceil(resultX[1]);
-    }
-    *xMin = std::min(resultX[0], *xMin);
-    *xMax = std::max(resultX[1], *xMax);
+  /* Cut after horizontal asymptotes. */
+  resultX[0] = std::min(resultX[0], asymptote[0]);
+  resultX[1] = std::max(resultX[1], asymptote[1]);
+  if (resultX[0] >= resultX[1]) {
+    /* Fallback to default range. */
+    resultX[0] = - k_defaultHalfRange;
+    resultX[1] = k_defaultHalfRange;
+  } else {
+    /* Add breathing room around points of interest. */
+    float xRange = resultX[1] - resultX[0];
+    resultX[0] -= k_breathingRoom * xRange;
+    resultX[1] += k_breathingRoom * xRange;
+    /* Round to the next integer. */
+    resultX[0] = std::floor(resultX[0]);
+    resultX[1] = std::ceil(resultX[1]);
   }
+  *xMin = std::min(resultX[0], *xMin);
+  *xMax = std::max(resultX[1], *xMax);
+
   *yMin = std::min(resultYMin, *yMin);
   *yMax = std::max(resultYMax, *yMax);
 }

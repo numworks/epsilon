@@ -139,6 +139,8 @@ int Store::nextDot(int series, int direction, int dot) {
 /* Window */
 
 void Store::setDefault() {
+  setZoomNormalize(false);
+
   float xMin, xMax, yMin, yMax;
   float mins[k_numberOfSeries], maxs[k_numberOfSeries];
   for (int series = 0; series < k_numberOfSeries; series++) {
@@ -168,12 +170,13 @@ void Store::setDefault() {
   setXMax(xMax + k_displayHorizontalMarginRatio * range);
 
   range = yMax - yMin;
-  setYMin(m_delegate->addMargin(yMin, range, true, true));
-  setYMax(m_delegate->addMargin(yMax, range, true, false));
+  setYMin(roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true));
+  setYMax(roundLimit(m_delegate->addMargin(yMax, range, true, false), range, false));
 
   if (revertToOrthonormal) {
     normalize();
   }
+  setZoomAuto(true);
 }
 
 /* Series */

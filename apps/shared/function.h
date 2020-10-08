@@ -55,7 +55,7 @@ public:
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 
   // Range
-  virtual void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange = true) const = 0;
+  virtual void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const = 0;
 
 protected:
   /* RecordDataBuffer is the layout of the data buffer of Record
@@ -93,7 +93,7 @@ protected:
     bool m_active;
   };
 
-  void protectedRangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange, bool boundByMagnitude) const;
+  void protectedRangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool boundByMagnitude) const;
 
 private:
   RecordDataBuffer * recordData() const;

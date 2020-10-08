@@ -7,6 +7,7 @@
 #include "range_parameter_controller.h"
 #include "function_zoom_and_pan_curve_view_controller.h"
 #include <poincare/coordinate_2D.h>
+#include <escher/button_state.h>
 
 namespace Shared {
 
@@ -66,6 +67,7 @@ private:
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) override;
+  void updateZoomButtons() override;
 
   void setCurveViewAsMainView();
 
@@ -79,8 +81,8 @@ private:
   RangeParameterController m_rangeParameterController;
   FunctionZoomAndPanCurveViewController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;
-  Button m_autoButton;
-  Button m_normalizeButton;
+  ButtonState m_autoButton;
+  ButtonState m_normalizeButton;
   Button m_navigationButton;
   Button m_rangeButton;
 };

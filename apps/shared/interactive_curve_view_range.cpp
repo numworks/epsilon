@@ -11,11 +11,32 @@ using namespace Poincare;
 
 namespace Shared {
 
+void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
+  m_delegate = delegate;
+  if (delegate) {
+    m_delegate->updateZoomButtons();
+  }
+}
+
 uint32_t InteractiveCurveViewRange::rangeChecksum() {
   float data[] = {xMin(), xMax(), yMin(), yMax()};
   size_t dataLengthInBytes = sizeof(data);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   return Ion::crc32Word((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
+}
+
+void InteractiveCurveViewRange::setZoomAuto(bool v) {
+  m_zoomAuto = v;
+  if (m_delegate) {
+    m_delegate->updateZoomButtons();
+  }
+}
+
+void InteractiveCurveViewRange::setZoomNormalize(bool v) {
+  m_zoomNormalize = v;
+  if (m_delegate) {
+    m_delegate->updateZoomButtons();
+  }
 }
 
 void InteractiveCurveViewRange::setXMin(float xMin) {
@@ -55,7 +76,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float xMa = xMax();
   float yMi = yMin();
   float yMa = yMax();
-  m_zoomAuto = false;
+  setZoomAuto(false);
   if (ratio*std::fabs(xMa-xMi) < Range1D::k_minFloat || ratio*std::fabs(yMa-yMi) < Range1D::k_minFloat) {
     return;
   }
@@ -163,7 +184,7 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     const float xRange = xMax() - xMin();
     const float leftMargin = leftMarginRatio * xRange;
     if (x < xMin() + leftMargin) {
-      m_zoomAuto = false;
+      setZoomAuto(false);
       /* The panning increment is a whole number of pixels so that the caching
        * for cartesian functions is not invalidated. */
       const float newXMin = std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth + xMin();
@@ -172,7 +193,7 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     }
     const float rightMargin = rightMarginRatio * xRange;
     if (x > xMax() - rightMargin) {
-      m_zoomAuto = false;
+      setZoomAuto(false);
       const float newXMax = std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax();
       m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetXMin(xMax() - xRange, k_lowerMaxFloat, k_upperMaxFloat);
@@ -182,14 +203,14 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     const float yRange = yMax() - yMin();
     const float bottomMargin = bottomMarginRatio * yRange;
     if (y < yMin() + bottomMargin) {
-      m_zoomAuto = false;
+      setZoomAuto(false);
       const float newYMin = y - bottomMargin;
       m_yRange.setMax(newYMin + yRange, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
     }
     const float topMargin = topMarginRatio * yRange;
     if (y > yMax() - topMargin) {
-      m_zoomAuto = false;
+      setZoomAuto(false);
       m_yRange.setMax(y + topMargin, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetYMin(yMax() - yRange, k_lowerMaxFloat, k_upperMaxFloat);
     }

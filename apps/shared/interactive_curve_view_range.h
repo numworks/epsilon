@@ -68,6 +68,8 @@ protected:
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
+  bool isOrthonormal(float tolerance = 0.f) const;
+
   bool m_zoomAuto;
   bool m_zoomNormalize;
 };

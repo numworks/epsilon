@@ -17,7 +17,7 @@ constexpr float
   Zoom::k_defaultHalfRange,
   Zoom::k_maxRatioBetweenPointsOfInterest;
 
-void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
+bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
 
   const bool hasIntervalOfDefinition = std::isfinite(tMin) && std::isfinite(tMax);
@@ -136,6 +136,7 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     /* Fallback to default range. */
     resultX[0] = - k_defaultHalfRange;
     resultX[1] = k_defaultHalfRange;
+    return false;
   } else {
     /* Add breathing room around points of interest. */
     float xRange = resultX[1] - resultX[0];
@@ -147,6 +148,8 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
 
   *yMin = std::min(resultYMin, *yMin);
   *yMax = std::max(resultYMax, *yMax);
+
+  return true;
 }
 
 void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary, bool boundByMagnitude) {
@@ -220,6 +223,39 @@ void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, f
   float center = (*tMax + *tMin) / 2.f;
   *tMax = center + newRange / 2.f;
   *tMin = center - newRange / 2.f;
+}
+
+void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
+  constexpr int searchSpeedUp = 13;
+  constexpr float rangeMagnitudeWeight = 0.2f;
+  constexpr float maxMagnitudeDifference = 1.2f;
+
+  const float step = std::pow(k_stepFactor, searchSpeedUp);
+  float bestGrade = FLT_MAX;
+  float xRange = k_minimalDistance;
+  float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
+  while (xRange < k_maximalDistance) {
+    RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, true);
+    float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
+    float grade = std::fabs(std::log(currentRatio / yxRatio)) + std::fabs(std::log(xRange / 10.f)) * rangeMagnitudeWeight;
+    if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
+      bestGrade = grade;
+      *xMin = -xRange;
+      *xMax = xRange;
+      *yMin = yMinRange;
+      *yMax = yMaxRange;
+    }
+
+    xRange *= step;
+  }
+  if (bestGrade == FLT_MAX) {
+    *xMin = -k_defaultHalfRange;
+    *xMax = k_defaultHalfRange;
+    RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, auxiliary, true);
+    return;
+  }
+
+  SetToRatio(yxRatio, xMin, xMax, yMin, yMax, true);
 }
 
 bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations) {

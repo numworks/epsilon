@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stddef.h>
 #include <assert.h>
+#include <poincare/ieee754.h>
 #include <poincare/preferences.h>
 #include <poincare/zoom.h>
 #include <algorithm>
@@ -37,6 +38,19 @@ void InteractiveCurveViewRange::setZoomNormalize(bool v) {
   if (m_delegate) {
     m_delegate->updateZoomButtons();
   }
+}
+
+float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
+  /* Floor/ceil to a round number, with a precision depending on the range.
+   * A range within : | Will have a magnitude : | 3.14 would be floored to :
+   *    [100,1000]    |     10                  | 0
+   *    [10,100]      |     1                   | 3
+   *    [1,10]        |     0.1                 | 3.1                       */
+  float magnitude = std::pow(10.0f, Poincare::IEEE754<float>::exponentBase10(range) - 1.0f);
+  if (isMin) {
+    return magnitude * std::floor(y / magnitude);
+  }
+  return magnitude * std::ceil(y / magnitude);
 }
 
 void InteractiveCurveViewRange::setXMin(float xMin) {
@@ -141,14 +155,14 @@ void InteractiveCurveViewRange::setDefault() {
   m_delegate->interestingRanges(this);
   bool revertToNormalized = isOrthonormal(k_orthonormalTolerance);
 
-  // Add margins
+  // Add margins, then round limits.
   float xRange = xMax() - xMin();
   float yRange = yMax() - yMin();
-  m_xRange.setMin(m_delegate->addMargin(xMin(), xRange, false, true), k_lowerMaxFloat, k_upperMaxFloat);
+  m_xRange.setMin(roundLimit(m_delegate->addMargin(xMin(), xRange, false, true), xRange, true), k_lowerMaxFloat, k_upperMaxFloat);
   // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
-  MemoizedCurveViewRange::protectedSetXMax(m_delegate->addMargin(xMax(), xRange, false, false), k_lowerMaxFloat, k_upperMaxFloat);
-  m_yRange.setMin(m_delegate->addMargin(yMin(), yRange, true, true), k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetYMax(m_delegate->addMargin(yMax(), yRange, true, false), k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(xMax(), xRange, false, false), xRange, false), k_lowerMaxFloat, k_upperMaxFloat);
+  m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);
 
   if (m_delegate->defaultRangeIsNormalized() || revertToNormalized) {
     // Normalize the axes, so that a polar circle is displayed as a circle

@@ -32,6 +32,7 @@ public:
   void setZoomAuto(bool v);
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v);
+  float roundLimit(float y, float range, bool isMin);
 
   // MemoizedCurveViewRange
   float xGridUnit() const override { return m_zoomNormalize ? yGridUnit() : MemoizedCurveViewRange::xGridUnit(); }

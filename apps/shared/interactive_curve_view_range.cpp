@@ -111,6 +111,7 @@ void InteractiveCurveViewRange::setDefault() {
 
   // Compute the interesting range
   m_delegate->interestingRanges(this);
+  bool revertToNormalized = isOrthonormal();
 
   // Add margins
   float xRange = xMax() - xMin();
@@ -121,7 +122,7 @@ void InteractiveCurveViewRange::setDefault() {
   m_yRange.setMin(m_delegate->addMargin(yMin(), yRange, true, true), k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(m_delegate->addMargin(yMax(), yRange, true, false), k_lowerMaxFloat, k_upperMaxFloat);
 
-  if (!m_delegate->defaultRangeIsNormalized()) {
+  if (!(m_delegate->defaultRangeIsNormalized() || revertToNormalized)) {
     return;
   }
 

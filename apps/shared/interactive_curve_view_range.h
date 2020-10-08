@@ -18,6 +18,8 @@ public:
     m_zoomNormalize(false)
   {}
 
+  static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
+
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate) { m_delegate = delegate; }
   uint32_t rangeChecksum() override;
 

@@ -69,6 +69,11 @@ float InteractiveCurveViewController::addMargin(float y, float range, bool isVer
   return y + ratio * range;
 }
 
+void InteractiveCurveViewController::updateZoomButtons() {
+  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_normalizeButton.setState(m_interactiveRange->zoomNormalize());
+}
+
 const char * InteractiveCurveViewController::title() {
   return I18n::translate(I18n::Message::GraphTab);
 }
@@ -304,9 +309,7 @@ bool InteractiveCurveViewController::autoButtonAction() {
 }
 
 bool InteractiveCurveViewController::normalizeButtonAction() {
-  if (m_interactiveRange->zoomNormalize()) {
-    m_interactiveRange->setZoomNormalize(false);
-  } else {
+  if (!m_interactiveRange->zoomNormalize()) {
     m_interactiveRange->setZoomAuto(false);
     m_interactiveRange->normalize();
     setCurveViewAsMainView();

@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <poincare/preferences.h>
+#include <poincare/zoom.h>
 #include <algorithm>
 
 using namespace Poincare;
@@ -88,27 +89,19 @@ void InteractiveCurveViewRange::normalize() {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
 
-  float xRange = xMax() - xMin();
-  float yRange = yMax() - yMin();
-  float xyRatio = xRange/yRange;
+  float newXMin = xMin(), newXMax = xMax(), newYMin = yMin(), newYMax = yMax();
 
   const float unit = std::max(xGridUnit(), yGridUnit());
   const float newXHalfRange = NormalizedXHalfRange(unit);
   const float newYHalfRange = NormalizedYHalfRange(unit);
-  float normalizedXYRatio = newXHalfRange/newYHalfRange;
-  if (xyRatio < normalizedXYRatio) {
-    float newXRange = normalizedXYRatio * yRange;
-    assert(newXRange >= xRange);
-    float delta = (newXRange - xRange) / 2.0f;
-    m_xRange.setMin(xMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetXMax(xMax()+delta, k_lowerMaxFloat, k_upperMaxFloat);
-  } else if (xyRatio > normalizedXYRatio) {
-    float newYRange = newYHalfRange/newXHalfRange * xRange;
-    assert(newYRange >= yRange);
-    float delta = (newYRange - yRange) / 2.0f;
-    m_yRange.setMin(yMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetYMax(yMax()+delta, k_lowerMaxFloat, k_upperMaxFloat);
-  }
+  float normalizedYXRatio = newYHalfRange/newXHalfRange;
+
+  Zoom::SetToRatio(normalizedYXRatio, &newXMin, &newXMax, &newYMin, &newYMax);
+
+  m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+  m_yRange.setMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
 void InteractiveCurveViewRange::setDefault() {

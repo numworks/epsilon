@@ -18,7 +18,7 @@ public:
 private:
   static constexpr int k_peakNumberOfPointsOfInterest = 3;
   static constexpr int k_sampleSize = Ion::Display::Width / 4;
-  static constexpr float k_defaultMaxInterval = 2e5f;
+  static constexpr float k_maximalDistance = 1e5f;
   static constexpr float k_minimalDistance = 1e-2f;
   static constexpr float k_asymptoteThreshold = 2e-1f;
   static constexpr float k_stepFactor = 1.1f;

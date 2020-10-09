@@ -11,7 +11,12 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
   m_tempInteractiveRange(*interactiveRange),
   m_xRangeCells{},
   m_yRangeCells{},
-  m_yAutoCell(I18n::Message::YAuto)
+  m_yAutoCell(I18n::Message::YAuto),
+  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+    Container::activeApp()->dismissModalViewController();
+    ((RangeParameterController *)context)->stackController()->pop();
+    return true;
+  }, this))
 {
   for (int i = 0; i < k_numberOfEditableTextCell; i++) {
     m_xRangeCells[i].setParentResponder(&m_selectableTableView);
@@ -80,6 +85,11 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (activeCell() == 2 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     m_tempInteractiveRange.setYAuto(!m_tempInteractiveRange.yAuto());
     m_selectableTableView.reloadData();
+    return true;
+  }
+  if (event == Ion::Events::Back && m_interactiveRange->rangeChecksum() != m_tempInteractiveRange.rangeChecksum()) {
+    // Open pop-up to confirm discarding values
+    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
   return FloatParameterController::handleEvent(event);

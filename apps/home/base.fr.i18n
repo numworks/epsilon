@@ -1,4 +1,4 @@
-Apps = "Applications"
-AppsCapital = "APPLICATIONS"
+Apps = "Issou"
+AppsCapital = "ISSOU"
 ForbidenAppInExamMode1 = "Cette application n'est"
 ForbidenAppInExamMode2 = "pas autorisée en mode examen."

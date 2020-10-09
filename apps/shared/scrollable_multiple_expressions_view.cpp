@@ -172,7 +172,7 @@ KDSize AbstractScrollableMultipleExpressionsView::ContentCell::privateMinimalSiz
   }
 
   KDSize centerSize = KDSizeZero;
-  if (displayCenter() || (forceFullDisplay && displayableCenter())) {
+  if (displayCenter() || (forceFullDisplay && !m_centeredExpressionView.layout().isUninitialized())) {
     centerSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
     width += centerSize.width() + 2 * AbstractScrollableMultipleExpressionsView::k_horizontalMargin + m_approximateSign.minimalSizeForOptimalDisplay().width();
   }

@@ -41,7 +41,7 @@ void TextToInsertForCommandText(const char * command, int commandLength, char * 
 
   UTF8Decoder decoder(command);
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != UCodePointNull && index < bufferSize - 1 && (commandLength < 0 || (decoder.stringPosition() - command <=  commandLength))) {
+  while (codePoint != UCodePointNull && (commandLength < 0 || (decoder.stringPosition() - command <=  commandLength))) {
     if (codePoint == ')') {
       numberOfOpenParentheses--;
     } else if (codePoint == ']') {

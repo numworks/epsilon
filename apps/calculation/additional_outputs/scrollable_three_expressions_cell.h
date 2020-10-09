@@ -19,7 +19,7 @@ public:
     setBackgroundColor(KDColorWhite);
   }
   void resetMemoization();
-  void setCalculation(Calculation * calculation, bool canChangeDisplayOutput);
+  void setCalculation(Calculation * calculation, bool * didForceOutput = nullptr);
   void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
     return m_contentCell.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
   }
@@ -60,7 +60,7 @@ public:
 
   void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
   void resetMemoization() { m_view.resetMemoization(); }
-  void setCalculation(Calculation * calculation, bool canChangeDisplayOutput = false);
+  void setCalculation(Calculation * calculation, bool * didForceOutput = nullptr);
   void setDisplayCenter(bool display);
   ScrollableThreeExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }

@@ -122,7 +122,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     if (!myApp->isAcceptableText(m_cacheBuffer)) {
       return true;
     }
-    m_calculationStore->push(m_cacheBuffer, myApp->localContext(), HistoryViewCell::Height);
+    m_calculationStore->push(m_cacheBuffer, myApp->localContext());
     m_historyController->reload();
     return true;
   }
@@ -145,7 +145,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   } else {
     layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize, context);
   }
-  m_calculationStore->push(m_cacheBuffer, context, HistoryViewCell::Height);
+  m_calculationStore->push(m_cacheBuffer, context);
   m_historyController->reload();
   m_contentView.expressionField()->setEditing(true, true);
   telemetryReportEvent("Input", m_cacheBuffer);

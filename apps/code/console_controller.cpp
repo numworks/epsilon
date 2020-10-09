@@ -450,6 +450,26 @@ void ConsoleController::printText(const char * text, size_t length) {
     flushOutputAccumulationBufferToStore();
     micropython_port_vm_hook_refresh_print();
   }
+#if __EMSCRIPTEN__
+  /* If we called micropython_port_interrupt_if_needed here, we would need to
+   * put in the WHITELIST all the methods that call
+   * ConsoleController::printText, which means all the MicroPython methods that
+   * call print... This is a lot of work + might reduce the performance as
+   * emterpreted code is slower.
+   *
+   * We thus do not allow print interruption on the web simulator. It would be
+   * better to allow it, but the biggest problem was on the device anyways
+   * -> It is much quicker to interrupt Python on the web simulator than on the
+   * device.
+   *
+   * TODO: Allow print interrpution on emscripten -> maybe by using WASM=1 ? */
+#else
+  /* micropython_port_vm_hook_loop is not enough to detect user interruptions,
+   * because it calls micropython_port_interrupt_if_needed every 20000
+   * operations, and a print operation is quite long. We thus explicitely call
+   * micropython_port_interrupt_if_needed here. */
+  micropython_port_interrupt_if_needed();
+#endif
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {

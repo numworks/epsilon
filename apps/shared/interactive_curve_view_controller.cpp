@@ -15,10 +15,8 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
-  m_interactiveRange(interactiveRange),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
-    graphController->rangeParameterController()->setRange(graphController->interactiveRange());
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
@@ -115,7 +113,7 @@ void InteractiveCurveViewController::didBecomeFirstResponder() {
   }
 }
 
-RangeParameterController * InteractiveCurveViewController::rangeParameterController() {
+ViewController * InteractiveCurveViewController::rangeParameterController() {
   return &m_rangeParameterController;
 }
 

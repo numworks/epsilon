@@ -2,11 +2,6 @@
 
 namespace Shared {
 
-Interval::IntervalParameters * IntervalParameterController::SharedTempIntervalParameters() {
-  static Interval::IntervalParameters sTempIntervalParameters;
-  return &sTempIntervalParameters;
-}
-
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   FloatParameterController<double>(parentResponder),
   m_interval(nullptr),
@@ -19,11 +14,6 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
     m_intervalCells[i].setParentResponder(&m_selectableTableView);
     m_intervalCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
   }
-}
-
-void IntervalParameterController::setInterval(Interval * interval) {
-  m_interval = interval;
-  *SharedTempIntervalParameters() = *(interval->parameters());
 }
 
 const char * IntervalParameterController::title() {
@@ -52,8 +42,8 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
 }
 
 double IntervalParameterController::parameterAtIndex(int index) {
-  GetterPointer getters[k_totalNumberOfCell] = {&Shared::Interval::IntervalParameters::start, &Shared::Interval::IntervalParameters::end, &Shared::Interval::IntervalParameters::step};
-  return (SharedTempIntervalParameters()->*getters[index])();
+  GetterPointer getters[k_totalNumberOfCell] = {&Interval::start, &Interval::end, &Interval::step};
+  return (m_interval->*getters[index])();
 }
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
@@ -61,18 +51,18 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  double start = parameterIndex == 0 ? f : SharedTempIntervalParameters()->start();
-  double end = parameterIndex == 1 ? f : SharedTempIntervalParameters()->end();
+  double start = parameterIndex == 0 ? f : m_interval->start();
+  double end = parameterIndex == 1 ? f : m_interval->end();
   if (start > end) {
     if (parameterIndex == 1) {
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
     double g = f+1.0;
-    SharedTempIntervalParameters()->setEnd(g);
+    m_interval->setEnd(g);
   }
-  SetterPointer setters[k_totalNumberOfCell] = {&Shared::Interval::IntervalParameters::setStart, &Shared::Interval::IntervalParameters::setEnd, &Shared::Interval::IntervalParameters::setStep};
-  (SharedTempIntervalParameters()->*setters[parameterIndex])(f);
+  SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};
+  (m_interval->*setters[parameterIndex])(f);
   return true;
 }
 
@@ -95,7 +85,6 @@ int IntervalParameterController::reusableParameterCellCount(int type) {
 }
 
 void IntervalParameterController::buttonAction() {
-  m_interval->setParameters(*SharedTempIntervalParameters());
   m_interval->forceRecompute();
   StackViewController * stack = stackController();
   stack->pop();

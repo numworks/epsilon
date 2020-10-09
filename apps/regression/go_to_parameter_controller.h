@@ -15,8 +15,8 @@ public:
   void setXPrediction(bool xPrediction);
   const char * title() override;
 private:
-  double extractParameterAtIndex(int index) override;
-  bool confirmParameterAtIndex(int parameterIndex, double f) override;
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   Store * m_store;
   bool m_xPrediction;
   GraphController * m_graphController;

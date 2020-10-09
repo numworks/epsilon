@@ -1,7 +1,7 @@
 AddScript = "Aggiungere script"
 AllowedCharactersaz09 = "Caratteri consentiti : a-z, 0-9, _"
 Autocomplete = "Autocompletamento"
-AutoImportScript = "Auto importazione nella console"
+AutoImportScript = "Importazione automatica dello script"
 BuiltinsAndKeywords = "Funzioni native e parole chiave"
 Console = "Console d'esecuzione"
 DeleteScript = "Eliminare lo script"

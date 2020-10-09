@@ -33,7 +33,6 @@ public:
   }
   bool displayCenter() const { return constContentCell()->displayCenter(); }
   void setDisplayCenter(bool display);
-  void setDisplayableCenter(bool displayable) { contentCell()->setDisplayableCenter(displayable); }
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
   Poincare::Layout layout() const { return constContentCell()->layout(); }
@@ -64,9 +63,7 @@ protected:
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
     bool displayCenter() const { return m_displayCenter && !m_centeredExpressionView.layout().isUninitialized(); }
-    bool displayableCenter() const { return m_displayableCenter && !m_centeredExpressionView.layout().isUninitialized(); }
     void setDisplayCenter(bool display);
-    void setDisplayableCenter(bool displayable) {m_displayableCenter = displayable;}
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     virtual Poincare::Layout layout() const override;
@@ -82,7 +79,6 @@ protected:
     ExpressionView m_centeredExpressionView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
-    bool m_displayableCenter;
   };
   virtual ContentCell * contentCell() = 0;
   virtual const ContentCell * constContentCell() const = 0;

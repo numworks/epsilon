@@ -30,7 +30,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   bool requireSimplification = false;
   bool canChangeUnitPrefix = false;
 
-  if (Unit::IsSISpeed(units)) {
+  if (Unit::IsISSpeed(units)) {
     // 1.a. Turn speed into km/h
     m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
@@ -43,7 +43,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
           )
         );
     requireSimplification = true; // Simplify the conversion
-  } else if (Unit::IsSIVolume(units)) {
+  } else if (Unit::IsISVolume(units)) {
     // 1.b. Turn volume into L
     m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
@@ -51,7 +51,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
         );
     requireSimplification = true; // Simplify the conversion
     canChangeUnitPrefix = true; // Pick best prefix (mL)
-  } else if (Unit::IsSIEnergy(units)) {
+  } else if (Unit::IsISEnergy(units)) {
     // 1.c. Turn energy into Wh
     m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
@@ -66,7 +66,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
         );
     requireSimplification = true; // Simplify the conversion
     canChangeUnitPrefix = true; // Pick best prefix (kWh)
-  } else if (Unit::IsSITime(units)) {
+  } else if (Unit::IsISTime(units)) {
     // Turn time into ? year + ? month + ? day + ? h + ? min + ? s
     double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
     m_memoizedExpressions[numberOfMemoizedExpressions++] = Unit::BuildTimeSplit(value, App::app()->localContext(), Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit());

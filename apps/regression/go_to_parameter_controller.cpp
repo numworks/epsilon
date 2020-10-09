@@ -30,7 +30,7 @@ const char * GoToParameterController::title() {
   return I18n::translate(I18n::Message::YPrediction);
 }
 
-double GoToParameterController::extractParameterAtIndex(int index) {
+double GoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
   if (m_xPrediction) {
     return m_cursor->x();
@@ -38,7 +38,7 @@ double GoToParameterController::extractParameterAtIndex(int index) {
   return m_cursor->y();
 }
 
-bool GoToParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
+bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   int series = m_graphController->selectedSeriesIndex();
   Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();

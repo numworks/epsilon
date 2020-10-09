@@ -129,9 +129,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableTableView.selectCellAtLocation(0, focusRow > 0 ? focusRow - 1 : 0);
-    /* The parameters 'sameCell' and 'previousSelectedY' are chosen to enforce
-     * toggling of the output when necessary. */
-    setSelectedSubviewType(subviewType, false, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
+    setSelectedSubviewType(subviewType, true, 0, selectedRow());
     return true;
   }
   if (event == Ion::Events::Clear) {
@@ -206,7 +204,20 @@ KDCoordinate HistoryController::rowHeight(int j) {
   }
   Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
   bool expanded = j == selectedRow() && selectedSubviewType() == SubviewType::Output;
-  return calculation->height(expanded);
+  KDCoordinate result = calculation->memoizedHeight(expanded);
+  if (result < 0) {
+    result = HistoryViewCell::Height(calculation.pointer(), expanded);
+    if (result < 0) {
+      // Raise, because Height modified the calculation and failed.
+      Poincare::ExceptionCheckpoint::Raise();
+    }
+    calculation->setMemoizedHeight(expanded, result);
+  }
+  /* We might want to put an assertion here to check the memoization:
+   * assert(result == HistoryViewCell::Height(calculation.pointer(), expanded));
+   * However, Height might fail due to pool memory exhaustion, in which case the
+   * assertion fails even if "result" had the right value. */
+  return result;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

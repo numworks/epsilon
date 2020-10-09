@@ -329,7 +329,7 @@ bool AppsContainer::updateAlphaLock() {
   return m_window.updateAlphaLock();
 }
 
-OnBoarding::PopUpController * AppsContainer::promptController() {
+OnBoarding::PromptController * AppsContainer::promptController() {
   if (k_promptNumberOfMessages == 0) {
     return nullptr;
   }

@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "interactive_curve_view_range.h"
 #include "float_parameter_controller.h"
+#include "discard_pop_up_controller.h"
 
 namespace Shared {
 
@@ -45,6 +46,7 @@ private:
   MessageTableCellWithEditableText m_xRangeCells[k_numberOfEditableTextCell];
   MessageTableCellWithConvertibleEditableText m_yRangeCells[k_numberOfConvertibleTextCell];
   MessageTableCellWithSwitch m_yAutoCell;
+  DiscardPopUpController m_confirmPopUpController;
 };
 
 }

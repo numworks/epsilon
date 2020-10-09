@@ -34,10 +34,6 @@ CXX = $(NDK_TOOLCHAIN_PATH)/$(NDK_TARGET)$(NDK_VERSION)-clang++
 LD = $(NDK_TOOLCHAIN_PATH)/$(NDK_TARGET)$(NDK_VERSION)-clang++
 
 SFLAGS += -fPIC
-# If MICROPY_NLR_SETJMP is 0, the MicroPython NLR is done by
-# python/src/py/nlrthumb.c and creates code containing relocations, which is not
-# accepted by Android.
-SFLAGS += -DMICROPY_NLR_SETJMP=1
 
 LDFLAGS += -shared
 LDFLAGS += -static-libstdc++

@@ -11,7 +11,12 @@ DomainParameterController::DomainParameterController(Responder * parentResponder
   FloatParameterController<float>(parentResponder),
   m_domainCells{},
   m_record(),
-  m_tempDomain()
+  m_tempDomain(),
+  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+    Container::activeApp()->dismissModalViewController();
+    ((DomainParameterController *)context)->stackController()->pop();
+    return true;
+  }, this))
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_domainCells[i].setParentResponder(&m_selectableTableView);
@@ -65,6 +70,11 @@ bool DomainParameterController::handleEvent(Ion::Events::Event event) {
     stackController()->pop();
     return true;
   }
+  if (event == Ion::Events::Back && !equalTempParameters()) {
+    // Open pop-up to confirm discarding values
+    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+    return true;
+  }
   return false;
 }
 
@@ -80,8 +90,7 @@ void DomainParameterController::extractParameters() {
    * parameters are valid (tMax>tMin), and final tMin value is already set.
    * Same happens in confirmParameters when setting function's parameters from
    * valid m_tempDomain parameters. */
-  assert(function()->tMin() == m_tempDomain.min());
-  assert(function()->tMax() == m_tempDomain.max());
+  assert(equalTempParameters());
 }
 
 bool DomainParameterController::setParameterAtIndex(int parameterIndex, float f) {
@@ -95,8 +104,11 @@ void DomainParameterController::confirmParameters() {
   function()->setTMin(parameterAtIndex(0));
   function()->setTMax(parameterAtIndex(1));
   // See comment on Range1D initialization in extractParameters
-  assert(function()->tMin() == m_tempDomain.min());
-  assert(function()->tMax() == m_tempDomain.max());
+  assert(equalTempParameters());
+}
+
+bool DomainParameterController::equalTempParameters() {
+  return function()->tMin() == m_tempDomain.min() && function()->tMax() == m_tempDomain.max();
 }
 
 void DomainParameterController::buttonAction() {

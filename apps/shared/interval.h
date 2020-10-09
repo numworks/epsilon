@@ -23,6 +23,7 @@ public:
     double m_end;
     double m_step;
   };
+  bool hasSameParameters(IntervalParameters parameters);
   double element(int i);
   IntervalParameters * parameters() { return &m_parameters; }
   void setParameters(IntervalParameters parameters) { m_parameters = parameters; }

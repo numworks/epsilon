@@ -1,5 +1,5 @@
-#ifndef ON_BOARDING_POP_UP_CONTROLLER_H
-#define ON_BOARDING_POP_UP_CONTROLLER_H
+#ifndef ON_PROMPT_CONTROLLER_H
+#define ON_PROMPT_CONTROLLER_H
 
 #include <escher.h>
 #include <apps/i18n.h>
@@ -8,9 +8,9 @@
 
 namespace OnBoarding {
 
-class PopUpController : public ViewController {
+class PromptController : public ViewController {
 public:
-  PopUpController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
+  PromptController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
   View * view() override { return &m_messageViewWithSkip; }
   bool handleEvent(Ion::Events::Event event) override;
 private:
@@ -34,4 +34,3 @@ private:
 }
 
 #endif
-

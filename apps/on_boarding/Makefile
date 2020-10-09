@@ -3,7 +3,7 @@ app_on_boarding_src = $(addprefix apps/on_boarding/,\
   logo_controller.cpp \
   logo_view.cpp \
   localization_controller.cpp \
-  pop_up_controller.cpp \
+  prompt_controller.cpp \
   power_on_self_test.cpp \
 )
 

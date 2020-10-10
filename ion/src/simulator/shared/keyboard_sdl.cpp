@@ -69,15 +69,9 @@ State scan() {
   state = sKeyboardState;
 #else
   // Register a key for the mouse, if any
-  SDL_Point p;
-  Uint32 mouseState = SDL_GetMouseState(&p.x, &p.y);
-  if (!(previousState) && mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)){
-    Key k = Simulator::Layout::keyAt(&p);
+  Key k = Simulator::Layout::getHighlightedKey();
+  if (SDL_GetMouseState(nullptr, nullptr) && SDL_BUTTON(SDL_BUTTON_LEFT)) {
     state.setKey(k);
-    previousState = true;
-  }
-  if (!(mouseState & SDL_BUTTON(SDL_BUTTON_LEFT))) {
-    previousState = false;
   }
 #endif
 

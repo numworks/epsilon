@@ -3,9 +3,12 @@ package io.github.omega.simulator;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -13,6 +16,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.libsdl.app.SDLActivity;
+import org.libsdl.app.SDL;
 
 public class OmegaActivity extends SDLActivity {
   protected String[] getLibraries() {
@@ -38,6 +42,12 @@ public class OmegaActivity extends SDLActivity {
       Log.w("LoadTexture", "Coundn't load a file:" + identifier);
     }
     return bitmap;
+  }
+
+  public boolean hapticFeedbackIsEnabled() {
+    ContentResolver contentResolver = SDL.getContext().getContentResolver();
+    int val = Settings.System.getInt(contentResolver, Settings.System.HAPTIC_FEEDBACK_ENABLED, 0);
+    return val != 0;
   }
 
   @Override

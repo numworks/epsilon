@@ -1,7 +1,9 @@
 #include "main.h"
 #include "display.h"
-#include "platform.h"
+#include "haptics.h"
 #include "layout.h"
+#include "platform.h"
+#include "telemetry.h"
 #include "random.h"
 
 #include <assert.h>
@@ -93,6 +95,13 @@ int main(int argc, char * argv[]) {
   if (!argument_volatile) {
     savePython();
   }
+  Ion::Simulator::Haptics::init();
+
+  ion_main(arguments.size(), &arguments[0]);
+
+  // Shutdown
+  Ion::Simulator::Haptics::shutdown();
+  Ion::Simulator::Main::quit();
 #endif
   
   Ion::Simulator::Main::quit();
@@ -205,7 +214,6 @@ namespace Main {
 
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;
-static SDL_Texture * sBackgroundTexture = nullptr;
 static bool sNeedsRefresh = false;
 static SDL_Rect sScreenRect;
 
@@ -257,12 +265,9 @@ void init() {
 
   Display::init(sRenderer);
 
-  // No need to load background in web simulator.
-  #ifndef __EMSCRIPTEN__
-  if (!argument_screen_only) {
-    sBackgroundTexture = IonSimulatorLoadImage(sRenderer, "background.jpg");
-  }
-  #endif
+#if !EPSILON_SDL_SCREEN_ONLY
+  Layout::init(sRenderer);
+#endif
 
   relayout();
 }
@@ -307,22 +312,24 @@ void refresh() {
   } else {
     SDL_Rect screenRect;
     Layout::getScreenRect(&screenRect);
-    SDL_Rect backgroundRect;
-    Layout::getBackgroundRect(&backgroundRect);
 
     SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
     SDL_RenderClear(sRenderer);
-    SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
+    // Can change sNeedsRefresh state if a key is highlighted and needs to be reset
+    Layout::draw(sRenderer);
     Display::draw(sRenderer, &screenRect);
   }
 
   SDL_RenderPresent(sRenderer);
-  sNeedsRefresh = false;
 
   IonSimulatorCallbackDidRefresh();
 }
 
 void quit() {
+#if !EPSILON_SDL_SCREEN_ONLY
+  Layout::quit();
+#endif
+  Display::quit();
   SDL_DestroyWindow(sWindow);
   SDL_Quit();
 }

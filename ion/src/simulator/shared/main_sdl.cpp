@@ -278,6 +278,7 @@ void relayout() {
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
   SDL_RenderSetLogicalSize(sRenderer, windowWidth, windowHeight);
 
+  #if !EPSILON_SDL_SCREEN_ONLY
   if (argument_screen_only) {
     // Keep original aspect ration in screen_only mode.
     float scale = (float)(Ion::Display::Width) / (float)(Ion::Display::Height);
@@ -294,6 +295,12 @@ void relayout() {
   } else {
     Layout::recompute(windowWidth, windowHeight);
   }
+  #else
+  sScreenRect.x = 0;
+  sScreenRect.y = 0;
+  sScreenRect.w = windowWidth;
+  sScreenRect.h = windowHeight;
+  #endif
 
   setNeedsRefresh();
 }
@@ -307,6 +314,9 @@ void refresh() {
     return;
   }
 
+  #if EPSILON_SDL_SCREEN_ONLY
+  Display::draw(sRenderer, &sScreenRect);
+  #else
   if (argument_screen_only) {
     Display::draw(sRenderer, &sScreenRect);
   } else {
@@ -319,6 +329,7 @@ void refresh() {
     Layout::draw(sRenderer);
     Display::draw(sRenderer, &screenRect);
   }
+  #endif
 
   SDL_RenderPresent(sRenderer);
 

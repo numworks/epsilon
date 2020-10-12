@@ -12,6 +12,7 @@ public:
   static constexpr float k_smallUnitMantissa = 1.f;
   static constexpr float k_mediumUnitMantissa = 2.f;
   static constexpr float k_largeUnitMantissa = 5.f;
+  static constexpr float k_minimalRangeLength = 1e-4f;
 
   typedef float (*ValueAtAbscissa)(float abscissa, Context * context, const void * auxiliary);
 
@@ -24,6 +25,9 @@ public:
   /* If shrink is false, the range will be set to ratio by increasing the size
    * of the smallest axis. If it is true, the longest axis will be reduced.*/
   static void SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink = false);
+
+  /* Compute a default range so that boundMin < value < boundMax */
+  static void RangeFromSingleValue(float value, float * boundMin, float * boundMax);
 
 private:
   static constexpr int k_peakNumberOfPointsOfInterest = 3;

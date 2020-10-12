@@ -9,6 +9,9 @@ namespace Poincare {
 class Zoom {
 public:
   static constexpr float k_defaultHalfRange = 10.f;
+  static constexpr float k_smallUnitMantissa = 1.f;
+  static constexpr float k_mediumUnitMantissa = 2.f;
+  static constexpr float k_largeUnitMantissa = 5.f;
 
   typedef float (*ValueAtAbscissa)(float abscissa, Context * context, const void * auxiliary);
 

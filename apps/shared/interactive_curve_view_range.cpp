@@ -109,6 +109,10 @@ void InteractiveCurveViewRange::setDefault() {
     return;
   }
 
+  /* If m_zoomNormalize was left active, xGridUnit() would return the value of
+   * yGridUnit, even if the ranger were not truly normalized. */
+  m_zoomNormalize = false;
+
   // Compute the interesting range
   m_delegate->interestingRanges(this);
   bool revertToNormalized = isOrthonormal();

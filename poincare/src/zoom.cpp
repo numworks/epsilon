@@ -262,6 +262,25 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   SetToRatio(yxRatio, xMin, xMax, yMin, yMax, true);
 }
 
+void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {
+  float t = tMin;
+  *fMin = FLT_MAX;
+  *fMax = -FLT_MAX;
+  while (t <= tMax) {
+    float value = evaluation(t, context, auxiliary);
+    if (value < *fMin) {
+      *fMin = value;
+    }
+    if (value > *fMax) {
+      *fMax = value;
+    }
+    t += tStep;
+  }
+  if (*fMin == *fMax) {
+    RangeFromSingleValue(*fMin, fMin, fMax);
+  }
+}
+
 void Zoom::RangeFromSingleValue(float value, float * boundMin, float * boundMax) {
   constexpr float margin = 0.2f;
   float delta = margin * std::fabs(value);

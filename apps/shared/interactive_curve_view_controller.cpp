@@ -151,6 +151,7 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   if (m_interactiveRange->zoomAuto()) {
     m_interactiveRange->setDefault();
+    m_interactiveRange->checkForNormalizedRange();
   }
 
   /* Warning: init cursor parameter before reloading banner view. Indeed,

@@ -226,27 +226,29 @@ void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, f
 }
 
 void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
-  constexpr int searchSpeedUp = 13;
+  constexpr float units[] = {1.f, 2.f, 5.f};
   constexpr float rangeMagnitudeWeight = 0.2f;
   constexpr float maxMagnitudeDifference = 1.2f;
 
-  const float step = std::pow(k_stepFactor, searchSpeedUp);
   float bestGrade = FLT_MAX;
-  float xRange = k_minimalDistance;
+  float xMagnitude = k_minimalDistance;
   float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
-  while (xRange < k_maximalDistance) {
-    RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, true);
-    float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
-    float grade = std::fabs(std::log(currentRatio / yxRatio)) + std::fabs(std::log(xRange / 10.f)) * rangeMagnitudeWeight;
-    if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
-      bestGrade = grade;
-      *xMin = -xRange;
-      *xMax = xRange;
-      *yMin = yMinRange;
-      *yMax = yMaxRange;
-    }
+  while (xMagnitude < k_maximalDistance) {
+    for(const float unit : units) {
+      const float xRange = unit * xMagnitude;
+      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, true);
+      float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
+      float grade = std::fabs(std::log(currentRatio / yxRatio)) + std::fabs(std::log(xRange / 10.f)) * rangeMagnitudeWeight;
+      if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
+        bestGrade = grade;
+        *xMin = -xRange;
+        *xMax = xRange;
+        *yMin = yMinRange;
+        *yMax = yMaxRange;
+      }
 
-    xRange *= step;
+    }
+    xMagnitude *= 10.f;
   }
   if (bestGrade == FLT_MAX) {
     *xMin = -k_defaultHalfRange;

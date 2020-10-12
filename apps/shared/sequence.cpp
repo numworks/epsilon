@@ -32,18 +32,7 @@ int Sequence::nameWithArgument(char * buffer, size_t bufferSize) {
   assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
   result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
   assert(result <= bufferSize);
-  switch (type())
-  {
-  case Type::Explicit:
-    result += strlcpy(buffer+result, ")", bufferSize-result);
-    break;
-  case Type::SingleRecurrence:
-    result += strlcpy(buffer+result, "+1)", bufferSize-result);
-    break;
-  default:
-    result += strlcpy(buffer+result, "+2)", bufferSize-result);
-    break;
-  }
+  result += strlcpy(buffer+result, ")", bufferSize-result);
   return result;
 }
 

@@ -18,7 +18,8 @@ constexpr float
   Zoom::k_maxRatioBetweenPointsOfInterest,
   Zoom::k_smallUnitMantissa,
   Zoom::k_mediumUnitMantissa,
-  Zoom::k_largeUnitMantissa;
+  Zoom::k_largeUnitMantissa,
+  Zoom::k_minimalRangeLength;
 
 bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
@@ -191,9 +192,7 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   *yMin = std::min(*yMin, sampleYMin);
   *yMax = std::max(*yMax, sampleYMax);
   if (*yMin == *yMax) {
-    float d = (*yMin == 0.f) ? 1.f : *yMin * 0.2f;
-    *yMin -= d;
-    *yMax += d;
+    RangeFromSingleValue(*yMin, yMin, yMax);
   }
   /* Round out the smallest bound to 0 if it is negligible compare to the
    * other one. This way, we can display the X axis for positive functions such
@@ -261,6 +260,16 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   }
 
   SetToRatio(yxRatio, xMin, xMax, yMin, yMax, true);
+}
+
+void Zoom::RangeFromSingleValue(float value, float * boundMin, float * boundMax) {
+  constexpr float margin = 0.2f;
+  float delta = margin * std::fabs(value);
+  if (delta < k_minimalRangeLength) {
+    delta = 1.f;
+  }
+  *boundMin = value - delta;
+  *boundMax = value + delta;
 }
 
 bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations) {

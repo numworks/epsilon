@@ -165,12 +165,18 @@ void FunctionGraphController::yRangeForCursorFirstMove(InteractiveCurveViewRange
   float cursorStep = range->xGridUnit() / k_numberOfCursorStepsInGradUnit;
   float yN, yP;
 
+  bool normalized = range->isOrthonormal();
+
   for (int i = 0; i < functionsCount; i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     yN = f->evaluateXYAtParameter(range->xCenter() - cursorStep, context).x2();
     yP = f->evaluateXYAtParameter(range->xCenter() + cursorStep, context).x2();
     range->setYMin(std::min(range->yMin(), std::min(yN, yP)));
     range->setYMax(std::max(range->yMax(), std::max(yN, yP)));
+  }
+
+  if (normalized) {
+    range->normalize();
   }
 }
 

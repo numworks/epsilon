@@ -19,6 +19,7 @@ public:
   {}
 
   static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
+  bool isOrthonormal(float tolerance = 0.f) const;
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate) { m_delegate = delegate; }
   uint32_t rangeChecksum() override;
@@ -68,8 +69,6 @@ protected:
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
-  bool isOrthonormal(float tolerance = 0.f) const;
-
   bool m_zoomAuto;
   bool m_zoomNormalize;
 };

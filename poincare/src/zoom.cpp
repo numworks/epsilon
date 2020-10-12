@@ -15,7 +15,10 @@ constexpr float
   Zoom::k_breathingRoom,
   Zoom::k_forceXAxisThreshold,
   Zoom::k_defaultHalfRange,
-  Zoom::k_maxRatioBetweenPointsOfInterest;
+  Zoom::k_maxRatioBetweenPointsOfInterest,
+  Zoom::k_smallUnitMantissa,
+  Zoom::k_mediumUnitMantissa,
+  Zoom::k_largeUnitMantissa;
 
 bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
@@ -226,7 +229,7 @@ void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, f
 }
 
 void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
-  constexpr float units[] = {1.f, 2.f, 5.f};
+  constexpr float units[] = {k_smallUnitMantissa, k_mediumUnitMantissa, k_largeUnitMantissa};
   constexpr float rangeMagnitudeWeight = 0.2f;
   constexpr float maxMagnitudeDifference = 1.2f;
 

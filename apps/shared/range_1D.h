@@ -19,7 +19,7 @@ class __attribute__((packed)) Range1D final {
 public:
   /* If m_min and m_max are too close, we cannot divide properly the range by
    * the number of pixels, which creates a drawing problem. */
-  constexpr static float k_minFloat = 1E-4f;
+  constexpr static float k_minFloat = Poincare::Zoom::k_minimalRangeLength;
   constexpr static float k_default = Poincare::Zoom::k_defaultHalfRange;
   Range1D(float min = -k_default, float max = k_default) :
     m_min(min),

@@ -194,7 +194,7 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
 }
 
 void InteractiveCurveViewRange::checkForNormalizedRange() {
-  m_zoomNormalize = isOrthonormal();
+  setZoomNormalize(isOrthonormal());
 }
 
 bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {

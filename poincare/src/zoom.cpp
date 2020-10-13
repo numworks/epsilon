@@ -175,7 +175,7 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
     }
     sampleYMin = std::min(sampleYMin, y);
     sampleYMax = std::max(sampleYMax, y);
-    if (std::fabs(y) > FLT_EPSILON) {
+    if (y != 0.f) {
       sum += std::log(std::fabs(y));
       pop++;
     }
@@ -247,7 +247,7 @@ void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, f
 void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
   constexpr float units[] = {k_smallUnitMantissa, k_mediumUnitMantissa, k_largeUnitMantissa};
   constexpr float rangeMagnitudeWeight = 0.2f;
-  constexpr float maxMagnitudeDifference = 1.2f;
+  constexpr float maxMagnitudeDifference = 2.f;
 
   float bestGrade = FLT_MAX;
   float xMagnitude = k_minimalDistance;
@@ -257,7 +257,9 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
       const float xRange = unit * xMagnitude;
       RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary);
       float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
-      float grade = std::fabs(std::log(currentRatio / yxRatio)) + std::fabs(std::log(xRange / 10.f)) * rangeMagnitudeWeight;
+      float grade = std::fabs(std::log(currentRatio / yxRatio));
+      /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */
+      grade += std::fabs(std::log(xRange / 10.f) * std::log(xRange)) * rangeMagnitudeWeight;
       if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
         bestGrade = grade;
         *xMin = -xRange;
@@ -265,7 +267,6 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
         *yMin = yMinRange;
         *yMax = yMaxRange;
       }
-
     }
     xMagnitude *= 10.f;
   }
@@ -276,7 +277,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     return;
   }
 
-  SetToRatio(yxRatio, xMin, xMax, yMin, yMax, true);
+  SetToRatio(yxRatio, xMin, xMax, yMin, yMax);
 }
 
 void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {

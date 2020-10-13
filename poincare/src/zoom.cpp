@@ -204,6 +204,25 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   }
 }
 
+void Zoom::CombineRanges(int length, const float * mins, const float * maxs, float * minRes, float * maxRes) {
+  ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+    int index = std::round(x);
+    return static_cast<const float *>(auxiliary)[index];
+  };
+  FullRange(evaluation, 0, length - 1, 1, minRes, maxRes, nullptr, mins);
+  float min, max;
+  FullRange(evaluation, 0, length - 1, 1, &min, &max, nullptr, maxs);
+  if (min < *minRes) {
+    *minRes = min;
+  }
+  if (max > *maxRes) {
+    *maxRes = max;
+  }
+  if (*minRes == *maxRes) {
+    RangeFromSingleValue(*minRes, minRes, maxRes);
+  }
+}
+
 void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink) {
   float currentRatio = (*yMax - *yMin) / (*xMax - *xMin);
 
@@ -275,9 +294,6 @@ void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float t
       *fMax = value;
     }
     t += tStep;
-  }
-  if (*fMin == *fMax) {
-    RangeFromSingleValue(*fMin, fMin, fMax);
   }
 }
 

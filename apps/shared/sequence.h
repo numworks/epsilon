@@ -76,7 +76,7 @@ public:
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
 
   //Range
-  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const override { protectedRangeForDisplay(xMin, xMax, yMin, yMax, context, false); };
+  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const override;
 
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;

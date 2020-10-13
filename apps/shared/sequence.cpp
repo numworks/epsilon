@@ -9,6 +9,7 @@
 #include <poincare/integer.h>
 #include <poincare/rational.h>
 #include <poincare/addition.h>
+#include <poincare/zoom.h>
 #include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <apps/i18n.h>
@@ -308,6 +309,15 @@ Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Contex
     result += evaluateXYAtParameter(i, context).x2();
   }
   return Float<double>::Builder(result);
+}
+
+void Sequence::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const {
+  Poincare::Zoom::ValueAtAbscissa evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
+    return static_cast<float>(static_cast<const Shared::Sequence *>(auxiliary)->initialRank());
+  };
+  Poincare::Zoom::FullRange(evaluation, 0, 1, 1, xMin, xMax, context, this);
+  *xMax += Poincare::Zoom::k_defaultHalfRange;
+  protectedFullRangeForDisplay(*xMin, *xMax, 1.f, yMin, yMax, context, false);
 }
 
 Sequence::RecordDataBuffer * Sequence::recordData() const {

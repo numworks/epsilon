@@ -138,22 +138,23 @@ int FunctionGraphController::numberOfCurves() const {
 
 void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  float resultXMin = FLT_MAX;
-  float resultXMax = -FLT_MAX;
-  float resultYMin = FLT_MAX;
-  float resultYMax = -FLT_MAX;
-  assert(functionStore()->numberOfActiveFunctions() > 0);
-  int functionsCount = functionStore()->numberOfActiveFunctions();
-  for (int i = 0; i < functionsCount; i++) {
+  constexpr int maxLength = 10;
+  float xMins[maxLength], xMaxs[maxLength], yMins[maxLength], yMaxs[maxLength];
+  int length = functionStore()->numberOfActiveFunctions();
+
+  for (int i = 0; i < length; i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    f->rangeForDisplay(&resultXMin, &resultXMax, &resultYMin, &resultYMax, context);
+    f->rangeForDisplay(xMins + i, xMaxs + i, yMins + i, yMaxs + i, context);
   }
 
-  range->setXMin(resultXMin);
-  range->setXMax(resultXMax);
-  range->setYMin(resultYMin);
-  range->setYMax(resultYMax);
-  /* We can only call this method once the X range has been fully computed. */
+  float xMin, xMax, yMin, yMax;
+  Poincare::Zoom::CombineRanges(length, xMins, xMaxs, &xMin, &xMax);
+  Poincare::Zoom::CombineRanges(length, yMins, yMaxs, &yMin, &yMax);
+  range->setXMin(xMin);
+  range->setXMax(xMax);
+  range->setYMin(yMin);
+  range->setYMax(yMax);
+
   yRangeForCursorFirstMove(range);
 }
 

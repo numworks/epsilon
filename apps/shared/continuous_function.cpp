@@ -262,36 +262,33 @@ void ContinuousFunction::setTMax(float tMax) {
 }
 
 void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const {
-  if (plotType() == PlotType::Cartesian) {
-    protectedRangeForDisplay(xMin, xMax, yMin, yMax, context, true);
+  if (plotType() != PlotType::Cartesian) {
+    assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
+    protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
+    protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
+    return;
+  }
+
+  Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+  /* When evaluating sin(x)/x close to zero using the standard sine function,
+   * one can detect small variations, while the cardinal sine is supposed to be
+   * locally monotonous. To smooth our such variations, we round the result of
+   * the evaluations. As we are not interested in precise results but only in
+   * ordering, this approximation is sufficient. */
+    constexpr float precision = 1e-5;
+    return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
+  };
+  bool fullyComputed = Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
+
+  evaluation = [](float x, Context * context, const void * auxiliary) {
+    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+  };
+
+  if (fullyComputed) {
+    Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
   } else {
-    fullXYRange(xMin, xMax, yMin, yMax, context);
+    Zoom::RangeWithRatioForDisplay(evaluation, InteractiveCurveViewRange::NormalYXRatio(), xMin, xMax, yMin, yMax, context, this);
   }
-}
-
-void ContinuousFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Context * context) const {
-  assert(yMin && yMax);
-  assert(!(std::isinf(tMin()) || std::isinf(tMax()) || std::isnan(rangeStep())));
-
-  float resultXMin = FLT_MAX, resultXMax = - FLT_MAX, resultYMin = FLT_MAX, resultYMax = - FLT_MAX;
-  for (float t = tMin(); t <= tMax(); t += rangeStep()) {
-    Coordinate2D<float> xy = privateEvaluateXYAtParameter(t, context);
-    if (!std::isfinite(xy.x1()) || !std::isfinite(xy.x2())) {
-      continue;
-    }
-    resultXMin = std::min(xy.x1(), resultXMin);
-    resultXMax = std::max(xy.x1(), resultXMax);
-    resultYMin = std::min(xy.x2(), resultYMin);
-    resultYMax = std::max(xy.x2(), resultYMax);
-  }
-  if (xMin) {
-    *xMin = resultXMin;
-  }
-  if (xMax) {
-    *xMax = resultXMax;
-  }
-  *yMin = resultYMin;
-  *yMax = resultYMax;
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

@@ -80,26 +80,19 @@ Function::RecordDataBuffer * Function::recordData() const {
   return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
-void Function::protectedRangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool boundByMagnitude) const {
-  Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-  /* When evaluating sin(x)/x close to zero using the standard sine function,
-   * one can detect small variations, while the cardinal sine is supposed to be
-   * locally monotonous. To smooth our such variations, we round the result of
-   * the evaluations. As we are not interested in precise results but only in
-   * ordering, this approximation is sufficient. */
-    constexpr float precision = 1e-5;
-    return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
-  };
-  bool fullyComputed = Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
-
-  evaluation = [](float x, Context * context, const void * auxiliary) {
-    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
-  };
-
-  if (fullyComputed) {
-    Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this, boundByMagnitude);
+void Function::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const {
+  Poincare::Zoom::ValueAtAbscissa evaluation;
+  if (xRange) {
+    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
+      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x1();
+    };
   } else {
-    Zoom::RangeWithRatioForDisplay(evaluation, InteractiveCurveViewRange::NormalYXRatio(), xMin, xMax, yMin, yMax, context, this);
+    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
+      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    };
   }
+
+  Poincare::Zoom::FullRange(evaluation, tMin, tMax, tStep, min, max, context, this);
 }
+
 }

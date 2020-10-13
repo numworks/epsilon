@@ -20,7 +20,6 @@ public:
   TermSumController * termSumController() { return &m_termSumController; }
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
-  void interestingRanges(Shared::InteractiveCurveViewRange * range) const override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }

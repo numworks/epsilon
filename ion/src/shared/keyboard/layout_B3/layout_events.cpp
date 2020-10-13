@@ -1,17 +1,13 @@
-#ifndef ION_KEYBOARD_LAYOUT_B2_EVENTS_H
-#define ION_KEYBOARD_LAYOUT_B2_EVENTS_H
-
-#include <ion/unicode/code_point.h>
-#include "../event_data.h"
+#include <layout_events.h>
 
 namespace Ion {
 namespace Events {
 
 static_assert('\x11' == UCodePointEmpty, "Unicode error");
-static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
+const EventData s_dataForEvent[4 * Event::PageSize] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
-  TL(), TL(), U(), U(),  U(),  U(),
+  TL(), U(), TL(), U(),  U(),  U(),
   TL(), TL(), TL(), TL(), TL(), TL(),
   T("ℯ^(\x11)"), T("ln(\x11)"),  T("log(\x11)"), T("𝐢"), T(","), T("^"),
   T("sin(\x11)"), T("cos(\x11)"), T("tan(\x11)"), T("π"), T("√(\x11)"), T("^2"),
@@ -53,10 +49,10 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 
 #ifndef NDEBUG
 
-static constexpr const char * s_nameForEvent[255] = {
+const char * s_nameForEvent[255] = {
  // Plain
   "Left", "Up", "Down", "Right", "OK", "Back",
-  "Home", "OnOff", nullptr, nullptr, nullptr, nullptr,
+  "Home", "nullptr", "OnOff", nullptr, nullptr, nullptr,
   "Shift", "Alpha", "XNT", "Var", "Toolbox", "Backspace",
   "Exp", "Ln", "Log", "Imaginary", "Comma", "Power",
   "Sine", "Cosine", "Tangent", "Pi", "Sqrt", "Square",
@@ -97,13 +93,7 @@ static constexpr const char * s_nameForEvent[255] = {
   "None", "Termination", nullptr, nullptr, nullptr, nullptr,
 };
 
-inline const char * Event::name() const {
-  return s_nameForEvent[m_id];
-}
-
 #endif
 
 }
 }
-
-#endif

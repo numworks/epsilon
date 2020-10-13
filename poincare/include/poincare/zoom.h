@@ -23,6 +23,8 @@ public:
   static void RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
   static void FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary);
 
+  static void CombineRanges(int length, const float * mins, const float * maxs, float * minRes, float * maxRes);
+
   /* If shrink is false, the range will be set to ratio by increasing the size
    * of the smallest axis. If it is true, the longest axis will be reduced.*/
   static void SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink = false);

@@ -139,31 +139,27 @@ int Store::nextDot(int series, int direction, int dot) {
 /* Window */
 
 void Store::setDefault() {
-  float minX = FLT_MAX;
-  float maxX = -FLT_MAX;
+  float min, max;
+  float mins[k_numberOfSeries], maxs[k_numberOfSeries];
   for (int series = 0; series < k_numberOfSeries; series++) {
-    if (!seriesIsEmpty(series)) {
-      minX = std::min(minX, minValueOfColumn(series, 0));
-      maxX = std::max(maxX, maxValueOfColumn(series, 0));
-    }
+    bool empty = seriesIsEmpty(series);
+    mins[series] = empty ? NAN : minValueOfColumn(series, 0);
+    maxs[series] = empty ? NAN : maxValueOfColumn(series, 0);
   }
-  float range = maxX - minX;
-  setXMin(minX - k_displayHorizontalMarginRatio * range);
-  setXMax(maxX + k_displayHorizontalMarginRatio * range);
+  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &min, &max);
+  float range = max - min;
+  setXMin(min - k_displayHorizontalMarginRatio * range);
+  setXMax(max + k_displayHorizontalMarginRatio * range);
 
-  float minY = FLT_MAX;
-  float maxY = -FLT_MAX;
   for (int series = 0; series < k_numberOfSeries; series++) {
-    for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-      if (xMin() <= get(series, 0, k) && get(series, 0, k) <= xMax()) {
-        minY = std::min<float>(minY, get(series, 1, k));
-        maxY = std::max<float>(maxY, get(series, 1, k));
-      }
-    }
+    bool empty = seriesIsEmpty(series);
+    mins[series] = empty ? NAN : minValueOfColumn(series, 1);
+    maxs[series] = empty ? NAN : maxValueOfColumn(series, 1);
   }
-  range = maxY - minY;
-  setYMin(m_delegate->addMargin(minY, range, true, true));
-  setYMax(m_delegate->addMargin(maxY, range, true, false));
+  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &min, &max);
+  range = max - min;
+  setYMin(m_delegate->addMargin(min, range, true, true));
+  setYMax(m_delegate->addMargin(max, range, true, false));
 }
 
 /* Series */

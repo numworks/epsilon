@@ -93,7 +93,7 @@ protected:
     bool m_active;
   };
 
-  void protectedRangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool boundByMagnitude) const;
+  void protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const;
 
 private:
   RecordDataBuffer * recordData() const;

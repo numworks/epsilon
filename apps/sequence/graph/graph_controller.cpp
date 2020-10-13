@@ -46,35 +46,6 @@ float GraphController::interestingXMin() const {
   return nmin;
 }
 
-void GraphController::interestingRanges(InteractiveCurveViewRange * range) const {
-  int nmin = INT_MAX;
-  int nmax = 0;
-  int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
-  for (int i = 0; i < nbOfActiveModels; i++) {
-    Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    int firstInterestingIndex = s->initialRank();
-    nmin = std::min(nmin, firstInterestingIndex);
-    nmax = std::max(nmax, firstInterestingIndex + static_cast<int>(k_defaultXHalfRange));
-  }
-  assert(nmax - nmin >= k_defaultXHalfRange);
-
-  range->setXMin(nmin);
-  range->setXMax(nmax);
-
-  Context * context = textFieldDelegateApp()->localContext();
-  float yMin = FLT_MAX, yMax = -FLT_MAX;
-  for (int i = 0; i < nbOfActiveModels; i++) {
-    Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-      return static_cast<const Shared::Sequence *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
-    };
-    Zoom::RefinedYRangeForDisplay(evaluation, nmin, nmax, &yMin, &yMax, context, s);
-  }
-
-  range->setYMin(yMin);
-  range->setYMax(yMax);
-}
-
 bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   double floatBody;

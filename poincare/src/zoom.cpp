@@ -147,16 +147,15 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     resultX[0] -= k_breathingRoom * xRange;
     resultX[1] += k_breathingRoom * xRange;
   }
-  *xMin = std::min(resultX[0], *xMin);
-  *xMax = std::max(resultX[1], *xMax);
-
-  *yMin = std::min(resultYMin, *yMin);
-  *yMax = std::max(resultYMax, *yMax);
+  *xMin = resultX[0];
+  *xMax = resultX[1];
+  *yMin = resultYMin;
+  *yMax = resultYMax;
 
   return true;
 }
 
-void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary, bool boundByMagnitude) {
+void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
   /* This methods computes the Y range that will be displayed for cartesian
    * functions and sequences, given an X range (xMin, xMax) and bounds yMin and
    * yMax that must be inside the Y range.*/
@@ -184,13 +183,12 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   /* sum/pop is the log mean value of the function, which can be interpreted as
    * its average order of magnitude. Then, bound is the value for the next
    * order of magnitude and is used to cut the Y range. */
-  if (boundByMagnitude) {
-    float bound = (pop > 0) ? std::exp(sum / pop + 1.f) : FLT_MAX;
-    sampleYMin = std::max(sampleYMin, - bound);
-    sampleYMax = std::min(sampleYMax, bound);
-  }
-  *yMin = std::min(*yMin, sampleYMin);
-  *yMax = std::max(*yMax, sampleYMax);
+
+  float bound = (pop > 0) ? std::exp(sum / pop + 1.f) : FLT_MAX;
+  sampleYMin = std::max(sampleYMin, - bound);
+  sampleYMax = std::min(sampleYMax, bound);
+  *yMin = sampleYMin;
+  *yMax = sampleYMax;
   if (*yMin == *yMax) {
     RangeFromSingleValue(*yMin, yMin, yMax);
   }
@@ -257,7 +255,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   while (xMagnitude < k_maximalDistance) {
     for(const float unit : units) {
       const float xRange = unit * xMagnitude;
-      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, true);
+      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary);
       float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
       float grade = std::fabs(std::log(currentRatio / yxRatio)) + std::fabs(std::log(xRange / 10.f)) * rangeMagnitudeWeight;
       if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
@@ -274,7 +272,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   if (bestGrade == FLT_MAX) {
     *xMin = -k_defaultHalfRange;
     *xMax = k_defaultHalfRange;
-    RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, auxiliary, true);
+    RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, auxiliary);
     return;
   }
 

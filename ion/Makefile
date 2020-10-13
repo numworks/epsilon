@@ -10,6 +10,8 @@ ifndef ION_KEYBOARD_LAYOUT
   $(error platform.mak should define ION_KEYBOARD_LAYOUT)
 endif
 SFLAGS += -Iion/include/ion/keyboard/$(ION_KEYBOARD_LAYOUT)
+SFLAGS += -Iion/include/ion/keyboard/
+ion_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
 
 include ion/src/$(PLATFORM)/Makefile
 -include ion/test/$(PLATFORM)/Makefile

@@ -40,6 +40,7 @@ protected:
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
+  virtual bool isCursorHanging() = 0;
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;

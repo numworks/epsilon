@@ -116,6 +116,16 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   return true;
 }
 
+bool FunctionGraphController::isCursorHanging() {
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  if (indexFunctionSelectedByCursor() >= functionStore()->numberOfActiveFunctions()) {
+    return true;
+  }
+  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context);
+  return xy.x1() != m_cursor->x() || xy.x2() != m_cursor->y();
+}
+
 CurveView * FunctionGraphController::curveView() {
   return functionGraphView();
 }

@@ -259,6 +259,21 @@ void GraphController::initCursorParameters() {
   *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
 }
 
+bool GraphController::isCursorHanging() {
+  if (m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
+    return true;
+  }
+  Coordinate2D<double> xy;
+  if (*m_selectedDotIndex == -1) {
+    xy = xyValues(*m_selectedSeriesIndex, m_cursor->t(), globalContext());
+  } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+    xy = Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
+  } else {
+    xy = Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+  }
+  return xy.x1() != m_cursor->x() || xy.x2() != m_cursor->y();
+}
+
 bool GraphController::moveCursorVertically(int direction) {
   Poincare::Context * context = globalContext();
   double x = m_cursor->x();

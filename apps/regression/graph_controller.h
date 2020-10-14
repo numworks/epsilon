@@ -40,6 +40,7 @@ private:
 
   // InteractiveCurveViewController
   void initCursorParameters() override;
+  bool isCursorHanging() override;
   uint32_t rangeVersion() override;
   int selectedCurveIndex() const override { return *m_selectedSeriesIndex; }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;

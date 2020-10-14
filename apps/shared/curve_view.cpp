@@ -671,18 +671,22 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   float rectUp = pixelToFloat(Axis::Vertical, rect.top() + k_externRectMargin);
   float rectDown = pixelToFloat(Axis::Vertical, rect.bottom() - k_externRectMargin);
 
-  bool rectOverlapsNegativeAbscissaAxis = std::isnan(rectLeft + rectRight + rectUp + rectDown);
-  if ((rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f) || rectOverlapsNegativeAbscissaAxis) {
-    if (rectRight > 0.0f || rectOverlapsNegativeAbscissaAxis) {
+  const Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
+  /* Cancel optimization if :
+   * - One of rect limits is nan.
+   * - Step is too large, any optimization would be counter productive. */
+  bool cancelOptimization = std::isnan(rectLeft + rectRight + rectUp + rectDown) || 2 * tStep >= piInAngleUnit;
+
+  bool rectOverlapsNegativeAbscissaAxis = false;
+  if (cancelOptimization || (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f)) {
+    if (cancelOptimization || rectRight > 0.0f) {
       // Origin is inside rect, tStart and tEnd cannot be optimized
       return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
     }
     // Rect view overlaps the abscissa, on the left of the origin.
     rectOverlapsNegativeAbscissaAxis = true;
   }
-
-  const Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
 
   float tMin, tMax;
   /* Compute angular coordinate of each corners of rect.
@@ -694,8 +698,8 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   if (!rectOverlapsNegativeAbscissaAxis) {
     float t3 = PolarThetaFromCoordinates(rectLeft, rectUp, angleUnit);
     float t4 = PolarThetaFromCoordinates(rectLeft, rectDown, angleUnit);
-    /* The area between tMin and tMax (modulo π) is the area where something can
-     * be plotted. */
+    /* The area between tMin and tMax (modulo π) is the only area where
+     * something needs to be plotted. */
     tMin = std::min(std::min(t1,t2),std::min(t3,t4));
     tMax = std::max(std::max(t1,t2),std::max(t3,t4));
   } else {
@@ -708,11 +712,18 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
     tMax = t1;
   }
 
-  /* Draw curve on intervals where (tMin%π, tMax%π) intersects (tStart, tEnd)
-   * For instance : if tStart=-π, tEnd=3π, tMin=π/4 and tMax=π/3, a curve is
-   * drawn between the intervals :
+  /* To optimize cache hits, the area actually drawn will be extended to nearest
+   * cached θ by at most tStep on both sides. If the extended area is too large
+   * the optimization will be ineffective. */
+  if (2 * tStep + tMax - tMin >= piInAngleUnit) {
+    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+  }
+
+  /* The number of segments to draw can be reduced by drawing curve on intervals
+   * where (tMin%π, tMax%π) intersects (tStart, tEnd).For instance :
+   * if tStart=-π, tEnd=3π, tMin=π/4 and tMax=π/3, a curve is drawn between :
    * - [ π/4, π/3 ], [ 2π + π/4, 2π + π/3 ]
-   * - [ -π + π/4, -π + π/3 ], [ π + π/4, π + π/3 ] in case f(θ) is negative*/
+   * - [ -π + π/4, -π + π/3 ], [ π + π/4, π + π/3 ] in case f(θ) is negative */
 
   // 1 - Set offset so that tStart <= tMax+thetaOffset < piInAngleUnit+tStart
   float thetaOffset = std::ceil((tStart - tMax)/piInAngleUnit) * piInAngleUnit;
@@ -724,7 +735,8 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
     // Draw curve if there is an intersection
     if (tS <= tE) {
       /* To maximize cache hits, we floor (and ceil) tS (and tE) to the closest
-       * cached value. More of the curve is drawn. */
+       * cached value. Step is small enough so that the extra drawn curve cannot
+       * overlap */
       int i = std::floor((tS - tStart) / tStep);
       float tCache1 = tStart + tStep * i;
 

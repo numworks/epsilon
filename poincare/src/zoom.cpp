@@ -184,11 +184,16 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
    * its average order of magnitude. Then, bound is the value for the next
    * order of magnitude and is used to cut the Y range. */
 
-  float bound = (pop > 0) ? std::exp(sum / pop + 1.f) : FLT_MAX;
-  sampleYMin = std::max(sampleYMin, - bound);
-  sampleYMax = std::min(sampleYMax, bound);
-  *yMin = sampleYMin;
-  *yMax = sampleYMax;
+  if (pop == 0) {
+    *yMin = 0;
+    *yMax = 0;
+  } else {
+    float bound = std::exp(sum / pop + 1.f);
+    sampleYMin = std::max(sampleYMin, - bound);
+    sampleYMax = std::min(sampleYMax, bound);
+    *yMin = sampleYMin;
+    *yMax = sampleYMax;
+  }
   if (*yMin == *yMax) {
     RangeFromSingleValue(*yMin, yMin, yMax);
   }

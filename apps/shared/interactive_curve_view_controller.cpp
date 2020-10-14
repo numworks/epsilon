@@ -156,7 +156,11 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   /* Warning: init cursor parameter before reloading banner view. Indeed,
    * reloading banner view needs an updated cursor to load the right data. */
-  initCursorParameters();
+  uint32_t newRangeVersion = rangeVersion();
+  if ((*m_rangeVersion != newRangeVersion && !isCursorVisible()) || isCursorHanging()) {
+    initCursorParameters();
+  }
+  *m_rangeVersion = newRangeVersion;
 
   curveView()->setOkView(&m_okView);
   if (!curveView()->isMainViewSelected()) {

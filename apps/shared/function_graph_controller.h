@@ -37,6 +37,7 @@ protected:
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;
   int numberOfCurves() const override;
   void initCursorParameters() override;
+  bool isCursorHanging() override;
   CurveView * curveView() override;
 
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;

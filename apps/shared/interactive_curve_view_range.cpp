@@ -115,7 +115,7 @@ void InteractiveCurveViewRange::setDefault() {
 
   // Compute the interesting range
   m_delegate->interestingRanges(this);
-  bool revertToNormalized = isOrthonormal();
+  bool revertToNormalized = isOrthonormal(k_orthonormalTolerance);
 
   // Add margins
   float xRange = xMax() - xMin();
@@ -198,8 +198,8 @@ void InteractiveCurveViewRange::checkForNormalizedRange() {
 }
 
 bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {
-  float pixelHeight = std::round(Ion::Display::Height * (NormalizedYHalfRange(100.f) / Ion::Display::HeightInTenthOfMillimeter));
-  float pixelWidth = std::round(Ion::Display::Width * (NormalizedXHalfRange(100.f) / Ion::Display::WidthInTenthOfMillimeter));
-  return std::fabs(std::round(pixelHeight * (xMax() - xMin())) - std::round(pixelWidth * (yMax() - yMin()))) <= tolerance;
+  float ratio = (yMax() - yMin()) / (xMax() - xMin());
+  float ratioDifference = std::fabs(std::log(ratio / NormalYXRatio()));
+  return  ratioDifference <= tolerance;
 }
 }

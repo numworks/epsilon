@@ -11,6 +11,7 @@ constexpr float
   Zoom::k_maximalDistance,
   Zoom::k_minimalDistance,
   Zoom::k_asymptoteThreshold,
+  Zoom::k_explosionThreshold,
   Zoom::k_stepFactor,
   Zoom::k_breathingRoom,
   Zoom::k_forceXAxisThreshold,
@@ -37,6 +38,7 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   float resultX[2] = {FLT_MAX, - FLT_MAX};
   float resultYMin = FLT_MAX, resultYMax = - FLT_MAX;
   float asymptote[2] = {FLT_MAX, - FLT_MAX};
+  float explosion[2] = {FLT_MAX, - FLT_MAX};
   int numberOfPoints;
   float xFallback, yFallback[2] = {NAN, NAN};
   float firstResult;
@@ -106,6 +108,7 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
         }
       case static_cast<uint8_t>(PointOfInterest::Root):
         asymptote[i] = i == 0 ? FLT_MAX : - FLT_MAX;
+        explosion[i] = i == 0 ? FLT_MAX : - FLT_MAX;
         resultX[0] = std::min(resultX[0], center + (i == 0 ? dXNext : dXPrev));
         resultX[1] = std::max(resultX[1], center + (i == 1 ? dXNext : dXPrev));
         if (std::isnan(firstResult)) {
@@ -117,10 +120,15 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
         if ((std::fabs(slopeNext) < k_asymptoteThreshold) && (std::fabs(slopePrev) > k_asymptoteThreshold)) {
           // Horizontal asymptote begins
           asymptote[i] = (i == 0) ? std::min(asymptote[i], center + dXNext) : std::max(asymptote[i], center + dXNext);
-        } else if ((std::fabs(slopeNext) < k_asymptoteThreshold) && (std::fabs(slopePrev) > k_asymptoteThreshold)) {
+        } else if ((std::fabs(slopeNext) > k_asymptoteThreshold) && (std::fabs(slopePrev) < k_asymptoteThreshold)) {
           // Horizontal asymptote invalidates : it might be an asymptote when
           // going the other way.
           asymptote[1 - i] = (i == 1) ? std::min(asymptote[1 - i], center + dXPrev) : std::max(asymptote[1 - i], center + dXPrev);
+        }
+        if (std::fabs(slopeNext) > k_explosionThreshold && std::fabs(slopePrev) < k_explosionThreshold) {
+          explosion[i] = (i == 0) ? std::min(explosion[i], center + dXNext) : std::max(explosion[i], center + dXNext);
+        } else if (std::fabs(slopeNext) < k_explosionThreshold && std::fabs(slopePrev) > k_explosionThreshold) {
+          explosion[1 - i] = (i == 1) ? std::min(explosion[1 - i], center + dXPrev) : std::max(explosion[1 - i], center + dXPrev);
         }
       }
     }
@@ -142,6 +150,8 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     resultX[1] = k_defaultHalfRange;
     return false;
   } else {
+    resultX[0] = std::min(resultX[0], explosion[0]);
+    resultX[1] = std::max(resultX[1], explosion[1]);
     /* Add breathing room around points of interest. */
     float xRange = resultX[1] - resultX[0];
     resultX[0] -= k_breathingRoom * xRange;

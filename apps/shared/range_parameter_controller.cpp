@@ -86,7 +86,7 @@ int RangeParameterController::reusableParameterCellCount(int type) {
 void RangeParameterController::buttonAction() {
   *m_interactiveRange = m_tempInteractiveRange;
   m_interactiveRange->setZoomAuto(false);
-  m_interactiveRange->checkForNormalizedRange();
+  m_interactiveRange->setZoomNormalize(m_interactiveRange->isOrthonormal());
 
   StackViewController * stack = stackController();
   stack->pop();

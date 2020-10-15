@@ -165,43 +165,8 @@ void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * rang
     range->setXMax(xMax);
     range->setYMin(yMin);
     range->setYMax(yMax);
-    yRangeForCursorFirstMove(range);
   } else {
     range->setNullRange();
-  }
-}
-
-void FunctionGraphController::yRangeForCursorFirstMove(InteractiveCurveViewRange * range) const {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  assert(functionStore()->numberOfActiveFunctions() > 0);
-  int functionsCount = functionStore()->numberOfActiveFunctions();
-
-  float cursorStep = range->xGridUnit() / k_numberOfCursorStepsInGradUnit;
-  float y[2]; // Left and Right
-
-  bool normalized = range->isOrthonormal();
-
-  constexpr float maximalExpansion = 10.f;
-  float yRange = range->yMax() - range->yMin();
-
-  for (int i = 0; i < functionsCount; i++) {
-    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    for (int i = 0; i < 2; i++) {
-      float step = cursorStep * (i == 0 ? -1 : 1);
-      y[i] = f->evaluateXYAtParameter(range->xCenter() + step, context).x2();
-      if (std::isfinite(y[i])) {
-        if (y[i] < range->yMin() && (range->yMax() - y[i]) < maximalExpansion * yRange) {
-          range->setYMin(y[i]);
-        }
-        if (y[i] > range->yMax() && (y[i] - range->yMin()) < maximalExpansion * yRange) {
-          range->setYMax(y[i]);
-        }
-      }
-    }
-  }
-
-  if (normalized) {
-    range->normalize();
   }
 }
 

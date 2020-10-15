@@ -24,6 +24,7 @@ public:
   static void FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary);
 
   static void CombineRanges(int length, const float * mins, const float * maxs, float * minRes, float * maxRes);
+  static void SanitizeRange(float * xMin, float * xMax, float * yMin, float * yMax, float normalRatio);
 
   /* If shrink is false, the range will be set to ratio by increasing the size
    * of the smallest axis. If it is true, the longest axis will be reduced.*/

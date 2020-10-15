@@ -9,9 +9,9 @@ namespace ExternalFlash {
 
 using namespace Regs;
 
-/* The external flash and the Quad-SPI peripheral support
- * several operating modes, corresponding to different numbers of signals
- * used to communicate during each phase of the command sequence.
+/* The external flash and the Quad-SPI peripheral support several operating
+ * modes, corresponding to different numbers of signals used to communicate
+ * during each phase of the command sequence.
  *
  *   Mode name for | Number of signals used during each phase:
  *  external flash | Instruction | Address | Alt. bytes | Data
@@ -23,8 +23,8 @@ using namespace Regs;
  * Quad-I/O    SPI |      1      |    4    |     4      |   4
  *             QPI |      4      |    4    |     4      |   4
  *
- * The external flash supports clock frequencies up to 104MHz for all instructions,
- * except for Read Data (0x03) which is supported up to 50Mhz.
+ * The external flash supports clock frequencies up to 104MHz for all
+ * instructions, except for Read Data (0x03) which is supported up to 50Mhz.
  *
  *
  *                Quad-SPI block diagram
@@ -37,22 +37,24 @@ using namespace Regs;
  *  matrix  -->  | register -->  FIFO   |    -->   |            |
  *               +----------------------+   write  +------------+
  *
- * Any data transmitted to or from the external flash memory go through a 32-byte FIFO.
+ * Any data transmitted to or from the external flash memory go through a
+ * 32-byte FIFO.
  *
- * Read or write operations are performed in burst mode, that is,
- * after any data byte is transmitted between the Quad-SPI and the flash memory,
- * the latter automatically increments the specified address and
- * the next byte to read or write is respectively pushed in or popped from the FIFO.
- * and so on, as long as the clock continues.
+ * Read or write operations are performed in burst mode, that is, after any data
+ * byte is transmitted between the Quad-SPI and the flash memory, the latter
+ * automatically increments the specified address and the next byte to read or
+ * write is respectively pushed in or popped from the FIFO.
+ * And so on, as long as the clock continues.
  *
  * If the FIFO gets full in a read operation or
  * if the FIFO gets empty in a write operation,
  * the operation stalls and CLK stays low until firmware services the FIFO.
  *
- * If the FIFO gets full in a write operation,
- * the operation is stalled until the FIFO has enough space to accept the amount of data being written.
- * If the FIFO does not have as many bytes as requested by the read operation and if BUSY=1,
- * the operation is stalled until enough data is present or until the transfer is complete, whichever happens first. */
+ * If the FIFO gets full in a write operation, the operation is stalled until
+ * the FIFO has enough space to accept the amount of data being written.
+ * If the FIFO does not have as many bytes as requested by the read operation
+ * and if BUSY=1, the operation is stalled until enough data is present or until
+ * the transfer is complete, whichever happens first. */
 
 enum class Command : uint8_t {
   WriteStatusRegister   = 0x01,
@@ -62,7 +64,7 @@ enum class Command : uint8_t {
   WriteEnable           = 0x06,
   Erase4KbyteBlock      = 0x20,
   WriteStatusRegister2  = 0x31,
-  QuadPageProgram       = 0x32, // WARNING! Changed from 33
+  QuadPageProgramAT25641  = 0x33,
   ReadStatusRegister2   = 0x35,
   Erase32KbyteBlock     = 0x52,
   EnableReset           = 0x66,
@@ -95,7 +97,10 @@ public:
 
 class OperatingModes {
 public:
-  constexpr OperatingModes(QUADSPI::CCR::OperatingMode instruction, QUADSPI::CCR::OperatingMode address, QUADSPI::CCR::OperatingMode data) :
+  constexpr OperatingModes(
+      QUADSPI::CCR::OperatingMode instruction,
+      QUADSPI::CCR::OperatingMode address,
+      QUADSPI::CCR::OperatingMode data) :
     m_instructionOperatingMode(instruction),
     m_addressOperatingMode(address),
     m_dataOperatingMode(data)
@@ -110,28 +115,33 @@ private:
 };
 
 /* TODO LEA 641B has quadSPI-1-*-4, not QPI-4-4-4*/
-static constexpr OperatingModes sOperatingModesNoData(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::NoData);
-static constexpr OperatingModes sOperatingModesSingle(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single);
-static constexpr OperatingModes sOperatingModes114(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad);
-static constexpr OperatingModes sOperatingModes144(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad, QUADSPI::CCR::OperatingMode::Quad);
+static constexpr OperatingModes sOperatingModes100(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::NoData);
 static constexpr OperatingModes sOperatingModes101(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::Single);
 static constexpr OperatingModes sOperatingModes110(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData);
 static constexpr OperatingModes sOperatingModes111(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single);
+static constexpr OperatingModes sOperatingModes114(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad);
+static constexpr OperatingModes sOperatingModes144(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad, QUADSPI::CCR::OperatingMode::Quad);
 
-
-static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
 static QUADSPI::CCR::OperatingMode sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
 
-static constexpr int ClockFrequencyDivisor = 2;
-static constexpr int QuadIOFastReadDummyCycles = 4;
+static constexpr int ClockFrequencyDivisor = 2; // F(QUADSPI) = F(AHB) / ClockFrequencyDivisor
+static constexpr int FastReadQuadIODummyCycles = 4; // Must be 4 for W25Q64JV (Fig 24.A page 34) and for AT25641 (table 7.19 page 28)
 
-
-static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, OperatingModes operatingModes, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
+static void send_command_full(
+    QUADSPI::CCR::FunctionalMode functionalMode,
+    OperatingModes operatingModes,
+    Command c,
+    uint8_t * address,
+    uint32_t altBytes,
+    size_t numberOfAltBytes,
+    uint8_t dummyCycles,
+    uint8_t * data,
+    size_t dataLength);
 
 static inline void send_command(Command c) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
-    sOperatingModesNoData,
+    sOperatingModes100,
     c,
     reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
     0, 0,
@@ -184,7 +194,7 @@ static void set_as_memory_mapped() {
     Command::FastReadQuadIO,
     reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
     0xA0, 1,
-    QuadIOFastReadDummyCycles,
+    FastReadQuadIODummyCycles,
     nullptr, 0
   );
 }
@@ -198,7 +208,7 @@ static void unset_memory_mapped_mode() {
     Command::FastReadQuadIO,
     0,
     ~(0xA0), 1,
-    QuadIOFastReadDummyCycles,
+    FastReadQuadIODummyCycles,
     &dummyData, 1
   );
 }
@@ -295,10 +305,11 @@ static void initQSPI() {
  // Configure controller for target device
   class QUADSPI::DCR dcr(0);
   dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
-  /* According to the device's datasheet (see Sections 8.7 and 8.8), the CS
-   * signal should stay high (deselect the device) for t_SHSL = 30ns at least.
-   * */
-  constexpr int ChipSelectHighTime = (30 * Clocks::Config::AHBFrequency + ClockFrequencyDivisor * 1000 - 1) / (ClockFrequencyDivisor * 1000);
+  /* According to the devices' datasheet', the CS signal should stay high
+   * (deselect the device) for t_SHSL = 50ns at least.
+   * (Max of 30ns (see AT25F641 Sections 8.7 and 8.8) and 10ns/50 ns (W25Q64JV
+   * Section 9.6). */
+  constexpr int ChipSelectHighTime = (50 * Clocks::Config::AHBFrequency + ClockFrequencyDivisor * 1000 - 1) / (ClockFrequencyDivisor * 1000);
   dcr.setCSHT(ChipSelectHighTime - 1);
   dcr.setCKMODE(true);
   QUADSPI.DCR()->set(dcr);
@@ -315,7 +326,7 @@ static void initChip() {
 
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
    * it to switch to QuadSPI/QPI. */
-  if (sOperatingMode == QUADSPI::CCR::OperatingMode::Single && DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
+  if (sOperatingMode == QUADSPI::CCR::OperatingMode::Single) {
     send_command(Command::WriteEnable);
     ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
     statusRegister2.setQE(true);
@@ -467,12 +478,9 @@ void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t 
     }
     send_command(Command::WriteEnable);
     wait();
-    if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) {
-      send_write_command(Command::PageProgram, destination, source, lengthThatFitsInPage, sOperatingModes111);
-    } else {
-      assert(DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad);
-      send_write_command(Command::QuadPageProgram, destination, source, lengthThatFitsInPage, sOperatingModes114);
-    }
+
+    send_write_command(Command::QuadPageProgramAT25641, destination, source, lengthThatFitsInPage, sOperatingModes114);
+
     length -= lengthThatFitsInPage;
     destination += lengthThatFitsInPage;
     source += lengthThatFitsInPage;

@@ -160,14 +160,12 @@ void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * rang
   float xMin, xMax, yMin, yMax;
   Poincare::Zoom::CombineRanges(length, xMins, xMaxs, &xMin, &xMax);
   Poincare::Zoom::CombineRanges(length, yMins, yMaxs, &yMin, &yMax);
-  if (std::isfinite(xMin) && std::isfinite(xMax) && std::isfinite(yMin) && std::isfinite(yMax) && xMax > xMin && yMax > yMin) {
-    range->setXMin(xMin);
-    range->setXMax(xMax);
-    range->setYMin(yMin);
-    range->setYMax(yMax);
-  } else {
-    range->setNullRange();
-  }
+  Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, range->NormalYXRatio());
+
+  range->setXMin(xMin);
+  range->setXMax(xMax);
+  range->setYMin(yMin);
+  range->setYMax(yMax);
 }
 
 }

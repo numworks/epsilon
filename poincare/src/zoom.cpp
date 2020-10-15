@@ -205,9 +205,6 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
     *yMin = sampleYMin;
     *yMax = sampleYMax;
   }
-  if (*yMin == *yMax) {
-    RangeFromSingleValue(*yMin, yMin, yMax);
-  }
   /* Round out the smallest bound to 0 if it is negligible compare to the
    * other one. This way, we can display the X axis for positive functions such
    * as sqrt(x) even if we do not sample close to 0. */
@@ -231,9 +228,6 @@ void Zoom::CombineRanges(int length, const float * mins, const float * maxs, flo
   }
   if (max > *maxRes) {
     *maxRes = max;
-  }
-  if (*minRes == *maxRes) {
-    RangeFromSingleValue(*minRes, minRes, maxRes);
   }
 }
 
@@ -349,16 +343,6 @@ void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float t
     *fMin = NAN;
     *fMax = NAN;
   }
-}
-
-void Zoom::RangeFromSingleValue(float value, float * boundMin, float * boundMax) {
-  constexpr float margin = 0.2f;
-  float delta = margin * std::fabs(value);
-  if (delta < k_minimalRangeLength) {
-    delta = 1.f;
-  }
-  *boundMin = value - delta;
-  *boundMax = value + delta;
 }
 
 bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations) {

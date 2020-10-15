@@ -675,8 +675,9 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
   /* Cancel optimization if :
    * - One of rect limits is nan.
-   * - Step is too large, any optimization would be counter productive. */
-  bool cancelOptimization = std::isnan(rectLeft + rectRight + rectUp + rectDown) || 2 * tStep >= piInAngleUnit;
+   * - Step is too large, see cache optimization comments
+   *   ("To optimize cache..."). */
+  bool cancelOptimization = std::isnan(rectLeft + rectRight + rectUp + rectDown) || tStep >= piInAngleUnit;
 
   bool rectOverlapsNegativeAbscissaAxis = false;
   if (cancelOptimization || (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f)) {
@@ -713,9 +714,27 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   }
 
   /* To optimize cache hits, the area actually drawn will be extended to nearest
-   * cached θ by at most tStep on both sides. If the extended area is too large
-   * the optimization will be ineffective. */
-  if (2 * tStep + tMax - tMin >= piInAngleUnit) {
+   * cached θ. tStep being a multiple of cache steps (see
+   * ComputeNonCartesianSteps), we extend segments on both ends to the closest
+   * θ = tStart + tStep * i
+   * If the drawn segment is extended too much, it might overlap with the next
+   * extended segment.
+   * For example, with * the segments that must be drawn and piInAngleUnit=7 :
+   *                 tStart                                            tEnd
+   *              kπ   | (k+1)π  (k+2)π  (k+3)π  (k+4)π  (k+5)π  (k+6)π  |(k+7)π
+   *               |-------|-------|-------|-------|-------|-------|-------|--
+   * tMax-tMin=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   * A - tStep=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   *               |---^^^-|--^^^^^|^^^^^^^|---^^^-|--^^^^^|^^^^^^^|---^^^-|--
+   *
+   * B - tStep=6 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   *               |---^^^^|^^     | ^^^^^^|      ^|^^^^^^^|^^^^   |   ^^^^|^^
+   *               |       |  ^^^^^|^      |^^^^^^ |     ^^|^^^^^^^|^^^    |
+   * In situation A, Step are small enough, not all segments must be drawn.
+   * In situation B, The entire range should be drawn, and two extended segments
+   * overlap (at tStart+5*tStep). Optimization is useless.
+   * If tStep < piInAngleUnit - (tMax - tMin), situation B cannot happen. */
+  if (tStep >= piInAngleUnit - tMax + tMin) {
     return drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
   }
 
@@ -729,6 +748,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   float thetaOffset = std::ceil((tStart - tMax)/piInAngleUnit) * piInAngleUnit;
 
   // 2 - Increase offset until tMin + thetaOffset > tEnd
+  float tCache2 = tStart;
   while (tMin + thetaOffset <= tEnd) {
     float tS = std::max(tMin + thetaOffset, tStart);
     float tE = std::min(tMax + thetaOffset, tEnd);
@@ -736,13 +756,15 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
     if (tS <= tE) {
       /* To maximize cache hits, we floor (and ceil) tS (and tE) to the closest
        * cached value. Step is small enough so that the extra drawn curve cannot
-       * overlap */
+       * overlap as tMax + tStep < piInAngleUnit + tMin) */
       int i = std::floor((tS - tStart) / tStep);
+      assert(tStart + tStep * i >= tCache2);
       float tCache1 = tStart + tStep * i;
 
       int j = std::ceil((tE - tStart) / tStep);
-      float tCache2 = std::min(tStart + tStep * j, tEnd);
+      tCache2 = std::min(tStart + tStep * j, tEnd);
 
+      assert(tCache1 < tCache2);
       drawCurve(ctx, rect, tCache1, tCache2, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
     }
     thetaOffset += piInAngleUnit;

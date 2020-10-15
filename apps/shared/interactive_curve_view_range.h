@@ -47,7 +47,6 @@ public:
   void setNullRange();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
-  void checkForNormalizedRange();
 
 protected:
   constexpr static float k_upperMaxFloat = 1E+8f;

@@ -102,6 +102,9 @@ void InteractiveCurveViewRange::normalize() {
   MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
   m_yRange.setMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
+
+  assert(isOrthonormal());
+  setZoomNormalize(true);
 }
 
 void InteractiveCurveViewRange::setDefault() {
@@ -126,12 +129,12 @@ void InteractiveCurveViewRange::setDefault() {
   m_yRange.setMin(m_delegate->addMargin(yMin(), yRange, true, true), k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(m_delegate->addMargin(yMax(), yRange, true, false), k_lowerMaxFloat, k_upperMaxFloat);
 
-  if (!(m_delegate->defaultRangeIsNormalized() || revertToNormalized)) {
-    return;
+  if (m_delegate->defaultRangeIsNormalized() || revertToNormalized) {
+    // Normalize the axes, so that a polar circle is displayed as a circle
+    normalize();
   }
 
-  // Normalize the axes, so that a polar circle is displayed as a circle
-  normalize();
+  setZoomAuto(true);
 }
 
 void InteractiveCurveViewRange::setNullRange() {
@@ -199,10 +202,6 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       MemoizedCurveViewRange::protectedSetYMin(yMax() - yRange, k_lowerMaxFloat, k_upperMaxFloat);
     }
   }
-}
-
-void InteractiveCurveViewRange::checkForNormalizedRange() {
-  setZoomNormalize(isOrthonormal());
 }
 
 bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {

@@ -151,7 +151,6 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   if (m_interactiveRange->zoomAuto()) {
     m_interactiveRange->setDefault();
-    m_interactiveRange->checkForNormalizedRange();
   }
 
   /* Warning: init cursor parameter before reloading banner view. Indeed,
@@ -298,8 +297,6 @@ bool InteractiveCurveViewController::autoButtonAction() {
     m_interactiveRange->setZoomAuto(false);
   } else {
     m_interactiveRange->setDefault();
-    m_interactiveRange->setZoomAuto(true);
-    m_interactiveRange->checkForNormalizedRange();
     initCursorParameters();
     setCurveViewAsMainView();
   }
@@ -310,9 +307,8 @@ bool InteractiveCurveViewController::normalizeButtonAction() {
   if (m_interactiveRange->zoomNormalize()) {
     m_interactiveRange->setZoomNormalize(false);
   } else {
-    m_interactiveRange->normalize();
     m_interactiveRange->setZoomAuto(false);
-    m_interactiveRange->setZoomNormalize(true);
+    m_interactiveRange->normalize();
     setCurveViewAsMainView();
   }
   return m_interactiveRange->zoomNormalize();

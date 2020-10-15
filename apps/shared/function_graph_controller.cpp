@@ -174,16 +174,27 @@ void FunctionGraphController::yRangeForCursorFirstMove(InteractiveCurveViewRange
   int functionsCount = functionStore()->numberOfActiveFunctions();
 
   float cursorStep = range->xGridUnit() / k_numberOfCursorStepsInGradUnit;
-  float yN, yP;
+  float y[2]; // Left and Right
 
   bool normalized = range->isOrthonormal();
 
+  constexpr float maximalExpansion = 10.f;
+  float yRange = range->yMax() - range->yMin();
+
   for (int i = 0; i < functionsCount; i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    yN = f->evaluateXYAtParameter(range->xCenter() - cursorStep, context).x2();
-    yP = f->evaluateXYAtParameter(range->xCenter() + cursorStep, context).x2();
-    range->setYMin(std::min(range->yMin(), std::min(yN, yP)));
-    range->setYMax(std::max(range->yMax(), std::max(yN, yP)));
+    for (int i = 0; i < 2; i++) {
+      float step = cursorStep * (i == 0 ? -1 : 1);
+      y[i] = f->evaluateXYAtParameter(range->xCenter() + step, context).x2();
+      if (std::isfinite(y[i])) {
+        if (y[i] < range->yMin() && (range->yMax() - y[i]) < maximalExpansion * yRange) {
+          range->setYMin(y[i]);
+        }
+        if (y[i] > range->yMax() && (y[i] - range->yMin()) < maximalExpansion * yRange) {
+          range->setYMax(y[i]);
+        }
+      }
+    }
   }
 
   if (normalized) {

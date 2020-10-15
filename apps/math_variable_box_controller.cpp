@@ -120,7 +120,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
   } else {
     assert(m_currentPage == Page::Sequence);
     Shared::Sequence u(record);
-    symbolLength = u.nameWithArgument(
+    symbolLength = u.nameWithArgumentAndType(
         symbolName,
         Shared::Sequence::k_maxNameWithArgumentSize
     );

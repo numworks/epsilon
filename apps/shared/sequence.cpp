@@ -36,6 +36,24 @@ int Sequence::nameWithArgument(char * buffer, size_t bufferSize) {
   return result;
 }
 
+int Sequence::nameWithArgumentAndType(char * buffer, size_t bufferSize) {
+  int result = nameWithArgument(buffer, bufferSize);
+  assert(result >= 1);
+  int offset = result - 1;
+  switch (type())
+  {
+  case Type::SingleRecurrence:
+    result += strlcpy(buffer+offset, "+1)", bufferSize-offset);
+    break;
+  case Type::DoubleRecurrence:
+    result += strlcpy(buffer+offset, "+2)", bufferSize-offset);
+    break;
+  default:
+    break;
+  }
+  return result;
+}
+
 void Sequence::tidy() {
   m_definition.tidyName();
   Function::tidy(); // m_definitionName.tidy()

@@ -16,33 +16,13 @@ CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
 }
 
 void CurveViewRange::normalize() {
-  float xMean = xCenter();
-  float yMean = yCenter();
+  Shared::InteractiveCurveViewRange::normalize();
 
-  const float unit = std::max(xGridUnit(), yGridUnit());
-
-  // Compute the X
-  const float newXHalfRange = NormalizedXHalfRange(unit);
-  float newXMin = xMean - newXHalfRange;
-  float newXMax = xMean + newXHalfRange;
+  /* The X axis is not supposed to go into the negatives, save for a small margin. However, after normalizing, it could be the case. We thus shift the X range rightward to the origin. */
   float interestingXMin = m_delegate->interestingXMin();
-  if (newXMin < interestingXMin) {
-    newXMin = interestingXMin -k_displayLeftMarginRatio*2.0f*newXHalfRange;
-    newXMax = newXMin + 2.0f*newXHalfRange;
-  }
-  if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
-    m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
-  }
-
-  // Compute the Y
-  const float newYHalfRange = NormalizedYHalfRange(unit);
-  float newYMin = yMean - newYHalfRange;
-  float newYMax = clipped(yMean + newYHalfRange, true);
-  if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
-    m_yRange.setMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
-  }
+  float xRange = xMax() - xMin();
+  m_xRange.setMin(interestingXMin - k_displayLeftMarginRatio * xRange);
+  setXMax(xMin() + xRange);
 }
 
 }

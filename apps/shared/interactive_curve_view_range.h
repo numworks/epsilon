@@ -44,6 +44,7 @@ public:
   void panWithVector(float x, float y);
   virtual void normalize();
   virtual void setDefault();
+  void setNullRange();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
   void checkForNormalizedRange();

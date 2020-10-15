@@ -134,6 +134,14 @@ void InteractiveCurveViewRange::setDefault() {
   normalize();
 }
 
+void InteractiveCurveViewRange::setNullRange() {
+  m_xRange.setMin(- Range1D::k_default);
+  setXMax(Range1D::k_default);
+  m_yRange.setMin(0);
+  m_yRange.setMax(0);
+  normalize();
+}
+
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   if (std::isnan(position)) {
     return;

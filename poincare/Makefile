@@ -191,6 +191,7 @@ tests_src += $(addprefix poincare/test/,\
   rational.cpp\
   regularized_incomplete_beta_function.cpp \
   simplification.cpp\
+  zoom.cpp\
 )
 
 ifeq ($(DEBUG),1)

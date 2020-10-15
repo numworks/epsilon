@@ -16,14 +16,22 @@ public:
 
   typedef float (*ValueAtAbscissa)(float abscissa, Context * context, const void * auxiliary);
 
-  /* Return false if the X range was given a default value because there were
-   * no points of interest. */
+  /* Find the most suitable window to display the function's points of
+   * interest. Return false if the X range was given a default value because
+   * there were no points of interest. */
   static bool InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary);
+  /* Find the best Y range to display the function on [xMin, xMax], but crop
+   * the values that are outside of the function's order of magnitude. */
   static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
+  /* Find the best window to display functions, with a specified ratio
+   * between X and Y. Usually used to find the most fitting orthonormal range. */
   static void RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
   static void FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary);
 
+  /* Find the bounding box of the given ranges. */
   static void CombineRanges(int length, const float * mins, const float * maxs, float * minRes, float * maxRes);
+  /* Ensures that the window is fit for display, with all bounds being proper
+   * numbers, with min < max. */
   static void SanitizeRange(float * xMin, float * xMax, float * yMin, float * yMax, float normalRatio);
 
   /* If shrink is false, the range will be set to ratio by increasing the size

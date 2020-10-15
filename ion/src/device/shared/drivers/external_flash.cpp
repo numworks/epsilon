@@ -57,25 +57,25 @@ using namespace Regs;
  * the transfer is complete, whichever happens first. */
 
 enum class Command : uint8_t {
-  WriteStatusRegister   = 0x01,
-  PageProgram           = 0x02, // Program previously erased memory areas as being "0"
-  ReadData              = 0x03,
-  ReadStatusRegister1   = 0x05,
-  WriteEnable           = 0x06,
-  Erase4KbyteBlock      = 0x20,
-  WriteStatusRegister2  = 0x31,
+  WriteStatusRegister     = 0x01,
+  PageProgram             = 0x02, // Program previously erased memory areas as being "0"
+  ReadData                = 0x03,
+  ReadStatusRegister1     = 0x05,
+  WriteEnable             = 0x06,
+  Erase4KbyteBlock        = 0x20,
+  WriteStatusRegister2    = 0x31,
   QuadPageProgramW25Q64JV = 0x32,
-  QuadPageProgramAT25641  = 0x33,
-  ReadStatusRegister2   = 0x35,
-  Erase32KbyteBlock     = 0x52,
-  EnableReset           = 0x66,
-  Reset                 = 0x99,
-  ReadJEDECID           = 0x9F,
-  ReleaseDeepPowerDown  = 0xAB,
-  DeepPowerDown         = 0xB9,
-  ChipErase             = 0xC7, // Erase the whole chip or a 64-Kbyte block as being "1"
-  Erase64KbyteBlock     = 0xD8,
-  FastReadQuadIO        = 0xEB
+  QuadPageProgramAT25F641 = 0x33,
+  ReadStatusRegister2     = 0x35,
+  Erase32KbyteBlock       = 0x52,
+  EnableReset             = 0x66,
+  Reset                   = 0x99,
+  ReadJEDECID             = 0x9F,
+  ReleaseDeepPowerDown    = 0xAB,
+  DeepPowerDown           = 0xB9,
+  ChipErase               = 0xC7, // Erase the whole chip or a 64-Kbyte block as being "1"
+  Erase64KbyteBlock       = 0xD8,
+  FastReadQuadIO          = 0xEB
 };
 
 static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
@@ -115,7 +115,8 @@ private:
   QUADSPI::CCR::OperatingMode m_dataOperatingMode;
 };
 
-/* TODO LEA 641B has quadSPI-1-*-4, not QPI-4-4-4*/
+/* W25Q64JV does not implement QPI-4-4-4, so we always send the instructions on
+ * one wire only.*/
 static constexpr OperatingModes sOperatingModes100(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::NoData);
 static constexpr OperatingModes sOperatingModes101(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::Single);
 static constexpr OperatingModes sOperatingModes110(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData);
@@ -126,7 +127,12 @@ static constexpr OperatingModes sOperatingModes144(QUADSPI::CCR::OperatingMode::
 static QUADSPI::CCR::OperatingMode sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
 
 static constexpr int ClockFrequencyDivisor = 2; // F(QUADSPI) = F(AHB) / ClockFrequencyDivisor
-static constexpr int FastReadQuadIODummyCycles = 4; // Must be 4 for W25Q64JV (Fig 24.A page 34) and for AT25641 (table 7.19 page 28)
+static constexpr int FastReadQuadIODummyCycles = 4; // Must be 4 for W25Q64JV (Fig 24.A page 34) and for AT25F641 (table 7.19 page 28)
+/* According to datasheets, the CS signal should stay high (deselect the device)
+ * for t_SHSL = 50ns at least.
+ * -> Max of 30ns (see AT25F641 Sections 8.7 and 8.8),
+ *           10ns and 50ns (see W25Q64JV Section 9.6). */
+static constexpr float ChipSelectHighTimeInNanoSeconds = 50.0f;
 
 static void send_command_full(
     QUADSPI::CCR::FunctionalMode functionalMode,
@@ -306,12 +312,9 @@ static void initQSPI() {
  // Configure controller for target device
   class QUADSPI::DCR dcr(0);
   dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
-  /* According to the devices' datasheet', the CS signal should stay high
-   * (deselect the device) for t_SHSL = 50ns at least.
-   * (Max of 30ns (see AT25F641 Sections 8.7 and 8.8) and 10ns/50 ns (W25Q64JV
-   * Section 9.6). */
-  constexpr int ChipSelectHighTime = (50 * Clocks::Config::AHBFrequency + ClockFrequencyDivisor * 1000 - 1) / (ClockFrequencyDivisor * 1000);
-  dcr.setCSHT(ChipSelectHighTime - 1);
+  constexpr int ChipSelectHighTimeCycles = (ChipSelectHighTimeInNanoSeconds * static_cast<float>(Clocks::Config::AHBFrequency)) / (static_cast<float>(ClockFrequencyDivisor) * 1000.0f) + 1.0f;
+  static_assert(ChipSelectHighTimeCycles == 5, "Bad ChipSelectHighTimeCycles computation");
+  dcr.setCSHT(ChipSelectHighTimeCycles - 1);
   dcr.setCKMODE(true);
   QUADSPI.DCR()->set(dcr);
   class QUADSPI::CR cr(0);
@@ -480,8 +483,9 @@ void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t 
     send_command(Command::WriteEnable);
     wait();
 
-    // Some Chips implement 0x32 only, others 0x33 only, we call both.
-    send_write_command(Command::QuadPageProgramAT25641, destination, source, lengthThatFitsInPage, sOperatingModes114);
+    /* Some chips implement 0x32 only, others 0x33 only, we call both. This does
+     * not seem to affect the writing. */
+    send_write_command(Command::QuadPageProgramAT25F641, destination, source, lengthThatFitsInPage, sOperatingModes144);
     send_write_command(Command::QuadPageProgramW25Q64JV, destination, source, lengthThatFitsInPage, sOperatingModes114);
 
     length -= lengthThatFitsInPage;

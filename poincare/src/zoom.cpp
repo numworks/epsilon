@@ -146,8 +146,10 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   resultX[1] = std::max(resultX[1], asymptote[1]);
   if (resultX[0] >= resultX[1]) {
     /* Fallback to default range. */
-    resultX[0] = NAN;
-    resultX[1] = NAN;
+    *xMin = NAN;
+    *xMax = NAN;
+    *yMin = NAN;
+    *yMax = NAN;
     return false;
   } else {
     resultX[0] = std::min(resultX[0], explosion[0]);

@@ -139,27 +139,41 @@ int Store::nextDot(int series, int direction, int dot) {
 /* Window */
 
 void Store::setDefault() {
-  float min, max;
+  float xMin, xMax, yMin, yMax;
   float mins[k_numberOfSeries], maxs[k_numberOfSeries];
   for (int series = 0; series < k_numberOfSeries; series++) {
     bool empty = seriesIsEmpty(series);
     mins[series] = empty ? NAN : minValueOfColumn(series, 0);
     maxs[series] = empty ? NAN : maxValueOfColumn(series, 0);
   }
-  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &min, &max);
-  float range = max - min;
-  setXMin(min - k_displayHorizontalMarginRatio * range);
-  setXMax(max + k_displayHorizontalMarginRatio * range);
+  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &xMin, &xMax);
 
   for (int series = 0; series < k_numberOfSeries; series++) {
     bool empty = seriesIsEmpty(series);
     mins[series] = empty ? NAN : minValueOfColumn(series, 1);
     maxs[series] = empty ? NAN : maxValueOfColumn(series, 1);
   }
-  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &min, &max);
-  range = max - min;
-  setYMin(m_delegate->addMargin(min, range, true, true));
-  setYMax(m_delegate->addMargin(max, range, true, false));
+  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &yMin, &yMax);
+
+  Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalYXRatio());
+
+  m_xRange.setMin(xMin);
+  m_xRange.setMax(xMax);
+  m_yRange.setMin(yMin);
+  m_yRange.setMax(yMax);
+  bool revertToOrthonormal = isOrthonormal(k_orthonormalTolerance);
+
+  float range = xMax - xMin;
+  setXMin(xMin - k_displayHorizontalMarginRatio * range);
+  setXMax(xMax + k_displayHorizontalMarginRatio * range);
+
+  range = yMax - yMin;
+  setYMin(m_delegate->addMargin(yMin, range, true, true));
+  setYMax(m_delegate->addMargin(yMax, range, true, false));
+
+  if (revertToOrthonormal) {
+    normalize();
+  }
 }
 
 /* Series */

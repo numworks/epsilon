@@ -215,6 +215,63 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   }
 }
 
+void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
+  constexpr float units[] = {k_smallUnitMantissa, k_mediumUnitMantissa, k_largeUnitMantissa};
+  constexpr float rangeMagnitudeWeight = 0.2f;
+  constexpr float maxMagnitudeDifference = 2.f;
+
+  float bestGrade = FLT_MAX;
+  float xMagnitude = k_minimalDistance;
+  float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
+  while (xMagnitude < k_maximalDistance) {
+    for(const float unit : units) {
+      const float xRange = unit * xMagnitude;
+      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary);
+      float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
+      float grade = std::fabs(std::log(currentRatio / yxRatio));
+      /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */
+      grade += std::fabs(std::log(xRange / 10.f) * std::log(xRange)) * rangeMagnitudeWeight;
+      if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
+        bestGrade = grade;
+        *xMin = -xRange;
+        *xMax = xRange;
+        *yMin = yMinRange;
+        *yMax = yMaxRange;
+      }
+    }
+    xMagnitude *= 10.f;
+  }
+  if (bestGrade == FLT_MAX) {
+    *xMin = NAN;
+    *xMax = NAN;
+    *yMin = NAN;
+    *yMax = NAN;
+    return;
+  }
+
+  SetToRatio(yxRatio, xMin, xMax, yMin, yMax);
+}
+
+void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {
+  float t = tMin;
+  *fMin = FLT_MAX;
+  *fMax = -FLT_MAX;
+  while (t <= tMax) {
+    float value = evaluation(t, context, auxiliary);
+    if (value < *fMin) {
+      *fMin = value;
+    }
+    if (value > *fMax) {
+      *fMax = value;
+    }
+    t += tStep;
+  }
+  if (*fMin > *fMax) {
+    *fMin = NAN;
+    *fMax = NAN;
+  }
+}
+
 void Zoom::CombineRanges(int length, const float * mins, const float * maxs, float * minRes, float * maxRes) {
   ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
     int index = std::round(x);
@@ -286,63 +343,6 @@ void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, f
   float center = (*tMax + *tMin) / 2.f;
   *tMax = center + newRange / 2.f;
   *tMin = center - newRange / 2.f;
-}
-
-void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
-  constexpr float units[] = {k_smallUnitMantissa, k_mediumUnitMantissa, k_largeUnitMantissa};
-  constexpr float rangeMagnitudeWeight = 0.2f;
-  constexpr float maxMagnitudeDifference = 2.f;
-
-  float bestGrade = FLT_MAX;
-  float xMagnitude = k_minimalDistance;
-  float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
-  while (xMagnitude < k_maximalDistance) {
-    for(const float unit : units) {
-      const float xRange = unit * xMagnitude;
-      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary);
-      float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
-      float grade = std::fabs(std::log(currentRatio / yxRatio));
-      /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */
-      grade += std::fabs(std::log(xRange / 10.f) * std::log(xRange)) * rangeMagnitudeWeight;
-      if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
-        bestGrade = grade;
-        *xMin = -xRange;
-        *xMax = xRange;
-        *yMin = yMinRange;
-        *yMax = yMaxRange;
-      }
-    }
-    xMagnitude *= 10.f;
-  }
-  if (bestGrade == FLT_MAX) {
-    *xMin = NAN;
-    *xMax = NAN;
-    *yMin = NAN;
-    *yMax = NAN;
-    return;
-  }
-
-  SetToRatio(yxRatio, xMin, xMax, yMin, yMax);
-}
-
-void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {
-  float t = tMin;
-  *fMin = FLT_MAX;
-  *fMax = -FLT_MAX;
-  while (t <= tMax) {
-    float value = evaluation(t, context, auxiliary);
-    if (value < *fMin) {
-      *fMin = value;
-    }
-    if (value > *fMax) {
-      *fMax = value;
-    }
-    t += tStep;
-  }
-  if (*fMin > *fMax) {
-    *fMin = NAN;
-    *fMax = NAN;
-  }
 }
 
 bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations) {

@@ -285,10 +285,39 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
   };
 
   if (fullyComputed) {
+    /* The function has points of interest. */
     Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
-  } else {
-    Zoom::RangeWithRatioForDisplay(evaluation, InteractiveCurveViewRange::NormalYXRatio(), xMin, xMax, yMin, yMax, context, this);
+    return;
   }
+
+  /* Try to display an orthonormal range. */
+  Zoom::RangeWithRatioForDisplay(evaluation, InteractiveCurveViewRange::NormalYXRatio(), xMin, xMax, yMin, yMax, context, this);
+  if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+    return;
+  }
+
+  /* The function's profile is not great for an orthonormal range.
+   * Try a basic range. */
+  *xMin = - Zoom::k_defaultHalfRange;
+  *xMax = Zoom::k_defaultHalfRange;
+  Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
+  if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+    return;
+  }
+
+  /* The function's order of magnitude cannot be computed. Try to just display
+   * the full function. */
+  float step =  (*xMax - *xMin) / k_polarParamRangeSearchNumberOfPoints;
+  Zoom::FullRange(evaluation, *xMin, *xMax, step, yMin, yMax, context, this);
+  if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+    return;
+  }
+
+  /* The function is probably undefined. */
+  *xMin = NAN;
+  *xMax = NAN;
+  *yMin = NAN;
+  *yMax = NAN;
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

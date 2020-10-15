@@ -146,8 +146,8 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   resultX[1] = std::max(resultX[1], asymptote[1]);
   if (resultX[0] >= resultX[1]) {
     /* Fallback to default range. */
-    resultX[0] = - k_defaultHalfRange;
-    resultX[1] = k_defaultHalfRange;
+    resultX[0] = NAN;
+    resultX[1] = NAN;
     return false;
   } else {
     resultX[0] = std::min(resultX[0], explosion[0]);
@@ -195,8 +195,9 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
    * order of magnitude and is used to cut the Y range. */
 
   if (pop == 0) {
-    *yMin = 0;
-    *yMax = 0;
+    *yMin = NAN;
+    *yMax = NAN;
+    return;
   } else {
     float bound = std::exp(sum / pop + 1.f);
     sampleYMin = std::max(sampleYMin, - bound);
@@ -286,9 +287,10 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     xMagnitude *= 10.f;
   }
   if (bestGrade == FLT_MAX) {
-    *xMin = -k_defaultHalfRange;
-    *xMax = k_defaultHalfRange;
-    RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, auxiliary);
+    *xMin = NAN;
+    *xMax = NAN;
+    *yMin = NAN;
+    *yMax = NAN;
     return;
   }
 
@@ -308,6 +310,10 @@ void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float t
       *fMax = value;
     }
     t += tStep;
+  }
+  if (*fMin > *fMax) {
+    *fMin = NAN;
+    *fMax = NAN;
   }
 }
 

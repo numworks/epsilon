@@ -237,6 +237,40 @@ void Zoom::CombineRanges(int length, const float * mins, const float * maxs, flo
   }
 }
 
+void Zoom::SanitizeRange(float * xMin, float * xMax, float * yMin, float * yMax, float normalRatio) {
+  /* Axes of the window can be :
+   *   - well-formed
+   *   - empty (min = max)
+   *   - ill-formed (min > max, or either bound is not finite)
+   *
+   * The general strategy to sanitize a window is as follow :
+   *   - for all ill-formed axes, set both bounds to 0
+   *   - if both axes are empty, set the X axis to default bounds
+   *   - if one axis is empty, normalize the window
+   *   - do nothing if both axes are well-formed. */
+
+  if (!std::isfinite(*xMin) || !std::isfinite(*xMax) || *xMax < *xMin) {
+    *xMin = 0;
+    *xMax = 0;
+  }
+  if (!std::isfinite(*yMin) || !std::isfinite(*yMax) || *yMax < *yMin) {
+    *yMin = 0;
+    *yMax = 0;
+  }
+
+  float xRange = *xMax - *xMin;
+  float yRange = *yMax - *yMin;
+  if (xRange < k_minimalRangeLength && yRange < k_minimalRangeLength) {
+    *xMax = *xMin + k_defaultHalfRange;
+    *xMin -= k_defaultHalfRange;
+    xRange = 2 * k_defaultHalfRange;
+  }
+
+  if (xRange < k_minimalRangeLength || yRange < k_minimalRangeLength) {
+    SetToRatio(normalRatio, xMin, xMax, yMin, yMax, false);
+  }
+}
+
 void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink) {
   float currentRatio = (*yMax - *yMin) / (*xMax - *xMin);
 

@@ -30,9 +30,6 @@ public:
    * of the smallest axis. If it is true, the longest axis will be reduced.*/
   static void SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink = false);
 
-  /* Compute a default range so that boundMin < value < boundMax */
-  static void RangeFromSingleValue(float value, float * boundMin, float * boundMax);
-
 private:
   static constexpr int k_peakNumberOfPointsOfInterest = 3;
   static constexpr int k_sampleSize = Ion::Display::Width / 4;

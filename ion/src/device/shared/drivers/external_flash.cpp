@@ -64,6 +64,7 @@ enum class Command : uint8_t {
   WriteEnable           = 0x06,
   Erase4KbyteBlock      = 0x20,
   WriteStatusRegister2  = 0x31,
+  QuadPageProgramW25Q64JV = 0x32,
   QuadPageProgramAT25641  = 0x33,
   ReadStatusRegister2   = 0x35,
   Erase32KbyteBlock     = 0x52,
@@ -479,7 +480,9 @@ void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t 
     send_command(Command::WriteEnable);
     wait();
 
+    // Some Chips implement 0x32 only, others 0x33 only, we call both.
     send_write_command(Command::QuadPageProgramAT25641, destination, source, lengthThatFitsInPage, sOperatingModes114);
+    send_write_command(Command::QuadPageProgramW25Q64JV, destination, source, lengthThatFitsInPage, sOperatingModes114);
 
     length -= lengthThatFitsInPage;
     destination += lengthThatFitsInPage;

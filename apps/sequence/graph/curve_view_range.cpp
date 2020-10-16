@@ -18,7 +18,9 @@ CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
 void CurveViewRange::normalize() {
   Shared::InteractiveCurveViewRange::normalize();
 
-  /* The X axis is not supposed to go into the negatives, save for a small margin. However, after normalizing, it could be the case. We thus shift the X range rightward to the origin. */
+  /* The X axis is not supposed to go into the negatives, save for a small
+   * margin. However, after normalizing, it could be the case. We thus shift
+   * the X range rightward to the origin. */
   float interestingXMin = m_delegate->interestingXMin();
   float xRange = xMax() - xMin();
   m_xRange.setMin(interestingXMin - k_displayLeftMarginRatio * xRange);

@@ -22,7 +22,7 @@ public:
   static bool InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary);
   /* Find the best Y range to display the function on [xMin, xMax], but crop
    * the values that are outside of the function's order of magnitude. */
-  static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
+  static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary, int sampleSize = k_sampleSize);
   /* Find the best window to display functions, with a specified ratio
    * between X and Y. Usually used to find the most fitting orthonormal range. */
   static void RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);

@@ -81,7 +81,7 @@ private:
   InteractiveCurveViewRange * m_interactiveRange;
   Button m_autoButton;
   Button m_normalizeButton;
-  Button m_zoomButton;
+  Button m_navigationButton;
   Button m_rangeButton;
 };
 

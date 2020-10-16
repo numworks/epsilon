@@ -167,19 +167,19 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   return true;
 }
 
-void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
+void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary, int sampleSize) {
   /* This methods computes the Y range that will be displayed for cartesian
    * functions and sequences, given an X range (xMin, xMax) and bounds yMin and
    * yMax that must be inside the Y range.*/
   assert(yMin && yMax);
 
   float sampleYMin = FLT_MAX, sampleYMax = -FLT_MAX;
-  const float step = (xMax - xMin) / (k_sampleSize - 1);
+  const float step = (xMax - xMin) / (sampleSize - 1);
   float x, y;
   float sum = 0.f;
   int pop = 0;
 
-  for (int i = 1; i < k_sampleSize; i++) {
+  for (int i = 1; i < sampleSize; i++) {
     x = xMin + i * step;
     y = evaluation(x, context, auxiliary);
     if (!std::isfinite(y)) {
@@ -222,13 +222,18 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   constexpr float rangeMagnitudeWeight = 0.2f;
   constexpr float maxMagnitudeDifference = 2.f;
 
+  /* RefinedYRange for display, by default, evaluates the function 80 times,
+   * and we call it 21 times. As we only need a rough estimate of the range to
+   * compare it to the others, we save some time by only sampling the function
+   * 20 times. */
+  constexpr int sampleSize = k_sampleSize / 4;
   float bestGrade = FLT_MAX;
   float xMagnitude = k_minimalDistance;
   float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
   while (xMagnitude < k_maximalDistance) {
     for(const float unit : units) {
       const float xRange = unit * xMagnitude;
-      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary);
+      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, sampleSize);
       float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
       float grade = std::fabs(std::log(currentRatio / yxRatio));
       /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */

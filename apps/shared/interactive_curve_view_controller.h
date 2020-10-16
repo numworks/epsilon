@@ -5,7 +5,7 @@
 #include "cursor_view.h"
 #include "ok_view.h"
 #include "range_parameter_controller.h"
-#include "zoom_parameter_controller.h"
+#include "function_zoom_and_pan_curve_view_controller.h"
 #include <poincare/coordinate_2D.h>
 
 namespace Shared {
@@ -77,7 +77,7 @@ private:
 
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
-  ZoomParameterController m_zoomParameterController;
+  FunctionZoomAndPanCurveViewController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;
   Button m_autoButton;
   Button m_normalizeButton;

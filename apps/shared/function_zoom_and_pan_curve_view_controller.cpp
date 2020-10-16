@@ -1,21 +1,21 @@
-#include "zoom_parameter_controller.h"
+#include "function_zoom_and_pan_curve_view_controller.h"
 #include <assert.h>
 #include <cmath>
 
 namespace Shared {
 
-ZoomParameterController::ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
+FunctionZoomAndPanCurveViewController::FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ZoomAndPanCurveViewController(parentResponder),
   m_contentView(curveView),
   m_interactiveRange(interactiveRange)
 {
 }
 
-const char * ZoomParameterController::title() {
+const char * FunctionZoomAndPanCurveViewController::title() {
   return I18n::translate(I18n::Message::Navigate);
 }
 
-void ZoomParameterController::viewWillAppear() {
+void FunctionZoomAndPanCurveViewController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_contentView.curveView()->setOkView(nullptr);
   /* We need to change the curve range to keep the same visual aspect of the
@@ -23,16 +23,16 @@ void ZoomParameterController::viewWillAppear() {
   adaptCurveRange(true);
 }
 
-void ZoomParameterController::viewDidDisappear() {
+void FunctionZoomAndPanCurveViewController::viewDidDisappear() {
   // Restore the curve range
   adaptCurveRange(false);
 }
 
-void ZoomParameterController::didBecomeFirstResponder() {
+void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
 }
 
-void ZoomParameterController::adaptCurveRange(bool viewWillAppear) {
+void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool viewWillAppear) {
   float currentYMin = m_interactiveRange->yMin();
   float currentRange = m_interactiveRange->yMax() - m_interactiveRange->yMin();
   float newYMin = 0;
@@ -47,16 +47,16 @@ void ZoomParameterController::adaptCurveRange(bool viewWillAppear) {
 
 /* Content View */
 
-ZoomParameterController::ContentView::ContentView(CurveView * curveView) :
+FunctionZoomAndPanCurveViewController::ContentView::ContentView(CurveView * curveView) :
   m_curveView(curveView)
 {
 }
 
-int ZoomParameterController::ContentView::numberOfSubviews() const {
+int FunctionZoomAndPanCurveViewController::ContentView::numberOfSubviews() const {
   return 2;
 }
 
-View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
+View * FunctionZoomAndPanCurveViewController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   /* The order of subviews matters here: redrawing curve view can be long and
    * if it was redraw before the legend view, you could see noise when
@@ -67,19 +67,19 @@ View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
   return m_curveView;
 }
 
-void ZoomParameterController::ContentView::layoutSubviews(bool force) {
-  assert(bounds().height() == ZoomParameterController::k_standardViewHeight);
+void FunctionZoomAndPanCurveViewController::ContentView::layoutSubviews(bool force) {
+  assert(bounds().height() == FunctionZoomAndPanCurveViewController::k_standardViewHeight);
   m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height() - k_legendHeight), force);
   m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), force);
 }
 
-CurveView * ZoomParameterController::ContentView::curveView() {
+CurveView * FunctionZoomAndPanCurveViewController::ContentView::curveView() {
   return m_curveView;
 }
 
 /* Legend View */
 
-ZoomParameterController::ContentView::LegendView::LegendView()
+FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView()
 {
   I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
   float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
@@ -95,15 +95,15 @@ ZoomParameterController::ContentView::LegendView::LegendView()
   }
 }
 
-void ZoomParameterController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
+void FunctionZoomAndPanCurveViewController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GrayBright);
 }
 
-int ZoomParameterController::ContentView::LegendView::numberOfSubviews() const {
+int FunctionZoomAndPanCurveViewController::ContentView::LegendView::numberOfSubviews() const {
   return k_numberOfLegends+k_numberOfTokens;
 }
 
-View * ZoomParameterController::ContentView::LegendView::subviewAtIndex(int index) {
+View * FunctionZoomAndPanCurveViewController::ContentView::LegendView::subviewAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfTokens+k_numberOfLegends);
   if (index < k_numberOfLegends) {
     return &m_legends[index];
@@ -111,7 +111,7 @@ View * ZoomParameterController::ContentView::LegendView::subviewAtIndex(int inde
   return &m_legendPictograms[index-k_numberOfLegends];
 }
 
-void ZoomParameterController::ContentView::LegendView::layoutSubviews(bool force) {
+void FunctionZoomAndPanCurveViewController::ContentView::LegendView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDCoordinate xOrigin = 0;
   KDCoordinate legendWidth = m_legends[0].minimalSizeForOptimalDisplay().width();

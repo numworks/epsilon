@@ -5,7 +5,7 @@
 
 using namespace Poincare;
 
-struct ParametersPack {
+class ParametersPack {
 public:
   ParametersPack(Expression expression, const char * symbol, Preferences::AngleUnit angleUnit) :
     m_expression(expression),

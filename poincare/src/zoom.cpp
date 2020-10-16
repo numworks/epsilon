@@ -265,11 +265,9 @@ void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float t
   *fMax = -FLT_MAX;
   while (t <= tMax) {
     float value = evaluation(t, context, auxiliary);
-    if (value < *fMin) {
-      *fMin = value;
-    }
-    if (value > *fMax) {
-      *fMax = value;
+    if (std::isfinite(value)) {
+      *fMin = std::min(*fMin, value);
+      *fMax = std::max(*fMax, value);
     }
     t += tStep;
   }
@@ -287,11 +285,11 @@ void Zoom::CombineRanges(int length, const float * mins, const float * maxs, flo
   FullRange(evaluation, 0, length - 1, 1, minRes, maxRes, nullptr, mins);
   float min, max;
   FullRange(evaluation, 0, length - 1, 1, &min, &max, nullptr, maxs);
-  if (min < *minRes) {
-    *minRes = min;
+  if (std::isfinite(min)) {
+    *minRes = std::min(min, *minRes);
   }
-  if (max > *maxRes) {
-    *maxRes = max;
+  if (std::isfinite(max)) {
+    *maxRes = std::max(max, *maxRes);
   }
 }
 

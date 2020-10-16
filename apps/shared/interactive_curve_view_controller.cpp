@@ -25,7 +25,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     graphController->normalizeButtonAction();
     return true;
   }, this), KDFont::SmallFont),
-  m_zoomButton(this, I18n::Message::Navigate, Invocation([](void * context, void * sender) {
+  m_navigationButton(this, I18n::Message::Navigate, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->navigationButtonAction();
     return true;
@@ -138,7 +138,7 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[] = {&m_autoButton, &m_normalizeButton, &m_zoomButton, &m_rangeButton};
+  const Button * buttons[] = {&m_autoButton, &m_normalizeButton, &m_navigationButton, &m_rangeButton};
   return (Button *)buttons[index];
 }
 

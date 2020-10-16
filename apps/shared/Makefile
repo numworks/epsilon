@@ -43,6 +43,7 @@ app_shared_src = $(addprefix apps/shared/,\
   function_list_controller.cpp \
   function_store.cpp \
   function_title_cell.cpp \
+  function_zoom_and_pan_curve_view_controller.cpp \
   go_to_parameter_controller.cpp \
   hideable_even_odd_buffer_text_cell.cpp \
   hideable_even_odd_cell.cpp \
@@ -89,7 +90,6 @@ app_shared_src = $(addprefix apps/shared/,\
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
   xy_banner_view.cpp\
-  zoom_parameter_controller.cpp \
 )
 
 app_shared_src += $(app_shared_test_src)

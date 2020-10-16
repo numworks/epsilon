@@ -1,14 +1,14 @@
-#ifndef SHARED_ZOOM_PARAMETER_CONTROLLER_H
-#define SHARED_ZOOM_PARAMETER_CONTROLLER_H
+#ifndef SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
+#define SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
 
 #include "zoom_and_pan_curve_view_controller.h"
 #include <apps/i18n.h>
 
 namespace Shared {
 
-class ZoomParameterController : public ZoomAndPanCurveViewController {
+class FunctionZoomAndPanCurveViewController : public ZoomAndPanCurveViewController {
 public:
-  ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
+  FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
   const char * title() override;
   View * view() override { return &m_contentView; }
   void viewWillAppear() override;

@@ -20,15 +20,15 @@ public:
   constexpr static int k_maxNumberOfPrimeFactors = 32;
 
   /* To save memory on stack, arrays of factor and coefficients for prime
-   * factorization are static and shared. To avoid multiple processes using the
-   * arrays at the same time, PrimeFactorization is under lock (in debug). The
-   * lock is checked then set when calling PrimeFactorization from a Arithmetic
-   * instance, and freed when the instance is destroyed. */
+   * factorization are static and shared.
+   * An error is returned if a second non-destructed instance of Arithmetic
+   * calls PrimeFactorization. This situation must be prevented. */
   Arithmetic() {};
   ~Arithmetic();
   /* When output is negative that indicates a special case:
    *  - -1 : too many factors.
    *  - -2 : a prime factor is too big.
+   *  - -3 : an other instance is using prime factorization
    * Before calling PrimeFactorization, we instantiate an Arithmetic object.
    * Outputs are retrieved using getFactorization_(index) methods. */
   int PrimeFactorization(const Integer & i);

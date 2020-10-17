@@ -69,7 +69,8 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
   KeySDLKeyPair(Ion::Keyboard::Key::Zero,           SDL_SCANCODE_0),
   KeySDLKeyPair(Ion::Keyboard::Key::Dot,            SDL_SCANCODE_KP_PERIOD),
   KeySDLKeyPair(Ion::Keyboard::Key::Dot,            SDL_SCANCODE_PERIOD),
-  KeySDLKeyPair(Ion::Keyboard::Key::EXE,            SDL_SCANCODE_RETURN)
+  KeySDLKeyPair(Ion::Keyboard::Key::EXE,            SDL_SCANCODE_RETURN),
+  KeySDLKeyPair(Ion::Keyboard::Key::EXE,            SDL_SCANCODE_KP_ENTER)
 };
 
 constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);

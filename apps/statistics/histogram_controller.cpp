@@ -131,10 +131,6 @@ void HistogramController::reloadBannerView() {
 
   // Add Size Data
   numberOfChar = 0;
-  legend = ": ";
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, bufferSize);
-  numberOfChar += legendLength;
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
@@ -146,10 +142,6 @@ void HistogramController::reloadBannerView() {
 
   // Add Frequency Data
   numberOfChar = 0;
-  legend = ": ";
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, bufferSize);
-  numberOfChar += legendLength;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);

@@ -13,7 +13,7 @@ using namespace Regs;
 constexpr static USART Port = USART(3);
 constexpr static GPIOPin RxPin = GPIOPin(GPIOC, 11);
 constexpr static GPIOPin TxPin = GPIOPin(GPIOD, 8);
-constexpr static GPIO::AFR::AlternateFunction AlternateFunction = GPIO::AFR::AlternateFunction::AF8;
+constexpr static GPIO::AFR::AlternateFunction AlternateFunction = GPIO::AFR::AlternateFunction::AF7;
 
 /* The baud rate of the UART is set by the following equation:
  * BaudRate = f/USARTDIV, where f is the clock frequency and USARTDIV a divider.

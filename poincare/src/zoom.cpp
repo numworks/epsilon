@@ -152,8 +152,12 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     *yMax = NAN;
     return false;
   } else {
-    resultX[0] = std::min(resultX[0], explosion[0]);
-    resultX[1] = std::max(resultX[1], explosion[1]);
+    float xMinWithExplosion = std::min(resultX[0], explosion[0]);
+    float xMaxWithExplosion = std::max(resultX[1], explosion[1]);
+    if (xMaxWithExplosion - xMinWithExplosion < k_maxRatioBetweenPointsOfInterest * (resultX[1] - resultX[0])) {
+      resultX[0] = xMinWithExplosion;
+      resultX[1] = xMaxWithExplosion;
+    }
     /* Add breathing room around points of interest. */
     float xRange = resultX[1] - resultX[0];
     resultX[0] -= k_breathingRoom * xRange;

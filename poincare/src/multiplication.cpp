@@ -721,13 +721,23 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       // Do not factorize random or randint
     } else if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
-      if (TermHasNumeralBase(oi)) {
+
+      if (shouldFactorizeBase && TermHasNumeralBase(oi)) {
         /* Combining powers of a given rational isn't straightforward. Indeed,
          * there are two cases we want to deal with:
          *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
          *  - 2^(1/2)*2^(3/2) we want to combine. */
         shouldFactorizeBase = oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power;
       }
+
+      if (shouldFactorizeBase && reductionContext.target() != ExpressionNode::ReductionTarget::User) {
+        /* (x^a)*(x^b)->x^(a+b) is not generally true: x*x^-1 is undefined in 0
+         * This rule is not true if one of the terms can divide by zero.
+         * In that case, cancel terms combination.
+         * With a User reduction exponents are combined anyway. */
+        shouldFactorizeBase = TermsCanSafelyCombineExponents(oi, oi1, reductionContext);
+      }
+
       if (shouldFactorizeBase) {
         factorizeBase(i, i+1, reductionContext);
         /* An undef term could have appeared when factorizing 1^inf and 1^-inf
@@ -1099,6 +1109,46 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression & e1, const Exp
   /* Note: We will return false for e1=2 and e2=Pi, even though one could argue
    * that these have the same exponent whose value is 1. */
   return e1.type() == ExpressionNode::Type::Power && e2.type() == ExpressionNode::Type::Power && (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
+}
+
+bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, ExpressionNode::ReductionContext reductionContext) {
+  /* Combining exponents on terms of same base (x^a)*(x^b)->x^(a+b) is safe if :
+   *  - x cannot be null
+   *  - a and b are strictly positive
+   *  - a+b is negative or null
+   * Otherwise, although one of the term should be undefined with x=0, x^(a+b)
+   * would yield 0 instead of being undefined. */
+  assert(TermsHaveIdenticalBase(e1,e2));
+
+  Expression base = Base(e1);
+  ExpressionNode::Sign baseSign = base.sign(reductionContext.context());
+
+  if (baseSign != ExpressionNode::Sign::Unknown && !base.isRationalZero()) {
+    // x cannot be null
+    return true;
+  }
+
+  Expression exponent1 = CreateExponent(e1);
+  ExpressionNode::Sign exponentSign1 = exponent1.sign(reductionContext.context());
+  Expression exponent2 = CreateExponent(e2);
+  ExpressionNode::Sign exponentSign2 = exponent2.sign(reductionContext.context());
+
+  if (exponentSign1 == ExpressionNode::Sign::Positive && !exponent1.isRationalZero()
+    && exponentSign2 == ExpressionNode::Sign::Positive && !exponent2.isRationalZero()) {
+    // a and b are strictly positive
+    return true;
+  }
+
+  Expression sum = Addition::Builder(exponent1, exponent2).shallowReduce(reductionContext);
+  ExpressionNode::Sign sumSign = sum.sign(reductionContext.context());
+
+  if (sumSign == ExpressionNode::Sign::Negative || sum.isRationalZero()) {
+    // a+b is negative or null
+    return true;
+  }
+
+  // Otherwise, exponents cannot be combined safely
+  return false;
 }
 
 bool Multiplication::TermHasNumeralBase(const Expression & e) {

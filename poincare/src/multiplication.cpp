@@ -1123,7 +1123,7 @@ bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const
   Expression base = Base(e1);
   ExpressionNode::Sign baseSign = base.sign(reductionContext.context());
 
-  if (baseSign != ExpressionNode::Sign::Unknown && !base.isRationalZero()) {
+  if (baseSign != ExpressionNode::Sign::Unknown && !base.isNumberZero()) {
     // x cannot be null
     return true;
   }
@@ -1133,8 +1133,8 @@ bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const
   Expression exponent2 = CreateExponent(e2);
   ExpressionNode::Sign exponentSign2 = exponent2.sign(reductionContext.context());
 
-  if (exponentSign1 == ExpressionNode::Sign::Positive && !exponent1.isRationalZero()
-    && exponentSign2 == ExpressionNode::Sign::Positive && !exponent2.isRationalZero()) {
+  if (exponentSign1 == ExpressionNode::Sign::Positive && !exponent1.isNumberZero()
+    && exponentSign2 == ExpressionNode::Sign::Positive && !exponent2.isNumberZero()) {
     // a and b are strictly positive
     return true;
   }
@@ -1142,7 +1142,7 @@ bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const
   Expression sum = Addition::Builder(exponent1, exponent2).shallowReduce(reductionContext);
   ExpressionNode::Sign sumSign = sum.sign(reductionContext.context());
 
-  if (sumSign == ExpressionNode::Sign::Negative || sum.isRationalZero()) {
+  if (sumSign == ExpressionNode::Sign::Negative || sum.isNumberZero()) {
     // a+b is negative or null
     return true;
   }

@@ -316,12 +316,12 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   for (int j = m-1; j >= 0; j--) {
     bool rowWithNullCoefficients = true;
     for (int i = 0; i < n; i++) {
-      if (!Ab.matrixChild(j, i).isRationalZero()) {
+      if (!Ab.matrixChild(j, i).isNumberZero()) {
         rowWithNullCoefficients = false;
         break;
       }
     }
-    if (rowWithNullCoefficients && !Ab.matrixChild(j, n).isRationalZero()) {
+    if (rowWithNullCoefficients && !Ab.matrixChild(j, n).isNumberZero()) {
       m_numberOfSolutions = 0;
     }
   }
@@ -348,7 +348,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined::Builder();
   }
-  if (delta.isRationalZero()) {
+  if (delta.isNumberZero()) {
     // if delta = 0, x0=x1= -b/(2a)
     exactSolutions[0] = Division::Builder(Opposite::Builder(coefficients[1]), Multiplication::Builder(Rational::Builder(2), coefficients[2]));
     m_numberOfSolutions = 2;
@@ -383,8 +383,8 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
     Expression * mult5Operands[3] = {new Rational::Builder(3), a->clone(), c->clone()};
     Expression * delta0 = new Subtraction::Builder(new Power::Builder(b->clone(), new Rational::Builder(2), false), new Multiplication::Builder(mult5Operands, 3, false), false);
     Reduce(&delta0, *context);
-    if (delta->isRationalZero()) {
-      if (delta0->isRationalZero()) {
+    if (delta->isNumberZero()) {
+      if (delta0->isNumberZero()) {
         // delta0 = 0 && delta = 0 --> x0 = -b/(3a)
         delete delta0;
         m_exactSolutions[0] = new Opposite::Builder(new Division::Builder(b, new Multiplication::Builder(new Rational::Builder(3), a, false), false), false);

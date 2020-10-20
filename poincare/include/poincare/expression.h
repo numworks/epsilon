@@ -153,7 +153,7 @@ public:
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Unreal; }
   bool isNumber() const { return node()->isNumber(); }
-  bool isRationalZero() const { return node()->isRationalZero(); }
+  bool isNumberZero() const { return node()->isNumberZero(); }
   bool isRationalOne() const;
   bool isRandom() const { return node()->isRandom(); }
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }

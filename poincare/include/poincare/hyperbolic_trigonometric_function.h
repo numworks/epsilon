@@ -17,7 +17,7 @@ private:
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   Expression shallowReduce(ReductionContext reductionContext) override;
-  virtual bool isNotableValue(Expression e) const { return e.isRationalZero(); }
+  virtual bool isNotableValue(Expression e) const { return e.isNumberZero(); }
   virtual Expression imageOfNotableValue() const { return Rational::Builder(0); }
 };
 

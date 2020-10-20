@@ -60,7 +60,7 @@ Expression ComplexCartesian::shallowReduce() {
       return e;
     }
   }
-  if (imag().isRationalZero()) {
+  if (imag().isNumberZero()) {
     Expression r = real();
     replaceWithInPlace(r);
     return r;
@@ -128,9 +128,9 @@ Expression ComplexCartesian::squareNorm(ExpressionNode::ReductionContext reducti
 Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionContext) {
   Expression a;
   // Special case for pure real or pure imaginary cartesian
-  if (imag().isRationalZero()) {
+  if (imag().isNumberZero()) {
     a = real();
-  } else if (real().isRationalZero()) {
+  } else if (real().isNumberZero()) {
     a = imag();
   }
   if (!a.isUninitialized()) {
@@ -149,7 +149,7 @@ Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionCont
 Expression ComplexCartesian::argument(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
-  if (!b.isRationalZero()) {
+  if (!b.isNumberZero()) {
     // if b != 0, argument = sign(b) * π/2 - atan(a/b)
     // First, compute atan(a/b) or (π/180)*atan(a/b)
     Expression divab = Division::Builder(a, b.clone());
@@ -242,11 +242,11 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, ExpressionNode::Reduction
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
-  assert(!b.isRationalZero());
+  assert(!b.isNumberZero());
 
   // Special case: a == 0 (otherwise, we are going to introduce undefined expressions - a^0 = NAN)
   // (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
-  if (a.isRationalZero()) {
+  if (a.isNumberZero()) {
     ComplexCartesian result;
     Expression bpow = Power::Builder(b, Rational::Builder(n));
     if (n/2%2 == 1) {

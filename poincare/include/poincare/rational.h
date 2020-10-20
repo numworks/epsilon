@@ -17,7 +17,7 @@ public:
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) { m_negative = negative; }
   bool isInteger() const { return denominator().isOne(); }
-  bool isRationalZero() const override { return isZero(); }
+  bool isNumberZero() const override { return isZero(); }
 
   // TreeNode
   size_t size() const override;

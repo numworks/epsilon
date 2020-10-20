@@ -17,6 +17,26 @@ QUIZ_CASE(poincare_properties_is_number) {
   quiz_assert(!Addition::Builder(Rational::Builder(1), Rational::Builder(2)).isNumber());
 }
 
+QUIZ_CASE(poincare_properties_is_number_zero) {
+  quiz_assert(!BasedInteger::Builder("2",Integer::Base::Binary).isNumberZero());
+  quiz_assert(!BasedInteger::Builder("2",Integer::Base::Decimal).isNumberZero());
+  quiz_assert(!BasedInteger::Builder("2",Integer::Base::Hexadecimal).isNumberZero());
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Binary).isNumberZero());
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Decimal).isNumberZero());
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Hexadecimal).isNumberZero());
+  quiz_assert(!Decimal::Builder("2",3).isNumberZero());
+  quiz_assert(Decimal::Builder("0",0).isNumberZero());
+  quiz_assert(!Float<float>::Builder(1.0f).isNumberZero());
+  quiz_assert(Float<float>::Builder(0.0f).isNumberZero());
+  quiz_assert(!Infinity::Builder(true).isNumberZero());
+  quiz_assert(!Undefined::Builder().isNumberZero());
+  quiz_assert(!Rational::Builder(2,3).isNumberZero());
+  quiz_assert(Rational::Builder(0,1).isNumberZero());
+  quiz_assert(!Symbol::Builder('a').isNumberZero());
+  quiz_assert(!Multiplication::Builder(Rational::Builder(1), Rational::Builder(0)).isNumberZero());
+  quiz_assert(!Addition::Builder(Rational::Builder(1), Rational::Builder(-1)).isNumberZero());
+}
+
 QUIZ_CASE(poincare_properties_is_random) {
   quiz_assert(Random::Builder().isRandom());
   quiz_assert(Randint::Builder(Rational::Builder(1), Rational::Builder(2)).isRandom());

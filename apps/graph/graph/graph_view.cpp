@@ -57,7 +57,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
-          }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd);
+          }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd,
+          [](double t, void * model, void * context) {
+            ContinuousFunction * f = (ContinuousFunction *)model;
+            Poincare::Context * c = (Poincare::Context *)context;
+            return f->evaluateXYAtParameter(t, c);
+          });
       /* Draw tangent */
       if (m_tangent && record == m_selectedRecord) {
         float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());

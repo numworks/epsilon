@@ -602,7 +602,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForParameterDouble xyEvaluationDouble) const {
   float previousT = NAN;
   float t = NAN;
   float previousX = NAN;
@@ -630,11 +630,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, std::min(0.0f, y), std::max(0.0f, y), color, 1);
     }
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations);
+    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyEvaluationDouble);
   } while (true);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForParameterDouble xyEvaluationDouble) const {
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   float tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
@@ -644,7 +644,7 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, flo
     return;
   }
   float tStep = pixelWidth();
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyEvaluationDouble);
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
@@ -685,7 +685,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
   }
 }
 
-void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion) const {
+void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForParameterDouble xyEvaluationDouble) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
@@ -725,8 +725,8 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
     return;
   }
   if (maxNumberOfRecursion > 0) {
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1);
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, maxNumberOfRecursion-1);
+    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1, xyEvaluationDouble);
+    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, maxNumberOfRecursion-1, xyEvaluationDouble);
   }
 }
 

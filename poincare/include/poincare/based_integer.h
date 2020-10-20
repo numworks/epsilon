@@ -28,7 +28,7 @@ public:
   // Expression subclassing
   Type type() const override { return Type::BasedInteger; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  bool isRationalZero() const override { return integer().isZero(); }
+  bool isNumberZero() const override { return integer().isZero(); }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

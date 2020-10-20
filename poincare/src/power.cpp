@@ -501,7 +501,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     // x^0
     if (rationalIndex.isZero()) {
       // 0^0 = undef or (±inf)^0 = undef
-      if (base.isRationalZero() || baseType == ExpressionNode::Type::Infinity) {
+      if (base.isNumberZero() || baseType == ExpressionNode::Type::Infinity) {
         return replaceWithUndefinedInPlace();
       }
       // x^0

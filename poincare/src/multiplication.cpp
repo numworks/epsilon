@@ -630,7 +630,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     // Use the last matrix child as the final matrix
     int n = resultMatrix.numberOfRows();
     int m = resultMatrix.numberOfColumns();
-    /* Scan accross the children to find other matrices. The last child is the
+    /* Scan across the children to find other matrices. The last child is the
      * result matrix so we start at numberOfChildren()-2. */
     int multiplicationChildIndex = numberOfChildren()-2;
     while (multiplicationChildIndex >= 0) {
@@ -690,7 +690,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       multiplicationChildIndex--;
     }
     /* Distribute the remaining multiplication children on the matrix children,
-     * if there are no oether matrices (such as a non reduced confidence
+     * if there are no other matrices (such as a non reduced confidence
      * interval). */
 
     if (multiplicationChildIndex >= 0) {
@@ -815,7 +815,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    /* Step 7: If the first child is zero, the multiplication result is zero. We
     * do this after merging the rational children, because the merge takes care
     * of turning 0*inf into undef. We still have to check that no other child
-    * involves an inifity expression to avoid reducing 0*e^(inf) to 0.
+    * involves an infinity expression to avoid reducing 0*e^(inf) to 0.
     * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);

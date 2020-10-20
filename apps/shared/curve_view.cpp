@@ -708,7 +708,14 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
        || (!isLeftDotValid && maxNumberOfRecursion == 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
        || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
       // the dots are already joined
-      stampAtLocation(ctx, rect, puf, pvf, color, thick);
+      /* We need to be sure that the point is not an artifact caused by error
+       * in float approximation. The value of pixelTolerance matters little,
+       * as wrong points will be off by a large margin. */
+      constexpr float pixelTolerance = 1.f;
+      float pvD = xyEvaluationDouble ? floatToPixel(Axis::Vertical, static_cast<float>(xyEvaluationDouble(u, model, context).x2())) : pvf;
+      if (std::fabs(pvf - pvD) < pixelTolerance) {
+        stampAtLocation(ctx, rect, puf, pvf, color, thick);
+      }
       return;
     }
   }
@@ -721,8 +728,24 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
       ((x <= cx && cx <= u) || (u <= cx && cx <= x)) && ((y <= cy && cy <= v) || (v <= cy && cy <= y))) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
-    straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
-    return;
+
+    constexpr float dangerousSlope = 1e6f;
+    if (xyEvaluationDouble && std::fabs((v-y) / (u-x)) > dangerousSlope) {
+      /* We need to make sure we're not drawing a vertical asymptote because of
+       * rounding errors. */
+      Coordinate2D<double> xyD = xyEvaluationDouble(static_cast<double>(t), model, context);
+      Coordinate2D<double> uvD = xyEvaluationDouble(static_cast<double>(s), model, context);
+      Coordinate2D<double> cxyD = xyEvaluationDouble(static_cast<double>(ct), model, context);
+      if (((xyD.x1() <= cxyD.x1() && cxyD.x1() <= uvD.x1()) || (uvD.x1() <= cxyD.x1() && cxyD.x1() <= xyD.x1()))
+       && ((xyD.x2() <= cxyD.x2() && cxyD.x2() <= uvD.x2()) || (uvD.x2() <= cxyD.x2() && cxyD.x2() <= xyD.x2())))
+      {
+        straightJoinDots(ctx, rect, floatToPixel(Axis::Horizontal, xyD.x1()), floatToPixel(Axis::Vertical, xyD.x2()), floatToPixel(Axis::Horizontal, uvD.x1()), floatToPixel(Axis::Vertical, uvD.x2()), color, thick);
+        return;
+      }
+    } else {
+      straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
+      return;
+    }
   }
   if (maxNumberOfRecursion > 0) {
     joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1, xyEvaluationDouble);

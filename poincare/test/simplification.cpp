@@ -194,6 +194,24 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("[[1,2][3,4]]×[[1,3][5,6]]×[[2,3][4,6]]", "[[82,123][178,267]]");
   assert_parsed_expression_simplify_to("π×confidence(π/5,3)[[1,2]]", "π×confidence(π/5,3)×[[1,2]]");
   assert_parsed_expression_simplify_to("0*[[1,0][0,1]]^500", "0×[[1,0][0,1]]^500");
+  assert_parsed_expression_simplify_to("x^5/x^3", "x^2");
+  assert_parsed_expression_simplify_to("x^5*x^3", "x^8");
+  assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2");
+  assert_parsed_expression_simplify_to("x^0", "1");
+  assert_parsed_expression_simplify_to("π^5/π^3", "π^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^5*π^3", "π^8", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^3/π^5", "1/π^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^0", "1", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^π/π^(π-1)", "π", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^5/x^3", "x^5/x^3", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^5×x^3", "x^8", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^0", "x^0", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^π/x^(π-1)", "x^π×x^\u0012-π+1\u0013", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("2^x×2^(-x)", "1", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("y^x×y^(-x)", "y^0", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x/√(x)", "x/√(x)", SystemForAnalysis);
 }
 
 void assert_parsed_unit_simplify_to_with_prefixes(const Unit::Representative * representative) {

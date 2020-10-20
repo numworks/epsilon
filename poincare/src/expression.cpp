@@ -79,10 +79,6 @@ Expression Expression::childAtIndex(int i) const {
 
 /* Properties */
 
-bool Expression::isRationalZero() const {
-  return type() == ExpressionNode::Type::Rational && convert<const Rational>().isZero();
-}
-
 bool Expression::isRationalOne() const {
   return type() == ExpressionNode::Type::Rational && convert<const Rational>().isOne();
 }

@@ -136,7 +136,7 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
   int i = rank-1;
   while (i >= 0) {
     int j = m.numberOfColumns()-1;
-    while (j >= i && matrixChild(i,j).isRationalZero()) {
+    while (j >= i && matrixChild(i,j).isNumberZero()) {
       j--;
     }
     if (j == i-1) {
@@ -225,7 +225,7 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
       // Using float to find the biggest pivot is sufficient.
       float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
       // Handle very low pivots
-      if (pivot == 0.0f && !matrixChild(iPivot_temp, k).isRationalZero()) {
+      if (pivot == 0.0f && !matrixChild(iPivot_temp, k).isNumberZero()) {
         pivot = FLT_MIN;
       }
 
@@ -241,7 +241,7 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
       }
       iPivot_temp++;
     }
-    if (matrixChild(iPivot, k).isRationalZero()) {
+    if (matrixChild(iPivot, k).isNumberZero()) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

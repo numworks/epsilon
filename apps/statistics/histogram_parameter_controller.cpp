@@ -18,6 +18,13 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
   }
 }
 
+void HistogramParameterController::viewWillAppear() {
+  // Initialize temporary parameters to the extracted value.
+  setParameterAtIndex(0, extractParameterAtIndex(0));
+  setParameterAtIndex(1, extractParameterAtIndex(1));
+  FloatParameterController::viewWillAppear();
+}
+
 const char * HistogramParameterController::title() {
   return I18n::translate(I18n::Message::HistogramSet);
 }
@@ -32,9 +39,25 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-double HistogramParameterController::parameterAtIndex(int index) {
+double HistogramParameterController::extractParameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
   return index == 0 ? m_store->barWidth() : m_store->firstDrawnBarAbscissa();
+}
+
+double HistogramParameterController::parameterAtIndex(int index) {
+  assert(index >= 0 && index < k_numberOfCells);
+  return index == 0 ? m_tempBarWidth : m_tempFirstDrawnBarAbscissa;
+}
+
+bool HistogramParameterController::confirmParameterAtIndex(int parameterIndex, double value) {
+  assert(parameterIndex == 0 || parameterIndex == 1);
+  if (parameterIndex == 0) {
+    // Set the bar width
+    m_store->setBarWidth(value);
+  } else {
+    m_store->setFirstDrawnBarAbscissa(value);
+  }
+  return true;
 }
 
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double value) {
@@ -47,8 +70,8 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
     return false;
   }
 
-  const double nextFirstDrawnBarAbscissa = setBarWidth ? m_store->firstDrawnBarAbscissa() : value;
-  const double nextBarWidth = setBarWidth ? value : m_store->barWidth();
+  const double nextFirstDrawnBarAbscissa = setBarWidth ? m_tempFirstDrawnBarAbscissa : value;
+  const double nextBarWidth = setBarWidth ? value : m_tempBarWidth;
 
   // The number of bars cannot be above the max
   assert(DoublePairStore::k_numberOfSeries > 0);
@@ -63,9 +86,9 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
 
   if (setBarWidth) {
     // Set the bar width
-    m_store->setBarWidth(value);
+    m_tempBarWidth = value;
   } else {
-    m_store->setFirstDrawnBarAbscissa(value);
+    m_tempFirstDrawnBarAbscissa = value;
   }
   return true;
 }
@@ -73,6 +96,13 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
 HighlightCell * HistogramParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0 && index < k_numberOfCells);
   return &m_cells[index];
+}
+
+void HistogramParameterController::buttonAction() {
+  // Update parameters values and proceed.
+  if (confirmParameterAtIndex(0, m_tempBarWidth) && confirmParameterAtIndex(1, m_tempFirstDrawnBarAbscissa)) {
+    FloatParameterController::buttonAction();
+  }
 }
 
 }

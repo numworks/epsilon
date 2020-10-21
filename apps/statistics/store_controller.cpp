@@ -46,7 +46,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     I18n::Message valuesMessages[] = {I18n::Message::Values1, I18n::Message::Values2, I18n::Message::Values3};
     mytitleCell->setText(I18n::translate(valuesMessages[seriesIndex]));
   } else {
-    I18n::Message sizesMessages[] = {I18n::Message::Sizes1, I18n::Message::Sizes2, I18n::Message::Sizes3};
+    I18n::Message sizesMessages[] = {I18n::Message::Frequencies1, I18n::Message::Frequencies2, I18n::Message::Frequencies3};
     mytitleCell->setText(I18n::translate(sizesMessages[seriesIndex]));
   }
   mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : Store::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller

@@ -38,11 +38,11 @@ protected:
   int activeCell();
   StackViewController * stackController();
   virtual T parameterAtIndex(int index) = 0;
+  virtual void buttonAction();
   SelectableTableView m_selectableTableView;
   ButtonWithSeparator m_okButton;
 private:
   constexpr static int k_buttonMargin = 6;
-  virtual void buttonAction();
   virtual InfinityTolerance infinityAllowanceForRow(int row) const { return InfinityTolerance::None; }
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;

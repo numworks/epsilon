@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "../shared/float_parameter_controller.h"
+#include "../shared/discard_pop_up_controller.h"
 #include "store.h"
 
 namespace Statistics {
@@ -17,6 +18,7 @@ public:
 private:
   constexpr static int k_numberOfCells = 2;
   double extractParameterAtIndex(int index);
+  bool handleEvent(Ion::Events::Event event) override;
   double parameterAtIndex(int index) override;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool setParameterAtIndex(int parameterIndex, double f) override;
@@ -25,6 +27,7 @@ private:
   void buttonAction() override;
   MessageTableCellWithEditableText m_cells[k_numberOfCells];
   Store * m_store;
+  Shared::DiscardPopUpController m_confirmPopUpController;
   // Temporary parameters
   double m_tempBarWidth;
   double m_tempFirstDrawnBarAbscissa;

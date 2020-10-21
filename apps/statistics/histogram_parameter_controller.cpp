@@ -10,7 +10,12 @@ namespace Statistics {
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store) :
   FloatParameterController<double>(parentResponder),
   m_cells{},
-  m_store(store)
+  m_store(store),
+  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+    Container::activeApp()->dismissModalViewController();
+    ((HistogramParameterController *)context)->stackController()->pop();
+    return true;
+  }, this))
 {
   for (int i = 0; i < k_numberOfCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
@@ -37,6 +42,15 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
   I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
+}
+
+bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Back && (extractParameterAtIndex(0) != parameterAtIndex(0) || extractParameterAtIndex(1) != parameterAtIndex(1))) {
+    // Temporary values are different, open pop-up to confirm discarding values
+    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+    return true;
+  }
+  return false;
 }
 
 double HistogramParameterController::extractParameterAtIndex(int index) {

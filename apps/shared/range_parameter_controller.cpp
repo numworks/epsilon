@@ -88,8 +88,7 @@ void RangeParameterController::buttonAction() {
   m_interactiveRange->setZoomAuto(false);
   m_interactiveRange->setZoomNormalize(m_interactiveRange->isOrthonormal());
 
-  StackViewController * stack = stackController();
-  stack->pop();
+  FloatParameterController::buttonAction();
 }
 
 }

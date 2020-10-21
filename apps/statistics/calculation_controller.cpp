@@ -74,7 +74,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i == 0) {
     // Display a calculation title cell
     I18n::Message titles[k_totalNumberOfRows] = {
-      I18n::Message::TotalSize,
+      I18n::Message::TotalFrequency,
       I18n::Message::Minimum,
       I18n::Message::Maximum,
       I18n::Message::Range,

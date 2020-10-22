@@ -3,6 +3,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Escher {
+
 StackView::StackView() :
   View(),
   m_controller(nullptr)
@@ -50,3 +52,5 @@ void StackView::logAttributes(std::ostream &os) const {
   os << " name=\"" << m_name << "\"";
 }
 #endif
+
+}

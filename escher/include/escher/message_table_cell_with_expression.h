@@ -4,6 +4,8 @@
 #include <escher/message_table_cell.h>
 #include <escher/expression_view.h>
 
+namespace Escher {
+
 class MessageTableCellWithExpression : public MessageTableCell {
 public:
   MessageTableCellWithExpression(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
@@ -13,5 +15,7 @@ public:
 private:
   ExpressionView m_subtitleView;
 };
+
+}
 
 #endif

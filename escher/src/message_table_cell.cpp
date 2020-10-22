@@ -2,6 +2,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
+namespace Escher {
+
 MessageTableCell::MessageTableCell(I18n::Message label, const KDFont * font, Layout layout) :
   TableCell(layout),
   m_messageTextView(font, label, 0, 0.5, KDColorBlack, KDColorWhite),
@@ -36,4 +38,6 @@ void MessageTableCell::setMessageFont(const KDFont * font) {
 void MessageTableCell::setBackgroundColor(KDColor color) {
   m_backgroundColor = color;
   m_messageTextView.setBackgroundColor(color);
+}
+
 }

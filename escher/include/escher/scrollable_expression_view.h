@@ -5,6 +5,8 @@
 #include <escher/scroll_view_data_source.h>
 #include <escher/expression_view.h>
 
+namespace Escher {
+
 class ScrollableExpressionView : public ScrollableView, public ScrollViewDataSource {
 public:
   ScrollableExpressionView(Responder * parentResponder, KDCoordinate leftRightMargin, KDCoordinate topBottomMargin, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
@@ -16,4 +18,5 @@ private:
   ExpressionView m_expressionView;
 };
 
+}
 #endif

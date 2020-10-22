@@ -170,7 +170,7 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
     return None;
   }
   Ion::Events::removeShift();
-  strlcpy(sharedExternalTextBuffer(), event.text, strlen(event.text) + 1);
+  strlcpy(sharedExternalTextBuffer(), event.text, sharedExternalTextBufferSize);
   return ExternalText;
 }
 

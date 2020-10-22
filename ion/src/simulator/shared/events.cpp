@@ -1,7 +1,6 @@
 #include "events.h"
 #include "haptics.h"
 #include <ion/events.h>
-#include <SDL.h>
 
 namespace Ion {
 namespace Events {
@@ -11,7 +10,7 @@ void didPressNewKey() {
 }
 
 char * sharedExternalTextBuffer() {
-  static char buffer[32];
+  static char buffer[sharedExternalTextBufferSize];
   return buffer;
 }
 

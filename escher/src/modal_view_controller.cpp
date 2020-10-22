@@ -2,6 +2,8 @@
 #include <escher/container.h>
 #include <assert.h>
 
+namespace Escher {
+
 ModalViewController::ContentView::ContentView() :
   View(),
   m_regularView(nullptr),
@@ -180,4 +182,6 @@ void ModalViewController::viewDidDisappear() {
 
 void ModalViewController::reloadView() {
   m_contentView.reload();
+}
+
 }

@@ -8,6 +8,8 @@
 #include <escher/invocation.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 class Button : public HighlightCell, public Responder {
 public:
   Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font = KDFont::SmallFont, KDColor textColor = KDColorBlack);
@@ -31,5 +33,7 @@ private:
   Invocation m_invocation;
   const KDFont * m_font;
 };
+
+}
 
 #endif

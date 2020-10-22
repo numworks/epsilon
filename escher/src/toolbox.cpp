@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
+namespace Escher {
+
 Toolbox::Toolbox(Responder * parentResponder, I18n::Message title) :
   NestedMenuController(parentResponder, title),
   m_messageTreeModel(nullptr)
@@ -71,4 +73,6 @@ bool Toolbox::returnToPreviousMenu() {
   }
   m_messageTreeModel = parentMessageTree;
   return NestedMenuController::returnToPreviousMenu();
+}
+
 }

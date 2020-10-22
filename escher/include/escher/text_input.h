@@ -8,6 +8,8 @@
 
 // See TODO in EditableField
 
+namespace Escher {
+
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
   TextInput(Responder * parentResponder, View * contentView) : ScrollableView(parentResponder, contentView, this) {}
@@ -107,4 +109,5 @@ private:
   virtual bool privateRemoveEndOfLine();
 };
 
+}
 #endif

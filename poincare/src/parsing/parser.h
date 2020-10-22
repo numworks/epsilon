@@ -7,7 +7,7 @@
  * and
  *   an efficient but less readable shunting-yard parser. */
 
-#include <poincare_nodes.h>
+#include <poincare_expressions.h>
 #include "tokenizer.h"
 
 namespace Poincare {

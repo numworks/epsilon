@@ -1,4 +1,17 @@
 #include "helper.h"
+#include <poincare/addition.h>
+#include <poincare/based_integer.h>
+#include <poincare/constant.h>
+#include <poincare/decimal.h>
+#include <poincare/division.h>
+#include <poincare/factorial.h>
+#include <poincare/float.h>
+#include <poincare/infinity.h>
+#include <poincare/opposite.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
 
 using namespace Poincare;
 

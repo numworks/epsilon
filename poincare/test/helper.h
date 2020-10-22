@@ -1,4 +1,5 @@
-#include <poincare_nodes.h>
+#include <poincare/expression_node.h>
+#include <poincare/print_float.h>
 #include <quiz.h>
 
 const char * MaxIntegerString(); // (2^32)^k_maxNumberOfDigits-1

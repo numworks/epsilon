@@ -1,4 +1,7 @@
 #include "helper.h"
+#include <poincare/expression.h>
+#include <poincare/integer.h>
+#include <poincare/infinity.h>
 
 using namespace Poincare;
 

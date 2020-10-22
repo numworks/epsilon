@@ -3,6 +3,8 @@
 
 #include <escher/toggleable_view.h>
 
+namespace Escher {
+
 class ToggleableDotView final : public ToggleableView {
 public:
   using ToggleableView::ToggleableView;
@@ -13,4 +15,5 @@ private:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 
+}
 #endif

@@ -4,6 +4,8 @@ extern "C" {
 }
 #include <ion.h>
 
+namespace Escher {
+
 ImageView::ImageView() :
   View(),
   m_image(nullptr)
@@ -41,4 +43,6 @@ void ImageView::setImage(const Image * image) {
     m_image = image;
     markRectAsDirty(bounds());
   }
+}
+
 }

@@ -10,6 +10,8 @@
 
 using namespace Poincare;
 
+namespace Escher {
+
 LayoutField::ContentView::ContentView() :
   m_cursor(),
   m_insertionCursor(),
@@ -767,4 +769,6 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
     scrollRightOfLayout(lastMergedLayoutChild);
   }
   scrollToCursor();
+}
+
 }

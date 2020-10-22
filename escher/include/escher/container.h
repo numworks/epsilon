@@ -10,6 +10,8 @@
  * When writing an Escher program, you typically subclass Container, and your
  * subclass owns one or more App. You then call "run()" on your container. */
 
+namespace Escher {
+
 #include <escher/run_loop.h>
 #include <escher/app.h>
 #include <escher/window.h>
@@ -41,5 +43,7 @@ private:
   virtual int numberOfContainerTimers();
   virtual Timer * containerTimerAtIndex(int i);
 };
+
+}
 
 #endif

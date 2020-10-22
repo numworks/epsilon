@@ -1,6 +1,8 @@
 #include <escher/container.h>
 #include <assert.h>
 
+namespace Escher {
+
 Container::Container() :
   RunLoop()
 {
@@ -74,4 +76,6 @@ int Container::numberOfContainerTimers() {
 Timer * Container::containerTimerAtIndex(int i) {
   assert(false);
   return nullptr;
+}
+
 }

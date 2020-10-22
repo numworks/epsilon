@@ -1,5 +1,7 @@
 #include <escher/table_view_data_source.h>
 
+namespace Escher {
+
 void TableViewDataSource::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
 }
 
@@ -35,4 +37,6 @@ int TableViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
     result += rowHeight(j++);
   }
   return (result < offsetY || offsetY == 0) ? j : j - 1;
+}
+
 }

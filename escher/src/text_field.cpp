@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <algorithm>
 
+namespace Escher {
 static char s_draftTextBuffer[TextField::maxBufferSize()];
 
 /* TextField::ContentView */
@@ -552,4 +553,6 @@ bool TextField::storeInClipboard() const {
     return true;
   }
   return false;
+}
+
 }

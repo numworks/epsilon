@@ -8,6 +8,8 @@
  * alignment = 0.5 -> align center
  * alignment = 1.0 -> align right or bottom */
 
+namespace Escher {
+
 class TextView : public View {
 public:
   TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) :
@@ -38,4 +40,5 @@ protected:
   KDColor m_backgroundColor;
 };
 
+}
 #endif

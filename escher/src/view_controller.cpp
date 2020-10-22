@@ -3,6 +3,8 @@
 #include <string.h>
 #include <ion/telemetry.h>
 
+namespace Escher {
+
 void ViewController::viewWillAppear() {
 #if EPSILON_TELEMETRY
   const char * screenId = telemetryId();
@@ -36,5 +38,7 @@ void ViewController::telemetryReportEvent(const char * action, const char * labe
   assert(action != nullptr);
   assert(label != nullptr);
   Ion::Telemetry::reportEvent(category, action, label);
+}
+
 }
 #endif

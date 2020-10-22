@@ -1,6 +1,8 @@
 #include <escher/simple_list_view_data_source.h>
 #include <assert.h>
 
+namespace Escher {
+
 KDCoordinate SimpleListViewDataSource::rowHeight(int j) {
   return cellHeight();
 }
@@ -29,4 +31,6 @@ int SimpleListViewDataSource::reusableCellCount(int type) {
 
 int SimpleListViewDataSource::typeAtLocation(int i, int j) {
   return 0;
+}
+
 }

@@ -6,6 +6,8 @@
 #include <escher/message_text_view.h>
 #include <escher/view_controller.h>
 
+namespace Escher {
+
 class ModalViewEmptyController : public ViewController {
 public:
   ModalViewEmptyController() : ViewController(nullptr) {}
@@ -34,4 +36,5 @@ protected:
   };
 };
 
+}
 #endif

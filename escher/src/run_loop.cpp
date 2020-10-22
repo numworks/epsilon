@@ -2,6 +2,8 @@
 #include <kandinsky/font.h>
 #include <assert.h>
 
+namespace Escher {
+
 RunLoop::RunLoop() :
   m_time(0) {
 }
@@ -74,4 +76,6 @@ bool RunLoop::step() {
   }
 
   return event != Ion::Events::Termination;
+}
+
 }

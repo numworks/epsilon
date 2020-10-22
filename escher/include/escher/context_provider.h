@@ -3,9 +3,13 @@
 
 #include <poincare/context.h>
 
+namespace Escher {
+
 class ContextProvider {
 public:
   virtual Poincare::Context * context() const { return nullptr; }
 };
+
+}
 
 #endif

@@ -3,6 +3,8 @@
 
 #include <escher/view.h>
 
+namespace Escher {
+
 class ScrollViewIndicator : public View {
 public:
   ScrollViewIndicator();
@@ -61,4 +63,5 @@ private:
   KDColor m_backgroundColor;
 };
 
+}
 #endif

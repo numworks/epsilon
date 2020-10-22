@@ -3,6 +3,8 @@
 
 #include <kandinsky/coordinate.h>
 
+namespace Escher {
+
 class Metric {
 public:
   constexpr static KDCoordinate CellMargin = 2;
@@ -38,4 +40,5 @@ public:
   constexpr static KDCoordinate EllipsisCellWidth = 37;
 };
 
+}
 #endif

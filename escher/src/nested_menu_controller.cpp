@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <string.h>
 
+namespace Escher {
 /* State */
 
 NestedMenuController::Stack::State::State(int selectedRow, KDCoordinate verticalScroll) :
@@ -171,4 +172,6 @@ bool NestedMenuController::returnToPreviousMenu() {
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
+}
+
 }

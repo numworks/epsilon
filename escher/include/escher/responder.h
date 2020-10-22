@@ -3,6 +3,8 @@
 
 #include <ion/events.h>
 
+namespace Escher {
+
 class Responder {
 public:
   Responder(Responder * parentResponder) : m_parentResponder(parentResponder) {}
@@ -19,4 +21,5 @@ private:
   Responder * m_parentResponder;
 };
 
+}
 #endif

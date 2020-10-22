@@ -2,6 +2,7 @@
 #include <escher/container.h>
 #include <assert.h>
 
+namespace Escher {
 
 Responder * Responder::commonAncestorWith(Responder * responder) {
   if (responder == nullptr) {
@@ -27,4 +28,6 @@ bool Responder::hasAncestor(Responder * responder) const {
     p = p->parentResponder();
   }
   return false;
+}
+
 }

@@ -6,6 +6,8 @@ extern "C" {
 }
 #include <cmath>
 
+namespace Escher {
+
 ScrollViewIndicator::ScrollViewIndicator() :
   View(),
   m_color(Palette::GrayDark),
@@ -110,3 +112,5 @@ void ScrollViewIndicator::logAttributes(std::ostream &os) const {
   os << " visibleLength=\"" << m_visibleLength << "\"";
 }
 #endif
+
+}

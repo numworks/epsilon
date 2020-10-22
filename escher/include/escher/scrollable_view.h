@@ -5,6 +5,8 @@
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 
+namespace Escher {
+
 class ScrollableView : public Responder, public ScrollView {
 public:
   ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource);
@@ -14,4 +16,5 @@ protected:
   KDSize contentSize() const override;
 };
 
+}
 #endif

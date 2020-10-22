@@ -4,6 +4,8 @@
 #include <escher/table_view.h>
 #include <escher/highlight_cell.h>
 
+namespace Escher {
+
 class SimpleTableViewDataSource : public TableViewDataSource {
 public:
   virtual KDCoordinate cellHeight() = 0;
@@ -21,4 +23,5 @@ public:
   int typeAtLocation(int i, int j) override;
 };
 
+}
 #endif

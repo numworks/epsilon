@@ -6,6 +6,8 @@
 #include <escher/highlight_cell.h>
 #include <escher/table_view_data_source.h>
 
+namespace Escher {
+
 class TableView : public ScrollView {
 public:
   TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource);
@@ -70,4 +72,5 @@ protected:
   ContentView m_contentView;
 };
 
+}
 #endif

@@ -6,6 +6,8 @@ extern "C" {
 }
 #include <algorithm>
 
+namespace Escher {
+
 TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource) :
   ScrollView(&m_contentView, scrollDataSource),
   m_contentView(this, dataSource, 0, 1)
@@ -201,4 +203,6 @@ int TableView::ContentView::columnsScrollingOffset() const {
    * us into an integer offset we can use to ask cells to our data source. */
   KDCoordinate invisibleWidth = std::max(m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0);
   return m_dataSource->indexFromCumulatedWidth(invisibleWidth);
+}
+
 }

@@ -3,6 +3,8 @@
 
 #include <escher/transparent_view.h>
 
+namespace Escher {
+
 class KeyView : public TransparentView {
 public:
   enum class Type {
@@ -23,5 +25,6 @@ private:
   Type m_type;
 };
 
-#endif
+}
 
+#endif

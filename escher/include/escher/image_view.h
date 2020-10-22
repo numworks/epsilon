@@ -4,6 +4,8 @@
 #include <escher/view.h>
 #include <escher/image.h>
 
+namespace Escher {
+
 class ImageView : public View {
 public:
   ImageView();
@@ -12,5 +14,7 @@ public:
 private:
   const Image * m_image;
 };
+
+}
 
 #endif

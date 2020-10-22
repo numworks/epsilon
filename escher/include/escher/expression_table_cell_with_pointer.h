@@ -5,6 +5,8 @@
 #include <escher/i18n.h>
 #include <escher/message_text_view.h>
 
+namespace Escher {
+
 class ExpressionTableCellWithPointer : public ExpressionTableCell {
 public:
   ExpressionTableCellWithPointer(Responder * responder = nullptr, I18n::Message accessoryMessage = (I18n::Message)0, Layout layout = Layout::HorizontalRightOverlap);
@@ -14,5 +16,7 @@ public:
 private:
   MessageTextView m_accessoryView;
 };
+
+}
 
 #endif

@@ -1,4 +1,18 @@
 #include <apps/shared/global_context.h>
+#include <poincare/addition.h>
+#include <poincare/based_integer.h>
+#include <poincare/derivative.h>
+#include <poincare/infinity.h>
+#include <poincare/integral.h>
+#include <poincare/multiplication.h>
+#include <poincare/product.h>
+#include <poincare/randint.h>
+#include <poincare/random.h>
+#include <poincare/rational.h>
+#include <poincare/sum.h>
+#include <poincare/undefined.h>
+#include <poincare/unit.h>
+
 #include "helper.h"
 
 using namespace Poincare;

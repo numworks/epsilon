@@ -3,6 +3,9 @@
 
 #include <escher/transparent_view.h>
 
+namespace Escher {
+
+
 class GaugeView : public TransparentView {
 public:
   GaugeView();
@@ -17,5 +20,7 @@ private:
   float m_level;
   KDColor m_backgroundColor;
 };
+
+}
 
 #endif

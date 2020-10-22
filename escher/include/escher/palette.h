@@ -4,6 +4,8 @@
 #include <kandinsky/color.h>
 #include <stddef.h>
 
+namespace Escher {
+
 class Palette {
 public:
   constexpr static KDColor YellowDark = KDColor::RGB24(0xffb734);
@@ -43,4 +45,5 @@ public:
   static KDColor nextDataColor(int * colorIndex);
 };
 
+}
 #endif

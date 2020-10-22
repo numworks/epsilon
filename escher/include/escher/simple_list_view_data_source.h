@@ -4,6 +4,8 @@
 #include <escher/list_view_data_source.h>
 #include <escher/highlight_cell.h>
 
+namespace Escher {
+
 class SimpleListViewDataSource : public ListViewDataSource {
 public:
   virtual KDCoordinate cellHeight() = 0;
@@ -17,4 +19,5 @@ public:
   int typeAtLocation(int i, int j) override;
 };
 
+}
 #endif

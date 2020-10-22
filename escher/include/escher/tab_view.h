@@ -6,6 +6,8 @@
 #include <escher/tab_view_cell.h>
 #include <escher/view_controller.h>
 
+namespace Escher {
+
 class TabViewController;
 
 class TabView : public View {
@@ -36,4 +38,5 @@ private:
   int8_t m_selectedTabIndex;
 };
 
+}
 #endif

@@ -3,6 +3,8 @@
 
 #include <escher/message_table_cell.h>
 
+namespace Escher {
+
 class MessageTableCellWithMessage : public MessageTableCell {
 public:
   MessageTableCellWithMessage(I18n::Message message = (I18n::Message)0, Layout layout = Layout::Vertical);
@@ -14,5 +16,7 @@ public:
 protected:
   MessageTextView m_accessoryView;
 };
+
+}
 
 #endif

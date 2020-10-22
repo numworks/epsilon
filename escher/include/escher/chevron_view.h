@@ -3,6 +3,8 @@
 
 #include <escher/transparent_view.h>
 
+namespace Escher {
+
 class ChevronView : public TransparentView {
 public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -11,5 +13,7 @@ public:
   constexpr static KDCoordinate k_chevronHeight = 10;
   constexpr static KDCoordinate k_chevronWidth = 8;
 };
+
+}
 
 #endif

@@ -2,6 +2,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 
+namespace Escher {
 namespace TextInputHelpers {
 
 const char * CursorPositionInCommand(const char * text, const char * stoppingPosition) {
@@ -29,4 +30,5 @@ const char * CursorPositionInCommand(const char * text, const char * stoppingPos
   return currentPointer;
 }
 
+}
 }

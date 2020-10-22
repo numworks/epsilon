@@ -1,6 +1,8 @@
 #include <escher/even_odd_cell.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 EvenOddCell::EvenOddCell() :
   HighlightCell(),
   m_even(false)
@@ -24,4 +26,6 @@ KDColor EvenOddCell::backgroundColor() const {
 void EvenOddCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor background = backgroundColor();
   ctx->fillRect(rect, background);
+}
+
 }

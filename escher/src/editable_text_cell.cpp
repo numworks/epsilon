@@ -4,6 +4,8 @@
 #include <poincare/print_float.h>
 #include <assert.h>
 
+namespace Escher {
+
 EditableTextCell::EditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate,
    const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   HighlightCell(),
@@ -58,4 +60,6 @@ void EditableTextCell::didBecomeFirstResponder() {
 
 KDSize EditableTextCell::minimalSizeForOptimalDisplay() const {
   return m_textField.minimalSizeForOptimalDisplay();
+}
+
 }

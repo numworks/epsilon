@@ -2,9 +2,9 @@ extern "C" {
 #include "modkandinsky.h"
 #include <py/runtime.h>
 }
-#include <kandinsky.h>
 #include "port.h"
 
+#include <kandinsky/ion_context.h>
 
 static mp_obj_t TupleForKDColor(KDColor c) {
   mp_obj_tuple_t * t = static_cast<mp_obj_tuple_t *>(MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL)));

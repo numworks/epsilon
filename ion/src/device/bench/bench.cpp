@@ -1,7 +1,6 @@
 #include "bench.h"
 #include <ion.h>
 #include <poincare/init.h>
-#include <kandinsky.h>
 #include "command_list.h"
 
 namespace Ion {

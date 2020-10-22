@@ -1,4 +1,6 @@
 #include <escher/tiled_view.h>
+#include <kandinsky/framebuffer.h>
+#include <kandinsky/framebuffer_context.h>
 #include <assert.h>
 
 namespace Escher {

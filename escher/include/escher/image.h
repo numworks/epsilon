@@ -1,7 +1,7 @@
 #ifndef ESCHER_IMAGE_H
 #define ESCHER_IMAGE_H
 
-#include <kandinsky.h>
+#include <kandinsky/coordinate.h>
 
 namespace Escher {
 

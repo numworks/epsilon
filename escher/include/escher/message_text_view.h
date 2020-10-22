@@ -4,6 +4,8 @@
 #include <escher/text_view.h>
 #include <escher/i18n.h>
 
+namespace Escher {
+
 class MessageTextView : public TextView {
 public:
   MessageTextView(const KDFont * font = KDFont::LargeFont, I18n::Message message = (I18n::Message)0, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
@@ -15,5 +17,7 @@ public:
 private:
   I18n::Message m_message;
 };
+
+}
 
 #endif

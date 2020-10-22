@@ -3,6 +3,8 @@
 
 #include <escher/scroll_view_data_source.h>
 
+namespace Escher {
+
 class SelectableTableViewDataSource : public ScrollViewDataSource {
 public:
   SelectableTableViewDataSource() :
@@ -23,4 +25,5 @@ private:
   int m_selectedCellY;
 };
 
+}
 #endif

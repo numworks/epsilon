@@ -3,9 +3,12 @@
 
 #include <escher/view.h>
 
+namespace Escher {
+
 class TransparentView : public View {
 protected:
   void markRectAsDirty(KDRect rect) override;
 };
 
+}
 #endif

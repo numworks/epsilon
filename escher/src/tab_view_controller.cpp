@@ -5,6 +5,8 @@ extern "C" {
 #include <escher/metric.h>
 #include <escher/container.h>
 
+namespace Escher {
+
 TabViewController::ContentView::ContentView() :
   View(),
   m_activeView(nullptr)
@@ -177,4 +179,6 @@ void TabViewController::viewDidDisappear() {
 ViewController * TabViewController::activeViewController() {
   assert(m_dataSource->activeTab() >= 0 && m_dataSource->activeTab() < m_numberOfChildren);
   return m_children[m_dataSource->activeTab()];
+}
+
 }

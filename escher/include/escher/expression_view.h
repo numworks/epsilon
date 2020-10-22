@@ -5,6 +5,8 @@
 #include <kandinsky/color.h>
 #include <poincare/layout.h>
 
+namespace Escher {
+
 /* This class does not handle the expression layout as the size of the layout is
  * needed to compute the size of table cells hosting the expression. As the size
  * of this cell is determined before we set the expression in the expression
@@ -43,5 +45,7 @@ private:
   float m_verticalAlignment;
   KDCoordinate m_horizontalMargin;
 };
+
+}
 
 #endif

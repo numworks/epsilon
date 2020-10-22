@@ -6,6 +6,8 @@
 #include <escher/palette.h>
 #include <escher/i18n.h>
 
+namespace Escher {
+
 class AlternateEmptyViewController;
 
 class AlternateEmptyViewDelegate {
@@ -26,5 +28,7 @@ public:
 private:
   MessageTextView m_message;
 };
+
+}
 
 #endif

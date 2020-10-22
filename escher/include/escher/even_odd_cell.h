@@ -3,6 +3,8 @@
 
 #include <escher/highlight_cell.h>
 
+namespace Escher {
+
 class EvenOddCell : public HighlightCell {
 public:
   EvenOddCell();
@@ -12,5 +14,7 @@ public:
 protected:
   bool m_even;
 };
+
+}
 
 #endif

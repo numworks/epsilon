@@ -4,6 +4,8 @@
 #include <escher/view_controller.h>
 #include <escher/stack_view.h>
 
+namespace Escher {
+
 class ModalViewController : public ViewController {
 public:
   ModalViewController(Responder * parentResponder, ViewController * child);
@@ -52,4 +54,5 @@ private:
   ViewController * m_regularViewController;
 };
 
+}
 #endif

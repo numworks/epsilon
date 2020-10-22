@@ -3,6 +3,8 @@
 
 #include <escher/view.h>
 
+namespace Escher {
+
 class SolidColorView : public View {
 public:
   SolidColorView(KDColor color);
@@ -18,4 +20,5 @@ private:
   KDColor m_color;
 };
 
+}
 #endif

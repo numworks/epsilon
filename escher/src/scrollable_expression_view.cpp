@@ -3,6 +3,8 @@
 #include <escher/metric.h>
 #include <assert.h>
 
+namespace Escher {
+
 ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder, KDCoordinate leftRightMargin, KDCoordinate topBottomMargin, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   ScrollableView(parentResponder, &m_expressionView, this),
   m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor)
@@ -32,4 +34,6 @@ void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
 
 void ScrollableExpressionView::setExpressionBackgroundColor(KDColor backgroundColor) {
   m_expressionView.setBackgroundColor(backgroundColor);
+}
+
 }

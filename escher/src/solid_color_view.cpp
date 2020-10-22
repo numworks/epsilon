@@ -1,5 +1,7 @@
 #include <escher/solid_color_view.h>
 
+namespace Escher {
+
 SolidColorView::SolidColorView(KDColor color) :
   View(),
   m_color(color)
@@ -31,3 +33,5 @@ void SolidColorView::logAttributes(std::ostream &os) const {
   os << " color=\"" << (int)m_color << "\"";
 }
 #endif
+
+}

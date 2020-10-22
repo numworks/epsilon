@@ -32,6 +32,8 @@ extern "C" {
 #include <escher/view.h>
 #include <escher/responder.h>
 
+namespace Escher {
+
 class ViewController : public Responder {
 public:
   /* DisplayParameter is only used within StackViewController for now. It
@@ -61,4 +63,5 @@ protected:
 #endif
 };
 
+}
 #endif

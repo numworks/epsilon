@@ -3,6 +3,8 @@
 
 #include <escher/view.h>
 
+namespace Escher {
+
 class TiledView : public View {
   using View::View;
 protected:
@@ -13,4 +15,5 @@ protected:
   virtual KDSize tileSize() const = 0;
 };
 
+}
 #endif

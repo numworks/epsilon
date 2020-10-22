@@ -1,6 +1,8 @@
 #include <escher/tiled_view.h>
 #include <assert.h>
 
+namespace Escher {
+
 void TiledView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor * pixels = tile();
   KDSize size = tileSize();
@@ -23,4 +25,6 @@ void TiledView::drawRect(KDContext * ctx, KDRect rect) const {
       ctx->fillRectWithPixels(tileRect, pixels, pixels);
     }
   }
+}
+
 }

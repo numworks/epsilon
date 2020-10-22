@@ -5,6 +5,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Escher {
+
 void App::Snapshot::pack(App * app) {
   tidy();
   app->~App();
@@ -82,4 +84,6 @@ void App::willBecomeInactive() {
 
 View * App::modalView() {
   return m_modalViewController.view();
+}
+
 }

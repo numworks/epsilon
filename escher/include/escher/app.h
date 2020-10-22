@@ -21,6 +21,8 @@
  * Multiple App can exist at once.
  * */
 
+namespace Escher {
+
 class Container;
 
 class App : public Responder {
@@ -83,6 +85,8 @@ private:
   Snapshot * m_snapshot;
   WarningController m_warningController;
 };
+
+}
 
 #endif
 

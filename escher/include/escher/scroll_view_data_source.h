@@ -3,6 +3,8 @@
 
 #include <kandinsky.h>
 
+namespace Escher {
+
 class ScrollViewDataSource;
 
 class ScrollViewDelegate {
@@ -23,4 +25,5 @@ private:
   KDPoint m_offset;
 };
 
+}
 #endif

@@ -1,5 +1,7 @@
 #include <escher/scroll_view_data_source.h>
 
+namespace Escher {
+
 bool ScrollViewDataSource::setOffset(KDPoint offset) {
   if (offset != m_offset) {
     m_offset = offset;
@@ -9,4 +11,6 @@ bool ScrollViewDataSource::setOffset(KDPoint offset) {
     return true;
   }
   return false;
+}
+
 }

@@ -2,6 +2,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
+namespace Escher {
+
 Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font, KDColor textColor) :
   HighlightCell(),
   Responder(parentResponder),
@@ -46,4 +48,6 @@ void Button::setHighlighted(bool highlight) {
 KDSize Button::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
   return KDSize(textSize.width() + (m_font == KDFont::SmallFont ? k_horizontalMarginSmall : k_horizontalMarginLarge), textSize.height() + k_verticalMargin);
+}
+
 }

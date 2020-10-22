@@ -3,6 +3,8 @@
 
 #include <escher/transparent_view.h>
 
+namespace Escher {
+
 class ToggleableView : public TransparentView {
 public:
   ToggleableView() : m_state(true) {}
@@ -12,4 +14,5 @@ protected:
   bool m_state;
 };
 
+}
 #endif

@@ -5,6 +5,8 @@
 #include <escher/ellipsis_view.h>
 #include <assert.h>
 
+namespace Escher {
+
 class EvenOddCellWithEllipsis : public EvenOddCell {
 public:
   EvenOddCellWithEllipsis();
@@ -17,5 +19,7 @@ private:
   void layoutSubviews(bool force = false) override;
   EllipsisView m_ellipsisView;
 };
+
+}
 
 #endif

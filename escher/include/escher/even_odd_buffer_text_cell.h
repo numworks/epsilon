@@ -5,6 +5,8 @@
 #include <escher/buffer_text_view.h>
 #include <escher/metric.h>
 
+namespace Escher {
+
 class EvenOddBufferTextCell : public EvenOddCell {
 public:
   EvenOddBufferTextCell(const KDFont * font = KDFont::SmallFont, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f);
@@ -29,5 +31,7 @@ protected:
   void layoutSubviews(bool force = false) override;
   BufferTextView m_bufferTextView;
 };
+
+}
 
 #endif

@@ -6,6 +6,8 @@ extern "C" {
 }
 #include <algorithm>
 
+namespace Escher {
+
 ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
   m_contentView(contentView),
@@ -292,3 +294,5 @@ void ScrollView::logAttributes(std::ostream &os) const {
   os << " offset=\"" << (int)contentOffset().x << "," << (int)contentOffset().y << "\"";
 }
 #endif
+
+}

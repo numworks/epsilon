@@ -1,5 +1,7 @@
 #include <escher/text_view.h>
 
+namespace Escher {
+
 void TextView::setBackgroundColor(KDColor backgroundColor) {
   if (m_backgroundColor != backgroundColor) {
     m_backgroundColor = backgroundColor;
@@ -42,4 +44,6 @@ void TextView::drawRect(KDContext * ctx, KDRect rect) const {
       m_verticalAlignment * (m_frame.height() - textSize.height()));
   ctx->fillRect(bounds(), m_backgroundColor);
   ctx->drawString(text(), origin, m_font, m_textColor, m_backgroundColor);
+}
+
 }

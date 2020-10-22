@@ -3,6 +3,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
+namespace Escher {
+
 InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
   m_expressionField(this, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
@@ -118,4 +120,6 @@ bool InputViewController::inputViewDidFinishEditing() {
 void InputViewController::inputViewDidAbortEditing() {
   m_failureAction.perform(this);
   dismissModalViewController();
+}
+
 }

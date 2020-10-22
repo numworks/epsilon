@@ -10,6 +10,8 @@ extern "C" {
 #include <iostream>
 #endif
 
+namespace Escher {
+
 /* Key concepts
  * - A View always clips: you cannot draw outside its frame
  * - A View can redraw its whole hierarchy, but a very important optimization is
@@ -93,4 +95,5 @@ private:
   KDRect m_dirtyRect;
 };
 
+}
 #endif

@@ -4,6 +4,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Escher {
+
 TabViewCell::TabViewCell() :
   View(),
   m_active(false),
@@ -63,3 +65,5 @@ void TabViewCell::logAttributes(std::ostream &os) const {
   os << " name=\"" << m_controller->title() << "\"";
 }
 #endif
+
+}

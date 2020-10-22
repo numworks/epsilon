@@ -4,6 +4,8 @@
 #include <escher/text_view.h>
 #include <escher/i18n.h>
 
+namespace Escher {
+
 class PointerTextView : public TextView {
 public:
   PointerTextView(const KDFont * font = KDFont::LargeFont, const char * text = nullptr, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
@@ -14,4 +16,5 @@ private:
   const char * m_text;
 };
 
+}
 #endif

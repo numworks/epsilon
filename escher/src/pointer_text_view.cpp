@@ -1,6 +1,8 @@
 #include <escher/pointer_text_view.h>
 #include <assert.h>
 
+namespace Escher {
+
 PointerTextView::PointerTextView(const KDFont * font, const char * text, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
@@ -13,4 +15,6 @@ void PointerTextView::setText(const char * text) {
     m_text = text;
     markRectAsDirty(bounds());
   }
+}
+
 }

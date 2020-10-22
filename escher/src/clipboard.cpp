@@ -3,6 +3,8 @@
 #include <ion/clipboard.h>
 #include <algorithm>
 
+namespace Escher {
+
 static Clipboard s_clipboard;
 
 Clipboard * Clipboard::sharedClipboard() {
@@ -52,4 +54,6 @@ void Clipboard::reset() {
 
 void Clipboard::replaceCharForPython(bool entersPythonApp) {
   UTF8Helper::TryAndReplacePatternsInStringByPatterns((char *)m_textBuffer, TextField::maxBufferSize(), (UTF8Helper::TextPair *)&PythonTextPairs, NumberOfPythonTextPairs, entersPythonApp);
+}
+
 }

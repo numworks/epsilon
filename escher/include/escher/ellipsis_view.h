@@ -3,6 +3,8 @@
 
 #include <escher/transparent_view.h>
 
+namespace Escher {
+
 class EllipsisView : public TransparentView {
 public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -11,5 +13,7 @@ public:
   constexpr static KDCoordinate k_ellipsisHeight = 3;
   constexpr static KDCoordinate k_ellipsisWidth = 17;
 };
+
+}
 
 #endif

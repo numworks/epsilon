@@ -5,6 +5,8 @@
 #include <escher/i18n.h>
 #include <escher/view_controller.h>
 
+namespace Escher {
+
 class AlternateEmptyViewController : public ViewController {
 public:
   AlternateEmptyViewController(Responder * parentResponder, ViewController * mainViewController, AlternateEmptyViewDelegate * delegate);
@@ -31,4 +33,5 @@ private:
   ContentView m_contentView;
 };
 
+}
 #endif

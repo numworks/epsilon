@@ -685,6 +685,11 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
   }
 }
 
+static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC, float yC) {
+  return ((x1 <= xC && xC <= x2) || (x2 <= xC && xC <= x1))
+      && ((y1 <= yC && yC <= y2) || (y2 <= yC && yC <= y1));
+}
+
 void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
@@ -720,8 +725,8 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
   Coordinate2D<float> cxy = xyFloatEvaluation(ct, model, context);
   float cx = cxy.x1();
   float cy = cxy.x2();
-  if ((drawStraightLinesEarly || maxNumberOfRecursion == 0) && isRightDotValid && isLeftDotValid &&
-      ((x <= cx && cx <= u) || (u <= cx && cx <= x)) && ((y <= cy && cy <= v) || (v <= cy && cy <= y))) {
+  if ((drawStraightLinesEarly || maxNumberOfRecursion <= 0) && isRightDotValid && isLeftDotValid &&
+      pointInBoundingBox(x, y, u, v, cx, cy)) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
 
@@ -732,9 +737,7 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
       Coordinate2D<double> xyD = xyDoubleEvaluation(static_cast<double>(t), model, context);
       Coordinate2D<double> uvD = xyDoubleEvaluation(static_cast<double>(s), model, context);
       Coordinate2D<double> cxyD = xyDoubleEvaluation(static_cast<double>(ct), model, context);
-      if (((xyD.x1() <= cxyD.x1() && cxyD.x1() <= uvD.x1()) || (uvD.x1() <= cxyD.x1() && cxyD.x1() <= xyD.x1()))
-       && ((xyD.x2() <= cxyD.x2() && cxyD.x2() <= uvD.x2()) || (uvD.x2() <= cxyD.x2() && cxyD.x2() <= xyD.x2())))
-      {
+      if (pointInBoundingBox(xyD.x1(), xyD.x2(), uvD.x1(), uvD.x2(), cxyD.x1(), cxyD.x2())) {
         straightJoinDots(ctx, rect, floatToPixel(Axis::Horizontal, xyD.x1()), floatToPixel(Axis::Vertical, xyD.x2()), floatToPixel(Axis::Horizontal, uvD.x1()), floatToPixel(Axis::Vertical, uvD.x2()), color, thick);
         return;
       }

@@ -3,6 +3,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
+namespace Escher {
+
 ExpressionTableCell::ExpressionTableCell(Responder * parentResponder, Layout layout) :
   Responder(parentResponder),
   TableCell(layout),
@@ -29,4 +31,6 @@ void ExpressionTableCell::setLayout(Poincare::Layout layout) {
 
 void ExpressionTableCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_labelExpressionView);
+}
+
 }

@@ -4,6 +4,8 @@
 #include <escher/scrollable_expression_view.h>
 #include <escher/table_cell.h>
 
+namespace Escher {
+
 class ExpressionTableCell : public Responder, public TableCell {
 public:
   ExpressionTableCell(Responder * responder = nullptr, Layout layout = Layout::HorizontalRightOverlap);
@@ -22,5 +24,7 @@ private:
   KDCoordinate labelMargin() const override { return 0; }
   ScrollableExpressionView m_labelExpressionView;
 };
+
+}
 
 #endif

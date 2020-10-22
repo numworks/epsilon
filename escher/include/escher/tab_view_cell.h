@@ -6,6 +6,8 @@
 #include <escher/text_view.h>
 #include <escher/view_controller.h>
 
+namespace Escher {
+
 class TabViewCell : public View {
 public:
   TabViewCell();
@@ -25,4 +27,5 @@ private:
   ViewController * m_controller;
 };
 
+}
 #endif

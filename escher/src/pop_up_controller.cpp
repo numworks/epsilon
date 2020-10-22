@@ -1,6 +1,8 @@
 #include <escher/pop_up_controller.h>
 #include <assert.h>
 
+namespace Escher {
+
 PopUpController::PopUpController(int numberOfLines, Invocation OkInvocation) :
   ViewController(nullptr),
   m_contentView(this, numberOfLines, OkInvocation)
@@ -104,4 +106,6 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
 
   m_cancelButton.setFrame(KDRect(k_buttonMargin, height - k_buttonMargin - k_buttonHeight, (width - 3 * k_buttonMargin) / 2, k_buttonHeight), force);
   m_okButton.setFrame(KDRect(2 * k_buttonMargin + (width - 3 * k_buttonMargin) / 2, height - k_buttonMargin - k_buttonHeight, (width - 3 * k_buttonMargin) / 2, k_buttonHeight), force);
+}
+
 }

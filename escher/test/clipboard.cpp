@@ -1,7 +1,12 @@
 #include <quiz.h>
 #include <string.h>
-#include <poincare_layouts.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/empty_layout.h>
 #include <poincare/expression.h>
+#include <poincare/integral_layout.h>
+#include <poincare/matrix_layout.h>
+#include <poincare/nth_root_layout.h>
+#include <poincare/sum_layout.h>
 #include <escher/clipboard.h>
 
 void assert_clipboard_enters_and_exits_python(const char * string, const char * stringResult) {

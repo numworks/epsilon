@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+namespace Escher {
+
 /* Timers we'll need
  * - Blink cursor timer
  * - Dim Screen timer
@@ -25,4 +27,5 @@ private:
   uint32_t m_numberOfTicksBeforeFire;
 };
 
+}
 #endif

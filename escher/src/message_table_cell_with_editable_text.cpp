@@ -2,6 +2,8 @@
 #include <escher/palette.h>
 #include <escher/container.h>
 
+namespace Escher {
+
 MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, I18n::Message message) :
   Responder(parentResponder),
   MessageTableCell(message),
@@ -59,4 +61,6 @@ void MessageTableCellWithEditableText::layoutSubviews(bool force) {
     textFieldSize.width(),
     textFieldSize.height()+k_horizontalMargin),
   force);
+}
+
 }

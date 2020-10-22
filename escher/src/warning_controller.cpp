@@ -2,6 +2,8 @@
 #include <escher/container.h>
 #include <algorithm>
 
+namespace Escher {
+
 WarningController::ContentView::ContentView() :
   SolidColorView(KDColorBlack),
   m_textView1(KDFont::SmallFont, (I18n::Message)0, k_middleAlignment, k_middleAlignment, KDColorWhite, KDColorBlack),
@@ -84,4 +86,6 @@ bool WarningController::handleEvent(Ion::Events::Event event) {
   }
   Container::activeApp()->dismissModalViewController();
   return true;
+}
+
 }

@@ -5,6 +5,8 @@
 #include <escher/responder.h>
 #include <poincare/layout.h>
 
+namespace Escher {
+
 class HighlightCell : public View {
 public:
   HighlightCell();
@@ -23,5 +25,7 @@ public:
 protected:
   bool m_highlighted;
 };
+
+}
 
 #endif

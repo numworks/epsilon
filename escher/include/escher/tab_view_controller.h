@@ -5,6 +5,8 @@
 #include <escher/tab_view_data_source.h>
 #include <escher/tab_view.h>
 
+namespace Escher {
+
 class TabViewController : public ViewController {
 public:
   TabViewController(Responder * parentResponder, TabViewDataSource * dataSource, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
@@ -50,4 +52,5 @@ private:
   TabViewDataSource * m_dataSource;
 };
 
+}
 #endif

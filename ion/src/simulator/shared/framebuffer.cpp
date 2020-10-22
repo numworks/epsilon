@@ -1,6 +1,10 @@
 #include "framebuffer.h"
-#include "window.h"
+
 #include <ion/display.h>
+#include <kandinsky/color.h>
+#include <kandinsky/framebuffer.h>
+
+#include "window.h"
 
 /* Drawing on an SDL texture
  * In SDL2, drawing bitmap data happens through textures, whose data lives in

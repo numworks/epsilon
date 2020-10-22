@@ -1,7 +1,9 @@
+#include <escher/view.h>
+#include <kandinsky/ion_context.h>
+
 extern "C" {
 #include <assert.h>
 }
-#include <escher/view.h>
 
 namespace Escher {
 

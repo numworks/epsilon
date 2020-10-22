@@ -1,5 +1,6 @@
 #include "turtle.h"
 #include <escher/palette.h>
+#include <kandinsky/ion_context.h>
 #include <cmath>
 extern "C" {
 #include <py/misc.h>

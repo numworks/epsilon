@@ -3,6 +3,8 @@
 #include <escher/palette.h>
 #include <cmath>
 
+namespace Escher {
+
 ButtonRowDelegate::ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer) :
   m_header(header),
   m_footer(footer)
@@ -224,4 +226,6 @@ void ButtonRowController::viewWillAppear() {
 
 void ButtonRowController::viewDidDisappear() {
   m_contentView.mainViewController()->viewDidDisappear();
+}
+
 }

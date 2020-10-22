@@ -3,6 +3,8 @@
 
 #include <ion/events.h>
 
+namespace Escher {
+
 // See TODO in EditableField
 
 class InputEventHandlerDelegate;
@@ -15,5 +17,7 @@ protected:
   bool handleBoxEvent(Ion::Events::Event event);
   InputEventHandlerDelegate * m_inputEventHandlerDelegate;
 };
+
+}
 
 #endif

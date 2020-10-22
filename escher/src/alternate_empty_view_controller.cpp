@@ -2,6 +2,8 @@
 #include <escher/container.h>
 #include <assert.h>
 
+namespace Escher {
+
 /* ContentView */
 
 AlternateEmptyViewController::ContentView::ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
@@ -86,4 +88,6 @@ void AlternateEmptyViewController::viewDidDisappear() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     m_contentView.mainViewController()->viewDidDisappear();
   }
+}
+
 }

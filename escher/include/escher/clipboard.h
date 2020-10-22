@@ -5,6 +5,8 @@
 #include <poincare/layout.h>
 #include <ion/unicode/utf8_helper.h>
 
+namespace Escher {
+
 class Clipboard {
 public:
   static Clipboard * sharedClipboard();
@@ -41,5 +43,7 @@ static constexpr UTF8Helper::TextPair PythonTextPairs[NumberOfPythonTextPairs] =
   UTF8Helper::TextPair("·", "*"),
   UTF8Helper::TextPair("][", "], ["),
 };
+
+}
 
 #endif

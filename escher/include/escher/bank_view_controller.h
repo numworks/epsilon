@@ -3,6 +3,8 @@
 
 #include <escher/view_controller.h>
 
+namespace Escher {
+
 class BankViewController : public ViewController {
 public:
   BankViewController(Responder * parentViewController);
@@ -43,5 +45,7 @@ private:
   ContentView m_view;
   int m_activeIndex;
 };
+
+}
 
 #endif

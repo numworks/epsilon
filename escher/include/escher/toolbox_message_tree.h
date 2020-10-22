@@ -3,6 +3,8 @@
 
 #include <escher/message_tree.h>
 
+namespace Escher {
+
 class ToolboxMessageTree : public MessageTree {
 public:
   constexpr static ToolboxMessageTree Leaf(I18n::Message label, I18n::Message text = (I18n::Message)0, bool stripInsertedText = true, I18n::Message insertedText = (I18n::Message)0) {
@@ -73,5 +75,5 @@ private:
   const bool m_childrenConsecutive;
 };
 
+}
 #endif
-

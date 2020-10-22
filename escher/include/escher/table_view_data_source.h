@@ -4,6 +4,8 @@
 #include <escher/view.h>
 #include <escher/highlight_cell.h>
 
+namespace Escher {
+
 class TableViewDataSource {
 public:
   virtual int numberOfRows() const = 0;
@@ -26,4 +28,5 @@ public:
   virtual int typeAtLocation(int i, int j) = 0;
 };
 
+}
 #endif

@@ -5,6 +5,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Escher {
+
 KDCoordinate SimpleTableViewDataSource::columnWidth(int i) {
   return cellWidth();
 }
@@ -49,4 +51,6 @@ int SimpleTableViewDataSource::reusableCellCount(int type) {
 
 int SimpleTableViewDataSource::typeAtLocation(int i, int j) {
   return 0;
+}
+
 }

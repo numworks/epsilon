@@ -4,6 +4,8 @@
 #include <escher/metric.h>
 #include <assert.h>
 
+namespace Escher {
+
 SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
   TableView(dataSource, selectionDataSource),
   Responder(parentResponder),
@@ -201,4 +203,6 @@ void SelectableTableView::unhighlightSelectedCell() {
       previousCell->setHighlighted(false);
     }
   }
+}
+
 }

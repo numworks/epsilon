@@ -6,6 +6,8 @@
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
 
+namespace Escher {
+
 class WarningController : public ViewController {
 public:
   WarningController(Responder * parentResponder, I18n::Message warningMessage1, I18n::Message warningMessage2 = (I18n::Message)0);
@@ -37,4 +39,5 @@ private:
   bool m_exitOnOKBackEXE;
 };
 
+}
 #endif

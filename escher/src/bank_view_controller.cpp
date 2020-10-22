@@ -1,6 +1,8 @@
 #include <escher/bank_view_controller.h>
 #include <escher/container.h>
 
+namespace Escher {
+
 BankViewController::BankViewController(Responder * parentViewController) :
   ViewController(parentViewController),
   m_activeIndex(0)
@@ -43,4 +45,6 @@ void BankViewController::ContentView::setSubview(View * view) {
   m_subview = view;
   layoutSubviews();
   markRectAsDirty(bounds());
+}
+
 }

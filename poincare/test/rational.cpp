@@ -1,4 +1,5 @@
 #include "helper.h"
+#include <poincare/rational.h>
 
 using namespace Poincare;
 

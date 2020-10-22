@@ -1,4 +1,6 @@
 #include <apps/shared/global_context.h>
+#include <poincare/infinity.h>
+#include <poincare/undefined.h>
 #include "helper.h"
 
 using namespace Poincare;

@@ -1,4 +1,12 @@
 #include <apps/shared/global_context.h>
+#include <poincare/addition.h>
+#include <poincare/arc_cosine.h>
+#include <poincare/constant.h>
+#include <poincare/infinity.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
+#include <poincare/square_root.h>
+#include <poincare/sum.h>
 #include "helper.h"
 
 using namespace Poincare;

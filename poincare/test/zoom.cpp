@@ -1,7 +1,9 @@
+#include <poincare/undefined.h>
 #include <poincare/zoom.h>
-#include "helper.h"
 #include <apps/shared/global_context.h>
 #include <float.h>
+
+#include "helper.h"
 
 using namespace Poincare;
 

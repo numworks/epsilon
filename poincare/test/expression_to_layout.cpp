@@ -1,4 +1,5 @@
 #include <poincare_layouts.h>
+#include <poincare_nodes.h>
 #include "helper.h"
 
 using namespace Poincare;

@@ -1,4 +1,12 @@
 #include <ion/storage.h>
+#include <poincare/function.h>
+#include <poincare/infinity.h>
+#include <poincare/rational.h>
+#include <poincare/store.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
+#include <poincare/unit.h>
+#include <poincare/unit_convert.h>
 #include "helper.h"
 
 using namespace Poincare;

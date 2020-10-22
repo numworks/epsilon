@@ -2,7 +2,7 @@
 #define APPS_SHARED_SEQUENCE_TITLE_CELL_H
 
 #include "../shared/function_title_cell.h"
-#include <poincare_layouts.h>
+#include <poincare/code_point_layout.h>
 
 namespace Shared {
 

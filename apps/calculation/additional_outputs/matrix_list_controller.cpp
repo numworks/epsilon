@@ -2,9 +2,14 @@
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
 #include <apps/global_preferences.h>
-#include <poincare_nodes.h>
+#include <poincare/determinant.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix_inverse.h>
+#include <poincare/matrix_reduced_row_echelon_form.h>
+#include <poincare/matrix_row_echelon_form.h>
+#include <poincare/matrix_trace.h>
 #include <string.h>
+
 
 using namespace Poincare;
 using namespace Shared;

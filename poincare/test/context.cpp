@@ -1,5 +1,9 @@
 #include <apps/shared/global_context.h>
+#include <poincare/addition.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
 #include "helper.h"
 
 using namespace Poincare;

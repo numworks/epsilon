@@ -1,4 +1,17 @@
 #include <poincare_layouts.h>
+#include <poincare/addition.h>
+#include <poincare/based_integer.h>
+#include <poincare/binomial_coefficient.h>
+#include <poincare/constant.h>
+#include <poincare/decimal.h>
+#include <poincare/division.h>
+#include <poincare/factorial.h>
+#include <poincare/integral.h>
+#include <poincare/logarithm.h>
+#include <poincare/matrix.h>
+#include <poincare/multiplication.h>
+#include <poincare/nth_root.h>
+#include <poincare/power.h>
 #include "helper.h"
 
 using namespace Poincare;

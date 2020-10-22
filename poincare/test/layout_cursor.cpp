@@ -1,4 +1,10 @@
 #include <poincare_layouts.h>
+#include <poincare/addition.h>
+#include <poincare/cosine.h>
+#include <poincare/empty_expression.h>
+#include <poincare/integral.h>
+#include <poincare/power.h>
+#include <poincare/random.h>
 #include "helper.h"
 
 using namespace Poincare;

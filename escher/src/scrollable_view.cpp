@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <algorithm>
 
+namespace Escher {
+
 ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource) :
   Responder(parentResponder),
   ScrollView(view, dataSource)
@@ -53,4 +55,6 @@ KDSize ScrollableView::contentSize() const {
   KDCoordinate viewWidth = std::max(viewSize.width(), maxContentWidthDisplayableWithoutScrolling());
   KDCoordinate viewHeight = std::max(viewSize.height(), maxContentHeightDisplayableWithoutScrolling());
   return KDSize(viewWidth, viewHeight);
+}
+
 }

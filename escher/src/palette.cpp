@@ -1,6 +1,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
+namespace Escher {
+
 constexpr KDColor Palette::YellowDark;
 constexpr KDColor Palette::YellowLight;
 constexpr KDColor Palette::PurpleBright;
@@ -39,4 +41,6 @@ KDColor Palette::nextDataColor(int * colorIndex) {
   KDColor c = DataColor[*colorIndex];
   *colorIndex = (*colorIndex + 1) % nbOfColors;
   return c;
+}
+
 }

@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <string.h>
 
+namespace Escher {
 // See TODO in EditableField
 
 class TextArea : public TextInput, public InputEventHandler {
@@ -141,4 +142,5 @@ private:
   constexpr static int k_maxLineChars = 3000;
 };
 
+}
 #endif

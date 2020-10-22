@@ -10,6 +10,7 @@
 #include <limits.h>
 #include <algorithm>
 
+namespace Escher {
 /* TextArea */
 
 TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont * font) :
@@ -653,4 +654,6 @@ void TextArea::selectUpDown(bool up, int step) {
   const char * newCursorLocation = contentView()->cursorLocation();
   contentView()->addSelection(up ? newCursorLocation : previousCursorLocation, up ? previousCursorLocation : newCursorLocation);
   scrollToCursor();
+}
+
 }

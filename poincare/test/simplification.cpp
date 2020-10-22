@@ -727,10 +727,12 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
   assert_parsed_expression_simplify_to("gcd(56,112,28,91)", "7");
+  assert_parsed_expression_simplify_to("gcd(-32,-32)", "32");
   assert_parsed_expression_simplify_to("im(1+5×𝐢)", "5");
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
   assert_parsed_expression_simplify_to("lcm(11,121, 3)", "363");
+  assert_parsed_expression_simplify_to("lcm(-32,-32)", "32");
   assert_parsed_expression_simplify_to("√(4)", "2");
   assert_parsed_expression_simplify_to("re(1+5×𝐢)", "1");
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");

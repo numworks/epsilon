@@ -1,7 +1,6 @@
 #ifndef ESCHER_VIEW_CONTROLLER_H
 #define ESCHER_VIEW_CONTROLLER_H
 
-#include <kandinsky.h>
 #include <escher/i18n.h>
 #include <escher/telemetry.h>
 extern "C" {

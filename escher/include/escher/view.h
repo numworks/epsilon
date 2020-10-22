@@ -1,10 +1,14 @@
 #ifndef ESCHER_VIEW_H
 #define ESCHER_VIEW_H
 
+#include <kandinsky/context.h>
+#include <kandinsky/point.h>
+#include <kandinsky/rect.h>
+#include <kandinsky/size.h>
+
 extern "C" {
 #include <stdint.h>
 }
-#include <kandinsky.h>
 
 #if ESCHER_VIEW_LOGGING
 #include <iostream>

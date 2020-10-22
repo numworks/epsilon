@@ -7,6 +7,8 @@ extern "C" {
 #include "turtle.h"
 #include "../../port.h"
 
+#include <kandinsky/ion_context.h>
+
 static Turtle sTurtle;
 
 void modturtle_gc_collect() {

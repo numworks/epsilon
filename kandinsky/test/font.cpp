@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <kandinsky.h>
+#include <kandinsky/font.h>
 #include <assert.h>
 
 static constexpr KDFont::CodePointIndexPair table[] = {

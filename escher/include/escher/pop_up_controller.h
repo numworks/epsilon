@@ -4,6 +4,7 @@
 #include <escher/invocation.h>
 #include <apps/i18n.h>
 
+namespace Escher {
 
 class HighContrastButton : public Button {
 public:
@@ -43,4 +44,5 @@ protected:
   ContentView m_contentView;
 };
 
+}
 #endif

@@ -1,5 +1,7 @@
 #include <escher/highlight_cell.h>
 
+namespace Escher {
+
 HighlightCell::HighlightCell() :
   View(),
   m_highlighted(false)
@@ -15,4 +17,6 @@ void HighlightCell::setHighlighted(bool highlight) {
 
 void HighlightCell::reloadCell() {
   markRectAsDirty(bounds());
+}
+
 }

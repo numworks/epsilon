@@ -4,6 +4,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Escher {
+
 void Window::redraw(bool force) {
   if (force) {
     markRectAsDirty(bounds());
@@ -40,5 +42,7 @@ void Window::layoutSubviews(bool force) {
 #if ESCHER_VIEW_LOGGING
 const char * Window::className() const {
   return "Window";
+}
+
 }
 #endif

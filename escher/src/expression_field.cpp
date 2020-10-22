@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <algorithm>
 
+namespace Escher {
+
 constexpr KDCoordinate ExpressionField::k_maximalHeight;
 constexpr KDCoordinate ExpressionField::k_minimalHeight;
 
@@ -175,4 +177,6 @@ void ExpressionField::restoreContent(const char * buffer, size_t size) {
     return;
   }
   m_layoutField.setLayout(Poincare::Layout::LayoutFromAddress(buffer, size));
+}
+
 }

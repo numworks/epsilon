@@ -3,6 +3,8 @@
 
 #include <escher/i18n.h>
 
+namespace Escher {
+
 class MessageTree {
 public:
   constexpr MessageTree(I18n::Message label = (I18n::Message)0, const int numberOfChildren = 0) :
@@ -19,5 +21,6 @@ protected:
   const int m_numberOfChildren;
 };
 
-#endif
+}
 
+#endif

@@ -10,6 +10,8 @@
 #include <escher/text_field_delegate.h>
 #include <poincare/layout.h>
 
+namespace Escher {
+
 /* TODO Implement a split view. Because we use a modal view, the main view is
  * redrawn underneath the modal view, which is visible and ugly. */
 
@@ -65,5 +67,7 @@ private:
   TextFieldDelegate * m_textFieldDelegate;
   LayoutFieldDelegate * m_layoutFieldDelegate;
 };
+
+}
 
 #endif

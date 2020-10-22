@@ -4,6 +4,8 @@
 #include <escher/expression_table_cell.h>
 #include <escher/i18n.h>
 
+namespace Escher {
+
 class ExpressionTableCellWithExpression : public ExpressionTableCell {
 public:
   ExpressionTableCellWithExpression(Responder * parentResponder = nullptr);
@@ -17,5 +19,7 @@ private:
   KDCoordinate accessoryMargin() const override { return 0; }
   ScrollableExpressionView m_accessoryExpressionView;
 };
+
+}
 
 #endif

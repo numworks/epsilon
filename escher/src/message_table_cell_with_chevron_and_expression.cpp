@@ -2,6 +2,8 @@
 #include <escher/metric.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message, const KDFont * font) :
   MessageTableCellWithChevron(message, font),
   m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
@@ -23,4 +25,6 @@ void MessageTableCellWithChevronAndExpression::setLayout(Poincare::Layout layout
   m_subtitleView.setLayout(layoutR);
   reloadCell();
   layoutSubviews();
+}
+
 }

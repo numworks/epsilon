@@ -8,6 +8,8 @@
 #include <escher/text_field.h>
 #include <poincare/print_float.h>
 
+namespace Escher {
+
 class EditableTextCell : public HighlightCell, public Responder {
 public:
   EditableTextCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont,
@@ -38,5 +40,7 @@ private:
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
 };
+
+}
 
 #endif

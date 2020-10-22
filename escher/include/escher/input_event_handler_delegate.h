@@ -1,6 +1,8 @@
 #ifndef ESCHER_INPUT_EVENT_HANDLER_DELEGATE_H
 #define ESCHER_INPUT_EVENT_HANDLER_DELEGATE_H
 
+namespace Escher {
+
 class InputEventHandler;
 class Toolbox;
 class NestedMenuController;
@@ -10,5 +12,7 @@ public:
   virtual Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) = 0;
   virtual NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) = 0;
 };
+
+}
 
 #endif

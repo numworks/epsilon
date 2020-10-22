@@ -4,6 +4,8 @@
 #include <escher/even_odd_cell.h>
 #include <escher/expression_view.h>
 
+namespace Escher {
+
 class EvenOddExpressionCell : public EvenOddCell {
 public:
   EvenOddExpressionCell(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
@@ -28,5 +30,7 @@ protected:
   KDCoordinate m_leftMargin;
   KDCoordinate m_rightMargin;
 };
+
+}
 
 #endif

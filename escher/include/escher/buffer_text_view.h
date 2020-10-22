@@ -3,6 +3,8 @@
 
 #include <escher/text_view.h>
 
+namespace Escher {
+
 class BufferTextView : public TextView {
 public:
   static constexpr int k_maxNumberOfChar = 256;
@@ -15,5 +17,7 @@ public:
 private:
   char m_buffer[k_maxNumberOfChar];
 };
+
+}
 
 #endif

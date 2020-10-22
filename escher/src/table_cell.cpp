@@ -3,6 +3,8 @@
 #include <escher/metric.h>
 #include <algorithm>
 
+namespace Escher {
+
 TableCell::TableCell(Layout layout) :
   Bordered(),
   HighlightCell(),
@@ -168,4 +170,6 @@ void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backColor = isHighlighted() ? Palette::Select : backgroundColor();
   drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+}
+
 }

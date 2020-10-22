@@ -3,6 +3,7 @@
 
 #include <ion/events.h>
 
+namespace Escher {
 class TextField;
 
 class TextFieldDelegate {
@@ -14,4 +15,5 @@ public:
   virtual bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) { return returnValue; }
 };
 
+}
 #endif

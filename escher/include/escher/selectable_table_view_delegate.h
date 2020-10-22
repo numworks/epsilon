@@ -3,6 +3,8 @@
 
 #include <escher/context_provider.h>
 
+namespace Escher {
+
 class SelectableTableView;
 
 class SelectableTableViewDelegate : public ContextProvider {
@@ -16,4 +18,5 @@ public:
   virtual void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) {}
 };
 
+}
 #endif

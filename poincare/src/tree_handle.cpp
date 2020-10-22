@@ -1,7 +1,7 @@
 #include <poincare/tree_handle.h>
 #include <poincare/ghost.h>
+#include <poincare_expressions.h>
 #include <poincare_layouts.h>
-#include <poincare_nodes.h>
 
 namespace Poincare {
 

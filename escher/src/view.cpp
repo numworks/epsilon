@@ -3,6 +3,8 @@ extern "C" {
 }
 #include <escher/view.h>
 
+namespace Escher {
+
 const Window * View::window() const {
   if (m_superview == nullptr) {
     return nullptr;
@@ -176,5 +178,6 @@ std::ostream &operator<<(std::ostream &os, View &view) {
   os << "</" << view.className() << ">";
   return os;
 }
-#endif
 
+}
+#endif

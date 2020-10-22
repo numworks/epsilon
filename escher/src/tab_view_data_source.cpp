@@ -1,5 +1,7 @@
 #include <escher/tab_view_data_source.h>
 
+namespace Escher {
+
 TabViewDataSource::TabViewDataSource() :
   m_activeChildIndex(-1),
   m_selectedChildIndex(-1)
@@ -21,3 +23,4 @@ void TabViewDataSource::setSelectedTab(int i) {
   m_selectedChildIndex = i;
 }
 
+}

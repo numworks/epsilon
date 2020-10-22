@@ -6,6 +6,8 @@
 #include <escher/metric.h>
 #include <escher/message_text_view.h>
 
+namespace Escher {
+
 class EvenOddMessageTextCell : public EvenOddCell {
 public:
   EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont);
@@ -21,5 +23,7 @@ protected:
   void layoutSubviews(bool force = false) override;
   MessageTextView m_messageTextView;
 };
+
+}
 
 #endif

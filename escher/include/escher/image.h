@@ -3,6 +3,8 @@
 
 #include <kandinsky.h>
 
+namespace Escher {
+
 class Image {
 public:
   constexpr Image(KDCoordinate width, KDCoordinate height, const uint8_t * compressedPixelData, uint16_t compressedPixelDataSize) :
@@ -17,5 +19,7 @@ private:
   const uint8_t * m_compressedPixelData;
   uint16_t m_compressedPixelDataSize;
 };
+
+}
 
 #endif

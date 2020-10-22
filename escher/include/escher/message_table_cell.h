@@ -5,6 +5,8 @@
 #include <escher/i18n.h>
 #include <escher/table_cell.h>
 
+namespace Escher {
+
 class MessageTableCell : public TableCell {
 public:
   MessageTableCell(I18n::Message label = (I18n::Message)0, const KDFont * font = KDFont::SmallFont, Layout layout = Layout::HorizontalLeftOverlap);
@@ -20,5 +22,7 @@ private:
   MessageTextView m_messageTextView;
   KDColor m_backgroundColor;
 };
+
+}
 
 #endif

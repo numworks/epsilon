@@ -1,5 +1,7 @@
 #include <escher/list_view_data_source.h>
 
+namespace Escher {
+
 KDCoordinate ListViewDataSource::cellWidth() {
   return 0;
 }
@@ -28,4 +30,6 @@ KDCoordinate ListViewDataSource::cumulatedWidthFromIndex(int i) {
 
 int ListViewDataSource::indexFromCumulatedWidth(KDCoordinate offsetX) {
   return 0;
+}
+
 }

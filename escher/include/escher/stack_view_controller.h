@@ -5,6 +5,8 @@
 #include <escher/stack_view.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 constexpr uint8_t kMaxNumberOfStacks = 4;
 
 class StackViewController : public ViewController {
@@ -74,4 +76,5 @@ private:
   bool m_isVisible;
 };
 
+}
 #endif

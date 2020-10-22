@@ -5,6 +5,8 @@ extern "C" {
 #include <escher/container.h>
 #include <escher/metric.h>
 
+namespace Escher {
+
 StackViewController::ControllerView::ControllerView() :
   View(),
   m_contentView(nullptr),
@@ -187,4 +189,6 @@ void StackViewController::viewDidDisappear() {
     m_view.popStack();
   }
   m_isVisible = false;
+}
+
 }

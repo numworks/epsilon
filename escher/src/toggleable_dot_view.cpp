@@ -1,6 +1,8 @@
 #include <escher/toggleable_dot_view.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 const uint8_t MediumDotMask[ToggleableDotView::k_dotSize][ToggleableDotView::k_dotSize] = {
   {0xFF, 0xDB, 0x53, 0x0F, 0x0F, 0x53, 0xDB, 0xFF},
   {0xD8, 0x10, 0x00, 0x00, 0x00, 0x00, 0x10, 0xD8},
@@ -38,4 +40,6 @@ void ToggleableDotView::drawRect(KDContext * ctx, KDRect rect) const {
     m_state ? Palette::YellowDark : Palette::GrayDark,
     m_state ? reinterpret_cast<const uint8_t *>(MediumDotMask) : reinterpret_cast<const uint8_t *>(MediumShallowDotMask),
     workingBuffer);
+}
+
 }

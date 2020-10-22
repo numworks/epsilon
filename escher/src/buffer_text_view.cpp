@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Escher {
+
 BufferTextView::BufferTextView(const KDFont * font, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
@@ -25,4 +27,6 @@ void BufferTextView::appendText(const char * text) {
   if (previousTextLength + argTextLength + 1 < k_maxNumberOfChar) {
     strlcpy(&m_buffer[previousTextLength], text, k_maxNumberOfChar - previousTextLength);
   }
+}
+
 }

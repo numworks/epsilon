@@ -3,6 +3,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
+namespace Escher {
+
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder) :
   ExpressionTableCell(parentResponder, Layout::HorizontalLeftOverlap),
   m_accessoryExpressionView(this, k_horizontalMargin, 0, 1.0f, 0.5f, Palette::GrayDark, KDColorWhite)
@@ -25,4 +27,6 @@ void ExpressionTableCellWithExpression::setAccessoryLayout(Poincare::Layout l) {
 
 void ExpressionTableCellWithExpression::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_accessoryExpressionView);
+}
+
 }

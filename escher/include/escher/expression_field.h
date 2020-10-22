@@ -8,6 +8,8 @@
 #include <escher/text_field_delegate.h>
 #include <poincare/layout.h>
 
+namespace Escher {
+
 class ExpressionField : public Responder, public View {
 public:
   ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
@@ -52,5 +54,7 @@ private:
   TextField m_textField;
   LayoutField m_layoutField;
 };
+
+}
 
 #endif

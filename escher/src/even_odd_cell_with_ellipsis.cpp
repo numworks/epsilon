@@ -1,5 +1,7 @@
 #include <escher/even_odd_cell_with_ellipsis.h>
 
+namespace Escher {
+
 EvenOddCellWithEllipsis::EvenOddCellWithEllipsis() :
   EvenOddCell()
 {
@@ -7,4 +9,6 @@ EvenOddCellWithEllipsis::EvenOddCellWithEllipsis() :
 
 void EvenOddCellWithEllipsis::layoutSubviews(bool force) {
   m_ellipsisView.setFrame(bounds(), force);
+}
+
 }

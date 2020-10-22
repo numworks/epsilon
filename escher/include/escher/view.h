@@ -10,6 +10,10 @@ extern "C" {
 #include <iostream>
 #endif
 
+namespace Shared {
+  class RoundCursorView;
+}
+
 namespace Escher {
 
 /* Key concepts
@@ -21,10 +25,6 @@ namespace Escher {
  *   send any display command. */
 
 class Window;
-
-namespace Shared {
-  class RoundCursorView;
-}
 
 class View {
   // We only want Window to be able to invoke View::redraw

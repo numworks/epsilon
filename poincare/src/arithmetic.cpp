@@ -9,13 +9,13 @@ Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
   if (a.isOverflow() || b.isOverflow()) {
     return Integer::Overflow(false);
   }
-  if (a.isEqualTo(b)) {
-    return a;
-  }
   Integer i = a;
   Integer j = b;
   i.setNegative(false);
   j.setNegative(false);
+  if (i.isEqualTo(j)) {
+    return i;
+  }
   do {
     if (i.isZero()) {
       return j;
@@ -35,14 +35,17 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
   if (a.isZero() || b.isZero()) {
     return Integer(0);
   }
-  if (a.isEqualTo(b)) {
-    return a;
+  Integer i = a;
+  Integer j = b;
+  i.setNegative(false);
+  j.setNegative(false);
+  if (i.isEqualTo(j)) {
+    return i;
   }
-  /* Using LCM(a,b) = a*(b/GCD(a,b)). Knowing that GCD(a, b) divides b,
-   * division is performed before multiplication to be more efficient. */
-  Integer signResult = Integer::Multiplication(a, Integer::Division(b, GCD(a, b)).quotient);
-  signResult.setNegative(false);
-  return signResult;
+  /* Using LCM(i,j) = i*(j/GCD(i,j)). Knowing that GCD(i, j) divides j, and that
+   * GCD(i,j) = 0 if and only if i == j == 0, which would have been escaped
+   * before. Division is performed before multiplication to be more efficient.*/
+  return Integer::Multiplication(i, Integer::Division(j, GCD(i, j)).quotient);
 }
 
 int Arithmetic::GCD(int a, int b) {

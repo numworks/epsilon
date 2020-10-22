@@ -2,6 +2,8 @@
 #include <assert.h>
 using namespace Poincare;
 
+namespace Escher {
+
 EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   EvenOddCell(),
@@ -67,4 +69,6 @@ View * EvenOddExpressionCell::subviewAtIndex(int index) {
 
 void EvenOddExpressionCell::layoutSubviews(bool force) {
   m_expressionView.setFrame(KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin, bounds().height()), force);
+}
+
 }

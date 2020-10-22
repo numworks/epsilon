@@ -6,6 +6,8 @@
 #include <escher/responder.h>
 #include <poincare/print_float.h>
 
+namespace Escher {
+
 class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
 public:
   MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
@@ -32,5 +34,7 @@ private:
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };
+
+}
 
 #endif

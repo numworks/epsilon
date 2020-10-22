@@ -3,6 +3,8 @@
 
 #include <escher/message_table_cell_with_chevron.h>
 
+namespace Escher {
+
 class MessageTableCellWithChevronAndMessage : public MessageTableCellWithChevron {
 public:
   MessageTableCellWithChevronAndMessage(const KDFont * labelFont = KDFont::SmallFont, const KDFont * contentFont = KDFont::SmallFont);
@@ -12,5 +14,7 @@ public:
 private:
   MessageTextView m_subtitleView;
 };
+
+}
 
 #endif

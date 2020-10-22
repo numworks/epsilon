@@ -1,5 +1,7 @@
 #include <escher/metric.h>
 
+namespace Escher {
+
 constexpr KDCoordinate Metric::CellMargin;
 constexpr KDCoordinate Metric::CommonLeftMargin;
 constexpr KDCoordinate Metric::CommonRightMargin;
@@ -31,3 +33,5 @@ constexpr KDCoordinate Metric::CellSeparatorThickness;
 constexpr KDCoordinate Metric::TableSeparatorThickness;
 constexpr KDCoordinate Metric::ExpressionViewHorizontalMargin;
 constexpr KDCoordinate Metric::EllipsisCellWidth;
+
+}

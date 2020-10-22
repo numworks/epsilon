@@ -4,6 +4,8 @@
 #include <escher/metric.h>
 #include <kandinsky/context.h>
 
+namespace Escher {
+
 class Bordered {
 public:
   void drawBorderOfRect(KDContext * ctx, KDRect rect, KDColor borderColor) const;
@@ -12,5 +14,6 @@ protected:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
 };
 
-#endif
+}
 
+#endif

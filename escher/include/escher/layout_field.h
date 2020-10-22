@@ -13,6 +13,8 @@
 
 // See TODO in EditableField
 
+namespace Escher {
+
 class LayoutField : public ScrollableView, public ScrollViewDataSource, public EditableField {
 public:
   LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr) :
@@ -120,5 +122,7 @@ private:
   Ion::Events::Event m_insertionCursorEvent;
   LayoutFieldDelegate * m_delegate;
 };
+
+}
 
 #endif

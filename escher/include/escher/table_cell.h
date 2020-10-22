@@ -4,6 +4,8 @@
 #include <escher/bordered.h>
 #include <escher/highlight_cell.h>
 
+namespace Escher {
+
 class TableCell : public Bordered, public HighlightCell {
 public:
   /* Layout enum class determines the way subviews are layouted.
@@ -35,5 +37,5 @@ private:
   Layout m_layout;
 };
 
+}
 #endif
-

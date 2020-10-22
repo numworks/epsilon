@@ -6,6 +6,7 @@
 #include <escher/text_field_delegate.h>
 #include <string.h>
 
+namespace Escher {
 // See TODO in EditableField
 
 /* TODO: TextField currently uses using 2 buffers:
@@ -105,4 +106,5 @@ private:
   TextFieldDelegate * m_delegate;
 };
 
+}
 #endif

@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <algorithm>
 
+namespace Escher {
+
 View * ButtonState::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -32,4 +34,6 @@ KDSize ButtonState::minimalSizeForOptimalDisplay() const {
   return KDSize(
     textSize.width() + stateSize.width() + k_stateMargin,
     std::max(textSize.height(), stateSize.height()));
+}
+
 }

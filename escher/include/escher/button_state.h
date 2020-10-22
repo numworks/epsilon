@@ -4,6 +4,8 @@
 #include <escher/button.h>
 #include <escher/toggleable_dot_view.h>
 
+namespace Escher {
+
 class ButtonState : public Button {
 public:
   using Button::Button;
@@ -20,5 +22,7 @@ private:
   void layoutSubviews(bool force = false) override;
   ToggleableDotView m_stateView;
 };
+
+}
 
 #endif

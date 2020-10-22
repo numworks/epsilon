@@ -4,6 +4,8 @@
 #include <ion.h>
 #include <escher/timer.h>
 
+namespace Escher {
+
 class RunLoop {
 public:
   RunLoop();
@@ -18,4 +20,5 @@ private:
   int m_time;
 };
 
+}
 #endif

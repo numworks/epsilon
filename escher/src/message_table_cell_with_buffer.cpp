@@ -1,6 +1,8 @@
 #include <escher/message_table_cell_with_buffer.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 MessageTableCellWithBuffer::MessageTableCellWithBuffer(I18n::Message message, const KDFont * font, const KDFont * accessoryFont, KDColor accessoryTextColor) :
   MessageTableCell(message, font),
   m_accessoryView(accessoryFont, 1.0f, 0.5f, accessoryTextColor)
@@ -29,4 +31,6 @@ void MessageTableCellWithBuffer::setHighlighted(bool highlight) {
 void MessageTableCellWithBuffer::setTextColor(KDColor color) {
   m_accessoryView.setTextColor(color);
   MessageTableCell::setTextColor(color);
+}
+
 }

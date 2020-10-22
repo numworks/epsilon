@@ -75,8 +75,6 @@ void assert_has_no_interesting_range(const char * definition, Preferences::Angle
   assert_interesting_range_is(definition, NAN, NAN, NAN, NAN, angleUnit, symbol);
 }
 
-void breaker() {}
-
 QUIZ_CASE(poincare_zoom_interesting_ranges) {
   assert_has_no_interesting_range(Undefined::Name());
   assert_has_no_interesting_range("0");
@@ -108,6 +106,7 @@ QUIZ_CASE(poincare_zoom_interesting_ranges) {
   assert_interesting_range_is("atan(x)", -2, 2);
   assert_interesting_range_is("sin(x)/x", -12, 12, -0.2, 1);
   assert_interesting_range_is("x×sin(x)", -9, 9, -5, 8);
+  assert_interesting_range_is("x×ln(x)", 0.22, 0.88, -0.367828071, -0.367828071);
 }
 
 void assert_refined_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {

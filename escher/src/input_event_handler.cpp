@@ -4,6 +4,8 @@
 #include <escher/toolbox.h>
 #include <escher/metric.h>
 
+namespace Escher {
+
 bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
   if (m_inputEventHandlerDelegate == nullptr) {
     return false;
@@ -20,4 +22,6 @@ bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
 }

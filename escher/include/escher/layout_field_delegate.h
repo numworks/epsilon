@@ -5,6 +5,8 @@
 #include <ion/events.h>
 #include <poincare/layout.h>
 
+namespace Escher {
+
 class LayoutField;
 
 class LayoutFieldDelegate : public ContextProvider{
@@ -15,5 +17,7 @@ public:
   virtual bool layoutFieldDidAbortEditing(LayoutField * layoutField) { return false; }
   virtual void layoutFieldDidChangeSize(LayoutField * layoutField) {}
 };
+
+}
 
 #endif

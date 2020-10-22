@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <kandinsky.h>
+#include <kandinsky/rect.h>
 #include <assert.h>
 
 QUIZ_CASE(kandinsky_rect_intersect) {

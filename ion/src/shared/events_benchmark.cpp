@@ -1,7 +1,6 @@
 #include <ion/events.h>
 #include <ion/timing.h>
 #include <ion/display.h>
-#include <kandinsky.h>
 #include "../../../poincare/include/poincare/print_int.h"
 #include <assert.h>
 

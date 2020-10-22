@@ -8,6 +8,8 @@
 #include <escher/button.h>
 #include <assert.h>
 
+namespace Escher {
+
 class ButtonRowDelegate;
 
 class ButtonRowController : public ViewController {
@@ -81,5 +83,7 @@ private:
   ButtonRowController * m_header;
   ButtonRowController * m_footer;
 };
+
+}
 
 #endif

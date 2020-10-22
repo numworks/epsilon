@@ -5,6 +5,8 @@
 #include <escher/view.h>
 #include <escher/view_controller.h>
 
+namespace Escher {
+
 class StackView : public View, public Bordered {
 public:
   StackView();
@@ -25,4 +27,5 @@ private:
   ViewController * m_controller;
 };
 
+}
 #endif

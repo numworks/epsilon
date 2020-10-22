@@ -4,6 +4,7 @@
 #include <escher/toggleable_view.h>
 #include <escher/palette.h>
 
+namespace Escher {
 
 class SwitchView final : public ToggleableView {
 public:
@@ -18,4 +19,5 @@ private:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 
+}
 #endif

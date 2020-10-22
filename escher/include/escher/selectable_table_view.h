@@ -8,6 +8,8 @@
 #include <escher/palette.h>
 #include <escher/responder.h>
 
+namespace Escher {
+
 /* SelectableTableView is a Table View that handles selection. To implement it,
  * it needs a class which should be both data source and view controller. This
  * takes the selectable table view as instance variable and makes it first
@@ -38,4 +40,5 @@ protected:
   SelectableTableViewDelegate * m_delegate;
 };
 
+}
 #endif

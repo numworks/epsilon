@@ -1,6 +1,8 @@
 #include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer(const KDFont * labelFont, const KDFont * subAccessoryFont) :
   MessageTableCellWithChevron((I18n::Message)0, labelFont),
   m_subAccessoryView(subAccessoryFont, 1.0f, 0.5f, Palette::GrayDark)
@@ -20,4 +22,6 @@ void MessageTableCellWithChevronAndBuffer::setHighlighted(bool highlight) {
 void MessageTableCellWithChevronAndBuffer::setAccessoryText(const char * textBody) {
   m_subAccessoryView.setText(textBody);
   layoutSubviews();
+}
+
 }

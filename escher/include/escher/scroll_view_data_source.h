@@ -1,7 +1,7 @@
 #ifndef ESCHER_SCROLL_VIEW_DATA_SOURCE_H
 #define ESCHER_SCROLL_VIEW_DATA_SOURCE_H
 
-#include <kandinsky.h>
+#include <kandinsky/point.h>
 
 namespace Escher {
 

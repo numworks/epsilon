@@ -6,7 +6,6 @@ extern "C" {
 }
 #include <ion.h>
 #include <escher/metric.h>
-#include <kandinsky.h>
 #include <math.h>
 #include <python/port/port.h>
 

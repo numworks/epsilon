@@ -1,8 +1,11 @@
 #ifndef POINCARE_LAYOUT_NODE_H
 #define POINCARE_LAYOUT_NODE_H
 
+#include <kandinsky/color.h>
+#include <kandinsky/context.h>
+#include <kandinsky/point.h>
+#include <kandinsky/size.h>
 #include <poincare/tree_node.h>
-#include <kandinsky.h>
 
 namespace Poincare {
 

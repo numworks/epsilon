@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+namespace Escher {
+
 namespace I18n {
   enum class Message : uint16_t;
   enum class Language : uint8_t;
@@ -10,5 +12,6 @@ namespace I18n {
   int numberOfLanguages();
 }
 
-#endif
+}
 
+#endif

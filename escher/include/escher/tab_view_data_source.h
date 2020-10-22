@@ -5,6 +5,8 @@ extern "C" {
 #include <stdint.h>
 }
 
+namespace Escher {
+
 class TabViewDataSource {
 public:
   TabViewDataSource();
@@ -17,4 +19,5 @@ private:
   int8_t m_selectedChildIndex;
 };
 
+}
 #endif

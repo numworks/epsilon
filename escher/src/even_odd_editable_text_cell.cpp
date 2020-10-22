@@ -2,6 +2,8 @@
 #include <escher/container.h>
 #include <assert.h>
 
+namespace Escher {
+
 EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   EvenOddCell(),
   Responder(parentResponder),
@@ -38,4 +40,6 @@ void EvenOddEditableTextCell::layoutSubviews(bool force) {
 
 void EvenOddEditableTextCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_editableCell);
+}
+
 }

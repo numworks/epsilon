@@ -5,6 +5,8 @@
 #include <escher/input_event_handler.h>
 #include <ion/unicode/code_point.h>
 
+namespace Escher {
+
 /* TODO: improve classes hierarchy to share selection handling (and some other
  * features) between EditableField and TextInput. Refactor the following classes:
  * InputEventHandler, TextInput, TextArea, EditableField, LayoutField,
@@ -18,5 +20,7 @@ public:
   virtual CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) = 0;
   virtual bool shouldFinishEditing(Ion::Events::Event event) = 0;
 };
+
+}
 
 #endif

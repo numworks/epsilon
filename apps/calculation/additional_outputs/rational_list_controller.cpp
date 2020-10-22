@@ -1,7 +1,8 @@
 #include "rational_list_controller.h"
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
-#include <poincare_nodes.h>
+#include <poincare/based_integer.h>
+#include <poincare/integer.h>
 #include <string.h>
 
 using namespace Poincare;

@@ -6,6 +6,8 @@
 #include <escher/nested_menu_controller.h>
 #include <escher/toolbox_message_tree.h>
 
+namespace Escher {
+
 class Toolbox : public NestedMenuController {
 public:
   Toolbox(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
@@ -36,4 +38,5 @@ protected:
    * and which are subtrees. */
 };
 
+}
 #endif

@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <algorithm>
 
+namespace Escher {
 /* TextInput::ContentView */
 
 void TextInput::ContentView::setFont(const KDFont * font) {
@@ -248,4 +249,6 @@ bool TextInput::selectLeftRight(bool left, bool all, int step) {
 
 bool TextInput::privateRemoveEndOfLine() {
   return contentView()->removeEndOfLine();
+}
+
 }

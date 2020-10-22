@@ -1,6 +1,8 @@
 #include <escher/gauge_view.h>
 #include <escher/palette.h>
 
+namespace Escher {
+
 const uint8_t gaugeIndicatorMask[GaugeView::k_indicatorDiameter][GaugeView::k_indicatorDiameter] = {
   {0xFF, 0xFF, 0xE1, 0x0C, 0x00, 0x00, 0x0C, 0xE1, 0xFF, 0xFF},
   {0xFF, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x45, 0xFF},
@@ -55,4 +57,6 @@ void GaugeView::drawRect(KDContext * ctx, KDRect rect) const {
 
 KDSize GaugeView::minimalSizeForOptimalDisplay() const {
   return KDSize(12*k_indicatorDiameter, k_indicatorDiameter);
+}
+
 }

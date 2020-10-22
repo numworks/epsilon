@@ -4,6 +4,8 @@ extern "C" {
 #include <assert.h>
 }
 
+namespace Escher {
+
 TabView::TabView() :
   View(),
   m_numberOfTabs(0),
@@ -98,3 +100,5 @@ void TabView::logAttributes(std::ostream &os) const {
   os << " activeTabIndex=\"" << (int)m_activeTabIndex << "\"";
 }
 #endif
+
+}

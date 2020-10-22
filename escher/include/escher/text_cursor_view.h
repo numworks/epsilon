@@ -3,6 +3,8 @@
 
 #include <escher/view.h>
 
+namespace Escher {
+
 class TextCursorView : public View {
 public:
   using View::View;
@@ -12,5 +14,5 @@ public:
   constexpr static KDCoordinate k_width = 1;
 };
 
+}
 #endif
-

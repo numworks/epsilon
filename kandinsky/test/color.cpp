@@ -1,6 +1,7 @@
 #include <quiz.h>
-#include <kandinsky.h>
 #include <assert.h>
+
+#include <kandinsky/color.h>
 
 QUIZ_CASE(kandinsky_color_rgb) {
   quiz_assert(sizeof(KDColor) == 2); // We really want KDColor to be packed

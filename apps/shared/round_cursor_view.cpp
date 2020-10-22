@@ -1,5 +1,7 @@
 #include "round_cursor_view.h"
 
+#include <kandinsky/ion_context.h>
+
 namespace Shared {
 
 void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {

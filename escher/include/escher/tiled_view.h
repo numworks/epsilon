@@ -2,6 +2,8 @@
 #define ESCHER_TILED_VIEW_H
 
 #include <escher/view.h>
+#include <kandinsky/context.h>
+#include <kandinsky/rect.h>
 
 namespace Escher {
 

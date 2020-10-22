@@ -3,6 +3,8 @@
 
 #include <escher/view.h>
 
+namespace Escher {
+
 class Window : public View {
 public:
   Window() : m_contentView(nullptr) {}
@@ -19,5 +21,7 @@ protected:
 private:
   const Window * window() const override;
 };
+
+}
 
 #endif

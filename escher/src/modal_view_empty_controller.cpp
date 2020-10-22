@@ -2,6 +2,8 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
+namespace Escher {
+
 constexpr KDColor ModalViewEmptyController::ModalViewEmptyView::k_backgroundColor;
 
 // ModalViewEmptyController::ModalViewEmptyView
@@ -78,4 +80,6 @@ void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
 
 void ModalViewEmptyController::setMessages(I18n::Message * messages) {
   static_cast<ModalViewEmptyView *>(view())->setMessages(messages);
+}
+
 }

@@ -4,6 +4,8 @@
 
 using namespace Poincare;
 
+namespace Escher {
+
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor, Poincare::Layout * selectionStart, Poincare::Layout * selectionEnd ) :
   m_layout(),
@@ -74,4 +76,6 @@ void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   if (!m_layout.isUninitialized()) {
     m_layout.draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor, m_selectionStart, m_selectionEnd, Palette::Select);
   }
+}
+
 }

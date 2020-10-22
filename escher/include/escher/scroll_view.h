@@ -5,6 +5,8 @@
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 
+namespace Escher {
+
 class ScrollView : public View {
 
 /* TODO: Should we add a reload method that forces the relayouting of the
@@ -150,4 +152,5 @@ private:
   KDColor m_backgroundColor;
 };
 
+}
 #endif

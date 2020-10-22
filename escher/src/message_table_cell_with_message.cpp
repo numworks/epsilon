@@ -2,6 +2,8 @@
 #include <escher/palette.h>
 #include <string.h>
 
+namespace Escher {
+
 MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, Layout layout) :
   MessageTableCell(message, KDFont::SmallFont, layout),
   m_accessoryView(KDFont::SmallFont, (I18n::Message)0, 0.0f, 0.5f)
@@ -36,4 +38,6 @@ void MessageTableCellWithMessage::setTextColor(KDColor color) {
 
 void MessageTableCellWithMessage::setAccessoryTextColor(KDColor color) {
   m_accessoryView.setTextColor(color);
+}
+
 }

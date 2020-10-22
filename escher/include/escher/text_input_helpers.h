@@ -4,6 +4,7 @@
 #include <escher/i18n.h>
 #include <stddef.h>
 
+namespace Escher {
 namespace TextInputHelpers {
 
 const char * CursorPositionInCommand(const char * text, const char * stoppingPosition = nullptr);
@@ -12,6 +13,7 @@ const char * CursorPositionInCommand(const char * text, const char * stoppingPos
  *   - The first EmptyChar (which is the position of the first argument)
  *   - The char after the first empty quote
  *   - The end of the text */
-}
 
+}
+}
 #endif

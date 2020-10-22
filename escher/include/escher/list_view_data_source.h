@@ -4,6 +4,8 @@
 #include <escher/table_view_data_source.h>
 #include <escher/highlight_cell.h>
 
+namespace Escher {
+
 class ListViewDataSource : public TableViewDataSource {
 public:
   virtual KDCoordinate cellWidth();
@@ -14,5 +16,7 @@ public:
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   virtual void willDisplayCellForIndex(HighlightCell * cell, int index);
 };
+
+}
 
 #endif

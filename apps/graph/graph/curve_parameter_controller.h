@@ -1,6 +1,8 @@
 #ifndef GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
+#include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_table_cell_with_switch.h>
 #include "../../shared/function_curve_parameter_controller.h"
 #include "calculation_parameter_controller.h"
 #include "banner_view.h"

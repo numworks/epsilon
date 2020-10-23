@@ -1,7 +1,6 @@
 #ifndef SHARED_STORE_PARAM_CONTROLLER_H
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
-#include <escher.h>
 #include "double_pair_store.h"
 #include <apps/i18n.h>
 

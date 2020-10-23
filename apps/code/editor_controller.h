@@ -1,7 +1,6 @@
 #ifndef CODE_EDITOR_CONTROLLER_H
 #define CODE_EDITOR_CONTROLLER_H
 
-#include <escher.h>
 #include "script.h"
 #include "editor_view.h"
 #include "variable_box_controller.h"

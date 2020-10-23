@@ -1,7 +1,6 @@
 #ifndef SOLVER_SOLUTIONS_CONTROLLER_H
 #define SOLVER_SOLUTIONS_CONTROLLER_H
 
-#include <escher.h>
 #include "equation_store.h"
 #include "../shared/scrollable_two_expressions_cell.h"
 #include <apps/i18n.h>

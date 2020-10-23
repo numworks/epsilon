@@ -7,6 +7,7 @@
 #include "cursor_view.h"
 #include <poincare/preferences.h>
 #include <poincare/coordinate_2D.h>
+#include <poincare/print_float.h>
 #include <cmath>
 
 namespace Shared {

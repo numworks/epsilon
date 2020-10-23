@@ -1,7 +1,7 @@
 #ifndef CALCULATION_EXPRESSION_FIELD_H
 #define CALCULATION_EXPRESSION_FIELD_H
 
-#include <escher.h>
+#include <escher/expression_field.h>
 
 namespace Calculation {
 

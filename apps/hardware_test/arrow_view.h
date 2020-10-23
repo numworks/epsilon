@@ -1,7 +1,7 @@
 #ifndef HARDWARE_TEST_ARROW_VIEW_H
 #define HARDWARE_TEST_ARROW_VIEW_H
 
-#include <escher.h>
+#include <escher/transparent_view.h>
 
 namespace HardwareTest {
 

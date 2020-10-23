@@ -1,7 +1,6 @@
 #ifndef PROBABILITY_PROBABILITY_APP_H
 #define PROBABILITY_PROBABILITY_APP_H
 
-#include <escher.h>
 #include "distribution_controller.h"
 #include "calculation_controller.h"
 #include "parameters_controller.h"

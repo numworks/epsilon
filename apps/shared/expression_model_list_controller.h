@@ -1,9 +1,10 @@
 #ifndef SHARED_EXPRESSION_MODEL_LIST_CONTROLLER_H
 #define SHARED_EXPRESSION_MODEL_LIST_CONTROLLER_H
 
-#include <escher.h>
-#include "expression_model_store.h"
 #include <apps/i18n.h>
+#include <escher/even_odd_message_text_cell.h>
+#include <escher/input_view_controller.h>
+#include "expression_model_store.h"
 
 namespace Shared {
 

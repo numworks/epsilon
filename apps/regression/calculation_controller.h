@@ -1,7 +1,6 @@
 #ifndef REGRESSION_CALCULATION_CONTROLLER_H
 #define REGRESSION_CALCULATION_CONTROLLER_H
 
-#include <escher.h>
 #include <poincare/preferences.h>
 #include "store.h"
 #include "column_title_cell.h"

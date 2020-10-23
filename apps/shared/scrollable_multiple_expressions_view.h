@@ -1,8 +1,12 @@
 #ifndef SHARED_SCROLLABLE_MULTIPLE_EXPRESSIONS_VIEW_H
 #define SHARED_SCROLLABLE_MULTIPLE_EXPRESSIONS_VIEW_H
 
-#include <escher.h>
 #include <apps/i18n.h>
+#include <escher/even_odd_cell.h>
+#include <escher/expression_view.h>
+#include <escher/message_text_view.h>
+#include <escher/metric.h>
+#include <escher/scrollable_view.h>
 
 namespace Shared {
 

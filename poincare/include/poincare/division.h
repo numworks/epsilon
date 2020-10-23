@@ -23,6 +23,11 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override;
+  NullStatus nullStatus(Context * context) const override {
+    // NonNull Status can't be returned because denominator could be infinite.
+    return childAtIndex(0)->nullStatus(context) == NullStatus::Null ? NullStatus::Null : NullStatus::Unknown;
+  }
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }

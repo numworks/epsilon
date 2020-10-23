@@ -5,7 +5,6 @@
 #include "../constant.h"
 #include "distribution/distribution.h"
 #include "calculation/calculation.h"
-#include <escher.h>
 #include <poincare/print_float.h>
 #include <poincare/coordinate_2D.h>
 

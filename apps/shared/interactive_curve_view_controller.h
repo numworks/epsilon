@@ -1,13 +1,15 @@
 #ifndef SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 #define SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 
+#include <escher/alternate_empty_view_delegate.h>
+#include <escher/button_row_controller.h>
+#include <escher/button_state.h>
+#include <poincare/coordinate_2D.h>
 #include "simple_interactive_curve_view_controller.h"
 #include "cursor_view.h"
 #include "ok_view.h"
 #include "range_parameter_controller.h"
 #include "function_zoom_and_pan_curve_view_controller.h"
-#include <poincare/coordinate_2D.h>
-#include <escher/button_state.h>
 
 namespace Shared {
 

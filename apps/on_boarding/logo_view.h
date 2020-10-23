@@ -1,8 +1,6 @@
 #ifndef APPS_LOGO_VIEW_H
 #define APPS_LOGO_VIEW_H
 
-#include <escher.h>
-
 namespace OnBoarding {
 
 class LogoView : public Escher::View {

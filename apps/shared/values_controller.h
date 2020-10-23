@@ -1,7 +1,6 @@
 #ifndef SHARED_VALUES_CONTROLLER_H
 #define SHARED_VALUES_CONTROLLER_H
 
-#include <escher.h>
 #include "function_store.h"
 #include "function_title_cell.h"
 #include "editable_cell_table_view_controller.h"
@@ -10,6 +9,9 @@
 #include "values_function_parameter_controller.h"
 #include "interval_parameter_controller.h"
 #include <apps/i18n.h>
+#include <escher/even_odd_buffer_text_cell.h>
+#include <escher/even_odd_editable_text_cell.h>
+#include <escher/even_odd_message_text_cell.h>
 
 namespace Shared {
 

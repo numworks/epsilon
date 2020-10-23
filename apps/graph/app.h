@@ -1,7 +1,6 @@
 #ifndef GRAPH_APP_H
 #define GRAPH_APP_H
 
-#include <escher.h>
 #include "continuous_function_store.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"

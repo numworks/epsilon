@@ -1,7 +1,9 @@
 #ifndef APPS_BATTERY_VIEW_H
 #define APPS_BATTERY_VIEW_H
 
-#include <escher.h>
+#include <escher/metric.h>
+#include <escher/transparent_view.h>
+#include <ion.h>
 
 class BatteryView : public Escher::TransparentView {
 public:

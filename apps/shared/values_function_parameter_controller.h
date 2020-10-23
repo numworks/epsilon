@@ -1,7 +1,6 @@
 #ifndef SHARED_VALUES_FUNCTION_PARAM_CONTROLLER_H
 #define SHARED_VALUES_FUNCTION_PARAM_CONTROLLER_H
 
-#include <escher.h>
 #include "function.h"
 #include <apps/i18n.h>
 

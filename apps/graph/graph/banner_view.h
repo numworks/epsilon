@@ -1,6 +1,7 @@
 #ifndef GRAPH_BANNER_VIEW_H
 #define GRAPH_BANNER_VIEW_H
 
+#include <escher/message_text_view.h>
 #include "../../shared/xy_banner_view.h"
 
 namespace Graph {

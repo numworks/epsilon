@@ -1,7 +1,8 @@
 #ifndef SHARED_BANNER_VIEW_H
 #define SHARED_BANNER_VIEW_H
 
-#include <escher.h>
+#include <escher/view.h>
+#include <escher/palette.h>
 
 namespace Shared {
 

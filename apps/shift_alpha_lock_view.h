@@ -1,8 +1,8 @@
 #ifndef APPS_SHIFT_ALPHA_LOCK_VIEW_H
 #define APPS_SHIFT_ALPHA_LOCK_VIEW_H
 
-#include <escher.h>
 #include "lock_view.h"
+#include <escher/message_text_view.h>
 #include <apps/i18n.h>
 
 class ShiftAlphaLockView : public Escher::View {

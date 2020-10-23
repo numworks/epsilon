@@ -1,7 +1,9 @@
 #ifndef ESCHER_POP_UP_CONTROLLER_H
 #define ESCHER_POP_UP_CONTROLLER_H
 
+#include <escher/button.h>
 #include <escher/invocation.h>
+#include <escher/view_controller.h>
 #include <apps/i18n.h>
 
 namespace Escher {

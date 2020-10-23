@@ -1,7 +1,6 @@
 #ifndef PROBABILITY_DISTRIBUTION_CONTROLLER_H
 #define PROBABILITY_DISTRIBUTION_CONTROLLER_H
 
-#include <escher.h>
 #include "cell.h"
 #include "distribution/distribution.h"
 #include "parameters_controller.h"

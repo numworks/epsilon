@@ -1,7 +1,6 @@
 #ifndef SOLVER_LIST_CONTROLLER_H
 #define SOLVER_LIST_CONTROLLER_H
 
-#include <escher.h>
 #include "../shared/expression_model_list_controller.h"
 #include "../shared/layout_field_delegate.h"
 #include "../shared/text_field_delegate.h"

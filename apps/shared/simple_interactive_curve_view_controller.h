@@ -11,9 +11,9 @@ namespace Shared {
 
 class SimpleInteractiveCurveViewController : public ZoomCurveViewController, public TextFieldDelegate {
 public:
-  SimpleInteractiveCurveViewController(Responder * parentResponder, CurveViewCursor * cursor) : ZoomCurveViewController(parentResponder), m_cursor(cursor) {}
+  SimpleInteractiveCurveViewController(Escher::Responder * parentResponder, CurveViewCursor * cursor) : ZoomCurveViewController(parentResponder), m_cursor(cursor) {}
   bool handleEvent(Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
 protected:
   virtual float cursorRightMarginRatio() { return 0.04f; } // (cursorWidth/2)/(graphViewWidth-1)
   virtual float cursorLeftMarginRatio() { return 0.04f; }  // (cursorWidth/2)/(graphViewWidth-1)

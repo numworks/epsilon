@@ -3,6 +3,8 @@
 
 #include <escher.h>
 
+namespace Shared {
+
 class MessageView : public Escher::View {
 public:
   MessageView(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
@@ -19,5 +21,5 @@ private:
   uint8_t m_numberOfMessages;
 };
 
+}
 #endif
-

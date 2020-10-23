@@ -28,6 +28,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Constant; }
   Sign sign(Context * context) const override;
+  NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

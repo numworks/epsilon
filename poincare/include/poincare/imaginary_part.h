@@ -19,8 +19,8 @@ public:
 #endif
 
   // Properties
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->sign(context) != Sign::Unknown ? NullStatus::Null : NullStatus::Unknown; }
   Type type() const override { return Type::ImaginaryPart; }
-
 
 private:
   // Layout

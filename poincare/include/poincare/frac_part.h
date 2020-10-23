@@ -19,9 +19,8 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override { return Sign::Positive; }
   Type type() const override { return Type::FracPart; }
-
-
 
 private:
   // Layout

@@ -19,6 +19,15 @@
 
 namespace Poincare {
 
+ExpressionNode::NullStatus ComplexCartesianNode::nullStatus(Context * context) const {
+  ExpressionNode::NullStatus realNullStatus = childAtIndex(0)->nullStatus(context);
+  ExpressionNode::NullStatus imagNullStatus = childAtIndex(1)->nullStatus(context);
+  if (realNullStatus == ExpressionNode::NullStatus::NonNull || imagNullStatus == ExpressionNode::NullStatus::NonNull) {
+    return ExpressionNode::NullStatus::NonNull;
+  }
+  return (realNullStatus == ExpressionNode::NullStatus::Null && imagNullStatus == ExpressionNode::NullStatus::Null) ? ExpressionNode::NullStatus::Null : ExpressionNode::NullStatus::Unknown;
+}
+
 Expression ComplexCartesianNode::shallowReduce(ReductionContext reductionContext) {
   return ComplexCartesian(this).shallowReduce();
 }

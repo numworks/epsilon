@@ -15,10 +15,6 @@ constexpr Expression::FunctionHelper SignFunction::s_functionHelper;
 
 int SignFunctionNode::numberOfChildren() const { return SignFunction::s_functionHelper.numberOfChildren(); }
 
-ExpressionNode::Sign SignFunctionNode::sign(Context * context) const {
-  return childAtIndex(0)->sign(context);
-}
-
 Expression SignFunctionNode::setSign(Sign s, ReductionContext reductionContext) {
  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   SignFunction sign(this);

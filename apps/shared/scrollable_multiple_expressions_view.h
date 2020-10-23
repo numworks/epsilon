@@ -6,9 +6,9 @@
 
 namespace Shared {
 
-class AbstractScrollableMultipleExpressionsView : public ScrollableView, public ScrollViewDataSource {
+class AbstractScrollableMultipleExpressionsView : public Escher::ScrollableView, public Escher::ScrollViewDataSource {
 public:
-  constexpr static KDCoordinate k_horizontalMargin = Metric::CommonLargeMargin;
+  constexpr static KDCoordinate k_horizontalMargin = Escher::Metric::CommonLargeMargin;
   enum class SubviewPosition : uint8_t {
     Left = 0,
     Center = 1,
@@ -20,7 +20,7 @@ public:
   }
 
   AbstractScrollableMultipleExpressionsView(Responder * parentResponder, View * contentCell);
-  ::EvenOddCell * evenOddCell() {
+  Escher::EvenOddCell * evenOddCell() {
     return contentCell();
   }
   void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerlayout, Poincare::Layout rightLayout);
@@ -39,7 +39,7 @@ public:
   Poincare::Layout layout() const { return constContentCell()->layout(); }
   KDCoordinate baseline() const { return constContentCell()->baseline(); }
 protected:
-  class ContentCell : public ::EvenOddCell {
+  class ContentCell : public Escher::EvenOddCell {
   public:
     static KDCoordinate StandardApproximateViewAndMarginsSize();
     ContentCell();
@@ -49,14 +49,14 @@ protected:
     void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
     KDSize minimalSizeForOptimalDisplayFullSize() const;
-    virtual ExpressionView * leftExpressionView() const { return nullptr; }
-    ExpressionView * rightExpressionView() {
+    virtual Escher::ExpressionView * leftExpressionView() const { return nullptr; }
+    Escher::ExpressionView * rightExpressionView() {
       return &m_rightExpressionView;
     }
-    ExpressionView * centeredExpressionView() {
+    Escher::ExpressionView * centeredExpressionView() {
       return &m_centeredExpressionView;
     }
-    MessageTextView * approximateSign() {
+    Escher::MessageTextView * approximateSign() {
       return &m_approximateSign;
     }
     SubviewPosition selectedSubviewPosition() const {
@@ -77,9 +77,9 @@ protected:
     const static I18n::Message k_defaultApproximateMessage = I18n::Message::AlmostEqual;
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View * subviewAtIndex(int index) override;
-    ExpressionView m_rightExpressionView;
-    MessageTextView m_approximateSign;
-    ExpressionView m_centeredExpressionView;
+    Escher::ExpressionView m_rightExpressionView;
+    Escher::MessageTextView m_approximateSign;
+    Escher::ExpressionView m_centeredExpressionView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
     bool m_displayableCenter;
@@ -90,12 +90,12 @@ protected:
 
 class ScrollableTwoExpressionsView : public AbstractScrollableMultipleExpressionsView {
 public:
-  ScrollableTwoExpressionsView(Responder * parentResponder) : AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell) {
+  ScrollableTwoExpressionsView(Escher::Responder * parentResponder) : AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell) {
     setMargins(
-        Metric::CommonSmallMargin,
-        Metric::CommonLargeMargin,
-        Metric::CommonSmallMargin,
-        Metric::CommonLargeMargin
+        Escher::Metric::CommonSmallMargin,
+        Escher::Metric::CommonLargeMargin,
+        Escher::Metric::CommonSmallMargin,
+        Escher::Metric::CommonLargeMargin
     );
   }
   KDSize minimalSizeForOptimalDisplayFullSize() const {

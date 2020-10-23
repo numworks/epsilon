@@ -1,6 +1,8 @@
 #include "go_to_parameter_controller.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :

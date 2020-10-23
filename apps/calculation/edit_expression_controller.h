@@ -1,7 +1,6 @@
 #ifndef CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
-#include <escher.h>
 #include <poincare/layout.h>
 #include "expression_field.h"
 #include "../shared/text_field_delegate.h"

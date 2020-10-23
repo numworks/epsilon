@@ -1,7 +1,6 @@
 #ifndef REGRESSION_STORE_CONTROLLER_H
 #define REGRESSION_STORE_CONTROLLER_H
 
-#include <escher.h>
 #include "store.h"
 #include "regression_context.h"
 #include "store_parameter_controller.h"

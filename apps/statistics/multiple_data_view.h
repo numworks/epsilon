@@ -1,7 +1,6 @@
 #ifndef STATISTICS_MULTIPLE_DATA_VIEW_H
 #define STATISTICS_MULTIPLE_DATA_VIEW_H
 
-#include <escher.h>
 #include "store.h"
 #include "../shared/banner_view.h"
 #include "../shared/curve_view.h"

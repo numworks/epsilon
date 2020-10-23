@@ -2,6 +2,8 @@
 #define APPS_GLOBAL_PREFERENCES_H
 
 #include <apps/i18n.h>
+#include <kandinsky.h>
+#include <ion.h>
 
 class GlobalPreferences {
 public:

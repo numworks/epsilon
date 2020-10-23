@@ -1,7 +1,6 @@
 #ifndef STATISTICS_HISTOGRAM_VIEW_H
 #define STATISTICS_HISTOGRAM_VIEW_H
 
-#include <escher.h>
 #include <poincare/print_float.h>
 #include "store.h"
 #include "../constant.h"

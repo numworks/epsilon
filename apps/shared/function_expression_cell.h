@@ -1,7 +1,8 @@
 #ifndef SHARED_FUNCTION_EXPRESSION_CELL_H
 #define SHARED_FUNCTION_EXPRESSION_CELL_H
 
-#include <escher.h>
+#include <escher/even_odd_expression_cell.h>
+#include <escher/message_table_cell_with_switch.h>
 
 namespace Shared {
 

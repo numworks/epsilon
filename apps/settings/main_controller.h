@@ -1,7 +1,6 @@
 #ifndef SETTINGS_MAIN_CONTROLLER_H
 #define SETTINGS_MAIN_CONTROLLER_H
 
-#include <escher.h>
 #include <apps/shared/settings_message_tree.h>
 #include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"

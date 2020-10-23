@@ -1,10 +1,11 @@
 #ifndef APPS_TITLE_BAR_VIEW_H
 #define APPS_TITLE_BAR_VIEW_H
 
-#include <escher.h>
+#include <apps/i18n.h>
+#include <escher/buffer_text_view.h>
+#include <escher/image_view.h>
 #include "battery_view.h"
 #include "shift_alpha_lock_view.h"
-#include <apps/i18n.h>
 
 class TitleBarView : public Escher::View {
 public:

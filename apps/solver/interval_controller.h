@@ -1,7 +1,6 @@
 #ifndef SOLVER_INTERVAL_CONTROLLER_H
 #define SOLVER_INTERVAL_CONTROLLER_H
 
-#include <escher.h>
 #include "equation_store.h"
 #include "../shared/float_parameter_controller.h"
 

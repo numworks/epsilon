@@ -1,8 +1,8 @@
 #ifndef SHARED_RANGE_PARAMETER_CONTROLLER_H
 #define SHARED_RANGE_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
 #include "interactive_curve_view_range.h"
+#include <escher/message_table_cell_with_editable_text.h>
 #include "float_parameter_controller.h"
 #include "discard_pop_up_controller.h"
 

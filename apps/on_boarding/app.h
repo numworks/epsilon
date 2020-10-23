@@ -1,7 +1,6 @@
 #ifndef ON_BOARDING_APP_H
 #define ON_BOARDING_APP_H
 
-#include <escher.h>
 #include "logo_controller.h"
 #include "localization_controller.h"
 #include "../shared/shared_app.h"

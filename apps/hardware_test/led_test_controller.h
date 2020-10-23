@@ -1,7 +1,6 @@
 #ifndef HARDWARE_TEST_LED_TEST_CONTROLLER_H
 #define HARDWARE_TEST_LED_TEST_CONTROLLER_H
 
-#include <escher.h>
 #include "arrow_view.h"
 
 namespace HardwareTest {

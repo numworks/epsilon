@@ -1,7 +1,6 @@
 #ifndef PROBABILITY_RESPONDER_IMAGE_CELL_H
 #define PROBABILITY_RESPONDER_IMAGE_CELL_H
 
-#include <escher.h>
 #include "calculation/calculation.h"
 #include "calculation_type_controller.h"
 #include "image_cell.h"

@@ -1,5 +1,4 @@
 #include "expression_field_delegate_app.h"
-#include <escher.h>
 #include <apps/i18n.h>
 #include <poincare/expression.h>
 

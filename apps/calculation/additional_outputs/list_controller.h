@@ -1,8 +1,13 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_LIST_CONTROLLER_H
 
-#include <escher.h>
 #include <apps/i18n.h>
+#include <escher/expression_table_cell_with_pointer.h>
+#include <escher/list_view_data_source.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/selectable_table_view_delegate.h>
+#include <escher/stack_view_controller.h>
 
 namespace Calculation {
 

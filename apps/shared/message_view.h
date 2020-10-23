@@ -1,8 +1,6 @@
 #ifndef SHARED_MESSAGE_VIEW_H
 #define SHARED_MESSAGE_VIEW_H
 
-#include <escher.h>
-
 namespace Shared {
 
 class MessageView : public Escher::View {

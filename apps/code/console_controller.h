@@ -1,9 +1,7 @@
 #ifndef CODE_CONSOLE_CONTROLLER_H
 #define CODE_CONSOLE_CONTROLLER_H
 
-#include <escher.h>
 #include <python/port/port.h>
-
 #include "console_edit_cell.h"
 #include "console_line_cell.h"
 #include "console_store.h"

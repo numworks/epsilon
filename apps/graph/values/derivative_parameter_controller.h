@@ -1,7 +1,6 @@
 #ifndef GRAPH_DERIVATIVE_PARAM_CONTROLLER_H
 #define GRAPH_DERIVATIVE_PARAM_CONTROLLER_H
 
-#include <escher.h>
 #include "../continuous_function_store.h"
 
 namespace Graph {

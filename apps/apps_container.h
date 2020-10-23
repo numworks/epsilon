@@ -17,7 +17,7 @@
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
 #include "on_boarding/prompt_controller.h"
-
+#include <escher/container.h>
 #include <ion/events.h>
 
 class AppsContainer : public Escher::Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {

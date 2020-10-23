@@ -1,8 +1,9 @@
 #ifndef SHARED_FUNCTION_CURVE_PARAMETER_CONTROLLER_H
 #define SHARED_FUNCTION_CURVE_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
 #include "function_go_to_parameter_controller.h"
+#include <escher/message_table_cell_with_chevron.h>
+#include <escher/simple_list_view_data_source.h>
 
 namespace Shared {
 

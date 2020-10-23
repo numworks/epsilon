@@ -1,7 +1,6 @@
 #ifndef CODE_APP_H
 #define CODE_APP_H
 
-#include <escher.h>
 #include <ion/events.h>
 #include "../shared/input_event_handler_delegate_app.h"
 #include "console_controller.h"

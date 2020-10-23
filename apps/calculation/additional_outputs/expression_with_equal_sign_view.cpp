@@ -1,4 +1,5 @@
 #include "expression_with_equal_sign_view.h"
+#include <escher/metric.h>
 
 using namespace Escher;
 

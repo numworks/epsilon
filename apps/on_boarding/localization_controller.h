@@ -1,7 +1,6 @@
 #ifndef ON_BOARDING_LOCALIZATION_CONTROLLER_H
 #define ON_BOARDING_LOCALIZATION_CONTROLLER_H
 
-#include <escher.h>
 #include <apps/shared/localization_controller.h>
 
 namespace OnBoarding {

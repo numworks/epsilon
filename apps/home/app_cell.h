@@ -1,7 +1,8 @@
 #ifndef HOME_APP_CELL_H
 #define HOME_APP_CELL_H
 
-#include <escher.h>
+#include <escher/highlight_cell.h>
+#include <escher/image_view.h>
 
 namespace Home {
 

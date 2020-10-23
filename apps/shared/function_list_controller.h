@@ -1,12 +1,12 @@
 #ifndef SHARED_FUNCTION_LIST_CONTROLLER_H
 #define SHARED_FUNCTION_LIST_CONTROLLER_H
 
-#include <escher.h>
+#include <apps/i18n.h>
+#include <escher/tab_view_controller.h>
 #include "function_store.h"
 #include "function_title_cell.h"
 #include "list_parameter_controller.h"
 #include "expression_model_list_controller.h"
-#include <apps/i18n.h>
 
 namespace Shared {
 

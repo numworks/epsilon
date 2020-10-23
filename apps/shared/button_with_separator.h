@@ -1,7 +1,7 @@
 #ifndef SHARED_BUTTON_WITH_SEPARATOR_H
 #define SHARED_BUTTON_WITH_SEPARATOR_H
 
-#include <escher.h>
+#include <escher/button.h>
 
 namespace Shared {
 

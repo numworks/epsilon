@@ -2,7 +2,6 @@
 #define REGRESSION_REGRESSION_CONTROLLER_H
 
 #include "store.h"
-#include <escher.h>
 #include <apps/i18n.h>
 
 namespace Regression {

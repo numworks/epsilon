@@ -1,7 +1,6 @@
 #ifndef SEQUENCE_LIST_CONTROLLER_H
 #define SEQUENCE_LIST_CONTROLLER_H
 
-#include <escher.h>
 #include "../../shared/sequence_title_cell.h"
 #include "../../shared/sequence_store.h"
 #include "../../shared/function_expression_cell.h"

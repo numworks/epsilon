@@ -1,7 +1,6 @@
 #ifndef SHARED_FUNCTION_GRAPH_VIEW_H
 #define SHARED_FUNCTION_GRAPH_VIEW_H
 
-#include <escher.h>
 #include "labeled_curve_view.h"
 #include "function.h"
 #include "../constant.h"

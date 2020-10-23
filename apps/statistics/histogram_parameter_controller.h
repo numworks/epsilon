@@ -1,7 +1,6 @@
 #ifndef STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
 #define STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
 #include "../shared/float_parameter_controller.h"
 #include "../shared/discard_pop_up_controller.h"
 #include "store.h"

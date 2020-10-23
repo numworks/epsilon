@@ -1,7 +1,6 @@
 #ifndef SHARED_FUNCTION_GRAPH_CONTROLLER_H
 #define SHARED_FUNCTION_GRAPH_CONTROLLER_H
 
-#include <escher.h>
 #include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
 #include "function_store.h"

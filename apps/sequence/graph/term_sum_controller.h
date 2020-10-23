@@ -1,7 +1,6 @@
 #ifndef SEQUENCE_TERM_SUM_CONTROLLER_H
 #define SEQUENCE_TERM_SUM_CONTROLLER_H
 
-#include <escher.h>
 #include <poincare/layout.h>
 #include "graph_view.h"
 #include "curve_view_range.h"

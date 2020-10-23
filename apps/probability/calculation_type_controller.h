@@ -1,7 +1,6 @@
 #ifndef PROBABILITY_CALCULATION_TYPE_CONTROLLER_H
 #define PROBABILITY_CALCULATION_TYPE_CONTROLLER_H
 
-#include <escher.h>
 #include "calculation/calculation.h"
 #include "distribution/distribution.h"
 #include "image_cell.h"

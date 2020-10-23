@@ -1,7 +1,6 @@
 #ifndef GRAPH_LIST_CONTROLLER_H
 #define GRAPH_LIST_CONTROLLER_H
 
-#include <escher.h>
 #include "list_parameter_controller.h"
 #include "text_field_function_title_cell.h"
 #include "../continuous_function_store.h"

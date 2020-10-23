@@ -2,6 +2,9 @@
 #define SHARED_XY_BANNER_VIEW_H
 
 #include "banner_view.h"
+#include <escher/buffer_text_view.h>
+#include <escher/responder.h>
+#include <escher/text_field.h>
 #include <poincare/print_float.h>
 
 namespace Shared {

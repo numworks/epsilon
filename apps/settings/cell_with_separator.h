@@ -1,8 +1,6 @@
 #ifndef SETTINGS_CELL_WITH_SEPARATOR_H
 #define SETTINGS_CELL_WITH_SEPARATOR_H
 
-#include <escher.h>
-
 namespace Settings {
 
 class CellWithSeparator : public HighlightCell {

@@ -1,7 +1,6 @@
 #ifndef HARDWARE_TEST_KEYBOARD_CONTROLLER_H
 #define HARDWARE_TEST_KEYBOARD_CONTROLLER_H
 
-#include <escher.h>
 #include "keyboard_view.h"
 
 namespace HardwareTest {

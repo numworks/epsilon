@@ -1,7 +1,6 @@
 #ifndef GRAPH_INTEGRAL_GRAPH_CONTROLLER_H
 #define GRAPH_INTEGRAL_GRAPH_CONTROLLER_H
 
-#include <escher.h>
 #include "graph_view.h"
 #include "../../shared/sum_graph_controller.h"
 

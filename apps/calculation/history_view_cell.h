@@ -1,9 +1,10 @@
 #ifndef CALCULATION_HISTORY_VIEW_CELL_H
 #define CALCULATION_HISTORY_VIEW_CELL_H
 
-#include <escher.h>
 #include "calculation.h"
 #include "../shared/scrollable_multiple_expressions_view.h"
+#include <escher/scrollable_expression_view.h>
+#include <escher/even_odd_cell_with_ellipsis.h>
 
 namespace Calculation {
 

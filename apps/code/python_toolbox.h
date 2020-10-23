@@ -2,7 +2,8 @@
 #define CODE_PYTHON_TOOLBOX_H
 
 #include <apps/i18n.h>
-#include <escher.h>
+#include <escher/container.h>
+#include <escher/toolbox.h>
 #include <ion/events.h>
 #include <kandinsky/font.h>
 

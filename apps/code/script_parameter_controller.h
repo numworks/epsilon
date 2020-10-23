@@ -1,8 +1,13 @@
 #ifndef CODE_SCRIPT_PARAMETER_CONTROLLER_H
 #define CODE_SCRIPT_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
 #include <apps/i18n.h>
+#include <escher/message_table_cell.h>
+#include <escher/message_table_cell_with_switch.h>
+#include <escher/stack_view_controller.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include "script_store.h"
 
 namespace Code {

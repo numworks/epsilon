@@ -1,7 +1,7 @@
 #ifndef APPS_WINDOW_H
 #define APPS_WINDOW_H
 
-#include <escher.h>
+#include <escher/window.h>
 #include "title_bar_view.h"
 
 class AppsWindow : public Escher::Window {

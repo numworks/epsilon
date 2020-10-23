@@ -1,7 +1,7 @@
 #ifndef SHARED_SUM_GRAPH_CONTROLLER_H
 #define SHARED_SUM_GRAPH_CONTROLLER_H
 
-#include <escher.h>
+#include <escher/expression_view.h>
 #include <poincare/print_float.h>
 #include "function_graph_view.h"
 #include "vertical_cursor_view.h"

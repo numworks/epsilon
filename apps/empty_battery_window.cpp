@@ -1,5 +1,6 @@
 #include "empty_battery_window.h"
 #include <apps/i18n.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }

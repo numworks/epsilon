@@ -10,15 +10,15 @@ namespace Shared {
 
 class RangeParameterController : public FloatParameterController<float> {
 public:
-  RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange);
+  RangeParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange);
   const char * title() override;
   int numberOfRows() const override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRange(InteractiveCurveViewRange * range);
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Range");
 private:
-  HighlightCell * reusableParameterCell(int index, int type) override;
+  Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
@@ -26,7 +26,7 @@ private:
   constexpr static int k_numberOfTextCell = 4;
   InteractiveCurveViewRange * m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
-  MessageTableCellWithEditableText m_rangeCells[k_numberOfTextCell];
+  Escher::MessageTableCellWithEditableText m_rangeCells[k_numberOfTextCell];
   DiscardPopUpController m_confirmPopUpController;
 };
 

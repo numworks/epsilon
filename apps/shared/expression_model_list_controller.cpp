@@ -3,6 +3,8 @@
 #include <poincare/symbol.h>
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Shared {
 
 /* Table Data Source */

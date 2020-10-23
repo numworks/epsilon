@@ -3,6 +3,8 @@
 #include "function_expression_cell.h"
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Shared {
 
 constexpr KDCoordinate FunctionListController::k_minTitleColumnWidth;

@@ -4,6 +4,8 @@
 #include <cmath>
 #include <ion/display.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :

@@ -5,17 +5,17 @@
 
 namespace Shared {
 
-class LayoutFieldDelegate : public ::LayoutFieldDelegate {
+class LayoutFieldDelegate : public Escher::LayoutFieldDelegate {
 public:
-  bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
-  bool layoutFieldDidAbortEditing(LayoutField * layoutField) override;
-  void layoutFieldDidChangeSize(LayoutField * layoutField) override;
+  bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
+  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
+  void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
   Poincare::Context * context() const override { return expressionFieldDelegateApp()->localContext(); }
 protected:
   ExpressionFieldDelegateApp * expressionFieldDelegateApp() const {
-    return static_cast<ExpressionFieldDelegateApp *>(Container::activeApp());
+    return static_cast<ExpressionFieldDelegateApp *>(Escher::Container::activeApp());
   }
 };
 

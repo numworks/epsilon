@@ -7,10 +7,10 @@
 
 namespace Shared {
 
-class HideableEvenOddBufferTextCell : public EvenOddBufferTextCell, public Hideable {
+class HideableEvenOddBufferTextCell : public Escher::EvenOddBufferTextCell, public Hideable {
 public:
   HideableEvenOddBufferTextCell() :
-    EvenOddBufferTextCell(),
+    Escher::EvenOddBufferTextCell(),
     Hideable()
   {}
   KDColor backgroundColor() const override;

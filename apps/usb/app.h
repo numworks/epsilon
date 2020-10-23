@@ -7,16 +7,16 @@
 
 namespace USB {
 
-class App : public ::App {
+class App : public Escher::App {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
   };
-  class Snapshot : public ::SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     Descriptor * descriptor() override;
   };
   bool processEvent(Ion::Events::Event) override;

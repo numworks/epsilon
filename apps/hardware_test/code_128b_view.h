@@ -5,7 +5,7 @@
 
 namespace HardwareTest {
 
-class Code128BView : public View {
+class Code128BView : public Escher::View {
 public:
   Code128BView();
   void drawRect(KDContext * ctx, KDRect rect) const override;

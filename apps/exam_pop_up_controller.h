@@ -5,7 +5,7 @@
 #include "exam_pop_up_controller_delegate.h"
 #include "global_preferences.h"
 
-class ExamPopUpController : public PopUpController {
+class ExamPopUpController : public Escher::PopUpController {
 public:
   ExamPopUpController(ExamPopUpControllerDelegate * delegate);
   void setTargetExamMode(GlobalPreferences::ExamMode mode);

@@ -6,10 +6,10 @@
 
 namespace USB {
 
-class USBConnectedController : public ViewController {
+class USBConnectedController : public Escher::ViewController {
 public:
   USBConnectedController();
-  View * view() override { return &m_messageView; }
+  Escher::View * view() override { return &m_messageView; }
   bool handleEvent(Ion::Events::Event event) override { return false; }
 private:
   MessageView m_messageView;

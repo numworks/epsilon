@@ -1,5 +1,7 @@
 #include "discard_pop_up_controller.h"
 
+using namespace Escher;
+
 namespace Shared {
 
 DiscardPopUpController::DiscardPopUpController(Invocation OkInvocation) :

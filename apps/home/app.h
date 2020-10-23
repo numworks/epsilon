@@ -7,23 +7,23 @@
 
 namespace Home {
 
-class App : public ::App {
+class App : public Escher::App {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
   };
-  class Snapshot : public ::SharedApp::Snapshot, public SelectableTableViewDataSource {
+  class Snapshot : public Shared::SharedApp::Snapshot, public Escher::SelectableTableViewDataSource {
   public:
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     Descriptor * descriptor() override;
   };
   static App * app() {
-    return static_cast<App *>(Container::activeApp());
+    return static_cast<App *>(Escher::Container::activeApp());
   }
   Snapshot * snapshot() const {
-    return static_cast<Snapshot *>(::App::snapshot());
+    return static_cast<Snapshot *>(Escher::App::snapshot());
   }
   TELEMETRY_ID("Home");
 private:

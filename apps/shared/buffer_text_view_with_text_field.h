@@ -4,11 +4,11 @@
 
 namespace Shared {
 
-class BufferTextViewWithTextField : public View, public Responder {
+class BufferTextViewWithTextField : public Escher::View, public Escher::Responder {
 public:
-  BufferTextViewWithTextField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont);
+  BufferTextViewWithTextField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont);
   KDSize minimalSizeForOptimalDisplay() const override;
-  TextField * textField() { return &m_textField; }
+  Escher::TextField * textField() { return &m_textField; }
   void setBufferText(const char * text);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
@@ -22,8 +22,8 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   KDRect textFieldFrame() const;
-  BufferTextView m_bufferTextView;
-  TextField m_textField;
+  Escher::BufferTextView m_bufferTextView;
+  Escher::TextField m_textField;
 };
 
 }

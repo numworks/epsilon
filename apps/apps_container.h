@@ -20,24 +20,24 @@
 
 #include <ion/events.h>
 
-class AppsContainer : public Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {
+class AppsContainer : public Escher::Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {
 public:
   static AppsContainer * sharedAppsContainer();
   AppsContainer();
   static bool poincareCircuitBreaker();
   virtual int numberOfApps() = 0;
-  virtual App::Snapshot * appSnapshotAtIndex(int index) = 0;
-  App::Snapshot * initialAppSnapshot();
-  App::Snapshot * hardwareTestAppSnapshot();
-  App::Snapshot * onBoardingAppSnapshot();
-  App::Snapshot * usbConnectedAppSnapshot();
+  virtual Escher::App::Snapshot * appSnapshotAtIndex(int index) = 0;
+  Escher::App::Snapshot * initialAppSnapshot();
+  Escher::App::Snapshot * hardwareTestAppSnapshot();
+  Escher::App::Snapshot * onBoardingAppSnapshot();
+  Escher::App::Snapshot * usbConnectedAppSnapshot();
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   MathVariableBoxController * variableBoxController();
   void suspend(bool checkIfOnOffKeyReleased = false);
   bool dispatchEvent(Ion::Events::Event event) override;
-  bool switchTo(App::Snapshot * snapshot) override;
+  bool switchTo(Escher::App::Snapshot * snapshot) override;
   void run() override;
   bool updateBatteryState();
   void refreshPreferences();
@@ -56,9 +56,9 @@ public:
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:
-  Window * window() override;
+  Escher::Window * window() override;
   int numberOfContainerTimers() override;
-  Timer * containerTimerAtIndex(int i) override;
+  Escher::Timer * containerTimerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();

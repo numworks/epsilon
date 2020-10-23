@@ -11,7 +11,7 @@
 
 namespace Shared {
 
-class CurveView : public View {
+class CurveView : public Escher::View {
 public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
@@ -27,7 +27,7 @@ public:
       CurveViewCursor * curveViewCursor = nullptr,
       BannerView * bannerView = nullptr,
       CursorView * cursorView = nullptr,
-      View * okView = nullptr,
+      Escher::View * okView = nullptr,
       bool displayBanner = true);
   virtual void reload();
   // When the main view is selected, the banner view is visible
@@ -36,8 +36,8 @@ public:
   CursorView * cursorView() { return m_cursorView; }
   void setCursorView(Shared::CursorView * cursorView);
   View * bannerView() { return m_bannerView; }
-  void setBannerView(View * bannerView);
-  void setOkView(View * okView);
+  void setBannerView(Escher::View * bannerView);
+  void setOkView(Escher::View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float pixelWidth() const;
   float pixelHeight() const;
@@ -123,7 +123,7 @@ protected:
   // Draw the label at the above/below and to the left/right of the given position
   void drawLabel(KDContext * ctx, KDRect rect, float xPosition, float yPosition, const char * label, KDColor color, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
   void drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
-  View * m_bannerView;
+  Escher::View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
@@ -152,7 +152,7 @@ private:
   KDRect bannerFrame();
   KDRect okFrame();
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and
    * cursor views may be nullptr if not needed. */
   void computeHorizontalExtremaLabels(bool increaseNumberOfSignificantDigits = false);
@@ -160,7 +160,7 @@ private:
   bool bannerIsVisible() const;
   CurveViewRange * m_curveViewRange;
   CursorView * m_cursorView;
-  View * m_okView;
+  Escher::View * m_okView;
   bool m_forceOkDisplay;
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;

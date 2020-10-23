@@ -5,7 +5,7 @@
 
 namespace HardwareTest {
 
-class ArrowView : public TransparentView {
+class ArrowView : public Escher::TransparentView {
 public:
   ArrowView();
   void drawRect(KDContext * ctx, KDRect rect) const override;

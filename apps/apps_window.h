@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "title_bar_view.h"
 
-class AppsWindow : public Window {
+class AppsWindow : public Escher::Window {
 public:
   AppsWindow();
   void setTitle(I18n::Message title);
@@ -18,7 +18,7 @@ public:
 private:
   int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   TitleBarView m_titleBarView;
   bool m_hideTitleBarView;
 };

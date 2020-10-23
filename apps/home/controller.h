@@ -6,11 +6,11 @@
 
 namespace Home {
 
-class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
+class Controller : public Escher::ViewController, public Escher::SimpleTableViewDataSource, public Escher::SelectableTableViewDelegate {
 public:
-  Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource);
+  Controller(Escher::Responder * parentResponder, Escher::SelectableTableViewDataSource * selectionDataSource);
 
-  View * view() override;
+  Escher::View * view() override;
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -20,25 +20,25 @@ public:
   int numberOfColumns() const override;
   KDCoordinate cellHeight() override;
   KDCoordinate cellWidth() override;
-  HighlightCell * reusableCell(int index) override;
+  Escher::HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
-  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   int numberOfIcons() const;
-  SelectableTableViewDataSource * selectionDataSource() const;
-  class ContentView : public View {
+  Escher::SelectableTableViewDataSource * selectionDataSource() const;
+  class ContentView : public Escher::View {
   public:
-    ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource);
-    SelectableTableView * selectableTableView();
+    ContentView(Controller * controller, Escher::SelectableTableViewDataSource * selectionDataSource);
+    Escher::SelectableTableView * selectableTableView();
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons, int numberOfColumns);
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    SelectableTableView m_selectableTableView;
+    Escher::SelectableTableView m_selectableTableView;
   };
   static constexpr KDCoordinate k_sideMargin = 4;
   static constexpr KDCoordinate k_bottomMargin = 14;

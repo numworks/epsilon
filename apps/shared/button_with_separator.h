@@ -3,9 +3,11 @@
 
 #include <escher.h>
 
-class ButtonWithSeparator : public Button {
+namespace Shared {
+
+class ButtonWithSeparator : public Escher::Button {
 public:
-  ButtonWithSeparator(Responder * parentResponder, I18n::Message textBody, Invocation invocation);
+  ButtonWithSeparator(Responder * parentResponder, I18n::Message textBody, Escher::Invocation invocation);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_margin = 5;
@@ -13,4 +15,5 @@ private:
   void layoutSubviews(bool force = false) override;
 };
 
+}
 #endif

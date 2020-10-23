@@ -19,7 +19,7 @@ public:
   //ListViewDataSource
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
 
@@ -33,11 +33,11 @@ public:
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
- constexpr static int k_maxNumberOfDisplayedRows = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin - Metric::StackTitleHeight) / Metric::ToolboxRowHeight + 2; // (240 - 18 - 50 - 20) / 40  = 3.8; the 0.8 cell can be above and below so we add +2 to get 5
+ constexpr static int k_maxNumberOfDisplayedRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::Metric::ToolboxRowHeight + 2; // (240 - 18 - 50 - 20) / 40  = 3.8; the 0.8 cell can be above and below so we add +2 to get 5
   constexpr static int k_numberOfMenuRows = 3;
   constexpr static KDCoordinate k_leafMargin = 20;
-  ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
-  MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
+  Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
+  Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
   Page pageAtIndex(int index);
   void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;
@@ -47,13 +47,13 @@ private:
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
-  ViewController * emptyViewController() override;
+  Escher::ViewController * emptyViewController() override;
   void resetMemoization();
   void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
   Page m_lockPageDelete;
-  ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
-  MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
+  Escher::ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
+  Escher::MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
   MathVariableBoxEmptyController m_emptyViewController;
   // Layout memoization
   // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and ExpressionModelStore code

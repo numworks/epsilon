@@ -5,29 +5,29 @@
 
 namespace HardwareTest {
 
-class BatteryTestController : public ViewController {
+class BatteryTestController : public Escher::ViewController {
 public:
-  BatteryTestController(Responder * parentResponder);
-  View * view() override;
+  BatteryTestController(Escher::Responder * parentResponder);
+  Escher::View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView : public Escher::SolidColorView {
   public:
     ContentView();
-    BufferTextView * batteryStateTextView();
-    BufferTextView * batteryLevelTextView();
-    BufferTextView * batteryChargingTextView();
+    Escher::BufferTextView * batteryStateTextView();
+    Escher::BufferTextView * batteryLevelTextView();
+    Escher::BufferTextView * batteryChargingTextView();
     constexpr static int k_maxNumberOfCharacters = 20;
     void setColor(KDColor color) override;
   private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
+    Escher::View * subviewAtIndex(int index) override;
     constexpr static int k_margin = 4;
-    BufferTextView m_batteryStateView;
-    BufferTextView m_batteryLevelView;
-    BufferTextView m_batteryChargingView;
+    Escher::BufferTextView m_batteryStateView;
+    Escher::BufferTextView m_batteryLevelView;
+    Escher::BufferTextView m_batteryChargingView;
   };
   constexpr static const char * k_batteryOKText = "BATTERY: OK";
   constexpr static const char * k_batteryNeedChargingText = "BATTERY: NEED RECHARGE";

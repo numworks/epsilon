@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-class FunctionTitleCell : public EvenOddCell {
+class FunctionTitleCell : public Escher::EvenOddCell {
 public:
   enum class Orientation {
     HorizontalIndicator,
@@ -23,7 +23,7 @@ public:
   void setBaseline(KDCoordinate baseline);
   virtual const KDFont * font() const = 0;
 protected:
-  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
+  constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   KDRect subviewFrame() const;
   float verticalAlignment() const;

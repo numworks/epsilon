@@ -5,13 +5,13 @@
 
 namespace Shared {
 
-class TextFieldDelegate : public ::TextFieldDelegate {
+class TextFieldDelegate : public Escher::TextFieldDelegate {
 public:
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
 protected:
   TextFieldDelegateApp * textFieldDelegateApp() const {
-    return static_cast<TextFieldDelegateApp *>(Container::activeApp());
+    return static_cast<TextFieldDelegateApp *>(Escher::Container::activeApp());
   }
 };
 

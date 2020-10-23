@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-class BannerView : public View {
+class BannerView : public Escher::View {
 public:
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -14,7 +14,7 @@ public:
   void reload() { layoutSubviews(); }
   static constexpr const KDFont * Font() { return KDFont::SmallFont; }
   static constexpr KDColor TextColor() { return KDColorBlack; }
-  static constexpr KDColor BackgroundColor() { return Palette::GrayMiddle; }
+  static constexpr KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
 private:
   static constexpr KDCoordinate LineSpacing = 2;
   int numberOfSubviews() const override = 0;

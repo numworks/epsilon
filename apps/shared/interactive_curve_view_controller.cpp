@@ -4,6 +4,7 @@
 #include <float.h>
 #include <assert.h>
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

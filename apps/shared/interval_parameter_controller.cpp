@@ -1,5 +1,7 @@
 #include "interval_parameter_controller.h"
 
+using namespace Escher;
+
 namespace Shared {
 
 Interval::IntervalParameters * IntervalParameterController::SharedTempIntervalParameters() {

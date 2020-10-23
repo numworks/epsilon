@@ -11,12 +11,12 @@ namespace Shared {
 /* ZoomCurveViewController is a View controller with a cursor that can handles
  * zoom in/out events. */
 
-class ZoomCurveViewController : public ViewController {
+class ZoomCurveViewController : public Escher::ViewController {
 public:
   static constexpr float k_zoomOutRatio = 3.f / 2.f;
 
-  ZoomCurveViewController(Responder * parentResponder) : ViewController(parentResponder) {}
-  View * view() override { return curveView(); }
+  ZoomCurveViewController(Escher::Responder * parentResponder) : Escher::ViewController(parentResponder) {}
+  Escher::View * view() override { return curveView(); }
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   virtual bool handleZoom(Ion::Events::Event event);

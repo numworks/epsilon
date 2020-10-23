@@ -5,14 +5,14 @@
 
 namespace Shared {
 
-class FunctionExpressionCell : public EvenOddExpressionCell {
+class FunctionExpressionCell : public Escher::EvenOddExpressionCell {
 public:
   FunctionExpressionCell() : EvenOddExpressionCell() {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
 private:
-  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
+  constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
 };
 
 }

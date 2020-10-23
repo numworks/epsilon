@@ -6,9 +6,9 @@
 
 namespace Shared {
 
-class ScrollableTwoExpressionsCell : public ::EvenOddCell, public Responder {
+class ScrollableTwoExpressionsCell : public Escher::EvenOddCell, public Escher::Responder {
 public:
-  ScrollableTwoExpressionsCell(Responder * parentResponder = nullptr);
+  ScrollableTwoExpressionsCell(Escher::Responder * parentResponder = nullptr);
   void setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout);
   void setEqualMessage(I18n::Message equalSignMessage) {
     return m_view.setEqualMessage(equalSignMessage);
@@ -16,7 +16,7 @@ public:
   void setHighlighted(bool highlight) override;
   void setEven(bool even) override;
   void reloadScroll();
-  Responder * responder() override {
+  Escher::Responder * responder() override {
     return this;
   }
   Poincare::Layout layout() const override { return m_view.layout(); }
@@ -24,7 +24,7 @@ public:
   void reinitSelection();
 private:
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   ScrollableTwoExpressionsView m_view;
 };

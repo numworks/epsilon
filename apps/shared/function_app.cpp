@@ -1,5 +1,6 @@
 #include "function_app.h"
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

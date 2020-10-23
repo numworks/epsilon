@@ -1,5 +1,7 @@
 #include "scrollable_two_expressions_cell.h"
 #include <assert.h>
+
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

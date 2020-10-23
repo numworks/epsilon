@@ -2,6 +2,8 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 // ContentView

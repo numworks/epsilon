@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <cmath>
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

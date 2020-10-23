@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <cmath>
 
+using namespace Escher;
+
 namespace Shared {
 
 FunctionZoomAndPanCurveViewController::FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :

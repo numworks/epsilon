@@ -1,5 +1,6 @@
 #include "layout_field_delegate.h"
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

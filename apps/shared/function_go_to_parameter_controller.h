@@ -8,7 +8,7 @@ namespace Shared {
 
 class FunctionGoToParameterController : public GoToParameterController {
 public:
-  FunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
+  FunctionGoToParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   const char * title() override { return I18n::translate(I18n::Message::Goto); }
   void setRecord(Ion::Storage::Record record);
 protected:

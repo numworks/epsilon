@@ -1,5 +1,7 @@
 #include "function_expression_cell.h"
 
+using namespace Escher;
+
 namespace Shared {
 
 KDSize FunctionExpressionCell::minimalSizeForOptimalDisplay() const {

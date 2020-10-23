@@ -1,6 +1,8 @@
 #include "parameter_text_field_delegate.h"
 #include <escher/text_field.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 bool ParameterTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {

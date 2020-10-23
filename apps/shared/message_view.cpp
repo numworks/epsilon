@@ -1,6 +1,10 @@
 #include "message_view.h"
 #include <assert.h>
 
+using namespace Escher;
+
+namespace Shared {
+
 MessageView::MessageView(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) {
   m_numberOfMessages = numberOfMessages < k_maxNumberOfMessages ? numberOfMessages : k_maxNumberOfMessages;
   for (uint8_t i = 0; i < m_numberOfMessages; i++) {
@@ -34,4 +38,6 @@ void MessageView::layoutSubviews(bool force) {
   for (uint8_t i = 1; i < m_numberOfMessages; i++) {
     m_messageTextViews[i].setFrame(KDRect(0, k_paragraphHeight + (i-1) * textHeight, width, textHeight), force);
   }
+}
+
 }

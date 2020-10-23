@@ -22,7 +22,7 @@ public:
 
   // Properties
   Type type() const override{ return Type::PermuteCoefficient; }
-
+  Sign sign(Context * context) const override { return Sign::Positive; }
 
 private:
   // Layout

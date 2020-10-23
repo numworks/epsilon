@@ -20,6 +20,7 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context) == Sign::Unknown ? Sign::Unknown : Sign::Positive; }
   Type type() const override { return Type::ArcCosine; }
 
 private:

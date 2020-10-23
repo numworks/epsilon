@@ -23,6 +23,7 @@ public:
 #endif
 
   // Properties
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::Opposite; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   Sign sign(Context * context) const override;

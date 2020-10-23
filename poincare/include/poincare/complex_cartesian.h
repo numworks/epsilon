@@ -19,6 +19,8 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override { return childAtIndex(1)->nullStatus(context) == NullStatus::Null ? childAtIndex(0)->sign(context) : Sign::Unknown; }
+  NullStatus nullStatus(Context * context) const override;
   Type type() const override { return Type::ComplexCartesian; }
 private:
   // Layout

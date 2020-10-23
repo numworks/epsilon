@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class BatteryView : public TransparentView {
+class BatteryView : public Escher::TransparentView {
 public:
   BatteryView() :
     m_chargeState(Ion::Battery::Charge::SOMEWHERE_INBETWEEN),
@@ -24,7 +24,7 @@ private:
   constexpr static KDCoordinate k_batteryWidth = 15;
   constexpr static KDCoordinate k_elementWidth = 1;
   constexpr static KDCoordinate k_capHeight = 4;
-  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
+  constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
   Ion::Battery::Charge m_chargeState;
   bool m_isCharging;
   bool m_isPlugged;

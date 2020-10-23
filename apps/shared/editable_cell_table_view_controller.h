@@ -12,18 +12,18 @@ namespace Shared {
 class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource, public TextFieldDelegate {
 public:
   EditableCellTableViewController(Responder * parentResponder);
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
   int numberOfRows() const override;
-  void willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Poincare::Preferences::PrintFloatMode mode);
+  void willDisplayCellAtLocationWithDisplayMode(Escher::HighlightCell * cell, int i, int j, Poincare::Preferences::PrintFloatMode mode);
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
 protected:
   static constexpr KDCoordinate k_cellHeight = 20;
-  static constexpr KDCoordinate k_margin = Metric::TableSeparatorThickness;
-  static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
+  static constexpr KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
+  static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 private:
   virtual void didChangeCell(int column, int row) {}
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;

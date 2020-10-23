@@ -6,10 +6,10 @@
 
 namespace HardwareTest {
 
-class SerialNumberController : public ViewController {
+class SerialNumberController : public Escher::ViewController {
 public:
-  SerialNumberController(Responder * parentResponder);
-  View * view() override { return &m_barCodeView; }
+  SerialNumberController(Escher::Responder * parentResponder);
+  Escher::View * view() override { return &m_barCodeView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:

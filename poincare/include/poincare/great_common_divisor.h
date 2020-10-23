@@ -17,6 +17,7 @@ public:
 #endif
 
   // ExpressionNode
+  Sign sign(Context * context) const override { return Sign::Positive; }
   Type type() const override { return Type::GreatCommonDivisor; }
 
 private:

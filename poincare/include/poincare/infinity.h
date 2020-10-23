@@ -23,6 +23,7 @@ public:
   // Properties
   Type type() const override { return Type::Infinity; }
   Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Approximation

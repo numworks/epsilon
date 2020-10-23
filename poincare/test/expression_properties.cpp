@@ -18,23 +18,24 @@ QUIZ_CASE(poincare_properties_is_number) {
 }
 
 QUIZ_CASE(poincare_properties_is_number_zero) {
-  quiz_assert(!BasedInteger::Builder("2",Integer::Base::Binary).isNumberZero());
-  quiz_assert(!BasedInteger::Builder("2",Integer::Base::Decimal).isNumberZero());
-  quiz_assert(!BasedInteger::Builder("2",Integer::Base::Hexadecimal).isNumberZero());
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Binary).isNumberZero());
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Decimal).isNumberZero());
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Hexadecimal).isNumberZero());
-  quiz_assert(!Decimal::Builder("2",3).isNumberZero());
-  quiz_assert(Decimal::Builder("0",0).isNumberZero());
-  quiz_assert(!Float<float>::Builder(1.0f).isNumberZero());
-  quiz_assert(Float<float>::Builder(0.0f).isNumberZero());
-  quiz_assert(!Infinity::Builder(true).isNumberZero());
-  quiz_assert(!Undefined::Builder().isNumberZero());
-  quiz_assert(!Rational::Builder(2,3).isNumberZero());
-  quiz_assert(Rational::Builder(0,1).isNumberZero());
-  quiz_assert(!Symbol::Builder('a').isNumberZero());
-  quiz_assert(!Multiplication::Builder(Rational::Builder(1), Rational::Builder(0)).isNumberZero());
-  quiz_assert(!Addition::Builder(Rational::Builder(1), Rational::Builder(-1)).isNumberZero());
+  Shared::GlobalContext context;
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Binary).nullStatus(&context) == ExpressionNode::NullStatus::Null );
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Decimal).nullStatus(&context) == ExpressionNode::NullStatus::Null );
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Hexadecimal).nullStatus(&context) == ExpressionNode::NullStatus::Null );
+  quiz_assert(Decimal::Builder("2",3).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
+  quiz_assert(Decimal::Builder("0",0).nullStatus(&context) == ExpressionNode::NullStatus::Null );
+  quiz_assert(Float<float>::Builder(1.0f).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
+  quiz_assert(Float<float>::Builder(0.0f).nullStatus(&context) == ExpressionNode::NullStatus::Null );
+  quiz_assert(Infinity::Builder(true).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
+  quiz_assert(Undefined::Builder().nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
+  quiz_assert(Rational::Builder(2,3).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
+  quiz_assert(Rational::Builder(0,1).nullStatus(&context) == ExpressionNode::NullStatus::Null );
+  quiz_assert(Symbol::Builder('a').nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
+  quiz_assert(Multiplication::Builder(Rational::Builder(1), Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
+  quiz_assert(Addition::Builder(Rational::Builder(1), Rational::Builder(-1)).nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
 }
 
 QUIZ_CASE(poincare_properties_is_random) {

@@ -6,29 +6,29 @@
 
 namespace HardwareTest {
 
-class VBlankTestController : public ViewController {
+class VBlankTestController : public Escher::ViewController {
 public:
-  VBlankTestController(Responder * parentResponder) :
-    ViewController(parentResponder),
+  VBlankTestController(Escher::Responder * parentResponder) :
+    Escher::ViewController(parentResponder),
     m_view()
   {}
-  View * view() override { return &m_view; }
+  Escher::View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView : public Escher::SolidColorView {
   public:
     ContentView();
-    BufferTextView * vBlankStateTextView() { return &m_vBlankStateView; }
+    Escher::BufferTextView * vBlankStateTextView() { return &m_vBlankStateView; }
     void setColor(KDColor color) override;
   private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 1; }
-    View * subviewAtIndex(int index) override {
+    Escher::View * subviewAtIndex(int index) override {
       assert(index == 0);
       return &m_vBlankStateView;
     }
-    BufferTextView m_vBlankStateView;
+    Escher::BufferTextView m_vBlankStateView;
   };
   constexpr static const char * k_vBlankOKText = "VBLANK: OK";
   constexpr static const char * k_vBlankFailTest = "VBLANK: FAIL";

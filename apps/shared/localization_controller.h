@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class LocalizationController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class LocalizationController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   static int IndexOfCountry(I18n::Country country);
   static I18n::Country CountryAtIndex(int i);
@@ -17,7 +17,7 @@ public:
     Country
   };
 
-  LocalizationController(Responder * parentResponder, KDCoordinate verticalMargin, Mode mode);
+  LocalizationController(Escher::Responder * parentResponder, KDCoordinate verticalMargin, Mode mode);
   void resetSelection();
   Mode mode() const { return m_mode; }
   void setMode(Mode mode);
@@ -26,26 +26,26 @@ public:
   virtual bool shouldDisplayTitle() const = 0;
   bool shouldDisplayWarning() const { return mode() == Mode::Country; }
 
-  View * view() override { return &m_contentView; }
+  Escher::View * view() override { return &m_contentView; }
   const char * title() override;
-  void didBecomeFirstResponder() override { Container::activeApp()->setFirstResponder(selectableTableView()); }
+  void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(selectableTableView()); }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   int numberOfRows() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
-  KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
-  HighlightCell * reusableCell(int index) override { return &m_cells[index]; }
+  KDCoordinate cellHeight() override { return Escher::Metric::ParameterCellHeight; }
+  Escher::HighlightCell * reusableCell(int index) override { return &m_cells[index]; }
   int reusableCellCount() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
 
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
 protected:
-  class ContentView : public View {
+  class ContentView : public Escher::View {
   public:
-    ContentView(LocalizationController * controller, SelectableTableViewDataSource * dataSource);
+    ContentView(LocalizationController * controller, Escher::SelectableTableViewDataSource * dataSource);
 
-    SelectableTableView * selectableTableView() { return &m_selectableTableView; }
-    void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(bounds(), Palette::WallScreen); }
+    Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }
+    void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(bounds(), Escher::Palette::WallScreen); }
     void modeHasChanged();
 
   private:
@@ -56,22 +56,22 @@ protected:
     KDCoordinate layoutWarningSubview(bool force, KDCoordinate verticalOrigin);
     KDCoordinate layoutTableSubview(bool force, KDCoordinate verticalOrigin);
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int i) override;
+    Escher::View * subviewAtIndex(int i) override;
 
     LocalizationController * m_controller;
-    SelectableTableView m_selectableTableView;
-    MessageTextView m_countryTitleMessage;
-    MessageTextView m_countryWarningLines[k_numberOfCountryWarningLines];
-    SolidColorView m_borderView;
+    Escher::SelectableTableView m_selectableTableView;
+    Escher::MessageTextView m_countryTitleMessage;
+    Escher::MessageTextView m_countryWarningLines[k_numberOfCountryWarningLines];
+    Escher::SolidColorView m_borderView;
   };
 
-  SelectableTableView * selectableTableView() { return m_contentView.selectableTableView(); }
+  Escher::SelectableTableView * selectableTableView() { return m_contentView.selectableTableView(); }
 
   ContentView m_contentView;
 
 private:
   static constexpr int k_numberOfCells = I18n::NumberOfLanguages > I18n::NumberOfCountries ? I18n::NumberOfLanguages : I18n::NumberOfCountries;
-  MessageTableCell m_cells[k_numberOfCells];
+  Escher::MessageTableCell m_cells[k_numberOfCells];
   Mode m_mode;
 };
 

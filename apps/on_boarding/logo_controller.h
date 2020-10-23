@@ -6,10 +6,10 @@
 
 namespace OnBoarding {
 
-class LogoController : public ViewController, public Timer {
+class LogoController : public Escher::ViewController, public Escher::Timer {
 public:
   LogoController();
-  View * view() override { return &m_logoView; }
+  Escher::View * view() override { return &m_logoView; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:

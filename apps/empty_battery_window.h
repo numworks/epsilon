@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class EmptyBatteryWindow : public Window {
+class EmptyBatteryWindow : public Escher::Window {
 public:
   EmptyBatteryWindow();
   void drawRect(KDContext * ctx, KDRect rect) const;

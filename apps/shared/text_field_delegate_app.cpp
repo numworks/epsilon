@@ -6,6 +6,7 @@
 #include <cmath>
 #include <string.h>
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

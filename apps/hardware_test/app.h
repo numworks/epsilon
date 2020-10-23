@@ -15,19 +15,19 @@
 
 namespace HardwareTest {
 
-class App : public ::App {
+class App : public Escher::App {
 public:
-  class Snapshot : public ::SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     Descriptor * descriptor() override;
   };
 private:
-  class WizardViewController : public BankViewController {
+  class WizardViewController : public Escher::BankViewController {
   public:
-    WizardViewController(Responder * parentResponder);
+    WizardViewController(Escher::Responder * parentResponder);
     int numberOfChildren() override;
-    ViewController * childAtIndex(int i) override;
+    Escher::ViewController * childAtIndex(int i) override;
     bool handleEvent(Ion::Events::Event event) override;
   private:
     BatteryTestController m_batteryTestController;

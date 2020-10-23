@@ -27,6 +27,10 @@ public:
   // Properties
   Type type() const override { return Type::Power; }
   Sign sign(Context * context) const override;
+  NullStatus nullStatus(Context * context) const override {
+    // NonNull Status can't be returned because base could be infinite.
+    return childAtIndex(0)->nullStatus(context) == NullStatus::Null ?  NullStatus::Null : NullStatus::Unknown;
+  }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
   Expression removeUnit(Expression * unit) override;

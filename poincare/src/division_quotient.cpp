@@ -12,6 +12,15 @@ constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
 
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
+ExpressionNode::Sign DivisionQuotientNode::sign(Context * context) const {
+  ExpressionNode::Sign numeratorSign = childAtIndex(0)->sign(context);
+  ExpressionNode::Sign denominatorSign = childAtIndex(1)->sign(context);
+  if (numeratorSign == ExpressionNode::Sign::Unknown || denominatorSign == ExpressionNode::Sign::Unknown) {
+    return ExpressionNode::Sign::Unknown;
+  }
+  return numeratorSign == denominatorSign ? ExpressionNode::Sign::Positive : ExpressionNode::Sign::Negative;
+}
+
 Expression DivisionQuotientNode::shallowReduce(ReductionContext reductionContext) {
   return DivisionQuotient(this).shallowReduce(reductionContext.context());
 }

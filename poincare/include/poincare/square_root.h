@@ -10,6 +10,8 @@ namespace Poincare {
 class SquareRootNode /*final*/ : public ExpressionNode  {
 public:
   // ExpressionNode
+  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context) == Sign::Positive ? Sign::Positive : Sign::Unknown ; }
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::SquareRoot; }
 
   // TreeNode

@@ -1,7 +1,11 @@
 #ifndef HOME_CONTROLLER_H
 #define HOME_CONTROLLER_H
 
-#include <escher.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/selectable_table_view_delegate.h>
+#include <escher/simple_table_view_data_source.h>
+#include <escher/view_controller.h>
 #include "app_cell.h"
 
 namespace Home {

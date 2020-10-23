@@ -1,7 +1,6 @@
 #ifndef SHARED_STORE_CONTROLLER_H
 #define SHARED_STORE_CONTROLLER_H
 
-#include <escher.h>
 #include "buffer_text_view_with_text_field.h"
 #include "editable_cell_table_view_controller.h"
 #include "double_pair_store.h"

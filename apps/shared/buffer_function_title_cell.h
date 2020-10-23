@@ -1,6 +1,7 @@
 #ifndef SHARED_BUFFER_FUNCTION_TITLE_CELL_H
 #define SHARED_BUFFER_FUNCTION_TITLE_CELL_H
 
+#include <escher/even_odd_message_text_cell.h>
 #include "function_title_cell.h"
 
 namespace Shared {

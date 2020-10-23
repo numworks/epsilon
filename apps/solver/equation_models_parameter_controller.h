@@ -1,7 +1,6 @@
 #ifndef SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 #define SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
 #include "equation_store.h"
 
 namespace Solver {

@@ -1,8 +1,6 @@
 #ifndef SOLVER_EQUATION_LIST_VIEW_H
 #define SOLVER_EQUATION_LIST_VIEW_H
 
-#include <escher.h>
-
 namespace Solver {
 
 class ListController;

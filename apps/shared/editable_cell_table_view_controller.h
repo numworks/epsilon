@@ -1,7 +1,6 @@
 #ifndef SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
-#include <escher.h>
 #include <poincare/preferences.h>
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"

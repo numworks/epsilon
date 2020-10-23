@@ -1,9 +1,12 @@
 #ifndef SHARED_FLOAT_PARAMETER_CONTROLLER_H
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
 #include "parameter_text_field_delegate.h"
 #include "button_with_separator.h"
+#include <escher/list_view_data_source.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/stack_view_controller.h>
 
 namespace Shared {
 

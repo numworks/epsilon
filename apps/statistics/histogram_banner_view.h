@@ -1,7 +1,6 @@
 #ifndef STATISTICS_HISTOGRAM_BANNER_VIEW_H
 #define STATISTICS_HISTOGRAM_BANNER_VIEW_H
 
-#include <escher.h>
 #include "../shared/banner_view.h"
 #include <apps/i18n.h>
 

@@ -4,7 +4,6 @@
 #include "../shared/function_store.h"
 #include "sequence.h"
 #include <stdint.h>
-#include <escher.h>
 
 namespace Shared {
 

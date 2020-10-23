@@ -1,7 +1,7 @@
 #ifndef APPS_LOCK_VIEW_H
 #define APPS_LOCK_VIEW_H
 
-#include <escher.h>
+#include <escher/transparent_view.h>
 
 class LockView : public Escher::TransparentView {
 public:

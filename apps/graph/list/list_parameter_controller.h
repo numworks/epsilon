@@ -2,6 +2,8 @@
 #define GRAPH_LIST_LIST_PARAM_CONTROLLER_H
 
 #include <apps/shared/list_parameter_controller.h>
+#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include "type_parameter_controller.h"
 #include "domain_parameter_controller.h"
 

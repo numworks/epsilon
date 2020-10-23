@@ -7,18 +7,18 @@
 namespace HardwareTest {
 
 //TODO Factorize with LCDData
-class LCDTimingTestController : public ViewController {
+class LCDTimingTestController : public Escher::ViewController {
 public:
-  LCDTimingTestController(Responder * parentResponder) :
-    ViewController(parentResponder),
+  LCDTimingTestController(Escher::Responder * parentResponder) :
+    Escher::ViewController(parentResponder),
     m_testSuccessful(false),
     m_view()
   {}
-  View * view() override { return &m_view; }
+  Escher::View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView : public Escher::SolidColorView {
   public:
     ContentView();
     void setStatus(bool success, int numberOfErrors);
@@ -27,12 +27,12 @@ private:
     constexpr static const char * k_lcdTimingFailTest = "LCD TIMING: FAIL";
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 2; }
-    View * subviewAtIndex(int index) override {
+    Escher::View * subviewAtIndex(int index) override {
       assert(index >= 0 && index < 2);
       return index == 0 ? &m_lcdTimingStateView : &m_lcdNumberGlyphFailuresView;
     }
-    BufferTextView m_lcdTimingStateView;
-    BufferTextView m_lcdNumberGlyphFailuresView;
+    Escher::BufferTextView m_lcdTimingStateView;
+    Escher::BufferTextView m_lcdNumberGlyphFailuresView;
   };
   static constexpr int k_errorLimit = 0;
   void runTest();

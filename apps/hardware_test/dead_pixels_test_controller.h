@@ -6,20 +6,20 @@
 
 namespace HardwareTest {
 
-class DeadPixelsTestController : public ViewController {
+class DeadPixelsTestController : public Escher::ViewController {
 public:
-  DeadPixelsTestController(Responder * parentResponder) :
-    ViewController(parentResponder),
+  DeadPixelsTestController(Escher::Responder * parentResponder) :
+    Escher::ViewController(parentResponder),
     m_colorIndex(0),
     m_view(KDColorBlack)
   {}
-  View * view() override { return &m_view; }
+  Escher::View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
 private:
   constexpr static int k_numberOfAdditionalColors = 4;
   constexpr static KDColor k_colors[k_numberOfAdditionalColors] = {KDColorRed, KDColorBlue, KDColorGreen, KDColorWhite}; // KDColorBlack is the first color, set in the constructor
   int m_colorIndex;
-  SolidColorView m_view;
+  Escher::SolidColorView m_view;
 };
 
 }

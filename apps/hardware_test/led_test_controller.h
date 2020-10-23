@@ -6,24 +6,24 @@
 
 namespace HardwareTest {
 
-class LEDTestController : public ViewController {
+class LEDTestController : public Escher::ViewController {
 public:
-  LEDTestController(Responder * parentResponder);
-  View * view() override;
+  LEDTestController(Escher::Responder * parentResponder);
+  Escher::View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView : public Escher::SolidColorView {
   public:
     ContentView();
-    SolidColorView * LEDColorIndicatorView();
+    Escher::SolidColorView * LEDColorIndicatorView();
   private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
-    SolidColorView m_ledColorIndicatorView;
-    SolidColorView m_ledColorOutlineView;
-    BufferTextView m_ledView;
+    Escher::View * subviewAtIndex(int index) override;
+    Escher::SolidColorView m_ledColorIndicatorView;
+    Escher::SolidColorView m_ledColorOutlineView;
+    Escher::BufferTextView m_ledView;
     ArrowView m_arrowView;
   };
   void setLEDColor(KDColor color);

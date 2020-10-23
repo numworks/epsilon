@@ -5,9 +5,9 @@
 
 namespace Shared {
 
-class DiscardPopUpController : public PopUpController {
+class DiscardPopUpController : public Escher::PopUpController {
 public:
-  DiscardPopUpController(Invocation OkInvocation);
+  DiscardPopUpController(Escher::Invocation OkInvocation);
 };
 
 }

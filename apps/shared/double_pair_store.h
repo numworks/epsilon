@@ -55,13 +55,13 @@ public:
   // Colors
   static KDColor colorOfSeriesAtIndex(int i) {
     assert(i >= 0 && i < k_numberOfSeries);
-    assert(i < Palette::numberOfDataColors());
-    return Palette::DataColor[i];
+    assert(i < Escher::Palette::numberOfDataColors());
+    return Escher::Palette::DataColor[i];
   }
   static KDColor colorLightOfSeriesAtIndex(int i) {
     assert(i >= 0 && i < k_numberOfSeries);
-    assert(i < Palette::numberOfLightDataColors());
-    return Palette::DataColorLight[i];
+    assert(i < Escher::Palette::numberOfLightDataColors());
+    return Escher::Palette::DataColorLight[i];
   }
   double * data() { return reinterpret_cast<double*>(&m_data); }
 protected:

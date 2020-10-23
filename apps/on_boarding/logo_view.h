@@ -5,15 +5,15 @@
 
 namespace OnBoarding {
 
-class LogoView : public View {
+class LogoView : public Escher::View {
 public:
   LogoView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  ImageView m_logoView;
+  Escher::ImageView m_logoView;
 };
 
 }

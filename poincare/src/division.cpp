@@ -14,6 +14,15 @@
 
 namespace Poincare {
 
+ExpressionNode::Sign DivisionNode::sign(Context * context) const {
+  ExpressionNode::Sign numeratorSign = childAtIndex(0)->sign(context);
+  ExpressionNode::Sign denominatorSign = childAtIndex(1)->sign(context);
+  if (numeratorSign == ExpressionNode::Sign::Unknown || denominatorSign == ExpressionNode::Sign::Unknown) {
+    return ExpressionNode::Sign::Unknown;
+  }
+  return numeratorSign == denominatorSign ? ExpressionNode::Sign::Positive : ExpressionNode::Sign::Negative;
+}
+
 int DivisionNode::polynomialDegree(Context * context, const char * symbolName) const {
   if (childAtIndex(1)->polynomialDegree(context, symbolName) != 0) {
     return -1;

@@ -653,10 +653,6 @@ int UnitNode::SpeedRepresentative::setAdditionalExpressions(double value, Expres
 }
 
 // UnitNode
-ExpressionNode::Sign UnitNode::sign(Context * context) const {
-  return Sign::Positive;
-}
-
 Expression UnitNode::removeUnit(Expression * unit) {
   return Unit(this).removeUnit(unit);
 }

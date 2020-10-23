@@ -349,7 +349,12 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
   const int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
     // Difference between the observation and the estimated value of the model
-    double residual = m_data[series][1][k] - yValueForXValue(series, m_data[series][0][k], globalContext);
+    double evaluation = yValueForXValue(series, m_data[series][0][k], globalContext);
+    if (std::isnan(evaluation) || std::isinf(evaluation)) {
+      // Data Not Suitable for evaluation
+      return NAN;
+    }
+    double residual = m_data[series][1][k] - evaluation;
     ssr += residual * residual;
     // Difference between the observation and the overall observations mean
     double difference = m_data[series][1][k] - mean;

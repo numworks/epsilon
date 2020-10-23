@@ -6,7 +6,7 @@
 
 namespace HardwareTest {
 
-class KeyboardView : public View {
+class KeyboardView : public Escher::View {
 public:
   KeyboardView() : m_keyboardModel() {}
   int testedKeyIndex() const { return m_keyboardModel.testedKeyIndex(); }

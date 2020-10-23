@@ -8,16 +8,16 @@ namespace Shared {
 /* Tab table controller is a controller whose view is a selectable table view
  * and whose one ancestor is a tab */
 
-class TabTableController : public ViewController, public SelectableTableViewDataSource {
+class TabTableController : public Escher::ViewController, public Escher::SelectableTableViewDataSource {
 public:
   TabTableController(Responder * parentResponder);
-  View * view() override { return selectableTableView(); }
+  Escher::View * view() override { return selectableTableView(); }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
-  virtual SelectableTableView * selectableTableView() = 0;
-  virtual Responder * tabController() const = 0;
+  virtual Escher::SelectableTableView * selectableTableView() = 0;
+  virtual Escher::Responder * tabController() const = 0;
 };
 
 }

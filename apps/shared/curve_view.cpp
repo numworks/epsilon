@@ -10,6 +10,7 @@
 #include <complex>
 #include <poincare/trigonometry.h>
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

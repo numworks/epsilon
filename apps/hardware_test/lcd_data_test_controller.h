@@ -6,18 +6,18 @@
 
 namespace HardwareTest {
 
-class LCDDataTestController : public ViewController {
+class LCDDataTestController : public Escher::ViewController {
 public:
-  LCDDataTestController(Responder * parentResponder) :
-    ViewController(parentResponder),
+  LCDDataTestController(Escher::Responder * parentResponder) :
+    Escher::ViewController(parentResponder),
     m_testSuccessful(false),
     m_view()
   {}
-  View * view() override { return &m_view; }
+  Escher::View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView : public Escher::SolidColorView {
   public:
     ContentView();
     void setStatus(bool success, int numberOfErrors);
@@ -26,12 +26,12 @@ private:
     constexpr static const char * k_lcdDataFailTest = "LCD DATA: FAIL";
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 2; }
-    View * subviewAtIndex(int index) override {
+    Escher::View * subviewAtIndex(int index) override {
       assert(index >= 0 && index < 2);
       return index == 0 ? &m_lcdDataStateView : &m_lcdNumberPixelFailuresView;
     }
-    BufferTextView m_lcdDataStateView;
-    BufferTextView m_lcdNumberPixelFailuresView;
+    Escher::BufferTextView m_lcdDataStateView;
+    Escher::BufferTextView m_lcdNumberPixelFailuresView;
   };
   static constexpr int k_errorLimit = 0;
   void runTest();

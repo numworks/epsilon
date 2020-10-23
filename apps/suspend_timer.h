@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class SuspendTimer : public Timer {
+class SuspendTimer : public Escher::Timer {
 public:
   SuspendTimer();
 private:

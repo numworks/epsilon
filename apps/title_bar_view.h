@@ -6,7 +6,7 @@
 #include "shift_alpha_lock_view.h"
 #include <apps/i18n.h>
 
-class TitleBarView : public View {
+class TitleBarView : public Escher::View {
 public:
   TitleBarView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -24,12 +24,12 @@ private:
   constexpr static KDCoordinate k_examIconMargin = 93;
   int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;
-  View * subviewAtIndex(int index) override;
-  MessageTextView m_titleView;
+  Escher::View * subviewAtIndex(int index) override;
+  Escher::MessageTextView m_titleView;
   BatteryView m_batteryView;
   ShiftAlphaLockView m_shiftAlphaLockView;
-  BufferTextView m_preferenceView;
-  ImageView m_examModeIconView;
+  Escher::BufferTextView m_preferenceView;
+  Escher::ImageView m_examModeIconView;
 };
 
 #endif

@@ -5,7 +5,7 @@
 
 namespace Home {
 
-class AppCell : public HighlightCell {
+class AppCell : public Escher::HighlightCell {
 public:
   AppCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -16,15 +16,15 @@ public:
 
   void setVisible(bool visible);
   void reloadCell() override;
-  void setAppDescriptor(::App::Descriptor * appDescriptor);
+  void setAppDescriptor(Escher::App::Descriptor * appDescriptor);
 private:
   static constexpr KDCoordinate k_iconMargin = 22;
   static constexpr KDCoordinate k_iconWidth = 55;
   static constexpr KDCoordinate k_iconHeight = 56;
   static constexpr KDCoordinate k_nameWidthMargin = 4;
   static constexpr KDCoordinate k_nameHeightMargin = 1;
-  ImageView m_iconView;
-  MessageTextView m_nameView;
+  Escher::ImageView m_iconView;
+  Escher::MessageTextView m_nameView;
   bool m_visible;
 };
 

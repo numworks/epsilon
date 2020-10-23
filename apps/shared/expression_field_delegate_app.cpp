@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <poincare/expression.h>
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

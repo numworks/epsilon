@@ -8,18 +8,18 @@
 
 namespace OnBoarding {
 
-class App : public ::App {
+class App : public Escher::App {
 public:
-  class Snapshot : public ::SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     Descriptor * descriptor() override;
   };
 
   int numberOfTimers() override;
-  Timer * timerAtIndex(int i) override;
+  Escher::Timer * timerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event) override;
-  void didBecomeActive(Window * window) override;
+  void didBecomeActive(Escher::Window * window) override;
 private:
   App(Snapshot * snapshot);
   void reinitOnBoarding();

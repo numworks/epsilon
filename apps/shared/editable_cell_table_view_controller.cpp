@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {

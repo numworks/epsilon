@@ -6,29 +6,29 @@
 
 namespace HardwareTest {
 
-class ColorsLCDTestController : public ViewController {
+class ColorsLCDTestController : public Escher::ViewController {
 public:
-  ColorsLCDTestController(Responder * parentResponder) :
-    ViewController(parentResponder),
+  ColorsLCDTestController(Escher::Responder * parentResponder) :
+    Escher::ViewController(parentResponder),
     m_view()
   {}
-  View * view() override { return &m_view; }
+  Escher::View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView : public Escher::SolidColorView {
   public:
     ContentView();
-    BufferTextView * colorsLCDStateTextView() { return &m_colorsLCDStateView; }
+    Escher::BufferTextView * colorsLCDStateTextView() { return &m_colorsLCDStateView; }
     void setColor(KDColor color) override;
   private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 1; }
-    View * subviewAtIndex(int index) override {
+    Escher::View * subviewAtIndex(int index) override {
       assert(index == 0);
       return &m_colorsLCDStateView;
     }
-    BufferTextView m_colorsLCDStateView;
+    Escher::BufferTextView m_colorsLCDStateView;
   };
   constexpr static int k_numberOfAcceptablesGlyphErrors = 1;
   constexpr static const char * k_colorsLCDOKText = "COLORS LCD: OK";

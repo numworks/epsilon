@@ -6,10 +6,10 @@
 
 namespace HardwareTest {
 
-class KeyboardTestController : public ViewController {
+class KeyboardTestController : public Escher::ViewController {
 public:
-  KeyboardTestController(Responder * parentResponder);
-  View * view() override;
+  KeyboardTestController(Escher::Responder * parentResponder);
+  Escher::View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:

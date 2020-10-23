@@ -8,7 +8,7 @@ namespace Shared {
 /* Regular table view data source is a table view data source with equal sized
  * columns and equal sized rows */
 
-class RegularTableViewDataSource : public TableViewDataSource {
+class RegularTableViewDataSource : public Escher::TableViewDataSource {
 public:
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

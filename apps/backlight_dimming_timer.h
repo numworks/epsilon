@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class BacklightDimmingTimer : public Timer {
+class BacklightDimmingTimer : public Escher::Timer {
 public:
   BacklightDimmingTimer();
 private:

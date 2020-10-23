@@ -1,6 +1,8 @@
 #include "buffer_function_title_cell.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 BufferFunctionTitleCell::BufferFunctionTitleCell(Orientation orientation, const KDFont * font) :

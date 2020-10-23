@@ -5,7 +5,7 @@
 #include "lock_view.h"
 #include <apps/i18n.h>
 
-class ShiftAlphaLockView : public View {
+class ShiftAlphaLockView : public Escher::View {
 public:
   ShiftAlphaLockView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -15,9 +15,9 @@ private:
   constexpr static KDCoordinate k_lockRightMargin = 5;
   int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   LockView m_lockView;
-  MessageTextView m_shiftAlphaView;
+  Escher::MessageTextView m_shiftAlphaView;
   Ion::Events::ShiftAlphaStatus m_status;
 };
 

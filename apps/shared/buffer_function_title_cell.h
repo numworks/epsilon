@@ -23,10 +23,10 @@ public:
   void layoutSubviews(bool force = false) override;
 protected:
   KDRect bufferTextViewFrame() const;
-  EvenOddBufferTextCell * bufferTextView() { return &m_bufferTextView; }
+  Escher::EvenOddBufferTextCell * bufferTextView() { return &m_bufferTextView; }
 private:
   constexpr static float k_verticalAlignment = 0.5f;
-  EvenOddBufferTextCell m_bufferTextView;
+  Escher::EvenOddBufferTextCell m_bufferTextView;
 };
 
 }

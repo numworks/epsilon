@@ -6,13 +6,13 @@
 
 namespace Shared {
 
-class ExpressionFieldDelegateApp : public TextFieldDelegateApp, public LayoutFieldDelegate {
+class ExpressionFieldDelegateApp : public TextFieldDelegateApp, public Escher::LayoutFieldDelegate {
 public:
   virtual ~ExpressionFieldDelegateApp() = default;
-  bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
+  bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
 protected:
-  ExpressionFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
+  ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
 };
 
 }

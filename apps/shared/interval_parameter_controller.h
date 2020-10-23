@@ -11,12 +11,12 @@ namespace Shared {
 
 class IntervalParameterController : public Shared::FloatParameterController<double> {
 public:
-  IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  IntervalParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   Interval * interval() { assert(m_interval); return m_interval; }
   void setInterval(Interval * interval);
   const char * title() override;
   void setTitle(I18n::Message title) { m_title = title; }
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override;
   void setStartEndMessages(I18n::Message startMessage, I18n::Message endMessage);
 protected:
@@ -26,11 +26,11 @@ protected:
   bool handleEvent(Ion::Events::Event event) override;
 private:
   static Interval::IntervalParameters * SharedTempIntervalParameters();
-  HighlightCell * reusableParameterCell(int index, int type) override;
+  Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   double parameterAtIndex(int index) override;
   void buttonAction() override;
-  MessageTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
+  Escher::MessageTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
   I18n::Message m_title;
   I18n::Message m_startMessage;
   I18n::Message m_endMessage;

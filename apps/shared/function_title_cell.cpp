@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Shared {
 
 void FunctionTitleCell::setOrientation(Orientation orientation) {

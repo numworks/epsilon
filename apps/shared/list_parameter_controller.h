@@ -7,11 +7,11 @@
 
 namespace Shared {
 
-class ListParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class ListParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
+  ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::SelectableTableViewDelegate * tableDelegate = nullptr);
 
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("ListParameter");
@@ -21,13 +21,13 @@ public:
   int numberOfRows() const override { return totalNumberOfCells(); }
 
   // ListViewDataSource
-  KDCoordinate rowHeight(int j) override { return Metric::ParameterCellHeight; }
+  KDCoordinate rowHeight(int j) override { return Escher::Metric::ParameterCellHeight; }
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
   virtual bool handleEnterOnRow(int rowIndex);
   virtual int totalNumberOfCells() const {
@@ -39,14 +39,14 @@ protected:
   }
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
-  SelectableTableView m_selectableTableView;
+  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
 #if FUNCTION_COLOR_CHOICE
-  MessageTableCellWithChevron m_colorCell;
+  Escher::MessageTableCellWithChevron m_colorCell;
 #endif
-  MessageTableCellWithSwitch m_enableCell;
-  MessageTableCell m_deleteCell;
+  Escher::MessageTableCellWithSwitch m_enableCell;
+  Escher::MessageTableCell m_deleteCell;
 };
 
 }

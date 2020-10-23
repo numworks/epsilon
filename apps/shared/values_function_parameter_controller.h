@@ -7,30 +7,30 @@
 
 namespace Shared {
 
-class ValuesFunctionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class ValuesFunctionParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ValuesFunctionParameterController() :
-    ViewController(nullptr),
+    Escher::ViewController(nullptr),
     m_copyColumn(I18n::Message::CopyColumnInList),
     m_selectableTableView(this, this, this),
     m_record()
   {}
 
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   const char * title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return 1; }
-  KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
-  HighlightCell * reusableCell(int index) override {
+  KDCoordinate cellHeight() override { return Escher::Metric::ParameterCellHeight; }
+  Escher::HighlightCell * reusableCell(int index) override {
     assert(index == 0);
     return &m_copyColumn;
   }
   int reusableCellCount() const override { return 1; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
-  MessageTableCellWithChevron m_copyColumn;
-  SelectableTableView m_selectableTableView;
+  Escher::MessageTableCellWithChevron m_copyColumn;
+  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
   char m_pageTitle[Function::k_maxNameWithArgumentSize];

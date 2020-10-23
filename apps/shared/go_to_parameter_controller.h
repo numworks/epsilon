@@ -10,7 +10,7 @@ namespace Shared {
 
 class GoToParameterController : public FloatParameterController<double> {
 public:
-  GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
+  GoToParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   int numberOfRows() const override { return 2; }
   bool handleEvent(Ion::Events::Event event) override;
 protected:
@@ -31,9 +31,9 @@ protected:
   double m_tempParameter;
 private:
   void buttonAction() override;
-  HighlightCell * reusableParameterCell(int index, int type) override;
+  Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override { return 1; }
-  MessageTableCellWithEditableText m_parameterCell;
+  Escher::MessageTableCellWithEditableText m_parameterCell;
 };
 
 }

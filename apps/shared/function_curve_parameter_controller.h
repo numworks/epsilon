@@ -6,18 +6,18 @@
 
 namespace Shared {
 
-class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class FunctionCurveParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   FunctionCurveParameterController();
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   TELEMETRY_ID("CurveParameter");
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   bool handleGotoSelection();
-  MessageTableCellWithChevron m_goToCell;
-  SelectableTableView m_selectableTableView;
+  Escher::MessageTableCellWithChevron m_goToCell;
+  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
   virtual FunctionGoToParameterController * goToParameterController() = 0;

@@ -7,13 +7,13 @@
 
 namespace Shared {
 
-class ExpressionModelListController : public ViewController, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
+class ExpressionModelListController : public Escher::ViewController, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate {
 public:
-  ExpressionModelListController(Responder * parentResponder, I18n::Message text);
+  ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
 protected:
   static constexpr KDCoordinate k_expressionMargin = 5;
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   // TableViewDataSource
   virtual int numberOfExpressionRows() const;
   bool isAddEmptyRow(int j);
@@ -21,7 +21,7 @@ protected:
   KDCoordinate memoizedCumulatedHeightFromIndex(int j);
   int memoizedIndexFromCumulatedHeight(KDCoordinate offsetY);
   virtual KDCoordinate expressionRowHeight(int j);
-  virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j);
+  virtual void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j);
   // Responder
   bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addEmptyModel();
@@ -32,9 +32,9 @@ protected:
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) { return j; }
   // ViewController
-  virtual SelectableTableView * selectableTableView() = 0;
+  virtual Escher::SelectableTableView * selectableTableView() = 0;
   virtual ExpressionModelStore * modelStore() = 0;
-  virtual InputViewController * inputController() = 0;
+  virtual Escher::InputViewController * inputController() = 0;
   // Memoization
   static constexpr int k_memoizedCellsCount = 7;
   /* We use memoization to speed up indexFromHeight(offset) in the children
@@ -55,7 +55,7 @@ protected:
    *   || j > selectedRow + halfMemoizationCount) { ... } */
   virtual void resetMemoizationForIndex(int index);
   virtual void shiftMemoization(bool newCellIsUnder);
-  EvenOddMessageTextCell m_addNewModel;
+  Escher::EvenOddMessageTextCell m_addNewModel;
 private:
   // Memoization
   static constexpr int k_resetedMemoizedValue = -1;

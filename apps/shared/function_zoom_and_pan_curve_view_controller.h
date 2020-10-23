@@ -10,7 +10,7 @@ class FunctionZoomAndPanCurveViewController : public ZoomAndPanCurveViewControll
 public:
   FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
   const char * title() override;
-  View * view() override { return &m_contentView; }
+  Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
@@ -19,14 +19,14 @@ public:
 private:
   constexpr static KDCoordinate k_standardViewHeight = 175;
 
-  class ContentView : public View {
+  class ContentView : public Escher::View {
   public:
     constexpr static KDCoordinate k_legendHeight = 30;
     ContentView(CurveView * curveView);
     void layoutSubviews(bool force = false) override;
     CurveView * curveView();
   private:
-    class LegendView : public View {
+    class LegendView : public Escher::View {
     public:
       LegendView();
       void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -36,12 +36,12 @@ private:
       constexpr static KDCoordinate k_tokenWidth = 10;
       void layoutSubviews(bool force = false) override;
       int numberOfSubviews() const override;
-      View * subviewAtIndex(int index) override;
-      MessageTextView m_legends[k_numberOfLegends];
-      KeyView m_legendPictograms[k_numberOfTokens];
+      Escher::View * subviewAtIndex(int index) override;
+      Escher::MessageTextView m_legends[k_numberOfLegends];
+      Escher::KeyView m_legendPictograms[k_numberOfTokens];
     };
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
+    Escher::View * subviewAtIndex(int index) override;
     CurveView * m_curveView;
     LegendView m_legendView;
   };

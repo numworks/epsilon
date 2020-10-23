@@ -13,9 +13,9 @@
 
 namespace Shared {
 
-class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
+class ValuesController : public EditableCellTableViewController, public Escher::ButtonRowDelegate,  public Escher::AlternateEmptyViewDefaultDelegate {
 public:
-  ValuesController(Responder * parentResponder, ButtonRowController * header);
+  ValuesController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
   // View controller
   const char * title() override;
   void viewWillAppear() override;
@@ -25,27 +25,27 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
+  void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
   // TableViewDataSource
   int numberOfColumns() const override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 
   // ButtonRowDelegate
-  int numberOfButtons(ButtonRowController::Position) const override;
+  int numberOfButtons(Escher::ButtonRowController::Position) const override;
 
   // AlternateEmptyViewDelegate
   bool isEmpty() const override;
-  Responder * defaultController() override;
+  Escher::Responder * defaultController() override;
 
   virtual IntervalParameterController * intervalParameterController() = 0;
 
 protected:
   // The cellWidth is increased by 10 pixels to avoid displaying more than 4 columns on the screen (and thus decrease the number of memoized cell)
-  static constexpr KDCoordinate k_cellWidth = (Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)) * 7 + 2*Metric::CellMargin+10; // KDFont::SmallFont->glyphSize().width() = 7, we add 10 to avoid displaying more that 4 columns and decr
+  static constexpr KDCoordinate k_cellWidth = (Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)) * 7 + 2*Escher::Metric::CellMargin+10; // KDFont::SmallFont->glyphSize().width() = 7, we add 10 to avoid displaying more that 4 columns and decr
   static constexpr int k_abscissaTitleCellType = 0;
   static constexpr int k_functionTitleCellType = 1;
   static constexpr int k_editableValueCellType = 2;
@@ -58,10 +58,10 @@ protected:
   int numberOfElementsInColumn(int columnIndex) const override;
 
   // Constructor helper
-  void setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate);
+  void setupSelectableTableViewAndCells(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // Parent controller getters
-  StackViewController * stackController() const;
+  Escher::StackViewController * stackController() const;
   Responder * tabController() const override;
 
   // Model getters
@@ -123,11 +123,11 @@ private:
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
-  virtual EvenOddBufferTextCell * floatCells(int j) = 0;
+  virtual Escher::EvenOddBufferTextCell * floatCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;
-  virtual EvenOddEditableTextCell * abscissaCells(int j) = 0;
+  virtual Escher::EvenOddEditableTextCell * abscissaCells(int j) = 0;
   virtual int abscissaTitleCellsCount() const = 0;
-  virtual EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
+  virtual Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
   virtual ViewController * functionParameterController() = 0;
 
   ValuesParameterController m_abscissaParameterController;

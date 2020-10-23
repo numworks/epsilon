@@ -12,7 +12,7 @@ namespace Shared {
 
 class FunctionApp : public ExpressionFieldDelegateApp {
 public:
-  class Snapshot : public ::SharedApp::Snapshot, public TabViewDataSource {
+  class Snapshot : public Shared::SharedApp::Snapshot, public Escher::TabViewDataSource {
   public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
@@ -28,19 +28,19 @@ public:
     uint32_t m_rangeVersion;
   };
   static FunctionApp * app() {
-    return static_cast<FunctionApp *>(Container::activeApp());
+    return static_cast<FunctionApp *>(Escher::Container::activeApp());
   }
   virtual ~FunctionApp() = default;
   Snapshot * snapshot() const {
-    return static_cast<Snapshot *>(::App::snapshot());
+    return static_cast<Snapshot *>(Escher::App::snapshot());
   }
   virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
   virtual ValuesController * valuesController() = 0;
-  virtual InputViewController * inputViewController() = 0;
+  virtual Escher::InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
 
 protected:
-  FunctionApp(Snapshot * snapshot, ViewController * rootViewController) :
+  FunctionApp(Snapshot * snapshot, Escher::ViewController * rootViewController) :
     ExpressionFieldDelegateApp(snapshot, rootViewController)
   {}
   // TextFieldDelegateApp

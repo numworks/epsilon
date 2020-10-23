@@ -1,6 +1,8 @@
 #include "function_curve_parameter_controller.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 FunctionCurveParameterController::FunctionCurveParameterController() :

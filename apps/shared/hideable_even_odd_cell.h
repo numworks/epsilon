@@ -6,7 +6,7 @@
 
 namespace Shared {
 
-class HideableEvenOddCell : public EvenOddCell, public Hideable {
+class HideableEvenOddCell : public Escher::EvenOddCell, public Hideable {
 public:
   HideableEvenOddCell() :
     EvenOddCell(),

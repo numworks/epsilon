@@ -1,6 +1,8 @@
 #include "buffer_text_view_with_text_field.h"
 #include <escher/palette.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 BufferTextViewWithTextField::BufferTextViewWithTextField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, const KDFont * font) :

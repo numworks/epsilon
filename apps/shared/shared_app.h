@@ -3,7 +3,9 @@
 
 #include <escher/app.h>
 
-class SharedApp : public App {
+namespace Shared {
+
+class SharedApp : public Escher::App {
   public:
   class Snapshot : public App::Snapshot {
     public:
@@ -11,4 +13,5 @@ class SharedApp : public App {
   };
 };
 
+}
 #endif

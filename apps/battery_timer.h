@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class BatteryTimer : public Timer {
+class BatteryTimer : public Escher::Timer {
 public:
   BatteryTimer();
 private:

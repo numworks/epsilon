@@ -1,7 +1,6 @@
 #ifndef SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 #define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 
-#include <escher.h>
 #include <poincare/layout.h>
 #include "../../shared/sequence_store.h"
 

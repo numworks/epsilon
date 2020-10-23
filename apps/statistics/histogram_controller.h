@@ -1,7 +1,6 @@
 #ifndef STATISTICS_HISTOGRAM_CONTROLLER_H
 #define STATISTICS_HISTOGRAM_CONTROLLER_H
 
-#include <escher.h>
 #include "store.h"
 #include "multiple_data_view_controller.h"
 #include "multiple_histograms_view.h"

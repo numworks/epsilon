@@ -1,7 +1,6 @@
 #ifndef HARDWARE_TEST_VBLANK_TEST_CONTROLLER_H
 #define HARDWARE_TEST_VBLANK_TEST_CONTROLLER_H
 
-#include <escher.h>
 #include <assert.h>
 
 namespace HardwareTest {

@@ -1,7 +1,6 @@
 #ifndef STATISTICS_STORE_CONTROLLER_H
 #define STATISTICS_STORE_CONTROLLER_H
 
-#include <escher.h>
 #include "store.h"
 #include "statistics_context.h"
 #include "../shared/store_controller.h"

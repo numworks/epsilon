@@ -1,7 +1,6 @@
 #ifndef STATISTICS_BOX_VIEW_H
 #define STATISTICS_BOX_VIEW_H
 
-#include <escher.h>
 #include "store.h"
 #include "box_range.h"
 #include "../constant.h"

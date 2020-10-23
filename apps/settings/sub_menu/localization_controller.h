@@ -1,7 +1,6 @@
 #ifndef SETTING_LOCALIZATION_CONTROLLER_H
 #define SETTING_LOCALIZATION_CONTROLLER_H
 
-#include <escher.h>
 #include <apps/shared/localization_controller.h>
 
 namespace Settings {

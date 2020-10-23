@@ -1,7 +1,6 @@
 #ifndef GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 #define GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 
-#include <escher.h>
 #include <apps/shared/interval_parameter_controller.h>
 #include "../../shared/continuous_function.h"
 

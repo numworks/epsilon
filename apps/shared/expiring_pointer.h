@@ -1,8 +1,6 @@
 #ifndef SHARED_EXPIRING_POINTER_H
 #define SHARED_EXPIRING_POINTER_H
 
-#include <escher.h>
-
 namespace Shared {
 
 template <class T>

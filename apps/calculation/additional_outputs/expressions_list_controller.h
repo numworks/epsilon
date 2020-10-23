@@ -1,7 +1,6 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_EXPRESSIONS_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_EXPRESSIONS_LIST_CONTROLLER_H
 
-#include <escher.h>
 #include <poincare/expression.h>
 #include <apps/i18n.h>
 #include "list_controller.h"

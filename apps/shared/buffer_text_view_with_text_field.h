@@ -1,6 +1,5 @@
 #ifndef SHARED_BUFFER_TEXT_VIEW_WITH_TEXT_FIELD_H
 #define SHARED_BUFFER_TEXT_VIEW_WITH_TEXT_FIELD_H
-#include <escher.h>
 
 namespace Shared {
 

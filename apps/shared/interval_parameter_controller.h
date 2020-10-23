@@ -1,7 +1,6 @@
 #ifndef SHARED_INTERVAL_PARAM_CONTROLLER_H
 #define SHARED_INTERVAL_PARAM_CONTROLLER_H
 
-#include <escher.h>
 #include "interval.h"
 #include "float_parameter_controller.h"
 #include <assert.h>

@@ -1,7 +1,6 @@
 #ifndef SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
 #define SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
 
-#include <escher.h>
 #include "scrollable_multiple_expressions_view.h"
 
 namespace Shared {

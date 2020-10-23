@@ -1,7 +1,6 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_ILLUSTRATED_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_ILLUSTRATED_LIST_CONTROLLER_H
 
-#include <escher.h>
 #include "scrollable_three_expressions_cell.h"
 #include "list_controller.h"
 #include "../calculation_store.h"

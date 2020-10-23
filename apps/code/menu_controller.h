@@ -1,12 +1,14 @@
 #ifndef CODE_MENU_CONTROLLER_H
 #define CODE_MENU_CONTROLLER_H
 
-#include <escher.h>
 #include "console_controller.h"
 #include "editor_controller.h"
 #include "script_name_cell.h"
 #include "script_parameter_controller.h"
 #include "script_store.h"
+#include <escher/button_row_controller.h>
+#include <escher/even_odd_cell_with_ellipsis.h>
+#include <escher/even_odd_message_text_cell.h>
 
 namespace Code {
 

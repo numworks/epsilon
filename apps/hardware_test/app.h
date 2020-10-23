@@ -1,7 +1,6 @@
 #ifndef HARDWARE_TEST_APP_H
 #define HARDWARE_TEST_APP_H
 
-#include <escher.h>
 #include "battery_test_controller.h"
 #include "colors_lcd_test_controller.h"
 #include "dead_pixels_test_controller.h"
@@ -12,6 +11,7 @@
 #include "serial_number_controller.h"
 #include "vblank_test_controller.h"
 #include "../shared/shared_app.h"
+#include <escher/bank_view_controller.h>
 
 namespace HardwareTest {
 

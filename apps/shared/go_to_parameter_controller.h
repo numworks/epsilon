@@ -1,9 +1,9 @@
 #ifndef SHARED_GO_TO_PARAMETER_CONTROLLER_H
 #define SHARED_GO_TO_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
-#include "float_parameter_controller.h"
 #include "curve_view_cursor.h"
+#include <escher/message_table_cell_with_editable_text.h>
+#include "float_parameter_controller.h"
 #include "interactive_curve_view_range.h"
 
 namespace Shared {

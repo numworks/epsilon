@@ -1,5 +1,4 @@
 #include <quiz.h>
-#include <escher.h>
 #include <assert.h>
 
 void assert_events_lead_to_selection(const Ion::Events::Event * events, int numberOfEvents, const char * selectedParsedAndSerializedText) {

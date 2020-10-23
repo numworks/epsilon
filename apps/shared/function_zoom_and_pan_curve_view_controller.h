@@ -1,8 +1,9 @@
 #ifndef SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
 #define SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
 
-#include "zoom_and_pan_curve_view_controller.h"
 #include <apps/i18n.h>
+#include <escher/key_view.h>
+#include "zoom_and_pan_curve_view_controller.h"
 
 namespace Shared {
 

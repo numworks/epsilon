@@ -1,7 +1,6 @@
 #ifndef SOLVER_SOLVER_APP_H
 #define SOLVER_SOLVER_APP_H
 
-#include <escher.h>
 #include "../shared/expression_field_delegate_app.h"
 #include "list_controller.h"
 #include "equation_store.h"

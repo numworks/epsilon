@@ -1,7 +1,6 @@
 #ifndef STAT_APP_H
 #define STAT_APP_H
 
-#include <escher.h>
 #include "box_controller.h"
 #include "calculation_controller.h"
 #include "histogram_controller.h"

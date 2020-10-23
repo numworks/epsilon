@@ -1,7 +1,7 @@
 #ifndef SHARED_FUNCTION_TITLE_CELL_H
 #define SHARED_FUNCTION_TITLE_CELL_H
 
-#include <escher.h>
+#include <escher/even_odd_cell.h>
 
 namespace Shared {
 

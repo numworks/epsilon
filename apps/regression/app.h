@@ -1,7 +1,6 @@
 #ifndef REGRESSION_APP_H
 #define REGRESSION_APP_H
 
-#include <escher.h>
 #include "../shared/text_field_delegate_app.h"
 #include "calculation_controller.h"
 #include "graph_controller.h"

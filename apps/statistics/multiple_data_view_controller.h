@@ -1,7 +1,6 @@
 #ifndef STATISTICS_MULTIPLE_DATA_VIEW_CONTROLLER_H
 #define STATISTICS_MULTIPLE_DATA_VIEW_CONTROLLER_H
 
-#include <escher.h>
 #include "store.h"
 #include "multiple_data_view.h"
 

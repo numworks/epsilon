@@ -1,7 +1,6 @@
 #ifndef APPS_LOGO_CONTROLLER_H
 #define APPS_LOGO_CONTROLLER_H
 
-#include <escher.h>
 #include "logo_view.h"
 
 namespace OnBoarding {

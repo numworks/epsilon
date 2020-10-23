@@ -1,7 +1,6 @@
 #ifndef REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
 #define REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
 
-#include <escher.h>
 #include "store.h"
 #include "../shared/curve_view_cursor.h"
 #include "go_to_parameter_controller.h"

@@ -1,8 +1,8 @@
 #ifndef APPS_MATH_TOOLBOX_H
 #define APPS_MATH_TOOLBOX_H
 
-#include <escher.h>
 #include <apps/i18n.h>
+#include <escher/toolbox.h>
 
 class MathToolbox : public Escher::Toolbox {
 public:

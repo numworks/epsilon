@@ -1,7 +1,6 @@
 #ifndef USB_USB_CONNECTED_CONTROLLER_H
 #define USB_USB_CONNECTED_CONTROLLER_H
 
-#include <escher.h>
 #include "../shared/message_view.h"
 
 namespace USB {

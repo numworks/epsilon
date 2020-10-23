@@ -1,7 +1,6 @@
 #ifndef CALCULATION_HISTORY_CONTROLLER_H
 #define CALCULATION_HISTORY_CONTROLLER_H
 
-#include <escher.h>
 #include "history_view_cell.h"
 #include "calculation_store.h"
 #include "selectable_table_view.h"

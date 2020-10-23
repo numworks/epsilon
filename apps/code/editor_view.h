@@ -1,8 +1,8 @@
 #ifndef CODE_EDITOR_VIEW_H
 #define CODE_EDITOR_VIEW_H
 
-#include <escher.h>
 #include "python_text_area.h"
+#include <escher/container.h>
 
 namespace Code {
 

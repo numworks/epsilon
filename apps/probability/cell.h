@@ -1,8 +1,6 @@
 #ifndef APPS_PROBABILITY_CELL_H
 #define APPS_PROBABILITY_CELL_H
 
-#include <escher.h>
-
 namespace Probability {
 
 class Cell : public Escher::HighlightCell {

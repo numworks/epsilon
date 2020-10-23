@@ -1,6 +1,8 @@
 #ifndef SHARED_FUNCTION_APP_H
 #define SHARED_FUNCTION_APP_H
 
+#include <escher/input_view_controller.h>
+#include <escher/tab_view_data_source.h>
 #include "expression_field_delegate_app.h"
 #include "function_graph_controller.h"
 #include "function_store.h"

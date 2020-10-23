@@ -1,7 +1,6 @@
 #ifndef SHARED_VALUES_PARAM_CONTROLLER_H
 #define SHARED_VALUES_PARAM_CONTROLLER_H
 
-#include <escher.h>
 #include "interval_parameter_controller.h"
 
 namespace Shared {

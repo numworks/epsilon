@@ -1,8 +1,6 @@
 #ifndef SHARED_OK_VIEW_H
 #define SHARED_OK_VIEW_H
 
-#include <escher.h>
-
 namespace Shared {
 
 class OkView : public Escher::TransparentView {

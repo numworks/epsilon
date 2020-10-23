@@ -1,7 +1,6 @@
 #ifndef STATISTICS_CALCULATION_CONTROLLER_H
 #define STATISTICS_CALCULATION_CONTROLLER_H
 
-#include <escher.h>
 #include <poincare/print_float.h>
 #include <poincare/preferences.h>
 #include "store.h"

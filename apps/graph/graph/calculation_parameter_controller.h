@@ -1,7 +1,6 @@
 #ifndef GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
 #include "preimage_parameter_controller.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"

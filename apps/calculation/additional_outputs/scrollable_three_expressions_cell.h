@@ -1,10 +1,10 @@
 #ifndef CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_CELL_H
 #define CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_CELL_H
 
-#include <escher.h>
 #include "../../shared/scrollable_multiple_expressions_view.h"
 #include "../calculation.h"
 #include "expression_with_equal_sign_view.h"
+#include <escher/table_cell.h>
 
 namespace Calculation {
 

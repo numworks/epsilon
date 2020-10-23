@@ -1,7 +1,8 @@
 #ifndef HARDWARE_TEST_BATTERY_TEST_CONTROLLER_H
 #define HARDWARE_TEST_BATTERY_TEST_CONTROLLER_H
 
-#include <escher.h>
+#include <escher/buffer_text_view.h>
+#include <escher/view_controller.h>
 
 namespace HardwareTest {
 

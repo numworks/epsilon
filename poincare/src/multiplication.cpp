@@ -1122,27 +1122,27 @@ bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const
 
   Expression base = Base(e1);
   ExpressionNode::Sign baseSign = base.sign(reductionContext.context());
+  ExpressionNode::NullStatus baseNullStatus = base.nullStatus(reductionContext.context());
 
-  if (baseSign != ExpressionNode::Sign::Unknown && !base.isNumberZero()) {
+  if (baseSign != ExpressionNode::Sign::Unknown && baseNullStatus == ExpressionNode::NullStatus::NonNull) {
     // x cannot be null
     return true;
   }
 
   Expression exponent1 = CreateExponent(e1);
-  ExpressionNode::Sign exponentSign1 = exponent1.sign(reductionContext.context());
   Expression exponent2 = CreateExponent(e2);
-  ExpressionNode::Sign exponentSign2 = exponent2.sign(reductionContext.context());
 
-  if (exponentSign1 == ExpressionNode::Sign::Positive && !exponent1.isNumberZero()
-    && exponentSign2 == ExpressionNode::Sign::Positive && !exponent2.isNumberZero()) {
+  if (exponent1.isStrictly(ExpressionNode::Sign::Positive, reductionContext.context())
+    && exponent2.isStrictly(ExpressionNode::Sign::Positive, reductionContext.context())) {
     // a and b are strictly positive
     return true;
   }
 
   Expression sum = Addition::Builder(exponent1, exponent2).shallowReduce(reductionContext);
   ExpressionNode::Sign sumSign = sum.sign(reductionContext.context());
+  ExpressionNode::NullStatus sumNullStatus = sum.nullStatus(reductionContext.context());
 
-  if (sumSign == ExpressionNode::Sign::Negative || sum.isNumberZero()) {
+  if (sumSign == ExpressionNode::Sign::Negative || sumNullStatus == ExpressionNode::NullStatus::Null) {
     // a+b is negative or null
     return true;
   }

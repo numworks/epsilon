@@ -156,6 +156,11 @@ public:
     Unknown = 0,
     Positive = 1
   };
+  enum class NullStatus {
+    Unknown = -1,
+    NonNull = 0,
+    Null = 1,
+  };
 
   class ReductionContext {
   public:
@@ -186,8 +191,8 @@ public:
   };
 
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
+  virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }
-  virtual bool isNumberZero() const { return false; }
   virtual bool isRandom() const { return false; }
   virtual bool isParameteredExpression() const { return false; }
   /* childAtIndexNeedsUserParentheses checks if parentheses are required by mathematical rules:

@@ -60,7 +60,7 @@ Expression ComplexCartesian::shallowReduce() {
       return e;
     }
   }
-  if (imag().isNumberZero()) {
+  if (imag().nullStatus(nullptr) == ExpressionNode::NullStatus::Null) {
     Expression r = real();
     replaceWithInPlace(r);
     return r;
@@ -128,9 +128,9 @@ Expression ComplexCartesian::squareNorm(ExpressionNode::ReductionContext reducti
 Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionContext) {
   Expression a;
   // Special case for pure real or pure imaginary cartesian
-  if (imag().isNumberZero()) {
+  if (imag().nullStatus(nullptr) == ExpressionNode::NullStatus::Null) {
     a = real();
-  } else if (real().isNumberZero()) {
+  } else if (real().nullStatus(nullptr) == ExpressionNode::NullStatus::Null) {
     a = imag();
   }
   if (!a.isUninitialized()) {
@@ -149,7 +149,8 @@ Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionCont
 Expression ComplexCartesian::argument(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
-  if (!b.isNumberZero()) {
+  if (b.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
+    // TODO: Handle ExpressionNode::NullStatus::Unknown
     // if b != 0, argument = sign(b) * π/2 - atan(a/b)
     // First, compute atan(a/b) or (π/180)*atan(a/b)
     Expression divab = Division::Builder(a, b.clone());
@@ -242,11 +243,11 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, ExpressionNode::Reduction
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
-  assert(!b.isNumberZero());
+  assert(b.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null);
 
   // Special case: a == 0 (otherwise, we are going to introduce undefined expressions - a^0 = NAN)
   // (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
-  if (a.isNumberZero()) {
+  if (a.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     ComplexCartesian result;
     Expression bpow = Power::Builder(b, Rational::Builder(n));
     if (n/2%2 == 1) {

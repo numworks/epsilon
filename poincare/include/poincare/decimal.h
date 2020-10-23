@@ -42,8 +42,8 @@ public:
   // Properties
   Type type() const override { return Type::Decimal; }
   Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  NullStatus nullStatus(Context * context) const override { return unsignedMantissa().isZero() ? NullStatus::Null : NullStatus::NonNull; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
-  bool isNumberZero() const override { return unsignedMantissa().isZero(); }
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {

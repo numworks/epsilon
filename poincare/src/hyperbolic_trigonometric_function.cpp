@@ -26,7 +26,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
   }
 
   // Step 1. Notable values
-  if (node()->isNotableValue(c)) {
+  if (node()->isNotableValue(c, reductionContext.context())) {
     Expression result = node()->imageOfNotableValue();
     replaceWithInPlace(result);
     return result;

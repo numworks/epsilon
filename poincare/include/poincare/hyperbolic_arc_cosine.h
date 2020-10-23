@@ -21,7 +21,7 @@ public:
   Type type() const override { return Type::HyperbolicArcCosine; }
 private:
   // Simplification
-  bool isNotableValue(Expression e) const override { return e.isRationalOne(); }
+  bool isNotableValue(Expression e, Context * context) const override { return e.isRationalOne(); }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

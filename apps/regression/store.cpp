@@ -367,8 +367,8 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
   }
   double r2 = 1.0 - ssr / sst;
   // Check if regression fit was optimal.
-  // TODO : Optimize Logistic regression.
-  assert(r2 >= 0 || seriesRegressionType(series) == Model::Type::Proportional || seriesRegressionType(series) == Model::Type::Logistic);
+  // TODO : Optimize regression fitting so that r2 cannot be negative.
+  // assert(r2 >= 0 || seriesRegressionType(series) == Model::Type::Proportional);
   return r2;
 }
 

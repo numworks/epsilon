@@ -166,6 +166,13 @@ QUIZ_CASE(exponential_regression3) {
   double coefficients[] = {-1, -1};
   double r2 = 0.9999999999999992;
   assert_regression_is(x, y, 11, Model::Type::Exponential, coefficients, r2);
+
+  // TODO : This data produce a wrong fit currently
+  // double x2[] = {1.0, 2.0, 3.0, 4.0};
+  // double y2[] = {2.0, 3.0, 4.0, 1.0};
+  // double coefficients2[] = {2.905, -0.0606857};
+  // double r22 = 0.838388;
+  // assert_regression_is(x2, y2, 4, Model::Type::Exponential, coefficients2, r22);
 }
 
 QUIZ_CASE(power_regression) {
@@ -174,6 +181,13 @@ QUIZ_CASE(power_regression) {
   double coefficients[] = {71.8, 2.7};
   double r2 = 1.0;
   assert_regression_is(x, y, 5, Model::Type::Power, coefficients, r2);
+
+  // TODO : This data produce a wrong fit currently
+  // double x2[] = {1.0, 2.0, 3.0, 4.0};
+  // double y2[] = {2.0, 3.0, 4.0, 1.0};
+  // double coefficients2[] = {2.54948, -0.0247463};
+  // double r22 = 0.833509;
+  // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 }
 
 // No case for trigonometric regression, because it has no unique solution
@@ -196,10 +210,11 @@ QUIZ_CASE(logistic_regression) {
   assert_regression_is(x2, y2, 10, Model::Type::Logistic, coefficients2, r22);
 
   // TODO : This data produce a wrong fit currently
-  // double x3[] = {4.0, 3.0, 21.0, 1.0, 6.0};
-  // double y3[] = {0.0, 4.0, 5.0, 4.0, 58.0};
-  // double coefficients3[] = {370162529.359743, 4.266439, 31.445238};
-  // double r23 = 0.401040;
+  // double x3[] = {1.0, 3.0, 4.0, 6.0, 8.0};
+  // double y3[] = {4.0, 4.0, 0.0, 58.0, 5.0};
+  // No source of truth for coefficient, r2 should at least be positive.
+  // double coefficients3[] = {-0.1, -0.4, -4};
+  // double r23 = 0.75;
   // assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, r23);
 }
 

@@ -23,7 +23,9 @@ public:
   }
 
   static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
-  bool isOrthonormal(float tolerance = 2 * FLT_EPSILON) const;
+  /* A tolerance of 0.001 is necessary to cover the imprecision with the
+   * largest ranges, around 10^7 */
+  bool isOrthonormal(float tolerance = 1e-3f) const;
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
   uint32_t rangeChecksum() override;

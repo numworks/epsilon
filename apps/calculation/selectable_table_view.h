@@ -5,10 +5,10 @@
 #include "history_view_cell.h"
 namespace Calculation {
 
-class CalculationSelectableTableView : public ::SelectableTableView {
+class CalculationSelectableTableView : public Escher::SelectableTableView {
 public:
-  CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
-    SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate = nullptr);
+  CalculationSelectableTableView(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource,
+    Escher::SelectableTableViewDataSource * selectionDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr);
   void scrollToBottom();
   void scrollToCell(int i, int j) override;
   void scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCellDataSource::SubviewType subviewType, int i, int j);

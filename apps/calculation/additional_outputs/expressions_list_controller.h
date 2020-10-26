@@ -18,10 +18,10 @@ public:
 
   //ListViewDataSource
   int reusableCellCount(int type) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override { return 0; }
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override;
 
   // IllustratedListController
@@ -37,7 +37,7 @@ private:
   Poincare::Layout layoutAtIndex(int index);
   virtual I18n::Message messageAtIndex(int index) = 0;
   // Cells
-  ExpressionTableCellWithPointer m_cells[k_maxNumberOfRows];
+  Escher::ExpressionTableCellWithPointer m_cells[k_maxNumberOfRows];
 };
 
 }

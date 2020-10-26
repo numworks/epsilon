@@ -10,12 +10,12 @@
 
 namespace Code {
 
-class ScriptNameCell : public EvenOddCell, public Responder {
+class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
 public:
-  ScriptNameCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr) :
-    EvenOddCell(),
-    Responder(parentResponder),
-    m_textField(k_extensionLength, this, m_textBody, TextField::maxBufferSize(), TextField::maxBufferSize(), nullptr, delegate)
+  ScriptNameCell(Escher::Responder * parentResponder = nullptr, Escher::TextFieldDelegate * delegate = nullptr) :
+    Escher::EvenOddCell(),
+    Escher::Responder(parentResponder),
+    m_textField(k_extensionLength, this, m_textBody, Escher::TextField::maxBufferSize(), Escher::TextField::maxBufferSize(), nullptr, delegate)
   {
     m_textBody[0] = 0;
   }
@@ -26,7 +26,7 @@ public:
   void setEven(bool even) override;
   // HighlightCell
   void setHighlighted(bool highlight) override;
-  Responder * responder() override {
+  Escher::Responder * responder() override {
     if (m_textField.isEditing()) {
       return this;
     }
@@ -40,18 +40,18 @@ public:
 
 private:
   constexpr static size_t k_extensionLength = 1+ScriptStore::k_scriptExtensionLength; // '.' + "py"
-  constexpr static KDCoordinate k_leftMargin = Metric::CommonLargeMargin;
+  constexpr static KDCoordinate k_leftMargin = Escher::Metric::CommonLargeMargin;
 
   // View
   int numberOfSubviews() const override { return 1; }
-  View * subviewAtIndex(int index) override {
+  Escher::View * subviewAtIndex(int index) override {
     assert(index == 0);
     return &m_textField;
   }
   void layoutSubviews(bool force = false) override;
 
   Shared::TextFieldWithExtension m_textField;
-  char m_textBody[TextField::maxBufferSize()];
+  char m_textBody[Escher::TextField::maxBufferSize()];
 };
 
 }

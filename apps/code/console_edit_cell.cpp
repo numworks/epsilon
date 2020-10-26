@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Code {
 
 ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :

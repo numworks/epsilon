@@ -8,7 +8,7 @@
 
 namespace Code {
 
-class ScriptNodeCell : public TableCell {
+class ScriptNodeCell : public Escher::TableCell {
 public:
   static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
@@ -24,7 +24,7 @@ public:
   static bool CanDisplayNameAndSource(int nameLength, const char * source);
 
   /* TableCell */
-  View * labelView() const override { return const_cast<View *>(static_cast<const View *>(&m_scriptNodeView)); }
+  Escher::View * labelView() const override { return const_cast<View *>(static_cast<const View *>(&m_scriptNodeView)); }
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
@@ -32,12 +32,12 @@ public:
   const char * text() const override { return m_scriptNodeView.text(); }
 
 protected:
-  class ScriptNodeView : public HighlightCell {
+  class ScriptNodeView : public Escher::HighlightCell {
   public:
     constexpr static const KDFont * k_font = KDFont::SmallFont;
-    constexpr static KDCoordinate k_optimalWidth = Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin;
+    constexpr static KDCoordinate k_optimalWidth = Ion::Display::Width - Escher::Metric::PopUpLeftMargin - Escher::Metric::PopUpRightMargin;
     ScriptNodeView() :
-      HighlightCell(),
+      Escher::HighlightCell(),
       m_scriptNode(nullptr)
     {}
     void setScriptNode(ScriptNode * node) { m_scriptNode = node; }

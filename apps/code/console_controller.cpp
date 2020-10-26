@@ -14,6 +14,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+using namespace Escher;
+
 namespace Code {
 
 static const char * sStandardPromptText = ">>> ";

@@ -1,6 +1,8 @@
 #include "script_parameter_controller.h"
 #include "menu_controller.h"
 
+using namespace Escher;
+
 namespace Code {
 
 ScriptParameterController::ScriptParameterController(Responder * parentResponder, I18n::Message title, MenuController * menuController) :

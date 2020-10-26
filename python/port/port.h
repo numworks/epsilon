@@ -24,11 +24,11 @@ public:
 
   // Sandbox
   void displaySandbox() { displayViewController(sandbox()); }
-  virtual ViewController * sandbox() { return nullptr; }
+  virtual Escher::ViewController * sandbox() { return nullptr; }
   virtual void resetSandbox() {}
 
   // Generic View Controller
-  virtual void displayViewController(ViewController * controller) {}
+  virtual void displayViewController(Escher::ViewController * controller) {}
   virtual void hideAnyDisplayedViewController() {}
 
   virtual void printText(const char * text, size_t length) {}

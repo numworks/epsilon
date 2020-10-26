@@ -17,21 +17,21 @@ public:
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
 
   /* TableViewDataSource */
   KDCoordinate rowHeight(int j) override;
   int numberOfRows() const override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   /* ListViewDataSource */
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   /* SelectableTableViewDelegate */
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
   //AlternateEmptyNestedMenuController
-  ViewController * emptyViewController() override { return &m_variableBoxEmptyController; }
+  Escher::ViewController * emptyViewController() override { return &m_variableBoxEmptyController; }
 
   /* VariableBoxController */
   void setDisplaySubtitles(bool display) { m_displaySubtitles = display; }
@@ -42,7 +42,7 @@ public:
   void insertAutocompletionResultAtIndex(int index);
 
 private:
-  constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
+  constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
   constexpr static size_t k_maxScriptNodesCount = 32; // Chosen without particular reasons
   constexpr static int k_totalBuiltinNodesCount = 107;
   constexpr static uint8_t k_scriptOriginsCount = 3;
@@ -78,8 +78,8 @@ private:
   int typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin = nullptr, int * cumulatedOriginsCount = nullptr) const;
 
   // NestedMenuController
-  HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }
-  HighlightCell * nodeCellAtIndex(int index) override { assert(false); return nullptr; }
+  Escher::HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }
+  Escher::HighlightCell * nodeCellAtIndex(int index) override { assert(false); return nullptr; }
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
 
@@ -91,7 +91,7 @@ private:
   // Returns true if this was an import structure
   bool addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules = true);
   const char * importationSourceNameFromNode(mp_parse_node_t & node);
-  bool importationSourceIsModule(const char * sourceName, const ToolboxMessageTree * * moduleChildren = nullptr, int * numberOfModuleChildren = nullptr);
+  bool importationSourceIsModule(const char * sourceName, const Escher::ToolboxMessageTree * * moduleChildren = nullptr, int * numberOfModuleChildren = nullptr);
   bool importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retreivedScript = nullptr);
   bool addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength);
   /* Add a node if it completes the text to autocomplete and if it is not
@@ -104,7 +104,7 @@ private:
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
-  MessageTableCell m_subtitleCells[k_scriptOriginsCount];
+  Escher::MessageTableCell m_subtitleCells[k_scriptOriginsCount];
   ScriptStore * m_scriptStore;
   size_t m_currentScriptNodesCount;
   size_t m_builtinNodesCount;

@@ -5,6 +5,8 @@ extern "C" {
 #include <python/port/mod/turtle/modturtle.h>
 }
 
+using namespace Escher;
+
 namespace Code {
 
 SandboxController::SandboxController(Responder * parentResponder) :

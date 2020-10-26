@@ -2,6 +2,8 @@
 #include <kandinsky/point.h>
 #include <escher.h>
 
+using namespace Escher;
+
 namespace Code {
 
 constexpr char ScriptNodeCell::k_parentheses[];

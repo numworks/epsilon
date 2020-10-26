@@ -5,6 +5,8 @@
 #include <apps/i18n.h>
 #include <apps/global_preferences.h>
 
+using namespace Escher;
+
 namespace Code {
 
 ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::ConsoleLineView() :

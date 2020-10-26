@@ -9,14 +9,14 @@ namespace Code {
 
 class MenuController;
 
-class ScriptParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class ScriptParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  ScriptParameterController(Responder * parentResponder, I18n::Message title, MenuController * menuController);
+  ScriptParameterController(Escher::Responder * parentResponder, I18n::Message title, MenuController * menuController);
   void setScript(Script script);
   void dismissScriptParameterController();
 
   /* ViewController */
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -24,21 +24,21 @@ public:
   TELEMETRY_ID("ScriptParameter");
 
   /* SimpleListViewDataSource */
-  KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
-  HighlightCell * reusableCell(int index) override;
+  KDCoordinate cellHeight() override { return Escher::Metric::ParameterCellHeight; }
+  Escher::HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override { return k_totalNumberOfCell; }
   int numberOfRows() const override { return k_totalNumberOfCell; }
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
 private:
   constexpr static int k_totalNumberOfCell = 4;
-  StackViewController * stackViewController();
+  Escher::StackViewController * stackViewController();
   I18n::Message m_pageTitle;
-  MessageTableCell m_executeScript;
-  MessageTableCell m_renameScript;
-  MessageTableCellWithSwitch m_autoImportScript;
-  MessageTableCell m_deleteScript;
-  SelectableTableView m_selectableTableView;
+  Escher::MessageTableCell m_executeScript;
+  Escher::MessageTableCell m_renameScript;
+  Escher::MessageTableCellWithSwitch m_autoImportScript;
+  Escher::MessageTableCell m_deleteScript;
+  Escher::SelectableTableView m_selectableTableView;
   Script m_script;
   MenuController * m_menuController;
 };

@@ -4,6 +4,8 @@
 #include <escher/app.h>
 #include <escher/palette.h>
 
+using namespace Escher;
+
 namespace Code {
 
 /* EditorView */

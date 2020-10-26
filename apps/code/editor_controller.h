@@ -13,7 +13,7 @@ class MenuController;
 class ScriptParameterController;
 class App;
 
-class EditorController : public ViewController, public TextAreaDelegate, public Shared::InputEventHandlerDelegate {
+class EditorController : public Escher::ViewController, public Escher::TextAreaDelegate, public Shared::InputEventHandlerDelegate {
 public:
   EditorController(MenuController * menuController, App * pythonDelegate);
   void setScript(Script script, int scriptIndex);
@@ -21,23 +21,23 @@ public:
   void willExitApp();
 
   /* ViewController */
-  View * view() override { return &m_editorView; }
+  Escher::View * view() override { return &m_editorView; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  Escher::ViewController::DisplayParameter displayParameter() override { return Escher::ViewController::DisplayParameter::WantsMaximumSpace; }
   TELEMETRY_ID("Editor");
 
   /* TextAreaDelegate */
-  bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;
+  bool textAreaDidReceiveEvent(Escher::TextArea * textArea, Ion::Events::Event event) override;
 
   /* InputEventHandlerDelegate */
-  VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
+  VariableBoxController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
 
 private:
   void cleanStorageEmptySpace();
-  StackViewController * stackController();
+  Escher::StackViewController * stackController();
   EditorView m_editorView;
   Script m_script;
   int m_scriptIndex;

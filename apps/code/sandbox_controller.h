@@ -9,22 +9,22 @@
 
 namespace Code {
 
-class SandboxController : public ViewController {
+class SandboxController : public Escher::ViewController {
 public:
-  SandboxController(Responder * parentResponder);
-  StackViewController * stackViewController();
+  SandboxController(Escher::Responder * parentResponder);
+  Escher::StackViewController * stackViewController();
   void reset();
 
   // ViewController
-  View * view() override { return &m_solidColorView; }
+  Escher::View * view() override { return &m_solidColorView; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  Escher::ViewController::DisplayParameter displayParameter() override { return Escher::ViewController::DisplayParameter::WantsMaximumSpace; }
 
 private:
   void redrawWindow();
-  SolidColorView m_solidColorView;
+  Escher::SolidColorView m_solidColorView;
 };
 }
 

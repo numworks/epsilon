@@ -29,9 +29,9 @@ private:
   SubviewType m_selectedSubviewType;
 };
 
-class HistoryViewCell : public ::EvenOddCell, public Responder {
+class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
 public:
-  constexpr static KDCoordinate k_margin = Metric::CommonSmallMargin;
+  constexpr static KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
   constexpr static KDCoordinate k_inputViewHorizontalMargin = Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
   static KDCoordinate Height(Calculation * calculation, bool expanded);
@@ -49,7 +49,7 @@ public:
     return this;
   }
   Poincare::Layout layout() const override;
-  KDColor backgroundColor() const override { return m_even ? KDColorWhite : Palette::WallScreen; }
+  KDColor backgroundColor() const override { return m_even ? KDColorWhite : Escher::Palette::WallScreen; }
   void resetMemoization();
   void setCalculation(Calculation * calculation, bool expanded, bool canChangeDisplayOutput = false);
   int numberOfSubviews() const override { return 2 + displayedEllipsis(); }
@@ -58,7 +58,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableTwoExpressionsView * outputView() { return &m_scrollableOutputView; }
-  ScrollableExpressionView * inputView() { return &m_inputView; }
+  Escher::ScrollableExpressionView * inputView() { return &m_inputView; }
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
@@ -71,9 +71,9 @@ private:
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformationType m_calculationAdditionInformation;
-  ScrollableExpressionView m_inputView;
+  Escher::ScrollableExpressionView m_inputView;
   Shared::ScrollableTwoExpressionsView m_scrollableOutputView;
-  EvenOddCellWithEllipsis m_ellipsis;
+  Escher::EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource * m_dataSource;
   bool m_calculationExpanded;
   bool m_calculationSingleLine;

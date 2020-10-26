@@ -19,7 +19,7 @@ public:
   void setExpression(Poincare::Expression e) override;
 private:
   CodePoint expressionSymbol() const override { return 'z'; }
-  HighlightCell * illustrationCell() override { return &m_complexGraphCell; }
+  Escher::HighlightCell * illustrationCell() override { return &m_complexGraphCell; }
   ComplexGraphCell m_complexGraphCell;
   ComplexModel m_model;
 };

@@ -9,7 +9,7 @@
 
 namespace Calculation {
 
-class IllustratedListController : public ListController, public SelectableTableViewDelegate {
+class IllustratedListController : public ListController, public Escher::SelectableTableViewDelegate {
 public:
   IllustratedListController(EditExpressionController * editExpressionController);
 
@@ -20,13 +20,13 @@ public:
   //ListViewDataSource
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // IllustratedListController
   void setExpression(Poincare::Expression e) override;
@@ -44,7 +44,7 @@ private:
   constexpr static int k_calculationStoreBufferSize = k_maxNumberOfAdditionalCalculations * (sizeof(Calculation) + Calculation::k_numberOfExpressions * Constant::MaxSerializedExpressionSize + sizeof(Calculation *));
   char m_calculationStoreBuffer[k_calculationStoreBufferSize];
   // Cells
-  virtual HighlightCell * illustrationCell() = 0;
+  virtual Escher::HighlightCell * illustrationCell() = 0;
   ScrollableThreeExpressionsCell m_additionalCalculationCells[k_maxNumberOfAdditionalCalculations];
 };
 

@@ -5,6 +5,7 @@
 
 using namespace Shared;
 using namespace Poincare;
+using namespace Escher;
 
 namespace Calculation {
 

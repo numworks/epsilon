@@ -22,7 +22,7 @@ public:
   ComplexGraphCell(ComplexModel * complexModel) : m_view(complexModel) {}
   void reload() { m_view.reload(); }
 private:
-  View * view() override { return &m_view; }
+  Escher::View * view() override { return &m_view; }
   ComplexGraphView m_view;
 };
 

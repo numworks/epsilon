@@ -13,7 +13,7 @@ namespace Calculation {
 
 class ScrollableThreeExpressionsView : public Shared::AbstractScrollableMultipleExpressionsView {
 public:
-  static constexpr KDCoordinate k_margin = Metric::CommonSmallMargin;
+  static constexpr KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
     setMargins(k_margin, k_margin, k_margin, k_margin); // Left Right margins are already added by TableCell
     setBackgroundColor(KDColorWhite);
@@ -29,7 +29,7 @@ private:
     ContentCell() : m_leftExpressionView() {}
     KDColor backgroundColor() const override { return KDColorWhite; }
     void setEven(bool even) override { return; }
-    ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }
+    Escher::ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }
   private:
     ExpressionWithEqualSignView m_leftExpressionView;
   };
@@ -39,7 +39,7 @@ private:
   ContentCell m_contentCell;
 };
 
-class ScrollableThreeExpressionsCell : public TableCell, public Responder {
+class ScrollableThreeExpressionsCell : public Escher::TableCell, public Escher::Responder {
 public:
   static KDCoordinate Height(Calculation * calculation);
   ScrollableThreeExpressionsCell() :
@@ -50,7 +50,7 @@ public:
   Poincare::Layout layout() const override { return m_view.layout(); }
 
   // Responder cell
-  Responder * responder() override {
+  Escher::Responder * responder() override {
     return this;
   }
   void didBecomeFirstResponder() override;

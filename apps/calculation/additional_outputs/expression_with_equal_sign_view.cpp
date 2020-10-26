@@ -1,5 +1,7 @@
 #include "expression_with_equal_sign_view.h"
 
+using namespace Escher;
+
 namespace Calculation {
 
 KDSize ExpressionWithEqualSignView::minimalSizeForOptimalDisplay() const {

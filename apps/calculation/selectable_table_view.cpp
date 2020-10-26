@@ -1,6 +1,8 @@
 #include "selectable_table_view.h"
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Calculation {
 
 CalculationSelectableTableView::CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,

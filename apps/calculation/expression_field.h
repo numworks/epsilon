@@ -5,10 +5,10 @@
 
 namespace Calculation {
 
-class ExpressionField : public ::ExpressionField {
+class ExpressionField : public Escher::ExpressionField {
 public:
-  ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
-  ::ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate) {
+  ExpressionField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::TextFieldDelegate * textFieldDelegate, Escher::LayoutFieldDelegate * layoutFieldDelegate) :
+  Escher::ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate) {
     setLayoutInsertionCursorEvent(Ion::Events::Up);
   }
 protected:

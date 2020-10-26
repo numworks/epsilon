@@ -2,6 +2,7 @@
 #include "../edit_expression_controller.h"
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Calculation {
 

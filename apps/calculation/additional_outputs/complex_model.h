@@ -42,7 +42,7 @@ public:
   static constexpr float k_minHorizontalMarginFactor = -1.0f;
   static constexpr float k_maxHorizontalMarginFactor = 2.0f;
   // Vertical range
-  static constexpr KDCoordinate k_width = Ion::Display::Width - Metric::PopUpRightMargin - Metric::PopUpLeftMargin;
+  static constexpr KDCoordinate k_width = Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin;
   static constexpr KDCoordinate k_height = IllustratedListController::k_illustrationHeight;
   static constexpr KDCoordinate k_unit = k_width/3;
   /*

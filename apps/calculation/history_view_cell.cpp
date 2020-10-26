@@ -7,6 +7,8 @@
 #include <string.h>
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Calculation {
 
 /* HistoryViewCellDataSource */

@@ -12,16 +12,16 @@ namespace Calculation {
 
 class App : public Shared::ExpressionFieldDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
-    const Image * icon() override;
+    const Escher::Image * icon() override;
   };
-  class Snapshot : public ::SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     CalculationStore * calculationStore() { return &m_calculationStore; }
@@ -36,18 +36,18 @@ public:
     size_t m_cacheBufferInformation;
   };
   static App * app() {
-    return static_cast<App *>(Container::activeApp());
+    return static_cast<App *>(Escher::Container::activeApp());
   }
   TELEMETRY_ID("Calculation");
-  bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
-  bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 
 private:
   App(Snapshot * snapshot);
   HistoryController m_historyController;
-  void didBecomeActive(Window * window) override;
+  void didBecomeActive(Escher::Window * window) override;
   void willBecomeInactive() override;
   EditExpressionController m_editExpressionController;
 };

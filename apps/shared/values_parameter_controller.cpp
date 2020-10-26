@@ -2,6 +2,8 @@
 #include "function_app.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 ValuesParameterController::ValuesParameterController(Responder * parentResponder) :

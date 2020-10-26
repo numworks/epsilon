@@ -6,7 +6,7 @@
 
 namespace Shared {
 
-class SettingsMessageTree : public MessageTree {
+class SettingsMessageTree : public Escher::MessageTree {
 public:
   constexpr SettingsMessageTree(I18n::Message label = I18n::Message::Default) :
     MessageTree(label, 0),

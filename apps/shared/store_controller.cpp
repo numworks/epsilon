@@ -7,6 +7,7 @@
 #include <algorithm>
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Shared {
 

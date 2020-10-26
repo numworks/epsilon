@@ -12,10 +12,10 @@
 
 namespace Shared {
 
-class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
+class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate  {
 public:
-  StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header);
-  View * view() override { return &m_contentView; }
+  StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header);
+  Escher::View * view() override { return &m_contentView; }
   TELEMETRY_ID("Store");
 
   virtual StoreContext * storeContext() = 0;
@@ -24,19 +24,19 @@ public:
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
 
   // TextFieldDelegate
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   // TableViewDataSource
   int numberOfColumns() const override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   // ViewController
   const char * title() override;
@@ -46,16 +46,16 @@ public:
   void didBecomeFirstResponder() override;
 
 protected:
-  static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits) * 7 + 2*Metric::CellMargin + Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
+  static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::CellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
 
-  constexpr static int k_maxNumberOfEditableCells = (Ion::Display::Width/k_cellWidth+2) * ((Ion::Display::Height - Metric::TitleBarHeight - Metric::TabHeight)/k_cellHeight+2);
+  constexpr static int k_maxNumberOfEditableCells = (Ion::Display::Width/k_cellWidth+2) * ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight)/k_cellHeight+2);
   constexpr static int k_numberOfTitleCells = 4;
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
 
-  class ContentView : public View , public Responder {
+  class ContentView : public Escher::View , public Escher::Responder {
   public:
-    ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
+    ContentView(DoublePairStore * store, Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDataSource * selectionDataSource, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
    StoreSelectableTableView * dataView() { return &m_dataView; }
    BufferTextViewWithTextField * formulaInputView() { return &m_formulaInputView; }
    void displayFormulaInput(bool display);
@@ -72,17 +72,17 @@ protected:
     bool m_displayFormulaInputView;
   };
 
-  Responder * tabController() const override;
+  Escher::Responder * tabController() const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  virtual HighlightCell * titleCells(int index) = 0;
+  virtual Escher::HighlightCell * titleCells(int index) = 0;
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
   virtual StoreParameterController * storeParameterController() = 0;
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 private:
-  SelectableTableView * selectableTableView() override {
+  Escher::SelectableTableView * selectableTableView() override {
     return m_contentView.dataView();
   }
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;

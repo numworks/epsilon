@@ -146,7 +146,7 @@ void generateHeaderFromImage(FILE * file, const char * guardian, const char * va
   fprintf(file, "#define IMAGE_STORE_%s_H\n\n", guardian);
   fprintf(file, "#include <escher/image.h>\n\n");
   fprintf(file, "namespace ImageStore {\n\n");
-  fprintf(file, "extern const Image * %s;\n\n", variable);
+  fprintf(file, "extern const Escher::Image * %s;\n\n", variable);
   fprintf(file, "};\n\n");
   fprintf(file, "#endif\n");
 }
@@ -204,6 +204,6 @@ void generateImplementationFromImage(FILE * file, const char * header, const cha
 
 
   fprintf(file, "\n};\n\n");
-  fprintf(file, "constexpr Image image = Image(%d, %d, compressedPixelData, %d);\n\n", width, height, sizeOfCompressedPixelBuffer);
-  fprintf(file, "const Image * ImageStore::%s = &image;\n", variable);
+  fprintf(file, "constexpr Escher::Image image = Escher::Image(%d, %d, compressedPixelData, %d);\n\n", width, height, sizeOfCompressedPixelBuffer);
+  fprintf(file, "const Escher::Image * ImageStore::%s = &image;\n", variable);
 }

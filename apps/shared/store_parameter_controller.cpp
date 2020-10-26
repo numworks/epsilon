@@ -3,6 +3,8 @@
 #include <poincare/helpers.h>
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController) :

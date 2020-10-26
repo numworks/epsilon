@@ -14,13 +14,13 @@ namespace Shared {
 
 class SumGraphController : public SimpleInteractiveCurveViewController {
 public:
-  SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
+  SumGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Sum");
   void setRecord(Ion::Storage::Record record);
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 protected:
   virtual bool moveCursorHorizontallyToPosition(double position);
   enum class Step {
@@ -43,14 +43,14 @@ private:
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
   virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;
-  class LegendView : public View {
+  class LegendView : public Escher::View {
   public:
-    LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);
+    LegendView(SumGraphController * controller, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
     LegendView& operator=(const LegendView& other) = delete;
     LegendView& operator=(LegendView&& other) = delete;
-    TextField * textField() { return &m_editableZone; }
+    Escher::TextField * textField() { return &m_editableZone; }
     KDSize minimalSizeForOptimalDisplay() const override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setLegendMessage(I18n::Message message, Step step);
@@ -67,12 +67,12 @@ private:
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
     int numberOfSubviews() const override { return 3; }
-    View * subviewAtIndex(int index) override;
+    Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutSubviews(Step step, bool force);
-    ExpressionView m_sum;
-    MessageTextView m_legend;
-    TextField m_editableZone;
+    Escher::ExpressionView m_sum;
+    Escher::MessageTextView m_legend;
+    Escher::TextField m_editableZone;
     char m_textBuffer[k_editableZoneBufferSize];
     CodePoint m_sumSymbol;
   };

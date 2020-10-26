@@ -6,13 +6,13 @@
 
 namespace Shared {
 
-class SeparatorEvenOddBufferTextCell : public EvenOddBufferTextCell {
+class SeparatorEvenOddBufferTextCell : public Escher::EvenOddBufferTextCell {
 public:
-  using EvenOddBufferTextCell::EvenOddBufferTextCell;
+  using Escher::EvenOddBufferTextCell::EvenOddBufferTextCell;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
 private:
-  constexpr static KDCoordinate k_rightMargin = Metric::CellMargin;
+  constexpr static KDCoordinate k_rightMargin = Escher::Metric::CellMargin;
 };
 
 }

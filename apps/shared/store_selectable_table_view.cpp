@@ -1,5 +1,7 @@
 #include "store_selectable_table_view.h"
 
+using namespace Escher;
+
 namespace Shared {
 
 StoreSelectableTableView::StoreSelectableTableView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :

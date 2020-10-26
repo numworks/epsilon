@@ -25,10 +25,10 @@ private:
   static constexpr float k_horizontalOrientationAlignment = 0.5f;
   static constexpr float k_verticalOrientationHorizontalAlignment = 0.9f;
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const override;
-  EvenOddExpressionCell m_titleTextView;
+  Escher::EvenOddExpressionCell m_titleTextView;
 };
 
 }

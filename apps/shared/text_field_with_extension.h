@@ -5,15 +5,15 @@
 
 namespace Shared {
 
-class TextFieldWithExtension : public TextField {
+class TextFieldWithExtension : public Escher::TextField {
 public:
   TextFieldWithExtension(size_t extensionLength,
       Responder * parentResponder,
       char * textBuffer,
       size_t textBufferSize,
       size_t draftTextBufferSize,
-      ::InputEventHandlerDelegate * inputEventHandlerDelegate,
-      ::TextFieldDelegate * delegate = nullptr,
+      Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+      Escher::TextFieldDelegate * delegate = nullptr,
       const KDFont * size = KDFont::LargeFont,
       float horizontalAlignment = 0.0f,
       float verticalAlignment = 0.5f,

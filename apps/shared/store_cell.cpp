@@ -1,5 +1,7 @@
 #include "store_cell.h"
 
+using namespace Escher;
+
 namespace Shared {
 
 void StoreCell::drawRect(KDContext * ctx, KDRect rect) const {

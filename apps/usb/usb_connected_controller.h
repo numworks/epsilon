@@ -12,7 +12,7 @@ public:
   Escher::View * view() override { return &m_messageView; }
   bool handleEvent(Ion::Events::Event event) override { return false; }
 private:
-  MessageView m_messageView;
+  Shared::MessageView m_messageView;
 };
 
 }

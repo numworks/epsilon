@@ -8,14 +8,14 @@ namespace Shared {
 
 class StoreCell : public HideableEvenOddEditableTextCell, public Separable {
 public:
-  StoreCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr) :
+  StoreCell(Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * delegate = nullptr) :
     HideableEvenOddEditableTextCell(parentResponder, inputEventHandlerDelegate, delegate),
     Separable()
   {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
 private:
-  static constexpr KDCoordinate k_rightMargin = Metric::CellMargin;
+  static constexpr KDCoordinate k_rightMargin = Escher::Metric::CellMargin;
   void didSetSeparator() override;
 };
 

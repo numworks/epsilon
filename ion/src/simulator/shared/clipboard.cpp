@@ -1,27 +1,33 @@
 #include <ion/clipboard.h>
-#include <SDL.h>
+#include "clipboard_helper.h"
+#include <ion.h>
 #include <string.h>
 
-/* This file implements the methods to access the system clipboard on all
- * targets but the web simulator. */
-
 namespace Ion {
+namespace Clipboard {
 
-void Clipboard::write(const char * text) {
+uint32_t localClipboardVersion;
+
+void write(const char * text) {
   /* FIXME : Handle the error if need be. */
-  SDL_SetClipboardText(text);
+  sendToSystemClipboard(text);
+  localClipboardVersion = crc32Byte(reinterpret_cast<const uint8_t *>(text), strlen(text));
 }
 
-void Clipboard::read(char * buffer, size_t bufferSize) {
-  if (!SDL_HasClipboardText()) {
-    buffer[0] = '\0';
-    return;
+const char * read() {
+  constexpr size_t bufferSize = 32768;
+  static char buffer[bufferSize];
+  fetchFromSystemClipboard(buffer, bufferSize);
+  if (buffer[0] == '\0') {
+    return nullptr;
   }
-  char * text = SDL_GetClipboardText();
-  if (text) {
-    strlcpy(buffer, text, bufferSize);
-    SDL_free(text);
+
+  uint32_t version = crc32Byte(reinterpret_cast<const uint8_t *>(buffer), strlen(buffer));
+  if (version == localClipboardVersion) {
+    return nullptr;
   }
+  return buffer;
 }
 
+}
 }

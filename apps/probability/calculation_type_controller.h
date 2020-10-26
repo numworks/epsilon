@@ -1,6 +1,10 @@
 #ifndef PROBABILITY_CALCULATION_TYPE_CONTROLLER_H
 #define PROBABILITY_CALCULATION_TYPE_CONTROLLER_H
 
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
+#include <escher/view_controller.h>
 #include "calculation/calculation.h"
 #include "distribution/distribution.h"
 #include "image_cell.h"

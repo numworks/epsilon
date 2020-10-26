@@ -1,6 +1,7 @@
 #ifndef PROBABILITY_PARAMETERS_CONTROLLER_H
 #define PROBABILITY_PARAMETERS_CONTROLLER_H
 
+#include <escher/message_table_cell_with_editable_text.h>
 #include "../shared/float_parameter_controller.h"
 #include "distribution/distribution.h"
 #include "calculation_controller.h"

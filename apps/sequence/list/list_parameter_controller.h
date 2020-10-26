@@ -1,6 +1,12 @@
 #ifndef SEQUENCE_LIST_PARAM_CONTROLLER_H
 #define SEQUENCE_LIST_PARAM_CONTROLLER_H
 
+#include <escher/even_odd_expression_cell.h>
+#include <escher/message_table_cell_with_chevron_and_expression.h>
+#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/message_table_cell_with_switch.h>
+#include <escher/simple_list_view_data_source.h>
 #include "../../shared/list_parameter_controller.h"
 #include "../../shared/parameter_text_field_delegate.h"
 #include "../../shared/sequence.h"

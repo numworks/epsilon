@@ -1,4 +1,5 @@
 #include "code_128b_view.h"
+#include <string.h>
 
 namespace HardwareTest {
 

@@ -1,8 +1,14 @@
 #ifndef SHARED_LIST_PARAM_CONTROLLER_H
 #define SHARED_LIST_PARAM_CONTROLLER_H
 
-#include "function_store.h"
 #include <apps/i18n.h>
+#include <escher/list_view_data_source.h>
+#include <escher/message_table_cell_with_switch.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/selectable_table_view_delegate.h>
+#include <escher/view_controller.h>
+#include "function_store.h"
 
 namespace Shared {
 

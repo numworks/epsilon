@@ -1,6 +1,8 @@
 #ifndef SHARED_VALUES_CONTROLLER_H
 #define SHARED_VALUES_CONTROLLER_H
 
+#include <escher/alternate_empty_view_delegate.h>
+#include <escher/button_row_controller.h>
 #include "function_store.h"
 #include "function_title_cell.h"
 #include "editable_cell_table_view_controller.h"

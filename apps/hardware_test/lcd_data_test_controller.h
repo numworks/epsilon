@@ -1,6 +1,9 @@
 #ifndef LCD_DATA_TEST_CONTROLLER_H
 #define LCD_DATA_TEST_CONTROLLER_H
 
+#include <escher/buffer_text_view.h>
+#include <escher/solid_color_view.h>
+#include <escher/view_controller.h>
 #include <assert.h>
 
 namespace HardwareTest {

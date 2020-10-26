@@ -1,6 +1,7 @@
 #ifndef GRAPH_FUNCTION_PARAM_CONTROLLER_H
 #define GRAPH_FUNCTION_PARAM_CONTROLLER_H
 
+#include <escher/message_table_cell_with_switch.h>
 #include "../../shared/expiring_pointer.h"
 #include "../../shared/continuous_function.h"
 #include "../../shared/values_function_parameter_controller.h"

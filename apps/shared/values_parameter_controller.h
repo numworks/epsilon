@@ -1,6 +1,9 @@
 #ifndef SHARED_VALUES_PARAM_CONTROLLER_H
 #define SHARED_VALUES_PARAM_CONTROLLER_H
 
+#include <escher/message_table_cell.h>
+#include <escher/message_table_cell_with_chevron.h>
+#include <escher/simple_list_view_data_source.h>
 #include "interval_parameter_controller.h"
 
 namespace Shared {

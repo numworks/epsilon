@@ -5,13 +5,13 @@
 
 namespace Shared {
 
-class InputEventHandlerDelegate : public ::InputEventHandlerDelegate {
+class InputEventHandlerDelegate : public Escher::InputEventHandlerDelegate {
 public:
-  Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override { return inputEventHandlerDelegateApp()->toolboxForInputEventHandler(textInput); }
-  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override { return inputEventHandlerDelegateApp()->variableBoxForInputEventHandler(textInput); }
+  Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * textInput) override { return inputEventHandlerDelegateApp()->toolboxForInputEventHandler(textInput); }
+  Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override { return inputEventHandlerDelegateApp()->variableBoxForInputEventHandler(textInput); }
 private:
   InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() const {
-    return static_cast<InputEventHandlerDelegateApp *>(Container::activeApp());
+    return static_cast<InputEventHandlerDelegateApp *>(Escher::Container::activeApp());
   }
 };
 

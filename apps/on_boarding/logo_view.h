@@ -1,6 +1,10 @@
 #ifndef APPS_LOGO_VIEW_H
 #define APPS_LOGO_VIEW_H
 
+#include <escher/image_view.h>
+#include <escher/view.h>
+#include <ion.h>
+
 namespace OnBoarding {
 
 class LogoView : public Escher::View {

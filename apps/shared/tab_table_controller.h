@@ -1,6 +1,11 @@
 #ifndef SHARED_TAB_TABLE_CONTROLLER_H
 #define SHARED_TAB_TABLE_CONTROLLER_H
 
+#include <escher/container.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/view_controller.h>
+
 namespace Shared {
 
 /* Tab table controller is a controller whose view is a selectable table view

@@ -1,6 +1,7 @@
 #ifndef SEQUENCE_APP_H
 #define SEQUENCE_APP_H
 
+#include <escher/alternate_empty_view_controller.h>
 #include "../shared/sequence_context.h"
 #include "../shared/sequence_store.h"
 #include "graph/graph_controller.h"

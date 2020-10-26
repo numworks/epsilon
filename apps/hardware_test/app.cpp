@@ -1,4 +1,5 @@
 #include "app.h"
+#include "../apps_container.h"
 
 using namespace Escher;
 

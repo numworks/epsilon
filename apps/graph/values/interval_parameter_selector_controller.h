@@ -2,6 +2,9 @@
 #define GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 
 #include <apps/shared/interval_parameter_controller.h>
+#include <escher/message_table_cell_with_chevron.h>
+#include <escher/simple_list_view_data_source.h>
+#include <escher/view_controller.h>
 #include "../../shared/continuous_function.h"
 
 namespace Graph {

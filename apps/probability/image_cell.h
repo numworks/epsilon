@@ -1,6 +1,9 @@
 #ifndef PROBABILITY_IMAGE_CELL_H
 #define PROBABILITY_IMAGE_CELL_H
 
+#include <escher/highlight_cell.h>
+#include <escher/image_view.h>
+
 namespace Probability {
 
 class ImageCell : public Escher::HighlightCell {

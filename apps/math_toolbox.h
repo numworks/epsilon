@@ -2,6 +2,7 @@
 #define APPS_MATH_TOOLBOX_H
 
 #include <apps/i18n.h>
+#include <escher/container.h>
 #include <escher/toolbox.h>
 
 class MathToolbox : public Escher::Toolbox {

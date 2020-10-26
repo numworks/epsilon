@@ -9,20 +9,20 @@
 
 namespace Code {
 
-class ConsoleEditCell : public HighlightCell, public Responder {
+class ConsoleEditCell : public Escher::HighlightCell, public Escher::Responder {
 public:
-  ConsoleEditCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr);
+  ConsoleEditCell(Escher::Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * delegate = nullptr);
 
   // View
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   // Responder
   void didBecomeFirstResponder() override;
 
   /* HighlightCell */
-  Responder * responder() override {
+  Escher::Responder * responder() override {
     return this;
   }
 
@@ -36,8 +36,8 @@ public:
   void clearAndReduceSize();
   const char * shiftCurrentTextAndClear();
 private:
-  PointerTextView m_promptView;
-  TextField m_textField;
+  Escher::PointerTextView m_promptView;
+  Escher::TextField m_textField;
 };
 
 }

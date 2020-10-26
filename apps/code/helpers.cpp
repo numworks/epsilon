@@ -1,6 +1,8 @@
 #include "helpers.h"
 #include <escher/clipboard.h>
 
+using namespace Escher;
+
 namespace Code {
 namespace Helpers {
 

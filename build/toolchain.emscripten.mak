@@ -105,7 +105,12 @@ _mp_hal_input \
 _mp_import_name \
 _mp_parse_compile_execute \
 _get_clipboard_text \
+_set_clipboard_text \
+__ZN3Ion9Clipboard24fetchFromSystemClipboardEPcm \
+__ZN3Ion9Clipboard21sendToSystemClipboardEPKc \
 __ZN3Ion9Clipboard4readEPcm \
+__ZN3Ion9Clipboard5writeEPKc \
+__ZN9Clipboard5storeEPKci \
 __ZN9Clipboard10storedTextEv \
 __ZN11LayoutField18privateHandleEventEN3Ion6Events5EventE \
 __ZN11LayoutField11handleEventEN3Ion6Events5EventE \

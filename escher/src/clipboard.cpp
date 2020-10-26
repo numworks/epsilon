@@ -15,7 +15,10 @@ void Clipboard::store(const char * storedText, int length) {
 }
 
 const char * Clipboard::storedText() {
-  Ion::Clipboard::read(m_textBuffer, TextField::maxBufferSize());
+  const char * systemText = Ion::Clipboard::read();
+  if (systemText) {
+    return systemText;
+  }
 
   /* In order to allow copy/paste of empty formulas, we need to add empty
    * layouts between empty system parenthesis. This way, when the expression

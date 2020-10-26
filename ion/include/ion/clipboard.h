@@ -1,16 +1,15 @@
 #ifndef ION_CLIPBOARD_H
 #define ION_CLIPBOARD_H
 
-#include <stddef.h>
-
 namespace Ion {
 namespace Clipboard {
 
 /* Write the text to the system clipboard. */
 void write(const char * text);
 
-/* Fill the buffer with text from the system clipboard. */
-void read(char * buffer, size_t bufferSize);
+/* Returns the system's clipboard text if it differs from the text previously
+ * copied, and nullptr otherwise. */
+const char * read();
 
 }
 }

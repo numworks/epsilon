@@ -17,6 +17,8 @@ extern "C" {
 #include "py/objmodule.h"
 }
 
+using namespace Escher;
+
 namespace Code {
 
 // Got these in python/py/src/compile.cpp compiled file

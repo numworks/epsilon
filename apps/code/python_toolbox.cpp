@@ -6,6 +6,8 @@ extern "C" {
 #include <ctype.h>
 }
 
+using namespace Escher;
+
 namespace Code {
 
 const ToolboxMessageTree forLoopChildren[] = {

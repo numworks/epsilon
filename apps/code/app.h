@@ -19,12 +19,12 @@ public:
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
-    const Image * icon() override;
+    const Escher::Image * icon() override;
   };
-  class Snapshot : public SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     Descriptor * descriptor() override;
     ScriptStore * scriptStore();
 #if EPSILON_GETOPT
@@ -38,7 +38,7 @@ public:
     ScriptStore m_scriptStore;
   };
   static App * app() {
-    return static_cast<App *>(Container::activeApp());
+    return static_cast<App *>(Escher::Container::activeApp());
   }
   ~App();
   TELEMETRY_ID("Code");
@@ -49,20 +49,20 @@ public:
     }
     return true;
   }
-  StackViewController * stackViewController() { return &m_codeStackViewController; }
+  Escher::StackViewController * stackViewController() { return &m_codeStackViewController; }
   ConsoleController * consoleController() { return &m_consoleController; }
   MenuController * menuController() { return &m_menuController; }
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
+  void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
   /* InputEventHandlerDelegate */
-  Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override;
-  VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
+  Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * textInput) override;
+  VariableBoxController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
 
   /* TextInputDelegate */
-  bool textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event);
+  bool textInputDidReceiveEvent(Escher::InputEventHandler * textInput, Ion::Events::Event event);
 
   /* Code::App */
   // Python delegate
@@ -86,9 +86,9 @@ private:
 
   App(Snapshot * snapshot);
   ConsoleController m_consoleController;
-  ButtonRowController m_listFooter;
+  Escher::ButtonRowController m_listFooter;
   MenuController m_menuController;
-  StackViewController m_codeStackViewController;
+  Escher::StackViewController m_codeStackViewController;
   PythonToolbox m_toolbox;
   VariableBoxController m_variableBoxController;
 };

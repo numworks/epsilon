@@ -13,15 +13,15 @@
 
 namespace Code {
 
-class ConsoleLineCell : public HighlightCell, public Responder {
+class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
 public:
-  ConsoleLineCell(Responder * parentResponder = nullptr);
+  ConsoleLineCell(Escher::Responder * parentResponder = nullptr);
   void setLine(ConsoleLine line);
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
-  Responder * responder() override {
+  Escher::Responder * responder() override {
     return this;
   }
   const char * text() const override {
@@ -29,13 +29,13 @@ public:
   }
   /* View */
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   /* Responder */
   void didBecomeFirstResponder() override;
 private:
-  class ScrollableConsoleLineView : public ScrollableView, public ScrollViewDataSource {
+  class ScrollableConsoleLineView : public Escher::ScrollableView, public Escher::ScrollViewDataSource {
   public:
     class ConsoleLineView : public HighlightCell {
     public:
@@ -47,15 +47,15 @@ private:
       ConsoleLine * m_line;
     };
 
-    ScrollableConsoleLineView(Responder * parentResponder);
+    ScrollableConsoleLineView(Escher::Responder * parentResponder);
     ConsoleLineView * consoleLineView() { return &m_consoleLineView; }
   private:
     ConsoleLineView m_consoleLineView;
   };
   static KDColor textColor(ConsoleLine * line) {
-    return line->isFromCurrentSession() ? KDColorBlack : Palette::GrayDark;
+    return line->isFromCurrentSession() ? KDColorBlack : Escher::Palette::GrayDark;
   }
-  MessageTextView m_promptView;
+  Escher::MessageTextView m_promptView;
   ScrollableConsoleLineView m_scrollableView;
   ConsoleLine m_line;
 };

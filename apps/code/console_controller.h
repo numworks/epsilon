@@ -16,9 +16,9 @@ namespace Code {
 
 class App;
 
-class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public Shared::InputEventHandlerDelegate, public MicroPython::ExecutionEnvironment {
+class ConsoleController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate, public Escher::TextFieldDelegate, public Shared::InputEventHandlerDelegate, public MicroPython::ExecutionEnvironment {
 public:
-  ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
+  ConsoleController(Escher::Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT
       , bool m_lockOnConsole
 #endif
@@ -35,11 +35,11 @@ public:
   void terminateInputLoop();
 
   // ViewController
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  Escher::ViewController::DisplayParameter displayParameter() override { return Escher::ViewController::DisplayParameter::WantsMaximumSpace; }
   TELEMETRY_ID("Console");
 
   // ListViewDataSource
@@ -47,27 +47,27 @@ public:
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // TextFieldDelegate
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   // InputEventHandlerDelegate
-  VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
+  VariableBoxController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
 
   // MicroPython::ExecutionEnvironment
-  ViewController * sandbox() override { return &m_sandboxController; }
+  Escher::ViewController * sandbox() override { return &m_sandboxController; }
   void resetSandbox() override;
-  void displayViewController(ViewController * controller) override;
+  void displayViewController(Escher::ViewController * controller) override;
   void hideAnyDisplayedViewController() override;
   void refreshPrintOutput() override;
   void printText(const char * text, size_t length) override;
@@ -81,10 +81,10 @@ public:
 private:
   static constexpr const char * k_importCommand1 = "from ";
   static constexpr const char * k_importCommand2 = " import *";
-  static constexpr size_t k_maxImportCommandSize = 5 + 9 + TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
+  static constexpr size_t k_maxImportCommandSize = 5 + 9 + Escher::TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
-  static constexpr int k_numberOfLineCells = (Ion::Display::Height - Metric::TitleBarHeight) / 14 + 2; // 14 = KDFont::SmallFont->glyphSize().height()
+  static constexpr int k_numberOfLineCells = (Ion::Display::Height - Escher::Metric::TitleBarHeight) / 14 + 2; // 14 = KDFont::SmallFont->glyphSize().height()
   // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
   static constexpr int k_outputAccumulationBufferSize = 100;
   bool isDisplayingViewController();
@@ -93,11 +93,11 @@ private:
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();
   size_t firstNewLineCharIndex(const char * text, size_t length);
-  StackViewController * stackViewController();
+  Escher::StackViewController * stackViewController();
   App * m_pythonDelegate;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
-  SelectableTableView m_selectableTableView;
+  Escher::SelectableTableView m_selectableTableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
   char m_outputAccumulationBuffer[k_outputAccumulationBufferSize];

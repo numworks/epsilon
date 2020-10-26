@@ -12,12 +12,12 @@ namespace Code {
 
 class ScriptParameterController;
 
-class MenuController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public ButtonRowDelegate {
+class MenuController : public Escher::ViewController, public Escher::TableViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate, public Escher::TextFieldDelegate, public Escher::ButtonRowDelegate {
 public:
-  MenuController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore, ButtonRowController * footer);
+  MenuController(Escher::Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore, Escher::ButtonRowController * footer);
   ConsoleController * consoleController();
-  StackViewController * stackViewController();
-  void willExitResponderChain(Responder * nextFirstResponder) override;
+  Escher::StackViewController * stackViewController();
+  void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
   void renameSelectedScript();
   void deleteScript(Script script);
   void reloadConsole();
@@ -27,7 +27,7 @@ public:
   int editedScriptIndex() const { return m_editorController.scriptIndex(); }
 
   /* ViewController */
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -36,40 +36,40 @@ public:
   /* TableViewDataSource */
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
-  KDCoordinate rowHeight(int j) override { return Metric::StoreRowHeight; }
+  KDCoordinate rowHeight(int j) override { return Escher::Metric::StoreRowHeight; }
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayScriptTitleCellForIndex(HighlightCell * cell, int index);
+  void willDisplayScriptTitleCellForIndex(Escher::HighlightCell * cell, int index);
 
   /* SelectableTableViewDelegate */
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   /* TextFieldDelegate */
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override { return false; }
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override {
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override { return false; }
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override {
     return privateTextFieldDidAbortEditing(textField, true);
   }
-  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
+  bool textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) override;
 
   /* ButtonRowDelegate */
-  int numberOfButtons(ButtonRowController::Position position) const override { return 1; }
-  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
+  int numberOfButtons(Escher::ButtonRowController::Position position) const override { return 1; }
+  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
-    return const_cast<Button *>(&m_consoleButton);
+    return const_cast<Escher::Button *>(&m_consoleButton);
   }
 
 private:
   static constexpr int k_maxNumberOfDisplayableScriptCells = 5; // = 240/50
-  static constexpr int k_parametersColumnWidth = Metric::EllipsisCellWidth;
+  static constexpr int k_parametersColumnWidth = Escher::Metric::EllipsisCellWidth;
   static constexpr int AddScriptCellType = 0;
   static constexpr int ScriptCellType = 1;
   static constexpr int ScriptParameterCellType = 2;
@@ -79,14 +79,14 @@ private:
   void editScriptAtIndex(int scriptIndex);
   void numberedDefaultScriptName(char * buffer);
   void updateAddScriptRowDisplay();
-  bool privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain);
+  bool privateTextFieldDidAbortEditing(Escher::TextField * textField, bool menuControllerStaysInResponderChain);
   ScriptStore * m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
-  EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
-  EvenOddMessageTextCell m_addNewScriptCell;
-  EvenOddCell m_emptyCell;
-  Button m_consoleButton;
-  SelectableTableView m_selectableTableView;
+  Escher::EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
+  Escher::EvenOddMessageTextCell m_addNewScriptCell;
+  Escher::EvenOddCell m_emptyCell;
+  Escher::Button m_consoleButton;
+  Escher::SelectableTableView m_selectableTableView;
   ScriptParameterController m_scriptParameterController;
   EditorController m_editorController;
   bool m_reloadConsoleWhenBecomingFirstResponder;

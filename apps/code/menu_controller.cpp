@@ -7,6 +7,8 @@
 #include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
 
+using namespace Escher;
+
 namespace Code {
 
 MenuController::MenuController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore, ButtonRowController * footer) :

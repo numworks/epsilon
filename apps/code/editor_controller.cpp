@@ -6,6 +6,7 @@
 #include <ion.h>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Code {
 

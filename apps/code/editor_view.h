@@ -6,13 +6,13 @@
 
 namespace Code {
 
-class EditorView : public Responder, public View, public ScrollViewDelegate {
+class EditorView : public Escher::Responder, public Escher::View, public Escher::ScrollViewDelegate {
 public:
-  EditorView(Responder * parentResponder, App * pythonDelegate);
+  EditorView(Escher::Responder * parentResponder, App * pythonDelegate);
   PythonTextArea::AutocompletionType autocompletionType(const char ** autocompletionBeginning, const char ** autocompletionEnd) const { return m_textArea.autocompletionType(nullptr, autocompletionBeginning, autocompletionEnd); }
   bool isAutocompleting() const;
   void resetSelection();
-  void setTextAreaDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) {
+  void setTextAreaDelegates(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::TextAreaDelegate * delegate) {
     m_textArea.setDelegates(inputEventHandlerDelegate, delegate);
   }
   const char * text() const { return m_textArea.text(); }
@@ -27,11 +27,11 @@ public:
   }
   void loadSyntaxHighlighter() { m_textArea.loadSyntaxHighlighter(); };
   void unloadSyntaxHighlighter() { m_textArea.unloadSyntaxHighlighter(); };
-  void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
+  void scrollViewDidChangeOffset(Escher::ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
 private:
   int numberOfSubviews() const override { return 2; }
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   class GutterView : public View {

@@ -2,6 +2,8 @@
 #include "app.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Code {
 
 void ScriptNameCell::setEven(bool even) {

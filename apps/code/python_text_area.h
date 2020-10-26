@@ -7,15 +7,15 @@ namespace Code {
 
 class App;
 
-class PythonTextArea : public TextArea {
+class PythonTextArea : public Escher::TextArea {
 public:
   enum class AutocompletionType : uint8_t {
     EndOfIdentifier,
     MiddleOfIdentifier,
     NoIdentifier
   };
-  PythonTextArea(Responder * parentResponder, App * pythonDelegate, const KDFont * font) :
-    TextArea(parentResponder, &m_contentView, font),
+  PythonTextArea(Escher::Responder * parentResponder, App * pythonDelegate, const KDFont * font) :
+    Escher::TextArea(parentResponder, &m_contentView, font),
     m_contentView(pythonDelegate, font),
     m_autocompletionResultIndex(0)
   {
@@ -34,10 +34,10 @@ public:
   AutocompletionType autocompletionType(const char * autocompletionLocation = nullptr, const char ** autocompletionLocationBeginning = nullptr, const char ** autocompletionLocationEnd = nullptr) const;
   bool isAutocompleting() const { return m_contentView.isAutocompleting(); }
 protected:
-  class ContentView : public TextArea::ContentView {
+  class ContentView : public Escher::TextArea::ContentView {
   public:
     ContentView(App * pythonDelegate, const KDFont * font) :
-      TextArea::ContentView(font),
+      Escher::TextArea::ContentView(font),
       m_pythonDelegate(pythonDelegate),
       m_autocomplete(false),
       m_autocompletionEnd(nullptr)

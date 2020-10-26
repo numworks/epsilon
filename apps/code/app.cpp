@@ -4,6 +4,8 @@
 #include "helpers.h"
 #include <ion/unicode/utf8_helper.h>
 
+using namespace Escher;
+
 namespace Code {
 
 I18n::Message App::Descriptor::name() {

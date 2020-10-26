@@ -1,6 +1,8 @@
 #ifndef SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 #define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 
+#include <escher/stack_view_controller.h>
+#include <escher/expression_table_cell_with_pointer.h>
 #include <poincare/layout.h>
 #include "../../shared/sequence_store.h"
 

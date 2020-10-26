@@ -2,6 +2,7 @@
 #define SHARED_FUNCTION_TITLE_CELL_H
 
 #include <escher/even_odd_cell.h>
+#include <escher/metric.h>
 
 namespace Shared {
 

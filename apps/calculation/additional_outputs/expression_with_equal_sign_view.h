@@ -7,7 +7,7 @@
 
 namespace Calculation {
 
-class ExpressionWithEqualSignView : public ExpressionView {
+class ExpressionWithEqualSignView : public Escher::ExpressionView {
 public:
   ExpressionWithEqualSignView() :
     m_equalSign(KDFont::LargeFont, I18n::Message::Equal, 0.5f, 0.5f, KDColorBlack)
@@ -18,7 +18,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override { return 1; }
-  MessageTextView m_equalSign;
+  Escher::MessageTextView m_equalSign;
 };
 
 }

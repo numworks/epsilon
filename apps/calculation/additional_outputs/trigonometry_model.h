@@ -26,11 +26,12 @@ private:
 
   /* We want to normalize the displayed trigonometry circle:
    * - On the X axis, we display 4.4 units on an available pixel width of
-   *   (Ion::Display::Width - Metric::PopUpRightMargin - Metric::PopUpLeftMargin)
+   *   (Ion::Display::Width - Escher::Metric::PopUpRightMargin
+   *    - Escher::Metric::PopUpLeftMargin)
    * - On the Y axis, the available pixel height is
    *   IllustratedListController::k_illustrationHeight
    */
-  float yHalfRange() const { return IllustratedListController::k_illustrationHeight*k_xHalfRange/(Ion::Display::Width - Metric::PopUpRightMargin - Metric::PopUpLeftMargin); }
+  float yHalfRange() const { return IllustratedListController::k_illustrationHeight*k_xHalfRange/(Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin); }
 
   float m_angle;
 };

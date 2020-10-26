@@ -8,9 +8,9 @@ namespace Calculation {
 
 class EditExpressionController;
 
-class ListController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class ListController : public Escher::StackViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  ListController(EditExpressionController * editExpressionController, SelectableTableViewDelegate * delegate = nullptr);
+  ListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -22,13 +22,13 @@ public:
 protected:
   class InnerListController : public ViewController {
   public:
-    InnerListController(ListController * dataSource, SelectableTableViewDelegate * delegate = nullptr);
+    InnerListController(ListController * dataSource, Escher::SelectableTableViewDelegate * delegate = nullptr);
     const char * title() override { return I18n::translate(I18n::Message::AdditionalResults); }
-    View * view() override { return &m_selectableTableView; }
+    Escher::View * view() override { return &m_selectableTableView; }
     void didBecomeFirstResponder() override;
-    SelectableTableView * selectableTableView() { return &m_selectableTableView; }
+    Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }
   private:
-    SelectableTableView m_selectableTableView;
+    Escher::SelectableTableView m_selectableTableView;
   };
   virtual int textAtIndex(char * buffer, size_t bufferSize, int index) = 0;
   InnerListController m_listController;

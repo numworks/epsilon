@@ -1,6 +1,8 @@
 #include "expression_field.h"
 #include <poincare/symbol.h>
 
+using namespace Escher;
+
 namespace Calculation {
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {

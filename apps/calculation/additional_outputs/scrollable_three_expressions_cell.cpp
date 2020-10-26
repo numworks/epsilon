@@ -2,6 +2,8 @@
 #include <poincare/exception_checkpoint.h>
 #include "../app.h"
 
+using namespace Escher;
+
 namespace Calculation {
 
 void ScrollableThreeExpressionsView::resetMemoization() {

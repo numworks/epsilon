@@ -1,9 +1,10 @@
 #ifndef SHARED_INTERVAL_PARAM_CONTROLLER_H
 #define SHARED_INTERVAL_PARAM_CONTROLLER_H
 
+#include <assert.h>
+#include <escher/message_table_cell_with_editable_text.h>
 #include "interval.h"
 #include "float_parameter_controller.h"
-#include <assert.h>
 #include "discard_pop_up_controller.h"
 
 namespace Shared {

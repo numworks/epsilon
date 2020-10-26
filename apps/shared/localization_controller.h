@@ -1,10 +1,14 @@
 #ifndef LOCALIZATION_CONTROLLER_H
 #define LOCALIZATION_CONTROLLER_H
 
+#include <escher/container.h>
 #include <escher/expression_view.h>
 #include <escher/message_table_cell.h>
+#include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/simple_list_view_data_source.h>
+#include <escher/solid_color_view.h>
+#include <escher/view_controller.h>
 #include <apps/i18n.h>
 #include <algorithm>
 

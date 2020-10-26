@@ -2,6 +2,7 @@
 #define HARDWARE_TEST_ARROW_VIEW_H
 
 #include <escher/transparent_view.h>
+#include <ion.h>
 
 namespace HardwareTest {
 

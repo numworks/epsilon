@@ -2,6 +2,8 @@
 #define APPS_LOGO_CONTROLLER_H
 
 #include "logo_view.h"
+#include <escher/view_controller.h>
+#include <escher/timer.h>
 
 namespace OnBoarding {
 

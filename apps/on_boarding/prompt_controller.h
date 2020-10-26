@@ -14,7 +14,7 @@ public:
   Escher::View * view() override { return &m_messageViewWithSkip; }
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  class MessageViewWithSkip : public MessageView {
+  class MessageViewWithSkip : public Shared::MessageView {
   public:
     MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
   protected:

@@ -16,7 +16,7 @@ public:
 protected:
   bool m_separatorLeft;
 private:
-  static constexpr int k_thickness = Metric::TableSeparatorThickness;
+  static constexpr int k_thickness = Escher::Metric::TableSeparatorThickness;
   virtual void didSetSeparator() = 0;
 };
 

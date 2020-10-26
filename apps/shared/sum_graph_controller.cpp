@@ -10,6 +10,7 @@
 #include <stdlib.h>
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Shared {
 

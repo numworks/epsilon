@@ -5,6 +5,8 @@ extern "C" {
 #include <stddef.h>
 }
 
+using namespace Escher;
+
 namespace Shared {
 
 constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];

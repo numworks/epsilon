@@ -2,6 +2,8 @@
 #include "hideable_even_odd_editable_text_cell.h"
 #include <escher/metric.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 void SeparatorEvenOddBufferTextCell::drawRect(KDContext * ctx, KDRect rect) const {

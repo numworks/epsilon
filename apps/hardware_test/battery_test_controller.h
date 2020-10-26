@@ -2,6 +2,7 @@
 #define HARDWARE_TEST_BATTERY_TEST_CONTROLLER_H
 
 #include <escher/buffer_text_view.h>
+#include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
 
 namespace HardwareTest {

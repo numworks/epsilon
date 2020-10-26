@@ -2,6 +2,7 @@
 #define GRAPH_LIST_DOMAIN_PARAMATER_CONTROLLER_H
 
 #include <escher/message_table_cell_with_expression.h>
+#include <escher/message_table_cell_with_editable_text.h>
 #include <ion/storage.h>
 #include "../../shared/continuous_function.h"
 #include "../../shared/expiring_pointer.h"

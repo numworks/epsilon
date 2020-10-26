@@ -2,6 +2,7 @@
 #define ON_PROMPT_CONTROLLER_H
 
 #include <apps/i18n.h>
+#include <escher/view_controller.h>
 #include "../shared/message_view.h"
 #include "../shared/ok_view.h"
 

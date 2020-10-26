@@ -1,5 +1,7 @@
 #include "tab_table_controller.h"
 
+using namespace Escher;
+
 namespace Shared {
 
 TabTableController::TabTableController(Responder * parentResponder) :

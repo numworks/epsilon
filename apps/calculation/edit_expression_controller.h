@@ -12,9 +12,9 @@
 namespace Calculation {
 
 /* TODO: implement a split view */
-class EditExpressionController : public ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class EditExpressionController : public Escher::ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, char * cacheBuffer, size_t * cacheBufferInformation, HistoryController * historyController, CalculationStore * calculationStore);
+  EditExpressionController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, char * cacheBuffer, size_t * cacheBufferInformation, HistoryController * historyController, CalculationStore * calculationStore);
 
   /* k_layoutBufferMaxSize dictates the size under which the expression being
    * edited can be remembered when the user leaves Calculation. */
@@ -25,7 +25,7 @@ public:
    * application. */
   static constexpr int k_cacheBufferSize = (k_layoutBufferMaxSize < Constant::MaxSerializedExpressionSize) ? Constant::MaxSerializedExpressionSize : k_layoutBufferMaxSize;
 
-  View * view() override { return &m_contentView; }
+  Escher::View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void insertTextBody(const char * text);
@@ -33,20 +33,20 @@ public:
   void memoizeInput();
 
   /* TextFieldDelegate */
-  bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(::TextField * textField) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   /* LayoutFieldDelegate */
-  bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
-  bool layoutFieldDidAbortEditing(::LayoutField * layoutField) override;
-  void layoutFieldDidChangeSize(::LayoutField * layoutField) override;
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
+  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
+  void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
 
 private:
-  class ContentView : public View {
+  class ContentView : public Escher::View {
   public:
-    ContentView(Responder * parentResponder, CalculationSelectableTableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+    ContentView(Escher::Responder * parentResponder, CalculationSelectableTableView * subview, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     void reload();
     CalculationSelectableTableView * mainView() { return m_mainView; }
     ExpressionField * expressionField() { return &m_expressionField; }

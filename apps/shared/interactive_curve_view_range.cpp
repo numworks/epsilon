@@ -138,8 +138,14 @@ void InteractiveCurveViewRange::normalize() {
   m_yRange.setMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
 
-  assert(isOrthonormal());
-  setZoomNormalize(true);
+  /* When the coordinates reach 10^7, the float type is not precise enough to
+   * properly normalize. */
+  if (isOrthonormal()) {
+    setZoomNormalize(true);
+  } else {
+    assert(xMin() < -1e7f || xMax() > 1e7f || yMin() < -1e7f || yMax() > 1e7f);
+    setZoomNormalize(false);
+  }
 }
 
 void InteractiveCurveViewRange::setDefault() {
@@ -173,6 +179,7 @@ void InteractiveCurveViewRange::setDefault() {
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
+  setZoomAuto(false);
   if (std::isnan(position)) {
     return;
   }
@@ -191,9 +198,14 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
     m_yRange.setMax(position + range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(position - range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
   }
+
+  if (!isOrthonormal()) {
+    setZoomNormalize(false);
+  }
 }
 
 void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
+  setZoomAuto(false);
   if (!std::isinf(x) && !std::isnan(x)) {
     const float xRange = xMax() - xMin();
     const float leftMargin = leftMarginRatio * xRange;
@@ -228,6 +240,12 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       m_yRange.setMax(y + topMargin, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetYMin(yMax() - yRange, k_lowerMaxFloat, k_upperMaxFloat);
     }
+  }
+
+  /* Panning to a point greater than the maximum range of 10^8 could make the
+   * graph not normalized.*/
+  if (!isOrthonormal()) {
+    setZoomNormalize(false);
   }
 }
 

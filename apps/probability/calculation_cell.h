@@ -1,6 +1,13 @@
 #ifndef PROBABILITY_CALCULATION_CELL_H
 #define PROBABILITY_CALCULATION_CELL_H
 
+#include <escher/editable_text_cell.h>
+#include <escher/highlight_cell.h>
+#include <escher/image_view.h>
+#include <escher/input_event_handler_delegate.h>
+#include <escher/message_text_view.h>
+#include <escher/text_field_delegate.h>
+
 namespace Probability {
 
 class CalculationCell : public Escher::HighlightCell {

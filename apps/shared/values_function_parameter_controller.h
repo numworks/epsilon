@@ -1,8 +1,13 @@
 #ifndef SHARED_VALUES_FUNCTION_PARAM_CONTROLLER_H
 #define SHARED_VALUES_FUNCTION_PARAM_CONTROLLER_H
 
-#include "function.h"
 #include <apps/i18n.h>
+#include <escher/message_table_cell_with_chevron.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
+#include <escher/view_controller.h>
+#include "function.h"
 
 namespace Shared {
 

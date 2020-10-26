@@ -5,6 +5,8 @@
 #include "math_variable_box_empty_controller.h"
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_expression.h>
+#include <escher/message_table_cell_with_chevron.h>
+#include <ion.h>
 
 class MathVariableBoxController : public AlternateEmptyNestedMenuController {
 public:

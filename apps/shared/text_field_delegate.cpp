@@ -1,6 +1,7 @@
 #include "text_field_delegate.h"
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Shared {
 

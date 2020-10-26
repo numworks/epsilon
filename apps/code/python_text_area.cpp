@@ -19,6 +19,8 @@ extern "C" {
 #include <stdlib.h>
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Code {
 
 constexpr KDColor CommentColor = KDColor::RGB24(0x999988);

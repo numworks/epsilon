@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Probability {
 
 CalculationCell::CalculationCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :

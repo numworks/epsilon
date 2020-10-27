@@ -1,6 +1,11 @@
 #ifndef SETTINGS_GENERIC_SUB_CONTROLLER_H
 #define SETTINGS_GENERIC_SUB_CONTROLLER_H
 
+#include <escher/view_controller.h>
+#include <escher/list_view_data_source.h>
+#include <escher/stack_view_controller.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
 #include <apps/shared/settings_message_tree.h>
 
 namespace Settings {

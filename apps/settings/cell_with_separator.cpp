@@ -1,4 +1,5 @@
 #include "cell_with_separator.h"
+#include <escher/metric.h>
 
 namespace Settings {
 

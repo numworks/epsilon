@@ -1,6 +1,8 @@
 #ifndef STATISTICS_CALCULATION_CONTROLLER_H
 #define STATISTICS_CALCULATION_CONTROLLER_H
 
+#include <escher/alternate_empty_view_controller.h>
+#include <escher/button_row_controller.h>
 #include <poincare/print_float.h>
 #include <poincare/preferences.h>
 #include "store.h"

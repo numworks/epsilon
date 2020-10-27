@@ -1,6 +1,7 @@
 #ifndef SETTINGS_ABOUT_CONTROLLER_H
 #define SETTINGS_ABOUT_CONTROLLER_H
 
+#include <escher/message_table_cell_with_buffer.h>
 #include "generic_sub_controller.h"
 #include "selectable_view_with_messages.h"
 #include "../../hardware_test/pop_up_controller.h"

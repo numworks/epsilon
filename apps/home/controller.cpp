@@ -9,6 +9,8 @@ extern "C" {
 #include <assert.h>
 }
 
+using namespace Escher;
+
 namespace Home {
 
 Controller::ContentView::ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource) :

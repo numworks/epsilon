@@ -14,10 +14,23 @@ enum class AsyncStatus : uint32_t {
 
 /* When using emscripten, the SDL_Clipboard methods do not interact with the
  * system clipboard, but only with an internal buffer. We thus need to
- * implement our own methods via the JavaScript API.
- * However, we still call the SDL_Clipboard methods as a fallback to preserve
- * the copy-paste feature in case of calls to set_clipboard_text and
- * get_clipboard_text failing. */
+ * implement our own methods via the JavaScript Async Clipboard API.
+ *
+ * On most browsers, accessing the clipboard is restricted to user-gestures, ie
+ * it must be handled directly during certain user input events. This article
+ * (https://webkit.org/blog/10855/async-clipboard-api/), which describe the
+ * Async Clipboard API for Safari 13.1 states : "The request to write to the
+ * clipboard must be triggered during a user gesture. A call to clipboard.write
+ * or clipboard.writeText outside the scope of a user gesture (such as "click"
+ * or "touch" event handlers) will result in the immediate rejection of the
+ * promise returned by the API call."
+ *
+ * On Chrome and Chromium-based browsers, this restriction has been relaxed.
+ * Interacting with the clipboard is possible if a user-gesture was detected
+ * beforehand.
+ * See this article for reference :
+ *   https://discourse.wicg.io/t/user-gesture-restrictions-and-async-code/1640
+ */
 
 EM_JS(void, set_clipboard_text, (const char * text, AsyncStatus * status, AsyncStatus failure, AsyncStatus success), {
   try {

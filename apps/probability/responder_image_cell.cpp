@@ -1,6 +1,8 @@
 #include "responder_image_cell.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Probability {
 
 ResponderImageCell::ResponderImageCell(Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController) :

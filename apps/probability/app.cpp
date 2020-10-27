@@ -4,6 +4,7 @@
 #include <new>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Probability {
 

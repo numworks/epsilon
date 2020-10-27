@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <apps/i18n.h>
 
+using namespace Escher;
+
 namespace Graph {
 
 BannerView::BannerView(

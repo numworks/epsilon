@@ -4,6 +4,7 @@
 #include <algorithm>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Graph {
 

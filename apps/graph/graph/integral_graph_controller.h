@@ -9,7 +9,7 @@ namespace Graph {
 
 class IntegralGraphController : public Shared::SumGraphController {
 public:
-  IntegralGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
+  IntegralGraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
 private:
   I18n::Message legendMessageAtStep(Step step) override;

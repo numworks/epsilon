@@ -1,6 +1,10 @@
 #ifndef REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_WITH_SEPARATOR_H
 #define REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_WITH_SEPARATOR_H
 
+#include <escher/even_odd_cell.h>
+#include <escher/even_odd_buffer_text_cell.h>
+#include <escher/responder.h>
+
 namespace Regression {
 
 class EvenOddDoubleBufferTextCellWithSeparator : public Escher::EvenOddCell, public Escher::Responder {

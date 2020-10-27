@@ -1,9 +1,17 @@
 #ifndef SOLVER_SOLUTIONS_CONTROLLER_H
 #define SOLVER_SOLUTIONS_CONTROLLER_H
 
+#include <apps/i18n.h>
+#include <escher/alternate_empty_view_controller.h>
+#include <escher/even_odd_buffer_text_cell.h>
+#include <escher/even_odd_expression_cell.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/selectable_table_view_delegate.h>
+#include <escher/table_view_data_source.h>
+#include <ion.h>
 #include "equation_store.h"
 #include "../shared/scrollable_two_expressions_cell.h"
-#include <apps/i18n.h>
 
 namespace Solver {
 

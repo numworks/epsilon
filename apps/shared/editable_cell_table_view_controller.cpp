@@ -2,6 +2,8 @@
 #include "../shared/poincare_helpers.h"
 #include "../constant.h"
 #include <assert.h>
+#include <escher/even_odd_cell.h>
+#include <escher/even_odd_editable_text_cell.h>
 #include <cmath>
 #include <algorithm>
 

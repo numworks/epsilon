@@ -1,6 +1,11 @@
 #ifndef REGRESSION_REGRESSION_CONTROLLER_H
 #define REGRESSION_REGRESSION_CONTROLLER_H
 
+#include <escher/message_table_cell_with_expression.h>
+#include <escher/list_view_data_source.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/view_controller.h>
 #include "store.h"
 #include <apps/i18n.h>
 

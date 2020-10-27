@@ -2,7 +2,11 @@
 #define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 
 #include <escher/stack_view_controller.h>
+#include <escher/even_odd_expression_cell.h>
 #include <escher/expression_table_cell_with_pointer.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include <poincare/layout.h>
 #include "../../shared/sequence_store.h"
 

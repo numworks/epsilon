@@ -1,4 +1,5 @@
 #include "responder_image_cell.h"
+#include <escher/container.h>
 #include <assert.h>
 
 using namespace Escher;

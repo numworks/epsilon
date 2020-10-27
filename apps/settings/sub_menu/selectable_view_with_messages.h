@@ -2,6 +2,7 @@
 #define SETTINGS_SELECTABLE_VIEW_WITH_MESSAGES_H
 
 #include <escher/selectable_table_view.h>
+#include <escher/message_table_cell_with_editable_text.h>
 #include <apps/i18n.h>
 
 namespace Settings {

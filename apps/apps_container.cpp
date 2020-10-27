@@ -2,6 +2,7 @@
 #include "apps_container_storage.h"
 #include "global_preferences.h"
 #include "exam_mode_configuration.h"
+#include <escher/clipboard.h>
 #include <ion.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>

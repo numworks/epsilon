@@ -1,6 +1,7 @@
 #include "title_bar_view.h"
 #include "exam_icon.h"
 #include "global_preferences.h"
+#include <escher/palette.h>
 extern "C" {
 #include <assert.h>
 }

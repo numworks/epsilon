@@ -1,6 +1,11 @@
 #ifndef SOLVER_EQUATION_LIST_VIEW_H
 #define SOLVER_EQUATION_LIST_VIEW_H
 
+#include <escher/responder.h>
+#include <escher/selectable_table_view.h>
+#include <escher/scroll_view.h>
+#include <escher/view.h>
+
 namespace Solver {
 
 class ListController;

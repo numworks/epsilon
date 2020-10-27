@@ -1,3 +1,5 @@
+#include <escher/container.h>
+#include <escher/stack_view_controller.h>
 #include "regression_controller.h"
 #include "model/cubic_model.h"
 #include "model/exponential_model.h"

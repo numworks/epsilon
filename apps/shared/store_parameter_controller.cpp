@@ -1,3 +1,5 @@
+#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/stack_view_controller.h>
 #include "store_parameter_controller.h"
 #include "store_controller.h"
 #include <poincare/helpers.h>

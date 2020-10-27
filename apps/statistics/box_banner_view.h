@@ -1,8 +1,10 @@
 #ifndef STATISTICS_BOX_BANNER_VIEW_H
 #define STATISTICS_BOX_BANNER_VIEW_H
 
-#include "../shared/banner_view.h"
 #include <apps/i18n.h>
+#include <escher/buffer_text_view.h>
+#include <escher/message_text_view.h>
+#include "../shared/banner_view.h"
 
 namespace Statistics {
 

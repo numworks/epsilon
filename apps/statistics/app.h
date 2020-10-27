@@ -1,6 +1,9 @@
 #ifndef STAT_APP_H
 #define STAT_APP_H
 
+#include <escher/alternate_empty_view_controller.h>
+#include <escher/tab_view_data_source.h>
+#include <escher/tab_view_controller.h>
 #include "box_controller.h"
 #include "calculation_controller.h"
 #include "histogram_controller.h"

@@ -1,6 +1,11 @@
 #ifndef SHARED_STORE_PARAM_CONTROLLER_H
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
+#include <escher/list_view_data_source.h>
+#include <escher/message_table_cell.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/view_controller.h>
 #include "double_pair_store.h"
 #include <apps/i18n.h>
 

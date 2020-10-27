@@ -1,4 +1,5 @@
 #include "simple_interactive_curve_view_controller.h"
+#include <escher/text_field.h>
 #include <cmath>
 #include <assert.h>
 

@@ -1,5 +1,7 @@
 #include "app.h"
 
+using namespace Escher;
+
 namespace HardwareTest {
 
 App * App::Snapshot::unpack(Container * container) {

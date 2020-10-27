@@ -27,6 +27,9 @@ uint32_t InteractiveCurveViewRange::rangeChecksum() {
 }
 
 void InteractiveCurveViewRange::setZoomAuto(bool v) {
+  if (m_zoomAuto == v) {
+    return;
+  }
   m_zoomAuto = v;
   if (m_delegate) {
     m_delegate->updateZoomButtons();
@@ -34,6 +37,9 @@ void InteractiveCurveViewRange::setZoomAuto(bool v) {
 }
 
 void InteractiveCurveViewRange::setZoomNormalize(bool v) {
+  if (m_zoomNormalize == v) {
+    return;
+  }
   m_zoomNormalize = v;
   if (m_delegate) {
     m_delegate->updateZoomButtons();
@@ -140,12 +146,9 @@ void InteractiveCurveViewRange::normalize() {
 
   /* When the coordinates reach 10^7, the float type is not precise enough to
    * properly normalize. */
-  if (isOrthonormal()) {
-    setZoomNormalize(true);
-  } else {
-    assert(xMin() < -1e7f || xMax() > 1e7f || yMin() < -1e7f || yMax() > 1e7f);
-    setZoomNormalize(false);
-  }
+  constexpr float limit = 1e7f;
+  assert(isOrthonormal() || xMin() < -limit || xMax() > limit || yMin() < -limit || yMax() > limit);
+  setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::setDefault() {
@@ -199,9 +202,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
     MemoizedCurveViewRange::protectedSetYMin(position - range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
   }
 
-  if (!isOrthonormal()) {
-    setZoomNormalize(false);
-  }
+  setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
@@ -244,9 +245,7 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
 
   /* Panning to a point greater than the maximum range of 10^8 could make the
    * graph not normalized.*/
-  if (!isOrthonormal()) {
-    setZoomNormalize(false);
-  }
+  setZoomNormalize(isOrthonormal());
 }
 
 bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {

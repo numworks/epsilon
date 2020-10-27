@@ -3,6 +3,8 @@ extern "C" {
 #include <assert.h>
 }
 
+using namespace Escher;
+
 namespace HardwareTest {
 
 constexpr KDColor LEDTestController::k_LEDColors[k_numberOfColors];

@@ -5,7 +5,7 @@
 
 namespace HardwareTest {
 
-class PopUpController : public ::PopUpController {
+class PopUpController : public Escher::PopUpController {
 public:
   PopUpController();
 };

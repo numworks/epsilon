@@ -4,9 +4,9 @@
 namespace HardwareTest {
 
 PopUpController::PopUpController() :
-  ::PopUpController(
+  Escher::PopUpController(
     4,
-    Invocation(
+    Escher::Invocation(
       [](void * context, void * sender) {
         AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
         bool switched = appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());

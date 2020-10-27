@@ -1,6 +1,8 @@
 #include "cell.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Probability {
 
 Cell::Cell() :

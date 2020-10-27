@@ -13,7 +13,7 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::USBAppCapital;
 }
 
-App * App::Snapshot::unpack(Container * container) {
+App * App::Snapshot::unpack(Escher::Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
@@ -23,7 +23,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 App::App(Snapshot * snapshot) :
-  ::App(snapshot, &m_usbConnectedController)
+  Escher::App(snapshot, &m_usbConnectedController)
 {
 }
 

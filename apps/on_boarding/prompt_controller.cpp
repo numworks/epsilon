@@ -2,6 +2,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace OnBoarding {
 
 PromptController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :

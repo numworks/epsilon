@@ -18,7 +18,7 @@ static KDColor sUSBConnectedColors[] = {
   KDColorBlack,
   KDColorBlack,
   KDColorBlack,
-  Palette::YellowDark,
+  Escher::Palette::YellowDark,
   KDColorWhite,
   KDColorBlack,
   KDColorBlack,

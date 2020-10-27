@@ -1,6 +1,8 @@
 #include "banner_view.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Regression {
 
 BannerView::BannerView(

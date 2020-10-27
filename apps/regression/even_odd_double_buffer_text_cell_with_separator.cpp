@@ -3,6 +3,8 @@
 #include "escher/metric.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Regression {
 
 EvenOddDoubleBufferTextCellWithSeparator::EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder, float horizontalAlignment, float verticalAlignment) :

@@ -5,15 +5,15 @@
 
 namespace Regression {
 
-class EvenOddDoubleBufferTextCellWithSeparator : public EvenOddCell, public Responder {
+class EvenOddDoubleBufferTextCellWithSeparator : public Escher::EvenOddCell, public Escher::Responder {
 public:
-  EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder = nullptr, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f);
+  EvenOddDoubleBufferTextCellWithSeparator(Escher::Responder * parentResponder = nullptr, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f);
   const char * text() const override;
   const char * firstText() const;
   const char * secondText() const;
   void reloadCell() override;
   void setHighlighted(bool highlight) override;
-  Responder * responder() override {
+  Escher::Responder * responder() override {
     return this;
   }
   void setEven(bool even) override;
@@ -24,13 +24,13 @@ public:
   void setTextColor(KDColor textColor);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   bool m_firstTextSelected;
-  EvenOddBufferTextCell m_firstBufferTextView;
-  EvenOddBufferTextCell m_secondBufferTextView;
+  Escher::EvenOddBufferTextCell m_firstBufferTextView;
+  Escher::EvenOddBufferTextCell m_secondBufferTextView;
 };
 
 }

@@ -4,6 +4,8 @@
 #include <apps/i18n.h>
 #include <escher/even_odd_message_text_cell.h>
 #include <escher/input_view_controller.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/selectable_table_view_delegate.h>
 #include "expression_model_store.h"
 
 namespace Shared {

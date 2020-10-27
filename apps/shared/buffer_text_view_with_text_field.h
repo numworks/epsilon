@@ -1,6 +1,14 @@
 #ifndef SHARED_BUFFER_TEXT_VIEW_WITH_TEXT_FIELD_H
 #define SHARED_BUFFER_TEXT_VIEW_WITH_TEXT_FIELD_H
 
+#include <escher/buffer_text_view.h>
+#include <escher/input_event_handler_delegate.h>
+#include <escher/metric.h>
+#include <escher/responder.h>
+#include <escher/text_field.h>
+#include <escher/text_field_delegate.h>
+#include <escher/view.h>
+
 namespace Shared {
 
 class BufferTextViewWithTextField : public Escher::View, public Escher::Responder {

@@ -1,4 +1,5 @@
 #include "about_controller.h"
+#include <escher/container.h>
 #include <assert.h>
 #include <cmath>
 

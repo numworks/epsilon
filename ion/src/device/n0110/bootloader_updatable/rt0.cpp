@@ -5,6 +5,7 @@
 #include <drivers/backlight.h>
 #include <drivers/board_privileged.h>
 #include <drivers/cache.h>
+#include <drivers/keyboard.h>
 #include <drivers/reset.h>
 #include <drivers/timing.h>
 #include <regs/regs.h>
@@ -258,4 +259,34 @@ void __attribute__((interrupt, noinline)) isr_systick() {
   auto t = Ion::Device::Timing::MillisElapsed;
   t++;
   Ion::Device::Timing::MillisElapsed = t;
+}
+
+void displayInterruptionMessage() {
+  KDRect screen = KDRect(0,0,Ion::Display::Width,Ion::Display::Height);
+  Ion::Display::pushRectUniform(screen, KDColorGreen);
+  for (volatile uint32_t i=0; i<38*1000; i++) {
+    __asm volatile("nop");
+  }
+  Ion::Display::pushRectUniform(screen, KDColorWhite);
+  KDContext * ctx = KDIonContext::sharedContext();
+  ctx->setOrigin(KDPointZero);
+  ctx->setClippingRect(screen);
+  KDCoordinate margin = 60;
+  KDCoordinate currentHeight = 0;
+  currentHeight += margin;
+  const char * title = "I got Interrupted by EXTI!";
+  KDSize titleSize = KDFont::LargeFont->stringSize(title);
+  ctx->drawString(title, KDPoint((Ion::Display::Width-titleSize.width())/2, currentHeight), KDFont::LargeFont);
+}
+
+using namespace Ion::Device::Regs;
+
+void __attribute__((interrupt, noinline)) keyboard_handler() {
+  for (uint8_t i=0; i < Ion::Device::Keyboard::Config::numberOfColumns; i++) {
+    uint8_t pin = Ion::Device::Keyboard::Config::RowPins[i];
+    if (Ion::Device::Regs::EXTI.PR()->get(pin)) {
+      Ion::Device::Regs::EXTI.PR()->set(pin, true);
+      displayInterruptionMessage();
+    }
+  }
 }

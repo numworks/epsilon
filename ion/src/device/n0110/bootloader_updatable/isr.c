@@ -35,11 +35,11 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // RtcWakeup service routine
   0, // Flash service routine
   0, // RCC service routine
-  0, // EXTI0 service routine
-  0, // EXTI1 service routine
-  0, // EXTI2 service routine
-  0, // EXTI3 service routine
-  0, // EXTI4 service routine
+  (ISR)keyboard_handler, // EXTI0 service routine
+  (ISR)keyboard_handler, // EXTI1 service routine
+  (ISR)keyboard_handler, // EXTI2 service routine
+  (ISR)keyboard_handler, // EXTI3 service routine
+  (ISR)keyboard_handler, // EXTI4 service routine
   0, // DMA1Stream0 service routine
   0, // DMA1Stream1 service routine
   0, // DMA1Stream2 service routine
@@ -52,7 +52,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // CAN1 RX0 interrupt
   0, // CAN1 RX1 interrupt
   0, // CAN1 SCE interrupt
-  0, // EXTI Line[9:5] interrupts
+  (ISR)keyboard_handler, // EXTI Line[9:5] interrupts
   0, // TIM1 Break interrupt and TIM9 global interrupt
   0, // TIM1 update interrupt and TIM10 global interrupt
   0, // TIM1 Trigger & Commutation interrupts and TIM11 global interrupt

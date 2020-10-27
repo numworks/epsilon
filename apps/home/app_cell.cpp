@@ -1,6 +1,8 @@
 #include "app_cell.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Home {
 
 AppCell::AppCell() :

@@ -24,13 +24,13 @@ namespace Probability {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
     public:
       I18n::Message name() override;
       I18n::Message upperName() override;
-      const Image * icon() override;
+      const Escher::Image * icon() override;
   };
-  class Snapshot : public ::SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     enum class Page {
       Distribution,
@@ -39,7 +39,7 @@ public:
     };
     Snapshot();
     ~Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     Descriptor * descriptor() override;
     void reset() override;
     Distribution * distribution();
@@ -70,16 +70,16 @@ public:
     Page m_activePage;
   };
   static App * app() {
-    return static_cast<App *>(Container::activeApp());
+    return static_cast<App *>(Escher::Container::activeApp());
   }
-  Snapshot * snapshot() const { return static_cast<Snapshot *>(::App::snapshot()); }
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   TELEMETRY_ID("Probability");
 private:
   App(Snapshot * snapshot);
   CalculationController m_calculationController;
   ParametersController m_parametersController;
   DistributionController m_distributionController;
-  StackViewController m_stackViewController;
+  Escher::StackViewController m_stackViewController;
 };
 
 }

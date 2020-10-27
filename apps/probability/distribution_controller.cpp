@@ -30,6 +30,8 @@
 #include "images/focused_student_icon.h"
 #include "images/focused_uniform_icon.h"
 
+using namespace Escher;
+
 namespace Probability {
 
 View * DistributionController::ContentView::subviewAtIndex(int index) {

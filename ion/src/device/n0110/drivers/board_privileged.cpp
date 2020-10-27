@@ -156,6 +156,13 @@ void init() {
   // Ensure right location of interrupt vectors
   CORTEX.VTOR()->setVTOR((void*)&InitialisationVector);
 
+  // Init NVIC EXTI interrups // TODO optimize in one write
+  NVIC.NVIC_ISER0()->set(6,true);
+  NVIC.NVIC_ISER0()->set(7,true);
+  NVIC.NVIC_ISER0()->set(8,true);
+  NVIC.NVIC_ISER0()->set(9,true);
+  NVIC.NVIC_ISER0()->set(10,true);
+
   // Put all inputs as Analog Input, No pull-up nor pull-down
   // Except for the SWD port (PB3, PA13, PA14)
   GPIOA.MODER()->set(0xEBFFFFFF);

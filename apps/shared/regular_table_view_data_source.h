@@ -1,6 +1,8 @@
 #ifndef SHARED_REGULAR_TABLE_VIEW_DATA_SOURCE_H
 #define SHARED_REGULAR_TABLE_VIEW_DATA_SOURCE_H
 
+#include <escher/table_view_data_source.h>
+
 namespace Shared {
 
 /* Regular table view data source is a table view data source with equal sized

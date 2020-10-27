@@ -1,6 +1,6 @@
 #include "localization_controller.h"
 #include <apps/global_preferences.h>
-
+#include <escher/stack_view_controller.h>
 
 namespace Settings {
 

@@ -1,6 +1,8 @@
 #ifndef SOLVER_LIST_CONTROLLER_H
 #define SOLVER_LIST_CONTROLLER_H
 
+#include <escher/button_row_controller.h>
+#include <escher/even_odd_expression_cell.h>
 #include "../shared/expression_model_list_controller.h"
 #include "../shared/layout_field_delegate.h"
 #include "../shared/text_field_delegate.h"

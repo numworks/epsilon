@@ -1,6 +1,10 @@
 #ifndef REGRESSION_CALCULATION_CONTROLLER_H
 #define REGRESSION_CALCULATION_CONTROLLER_H
 
+#include <escher/alternate_empty_view_controller.h>
+#include <escher/button_row_controller.h>
+#include <escher/even_odd_expression_cell.h>
+#include <escher/even_odd_message_text_cell.h>
 #include <poincare/preferences.h>
 #include "store.h"
 #include "column_title_cell.h"

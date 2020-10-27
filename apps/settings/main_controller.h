@@ -2,6 +2,8 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <apps/shared/settings_message_tree.h>
+#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_table_cell_with_switch.h>
 #include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"
 #include "sub_menu/display_mode_controller.h"

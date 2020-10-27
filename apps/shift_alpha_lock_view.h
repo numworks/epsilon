@@ -4,6 +4,7 @@
 #include "lock_view.h"
 #include <escher/message_text_view.h>
 #include <apps/i18n.h>
+#include <ion.h>
 
 class ShiftAlphaLockView : public Escher::View {
 public:

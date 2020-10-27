@@ -234,7 +234,7 @@ constexpr Event USBPlug = Event::Special(4);
 constexpr Event BatteryCharging = Event::Special(5);
 /* This event is only used in the simulator, to handle text that cannot be
  * associated with a key. */
-// constexpr Event ExternalText = Event::Special(6);
+constexpr Event ExternalText = Event::Special(6);
 
 }
 }

@@ -159,3 +159,17 @@ KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
   return IndexForReplacementCharacterCodePoint;
 #endif
 }
+
+bool KDFont::CanBeWrittenWithGlyphs(const char * text) {
+  UTF8Decoder decoder(text);
+  CodePoint cp = decoder.nextCodePoint();
+  while(cp != UCodePointNull) {
+    if (LargeFont->indexForCodePoint(cp) == KDFont::IndexForReplacementCharacterCodePoint
+     || SmallFont->indexForCodePoint(cp) == KDFont::IndexForReplacementCharacterCodePoint)
+    {
+      return false;
+    }
+    cp = decoder.nextCodePoint();
+  }
+  return true;
+}

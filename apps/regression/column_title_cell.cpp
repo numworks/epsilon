@@ -1,5 +1,7 @@
 #include "column_title_cell.h"
 
+using namespace Escher;
+
 namespace Regression {
 
 void ColumnTitleCell::setColor(KDColor color) {

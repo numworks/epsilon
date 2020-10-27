@@ -11,7 +11,7 @@ class GraphController;
 
 class GoToParameterController : public Shared::GoToParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  GoToParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void setXPrediction(bool xPrediction);
   const char * title() override;
 private:

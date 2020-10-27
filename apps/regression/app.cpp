@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Regression {
 

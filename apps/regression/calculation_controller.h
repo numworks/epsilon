@@ -15,10 +15,10 @@ namespace Regression {
 
 constexpr static KDCoordinate maxCoordinate(KDCoordinate a, KDCoordinate b) { return a > b ? a : b; }
 
-class CalculationController : public Shared::TabTableController, public TableViewDataSource, public SelectableTableViewDelegate, public ButtonRowDelegate, public AlternateEmptyViewDefaultDelegate  {
+class CalculationController : public Shared::TabTableController, public Escher::TableViewDataSource, public Escher::SelectableTableViewDelegate, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate  {
 
 public:
-  CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
+  CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
 
   // View Controller
   const char * title() override;
@@ -29,22 +29,22 @@ public:
   void didBecomeFirstResponder() override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
-  Responder * defaultController() override;
+  Escher::Responder * defaultController() override;
 
   // TableViewDataSource
   int numberOfRows() const override;
   int numberOfColumns() const override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 private:
@@ -62,21 +62,21 @@ private:
   static constexpr int k_regressionCellIndex = 9;
 
   static constexpr KDCoordinate k_cellHeight = 25;
-  static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
+  static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Escher::Metric::CommonRightMargin/2 - Escher::Metric::CommonLeftMargin/2;
   // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
   static constexpr KDCoordinate k_minCalculationCellWidth = 7*2*(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)); //Calculation width should at least be able to hold to numbers with LargeNumberOfSignificantDigits.
   static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(150, k_minCalculationCellWidth); // Should hold aX^3+bX^2+cX+d
   static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(195, k_minCalculationCellWidth ); // Should hold ? aX^4+bX^3+c*X^2+dX+e
   static constexpr KDCoordinate k_margin = 8;
-  static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
-  Responder * tabController() const override;
-  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+  static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
+  Escher::Responder * tabController() const override;
+  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   bool hasLinearRegression() const;
   int maxNumberOfCoefficients() const;
   Poincare::Layout m_r2Layout;
-  SelectableTableView m_selectableTableView;
-  EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
-  EvenOddExpressionCell m_r2TitleCell;
+  Escher::SelectableTableView m_selectableTableView;
+  Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
+  Escher::EvenOddExpressionCell m_r2TitleCell;
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];

@@ -1,4 +1,5 @@
 #include "buffer_text_view_with_text_field.h"
+#include <escher/container.h>
 #include <escher/palette.h>
 
 using namespace Escher;

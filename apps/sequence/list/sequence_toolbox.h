@@ -1,8 +1,8 @@
 #ifndef SEQUENCE_SEQUENCE_TOOLBOX_H
 #define SEQUENCE_SEQUENCE_TOOLBOX_H
 
+#include <escher/expression_table_cell.h>
 #include "../../math_toolbox.h"
-
 #include <poincare/layout.h>
 
 namespace Sequence {

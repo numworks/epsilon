@@ -1,5 +1,6 @@
 #include "banner_view.h"
 #include <assert.h>
+#include <ion.h>
 
 namespace Shared {
 

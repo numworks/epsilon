@@ -1,6 +1,7 @@
 #ifndef REGRESSION_STORE_PARAMETER_CONTROLLER_H
 #define REGRESSION_STORE_PARAMETER_CONTROLLER_H
 
+#include <escher/message_table_cell_with_chevron_and_expression.h>
 #include "regression_controller.h"
 #include "store.h"
 #include "../shared/store_parameter_controller.h"

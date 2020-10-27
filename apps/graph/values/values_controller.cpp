@@ -1,5 +1,6 @@
 #include "values_controller.h"
 #include <assert.h>
+#include <escher/clipboard.h>
 #include "../../shared/poincare_helpers.h"
 #include "../../constant.h"
 #include "../app.h"

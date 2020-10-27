@@ -1,5 +1,6 @@
 #include "multiple_data_view_controller.h"
 #include <apps/i18n.h>
+#include <escher/container.h>
 #include <assert.h>
 
 using namespace Shared;

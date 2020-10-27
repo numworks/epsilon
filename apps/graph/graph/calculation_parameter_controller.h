@@ -14,10 +14,10 @@
 
 namespace Graph {
 
-class CalculationParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class CalculationParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
-  View * view() override;
+  CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
+  Escher::View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -25,17 +25,17 @@ public:
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
   bool shouldDisplayIntersection() const;
-  MessageTableCellWithChevron m_preimageCell;
+  Escher::MessageTableCellWithChevron m_preimageCell;
   constexpr static int k_totalNumberOfReusableCells = 6;
-  MessageTableCell m_cells[k_totalNumberOfReusableCells];
-  SelectableTableView m_selectableTableView;
+  Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
+  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
   PreimageParameterController m_preimageParameterController;
   PreimageGraphController m_preimageGraphController;

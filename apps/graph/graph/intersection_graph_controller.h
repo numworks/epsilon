@@ -7,7 +7,7 @@ namespace Graph {
 
 class IntersectionGraphController : public CalculationGraphController {
 public:
-  IntersectionGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
+  IntersectionGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
 private:
   void reloadBannerView() override;

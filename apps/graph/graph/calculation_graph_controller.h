@@ -13,7 +13,7 @@ class App;
 
 class CalculationGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::FunctionBannerDelegate {
 public:
-  CalculationGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, I18n::Message defaultMessage);
+  CalculationGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, I18n::Message defaultMessage);
   void viewWillAppear() override;
   void setRecord(Ion::Storage::Record record);
 protected:
@@ -27,7 +27,7 @@ protected:
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;
   Ion::Storage::Record m_record;
-  MessageTextView m_defaultBannerView;
+  Escher::MessageTextView m_defaultBannerView;
   bool m_isActive;
 private:
   bool handleEnter() override;

@@ -13,7 +13,7 @@ namespace Graph {
 
 class DomainParameterController : public Shared::FloatParameterController<float> {
 public:
-  DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  DomainParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // ViewController
   const char * title() override { return I18n::translate(I18n::Message::FunctionDomain); }
@@ -21,14 +21,14 @@ public:
 
   // ListViewDataSource
   int numberOfRows() const override { return k_totalNumberOfCell+1; }
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 private:
   constexpr static int k_totalNumberOfCell = 2;
   void viewWillAppear() override;
   int reusableParameterCellCount(int type) override { return k_totalNumberOfCell; }
-  HighlightCell * reusableParameterCell(int index, int type) override;
+  Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
   float parameterAtIndex(int index) override;
@@ -41,7 +41,7 @@ private:
   void extractParameters();
   // Return true if temporary parameters and function parameters are equal.
   bool equalTempParameters();
-  MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
+  Escher::MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
   Shared::Range1D m_tempDomain;
   Shared::DiscardPopUpController m_confirmPopUpController;

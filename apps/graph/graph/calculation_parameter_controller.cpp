@@ -5,6 +5,7 @@
 #include <cmath>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Graph {
 

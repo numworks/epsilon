@@ -4,6 +4,8 @@
 #include "../app.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Graph {
 
 TypeParameterController::TypeParameterController(Responder * parentResponder) :

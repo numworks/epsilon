@@ -13,23 +13,23 @@ namespace Graph {
 
 class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate {
 public:
-  ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   const char * title() override;
   void renameSelectedFunction();
   // TextFieldDelegate
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
 private:
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
-  HighlightCell * expressionCells(int index) override;
-  void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
-  void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::ContinuousFunction> function, TextField * textField);
+  Escher::HighlightCell * expressionCells(int index) override;
+  void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j) override;
+  void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;
+  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::ContinuousFunction> function, Escher::TextField * textField);
   ContinuousFunctionStore * modelStore() override;
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];

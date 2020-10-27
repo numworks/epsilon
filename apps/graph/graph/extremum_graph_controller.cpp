@@ -3,6 +3,7 @@
 #include <poincare/serialization_helper.h>
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Graph {
 

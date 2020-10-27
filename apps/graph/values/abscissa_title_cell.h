@@ -6,9 +6,9 @@
 
 namespace Graph {
 
-class AbscissaTitleCell : public EvenOddMessageTextCell, public Shared::Separable {
+class AbscissaTitleCell : public Escher::EvenOddMessageTextCell, public Shared::Separable {
 public:
-  AbscissaTitleCell() : EvenOddMessageTextCell(), Separable() {}
+  AbscissaTitleCell() : Escher::EvenOddMessageTextCell(), Separable() {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
 private:

@@ -4,6 +4,8 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Graph {
 
 IntervalParameterSelectorController::IntervalParameterSelectorController() :

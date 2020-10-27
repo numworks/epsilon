@@ -11,11 +11,11 @@ class ListController;
 
 class ListParameterController : public Shared::ListParameterController {
 public:
-  ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  ListParameterController(ListController * listController, Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;
   // ListViewDataSource
-  HighlightCell * reusableCell(int index, int type) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
   bool handleEnterOnRow(int rowIndex) override;
 private:
@@ -24,11 +24,11 @@ private:
   }
   void renameFunction();
   ListController * m_listController;
-  MessageTableCellWithChevronAndMessage m_typeCell;
-  MessageTableCellWithChevronAndBuffer m_functionDomain;
+  Escher::MessageTableCellWithChevronAndMessage m_typeCell;
+  Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;
   TypeParameterController m_typeParameterController;
   DomainParameterController m_domainParameterController;
-  MessageTableCell m_renameCell;
+  Escher::MessageTableCell m_renameCell;
 };
 
 }

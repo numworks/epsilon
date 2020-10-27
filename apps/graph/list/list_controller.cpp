@@ -6,6 +6,7 @@
 #include <apps/apps_container.h>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Graph {
 

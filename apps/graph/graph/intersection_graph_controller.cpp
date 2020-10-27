@@ -3,6 +3,7 @@
 #include <poincare/preferences.h>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Graph {
 

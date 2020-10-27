@@ -1,5 +1,8 @@
 #include "expression_model_list_controller.h"
 #include <apps/constant.h>
+#include <escher/container.h>
+#include <escher/even_odd_expression_cell.h>
+#include <escher/selectable_table_view.h>
 #include <poincare/symbol.h>
 #include <algorithm>
 

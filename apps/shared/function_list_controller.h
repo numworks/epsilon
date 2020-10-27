@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/button_row_controller.h>
+#include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 #include "function_store.h"
 #include "function_title_cell.h"

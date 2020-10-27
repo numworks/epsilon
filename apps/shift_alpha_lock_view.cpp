@@ -1,4 +1,5 @@
 #include "shift_alpha_lock_view.h"
+#include <escher/palette.h>
 
 ShiftAlphaLockView::ShiftAlphaLockView() :
   View(),

@@ -1,4 +1,6 @@
 #include "generic_sub_controller.h"
+#include <escher/container.h>
+#include <escher/message_table_cell.h>
 #include <assert.h>
 #include <cmath>
 

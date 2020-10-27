@@ -1,6 +1,12 @@
 #ifndef SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 #define SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 
+#include <escher/list_view_data_source.h>
+#include <escher/expression_table_cell.h>
+#include <escher/message_table_cell.h>
+#include <escher/selectable_table_view.h>
+#include <escher/selectable_table_view_data_source.h>
+#include <escher/stack_view_controller.h>
 #include "equation_store.h"
 
 namespace Solver {

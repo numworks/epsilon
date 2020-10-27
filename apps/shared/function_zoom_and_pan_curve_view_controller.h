@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/key_view.h>
+#include <escher/message_text_view.h>
 #include "zoom_and_pan_curve_view_controller.h"
 
 namespace Shared {

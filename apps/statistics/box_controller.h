@@ -1,6 +1,7 @@
 #ifndef STATISTICS_BOX_CONTROLLER_H
 #define STATISTICS_BOX_CONTROLLER_H
 
+#include <escher/button_row_controller.h>
 #include "store.h"
 #include "multiple_boxes_view.h"
 #include "multiple_data_view_controller.h"

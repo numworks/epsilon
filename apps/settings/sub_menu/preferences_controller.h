@@ -1,6 +1,7 @@
 #ifndef SETTINGS_PREFERENCES_CONTROLLER_H
 #define SETTINGS_PREFERENCES_CONTROLLER_H
 
+#include <escher/message_table_cell_with_expression.h>
 #include "generic_sub_controller.h"
 
 namespace Settings {

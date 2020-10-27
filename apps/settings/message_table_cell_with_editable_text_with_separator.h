@@ -1,6 +1,7 @@
 #ifndef SETTINGS_MESSAGE_TABLE_CELL_WITH_EDITABLE_TEXT_WITH_SEPARATOR_H
 #define SETTINGS_MESSAGE_TABLE_CELL_WITH_EDITABLE_TEXT_WITH_SEPARATOR_H
 
+#include <escher/message_table_cell_with_editable_text.h>
 #include "cell_with_separator.h"
 
 namespace Settings {

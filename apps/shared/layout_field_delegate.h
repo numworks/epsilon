@@ -1,6 +1,7 @@
 #ifndef SHARED_LAYOUT_FIELD_DELEGATE_H
 #define SHARED_LAYOUT_FIELD_DELEGATE_H
 
+#include <escher/container.h>
 #include "expression_field_delegate_app.h"
 
 namespace Shared {

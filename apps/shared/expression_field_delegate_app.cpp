@@ -1,5 +1,6 @@
 #include "expression_field_delegate_app.h"
 #include <apps/i18n.h>
+#include <escher/layout_field.h>
 #include <poincare/expression.h>
 
 using namespace Escher;

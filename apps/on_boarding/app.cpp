@@ -2,6 +2,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace OnBoarding {
 
 App * App::Snapshot::unpack(Container * container) {

@@ -96,7 +96,6 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float xMa = xMax();
   float yMi = yMin();
   float yMa = yMax();
-  setZoomAuto(false);
   if (ratio*std::fabs(xMa-xMi) < Range1D::k_minFloat || ratio*std::fabs(yMa-yMi) < Range1D::k_minFloat) {
     return;
   }
@@ -105,12 +104,14 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float newXMin = centerX*(1.0f-ratio)+ratio*xMi;
   float newXMax = centerX*(1.0f-ratio)+ratio*xMa;
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
+    setZoomAuto(false);
     m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   }
   float newYMin = centerY*(1.0f-ratio)+ratio*yMi;
   float newYMax = centerY*(1.0f-ratio)+ratio*yMa;
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
+    setZoomAuto(false);
     m_yRange.setMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   }
@@ -119,6 +120,9 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
   if (clipped(xMin() + x, false) != xMin() + x || clipped(xMax() + x, true) != xMax() + x || clipped(yMin() + y, false) != yMin() + y || clipped(yMax() + y, true) != yMax() + y || std::isnan(clipped(xMin() + x, false)) || std::isnan(clipped(xMax() + x, true)) || std::isnan(clipped(yMin() + y, false)) || std::isnan(clipped(yMax() + y, true))) {
     return;
+  }
+  if (x != 0.f || y != 0.f) {
+    setZoomAuto(false);
   }
   m_xRange.setMax(xMax()+x, k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetXMin(xMin() + x, k_lowerMaxFloat, k_upperMaxFloat);
@@ -129,6 +133,12 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 void InteractiveCurveViewRange::normalize() {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
+
+  if (isOrthonormal()) {
+    return;
+  }
+
+  setZoomAuto(false);
 
   float newXMin = xMin(), newXMax = xMax(), newYMin = yMin(), newYMax = yMax();
 
@@ -182,7 +192,6 @@ void InteractiveCurveViewRange::setDefault() {
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
-  setZoomAuto(false);
   if (std::isnan(position)) {
     return;
   }
@@ -191,22 +200,29 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
     if (std::fabs(position/range) > k_maxRatioPositionRange) {
       range = Range1D::defaultRangeLengthFor(position);
     }
-    m_xRange.setMax(position + range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetXMin(position - range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
+    float newXMax = position + range/2.0f;
+    if (xMax() != newXMax) {
+      setZoomAuto(false);
+      m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMin(newXMax - range, k_lowerMaxFloat, k_upperMaxFloat);
+    }
   } else {
     float range = yMax() - yMin();
     if (std::fabs(position/range) > k_maxRatioPositionRange) {
       range = Range1D::defaultRangeLengthFor(position);
     }
-    m_yRange.setMax(position + range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetYMin(position - range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
+    float newYMax = position + range/2.0f;
+    if (yMax() != newYMax) {
+      setZoomAuto(false);
+      m_yRange.setMax(position + range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetYMin(position - range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
+    }
   }
 
   setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
-  setZoomAuto(false);
   if (!std::isinf(x) && !std::isnan(x)) {
     const float xRange = xMax() - xMin();
     const float leftMargin = leftMarginRatio * xRange;

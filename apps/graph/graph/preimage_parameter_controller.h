@@ -9,8 +9,8 @@ namespace Graph {
 class PreimageParameterController : public Shared::GoToParameterController {
 public:
   PreimageParameterController(
-    Responder * parentResponder,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    Escher::Responder * parentResponder,
+    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor,
     PreimageGraphController * preimageGraphController

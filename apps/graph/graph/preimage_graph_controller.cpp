@@ -2,6 +2,8 @@
 #include "../../shared/poincare_helpers.h"
 #include <poincare/serialization_helper.h>
 
+using namespace Escher;
+
 namespace Graph {
 
 PreimageGraphController::PreimageGraphController(

@@ -9,10 +9,10 @@ namespace Graph {
 
 class ListController;
 
-class TextFieldFunctionTitleCell : public Shared::FunctionTitleCell, public Responder {
+class TextFieldFunctionTitleCell : public Shared::FunctionTitleCell, public Escher::Responder {
 public:
   TextFieldFunctionTitleCell(ListController * listController, Orientation orientation = Orientation::VerticalIndicator, const KDFont * font = KDFont::LargeFont);
-  TextField * textField() { return &m_textField; }
+  Escher::TextField * textField() { return &m_textField; }
   void setEditing(bool editing);
   bool isEditing() const;
   void setHorizontalAlignment(float alignment);
@@ -24,13 +24,13 @@ public:
   void setEven(bool even) override;
   // HighlightCell
   void setHighlighted(bool highlight) override;
-  Responder * responder() override;
+  Escher::Responder * responder() override;
   const char * text() const override {
     return m_textField.text();
   }
   // View
   int numberOfSubviews() const override { return 1; }
-  View * subviewAtIndex(int index) override {
+  Escher::View * subviewAtIndex(int index) override {
     assert(index == 0);
     return &m_textField;
   }

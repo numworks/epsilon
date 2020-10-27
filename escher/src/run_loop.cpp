@@ -1,4 +1,5 @@
 #include <escher/run_loop.h>
+#include <kandinsky/font.h>
 #include <assert.h>
 
 RunLoop::RunLoop() :
@@ -64,6 +65,11 @@ bool RunLoop::step() {
 #endif
 
   if (event != Ion::Events::None) {
+#if !PLATFORM_DEVICE
+    if (event == Ion::Events::ExternalText && !KDFont::CanBeWrittenWithGlyphs(event.text())) {
+      return true;
+    }
+#endif
     dispatchEvent(event);
   }
 

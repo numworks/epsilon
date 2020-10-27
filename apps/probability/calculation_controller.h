@@ -11,15 +11,15 @@
 
 namespace Probability {
 
-class CalculationController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
+class CalculationController : public Escher::ViewController, public Escher::TableViewDataSource, public Escher::SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
 public:
-  CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation);
+  CalculationController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation);
   /* Responder */
-  void didEnterResponderChain(Responder * previousResponder) override;
+  void didEnterResponderChain(Escher::Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
 
   /* ViewController */
-  View * view() override;
+  Escher::View * view() override;
   const char * title() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -32,15 +32,15 @@ public:
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   /* TextField delegate */
-  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
   void reloadDistributionCurveView();
   void reload();
@@ -49,23 +49,23 @@ private:
   constexpr static int k_numberOfCalculationCells = 3;
   constexpr static KDCoordinate k_tableMargin = 3;
   void updateTitle();
-  class ContentView : public View {
+  class ContentView : public Escher::View {
   public:
-    ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation);
+    ContentView(Escher::SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation);
     DistributionCurveView * distributionCurveView() {
       return &m_distributionCurveView;
     }
   private:
     constexpr static KDCoordinate k_titleHeightMargin = 5;
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
+    Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    MessageTextView m_titleView;
-    SelectableTableView * m_selectableTableView;
+    Escher::MessageTextView m_titleView;
+    Escher::SelectableTableView * m_selectableTableView;
     DistributionCurveView m_distributionCurveView;
   };
   ContentView m_contentView;
-  SelectableTableView m_selectableTableView;
+  Escher::SelectableTableView m_selectableTableView;
   ResponderImageCell m_imageCell;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   Calculation * m_calculation;

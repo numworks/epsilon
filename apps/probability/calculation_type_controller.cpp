@@ -10,6 +10,8 @@
 #include "images/focused_calcul3_icon.h"
 #include "images/focused_calcul4_icon.h"
 
+using namespace Escher;
+
 namespace Probability {
 
 CalculationTypeController::CalculationTypeController(Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController) :

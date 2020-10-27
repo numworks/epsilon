@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <string.h>
 
+using namespace Escher;
+
 namespace Probability {
 
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :

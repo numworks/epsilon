@@ -10,10 +10,10 @@ namespace Probability {
 
 class CalculationController;
 
-class CalculationTypeController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class CalculationTypeController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  CalculationTypeController(Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController);
-  View * view() override;
+  CalculationTypeController(Escher::Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController);
+  Escher::View * view() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
@@ -21,13 +21,13 @@ public:
   int numberOfRows() const override;
   KDCoordinate cellWidth() override;
   KDCoordinate cellHeight() override;
-  HighlightCell * reusableCell(int index) override;
+  Escher::HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   constexpr static int k_numberOfImages = 4;
 private:
   ImageCell m_imageCells[k_numberOfImages];
-  SelectableTableView m_selectableTableView;
+  Escher::SelectableTableView m_selectableTableView;
   Distribution * m_distribution;
   Calculation * m_calculation;
   CalculationController * m_calculationController;

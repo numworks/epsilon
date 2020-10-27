@@ -5,12 +5,12 @@
 
 namespace Probability {
 
-class Cell : public HighlightCell {
+class Cell : public Escher::HighlightCell {
 public:
   Cell();
   void reloadCell() override;
   void setLabel(I18n::Message message);
-  void setImage(const Image * image, const Image * focusedImage);
+  void setImage(const Escher::Image * image, const Escher::Image * focusedImage);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_iconWidth = 35;
@@ -19,15 +19,15 @@ private:
   constexpr static KDCoordinate k_chevronWidth = 8;
   constexpr static KDCoordinate k_chevronMargin = 10;
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  MessageTextView m_labelView;
-  ImageView m_iconView;
+  Escher::MessageTextView m_labelView;
+  Escher::ImageView m_iconView;
   /* TODO: One day, we would rather store a mask (8bits/pixel) instead of two
    * images (16bits/pixels)*/
-  const Image * m_icon;
-  const Image * m_focusedIcon;
-  ChevronView m_chevronView;
+  const Escher::Image * m_icon;
+  const Escher::Image * m_focusedIcon;
+  Escher::ChevronView m_chevronView;
 };
 
 }

@@ -18,7 +18,6 @@ namespace Events {
 
 static constexpr size_t sharedExternalTextBufferSize = sizeof(SDL_TextInputEvent::text);
 char * sharedExternalTextBuffer();
-constexpr Event ExternalText = Event::Special(6);
 
 }
 }

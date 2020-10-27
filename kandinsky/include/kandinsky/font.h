@@ -33,6 +33,8 @@ public:
   static constexpr const KDFont * LargeFont = &privateLargeFont;
   static constexpr const KDFont * SmallFont = &privateSmallFont;
 
+  static bool CanBeWrittenWithGlyphs(const char * text);
+
   KDSize stringSize(const char * text, int textLength = -1) const {
     return stringSizeUntil(text, textLength < 0 ? nullptr : text + textLength);
   }

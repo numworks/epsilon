@@ -166,9 +166,6 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
       }
     }
   }
-  if (!UTF8Helper::CanBeWrittenWithGlyphs(event.text)) {
-    return None;
-  }
   Ion::Events::removeShift();
   strlcpy(sharedExternalTextBuffer(), event.text, sharedExternalTextBufferSize);
   return ExternalText;

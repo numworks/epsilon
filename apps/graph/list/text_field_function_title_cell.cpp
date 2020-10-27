@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <algorithm>
 
+using namespace Escher;
+
 namespace Graph {
 
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :

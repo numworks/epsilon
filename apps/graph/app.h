@@ -13,16 +13,16 @@ namespace Graph {
 
 class App : public Shared::FunctionApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
-    const Image * icon() override;
+    const Escher::Image * icon() override;
   };
   class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
     Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     ContinuousFunctionStore * functionStore() override { return &m_functionStore; }
@@ -37,15 +37,15 @@ public:
     Shared::Interval m_interval[Shared::ContinuousFunction::k_numberOfPlotTypes];
   };
   static App * app() {
-    return static_cast<App *>(Container::activeApp());
+    return static_cast<App *>(Escher::Container::activeApp());
   }
   Snapshot * snapshot() const {
-    return static_cast<Snapshot *>(::App::snapshot());
+    return static_cast<Snapshot *>(Escher::App::snapshot());
   }
   TELEMETRY_ID("Graph");
   bool XNTCanBeOverriden() const override { return false; }
   CodePoint XNT() override;
-  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
+  Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
   Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
     return snapshot()->intervalForType(plotType);
@@ -53,25 +53,25 @@ public:
   ValuesController * valuesController() override {
     return &m_valuesController;
   }
-  InputViewController * inputViewController() override {
+  Escher::InputViewController * inputViewController() override {
     return &m_inputViewController;
   }
 private:
   App(Snapshot * snapshot);
   ListController m_listController;
-  ButtonRowController m_listFooter;
-  ButtonRowController m_listHeader;
-  StackViewController m_listStackViewController;
+  Escher::ButtonRowController m_listFooter;
+  Escher::ButtonRowController m_listHeader;
+  Escher::StackViewController m_listStackViewController;
   GraphController m_graphController;
-  AlternateEmptyViewController m_graphAlternateEmptyViewController;
-  ButtonRowController m_graphHeader;
-  StackViewController m_graphStackViewController;
+  Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
+  Escher::ButtonRowController m_graphHeader;
+  Escher::StackViewController m_graphStackViewController;
   ValuesController m_valuesController;
-  AlternateEmptyViewController m_valuesAlternateEmptyViewController;
-  ButtonRowController m_valuesHeader;
-  StackViewController m_valuesStackViewController;
-  TabViewController m_tabViewController;
-  InputViewController m_inputViewController;
+  Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
+  Escher::ButtonRowController m_valuesHeader;
+  Escher::StackViewController m_valuesStackViewController;
+  Escher::TabViewController m_tabViewController;
+  Escher::InputViewController m_inputViewController;
 };
 
 }

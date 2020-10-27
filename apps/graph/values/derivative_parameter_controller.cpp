@@ -3,6 +3,8 @@
 #include "../app.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Graph {
 
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :

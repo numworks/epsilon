@@ -7,7 +7,7 @@ namespace Graph {
 
 class MinimumGraphController : public CalculationGraphController {
 public:
-  MinimumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
+  MinimumGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
   TELEMETRY_ID("Minimum");
 private:
@@ -19,7 +19,7 @@ private:
 
 class MaximumGraphController : public CalculationGraphController {
 public:
-  MaximumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
+  MaximumGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
   TELEMETRY_ID("Maximum");
 private:

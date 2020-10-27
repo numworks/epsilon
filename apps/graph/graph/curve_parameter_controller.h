@@ -11,13 +11,13 @@ class GraphController;
 
 class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
-  CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController);
+  CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  HighlightCell * reusableCell(int index) override;
+  Escher::HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
   bool shouldDisplayCalculationAndDerivative() const;
@@ -25,8 +25,8 @@ private:
   Shared::FunctionGoToParameterController * goToParameterController() override;
   Shared::FunctionGoToParameterController m_goToParameterController;
   GraphController * m_graphController;
-  MessageTableCellWithChevron m_calculationCell;
-  MessageTableCellWithSwitch m_derivativeCell;
+  Escher::MessageTableCellWithChevron m_calculationCell;
+  Escher::MessageTableCellWithSwitch m_derivativeCell;
   CalculationParameterController m_calculationParameterController;
 };
 

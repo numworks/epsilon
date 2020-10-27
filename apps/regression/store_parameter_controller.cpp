@@ -3,6 +3,8 @@
 #include "store_controller.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Regression {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController) :

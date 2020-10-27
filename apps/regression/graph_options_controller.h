@@ -10,10 +10,10 @@ namespace Regression {
 
 class GraphController;
 
-class GraphOptionsController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class GraphOptionsController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  GraphOptionsController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
-  View * view() override;
+  GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  Escher::View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -24,17 +24,17 @@ public:
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
   constexpr static int k_regressionCellType = 0;
   constexpr static int k_parameterCelltype = 1;
   constexpr static int k_numberOfParameterCells = 2;
-  MessageTableCellWithChevron m_parameterCells[k_numberOfParameterCells];
-  MessageTableCellWithChevronAndExpression m_changeRegressionCell;
-  SelectableTableView m_selectableTableView;
+  Escher::MessageTableCellWithChevron m_parameterCells[k_numberOfParameterCells];
+  Escher::MessageTableCellWithChevronAndExpression m_changeRegressionCell;
+  Escher::SelectableTableView m_selectableTableView;
   GoToParameterController m_goToParameterController;
   Store * m_store;
   GraphController * m_graphController;

@@ -14,16 +14,16 @@ namespace Regression {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
-    const Image * icon() override;
+    const Escher::Image * icon() override;
   };
-  class Snapshot : public ::SharedApp::Snapshot, public TabViewDataSource {
+  class Snapshot : public Shared::SharedApp::Snapshot, public Escher::TabViewDataSource {
   public:
     Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     Store * store() { return &m_store; }
@@ -40,23 +40,23 @@ public:
     int m_selectedSeriesIndex;
   };
   static App * app() {
-    return static_cast<App *>(Container::activeApp());
+    return static_cast<App *>(Escher::Container::activeApp());
   }
   TELEMETRY_ID("Regression");
   RegressionController * regressionController() { return &m_regressionController; }
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   CalculationController m_calculationController;
-  AlternateEmptyViewController m_calculationAlternateEmptyViewController;
-  ButtonRowController m_calculationHeader;
+  Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
+  Escher::ButtonRowController m_calculationHeader;
   GraphController m_graphController;
-  AlternateEmptyViewController m_graphAlternateEmptyViewController;
-  ButtonRowController m_graphHeader;
-  StackViewController m_graphStackViewController;
+  Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
+  Escher::ButtonRowController m_graphHeader;
+  Escher::StackViewController m_graphStackViewController;
   StoreController m_storeController;
-  ButtonRowController m_storeHeader;
-  StackViewController m_storeStackViewController;
-  TabViewController m_tabViewController;
+  Escher::ButtonRowController m_storeHeader;
+  Escher::StackViewController m_storeStackViewController;
+  Escher::TabViewController m_tabViewController;
   RegressionController m_regressionController;
 };
 

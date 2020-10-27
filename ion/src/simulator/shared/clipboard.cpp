@@ -15,7 +15,10 @@ void write(const char * text) {
 }
 
 const char * read() {
-  constexpr size_t bufferSize = 32768;
+  /* The buffer's size is chosen to be around the size of a typical large
+   * python script, allowing the user the insert most scripts into the
+   * simulator using the paste feature. */
+  constexpr size_t bufferSize = 8192;
   static char buffer[bufferSize];
   fetchFromSystemClipboard(buffer, bufferSize);
   if (buffer[0] == '\0') {

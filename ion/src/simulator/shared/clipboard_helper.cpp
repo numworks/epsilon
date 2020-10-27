@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <string.h>
 
+/* This implementation is used for all targets but the web simulator. */
+
 namespace Ion {
 namespace Clipboard {
 

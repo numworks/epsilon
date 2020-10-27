@@ -11,7 +11,7 @@ class EXTI {
 public:
   class MaskRegister : Register32 {
   public:
-    bool get(int index) { return (bool)getBitRange(index, index); }
+    bool get(int index) volatile { return (bool)getBitRange(index, index); }
     void set(int index, bool state) volatile { setBitRange(index, index, state); }
   };
 

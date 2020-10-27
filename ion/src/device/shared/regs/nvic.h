@@ -23,6 +23,10 @@ public:
   class NVIC_ICER1 : public MaskRegister { };
   class NVIC_ICER2 : public MaskRegister { };
 
+  class NVIC_ICPR0 : public MaskRegister { };
+  class NVIC_ICPR1 : public MaskRegister { };
+  class NVIC_ICPR2 : public MaskRegister { };
+
   constexpr NVIC() {};
   REGS_REGISTER_AT(NVIC_ISER0, 0x00);
   REGS_REGISTER_AT(NVIC_ISER1, 0x04);
@@ -30,6 +34,9 @@ public:
   REGS_REGISTER_AT(NVIC_ICER0, 0x80);
   REGS_REGISTER_AT(NVIC_ICER1, 0x84);
   REGS_REGISTER_AT(NVIC_ICER2, 0x88);
+  REGS_REGISTER_AT(NVIC_ICPR0, 0x180);
+  REGS_REGISTER_AT(NVIC_ICPR1, 0x184);
+  REGS_REGISTER_AT(NVIC_ICPR2, 0x188);
 private:
   constexpr uint32_t Base() const {
     return 0xE000E100;

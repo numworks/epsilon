@@ -52,6 +52,7 @@ void MatrixListController::setExpression(Poincare::Expression e) {
     // 2. Matrix inverse if invertible matrix
     // A squared matrix is invertible if and only if determinant is non null
     if (!determinant.isUndefined() && determinant.nullStatus(context) != ExpressionNode::NullStatus::Null) {
+      // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_indexMessageMap[index] = messageIndex++;
       m_layouts[index++] = getLayoutFromExpression(MatrixInverse::Builder(m_expression.clone()), context, preferences);
     }

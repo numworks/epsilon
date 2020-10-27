@@ -2,6 +2,8 @@
 #include "logo_icon.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace OnBoarding {
 
 LogoView::LogoView() :

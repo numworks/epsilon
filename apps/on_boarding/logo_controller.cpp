@@ -4,6 +4,8 @@
 #include <apps/global_preferences.h>
 #include <ion/led.h>
 
+using namespace Escher;
+
 namespace OnBoarding {
 
 LogoController::LogoController() :

@@ -1,6 +1,8 @@
 #include "abscissa_title_cell.h"
 #include <apps/shared/hideable_even_odd_editable_text_cell.h>
 
+using namespace Escher;
+
 namespace Graph {
 
 void AbscissaTitleCell::drawRect(KDContext * ctx, KDRect rect) const {

@@ -10,33 +10,33 @@
 
 namespace Graph {
 
-class TypeParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class TypeParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  TypeParameterController(Responder * parentResponder);
+  TypeParameterController(Escher::Responder * parentResponder);
 
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
   const char * title() override;
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   TELEMETRY_ID("TypeParameter");
 
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfTypes; }
   KDCoordinate rowHeight(int j) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  MessageTableCellWithExpression * reusableCell(int index, int type) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  Escher::MessageTableCellWithExpression * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfTypes; }
   int typeAtLocation(int i, int j) override { return 0; }
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 private:
   constexpr static int k_numberOfTypes = 3;
-  StackViewController * stackController() const;
-  SelectableTableView m_selectableTableView;
-  MessageTableCellWithExpression m_cells[k_numberOfTypes];
+  Escher::StackViewController * stackController() const;
+  Escher::SelectableTableView m_selectableTableView;
+  Escher::MessageTableCellWithExpression m_cells[k_numberOfTypes];
   Ion::Storage::Record m_record;
 };
 

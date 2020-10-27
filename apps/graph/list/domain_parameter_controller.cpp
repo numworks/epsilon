@@ -4,6 +4,7 @@
 #include <assert.h>
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Graph {
 

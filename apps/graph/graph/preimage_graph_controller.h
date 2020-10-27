@@ -6,7 +6,7 @@ namespace Graph {
 class PreimageGraphController : public CalculationGraphController {
 public:
   PreimageGraphController(
-    Responder * parentResponder,
+    Escher::Responder * parentResponder,
     GraphView * graphView,
     BannerView * bannerView,
     Shared::InteractiveCurveViewRange * curveViewRange,

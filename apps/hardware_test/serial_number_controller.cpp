@@ -1,6 +1,8 @@
 #include "serial_number_controller.h"
 #include <ion.h>
 
+using namespace Escher;
+
 namespace HardwareTest {
 
 SerialNumberController::SerialNumberController(Responder * parentResponder) :

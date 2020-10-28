@@ -44,5 +44,6 @@ const char * Window::className() const {
   return "Window";
 }
 
-}
 #endif
+
+}

@@ -10,11 +10,11 @@
 
 namespace Settings {
 
-class GenericSubController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class GenericSubController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
-  GenericSubController(Responder * parentResponder);
+  GenericSubController(Escher::Responder * parentResponder);
   const char * title() override;
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -23,15 +23,15 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setMessageTreeModel(const MessageTree * messageTreeModel);
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  void setMessageTreeModel(const Escher::MessageTree * messageTreeModel);
   void viewDidDisappear() override;
 protected:
-  StackViewController * stackController() const;
+  Escher::StackViewController * stackController() const;
   virtual int initialSelectedRow() const { return 0; }
   constexpr static KDCoordinate k_topBottomMargin = 13;
-  SelectableTableView m_selectableTableView;
-  MessageTree * m_messageTreeModel;
+  Escher::SelectableTableView m_selectableTableView;
+  Escher::MessageTree * m_messageTreeModel;
 };
 
 }

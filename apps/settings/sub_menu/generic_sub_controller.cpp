@@ -5,6 +5,7 @@
 #include <cmath>
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Settings {
 

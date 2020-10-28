@@ -7,6 +7,7 @@ extern "C" {
 }
 
 using namespace Poincare;
+using namespace Escher;
 
 TitleBarView::TitleBarView() :
   View(),

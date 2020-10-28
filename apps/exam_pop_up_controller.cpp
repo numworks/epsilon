@@ -3,6 +3,8 @@
 #include "exam_mode_configuration.h"
 #include <assert.h>
 
+using namespace Escher;
+
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
   PopUpController(
     k_numberOfLines,

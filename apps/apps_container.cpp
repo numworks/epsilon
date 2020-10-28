@@ -12,6 +12,7 @@ extern "C" {
 }
 
 using namespace Shared;
+using namespace Escher;
 
 AppsContainer * AppsContainer::sharedAppsContainer() {
   static AppsContainerStorage appsContainerStorage;

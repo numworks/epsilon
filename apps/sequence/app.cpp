@@ -4,6 +4,7 @@
 #include "../shared/global_context.h"
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Sequence {
 

@@ -6,10 +6,11 @@
 
 using namespace Shared;
 using namespace Poincare;
+using namespace Escher;
 
 namespace Sequence {
 
-ListController::ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer) :
+ListController::ListController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddSequence),
   m_sequenceTitleCells{},
   m_expressionCells{},

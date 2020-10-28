@@ -6,10 +6,11 @@
 
 using namespace Poincare;
 using namespace Shared;
+using namespace Escher;
 
 namespace Sequence {
 
-ListParameterController::ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * listController) :
+ListParameterController::ListParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * listController) :
   Shared::ListParameterController(listController, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
   m_typeCell(I18n::Message::SequenceType),
   m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, I18n::Message::FirstTermIndex),

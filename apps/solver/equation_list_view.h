@@ -10,7 +10,7 @@ namespace Solver {
 
 class ListController;
 
-class EquationListView : public Responder, public View, public ScrollViewDelegate, public ScrollViewDataSource {
+class EquationListView : public Escher::Responder, public Escher::View, public Escher::ScrollViewDelegate, public Escher::ScrollViewDataSource {
 public:
   enum class BraceStyle {
     None,
@@ -19,9 +19,9 @@ public:
   };
   EquationListView(ListController * listController);
   void setBraceStyle(BraceStyle style);
-  void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
+  void scrollViewDidChangeOffset(Escher::ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
-  SelectableTableView * selectableTableView() {
+  Escher::SelectableTableView * selectableTableView() {
     return &m_listView;
   }
   constexpr static KDCoordinate k_margin = 10;
@@ -29,7 +29,7 @@ public:
   void layoutSubviews(bool force = false) override;
 private:
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
 
   class BraceView : public View {
   public:
@@ -38,9 +38,9 @@ private:
     constexpr static KDCoordinate k_braceWidth = 10;
   };
   BraceStyle m_braceStyle;
-  SelectableTableView m_listView;
+  Escher::SelectableTableView m_listView;
   BraceView m_braceView;
-  ScrollView m_scrollBraceView;
+  Escher::ScrollView m_scrollBraceView;
 };
 
 }

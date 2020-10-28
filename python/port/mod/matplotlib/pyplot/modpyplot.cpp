@@ -57,7 +57,7 @@ bool colorFromKeywordArgument(mp_map_elem_t * elemColor, KDColor * color) {
     *color = MicroPython::Color::Parse(elemColor->value);
     return true;
   } else {
-    *color = Palette::nextDataColor(&paletteIndex);
+    *color = Escher::Palette::nextDataColor(&paletteIndex);
     return false;
   }
 }

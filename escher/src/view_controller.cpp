@@ -40,5 +40,6 @@ void ViewController::telemetryReportEvent(const char * action, const char * labe
   Ion::Telemetry::reportEvent(category, action, label);
 }
 
-}
 #endif
+
+}

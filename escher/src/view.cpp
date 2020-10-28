@@ -181,5 +181,6 @@ std::ostream &operator<<(std::ostream &os, View &view) {
   return os;
 }
 
-}
 #endif
+
+}

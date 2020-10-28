@@ -8,28 +8,28 @@
 
 namespace Statistics {
 
-class MultipleDataViewController : public ViewController, public AlternateEmptyViewDefaultDelegate {
+class MultipleDataViewController : public Escher::ViewController, public Escher::AlternateEmptyViewDefaultDelegate {
 
 public:
-  MultipleDataViewController(Responder * parentResponder, Store * store, int * m_selectedBarIndex, int * selectedSeriesIndex);
+  MultipleDataViewController(Escher::Responder * parentResponder, Store * store, int * m_selectedBarIndex, int * selectedSeriesIndex);
   virtual MultipleDataView * multipleDataView() = 0;
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
-  Responder * defaultController() override;
+  Escher::Responder * defaultController() override;
 
   // ViewController
-  View * view() override { return multipleDataView(); }
+  Escher::View * view() override { return multipleDataView(); }
   void viewWillAppear() override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
+  void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
+  void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 protected:
   virtual void highlightSelection() {}
-  virtual Responder * tabController() const = 0;
+  virtual Escher::Responder * tabController() const = 0;
   virtual void reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
   Store * m_store;

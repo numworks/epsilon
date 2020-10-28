@@ -5,9 +5,9 @@
 
 namespace Statistics {
 
-class CalculationSelectableTableView : public SelectableTableView {
+class CalculationSelectableTableView : public Escher::SelectableTableView {
 public:
-  using SelectableTableView::SelectableTableView;
+  using Escher::SelectableTableView::SelectableTableView;
   bool handleEvent(Ion::Events::Event event) override;
 };
 

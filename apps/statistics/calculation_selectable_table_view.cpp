@@ -1,5 +1,7 @@
 #include "calculation_selectable_table_view.h"
 
+using namespace Escher;
+
 namespace Statistics {
 
 bool CalculationSelectableTableView::handleEvent(Ion::Events::Event event) {

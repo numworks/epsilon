@@ -23,7 +23,7 @@ public:
 
   // View
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
 
 private:
   static constexpr KDCoordinate k_axisViewHeight = 21;

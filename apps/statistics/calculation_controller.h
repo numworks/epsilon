@@ -14,25 +14,25 @@
 
 namespace Statistics {
 
-class CalculationController : public Shared::TabTableController, public ButtonRowDelegate, public TableViewDataSource, public AlternateEmptyViewDefaultDelegate {
+class CalculationController : public Shared::TabTableController, public Escher::ButtonRowDelegate, public Escher::TableViewDataSource, public Escher::AlternateEmptyViewDefaultDelegate {
 
 public:
-  CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
+  CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
-  Responder * defaultController() override;
+  Escher::Responder * defaultController() override;
 
   // TableViewDataSource
   int numberOfRows() const override { return k_totalNumberOfRows; }
   int numberOfColumns() const override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override { return k_cellHeight; }
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 
@@ -59,13 +59,13 @@ private:
   // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
   static constexpr KDCoordinate k_calculationCellWidth = 7*(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits));
   static constexpr KDCoordinate k_margin = 8;
-  static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
+  static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 
-  Responder * tabController() const override;
-  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+  Escher::Responder * tabController() const override;
+  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   CalculationSelectableTableView m_selectableTableView;
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
-  EvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
+  Escher::EvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell m_hideableCell;
   Store * m_store;

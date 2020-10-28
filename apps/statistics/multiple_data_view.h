@@ -7,7 +7,7 @@
 
 namespace Statistics {
 
-class MultipleDataView : public View {
+class MultipleDataView : public Escher::View {
 public:
   static constexpr int k_defaultSelectedBar = 0;
   MultipleDataView(Store * store) :
@@ -33,7 +33,7 @@ protected:
   virtual Shared::BannerView * bannerView() = 0;
   void layoutSubviews(bool force = false) override;
   virtual void layoutDataSubviews(bool force);
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   virtual void changeDataViewSelection(int index, bool select);
   KDRect bannerFrame() const;
   Store * m_store;

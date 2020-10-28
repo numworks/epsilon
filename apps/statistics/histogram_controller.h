@@ -8,14 +8,14 @@
 
 namespace Statistics {
 
-class HistogramController : public MultipleDataViewController, public ButtonRowDelegate {
+class HistogramController : public MultipleDataViewController, public Escher::ButtonRowDelegate {
 
 public:
-  HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, uint32_t * m_storeVersion, uint32_t * m_barVersion, uint32_t * m_rangeVersion, int * m_selectedBarIndex, int * selectedSeriesIndex);
+  HistogramController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Store * store, uint32_t * m_storeVersion, uint32_t * m_barVersion, uint32_t * m_rangeVersion, int * m_selectedBarIndex, int * selectedSeriesIndex);
 
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
   void setCurrentDrawnSeries(int series);
-  StackViewController * stackController();
+  Escher::StackViewController * stackController();
 
   // ViewController
   const char * title() override;
@@ -25,14 +25,14 @@ public:
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
+  void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
   constexpr static int k_maxIntervalLegendLength = 33;
   constexpr static int k_maxLegendLength = 13;
   constexpr static int k_maxNumberOfCharacters = 30;
   void highlightSelection() override;
-  Responder * tabController() const override;
+  Escher::Responder * tabController() const override;
   void reloadBannerView() override;
   void preinitXRangeParameters(double * xMin);
   void initRangeParameters();

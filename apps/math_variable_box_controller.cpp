@@ -17,6 +17,7 @@
 using namespace Poincare;
 using namespace Shared;
 using namespace Ion;
+using namespace Escher;
 
 MathVariableBoxController::MathVariableBoxController() :
   AlternateEmptyNestedMenuController(I18n::Message::Variables),

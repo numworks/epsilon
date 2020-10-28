@@ -4,6 +4,8 @@ extern "C" {
 #include <assert.h>
 }
 
+using namespace Escher;
+
 AppsWindow::AppsWindow() :
   Window(),
   m_titleBarView(),

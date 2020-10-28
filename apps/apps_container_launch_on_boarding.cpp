@@ -1,5 +1,5 @@
 #include "apps_container.h"
 
-App::Snapshot * AppsContainer::initialAppSnapshot() {
+Escher::App::Snapshot * AppsContainer::initialAppSnapshot() {
   return onBoardingAppSnapshot();
 }

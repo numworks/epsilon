@@ -52,8 +52,10 @@ void ion_main(int argc, const char * const argv[]) {
     const char * appNames[] = {"home", EPSILON_APPS_NAMES};
     for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfApps(); j++) {
       App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
-      int cmp = strcmp(argv[i]+2, appNames[j]);
-      if (cmp == '-') {
+      const char * s1 = argv[i]+2;
+      const char * s2 = appNames[j];
+      while (*s1 != '\0' && (*s1 == *s2)) {s1++; s2++;}
+      if (*s2 == '\0' && *s1 == '-') {
         snapshot->setOpt(argv[i]+2+strlen(appNames[j])+1, argv[i+1]);
         break;
       }

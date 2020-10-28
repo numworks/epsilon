@@ -58,11 +58,11 @@ int ConjugateLayoutNode::serialize(char * buffer, int bufferSize, Preferences::P
 KDSize ConjugateLayoutNode::computeSize() {
   KDSize childSize = childLayout()->layoutSize();
   KDCoordinate newWidth =
-    Metric::FractionAndConjugateHorizontalMargin +
-    Metric::FractionAndConjugateHorizontalOverflow +
+    Escher::Metric::FractionAndConjugateHorizontalMargin +
+    Escher::Metric::FractionAndConjugateHorizontalOverflow +
     childSize.width() +
-    Metric::FractionAndConjugateHorizontalOverflow +
-    Metric::FractionAndConjugateHorizontalMargin;
+    Escher::Metric::FractionAndConjugateHorizontalOverflow +
+    Escher::Metric::FractionAndConjugateHorizontalMargin;
   KDCoordinate newHeight =
     childSize.height() +
     k_overlineWidth +
@@ -77,16 +77,16 @@ KDCoordinate ConjugateLayoutNode::computeBaseline() {
 KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child) {
   assert(child == childLayout());
   return KDPoint(
-      Metric::FractionAndConjugateHorizontalMargin + Metric::FractionAndConjugateHorizontalOverflow,
+      Escher::Metric::FractionAndConjugateHorizontalMargin + Escher::Metric::FractionAndConjugateHorizontalOverflow,
       k_overlineWidth + k_overlineVerticalMargin);
 }
 
 void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   ctx->fillRect(
       KDRect(
-        p.x() + Metric::FractionAndConjugateHorizontalMargin,
+        p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
         p.y(),
-        childLayout()->layoutSize().width() + 2 * Metric::FractionAndConjugateHorizontalOverflow,
+        childLayout()->layoutSize().width() + 2 * Escher::Metric::FractionAndConjugateHorizontalOverflow,
         k_overlineWidth),
       expressionColor);
 }

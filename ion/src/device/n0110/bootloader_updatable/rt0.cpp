@@ -283,7 +283,7 @@ using namespace Ion::Device::Regs;
 
 void __attribute__((interrupt, noinline)) keyboard_handler() {
   for (uint8_t i=0; i < Ion::Device::Keyboard::Config::numberOfColumns; i++) {
-    uint8_t pin = Ion::Device::Keyboard::Config::RowPins[i];
+    uint8_t pin = Ion::Device::Keyboard::Config::ColumnPins[i];
     if (Ion::Device::Regs::EXTI.PR()->get(pin)) {
       Ion::Device::Regs::EXTI.PR()->set(pin, true);
       displayInterruptionMessage();

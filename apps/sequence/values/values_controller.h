@@ -10,15 +10,15 @@ namespace Sequence {
 
 class ValuesController : public Shared::ValuesController {
 public:
-  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header);
+  ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
 
   // TableViewDataSource
   KDCoordinate columnWidth(int i) override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   // ButtonRowDelegate
-  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
-    return const_cast<Button *>(&m_setIntervalButton);
+  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
+    return const_cast<Escher::Button *>(&m_setIntervalButton);
   }
 
   // AlternateEmptyViewDelegate
@@ -61,17 +61,17 @@ private:
 
 
   // Parameters controllers getter
-  ViewController * functionParameterController() override;
+  Escher::ViewController * functionParameterController() override;
 
   // Cells & view
-  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableRows; }
-  EvenOddEditableTextCell * abscissaCells(int j) override {
+  Escher::EvenOddEditableTextCell * abscissaCells(int j) override {
     assert (j >= 0 && j < k_maxNumberOfDisplayableRows);
     return &m_abscissaCells[j];
   }
   int abscissaTitleCellsCount() const override { return 1; }
-  EvenOddMessageTextCell * abscissaTitleCells(int j) override {
+  Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override {
     assert (j >= 0 && j < abscissaTitleCellsCount());
     return &m_abscissaTitleCell;
   }
@@ -79,21 +79,21 @@ private:
     assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
     return &m_sequenceTitleCells[j];
   }
-  EvenOddBufferTextCell * floatCells(int j) override {
+  Escher::EvenOddBufferTextCell * floatCells(int j) override {
     assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
     return &m_floatCells[j];
   }
 
-  SelectableTableView m_selectableTableView;
+  Escher::SelectableTableView m_selectableTableView;
   Shared::SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
-  EvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
-  EvenOddMessageTextCell m_abscissaTitleCell;
-  EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];
+  Escher::EvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
+  Escher::EvenOddMessageTextCell m_abscissaTitleCell;
+  Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];
 #if COPY_COLUMN
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif
   IntervalParameterController m_intervalParameterController;
-  Button m_setIntervalButton;
+  Escher::Button m_setIntervalButton;
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
 };
 

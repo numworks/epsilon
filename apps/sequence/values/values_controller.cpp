@@ -6,6 +6,7 @@
 #include <apps/i18n.h>
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Sequence {
 

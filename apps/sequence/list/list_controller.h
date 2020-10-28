@@ -16,12 +16,12 @@ namespace Sequence {
 
 class ListController : public Shared::FunctionListController, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer);
+  ListController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Escher::ButtonRowController * footer);
   const char * title() override;
   int numberOfExpressionRows() const override;
   KDCoordinate expressionRowHeight(int j) override;
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
   void selectPreviousNewSequenceCell();
   void editExpression(int sequenceDefinitionIndex, Ion::Events::Event event);
 private:
@@ -30,9 +30,9 @@ private:
   ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
-  HighlightCell * expressionCells(int index) override;
-  void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
-  void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
+  Escher::HighlightCell * expressionCells(int index) override;
+  void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j) override;
+  void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;
   int modelIndexForRow(int j) override;
   int sequenceDefinitionForRow(int j);
   void addEmptyModel() override;
@@ -45,7 +45,7 @@ private:
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
-  StackViewController m_typeStackController;
+  Escher::StackViewController m_typeStackController;
   SequenceToolbox m_sequenceToolbox;
 };
 

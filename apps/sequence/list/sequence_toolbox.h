@@ -12,8 +12,8 @@ public:
   SequenceToolbox();
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  HighlightCell * reusableCell(int index, int type) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;
   void buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth);
 private:
@@ -22,7 +22,7 @@ private:
    * parent's classes. */
   int stackRowOffset() const override { return stackDepth() == 0 ? m_numberOfAddedCells : 0; }
   bool selectAddedCell(int selectedRow);
-  ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];
+  Escher::ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];
   Poincare::Layout m_addedCellLayout[k_maxNumberOfDisplayedRows];
   int m_numberOfAddedCells;
 };

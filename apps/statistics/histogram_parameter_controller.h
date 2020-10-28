@@ -10,11 +10,11 @@ namespace Statistics {
 
 class HistogramParameterController : public Shared::FloatParameterController<double> {
 public:
-  HistogramParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegateApp, Store * store);
+  HistogramParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegateApp, Store * store);
   void viewWillAppear() override;
   const char * title() override;
   int numberOfRows() const override { return 1+k_numberOfCells; }
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
   constexpr static int k_numberOfCells = 2;
   double extractParameterAtIndex(int index);
@@ -22,10 +22,10 @@ private:
   double parameterAtIndex(int index) override;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  HighlightCell * reusableParameterCell(int index, int type) override;
+  Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override { return k_numberOfCells; }
   void buttonAction() override;
-  MessageTableCellWithEditableText m_cells[k_numberOfCells];
+  Escher::MessageTableCellWithEditableText m_cells[k_numberOfCells];
   Store * m_store;
   Shared::DiscardPopUpController m_confirmPopUpController;
   // Temporary parameters

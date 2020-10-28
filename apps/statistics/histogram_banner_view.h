@@ -11,19 +11,19 @@ namespace Statistics {
 class HistogramBannerView : public Shared::BannerView {
 public:
   HistogramBannerView();
-  BufferTextView * intervalView() { return &m_intervalView; }
-  BufferTextView * sizeView() { return &m_sizeView; }
-  BufferTextView * frequencyView() { return &m_frequencyView; }
+  Escher::BufferTextView * intervalView() { return &m_intervalView; }
+  Escher::BufferTextView * sizeView() { return &m_sizeView; }
+  Escher::BufferTextView * frequencyView() { return &m_frequencyView; }
 private:
   static constexpr int k_numberOfSubviews = 6;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
-  View * subviewAtIndex(int index) override;
-  MessageTextView m_intervalLegendView;
-  BufferTextView m_intervalView;
-  MessageTextView m_sizeLegendView;
-  BufferTextView m_sizeView;
-  MessageTextView m_frequencyLegendView;
-  BufferTextView m_frequencyView;
+  Escher::View * subviewAtIndex(int index) override;
+  Escher::MessageTextView m_intervalLegendView;
+  Escher::BufferTextView m_intervalView;
+  Escher::MessageTextView m_sizeLegendView;
+  Escher::BufferTextView m_sizeView;
+  Escher::MessageTextView m_frequencyLegendView;
+  Escher::BufferTextView m_frequencyView;
 };
 
 }

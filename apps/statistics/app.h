@@ -16,16 +16,16 @@ namespace Statistics {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
-    const Image * icon() override;
+    const Escher::Image * icon() override;
   };
-  class Snapshot : public ::SharedApp::Snapshot, public TabViewDataSource {
+  class Snapshot : public Shared::SharedApp::Snapshot, public Escher::TabViewDataSource {
   public:
     Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     Store * store() { return &m_store; }
@@ -50,19 +50,19 @@ public:
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   CalculationController m_calculationController;
-  AlternateEmptyViewController m_calculationAlternateEmptyViewController;
-  ButtonRowController m_calculationHeader;
+  Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
+  Escher::ButtonRowController m_calculationHeader;
   BoxController m_boxController;
-  AlternateEmptyViewController m_boxAlternateEmptyViewController;
-  ButtonRowController m_boxHeader;
+  Escher::AlternateEmptyViewController m_boxAlternateEmptyViewController;
+  Escher::ButtonRowController m_boxHeader;
   HistogramController m_histogramController;
-  AlternateEmptyViewController m_histogramAlternateEmptyViewController;
-  ButtonRowController m_histogramHeader;
-  StackViewController m_histogramStackViewController;
+  Escher::AlternateEmptyViewController m_histogramAlternateEmptyViewController;
+  Escher::ButtonRowController m_histogramHeader;
+  Escher::StackViewController m_histogramStackViewController;
   StoreController m_storeController;
-  ButtonRowController m_storeHeader;
-  StackViewController m_storeStackViewController;
-  TabViewController m_tabViewController;
+  Escher::ButtonRowController m_storeHeader;
+  Escher::StackViewController m_storeStackViewController;
+  Escher::TabViewController m_tabViewController;
 };
 
 }

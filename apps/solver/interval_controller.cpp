@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <string.h>
 
+using namespace Escher;
+
 namespace Solver {
 
 IntervalController::ContentView::ContentView(SelectableTableView * selectableTableView) :

@@ -12,16 +12,16 @@ namespace Solver {
 
 class App : public Shared::ExpressionFieldDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Escher::App::Descriptor {
     public:
       I18n::Message name() override;
       I18n::Message upperName() override;
-      const Image * icon() override;
+      const Escher::Image * icon() override;
   };
-  class Snapshot : public ::SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Escher::Container * container) override;
     Descriptor * descriptor() override;
     void reset() override;
     EquationStore * equationStore() { return &m_equationStore; }
@@ -30,17 +30,17 @@ public:
     EquationStore m_equationStore;
   };
   static App * app() {
-    return static_cast<App *>(Container::activeApp());
+    return static_cast<App *>(Escher::Container::activeApp());
   }
   Snapshot * snapshot() {
-    return static_cast<Snapshot *>(::App::snapshot());
+    return static_cast<Snapshot *>(Escher::App::snapshot());
   }
   EquationStore * equationStore() {
     return snapshot()->equationStore();
   }
-  InputViewController * inputViewController() { return &m_inputViewController; }
-  ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
-  ViewController * intervalController() { return &m_intervalController; }
+  Escher::InputViewController * inputViewController() { return &m_inputViewController; }
+  Escher::ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
+  Escher::ViewController * intervalController() { return &m_intervalController; }
   SolutionsController * solutionsController() { return &m_solutionsController; }
   void willBecomeInactive() override;
   TELEMETRY_ID("Solver");
@@ -51,11 +51,11 @@ private:
   App(Snapshot * snapshot);
   SolutionsController m_solutionsController;
   IntervalController m_intervalController;
-  AlternateEmptyViewController m_alternateEmptyViewController;
+  Escher::AlternateEmptyViewController m_alternateEmptyViewController;
   ListController m_listController;
-  ButtonRowController m_listFooter;
-  StackViewController m_stackViewController;
-  InputViewController m_inputViewController;
+  Escher::ButtonRowController m_listFooter;
+  Escher::StackViewController m_stackViewController;
+  Escher::InputViewController m_inputViewController;
 };
 
 }

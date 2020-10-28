@@ -13,57 +13,57 @@
 
 namespace Solver {
 
-class ListController : public Shared::ExpressionModelListController, public ButtonRowDelegate, public ListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::ListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer);
+  ListController(Escher::Responder * parentResponder, EquationStore * equationStore, Escher::ButtonRowController * footer);
   /* ButtonRowDelegate */
-  int numberOfButtons(ButtonRowController::Position position) const override;
-  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
+  int numberOfButtons(Escher::ButtonRowController::Position position) const override;
+  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   int numberOfRows() const override { return numberOfExpressionRows(); }
   KDCoordinate rowHeight(int j) override{ return ExpressionModelListController::memoizedRowHeight(j); }
   KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
   int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
   int typeAtLocation(int i, int j) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   /* ExpressionModelListController */
   // Make methods public
   void editExpression(Ion::Events::Event event) override { return Shared::ExpressionModelListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::ExpressionModelListController::editSelectedRecordWithText(text); }
   /* ViewController */
-  View * view() override { return &m_equationListView; }
+  Escher::View * view() override { return &m_equationListView; }
   TELEMETRY_ID("List");
   /* Text/Layout Field Delegate */
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
   /* Specific to Solver */
   void resolveEquations();
 private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
-  SelectableTableView * selectableTableView() override;
+  Escher::SelectableTableView * selectableTableView() override;
   void reloadButtonMessage();
   void addEmptyModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
   EquationStore * modelStore() override;
-  StackViewController * stackController() const;
-  InputViewController * inputController() override;
+  Escher::StackViewController * stackController() const;
+  Escher::InputViewController * inputController() override;
   // ListViewDataSource
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override { return ListViewDataSource::cumulatedHeightFromIndex(j); }
   int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
   EquationListView m_equationListView;
-  EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
-  Button m_resolveButton;
+  Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
+  Escher::Button m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
-  StackViewController m_modelsStackController;
+  Escher::StackViewController m_modelsStackController;
 };
 
 }

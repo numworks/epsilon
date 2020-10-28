@@ -9,17 +9,17 @@ namespace Settings {
 
 class DisplayModeController : public PreferencesController, public Shared::ParameterTextFieldDelegate {
 public:
-  DisplayModeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  DisplayModeController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   TELEMETRY_ID("DisplayMode");
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
   static constexpr int k_resultFormatType = 0;
   static constexpr int k_significantDigitsType = 1;

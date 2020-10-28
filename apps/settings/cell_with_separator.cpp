@@ -1,6 +1,8 @@
 #include "cell_with_separator.h"
 #include <escher/metric.h>
 
+using namespace Escher;
+
 namespace Settings {
 
 void CellWithSeparator::setHighlighted(bool highlight) {

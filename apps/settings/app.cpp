@@ -2,6 +2,8 @@
 #include "settings_icon.h"
 #include <apps/i18n.h>
 
+using namespace Escher;
+
 namespace Settings {
 
 I18n::Message App::Descriptor::name() {

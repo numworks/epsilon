@@ -5,6 +5,7 @@
 
 using namespace Poincare;
 using namespace Shared;
+using namespace Escher;
 
 namespace Settings {
 

@@ -8,12 +8,12 @@ namespace Settings {
 
 class PreferencesController : public GenericSubController {
 public:
-  PreferencesController(Responder * parentResponder);
+  PreferencesController(Escher::Responder * parentResponder);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
   TELEMETRY_ID("Other");
 protected:
@@ -24,7 +24,7 @@ private:
   Poincare::Layout layoutForPreferences(I18n::Message message);
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
   int valueIndexForPreference(I18n::Message message) const;
-  MessageTableCellWithExpression m_cells[k_totalNumberOfCell];
+  Escher::MessageTableCellWithExpression m_cells[k_totalNumberOfCell];
 };
 
 }

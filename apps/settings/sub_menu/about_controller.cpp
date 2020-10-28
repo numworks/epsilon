@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <cmath>
 
+using namespace Escher;
+
 namespace Settings {
 
 AboutController::AboutController(Responder * parentResponder) :

@@ -2,6 +2,8 @@
 #include <apps/global_preferences.h>
 #include <escher/stack_view_controller.h>
 
+using namespace Escher;
+
 namespace Settings {
 
 int LocalizationController::indexOfCellToSelectOnReset() const {

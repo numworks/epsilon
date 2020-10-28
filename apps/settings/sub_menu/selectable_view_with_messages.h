@@ -7,19 +7,19 @@
 
 namespace Settings {
 
-class SelectableViewWithMessages : public View {
+class SelectableViewWithMessages : public Escher::View {
 public:
-  SelectableViewWithMessages(SelectableTableView * selectableTableView);
+  SelectableViewWithMessages(Escher::SelectableTableView * selectableTableView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setMessages(I18n::Message * messages, int numberOfMessages);
   void reload();
 private:
   int numberOfSubviews() const override { return 1 + m_numberOfMessages; }
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  SelectableTableView * m_selectableTableView;
+  Escher::SelectableTableView * m_selectableTableView;
   static constexpr int k_maxNumberOfLines = 4;
-  MessageTextView m_messageLines[k_maxNumberOfLines];
+  Escher::MessageTextView m_messageLines[k_maxNumberOfLines];
   int m_numberOfMessages;
 };
 

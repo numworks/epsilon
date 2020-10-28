@@ -52,6 +52,8 @@ void ion_main(int argc, const char * const argv[]) {
     const char * appNames[] = {"home", EPSILON_APPS_NAMES};
     for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfApps(); j++) {
       App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
+      // Compare name in order to find if the firsts chars which are different are NULL and '-'
+      // -> check if the app name is in the argv
       const char * s1 = argv[i]+2;
       const char * s2 = appNames[j];
       while (*s1 != '\0' && (*s1 == *s2)) {s1++; s2++;}

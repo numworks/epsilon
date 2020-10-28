@@ -6,6 +6,7 @@
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
+using namespace Escher;
 
 namespace Sequence {
 

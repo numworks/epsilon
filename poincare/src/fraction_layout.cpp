@@ -190,7 +190,7 @@ void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
 
 KDSize FractionLayoutNode::computeSize() {
   KDCoordinate width = std::max(numeratorLayout()->layoutSize().width(), denominatorLayout()->layoutSize().width())
-    + 2*Metric::FractionAndConjugateHorizontalOverflow+2*Metric::FractionAndConjugateHorizontalMargin;
+    + 2*Escher::Metric::FractionAndConjugateHorizontalOverflow+2*Escher::Metric::FractionAndConjugateHorizontalMargin;
   KDCoordinate height = numeratorLayout()->layoutSize().height()
     + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin
     + denominatorLayout()->layoutSize().height();
@@ -217,7 +217,7 @@ KDPoint FractionLayoutNode::positionOfChild(LayoutNode * child) {
 
 void FractionLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDCoordinate fractionLineY = p.y() + numeratorLayout()->layoutSize().height() + k_fractionLineMargin;
-  ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, layoutSize().width()-2*Metric::FractionAndConjugateHorizontalMargin, k_fractionLineHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x()+Escher::Metric::FractionAndConjugateHorizontalMargin, fractionLineY, layoutSize().width()-2*Escher::Metric::FractionAndConjugateHorizontalMargin, k_fractionLineHeight), expressionColor);
 }
 
 }

@@ -121,6 +121,7 @@ void init() {
     }
     EXTI.IMR()->set(pin, true);
     EXTI.FTSR()->set(pin, true);
+    EXTI.RTSR()->set(pin, true);
   }
 }
 

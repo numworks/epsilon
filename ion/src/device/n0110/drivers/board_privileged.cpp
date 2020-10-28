@@ -162,6 +162,7 @@ void init() {
   NVIC.NVIC_ISER0()->set(8,true);
   NVIC.NVIC_ISER0()->set(9,true);
   NVIC.NVIC_ISER0()->set(10,true);
+  NVIC.NVIC_ISER0()->set(23,true);
 
   // Put all inputs as Analog Input, No pull-up nor pull-down
   // Except for the SWD port (PB3, PA13, PA14)

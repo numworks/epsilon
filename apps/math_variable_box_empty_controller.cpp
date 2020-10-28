@@ -3,6 +3,8 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
+using namespace Escher;
+
 MathVariableBoxEmptyController::MathVariableBoxEmptyView::MathVariableBoxEmptyView() :
   ModalViewEmptyView(),
   m_layoutExample(0.5f, 0.5f, KDColorBlack, Palette::WallScreen)

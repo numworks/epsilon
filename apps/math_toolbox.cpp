@@ -5,6 +5,7 @@
 #include <string.h>
 
 using namespace Poincare;
+using namespace Escher;
 
 /* TODO
  * Unit submenu should be created from the Poincare::Unit::Representative table.

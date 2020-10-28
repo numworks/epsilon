@@ -1,6 +1,8 @@
 #include "battery_view.h"
 #include <escher/palette.h>
 
+using namespace Escher;
+
 const uint8_t flashMask[BatteryView::k_flashHeight][BatteryView::k_flashWidth] = {
   {0xDB, 0x00, 0x00, 0xFF},
   {0xB7, 0x00, 0x6D, 0xFF},

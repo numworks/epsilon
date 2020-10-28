@@ -24,11 +24,11 @@ int AppsContainerStorage::numberOfApps() {
   return k_numberOfCommonApps;
 }
 
-App::Snapshot * AppsContainerStorage::appSnapshotAtIndex(int index) {
+Escher::App::Snapshot * AppsContainerStorage::appSnapshotAtIndex(int index) {
   if (index < 0) {
     return nullptr;
   }
-  App::Snapshot * snapshots[] = {
+  Escher::App::Snapshot * snapshots[] = {
     homeAppSnapshot()
     APPS_CONTAINER_SNAPSHOT_LIST
   };

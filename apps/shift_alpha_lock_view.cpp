@@ -1,6 +1,8 @@
 #include "shift_alpha_lock_view.h"
 #include <escher/palette.h>
 
+using namespace Escher;
+
 ShiftAlphaLockView::ShiftAlphaLockView() :
   View(),
   m_shiftAlphaView(KDFont::SmallFont, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),

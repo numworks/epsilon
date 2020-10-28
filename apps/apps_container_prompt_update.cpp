@@ -14,6 +14,6 @@ KDColor AppsContainer::k_promptColors[] = {
   KDColorBlack,
   KDColorWhite,
   KDColorBlack,
-  Palette::YellowDark};
+  Escher::Palette::YellowDark};
 
 int AppsContainer::k_promptNumberOfMessages = 6;

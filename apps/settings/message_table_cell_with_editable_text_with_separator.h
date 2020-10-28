@@ -8,15 +8,15 @@ namespace Settings {
 
 class MessageTableCellWithEditableTextWithSeparator : public CellWithSeparator {
 public:
-  MessageTableCellWithEditableTextWithSeparator(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0) :
+  MessageTableCellWithEditableTextWithSeparator(Escher::Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0) :
     CellWithSeparator(),
     m_cell(parentResponder, inputEventHandlerDelegate, textFieldDelegate, message) {}
   const char * text() const override { return m_cell.text(); }
   Poincare::Layout layout() const override{ return m_cell.layout(); }
-  MessageTableCellWithEditableText * messageTableCellWithEditableText() { return &m_cell; }
+  Escher::MessageTableCellWithEditableText * messageTableCellWithEditableText() { return &m_cell; }
 private:
-  HighlightCell * cell() override { return &m_cell; }
-  MessageTableCellWithEditableText m_cell;
+  Escher::HighlightCell * cell() override { return &m_cell; }
+  Escher::MessageTableCellWithEditableText m_cell;
 };
 
 }

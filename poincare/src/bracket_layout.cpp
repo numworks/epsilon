@@ -107,7 +107,7 @@ KDCoordinate BracketLayoutNode::childHeight() {
 KDCoordinate BracketLayoutNode::computeChildHeight() {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
-  KDCoordinate result = Metric::MinimalBracketAndParenthesisHeight;
+  KDCoordinate result = Escher::Metric::MinimalBracketAndParenthesisHeight;
   int idxInParent = parentLayout->indexOfChild(this);
   if (parentLayout->type() != LayoutNode::Type::HorizontalLayout) {
     /* The bracket has no true sibling. Those that might be founded by

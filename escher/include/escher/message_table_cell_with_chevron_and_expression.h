@@ -16,6 +16,6 @@ private:
   ExpressionView m_subtitleView;
 };
 
-#endif
-
 }
+
+#endif

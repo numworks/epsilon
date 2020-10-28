@@ -2,6 +2,8 @@
 #include "../constant.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Statistics {
 
 HistogramBannerView::HistogramBannerView() :

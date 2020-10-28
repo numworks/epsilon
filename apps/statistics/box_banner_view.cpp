@@ -1,6 +1,8 @@
 #include "box_banner_view.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Statistics {
 
 BoxBannerView::BoxBannerView() :

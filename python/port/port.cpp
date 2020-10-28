@@ -190,22 +190,22 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
       NamedColor("b", KDColorBlue),
       NamedColor("red", KDColorRed),
       NamedColor("r", KDColorRed),
-      NamedColor("green", Palette::Green),
-      NamedColor("g", Palette::Green),
+      NamedColor("green", Escher::Palette::Green),
+      NamedColor("g", Escher::Palette::Green),
       NamedColor("yellow", KDColorYellow),
       NamedColor("y", KDColorYellow),
-      NamedColor("brown", Palette::Brown),
+      NamedColor("brown", Escher::Palette::Brown),
       NamedColor("black", KDColorBlack),
       NamedColor("k", KDColorBlack),
       NamedColor("white", KDColorWhite),
       NamedColor("w", KDColorWhite),
-      NamedColor("pink", Palette::Pink),
-      NamedColor("orange", Palette::Orange),
-      NamedColor("purple", Palette::Purple),
-      NamedColor("gray", Palette::GrayDark),
-      NamedColor("grey", Palette::GrayDark),
-      NamedColor("cyan", Palette::Cyan),
-      NamedColor("magenta", Palette::Magenta)
+      NamedColor("pink", Escher::Palette::Pink),
+      NamedColor("orange", Escher::Palette::Orange),
+      NamedColor("purple", Escher::Palette::Purple),
+      NamedColor("gray", Escher::Palette::GrayDark),
+      NamedColor("grey", Escher::Palette::GrayDark),
+      NamedColor("cyan", Escher::Palette::Cyan),
+      NamedColor("magenta", Escher::Palette::Magenta)
     };
     for (NamedColor p : pairs) {
       if (strcmp(p.name(), color) == 0) {

@@ -21,10 +21,18 @@ void Ion::Timing::msleep(uint32_t ms) {
 int main(int argc, char * argv[]) {
   std::vector<const char *> arguments(argv, argv + argc);
 
-  char * language = IonSimulatorGetLanguageCode();
-  if (language != nullptr) {
-    arguments.insert(arguments.begin(), language);
-    arguments.insert(arguments.begin(), "--language");
+  int languageInArgv = false;
+  for (int i=1; i<argc; i++) {
+    if (strcmp(argv[i], "--language") == 0 && argc > i+1) {
+      languageInArgv = true;
+    }
+  }
+  if(!languageInArgv) {
+    char * language = IonSimulatorGetLanguageCode();
+    if (language != nullptr) {
+      arguments.push_back("--language");
+      arguments.push_back(language);
+    }
   }
 
 #if EPSILON_TELEMETRY

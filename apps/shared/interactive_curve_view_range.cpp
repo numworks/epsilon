@@ -158,6 +158,7 @@ void InteractiveCurveViewRange::normalize() {
    * properly normalize. */
   constexpr float limit = 1e7f;
   assert(isOrthonormal() || xMin() < -limit || xMax() > limit || yMin() < -limit || yMax() > limit);
+  (void) limit; // Silence compilation warning about unused variable.
   setZoomNormalize(isOrthonormal());
 }
 

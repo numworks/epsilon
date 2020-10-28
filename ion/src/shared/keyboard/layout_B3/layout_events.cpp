@@ -49,7 +49,7 @@ const EventData s_dataForEvent[4 * Event::PageSize] = {
 
 #ifndef NDEBUG
 
-const char * s_nameForEvent[255] = {
+const char * const s_nameForEvent[255] = {
  // Plain
   "Left", "Up", "Down", "Right", "OK", "Back",
   "Home", "nullptr", "OnOff", nullptr, nullptr, nullptr,

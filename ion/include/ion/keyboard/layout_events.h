@@ -11,7 +11,7 @@ namespace Events {
 extern const EventData s_dataForEvent[4*Event::PageSize];
 
 #ifndef NDEBUG
-extern const const char * s_nameForEvent[255];
+extern const char * const s_nameForEvent[255];
 
 inline const char * Event::name() const {
   return s_nameForEvent[m_id];

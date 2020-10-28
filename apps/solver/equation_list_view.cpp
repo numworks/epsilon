@@ -1,6 +1,8 @@
 #include "equation_list_view.h"
 #include "list_controller.h"
 
+using namespace Escher;
+
 namespace Solver {
 
 /* EquationListView */

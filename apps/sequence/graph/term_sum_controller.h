@@ -10,7 +10,7 @@ namespace Sequence {
 
 class TermSumController : public Shared::SumGraphController {
 public:
-  TermSumController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
+  TermSumController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
 private:
   bool moveCursorHorizontallyToPosition(double position) override;

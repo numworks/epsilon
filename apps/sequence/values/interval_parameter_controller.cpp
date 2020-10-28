@@ -7,7 +7,7 @@ namespace Sequence {
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f < 0) {
-    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    Escher::Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   double parameter = std::round(f);

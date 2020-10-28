@@ -2,6 +2,8 @@
 #include "function_app.h"
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Shared {
 
 ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :

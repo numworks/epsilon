@@ -3,6 +3,7 @@
 #include "solver_icon.h"
 
 using namespace Shared;
+using namespace Escher;
 
 namespace Solver {
 

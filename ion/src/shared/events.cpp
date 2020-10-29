@@ -9,7 +9,7 @@ namespace Ion {
 namespace Events {
 
 const char * EventData::text() const {
-  if (m_data == nullptr || m_data == k_textless) {
+  if (m_data == nullptr || m_data[0] == 0) {
     return nullptr;
   }
   return m_data;

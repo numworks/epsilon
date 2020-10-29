@@ -233,7 +233,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
       int offset = independentRank - sqctx->independentSequenceRank<T>(i);
       if (offset != 0) {
         for (int j = MaxRecurrenceDepth; j >= 0; j--) {
-            values[i][j] = j-offset < 0 ? NAN : sqctx->independentSequenceValue<T>(i, j-offset);
+            values[i][j] = j-offset < 0 || j-offset > MaxRecurrenceDepth ? NAN : sqctx->independentSequenceValue<T>(i, j-offset);
         }
       }
     } else {

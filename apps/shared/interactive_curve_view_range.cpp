@@ -154,9 +154,10 @@ void InteractiveCurveViewRange::normalize() {
   m_yRange.setMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
 
-  /* When the coordinates reach 10^7, the float type is not precise enough to
+  /* When the coordinates reach 10^6, the float type is not precise enough to
    * properly normalize. */
-  constexpr float limit = 1e7f;
+  // FIXME : Fine a more precise way to filter the edge cases
+  constexpr float limit = 1e6f;
   assert(isOrthonormal() || xMin() < -limit || xMax() > limit || yMin() < -limit || yMax() > limit);
   (void) limit; // Silence compilation warning about unused variable.
   setZoomNormalize(isOrthonormal());

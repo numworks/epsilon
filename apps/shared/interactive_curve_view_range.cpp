@@ -168,8 +168,10 @@ void InteractiveCurveViewRange::setDefault() {
   }
 
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of
-   * yGridUnit, even if the ranger were not truly normalized. */
-  m_zoomNormalize = false;
+   * yGridUnit, even if the ranger were not truly normalized. We use
+   * setZoomNormalize to refresh the button in case the graph does not end up
+   * normalized. */
+  setZoomNormalize(false);
 
   // Compute the interesting range
   m_delegate->interestingRanges(this);

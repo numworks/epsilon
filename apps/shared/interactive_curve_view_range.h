@@ -58,7 +58,8 @@ protected:
   constexpr static float k_upperMaxFloat = 1E+8f;
   constexpr static float k_lowerMaxFloat = 9E+7f;
   constexpr static float k_maxRatioPositionRange = 1E5f;
-  constexpr static float k_orthonormalTolerance = 0.2f;
+  /* The tolerance is chosen to normalize sqrt(x) */
+  constexpr static float k_orthonormalTolerance = 0.7f;
   static float clipped(float x, bool isMax) { return Range1D::clipped(x, isMax, k_lowerMaxFloat, k_upperMaxFloat); }
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
    * the screen has size 43.2mm * 57.6mm.

@@ -52,11 +52,11 @@ bool Event::hasText() const {
   return text() != nullptr;
 }
 
-bool Event::defaultIsDefined() const  {
+bool Event::isDefined() const  {
   if (isKeyboardEvent()) {
     return s_dataForEvent[m_id].isDefined();
   } else {
-    return (*this == None || *this == Termination || *this == USBEnumeration || *this == USBPlug || *this == BatteryCharging);
+    return (*this == None || *this == Termination || *this == USBEnumeration || *this == USBPlug || *this == BatteryCharging || *this == ExternalText);
   }
 }
 

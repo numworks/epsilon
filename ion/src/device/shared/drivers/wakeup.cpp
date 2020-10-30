@@ -22,7 +22,7 @@ void onChargingEvent() {
    * - N0100: position 0-3 (charging pin = 0) with  0000 (ChargingGPIO = group A)
    * - N0110: position 12-15 (charging pin = 3) with 0100 (ChargingGPIO = group E)
    */
-  SYSCFG.EXTICR1()->setEXTI(Battery::Config::ChargingPin.pin(), Battery::Config::ChargingPin.group());
+  SYSCFG.EXTICR()->setEXTI(Battery::Config::ChargingPin.pin(), Battery::Config::ChargingPin.group());
 
   EXTI.EMR()->set(Battery::Config::ChargingPin.pin(), true);
 
@@ -35,7 +35,7 @@ void onUSBPlugging() {
   USB::initGPIO();
   /* Here, EXTICR3 register is filled between position 4-7 (Vbus pin = 9) with
    * 0000 (Vbus GPIO = group A). */
-  SYSCFG.EXTICR3()->setEXTI(USB::Config::VbusPin.pin(), USB::Config::VbusPin.group());
+  SYSCFG.EXTICR()->setEXTI(USB::Config::VbusPin.pin(), USB::Config::VbusPin.group());
 
   EXTI.EMR()->set(USB::Config::VbusPin.pin(), true);
   EXTI.FTSR()->set(USB::Config::VbusPin.pin(), true);
@@ -56,11 +56,11 @@ void onOnOffKeyDown() {
   Keyboard::Config::ColumnGPIO.MODER()->setMode(columnPin, GPIO::MODER::Mode::Input);
   Keyboard::Config::ColumnGPIO.PUPDR()->setPull(columnPin, GPIO::PUPDR::Pull::Up);
 
-  /* Here, EXTICR1 register is filled between:
+  /* Here, EXTICR register is filled between:
    * - N0100: position 4-7 (column pin = 1) with 0010 (ColumnGPIO = group C)
    * - N0110: position 8-11 (column pin = 2) with 0010 (ColumnGPIO = group C). */
 
-  SYSCFG.EXTICR1()->setEXTI(columnPin, Keyboard::Config::ColumnGPIO);
+  SYSCFG.EXTICR()->setEXTI(columnPin, Keyboard::Config::ColumnGPIO);
 
   EXTI.EMR()->set(columnPin, true);
 

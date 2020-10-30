@@ -22,18 +22,22 @@ public:
     REGS_FIELD(MEM_MODE, MemMode, 1, 0);
   };
 #endif
-  class EXTICR1 : Register32 {
+
+  class EXTICR  {
   public:
-    void setEXTI(int index, GPIO gpio) volatile { setBitRange(4*index+3, 4*index, (uint32_t)gpio); }
+    uint8_t getEXTI(int index) volatile {
+      int indexMod4 = index % 4;
+      return m_values[index / 4].getBitRange(4 * indexMod4 + 3, 4 * indexMod4);
+    }
+
+    void setEXTI(int index, GPIO gpio) volatile {
+      int indexMod4 = index % 4;
+      m_values[index / 4].setBitRange(4 * indexMod4 + 3, 4 * indexMod4, static_cast<uint8_t>(gpio));
+    }
+  private:
+    Register32 m_values[4];
   };
-  class EXTICR2 : Register32 {
-  public:
-    void setEXTI(int index, GPIO gpio) volatile { setBitRange(4*(index-4)+3, 4*(index-4), (uint32_t)gpio); }
-  };
-  class EXTICR3 : Register32 {
-  public:
-    void setEXTI(int index, GPIO gpio) volatile { setBitRange(4*(index-8)+3, 4*(index-8), (uint32_t)gpio); }
-  };
+
   class CMPCR : Register32 {
   public:
     REGS_BOOL_FIELD(CMP_PD, 0);
@@ -43,9 +47,7 @@ public:
 #if REGS_SYSCFG_CONFIG_F412
   REGS_REGISTER_AT(MEMRMP, 0x00);
 #endif
-  REGS_REGISTER_AT(EXTICR1, 0x08);
-  REGS_REGISTER_AT(EXTICR2, 0x0C);
-  REGS_REGISTER_AT(EXTICR3, 0x10);
+  REGS_REGISTER_AT(EXTICR, 0x08);
   REGS_REGISTER_AT(CMPCR, 0x20);
 private:
   constexpr uint32_t Base() const {

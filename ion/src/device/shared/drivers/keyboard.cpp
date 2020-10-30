@@ -112,13 +112,7 @@ void init() {
    */
   for (uint8_t i=0; i<Config::numberOfColumns; i++) {
     uint8_t pin = Config::ColumnPins[i];
-    // TODO EMILIE: this is quite dirty
-    if (pin/4 == 0) {
-      SYSCFG.EXTICR1()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
-    } else {
-      assert(pin/4 == 1);
-      SYSCFG.EXTICR2()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
-    }
+    SYSCFG.EXTICR()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
     EXTI.IMR()->set(pin, true);
     EXTI.FTSR()->set(pin, true);
     EXTI.RTSR()->set(pin, true);

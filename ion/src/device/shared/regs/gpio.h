@@ -91,7 +91,7 @@ public:
     }
   };
 
-  constexpr GPIO(int i) : m_index(i) {}
+  constexpr GPIO(uint8_t i) : m_index(i) {}
   constexpr operator int() const { return m_index; }
   REGS_REGISTER_AT(MODER, 0x00);
   REGS_REGISTER_AT(OTYPER, 0x04);
@@ -104,7 +104,7 @@ private:
   constexpr uint32_t Base() const {
     return 0x40020000 + 0x400*m_index;
   };
-  int m_index;
+  uint8_t m_index;
 };
 
 constexpr GPIO GPIOA(0);

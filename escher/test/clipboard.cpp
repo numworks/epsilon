@@ -9,6 +9,8 @@
 #include <poincare/sum_layout.h>
 #include <escher/clipboard.h>
 
+using namespace Escher;
+
 void assert_clipboard_enters_and_exits_python(const char * string, const char * stringResult) {
   Clipboard * clipboard = Clipboard::sharedClipboard();
   clipboard->store(string);

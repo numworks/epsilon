@@ -123,6 +123,7 @@ private:
     &InvBinom::s_functionHelper,
     &MatrixInverse::s_functionHelper,
     &InvNorm::s_functionHelper,
+    &KMat::s_functionHelper,
     &LeastCommonMultiple::s_functionHelper,
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,

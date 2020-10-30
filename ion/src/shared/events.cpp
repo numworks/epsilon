@@ -61,6 +61,8 @@ bool Event::isDefined() const  {
 }
 
 const char * Event::defaultText() const {
+  /* As the ExternalText event is only available on the simulator, we save a
+   * comparison by not handling it on the device. */
   if (m_id >= 4*PageSize) {
     return nullptr;
   }

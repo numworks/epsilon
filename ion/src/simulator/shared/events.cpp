@@ -21,12 +21,5 @@ const char * Event::text() const {
   return defaultText();
 }
 
-bool Event::isDefined() const {
-  if (*this == ExternalText) {
-    return true;
-  }
-  return defaultIsDefined();
-}
-
 }
 }

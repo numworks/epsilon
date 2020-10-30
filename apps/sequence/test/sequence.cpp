@@ -412,6 +412,37 @@ QUIZ_CASE(sequence_evaluation) {
   definitions[2] = nullptr;
   conditions1[1] = "9";
   check_sequences_defined_by(results33, types, definitions, conditions1, conditions2);
+
+  // Explicit self-referencing sequences
+  double results34[MaxNumberOfSequences][10] = {
+    {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+    {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+    {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}
+  };
+  types[0] = Sequence::Type::Explicit; types[1] = Sequence::Type::Explicit; types[2] = Sequence::Type::Explicit;
+  conditions1[0] = nullptr; conditions1[1] = nullptr; conditions1[2] = nullptr;
+  conditions2[0] = nullptr; conditions2[1] = nullptr; conditions2[2] = nullptr;
+  definitions[0] = "|u(0)|";
+  definitions[1] = "floor(v(0))";
+  definitions[2] = "ceil(w(0))";
+  check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);
+  definitions[0] = "acos(u(0))";
+  definitions[1] = "asin(v(0))";
+  definitions[2] = "atan(w(0))";
+  check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);
+  definitions[0] = "cos(u(0))";
+  definitions[1] = "sin(v(0))";
+  definitions[2] = "tan(w(0))";
+  check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);
+  definitions[0] = "1+u(0)";
+  definitions[1] = "2*v(0)";
+  definitions[2] = "2^(u(0))";
+  check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);
+  definitions[0] = "ℯ^(u(0))";
+  definitions[1] = "√(v(0))";
+  definitions[2] = "log(u(0))";
+  check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);
+
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {

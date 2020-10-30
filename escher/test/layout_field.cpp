@@ -1,5 +1,10 @@
 #include <quiz.h>
 #include <assert.h>
+#include <ion/events.h>
+#include <escher/clipboard.h>
+#include <escher/layout_field.h>
+
+using namespace Escher;
 
 void assert_events_lead_to_selection(const Ion::Events::Event * events, int numberOfEvents, const char * selectedParsedAndSerializedText) {
   LayoutField field = LayoutField(nullptr, nullptr);

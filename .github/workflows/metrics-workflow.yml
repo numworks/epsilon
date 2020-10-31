@@ -29,8 +29,7 @@ jobs:
       - name: Prepare comment auth
         run: echo "::set-env name=GITHUB_TOKEN::$(echo ZGExNWM1YzNlMjVkMWU5ZGFmOWQyY2UxMmRhYjJiN2ZhMWM4ODVhMA== | base64 --decode)"
       - name: Add comment
-        uses: actions/github@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+        uses: KeisukeYamashita/create-comment@v1
         with:
-          args: comment ${{ steps.binary_size.outputs.table }}
+          comment: ${{ steps.binary_size.outputs.table }}
+          token: ${{ env.GITHUB_TOKEN }}

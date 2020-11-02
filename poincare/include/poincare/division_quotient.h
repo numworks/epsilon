@@ -33,8 +33,8 @@ private:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 

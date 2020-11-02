@@ -40,8 +40,8 @@ public:
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
   /* Approximation */
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
   bool isUnknown() const;
 private:

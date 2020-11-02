@@ -33,13 +33,13 @@ public:
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Approximation
-  virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override {
     return ApproximationHelper::MapReduce<float>(
         this, context, complexFormat, angleUnit, compute<float>,
         computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>,
         computeOnMatrices<float>);
   }
-  virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override {
     return ApproximationHelper::MapReduce<double>(
         this, context, complexFormat, angleUnit, compute<double>,
         computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>,

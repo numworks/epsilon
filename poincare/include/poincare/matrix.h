@@ -40,10 +40,10 @@ public:
   Expression shallowReduce(ReductionContext reductionContext) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override {
     return templatedApproximate<float>(context, complexFormat, angleUnit);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override {
     return templatedApproximate<double>(context, complexFormat, angleUnit);
   }
 

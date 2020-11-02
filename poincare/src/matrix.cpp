@@ -224,7 +224,7 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
     float bestPivot = 0.0;
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
-      float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
       // Handle very low pivots
       if (pivot == 0.0f && matrixChild(iPivot_temp, k).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
         pivot = FLT_MIN;

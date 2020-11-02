@@ -779,7 +779,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * - (a^b)^(-1) has to be reduced to avoid infinite loop discussed above;
      * - if a^b is unreal, a^(-b) also. */
     if (!cMinusOne && reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-      Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
       if (approximation.type() == ExpressionNode::Type::Unreal) {
         // The inner power is unreal, return "unreal"
         replaceWithInPlace(approximation);

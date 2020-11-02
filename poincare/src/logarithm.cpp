@@ -300,7 +300,7 @@ Expression Logarithm::simpleShallowReduce(Context * context, Preferences::Comple
       }
       bool isNegative = true;
       Expression result;
-      Evaluation<float> baseApproximation = b.node()->approximate(1.0f, context, complexFormat, angleUnit);
+      Evaluation<float> baseApproximation = b.node()->approximate(1.0f, context, complexFormat, angleUnit, true);
       std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
       if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
         result = Undefined::Builder();

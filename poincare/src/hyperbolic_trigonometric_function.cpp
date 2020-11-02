@@ -45,7 +45,8 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
               && e.approximateToScalar<double>(
                 reductionContext.context(),
                 reductionContext.complexFormat(),
-                reductionContext.angleUnit()) >= 1.0))
+                reductionContext.angleUnit(),
+                true) >= 1.0))
         {
           result = e;
         }
@@ -58,7 +59,8 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
               && e.approximateToScalar<double>(
                 reductionContext.context(),
                 reductionContext.complexFormat(),
-                reductionContext.angleUnit()) >= 0.0))
+                reductionContext.angleUnit(),
+                true) >= 0.0))
         {
           result = e;
         }
@@ -79,7 +81,8 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
               && std::fabs(e.approximateToScalar<double>(
                 reductionContext.context(),
                 reductionContext.complexFormat(),
-                reductionContext.angleUnit())) < 1.0))
+                reductionContext.angleUnit()),
+                true) < 1.0))
         {
           result = e;
         }

@@ -190,6 +190,29 @@ public:
     UnitConversion m_unitConversion;
   };
 
+  class ApproximationContext {
+  public:
+    ApproximationContext(
+        Context * context,
+        Preferences::ComplexFormat complexFormat,
+        Preferences::AngleUnit angleUnit,
+        bool withinReduce = false) :
+      m_context(context),
+      m_complexFormat(complexFormat),
+      m_angleUnit(angleUnit),
+      m_withinReduce(withinReduce)
+    {}
+    Context * context() { return m_context; }
+    Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
+    Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
+    bool withinReduce() const { return m_withinReduce; }
+  private:
+    Context * m_context;
+    Preferences::ComplexFormat m_complexFormat;
+    Preferences::AngleUnit m_angleUnit;
+    bool m_withinReduce;
+  };
+
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }
@@ -239,8 +262,8 @@ public:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   constexpr static int k_maxNumberOfSteps = 10000;
-  virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const = 0;
-  virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const = 0;
+  virtual Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const = 0;
+  virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const = 0;
 
   /* Simplification */
   /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);

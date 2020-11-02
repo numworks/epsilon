@@ -286,7 +286,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
 
   // Step 1. Look for an expression of type "acos(cos(x))", return x
   if (AreInverseFunctions(e.childAtIndex(0), e)) {
-    float x = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit).toScalar();
+    float x = e.childAtIndex(0).childAtIndex(0).nodex()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit, true).toScalar();
     if (!(std::isinf(x) || std::isnan(x))) {
       Expression result = e.childAtIndex(0).childAtIndex(0);
       // We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for asin(sin) and atan(tan)
@@ -314,7 +314,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
 
   // Step 2. Special case for atan(sin(x)/cos(x))
   if (e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0))) {
-    float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit).toScalar();
+  float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit, true).toScalar();
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
       Expression result = e.childAtIndex(0).childAtIndex(1).childAtIndex(0);
       e.replaceWithInPlace(result);

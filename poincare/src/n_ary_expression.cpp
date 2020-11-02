@@ -89,7 +89,7 @@ Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(ExpressionN
         return replaceWithUndefinedInPlace();
       }
       // If c was complex but with a null imaginary part, real part is checked.
-      float app = c.approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      float app = c.approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
       if (std::isfinite(app) && app != std::round(app)) {
         return replaceWithUndefinedInPlace();
       }

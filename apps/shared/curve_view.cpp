@@ -413,6 +413,10 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
   if (dashSize < 0) {
     // Continuous segment is equivalent to one big dash
     dashSize = end - start;
+    if (dashSize < 0) {
+      // end-start overflowed
+      dashSize = KDCOORDINATE_MAX;
+    }
   }
   KDRect lineRect = KDRectZero;
   for (KDCoordinate i = start; i < end; i += 2*dashSize) {
@@ -426,6 +430,10 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
     }
     if (rect.intersects(lineRect)) {
       ctx->fillRect(lineRect, color);
+    }
+    if (i > KDCOORDINATE_MAX - 2*dashSize) {
+      // Avoid overflowing KDCoordinate
+      break;
     }
   }
 }
@@ -595,7 +603,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
   float previousT = NAN;
   float t = NAN;
   float previousX = NAN;
@@ -617,17 +625,17 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     }
     previousX = x;
     previousY = y;
-    Coordinate2D<float> xy = xyEvaluation(t, model, context);
+    Coordinate2D<float> xy = xyFloatEvaluation(t, model, context);
     x = xy.x1();
     y = xy.x2();
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, std::min(0.0f, y), std::max(0.0f, y), color, 1);
     }
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations);
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
   } while (true);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   float tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
@@ -637,7 +645,7 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, flo
     return;
   }
   float tStep = pixelWidth();
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
@@ -678,7 +686,12 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
   }
 }
 
-void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion) const {
+static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC, float yC) {
+  return ((x1 <= xC && xC <= x2) || (x2 <= xC && xC <= x1))
+      && ((y1 <= yC && yC <= y2) || (y2 <= yC && yC <= y1));
+}
+
+void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
@@ -701,25 +714,42 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
        || (!isLeftDotValid && maxNumberOfRecursion == 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
        || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
       // the dots are already joined
-      stampAtLocation(ctx, rect, puf, pvf, color, thick);
+      /* We need to be sure that the point is not an artifact caused by error
+       * in float approximation. */
+      float pvd = xyDoubleEvaluation ? floatToPixel(Axis::Vertical, static_cast<float>(xyDoubleEvaluation(u, model, context).x2())) : pvf;
+      stampAtLocation(ctx, rect, puf, pvd, color, thick);
       return;
     }
   }
   // Middle point
   float ct = (t + s)/2.0f;
-  Coordinate2D<float> cxy = xyEvaluation(ct, model, context);
+  Coordinate2D<float> cxy = xyFloatEvaluation(ct, model, context);
   float cx = cxy.x1();
   float cy = cxy.x2();
-  if ((drawStraightLinesEarly || maxNumberOfRecursion == 0) && isRightDotValid && isLeftDotValid &&
-      ((x <= cx && cx <= u) || (u <= cx && cx <= x)) && ((y <= cy && cy <= v) || (v <= cy && cy <= y))) {
+  if ((drawStraightLinesEarly || maxNumberOfRecursion <= 0) && isRightDotValid && isLeftDotValid &&
+      pointInBoundingBox(x, y, u, v, cx, cy)) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
-    straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
-    return;
+
+    constexpr float dangerousSlope = 1e6f;
+    if (xyDoubleEvaluation && std::fabs((v-y) / (u-x)) > dangerousSlope) {
+      /* We need to make sure we're not drawing a vertical asymptote because of
+       * rounding errors. */
+      Coordinate2D<double> xyD = xyDoubleEvaluation(static_cast<double>(t), model, context);
+      Coordinate2D<double> uvD = xyDoubleEvaluation(static_cast<double>(s), model, context);
+      Coordinate2D<double> cxyD = xyDoubleEvaluation(static_cast<double>(ct), model, context);
+      if (pointInBoundingBox(xyD.x1(), xyD.x2(), uvD.x1(), uvD.x2(), cxyD.x1(), cxyD.x2())) {
+        straightJoinDots(ctx, rect, floatToPixel(Axis::Horizontal, xyD.x1()), floatToPixel(Axis::Vertical, xyD.x2()), floatToPixel(Axis::Horizontal, uvD.x1()), floatToPixel(Axis::Vertical, uvD.x2()), color, thick);
+        return;
+      }
+    } else {
+      straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
+      return;
+    }
   }
   if (maxNumberOfRecursion > 0) {
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1);
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, maxNumberOfRecursion-1);
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1, xyDoubleEvaluation);
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, maxNumberOfRecursion-1, xyDoubleEvaluation);
   }
 }
 

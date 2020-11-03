@@ -1,6 +1,6 @@
 include build/targets.device.$(MODEL).mak
 
-HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash
+HANDY_TARGETS += flasher.light flasher.verbose flasher.verbose.flash bench.ram bench.flash
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 %_ram_map: %.$(EXE)
@@ -42,8 +42,10 @@ openocd:
 flasher_src = $(ion_src) $(ion_device_flasher_src) $(liba_src) $(kandinsky_src)
 $(BUILD_DIR)/flasher.light.$(EXE): $(call flavored_object_for,$(flasher_src),light usbxip)
 $(BUILD_DIR)/flasher.verbose.$(EXE): $(call flavored_object_for,$(flasher_src),usbxip)
+$(BUILD_DIR)/flasher.verbose.flash.$(EXE): $(call flavored_object_for,$(flasher_src))
 $(BUILD_DIR)/flasher.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/flasher
 $(BUILD_DIR)/flasher.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
+$(BUILD_DIR)/flasher.%.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 
 #TODO Do not build all apps... Put elsewhere?
 bench_src = $(ion_src) $(liba_src) $(kandinsky_src) $(poincare_src) $(libaxx_src) $(app_shared_src) $(ion_device_bench_src)

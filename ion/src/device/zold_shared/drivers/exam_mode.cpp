@@ -16,8 +16,6 @@ constexpr static const uint32_t _exam_mode_buffer_start_address = 0x9000c028;
 constexpr static const uint32_t _exam_mode_buffer_end_address = 0x9000d028;
 
 // TODO EMILIE Duplicata - see previous comment TODO EMILIE
-
-// TODO EMILIE Duplicata - see previous comment TODO EMILIE
 // if i = 0b000011101, firstOneBitInByte(i) returns 5
 size_t numberOfBitsAfterLeadingZeroes(int i) {
   int minShift = 0;
@@ -35,7 +33,7 @@ size_t numberOfBitsAfterLeadingZeroes(int i) {
 }
 
 // TODO EMILIE Duplicata - see previous comment TODO EMILIE
-uint8_t * SignificantExamModeAddress() {
+uint8_t * SignificantPersistedByteAddress() {
   uint32_t * persitence_start_32 = (uint32_t *)_exam_mode_buffer_start_address;
   uint32_t * persitence_end_32 = (uint32_t *)_exam_mode_buffer_end_address;
   while (persitence_start_32 < persitence_end_32 && *persitence_start_32 == 0x0) {

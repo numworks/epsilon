@@ -135,6 +135,13 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_BACKLIGHT_BRIGHTNESS:
       *static_cast<uint8_t *>(args[0]) = Ion::Device::Backlight::brightness();
       return;
+    // MEMORY
+    case SVC_MEMORY_PERSIST_BYTE:
+      Ion::Device::Memory::PersistByte(*static_cast<uint8_t *>(args[0]));
+      return;
+    case SVC_MEMORY_READ_PERSISTED_BYTE:
+      *static_cast<uint8_t *>(args[0]) = Ion::Device::Memory::PersistedByte();
+      return;
     default:
       return;
   }

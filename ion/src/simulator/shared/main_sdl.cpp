@@ -88,6 +88,7 @@ int main(int argc, char * argv[]) {
 #endif
 
   Ion::Simulator::Main::init();
+  Ion::Simulator::Haptics::init();
 
   ion_main(arguments.size(), &arguments[0]);
 
@@ -95,15 +96,10 @@ int main(int argc, char * argv[]) {
   if (!argument_volatile) {
     savePython();
   }
-  Ion::Simulator::Haptics::init();
-
-  ion_main(arguments.size(), &arguments[0]);
+#endif
 
   // Shutdown
   Ion::Simulator::Haptics::shutdown();
-  Ion::Simulator::Main::quit();
-#endif
-  
   Ion::Simulator::Main::quit();
 
   if (file_buffer != nullptr)
@@ -313,10 +309,8 @@ void refresh() {
   if (!sNeedsRefresh) {
     return;
   }
+  sNeedsRefresh = false;
 
-  #if EPSILON_SDL_SCREEN_ONLY
-  Display::draw(sRenderer, &sScreenRect);
-  #else
   if (argument_screen_only) {
     Display::draw(sRenderer, &sScreenRect);
   } else {
@@ -329,7 +323,6 @@ void refresh() {
     Layout::draw(sRenderer);
     Display::draw(sRenderer, &screenRect);
   }
-  #endif
 
   SDL_RenderPresent(sRenderer);
 

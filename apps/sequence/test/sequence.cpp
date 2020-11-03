@@ -443,6 +443,16 @@ QUIZ_CASE(sequence_evaluation) {
   definitions[2] = "log(u(0))";
   check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);
 
+  // u(n) = log(v(2)); v(n) = 10
+  double results35[MaxNumberOfSequences][10] = {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
+    {10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0},
+    {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "log(v(2))";
+  definitions[1] = "10";
+  definitions[2] = nullptr;
+  check_sequences_defined_by(results35, types, definitions, conditions1, conditions2);
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {

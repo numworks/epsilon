@@ -63,7 +63,16 @@ Evaluation<double> SequenceNode::approximate(DoublePrecision p, ApproximationCon
 
 template<typename T>
 Evaluation<T> SequenceNode::templatedApproximate(ApproximationContext approximationContext) const {
-  if (childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
+  if (childAtIndex(0)->approximate((T)1, approximationContext).isUndefined() || approximationContext.withinReduce()) {
+    /* If we're inside a reducing routine, we want to escape the sequence
+     * approximation. Indeed, in order to know that the sequence is well defined
+     * (especially for self-referencing or inter-dependently defined sequences),
+     * we need to reduce the sequence definition (done by calling
+     * 'expressionForSymbolAbstract'); if we're within a reduce routine, we
+     * would create an infinite loop. Returning a NAN approximation for
+     * sequences within reduce routine does not really matter: we just have
+     * access to less information in order to simplify (abs(u(n)) might not be
+     * reduced for instance). */
     return Complex<T>::Undefined();
   }
   Expression e = approximationContext.context()->expressionForSymbolAbstract(this, false);

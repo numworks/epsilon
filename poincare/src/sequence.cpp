@@ -53,24 +53,24 @@ Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
   return Sequence(this).shallowReduce(reductionContext);
 }
 
-Evaluation<float> SequenceNode::approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<float>(context, complexFormat, angleUnit);
+Evaluation<float> SequenceNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<float>(approximationContext);
 }
 
-Evaluation<double> SequenceNode::approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<double>(context, complexFormat, angleUnit);
+Evaluation<double> SequenceNode::approximate(DoublePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<double>(approximationContext);
 }
 
 template<typename T>
-Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  if (childAtIndex(0)->approximate((T)1, context, complexFormat, angleUnit).isUndefined()) {
+Evaluation<T> SequenceNode::templatedApproximate(ApproximationContext approximationContext) const {
+  if (childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
     return Complex<T>::Undefined();
   }
-  Expression e = context->expressionForSymbolAbstract(this, false);
+  Expression e = approximationContext.context()->expressionForSymbolAbstract(this, false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, complexFormat, angleUnit);
+  return e.node()->approximate(T(), approximationContext);
 }
 
 Sequence Sequence::Builder(const char * name, size_t length, Expression child) {

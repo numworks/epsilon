@@ -24,9 +24,9 @@ int VectorCrossNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> VectorCrossNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input0 = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> input1 = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> VectorCrossNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input0 = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> input1 = childAtIndex(1)->approximate(T(), approximationContext);
   return input0.cross(&input1);
 }
 

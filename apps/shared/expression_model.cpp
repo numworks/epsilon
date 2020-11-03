@@ -73,10 +73,14 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
       m_expression = Undefined::Builder();
     } else {
       m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
-      PoincareHelpers::Simplify(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+      /* 'Simplify' routine might need to call expressionReduced on the very
+       * same function. So we need to keep a valid m_expression while executing
+       * 'Simplify'. Thus, we use a temporary expression. */
+      Expression tempExpression = m_expression.clone();
+      PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
       // simplify might return an uninitialized Expression if interrupted
-      if (m_expression.isUninitialized()) {
-        m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+      if (!tempExpression.isUninitialized()) {
+        m_expression = tempExpression;
       }
     }
   }

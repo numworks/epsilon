@@ -37,8 +37,8 @@ Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
 
 // Add tests :)
 template<typename T>
-Evaluation<T> FactorNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> e = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> FactorNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> e = childAtIndex(0)->approximate(T(), approximationContext);
   if (std::isnan(e.toScalar())) {
     return Complex<T>::Undefined();
   }
@@ -46,7 +46,7 @@ Evaluation<T> FactorNode::templatedApproximate(Context * context, Preferences::C
 }
 
 
-Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i) const {
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
@@ -95,13 +95,13 @@ Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionCon
     replaceWithInPlace(r);
     return std::move(r);
   }
-  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator());
   if (numeratorDecomp.numberOfChildren() == 0) {
     return replaceWithUndefinedInPlace();
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.isInteger()) {
-    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator());
     if (denominatorDecomp.numberOfChildren() == 0) {
       return replaceWithUndefinedInPlace();
     }

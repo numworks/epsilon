@@ -46,10 +46,10 @@ public:
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return Complex<float>::Builder(templatedApproximate<float>());
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return Complex<double>::Builder(templatedApproximate<double>());
   }
 

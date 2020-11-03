@@ -42,9 +42,9 @@ public:
      * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
     return Complex<U>::Builder(std::log10(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
-  template<typename U> Evaluation<U> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  template<typename U> Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
 class Logarithm final : public Expression {
@@ -61,7 +61,7 @@ public:
 
 private:
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
-  Expression simpleShallowReduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression simpleShallowReduce(ExpressionNode::ReductionContext reductionContext);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
   Expression splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext);
   bool parentIsAPowerOfSameBase() const;

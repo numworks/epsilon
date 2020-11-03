@@ -39,7 +39,7 @@ int EqualNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 }
 
 template<typename T>
-Evaluation<T> EqualNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> EqualNode::templatedApproximate(ApproximationContext approximationContext) const {
   return Complex<T>::Undefined();
 }
 

@@ -28,9 +28,9 @@ int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
-template <typename T> Evaluation<T> RandintNode::templateApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * inputIsUndefined) const {
-  Evaluation<T> aInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> bInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+template <typename T> Evaluation<T> RandintNode::templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined) const {
+  Evaluation<T> aInput = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> bInput = childAtIndex(1)->approximate(T(), approximationContext);
   if (inputIsUndefined) {
     *inputIsUndefined = aInput.isUndefined() || bInput.isUndefined();
   }
@@ -67,7 +67,7 @@ Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionCont
     return e;
   }
   bool inputIsUndefined = false;
-  double eval = static_cast<RandintNode *>(node())->templateApproximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), &inputIsUndefined).toScalar();
+  double eval = static_cast<RandintNode *>(node())->templateApproximate<double>(ExpressionNode::ApproximationContext(reductionContext, true), &inputIsUndefined).toScalar();
   if (inputIsUndefined) {
     /* The input might be NAN because we are reducing a function's expression
      * which depends on x. We thus do not want to replace too early with

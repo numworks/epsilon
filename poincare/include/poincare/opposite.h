@@ -30,11 +30,11 @@ public:
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override {
-    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, compute<float>);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<float>(this, approximationContext, compute<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override {
-    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, compute<double>);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<double>(this, approximationContext, compute<double>);
   }
 
   // Layout

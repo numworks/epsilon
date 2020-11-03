@@ -34,12 +34,12 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
-  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T approximateWithArgument(T x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T growthRateAroundAbscissa(T x, T h, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T riddersApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, T x, T h, T * error) const;
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
+  template<typename T> T approximateWithArgument(T x, ApproximationContext approximationContext) const;
+  template<typename T> T growthRateAroundAbscissa(T x, T h, ApproximationContext approximationContext) const;
+  template<typename T> T riddersApproximation(ApproximationContext approximationContext, T x, T h, T * error) const;
   // TODO: Change coefficients?
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;

@@ -91,13 +91,13 @@ bool SymbolNode::derivate(ReductionContext reductionContext, Expression symbol, 
 }
 
 template<typename T>
-Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> SymbolNode::templatedApproximate(ApproximationContext approximationContext) const {
   Symbol s(this);
-  Expression e = SymbolAbstract::Expand(s, context, false);
+  Expression e = SymbolAbstract::Expand(s, approximationContext.context(), false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, complexFormat, angleUnit);
+  return e.node()->approximate(T(), approximationContext);
 }
 
 bool SymbolNode::isUnknown() const {

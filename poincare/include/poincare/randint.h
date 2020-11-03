@@ -28,13 +28,13 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override {
-    return templateApproximate<float>(context, complexFormat, angleUnit);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return templateApproximate<float>(approximationContext);
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override {
-    return templateApproximate<double>(context, complexFormat, angleUnit);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return templateApproximate<double>(approximationContext);
   }
-  template <typename T> Evaluation<T> templateApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * inputIsUndefined = nullptr) const;
+  template <typename T> Evaluation<T> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };

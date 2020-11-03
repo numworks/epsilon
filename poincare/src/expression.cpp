@@ -375,7 +375,7 @@ Expression Expression::defaultHandleUnitsInChildren() {
 }
 
 Expression Expression::shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext) {
-  double approx = node()->approximate(double(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true).toScalar();
+  double approx = node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
   /* If approx is capped by the largest integer such as all smaller integers can
    * be exactly represented in IEEE754, approx is the exact result (no
    * precision were loss). */
@@ -449,7 +449,7 @@ Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences
   sApproximationEncounteredComplex = false;
   // Reset interrupting flag because some evaluation methods use it
   sSimplificationHasBeenInterrupted = false;
-  Evaluation<U> e = node()->approximate(U(), context, complexFormat, angleUnit, withinReduce);
+  Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
   if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
     e = Complex<U>::Undefined();
   }
@@ -1160,8 +1160,8 @@ template Expression Expression::approximate<double>(Context * context, Preferenc
 template float Expression::approximateToScalar(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 template double Expression::approximateToScalar(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 
-template float Expression::ApproximateToScalar<float>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, bool withinReduce);
-template double Expression::ApproximateToScalar<double>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, bool withinReduce);
+template float Expression::ApproximateToScalar<float>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation);
+template double Expression::ApproximateToScalar<double>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation);
 
 template Evaluation<float> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 template Evaluation<double> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;

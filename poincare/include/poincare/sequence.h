@@ -34,9 +34,9 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override;
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override;
-  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override;
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override;
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
 class Sequence : public SymbolAbstract {

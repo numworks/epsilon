@@ -24,8 +24,8 @@ Expression LeastCommonMultipleNode::shallowBeautify(ReductionContext reductionCo
 }
 
 template<typename T>
-Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return Arithmetic::LCM<T>(*this, context, complexFormat, angleUnit);
+Evaluation<T> LeastCommonMultipleNode::templatedApproximate(ApproximationContext approximationContext) const {
+  return Arithmetic::LCM<T>(*this, approximationContext);
 }
 
 Expression LeastCommonMultiple::shallowBeautify(Context * context) {
@@ -64,7 +64,7 @@ Expression LeastCommonMultiple::shallowReduce(ExpressionNode::ReductionContext r
   return result;
 }
 
-template Evaluation<float> LeastCommonMultipleNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> LeastCommonMultipleNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> LeastCommonMultipleNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> LeastCommonMultipleNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
 
 }

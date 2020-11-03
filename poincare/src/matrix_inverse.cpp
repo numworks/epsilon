@@ -27,8 +27,8 @@ int MatrixInverseNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 }
 
 template<typename T>
-Evaluation<T> MatrixInverseNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> MatrixInverseNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> inverse;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     inverse = static_cast<MatrixComplex<T>&>(input).inverse();

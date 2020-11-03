@@ -706,7 +706,7 @@ Expression UnitNode::shallowBeautify(ReductionContext reductionContext) {
 }
 
 template<typename T>
-Evaluation<T> UnitNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> UnitNode::templatedApproximate(ApproximationContext approximationContext) const {
   return Complex<T>::Undefined();
 }
 
@@ -951,7 +951,7 @@ void Unit::chooseBestRepresentativeAndPrefix(double * value, double exponent, Ex
   }
 }
 
-template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> UnitNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> UnitNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> UnitNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
 
 }

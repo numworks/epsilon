@@ -33,9 +33,9 @@ int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::
 }
 
 template<typename T>
-Evaluation<T> DivisionQuotientNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> DivisionQuotientNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), approximationContext);
   T f1 = f1Input.toScalar();
   T f2 = f2Input.toScalar();
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {

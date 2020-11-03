@@ -24,9 +24,9 @@ int VectorDotNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 template<typename T>
-Evaluation<T> VectorDotNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input0 = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> input1 = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> VectorDotNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input0 = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> input1 = childAtIndex(1)->approximate(T(), approximationContext);
   return Complex<T>::Builder(input0.dot(&input1));
 }
 

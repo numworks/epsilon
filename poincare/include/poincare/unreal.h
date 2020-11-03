@@ -20,10 +20,10 @@ public:
   Type type() const override { return Type::Unreal; }
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return templatedApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return templatedApproximate<double>();
   }
 

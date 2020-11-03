@@ -14,18 +14,18 @@ Expression StoreNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T>
-Evaluation<T> StoreNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> StoreNode::templatedApproximate(ApproximationContext approximationContext) const {
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbolAbstract. */
-  Expression storedExpression = Store(this).storeValueForSymbol(context, complexFormat, angleUnit);
+  Expression storedExpression = Store(this).storeValueForSymbol(approximationContext.context());
   assert(!storedExpression.isUninitialized());
-  return storedExpression.node()->approximate(T(), context, complexFormat, angleUnit);
+  return storedExpression.node()->approximate(T(), approximationContext);
 }
 
 Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   // Store the expression.
-  Expression storedExpression = storeValueForSymbol(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  Expression storedExpression = storeValueForSymbol(reductionContext.context());
 
   if (symbol().type() == ExpressionNode::Type::Symbol) {
     /* If the symbol is not a function, we want to replace the store with its
@@ -46,7 +46,7 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
   return storedExpression;
 }
 
-Expression Store::storeValueForSymbol(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Store::storeValueForSymbol(Context * context) const {
   assert(!value().isUninitialized());
   context->setExpressionForSymbolAbstract(value(), symbol());
   Expression storedExpression = context->expressionForSymbolAbstract(symbol(), false);

@@ -26,10 +26,10 @@ Expression InvBinomNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T>
-Evaluation<T> InvBinomNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> nEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> pEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> InvBinomNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> nEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
+  Evaluation<T> pEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
 
   T a = aEvaluation.toScalar();
   T n = nEvaluation.toScalar();

@@ -24,8 +24,8 @@ Expression GreatCommonDivisorNode::shallowBeautify(ReductionContext reductionCon
 }
 
 template<typename T>
-Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return Arithmetic::GCD<T>(*this, context, complexFormat, angleUnit);
+Evaluation<T> GreatCommonDivisorNode::templatedApproximate(ApproximationContext approximationContext) const {
+  return Arithmetic::GCD<T>(*this, approximationContext);
 }
 
 Expression GreatCommonDivisor::shallowBeautify(Context * context) {
@@ -64,7 +64,7 @@ Expression GreatCommonDivisor::shallowReduce(ExpressionNode::ReductionContext re
   return result;
 }
 
-template Evaluation<float> GreatCommonDivisorNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> GreatCommonDivisorNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> GreatCommonDivisorNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> GreatCommonDivisorNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
 
 }

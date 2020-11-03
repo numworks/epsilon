@@ -44,8 +44,8 @@ T ApproximationHelper::Epsilon() {
   return precision;
 }
 
-template <typename T> int ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  Evaluation<T> evaluation = expression->approximate(T(), context, complexFormat, angleUnit);
+template <typename T> int ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, ExpressionNode::ApproximationContext approximationContext) {
+  Evaluation<T> evaluation = expression->approximate(T(), approximationContext);
   T scalar = evaluation.toScalar();
   if (std::isnan(scalar) || scalar != (int)scalar) {
     *isUndefined = true;
@@ -79,41 +79,41 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   return result;
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
+template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute) {
   assert(expression->numberOfChildren() == 1);
-  Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), approximationContext);
   if (input.type() == EvaluationNode<T>::Type::Complex) {
-    return compute(static_cast<Complex<T> &>(input).stdComplex(), complexFormat, angleUnit);
+    return compute(static_cast<Complex<T> &>(input).stdComplex(), approximationContext.complexFormat(), approximationContext.angleUnit());
   } else {
     assert(input.type() == EvaluationNode<T>::Type::MatrixComplex);
     MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(input);
     MatrixComplex<T> result = MatrixComplex<T>::Builder();
     for (int i = 0; i < m.numberOfChildren(); i++) {
-      result.addChildAtIndexInPlace(compute(m.complexAtIndex(i), complexFormat, angleUnit), i, i);
+      result.addChildAtIndexInPlace(compute(m.complexAtIndex(i), approximationContext.complexFormat(), approximationContext.angleUnit()), i, i);
     }
     result.setDimensions(m.numberOfRows(), m.numberOfColumns());
     return std::move(result);
   }
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const ExpressionNode * expression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
+template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
   assert(expression->numberOfChildren() > 0);
-  Evaluation<T> result = expression->childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> result = expression->childAtIndex(0)->approximate(T(), approximationContext);
   for (int i = 1; i < expression->numberOfChildren(); i++) {
     Evaluation<T> intermediateResult;
-    Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), context, complexFormat, angleUnit);
+    Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), approximationContext);
     if (result.type() == EvaluationNode<T>::Type::Complex && nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
-      intermediateResult = computeOnComplexes(static_cast<Complex<T> &>(result).stdComplex(), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), complexFormat);
+      intermediateResult = computeOnComplexes(static_cast<Complex<T> &>(result).stdComplex(), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), approximationContext.complexFormat());
     } else if (result.type() == EvaluationNode<T>::Type::Complex) {
       assert(nextOperandEvaluation.type() == EvaluationNode<T>::Type::MatrixComplex);
-      intermediateResult = computeOnComplexAndMatrix(static_cast<Complex<T> &>(result).stdComplex(), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), complexFormat);
+      intermediateResult = computeOnComplexAndMatrix(static_cast<Complex<T> &>(result).stdComplex(), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat());
     } else if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
       assert(result.type() == EvaluationNode<T>::Type::MatrixComplex);
-      intermediateResult = computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(result), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), complexFormat);
+      intermediateResult = computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(result), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), approximationContext.complexFormat());
     } else {
       assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
       assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      intermediateResult = computeOnMatrices(static_cast<MatrixComplex<T> &>(result), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), complexFormat);
+      intermediateResult = computeOnMatrices(static_cast<MatrixComplex<T> &>(result), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat());
     }
     result = intermediateResult;
     if (result.isUndefined()) {
@@ -145,14 +145,14 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
 }
 template float Poincare::ApproximationHelper::Epsilon<float>();
 template double Poincare::ApproximationHelper::Epsilon<double>();
-template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
-template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
+template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
+template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexCompute<float> compute);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexCompute<double> compute);
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<float> computeOnMatrices);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<double> computeOnMatrices);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<float> computeOnMatrices);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<double> computeOnMatrices);
 template Poincare::MatrixComplex<float> Poincare::ApproximationHelper::ElementWiseOnMatrixComplexAndComplex<float>(const Poincare::MatrixComplex<float>, const std::complex<float>, Poincare::Preferences::ComplexFormat, Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>, Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<double> Poincare::ApproximationHelper::ElementWiseOnMatrixComplexAndComplex<double>(const Poincare::MatrixComplex<double>, std::complex<double> const, Poincare::Preferences::ComplexFormat, Poincare::Complex<double> (*)(std::complex<double>, std::complex<double>, Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<float> Poincare::ApproximationHelper::ElementWiseOnComplexMatrices<float>(const Poincare::MatrixComplex<float>, const Poincare::MatrixComplex<float>, Poincare::Preferences::ComplexFormat, Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>, Poincare::Preferences::ComplexFormat));

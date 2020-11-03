@@ -26,8 +26,8 @@ int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> DeterminantNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> DeterminantNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   return Complex<T>::Builder(input.determinant());
 }
 

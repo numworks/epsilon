@@ -25,8 +25,8 @@ int MatrixTransposeNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 template<typename T>
-Evaluation<T> MatrixTransposeNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> MatrixTransposeNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> transpose;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     transpose = static_cast<MatrixComplex<T>&>(input).transpose();

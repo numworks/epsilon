@@ -31,9 +31,9 @@ Expression PredictionIntervalNode::shallowReduce(ReductionContext reductionConte
 }
 
 template<typename T>
-Evaluation<T> PredictionIntervalNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> pInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> PredictionIntervalNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> pInput = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> nInput = childAtIndex(1)->approximate(T(), approximationContext);
   T p = static_cast<Complex<T> &>(pInput).toScalar();
   T n = static_cast<Complex<T> &>(nInput).toScalar();
   if (std::isnan(p) || std::isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {

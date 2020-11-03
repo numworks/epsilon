@@ -29,7 +29,7 @@ void UnitConvertNode::deepReduceChildren(ExpressionNode::ReductionContext reduct
 }
 
 template<typename T>
-Evaluation<T> UnitConvertNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> UnitConvertNode::templatedApproximate(ApproximationContext approximationContext) const {
   /* If we are here, it means that the unit convert node was not shallowReduced.
    * Otherwise, it would have been replaced by the division of the value by the
    * unit. We thus return Undefined. */
@@ -109,7 +109,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext reducti
   return result.shallowBeautify(reductionContextWithoutUnits);
 }
 
-template Evaluation<float> UnitConvertNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> UnitConvertNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> UnitConvertNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> UnitConvertNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
 
 }

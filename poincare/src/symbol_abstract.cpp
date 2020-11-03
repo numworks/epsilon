@@ -20,7 +20,7 @@ size_t SymbolAbstractNode::size() const {
 
 ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
   SymbolAbstract s(this);
-  Expression e = SymbolAbstract::Expand(s, context, false);
+  Expression e = SymbolAbstract::Expand(s, context, true);
   if (e.isUninitialized()) {
     return Sign::Unknown;
   }

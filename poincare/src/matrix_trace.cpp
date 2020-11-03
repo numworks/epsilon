@@ -27,8 +27,8 @@ int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> MatrixTraceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> MatrixTraceNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Complex<T> result = Complex<T>::Builder(input.trace());
   return std::move(result);
 }

@@ -162,54 +162,60 @@ public:
     Null = 1,
   };
 
-  class ReductionContext {
+  class ComputationContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
+    ComputationContext(
+        Context * context,
+        Preferences::ComplexFormat complexFormat,
+        Preferences::AngleUnit angleUnit) :
       m_context(context),
       m_complexFormat(complexFormat),
-      m_angleUnit(angleUnit),
+      m_angleUnit(angleUnit)
+    {}
+    Context * context() { return m_context; }
+    void setContext(Context * context) { m_context = context; }
+    Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
+    Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
+  private:
+    Context * m_context;
+    Preferences::ComplexFormat m_complexFormat;
+    Preferences::AngleUnit m_angleUnit;
+  };
+
+  class ReductionContext : public ComputationContext {
+  public:
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
+      ComputationContext(context, complexFormat, angleUnit),
       m_unitFormat(unitFormat),
       m_target(target),
       m_symbolicComputation(symbolicComputation),
       m_unitConversion(unitConversion)
     {}
-    Context * context() { return m_context; }
-    Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
-    Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
     Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
     ReductionTarget target() const { return m_target; }
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
     UnitConversion unitConversion() const { return m_unitConversion; }
   private:
-    Context * m_context;
-    Preferences::ComplexFormat m_complexFormat;
-    Preferences::AngleUnit m_angleUnit;
     Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;
     UnitConversion m_unitConversion;
   };
 
-  class ApproximationContext {
+  class ApproximationContext : public ComputationContext {
   public:
     ApproximationContext(
         Context * context,
         Preferences::ComplexFormat complexFormat,
         Preferences::AngleUnit angleUnit,
         bool withinReduce = false) :
-      m_context(context),
-      m_complexFormat(complexFormat),
-      m_angleUnit(angleUnit),
+      ComputationContext(context, complexFormat, angleUnit),
       m_withinReduce(withinReduce)
     {}
-    Context * context() { return m_context; }
-    Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
-    Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
+    ApproximationContext(ReductionContext reductionContext, bool withinReduce) :
+      ApproximationContext(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), withinReduce) {}
     bool withinReduce() const { return m_withinReduce; }
   private:
-    Context * m_context;
-    Preferences::ComplexFormat m_complexFormat;
-    Preferences::AngleUnit m_angleUnit;
     bool m_withinReduce;
   };
 

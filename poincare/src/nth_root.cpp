@@ -34,9 +34,9 @@ Expression NthRootNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T>
-Evaluation<T> NthRootNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> base = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> index = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> base = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> index = childAtIndex(1)->approximate(T(), approximationContext);
   Complex<T> result = Complex<T>::Undefined();
   if (base.type() == EvaluationNode<T>::Type::Complex
       && index.type() == EvaluationNode<T>::Type::Complex)
@@ -46,14 +46,14 @@ Evaluation<T> NthRootNode::templatedApproximate(Context * context, Preferences::
     /* If the complexFormat is Real, we look for nthroot of form root(x,q) with
      * x real and q integer because they might have a real form which does not
      * correspond to the principale angle. */
-    if (complexFormat == Preferences::ComplexFormat::Real && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
+    if (approximationContext.complexFormat() == Preferences::ComplexFormat::Real && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
       // root(x, q) with q integer and x real
       Complex<T> result = PowerNode::computeNotPrincipalRealRootOfRationalPow(basec, (T)1.0, indexc.real());
        if (!result.isUndefined()) {
          return std::move(result);
        }
     }
-    result = PowerNode::compute(basec, std::complex<T>(1.0)/(indexc), complexFormat);
+    result = PowerNode::compute(basec, std::complex<T>(1.0)/(indexc), approximationContext.complexFormat());
   }
   return std::move(result);
 }

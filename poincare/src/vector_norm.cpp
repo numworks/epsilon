@@ -25,8 +25,8 @@ int VectorNormNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 template<typename T>
-Evaluation<T> VectorNormNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> VectorNormNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   return Complex<T>::Builder(input.norm());
 }
 

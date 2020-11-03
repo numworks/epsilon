@@ -99,10 +99,10 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 template<typename T>
-Evaluation<T> MatrixNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixNode::templatedApproximate(ApproximationContext approximationContext) const {
   MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   for (ExpressionNode * c : children()) {
-    matrix.addChildAtIndexInPlace(c->approximate(T(), context, complexFormat, angleUnit), matrix.numberOfChildren(), matrix.numberOfChildren());
+    matrix.addChildAtIndexInPlace(c->approximate(T(), approximationContext), matrix.numberOfChildren(), matrix.numberOfChildren());
   }
   matrix.setDimensions(numberOfRows(), numberOfColumns());
   return std::move(matrix);

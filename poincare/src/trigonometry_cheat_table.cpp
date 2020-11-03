@@ -59,7 +59,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
   }
 
   // Approximate e to quickly compare it to cheat table entries
-  float eValue = e.node()->approximation(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true).toScalar();
+  float eValue = e.node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
   if (std::isnan(eValue) || std::isinf(eValue)) {
     return Expression();
   }

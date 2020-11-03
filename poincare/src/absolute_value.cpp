@@ -52,7 +52,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   }
   // |x| = ±x if x is real
   if (c.isReal(reductionContext.context())) {
-    double app = c.node()->approximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true).toScalar();
+    double app = c.node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
     if (!std::isnan(app)) {
       if ((c.isNumber() && app >= 0) || app >= Expression::Epsilon<double>()) {
         /* abs(a) = a with a >= 0

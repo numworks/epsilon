@@ -40,18 +40,18 @@ public:
   Expression shallowReduce(ReductionContext reductionContext) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, ApproximateContext approximateContext) const override {
-    return templatedApproximate<float>(context, complexFormat, angleUnit);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return templatedApproximate<float>(approximationContext);
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximateContext approximateContext) const override {
-    return templatedApproximate<double>(context, complexFormat, angleUnit);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return templatedApproximate<double>(approximationContext);
   }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
-  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
   /* We could store 2 uint8_t but multiplying m_numberOfRows and
    * m_numberOfColumns could then lead to overflow. As we are unlikely to use
    * greater matrix than 100*100, uint16_t is fine. */

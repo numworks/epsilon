@@ -24,16 +24,16 @@ Expression SumAndProductNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T>
-Evaluation<T> SumAndProductNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), approximationContext);
+  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), approximationContext);
   T start = aInput.toScalar();
   T end = bInput.toScalar();
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return Complex<T>::Undefined();
   }
   SymbolNode * symbol = static_cast<SymbolNode *>(childAtIndex(1));
-  VariableContext nContext = VariableContext(symbol->name(), context);
+  VariableContext nContext = VariableContext(symbol->name(), approximationContext.context());
   Evaluation<T> result = Complex<T>::Builder((T)emptySumAndProductValue());
   for (int i = (int)start; i <= (int)end; i++) {
     if (Expression::ShouldStopProcessing()) {
@@ -47,7 +47,8 @@ Evaluation<T> SumAndProductNode::templatedApproximate(Context * context, Prefere
       * have. We can then evaluate its value */
       child.childAtIndex(0).replaceSymbolWithExpression(symbol, Float<T>::Builder(i));
     }
-    result = evaluateWithNextTerm(T(), result, child.node()->approximate(T(), &nContext, complexFormat, angleUnit), complexFormat);
+    approximationContext.setContext(&nContext);
+    result = evaluateWithNextTerm(T(), result, child.node()->approximate(T(), approximationContext), approximationContext.complexFormat());
     if (result.isUndefined()) {
       return Complex<T>::Undefined();
     }
@@ -70,7 +71,7 @@ Expression SumAndProduct::shallowReduce(Context * context) {
   return *this;
 }
 
-template Evaluation<float> SumAndProductNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> SumAndProductNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const;
+template Evaluation<double> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const;
 
 }

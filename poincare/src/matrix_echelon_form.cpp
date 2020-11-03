@@ -21,8 +21,8 @@ int MatrixEchelonFormNode::serialize(char * buffer, int bufferSize, Preferences:
 }
 
 template<typename T>
-Evaluation<T> MatrixEchelonFormNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> MatrixEchelonFormNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> ref;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     ref = static_cast<MatrixComplex<T>&>(input).ref(isFormReduced());

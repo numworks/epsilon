@@ -105,19 +105,19 @@ Expression LogarithmNode<2>::shallowBeautify(ReductionContext reductionContext) 
 }
 
 template<>
-template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return ApproximationHelper::Map(this, context, complexFormat, angleUnit, computeOnComplex<U>);
+template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(ApproximationContext approximationContext) const {
+  return ApproximationHelper::Map(this, approximationContext, computeOnComplex<U>);
 }
 
 template<>
-template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<U> x = childAtIndex(0)->approximate(U(), context, complexFormat, angleUnit);
-  Evaluation<U> n = childAtIndex(1)->approximate(U(), context, complexFormat, angleUnit);
+template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<U> x = childAtIndex(0)->approximate(U(), approximationContext);
+  Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
   std::complex<U> result = std::complex<U>(NAN, NAN);
   if (x.type() == EvaluationNode<U>::Type::Complex && n.type() == EvaluationNode<U>::Type::Complex) {
     std::complex<U> xc = (static_cast<Complex<U>&>(x)).stdComplex();
     std::complex<U> nc = (static_cast<Complex<U>&>(n)).stdComplex();
-    result = DivisionNode::compute<U>(computeOnComplex(xc, complexFormat, angleUnit).stdComplex(), computeOnComplex(nc, complexFormat, angleUnit).stdComplex(), complexFormat).stdComplex();
+    result = DivisionNode::compute<U>(computeOnComplex(xc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), computeOnComplex(nc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), approximationContext.complexFormat()).stdComplex();
   }
   return Complex<U>::Builder(result);
 }
@@ -171,7 +171,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     }
     return *this;
   }
-  Expression f = simpleShallowReduce(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  Expression f = simpleShallowReduce(reductionContext);
   if (f.type() != ExpressionNode::Type::Logarithm) {
     return f;
   }
@@ -264,7 +264,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return *this;
 }
 
-Expression Logarithm::simpleShallowReduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Logarithm::simpleShallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression c = childAtIndex(0);
   Expression b = childAtIndex(1);
   // log(0,0)->Undefined
@@ -275,7 +275,7 @@ Expression Logarithm::simpleShallowReduce(Context * context, Preferences::Comple
   if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isOne()) {
     return replaceWithUndefinedInPlace();
   }
-  bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, context);
+  bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, reductionContext.context());
   // log(x,x)->1 with x != inf and log(inf,inf) = undef
   if (c.isIdenticalTo(b)) {
     Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(1).convert<Expression>();
@@ -293,14 +293,14 @@ Expression Logarithm::simpleShallowReduce(Context * context, Preferences::Comple
     const Rational r = static_cast<Rational &>(c);
     // log(0, x) = -inf if x > 1 && x != inf || inf x < 1 || undef if x < 0
     if (r.isZero()) {
-      bool infiniteBase = b.recursivelyMatches(Expression::IsInfinity, context);
+      bool infiniteBase = b.recursivelyMatches(Expression::IsInfinity, reductionContext.context());
       // Special case: log(0,inf) -> undef
       if (infiniteBase) {
         return replaceWithUndefinedInPlace();
       }
       bool isNegative = true;
       Expression result;
-      Evaluation<float> baseApproximation = b.node()->approximate(1.0f, context, complexFormat, angleUnit, true);
+      Evaluation<float> baseApproximation = b.node()->approximate(1.0f, ExpressionNode::ApproximationContext(reductionContext, true));
       std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
       if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
         result = Undefined::Builder();
@@ -401,7 +401,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
     Logarithm e = clone().convert<Logarithm>();
     e.replaceChildAtIndexInPlace(0, Rational::Builder(factors[index]));
     Multiplication m = Multiplication::Builder(Rational::Builder(coefficients[index]), e);
-    e.simpleShallowReduce(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    e.simpleShallowReduce(reductionContext);
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(reductionContext);
   }
@@ -425,10 +425,10 @@ Expression Logarithm::shallowBeautify() {
   return *this;
 }
 
-template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
-template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
-template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
-template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(ApproximationContext) const;
+template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(ApproximationContext) const;
+template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(ApproximationContext) const;
+template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(ApproximationContext) const;
 template int LogarithmNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 template int LogarithmNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 

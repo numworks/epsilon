@@ -293,12 +293,12 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixC
   return MatrixComplex<T>::Undefined();
 }
 
-template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> PowerNode::templatedApproximate(ApproximationContext approximationContext) const {
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "unreal". */
-  if (complexFormat == Preferences::ComplexFormat::Real) {
-    Evaluation<T> base = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  if (approximationContext.complexFormat() == Preferences::ComplexFormat::Real) {
+    Evaluation<T> base = childAtIndex(0)->approximate(T(), approximationContext);
     if (base.type() != EvaluationNode<T>::Type::Complex) {
       goto defaultApproximation;
     }
@@ -334,7 +334,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
     }
   }
 defaultApproximation:
-  return ApproximationHelper::MapReduce<T>(this, context, complexFormat, angleUnit, compute<T>, computeOnComplexAndMatrix<T>, computeOnMatrixAndComplex<T>, computeOnMatrices<T>);
+  return ApproximationHelper::MapReduce<T>(this, approximationContext, compute<T>, computeOnComplexAndMatrix<T>, computeOnMatrixAndComplex<T>, computeOnMatrices<T>);
 }
 
 // Power
@@ -1393,9 +1393,9 @@ Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::Re
 #if 0
   const Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
   const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
-  Expression op = Multiplication::Builder(pi, r).shallowReduce(context, complexFormat, angleUnit, false);
-  Cosine cos = Cosine(op).shallowReduce(context, complexFormat, angleUnit, false);;
-  Sine sin = Sine(op).shallowReduce(context, complexFormat, angleUnit, false);
+  Expression op = Multiplication::Builder(pi, r).shallowReduce(reductionContext, false);
+  Cosine cos = Cosine(op).shallowReduce(reductionContext, false);;
+  Sine sin = Sine(op).shallowReduce(reductionContext, false);
   Expression m = Multiplication::Builder(iComplex, sin);
   Expression a = Addition::Builder(cos, m);
   const Expression * multExpOperands[3] = {pi, r->clone()};

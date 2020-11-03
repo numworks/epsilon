@@ -24,10 +24,10 @@ int NormPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 template<typename T>
-Evaluation<T> NormPDFNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> sigmaEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> NormPDFNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
+  Evaluation<T> sigmaEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
 
   T x = xEvaluation.toScalar();
   T mu = muEvaluation.toScalar();

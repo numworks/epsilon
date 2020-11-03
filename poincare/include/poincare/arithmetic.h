@@ -14,8 +14,8 @@ public:
   static Expression LCM(const Expression & expression);
   static int GCD(int i, int j);
   static int LCM(int i, int j);
-  template<typename T> static Evaluation<T> GCD(const ExpressionNode & expressionNode, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  template<typename T> static Evaluation<T> LCM(const ExpressionNode & expressionNode, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  template<typename T> static Evaluation<T> GCD(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
+  template<typename T> static Evaluation<T> LCM(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
   /* When outputCoefficients[0] is set to -1, that indicates a special case:
    * i could not be factorized.
    * Before calling PrimeFactorization, we initiate two tables of Integers

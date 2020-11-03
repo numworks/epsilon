@@ -81,8 +81,8 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
               && std::fabs(e.approximateToScalar<double>(
                 reductionContext.context(),
                 reductionContext.complexFormat(),
-                reductionContext.angleUnit()),
-                true) < 1.0))
+                reductionContext.angleUnit(),
+                true)) < 1.0))
         {
           result = e;
         }

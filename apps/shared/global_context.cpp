@@ -18,8 +18,6 @@ SequenceStore * GlobalContext::sequenceStore() {
   return &sequenceStore;
 }
 
-
-
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }

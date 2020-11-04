@@ -30,12 +30,12 @@ Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * 
 
 void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequence::Type types[MaxNumberOfSequences], const char * definitions[MaxNumberOfSequences], const char * conditions1[MaxNumberOfSequences], const char * conditions2[MaxNumberOfSequences]) {
   Shared::GlobalContext globalContext;
-  SequenceStore store;
-  SequenceContext sequenceContext(&globalContext, &store);
+  SequenceStore * store = globalContext.sequenceStore();
+  SequenceContext sequenceContext(&globalContext, store);
 
   Sequence * seqs[MaxNumberOfSequences];
   for (int i = 0; i < MaxNumberOfSequences; i++) {
-    seqs[i] = addSequence(&store, types[i], definitions[i], conditions1[i], conditions2[i], &globalContext);
+    seqs[i] = addSequence(store, types[i], definitions[i], conditions1[i], conditions2[i], &globalContext);
   }
 
   for (int j = 0; j < 10; j++) {
@@ -46,20 +46,25 @@ void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequenc
       }
     }
   }
-  store.removeAll();
+  store->removeAll();
+  /* The store is a global variable that has been contructed through
+   * GlobalContext::sequenceStore singleton. It won't be destructed. However,
+   * we need to make sure that the pool is empty between quiz_cases. */
+  store->tidy();
 }
 
 void check_sum_of_sequence_between_bounds(double result, double start, double end, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
   Shared::GlobalContext globalContext;
-  SequenceStore store;
-  SequenceContext sequenceContext(&globalContext, &store);
+  SequenceStore * store = globalContext.sequenceStore();
+  SequenceContext sequenceContext(&globalContext, store);
 
-  Sequence * seq = addSequence(&store, type, definition, condition1, condition2, &globalContext);
+  Sequence * seq = addSequence(store, type, definition, condition1, condition2, &globalContext);
 
   double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, &sequenceContext), &globalContext);
   quiz_assert(std::fabs(sum - result) < 0.00000001);
 
-  store.removeAll();
+  store->removeAll();
+  store->tidy(); // Cf comment above
 }
 
 QUIZ_CASE(sequence_evaluation) {

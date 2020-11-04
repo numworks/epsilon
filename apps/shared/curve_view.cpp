@@ -1006,12 +1006,30 @@ KDRect CurveView::cursorFrame() {
   KDRect cursorFrame = KDRectZero;
   if (m_cursorView && m_mainViewSelected && std::isfinite(m_curveViewCursor->x()) && std::isfinite(m_curveViewCursor->y())) {
     KDSize cursorSize = m_cursorView->minimalSizeForOptimalDisplay();
-    KDCoordinate xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
-    KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, yCursorPixelPosition - (cursorSize.height()-1)/2, cursorSize.width(), cursorSize.height());
+    float xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
+    float yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
+
+    /* If the cursor is not visible, put its frame to zero, because it might be
+     * very far out of the visible frame and thus later overflow KDCoordinate.
+     * The "2" factor is a big safety margin. */
+    constexpr int maxCursorPixel = KDCOORDINATE_MAX / 2;
+    // Assert we are not removing visible cursors
+    static_assert((Ion::Display::Width * 2 < maxCursorPixel)
+        && (Ion::Display::Height * 2 < maxCursorPixel),
+        "maxCursorPixel is should be bigger");
+    if (std::abs(yCursorPixelPosition) > maxCursorPixel
+        || std::abs(xCursorPixelPosition) > maxCursorPixel)
+    {
+      return KDRectZero;
+    }
+
+    KDCoordinate xCursor = xCursorPixelPosition;
+    KDCoordinate yCursor = yCursorPixelPosition;
+    KDCoordinate xCursorFrame = xCursor - (cursorSize.width()-1)/2;
+    cursorFrame = KDRect(xCursorFrame, yCursor - (cursorSize.height()-1)/2, cursorSize);
     if (cursorSize.height() == 0) {
       KDCoordinate bannerHeight = (m_bannerView != nullptr) ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
-      cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, 0, cursorSize.width(),bounds().height()-bannerHeight);
+      cursorFrame = KDRect(xCursorFrame, 0, cursorSize.width(), bounds().height() - bannerHeight);
     }
   }
   return cursorFrame;

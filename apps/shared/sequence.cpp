@@ -55,15 +55,6 @@ int Sequence::nameWithArgumentAndType(char * buffer, size_t bufferSize) {
   return result;
 }
 
-void Sequence::tidy() {
-  m_definition.tidyName();
-  Function::tidy(); // m_definitionName.tidy()
-  m_firstInitialCondition.tidy();
-  m_firstInitialCondition.tidyName();
-  m_secondInitialCondition.tidy();
-  m_secondInitialCondition.tidyName();
-}
-
 Sequence::Type Sequence::type() const {
   return recordData()->type();
 }

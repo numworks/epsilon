@@ -63,7 +63,7 @@ Evaluation<double> SequenceNode::approximate(DoublePrecision p, ApproximationCon
 
 template<typename T>
 Evaluation<T> SequenceNode::templatedApproximate(ApproximationContext approximationContext) const {
-  if (childAtIndex(0)->approximate((T)1, approximationContext).isUndefined() || approximationContext.withinReduce()) {
+  if (approximationContext.withinReduce() || childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
     /* If we're inside a reducing routine, we want to escape the sequence
      * approximation. Indeed, in order to know that the sequence is well defined
      * (especially for self-referencing or inter-dependently defined sequences),

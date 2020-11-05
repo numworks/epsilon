@@ -143,14 +143,14 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
 }
 
 bool SlideStringByNumberOfChar(char * text, int slidingSize, size_t textMaxLength) {
-  size_t lenText = strlen(text);
-  if (lenText + slidingSize > textMaxLength || lenText + slidingSize < 0) {
+  const size_t textLen = strlen(text);
+  if (textLen + slidingSize > textMaxLength || textLen + slidingSize < 0) {
     return false;
   }
   if (slidingSize > 0) {
-    memmove(text+slidingSize, text, strlen(text)+1);
+    memmove(text+slidingSize, text, textLen + 1);
   } else if (slidingSize < 0) {
-    memmove(text, text-slidingSize, strlen(text)+1);
+    memmove(text, text-slidingSize, textLen + 1);
   }
   // In case slidingSize = 0, there is nothing to do
   return true;

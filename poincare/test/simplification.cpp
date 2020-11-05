@@ -369,6 +369,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("0×_°C", "0×_°C");
   assert_parsed_expression_simplify_to("-32×_°F", "-32×_°F");
   assert_parsed_expression_simplify_to("273.16×_K", "273.16×_K");
+  assert_parsed_expression_simplify_to("_cKπ23", "0.72256631032565×_K");
   assert_parsed_expression_simplify_to("100×_°C→_K", "373.15×_K");
   assert_parsed_expression_simplify_to("-100×_°C→_K", "173.15×_K");
   assert_parsed_expression_simplify_to("_°C+_°C", Undefined::Name());

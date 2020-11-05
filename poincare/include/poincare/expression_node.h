@@ -191,6 +191,17 @@ public:
       m_symbolicComputation(symbolicComputation),
       m_unitConversion(unitConversion)
     {}
+    static ReductionContext NonInvasiveReductionContext(ReductionContext reductionContext) {
+      return ReductionContext(
+          reductionContext.context(),
+          reductionContext.complexFormat(),
+          reductionContext.angleUnit(),
+          reductionContext.unitFormat(),
+          reductionContext.target(),
+          SymbolicComputation::DoNotReplaceAnySymbol,
+          UnitConversion::None
+        );
+    }
     Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
     ReductionTarget target() const { return m_target; }
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }

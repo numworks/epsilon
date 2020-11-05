@@ -423,7 +423,9 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   // Step 2: Handle the units
   if (hasUnit()) {
     Expression units;
-    self = deepReduce(reductionContext); // removeUnit has to be called on reduced expression
+    /* removeUnit has to be called on reduced expression but we want to modify
+     * the least the expression so we use the uninvasive reduction context. */
+    self = deepReduce(ExpressionNode::ReductionContext::NonInvasiveReductionContext(reductionContext));
     self = removeUnit(&units);
 
     if (self.isUndefined() || units.isUninitialized()) {

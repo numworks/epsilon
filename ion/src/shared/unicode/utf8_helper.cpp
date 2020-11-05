@@ -203,7 +203,7 @@ void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, Tex
       size_t replacingStringLength = strlen(replacingString);
 
       if (strncmp(&text[i], matchedString, matchedStringLength) == 0) {
-        didReplace = replaceFirstCharsByPattern(&text[i], matchedStringLength, replacingString, textMaxLength);
+        didReplace = replaceFirstCharsByPattern(&text[i], matchedStringLength, replacingString, textMaxLength - i);
         if (didReplace) {
           int delta = replacingStringLength - matchedStringLength;
           textLength += delta;

@@ -177,7 +177,7 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
   alignedByteLength += reinterpret_cast<uintptr_t>(address) & bitMaskOnes;
 
   assert(alignedAddress % ((uintptr_t)sizeof(uintptr_t)) == 0);
-  gc_collect_root((void **)alignedAddress, byteLength /  sizeof(uintptr_t));
+  gc_collect_root((void **)alignedAddress, alignedByteLength /  sizeof(uintptr_t));
 }
 
 KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){

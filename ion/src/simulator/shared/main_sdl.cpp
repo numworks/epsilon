@@ -311,6 +311,9 @@ void refresh() {
   }
   sNeedsRefresh = false;
 
+  #if EPSILON_SDL_SCREEN_ONLY
+  Display::draw(sRenderer, &sScreenRect);
+  #else
   if (argument_screen_only) {
     Display::draw(sRenderer, &sScreenRect);
   } else {
@@ -323,6 +326,7 @@ void refresh() {
     Layout::draw(sRenderer);
     Display::draw(sRenderer, &screenRect);
   }
+  #endif
 
   SDL_RenderPresent(sRenderer);
 

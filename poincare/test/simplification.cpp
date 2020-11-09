@@ -1238,6 +1238,8 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("3×_m→6_km", "0.003×_km");
   assert_parsed_expression_simplify_to("4×_min→_s^3/_s^2", "240×_s");
   assert_parsed_expression_simplify_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
+  assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m");
+  assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m", User, Radian, Imperial);
 
   assert_parsed_expression_simplify_to("1→2", Undefined::Name());
   assert_parsed_expression_simplify_to("1→a+a", Undefined::Name());

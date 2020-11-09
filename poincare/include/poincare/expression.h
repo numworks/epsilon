@@ -390,7 +390,7 @@ protected:
   Expression makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext);
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const { return node()->denominator(reductionContext); }
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext) { return node()->shallowBeautify(reductionContext); }
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
   // WARNING: this must be called on reduced expressions
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
@@ -429,6 +429,10 @@ private:
   Expression defaultHandleUnitsInChildren(); // Children must be reduced
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
+  void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
+    node()->deepBeautifyChildren(reductionContext);
+  }
+  void defaultDeepBeautifyChildren(ExpressionNode::ReductionContext reductionContext);
   bool defaultDidDerivate() { return false; }
   Expression defaultUnaryFunctionDifferential() { return *this; }
 

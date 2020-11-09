@@ -55,7 +55,7 @@ private:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
 
   // Derivation
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
@@ -83,7 +83,7 @@ public:
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder({e1, e2}); }
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {

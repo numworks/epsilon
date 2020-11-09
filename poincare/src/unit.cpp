@@ -701,8 +701,8 @@ Expression UnitNode::shallowReduce(ReductionContext reductionContext) {
   return Unit(this).shallowReduce(reductionContext);
 }
 
-Expression UnitNode::shallowBeautify(ReductionContext reductionContext) {
-  return Unit(this).shallowBeautify(reductionContext);
+Expression UnitNode::shallowBeautify(ReductionContext * reductionContext) {
+  return Unit(this).shallowBeautify();
 }
 
 template<typename T>
@@ -824,7 +824,7 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, Expres
       ExpressionNode::ReductionTarget::User,
       ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       ExpressionNode::UnitConversion::None);
-  return res.squashUnaryHierarchyInPlace().shallowBeautify(keepUnitsContext);
+  return res.squashUnaryHierarchyInPlace().shallowBeautify(&keepUnitsContext);
 }
 
 Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext) {
@@ -904,7 +904,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   return result;
 }
 
-Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression Unit::shallowBeautify() {
   // Force Float(1) in front of an orphan Unit
   if (parent().isUninitialized() || parent().type() == ExpressionNode::Type::Opposite) {
     Multiplication m = Multiplication::Builder(Float<double>::Builder(1.));

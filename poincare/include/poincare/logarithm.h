@@ -29,7 +29,7 @@ public:
   // Simplification
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Derivation

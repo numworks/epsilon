@@ -103,11 +103,15 @@ void ExpressionNode::deepReduceChildren(ExpressionNode::ReductionContext reducti
   Expression(this).defaultDeepReduceChildren(reductionContext);
 }
 
+void ExpressionNode::deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
+  Expression(this).defaultDeepBeautifyChildren(reductionContext);
+}
+
 Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
   return Expression(this).defaultShallowReduce();
 }
 
-Expression ExpressionNode::shallowBeautify(ReductionContext reductionContext) {
+Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Expression(this).defaultShallowBeautify();
 }
 

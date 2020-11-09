@@ -473,7 +473,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; } // TODO
 
   const Representative * representative() const { return m_representative; }
@@ -686,7 +686,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify();
 
   bool isBaseUnit() const { return node()->representative()->isBaseUnit() && node()->prefix() == node()->representative()->basePrefix(); }
   void chooseBestRepresentativeAndPrefix(double * value, double exponent, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix);

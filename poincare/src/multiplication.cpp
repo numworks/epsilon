@@ -211,7 +211,7 @@ Expression MultiplicationNode::shallowReduce(ReductionContext reductionContext) 
   return Multiplication(this).shallowReduce(reductionContext);
 }
 
-Expression MultiplicationNode::shallowBeautify(ReductionContext reductionContext) {
+Expression MultiplicationNode::shallowBeautify(ReductionContext * reductionContext) {
   return Multiplication(this).shallowBeautify(reductionContext);
 }
 
@@ -400,7 +400,7 @@ static bool CanSimplifyUnitProduct(
   return isSimpler;
 }
 
-Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Recognize derived units in the product of units
@@ -408,7 +408,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
    */
 
   // Step 1: Turn -n*A into -(n*A)
-  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(reductionContext);
+  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(*reductionContext);
   // If one negative numeral factor was made positive, we turn the expression in an Opposite
   if (!noNegativeNumeral.isUninitialized()) {
     Opposite o = Opposite::Builder();
@@ -425,7 +425,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     Expression units;
     /* removeUnit has to be called on reduced expression but we want to modify
      * the least the expression so we use the uninvasive reduction context. */
-    self = deepReduce(ExpressionNode::ReductionContext::NonInvasiveReductionContext(reductionContext));
+    self = deepReduce(ExpressionNode::ReductionContext::NonInvasiveReductionContext(*reductionContext));
     self = removeUnit(&units);
 
     if (self.isUndefined() || units.isUninitialized()) {
@@ -434,7 +434,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       goto replace_by_result;
     }
 
-    ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
+    ExpressionNode::UnitConversion unitConversionMode = reductionContext->unitConversion();
     if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
       /* Step 2a: Recognize derived units
        * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
@@ -501,7 +501,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       // Apply simplifications
       if (unitsAccu.numberOfChildren() > 0) {
         // Divide by derived units
-        units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
+        units = Division::Builder(units, unitsAccu.clone()).deepReduce(*reductionContext);
         Expression newUnits;
         // Separate units and generated values
         units = units.removeUnit(&newUnits);
@@ -528,7 +528,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      * most relevant.
      */
 
-    double value = self.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    double value = self.approximateToScalar<double>(reductionContext->context(), reductionContext->complexFormat(), reductionContext->angleUnit());
     if (std::isnan(value)) {
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();
@@ -538,7 +538,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
         /* In most cases, unit composition works the same for imperial and
          * metric units. However, in imperial, we want volumes to be displayed
          * using volume units instead of cubic length. */
-        const bool forceVolumeRepresentative = reductionContext.unitFormat() == Preferences::UnitFormat::Imperial && UnitNode::Vector<int>::FromBaseUnits(units) == UnitNode::VolumeRepresentative::Default().dimensionVector();
+        const bool forceVolumeRepresentative = reductionContext->unitFormat() == Preferences::UnitFormat::Imperial && UnitNode::Vector<int>::FromBaseUnits(units) == UnitNode::VolumeRepresentative::Default().dimensionVector();
         const UnitNode::Representative * repr;
         if (forceVolumeRepresentative) {
           /* The choice of representative doesn't matter, as it will be tuned to a
@@ -546,9 +546,9 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
           repr = UnitNode::VolumeRepresentative::Default().representativesOfSameDimension();
           units = Unit::Builder(repr, UnitNode::Prefix::EmptyPrefix());
           value /= repr->ratio();
-          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, reductionContext);
+          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, *reductionContext);
         } else {
-          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, reductionContext);
+          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, *reductionContext);
         }
       }
       // Build final Expression
@@ -558,7 +558,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   } else {
   // Step 3: Create a Division if relevant
     Expression numer, denom;
-    splitIntoNormalForm(numer, denom, reductionContext);
+    splitIntoNormalForm(numer, denom, *reductionContext);
     if (!numer.isUninitialized()) {
       result = numer;
     }

@@ -53,7 +53,7 @@ private:
 
   // Simplify
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::RightOfPower; }
   int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
@@ -83,7 +83,7 @@ public:
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 
 private:

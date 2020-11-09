@@ -61,7 +61,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::Decimal; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::Decimal; }
 

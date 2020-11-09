@@ -31,7 +31,7 @@ Expression FactorNode::shallowReduce(ReductionContext reductionContext) {
   return Factor(this).shallowReduce(reductionContext.context());
 }
 
-Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
+Expression FactorNode::shallowBeautify(ReductionContext * reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);
 }
 
@@ -85,7 +85,7 @@ Expression Factor::shallowReduce(Context * context) {
   return *this;
 }
 
-Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression Factor::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();

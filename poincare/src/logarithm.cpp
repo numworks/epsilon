@@ -95,12 +95,12 @@ Expression LogarithmNode<1>::unaryFunctionDifferential() {
 /**/
 
 template<>
-Expression LogarithmNode<1>::shallowBeautify(ReductionContext reductionContext) {
+Expression LogarithmNode<1>::shallowBeautify(ReductionContext * reductionContext) {
   return CommonLogarithm(this);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowBeautify(ReductionContext reductionContext) {
+Expression LogarithmNode<2>::shallowBeautify(ReductionContext * reductionContext) {
   return Logarithm(this).shallowBeautify();
 }
 

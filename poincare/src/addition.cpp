@@ -46,7 +46,7 @@ Expression AdditionNode::shallowReduce(ReductionContext reductionContext) {
   return Addition(this).shallowReduce(reductionContext);
 }
 
-Expression AdditionNode::shallowBeautify(ReductionContext reductionContext) {
+Expression AdditionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Addition(this).shallowBeautify(reductionContext);
 }
 
@@ -84,7 +84,7 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
   return deg;
 }
 
-Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
   /* Beautifying AdditionNode essentially consists in adding Subtractions if
    * needed.
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
@@ -98,12 +98,12 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionC
   /* Sort children in decreasing order:
    * 1+x+x^2 --> x^2+x+1
    * 1+R(2) --> R(2)+1 */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext.context(), true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext->context(), true);
 
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     // Try to make the child i positive if any negative numeral factor is found
-    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(reductionContext);
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(*reductionContext);
     if (subtractant.isUninitialized())
     {
       // if subtractant is not initialized, it means the child i had no negative numeral factor
@@ -130,7 +130,6 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionC
   }
 
   Expression result = squashUnaryHierarchyInPlace();
-
   return result;
 }
 

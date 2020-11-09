@@ -47,7 +47,7 @@ private:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const override;
   // Derivation
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
@@ -85,7 +85,7 @@ public:
   // Simplification
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);

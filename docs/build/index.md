@@ -58,8 +58,7 @@ Once the SDK has been installed, just open your terminal (Msys2, Terminal.app, x
 
 ```
 make PLATFORM=simulator clean
-make PLATFORM=simulator
-./epsilon.elf
+make PLATFORM=simulator epsilon_run
 ```
 
 ## Run Epsilon on your calculator

@@ -19,8 +19,8 @@ Expression LeastCommonMultipleNode::shallowReduce(ReductionContext reductionCont
   return LeastCommonMultiple(this).shallowReduce(reductionContext);
 }
 
-Expression LeastCommonMultipleNode::shallowBeautify(ReductionContext reductionContext) {
-  return LeastCommonMultiple(this).shallowBeautify(reductionContext.context());
+Expression LeastCommonMultipleNode::shallowBeautify(ReductionContext * reductionContext) {
+  return LeastCommonMultiple(this).shallowBeautify(reductionContext->context());
 }
 
 template<typename T>

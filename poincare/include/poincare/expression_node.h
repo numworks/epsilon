@@ -284,8 +284,9 @@ public:
 
   /* Simplification */
   /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);
+  /*!*/ virtual void deepBeautifyChildren(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
-  /*!*/ virtual Expression shallowBeautify(ReductionContext reductionContext);
+  /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
   /*!*/ virtual bool derivate(ReductionContext, Expression symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential();
   /* Return a clone of the denominator part of the expression */

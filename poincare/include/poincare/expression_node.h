@@ -286,6 +286,12 @@ public:
   /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);
   /*!*/ virtual void deepBeautifyChildren(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
+  /* TODO: shallowBeautify takes a pointer to the reduction context, unlike
+   * other methods. The pointer is needed to allow UnitConvert to modify the
+   * context and prevent unit modifications (in Expression::deepBeautify, after
+   * calling UnitConvert::shallowBeautify).
+   * We should uniformize this behaviour and use pointers in other methods using
+   * the reduction context. */
   /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
   /*!*/ virtual bool derivate(ReductionContext, Expression symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential();

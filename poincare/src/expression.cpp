@@ -388,6 +388,18 @@ Expression Expression::shallowReduceUsingApproximation(ExpressionNode::Reduction
   return *this;
 }
 
+void Expression::defaultDeepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
+  const int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    Expression child = childAtIndex(i);
+    child = child.deepBeautify(reductionContext);
+    // We add missing Parentheses after beautifying the parent and child
+    if (node()->childAtIndexNeedsUserParentheses(child, i)) {
+      replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
+    }
+  }
+}
+
 bool Expression::SimplificationHasBeenInterrupted() {
   return sSimplificationHasBeenInterrupted;
 }
@@ -656,7 +668,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
       ecomplexClone.imag().deepBeautify(userReductionContext);
       *approximateExpression = ecomplexClone.approximate<double>(context, complexFormat, angleUnit);
     }
-    // Step 2: create the simplied expression with the required complex format
+    // Step 2: create the simplified expression with the required complex format
     Expression ra = complexFormat == Preferences::ComplexFormat::Polar ?
       ecomplex.clone().convert<ComplexCartesian>().norm(userReductionContext).shallowReduce(userReductionContext) :
       ecomplex.real();
@@ -833,16 +845,8 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
 }
 
 Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = shallowBeautify(reductionContext);
-  const int nbChildren = e.numberOfChildren();
-  for (int i = 0; i < nbChildren; i++) {
-    Expression child = e.childAtIndex(i);
-    child = child.deepBeautify(reductionContext);
-    // We add missing Parentheses after beautifying the parent and child
-    if (e.node()->childAtIndexNeedsUserParentheses(child, i)) {
-      e.replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
-    }
-  }
+  Expression e = shallowBeautify(&reductionContext);
+  e.deepBeautifyChildren(reductionContext);
   return e;
 }
 

@@ -115,7 +115,7 @@ Expression DecimalNode::shallowReduce(ReductionContext reductionContext) {
   return Decimal(this).shallowReduce();
 }
 
-Expression DecimalNode::shallowBeautify(ReductionContext reductionContext) {
+Expression DecimalNode::shallowBeautify(ReductionContext * reductionContext) {
   return Decimal(this).shallowBeautify();
 }
 

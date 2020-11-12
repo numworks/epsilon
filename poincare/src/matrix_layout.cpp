@@ -314,6 +314,7 @@ void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColo
 void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
   int rowIndex = rowAtChildIndex(index);
+  int rowIsEmpty = isRowEmpty(rowIndex);
   int columnIndex = columnAtChildIndex(index);
   bool columnIsEmpty = isColumnEmpty(columnIndex);
   int newIndex = index;
@@ -321,6 +322,10 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
     // If the column is now empty, delete it
     deleteColumnAtIndex(columnIndex);
     newIndex -= rowIndex;
+  }
+  if (rowIsEmpty && m_numberOfRows > 2) {
+    // If the row is now empty, delete it
+    deleteRowAtIndex(rowIndex);
   }
   if (cursor) {
     assert(newIndex >= 0 && newIndex < m_numberOfColumns*m_numberOfRows);

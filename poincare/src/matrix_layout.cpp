@@ -318,12 +318,12 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   int columnIndex = columnAtChildIndex(index);
   bool columnIsEmpty = isColumnEmpty(columnIndex);
   int newIndex = index;
-  if (columnIsEmpty && m_numberOfColumns > 2) {
+  if (columnIsEmpty && m_numberOfColumns > 2 && columnIndex == m_numberOfColumns - 2) {
     // If the column is now empty, delete it
     deleteColumnAtIndex(columnIndex);
     newIndex -= rowIndex;
   }
-  if (rowIsEmpty && m_numberOfRows > 2) {
+  if (rowIsEmpty && m_numberOfRows > 2 && rowIndex == m_numberOfRows - 2) {
     // If the row is now empty, delete it
     deleteRowAtIndex(rowIndex);
   }

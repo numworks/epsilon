@@ -92,20 +92,32 @@ void MatrixLayoutNode::willAddSiblingToEmptyChildAtIndex(int childIndex) {
 }
 
 void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  // Deleting the left empty layout of an empty row deletes the row
+  /* Deleting the left empty layout of an empty row deletes the row, and
+   * deleting the top empty layout of an empty column deletes the column. */
   assert(cursor != nullptr);
   LayoutNode * pointedChild = cursor->layoutNode();
   if (pointedChild->isEmpty()) {
     int indexOfPointedLayout = indexOfChild(pointedChild);
-    if (columnAtChildIndex(indexOfPointedLayout) == 0) {
-      int rowIndex = rowAtChildIndex(indexOfPointedLayout);
+    int columnIndex = columnAtChildIndex(indexOfPointedLayout);
+    int rowIndex = rowAtChildIndex(indexOfPointedLayout);
+    bool deleted = false;
+    if (columnIndex == 0) {
       if (rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex) && m_numberOfRows > 2) {
         deleteRowAtIndex(rowIndex);
+        deleted = true;
+      }
+    }
+    if (rowIndex == 0) {
+      if (columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex) && m_numberOfColumns > 2) {
+        deleteColumnAtIndex(columnIndex);
+        deleted = true;
+      }
+    }
+    if (deleted) {
         assert(indexOfPointedLayout >= 0 && indexOfPointedLayout < m_numberOfColumns*m_numberOfRows);
         cursor->setLayoutNode(childAtIndex(indexOfPointedLayout));
         cursor->setPosition(LayoutCursor::Position::Right);
         return;
-      }
     }
   }
   GridLayoutNode::deleteBeforeCursor(cursor);

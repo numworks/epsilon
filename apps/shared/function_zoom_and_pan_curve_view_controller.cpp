@@ -37,9 +37,12 @@ void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool viewWillAppear)
   float currentRange = m_interactiveRange->yMax() - m_interactiveRange->yMin();
   float newYMin = 0;
   if (viewWillAppear) {
-    newYMin = currentYMin + ((float)ContentView::k_legendHeight)/((float)k_standardViewHeight)*currentRange;
+    float rangeOffscreen = ((float)ContentView::k_legendHeight)/((float)k_standardViewHeight)*currentRange;
+    newYMin = currentYMin + rangeOffscreen;
+    m_interactiveRange->setOffscreenYAxis(rangeOffscreen);
   } else {
     newYMin = m_interactiveRange->yMax() - currentRange*((float)k_standardViewHeight)/(((float)k_standardViewHeight)-((float)ContentView::k_legendHeight));
+    m_interactiveRange->setOffscreenYAxis(0.f);
   }
   m_interactiveRange->setYMin(newYMin);
   m_contentView.curveView()->reload();

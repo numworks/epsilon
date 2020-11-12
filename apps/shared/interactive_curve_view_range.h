@@ -46,6 +46,8 @@ public:
   void setYMin(float f) override;
   void setYMax(float f) override;
 
+  void setOffscreenYAxis(float f) { m_offscreenYAxis = f; }
+
   // Window
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
@@ -77,6 +79,9 @@ protected:
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
+  float offscreenYAxis() const override { return m_offscreenYAxis; }
+
+  float m_offscreenYAxis;
   bool m_zoomAuto;
   bool m_zoomNormalize;
 };

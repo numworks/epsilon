@@ -24,7 +24,7 @@ public:
     return computeGridUnit(k_minNumberOfXGridUnits, k_maxNumberOfXGridUnits, xMax() - xMin());
   }
   virtual float yGridUnit() const {
-    return computeGridUnit(k_minNumberOfYGridUnits, k_maxNumberOfYGridUnits, yMax() - yMin());
+    return computeGridUnit(k_minNumberOfYGridUnits, k_maxNumberOfYGridUnits, yMax() - yMin() + offscreenYAxis());
   }
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
@@ -32,6 +32,7 @@ protected:
   constexpr static float k_minNumberOfXGridUnits = 7.0f;
   constexpr static float k_minNumberOfYGridUnits = 5.0f;
 private:
+  virtual float offscreenYAxis() const { return 0.f; }
   /* The grid units is constrained to be a number of type: k*10^n with k = 1,2 or 5
    * and n a relative integer. The choice of x and y grid units depend on the
    * grid range.*/

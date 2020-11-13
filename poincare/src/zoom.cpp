@@ -183,7 +183,7 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   float sum = 0.f;
   int pop = 0;
 
-  for (int i = 1; i < sampleSize; i++) {
+  for (int i = 1; i < sampleSize - 1; i++) {
     x = xMin + i * step;
     y = evaluation(x, context, auxiliary);
     if (!std::isfinite(y)) {

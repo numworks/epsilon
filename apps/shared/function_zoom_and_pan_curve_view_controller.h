@@ -14,6 +14,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Zoom");
 private:
   constexpr static KDCoordinate k_standardViewHeight = 175;
@@ -53,6 +54,7 @@ private:
 
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;
+  bool m_restoreZoomAuto;
 };
 
 }

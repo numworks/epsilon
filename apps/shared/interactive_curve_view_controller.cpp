@@ -318,9 +318,7 @@ bool InteractiveCurveViewController::normalizeButtonAction() {
 }
 
 void InteractiveCurveViewController::navigationButtonAction() {
-  m_interactiveRange->setZoomAuto(false);
   stackController()->push(zoomParameterController());
 }
-
 
 }

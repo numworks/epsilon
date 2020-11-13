@@ -7,7 +7,8 @@ namespace Shared {
 FunctionZoomAndPanCurveViewController::FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
   ZoomAndPanCurveViewController(parentResponder),
   m_contentView(curveView),
-  m_interactiveRange(interactiveRange)
+  m_interactiveRange(interactiveRange),
+  m_restoreZoomAuto(false)
 {
 }
 
@@ -32,6 +33,19 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
 }
 
+bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Back) {
+    /* If Auto is still on (because the navigation menu was brought up and
+     * closed immediately), we need to deactivate it to prevent the range from
+     * being recomputed in InteractiveCurveViewController::viewWillAppear().
+     * We need to store it's state to reset it later in viewDidDisappear(), so
+     * that open navigation without moving doesn't deactivate the Auto. */
+    m_restoreZoomAuto = m_interactiveRange->zoomAuto();
+    m_interactiveRange->setZoomAuto(false);
+  }
+  return ZoomAndPanCurveViewController::handleEvent(event);
+}
+
 void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool viewWillAppear) {
   float currentYMin = m_interactiveRange->yMin();
   float currentRange = m_interactiveRange->yMax() - m_interactiveRange->yMin();
@@ -43,6 +57,8 @@ void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool viewWillAppear)
   } else {
     newYMin = m_interactiveRange->yMax() - currentRange*((float)k_standardViewHeight)/(((float)k_standardViewHeight)-((float)ContentView::k_legendHeight));
     m_interactiveRange->setOffscreenYAxis(0.f);
+    m_interactiveRange->setZoomAuto(m_restoreZoomAuto);
+    m_restoreZoomAuto = false;
   }
   m_interactiveRange->setYMin(newYMin);
   m_contentView.curveView()->reload();

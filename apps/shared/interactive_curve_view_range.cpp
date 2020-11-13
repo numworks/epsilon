@@ -182,19 +182,29 @@ void InteractiveCurveViewRange::setDefault() {
   // Compute the interesting range
   m_delegate->interestingRanges(this);
   bool revertToNormalized = isOrthonormal(k_orthonormalTolerance);
+  /* If the horizontal bounds are integers, they are preset values and should
+   * not be changed. */
+  bool isDefaultRange = (xMin() == std::round(xMin())) && (xMax() == std::round(xMax()));
 
   // Add margins, then round limits.
-  float xRange = xMax() - xMin();
-  float yRange = yMax() - yMin();
-  m_xRange.setMin(roundLimit(m_delegate->addMargin(xMin(), xRange, false, true), xRange, true), k_lowerMaxFloat, k_upperMaxFloat);
+  float newXMin = xMin(), newXMax = xMax();
+  if (!isDefaultRange) {
+    float xRange = xMax() - xMin();
+    newXMin = roundLimit(m_delegate->addMargin(xMin(), xRange, false, true), xRange, true);
+    newXMax = roundLimit(m_delegate->addMargin(xMax(), xRange, false, false), xRange, false);
+  }
+  m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
-  MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(xMax(), xRange, false, false), xRange, false), k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+  float yRange = yMax() - yMin();
   m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);
 
   if (m_delegate->defaultRangeIsNormalized() || revertToNormalized) {
-    // Normalize the axes, so that a polar circle is displayed as a circle
-    normalize();
+    /* Normalize the axes, so that a polar circle is displayed as a circle.
+     * If we are displaying cartesian functions with a default range, we want
+     * the X bounds untouched. */
+    normalize(isDefaultRange && !m_delegate->defaultRangeIsNormalized());
   }
 
   setZoomAuto(true);

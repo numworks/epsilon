@@ -131,7 +131,7 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
   MemoizedCurveViewRange::protectedSetYMin(yMin() + y, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
-void InteractiveCurveViewRange::normalize() {
+void InteractiveCurveViewRange::normalize(bool forceChangeY) {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
 
@@ -148,7 +148,11 @@ void InteractiveCurveViewRange::normalize() {
   const float newYHalfRange = NormalizedYHalfRange(unit);
   float normalizedYXRatio = newYHalfRange/newXHalfRange;
 
-  Zoom::SetToRatio(normalizedYXRatio, &newXMin, &newXMax, &newYMin, &newYMax);
+  /* Most of the time, we do not want to shrink, to avoid hiding parts of the
+   * function. However, when forceChangeY is true, we shrink if the Y range is
+   * the longer one. */
+  bool shrink = forceChangeY && (newYMax - newYMin) / (newXMax - newXMin) > normalizedYXRatio;
+  Zoom::SetToRatio(normalizedYXRatio, &newXMin, &newXMax, &newYMin, &newYMax, shrink);
 
   m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);

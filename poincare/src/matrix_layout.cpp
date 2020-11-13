@@ -102,13 +102,13 @@ void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     int rowIndex = rowAtChildIndex(indexOfPointedLayout);
     bool deleted = false;
     if (columnIndex == 0) {
-      if (rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex) && m_numberOfRows > 2) {
+      if (m_numberOfRows > 2 && rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex)) {
         deleteRowAtIndex(rowIndex);
         deleted = true;
       }
     }
     if (rowIndex == 0) {
-      if (columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex) && m_numberOfColumns > 2) {
+      if (m_numberOfColumns > 2 && columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex)) {
         deleteColumnAtIndex(columnIndex);
         deleted = true;
       }

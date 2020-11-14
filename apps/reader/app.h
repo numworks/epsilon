@@ -2,6 +2,7 @@
 #define READER_H
 
 #include <escher.h>
+#include "list_book_controller.h"
 
 namespace reader {
 
@@ -20,7 +21,7 @@ public:
   };
 private:
   App(Snapshot * snapshot);
-
+  ListBookController m_listBookController;
 };
 
 }

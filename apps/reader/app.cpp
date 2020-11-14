@@ -30,7 +30,8 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 
 App::App(Snapshot * snapshot) :
-  ::App(snapshot, nullptr)
+  ::App(snapshot, &m_listBookController),
+  m_listBookController(nullptr)
 {
 }
 

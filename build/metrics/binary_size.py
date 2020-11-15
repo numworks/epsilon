@@ -132,6 +132,6 @@ for i,filename in enumerate(args.files):
 formatted_table = format_table(table)
 
 if args.escape:
-  print(urllib.parse.quote(formatted_table, safe='| :*+'))
+  print(urllib.parse.quote(formatted_table, safe='| :*+').replace("\n","\\n").replace("\n", "\\n"))
 else:
   print(formatted_table)

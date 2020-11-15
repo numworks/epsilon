@@ -29,7 +29,13 @@ jobs:
       - name: Prepare comment auth
         run: echo "::set-env name=GITHUB_TOKEN::$(echo ZGExNWM1YzNlMjVkMWU5ZGFmOWQyY2UxMmRhYjJiN2ZhMWM4ODVhMA== | base64 --decode)"
       - name: Add comment
-        uses: KeisukeYamashita/create-comment@v1
+        uses: actions/github-script@v3
         with:
-          comment: ${{ steps.binary_size.outputs.table }}
-          token: ${{ env.GITHUB_TOKEN }}
+          github-token: ${{ env.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '${{ steps.binary_size.outputs.table }}'
+            })

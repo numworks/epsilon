@@ -440,15 +440,11 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("cross([[1][2][3]],[[4][7][8]])", "[[-5][4][-1]]");
   assert_expression_approximates_to<double>("cross([[1][2][3]],[[4][7][8]])", "[[-5][4][-1]]");
-  assert_expression_approximates_to<float>("cross([[1,2,3]],[[4][7][8]])", "[[-5][4][-1]]");
-  assert_expression_approximates_to<double>("cross([[1,2,3]],[[4][7][8]])", "[[-5][4][-1]]");
-  assert_expression_approximates_to<float>("cross([[1,2,3]],[[4,7,8]])", "[[-5][4][-1]]");
-  assert_expression_approximates_to<double>("cross([[1,2,3]],[[4,7,8]])", "[[-5][4][-1]]");
+  assert_expression_approximates_to<float>("cross([[1,2,3]],[[4,7,8]])", "[[-5,4,-1]]");
+  assert_expression_approximates_to<double>("cross([[1,2,3]],[[4,7,8]])", "[[-5,4,-1]]");
 
   assert_expression_approximates_to<float>("dot([[1][2][3]],[[4][7][8]])", "42");
   assert_expression_approximates_to<double>("dot([[1][2][3]],[[4][7][8]])", "42");
-  assert_expression_approximates_to<float>("dot([[1,2,3]],[[4][7][8]])", "42");
-  assert_expression_approximates_to<double>("dot([[1,2,3]],[[4][7][8]])", "42");
   assert_expression_approximates_to<float>("dot([[1,2,3]],[[4,7,8]])", "42");
   assert_expression_approximates_to<double>("dot([[1,2,3]],[[4,7,8]])", "42");
 

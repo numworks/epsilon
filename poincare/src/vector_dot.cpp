@@ -44,8 +44,9 @@ Expression VectorDot::shallowReduce(ExpressionNode::ReductionContext reductionCo
   if (c0.type() == ExpressionNode::Type::Matrix && c1.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild0 = static_cast<Matrix&>(c0);
     Matrix matrixChild1 = static_cast<Matrix&>(c1);
-    // Dot product is defined between two vectors of the same dimensions
-    if (!matrixChild0.isVector() || !matrixChild1.isVector() || matrixChild0.numberOfChildren() != matrixChild1.numberOfChildren()) {
+    /* Dot product is defined between two vectors of the same dimension and
+     * orientation */
+    if (!matrixChild0.isVector() || !matrixChild1.isVector() || matrixChild0.numberOfChildren() != matrixChild1.numberOfChildren() || matrixChild0.numberOfRows() != matrixChild1.numberOfRows()) {
       return replaceWithUndefinedInPlace();
     }
     Expression a = matrixChild0.dot(&matrixChild1, reductionContext);

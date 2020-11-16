@@ -45,7 +45,7 @@ Expression VectorCross::shallowReduce(ExpressionNode::ReductionContext reduction
     Matrix matrixChild0 = static_cast<Matrix&>(c0);
     Matrix matrixChild1 = static_cast<Matrix&>(c1);
     // Cross product is defined between two vectors of size 3
-    if (!matrixChild0.isVector() || !matrixChild1.isVector() || matrixChild0.numberOfChildren() != 3 || matrixChild1.numberOfChildren() != 3) {
+    if (!matrixChild0.isVector() || !matrixChild1.isVector() || matrixChild0.numberOfChildren() != 3 || matrixChild1.numberOfChildren() != 3 || matrixChild0.numberOfRows() != matrixChild1.numberOfRows()) {
       return replaceWithUndefinedInPlace();
     }
     Expression a = matrixChild0.cross(&matrixChild1, reductionContext);

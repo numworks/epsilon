@@ -73,6 +73,11 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
   {
     return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);
   }
+  if (context == nullptr) {
+    // A context is required
+    assert(false);
+    return Undefined::Builder();
+  }
   Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */

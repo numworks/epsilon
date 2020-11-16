@@ -509,8 +509,8 @@ Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const
 }
 
 Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
-  // Dot product is defined between two vectors of same size
-  assert(isVector() &&  b->isVector() && numberOfChildren() == b->numberOfChildren());
+  // Dot product is defined between two vectors of same size and orientation
+  assert(isVector() &&  b->isVector() && numberOfChildren() == b->numberOfChildren() && numberOfRows() == b->numberOfRows());
   Addition sum = Addition::Builder();
   for (int j = 0; j < numberOfChildren(); j++) {
     Expression product = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone(), const_cast<Matrix *>(b)->childAtIndex(j).clone());
@@ -521,8 +521,9 @@ Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionCon
 }
 
 Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
-  // Cross product is defined between two vectors of size 3
-  assert(isVector() &&  b->isVector() && numberOfChildren() == 3 && b->numberOfChildren() == 3);
+  /* Cross product is defined between two vectors of size 3 and of same
+   * orientation */
+  assert(isVector() &&  b->isVector() && numberOfChildren() == 3 && b->numberOfChildren() == 3 && numberOfRows() == b->numberOfRows());
   Matrix matrix = Matrix::Builder();
   for (int j = 0; j < 3; j++) {
     int j1 = (j+1)%3;
@@ -535,7 +536,7 @@ Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionConte
     matrix.addChildAtIndexInPlace(difference, matrix.numberOfChildren(), matrix.numberOfChildren());
     difference.shallowReduce(reductionContext);
   }
-  matrix.setDimensions(3, 1);
+  matrix.setDimensions(numberOfRows(), numberOfColumns());
   return matrix;
 }
 

@@ -53,7 +53,7 @@ public:
   Expression imag() { return childAtIndex(1); }
 
   // Simplification
-  Expression shallowReduce();
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 
   // Common operations (done in-place)

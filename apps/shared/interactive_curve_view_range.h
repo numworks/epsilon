@@ -14,6 +14,7 @@ public:
   InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
     m_delegate(nullptr),
+    m_offscreenYAxis(0.f),
     m_zoomAuto(true),
     m_zoomNormalize(false)
   {

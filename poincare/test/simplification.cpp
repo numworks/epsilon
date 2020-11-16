@@ -1091,18 +1091,18 @@ QUIZ_CASE(poincare_simplification_matrix) {
 
   // Cross product
   assert_parsed_expression_simplify_to("cross([[0][1/√(2)][0]],[[0][0][1]])", "[[√(2)/2][0][0]]");
-  assert_parsed_expression_simplify_to("cross([[1][2][3]],[[4][7][8]])", "[[-5][4][-1]]");
-  assert_parsed_expression_simplify_to("cross([[1][π][𝐢]],[[𝐢π][𝐢π^2][-π]])", "[[0][0][0]]");
+  assert_parsed_expression_simplify_to("cross([[1,2,3]],[[4][7][8]])", "[[-5][4][-1]]");
+  assert_parsed_expression_simplify_to("cross([[1,π,𝐢]],[[𝐢π,𝐢π^2,-π]])", "[[0][0][0]]");
 
   // Dot product
   assert_parsed_expression_simplify_to("dot([[1/√(2)][0][0]],[[1][0][0]])", "√(2)/2");
-  assert_parsed_expression_simplify_to("dot([[1][1][0]],[[0][0][1]])", "0");
-  assert_parsed_expression_simplify_to("dot([[1][1][1]],[[0][π][𝐢]])", "π+𝐢");
+  assert_parsed_expression_simplify_to("dot([[1,1,0]],[[0][0][1]])", "0");
+  assert_parsed_expression_simplify_to("dot([[1,1,1]],[[0,π,𝐢]])", "π+𝐢");
 
   // Vector norm
   assert_parsed_expression_simplify_to("norm([[1/√(2)][0][0]])", "√(2)/2");
   assert_parsed_expression_simplify_to("norm([[1][2][3]])", "√(14)");
-  assert_parsed_expression_simplify_to("norm([[1][𝐢+1][π][-5]])", "√(π^2+28)");
+  assert_parsed_expression_simplify_to("norm([[1,𝐢+1,π,-5]])", "√(π^2+28)");
 
   // Expressions with unreduced matrix
   assert_reduce("confidence(cos(2)/25,3)→a");

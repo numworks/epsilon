@@ -7,8 +7,7 @@ namespace Shared {
 FunctionApp::Snapshot::Snapshot() :
   m_cursor(),
   m_indexFunctionSelectedByCursor(0),
-  m_rangeVersion(0),
-  m_angleUnitVersion(Preferences::AngleUnit::Radian)
+  m_rangeVersion(0)
 {
 }
 

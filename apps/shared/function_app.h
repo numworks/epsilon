@@ -17,7 +17,6 @@ public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
-    Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
     virtual FunctionStore * functionStore() = 0;
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
@@ -27,7 +26,6 @@ public:
   private:
     int m_indexFunctionSelectedByCursor;
     uint32_t m_rangeVersion;
-    Poincare::Preferences::AngleUnit m_angleUnitVersion;
   };
   static FunctionApp * app() {
     return static_cast<FunctionApp *>(Container::activeApp());

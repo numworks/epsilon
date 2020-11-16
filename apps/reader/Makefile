@@ -4,6 +4,7 @@ app_headers += apps/reader/app.h
 app_sreader_src = $(addprefix apps/reader/,\
   app.cpp \
   list_book_controller.cpp \
+  utility.cpp \
 )
 
 apps_src += $(app_sreader_src)

@@ -1,5 +1,5 @@
 #include "list_book_controller.h"
-
+#include "utility.h"
 namespace reader
 {
 
@@ -12,8 +12,20 @@ ListBookController::ListBookController(Responder * parentResponder):
     ViewController(parentResponder),
     m_tableView(this, this)
 {
-    m_files[0].name= "Harry Potter 1.txt";
-    m_nbFiles = 1;
+    size_t nbTotalFiles = External::Archive::numberOfFiles();
+
+    for(size_t i=0; i < nbTotalFiles; ++i)
+    {
+        External::Archive::File file;
+        External::Archive::fileAtIndex(i, file);
+        if(stringEndsWith(file.name, ".txt"))
+        {
+            m_files[m_nbFiles] = file;
+            m_nbFiles++;
+            if(m_nbFiles == NB_FILES)
+                break;
+        }
+    }
 }
 
 int ListBookController::numberOfRows() const

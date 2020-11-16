@@ -36,6 +36,7 @@ public:
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::MatrixComplex; }
+  bool isVector() const { return m_numberOfRows == 1 || m_numberOfColumns == 1; }
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
   virtual void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
@@ -71,6 +72,7 @@ public:
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }
+  bool isVector() const { return node()->isVector(); }
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
   void setDimensions(int rows, int columns);

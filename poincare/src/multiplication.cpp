@@ -912,7 +912,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
     real.shallowReduce(reductionContext);
     imag.shallowReduce(reductionContext);
-    return newComplexCartesian.shallowReduce();
+    return newComplexCartesian.shallowReduce(reductionContext);
   }
 
   return result;

@@ -29,7 +29,7 @@ ExpressionNode::NullStatus ComplexCartesianNode::nullStatus(Context * context) c
 }
 
 Expression ComplexCartesianNode::shallowReduce(ReductionContext reductionContext) {
-  return ComplexCartesian(this).shallowReduce();
+  return ComplexCartesian(this).shallowReduce(reductionContext);
 }
 
 Expression ComplexCartesianNode::shallowBeautify(ReductionContext * reductionContext) {
@@ -61,7 +61,7 @@ Complex<T> ComplexCartesianNode::templatedApproximate(ApproximationContext appro
   return Complex<T>::Builder(a.real(), b.real());
 }
 
-Expression ComplexCartesian::shallowReduce() {
+Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     e = e.defaultHandleUnitsInChildren();
@@ -69,7 +69,7 @@ Expression ComplexCartesian::shallowReduce() {
       return e;
     }
   }
-  if (imag().nullStatus(nullptr) == ExpressionNode::NullStatus::Null) {
+  if (imag().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     Expression r = real();
     replaceWithInPlace(r);
     return r;
@@ -137,9 +137,9 @@ Expression ComplexCartesian::squareNorm(ExpressionNode::ReductionContext reducti
 Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionContext) {
   Expression a;
   // Special case for pure real or pure imaginary cartesian
-  if (imag().nullStatus(nullptr) == ExpressionNode::NullStatus::Null) {
+  if (imag().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     a = real();
-  } else if (real().nullStatus(nullptr) == ExpressionNode::NullStatus::Null) {
+  } else if (real().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     a = imag();
   }
   if (!a.isUninitialized()) {

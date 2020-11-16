@@ -11,9 +11,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, rangeVersion),
-  m_angleUnitVersion(angleUnitVersion),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }
@@ -42,11 +41,7 @@ void FunctionGraphController::viewWillAppear() {
   if (functionGraphView()->context() == nullptr) {
     functionGraphView()->setContext(textFieldDelegateApp()->localContext());
   }
-  Preferences::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
-  if (*m_angleUnitVersion != newAngleUnitVersion) {
-    *m_angleUnitVersion = newAngleUnitVersion;
-    initCursorParameters();
-  }
+
   InteractiveCurveViewController::viewWillAppear();
 }
 

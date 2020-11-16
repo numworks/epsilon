@@ -12,7 +12,7 @@ namespace Shared {
 
 class FunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
 public:
-  FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion);
+  FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion);
   bool isEmpty() const override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -50,7 +50,6 @@ private:
   bool moveCursorVertically(int direction) override;
   uint32_t rangeVersion() override;
 
-  Poincare::Preferences::AngleUnit * m_angleUnitVersion;
   int * m_indexFunctionSelectedByCursor;
 };
 

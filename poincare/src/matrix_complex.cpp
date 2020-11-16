@@ -137,7 +137,7 @@ MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
 
 template<typename T>
 std::complex<T> MatrixComplexNode<T>::norm() const {
-  if (numberOfChildren() == 0 || numberOfColumns() > 1) {
+  if (!isVector()) {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> sum = 0;
@@ -153,7 +153,7 @@ std::complex<T> MatrixComplexNode<T>::dot(Evaluation<T> * e) const {
     return std::complex<T>(NAN, NAN);
   }
   MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
-  if (numberOfChildren() == 0 || numberOfColumns() > 1 || b->numberOfChildren() == 0 || b->numberOfColumns() > 1 || numberOfRows() != b->numberOfRows()) {
+  if (!isVector() || !b->isVector() || numberOfChildren() != b->numberOfChildren()) {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> sum = 0;
@@ -169,7 +169,7 @@ Evaluation<T> MatrixComplexNode<T>::cross(Evaluation<T> * e) const {
     return MatrixComplex<T>::Undefined();
   }
   MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
-  if (numberOfChildren() == 0 || numberOfColumns() != 1 || numberOfRows() != 3 || b->numberOfChildren() == 0 || b->numberOfColumns() != 1 || b->numberOfRows() != 3) {
+  if (!isVector() || !b->isVector() || numberOfChildren() != 3 || b->numberOfChildren() != 3) {
     return MatrixComplex<T>::Undefined();
   }
   std::complex<T> operandsCopy[3];

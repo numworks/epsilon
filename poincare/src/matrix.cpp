@@ -494,10 +494,10 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
 }
 
 Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const {
-  assert(numberOfColumns() == 1);
+  assert(isVector());
   Addition sum = Addition::Builder();
-  for (int j = 0; j < numberOfRows(); j++) {
-    Expression absValue = AbsoluteValue::Builder(const_cast<Matrix *>(this)->matrixChild(0, j).clone());
+  for (int j = 0; j < numberOfChildren(); j++) {
+    Expression absValue = AbsoluteValue::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone());
     Expression squaredAbsValue = Power::Builder(absValue, Rational::Builder(2));
     absValue.shallowReduce(reductionContext);
     sum.addChildAtIndexInPlace(squaredAbsValue, sum.numberOfChildren(), sum.numberOfChildren());
@@ -510,10 +510,10 @@ Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const
 
 Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
   // Dot product is defined between two vectors of same size
-  assert(numberOfRows() == b->numberOfRows() && numberOfColumns() == 1 && b->numberOfColumns() == 1);
+  assert(isVector() &&  b->isVector() && numberOfChildren() == b->numberOfChildren());
   Addition sum = Addition::Builder();
-  for (int j = 0; j < numberOfRows(); j++) {
-    Expression product = Multiplication::Builder(const_cast<Matrix *>(this)->matrixChild(0, j).clone(), const_cast<Matrix *>(b)->matrixChild(0, j).clone());
+  for (int j = 0; j < numberOfChildren(); j++) {
+    Expression product = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone(), const_cast<Matrix *>(b)->childAtIndex(j).clone());
     sum.addChildAtIndexInPlace(product, sum.numberOfChildren(), sum.numberOfChildren());
     product.shallowReduce(reductionContext);
   }
@@ -522,13 +522,13 @@ Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionCon
 
 Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
   // Cross product is defined between two vectors of size 3
-  assert(numberOfRows() == 3 && numberOfColumns() == 1 && b->numberOfRows() == 3 && b->numberOfColumns() == 1);
+  assert(isVector() &&  b->isVector() && numberOfChildren() == 3 && b->numberOfChildren() == 3);
   Matrix matrix = Matrix::Builder();
   for (int j = 0; j < 3; j++) {
     int j1 = (j+1)%3;
     int j2 = (j+2)%3;
-    Expression a1b2 = Multiplication::Builder(const_cast<Matrix *>(this)->matrixChild(0, j1).clone(), const_cast<Matrix *>(b)->matrixChild(0, j2).clone());
-    Expression a2b1 = Multiplication::Builder(const_cast<Matrix *>(this)->matrixChild(0, j2).clone(), const_cast<Matrix *>(b)->matrixChild(0, j1).clone());
+    Expression a1b2 = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j1).clone(), const_cast<Matrix *>(b)->childAtIndex(j2).clone());
+    Expression a2b1 = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j2).clone(), const_cast<Matrix *>(b)->childAtIndex(j1).clone());
     Expression difference  = Subtraction::Builder(a1b2, a2b1);
     a1b2.shallowReduce(reductionContext);
     a2b1.shallowReduce(reductionContext);

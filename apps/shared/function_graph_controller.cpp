@@ -68,9 +68,21 @@ void FunctionGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
 }
 
-
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
-  return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
+  float gridUnit = 2 * interactiveCurveViewRange()->xGridUnit();
+
+  float yMin = interactiveCurveViewRange()->yMin(), yMax = interactiveCurveViewRange()->yMax();
+  float middle = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+  float resLeft = gridUnit * std::floor(middle / gridUnit);
+  float yLeft = function->evaluateXYAtParameter(resLeft, context).x2();
+  float resRight = resLeft + gridUnit;
+  float yRight = function->evaluateXYAtParameter(resRight, context).x2();
+  if ((yMin < yLeft && yLeft < yMax) || !(yMin < yRight && yRight < yMax)) {
+    return resLeft;
+  }
+  return resRight;
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {

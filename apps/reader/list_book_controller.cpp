@@ -22,6 +22,8 @@ ListBookController::ListBookController(Responder * parentResponder):
         {
             m_files[m_nbFiles] = file;
             m_nbFiles++;
+            if(m_nbFiles == NB_FILES)
+                break;
         }
     }
 }

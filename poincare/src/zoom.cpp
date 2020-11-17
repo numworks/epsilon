@@ -221,36 +221,37 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   }
 }
 
+static float smoothToPowerOfTen(float x) {
+  return std::pow(10.f, std::round(std::log10(x)));
+}
+
 void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
-  constexpr float units[] = {k_smallUnitMantissa, k_mediumUnitMantissa, k_largeUnitMantissa};
   constexpr float rangeMagnitudeWeight = 0.2f;
   constexpr float maxMagnitudeDifference = 2.f;
-
   /* RefinedYRange for display, by default, evaluates the function 80 times,
    * and we call it 21 times. As we only need a rough estimate of the range to
    * compare it to the others, we save some time by only sampling the function
    * 20 times. */
   constexpr int sampleSize = k_sampleSize / 4;
-  float bestGrade = FLT_MAX;
+  float bestGrade = FLT_MAX, bestUnit, bestMagnitude;
+  float unit = k_smallUnitMantissa;
   float xMagnitude = k_minimalDistance;
   float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
   while (xMagnitude < k_maximalDistance) {
-    for(const float unit : units) {
-      const float xRange = unit * xMagnitude;
-      RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, sampleSize);
-      float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
-      float grade = std::fabs(std::log(currentRatio / yxRatio));
-      /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */
-      grade += std::fabs(std::log(xRange / 10.f) * std::log(xRange)) * rangeMagnitudeWeight;
-      if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
-        bestGrade = grade;
-        *xMin = -xRange;
-        *xMax = xRange;
-        *yMin = yMinRange;
-        *yMax = yMaxRange;
-      }
+    const float xRange = unit * xMagnitude;
+    RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, sampleSize);
+    float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
+    float grade = std::fabs(std::log(currentRatio / yxRatio));
+    /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */
+    grade += std::fabs(std::log(xRange / 10.f) * std::log(xRange)) * rangeMagnitudeWeight;
+    if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
+      bestGrade = grade;
+      bestUnit = unit;
+      bestMagnitude = xMagnitude;
+      *yMin = yMinRange;
+      *yMax = yMaxRange;
     }
-    xMagnitude *= 10.f;
+    NextUnit(&unit, &xMagnitude);
   }
   if (bestGrade == FLT_MAX) {
     *xMin = NAN;
@@ -260,6 +261,17 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     return;
   }
 
+  /* The X bounds are preset, user-friendly values : we do not want them to be
+   * altered by the normalization. To that end, we use a larger unit for the
+   * horizontal axis, so that the Y axis is the one that will be extended. */
+  float xRange = bestUnit * bestMagnitude;
+  while ((*yMax - *yMin) / (2 * xRange) > yxRatio) {
+    NextUnit(&bestUnit, &bestMagnitude);
+    xRange = bestUnit * bestMagnitude;
+  }
+  xRange = bestUnit * smoothToPowerOfTen(bestMagnitude);
+  *xMin = -xRange;
+  *xMax = xRange;
   SetToRatio(yxRatio, xMin, xMax, yMin, yMax);
 }
 

@@ -153,7 +153,7 @@ int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
 }
 
-void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) const {
+void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   constexpr int maxLength = 10;
   float xMins[maxLength], xMaxs[maxLength], yMins[maxLength], yMaxs[maxLength];

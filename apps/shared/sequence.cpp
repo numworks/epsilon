@@ -302,7 +302,7 @@ Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Contex
   return Float<double>::Builder(result);
 }
 
-void Sequence::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const {
+void Sequence::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const {
   Poincare::Zoom::ValueAtAbscissa evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
     return static_cast<float>(static_cast<const Shared::Sequence *>(auxiliary)->initialRank());
   };

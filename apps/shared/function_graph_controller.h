@@ -17,7 +17,7 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
-  void interestingRanges(Shared::InteractiveCurveViewRange * range) const override;
+  void interestingRanges(Shared::InteractiveCurveViewRange * range) override;
 
 protected:
   float cursorTopMarginRatio() override { return 0.068f; }

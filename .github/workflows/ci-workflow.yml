@@ -54,12 +54,16 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: numworks/setup-msys2@v1
+      - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
-      - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng
-      - run: msys2do make -j2 PLATFORM=simulator
-      - run: msys2do make -j2 PLATFORM=simulator epsilon.official.exe
-      - run: msys2do make -j2 PLATFORM=simulator test.headless.exe
+      - shell: msys2 {0}
+        run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng
+      - shell: msys2 {0}
+        run: make -j2 PLATFORM=simulator
+      - shell: msys2 {0}
+        run: make -j2 PLATFORM=simulator epsilon.official.exe
+      - shell: msys2 {0}
+        run: make -j2 PLATFORM=simulator test.headless.exe
       - run: cmd /c output\release\simulator\windows\test.headless.exe
       - uses: actions/upload-artifact@master
         with:

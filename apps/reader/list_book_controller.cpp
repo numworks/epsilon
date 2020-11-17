@@ -12,20 +12,7 @@ ListBookController::ListBookController(Responder * parentResponder):
     ViewController(parentResponder),
     m_tableView(this, this)
 {
-    size_t nbTotalFiles = External::Archive::numberOfFiles();
-
-    for(size_t i=0; i < nbTotalFiles; ++i)
-    {
-        External::Archive::File file;
-        External::Archive::fileAtIndex(i, file);
-        if(stringEndsWith(file.name, ".txt"))
-        {
-            m_files[m_nbFiles] = file;
-            m_nbFiles++;
-            if(m_nbFiles == NB_FILES)
-                break;
-        }
-    }
+    m_nbFiles = filesWithExtension(".txt", m_files, NB_FILES);
 }
 
 int ListBookController::numberOfRows() const

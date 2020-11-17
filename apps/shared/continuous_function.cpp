@@ -261,7 +261,7 @@ void ContinuousFunction::setTMax(float tMax) {
   setCache(nullptr);
 }
 
-void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const {
+void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const {
   if (plotType() != PlotType::Cartesian) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
@@ -291,7 +291,7 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
   }
 
   /* Try to display an orthonormal range. */
-  Zoom::RangeWithRatioForDisplay(evaluation, InteractiveCurveViewRange::NormalYXRatio(), xMin, xMax, yMin, yMax, context, this);
+  Zoom::RangeWithRatioForDisplay(evaluation, targetRatio, xMin, xMax, yMin, yMax, context, this);
   if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
     return;
   }

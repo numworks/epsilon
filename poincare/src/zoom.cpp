@@ -371,4 +371,21 @@ bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2
   return true;
 }
 
+void Zoom::NextUnit(float * mantissa, float * exponent) {
+  if (*mantissa == k_smallUnitMantissa) {
+    *mantissa = k_mediumUnitMantissa;
+    return;
+  }
+  if (*mantissa == k_mediumUnitMantissa) {
+    *mantissa = k_largeUnitMantissa;
+    return;
+  }
+  if (*mantissa == k_largeUnitMantissa) {
+    *mantissa = k_smallUnitMantissa;
+    *exponent = 10.f * *exponent;
+    return;
+  }
+  assert(false);
+}
+
 }

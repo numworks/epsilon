@@ -2,6 +2,25 @@
 
 namespace Ion {
 
+/* TODO: move this comment in the right section
+ * The calculator is flashed with a code and a signature. We need to verify that
+ * the signature has been made by Numworks, and that it matches the code.
+ *
+ * We must compute and compare the code's hash to ensure it hasn't been altered.
+ *
+ * To check the signature, we could leverage the hardware AES peripheral, which
+ * performs a fast symmetric-key encryption algorithm. We would encode the code
+ * hash as a signature which would then be decrypted using the same key.
+ * The decrypted signature is then compared with the actual hash.
+ * However, we would have to store the symmetric key on the calculator which
+ * would be a security threat.
+ *
+ * With an Asymmetric-key algorithm only the public key must be stored on the
+ * calculator. The decrypted signature is also compared with the actual hash.
+ *
+ * Both the encryption and decryption steps are slower with an Asymmetric-key
+ * algorithm, because of bigger keys. */
+
 const size_t ChunkBytes = 64;
 
 const size_t HashVariables = 8;

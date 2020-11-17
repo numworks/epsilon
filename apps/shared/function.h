@@ -55,7 +55,7 @@ public:
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 
   // Range
-  virtual void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const = 0;
+  virtual void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const = 0;
 
 protected:
   /* RecordDataBuffer is the layout of the data buffer of Record

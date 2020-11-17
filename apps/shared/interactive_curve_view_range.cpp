@@ -181,7 +181,6 @@ void InteractiveCurveViewRange::setDefault() {
 
   // Compute the interesting range
   m_delegate->interestingRanges(this);
-  bool revertToNormalized = isOrthonormal(k_orthonormalTolerance);
   /* If the horizontal bounds are integers, they are preset values and should
    * not be changed. */
   bool isDefaultRange = (xMin() == std::round(xMin())) && (xMax() == std::round(xMax()));
@@ -200,7 +199,7 @@ void InteractiveCurveViewRange::setDefault() {
   m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);
 
-  if (m_delegate->defaultRangeIsNormalized() || revertToNormalized) {
+  if (m_delegate->defaultRangeIsNormalized() || isOrthonormal(k_orthonormalTolerance)) {
     /* Normalize the axes, so that a polar circle is displayed as a circle.
      * If we are displaying cartesian functions with a default range, we want
      * the X bounds untouched. */

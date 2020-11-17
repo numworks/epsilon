@@ -159,9 +159,11 @@ void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * rang
   float xMins[maxLength], xMaxs[maxLength], yMins[maxLength], yMaxs[maxLength];
   int length = functionStore()->numberOfActiveFunctions();
 
+  float ratio = InteractiveCurveViewRange::NormalYXRatio() / (1 + cursorTopMarginRatio() + cursorBottomMarginRatio());
+
   for (int i = 0; i < length; i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    f->rangeForDisplay(xMins + i, xMaxs + i, yMins + i, yMaxs + i, context);
+    f->rangeForDisplay(xMins + i, xMaxs + i, yMins + i, yMaxs + i, ratio, context);
   }
 
   float xMin, xMax, yMin, yMax;

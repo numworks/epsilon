@@ -8,7 +8,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - name: Install ARM toolchain
-        uses: numworks/setup-arm-toolchain@v1
+        uses: numworks/setup-arm-toolchain@2020-q2
       - name: Checkout PR base
         uses: actions/checkout@v2
         with:

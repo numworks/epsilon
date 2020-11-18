@@ -8,10 +8,15 @@ namespace Poincare {
 
 class Array {
 public:
+  enum class VectorType {
+    None,
+    Vertical,
+    Horizontal
+  };
   Array() :
     m_numberOfRows(0),
     m_numberOfColumns(0) {}
-  bool isVector() const { return m_numberOfRows == 1 || m_numberOfColumns == 1; }
+  VectorType vectorType() const { return m_numberOfColumns == 1 ? VectorType::Vertical : (m_numberOfRows == 1 ? VectorType::Horizontal : VectorType::None); }
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
   void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }

@@ -1,34 +1,30 @@
 #ifndef POINCARE_GRID_LAYOUT_NODE_H
 #define POINCARE_GRID_LAYOUT_NODE_H
 
+#include <poincare/array.h>
+#include <poincare/empty_layout.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/empty_layout.h>
 
 namespace Poincare {
 
 class GridLayout;
 class MatrixLayoutNode;
 
-class GridLayoutNode : public LayoutNode {
+class GridLayoutNode : public Array, public LayoutNode {
   friend class MatrixLayoutNode;
   friend class BinomialCoefficientLayoutNode;
   friend class BinomialCoefficientLayout;
   friend class GridLayout;
 public:
   GridLayoutNode() :
-    LayoutNode(),
-    m_numberOfRows(0),
-    m_numberOfColumns(0)
+    Array(),
+    LayoutNode()
   {}
 
   // Layout
   Type type() const override { return Type::GridLayout; }
 
-  int numberOfRows() const { return m_numberOfRows; }
-  int numberOfColumns() const { return m_numberOfColumns; }
-  virtual void setNumberOfRows(int numberOfRows) { m_numberOfRows = numberOfRows; }
-  virtual void setNumberOfColumns(int numberOfColumns) { m_numberOfColumns = numberOfColumns; }
   KDSize gridSize() const { return KDSize(width(), height()); }
 
   // LayoutNode
@@ -70,8 +66,6 @@ protected:
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
-  int m_numberOfRows;
-  int m_numberOfColumns;
 
   // LayoutNode
   KDSize computeSize() override;
@@ -100,14 +94,8 @@ public:
   int numberOfColumns() const { return node()->numberOfColumns(); }
 private:
   virtual GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(Layout::node()); }
-  void setNumberOfRows(int rows) {
-    assert(rows >= 0);
-    node()->setNumberOfRows(rows);
-  }
-  void setNumberOfColumns(int columns) {
-    assert(columns >= 0);
-    node()->setNumberOfColumns(columns);
-  }
+  void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
+  void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }
 };
 
 }

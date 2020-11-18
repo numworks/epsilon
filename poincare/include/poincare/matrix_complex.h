@@ -1,8 +1,9 @@
 #ifndef POINCARE_MATRIX_COMPLEX_H
 #define POINCARE_MATRIX_COMPLEX_H
 
-#include <poincare/evaluation.h>
+#include <poincare/array.h>
 #include <poincare/complex.h>
+#include <poincare/evaluation.h>
 
 namespace Poincare {
 
@@ -10,12 +11,11 @@ template<typename T>
 class MatrixComplex;
 
 template<typename T>
-class MatrixComplexNode final : public EvaluationNode<T> {
+class MatrixComplexNode final : public Array, public EvaluationNode<T> {
 public:
   MatrixComplexNode() :
-    EvaluationNode<T>(),
-    m_numberOfRows(0),
-    m_numberOfColumns(0)
+    Array(),
+    EvaluationNode<T>()
   {}
 
   std::complex<T> complexAtIndex(int index) const;
@@ -36,11 +36,6 @@ public:
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::MatrixComplex; }
-  bool isVector() const { return m_numberOfRows == 1 || m_numberOfColumns == 1; }
-  int numberOfRows() const { return m_numberOfRows; }
-  int numberOfColumns() const { return m_numberOfColumns; }
-  virtual void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
-  virtual void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
   bool isUndefined() const override;
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override;
@@ -51,10 +46,6 @@ public:
   std::complex<T> norm() const override;
   std::complex<T> dot(Evaluation<T> * e) const override;
   Evaluation<T> cross(Evaluation<T> * e) const override;
-private:
-  // See comment on Matrix
-  uint16_t m_numberOfRows;
-  uint16_t m_numberOfColumns;
 };
 
 template<typename T>
@@ -79,14 +70,8 @@ public:
   void addChildAtIndexInPlace(Evaluation<T> t, int index, int currentNumberOfChildren);
 private:
   MatrixComplexNode<T> * node() { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
-  void setNumberOfRows(int rows) {
-    assert(rows >= 0);
-    node()->setNumberOfRows(rows);
-  }
-  void setNumberOfColumns(int columns) {
-    assert(columns >= 0);
-    node()->setNumberOfColumns(columns);
-  }
+  void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
+  void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }
   MatrixComplexNode<T> * node() const { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
 };
 

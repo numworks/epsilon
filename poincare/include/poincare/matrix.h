@@ -1,22 +1,16 @@
 #ifndef POINCARE_MATRIX_H
 #define POINCARE_MATRIX_H
 
+#include <poincare/array.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
 
-class MatrixNode /*final*/ : public ExpressionNode {
+class MatrixNode /*final*/ : public Array, public ExpressionNode {
 public:
-  MatrixNode() :
-    m_numberOfRows(0),
-    m_numberOfColumns(0) {}
+  MatrixNode() : Array() {}
 
   bool hasMatrixChild(Context * context) const;
-  bool isVector() const { return m_numberOfRows == 1 || m_numberOfColumns == 1; }
-  int numberOfRows() const { return m_numberOfRows; }
-  int numberOfColumns() const { return m_numberOfColumns; }
-  virtual void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
-  virtual void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixNode); }
@@ -53,11 +47,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
-  /* We could store 2 uint8_t but multiplying m_numberOfRows and
-   * m_numberOfColumns could then lead to overflow. As we are unlikely to use
-   * greater matrix than 100*100, uint16_t is fine. */
-  uint16_t m_numberOfRows;
-  uint16_t m_numberOfColumns;
 };
 
 class Matrix final : public Expression {
@@ -98,8 +87,8 @@ public:
 
 private:
   MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }
-  void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
-  void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
+  void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
+  void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }
   Expression computeInverseOrDeterminant(bool computeDeterminant, ExpressionNode::ReductionContext reductionContext, bool * couldCompute) const;
   // rowCanonize turns a matrix in its row echelon form, reduced or not.
   Matrix rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant, bool reduced = true);

@@ -63,7 +63,7 @@ public:
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }
-  bool isVector() const { return node()->isVector(); }
+  Array::VectorType vectorType() const { return node()->vectorType(); }
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
   void setDimensions(int rows, int columns);

@@ -57,7 +57,7 @@ public:
   static Matrix Builder() { return TreeHandle::NAryBuilder<Matrix, MatrixNode>(); }
 
   void setDimensions(int rows, int columns);
-  bool isVector() const { return node()->isVector(); }
+  Array::VectorType vectorType() const { return node()->vectorType(); }
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
   using TreeHandle::addChildAtIndexInPlace;

@@ -42,8 +42,8 @@ Expression VectorNorm::shallowReduce(ExpressionNode::ReductionContext reductionC
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild = static_cast<Matrix&>(c);
-    if (!matrixChild.isVector()) {
-      // Norm is only defined on vectors
+    // Norm is only defined on vectors only
+    if (matrixChild.vectorType() == Array::VectorType::None) {
       return replaceWithUndefinedInPlace();
     }
     Expression a = matrixChild.norm(reductionContext);

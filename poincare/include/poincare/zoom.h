@@ -45,7 +45,7 @@ private:
   static constexpr float k_minimalDistance = 1e-2f;
   static constexpr float k_asymptoteThreshold = 2e-1f;
   static constexpr float k_explosionThreshold = 1e1f;
-  static constexpr float k_stepFactor = 1.1f;
+  static constexpr float k_stepFactor = 1.09f;
   static constexpr float k_breathingRoom = 0.3f;
   static constexpr float k_forceXAxisThreshold = 0.2f;
   static constexpr float k_maxRatioBetweenPointsOfInterest = 100.f;

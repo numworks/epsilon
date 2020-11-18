@@ -494,7 +494,8 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
 }
 
 Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const {
-  assert(isVector());
+  // Norm is defined on vectors only
+  assert(vectorType() != Array::VectorType::None);
   Addition sum = Addition::Builder();
   for (int j = 0; j < numberOfChildren(); j++) {
     Expression absValue = AbsoluteValue::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone());
@@ -509,8 +510,8 @@ Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const
 }
 
 Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
-  // Dot product is defined between two vectors of same size and orientation
-  assert(isVector() &&  b->isVector() && numberOfChildren() == b->numberOfChildren() && numberOfRows() == b->numberOfRows());
+  // Dot product is defined between two vectors of same size and type
+  assert(vectorType() != Array::VectorType::None && vectorType() == b->vectorType() && numberOfChildren() == b->numberOfChildren());
   Addition sum = Addition::Builder();
   for (int j = 0; j < numberOfChildren(); j++) {
     Expression product = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone(), const_cast<Matrix *>(b)->childAtIndex(j).clone());
@@ -521,9 +522,8 @@ Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionCon
 }
 
 Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
-  /* Cross product is defined between two vectors of size 3 and of same
-   * orientation */
-  assert(isVector() &&  b->isVector() && numberOfChildren() == 3 && b->numberOfChildren() == 3 && numberOfRows() == b->numberOfRows());
+  // Cross product is defined between two vectors of size 3 and of same type.
+  assert(vectorType() != Array::VectorType::None && vectorType() == b->vectorType() && numberOfChildren() == 3 && b->numberOfChildren() == 3);
   Matrix matrix = Matrix::Builder();
   for (int j = 0; j < 3; j++) {
     int j1 = (j+1)%3;

@@ -22,6 +22,16 @@ constexpr float
   Zoom::k_largeUnitMantissa,
   Zoom::k_minimalRangeLength;
 
+static bool DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3) {
+  /* The float type looses precision surprisingly fast, and cannot confidently
+   * hold more than 6.6 digits of precision. Results more precise than that are
+   * too noisy to be be of any value. */
+  float yMin = std::min(y1, std::min(y2, y3));
+  float yMax = std::max(y1, std::max(y2, y3));
+  constexpr float maxPrecision = 2.4e-7f; // 2^-22 ~ 10^-6.6
+  return (yMax - yMin) / std::fabs(dx) > maxPrecision;
+}
+
 bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
 
@@ -84,7 +94,7 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
       /* Check for a change in the profile. */
       const PointOfInterest variation = BoundOfIntervalOfDefinitionIsReached(yPrev, yNext) ? PointOfInterest::Bound :
                             RootExistsOnInterval(yPrev, yNext) ? PointOfInterest::Root :
-                            ExtremumExistsOnInterval(yOld, yPrev, yNext) ? PointOfInterest::Extremum :
+                            (ExtremumExistsOnInterval(yOld, yPrev, yNext) && DoesNotOverestimatePrecision(dXNext, yOld, yPrev, yNext)) ? PointOfInterest::Extremum :
                             PointOfInterest::None;
       switch (static_cast<uint8_t>(variation)) {
         /* The fallthrough is intentional, as we only want to update the Y

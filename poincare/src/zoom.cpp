@@ -208,8 +208,8 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
     float bound = std::exp(sum / pop + 1.f);
     sampleYMin = std::max(sampleYMin, - bound);
     sampleYMax = std::min(sampleYMax, bound);
-    *yMin = sampleYMin;
-    *yMax = sampleYMax;
+    *yMin = std::min(*yMin, sampleYMin);
+    *yMax = std::max(*yMax, sampleYMax);
   }
   /* Round out the smallest bound to 0 if it is negligible compare to the
    * other one. This way, we can display the X axis for positive functions such

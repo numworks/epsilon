@@ -5,6 +5,9 @@
 
 using namespace Poincare;
 
+// When adding the graph window margins, this ratio gives an orthonormal window
+constexpr float NormalRatio = 0.442358822;
+
 class ParametersPack {
 public:
   ParametersPack(Expression expression, const char * symbol, Preferences::AngleUnit angleUnit) :
@@ -16,168 +19,157 @@ public:
   Expression expression() const { return m_expression; }
   const char * symbol() const { return m_symbol; }
   Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
+
 private:
   Expression m_expression;
   const char * m_symbol;
   Preferences::AngleUnit m_angleUnit;
 };
 
-constexpr float NormalRatio = 306.f / 576.f;
-
 float evaluate_expression(float x, Context * context, const void * auxiliary) {
   const ParametersPack * pack = static_cast<const ParametersPack *>(auxiliary);
   return pack->expression().approximateWithValueForSymbol<float>(pack->symbol(), x, context, Real, pack->angleUnit());
 }
 
-bool bracket(float a, float b, float d) {
-  assert(std::isfinite(a) && std::isfinite(b) && std::isfinite(d));
-  return a - d <= b && b <= a + d;
+bool float_equal(float a, float b, float tolerance = 0.f) {
+  assert(std::isfinite(tolerance));
+  return !(std::isnan(a) || std::isnan(b))
+      && a <= b + tolerance && a >= b - tolerance;
 }
 
-bool range_matches(float min, float max, float targetMin, float targetMax, float tolerance) {
-  assert(std::isfinite(targetMin) == std::isfinite(targetMax));
-
-  const float rangeTolerance = tolerance * (targetMax - targetMin);
-
-  if (std::isfinite(targetMin) && (targetMin <= targetMax)) {
-    return  std::isfinite(min) && std::isfinite(max)
-         && bracket(min, targetMin, rangeTolerance) && bracket(max, targetMax, rangeTolerance);
-  } else {
-    return (!std::isfinite(min) && !std::isfinite(max)) || (max < min);
-  }
+bool range1D_matches(float min, float max, float targetMin, float targetMax, float tolerance = 0.f) {
+  return (float_equal(min, targetMin, tolerance) && float_equal(max, targetMax, tolerance))
+      || (std::isnan(min) && std::isnan(max) && std::isnan(targetMin) && std::isnan(targetMax));
 }
 
-bool window_is_similar(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, bool addXMargin = false, float tolerance = 0.1f) {
-  assert(std::isfinite(targetXMin) == std::isfinite(targetXMax) && std::isfinite(targetYMin) == std::isfinite(targetYMax));
-
-  /* The target window given in the test should reflect the points of
-   * interest we try to display, and should not take into account the
-   * breathing room added by the algorithm. We handle it here. */
-  constexpr float margin = 0.3f; // Zoom::k_breathingRoom;
-  float xDelta = addXMargin ? (xMax - xMin) * margin : 0.f;
-
-  return range_matches(xMin, xMax, targetXMin - xDelta, targetXMax + xDelta, tolerance)
-      && range_matches(yMin, yMax, targetYMin, targetYMax, tolerance);
+bool ranges_match(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, float tolerance = 0.f) {
+  return range1D_matches(xMin, xMax, targetXMin, targetXMax, tolerance)
+      && range1D_matches(yMin, yMax, targetYMin, targetYMax, tolerance);
 }
 
-void assert_interesting_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin = FLT_MAX, float targetYMax = -FLT_MAX, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
+void assert_interesting_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
+  float xMin, xMax, yMin, yMax;
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
-  float xMin, xMax, yMin, yMax;
   ParametersPack aux(e, symbol, angleUnit);
-  Zoom::InterestingRangesForDisplay(&evaluate_expression, &xMin, &xMax, &yMin, &yMax, -INFINITY, INFINITY, &globalContext, &aux);
-
-  bool test = window_is_similar(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax, true);
-  quiz_assert_print_if_failure(test, definition);
-}
-
-void assert_has_no_interesting_range(const char * definition, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
-  assert_interesting_range_is(definition, NAN, NAN, NAN, NAN, angleUnit, symbol);
+  Zoom::InterestingRangesForDisplay(evaluate_expression, &xMin, &xMax, &yMin, &yMax, -INFINITY, INFINITY, &globalContext, &aux);
+  quiz_assert_print_if_failure(ranges_match(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax, FLT_EPSILON), definition);
 }
 
 QUIZ_CASE(poincare_zoom_interesting_ranges) {
-  assert_has_no_interesting_range(Undefined::Name());
-  assert_has_no_interesting_range("0");
-  assert_has_no_interesting_range("1");
-  assert_has_no_interesting_range("-100");
-  assert_has_no_interesting_range("x");
-  assert_has_no_interesting_range("x^2");
-  assert_has_no_interesting_range("-(x^3)");
-  assert_has_no_interesting_range("10×x^4");
-  assert_has_no_interesting_range("ℯ^(-x)");
+  assert_interesting_range_is("0", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("1", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("-100", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("x", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("x^2", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("-(x^3)", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("10×x^4", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("ℯ^(-x)", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("√(x^2+1)-x", NAN, NAN, NAN, NAN);
 
-  assert_interesting_range_is("x-21", 20.5, 22.5);
-  assert_interesting_range_is("-11x+100", 8.7, 9.5);
-  assert_interesting_range_is("x^2-1", -5, 5, -1, -1);
-  assert_interesting_range_is("(x+10)(x-10)", -10.5, 10.5, -100, -100);
-  assert_interesting_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", 0, 5, -16, 5);
-  assert_interesting_range_is("1/x", -2.5, 2.5);
-  assert_interesting_range_is("1/(x-10)", 8, 14);
-  assert_interesting_range_is("√(x)", 0, 7);
-  assert_interesting_range_is("ln(x)", 0, 5);
-  assert_interesting_range_is("sin(x)", -9, 9, -1, 1);
-  assert_interesting_range_is("sin(x)", -480, 480, -1, 1, Degree);
-  assert_interesting_range_is("cos(x)", -10, 10, -1, 1);
-  assert_interesting_range_is("cos(x)", -580, 580, -1, 1, Degree);
-  assert_interesting_range_is("tan(x)", -9, 9);
-  assert_interesting_range_is("tan(x)", -500, 500, FLT_MAX, -FLT_MAX, Degree);
-  assert_interesting_range_is("asin(x)", -1, 1);
-  assert_interesting_range_is("acos(x)", -1, 1, FLT_MAX, -FLT_MAX, Degree);
-  assert_interesting_range_is("atan(x)", -2, 2);
-  assert_interesting_range_is("sin(x)/x", -12, 12, -0.2, 1);
-  assert_interesting_range_is("x×sin(x)", -9, 9, -5, 8);
-  assert_interesting_range_is("x×ln(x)", 0.22, 0.88, -0.367828071, -0.367828071);
+  assert_interesting_range_is("x-21", 19.126959, 21.957670, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("-11x+100", 8.806580, 10.109919, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("x^2-1", -8.634861, 8.634861, -1, -1);
+  assert_interesting_range_is("(x+10)(x-10)", -17.205507, 17.205507, -100, -100);
+  assert_interesting_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", -1.61903656, 7.01582479, -16.8975754, 4.9766078);
+  assert_interesting_range_is("1/x", -3.97572827, 3.97572827, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("1/(1-x)", -2.81933546, 4.96758938, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("1/(x-10)", 5.72560453, 15.8184233, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("√(x)", -2.09669948, 9.08569717, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("ln(x)", -1.61903656, 7.01582479, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("sin(x)", -13.2858067, 13.2858067, -0.985581219, 0.985581219);
+  assert_interesting_range_is("cos(x)", -906.33136, 906.33136, -0.996542156, 0.989880025, Degree);
+  assert_interesting_range_is("tan(x)", -14.4815292, 14.4815292, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("1/tan(x)", -987.901184, 987.901184, FLT_MAX, -FLT_MAX, Degree);
+  assert_interesting_range_is("asin(x)", -1.67939043, 1.67939043, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("acos(x)", -1.67939043, 1.67939043, FLT_MAX, -FLT_MAX, Degree);
+  assert_interesting_range_is("atan(x)", -3.34629107, 3.34629107, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("x×sin(x)", -14.4815292, 14.4815292, -4.81068802, 7.47825241);
+  assert_interesting_range_is("x×ln(x)", -0.314885706, 1.36450469, -0.367841482, -0.367841482);
+  assert_interesting_range_is("root(x^3+1,3)-x", -2.732898, 2.45420456, 1.58665824, 1.58665824);
 }
 
-void assert_refined_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
+
+void assert_refined_range_is(const char * definition, float xMin, float xMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
+  float yMin = FLT_MAX, yMax = -FLT_MAX;
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
-  float yMin, yMax;
   ParametersPack aux(e, symbol, angleUnit);
-  Zoom::RefinedYRangeForDisplay(&evaluate_expression, targetXMin, targetXMax, &yMin, &yMax, &globalContext, &aux);
-
-  bool test = window_is_similar(targetXMin, targetXMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax);
-  quiz_assert_print_if_failure(test, definition);
+  Zoom::RefinedYRangeForDisplay(evaluate_expression, xMin, xMax, &yMin, &yMax, &globalContext, &aux);
+  quiz_assert_print_if_failure(range1D_matches(yMin, yMax, targetYMin, targetYMax, FLT_EPSILON), definition);
 }
 
-QUIZ_CASE(poincare_zoom_refined_ranges) {
-  assert_refined_range_is(Undefined::Name(), NAN, NAN, NAN, NAN);
-  assert_refined_range_is("0", NAN, NAN, NAN, NAN);
-
+QUIZ_CASE(poincare_zoom_refined_range) {
   assert_refined_range_is("1", -10, 10, 1, 1);
-  assert_refined_range_is("x", -10, 10, -10, 10);
-  assert_refined_range_is("x^2", -10, 10, 0, 37);
-  assert_refined_range_is("1/x", -10, 10, -0.73, 0.73);
-  assert_refined_range_is("(x-100)(x+100)", -120, 120, -10000, 4400);
-  assert_refined_range_is("sin(x)", -300, 300, -1, 1, Degree);
-  assert_refined_range_is("ℯ^x", -10, 10, 0, 3);
-  assert_refined_range_is("atan(x)", -100, 100, -90, 90, Degree);
+  assert_refined_range_is("-100", -10, 10, -100, -100);
+  assert_refined_range_is("x", -10, 10, -9.74683571, 9.74683571);
+  assert_refined_range_is("x^2", -10, 10, 0, 36.5035477);
+  assert_refined_range_is("-(x^3)", -10, 10, -133.769241, 133.769241);
+  assert_refined_range_is("10×x^4", -10, 10, 0, 4902.04102);
+  assert_refined_range_is("ℯ^(-x)", -10, 10, 0, 2.71828127);
+  assert_refined_range_is("x-21", 19.126959, 21.957670, -1.48373008, 0.92183876);
+  assert_refined_range_is("-11x+100", 8.806580, 10.109919, -8.44783878, 2.94615173);
+  assert_refined_range_is("x^2-1", -8.634861, 8.634861, -0.988053143, 26.5802021);
+  assert_refined_range_is("(x+10)(x-10)", -17.205507, 17.205507, -99.9525681, 156.399399);
+  assert_refined_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", -1.61903656, 7.01582479, -16.8871994, 67.6706848);
+  assert_refined_range_is("1/x", -3.97572827, 3.97572827, -1.86576664, 1.86576664);
+  assert_refined_range_is("1/(x-10)", 5.72560453, 15.8184233, -1.45247293, 1.45247293);
+  assert_refined_range_is("√(x)", -2.09669948, 9.08569717, 0, 2.99067688);
+  assert_refined_range_is("ln(x)", -1.61903656, 7.01582479, -2.63196707, 1.93246615);
+  assert_refined_range_is("sin(x)", -13.2858067, 13.2858067, -0.998738647, 0.998738587);
+  assert_refined_range_is("cos(x)", -906.33136, 906.33136, -0.999904931, 0.998831093, Degree);
+  assert_refined_range_is("tan(x)", -14.4815292, 14.4815292, -2.86643958, 2.86643958);
+  assert_refined_range_is("asin(x)", -1.67939043, 1.67939043, -1.131253, 1.131253);
+  assert_refined_range_is("acos(x)", -1.67939043, 1.67939043, 0, 177.611237, Degree);
+  assert_refined_range_is("atan(x)", -3.34629107, 3.34629107, -1.27329516, 1.27329516);
+  assert_refined_range_is("x×sin(x)", -14.4815292, 14.4815292, -7.37234354, 7.37234354);
+  assert_refined_range_is("x×ln(x)", -0.314885706, 1.36450469, -0.367870897, 0.396377981);
+  assert_refined_range_is("x!", -10, 10, NAN, NAN);
 }
 
-bool can_find_normal_range(const char * definition, Preferences::AngleUnit angleUnit, const char * symbol) {
+void assert_orthonormal_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
+  assert((std::isnan(targetXMin) && std::isnan(targetXMax) && std::isnan(targetYMin) && std::isnan(targetYMax))
+      || float_equal((targetYMax - targetYMin) / (targetXMax - targetXMin), NormalRatio, FLT_EPSILON));
+  float xMin, xMax, yMin, yMax;
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
-  float xMin, xMax, yMin, yMax;
   ParametersPack aux(e, symbol, angleUnit);
-  Zoom::RangeWithRatioForDisplay(&evaluate_expression, NormalRatio, &xMin, &xMax, &yMin, &yMax, &globalContext, &aux);
-  return std::isfinite(xMin) && std::isfinite(xMax) && std::isfinite(yMin) && std::isfinite(yMax);
+  Zoom::RangeWithRatioForDisplay(evaluate_expression, NormalRatio, &xMin, &xMax, &yMin, &yMax, &globalContext, &aux);
+  quiz_assert_print_if_failure(ranges_match(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax, FLT_EPSILON), definition);
 }
 
-void assert_range_is_normalized(const char * definition, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
-  quiz_assert_print_if_failure(can_find_normal_range(definition, angleUnit, symbol), definition);
+QUIZ_CASE(poincare_zoom_range_with_ratio) {
+  assert_orthonormal_range_is("1", NAN, NAN, NAN, NAN);
+  assert_orthonormal_range_is("x", -5, 5, -2.21179414, 2.21179414);
+  assert_orthonormal_range_is("x^2", -2, 2, -0.172234654, 1.59720063);
+  assert_orthonormal_range_is("x^3", -5, 5, -2.21179414, 2.21179414);
+  assert_orthonormal_range_is("ℯ^x", -5, 5, -0.852653265, 3.57093501);
+  assert_orthonormal_range_is("ℯ^x+4", -5, 5, 3.21590924, 7.63949776);
 }
 
-QUIZ_CASE(poincare_zoom_ratio_ranges) {
-  assert_range_is_normalized("x");
-  assert_range_is_normalized("x^2");
-  assert_range_is_normalized("-(x^3)");
-  assert_range_is_normalized("ℯ^x");
-  assert_range_is_normalized("ℯ^(-x)");
-}
-
-void assert_full_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
+void assert_full_range_is(const char * definition, float xMin, float xMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
   float yMin, yMax;
   constexpr float stepDivisor = Ion::Display::Width;
-  const float step = (targetXMax - targetXMin) / stepDivisor;
+  const float step = (xMax - xMin) / stepDivisor;
   ParametersPack aux(e, symbol, angleUnit);
-  Zoom::FullRange(&evaluate_expression, targetXMin, targetXMax, step, &yMin, &yMax, &globalContext, &aux);
-  quiz_assert_print_if_failure(window_is_similar(targetXMin, targetXMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax), definition);
+  Zoom::FullRange(&evaluate_expression, xMin, xMax, step, &yMin, &yMax, &globalContext, &aux);
+  quiz_assert_print_if_failure(range1D_matches(yMin, yMax, targetYMin, targetYMax), definition);
 }
 
-QUIZ_CASE(poincare_zoom_full_ranges) {
+QUIZ_CASE(poincare_zoom_full_range) {
   assert_full_range_is("1", -10, 10, 1, 1);
   assert_full_range_is("x", -10, 10, -10, 10);
   assert_full_range_is("x-3", -10, 10, -13, 7);
   assert_full_range_is("-6x", -10, 10, -60, 60);
   assert_full_range_is("x^2", -10, 10, 0, 100);
-  assert_full_range_is("ℯ^x", -10, 10, 0, 22000);
+  assert_full_range_is("ℯ^x", -10, 10, 0.0000453999419, 22026.459);
   assert_full_range_is("sin(x)", -3600, 3600, -1, 1, Degree);
-  assert_full_range_is("acos(x)", -10, 10, 0, 3.14);
+  assert_full_range_is("acos(x)", -10, 10, 0, 3.1415925);
 }
 
-void assert_ranges_combine(int length, float * mins, float * maxs, float targetMin, float targetMax) {
+void assert_ranges_combine_to(int length, float * mins, float * maxs, float targetMin, float targetMax) {
   float resMin, resMax;
   Zoom::CombineRanges(length, mins, maxs, &resMin, &resMax);
   quiz_assert(resMin == targetMin && resMax == targetMax);
@@ -188,19 +180,19 @@ void assert_sanitized_range_is(float xMin, float xMax, float yMin, float yMax, f
   quiz_assert(xMin == targetXMin && xMax == targetXMax && yMin == targetYMin && yMax == targetYMax);
 }
 
-void assert_ratio_is_set(float xMin, float xMax, float yMin, float yMax, float yxRatio) {
-  {
-    float tempXMin = xMin, tempXMax = xMax, tempYMin = yMin, tempYMax = yMax;
-    Zoom::SetToRatio(yxRatio, &tempXMin, &tempXMax, &tempYMin, &tempYMax, false);
-    quiz_assert((tempYMax - tempYMin) / (tempXMax - tempXMin) == yxRatio);
-    quiz_assert((tempYMax - tempYMin) > (yMax - yMin) || (tempXMax - tempXMin) > (xMax - xMin));
-  }
-  {
-    float tempXMin = xMin, tempXMax = xMax, tempYMin = yMin, tempYMax = yMax;
-    Zoom::SetToRatio(yxRatio, &tempXMin, &tempXMax, &tempYMin, &tempYMax, true);
-    quiz_assert((tempYMax - tempYMin) / (tempXMax - tempXMin) == yxRatio);
-    quiz_assert((tempYMax - tempYMin) < (yMax - yMin) || (tempXMax - tempXMin) < (xMax - xMin));
-  }
+void assert_ratio_is_set_to(float yxRatio, float xMin, float xMax, float yMin, float yMax, bool shrink, float targetXMin, float targetXMax, float targetYMin, float targetYMax) {
+  float tempXMin = xMin, tempXMax = xMax, tempYMin = yMin, tempYMax = yMax;
+  assert(yxRatio == (targetYMax - targetYMin) / (targetXMax - targetXMin));
+  Zoom::SetToRatio(yxRatio, &tempXMin, &tempXMax, &tempYMin, &tempYMax, shrink);
+  quiz_assert(ranges_match(tempXMin, tempXMax, tempYMin, tempYMax, targetXMin, targetXMax, targetYMin, targetYMax, FLT_EPSILON));
+}
+
+void assert_shrinks_to(float yxRatio, float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax) {
+  assert_ratio_is_set_to(yxRatio, xMin, xMax, yMin, yMax, true, targetXMin, targetXMax, targetYMin, targetYMax);
+}
+
+void assert_expands_to(float yxRatio, float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax) {
+  assert_ratio_is_set_to(yxRatio, xMin, xMax, yMin, yMax, false, targetXMin, targetXMax, targetYMin, targetYMax);
 }
 
 QUIZ_CASE(poincare_zoom_utility) {
@@ -209,39 +201,62 @@ QUIZ_CASE(poincare_zoom_utility) {
     constexpr int length = 1;
     float mins[length] = {-10};
     float maxs[length] = {10};
-    assert_ranges_combine(length, mins, maxs, -10, 10);
+    assert_ranges_combine_to(length, mins, maxs, -10, 10);
   }
   {
     constexpr int length = 2;
     float mins[length] = {-1, -2};
     float maxs[length] = {1, 2};
-    assert_ranges_combine(length, mins, maxs, -2, 2);
+    assert_ranges_combine_to(length, mins, maxs, -2, 2);
   }
   {
     constexpr int length = 2;
     float mins[length] = {-1, 9};
     float maxs[length] = {1, 11};
-    assert_ranges_combine(length, mins, maxs, -1, 11);
+    assert_ranges_combine_to(length, mins, maxs, -1, 11);
   }
   {
     constexpr int length = 3;
     float mins[length] = {-3, -2, -1};
     float maxs[length] = {1, 2, 3};
-    assert_ranges_combine(length, mins, maxs, -3, 3);
+    assert_ranges_combine_to(length, mins, maxs, -3, 3);
   }
 
   // Range sanitation
-  assert_sanitized_range_is(-10, 10, -10, 10, -10, 10, -10, 10);
-  assert_sanitized_range_is(-10, 10, 100, 100, -10, 10, 94.6875, 105.3125);
-  assert_sanitized_range_is(3, -3, -10, 10, -18.8235302, 18.8235302, -10, 10);
-  assert_sanitized_range_is(3, -3, 2, 2, -10, 10, -3.3125, 7.3125);
-  assert_sanitized_range_is(NAN, NAN, NAN, NAN, -10, 10, -5.3125, 5.3125);
+  assert_sanitized_range_is(
+      -10, 10, -10, 10,
+      -10, 10, -10, 10);
+  assert_sanitized_range_is(
+      -10, 10, 100, 100,
+      -10, 10, 95.5764083, 104.423592);
+  assert_sanitized_range_is(
+      3, -3, -10, 10,
+      -22.6060829, 22.6060829, -10, 10);
+  assert_sanitized_range_is(
+      3, -3, 2, 2,
+      -10, 10, -2.42358828, 6.42358828);
+  assert_sanitized_range_is(
+      NAN, NAN, NAN, NAN,
+      -10, 10, -4.42358828, 4.42358828);
 
   // Ratio
-  assert_ratio_is_set(-10, 10, -10, 10, 0.1);
-  assert_ratio_is_set(-10, 10, -10, 10, 0.5);
-  assert_ratio_is_set(-10, 10, -10, 10, NormalRatio);
-  assert_ratio_is_set(-10, 10, -10, 10, 3);
-
-
+  assert_shrinks_to(1.f,
+      -10, 10, -10, 10,
+      -10, 10, -10, 10);
+  assert_expands_to(1.f,
+      -10, 10, -10, 10,
+      -10, 10, -10, 10);
+  assert_shrinks_to(0.5f,
+      -10, 10, -10, 10,
+      -10, 10, -5, 5);
+  assert_expands_to(0.5f,
+      -10, 10, -10, 10,
+      -20, 20, -10, 10);
+  assert_shrinks_to(1.33f,
+      -10, 10, -10, 10,
+      -7.518797, 7.518797, -10, 10);
+  assert_expands_to(1.33f,
+      -10, 10, -10, 10,
+      -10, 10, -13.3, 13.3);
 }
+

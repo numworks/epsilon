@@ -223,12 +223,12 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText) {
     }
     if (codePoint == UCodePointMultiplicationSign) {
       newChild = CodePointLayout::Builder(UCodePointMultiplicationSign);
-    } else if (codePoint == '(') {
+    } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
-    } else if (codePoint == ')') {
+    } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
       newChild = RightParenthesisLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the

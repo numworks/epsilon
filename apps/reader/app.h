@@ -22,6 +22,7 @@ public:
 private:
   App(Snapshot * snapshot);
   ListBookController m_listBookController;
+  StackViewController m_stackViewController;
 };
 
 }

@@ -30,8 +30,9 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 
 App::App(Snapshot * snapshot) :
-  ::App(snapshot, &m_listBookController),
-  m_listBookController(nullptr)
+  ::App(snapshot, &m_stackViewController),
+  m_listBookController(&m_stackViewController),
+  m_stackViewController(nullptr, &m_listBookController)
 {
 }
 

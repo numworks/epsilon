@@ -269,51 +269,54 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
     return;
   }
 
-  Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-  /* When evaluating sin(x)/x close to zero using the standard sine function,
-   * one can detect small variations, while the cardinal sine is supposed to be
-   * locally monotonous. To smooth our such variations, we round the result of
-   * the evaluations. As we are not interested in precise results but only in
-   * ordering, this approximation is sufficient. */
-    constexpr float precision = 1e-5;
-    return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
-  };
-  bool fullyComputed = Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
+  if (!basedOnCostlyAlgorithms(context)) {
+    Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+      /* When evaluating sin(x)/x close to zero using the standard sine function,
+       * one can detect small variations, while the cardinal sine is supposed to be
+       * locally monotonous. To smooth our such variations, we round the result of
+       * the evaluations. As we are not interested in precise results but only in
+       * ordering, this approximation is sufficient. */
+      constexpr float precision = 1e-5;
+      return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
+    };
+    bool fullyComputed = Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
 
-  evaluation = [](float x, Context * context, const void * auxiliary) {
-    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
-  };
+    evaluation = [](float x, Context * context, const void * auxiliary) {
+      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    };
 
-  if (fullyComputed) {
-    /* The function has points of interest. */
+    if (fullyComputed) {
+      /* The function has points of interest. */
+      Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
+      return;
+    }
+
+    /* Try to display an orthonormal range. */
+    Zoom::RangeWithRatioForDisplay(evaluation, targetRatio, xMin, xMax, yMin, yMax, context, this);
+    if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+      return;
+    }
+
+    /* The function's profile is not great for an orthonormal range.
+     * Try a basic range. */
+    *xMin = - Zoom::k_defaultHalfRange;
+    *xMax = Zoom::k_defaultHalfRange;
     Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
-    return;
+    if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+      return;
+    }
+
+    /* The function's order of magnitude cannot be computed. Try to just display
+     * the full function. */
+    float step =  (*xMax - *xMin) / k_polarParamRangeSearchNumberOfPoints;
+    Zoom::FullRange(evaluation, *xMin, *xMax, step, yMin, yMax, context, this);
+    if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+      return;
+    }
   }
 
-  /* Try to display an orthonormal range. */
-  Zoom::RangeWithRatioForDisplay(evaluation, targetRatio, xMin, xMax, yMin, yMax, context, this);
-  if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
-    return;
-  }
-
-  /* The function's profile is not great for an orthonormal range.
-   * Try a basic range. */
-  *xMin = - Zoom::k_defaultHalfRange;
-  *xMax = Zoom::k_defaultHalfRange;
-  Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
-  if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
-    return;
-  }
-
-  /* The function's order of magnitude cannot be computed. Try to just display
-   * the full function. */
-  float step =  (*xMax - *xMin) / k_polarParamRangeSearchNumberOfPoints;
-  Zoom::FullRange(evaluation, *xMin, *xMax, step, yMin, yMax, context, this);
-  if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
-    return;
-  }
-
-  /* The function is probably undefined. */
+  /* The function makes use of some costly algorithms and cannot be computed in
+   * a timely manner, or it is probably undefined. */
   *xMin = NAN;
   *xMax = NAN;
   *yMin = NAN;
@@ -413,6 +416,14 @@ Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double e
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Poincare::Context * context) {
   setCache(nullptr);
   return ExpressionModelHandle::setContent(c, context);
+}
+
+bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
+  return expressionReduced(context).hasExpression([](const Expression e, const void * context) {
+        return e.type() == ExpressionNode::Type::Sequence
+            || e.type() == ExpressionNode::Type::Integral
+            || e.type() == ExpressionNode::Type::Derivative;
+      }, nullptr);
 }
 
 template Coordinate2D<float> ContinuousFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;

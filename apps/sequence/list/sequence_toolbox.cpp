@@ -69,7 +69,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
     m_numberOfAddedCells = 0;
     return;
   }
-  /* The cells added reprensent the sequence at smaller ranks than its depth
+  /* The cells added represent the sequence at smaller ranks than its depth
    * and the other sequence at ranks smaller or equal to the depth, ie:
    * if the sequence is u(n+1), we add cells u(n), v(n), v(n+1), w(n), w(n+1).
    * There is a special case for double recurrent sequences because we do not

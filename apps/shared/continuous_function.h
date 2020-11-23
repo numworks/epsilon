@@ -93,6 +93,7 @@ private:
   void didBecomeInactive() override { m_cache = nullptr; }
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
+  bool basedOnCostlyAlgorithms(Poincare::Context * context) const;
 
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a ContinuousFunction. See comment on

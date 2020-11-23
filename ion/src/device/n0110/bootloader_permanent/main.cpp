@@ -88,7 +88,7 @@ void ion_main(int argc, const char * const argv[]) {
   // TODO LEA remove the "#if 0" to replace ST's bootloader by our permanent bootloader
   // Set the reset address when the 6 key is pressed
   constexpr uint16_t Boot1Address = 0x0080; // TODO LEA Compute from 0x00200000 + fetch 0x00200000 elsewhere
-  if (FLASH.OPTCR1()->getBOOT_ADD1() != Boot1Address) {
+  /*if (FLASH.OPTCR1()->getBOOT_ADD1() != Boot1Address) {
     // Unlock option bytes programming
     if (FLASH.OPTCR()->getOPTLOCK()) {
       FLASH.OPTKEYR()->set(0x08192A3B);
@@ -106,7 +106,7 @@ void ion_main(int argc, const char * const argv[]) {
     //4. Wait for the BSY bit to be cleared.
     while (FLASH.SR()->getBSY()) {}
     FLASH.OPTCR()->setOPTLOCK(true);
-  }
+  }*/
 //#endif
 
   constexpr uint16_t Boot0Address = 0x0081; // TODO LEA Compute from 0x00204000 + fetch 0x00204000 elsewhere
@@ -127,7 +127,7 @@ void ion_main(int argc, const char * const argv[]) {
   // TODO LEA end factorize
 
 
-  constexpr FLASH::OPTCR::RDP RDPLevel = FLASH::OPTCR::RDP::Level1;
+  /*constexpr FLASH::OPTCR::RDP RDPLevel = FLASH::OPTCR::RDP::Level1;
   if (FLASH.OPTCR()->getRDP() != RDPLevel) {
     // Set the RDP to Level 2
     if (FLASH.OPTCR()->getOPTLOCK()) {
@@ -141,7 +141,7 @@ void ion_main(int argc, const char * const argv[]) {
     FLASH.OPTCR()->setOPTSTRT(true);
     while (FLASH.SR()->getBSY()) {}
     FLASH.OPTCR()->setOPTLOCK(true);
-  }
+  }*/
 
   // Step 2. Update Updatable bootloader if present in external flash and authenticated
   UpdateUpdatableBootloader();

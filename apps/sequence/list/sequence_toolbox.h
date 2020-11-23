@@ -17,6 +17,12 @@ public:
   int typeAtLocation(int i, int j) override;
   void buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth);
 private:
+  int stackRowIndex(int selectedRow) override {
+    /* At 0 depth, mathToolboxIndex() offset must be removed when calling
+     * NestedMenuController::push() so that the pushed row is correct when
+     * popped in NestedMenuController::returnToPreviousMenu(). */
+    return stackDepth() == 0 ? selectedRow + m_numberOfAddedCells : selectedRow;
+  };
   bool selectAddedCell(int selectedRow);
   int mathToolboxIndex(int index);
   ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];

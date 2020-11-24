@@ -66,7 +66,7 @@ protected:
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();
   virtual bool selectLeaf(int selectedRow) = 0;
-  virtual int stackRowIndex(int selectedRow) { return selectedRow; }
+  virtual int stackRowOffset() const { return 0; }
   InputEventHandler * sender() { return m_sender; }
   virtual HighlightCell * leafCellAtIndex(int index) = 0;
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;

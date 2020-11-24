@@ -60,7 +60,7 @@ bool Cosine::derivate(ExpressionNode::ReductionContext reductionContext, Express
 }
 
 Expression Cosine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Multiplication::Builder(Rational::Builder(-1), Sine::Builder(childAtIndex(0).clone()));
+  return Multiplication::Builder(Rational::Builder(-1), Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Sine::Builder(childAtIndex(0).clone()));
 }
 
 }

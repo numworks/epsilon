@@ -3,6 +3,7 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
 
 #include <cmath>
@@ -57,7 +58,7 @@ bool Sine::derivate(ExpressionNode::ReductionContext reductionContext, Expressio
 }
 
 Expression Sine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Cosine::Builder(childAtIndex(0).clone());
+  return Multiplication::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Cosine::Builder(childAtIndex(0).clone()));
 }
 
 }

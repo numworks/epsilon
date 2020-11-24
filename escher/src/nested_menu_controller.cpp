@@ -157,7 +157,7 @@ bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIn
 }
 
 bool NestedMenuController::selectSubMenu(int selectedRow) {
-  m_stack.push(stackRowIndex(selectedRow), m_selectableTableView.contentOffset().y());
+  m_stack.push(selectedRow, m_selectableTableView.contentOffset().y());
   m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
@@ -166,7 +166,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
 bool NestedMenuController::returnToPreviousMenu() {
   assert(m_stack.depth() > 0);
   NestedMenuController::Stack::State state = m_stack.pop();
-  m_listController.setFirstSelectedRow(state.selectedRow());
+  m_listController.setFirstSelectedRow(state.selectedRow() + stackRowOffset());
   KDPoint scroll = m_selectableTableView.contentOffset();
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));
   Container::activeApp()->setFirstResponder(&m_listController);

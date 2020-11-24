@@ -41,8 +41,9 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  double radianX = x * toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
-  return a*sin(b*radianX+c)+d;
+  double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+  // sin() is here defined for radians, so b*x+c are converted in radians.
+  return a * sin(radian * (b * x + c)) + d;
 }
 
 double TrigonometricModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
@@ -54,19 +55,20 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double radianX = x * toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
-
+  double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+  /* sin() and cos() are here defined for radians, so b*x+c are converted in
+   * radians. The added coefficient also appear in derivatives. */
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: sin(b*x+c)
-    return sin(b * radianX + c);
+    return sin(radian * (b * x + c));
   }
   if (derivateCoefficientIndex == 1) {
     // Derivate with respect to b: x*a*cos(b*x+c);
-    return radianX * a * cos(b * radianX + c);
+    return radian * x * a * cos(radian * (b * x + c));
   }
   assert(derivateCoefficientIndex == 2);
-  // Derivatewith respect to c: a*cos(b*x+c)
-  return a * cos(b * radianX + c);
+  // Derivate with respect to c: a*cos(b*x+c)
+  return radian * a * cos(radian * (b * x + c));
 }
 
 void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
@@ -79,8 +81,8 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
    *
    * Init the "amplitude" coefficient. We take twice the standard deviation,
    * because for a normal law, this interval contains 99.73% of the values. We
-   * do not take half of the apmlitude of the series, because this would be too
-   * dependant on outliers. */
+   * do not take half of the amplitude of the series, because this would be too
+   * dependent on outliers. */
   modelCoefficients[0] = 3.0*store->standardDeviationOfColumn(series, 1);
   // Init the "y delta" coefficient
   modelCoefficients[k_numberOfCoefficients - 1] = store->meanOfColumn(series, 1);

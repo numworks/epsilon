@@ -20,20 +20,17 @@ SequenceToolbox::SequenceToolbox() :
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
-  if (selectedRow() < m_numberOfAddedCells && stackDepth() == 0) {
+  if (stackDepth() == 0 && selectedRow() < m_numberOfAddedCells) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       return selectAddedCell(selectedRow());
     }
     return false;
   }
-  return MathToolbox::handleEventForRow(event, mathToolboxIndex(selectedRow()));
+  return MathToolbox::handleEventForRow(event, selectedRow() - stackRowOffset());
 }
 
 int SequenceToolbox::numberOfRows() const {
-  if (stackDepth() == 0) {
-    return MathToolbox::numberOfRows()+m_numberOfAddedCells;
-  }
-  return MathToolbox::numberOfRows();
+  return MathToolbox::numberOfRows() + stackRowOffset();
 }
 
 HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
@@ -52,14 +49,14 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     cell->reloadCell();
     return;
   }
-  MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));
+  MathToolbox::willDisplayCellForIndex(cell, index - stackRowOffset());
 }
 
 int SequenceToolbox::typeAtLocation(int i, int j) {
   if (stackDepth() == 0 && j < m_numberOfAddedCells) {
     return 2;
   }
-  return MathToolbox::typeAtLocation(i,mathToolboxIndex(j));
+  return MathToolbox::typeAtLocation(i, j - stackRowOffset());
 }
 
 void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth) {
@@ -98,14 +95,6 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   sender()->handleEventWithText(buffer);
   Container::activeApp()->dismissModalViewController();
   return true;
-}
-
-int SequenceToolbox::mathToolboxIndex(int index) {
-  int indexMathToolbox = index;
-  if (stackDepth() == 0) {
-    indexMathToolbox = index - m_numberOfAddedCells;
-  }
-  return indexMathToolbox;
 }
 
 }

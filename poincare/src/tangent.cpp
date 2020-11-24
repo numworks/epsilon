@@ -72,7 +72,7 @@ bool Tangent::derivate(ExpressionNode::ReductionContext reductionContext, Expres
 }
 
 Expression Tangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Power::Builder(Cosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2));
+  return Multiplication::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Power::Builder(Cosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2)));
 }
 
 }

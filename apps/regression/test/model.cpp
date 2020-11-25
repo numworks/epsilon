@@ -190,7 +190,34 @@ QUIZ_CASE(power_regression) {
   // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 }
 
-// No case for trigonometric regression, because it has no unique solution
+QUIZ_CASE(trigonometric_regression) {
+  Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
+  double r2 = 0.9994216;
+  double x[] = {1, 31, 61, 91, 121, 151, 181, 211, 241, 271, 301, 331, 361};
+  double y[] = {9.24, 10.05, 11.33, 12.72, 14.16, 14.98, 15.14, 14.41, 13.24, 11.88, 10.54, 9.48, 9.19};
+  double coefficients[] = {2.9723, 0.016780, -1.3067, 12.146};
+  int numberOfPoints = 13;
+
+  // TODO : Ensure unicity with trigonometric coefficients.
+  Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Radian);
+  // a*sin(b*x+c)+d = -a*sin(b*x+c+π)+d
+  double coefficientsRad[] = {-coefficients[0], coefficients[1], coefficients[2] + M_PI, coefficients[3]};
+  assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsRad, r2);
+
+  Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Degree);
+  double radToDeg = 180.0 / M_PI;
+  // a*sin(b*x+c)+d = a*sin(b*x+c+2π)+d
+  double coefficientsDeg[] = {coefficients[0], coefficients[1] * radToDeg, (coefficients[2] - 2.0 * M_PI) * radToDeg, coefficients[3]};
+  assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsDeg, r2);
+
+  Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Gradian);
+  double radToGrad = 200.0 / M_PI;
+  // a*sin(b*x+c)+d = a*sin(b*x+c+2π)+d
+  double coefficientsGrad[] = {coefficients[0], coefficients[1] * radToGrad, (coefficients[2] - 2.0 * M_PI) * radToGrad, coefficients[3]};
+  assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsGrad, r2);
+
+  Poincare::Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
+}
 
 
 QUIZ_CASE(logistic_regression) {

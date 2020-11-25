@@ -86,6 +86,18 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
   modelCoefficients[0] = 3.0*store->standardDeviationOfColumn(series, 1);
   // Init the "y delta" coefficient
   modelCoefficients[k_numberOfCoefficients - 1] = store->meanOfColumn(series, 1);
+  // Init the b coefficient
+  double rangeX = store->maxValueOfColumn(series, 0) - store->minValueOfColumn(series, 0);
+  if (rangeX > 0) {
+    /* b/2π represents the frequency of the sine (in radians). Instead of
+     * initializing it to 0, we use the inverse of X series' range as an order
+     * of magnitude for it. It can help avoiding a regression that overfits the
+     * data with a very high frequency. This period also depends on the
+     * angleUnit. We take it into account so that it doesn't impact the result
+     * (although coefficients b and c depends on the angleUnit). */
+    double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+    modelCoefficients[1] = (2.0 * M_PI / radian) / rangeX;
+  }
 }
 
 Expression TrigonometricModel::expression(double * modelCoefficients) {

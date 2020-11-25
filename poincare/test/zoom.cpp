@@ -7,6 +7,7 @@ using namespace Poincare;
 
 // When adding the graph window margins, this ratio gives an orthonormal window
 constexpr float NormalRatio = 0.442358822;
+constexpr float StandardTolerance = 10 * FLT_EPSILON;
 
 class ParametersPack {
 public:
@@ -31,18 +32,18 @@ float evaluate_expression(float x, Context * context, const void * auxiliary) {
   return pack->expression().approximateWithValueForSymbol<float>(pack->symbol(), x, context, Real, pack->angleUnit());
 }
 
-bool float_equal(float a, float b, float tolerance = 0.f) {
+bool float_equal(float a, float b, float tolerance = StandardTolerance) {
   assert(std::isfinite(tolerance));
   return !(std::isnan(a) || std::isnan(b))
-      && a <= b + tolerance && a >= b - tolerance;
+      && std::fabs(a - b) <= tolerance * std::fabs(a + b);
 }
 
-bool range1D_matches(float min, float max, float targetMin, float targetMax, float tolerance = 0.f) {
+bool range1D_matches(float min, float max, float targetMin, float targetMax, float tolerance = StandardTolerance) {
   return (float_equal(min, targetMin, tolerance) && float_equal(max, targetMax, tolerance))
       || (std::isnan(min) && std::isnan(max) && std::isnan(targetMin) && std::isnan(targetMax));
 }
 
-bool ranges_match(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, float tolerance = 0.f) {
+bool ranges_match(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, float tolerance = StandardTolerance) {
   return range1D_matches(xMin, xMax, targetXMin, targetXMax, tolerance)
       && range1D_matches(yMin, yMax, targetYMin, targetYMax, tolerance);
 }
@@ -53,7 +54,7 @@ void assert_interesting_range_is(const char * definition, float targetXMin, floa
   Expression e = parse_expression(definition, &globalContext, false);
   ParametersPack aux(e, symbol, angleUnit);
   Zoom::InterestingRangesForDisplay(evaluate_expression, &xMin, &xMax, &yMin, &yMax, -INFINITY, INFINITY, &globalContext, &aux);
-  quiz_assert_print_if_failure(ranges_match(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax, FLT_EPSILON), definition);
+  quiz_assert_print_if_failure(ranges_match(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax), definition);
 }
 
 QUIZ_CASE(poincare_zoom_interesting_ranges) {
@@ -98,7 +99,7 @@ void assert_refined_range_is(const char * definition, float xMin, float xMax, fl
   Expression e = parse_expression(definition, &globalContext, false);
   ParametersPack aux(e, symbol, angleUnit);
   Zoom::RefinedYRangeForDisplay(evaluate_expression, xMin, xMax, &yMin, &yMax, &globalContext, &aux);
-  quiz_assert_print_if_failure(range1D_matches(yMin, yMax, targetYMin, targetYMax, FLT_EPSILON), definition);
+  quiz_assert_print_if_failure(range1D_matches(yMin, yMax, targetYMin, targetYMax), definition);
 }
 
 QUIZ_CASE(poincare_zoom_refined_range) {
@@ -131,13 +132,13 @@ QUIZ_CASE(poincare_zoom_refined_range) {
 
 void assert_orthonormal_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
   assert((std::isnan(targetXMin) && std::isnan(targetXMax) && std::isnan(targetYMin) && std::isnan(targetYMax))
-      || float_equal((targetYMax - targetYMin) / (targetXMax - targetXMin), NormalRatio, FLT_EPSILON));
+      || float_equal((targetYMax - targetYMin) / (targetXMax - targetXMin), NormalRatio));
   float xMin, xMax, yMin, yMax;
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
   ParametersPack aux(e, symbol, angleUnit);
   Zoom::RangeWithRatioForDisplay(evaluate_expression, NormalRatio, &xMin, &xMax, &yMin, &yMax, &globalContext, &aux);
-  quiz_assert_print_if_failure(ranges_match(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax, FLT_EPSILON), definition);
+  quiz_assert_print_if_failure(ranges_match(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax), definition);
 }
 
 QUIZ_CASE(poincare_zoom_range_with_ratio) {
@@ -186,7 +187,7 @@ void assert_ratio_is_set_to(float yxRatio, float xMin, float xMax, float yMin, f
   float tempXMin = xMin, tempXMax = xMax, tempYMin = yMin, tempYMax = yMax;
   assert(yxRatio == (targetYMax - targetYMin) / (targetXMax - targetXMin));
   Zoom::SetToRatio(yxRatio, &tempXMin, &tempXMax, &tempYMin, &tempYMax, shrink);
-  quiz_assert(ranges_match(tempXMin, tempXMax, tempYMin, tempYMax, targetXMin, targetXMax, targetYMin, targetYMax, FLT_EPSILON));
+  quiz_assert(ranges_match(tempXMin, tempXMax, tempYMin, tempYMax, targetXMin, targetXMax, targetYMin, targetYMax));
 }
 
 void assert_shrinks_to(float yxRatio, float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax) {

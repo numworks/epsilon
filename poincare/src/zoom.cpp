@@ -1,6 +1,7 @@
 #include <poincare/zoom.h>
 #include <float.h>
 #include <algorithm>
+#include <stddef.h>
 
 namespace Poincare {
 
@@ -28,7 +29,7 @@ static bool DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3)
    * too noisy to be be of any value. */
   float yMin = std::min(y1, std::min(y2, y3));
   float yMax = std::max(y1, std::max(y2, y3));
-  constexpr float maxPrecision = 2.4e-7f; // 2^-22 ~ 10^-6.6
+  constexpr float maxPrecision = 2 * FLT_EPSILON;
   return (yMax - yMin) / std::fabs(dx) > maxPrecision;
 }
 
@@ -284,7 +285,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     return;
   }
 
-  /* The X bounds are preset, user-friendly values : we do not want them to be
+  /* The X bounds are preset, user-friendly values: we do not want them to be
    * altered by the normalization. To that end, we use a larger unit for the
    * horizontal axis, so that the Y axis is the one that will be extended. */
   float xRange = bestUnit * bestMagnitude;
@@ -407,20 +408,17 @@ bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2
 }
 
 void Zoom::NextUnit(float * mantissa, float * exponent) {
-  if (*mantissa == k_smallUnitMantissa) {
-    *mantissa = k_mediumUnitMantissa;
-    return;
+  float mantissaUnits[] = {k_smallUnitMantissa, k_mediumUnitMantissa, k_largeUnitMantissa};
+  size_t numberOfUnits = sizeof(mantissaUnits) / sizeof(float);
+  for (size_t i = 0; i < numberOfUnits; i++) {
+    if (*mantissa == mantissaUnits[i]) {
+      *mantissa = mantissaUnits[(i + 1) % numberOfUnits];
+      if (*mantissa == mantissaUnits[0]) {
+        *exponent *= 10.0f;
+      }
+      return;
+    }
   }
-  if (*mantissa == k_mediumUnitMantissa) {
-    *mantissa = k_largeUnitMantissa;
-    return;
-  }
-  if (*mantissa == k_largeUnitMantissa) {
-    *mantissa = k_smallUnitMantissa;
-    *exponent = 10.f * *exponent;
-    return;
-  }
-  assert(false);
 }
 
 }

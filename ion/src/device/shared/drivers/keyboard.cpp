@@ -110,7 +110,6 @@ void init() {
    *        5       |   0    |    0    |    0    | ***** |   C   | ***** | Falling edge GPIO C pin 5
    *
    */
-#if 0
   for (uint8_t i=0; i<Config::numberOfColumns; i++) {
     uint8_t pin = Config::ColumnPins[i];
     SYSCFG.EXTICR()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
@@ -118,7 +117,6 @@ void init() {
     EXTI.FTSR()->set(pin, true);
     EXTI.RTSR()->set(pin, true);
   }
-#endif
 }
 
 void shutdown() {

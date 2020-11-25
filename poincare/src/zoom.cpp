@@ -49,7 +49,7 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   float resultYMin = FLT_MAX, resultYMax = - FLT_MAX;
   float asymptote[2] = {FLT_MAX, - FLT_MAX};
   float explosion[2] = {FLT_MAX, - FLT_MAX};
-  int numberOfPoints;
+  int numberOfPoints, totalNumberOfPoints = 0;
   float xFallback, yFallback[2] = {NAN, NAN};
   float firstResult;
   float dXOld, dXPrev, dXNext, yOld, yPrev, yNext;
@@ -63,6 +63,7 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
       ExtremumExistsOnInterval(ya, yb, yc) || ya == yc)
   {
     resultX[0] = resultX[1] = center;
+    totalNumberOfPoints++;
     if (ExtremumExistsOnInterval(ya, yb, yc) && IsConvexAroundExtremum(evaluation, a, b, c, ya, yb, yc, context, auxiliary)) {
       resultYMin = resultYMax = yb;
     }
@@ -124,6 +125,7 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
         if (std::isnan(firstResult)) {
           firstResult = dXNext;
         }
+        totalNumberOfPoints++;
         break;
       default:
         const float slopeNext = (yNext - yPrev) / (dXNext - dXPrev), slopePrev = (yPrev - yOld) / (dXPrev - dXOld);
@@ -151,23 +153,33 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     }
   }
 
+  if (totalNumberOfPoints == 1) {
+    float xM = (resultX[0] + resultX[1]) / 2;
+    resultX[0] = xM;
+    resultX[1] = xM;
+  }
   /* Cut after horizontal asymptotes. */
   resultX[0] = std::min(resultX[0], asymptote[0]);
   resultX[1] = std::max(resultX[1], asymptote[1]);
+  /* Cut after explosions if it does not reduce precision */
+  float xMinWithExplosion = std::min(resultX[0], explosion[0]);
+  float xMaxWithExplosion = std::max(resultX[1], explosion[1]);
+  if (xMaxWithExplosion - xMinWithExplosion < k_maxRatioBetweenPointsOfInterest * (resultX[1] - resultX[0])) {
+    resultX[0] = xMinWithExplosion;
+    resultX[1] = xMaxWithExplosion;
+  }
   if (resultX[0] >= resultX[1]) {
+    if (resultX[0] > resultX[1]) {
+      resultX[0] = NAN;
+      resultX[1] = NAN;
+    }
     /* Fallback to default range. */
-    *xMin = NAN;
-    *xMax = NAN;
+    *xMin = resultX[0];
+    *xMax = resultX[1];
     *yMin = NAN;
     *yMax = NAN;
     return false;
   } else {
-    float xMinWithExplosion = std::min(resultX[0], explosion[0]);
-    float xMaxWithExplosion = std::max(resultX[1], explosion[1]);
-    if (xMaxWithExplosion - xMinWithExplosion < k_maxRatioBetweenPointsOfInterest * (resultX[1] - resultX[0])) {
-      resultX[0] = xMinWithExplosion;
-      resultX[1] = xMaxWithExplosion;
-    }
     /* Add breathing room around points of interest. */
     float xRange = resultX[1] - resultX[0];
     resultX[0] -= k_breathingRoom * xRange;
@@ -247,9 +259,10 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   float unit = k_smallUnitMantissa;
   float xMagnitude = k_minimalDistance;
   float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
+  float center = *xMin == *xMax ? *xMin : 0.f;
   while (xMagnitude < k_maximalDistance) {
     const float xRange = unit * xMagnitude;
-    RefinedYRangeForDisplay(evaluation, -xRange, xRange, &yMinRange, &yMaxRange, context, auxiliary, sampleSize);
+    RefinedYRangeForDisplay(evaluation, center - xRange, center + xRange, &yMinRange, &yMaxRange, context, auxiliary, sampleSize);
     float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
     float grade = std::fabs(std::log(currentRatio / yxRatio));
     /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */
@@ -280,8 +293,8 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     xRange = bestUnit * bestMagnitude;
   }
   xRange = bestUnit * smoothToPowerOfTen(bestMagnitude);
-  *xMin = -xRange;
-  *xMax = xRange;
+  *xMin = center - xRange;
+  *xMax = center + xRange;
   SetToRatio(yxRatio, xMin, xMax, yMin, yMax);
 }
 

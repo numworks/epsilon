@@ -73,8 +73,10 @@ public:
   double yValueForXValue(int series, double x, Poincare::Context * globalContext);
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double correlationCoefficient(int series) const; // R
-  float maxValueOfColumn(int series, int i) const; //TODO LEA why float ?
-  float minValueOfColumn(int series, int i) const; //TODO LEA why float ?
+
+  // To speed up computation during drawings, float is returned.
+  float maxValueOfColumn(int series, int i) const;
+  float minValueOfColumn(int series, int i) const;
 private:
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;

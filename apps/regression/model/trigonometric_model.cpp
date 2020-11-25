@@ -9,8 +9,8 @@
 #include <poincare/preferences.h>
 #include <poincare/sine.h>
 #include <poincare/symbol.h>
-#include <math.h>
 #include <assert.h>
+#include <cmath>
 
 using namespace Poincare;
 using namespace Shared;
@@ -43,7 +43,7 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
   double d = modelCoefficients[3];
   double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
   // sin() is here defined for radians, so b*x+c are converted in radians.
-  return a * sin(radian * (b * x + c)) + d;
+  return a * std::sin(radian * (b * x + c)) + d;
 }
 
 double TrigonometricModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
@@ -60,15 +60,15 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
    * radians. The added coefficient also appear in derivatives. */
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: sin(b*x+c)
-    return sin(radian * (b * x + c));
+    return std::sin(radian * (b * x + c));
   }
   if (derivateCoefficientIndex == 1) {
     // Derivate with respect to b: x*a*cos(b*x+c);
-    return radian * x * a * cos(radian * (b * x + c));
+    return radian * x * a * std::cos(radian * (b * x + c));
   }
   assert(derivateCoefficientIndex == 2);
   // Derivate with respect to c: a*cos(b*x+c)
-  return radian * a * cos(radian * (b * x + c));
+  return radian * a * std::cos(radian * (b * x + c));
 }
 
 void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {

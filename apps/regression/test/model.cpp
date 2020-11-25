@@ -196,7 +196,8 @@ QUIZ_CASE(trigonometric_regression) {
   double x[] = {1, 31, 61, 91, 121, 151, 181, 211, 241, 271, 301, 331, 361};
   double y[] = {9.24, 10.05, 11.33, 12.72, 14.16, 14.98, 15.14, 14.41, 13.24, 11.88, 10.54, 9.48, 9.19};
   double coefficients[] = {2.9723, 0.016780, -1.3067, 12.146};
-  int numberOfPoints = 13;
+  int numberOfPoints = sizeof(x) / sizeof(double);
+  assert(sizeof(y) == sizeof(double) * numberOfPoints);
 
   // TODO : Ensure unicity with trigonometric coefficients.
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Radian);

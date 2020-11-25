@@ -57,19 +57,20 @@ void assert_interesting_range_is(const char * definition, float targetXMin, floa
 }
 
 QUIZ_CASE(poincare_zoom_interesting_ranges) {
-  assert_interesting_range_is("0", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("1", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("-100", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("x", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("x^2", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("-(x^3)", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("10×x^4", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("0", 0, 0, NAN, NAN);
+  assert_interesting_range_is("1", 0, 0, NAN, NAN);
+  assert_interesting_range_is("-100", 0, 0, NAN, NAN);
+  assert_interesting_range_is("x", 0, 0, NAN, NAN);
+  assert_interesting_range_is("x^2", 0, 0, NAN, NAN);
+  assert_interesting_range_is("-(x^3)", 0, 0, NAN, NAN);
+  assert_interesting_range_is("10×x^4", 0, 0, NAN, NAN);
   assert_interesting_range_is("ℯ^(-x)", NAN, NAN, NAN, NAN);
   assert_interesting_range_is("√(x^2+1)-x", NAN, NAN, NAN, NAN);
 
-  assert_interesting_range_is("x-21", 19.126959, 21.957670, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("-11x+100", 8.806580, 10.109919, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("x-21", 20.5423145, 20.5423145, NAN, NAN);
+  assert_interesting_range_is("-11x+100", 9.45824909, 9.45824909, NAN, NAN);
   assert_interesting_range_is("x^2-1", -8.634861, 8.634861, -1, -1);
+  assert_interesting_range_is("3x^2+x+10", -0.179552406, -0.179552406, NAN, NAN);
   assert_interesting_range_is("(x+10)(x-10)", -17.205507, 17.205507, -100, -100);
   assert_interesting_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", -1.61903656, 7.01582479, -16.8975754, 4.9766078);
   assert_interesting_range_is("1/x", -3.97572827, 3.97572827, FLT_MAX, -FLT_MAX);
@@ -87,6 +88,7 @@ QUIZ_CASE(poincare_zoom_interesting_ranges) {
   assert_interesting_range_is("x×sin(x)", -14.4815292, 14.4815292, -4.81068802, 7.47825241);
   assert_interesting_range_is("x×ln(x)", -0.314885706, 1.36450469, -0.367841482, -0.367841482);
   assert_interesting_range_is("root(x^3+1,3)-x", -2.732898, 2.45420456, 1.58665824, 1.58665824);
+  assert_interesting_range_is("x^x", -0.745449066, 3.23027921, 0.692226887, 0.692226887);
 }
 
 

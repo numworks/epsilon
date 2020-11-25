@@ -73,12 +73,12 @@ public:
   double yValueForXValue(int series, double x, Poincare::Context * globalContext);
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double correlationCoefficient(int series) const; // R
+  float maxValueOfColumn(int series, int i) const; //TODO LEA why float ?
+  float minValueOfColumn(int series, int i) const; //TODO LEA why float ?
 private:
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;
   void resetMemoization();
-  float maxValueOfColumn(int series, int i) const; //TODO LEA why float ?
-  float minValueOfColumn(int series, int i) const; //TODO LEA why float ?
   Model * regressionModel(int index);
   uint32_t m_seriesChecksum[k_numberOfSeries];
   Model::Type m_regressionTypes[k_numberOfSeries];

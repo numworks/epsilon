@@ -16,6 +16,7 @@ public:
   static bool isDirectTrigonometryFunction(const Expression & e);
   static bool isInverseTrigonometryFunction(const Expression & e);
   static bool AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction);
+  static Expression UnitConversionFactor(Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit);
   static bool ExpressionIsEquivalentToTangent(const Expression & e);
   static Expression shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext);
   static Expression shallowReduceInverseFunction(Expression & e,  ExpressionNode::ReductionContext reductionContext);

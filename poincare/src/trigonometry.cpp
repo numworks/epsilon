@@ -3,6 +3,7 @@
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/derivative.h>
+#include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -85,6 +86,13 @@ bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const 
       break;
   }
   return inverseFunction.type() == correspondingType;
+}
+
+Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit) {
+  if (fromUnit == toUnit) {
+    return Rational::Builder(1);
+  }
+  return Division::Builder(piExpression(toUnit), piExpression(fromUnit));
 }
 
 bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {

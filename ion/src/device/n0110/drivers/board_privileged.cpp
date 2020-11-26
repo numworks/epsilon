@@ -164,6 +164,15 @@ void init() {
   NVIC.NVIC_ISER0()->set(10,true);
   NVIC.NVIC_ISER0()->set(23,true);
 
+  // TODO Emilie: I doubt this is necessary...
+  // TODO Emilie: optimize in one write
+  NVIC.NVIC_IPR()->setPriority(6, 0);
+  NVIC.NVIC_IPR()->setPriority(7, 0);
+  NVIC.NVIC_IPR()->setPriority(8, 0);
+  NVIC.NVIC_IPR()->setPriority(9, 0);
+  NVIC.NVIC_IPR()->setPriority(10, 0);
+  NVIC.NVIC_IPR()->setPriority(23, 0);
+
   // Put all inputs as Analog Input, No pull-up nor pull-down
   // Except for the SWD port (PB3, PA13, PA14)
   GPIOA.MODER()->set(0xEBFFFFFF);

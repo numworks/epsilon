@@ -35,7 +35,7 @@ private:
 
   // Derivation
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
-  Expression unaryFunctionDifferential() override;
+  Expression unaryFunctionDifferential(ReductionContext reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -56,7 +56,7 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential();
+  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

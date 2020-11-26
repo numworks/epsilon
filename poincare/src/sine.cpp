@@ -36,8 +36,8 @@ bool SineNode::derivate(ReductionContext reductionContext, Expression symbol, Ex
   return Sine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression SineNode::unaryFunctionDifferential() {
-  return Sine(this).unaryFunctionDifferential();
+Expression SineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return Sine(this).unaryFunctionDifferential(reductionContext);
 }
 
 Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -52,11 +52,11 @@ Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext
 }
 
 bool Sine::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression Sine::unaryFunctionDifferential() {
+Expression Sine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
   return Cosine::Builder(childAtIndex(0).clone());
 }
 

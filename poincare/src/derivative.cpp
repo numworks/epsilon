@@ -187,8 +187,8 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   return derivand;
 }
 
-void Derivative::DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue) {
-  Expression df = function.unaryFunctionDifferential();
+void Derivative::DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext) {
+  Expression df = function.unaryFunctionDifferential(reductionContext);
   Expression dg = Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());
   function.replaceWithInPlace(Multiplication::Builder(df, dg));
 

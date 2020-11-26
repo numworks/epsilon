@@ -400,7 +400,7 @@ protected:
    * It returns whether the instance is differentiable, and differentiates it if
    * able. */
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->derivate(reductionContext, symbol, symbolValue); }
-  Expression unaryFunctionDifferential() { return node()->unaryFunctionDifferential(); }
+  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;

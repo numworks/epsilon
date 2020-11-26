@@ -26,16 +26,16 @@ bool HyperbolicTangentNode::derivate(ReductionContext reductionContext, Expressi
   return HyperbolicTangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression HyperbolicTangentNode::unaryFunctionDifferential() {
-  return HyperbolicTangent(this).unaryFunctionDifferential();
+Expression HyperbolicTangentNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return HyperbolicTangent(this).unaryFunctionDifferential(reductionContext);
 }
 
 bool HyperbolicTangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression HyperbolicTangent::unaryFunctionDifferential() {
+Expression HyperbolicTangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
   return Power::Builder(HyperbolicCosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2));
 }
 

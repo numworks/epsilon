@@ -40,8 +40,8 @@ bool TangentNode::derivate(ReductionContext reductionContext, Expression symbol,
   return Tangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression TangentNode::unaryFunctionDifferential() {
-  return Tangent(this).unaryFunctionDifferential();
+Expression TangentNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return Tangent(this).unaryFunctionDifferential(reductionContext);
 }
 
 Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -67,11 +67,11 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
 }
 
 bool Tangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression Tangent::unaryFunctionDifferential() {
+Expression Tangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
   return Power::Builder(Cosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2));
 }
 

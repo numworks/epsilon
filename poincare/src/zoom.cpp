@@ -29,7 +29,7 @@ static bool DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3)
    * too noisy to be be of any value. */
   float yMin = std::min(y1, std::min(y2, y3));
   float yMax = std::max(y1, std::max(y2, y3));
-  constexpr float maxPrecision = 2 * FLT_EPSILON;
+  constexpr float maxPrecision = 2.f * FLT_EPSILON;
   return (yMax - yMin) / std::fabs(dx) > maxPrecision;
 }
 

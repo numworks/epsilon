@@ -85,8 +85,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       I18n::Message::ThirdQuartile,
       I18n::Message::Median,
       I18n::Message::InterquartileRange,
-      I18n::Message::Sum,
-      I18n::Message::SquareSum,
+      I18n::Message::SumValues,
+      I18n::Message::SumSquareValues,
       I18n::Message::SampleStandardDeviationS};
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
     calcTitleCell->setMessage(titles[j-1]);

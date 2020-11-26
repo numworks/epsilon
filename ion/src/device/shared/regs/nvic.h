@@ -27,6 +27,21 @@ public:
   class NVIC_ICPR1 : public MaskRegister { };
   class NVIC_ICPR2 : public MaskRegister { };
 
+  class NVIC_IPR  {
+  public:
+    uint8_t getPriority(int interruptIndex) volatile {
+      int indexMod4 = interruptIndex % 4;
+      return m_values[interruptIndex / 4].getBitRange(4 * indexMod4 + 3, 4 * indexMod4);
+    }
+
+    void setPriority(int interruptIndex, uint8_t priority) volatile {
+      int indexMod4 = interruptIndex % 4;
+      m_values[interruptIndex / 4].setBitRange(4 * indexMod4 + 3, 4 * indexMod4, priority);
+    }
+  private:
+    Register32 m_values[60];
+  };
+
   constexpr NVIC() {};
   REGS_REGISTER_AT(NVIC_ISER0, 0x00);
   REGS_REGISTER_AT(NVIC_ISER1, 0x04);
@@ -37,6 +52,7 @@ public:
   REGS_REGISTER_AT(NVIC_ICPR0, 0x180);
   REGS_REGISTER_AT(NVIC_ICPR1, 0x184);
   REGS_REGISTER_AT(NVIC_ICPR2, 0x188);
+  REGS_REGISTER_AT(NVIC_IPR, 0x300);
 private:
   constexpr uint32_t Base() const {
     return 0xE000E100;

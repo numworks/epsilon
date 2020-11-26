@@ -266,8 +266,9 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     RefinedYRangeForDisplay(evaluation, center - xRange, center + xRange, &yMinRange, &yMaxRange, context, auxiliary, sampleSize);
     float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
     float grade = std::fabs(std::log(currentRatio / yxRatio));
-    /* When in doubt, favor ranges between [-1, 1] and [-10, 10] */
-    grade += std::fabs(std::log(xRange / 10.f) * std::log(xRange)) * rangeMagnitudeWeight;
+    /* The weigth function favors the [-5, 5] range, which will expand into
+     * the [-10, 10] range */
+    grade += std::fabs(std::log(xRange / k_largeUnitMantissa)) * rangeMagnitudeWeight;
     if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
       bestGrade = grade;
       bestUnit = unit;

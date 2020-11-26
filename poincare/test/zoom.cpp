@@ -143,7 +143,7 @@ void assert_orthonormal_range_is(const char * definition, float targetXMin, floa
 
 QUIZ_CASE(poincare_zoom_range_with_ratio) {
   assert_orthonormal_range_is("1", NAN, NAN, NAN, NAN);
-  assert_orthonormal_range_is("x", -5, 5, -2.21179414, 2.21179414);
+  assert_orthonormal_range_is("x", -20, 20, -8.84717655, 8.84717655);
   assert_orthonormal_range_is("x^2", -2, 2, -0.172234654, 1.59720063);
   assert_orthonormal_range_is("x^3", -5, 5, -2.21179414, 2.21179414);
   assert_orthonormal_range_is("ℯ^x", -5, 5, -0.852653265, 3.57093501);

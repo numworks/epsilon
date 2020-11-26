@@ -78,6 +78,7 @@ QUIZ_CASE(equation_solve) {
   unset("x");
 
   // Monovariable non-polynomial equation
+  Poincare::Preferences::sharedPreferences()->setAngleUnit(Degree);
   assert_solves_numerically_to("cos(x)=0", -100, 100, {-90.0, 90.0});
   assert_solves_numerically_to("cos(x)=0", -900, 1000, {-810.0, -630.0, -450.0, -270.0, -90.0, 90.0, 270.0, 450.0, 630.0, 810.0});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0}, "y");

@@ -25,17 +25,17 @@ bool HyperbolicCosineNode::derivate(ReductionContext reductionContext, Expressio
   return HyperbolicCosine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression HyperbolicCosineNode::unaryFunctionDifferential() {
-  return HyperbolicCosine(this).unaryFunctionDifferential();
+Expression HyperbolicCosineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return HyperbolicCosine(this).unaryFunctionDifferential(reductionContext);
 }
 
 
 bool HyperbolicCosine::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression HyperbolicCosine::unaryFunctionDifferential() {
+Expression HyperbolicCosine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
   return HyperbolicSine::Builder(childAtIndex(0).clone());
 }
 

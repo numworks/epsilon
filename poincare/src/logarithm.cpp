@@ -76,8 +76,8 @@ bool LogarithmNode<2>::derivate(ReductionContext reductionContext, Expression sy
 }
 
 template <>
-Expression LogarithmNode<2>::unaryFunctionDifferential() {
-  return Logarithm(this).unaryFunctionDifferential();
+Expression LogarithmNode<2>::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return Logarithm(this).unaryFunctionDifferential(reductionContext);
 }
 
 /* Those two methods will not be called, as CommonLogarithm disappears in
@@ -89,7 +89,7 @@ bool LogarithmNode<1>::derivate(ReductionContext reductionContext, Expression sy
 }
 
 template <>
-Expression LogarithmNode<1>::unaryFunctionDifferential() {
+Expression LogarithmNode<1>::unaryFunctionDifferential(ReductionContext reductionContext) {
   assert(false);
   return Expression();
 }
@@ -339,11 +339,11 @@ bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Expr
   if (childAtIndex(1).polynomialDegree(reductionContext.context(), symbol.convert<Symbol>().name()) != 0) {
     return false;
   }
-  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression Logarithm::unaryFunctionDifferential() {
+Expression Logarithm::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
   /* log(x, b)` = (ln(x)/ln(b))`
    *            = 1 / (x * ln(b))
    *

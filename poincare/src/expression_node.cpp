@@ -119,7 +119,7 @@ bool ExpressionNode::derivate(ReductionContext reductionContext, Expression symb
   return Expression(this).defaultDidDerivate();
 }
 
-Expression ExpressionNode::unaryFunctionDifferential() {
+Expression ExpressionNode::unaryFunctionDifferential(ReductionContext reductionContext) {
   return Expression(this).defaultUnaryFunctionDifferential();
 }
 

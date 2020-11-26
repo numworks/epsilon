@@ -25,7 +25,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Derivation
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
-  Expression unaryFunctionDifferential() override;
+  Expression unaryFunctionDifferential(ReductionContext reductionContext) override;
   //Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -42,7 +42,7 @@ public:
   static HyperbolicTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicTangent, HyperbolicTangentNode>({child}); }
 
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential();
+  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tanh", 1, &UntypedBuilderOneChild<HyperbolicTangent>);
 };

@@ -41,32 +41,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
 }
 
 float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) {
-  /* The provided min or max range limit y is altered by adding a margin.
-   * In pixels, the view's height occupied by the vertical range is equal to
-   *   viewHeight - topMargin - bottomMargin.
-   * Hence one pixel must correspond to
-   *   range / (viewHeight - topMargin - bottomMargin).
-   * Finally, adding topMargin pixels of margin, say at the top, comes down
-   * to adding
-   *   range * topMargin / (viewHeight - topMargin - bottomMargin)
-   * which is equal to
-   *   range * topMarginRatio / ( 1 - topMarginRatio - bottomMarginRatio)
-   * where
-   *   topMarginRation = topMargin / viewHeight
-   *   bottomMarginRatio = bottomMargin / viewHeight.
-   * The same goes horizontally.
-   */
-  float topMarginRatio = isVertical ? cursorTopMarginRatio() : cursorRightMarginRatio();
-  float bottomMarginRatio = isVertical ? cursorBottomMarginRatio() : cursorLeftMarginRatio();
-  assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
-  float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
-  float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
-  /* We want to add slightly more than the required margin, so that
-   * InteractiveCurveViewRange::panToMakePointVisible does not think a point is
-   * invisible due to precision problems when checking if it is outside the
-   * required margin. This is why we add a 1.05f factor. */
-  ratio = 1.05f * ratio / ratioDenominator;
-  return y + ratio * range;
+  return AddMarginHelper(y, range, isVertical, isMin, cursorTopMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), cursorRightMarginRatio());
 }
 
 void InteractiveCurveViewController::updateZoomButtons() {

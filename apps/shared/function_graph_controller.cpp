@@ -154,27 +154,8 @@ int FunctionGraphController::numberOfCurves() const {
 }
 
 void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  constexpr int maxLength = 10;
-  float xMins[maxLength], xMaxs[maxLength], yMins[maxLength], yMaxs[maxLength];
-  int length = functionStore()->numberOfActiveFunctions();
-
   float ratio = InteractiveCurveViewRange::NormalYXRatio() / (1 + cursorTopMarginRatio() + cursorBottomMarginRatio());
-
-  for (int i = 0; i < length; i++) {
-    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    f->rangeForDisplay(xMins + i, xMaxs + i, yMins + i, yMaxs + i, ratio, context);
-  }
-
-  float xMin, xMax, yMin, yMax;
-  Poincare::Zoom::CombineRanges(length, xMins, xMaxs, &xMin, &xMax);
-  Poincare::Zoom::CombineRanges(length, yMins, yMaxs, &yMin, &yMax);
-  Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, range->NormalYXRatio());
-
-  range->setXMin(xMin);
-  range->setXMax(xMax);
-  range->setYMin(yMin);
-  range->setYMax(yMax);
+  InterestingRangesHelper(range, textFieldDelegateApp()->localContext(), functionStore(), ratio);
 }
 
 }

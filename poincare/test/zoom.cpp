@@ -7,7 +7,7 @@ using namespace Poincare;
 
 // When adding the graph window margins, this ratio gives an orthonormal window
 constexpr float NormalRatio = 0.442358822;
-constexpr float StandardTolerance = 10 * FLT_EPSILON;
+constexpr float StandardTolerance = 10.f * FLT_EPSILON;
 
 class ParametersPack {
 public:

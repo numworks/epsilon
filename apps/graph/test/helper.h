@@ -12,6 +12,10 @@ constexpr ContinuousFunction::PlotType Cartesian = ContinuousFunction::PlotType:
 constexpr ContinuousFunction::PlotType Polar = ContinuousFunction::PlotType::Polar;
 constexpr ContinuousFunction::PlotType Parametric = ContinuousFunction::PlotType::Parametric;
 
+constexpr Preferences::AngleUnit Radian = Preferences::AngleUnit::Radian;
+constexpr Preferences::AngleUnit Degree = Preferences::AngleUnit::Degree;
+constexpr Preferences::AngleUnit Gradian = Preferences::AngleUnit::Gradian;
+
 ContinuousFunction * addFunction(const char * definition, ContinuousFunction::PlotType type, ContinuousFunctionStore * store, Context * context);
 
 }

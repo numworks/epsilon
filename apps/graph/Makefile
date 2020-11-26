@@ -42,6 +42,7 @@ i18n_files += $(call i18n_without_universal_for,graph/base)
 tests_src += $(addprefix apps/graph/test/,\
   caching.cpp \
   helper.cpp \
+  ranges.cpp \
 )
 
 $(eval $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png))

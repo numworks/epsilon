@@ -99,7 +99,7 @@ public:
 
   /* Select */
   void select(Direction direction, bool * shouldRecomputeLayout, Layout * selection);
-  LayoutCursor selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection, int step = 1);
+  LayoutCursor selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection);
 
   /* Layout modification */
   void addEmptyExponentialLayout();

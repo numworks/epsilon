@@ -106,33 +106,9 @@ void LayoutCursor::select(Direction direction, bool * shouldRecomputeLayout, Lay
   }
 }
 
-LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection, int step) {
+LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
   LayoutCursor result = clone();
-  if (step <= 0) {
-    return result;
-  }
-  // First step
   result.select(direction, shouldRecomputeLayout, selection);
-
-  if (step == 1 || selection->isUninitialized()) {
-    // If first step failed, result is returned so the situation is handled
-    return result;
-  }
-  // Otherwise, as many steps as possible are performed
-  // Shallow copy to temporary variables
-  LayoutCursor result_temp = result;
-  Layout selection_temp = *selection;
-  for (int i = 1; i < step; ++i) {
-    result_temp.select(direction, shouldRecomputeLayout, &selection_temp);
-    if (selection_temp.isUninitialized()) {
-      // Return last successful result
-      return result;
-    }
-    // Update last successful result
-    result = result_temp;
-    *selection = selection_temp;
-    assert(result.isDefined());
-  }
   return result;
 }
 

@@ -35,12 +35,14 @@ First of all, follow **step 1** [here](https://www.numworks.com/resources/engine
 <details>
   <summary><b>Model n0100</b></summary>
 
+(note: you can change the `EPSILON_I18N=en` flag to `fr`, `nl`, `pt`, `it`, `de`, `es` or `hu`).
+
 ```bash
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
 make MODEL=n0100 clean
-make MODEL=n0100 OMEGA_USERNAME="{Your name, max 15 characters}" -j4
+make MODEL=n0100 EPSILON_I18N=en OMEGA_USERNAME="{Your name, max 15 characters}" -j4
 make MODEL=n0100 epsilon_flash
 ```
 

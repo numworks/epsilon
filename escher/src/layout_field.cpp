@@ -641,20 +641,23 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
   if (!IsSelectionEvent(event)) {
     return false;
   }
-  Layout addedSelection;
   int step = Ion::Events::repetitionFactor();
-  LayoutCursor result = m_contentView.cursor()->selectAtDirection(
-    DirectionForSelectionEvent(event),
-    shouldRecomputeLayout,
-    &addedSelection,
-    step
-  );
-  if (addedSelection.isUninitialized()) {
-    return false;
+  // Selection is handled one step at a time. Repeat selection for each step.
+  for (int i = 0; i < step; ++i) {
+    Layout addedSelection;
+    LayoutCursor result = m_contentView.cursor()->selectAtDirection(
+      DirectionForSelectionEvent(event),
+      shouldRecomputeLayout,
+      &addedSelection
+    );
+    if (addedSelection.isUninitialized()) {
+      // Successful event if at least one step succeeded.
+      return i > 0;
+    }
+    m_contentView.addSelection(addedSelection);
+    assert(result.isDefined());
+    m_contentView.setCursor(result);
   }
-  m_contentView.addSelection(addedSelection);
-  assert(result.isDefined());
-  m_contentView.setCursor(result);
   return true;
 }
 

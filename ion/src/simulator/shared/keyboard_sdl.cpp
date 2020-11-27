@@ -50,8 +50,6 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
 
 constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);
 
-static bool previousState = false;
-
 State scan() {
   // We need to tell SDL to get new state from the host OS
   SDL_PumpEvents();

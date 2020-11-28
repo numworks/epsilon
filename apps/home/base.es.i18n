@@ -1,4 +1,4 @@
 Apps = "Aplicaciones"
 AppsCapital = "OMEGA"
-ForbidenAppInExamMode1 = "This application is"
-ForbidenAppInExamMode2 = "forbidden in exam mode"
+ForbidenAppInExamMode1 = "Esta aplicación está"
+ForbidenAppInExamMode2 = "prohibida en el modo examen"

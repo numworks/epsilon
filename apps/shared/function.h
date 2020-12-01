@@ -94,6 +94,7 @@ protected:
   };
 
   void protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const;
+  virtual void functionBecameInactive() {}
 
 private:
   RecordDataBuffer * recordData() const;

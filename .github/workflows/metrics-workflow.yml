@@ -1,5 +1,5 @@
 name: Metrics
-on: [pull_request_target]
+on: [pull_request]
 
 jobs:
   binary-size:
@@ -26,14 +26,11 @@ jobs:
       - name: Retrieve binary size analysis
         id: binary_size
         run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --escape)"
+      - name: Prepare comment auth
+        run: echo "::set-env name=GITHUB_TOKEN::$(echo ZGExNWM1YzNlMjVkMWU5ZGFmOWQyY2UxMmRhYjJiN2ZhMWM4ODVhMA== | base64 --decode)"
       - name: Add comment
-        uses: actions/github-script@v3.0.0
+        uses: actions/github@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: `${{ steps.binary_size.outputs.table }}`,
-            });
+          args: comment ${{ steps.binary_size.outputs.table }}

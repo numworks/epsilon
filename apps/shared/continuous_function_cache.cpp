@@ -10,14 +10,16 @@ constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
 
 // public
 void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
+  ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
+
   if (!cache) {
     /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
      * of the function we are trying to draw is greater than the number of
-     * available caches, so we do nothing.*/
+     * available caches, so we just tell the function to not lookup any cache. */
+    function->setCache(nullptr);
     return;
   }
 
-  ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
   if (tStep < 3 * k_cacheHitTolerance) {
     /* If tStep is lower than twice the tolerance, we risk shifting the index
      * by 1 for cache hits. As an added safety, we add another buffer of
@@ -29,9 +31,7 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
   if (function->cache() != cache) {
     cache->clear();
     function->setCache(cache);
-  }
-
-  if (tStep != 0. && tStep != cache->step()) {
+  } else if (tStep != 0. && tStep != cache->step()) {
     cache->clear();
   }
 

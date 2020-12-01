@@ -440,7 +440,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("-inf×_oz", "-inf×_kg");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
   assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "13.083978345207×_ps");
-  assert_parsed_expression_simplify_to("log(0)×_s", "-inf×_s");
+  assert_parsed_expression_simplify_to("log(0)×_s", "undef");
   assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
 
   /* Units with invalid exponent */
@@ -645,10 +645,10 @@ QUIZ_CASE(poincare_simplification_factorial) {
 QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(0,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(0,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(1,0)", "0");
-  assert_parsed_expression_simplify_to("log(2,0)", "0");
-  assert_parsed_expression_simplify_to("log(0,14)", "-inf");
-  assert_parsed_expression_simplify_to("log(0,0.14)", Infinity::Name());
+  assert_parsed_expression_simplify_to("log(1,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(2,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(0,14)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(0,0.14)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(0,0.14+𝐢)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(2,1)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(x,1)", Undefined::Name());

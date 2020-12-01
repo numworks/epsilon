@@ -267,48 +267,20 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
 Expression Logarithm::simpleShallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression c = childAtIndex(0);
   Expression b = childAtIndex(1);
-  // log(0,0)->Undefined
-  if (c.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero() && static_cast<Rational &>(c).isZero()) {
-    return replaceWithUndefinedInPlace();
-  }
+
   // log(x,1)->Undefined
   if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isOne()) {
     return replaceWithUndefinedInPlace();
   }
-  bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, reductionContext.context());
-  // log(x,x)->1 with x != inf and log(inf,inf) = undef
-  if (c.isIdenticalTo(b)) {
-    Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(1).convert<Expression>();
-    replaceWithInPlace(result);
-    return result;
-  }
-  // log(x,0)->0 with x != inf and log(inf,0) = undef
+  // log(x,0) -> undef
   if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero()) {
-    Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(0).convert<Expression>();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
-
   if (c.type() == ExpressionNode::Type::Rational) {
     const Rational r = static_cast<Rational &>(c);
-    // log(0, x) = -inf if x > 1 && x != inf || inf x < 1 || undef if x < 0
+    // log(0, x) = undef
     if (r.isZero()) {
-      bool infiniteBase = b.recursivelyMatches(Expression::IsInfinity, reductionContext.context());
-      // Special case: log(0,inf) -> undef
-      if (infiniteBase) {
-        return replaceWithUndefinedInPlace();
-      }
-      bool isNegative = true;
-      Expression result;
-      Evaluation<float> baseApproximation = b.node()->approximate(1.0f, ExpressionNode::ApproximationContext(reductionContext, true));
-      std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
-      if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
-        result = Undefined::Builder();
-      }
-      isNegative = logDenominator.real() > 0.0f;
-      result = result.isUninitialized() ? Infinity::Builder(isNegative) : result;
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
     // log(1) = 0;
     if (r.isOne()) {
@@ -317,6 +289,14 @@ Expression Logarithm::simpleShallowReduce(ExpressionNode::ReductionContext reduc
       return result;
     }
   }
+  bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, reductionContext.context());
+  // log(x,x)->1 with x != inf and log(inf,inf) = undef
+  if (c.isIdenticalTo(b)) {
+    Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(1).convert<Expression>();
+    replaceWithInPlace(result);
+    return result;
+  }
+
   return *this;
 }
 

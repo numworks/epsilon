@@ -50,6 +50,9 @@ KDColor Function::color() const {
 
 void Function::setActive(bool active) {
   recordData()->setActive(active);
+  if (!active) {
+    functionBecameInactive();
+  }
 }
 
 int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {

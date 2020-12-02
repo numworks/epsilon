@@ -78,6 +78,8 @@ protected:
    *   2 * 1 unit -> 10.0mm
    * So normalizedYHalfRange = 43.2mm * 170/240 * 1 unit / 10.0mm */
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
+  virtual bool defaultRangeCriteria() const { return (xMin() == std::round(xMin())) && (xMax() == std::round(xMax())); }
+
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
   float offscreenYAxis() const override { return m_offscreenYAxis; }

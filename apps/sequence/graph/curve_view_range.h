@@ -10,6 +10,7 @@ public:
   CurveViewRange(Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
   void normalize(bool forceChangeY = false) override;
 private:
+  virtual bool defaultRangeCriteria() const override { return false; }
   constexpr static float k_displayLeftMarginRatio = 0.1f;
 };
 

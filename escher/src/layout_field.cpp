@@ -654,6 +654,9 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
       // Successful event if at least one step succeeded.
       return i > 0;
     }
+    /* TODO : addSelection() is built so that it should be called steps by steps
+     *        It could be reworked to handle selection with steps > 1 and match
+     *        text_input's implementation */
     m_contentView.addSelection(addedSelection);
     assert(result.isDefined());
     m_contentView.setCursor(result);

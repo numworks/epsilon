@@ -350,7 +350,7 @@ Expression Logarithm::unaryFunctionDifferential() {
    * ln(x) is only defined for x > 0, but 1/x is defined for any x != 0.
    * Therefore we need to restricted the domain of the derivative function by
    * adding a part that is undefined for x < 0.
-   * The chosen solution is √x^2 / (x * √x^2), which has the advantages of :
+   * The chosen solution is (√x)^2 / (x * (√x)^2), which has the advantages of :
    *   - not being reduced with SystemForApproximation, unlike √x/x√x
    *   - not adding additional undefined points, unlike ln(x)/xln(x) for x = 1
    *   - not reducing precision, unlike 1/√(x^2)

@@ -2,17 +2,24 @@
 #include "global_preferences.h"
 #include <poincare/init.h>
 
-#define DUMMY_MAIN 0
+#define DUMMY_MAIN 1
 #if DUMMY_MAIN
 
 void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
+  // TODO : The blue square should appear.
+  // This seems to be due to temporary vars set and getters not being
+  // synchronized between privileged and unprivileged versions of display.cpp
   Ion::Backlight::init();
+  KDColor pixels[10000];
+  for (int i = 0; i < 10000; ++i) {
+    pixels[i] = i%3==0 ? KDColorGreen : (i%3==1 ? KDColorRed : KDColorYellow);
+  }
   while (1) {
-    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorRed);
-    Ion::Timing::msleep(100);
-    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorBlue);
-    Ion::Timing::msleep(100);
+    Ion::Display::pushRectUniform(KDRect(10,100,100,100), KDColorBlue);
+    Ion::Timing::msleep(300);
+    Ion::Display::pushRect(KDRect(0,0,100,100), const_cast<KDColor *>(pixels));
+    Ion::Timing::msleep(500);
   }
 }
 

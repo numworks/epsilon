@@ -11,6 +11,8 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   cortex_control.s \
   crc32.cpp \
   display.cpp \
+  display_privileged.cpp:+privileged \
+  display_unprivileged.cpp:-privileged \
   events_keyboard_platform.cpp \
   exam_mode.cpp \
   exam_mode_privileged.cpp:+privileged \

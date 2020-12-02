@@ -50,6 +50,9 @@ public:
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; };
 
+  /* Derivation */
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+
 private:
   char m_name[0]; // MUST be the last member variable
 
@@ -70,6 +73,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 
 private:
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }

@@ -4,6 +4,7 @@
 #include <drivers/reset_privileged.h>
 #include <ion/src/device/shared/usb/dfu_privileged.h>
 #include <drivers/exam_mode_privileged.h>
+#include <drivers/display_privileged.h>
 
 extern "C" {
 void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
@@ -34,6 +35,12 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
       //  Ion::Device::ExamMode::externalFlashWrite((uint8_t *)args[0], (uint8_t *)args[1]);
       //  But I haven't fully understood passing args to SVChandler yet - the previous code fails with optim...
       Ion::Device::ExamMode::ToggleExamMode();
+      return;
+    case SVC_PUSH_RECT:
+      // Ion::Device::Display::pushRectSVC();
+      return;
+    case SVC_PUSH_RECT_UNIFORM:
+      Ion::Device::Display::pushRectUniformSVC();
       return;
     default:
       return;

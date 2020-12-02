@@ -3,6 +3,7 @@
 
 #include <kandinsky/rect.h>
 #include <kandinsky/color.h>
+#include <ion/timing.h>
 extern "C" {
 #include <stddef.h>
 }
@@ -10,6 +11,20 @@ extern "C" {
 namespace Ion {
 namespace Device {
 namespace Display {
+
+void setTempKD(KDRect *tempKD);
+void setTempPixels(const KDColor *tempPixels);
+void setTempC(KDColor tempC);
+
+KDRect getTempKD();
+const KDColor * getTempPixels();
+KDColor getTempC();
+void pushR();
+void pushRU();
+
+void stampA();
+void stampB();
+void stampC();
 
 void init();
 void shutdown();

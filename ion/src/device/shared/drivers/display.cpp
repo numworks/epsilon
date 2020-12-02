@@ -3,6 +3,7 @@
 #include <ion/timing.h>
 #include <drivers/config/display.h>
 #include <assert.h>
+#include <drivers/svcall.h>
 
 /* This driver interfaces with the ST7789V LCD controller.
  * This chip keeps a whole frame in SRAM memory and feeds it to the LCD panel as
@@ -21,19 +22,18 @@ namespace Display {
 using namespace Device::Display;
 
 void pushRect(KDRect r, const KDColor * pixels) {
+  // Store r and pixels
+  // register KDRect *r asm ("r2");
+  // register KDColor *pixels asm ("r3");
+  // setTempKD(&r);
+  // setTempPixels(pixels);
+  // pushR();
+  // svc(SVC_PUSH_RECT);
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
 #endif
   setDrawingArea(r, Orientation::Landscape);
   pushPixels(pixels, r.width()*r.height());
-}
-
-void pushRectUniform(KDRect r, KDColor c) {
-#if USE_DMA
-  waitForPendingDMAUploadCompletion();
-#endif
-  setDrawingArea(r, Orientation::Portrait);
-  pushColor(c, r.width()*r.height());
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
@@ -209,6 +209,69 @@ namespace Device {
 namespace Display {
 
 using namespace Regs;
+
+// Default global variable (red square)
+KDRect tempKD = KDRect(Ion::Display::Width-100, 0, 100, 100);
+const KDColor *tempPixels = nullptr;
+KDColor tempC = KDColorRed;
+
+// Getters and setters
+void setTempKD(KDRect *KD) {
+  tempKD = KDRect(KD->x(), KD->y(), KD->width(), KD->height());
+}
+
+void setTempPixels(const KDColor *pixels) {
+  tempPixels = pixels;
+}
+
+void setTempC(KDColor c) {
+  tempC = c;
+}
+
+KDRect getTempKD() {
+  return tempKD;
+}
+const KDColor * getTempPixels() {
+  return tempPixels;
+}
+KDColor getTempC() {
+  return tempC;
+}
+
+void pushR() {
+  if (getTempPixels() == nullptr) {
+    return;
+  }
+  setDrawingArea(getTempKD(), Orientation::Landscape);
+  pushPixels(getTempPixels(), getTempKD().width()*getTempKD().height());
+}
+
+void pushRU() {
+  setDrawingArea(getTempKD(), Orientation::Portrait);
+  pushColor(getTempC(), getTempKD().width()*getTempKD().height());
+  Ion::Timing::msleep(100);
+  stampA();
+}
+
+// Stamps
+// Purple rectangle
+void stampA() {
+  KDRect a = KDRect(150,25,50,175);
+  setDrawingArea(a, Orientation::Portrait);
+  pushColor(KDColorPurple, a.width()*a.height());
+}
+// Black square
+void stampB() {
+  KDRect a = KDRect(75,75,100,100);
+  setDrawingArea(a, Orientation::Portrait);
+  pushColor(KDColorBlack, a.width()*a.height());
+}
+// Orange rectangle
+void stampC() {
+  KDRect a = KDRect(25,150,175,50);
+  setDrawingArea(a, Orientation::Portrait);
+  pushColor(KDColorOrange, a.width()*a.height());
+}
 
 static inline void send_data(uint16_t d) {
   *DataAddress = d;

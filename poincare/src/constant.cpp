@@ -78,6 +78,10 @@ Expression ConstantNode::shallowReduce(ReductionContext reductionContext) {
   return Constant(this).shallowReduce(reductionContext);
 }
 
+bool ConstantNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Constant(this).derivate(reductionContext, symbol, symbolValue);
+}
+
 bool ConstantNode::isConstantCodePoint(CodePoint c) const {
   UTF8Decoder decoder(m_name);
   bool result = (decoder.nextCodePoint() == c);
@@ -104,6 +108,11 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
   replaceWithInPlace(result);
   return result;
+}
+
+bool Constant::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  replaceWithInPlace(Rational::Builder(0));
+  return true;
 }
 
 }

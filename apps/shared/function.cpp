@@ -51,7 +51,7 @@ KDColor Function::color() const {
 void Function::setActive(bool active) {
   recordData()->setActive(active);
   if (!active) {
-    functionBecameInactive();
+    didBecomeInactive();
   }
 }
 

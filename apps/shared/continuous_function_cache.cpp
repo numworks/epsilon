@@ -31,7 +31,7 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
   if (function->cache() != cache) {
     cache->clear();
     function->setCache(cache);
-  } else if (tStep != 0. && tStep != cache->step()) {
+  } else if (tStep != 0.f && tStep != cache->step()) {
     cache->clear();
   }
 

@@ -176,8 +176,12 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
     return *this;
   }
   /* Updates the value of derivand, because derivate may call
-   * replaceWithInplace on it */
-  derivand = childAtIndex(0);
+   * replaceWithInplace on it.
+   * We need to reduce the derivand here before replacing the symbol : the
+   * general formulas used during the derivation process can create some nodes
+   * that are not defined for some values (e.g. log), but that would disappear
+   * at reduction. */
+  derivand = childAtIndex(0).deepReduce(reductionContext);
   /* Deep reduces the child, because derivate may not preserve its reduced
    * status. */
 

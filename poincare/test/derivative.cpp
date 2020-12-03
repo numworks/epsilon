@@ -64,4 +64,6 @@ QUIZ_CASE(poincare_derivative_approximation) {
   assert_reduces_for_approximation("diff(abs(x),x,123)", "1");
   assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1");
   assert_reduces_for_approximation("diff(abs(x),x,0)", Undefined::Name());
+
+  assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");
 }

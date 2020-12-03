@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-void InteractiveCurveViewRangeDelegate::InterestingRangesHelper(InteractiveCurveViewRange * range, Poincare::Context * context, FunctionStore * functionStore, float targetRatio) {
+void InteractiveCurveViewRangeDelegate::DefaultInterestingRanges(InteractiveCurveViewRange * range, Poincare::Context * context, FunctionStore * functionStore, float targetRatio) {
   constexpr int maxLength = 10;
   float xMins[maxLength], xMaxs[maxLength], yMins[maxLength], yMaxs[maxLength];
   int length = functionStore->numberOfActiveFunctions();
@@ -26,7 +26,7 @@ void InteractiveCurveViewRangeDelegate::InterestingRangesHelper(InteractiveCurve
   range->setYMax(yMax);
 }
 
-float InteractiveCurveViewRangeDelegate::AddMarginHelper(float x, float range, bool isVertical, bool isMin, float top, float bottom, float left, float right) {
+float InteractiveCurveViewRangeDelegate::DefaultAddMargin(float x, float range, bool isVertical, bool isMin, float top, float bottom, float left, float right) {
   /* The provided min or max range limit y is altered by adding a margin.
    * In pixels, the view's height occupied by the vertical range is equal to
    *   viewHeight - topMargin - bottomMargin.

@@ -7,7 +7,7 @@ using namespace Poincare;
 
 // When adding the graph window margins, this ratio gives an orthonormal window
 constexpr float NormalRatio = 0.442358822;
-constexpr float StandardTolerance = 10.f * FLT_EPSILON;
+constexpr float StandardTolerance = 50.f * FLT_EPSILON;
 
 class ParametersPack {
 public:
@@ -35,7 +35,7 @@ float evaluate_expression(float x, Context * context, const void * auxiliary) {
 bool float_equal(float a, float b, float tolerance = StandardTolerance) {
   assert(std::isfinite(tolerance));
   return !(std::isnan(a) || std::isnan(b))
-      && std::fabs(a - b) <= tolerance * std::fabs(a + b);
+      && IsApproximatelyEqual(a, b, tolerance, 0.);
 }
 
 bool range1D_matches(float min, float max, float targetMin, float targetMax, float tolerance = StandardTolerance) {

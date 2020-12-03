@@ -10,7 +10,7 @@ namespace Graph {
 bool floatEquals(float a, float b, float tolerance = 1.f/static_cast<float>(Ion::Display::Height)) {
   /* The default value for the tolerance is chosen so that the error introduced
    * by caching would not typically be visible on screen. */
-  return a == b || std::abs(a - b) <= tolerance * std::abs(a + b) / 2.f || (std::isnan(a) && std::isnan(b));
+  return (std::isnan(a) && std::isnan(b)) || IsApproximatelyEqual(a, b, tolerance, 0.);
 }
 
 void assert_check_cartesian_cache_against_function(ContinuousFunction * function, ContinuousFunctionCache * cache, Context * context, float tMin) {

@@ -1,4 +1,5 @@
 #include <poincare/zoom.h>
+#include <poincare/helpers.h>
 #include <float.h>
 #include <algorithm>
 #include <stddef.h>
@@ -219,6 +220,7 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
       pop++;
     }
   }
+
   /* sum/pop is the log mean value of the function, which can be interpreted as
    * its average order of magnitude. Then, bound is the value for the next
    * order of magnitude and is used to cut the Y range. */
@@ -231,8 +233,8 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
     float bound = std::exp(sum / pop + 1.f);
     sampleYMin = std::max(sampleYMin, - bound);
     sampleYMax = std::min(sampleYMax, bound);
-    *yMin = std::min(*yMin, sampleYMin);
-    *yMax = std::max(*yMax, sampleYMax);
+    *yMin = std::isfinite(*yMin) ? std::min(*yMin, sampleYMin) : sampleYMin;
+    *yMax = std::isfinite(*yMax) ? std::max(*yMax, sampleYMax) : sampleYMax;
   }
   /* Round out the smallest bound to 0 if it is negligible compare to the
    * other one. This way, we can display the X axis for positive functions such
@@ -244,41 +246,57 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   }
 }
 
-static float smoothToPowerOfTen(float x) {
-  return std::pow(10.f, std::round(std::log10(x)));
-}
-
 void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
-  constexpr float rangeMagnitudeWeight = 0.2f;
-  constexpr float maxMagnitudeDifference = 2.f;
-  /* RefinedYRange for display, by default, evaluates the function 80 times,
-   * and we call it 21 times. As we only need a rough estimate of the range to
-   * compare it to the others, we save some time by only sampling the function
-   * 20 times. */
-  constexpr int sampleSize = k_sampleSize / 4;
-  float bestGrade = FLT_MAX, bestUnit, bestMagnitude;
-  float unit = k_smallUnitMantissa;
-  float xMagnitude = k_minimalDistance;
-  float yMinRange = FLT_MAX, yMaxRange = -FLT_MAX;
-  float center = *xMin == *xMax ? *xMin : 0.f;
-  while (xMagnitude < k_maximalDistance) {
-    const float xRange = unit * xMagnitude;
-    RefinedYRangeForDisplay(evaluation, center - xRange, center + xRange, &yMinRange, &yMaxRange, context, auxiliary, sampleSize);
-    float currentRatio = (yMaxRange - yMinRange) / (2 * xRange);
-    float grade = std::fabs(std::log(currentRatio / yxRatio));
-    /* The weigth function favors the [-5, 5] range, which will expand into
-     * the [-10, 10] range */
-    grade += std::fabs(std::log(xRange / k_largeUnitMantissa)) * rangeMagnitudeWeight;
-    if (std::fabs(std::log(currentRatio / yxRatio)) < maxMagnitudeDifference && grade < bestGrade) {
-      bestGrade = grade;
-      bestUnit = unit;
-      bestMagnitude = xMagnitude;
-      *yMin = yMinRange;
-      *yMax = yMaxRange;
-    }
-    NextUnit(&unit, &xMagnitude);
+  constexpr float minimalXCoverage = 0.15f;
+  constexpr float minimalYCoverage = 0.3f;
+  constexpr int sampleSize = k_sampleSize * 2;
+
+  float xCenter = *xMin == *xMax ? *xMin : 0.f;
+  *xMin = xCenter - k_defaultHalfRange;
+  *xMax = xCenter + k_defaultHalfRange;
+  float xRange = 2 * k_defaultHalfRange;
+  float step = xRange / (sampleSize - 1);
+  float sample[sampleSize];
+  for (int i = 0; i < sampleSize; i++) {
+    sample[i] = evaluation(*xMin + i * step, context, auxiliary);
   }
-  if (bestGrade == FLT_MAX) {
+  Helpers::Sort(
+      [](int i, int j, void * ctx, int size) {
+        float * array = static_cast<float *>(ctx);
+        float temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      },
+      [](int i, int j, void * ctx, int size) {
+        float * array = static_cast<float *>(ctx);
+        return array[i] >= array[j];
+      },
+      sample,
+      sampleSize);
+
+  float yRange = yxRatio * xRange;
+  int j = 1;
+  int bestIndex, bestBreadth = 0, bestDistanceToCenter;
+  for (int i = 0; i < sampleSize; i++) {
+    if (sampleSize - i < bestBreadth) {
+      break;
+    }
+    while (j < sampleSize && sample[j] < sample[i] + yRange) {
+      j++;
+    }
+    int breadth = j - i;
+    int distanceToCenter = std::fabs(static_cast<float>(i + j - sampleSize));
+    if (breadth > bestBreadth
+     || (breadth == bestBreadth
+      && distanceToCenter <= bestDistanceToCenter)) {
+      bestIndex = i;
+      bestBreadth = breadth;
+      bestDistanceToCenter = distanceToCenter;
+    }
+  }
+
+  if (bestBreadth < minimalXCoverage * sampleSize
+   || sample[bestIndex + bestBreadth] - sample[bestIndex] < minimalYCoverage * yRange) {
     *xMin = NAN;
     *xMax = NAN;
     *yMin = NAN;
@@ -286,18 +304,9 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     return;
   }
 
-  /* The X bounds are preset, user-friendly values: we do not want them to be
-   * altered by the normalization. To that end, we use a larger unit for the
-   * horizontal axis, so that the Y axis is the one that will be extended. */
-  float xRange = bestUnit * bestMagnitude;
-  while ((*yMax - *yMin) / (2 * xRange) > yxRatio) {
-    NextUnit(&bestUnit, &bestMagnitude);
-    xRange = bestUnit * bestMagnitude;
-  }
-  xRange = bestUnit * smoothToPowerOfTen(bestMagnitude);
-  *xMin = center - xRange;
-  *xMax = center + xRange;
-  SetToRatio(yxRatio, xMin, xMax, yMin, yMax);
+  float yCenter = (sample[bestIndex] + sample[bestIndex + bestBreadth - 1]) / 2.f;
+  *yMin = yCenter - yRange / 2.f;
+  *yMax = yCenter + yRange / 2.f;
 }
 
 void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {
@@ -406,20 +415,6 @@ bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2
     }
   }
   return true;
-}
-
-void Zoom::NextUnit(float * mantissa, float * exponent) {
-  float mantissaUnits[] = {k_smallUnitMantissa, k_mediumUnitMantissa, k_largeUnitMantissa};
-  size_t numberOfUnits = sizeof(mantissaUnits) / sizeof(float);
-  for (size_t i = 0; i < numberOfUnits; i++) {
-    if (*mantissa == mantissaUnits[i]) {
-      *mantissa = mantissaUnits[(i + 1) % numberOfUnits];
-      if (*mantissa == mantissaUnits[0]) {
-        *exponent *= 10.0f;
-      }
-      return;
-    }
-  }
 }
 
 }

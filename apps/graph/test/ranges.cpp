@@ -8,6 +8,9 @@ namespace Graph {
 
 class AdHocGraphController : public InteractiveCurveViewRangeDelegate {
 public:
+  /* These margins are obtained from instance methods of the various derived
+   * class of SimpleInteractiveCurveViewController. As we cannot create an
+   * instance of this class here, we define those directly. */
   static constexpr float k_topMargin = 0.068f;
   static constexpr float k_bottomMargin = 0.132948f;
   static constexpr float k_leftMargin = 0.04f;
@@ -30,7 +33,7 @@ private:
 };
 
 bool float_equal(float a, float b, float tolerance = 10.f * FLT_EPSILON) {
-  return std::fabs(a - b) <= tolerance * std::fabs(a + b);
+  return IsApproximatelyEqual(a, b, tolerance, 0.);
 }
 
 template <size_t N>

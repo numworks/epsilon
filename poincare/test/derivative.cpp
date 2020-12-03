@@ -21,8 +21,11 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(ln(x),x,x)", "1/x");
   assert_reduces_to_formal_expression("diff(log(x),x,x)", "1/\u0012x×ln(5)+x×ln(2)\u0013");
   assert_reduces_to_formal_expression("diff(sin(x),x,x)", "cos(x)");
+  assert_reduces_to_formal_expression("diff(sin(x),x,x)", "\u0012π×cos(x)\u0013/180", Degree);
   assert_reduces_to_formal_expression("diff(cos(x),x,x)", "-sin(x)");
+  assert_reduces_to_formal_expression("diff(cos(x),x,x)", "-\u0012π×sin(x)\u0013/200", Gradian);
   assert_reduces_to_formal_expression("diff(tan(x),x,x)", "1/cos(x)^2");
+  assert_reduces_to_formal_expression("diff(tan(x),x,x)", "π/\u0012180×cos(x)^2\u0013", Degree);
   assert_reduces_to_formal_expression("diff(sinh(x),x,x)", "cosh(x)");
   assert_reduces_to_formal_expression("diff(cosh(x),x,x)", "sinh(x)");
   assert_reduces_to_formal_expression("diff(tanh(x),x,x)", "1/cosh(x)^2");

@@ -143,11 +143,11 @@ void assert_orthonormal_range_is(const char * definition, float targetXMin, floa
 
 QUIZ_CASE(poincare_zoom_range_with_ratio) {
   assert_orthonormal_range_is("1", NAN, NAN, NAN, NAN);
-  assert_orthonormal_range_is("x", -20, 20, -8.84717655, 8.84717655);
-  assert_orthonormal_range_is("x^2", -2, 2, -0.172234654, 1.59720063);
-  assert_orthonormal_range_is("x^3", -5, 5, -2.21179414, 2.21179414);
-  assert_orthonormal_range_is("ℯ^x", -5, 5, -0.852653265, 3.57093501);
-  assert_orthonormal_range_is("ℯ^x+4", -5, 5, 3.21590924, 7.63949776);
+  assert_orthonormal_range_is("x", -10, 10, -4.360695, 4.486482);
+  assert_orthonormal_range_is("x^2", -10, 10, -0.0527148247, 8.7944622);
+  assert_orthonormal_range_is("x^3", -10, 10, -3.91881895, 4.9283576);
+  assert_orthonormal_range_is("ℯ^x", -10, 10, -0.439413071, 8.40776348);
+  assert_orthonormal_range_is("ℯ^x+4", -10, 10, 3.56058741, 12.4077644);
 }
 
 void assert_full_range_is(const char * definition, float xMin, float xMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {

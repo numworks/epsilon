@@ -183,7 +183,7 @@ void InteractiveCurveViewRange::setDefault() {
   m_delegate->interestingRanges(this);
   /* If the horizontal bounds are integers, they are preset values and should
    * not be changed. */
-  bool isDefaultRange = defaultRangeCriteria();
+  bool isDefaultRange = hasDefaultRange();
 
   // Add margins, then round limits.
   float newXMin = xMin(), newXMax = xMax();

@@ -13,8 +13,8 @@ class InteractiveCurveViewRangeDelegate {
 public:
   static constexpr float k_defaultXHalfRange = 10.0f;
 
-  static void InterestingRangesHelper(InteractiveCurveViewRange * range, Poincare::Context * context, FunctionStore * functionStore, float targetRatio);
-  static float AddMarginHelper(float x, float range, bool isVertical, bool isMin, float top, float bottom, float left, float right);
+  static void DefaultInterestingRanges(InteractiveCurveViewRange * range, Poincare::Context * context, FunctionStore * functionStore, float targetRatio);
+  static float DefaultAddMargin(float x, float range, bool isVertical, bool isMin, float top, float bottom, float left, float right);
 
   virtual float interestingXMin() const { return -k_defaultXHalfRange; }
   virtual bool defaultRangeIsNormalized() const { return false; }

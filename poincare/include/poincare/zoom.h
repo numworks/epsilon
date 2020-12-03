@@ -67,7 +67,6 @@ private:
    * an asymptote, by recursively computing the slopes. In case of an extremum,
    * the slope should taper off toward the center. */
   static bool IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations = 3);
-  static void NextUnit(float * mantissa, float * exponent);
 };
 
 }

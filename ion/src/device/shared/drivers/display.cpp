@@ -22,13 +22,6 @@ namespace Display {
 using namespace Device::Display;
 
 void pushRect(KDRect r, const KDColor * pixels) {
-  // Store r and pixels
-  // register KDRect *r asm ("r2");
-  // register KDColor *pixels asm ("r3");
-  // setTempKD(&r);
-  // setTempPixels(pixels);
-  // pushR();
-  // svc(SVC_PUSH_RECT);
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
 #endif
@@ -210,40 +203,39 @@ namespace Display {
 
 using namespace Regs;
 
-// Default global variable (red square)
+// Default global variable (top left square)
+/* Using global variables is not effective as there is a different scope between
+ * privileged and unprivileged calls */
 KDRect tempKD = KDRect(Ion::Display::Width-100, 0, 100, 100);
-const KDColor *tempPixels = nullptr;
-KDColor tempC = KDColorRed;
 
 // Getters and setters
 void setTempKD(KDRect *KD) {
   tempKD = KDRect(KD->x(), KD->y(), KD->width(), KD->height());
 }
 
-void setTempPixels(const KDColor *pixels) {
-  tempPixels = pixels;
-}
-
 void setTempC(KDColor c) {
-  tempC = c;
+  // Assigning value to a register
+  uint16_t tempN = c;
+  asm volatile (
+    "mov r11,%0"
+    : :
+    "r"(tempN)
+  );
 }
 
 KDRect getTempKD() {
   return tempKD;
 }
-const KDColor * getTempPixels() {
-  return tempPixels;
-}
-KDColor getTempC() {
-  return tempC;
-}
 
-void pushR() {
-  if (getTempPixels() == nullptr) {
-    return;
-  }
-  setDrawingArea(getTempKD(), Orientation::Landscape);
-  pushPixels(getTempPixels(), getTempKD().width()*getTempKD().height());
+KDColor getTempC() {
+  // Loading value from a register
+  uint16_t tempN;
+  asm volatile (
+    "mov %0,r11"
+    : "=r"(tempN):
+
+  );
+  return KDColor::RGB16(tempN);
 }
 
 void pushRU() {

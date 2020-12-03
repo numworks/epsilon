@@ -20,8 +20,8 @@ public:
 
   // InteractiveCurveViewRangeDelegate
   bool defaultRangeIsNormalized() const override { return functionStore()->displaysNonCartesianFunctions(); }
-  void interestingRanges(InteractiveCurveViewRange * range) override { InterestingRangesHelper(range, context(), functionStore(), Ratio()); }
-  float addMargin(float x, float range, bool isVertical, bool isMin) override { return AddMarginHelper(x, range, isVertical, isMin, k_topMargin, k_bottomMargin, k_leftMargin, k_rightMargin); }
+  void interestingRanges(InteractiveCurveViewRange * range) override { DefaultInterestingRanges(range, context(), functionStore(), Ratio()); }
+  float addMargin(float x, float range, bool isVertical, bool isMin) override { return DefaultAddMargin(x, range, isVertical, isMin, k_topMargin, k_bottomMargin, k_leftMargin, k_rightMargin); }
   void updateZoomButtons() override {}
 
 private:

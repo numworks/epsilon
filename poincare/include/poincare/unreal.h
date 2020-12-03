@@ -28,7 +28,7 @@ public:
   }
 
   /* Derivation
-   * Overrides NumberNode's derivate to revert to a non-derivable state */
+   * Unlike Numbers that derivate to 0, Unreal derivates to Unreal. */
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return false; }
 
   // Layout

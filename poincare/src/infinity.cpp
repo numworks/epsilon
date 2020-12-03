@@ -31,6 +31,10 @@ template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
   return Complex<T>::Builder(m_negative ? -INFINITY : INFINITY);
 }
 
+bool InfinityNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Infinity(this).derivate(reductionContext, symbol, symbolValue);
+}
+
 Infinity Infinity::Builder(bool negative) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(InfinityNode));
   InfinityNode * node = new (bufferNode) InfinityNode(negative);
@@ -43,6 +47,11 @@ Expression Infinity::setSign(ExpressionNode::Sign s) {
   Expression result = Infinity::Builder(s == ExpressionNode::Sign::Negative);
   replaceWithInPlace(result);
   return result;
+}
+
+bool Infinity::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  replaceWithUndefinedInPlace();
+  return true;
 }
 
 template Evaluation<float> InfinityNode::templatedApproximate<float>() const;

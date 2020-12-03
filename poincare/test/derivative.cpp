@@ -8,6 +8,9 @@ void assert_reduces_to_formal_expression(const char * expression, const char * r
 }
 
 QUIZ_CASE(poincare_derivative_formal) {
+  assert_reduces_to_formal_expression("diff(undef,x,x)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff(unreal,x,x)", Unreal::Name());
+  assert_reduces_to_formal_expression("diff(inf,x,x)", Undefined::Name());
   assert_reduces_to_formal_expression("diff(1,x,x)", "0");
   assert_reduces_to_formal_expression("diff(π,x,x)", "0");
   assert_reduces_to_formal_expression("diff(y,x,x)", "0");

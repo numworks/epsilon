@@ -30,8 +30,8 @@ public:
   }
 
   /* Derivation
-   * Overrides NumberNode's derivate to revert to a non-derivable state */
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return false; }
+   * Unlike Numbers that derivate to 0, Undefined derivates to Undefined. */
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return true; }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

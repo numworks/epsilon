@@ -16,7 +16,7 @@ void ion_main(int argc, const char * const argv[]) {
     pixels[i] = i%3==0 ? KDColorGreen : (i%3==1 ? KDColorRed : KDColorYellow);
   }
   while (1) {
-    Ion::Display::pushRectUniform(KDRect(10,100,100,100), KDColorBlue);
+    Ion::Display::pushRectUniform(KDRect(10,10,100,100), KDColorBlue);
     Ion::Timing::msleep(300);
     Ion::Display::pushRect(KDRect(0,0,100,100), const_cast<KDColor *>(pixels));
     Ion::Timing::msleep(500);

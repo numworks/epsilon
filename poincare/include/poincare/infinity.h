@@ -37,6 +37,11 @@ public:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
+
+  /* Derivation
+   * Unlike Numbers that derivate to 0, Infinity derivates to Undefined. */
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+
 private:
   // Simplification
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::MoreLetters; }
@@ -56,6 +61,7 @@ public:
   static int NameSize() {
     return 4;
   }
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 private:
   InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }
 };

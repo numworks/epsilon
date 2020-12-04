@@ -17,18 +17,24 @@ namespace Display {
 
 using namespace Device::Display;
 
+// TODO HUGO : Factorize pushRect and pushRectSVC()
+
 void pushRect(KDRect r, const KDColor * pixels) {
   // Store rect and pixels
-  const char * args[2] = {(char *)&r, (char *)&pixels};
-  setSvcallArgs(2, args);
-  pushRectSVC();
+#if USE_DMA
+  waitForPendingDMAUploadCompletion();
+#endif
+  setDrawingArea(r, Orientation::Landscape);
+  pushPixels(pixels, r.width() * r.height());
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
   // Store rect and color
-  const char * args[2] = {(char *)&r, (char *)&c};
-  setSvcallArgs(2, args);
-  pushRectUniformSVC();
+#if USE_DMA
+  waitForPendingDMAUploadCompletion();
+#endif
+  setDrawingArea(r, Orientation::Portrait);
+  pushColor(c, r.width() * r.height());
 }
 
 }
@@ -42,31 +48,31 @@ namespace Display {
 using namespace Device::Display;
 
 void pushRectSVC() {
+  // Load rect and pixels
+  void * args[2];
+  getSvcallArgs(2, args);
+  KDRect r = *static_cast<KDRect *>(args[0]);
+  const KDColor * pixels = *static_cast<const KDColor **>(args[1]);
+
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
 #endif
-  // Load rect and pixels
-  const char * args[2];
-  getSvcallArgs(2, args);
-  KDRect r = *(KDRect *)args[0];
-  const KDColor * pixels = *(const KDColor **)args[1];
-
   setDrawingArea(r, Orientation::Landscape);
-  pushPixels(pixels, r.width()*r.height());
+  pushPixels(pixels, r.width() * r.height());
 }
 
 void pushRectUniformSVC() {
+  // Load rect and color
+  void * args[2];
+  getSvcallArgs(2, args);
+  KDRect r = *static_cast<KDRect *>(args[0]);
+  KDColor c = *static_cast<KDColor *>(args[1]);
+
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
 #endif
-  // Load rect and color
-  const char * args[2];
-  getSvcallArgs(2, args);
-  KDRect r = *(KDRect *)args[0];
-  KDColor c = *(KDColor *)args[1];
-
   setDrawingArea(r, Orientation::Portrait);
-  pushColor(c, r.width()*r.height());
+  pushColor(c, r.width() * r.height());
 }
 
 }

@@ -18,12 +18,12 @@ void pushRectUniform(KDRect r, KDColor c) {
   svc(SVC_PUSH_RECT_UNIFORM);
 }
 
-// void pushRect(KDRect r, const KDColor * pixels) {
-  // // Store r and c
-  // const char * args[2] = {(char *)&r, (char *)&pixels};
-  // svcArgs(2, args);
-  // svc(SVC_PUSH_RECT);
-// }
+void pushRect(KDRect r, const KDColor * pixels) {
+  // Store r and c
+  const char * args[2] = {(char *)&r, (char *)&pixels};
+  svcArgs(2, args);
+  svc(SVC_PUSH_RECT);
+}
 
 
 }

@@ -2,7 +2,7 @@
 #include "global_preferences.h"
 #include <poincare/init.h>
 
-#define DUMMY_MAIN 1
+#define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
 void ion_main(int argc, const char * const argv[]) {
@@ -14,6 +14,7 @@ void ion_main(int argc, const char * const argv[]) {
   }
   Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
   while (1) {
+    // TODO : Fix color loss
     Ion::Display::pushRectUniform(KDRect(10,10,100,100), KDColorBlue);
     Ion::Timing::msleep(500);
     Ion::Display::pushRect(KDRect(0,0,100,100), const_cast<KDColor *>(pixels));

@@ -12,9 +12,10 @@ void ion_main(int argc, const char * const argv[]) {
   for (int i = 0; i < 10000; ++i) {
     pixels[i] = i%3==0 ? KDColorGreen : (i%3==1 ? KDColorRed : KDColorYellow);
   }
+  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
   while (1) {
     Ion::Display::pushRectUniform(KDRect(10,10,100,100), KDColorBlue);
-    Ion::Timing::msleep(300);
+    Ion::Timing::msleep(500);
     Ion::Display::pushRect(KDRect(0,0,100,100), const_cast<KDColor *>(pixels));
     Ion::Timing::msleep(500);
   }

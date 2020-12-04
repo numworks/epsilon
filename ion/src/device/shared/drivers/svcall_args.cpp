@@ -1,6 +1,9 @@
 #include <drivers/svcall_args.h>
+#include <ion/timing.h>
 
 void setArg(int argc, const char * argv) {
+  // Todo : remove this msleep. without it, the compiler reorder setArg calls
+  Ion::Timing::msleep(1);
   switch (argc) {
     case 0:
       asm volatile ("mov r7,%0"::"r"(argv));

@@ -14,6 +14,7 @@ extern "C" {
 #define SVC_DFU 5
 #define SVC_RESET_CORE 6
 #define SVC_EXAM_MODE_TOGGLE 7
+// #define SVC_PUSH_RECT 8
 #define SVC_PUSH_RECT_UNIFORM 8
 
 #ifdef __cplusplus

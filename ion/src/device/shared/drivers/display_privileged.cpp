@@ -1,5 +1,6 @@
 #include "display_privileged.h"
 #include "display.h"
+#include <drivers/svcall_args.h>
 
 #define USE_DMA_FOR_PUSH_PIXELS 0
 #define USE_DMA_FOR_PUSH_COLOR 0
@@ -13,9 +14,10 @@ using namespace Device::Display;
 
 void pushRectUniform(KDRect r, KDColor c) {
   // Store r and c
-  setTempKD(&r);
-  setTempC(c);
+  const char * args[2] = {(char *)&r, (char *)&c};
+  svcArgs(2, args);
   pushRectUniformSVC();
+
   Ion::Timing::msleep(100);
   stampB();
 }

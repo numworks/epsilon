@@ -1,4 +1,5 @@
 #include "display.h"
+#include <drivers/svcall_args.h>
 #include <drivers/svcall.h>
 
 namespace Ion {
@@ -12,9 +13,10 @@ using namespace Device::Display;
 
 void pushRectUniform(KDRect r, KDColor c) {
   // Store r and c
-  setTempKD(&r);
-  setTempC(c);
+  const char * args[2] = {(char *)&r, (char *)&c};
+  svcArgs(2, args);
   svc(SVC_PUSH_RECT_UNIFORM);
+
   Ion::Timing::msleep(100);
   stampC();
 }

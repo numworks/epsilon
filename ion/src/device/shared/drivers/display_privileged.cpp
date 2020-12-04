@@ -19,12 +19,12 @@ void pushRectUniform(KDRect r, KDColor c) {
   pushRectUniformSVC();
 }
 
-// void pushRect(KDRect r, const KDColor * pixels) {
-  // // Store r and c
-  // const char * args[2] = {(char *)&r, (char *)&pixels};
-  // svcArgs(2, args);
-  // pushRectSVC();
-// }
+void pushRect(KDRect r, const KDColor * pixels) {
+  // Store r and c
+  const char * args[2] = {(char *)&r, (char *)&pixels};
+  svcArgs(2, args);
+  pushRectSVC();
+}
 
 }
 }
@@ -43,12 +43,12 @@ void pushRectUniformSVC() {
   pushRU();
 }
 
-// void pushRectSVC() {
-// #if USE_DMA
-//   waitForPendingDMAUploadCompletion();
-// #endif
-//   pushR();
-// }
+void pushRectSVC() {
+#if USE_DMA
+  waitForPendingDMAUploadCompletion();
+#endif
+  pushR();
+}
 
 }
 }

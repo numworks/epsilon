@@ -21,14 +21,6 @@ namespace Display {
 
 using namespace Device::Display;
 
-void pushRect(KDRect r, const KDColor * pixels) {
-#if USE_DMA
-  waitForPendingDMAUploadCompletion();
-#endif
-  setDrawingArea(r, Orientation::Landscape);
-  pushPixels(pixels, r.width()*r.height());
-}
-
 void pullRect(KDRect r, KDColor * pixels) {
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
@@ -213,15 +205,15 @@ void pushRU() {
   pushColor(c, r.width()*r.height());
 }
 
-// void pushR() {
-  // const char * args[2];
-  // svcGetArgs(2, args);
-  // KDRect r = *(KDRect *)args[0];
-  // const KDColor * pixels = *(const KDColor **)args[1];
+void pushR() {
+  const char * args[2];
+  svcGetArgs(2, args);
+  KDRect r = *(KDRect *)args[0];
+  const KDColor * pixels = *(const KDColor **)args[1];
 
-  // setDrawingArea(r, Orientation::Landscape);
-  // pushPixels(pixels, r.width()*r.height());
-// }
+  setDrawingArea(r, Orientation::Landscape);
+  pushPixels(pixels, r.width()*r.height());
+}
 
 static inline void send_data(uint16_t d) {
   *DataAddress = d;

@@ -16,10 +16,14 @@ void pushRectUniform(KDRect r, KDColor c) {
   const char * args[2] = {(char *)&r, (char *)&c};
   svcArgs(2, args);
   svc(SVC_PUSH_RECT_UNIFORM);
-
-  Ion::Timing::msleep(100);
-  stampC();
 }
+
+// void pushRect(KDRect r, const KDColor * pixels) {
+  // // Store r and c
+  // const char * args[2] = {(char *)&r, (char *)&pixels};
+  // svcArgs(2, args);
+  // svc(SVC_PUSH_RECT);
+// }
 
 
 }

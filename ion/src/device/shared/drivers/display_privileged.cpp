@@ -17,10 +17,14 @@ void pushRectUniform(KDRect r, KDColor c) {
   const char * args[2] = {(char *)&r, (char *)&c};
   svcArgs(2, args);
   pushRectUniformSVC();
-
-  Ion::Timing::msleep(100);
-  stampB();
 }
+
+// void pushRect(KDRect r, const KDColor * pixels) {
+  // // Store r and c
+  // const char * args[2] = {(char *)&r, (char *)&pixels};
+  // svcArgs(2, args);
+  // pushRectSVC();
+// }
 
 }
 }
@@ -38,6 +42,13 @@ void pushRectUniformSVC() {
 #endif
   pushRU();
 }
+
+// void pushRectSVC() {
+// #if USE_DMA
+//   waitForPendingDMAUploadCompletion();
+// #endif
+//   pushR();
+// }
 
 }
 }

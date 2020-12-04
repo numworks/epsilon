@@ -11,7 +11,7 @@ namespace Ion {
 namespace Device {
 namespace Display {
 
-void pushRectSVC(); //const KDColor * pixels, size_t numberOfPixels);
+// void pushRectSVC(); //const KDColor * pixels, size_t numberOfPixels);
 void pushRectUniformSVC(); //KDColor color, size_t numberOfPixels);
 
 }

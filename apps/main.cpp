@@ -5,6 +5,8 @@
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
+// TODO HUGO : Test with regular main, all apps and all languages.
+
 void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
   Ion::Backlight::init();
@@ -14,7 +16,6 @@ void ion_main(int argc, const char * const argv[]) {
   }
   Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
   while (1) {
-    // TODO : Fix color loss
     Ion::Display::pushRectUniform(KDRect(10,10,100,100), KDColorBlue);
     Ion::Timing::msleep(500);
     Ion::Display::pushRect(KDRect(0,0,100,100), const_cast<KDColor *>(pixels));

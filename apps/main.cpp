@@ -7,9 +7,6 @@
 
 void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
-  // TODO : The blue square should appear.
-  // This seems to be due to temporary vars set and getters not being
-  // synchronized between privileged and unprivileged versions of display.cpp
   Ion::Backlight::init();
   KDColor pixels[10000];
   for (int i = 0; i < 10000; ++i) {

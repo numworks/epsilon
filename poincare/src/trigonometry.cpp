@@ -90,6 +90,7 @@ bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const 
 
 Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit) {
   if (fromUnit == toUnit) {
+    // Just an optimisation to gain some time at reduction
     return Rational::Builder(1);
   }
   return Division::Builder(piExpression(toUnit), piExpression(fromUnit));

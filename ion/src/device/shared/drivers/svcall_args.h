@@ -1,12 +1,10 @@
 #ifndef ION_DEVICE_SHARED_SVCALL_ARGS_H
 #define ION_DEVICE_SHARED_SVCALL_ARGS_H
 
-void setArg(int argc, const char * argv);
+void svcall(unsigned int svcNumber, int argc = 0, const char * argv[] = nullptr);
 
-const char * getArg(int argc);
+void setSvcallArgs(int argc, const char * argv[]);
 
-void svcArgs(int argc, const char * argv[]);
-
-void svcGetArgs(int argc, const char * argv[]);
+void getSvcallArgs(int argc, const char * argv[]);
 
 #endif

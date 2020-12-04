@@ -1,40 +1,54 @@
-#include <drivers/svcall_args.h>
+#include "svcall_args.h"
+#include "svcall.h"
+#include <assert.h>
 #include <ion/timing.h>
 
-void setArg(int argc, const char * argv) {
-  // Todo : remove this msleep. without it, the compiler reorder setArg calls
+void setSvcallArg(int argId, const char * argv) {
+  // TODO : remove this msleep. without it, the compiler reorder setArg calls
   Ion::Timing::msleep(1);
-  switch (argc) {
+  switch (argId) {
     case 0:
       asm volatile ("mov r7,%0"::"r"(argv));
       return;
     case 1:
       asm volatile ("mov r8,%0"::"r"(argv));
       return;
+    default:
+      assert(false);
     }
 }
 
-const char * getArg(int argc) {
+const char * getSvcallArg(int argId) {
+
   const char * argv;
-  switch (argc) {
+  switch (argId) {
     case 0:
       asm volatile ("mov %0,r7":"=r"(argv):);
       break;
     case 1:
       asm volatile ("mov %0,r8":"=r"(argv):);
       break;
+    default:
+      assert(false);
     }
   return argv;
 }
 
-void svcArgs(int argc, const char * argv[]) {
+void setSvcallArgs(int argc, const char * argv[]) {
   for (int argId = 0; argId < argc; ++argId) {
-    setArg(argId, argv[argId]);
+    setSvcallArg(argId, argv[argId]);
   }
 }
 
-void svcGetArgs(int argc, const char * argv[]) {
+void getSvcallArgs(int argc, const char * argv[]) {
   for (int argId = 0; argId < argc; ++argId) {
-    argv[argId] = getArg(argId);
+    argv[argId] = getSvcallArg(argId);
   }
+}
+
+void svcall(unsigned int svcNumber, int argc, const char * argv[]) {
+  if (argc > 0) {
+    setSvcallArgs(argc, argv);
+  }
+  svc(svcNumber);
 }

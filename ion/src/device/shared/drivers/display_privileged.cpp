@@ -1,6 +1,11 @@
 #include "display_privileged.h"
 #include "display.h"
-#include <drivers/svcall_args.h>
+#include "svcall_args.h"
+#include <kandinsky/rect.h>
+#include <kandinsky/color.h>
+extern "C" {
+#include <stddef.h>
+}
 
 #define USE_DMA_FOR_PUSH_PIXELS 0
 #define USE_DMA_FOR_PUSH_COLOR 0
@@ -12,18 +17,18 @@ namespace Display {
 
 using namespace Device::Display;
 
-void pushRectUniform(KDRect r, KDColor c) {
-  // Store r and c
-  const char * args[2] = {(char *)&r, (char *)&c};
-  svcArgs(2, args);
-  pushRectUniformSVC();
+void pushRect(KDRect r, const KDColor * pixels) {
+  // Store rect and pixels
+  const char * args[2] = {(char *)&r, (char *)&pixels};
+  setSvcallArgs(2, args);
+  pushRectSVC();
 }
 
-void pushRect(KDRect r, const KDColor * pixels) {
-  // Store r and c
-  const char * args[2] = {(char *)&r, (char *)&pixels};
-  svcArgs(2, args);
-  pushRectSVC();
+void pushRectUniform(KDRect r, KDColor c) {
+  // Store rect and color
+  const char * args[2] = {(char *)&r, (char *)&c};
+  setSvcallArgs(2, args);
+  pushRectUniformSVC();
 }
 
 }
@@ -36,18 +41,32 @@ namespace Display {
 
 using namespace Device::Display;
 
-void pushRectUniformSVC() {
-#if USE_DMA
-  waitForPendingDMAUploadCompletion();
-#endif
-  pushRU();
-}
-
 void pushRectSVC() {
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
 #endif
-  pushR();
+  // Load rect and pixels
+  const char * args[2];
+  getSvcallArgs(2, args);
+  KDRect r = *(KDRect *)args[0];
+  const KDColor * pixels = *(const KDColor **)args[1];
+
+  setDrawingArea(r, Orientation::Landscape);
+  pushPixels(pixels, r.width()*r.height());
+}
+
+void pushRectUniformSVC() {
+#if USE_DMA
+  waitForPendingDMAUploadCompletion();
+#endif
+  // Load rect and color
+  const char * args[2];
+  getSvcallArgs(2, args);
+  KDRect r = *(KDRect *)args[0];
+  KDColor c = *(KDColor *)args[1];
+
+  setDrawingArea(r, Orientation::Portrait);
+  pushColor(c, r.width()*r.height());
 }
 
 }

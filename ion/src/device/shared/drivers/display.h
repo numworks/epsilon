@@ -12,16 +12,6 @@ namespace Ion {
 namespace Device {
 namespace Display {
 
-extern KDRect tempKD;
-
-void setTempKD(KDRect *tempKD);
-void setTempPixels(const KDColor *tempPixels);
-void setTempC(KDColor tempC);
-
-KDRect getTempKD();
-const KDColor * getTempPixels();
-KDColor getTempC();
-void pushR();
 void pushRU();
 
 void stampA();

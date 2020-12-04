@@ -3,7 +3,7 @@
 #include <ion/timing.h>
 #include <drivers/config/display.h>
 #include <assert.h>
-#include <drivers/svcall.h>
+#include <drivers/svcall_args.h>
 
 /* This driver interfaces with the ST7789V LCD controller.
  * This chip keeps a whole frame in SRAM memory and feeds it to the LCD panel as
@@ -203,44 +203,15 @@ namespace Display {
 
 using namespace Regs;
 
-// Default global variable (top left square)
-/* Using global variables is not effective as there is a different scope between
- * privileged and unprivileged calls */
-KDRect tempKD = KDRect(Ion::Display::Width-100, 0, 100, 100);
-
-// Getters and setters
-void setTempKD(KDRect *KD) {
-  tempKD = KDRect(KD->x(), KD->y(), KD->width(), KD->height());
-}
-
-void setTempC(KDColor c) {
-  // Assigning value to a register
-  uint16_t tempN = c;
-  asm volatile (
-    "mov r11,%0"
-    : :
-    "r"(tempN)
-  );
-}
-
-KDRect getTempKD() {
-  return tempKD;
-}
-
-KDColor getTempC() {
-  // Loading value from a register
-  uint16_t tempN;
-  asm volatile (
-    "mov %0,r11"
-    : "=r"(tempN):
-
-  );
-  return KDColor::RGB16(tempN);
-}
-
 void pushRU() {
-  setDrawingArea(getTempKD(), Orientation::Portrait);
-  pushColor(getTempC(), getTempKD().width()*getTempKD().height());
+  const char * args[2];
+  svcGetArgs(2, args);
+  KDRect r = *(KDRect *)args[0];
+  KDColor c = *(KDColor *)args[1];
+
+  setDrawingArea(r, Orientation::Portrait);
+  pushColor(c, r.width()*r.height());
+
   Ion::Timing::msleep(100);
   stampA();
 }

@@ -211,30 +211,17 @@ void pushRU() {
 
   setDrawingArea(r, Orientation::Portrait);
   pushColor(c, r.width()*r.height());
-
-  Ion::Timing::msleep(100);
-  stampA();
 }
 
-// Stamps
-// Purple rectangle
-void stampA() {
-  KDRect a = KDRect(150,25,50,175);
-  setDrawingArea(a, Orientation::Portrait);
-  pushColor(KDColorPurple, a.width()*a.height());
-}
-// Black square
-void stampB() {
-  KDRect a = KDRect(75,75,100,100);
-  setDrawingArea(a, Orientation::Portrait);
-  pushColor(KDColorBlack, a.width()*a.height());
-}
-// Orange rectangle
-void stampC() {
-  KDRect a = KDRect(25,150,175,50);
-  setDrawingArea(a, Orientation::Portrait);
-  pushColor(KDColorOrange, a.width()*a.height());
-}
+// void pushR() {
+  // const char * args[2];
+  // svcGetArgs(2, args);
+  // KDRect r = *(KDRect *)args[0];
+  // const KDColor * pixels = *(const KDColor **)args[1];
+
+  // setDrawingArea(r, Orientation::Landscape);
+  // pushPixels(pixels, r.width()*r.height());
+// }
 
 static inline void send_data(uint16_t d) {
   *DataAddress = d;

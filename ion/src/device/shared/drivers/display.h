@@ -13,10 +13,7 @@ namespace Device {
 namespace Display {
 
 void pushRU();
-
-void stampA();
-void stampB();
-void stampC();
+// void pushR();
 
 void init();
 void shutdown();

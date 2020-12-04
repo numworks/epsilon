@@ -12,9 +12,6 @@ namespace Ion {
 namespace Device {
 namespace Display {
 
-void pushRU();
-void pushR();
-
 void init();
 void shutdown();
 

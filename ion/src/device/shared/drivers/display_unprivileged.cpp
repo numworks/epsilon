@@ -1,6 +1,6 @@
 #include "display.h"
-#include <drivers/svcall_args.h>
-#include <drivers/svcall.h>
+#include "svcall.h"
+#include "svcall_args.h"
 
 namespace Ion {
 namespace Display {
@@ -11,20 +11,17 @@ using namespace Device::Display;
  * flash (because the external flash is then shut down). We forbid inlining to
  * avoid inlining these instructions in the external flash. */
 
-void pushRectUniform(KDRect r, KDColor c) {
-  // Store r and c
-  const char * args[2] = {(char *)&r, (char *)&c};
-  svcArgs(2, args);
-  svc(SVC_PUSH_RECT_UNIFORM);
-}
-
 void pushRect(KDRect r, const KDColor * pixels) {
-  // Store r and c
+  // Store rect and pixels
   const char * args[2] = {(char *)&r, (char *)&pixels};
-  svcArgs(2, args);
-  svc(SVC_PUSH_RECT);
+  svcall(SVC_PUSH_RECT, 2, args);
 }
 
+void pushRectUniform(KDRect r, KDColor c) {
+  // Store rect and color
+  const char * args[2] = {(char *)&r, (char *)&c};
+  svcall(SVC_PUSH_RECT_UNIFORM, 2, args);
+}
 
 }
 }

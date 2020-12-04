@@ -3,7 +3,6 @@
 
 #include <kandinsky/rect.h>
 #include <kandinsky/color.h>
-#include <ion/timing.h>
 extern "C" {
 #include <stddef.h>
 }

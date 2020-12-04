@@ -13,13 +13,13 @@ using namespace Device::Display;
 
 void pushRect(KDRect r, const KDColor * pixels) {
   // Store rect and pixels
-  const char * args[2] = {(char *)&r, (char *)&pixels};
+  void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
   svcall(SVC_PUSH_RECT, 2, args);
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
   // Store rect and color
-  const char * args[2] = {(char *)&r, (char *)&c};
+  void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&c) };
   svcall(SVC_PUSH_RECT_UNIFORM, 2, args);
 }
 

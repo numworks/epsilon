@@ -13,7 +13,7 @@ public:
   View * view() override;
 
   void setBook(const External::Archive::File& file);
-  
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   WordWrapTextView m_readerView;
 };

@@ -8,11 +8,17 @@ namespace reader
 
 class WordWrapTextView : public PointerTextView {
 public:
-
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-  
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+    void setText(const char*, int length);
+    void nextPage();
+    void previousPage();
+    
 protected:
-  
+    int m_pageOffset = 0;
+    mutable int m_nextPageOffset = 0;
+    int m_length = 0;
+
+    static const int margin = 10;
 };
 
 }

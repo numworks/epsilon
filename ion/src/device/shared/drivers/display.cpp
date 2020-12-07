@@ -3,7 +3,6 @@
 #include <ion/timing.h>
 #include <drivers/config/display.h>
 #include <assert.h>
-#include <drivers/svcall_args.h>
 
 /* This driver interfaces with the ST7789V LCD controller.
  * This chip keeps a whole frame in SRAM memory and feeds it to the LCD panel as

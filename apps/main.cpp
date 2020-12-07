@@ -5,8 +5,6 @@
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
-// TODO HUGO : Test with regular main, all apps and all languages.
-
 void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
   Ion::Backlight::init();

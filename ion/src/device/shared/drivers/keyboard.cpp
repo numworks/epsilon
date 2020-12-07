@@ -62,6 +62,8 @@ State scan() {
      * append 6 bits of (not columns) to state. */
     state = (state << 6) | (~columns & 0x3F);
   }
+  // Detecting interruption requires all row to be pulled-down
+  activateAllRows();
 
   // Make sure undefined key bits are forced to zero in the return value
   state = Config::ValidKeys(state);
@@ -97,6 +99,9 @@ void init() {
     Config::ColumnGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Input);
     Config::ColumnGPIO.PUPDR()->setPull(pin, GPIO::PUPDR::Pull::Up);
   }
+
+  // Detecting interruption requires all row to be pulled-down
+  activateAllRows();
 
   // Init interruption
   /*

@@ -10,7 +10,7 @@
  *  require that Thumb code only use those registers.
  *  A subroutine must preserve the contents of the registers r4-r8, r10, r11
  *  and SP (and r9 in PCS variants that designate r9 as v6).
- * r10 and r8 seem to less likely to be used if a register is required between
+ * r10 and r8 seem less likely to be used if a register is required between
  * storage and loading of an argument (which should be avoided anyway).
  * TODO HUGO : Extensively test using registers between STORE and LOAD.
  */

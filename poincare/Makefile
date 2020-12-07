@@ -195,7 +195,7 @@ tests_src += $(addprefix poincare/test/,\
 )
 
 ifeq ($(DEBUG),1)
-POINCARE_TREE_LOG ?= 1
+POINCARE_TREE_LOG ?= 0
 endif
 
 ifdef POINCARE_TREE_LOG

@@ -1,6 +1,6 @@
 #include "display_privileged.h"
 #include "display.h"
-#include "svcall_args.h"
+#include "svcall.h"
 #include <kandinsky/rect.h>
 #include <kandinsky/color.h>
 extern "C" {

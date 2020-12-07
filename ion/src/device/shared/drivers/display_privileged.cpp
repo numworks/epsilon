@@ -51,6 +51,9 @@ void pushRectSVC() {
   // Load rect and pixels
   void * args[2];
   getSvcallArgs(2, args);
+  if (args[0] == nullptr || args[1] == nullptr) {
+    return;
+  }
   KDRect r = *static_cast<KDRect *>(args[0]);
   const KDColor * pixels = *static_cast<const KDColor **>(args[1]);
 
@@ -65,6 +68,9 @@ void pushRectUniformSVC() {
   // Load rect and color
   void * args[2];
   getSvcallArgs(2, args);
+  if (args[0] == nullptr || args[1] == nullptr) {
+    return;
+  }
   KDRect r = *static_cast<KDRect *>(args[0]);
   KDColor c = *static_cast<KDColor *>(args[1]);
 

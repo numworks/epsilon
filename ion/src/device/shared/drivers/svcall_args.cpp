@@ -24,5 +24,11 @@ void svcall(unsigned int svcNumber, int argc, void * argv[]) {
       SVC_STORE_ARG(SVC_ARGS_REGISTER_1, argv[1])
     }
   }
-  svc(svcNumber);
+  /* TODO Hugo : with DEBUG=1 :
+   * svc(svcNumber); -> asm operand 0 probably doesn't match constraints */
+  if (svcNumber == SVC_PUSH_RECT_UNIFORM) {
+    svc(SVC_PUSH_RECT_UNIFORM);
+  } else if (svcNumber == SVC_PUSH_RECT) {
+    svc(SVC_PUSH_RECT);
+  }
 }

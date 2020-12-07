@@ -21,4 +21,10 @@ extern "C" {
 }
 #endif
 
+void svcall(unsigned int svcNumber, int argc = 0, void * argv[] = nullptr);
+
+void getSvcallArgs(int argc, void * argv[]);
+
+void setSvcallArgs(int argc, void * argv[]);
+
 #endif

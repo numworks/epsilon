@@ -71,7 +71,7 @@ QUIZ_CASE(graph_ranges_single_function) {
 
   assert_best_cartesian_range_is("0", -10, 10, -5.81249952, 4.81249952);
   assert_best_cartesian_range_is("1", -10, 10, -4.81249952, 5.81249952);
-  assert_best_cartesian_range_is("-100", -10, 10, -105.662506, -95.0375061);
+  assert_best_cartesian_range_is("-100", -10, 10, -105.8125, -95.1875);
   assert_best_cartesian_range_is("0.01", -10, 10, -5.81249952, 4.81249952);
 
   assert_best_cartesian_range_is("x", -10, 10, -5.66249943, 4.96249962);

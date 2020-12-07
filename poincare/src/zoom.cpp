@@ -317,7 +317,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
    * X axis. Conversely, very flat functions may only take a small portion of
    * the Y range. In those cases, the ratio is not suitable. */
   if (bestBreadth < minimalXCoverage * sampleSize
-   || sample[bestIndex + bestBreadth] - sample[bestIndex] < minimalYCoverage * yRange) {
+   || sample[bestIndex + bestBreadth - 1] - sample[bestIndex] < minimalYCoverage * yRange) {
     *xMin = NAN;
     *xMax = NAN;
     *yMin = NAN;

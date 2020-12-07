@@ -29,7 +29,7 @@ public:
 
   /* Derivation
    * Unlike Numbers that derivate to 0, Unreal derivates to Unreal. */
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return false; }
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return true; }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

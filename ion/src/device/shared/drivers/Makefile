@@ -30,8 +30,8 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   reset_privileged.cpp:+privileged \
   reset_unprivileged.cpp:-privileged \
   serial_number.cpp \
+  svc.cpp \
   svcall_handler.cpp:+svcallhandler \
-  svcall_args.cpp \
   swd.cpp \
   timing.cpp \
   timing_privileged.cpp:+privileged \

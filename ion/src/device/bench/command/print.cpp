@@ -1,6 +1,7 @@
 #include "command.h"
 #include <ion.h>
 #include <ion/src/device/shared/drivers/led.h>
+#include <kandinsky/ion_context.h>
 
 namespace Ion {
 namespace Device {

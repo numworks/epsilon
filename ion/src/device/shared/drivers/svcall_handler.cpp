@@ -42,6 +42,9 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
     case SVC_PUSH_RECT_UNIFORM:
       Ion::Device::Display::pushRectUniformSVC();
       return;
+    case SVC_PULL_RECT:
+      Ion::Device::Display::pullRectSVC();
+      return;
     default:
       return;
   }

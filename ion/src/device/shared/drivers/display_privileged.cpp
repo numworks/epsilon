@@ -20,7 +20,6 @@ using namespace Device::Display;
 // TODO HUGO : Factorize pushRect and pushRectSVC()
 
 void pushRect(KDRect r, const KDColor * pixels) {
-  // Store rect and pixels
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
 #endif
@@ -29,12 +28,19 @@ void pushRect(KDRect r, const KDColor * pixels) {
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
-  // Store rect and color
 #if USE_DMA
   waitForPendingDMAUploadCompletion();
 #endif
   setDrawingArea(r, Orientation::Portrait);
   pushColor(c, r.width() * r.height());
+}
+
+void pullRect(KDRect r, KDColor * pixels) {
+#if USE_DMA
+  waitForPendingDMAUploadCompletion();
+#endif
+  setDrawingArea(r, Orientation::Landscape);
+  pullPixels(pixels, r.width()*r.height());
 }
 
 }
@@ -79,6 +85,23 @@ void pushRectUniformSVC() {
 #endif
   setDrawingArea(r, Orientation::Portrait);
   pushColor(c, r.width() * r.height());
+}
+
+void pullRectSVC() {
+  // Load rect and pixels
+  void * args[2];
+  getSvcallArgs(2, args);
+  if (args[0] == nullptr || args[1] == nullptr) {
+    return;
+  }
+  KDRect r = *static_cast<KDRect *>(args[0]);
+  KDColor * pixels = *static_cast<KDColor **>(args[1]);
+
+#if USE_DMA
+  waitForPendingDMAUploadCompletion();
+#endif
+  setDrawingArea(r, Orientation::Landscape);
+  pullPixels(pixels, r.width()*r.height());
 }
 
 }

@@ -55,12 +55,21 @@ void svcall(unsigned int svcNumber, int argc, void * argv[]) {
   getSvcallArgs(argc, regState);
   // Write registers
   setSvcallArgs(argc, argv);
-  /* TODO Hugo : with DEBUG=1, compilation error :
-   * svc(svcNumber); -> asm operand 0 probably doesn't match constraints */
-  if (svcNumber == SVC_PUSH_RECT_UNIFORM) {
-    svc(SVC_PUSH_RECT_UNIFORM);
-  } else if (svcNumber == SVC_PUSH_RECT) {
-    svc(SVC_PUSH_RECT);
+  /* TODO Hugo : The following line triggers a compilation error :
+   * svc(svcNumber); -> asm operand 0 probably doesn't match constraints
+   * Current fix is to switch on SVC calls */
+  switch (svcNumber) {
+    case SVC_PUSH_RECT:
+      svc(SVC_PUSH_RECT);
+      break;
+    case SVC_PUSH_RECT_UNIFORM:
+      svc(SVC_PUSH_RECT_UNIFORM);
+      break;
+    case SVC_PULL_RECT:
+      svc(SVC_PULL_RECT);
+      break;
+    default:
+      break;
   }
   // Restore registers state
   setSvcallArgs(argc, regState);

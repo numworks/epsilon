@@ -1,5 +1,6 @@
 #include "bench.h"
 #include <ion.h>
+#include <kandinsky/ion_context.h>
 #include <poincare/init.h>
 #include "command_list.h"
 

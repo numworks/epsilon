@@ -3,7 +3,7 @@
 #include <drivers/backlight.h>
 #include <drivers/battery.h>
 #include <drivers/console.h>
-#include <drivers/display.h>
+#include <drivers/display_privileged.h>
 #include <drivers/external_flash.h>
 #include <drivers/keyboard.h>
 #include <drivers/led.h>

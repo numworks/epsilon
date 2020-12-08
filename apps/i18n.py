@@ -77,7 +77,10 @@ def check_redundancy(messages, data, locales):
             redundant_names.add(name)
     if (len(redundant_names) > 0):
         sys.stderr.write("Some localized messages are redundant and can be made universal :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
-        sys.exit(-1)
+        # TODO Hugo : Uncomment this line. On long-term, we could remove this
+        # line and add visibility to the message, using colors like
+        #       "\033[1m\033[91mwarning\033[0m: Some localized […] "
+        # sys.exit(-1)
 
 def parse_files(files):
     data = {}

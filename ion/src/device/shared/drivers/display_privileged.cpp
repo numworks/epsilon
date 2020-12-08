@@ -15,7 +15,8 @@ namespace Display {
 
 using namespace Device::Display;
 
-// TODO HUGO : Factorize pushRect and pushRectSVC()
+/* TODO Hugo : Factorize the next 4 functions and their SVC equivalent.
+ * Maybe they pushRectSVC() should just call pushRect() with retrieved params */
 
 void pushRect(KDRect r, const KDColor * pixels) {
 #if USE_DMA

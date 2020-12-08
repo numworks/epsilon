@@ -23,6 +23,9 @@
  * - Put the result in r0;
  * - In the epilogue, pull r4 to r11 from the stack, and pull the return address
  *   to the program counter r15. This can be done with a single LDM instruction.
+ * If we had a better control on how the code is assembled around svc calls, we
+ * could almost retrieve the parameters from r0-r3, and wouldn't have to deal
+ * with previous registers, as they should be automatically saved on the stack.
  */
 
 #define SVC_ARGS_REGISTER_0 "r10"
@@ -69,7 +72,7 @@ void svcall(unsigned int svcNumber, int argc, void * argv[]) {
       svc(SVC_PULL_RECT);
       break;
     case SVC_POST_PUSH_MULTICOLOR:
-      /* TODO Hugo : Fix crash on device when this row is uncommented
+      /* TODO Hugo : [Important]Fix crash on device when this row is uncommented
        * With this row, a crash also happen whether or not :
        * - SVC_POST_PUSH_MULTICOLOR in svc() is replaced with anything
        * - SVC_POST_PUSH_MULTICOLOR in switch case is replaced with anything

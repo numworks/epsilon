@@ -7,6 +7,7 @@ namespace Display {
 
 void pushRectSVC();
 void pushRectUniformSVC();
+void pullRectSVC();
 
 }
 }

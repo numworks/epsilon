@@ -294,7 +294,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
    * dealing with linear functions. */
   float yRange = yxRatio * xRange;
   int j = 1;
-  int bestIndex, bestBreadth = 0, bestDistanceToCenter;
+  int bestIndex = 0, bestBreadth = 0, bestDistanceToCenter;
   for (int i = 0; i < sampleSize; i++) {
     if (sampleSize - i < bestBreadth) {
       break;

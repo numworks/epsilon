@@ -15,6 +15,7 @@ LocalizationController::ContentView::ContentView(LocalizationController * contro
 {
   m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
   m_countryTitleMessage.setAlignment(0.5f, 0.5f);
+  assert(k_numberOfCountryWarningLines == 2); // textMessages is not overflowed
   I18n::Message textMessages[k_numberOfCountryWarningLines] = {I18n::Message::CountryWarning1, I18n::Message::CountryWarning2};
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
     m_countryWarningLines[i].setBackgroundColor(Palette::WallScreen);

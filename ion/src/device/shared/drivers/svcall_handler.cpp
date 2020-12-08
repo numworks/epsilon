@@ -45,6 +45,9 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
     case SVC_PULL_RECT:
       Ion::Device::Display::pullRectSVC();
       return;
+    case SVC_POST_PUSH_MULTICOLOR:
+      Ion::Device::Display::POSTPushMulticolorSVC();
+      return;
     default:
       return;
   }

@@ -68,7 +68,17 @@ void svcall(unsigned int svcNumber, int argc, void * argv[]) {
     case SVC_PULL_RECT:
       svc(SVC_PULL_RECT);
       break;
-    default:
+    case SVC_POST_PUSH_MULTICOLOR:
+      /* TODO Hugo : Fix crash on device when this row is uncommented
+       * With this row, a crash also happen whether or not :
+       * - SVC_POST_PUSH_MULTICOLOR in svc() is replaced with anything
+       * - SVC_POST_PUSH_MULTICOLOR in switch case is replaced with anything
+       *   that the compiler won't optimize out
+       * - svcall_handler() SVC_POST_PUSH_MULTICOLOR case call is commented
+       * - SVC_POST_PUSH_MULTICOLOR is renamed or reordered
+       * - Any other logic related to POSTPushMulticolor() is commented
+      */
+      // svc(SVC_POST_PUSH_MULTICOLOR);
       break;
   }
   // Restore registers state

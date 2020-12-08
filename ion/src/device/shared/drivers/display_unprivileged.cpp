@@ -1,10 +1,8 @@
-#include "display.h"
+#include <ion/display.h>
 #include "svcall.h"
 
 namespace Ion {
 namespace Display {
-
-using namespace Device::Display;
 
 /* We isolate the standby code that needs to be executed from the internal
  * flash (because the external flash is then shut down). We forbid inlining to
@@ -26,6 +24,12 @@ void pullRect(KDRect r, KDColor * pixels) {
   // Store rect and pixels
   void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
   svcall(SVC_PULL_RECT, 2, args);
+}
+
+void POSTPushMulticolor(int rootNumberTiles, int tileSize) {
+  // Store rootNumberTiles and tileSize
+  void * args[2] = { static_cast<void *>(&rootNumberTiles), static_cast<void *>(&tileSize) };
+  svcall(SVC_POST_PUSH_MULTICOLOR, 2, args);
 }
 
 }

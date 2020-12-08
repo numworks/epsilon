@@ -101,6 +101,7 @@ void TableCell::layoutSubviews(bool force) {
     y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), k_verticalMargin) - withMargin(subAccessorySize.height(), 0));
     if (subAccessory) {
       KDCoordinate subAccessoryHeight = std::min<KDCoordinate>(subAccessorySize.height(), height - y - k_separatorThickness - k_verticalMargin);
+      assert(accessory);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, subAccessoryHeight), force);
       y += subAccessoryHeight;
     }

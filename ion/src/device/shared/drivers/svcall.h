@@ -16,6 +16,7 @@ extern "C" {
 #define SVC_EXAM_MODE_TOGGLE 7
 #define SVC_PUSH_RECT 8
 #define SVC_PUSH_RECT_UNIFORM 9
+#define SVC_PULL_RECT 10
 
 #ifdef __cplusplus
 }

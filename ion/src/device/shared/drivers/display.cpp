@@ -20,14 +20,6 @@ namespace Display {
 
 using namespace Device::Display;
 
-void pullRect(KDRect r, KDColor * pixels) {
-#if USE_DMA
-  waitForPendingDMAUploadCompletion();
-#endif
-  setDrawingArea(r, Orientation::Landscape);
-  pullPixels(pixels, r.width()*r.height());
-}
-
 bool waitForVBlank() {
   /* Min screen frequency is 40Hz so the maximal period is T = 1/40Hz = 25ms.
    * If after T ms, we still do not have a VBlank event, just return. */

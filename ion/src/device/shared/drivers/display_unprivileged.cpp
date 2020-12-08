@@ -22,5 +22,11 @@ void pushRectUniform(KDRect r, KDColor c) {
   svcall(SVC_PUSH_RECT_UNIFORM, 2, args);
 }
 
+void pullRect(KDRect r, KDColor * pixels) {
+  // Store rect and pixels
+  void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
+  svcall(SVC_PULL_RECT, 2, args);
+}
+
 }
 }

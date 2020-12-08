@@ -14,6 +14,9 @@
 #include <kandinsky/rect.h>
 #include <kandinsky/color.h>
 
+/* TODO Hugo : Implement SVC for all the methods that are exposed to the
+ * userland and that are interacting directly with the screen driver */
+
 namespace Ion {
 namespace Display {
 

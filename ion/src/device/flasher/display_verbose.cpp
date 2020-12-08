@@ -1,4 +1,5 @@
 #include <ion.h>
+#include <kandinsky/ion_context.h>
 
 namespace Flasher {
 namespace Display {

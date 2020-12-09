@@ -40,7 +40,7 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event
     /* If Auto is still on (because the navigation menu was brought up and
      * closed immediately), we need to deactivate it to prevent the range from
      * being recomputed in InteractiveCurveViewController::viewWillAppear().
-     * We need to store it's state to reset it later in viewDidDisappear(), so
+     * We need to store its state to reset it later in viewDidDisappear(), so
      * that open navigation without moving doesn't deactivate the Auto. */
     m_restoreZoomAuto = m_interactiveRange->zoomAuto();
     m_interactiveRange->setZoomAuto(false);

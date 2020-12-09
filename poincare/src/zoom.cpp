@@ -470,8 +470,13 @@ void Zoom::ExpandSparseWindow(float * sample, int length, float * xMin, float * 
   for (int i = 0; i < length; i++) {
     float x = *xMin + i * step;
     float y = sample[i];
-    float r = 2 * std::max(std::fabs(x - xCenter) / xRange, std::fabs(y - yCenter) / yRange);
-    emptyCenter = std::min(emptyCenter, r);
+    if (std::isfinite(y)) {
+      /* r is the ratio between the window and the largest rectangle (with same
+       * center and shape as the window) that does not contain (x,y).
+       * i.e. the smallest zoom-in for which (x,y) is not visible. */
+      float r = 2 * std::max(std::fabs(x - xCenter) / xRange, std::fabs(y - yCenter) / yRange);
+      emptyCenter = std::min(emptyCenter, r);
+    }
   }
 
   if (emptyCenter > emptyCenterMaxSize) {

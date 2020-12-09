@@ -42,6 +42,10 @@
  */
 
 #include "keyboard.h"
+#include "keyboard_queue.h"
+
+// TODO Emilie: remove
+#include <ion/display.h>
 
 namespace Ion {
 namespace Keyboard {
@@ -135,6 +139,18 @@ void shutdown() {
     uint8_t pin = Config::ColumnPins[i];
     Config::ColumnGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Analog);
     Config::ColumnGPIO.PUPDR()->setPull(pin, GPIO::PUPDR::Pull::None);
+  }
+}
+
+void handleInterruption() {
+  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
+    uint8_t pin = Config::ColumnPins[i];
+    if (EXTI.PR()->get(pin)) {
+      EXTI.PR()->set(pin, true);
+      // TODO Emilie: remove
+      ::Ion::Display::pushRectUniform(KDRect(0,0,100,100), KDColorRed);
+      Queue::sharedQueue()->push(Keyboard::scan());
+    }
   }
 }
 

@@ -13,6 +13,7 @@ using namespace Ion::Keyboard;
 
 void init();
 void shutdown();
+void handleInterruption();
 
 inline uint8_t rowForKey(Key key) {
   return (int)key/Config::numberOfColumns;

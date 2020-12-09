@@ -21,6 +21,7 @@ const char * FunctionZoomAndPanCurveViewController::title() {
 void FunctionZoomAndPanCurveViewController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_contentView.curveView()->setOkView(nullptr);
+  m_contentView.setDisplayLegend(true);
   /* We need to change the curve range to keep the same visual aspect of the
    * view. */
   adaptCurveRange(true);
@@ -45,14 +46,19 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event
     m_restoreZoomAuto = m_interactiveRange->zoomAuto();
     m_interactiveRange->setZoomAuto(false);
   }
-  return ZoomAndPanCurveViewController::handleEvent(event);
+  bool eventHandled = ZoomAndPanCurveViewController::handleEvent(event);
+  /* Hide the legend if the event does something, as the user likely does not
+   * need it, but display it if the event does nothing to remind the user of
+   * the UI. */
+  bool legendVisibilityChanged = setLegendVisible(!eventHandled);
+  return legendVisibilityChanged || eventHandled;
 }
 
-void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool viewWillAppear) {
+void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool legendWillAppear) {
   float currentYMin = m_interactiveRange->yMin();
   float currentRange = m_interactiveRange->yMax() - m_interactiveRange->yMin();
   float newYMin = 0;
-  if (viewWillAppear) {
+  if (legendWillAppear) {
     float rangeOffscreen = ((float)ContentView::k_legendHeight)/((float)k_standardViewHeight)*currentRange;
     newYMin = currentYMin + rangeOffscreen;
     m_interactiveRange->setOffscreenYAxis(rangeOffscreen);
@@ -66,10 +72,21 @@ void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool viewWillAppear)
   m_contentView.curveView()->reload();
 }
 
+bool FunctionZoomAndPanCurveViewController::setLegendVisible(bool visible) {
+  if (visible != m_contentView.displayLegend()) {
+    m_contentView.setDisplayLegend(visible);
+    adaptCurveRange(visible);
+    m_contentView.layoutSubviews();
+    return true;
+  }
+  return false;
+}
+
 /* Content View */
 
 FunctionZoomAndPanCurveViewController::ContentView::ContentView(CurveView * curveView) :
-  m_curveView(curveView)
+  m_curveView(curveView),
+  m_displayLegend(true)
 {
 }
 
@@ -90,8 +107,9 @@ View * FunctionZoomAndPanCurveViewController::ContentView::subviewAtIndex(int in
 
 void FunctionZoomAndPanCurveViewController::ContentView::layoutSubviews(bool force) {
   assert(bounds().height() == FunctionZoomAndPanCurveViewController::k_standardViewHeight);
-  m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height() - k_legendHeight), force);
-  m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), force);
+  KDCoordinate curveHeight = m_displayLegend ? bounds().height() - k_legendHeight : bounds().height();
+  m_curveView->setFrame(KDRect(0, 0, bounds().width(), curveHeight), force);
+  m_legendView.setFrame(m_displayLegend ? KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight) : KDRectZero, force);
 }
 
 CurveView * FunctionZoomAndPanCurveViewController::ContentView::curveView() {

@@ -101,19 +101,16 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   }
   float centerX = std::isnan(x) || std::isinf(x) ? xCenter() : x;
   float centerY = std::isnan(y) || std::isinf(y) ? yCenter() : y;
-  float newXMin = centerX*(1.0f-ratio)+ratio*xMi;
-  float newXMax = centerX*(1.0f-ratio)+ratio*xMa;
-  if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
+  Zoom::SetZoom(ratio, centerX, centerY, &xMi, &xMa, &yMi, &yMa);
+  if (!std::isnan(xMi) && !std::isnan(xMa)) {
     setZoomAuto(false);
-    m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+    m_xRange.setMax(xMa, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetXMin(xMi, k_lowerMaxFloat, k_upperMaxFloat);
   }
-  float newYMin = centerY*(1.0f-ratio)+ratio*yMi;
-  float newYMax = centerY*(1.0f-ratio)+ratio*yMa;
-  if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
+  if (!std::isnan(yMi) && !std::isnan(yMa)) {
     setZoomAuto(false);
-    m_yRange.setMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
+    m_yRange.setMax(yMa, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetYMin(yMi, k_lowerMaxFloat, k_upperMaxFloat);
   }
   m_offscreenYAxis *= ratio;
 }

@@ -37,6 +37,7 @@ public:
   /* If shrink is false, the range will be set to ratio by increasing the size
    * of the smallest axis. If it is true, the longest axis will be reduced.*/
   static void SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, bool shrink = false);
+  static void SetZoom(float ratio, float xCenter, float yCenter, float * xMin, float * xMax, float * yMin, float * yMax);
 
 private:
   static constexpr int k_peakNumberOfPointsOfInterest = 3;

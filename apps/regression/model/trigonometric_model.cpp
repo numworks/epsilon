@@ -114,13 +114,15 @@ void TrigonometricModel::uniformizeCoefficientsFromFit(double * modelCoefficient
     modelCoefficients[2] *= -1.0;
     modelCoefficients[2] += piInAngleUnit;
   }
-  /* C must be between -π (excluded) and π (included).
-   * A * sin(B * x + C) + D = A * sin(B * x + C - 2π) = A * sin(B * x + C + 2π)
-   * Using remainder(C,2π) = C - 2π * round(C / 2π) */
-  modelCoefficients[2] -= 2.0 * piInAngleUnit * std::round(modelCoefficients[2] / (2.0 * piInAngleUnit));
-  if (modelCoefficients[2] == -piInAngleUnit) {
-    // Keep π instead of -π
-    modelCoefficients[2] = piInAngleUnit;
+  // C must be between -π (excluded) and π (included).
+  if (modelCoefficients[2] <= -piInAngleUnit || modelCoefficients[2] > piInAngleUnit) {
+    /* A*sin(B*x + C) + D = A*sin(B*x + C - 2π) = A*sin(B*x + C + 2π)
+     * Using remainder(C,2π) = C - 2π * round(C / 2π) */
+    modelCoefficients[2] -= 2.0 * piInAngleUnit * std::round(modelCoefficients[2] / (2.0 * piInAngleUnit));
+    if (modelCoefficients[2] == -piInAngleUnit) {
+      // Keep π instead of -π
+      modelCoefficients[2] = piInAngleUnit;
+    }
   }
 }
 

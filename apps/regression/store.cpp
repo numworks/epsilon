@@ -196,6 +196,8 @@ void Store::updateCoefficients(int series, Poincare::Context * globalContext) {
     m_angleUnit = currentAngleUnit;
     for (int i = 0; i < k_numberOfSeries; i++) {
       if (m_regressionTypes[i] == Model::Type::Trigonometric) {
+        /* TODO : Assuming regression should be independent of angleUnit,
+         * coefficients b and c could just be converted to the new angle unit.*/
         m_regressionChanged[i] = true;
       }
     }

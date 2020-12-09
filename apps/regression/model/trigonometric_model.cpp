@@ -73,9 +73,6 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
 
 void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series));
-  for (int i = 1; i < k_numberOfCoefficients - 1; i++) {
-    modelCoefficients[i] = defaultValue;
-  }
   /* We try a better initialization than the default value. We hope that this
    * will improve the gradient descent to find correct coefficients.
    *
@@ -88,6 +85,7 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
   modelCoefficients[k_numberOfCoefficients - 1] = store->meanOfColumn(series, 1);
   // Init the b coefficient
   double rangeX = store->maxValueOfColumn(series, 0) - store->minValueOfColumn(series, 0);
+  double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
   if (rangeX > 0) {
     /* b/2π represents the frequency of the sine (in radians). Instead of
      * initializing it to 0, we use the inverse of X series' range as an order
@@ -95,9 +93,14 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
      * data with a very high frequency. This period also depends on the
      * angleUnit. We take it into account so that it doesn't impact the result
      * (although coefficients b and c depends on the angleUnit). */
-    double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
     modelCoefficients[1] = (2.0 * M_PI / radian) / rangeX;
+  } else {
+    // Coefficient b must not depend on angleUnit.
+    modelCoefficients[1] = defaultValue * M_PI / radian;
   }
+  /* No shift is assumed, coefficient c is set to 0.
+   * If it were to be non-null, angleUnit must be taken into account. */
+  modelCoefficients[2] = 0.0 * M_PI / radian;
 }
 
 Expression TrigonometricModel::expression(double * modelCoefficients) {

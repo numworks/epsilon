@@ -4,6 +4,12 @@
 #include <poincare/context.h>
 #include <ion/display.h>
 
+/* FIXME : This class is concerned with manipulating the ranges of graphing
+ * window, often represented by four float xMin, xMax, yMin, yMax. Handling
+ * those same four values has proven repetititve, tredious, and prone to error.
+ * This code could benefit from a data structure to regroup those values in a
+ * single object. */
+
 namespace Poincare {
 
 class Zoom {

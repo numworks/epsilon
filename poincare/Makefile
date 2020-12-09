@@ -195,8 +195,8 @@ tests_src += $(addprefix poincare/test/,\
 )
 
 ifeq ($(DEBUG),1)
-  ifeq ("$(PLATFORM)", "simulator")
-    POINCARE_TREE_LOG ?= 0
+  ifeq ($(PLATFORM),simulator)
+    POINCARE_TREE_LOG ?= 1
   endif
 endif
 

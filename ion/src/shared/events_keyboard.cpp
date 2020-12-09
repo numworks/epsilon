@@ -1,5 +1,6 @@
 #include <ion/events.h>
 #include <ion/timing.h>
+#include <ion/src/device/shared/drivers/keyboard_queue.h> // TODO Emilie: tidy
 #include <assert.h>
 
 namespace Ion {
@@ -66,7 +67,7 @@ static inline Event innerGetEvent(int * timeout) {
       return platformEvent;
     }
 
-    Keyboard::State state = Keyboard::scan();
+    Keyboard::State state = Ion::Device::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Device::Keyboard::Queue::sharedQueue()->pop();
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;
 

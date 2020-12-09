@@ -104,6 +104,29 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
   modelCoefficients[2] = 0.0;
 }
 
+void TrigonometricModel::uniformizeCoefficientsFromFit(double * modelCoefficients) const {
+  // Coefficients must be unique.
+  double piInAngleUnit = M_PI / toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+  // A must be positive.
+  if (modelCoefficients[0] < 0) {
+    // A * sin(B * x + C) + D = -A * sin(B * x + C + π) + D
+    modelCoefficients[0] *= -1;
+    modelCoefficients[2] += piInAngleUnit;
+  }
+  // B must be positive.
+  if (modelCoefficients[1] < 0) {
+    // A * sin(B * x + C) + D = -A * sin(-B * x - C) + D
+    // -A * sin(-B * x - C) + D = A * sin(-B * x - C + π) + D
+    modelCoefficients[1] *= -1;
+    modelCoefficients[2] *= -1;
+    modelCoefficients[2] += piInAngleUnit;
+  }
+  // C must be between -π and π.
+  // A * sin(B * x + C) + D = A * sin(B * x + C - 2π) = A * sin(B * x + C + 2π)
+  // Using remainder(C,2π) = C - 2π * round(C / 2π)
+  modelCoefficients[2] -= 2 * piInAngleUnit * round(modelCoefficients[2] / (2 * piInAngleUnit));
+}
+
 Expression TrigonometricModel::expression(double * modelCoefficients) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];

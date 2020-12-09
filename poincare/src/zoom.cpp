@@ -421,6 +421,14 @@ void Zoom::SetToRatio(float yxRatio, float * xMin, float * xMax, float * yMin, f
   *tMin = center - newRange / 2.f;
 }
 
+void Zoom::SetZoom(float ratio, float xCenter, float yCenter, float * xMin, float * xMax, float * yMin, float * yMax) {
+  float oneMinusRatio = 1.f - ratio;
+  *xMin = oneMinusRatio * xCenter + ratio * *xMin;
+  *xMax = oneMinusRatio * xCenter + ratio * *xMax;
+  *yMin = oneMinusRatio * yCenter + ratio * *yMin;
+  *yMax = oneMinusRatio * yCenter + ratio * *yMax;
+}
+
 bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations) {
   if (iterations <= 0) {
     return false;

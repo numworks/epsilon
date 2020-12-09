@@ -17,15 +17,8 @@ using namespace Shared;
 
 namespace Regression {
 
-static double toRadians(Poincare::Preferences::AngleUnit angleUnit) {
-  switch (Poincare::Preferences::sharedPreferences()->angleUnit()) {
-    case Poincare::Preferences::AngleUnit::Degree:
-      return M_PI/180.0;
-    case Poincare::Preferences::AngleUnit::Gradian:
-      return M_PI/200.0;
-    default:
-      return 1;
-  }
+static double toRadians() {
+  return M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
 Layout TrigonometricModel::layout() {
@@ -41,7 +34,7 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+  double radian = toRadians();
   // sin() is here defined for radians, so b*x+c are converted in radians.
   return a * std::sin(radian * (b * x + c)) + d;
 }
@@ -55,7 +48,7 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+  double radian = toRadians();
   /* sin() and cos() are here defined for radians, so b*x+c are converted in
    * radians. The added coefficient also appear in derivatives. */
   if (derivateCoefficientIndex == 0) {
@@ -85,7 +78,7 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
   modelCoefficients[k_numberOfCoefficients - 1] = store->meanOfColumn(series, 1);
   // Init the b coefficient
   double rangeX = store->maxValueOfColumn(series, 0) - store->minValueOfColumn(series, 0);
-  double radian = toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+  double piInAngleUnit = Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
   if (rangeX > 0) {
     /* b/2π represents the frequency of the sine (in radians). Instead of
      * initializing it to 0, we use the inverse of X series' range as an order
@@ -93,38 +86,42 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
      * data with a very high frequency. This period also depends on the
      * angleUnit. We take it into account so that it doesn't impact the result
      * (although coefficients b and c depends on the angleUnit). */
-    modelCoefficients[1] = (2.0 * M_PI / radian) / rangeX;
+    modelCoefficients[1] = (2.0 * piInAngleUnit) / rangeX;
   } else {
     // Coefficient b must not depend on angleUnit.
-    modelCoefficients[1] = defaultValue * M_PI / radian;
+    modelCoefficients[1] = defaultValue * piInAngleUnit;
   }
   /* No shift is assumed, coefficient c is set to 0.
    * If it were to be non-null, angleUnit must be taken into account.
-   * modelCoefficients[2] = initialCValue * M_PI / radian; */
+   * modelCoefficients[2] = initialCValue * piInAngleUnit; */
   modelCoefficients[2] = 0.0;
 }
 
 void TrigonometricModel::uniformizeCoefficientsFromFit(double * modelCoefficients) const {
   // Coefficients must be unique.
-  double piInAngleUnit = M_PI / toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+  double piInAngleUnit = Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
   // A must be positive.
-  if (modelCoefficients[0] < 0) {
+  if (modelCoefficients[0] < 0.0) {
     // A * sin(B * x + C) + D = -A * sin(B * x + C + π) + D
-    modelCoefficients[0] *= -1;
+    modelCoefficients[0] *= -1.0;
     modelCoefficients[2] += piInAngleUnit;
   }
   // B must be positive.
-  if (modelCoefficients[1] < 0) {
-    // A * sin(B * x + C) + D = -A * sin(-B * x - C) + D
-    // -A * sin(-B * x - C) + D = A * sin(-B * x - C + π) + D
-    modelCoefficients[1] *= -1;
-    modelCoefficients[2] *= -1;
+  if (modelCoefficients[1] < 0.0) {
+    /* A * sin(B * x + C) + D = -A * sin(-B * x - C) + D
+     * -A * sin(-B * x - C) + D = A * sin(-B * x - C + π) + D */
+    modelCoefficients[1] *= -1.0;
+    modelCoefficients[2] *= -1.0;
     modelCoefficients[2] += piInAngleUnit;
   }
-  // C must be between -π and π.
-  // A * sin(B * x + C) + D = A * sin(B * x + C - 2π) = A * sin(B * x + C + 2π)
-  // Using remainder(C,2π) = C - 2π * round(C / 2π)
-  modelCoefficients[2] -= 2 * piInAngleUnit * round(modelCoefficients[2] / (2 * piInAngleUnit));
+  /* C must be between -π (excluded) and π (included).
+   * A * sin(B * x + C) + D = A * sin(B * x + C - 2π) = A * sin(B * x + C + 2π)
+   * Using remainder(C,2π) = C - 2π * round(C / 2π) */
+  modelCoefficients[2] -= 2.0 * piInAngleUnit * std::round(modelCoefficients[2] / (2.0 * piInAngleUnit));
+  if (modelCoefficients[2] == -piInAngleUnit) {
+    // Keep π instead of -π
+    modelCoefficients[2] = piInAngleUnit;
+  }
 }
 
 Expression TrigonometricModel::expression(double * modelCoefficients) {

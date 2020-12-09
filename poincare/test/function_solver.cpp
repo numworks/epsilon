@@ -236,8 +236,14 @@ QUIZ_CASE(poincare_function_root) {
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
-      Coordinate2D<double>(99.8, 0.0)};
+      Coordinate2D<double>(99.9, 0.0)};
     assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "0", nullptr, "a", 100.0, -0.1, -1.0);
+  }
+  {
+    constexpr int numberOfRoots = 1;
+    Coordinate2D<double> roots[numberOfRoots] = {
+      Coordinate2D<double>(NAN, 0.0)};
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "ℯ^x", nullptr, "a", -1000.0, 0.1, -800);
   }
 }
 

@@ -1005,6 +1005,9 @@ Coordinate2D<double> Expression::nextMaximum(const char * symbol, double start, 
 }
 
 double Expression::nextRoot(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  if (nullStatus(context) == ExpressionNode::NullStatus::Null) {
+    return start + step;
+  }
   return nextIntersectionWithExpression(symbol, start, step, max,
       [](double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
         const Expression * expression0 = reinterpret_cast<const Expression *>(context1);
@@ -1139,17 +1142,32 @@ double Expression::nextIntersectionWithExpression(const char * symbol, double st
 
 void Expression::bracketRoot(const char * symbol, double start, double step, double max, double result[2], Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
   double a = start;
+  double c = a;
   double b = start+step;
+  double fa = evaluation(a, context, complexFormat, angleUnit, this, symbol, &expression);
+  double fc = fa;
+  double fb = evaluation(b, context, complexFormat, angleUnit, this, symbol, &expression);
   while (step > 0.0 ? b <= max : b >= max) {
-    double fa = evaluation(a, context, complexFormat, angleUnit, this, symbol, &expression);
-    double fb = evaluation(b, context, complexFormat, angleUnit, this, symbol, &expression);
-    if (fa*fb <= 0) {
+    if (fa == 0. && ((fc < 0. && fb > 0.) || (fc > 0. && fb < 0.))) {
+      /* If fa is null, we still check that the function changes sign on ]c,b[,
+       * and that fc and fb are not null. Otherwise, it's more likely those
+       * zeroes are caused by approximation errors. */
+      result[0] = a;
+      result[1] = b;
+      return;
+    } else if (fb != 0. && ((fa < 0.) != (fb < 0.))) {
+      /* The function changes sign.
+       * The case fb = 0 is handled in the next pass with fa = 0. */
       result[0] = a;
       result[1] = b;
       return;
     }
+    c = a;
+    fc = fa;
     a = b;
+    fa = fb;
     b = b+step;
+    fb = evaluation(b, context, complexFormat, angleUnit, this, symbol, &expression);
   }
   result[0] = NAN;
   result[1] = NAN;

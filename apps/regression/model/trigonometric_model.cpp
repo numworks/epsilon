@@ -99,8 +99,9 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
     modelCoefficients[1] = defaultValue * M_PI / radian;
   }
   /* No shift is assumed, coefficient c is set to 0.
-   * If it were to be non-null, angleUnit must be taken into account. */
-  modelCoefficients[2] = 0.0 * M_PI / radian;
+   * If it were to be non-null, angleUnit must be taken into account.
+   * modelCoefficients[2] = initialCValue * M_PI / radian; */
+  modelCoefficients[2] = 0.0;
 }
 
 Expression TrigonometricModel::expression(double * modelCoefficients) {

@@ -202,19 +202,19 @@ QUIZ_CASE(trigonometric_regression) {
   // TODO : Ensure unicity with trigonometric coefficients.
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Radian);
   // a*sin(b*x+c)+d = -a*sin(b*x+c+π)+d
-  double coefficientsRad[] = {-coefficients[0], coefficients[1], coefficients[2] + M_PI, coefficients[3]};
+  double coefficientsRad[] = {coefficients[0], coefficients[1], coefficients[2], coefficients[3]};
   assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsRad, r2);
 
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Degree);
   double radToDeg = 180.0 / M_PI;
   // a*sin(b*x+c)+d = a*sin(b*x+c+2π)+d
-  double coefficientsDeg[] = {coefficients[0], coefficients[1] * radToDeg, (coefficients[2] - 2.0 * M_PI) * radToDeg, coefficients[3]};
+  double coefficientsDeg[] = {coefficients[0], coefficients[1] * radToDeg, coefficients[2] * radToDeg, coefficients[3]};
   assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsDeg, r2);
 
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Gradian);
   double radToGrad = 200.0 / M_PI;
   // a*sin(b*x+c)+d = a*sin(b*x+c+2π)+d
-  double coefficientsGrad[] = {coefficients[0], coefficients[1] * radToGrad, (coefficients[2] - 2.0 * M_PI) * radToGrad, coefficients[3]};
+  double coefficientsGrad[] = {coefficients[0], coefficients[1] * radToGrad, coefficients[2] * radToGrad, coefficients[3]};
   assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsGrad, r2);
 
   Poincare::Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);

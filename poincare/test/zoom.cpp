@@ -98,7 +98,7 @@ void assert_refined_range_is(const char * definition, float xMin, float xMax, fl
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
   ParametersPack aux(e, symbol, angleUnit);
-  Zoom::RefinedYRangeForDisplay(evaluate_expression, xMin, xMax, &yMin, &yMax, &globalContext, &aux);
+  Zoom::RefinedYRangeForDisplay(evaluate_expression, &xMin, &xMax, &yMin, &yMax, &globalContext, &aux);
   quiz_assert_print_if_failure(range1D_matches(yMin, yMax, targetYMin, targetYMax), definition);
 }
 

@@ -195,20 +195,20 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   return true;
 }
 
-void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary, int sampleSize) {
+void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
   /* This methods computes the Y range that will be displayed for cartesian
    * functions and sequences, given an X range (xMin, xMax) and bounds yMin and
    * yMax that must be inside the Y range.*/
   assert(yMin && yMax);
 
   float sampleYMin = FLT_MAX, sampleYMax = -FLT_MAX;
-  const float step = (xMax - xMin) / (sampleSize - 1);
+  const float step = (*xMax - *xMin) / (k_sampleSize - 1);
   float x, y;
   float sum = 0.f;
   int pop = 0;
 
-  for (int i = 1; i < sampleSize - 1; i++) {
-    x = xMin + i * step;
+  for (int i = 1; i < k_sampleSize - 1; i++) {
+    x = *xMin + i * step;
     y = evaluation(x, context, auxiliary);
     if (!std::isfinite(y)) {
       continue;

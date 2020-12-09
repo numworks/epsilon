@@ -190,8 +190,23 @@ QUIZ_CASE(power_regression) {
   // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 }
 
-QUIZ_CASE(trigonometric_regression) {
-  Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
+void assert_trigonomatric_regression_is(double * xi, double * yi, int numberOfPoints, double * trueCoefficients, double trueR2, Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
+  // Test the trigonometric regression at all angle units
+  const Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
+  const Poincare::Preferences::AngleUnit units[3] = {Poincare::Preferences::AngleUnit::Radian, Poincare::Preferences::AngleUnit::Degree, Poincare::Preferences::AngleUnit::Gradian};
+  for (int i = 0; i < 3; ++i) {
+    Poincare::Preferences::AngleUnit unit = units[i];
+    Poincare::Preferences::sharedPreferences()->setAngleUnit(unit);
+    double unitFactor = Trigonometry::PiInAngleUnit(unit) / Trigonometry::PiInAngleUnit(trueCoeffcientsUnit);
+    // True coefficients b and c are converted to the tested angle unit
+    double coefficientsUnit[] = {trueCoefficients[0], trueCoefficients[1] * unitFactor, trueCoefficients[2] * unitFactor, trueCoefficients[3]};
+    assert_regression_is(xi, yi, numberOfPoints, Model::Type::Trigonometric, coefficientsUnit, trueR2);
+  }
+  // Restore previous angleUnit
+  Poincare::Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
+}
+
+QUIZ_CASE(trigonometric_regression1) {
   double r2 = 0.9994216;
   double x[] = {1, 31, 61, 91, 121, 151, 181, 211, 241, 271, 301, 331, 361};
   double y[] = {9.24, 10.05, 11.33, 12.72, 14.16, 14.98, 15.14, 14.41, 13.24, 11.88, 10.54, 9.48, 9.19};
@@ -199,25 +214,18 @@ QUIZ_CASE(trigonometric_regression) {
   int numberOfPoints = sizeof(x) / sizeof(double);
   assert(sizeof(y) == sizeof(double) * numberOfPoints);
 
-  // TODO : Ensure unicity with trigonometric coefficients.
-  Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Radian);
-  // a*sin(b*x+c)+d = -a*sin(b*x+c+π)+d
-  double coefficientsRad[] = {coefficients[0], coefficients[1], coefficients[2], coefficients[3]};
-  assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsRad, r2);
+  assert_trigonomatric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
+}
 
-  Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Degree);
-  double radToDeg = 180.0 / M_PI;
-  // a*sin(b*x+c)+d = a*sin(b*x+c+2π)+d
-  double coefficientsDeg[] = {coefficients[0], coefficients[1] * radToDeg, coefficients[2] * radToDeg, coefficients[3]};
-  assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsDeg, r2);
+QUIZ_CASE(trigonometric_regression2) {
+  double r2 = 0.9154;
+  double x[] = { 0,  2,  4,  6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48};
+  double y[] = {-2, -4, -5, -2, 3,  6,  8, 11,  9,  5,  2,  1,  0, -3, -5, -2,  3,  5,  7, 10, 10,  5,  2,  2,  1};
+  double coefficients[] = {6.42, 0.26, -2.16, 2.82};
+  int numberOfPoints = sizeof(x) / sizeof(double);
+  assert(sizeof(y) == sizeof(double) * numberOfPoints);
 
-  Poincare::Preferences::sharedPreferences()->setAngleUnit(Poincare::Preferences::AngleUnit::Gradian);
-  double radToGrad = 200.0 / M_PI;
-  // a*sin(b*x+c)+d = a*sin(b*x+c+2π)+d
-  double coefficientsGrad[] = {coefficients[0], coefficients[1] * radToGrad, coefficients[2] * radToGrad, coefficients[3]};
-  assert_regression_is(x, y, numberOfPoints, Model::Type::Trigonometric, coefficientsGrad, r2);
-
-  Poincare::Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
+  assert_trigonomatric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
 }
 
 

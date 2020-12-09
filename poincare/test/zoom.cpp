@@ -198,6 +198,12 @@ void assert_expands_to(float yxRatio, float xMin, float xMax, float yMin, float 
   assert_ratio_is_set_to(yxRatio, xMin, xMax, yMin, yMax, false, targetXMin, targetXMax, targetYMin, targetYMax);
 }
 
+void assert_zooms_to(float ratio, float xCenter, float yCenter, float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax) {
+  float tempXMin = xMin, tempXMax = xMax, tempYMin = yMin, tempYMax = yMax;
+  Zoom::SetZoom(ratio, xCenter, yCenter, &tempXMin, &tempXMax, &tempYMin, &tempYMax);
+  quiz_assert(ranges_match(tempXMin, tempXMax, tempYMin, tempYMax, targetXMin, targetXMax, targetYMin, targetYMax));
+}
+
 QUIZ_CASE(poincare_zoom_utility) {
   // Ranges combinations
   {
@@ -261,5 +267,22 @@ QUIZ_CASE(poincare_zoom_utility) {
   assert_expands_to(1.33f,
       -10, 10, -10, 10,
       -10, 10, -13.3, 13.3);
+
+  // Zoom
+  assert_zooms_to(1.f, 0, 0,
+      -10, 10, -10, 10,
+      -10, 10, -10, 10);
+  assert_zooms_to(0.5f, 0, 0,
+      -10, 10, -5, 5,
+      -5, 5, -2.5, 2.5);
+  assert_zooms_to(3.f, 0, 0,
+      -10, 10, -5, 5,
+      -30, 30, -15, 15);
+  assert_zooms_to(1.5f, 10, 5,
+      -10, 10, -5, 5,
+      -20, 10, -10, 5);
+  assert_zooms_to(0.25f, 2, -2,
+      -10, 10, -5, 5,
+      -1, 4, -2.75, -0.25);
 }
 

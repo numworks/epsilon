@@ -287,7 +287,7 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
 
     if (fullyComputed) {
       /* The function has points of interest. */
-      Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
+      Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
       return;
     }
 
@@ -301,7 +301,7 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
      * Try a basic range. */
     *xMin = - Zoom::k_defaultHalfRange;
     *xMax = Zoom::k_defaultHalfRange;
-    Zoom::RefinedYRangeForDisplay(evaluation, *xMin, *xMax, yMin, yMax, context, this);
+    Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
     if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
       return;
     }

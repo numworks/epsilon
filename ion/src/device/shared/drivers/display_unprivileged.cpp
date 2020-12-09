@@ -11,25 +11,29 @@ namespace Display {
 void pushRect(KDRect r, const KDColor * pixels) {
   // Store rect and pixels
   void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
-  svcall(SVC_PUSH_RECT, 2, args);
+  int argc = sizeof(args)/sizeof(void *);
+  svcall(SVC_PUSH_RECT, &argc, args);
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
   // Store rect and color
   void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&c) };
-  svcall(SVC_PUSH_RECT_UNIFORM, 2, args);
+  int argc = sizeof(args)/sizeof(void *);
+  svcall(SVC_PUSH_RECT_UNIFORM, &argc, args);
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
   // Store rect and pixels
   void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
-  svcall(SVC_PULL_RECT, 2, args);
+  int argc = sizeof(args)/sizeof(void *);
+  svcall(SVC_PULL_RECT, &argc, args);
 }
 
 void POSTPushMulticolor(int rootNumberTiles, int tileSize) {
   // Store rootNumberTiles and tileSize
   void * args[2] = { static_cast<void *>(&rootNumberTiles), static_cast<void *>(&tileSize) };
-  svcall(SVC_POST_PUSH_MULTICOLOR, 2, args);
+  int argc = sizeof(args)/sizeof(void *);
+  svcall(SVC_POST_PUSH_MULTICOLOR, &argc, args);
 }
 
 }

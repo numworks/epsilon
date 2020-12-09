@@ -35,6 +35,7 @@ void Model::fit(Store * store, int series, double * modelCoefficients, Poincare:
   if (dataSuitableForFit(store, series)) {
     initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false, store, series);
     fitLevenbergMarquardt(store, series, modelCoefficients, context);
+    uniformizeCoefficientsFromFit(modelCoefficients);
   } else {
     initCoefficientsForFit(modelCoefficients, NAN, true);
   }

@@ -27,6 +27,8 @@ private:
     ContentView(CurveView * curveView);
     void layoutSubviews(bool force = false) override;
     CurveView * curveView();
+    bool displayLegend() const { return m_displayLegend; }
+    void setDisplayLegend(bool v) { m_displayLegend = v; }
   private:
     class LegendView : public Escher::View {
     public:
@@ -46,9 +48,12 @@ private:
     Escher::View * subviewAtIndex(int index) override;
     CurveView * m_curveView;
     LegendView m_legendView;
+    bool m_displayLegend;
   };
 
-  void adaptCurveRange(bool viewWillAppear);
+  void adaptCurveRange(bool legendWillAppear);
+  /* Returns true if the legend visibility has changed. */
+  bool setLegendVisible(bool visible);
 
   // ZoomAndPanCurveViewController
   InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_interactiveRange; }

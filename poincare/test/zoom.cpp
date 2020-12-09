@@ -128,6 +128,7 @@ QUIZ_CASE(poincare_zoom_refined_range) {
   assert_refined_range_is("x×sin(x)", -14.4815292, 14.4815292, -7.37234354, 7.37234354);
   assert_refined_range_is("x×ln(x)", -0.314885706, 1.36450469, -0.367870897, 0.396377981);
   assert_refined_range_is("x!", -10, 10, NAN, NAN);
+  assert_refined_range_is("xℯ^(1/x)", -1.3, 2.4, -0.564221799, 5.58451653);
 }
 
 void assert_orthonormal_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {

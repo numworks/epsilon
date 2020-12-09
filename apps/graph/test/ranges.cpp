@@ -97,6 +97,7 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("ℯ^x", -10, 10, -1.71249962, 8.91249943);
   assert_best_cartesian_range_is("ℯ^x+4", -10, 10, 2.28750038, 12.9124994);
   assert_best_cartesian_range_is("ℯ^(-x)", -10, 10, -1.71249962, 8.91249943);
+  assert_best_cartesian_range_is("(1-x)ℯ^(1/(1-x))", -1.8, 2.9, -3, 5.1);
 
   assert_best_cartesian_range_is("ln(x)", -2.85294199, 8.25294113, -3.5, 2.4000001);
   assert_best_cartesian_range_is("log(x)", -0.900000036, 3.20000005, -1.23906231, 0.939062357);

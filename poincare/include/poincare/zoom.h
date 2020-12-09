@@ -68,6 +68,10 @@ private:
    * an asymptote, by recursively computing the slopes. In case of an extremum,
    * the slope should taper off toward the center. */
   static bool IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations = 3);
+  /* If the function is discontinuous between its points of interest, there
+   * might be a lot of empty space in the middle of the screen. In that case,
+   * we want to zoom out to see more of the graph. */
+  static void ExpandSparseWindow(float * sample, int length, float * xMin, float * xMax, float * yMin, float * yMax);
 };
 
 }

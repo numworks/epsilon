@@ -201,15 +201,19 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, flo
    * yMax that must be inside the Y range.*/
   assert(yMin && yMax);
 
+  float sample[k_sampleSize];
   float sampleYMin = FLT_MAX, sampleYMax = -FLT_MAX;
   const float step = (*xMax - *xMin) / (k_sampleSize - 1);
   float x, y;
   float sum = 0.f;
   int pop = 0;
 
+  sample[0] = evaluation(*xMin, context, auxiliary);
+  sample[k_sampleSize - 1] = evaluation(*xMax, context, auxiliary);
   for (int i = 1; i < k_sampleSize - 1; i++) {
     x = *xMin + i * step;
     y = evaluation(x, context, auxiliary);
+    sample[i] = y;
     if (!std::isfinite(y)) {
       continue;
     }
@@ -244,6 +248,8 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, flo
   } else if (*yMax < 0.f && *yMax / *yMin < k_forceXAxisThreshold) {
     *yMax = 0.f;
   }
+
+  ExpandSparseWindow(sample, k_sampleSize, xMin, xMax, yMin, yMax);
 }
 
 void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
@@ -444,6 +450,33 @@ bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2
     }
   }
   return true;
+}
+
+void Zoom::ExpandSparseWindow(float * sample, int length, float * xMin, float * xMax, float * yMin, float * yMax) {
+  /* We compute the "empty center" of the window, i.e. the largest rectangle
+   * (with same center and shape as the window) that does not contain any
+   * point. If that rectangle is deemed too large, we consider that not enough
+   * of the curve shows up on screen and we zoom out. */
+  constexpr float emptyCenterMaxSize = 0.5f;
+  constexpr float ratioCorrection = 4.f/3.f;
+
+  float xCenter = (*xMax + *xMin) / 2.f;
+  float yCenter = (*yMax + *yMin) / 2.f;
+  float xRange = *xMax - *xMin;
+  float yRange = *yMax - *yMin;
+
+  float emptyCenter = FLT_MAX;
+  float step = xRange / (length - 1);
+  for (int i = 0; i < length; i++) {
+    float x = *xMin + i * step;
+    float y = sample[i];
+    float r = 2 * std::max(std::fabs(x - xCenter) / xRange, std::fabs(y - yCenter) / yRange);
+    emptyCenter = std::min(emptyCenter, r);
+  }
+
+  if (emptyCenter > emptyCenterMaxSize) {
+    SetZoom(ratioCorrection + emptyCenter, xCenter, yCenter, xMin, xMax, yMin ,yMax);
+  }
 }
 
 }

@@ -23,7 +23,7 @@ extern "C" {
 }
 #endif
 
-void svcall(unsigned int svcNumber, int argc = 0, void * argv[] = nullptr);
+void svcall(unsigned int svcNumber, int * argcPointer = nullptr, void * argv[] = nullptr);
 
 void getSvcallArgs(int argc, void * argv[]);
 

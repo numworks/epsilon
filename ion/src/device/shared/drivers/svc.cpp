@@ -1,4 +1,5 @@
 #include "svcall.h"
+#include <assert.h>
 
 /* According to arm documentation, available at :
  * https://developer.arm.com/documentation/ihi0042/latest/
@@ -52,7 +53,15 @@ void setSvcallArgs(int argc, void * argv[]) {
   }
 }
 
-void svcall(unsigned int svcNumber, int argc, void * argv[]) {
+void svcall(unsigned int svcNumber, int * argcPointer, void * argv[]) {
+  int argc;
+  if (argcPointer == nullptr) {
+    assert(argv == nullptr);
+    argc = 0;
+  } else {
+    assert(argcPointer);
+    argc = *argcPointer;
+  }
   // Save previous registers state
   void * regState[2];
   getSvcallArgs(argc, regState);
@@ -84,6 +93,9 @@ void svcall(unsigned int svcNumber, int argc, void * argv[]) {
       // svc(SVC_POST_PUSH_MULTICOLOR);
       break;
   }
+
+  // Get svc_handler results in args
+  getSvcallArgs(argc, argv);
   // Restore registers state
   setSvcallArgs(argc, regState);
 }

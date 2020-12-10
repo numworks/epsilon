@@ -1480,7 +1480,8 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
    * integers (ie 3^999, 120232323232^50) that would take too much time to
    * compute:
    *  - we cap the exponent at k_maxExactPowerMatrix
-   *  - we cap the resulting power at DBL_MAX
+   *  - we cap the resulting power at FLT_MAX, as setting it any higher would
+   *    prevent the drawing of some curves.
    * The complexity of computing a power of rational is mainly due to computing
    * the GCD of the resulting numerator and denominator. Euclide algorithm's
    * complexity is apportionned to the number of decimal digits in the smallest
@@ -1490,9 +1491,9 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
     return true;
   }
 
-  double index = maxIntegerExponent.approximate<double>();
-  double powerNumerator = std::pow(b.unsignedIntegerNumerator().approximate<double>(), index);
-  double powerDenominator = std::pow(b.integerDenominator().approximate<double>(), index);
+  float index = maxIntegerExponent.approximate<float>();
+  float powerNumerator = std::pow(b.unsignedIntegerNumerator().approximate<float>(), index);
+  float powerDenominator = std::pow(b.integerDenominator().approximate<float>(), index);
   if (std::isnan(powerNumerator) || std::isnan(powerDenominator) || std::isinf(powerNumerator) || std::isinf(powerDenominator)) {
     return true;
   }

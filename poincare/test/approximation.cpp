@@ -137,6 +137,8 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<double>("𝐢^𝐢", "2.0787957635076ᴇ-1");
   assert_expression_approximates_to<float>("1.0066666666667^60", "1.48985", Radian, Metric, Cartesian, 6);
   assert_expression_approximates_to<double>("1.0066666666667^60", "1.489845708305", Radian, Metric, Cartesian, 13);
+  assert_expression_approximates_to<double>("1.0092^50", "1.5807460027336");
+  assert_expression_approximates_to<float>("1.0092^50", "1.580744");
   assert_expression_approximates_to<float>("ℯ^(𝐢×π)", "-1");
   assert_expression_approximates_to<double>("ℯ^(𝐢×π)", "-1");
   assert_expression_approximates_to<float>("ℯ^(𝐢×π+2)", "-7.38906", Radian, Metric, Cartesian, 6);

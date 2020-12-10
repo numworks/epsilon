@@ -1005,6 +1005,9 @@ Coordinate2D<double> Expression::nextMaximum(const char * symbol, double start, 
 }
 
 double Expression::nextRoot(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  /* The algorithms used to numerically find roots require either the function
+   * to change sign around the root or for the root to be an extremum. Neither
+   * is true for the null function, which we handle here. */
   if (nullStatus(context) == ExpressionNode::NullStatus::Null) {
     return start + step;
   }
@@ -1141,33 +1144,33 @@ double Expression::nextIntersectionWithExpression(const char * symbol, double st
 }
 
 void Expression::bracketRoot(const char * symbol, double start, double step, double max, double result[2], Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  double a = start;
-  double c = a;
-  double b = start+step;
-  double fa = evaluation(a, context, complexFormat, angleUnit, this, symbol, &expression);
-  double fc = fa;
+  double b = start;
+  double a = b;
+  double c = start+step;
   double fb = evaluation(b, context, complexFormat, angleUnit, this, symbol, &expression);
-  while (step > 0.0 ? b <= max : b >= max) {
-    if (fa == 0. && ((fc < 0. && fb > 0.) || (fc > 0. && fb < 0.))) {
-      /* If fa is null, we still check that the function changes sign on ]c,b[,
-       * and that fc and fb are not null. Otherwise, it's more likely those
+  double fa = fb;
+  double fc = evaluation(c, context, complexFormat, angleUnit, this, symbol, &expression);
+  while (step > 0.0 ? c <= max : c >= max) {
+    if (fb == 0. && ((fa < 0. && fc > 0.) || (fa > 0. && fc < 0.))) {
+      /* If fb is null, we still check that the function changes sign on ]a,c[,
+       * and that fa and fc are not null. Otherwise, it's more likely those
        * zeroes are caused by approximation errors. */
-      result[0] = a;
-      result[1] = b;
+      result[0] = b;
+      result[1] = c;
       return;
-    } else if (fb != 0. && ((fa < 0.) != (fb < 0.))) {
+    } else if (fc != 0. && ((fb < 0.) != (fc < 0.))) {
       /* The function changes sign.
-       * The case fb = 0 is handled in the next pass with fa = 0. */
-      result[0] = a;
-      result[1] = b;
+       * The case fc = 0 is handled in the next pass with fb = 0. */
+      result[0] = b;
+      result[1] = c;
       return;
     }
-    c = a;
-    fc = fa;
     a = b;
     fa = fb;
-    b = b+step;
-    fb = evaluation(b, context, complexFormat, angleUnit, this, symbol, &expression);
+    b = c;
+    fb = fc;
+    c = c+step;
+    fc = evaluation(c, context, complexFormat, angleUnit, this, symbol, &expression);
   }
   result[0] = NAN;
   result[1] = NAN;

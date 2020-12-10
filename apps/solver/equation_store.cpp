@@ -449,7 +449,8 @@ Preferences::ComplexFormat EquationStore::updatedComplexFormat(Context * context
 
 bool EquationStore::isExplictlyComplex(Context * context) {
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    if (modelForRecord(definedRecordAtIndex(i))->containsIComplex(context)) {
+    // Ignore defined symbols if user variables are not used
+    if (modelForRecord(definedRecordAtIndex(i))->containsIComplex(context, m_userVariablesUsed ? ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition : ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)) {
       return true;
     }
   }

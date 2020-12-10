@@ -59,7 +59,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   assert_parsed_expression_simplify_to("12348/34564", "3087/8641");
   assert_parsed_expression_simplify_to("1-0.3-0.7", "0");
   assert_parsed_expression_simplify_to("123456789123456789+112233445566778899", "235690234690235688");
-  assert_parsed_expression_simplify_to("56^56", "79164324866862966607842406018063254671922245312646690223362402918484170424104310169552592050323456");
+  assert_parsed_expression_simplify_to("56^56", "56^56");
   assert_parsed_expression_simplify_to("999^999", "999^999");
   assert_parsed_expression_simplify_to("999^-999", "1/999^999");
   assert_parsed_expression_simplify_to("0^0", Undefined::Name());

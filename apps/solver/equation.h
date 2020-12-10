@@ -12,7 +12,7 @@ public:
     return false;
   }
   Poincare::Expression standardForm(Poincare::Context * context, bool replaceFunctionsButNotSymbols, Poincare::ExpressionNode::ReductionTarget reductionTarget) const { return m_model.standardForm(this, context, replaceFunctionsButNotSymbols, reductionTarget); }
-  bool containsIComplex(Poincare::Context * context) const;
+  bool containsIComplex(Poincare::Context * context, Poincare::ExpressionNode::SymbolicComputation replaceSymbols) const;
 
 private:
   class Model : public Shared::ExpressionModel {

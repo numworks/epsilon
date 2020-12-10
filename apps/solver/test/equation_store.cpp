@@ -106,6 +106,19 @@ QUIZ_CASE(equation_solve_complex_real) {
   assert_solves_to_error("x^2-√(-1)=0", EquationUnreal);
   assert_solves_to_error("x+√(-1)×√(-1)=0", EquationUnreal);
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2");
+  // With a predefined variable that should be ignored
+  set("h", "3");
+  assert_solves_to("(h-1)*(h-2)=0", {"h=1", "h=2", "delta=1"});
+  set("h", "1");
+  assert_solves_to("h^2=-1", {"delta=-4"}); // No real solutions
+  set("h", "𝐢+1");
+  assert_solves_to("h^2=-1", {"delta=-4"}); // No real solutions
+  //  - We still want complex solutions if the input has some complex value
+  set("h", "1");
+  assert_solves_to("(h-𝐢)^2=0", {"h=𝐢", "delta=0"}); // Complex solutions
+  set("h", "𝐢+1");
+  assert_solves_to("(h-𝐢)^2=0", {"h=𝐢", "delta=0"}); // Complex solutions
+  unset("h");
   reset_complex_format();
 }
 

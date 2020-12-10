@@ -20,6 +20,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   virtual bool handleZoom(Ion::Events::Event event);
+  virtual bool handleEnter();
   virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
   virtual CurveView * curveView() = 0;
   virtual float xFocus() = 0;

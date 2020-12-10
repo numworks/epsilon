@@ -130,7 +130,9 @@ bool FunctionGraphController::isCursorHanging() {
   }
   ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context);
-  return xy.x1() != m_cursor->x() || xy.x2() != m_cursor->y();
+  // NaN != Nan returns true, but cursor is not hanging if both values are NaN
+  return (xy.x1() != m_cursor->x() && !(std::isnan(xy.x1()) && std::isnan(m_cursor->x())))
+      || (xy.x2() != m_cursor->y() && !(std::isnan(xy.x2()) && std::isnan(m_cursor->y())));
 }
 
 CurveView * FunctionGraphController::curveView() {

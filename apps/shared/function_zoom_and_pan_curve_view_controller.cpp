@@ -31,6 +31,8 @@ void FunctionZoomAndPanCurveViewController::viewDidDisappear() {
   // Restore the curve range
   if (m_contentView.displayLegend()) {
     adaptCurveRange(false);
+    /* We also need to hide the legend here, because quitting with the OK button is handled by the base class, and thus triggers an attempt at hiding the legend after the view has already disappeared. If the legend was still visible at this point, adaptCurveRange(false) would be called twice. */
+    m_contentView.setDisplayLegend(false);
   }
 }
 
@@ -39,7 +41,8 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
 }
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back || event == Ion::Events::Home) {
+  bool isQuitEvent = event == Ion::Events::Back || event == Ion::Events::Home;
+  if (isQuitEvent || event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* If Auto is still on (because the navigation menu was brought up and
      * closed immediately), we need to deactivate it to prevent the range from
      * being recomputed in InteractiveCurveViewController::viewWillAppear().
@@ -47,14 +50,13 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event
      * that open navigation without moving doesn't deactivate the Auto. */
     m_restoreZoomAuto = m_interactiveRange->zoomAuto();
     m_interactiveRange->setZoomAuto(false);
-    return false;
   }
   bool eventHandled = ZoomAndPanCurveViewController::handleEvent(event);
   /* Hide the legend if the event does something, as the user likely does not
    * need it, but display it if the event does nothing to remind the user of
    * the UI. */
   bool legendVisibilityChanged = setLegendVisible(!eventHandled);
-  return legendVisibilityChanged || eventHandled;
+  return !isQuitEvent && (legendVisibilityChanged || eventHandled);
 }
 
 void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool legendWillAppear) {

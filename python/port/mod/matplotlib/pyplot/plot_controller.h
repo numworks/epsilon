@@ -18,6 +18,8 @@ protected:
   Shared::CurveView * curveView() override { return &m_view; }
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_store; }
 private:
+  bool handleEnter() override { return false; }
+
   PlotStore * m_store;
   PlotView m_view;
 };

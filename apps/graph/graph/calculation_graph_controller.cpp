@@ -59,12 +59,6 @@ ContinuousFunctionStore * CalculationGraphController::functionStore() const {
   return App::app()->functionStore();
 }
 
-bool CalculationGraphController::handleEnter() {
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  stack->pop();
-  return true;
-}
-
 bool CalculationGraphController::moveCursorHorizontally(int direction, int scrollspeed) {
   if (!m_isActive) {
     return false;

@@ -29,7 +29,9 @@ void FunctionZoomAndPanCurveViewController::viewWillAppear() {
 
 void FunctionZoomAndPanCurveViewController::viewDidDisappear() {
   // Restore the curve range
-  adaptCurveRange(false);
+  if (m_contentView.displayLegend()) {
+    adaptCurveRange(false);
+  }
 }
 
 void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
@@ -37,7 +39,7 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
 }
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back) {
+  if (event == Ion::Events::Back || event == Ion::Events::Home) {
     /* If Auto is still on (because the navigation menu was brought up and
      * closed immediately), we need to deactivate it to prevent the range from
      * being recomputed in InteractiveCurveViewController::viewWillAppear().
@@ -45,6 +47,7 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event
      * that open navigation without moving doesn't deactivate the Auto. */
     m_restoreZoomAuto = m_interactiveRange->zoomAuto();
     m_interactiveRange->setZoomAuto(false);
+    return false;
   }
   bool eventHandled = ZoomAndPanCurveViewController::handleEvent(event);
   /* Hide the legend if the event does something, as the user likely does not

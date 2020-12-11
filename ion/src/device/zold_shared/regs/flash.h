@@ -75,16 +75,6 @@ public:
   class OPTCR1 : public Register32 {
   public:
     using Register32::Register32;
-    uint8_t getBootAddress1() volatile {
-      return (uint32_t)getBitRange(31,low)
-      return m_values[index / 4].getBitRange(4 * indexMod4 + 3, 4 * indexMod4);
-    }
-
-    void setEXTI(int index, GPIO gpio) volatile {
-      int indexMod4 = index % 4;
-      m_values[index / 4].setBitRange(4 * indexMod4 + 3, 4 * indexMod4, static_cast<uint8_t>(gpio));
-    }
-  private:
     REGS_FIELD(BOOT_ADD1, uint16_t, 31, 16);
     REGS_FIELD(BOOT_ADD0, uint16_t, 15, 0);
   };

@@ -1,8 +1,6 @@
-#include ion/src/device/shared/boot/Makefile
-include ion/src/device/shared/usb/Makefile
-include ion/src/device/shared/drivers/Makefile
-
-ion_device_src += $(addprefix ion/src/device/shared/, \
-  events.cpp \
-  stack.cpp \
+ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
+  boot/rt0.cpp \
+  drivers/board.cpp \
+  drivers/reset.cpp \
+  drivers/timing.cpp \
 )

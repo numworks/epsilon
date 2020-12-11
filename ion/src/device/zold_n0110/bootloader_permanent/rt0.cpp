@@ -19,6 +19,7 @@ extern "C" {
 }
 
 void __attribute__((noinline)) abort() {
+  // TODO: jump to other bootloader!
 #ifdef NDEBUG
   Ion::Device::Reset::core();
 #else

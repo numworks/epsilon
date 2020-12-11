@@ -1,9 +1,3 @@
-ion_device_src += $(addprefix ion/src/device/n0100/drivers/, \
+ion_device_bootloader_src += $(addprefix ion/src/device/n0100/bootloader/, \
   board.cpp \
-  flash.cpp \
-  led.cpp \
-  power.cpp \
-  reset.cpp \
 )
-
-LDSCRIPT ?= ion/src/device/n0100/flash.ld

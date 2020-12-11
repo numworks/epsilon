@@ -29,10 +29,10 @@ secure_bootloader_external: $(BUILD_DIR)/bootloader.updatable.elf $(BUILD_DIR)/e
 	$(eval DFU_SLAVE := $(shell $(PYTHON) build/device/dfu.py -l | grep -E "0483:a291|0483:df11"))
 	$(Q) if [[ "$(DFU_SLAVE)" == *"0483:df11"* ]]; \
 	  then \
-	    $(PYTHON) build/device/dfu.py -u $(word 2,$^); \
+	    $(PYTHON) build/device/dfu.py -D $(word 2,$^); \
 	    sleep 2; \
 	fi
-	$(Q) $(PYTHON) build/device/dfu.py -u $(word 1,$^)
+	$(Q) $(PYTHON) build/device/dfu.py -D $(word 1,$^)
 
 .PHONY: %.two_binaries
 %.two_binaries: %.elf

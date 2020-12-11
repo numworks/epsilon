@@ -17,12 +17,12 @@ public:
 
   enum class HomeAppsLayout : uint8_t {
     Default,
-    HidePython,
+    HidePython
   };
 
   enum class DiscriminantSymbol : uint8_t {
     Delta,
-    D,
+    D
   };
 
   constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol) :

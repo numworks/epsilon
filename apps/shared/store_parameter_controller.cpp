@@ -82,10 +82,11 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
         double * contextBOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + b);
         return *contextAOtherColumn > *contextBOtherColumn;
       };
+      double * seriesContext = m_store->data() + m_series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
       if (m_xColumnSelected) {
-        Poincare::Helpers::Sort(swapRows, compareX, (m_store->data() + m_series), m_store->numberOfPairsOfSeries(m_series));
+        Poincare::Helpers::Sort(swapRows, compareX, seriesContext, m_store->numberOfPairsOfSeries(m_series));
       } else {
-        Poincare::Helpers::Sort(swapRows, compareY, (m_store->data() + m_series), m_store->numberOfPairsOfSeries(m_series));
+        Poincare::Helpers::Sort(swapRows, compareY, seriesContext, m_store->numberOfPairsOfSeries(m_series));
       }
       break;
     }

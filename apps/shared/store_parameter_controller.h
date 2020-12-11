@@ -13,7 +13,10 @@ class StoreParameterController : public ViewController, public ListViewDataSourc
 public:
   StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
-  void selectSeries(int series) { m_series = series; }
+  void selectSeries(int series) {
+    assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
+    m_series = series;
+  }
   View * view() override { return &m_selectableTableView; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   const char * title() override;

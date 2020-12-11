@@ -84,11 +84,14 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout(),
   m_contentView(this)
 {
-  m_delta2Layout = HorizontalLayout::Builder(VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
-  const char * equalB = "=b";
-  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(equalB, strlen(equalB), KDFont::SmallFont), 0, false);
   const char * delta = GlobalPreferences::sharedGlobalPreferences()->discriminantSymbol();
-  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(delta, strlen(delta), KDFont::SmallFont), 0, false);
+  const char * equalB = "=b";
+  m_delta2Layout = HorizontalLayout::Builder(
+    LayoutHelper::String(delta, strlen(delta), KDFont::SmallFont),
+    LayoutHelper::String(equalB, strlen(equalB), KDFont::SmallFont),
+    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript),
+    LayoutHelper::String("-4ac", 4, KDFont::SmallFont)
+  );
   for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }

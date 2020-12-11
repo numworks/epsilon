@@ -1,6 +1,6 @@
 include build/targets.device.$(MODEL).mak
 
-HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash bootloader.permanent bootloader.updatable
+HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash bootloader
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 $(eval $(call rule_for, \
@@ -49,3 +49,8 @@ $(BUILD_DIR)/bench.ram.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
 $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),consoleuart usbxip)
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
+
+bootloader_src = $(ion_device_bootloader_src) $(liba_src)
+$(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),)
+$(BUILD_DIR)/bootloader.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/bootloader
+$(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/bootloader_common_flash.ld

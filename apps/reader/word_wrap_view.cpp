@@ -2,8 +2,6 @@
 
 #include "utility.h"
 
-#include <iostream>
-
 namespace reader
 {
 
@@ -41,7 +39,6 @@ void WordWrapTextView::previousPage()
         
         if(previousTextPosition.x() < margin)
         {
-            std::cout<<"|||\n"<<std::endl;
             textPosition = KDPoint(m_frame.width() - margin, textPosition.y() - textSize.height());
             previousTextPosition = KDPoint(textPosition.x() - textSize.width(), textPosition.y());
         }

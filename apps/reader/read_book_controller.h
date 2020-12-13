@@ -14,8 +14,12 @@ public:
 
   void setBook(const External::Archive::File& file);
   bool handleEvent(Ion::Events::Event event) override;
+
+  void savePosition() const;
+  void loadPosition();
 private:
   WordWrapTextView m_readerView;
+  const External::Archive::File* m_file;
 };
 
 }

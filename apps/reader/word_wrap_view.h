@@ -12,7 +12,8 @@ public:
     void setText(const char*, int length);
     void nextPage();
     void previousPage();
-    
+    int getPageOffset() const;
+    void setPageOffset(int o);
 protected:
     int m_pageOffset = 0;
     mutable int m_nextPageOffset = 0;

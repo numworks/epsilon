@@ -146,4 +146,14 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const
     m_nextPageOffset = startOfWord - text();
 }
 
+int WordWrapTextView::getPageOffset() const
+{
+    return m_pageOffset;
+}
+
+void WordWrapTextView::setPageOffset(int o)
+{
+    m_pageOffset = o;
+}
+
 }

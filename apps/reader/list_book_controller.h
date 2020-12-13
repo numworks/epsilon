@@ -22,6 +22,8 @@ public:
     void willDisplayCellForIndex(HighlightCell * cell, int index) override;
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
+    bool hasBook(const char* filename) const;
+    void cleanRemovedBookRecord();
 private:
     SelectableTableView m_tableView;
 

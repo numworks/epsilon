@@ -16,6 +16,7 @@ ListBookController::ListBookController(Responder * parentResponder):
     m_readBookController(this)
 {
     m_nbFiles = filesWithExtension(".txt", m_files, NB_FILES);
+    cleanRemovedBookRecord();
 }
 
 int ListBookController::numberOfRows() const
@@ -70,6 +71,32 @@ bool ListBookController::handleEvent(Ion::Events::Event event)
     }
 
     return false;
+}
+
+
+bool ListBookController::hasBook(const char* filename) const
+{
+    for(int i=0;i<m_nbFiles;i++)
+    {
+        if(strcmp(m_files[i].name, filename) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void ListBookController::cleanRemovedBookRecord()
+{
+  int nb = Ion::Storage::sharedStorage()->numberOfRecordsWithExtension("txt");
+  for(int i=0; i<nb; i++)
+  {
+    Ion::Storage::Record r = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex("txt", i);
+    if(!hasBook(r.fullName()))
+    {
+        r.destroy();
+    }
+  }
 }
 
 }

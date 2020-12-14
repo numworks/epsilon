@@ -237,11 +237,11 @@ double ContinuousFunction::approximateDerivative(double x, Poincare::Context * c
   if (x < tMin() || x > tMax()) {
     return NAN;
   }
-  Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
-  /* TODO: when we approximate derivative, we might want to simplify the
-   * derivative here. However, we might want to do it once for all x (to avoid
-   * lagging in the derivative table. */
-  return PoincareHelpers::ApproximateToScalar<double>(derivative, context);
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknown[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknown);
+  // Derivative is simplified once and for all
+  return PoincareHelpers::ApproximateWithValueForSymbol(ExpressionModelHandle::expressionDerivateReduced(context), unknown, x, context);
 }
 
 float ContinuousFunction::tMin() const {

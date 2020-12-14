@@ -75,16 +75,20 @@ public:
   class OPTCR1 : public Register32 {
   public:
     using Register32::Register32;
-    uint8_t getBootAddress1() volatile {
-      return (uint32_t)getBitRange(31,low)
-      return m_values[index / 4].getBitRange(4 * indexMod4 + 3, 4 * indexMod4);
+    uint32_t getBootAddress0() volatile {
+      return (uint32_t)getBOOT_ADD0()*k_granularity;
     }
-
-    void setEXTI(int index, GPIO gpio) volatile {
-      int indexMod4 = index % 4;
-      m_values[index / 4].setBitRange(4 * indexMod4 + 3, 4 * indexMod4, static_cast<uint8_t>(gpio));
+    uint32_t getBootAddress1() volatile {
+      return (uint32_t)getBOOT_ADD1()*k_granularity;
+    }
+    void setBootAddress0(uint32_t add) volatile {
+      setBOOT_ADD0(add/k_granularity);
+    }
+    void setBootAddress1(uint32_t add) volatile {
+      setBOOT_ADD1(add/k_granularity);
     }
   private:
+    static constexpr uint32_t k_granularity = 0x4000;
     REGS_FIELD(BOOT_ADD1, uint16_t, 31, 16);
     REGS_FIELD(BOOT_ADD0, uint16_t, 15, 0);
   };

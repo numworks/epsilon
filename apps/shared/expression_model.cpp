@@ -2,6 +2,7 @@
 #include "global_context.h"
 #include "poincare_helpers.h"
 #include <apps/apps_container.h>
+#include <poincare/derivative.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/undefined.h>
 #include <string.h>
@@ -17,6 +18,7 @@ namespace Shared {
 ExpressionModel::ExpressionModel() :
   m_expression(),
   m_layout(),
+  m_expressionDerivate(),
   m_circular(-1)
 {
 }
@@ -85,6 +87,18 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
     }
   }
   return m_expression;
+}
+
+Expression ExpressionModel::expressionDerivateReduced(const Storage::Record * record, Poincare::Context * context) const {
+  if (m_expressionDerivate.isUninitialized()) {
+    m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+    PoincareHelpers::Simplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    // simplify might return an uninitialized Expression if interrupted
+    if (m_expressionDerivate.isUninitialized()) {
+      m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+    }
+  }
+  return m_expressionDerivate;
 }
 
 Expression ExpressionModel::expressionClone(const Storage::Record * record) const {
@@ -161,6 +175,7 @@ void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record,
 void ExpressionModel::tidy() const {
   m_layout = Layout();
   m_expression = Expression();
+  m_expressionDerivate = Expression();
   m_circular = -1;
 }
 

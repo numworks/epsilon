@@ -19,7 +19,7 @@ EditableCellTableViewController::EditableCellTableViewController(Responder * par
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
-     || (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
+     || (event == Ion::Events::Down && selectedRow() < numberOfRows())
      || (event == Ion::Events::Up && selectedRow() > 0)
      || (event == Ion::Events::Right && (textField->cursorLocation() == textField->draftTextBuffer() + textField->draftTextLength()) && selectedColumn() < numberOfColumns()-1)
      || (event == Ion::Events::Left && textField->cursorLocation() == textField->draftTextBuffer() && selectedColumn() > 0);

@@ -41,6 +41,7 @@ protected:
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
+  // The cursor is hanging if the selected function has been edited or deleted
   virtual bool isCursorHanging() = 0;
 
   // Closest vertical curve helper

@@ -271,7 +271,9 @@ bool GraphController::isCursorHanging() {
   } else {
     xy = Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
   }
-  return xy.x1() != m_cursor->x() || xy.x2() != m_cursor->y();
+  // NaN != Nan returns true, but cursor is not hanging if both values are NaN
+  return (xy.x1() != m_cursor->x() && !(std::isnan(xy.x1()) && std::isnan(m_cursor->x())))
+      || (xy.x2() != m_cursor->y() && !(std::isnan(xy.x2()) && std::isnan(m_cursor->y())));
 }
 
 bool GraphController::moveCursorVertically(int direction) {

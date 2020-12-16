@@ -66,4 +66,3 @@ static_assert(SSCG_INCSTEP * SSCG_MODPER < 32767, "Wrong values for the Spread s
 }
 
 #endif
-

@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
 #include <cmath>
 #include <algorithm>
@@ -259,9 +260,9 @@ void GraphController::initCursorParameters() {
   *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
 }
 
-bool GraphController::isCursorHanging() {
+bool GraphController::cursorMatchesModel() {
   if (m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
-    return true;
+    return false;
   }
   Coordinate2D<double> xy;
   if (*m_selectedDotIndex == -1) {
@@ -271,9 +272,7 @@ bool GraphController::isCursorHanging() {
   } else {
     xy = Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
   }
-  // NaN != Nan returns true, but cursor is not hanging if both values are NaN
-  return (xy.x1() != m_cursor->x() && !(std::isnan(xy.x1()) && std::isnan(m_cursor->x())))
-      || (xy.x2() != m_cursor->y() && !(std::isnan(xy.x2()) && std::isnan(m_cursor->y())));
+  return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
 }
 
 bool GraphController::moveCursorVertically(int direction) {

@@ -41,8 +41,8 @@ protected:
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
-  // The cursor is hanging if the selected function has been edited or deleted
-  virtual bool isCursorHanging() = 0;
+  // The cursor does not match if selected model has been edited or deleted
+  virtual bool cursorMatchesModel() = 0;
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;

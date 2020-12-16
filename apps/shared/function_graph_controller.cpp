@@ -1,5 +1,6 @@
 #include "function_graph_controller.h"
 #include "function_app.h"
+#include "poincare_helpers.h"
 #include "../apps_container.h"
 #include <poincare/coordinate_2D.h>
 #include <assert.h>
@@ -123,16 +124,14 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   return true;
 }
 
-bool FunctionGraphController::isCursorHanging() {
+bool FunctionGraphController::cursorMatchesModel() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   if (indexFunctionSelectedByCursor() >= functionStore()->numberOfActiveFunctions()) {
-    return true;
+    return false;
   }
   ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context);
-  // NaN != Nan returns true, but cursor is not hanging if both values are NaN
-  return (xy.x1() != m_cursor->x() && !(std::isnan(xy.x1()) && std::isnan(m_cursor->x())))
-      || (xy.x2() != m_cursor->y() && !(std::isnan(xy.x2()) && std::isnan(m_cursor->y())));
+  return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
 }
 
 CurveView * FunctionGraphController::curveView() {

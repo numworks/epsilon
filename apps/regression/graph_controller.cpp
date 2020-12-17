@@ -269,6 +269,8 @@ bool GraphController::cursorMatchesModel() {
     xy = xyValues(*m_selectedSeriesIndex, m_cursor->t(), globalContext());
   } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     xy = Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
+  } else if (*m_selectedDotIndex > m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+    return false;
   } else {
     xy = Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
   }

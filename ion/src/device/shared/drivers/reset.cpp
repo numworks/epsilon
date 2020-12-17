@@ -9,6 +9,17 @@ namespace Reset {
 
 using namespace Regs;
 
+void core() {
+  // Perform a full core reset
+  Ion::Device::Cache::dsb(); // Complete all memory accesses
+  CORTEX.AIRCR()->requestReset();
+  Ion::Device::Cache::dsb();
+  // Wait until reset
+  while (true) {
+    asm("nop");
+  }
+}
+
 /* jump is executed from the internal flash only as it shutdowns the external
  * flash. */
 

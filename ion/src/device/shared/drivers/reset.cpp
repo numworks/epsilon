@@ -1,5 +1,6 @@
 #include "reset.h"
 #include <drivers/board.h>
+#include <drivers/cache.h>
 #include <regs/regs.h>
 
 namespace Ion {
@@ -12,6 +13,9 @@ using namespace Regs;
  * flash. */
 
 void jump(uint32_t jumpIsrVectorAddress) {
+  // Disable cache before reset
+  Cache::disable();
+
   /* Shutdown all clocks and periherals to mimic a hardware reset. */
   // TODO Emilie: don't forget to Disable Cache inside Board::shutdown if required before reset
   Board::shutdown();

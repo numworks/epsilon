@@ -71,6 +71,7 @@ void Sequence::setType(Type t) {
     setInitialRank(0);
   }
   recordData()->setType(t);
+  m_definition.tidyName();
   tidy();
   /* Reset all contents */
   switch (t) {

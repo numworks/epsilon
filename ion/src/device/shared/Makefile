@@ -4,7 +4,6 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
   boot/rt0.cpp \
   drivers/base64.cpp \
   drivers/hash.cpp \
-  drivers/hash.cpp \
   drivers/external_flash.cpp \
   drivers/flash.cpp \
   drivers/internal_flash.cpp \

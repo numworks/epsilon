@@ -48,6 +48,7 @@ void MathVariableBoxEmptyController::setType(Type type) {
     case Type::Sequence:
     {
       messages[0] = I18n::Message::EmptySequenceBox0;
+      messages[1] = I18n::Message::EmptySequenceBox1;
       messages[3] = I18n::Message::Default;
       break;
     }

@@ -149,7 +149,7 @@ Coordinate2D<double> Solver::BrentMinimum(double ax, double bx, ValueAtAbscissa 
     }
     u = x + (std::fabs(d) >= tol1 ? d : (d>0 ? tol1 : -tol1));
     fu = evaluation(u, context, complexFormat, angleUnit, context1, context2, context3);
-    if (fu <= fx) {
+    if (fu <= fx || (std::isnan(fx) && !std::isnan(fu))) {
       if (u<x) {
         b = x;
       } else {

@@ -42,8 +42,8 @@ void solve_and(std::initializer_list<const char *> equations, T && lambda) {
 
 // Helpers
 
-void assert_solves_to_error(const char * equation, EquationStore::Error error) {
-  solve_and_process_error({equation},[error](EquationStore * store, EquationStore::Error e){
+void assert_solves_to_error(std::initializer_list<const char *> equations, EquationStore::Error error) {
+  solve_and_process_error(equations, [error](EquationStore * store, EquationStore::Error e){
     quiz_assert(e == error);
   });
 }

@@ -406,6 +406,9 @@ protected:
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
+  // Solver parameters
+  static constexpr double k_solverStepPrecision = 1e-2;
+  static constexpr double k_solverMinimalStep = 1e-3;
 
   /* Add missing parenthesis will add parentheses that easen the reading of the
    * expression or that are required by math rules. For example:

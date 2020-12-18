@@ -7,7 +7,6 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-void initFPU();
 void init();
 void shutdown();
 enum class Frequency {

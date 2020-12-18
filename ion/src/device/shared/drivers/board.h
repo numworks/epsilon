@@ -9,11 +9,10 @@ namespace Board {
 
 void init();
 void shutdown();
-enum class Frequency {
-  Low = 0,
-  High = 1
-};
-void setFrequency(Frequency f);
+
+void setClockLowFrequency();
+void setClockStandardFrequency();
+
 }
 }
 }

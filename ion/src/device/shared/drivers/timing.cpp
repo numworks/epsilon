@@ -14,11 +14,11 @@ void usleep(uint32_t us) {
 
 void msleep(uint32_t ms) {
   // We decrease the AHB clock frequency to save power while sleeping.
-  Device::Board::setFrequency(Board::Frequency::Low);
+  Device::Board::setClockLowFrequency();
   for (volatile uint32_t i=0; i<Config::LoopsPerMillisecondLowFrequency*ms; i++) {
     __asm volatile("nop");
   }
-  Device::Board::setFrequency(Board::Frequency::High);
+  Device::Board::setClockStandardFrequency();
 }
 
 }

@@ -8,11 +8,11 @@ namespace Probability {
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (!isContinuous()) {
     return Poincare::Solver::CumulativeDistributiveFunctionForNDefinedFunction<double>(x,
-        [](double k, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
-        const Distribution * distribution = reinterpret_cast<const Distribution *>(context1);
-        return distribution->evaluateAtDiscreteAbscissa(k);
-      }, nullptr, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::AngleUnit::Degree, this);
-    // Context, complex format and angle unit are dummy values
+        [](double k, Poincare::Context * context, const void * auxiliary) {
+          const Distribution * distribution = static_cast<const Distribution *>(auxiliary);
+          return distribution->evaluateAtDiscreteAbscissa(k);
+        },
+        nullptr, this);
   }
   return 0.0;
 }
@@ -62,10 +62,10 @@ double Distribution::cumulativeDistributiveInverseForProbability(double * probab
     return -1.0;
   }
   return Poincare::Solver::CumulativeDistributiveInverseForNDefinedFunction<double>(probability,
-        [](double k, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
-        const Distribution * distribution = reinterpret_cast<const Distribution *>(context1);
+      [](double k, Poincare::Context * context, const void * auxiliary) {
+        const Distribution * distribution = static_cast<const Distribution *>(auxiliary);
         return distribution->evaluateAtDiscreteAbscissa(k);
-      }, nullptr, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::AngleUnit::Degree, this);
+      }, nullptr, this);
     // Context, complex format and angle unit are dummy values
 }
 
@@ -115,21 +115,15 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
   if (*probability < DBL_EPSILON) {
     return -INFINITY;
   }
+  const void * pack[2] = { this, probability };
   Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
-      ax,
-      bx,
-      DBL_EPSILON,
-      [](double x, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
-        const Distribution * distribution = reinterpret_cast<const Distribution *>(context1);
-        const double * proba = reinterpret_cast<const double *>(context2);
+      ax, bx, DBL_EPSILON,
+      [](double x, Poincare::Context * context, const void * auxiliary) {
+        const Distribution * distribution = static_cast<const Distribution * const *>(auxiliary)[0];
+        const double * proba = static_cast<const double * const *>(auxiliary)[1];
         return distribution->cumulativeDistributiveFunctionAtAbscissa(x) - *proba; // This needs to be an increasing function
       },
-      nullptr,
-      Poincare::Preferences::sharedPreferences()->complexFormat(),
-      Poincare::Preferences::sharedPreferences()->angleUnit(),
-      this,
-      probability,
-      nullptr);
+      nullptr, pack);
   /* Either no result was found, the precision is ok or the result was outside
    * the given ax bx bounds */
    if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON || std::fabs(result.x1()- ax) < FLT_EPSILON || std::fabs(result.x1() - bx) < FLT_EPSILON)) {

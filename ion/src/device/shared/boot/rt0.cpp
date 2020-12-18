@@ -19,10 +19,6 @@ namespace Ion {
 namespace Device {
 namespace Init {
 
-/* When 'start' is executed, the external flash is supposed to be shutdown. We
- * thus forbid inlining to prevent executing this code from external flash
- * (just in case 'start' was to be called from the external flash). */
-
 void configureRAM() {
   /* Copy data section to RAM
    * The data section is R/W but its initialization value matters. It's stored
@@ -37,9 +33,6 @@ void configureRAM() {
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
-  /* Initialize the FPU as early as possible.
-   * For example, static C++ objects are very likely to manipulate float values */
-  Ion::Device::Board::initFPU();
 
   /* Call static C++ object constructors
    * The C++ compiler creates an initialization function for each static object.

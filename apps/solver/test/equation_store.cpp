@@ -77,6 +77,15 @@ QUIZ_CASE(equation_solve) {
   });
   unset("x");
 
+  /* Without the user defined variable, this test has too many variables.
+   * With the user defined variable, it has no solutions. */
+  set("g", "0");
+  assert_solves_to_no_solution({
+    "a=a+1",
+    "a+b+c+d+e+f+g=0"
+  });
+  unset("g");
+
   // Monovariable non-polynomial equation
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Degree);
   assert_solves_numerically_to("cos(x)=0", -100, 100, {-90.0, 90.0});
@@ -212,4 +221,14 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   unset("f");
   unset("g");
   unset("h");
+
+  set("a", "0");
+  assert_solves_to("a=0", "a=0");
+  unset("a");
+
+  set("b", "0");
+  assert_solves_to_no_solution({"b*b=1","a=b"});
+  // If predefined variable had been ignored, there would have been this error
+  // assert_solves_to_error({"b*b=1","a=b"}, NonLinearSystem);
+  unset("b");
 }

@@ -6,6 +6,12 @@
 
 namespace Poincare {
 
+template<typename T>
+bool SolverHelper<T>::RootExistsOnInterval(T fa, T fb, T fc) {
+  return ((fb == static_cast<T>(0) && ((fa < static_cast<T>(0) && fc > static_cast<T>(0)) || (fa > static_cast<T>(0) && fc < static_cast<T>(0))))
+       || ((fb < static_cast<T>(0) && fc > static_cast<T>(0)) || (fb > static_cast<T>(0) && fc < static_cast<T>(0))));
+}
+
 Coordinate2D<double> Solver::BrentMinimum(double ax, double bx, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */

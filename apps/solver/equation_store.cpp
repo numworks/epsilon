@@ -138,14 +138,28 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
 }
 
 EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols) {
+  /* TODO : Display if predefined variables have been considered when number of
+   * solutions is null or infinite. */
   assert(replaceFunctionsButNotSymbols != nullptr);
+  // First, solve the equation using predefined variables if there are
   *replaceFunctionsButNotSymbols = false;
-  Error e = privateExactSolve(context, false);
-  if (m_numberOfUserVariables > 0 && (e != Error::NoError || numberOfSolutions() == 0)) {
+
+  Error firstError = privateExactSolve(context, false);
+  int firstNumberOfSolutions = numberOfSolutions();
+
+  if (m_numberOfUserVariables > 0 && (firstError != Error::NoError || firstNumberOfSolutions == 0 || firstNumberOfSolutions == INT_MAX)) {
+    // If there were predefined variables, and solution isn't good, try without
     *replaceFunctionsButNotSymbols = true;
-    e = privateExactSolve(context, true);
+    Error secondError = privateExactSolve(context, true);
+
+    if (firstError == Error::NoError && secondError != Error::NoError) {
+      // First solution was better, but has been tidied. It is recomputed.
+      *replaceFunctionsButNotSymbols = false;
+      return privateExactSolve(context, false);
+    }
+    return secondError;
   }
-  return e;
+  return firstError;
 }
 
 /* Equations are solved according to the following procedure :

@@ -30,27 +30,33 @@ private:
 
 class Solver {
 public:
+  typedef SolverHelper<double>::ValueAtAbscissa ValueAtAbscissa;
+
   // Minimum
-  typedef double (*ValueAtAbscissa)(double abscissa, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3);
-  static Coordinate2D<double> BrentMinimum(double ax, double bx, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr);
+  static Coordinate2D<double> NextMinimum(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double minimalStep, double stepPrecision);
 
   // Root
-  static double BrentRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr);
-  static Coordinate2D<double> IncreasingFunctionRoot(double ax, double bx, double resultPrecision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr, double * resultEvaluation = nullptr);
+  static double NextRoot(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double minimalStep, double stepPrecision);
+  static Coordinate2D<double> IncreasingFunctionRoot(double ax, double bx, double resultPrecision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double * resultEvaluation = nullptr);
 
-  // Proba
-
+  // Probabilities
   // Cumulative distributive inverse for function defined on N (positive integers)
-  template<typename T> static T CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr);
-
+  template<typename T> static T CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
   // Cumulative distributive function for function defined on N (positive integers)
-  template<typename T> static T CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr);
+  template<typename T> static T CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
 
 private:
   constexpr static int k_maxNumberOfOperations = 1000000;
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
+  static constexpr double k_zeroPrecision = 1e-5;
+  static constexpr double k_maxFloat = 1e100;
+  static constexpr double k_precisionByGradUnit = 1e6;
+
+  static Coordinate2D<double> BrentMinimum(double ax, double bx, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
+  static double BrentRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
+  static Coordinate2D<double> RoundCoordinatesToZero(Coordinate2D<double> xy, double a, double b, ValueAtAbscissa f, Context * context, const void * auxiliary);
 };
 
 }

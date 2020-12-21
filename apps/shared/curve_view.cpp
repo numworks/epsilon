@@ -713,6 +713,10 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
     tMax = t1;
   }
 
+  // Add a thousandth of π as a margin to avoid visible approximation errors.
+  tMax += piInAngleUnit / 1000.0f;
+  tMin -= piInAngleUnit / 1000.0f;
+
   /* To optimize cache hits, the area actually drawn will be extended to nearest
    * cached θ. tStep being a multiple of cache steps (see
    * ComputeNonCartesianSteps), we extend segments on both ends to the closest
@@ -725,10 +729,11 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
    *               |-------|-------|-------|-------|-------|-------|-------|--
    * tMax-tMin=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
    * A - tStep=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
-   *               |---^^^-|--^^^^^|^^^^^^^|---^^^-|--^^^^^|^^^^^^^|---^^^-|--
+   *               |___^^^_|__     | ^^^^^^|___   _|__^^^^^|^      |___^^^_|__
+   *               |       |  ^^^^^|^      |   ^^^ |       | ^^^^^^|       |
    *
    * B - tStep=6 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
-   *               |---^^^^|^^     | ^^^^^^|      ^|^^^^^^^|^^^^   |   ^^^^|^^
+   *               |___^^^^|^^     | ^^^^^^|      ^|^^^^^^^|^^^^   |   ^^^^|^^
    *               |       |  ^^^^^|^      |^^^^^^ |     ^^|^^^^^^^|^^^    |
    * In situation A, Step are small enough, not all segments must be drawn.
    * In situation B, The entire range should be drawn, and two extended segments
@@ -764,7 +769,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
       int j = std::ceil((tE - tStart) / tStep);
       tCache2 = std::min(tStart + tStep * j, tEnd);
 
-      assert(tCache1 < tCache2);
+      assert(tCache1 <= tCache2);
       drawCurve(ctx, rect, tCache1, tCache2, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
     }
     thetaOffset += piInAngleUnit;

@@ -408,6 +408,9 @@ Coordinate2D<double> Solver::RoundCoordinatesToZero(Coordinate2D<double> xy, dou
   return result;
 }
 
+template Coordinate2D<float> SolverHelper<float>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, float start, float end, float relativePrecision, float maximalPrecision);
+template bool SolverHelper<float>::RootExistsOnInterval(float fa, float fb, float fc);
+
 template float Solver::CumulativeDistributiveInverseForNDefinedFunction(float *, ValueAtAbscissa, Context *, const void *);
 template double Solver::CumulativeDistributiveInverseForNDefinedFunction(double *, ValueAtAbscissa, Context *, const void *);
 template float Solver::CumulativeDistributiveFunctionForNDefinedFunction(float, ValueAtAbscissa, Context *, const void *);

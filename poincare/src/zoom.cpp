@@ -24,22 +24,11 @@ constexpr float
   Zoom::k_largeUnitMantissa,
   Zoom::k_minimalRangeLength;
 
-static bool DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3) {
-  /* The float type looses precision surprisingly fast, and cannot confidently
-   * hold more than 6.6 digits of precision. Results more precise than that are
-   * too noisy to be be of any value. */
-  float yMin = std::min(y1, std::min(y2, y3));
-  float yMax = std::max(y1, std::max(y2, y3));
-  constexpr float maxPrecision = 2.f * FLT_EPSILON;
-  return (yMax - yMin) / std::fabs(dx) > maxPrecision;
-}
-
 bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
 
-  const bool hasIntervalOfDefinition = std::isfinite(tMin) && std::isfinite(tMax);
   float center, maxDistance;
-  if (hasIntervalOfDefinition) {
+  if (std::isfinite(tMin) && std::isfinite(tMax)) {
     center = (tMax + tMin) / 2.f;
     maxDistance = (tMax - tMin) / 2.f;
   } else {
@@ -47,151 +36,145 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     maxDistance = k_maximalDistance;
   }
 
-  float resultX[2] = {FLT_MAX, - FLT_MAX};
-  float resultYMin = FLT_MAX, resultYMax = - FLT_MAX;
-  float asymptote[2] = {FLT_MAX, - FLT_MAX};
-  float explosion[2] = {FLT_MAX, - FLT_MAX};
-  int numberOfPoints, totalNumberOfPoints = 0;
-  float xFallback, yFallback[2] = {NAN, NAN};
-  float firstResult;
-  float dXOld, dXPrev, dXNext, yOld, yPrev, yNext;
+  SolverHelper<float>::BracketSearch search = [](float a, float b, float c, float fa, float fb, float fc, ValueAtAbscissa f, Context * context, const void * auxiliary) {
+    if (BoundOfIntervalOfDefinitionIsReached(fa, fc)) {
+      return Coordinate2D<float>(b, NAN);
+    }
+    if (SolverHelper<float>::RootExistsOnInterval(fa, fb, fc)) {
+      return Coordinate2D<float>(b, 0.f);
+    }
+    if ((SolverHelper<float>::MinimumExistsOnInterval(fa, fb, fc) || SolverHelper<float>::MaximumExistsOnInterval(fa, fb, fc)) && DoesNotOverestimatePrecision(c, fa, fb, fc)) {
+      return Coordinate2D<float>(
+          b,
+          IsConvexAroundExtremum(f, a, b, c, fa, fb, fc, context, auxiliary) ? fb : NAN);
+    }
+    /* Asymptotes and explosions
+     * As the y value does not matter for an asymptote or explosion, it is used to notify the algorithm :
+     *  - FLT_MIN (FLT_MAX) is the beginning of an asymptote (explosion)
+     *  - -FLT_MIN (-FLT_MAX) is the end of an asymptote (explosion) */
+    float slopeNext = std::fabs((fc - fb) / (c - b)), slopePrev = std::fabs((fb - fa) / (b - a));
+    if (slopeNext < k_asymptoteThreshold && slopePrev > k_asymptoteThreshold) {
+      return Coordinate2D<float>(b, FLT_MIN);
+    } else if (slopeNext > k_asymptoteThreshold && slopePrev < k_asymptoteThreshold) {
+      return Coordinate2D<float>(b, -FLT_MIN);
+    }
+    if (slopeNext > k_explosionThreshold && slopePrev < k_explosionThreshold) {
+      return Coordinate2D<float>(b, FLT_MAX);
+    } else if (slopeNext < k_explosionThreshold && slopePrev > k_explosionThreshold) {
+      return Coordinate2D<float>(b, -FLT_MAX);
+    }
+    return Coordinate2D<float>(NAN, NAN);
+  };
 
-  /* Look for a point of interest at the center. */
-  const float a = center - k_minimalDistance - FLT_EPSILON, b = center + FLT_EPSILON, c = center + k_minimalDistance + FLT_EPSILON;
-  const float ya = evaluation(a, context, auxiliary), yb = evaluation(b, context, auxiliary), yc = evaluation(c, context, auxiliary);
-  if (BoundOfIntervalOfDefinitionIsReached(ya, yc) ||
-      BoundOfIntervalOfDefinitionIsReached(yc, ya) ||
-      RootExistsOnInterval(ya, yc) ||
-      ExtremumExistsOnInterval(ya, yb, yc) || ya == yc)
-  {
-    resultX[0] = resultX[1] = center;
-    totalNumberOfPoints++;
-    if (ExtremumExistsOnInterval(ya, yb, yc) && IsConvexAroundExtremum(evaluation, a, b, c, ya, yb, yc, context, auxiliary)) {
-      resultYMin = resultYMax = yb;
+  float resultXMin = FLT_MAX, resultXMax = -FLT_MAX, resultYMin = FLT_MAX, resultYMax = -FLT_MAX;
+  float fallbackXMin = NAN, fallbackXMax = NAN, fallbackYMin = NAN, fallbackYMax = NAN, firstPoint = NAN;
+  float asymptoteXMin = FLT_MAX, asymptoteXMax = -FLT_MAX, explosionXMin = FLT_MAX, explosionXMax = -FLT_MAX;
+  int numberOfExtrema = 0;
+
+  /* Handle the center */
+  float l = center - k_minimalDistance, r = center + k_minimalDistance;
+  float fl = evaluation(l, context, auxiliary), fc = evaluation(center, context, auxiliary), fr = evaluation(r, context, auxiliary);
+  if (std::isfinite(search(l, center, r, fl, fc, fr, evaluation, context, auxiliary).x1())
+   || std::isfinite(search(r, center, l, fr, fc, fl, evaluation, context, auxiliary).x1())) {
+    resultXMin = resultXMax = center;
+    if (std::isfinite(fc)) {
+      resultYMin = resultYMax = fc;
     }
   }
 
-  /* We search for points of interest by exploring the function leftward from
-   * the center and then rightward, hence the two iterations. */
-  for (int i = 0; i < 2; i++) {
-    /* Initialize the search parameters. */
-    numberOfPoints = 0;
-    firstResult = NAN;
-    xFallback = NAN;
-    dXPrev = i == 0 ? - k_minimalDistance : k_minimalDistance;
-    dXNext = dXPrev * k_stepFactor;
-    yPrev = evaluation(center + dXPrev, context, auxiliary);
-    yNext = evaluation(center + dXNext, context, auxiliary);
+  float searchXLeft = l, searchXRight = r;
+  int direction = 1;
+  while (direction != 0) {
+    Coordinate2D<float> pointOfInterest;
+    if (direction > 0) {
+      pointOfInterest = SolverHelper<float>::NextPointOfInterest(evaluation, context, auxiliary, search, searchXRight, center + maxDistance, k_stepFactor - 1.f, k_minimalDistance);
+      searchXRight = pointOfInterest.x1();
+    } else /* direction < 0 */ {
+      pointOfInterest = SolverHelper<float>::NextPointOfInterest(evaluation, context, auxiliary, search, searchXLeft, center - maxDistance, k_stepFactor - 1.f, k_minimalDistance);
+      searchXLeft = pointOfInterest.x1();
+    }
 
-    while(std::fabs(dXPrev) < maxDistance) {
-      /* Update the slider. */
-      dXOld = dXPrev;
-      dXPrev = dXNext;
-      dXNext *= k_stepFactor;
-      yOld = yPrev;
-      yPrev = yNext;
-      yNext = evaluation(center + dXNext, context, auxiliary);
-      if (std::isinf(yNext)) {
-        continue;
+    float x = pointOfInterest.x1(), y = pointOfInterest.x2();
+    if (std::isnan(x)) {
+      /* No point of interest left in this direction */
+    } else if (std::fabs(y) == FLT_MAX) {
+      if ((y < 0.f) == (direction < 0)) {
+        explosionXMax = std::max(explosionXMax, x);
+      } else {
+        explosionXMin = std::min(explosionXMin, x);
       }
-      /* Check for a change in the profile. */
-      const PointOfInterest variation = BoundOfIntervalOfDefinitionIsReached(yPrev, yNext) ? PointOfInterest::Bound :
-                            RootExistsOnInterval(yPrev, yNext) ? PointOfInterest::Root :
-                            (ExtremumExistsOnInterval(yOld, yPrev, yNext) && DoesNotOverestimatePrecision(dXNext, yOld, yPrev, yNext)) ? PointOfInterest::Extremum :
-                            PointOfInterest::None;
-      switch (static_cast<uint8_t>(variation)) {
-        /* The fallthrough is intentional, as we only want to update the Y
-         * range when an extremum is detected, but need to update the X range
-         * in all cases. */
-      case static_cast<uint8_t>(PointOfInterest::Extremum):
-        if (IsConvexAroundExtremum(evaluation, center + dXOld, center + dXPrev, center + dXNext, yOld, yPrev, yNext, context, auxiliary)) {
-          resultYMin = std::min(resultYMin, yPrev);
-          resultYMax = std::max(resultYMax, yPrev);
-        }
-      case static_cast<uint8_t>(PointOfInterest::Bound):
-        /* We only count extrema / discontinuities for limiting the number
-         * of points. This prevents cos(x) and cos(x)+2 from having different
-         * profiles. */
-        if (++numberOfPoints == k_peakNumberOfPointsOfInterest) {
-          /* When too many points are encountered, we prepare their erasure by
-           * setting a restore point. */
-          xFallback = dXNext + center;
-          yFallback[0] = resultYMin;
-          yFallback[1] = resultYMax;
-        }
-      case static_cast<uint8_t>(PointOfInterest::Root):
-        asymptote[i] = i == 0 ? FLT_MAX : - FLT_MAX;
-        explosion[i] = i == 0 ? FLT_MAX : - FLT_MAX;
-        resultX[0] = std::min(resultX[0], center + (i == 0 ? dXNext : dXPrev));
-        resultX[1] = std::max(resultX[1], center + (i == 1 ? dXNext : dXPrev));
-        if (std::isnan(firstResult)) {
-          firstResult = dXNext;
-        }
-        totalNumberOfPoints++;
-        break;
-      default:
-        const float slopeNext = (yNext - yPrev) / (dXNext - dXPrev), slopePrev = (yPrev - yOld) / (dXPrev - dXOld);
-        if ((std::fabs(slopeNext) < k_asymptoteThreshold) && (std::fabs(slopePrev) > k_asymptoteThreshold)) {
-          // Horizontal asymptote begins
-          asymptote[i] = (i == 0) ? std::min(asymptote[i], center + dXNext) : std::max(asymptote[i], center + dXNext);
-        } else if ((std::fabs(slopeNext) > k_asymptoteThreshold) && (std::fabs(slopePrev) < k_asymptoteThreshold)) {
-          // Horizontal asymptote invalidates : it might be an asymptote when
-          // going the other way.
-          asymptote[1 - i] = (i == 1) ? std::min(asymptote[1 - i], center + dXPrev) : std::max(asymptote[1 - i], center + dXPrev);
-        }
-        if (std::fabs(slopeNext) > k_explosionThreshold && std::fabs(slopePrev) < k_explosionThreshold) {
-          explosion[i] = (i == 0) ? std::min(explosion[i], center + dXNext) : std::max(explosion[i], center + dXNext);
-        } else if (std::fabs(slopeNext) < k_explosionThreshold && std::fabs(slopePrev) > k_explosionThreshold) {
-          explosion[1 - i] = (i == 1) ? std::min(explosion[1 - i], center + dXPrev) : std::max(explosion[1 - i], center + dXPrev);
-        }
+    } else if (std::fabs(y) == FLT_MIN) {
+      if ((y < 0.f) == (direction < 0)) {
+        asymptoteXMax = std::max(asymptoteXMax, x);
+      } else {
+        asymptoteXMin = std::min(asymptoteXMin, x);
+      }
+    } else {
+      resultXMin = std::min(resultXMin, x);
+      resultXMax = std::max(resultXMax, x);
+      if (std::isnan(firstPoint)) {
+        firstPoint = x;
+      }
+      if (y != 0.f && ++numberOfExtrema == k_peakNumberOfPointsOfInterest) {
+        fallbackXMin = resultXMin;
+        fallbackXMax = resultXMax;
+        fallbackYMin = resultYMin;
+        fallbackYMax = resultYMax;
+      }
+      if (std::isfinite(y)) {
+        resultYMin = std::min(resultYMin, y);
+        resultYMax = std::max(resultYMax, y);
       }
     }
-    if (std::fabs(resultX[i]) > std::fabs(firstResult) * k_maxRatioBetweenPointsOfInterest && !std::isnan(xFallback)) {
-      /* When there are too many points, cut them if their orders are too
-       * different. */
-      resultX[i] = xFallback;
-      resultYMin = yFallback[0];
-      resultYMax = yFallback[1];
+
+    if (std::isfinite(searchXRight) && searchXRight < center + maxDistance) {
+      if (std::isfinite(searchXLeft) && searchXLeft > center - maxDistance) {
+        direction = (searchXRight - center) < (center - searchXLeft) ? 1 : -1;
+      } else {
+        direction = 1;
+      }
+    } else if (std::isfinite(searchXLeft) && searchXLeft > center - maxDistance) {
+      direction = -1;
+    } else {
+      direction = 0;
     }
   }
 
-  if (totalNumberOfPoints == 1) {
-    float xM = (resultX[0] + resultX[1]) / 2;
-    resultX[0] = xM;
-    resultX[1] = xM;
+  /* Combine the different boundaries */
+  /* Asymptotes */
+  resultXMin = std::min(resultXMin, asymptoteXMin);
+  resultXMax = std::max(resultXMax, asymptoteXMax);
+  /* Explosions, but only if it does not hide other points */
+  float xMinWithExplosion = std::min(resultXMin, explosionXMin);
+  float xMaxWithExplosion = std::max(resultXMax, explosionXMax);
+  if (xMaxWithExplosion - xMinWithExplosion < k_maxRatioBetweenPointsOfInterest * (resultXMax - resultXMin)) {
+    resultXMin = xMinWithExplosion;
+    resultXMax = xMaxWithExplosion;
   }
-  /* Cut after horizontal asymptotes. */
-  resultX[0] = std::min(resultX[0], asymptote[0]);
-  resultX[1] = std::max(resultX[1], asymptote[1]);
-  /* Cut after explosions if it does not reduce precision */
-  float xMinWithExplosion = std::min(resultX[0], explosion[0]);
-  float xMaxWithExplosion = std::max(resultX[1], explosion[1]);
-  if (xMaxWithExplosion - xMinWithExplosion < k_maxRatioBetweenPointsOfInterest * (resultX[1] - resultX[0])) {
-    resultX[0] = xMinWithExplosion;
-    resultX[1] = xMaxWithExplosion;
+  /* Cut the range if it is too large to show some points */
+  if (resultXMax - resultXMin > std::fabs(firstPoint) * k_maxRatioBetweenPointsOfInterest && std::isfinite(fallbackXMin) && std::isfinite(fallbackXMax)) {
+    resultXMin = fallbackXMin;
+    resultXMax = fallbackXMax;
+    resultYMin = fallbackYMin;
+    resultYMax = fallbackYMax;
   }
-  if (resultX[0] >= resultX[1]) {
-    if (resultX[0] > resultX[1]) {
-      resultX[0] = NAN;
-      resultX[1] = NAN;
+  /* Filter invalid ranges */
+  if (resultXMin >= resultXMax) {
+    if (resultXMin > resultXMax) {
+      resultXMin = resultXMax = NAN;
     }
-    /* Fallback to default range. */
-    *xMin = resultX[0];
-    *xMax = resultX[1];
+    *xMin = resultXMin;
+    *xMax = resultXMax;
     *yMin = NAN;
     *yMax = NAN;
     return false;
-  } else {
-    /* Add breathing room around points of interest. */
-    float xRange = resultX[1] - resultX[0];
-    resultX[0] -= k_breathingRoom * xRange;
-    resultX[1] += k_breathingRoom * xRange;
   }
-  *xMin = resultX[0];
-  *xMax = resultX[1];
+  /* Add breathing room */
+  float xBreadth = k_breathingRoom * (resultXMax - resultXMin);
+  *xMin = resultXMin - xBreadth;
+  *xMax = resultXMax + xBreadth;
   *yMin = resultYMin;
   *yMax = resultYMax;
-
   return true;
 }
 
@@ -324,8 +307,8 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
    * the Y range. In those cases, the ratio is not suitable. */
   if (bestBreadth < minimalXCoverage * sampleSize
    || sample[bestIndex + bestBreadth - 1] - sample[bestIndex] < minimalYCoverage * yRange) {
-    *xMin = NAN;
-    *xMax = NAN;
+    *xMin = xCenter;
+    *xMax = xCenter;
     *yMin = NAN;
     *yMax = NAN;
     return;
@@ -450,6 +433,16 @@ bool Zoom::IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2
     }
   }
   return true;
+}
+
+bool Zoom::DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3) {
+  /* The float type looses precision surprisingly fast, and cannot confidently
+   * hold more than 6.6 digits of precision. Results more precise than that are
+   * too noisy to be be of any value. */
+  float yMin = std::min(y1, std::min(y2, y3));
+  float yMax = std::max(y1, std::max(y2, y3));
+  constexpr float maxPrecision = 2.f * FLT_EPSILON;
+  return (yMax - yMin) / std::fabs(dx) > maxPrecision;
 }
 
 void Zoom::ExpandSparseWindow(float * sample, int length, float * xMin, float * xMax, float * yMin, float * yMax) {

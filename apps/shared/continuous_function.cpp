@@ -294,14 +294,15 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
 
     /* Try to display an orthonormal range. */
     Zoom::RangeWithRatioForDisplay(evaluation, targetRatio, xMin, xMax, yMin, yMax, context, this);
-    if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+    if (std::isfinite(*yMin) && std::isfinite(*yMax)) {
       return;
     }
 
     /* The function's profile is not great for an orthonormal range.
      * Try a basic range. */
-    *xMin = - Zoom::k_defaultHalfRange;
-    *xMax = Zoom::k_defaultHalfRange;
+    assert(*xMin == *xMax);
+    *xMin -= Zoom::k_defaultHalfRange;
+    *xMax += Zoom::k_defaultHalfRange;
     Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
     if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
       return;

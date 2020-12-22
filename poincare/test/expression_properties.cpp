@@ -401,13 +401,11 @@ void assert_reduced_expression_unit_is(const char * expression, const char * uni
   Shared::GlobalContext globalContext;
   ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, Metric, SystemForApproximation);
   Expression e = parse_expression(expression, &globalContext, false);
-  e = e.reduce(redContext);
   Expression u1;
-  e = e.removeUnit(&u1);
+  e = e.reduceAndRemoveUnit(redContext, &u1);
   Expression e2 = parse_expression(unit, &globalContext, false);
   Expression u2;
-  e2 = e2.reduce(redContext);
-  e2.removeUnit(&u2);
+  e2.reduceAndRemoveUnit(redContext, &u2);
   quiz_assert_print_if_failure(u1.isUninitialized() == u2.isUninitialized() && (u1.isUninitialized() || u1.isIdenticalTo(u2)), expression);
 }
 
@@ -425,9 +423,8 @@ void assert_additional_results_compute_to(const char * expression, const char * 
   assert(length <= maxNumberOfResults);
   Expression additional[maxNumberOfResults];
   ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, unitFormat, User, ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
-  Expression e = parse_expression(expression, &globalContext, false).reduce(reductionContext);
   Expression units;
-  e = e.removeUnit(&units);
+  Expression e = parse_expression(expression, &globalContext, false).reduceAndRemoveUnit(reductionContext, &units);
   double value = e.approximateToScalar<double>(&globalContext, Cartesian, Degree);
 
   if (!Unit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {

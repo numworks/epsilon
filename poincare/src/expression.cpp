@@ -827,6 +827,12 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
   return *this;
 }
 
+Expression Expression::reduceAndRemoveUnit(ExpressionNode::ReductionContext reductionContext, Expression * Unit) {
+  /* RemoveUnit has to be called on reduced expression. reduce method is called
+   * instead of deepReduce to catch interrupted simplification. */
+  return reduce(reductionContext).removeUnit(Unit);
+}
+
 Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
   sSimplificationHasBeenInterrupted = false;
   Expression result = deepReduce(reductionContext);

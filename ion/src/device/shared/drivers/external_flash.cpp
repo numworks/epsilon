@@ -1,7 +1,7 @@
 #include "external_flash.h"
 #include <drivers/config/external_flash.h>
 #include <drivers/config/clocks.h>
-#include <ion/timing.h>
+#include <drivers/timing.h>
 
 namespace Ion {
 namespace Device {
@@ -346,7 +346,7 @@ static void shutdownChip() {
   send_command(Command::EnableReset);
   send_command(Command::Reset);
   sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
-  Ion::Timing::usleep(30);
+  Timing::usleep(30);
 
   // Sleep deep
   send_command(Command::DeepPowerDown, sOperatingMode);

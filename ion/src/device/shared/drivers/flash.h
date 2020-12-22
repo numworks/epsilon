@@ -8,6 +8,9 @@ namespace Ion {
 namespace Device {
 namespace Flash {
 
+bool AddressIsInInternalFlash(uint32_t address);
+bool AddressIsInExternalFlash(uint32_t address);
+
 int TotalNumberOfSectors();
 int SectorAtAddress(uint32_t address);
 bool SectorIsInInternalFlash(int i);

@@ -112,6 +112,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
     m_yRange.setMax(yMa, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(yMi, k_lowerMaxFloat, k_upperMaxFloat);
   }
+  setZoomNormalize(isOrthonormal());
   m_offscreenYAxis *= ratio;
 }
 

@@ -1023,6 +1023,25 @@ double Expression::nextRoot(const char * symbol, double start, double step, doub
   if (nullStatus(context) == ExpressionNode::NullStatus::Null) {
     return start + step;
   }
+  if (type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot || type() == ExpressionNode::Type::SquareRoot) {
+    /* A power such as sqrt(x) can have a vertical derivative around its root,
+     * making the tolerance used for finding zeroes ill-suited. As such, we
+     * make use of the fact that the base of the power needs to be null for the
+     * root to be null. */
+    double result = childAtIndex(0).nextRoot(symbol, start, step, max, context, complexFormat, angleUnit);
+    if (std::isnan(result)) {
+      return NAN;
+    }
+    double exponent = type() == ExpressionNode::Type::SquareRoot ? 0.5 : childAtIndex(1).approximateWithValueForSymbol(symbol, result, context, complexFormat, angleUnit);
+    if (std::isnan(exponent) || exponent < k_solverStepPrecision * Solver::k_zeroPrecision) {
+      return NAN;
+    }
+    double valueAtRoot = approximateWithValueForSymbol(symbol, result, context, complexFormat, angleUnit);
+    if (std::isfinite(valueAtRoot) && std::fabs(valueAtRoot) <= std::pow(k_solverStepPrecision * Solver::k_zeroPrecision, exponent)) {
+      return result;
+    }
+    return nextRoot(symbol, result, step, max, context, complexFormat, angleUnit);
+  }
   const void * pack[] = { this, symbol, &complexFormat, &angleUnit };
   Solver::ValueAtAbscissa evaluation = [](double x, Context * ctx, const void * aux) {
     const Expression * expr = static_cast<const Expression * const *>(aux)[0];

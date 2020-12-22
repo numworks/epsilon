@@ -869,7 +869,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
    * (6)  -123_°C->_K
    * (7)  Right member of a unit convert - this is handled above, as
    *      UnitConversion is set to None in this case. */
-  if (node()->representative()->dimensionVector() == TemperatureRepresentative::Default().dimensionVector()) {
+  if (node()->representative()->dimensionVector() == TemperatureRepresentative::Default().dimensionVector() && node()->representative() != k_temperatureRepresentatives + k_kelvinRepresentativeIndex) {
     Expression p = parent();
     if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert) {
       // Form (1) and (2)

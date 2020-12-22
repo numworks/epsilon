@@ -125,4 +125,52 @@ QUIZ_CASE(graph_ranges_several_functions) {
   }
 }
 
+void assert_zooms_to(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, bool conserveRatio, bool zoomIn) {
+  float ratio = zoomIn ? 1.f / ZoomCurveViewController::k_zoomOutRatio : ZoomCurveViewController::k_zoomOutRatio;
+
+  InteractiveCurveViewRange graphRange;
+  graphRange.setXMin(xMin);
+  graphRange.setXMax(xMax);
+  graphRange.setYMin(yMin);
+  graphRange.setYMax(yMax);
+
+  float xCenter = (xMax + xMin) / 2.f;
+  float yCenter = (yMax + yMin) / 2.f;
+
+  graphRange.zoom(ratio, xCenter, yCenter);
+
+  quiz_assert(float_equal(graphRange.xMin(), targetXMin) && float_equal(graphRange.xMax(), targetXMax) && float_equal(graphRange.yMin(), targetYMin) && float_equal(graphRange.yMax(), targetYMax));
+  quiz_assert(float_equal((yMax - yMin) / (xMax - xMin), (targetYMax - targetYMin) / (targetXMax - targetXMin)) == conserveRatio);
+}
+
+void assert_zooms_in_to(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, bool conserveRatio) {
+  assert_zooms_to(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax, conserveRatio, true);
+}
+
+void assert_zooms_out_to(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, bool conserveRatio) {
+  assert_zooms_to(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax, conserveRatio, false);
+}
+
+QUIZ_CASE(graph_ranges_zoom) {
+  assert_zooms_in_to(
+      -12, 12, -12, 12,
+      -8, 8, -8, 8,
+      true);
+
+  assert_zooms_in_to(
+      -3, 3, 0, 1e-4,
+      -3, 3, 0, 1e-4,
+      true);
+
+  assert_zooms_out_to(
+      -10, 10, -10, 10,
+      -15, 15, -15, 15,
+      true);
+
+  assert_zooms_out_to(
+      -1, 1, 9e7, 1e8,
+      -1.5, 1.5, 87500000, 1e8,
+      false);
+}
+
 }

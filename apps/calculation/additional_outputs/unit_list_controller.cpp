@@ -28,8 +28,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   Expression copy = m_expression.clone();
   Expression units;
   // Reduce to be able to recognize units
-  PoincareHelpers::Reduce(&copy, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
-  copy = copy.removeUnit(&units);
+  PoincareHelpers::ReduceAndRemoveUnit(&copy, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &units);
   double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
   ExpressionNode::ReductionContext reductionContext(
       App::app()->localContext(),

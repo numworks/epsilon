@@ -77,7 +77,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reduc
         reductionContext->target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
-    Expression childWithoutUnit = childAtIndex(1).clone().reduce(reductionContextWithUnits).removeUnit(&unit);
+    Expression childWithoutUnit = childAtIndex(1).clone().reduceAndRemoveUnit(reductionContextWithUnits, &unit);
     if (childWithoutUnit.isUndefined() || unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
@@ -104,9 +104,8 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reduc
 
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), unit.clone());
-  division = division.reduce(*reductionContext);
   Expression divisionUnit;
-  division = division.removeUnit(&divisionUnit);
+  division = division.reduceAndRemoveUnit(*reductionContext, &divisionUnit);
   if (!divisionUnit.isUninitialized()) {
     // The left and right members are not homogeneous
     return replaceWithUndefinedInPlace();

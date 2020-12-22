@@ -425,8 +425,8 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext * re
     Expression units;
     /* removeUnit has to be called on reduced expression but we want to modify
      * the least the expression so we use the uninvasive reduction context. */
-    self = deepReduce(ExpressionNode::ReductionContext::NonInvasiveReductionContext(*reductionContext));
-    self = removeUnit(&units);
+    self = self.reduce(ExpressionNode::ReductionContext::NonInvasiveReductionContext(*reductionContext));
+    self = self.removeUnit(&units);
 
     if (self.isUndefined() || units.isUninitialized()) {
       // TODO: handle error "Invalid unit"
@@ -501,7 +501,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext * re
       // Apply simplifications
       if (unitsAccu.numberOfChildren() > 0) {
         // Divide by derived units
-        units = Division::Builder(units, unitsAccu.clone()).deepReduce(*reductionContext);
+        units = Division::Builder(units, unitsAccu.clone()).reduce(*reductionContext);
         Expression newUnits;
         // Separate units and generated values
         units = units.removeUnit(&newUnits);

@@ -50,7 +50,7 @@ void UnitConvert::deepReduceChildren(ExpressionNode::ReductionContext reductionC
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined,
       ExpressionNode::UnitConversion::None);
-  // Don't transform the targetted unit
+  // Don't transform the targeted unit
   childAtIndex(1).deepReduce(reductionContextKeepUnitAsIs);
 }
 
@@ -77,7 +77,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reduc
         reductionContext->target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
-    Expression childWithoutUnit = childAtIndex(1).clone().deepReduce(reductionContextWithUnits).removeUnit(&unit);
+    Expression childWithoutUnit = childAtIndex(1).clone().reduce(reductionContextWithUnits).removeUnit(&unit);
     if (childWithoutUnit.isUndefined() || unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
@@ -104,7 +104,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reduc
 
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), unit.clone());
-  division = division.deepReduce(*reductionContext);
+  division = division.reduce(*reductionContext);
   Expression divisionUnit;
   division = division.removeUnit(&divisionUnit);
   if (!divisionUnit.isUninitialized()) {

@@ -21,6 +21,7 @@ namespace Config {
 using namespace Regs;
 
 constexpr static uint32_t StartAddress = 0xFFFFFFFF;
+constexpr static uint32_t FirstSectorSize = 0;
 constexpr static uint32_t EndAddress = 0xFFFFFFFF;
 constexpr static int NumberOf4KSectors = 0;
 constexpr static int NumberOf32KSectors = 0;

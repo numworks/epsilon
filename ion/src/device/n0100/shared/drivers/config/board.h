@@ -9,8 +9,10 @@ namespace Device {
 namespace Board {
 namespace Config {
 
-constexpr static uint32_t VirtualInternalStartAddress = InternalFlash::StartAddress;
-constexpr static uint32_t VirtualInternalEndAddress = InternalFlash::EndAddress;
+constexpr static uint32_t StandardBootloaderStartAddress = InternalFlash::Config::StartAddress;
+constexpr static uint32_t RescueBootloaderStartAddress = InternalFlash::Config::StartAddress;
+constexpr static uint32_t KernelFirstBlockStartAddress = InternalFlash::Config::StartAddress;
+constexpr static uint32_t KernelSecondBlockStartAddress = 0xFFFFFFFF;
 
 }
 }

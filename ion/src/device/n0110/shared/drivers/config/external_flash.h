@@ -21,6 +21,7 @@ namespace Config {
 using namespace Regs;
 
 constexpr static uint32_t StartAddress = 0x90000000;
+constexpr static uint32_t FirstSectorSize = 0x1000; // The 4 first k are dedicated to the exam mode buffer
 constexpr static uint32_t EndAddress = 0x90800000;
 
 constexpr static int NumberOf4KSectors = 8;

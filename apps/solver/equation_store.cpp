@@ -138,8 +138,6 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
 }
 
 EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols) {
-  /* TODO : Display if predefined variables have been considered when number of
-   * solutions is null or infinite. */
   assert(replaceFunctionsButNotSymbols != nullptr);
   // First, solve the equation using predefined variables if there are
   *replaceFunctionsButNotSymbols = false;

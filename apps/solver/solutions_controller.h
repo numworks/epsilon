@@ -27,8 +27,8 @@ public:
   TELEMETRY_ID("Solutions");
 
   /* AlternateEmptyViewDefaultDelegate */
-  bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
+  bool isEmpty() const override { return false; };  // View cannot be empty
+  I18n::Message emptyMessage() override { assert(false); }
   Escher::Responder * defaultController() override;
   /* TableViewDataSource */
   int numberOfRows() const override;
@@ -107,6 +107,8 @@ private:
     return m_equationStore->userVariablesUsed();
   }
   int userVariablesMessageRow() const;
+  int displayedSolutions() const;
+  I18n::Message noSolutionMessage();
 
   EquationStore * m_equationStore;
   Escher::EvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];

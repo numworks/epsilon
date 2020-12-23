@@ -31,7 +31,11 @@ SolutionsController::ContentView::ContentView(SolutionsController * controller) 
 }
 
 void SolutionsController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_displayWarningMoreSolutions) {
+  if (m_selectableTableView.numberOfDisplayableRows() == 0) {
+    // No selectable table, fill the entire bound for background
+    ctx->fillRect(KDRect(0, 0, bounds().width(), bounds().height()), k_backgroundColor);
+  } else if (m_displayWarningMoreSolutions) {
+    // Fill the top margin for additional warnings
     ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin), k_backgroundColor);
   }
 }
@@ -50,7 +54,8 @@ void SolutionsController::ContentView::setWarningMessages(I18n::Message message0
 }
 
 int SolutionsController::ContentView::numberOfSubviews() const {
-  return 1 + 2*m_displayWarningMoreSolutions;
+  // Exclude selectableTableView if there are no rows to display
+  return (m_selectableTableView.numberOfDisplayableRows() == 0 ? 0 : 1) + 2 * m_displayWarningMoreSolutions;
 }
 
 View * SolutionsController::ContentView::subviewAtIndex(int index) {
@@ -69,9 +74,16 @@ View * SolutionsController::ContentView::subviewAtIndex(int index) {
 void SolutionsController::ContentView::layoutSubviews(bool force) {
   if (m_displayWarningMoreSolutions) {
     KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-    m_warningMessageView0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight), force);
-    m_warningMessageView1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight), force);
-    m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin), force);
+    KDCoordinate topMargin;
+    if (m_selectableTableView.numberOfDisplayableRows() == 0) {
+      // Only the warning are displayed, center them within bounds instead
+      topMargin = bounds().height()/2;
+    } else {
+      topMargin = k_topMargin/2;
+      m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(), bounds().height()-k_topMargin), force);
+    }
+    m_warningMessageView0.setFrame(KDRect(0, topMargin - textHeight, bounds().width(), textHeight), force);
+    m_warningMessageView1.setFrame(KDRect(0, topMargin, bounds().width(), textHeight), force);
   } else {
     m_selectableTableView.setFrame(bounds(), force);
   }
@@ -115,10 +127,13 @@ const char * SolutionsController::title() {
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
   bool requireWarning = false;
-  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+  if (displayedSolutions() == 0) {
+    m_contentView.setWarningMessages(I18n::Message::Default, noSolutionMessage());
+    requireWarning = true;
+  } else if (m_equationStore->type() == EquationStore::Type::Monovariable) {
     m_contentView.setWarningMessages(I18n::Message::OnlyFirstSolutionsDisplayed0, I18n::Message::OnlyFirstSolutionsDisplayed1);
     requireWarning = m_equationStore->haveMoreApproximationSolutions();
-  } else if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && m_equationStore->numberOfSolutions() == 1) {
+  } else if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && displayedSolutions() == 1) {
     assert(Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real);
     m_contentView.setWarningMessages(I18n::Message::PolynomeHasNoRealSolution0, I18n::Message::PolynomeHasNoRealSolution1);
     requireWarning = true;
@@ -141,26 +156,6 @@ void SolutionsController::didEnterResponderChain(Responder * previousFirstRespon
 
 /* AlternateEmptyRowDelegate */
 
-bool SolutionsController::isEmpty() const {
-  if (m_equationStore->numberOfDefinedModels() == 0 || m_equationStore->numberOfSolutions() == 0 || m_equationStore->numberOfSolutions() == INT_MAX) {
-    return true;
-  }
-  return false;
-}
-
-I18n::Message SolutionsController::emptyMessage() {
-  if (m_equationStore->numberOfSolutions() == INT_MAX) {
-    return I18n::Message::InfiniteNumberOfSolutions;
-  }
-  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
-    return I18n::Message::NoSolutionInterval;
-  }
-  if (m_equationStore->numberOfDefinedModels() <= 1) {
-    return I18n::Message::NoSolutionEquation;
-  }
-  return I18n::Message::NoSolutionSystem;
-}
-
 Responder * SolutionsController::defaultController() {
   return parentResponder()->parentResponder();
 }
@@ -168,13 +163,13 @@ Responder * SolutionsController::defaultController() {
 /* TableViewDataSource */
 
 int SolutionsController::numberOfRows() const {
-  return m_equationStore->numberOfSolutions() + (m_equationStore->numberOfUserVariables() > 0 ? 1 + m_equationStore->numberOfUserVariables() : 0);
+  return displayedSolutions() + (m_equationStore->numberOfUserVariables() > 0 ? 1 + m_equationStore->numberOfUserVariables() : 0);
 }
 
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (j == rowOfUserVariablesMessage) {
-    // Predefined varaible used/ignored message
+    // Predefined variable used/ignored message
     assert(i >= 0);
     MessageCell * messageCell = static_cast<MessageCell *>(cell);
     messageCell->setHorizontalAlignment(i == 0 ? 1.0f : 0.0f);
@@ -186,7 +181,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
     return;
   }
   if (i == 0) {
-    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()-1) {
+    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == displayedSolutions() - 1) {
       // Formula of the discriminant
       EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
       deltaCell->setLayout(m_delta2Layout);
@@ -214,13 +209,14 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
         }
       } else {
         // User variable name
-        assert(rowOfUserVariablesMessage > 0);
+        assert(rowOfUserVariablesMessage >= 0);
         strlcpy(bufferSymbol, m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1), Poincare::SymbolAbstract::k_maxNameSize);
       }
       symbolCell->setText(bufferSymbol);
     }
   } else {
     if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage) {
+      assert(displayedSolutions() > 0);
       if (m_equationStore->type() == EquationStore::Type::Monovariable) {
         // Values of the solutions
         EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
@@ -257,6 +253,7 @@ KDCoordinate SolutionsController::columnWidth(int i) {
 KDCoordinate SolutionsController::rowHeight(int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage) {
+    assert(displayedSolutions() > 0);
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       return k_defaultCellHeight;
     }
@@ -338,7 +335,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
     return k_messageCellType;
   }
   if (i == 0) {
-    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()-1) {
+    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == displayedSolutions() - 1) {
       return k_deltaCellType;
     }
     return k_symbolCellType;
@@ -358,7 +355,7 @@ void SolutionsController::tableViewDidChangeSelection(SelectableTableView * t, i
   if (rowOfUserVariablesMessage < 0) {
     return;
   }
-  assert(rowOfUserVariablesMessage > 0);
+  assert(rowOfUserVariablesMessage >= 0);
   // Forbid the selection of the messages row
   if (t->selectedRow() == rowOfUserVariablesMessage) {
     t->selectCellAtLocation(t->selectedColumn(), rowOfUserVariablesMessage + (rowOfUserVariablesMessage < previousSelectedCellY ? -1 : 1));
@@ -367,7 +364,25 @@ void SolutionsController::tableViewDidChangeSelection(SelectableTableView * t, i
 
 int SolutionsController::userVariablesMessageRow() const {
   assert(m_equationStore->numberOfUserVariables() >= 0);
-  return m_equationStore->numberOfUserVariables() == 0 ? -1 : m_equationStore->numberOfSolutions();
+  return m_equationStore->numberOfUserVariables() == 0 ? -1 : displayedSolutions();
+}
+
+int SolutionsController::displayedSolutions() const {
+  // No displayed solutions if there are an infinite number of them.
+  return m_equationStore->numberOfSolutions() == INT_MAX ? 0 : m_equationStore->numberOfSolutions();
+}
+
+I18n::Message SolutionsController::noSolutionMessage() {
+  if (m_equationStore->numberOfSolutions() == INT_MAX) {
+    return I18n::Message::InfiniteNumberOfSolutions;
+  }
+  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+    return I18n::Message::NoSolutionInterval;
+  }
+  if (m_equationStore->numberOfDefinedModels() <= 1) {
+    return I18n::Message::NoSolutionEquation;
+  }
+  return I18n::Message::NoSolutionSystem;
 }
 
 }

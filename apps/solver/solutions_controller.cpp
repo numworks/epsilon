@@ -41,11 +41,11 @@ void SolutionsController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
 }
 
 void SolutionsController::ContentView::setWarning(bool warning) {
-  if (m_displayWarningMoreSolutions != warning) {
-    m_displayWarningMoreSolutions = warning;
-    m_selectableTableView.setTopMargin(m_displayWarningMoreSolutions ? 0 : Metric::CommonTopMargin);
-    layoutSubviews();
-  }
+  m_displayWarningMoreSolutions = warning;
+  m_selectableTableView.setTopMargin(m_displayWarningMoreSolutions ? 0 : Metric::CommonTopMargin);
+  /* m_displayWarningMoreSolutions might stay the same, but number of rows and
+   * messages have changed. */
+  layoutSubviews();
 }
 
 void SolutionsController::ContentView::setWarningMessages(I18n::Message message0, I18n::Message message1) {

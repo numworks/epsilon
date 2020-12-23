@@ -152,7 +152,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool
     *replaceFunctionsButNotSymbols = true;
     Error secondError = privateExactSolve(context, true);
 
-    if (firstError == Error::NoError && secondError != Error::NoError) {
+    if (firstError == Error::NoError && secondError != Error::NoError && secondError != Error::RequireApproximateSolution) {
       // First solution was better, but has been tidied. It is recomputed.
       *replaceFunctionsButNotSymbols = false;
       return privateExactSolve(context, false);

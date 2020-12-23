@@ -231,4 +231,10 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   // If predefined variable had been ignored, there would have been this error
   // assert_solves_to_error({"b*b=1","a=b"}, NonLinearSystem);
   unset("b");
+
+  set("x", "-1");
+  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  set("x", "1");
+  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  unset("x");
 }

@@ -568,7 +568,7 @@ def main():
     )
     parser.add_argument(
         "-D", "--download",
-        help=">rite firmware from file to DFU device",
+        help="Write firmware from file to DFU device",
         dest="path",
         default=False
     )
@@ -631,7 +631,7 @@ def main():
         write_elements(elements, mass_erase_required, progress=cli_progress)
 
         if leave:
-            print("Exiting DFU...")
+            print("Exiting DFU... on address " + str(hex(address)))
             exit_dfu(address)
         return
 

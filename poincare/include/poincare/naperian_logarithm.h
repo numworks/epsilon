@@ -33,7 +33,7 @@ private:
     /* ln has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
      * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
      * (warning: ln takes the other side of the cut values on ]-inf-0i, 0-0i]). */
-    return Complex<T>::Builder(std::log(c));
+    return Complex<T>::Builder(c == std::complex<T>(0) ? std::complex<T>(NAN, NAN) : std::log10(c));
   }
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);

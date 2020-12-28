@@ -90,7 +90,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
   // The number of bars cannot be above the max
   assert(DoublePairStore::k_numberOfSeries > 0);
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    const double min = setBarWidth ? m_store->minValue(i) : nextFirstDrawnBarAbscissa;
+    const double min = std::min(m_store->minValue(i), nextFirstDrawnBarAbscissa);
     double numberOfBars = std::ceil((m_store->maxValue(i) - min)/nextBarWidth);
     if (numberOfBars > Store::k_maxNumberOfBars) {
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);

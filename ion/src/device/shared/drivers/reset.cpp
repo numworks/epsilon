@@ -20,16 +20,17 @@ void core() {
   }
 }
 
-/* jump is executed from the internal flash only as it shutdowns the external
- * flash. */
+/* jump is executed from the internal flash only as it might shutdown the
+ * external flash. */
 
-void jump(uint32_t jumpIsrVectorAddress) {
-  // Disable cache before reset
-  Cache::disable();
+void jump(uint32_t jumpIsrVectorAddress, bool mimicReset) {
+  if (mimicReset) {
+    // Disable cache before reset
+    Cache::disable();
 
-  /* Shutdown all clocks and periherals to mimic a hardware reset. */
-  // TODO Emilie: don't forget to Disable Cache inside Board::shutdown if required before reset
-  Board::shutdown();
+    /* Shutdown all clocks and periherals to mimic a hardware reset. */
+    Board::shutdown();
+  }
 
   /* Jump to the reset service routine after having reset the stack pointer.
    * Both addresses are fetched from the base of the Flash memory, just like a

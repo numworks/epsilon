@@ -9,7 +9,7 @@ namespace Reset {
 
 void core();
 void coreWhilePlugged();
-void jump(uint32_t jumpIsrVectorAddress);
+void jump(uint32_t jumpIsrVectorAddress, bool mimicReset = true);
 
 }
 }

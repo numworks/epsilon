@@ -10,13 +10,17 @@ namespace Regs {
 // http://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf
 class NVIC {
 public:
-  class MaskRegister : Register32 {
+  class MaskRegister : public Register32 {
   public:
-    bool get(int index) { return (bool)getBitRange(index, index); }
-    void set(int index, bool state) volatile { setBitRange(index, index, state); }
+    using Register32::Register32;
+    bool getBit(int index) { return (bool)getBitRange(index, index); }
+    void setBit(int index, bool state) volatile { setBitRange(index, index, state); }
   };
 
-  class NVIC_ISER0 : public MaskRegister { };
+  class NVIC_ISER0 : public MaskRegister {
+  public:
+    using MaskRegister::MaskRegister;
+  };
   class NVIC_ISER1 : public MaskRegister { };
   class NVIC_ISER2 : public MaskRegister { };
   class NVIC_ICER0 : public MaskRegister { };

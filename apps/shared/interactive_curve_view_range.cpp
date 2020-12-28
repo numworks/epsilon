@@ -157,12 +157,8 @@ void InteractiveCurveViewRange::normalize(bool forceChangeY) {
   m_yRange.setMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
 
-  /* When the coordinates reach 10^6, the float type is not precise enough to
-   * properly normalize. */
-  // FIXME : Fine a more precise way to filter the edge cases
-  constexpr float limit = 1e6f;
-  assert(isOrthonormal() || xMin() < -limit || xMax() > limit || yMin() < -limit || yMax() > limit);
-  (void) limit; // Silence compilation warning about unused variable.
+  /* The range should be close to orthonormal, unless it has been clipped because the maximum bounds have been reached. */
+  assert(isOrthonormal() || xMin() <= - k_lowerMaxFloat || xMax() >= k_lowerMaxFloat || yMin() <= - k_lowerMaxFloat || yMax() >= k_lowerMaxFloat);
   setZoomNormalize(isOrthonormal());
 }
 
@@ -281,8 +277,17 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
 }
 
 bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {
+  if (tolerance == 0.f) {
+    float xr = std::fabs(xMin()) > std::fabs(xMax()) ? xMax() / xMin() : xMin() / xMax();
+    float yr = std::fabs(yMin()) > std::fabs(yMax()) ? yMax() / yMin() : yMin() / yMax();
+    /* The subtraction x - y induces a loss of significance of -log2(1-x/y)
+     * bits. Since normalizing requires computing xMax - xMin and yMax - yMin,
+     * the ratio of the normalized range will deviate from the Normal ratio. We
+     * add an extra two lost bits to account for loss of precision from other
+     * sources. */
+    tolerance = std::pow(2.f, - std::log2(std::min(1.f - xr, 1.f - yr)) - 23.f + 2.f);
+  }
   float ratio = (yMax() - yMin()) / (xMax() - xMin());
-  float ratioDifference = std::fabs(std::log(ratio / NormalYXRatio()));
-  return  ratioDifference <= tolerance;
+  return  ratio <= NormalYXRatio() + tolerance && ratio >= NormalYXRatio() - tolerance;
 }
 }

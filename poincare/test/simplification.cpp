@@ -1267,6 +1267,7 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
   assert_parsed_expression_simplify_to("4→_km/_m", Undefined::Name());
   assert_parsed_expression_simplify_to("3×_min→_s+1-1", Undefined::Name());
+  assert_parsed_expression_simplify_to("0→_K", Undefined::Name());
 
   assert_parsed_expression_simplify_to("0_K→_°C", "-273.15×_°C");
   assert_parsed_expression_simplify_to("0_°C→_K", "273.15×_K");

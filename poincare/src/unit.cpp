@@ -834,7 +834,7 @@ Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode
 
   Expression startUnit;
   e = e.removeUnit(&startUnit);
-  if (startUnit.type() != ExpressionNode::Type::Unit) {
+  if (startUnit.isUninitialized() || startUnit.type() != ExpressionNode::Type::Unit) {
     return Undefined::Builder();
   }
   const Representative * startRepr = static_cast<Unit &>(startUnit).representative();

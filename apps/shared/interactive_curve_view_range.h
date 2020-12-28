@@ -24,9 +24,9 @@ public:
   }
 
   static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
-  /* A tolerance of 0.001 is necessary to cover the imprecision with the
-   * largest ranges, around 10^7 */
-  bool isOrthonormal(float tolerance = 1e-3f) const;
+  /* If the tolerance is null, isOrthonormal will adapt the tolerance to take
+   * the loss of significance when changing the ratio into account. */
+  bool isOrthonormal(float tolerance = 0.f) const;
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
   uint32_t rangeChecksum() override;
@@ -62,7 +62,7 @@ protected:
   constexpr static float k_lowerMaxFloat = 9E+7f;
   constexpr static float k_maxRatioPositionRange = 1E5f;
   /* The tolerance is chosen to normalize sqrt(x) */
-  constexpr static float k_orthonormalTolerance = 0.7f;
+  constexpr static float k_orthonormalTolerance = 0.24f;
   static float clipped(float x, bool isMax) { return Range1D::clipped(x, isMax, k_lowerMaxFloat, k_upperMaxFloat); }
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
    * the screen has size 43.2mm * 57.6mm.

@@ -1,0 +1,18 @@
+ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
+  boot/isr.c \
+  boot/rt0.cpp \
+  drivers/backlight.cpp \
+  drivers/battery.cpp \
+  drivers/board.cpp \
+  drivers/console_dummy.cpp \
+  drivers/cortex_control.s \
+  drivers/crc32.cpp \
+  drivers/display.cpp \
+  drivers/keyboard.cpp \
+  drivers/keyboard_queue.cpp \
+  drivers/led.cpp \
+  drivers/swd.cpp \
+  drivers/timing.cpp \
+  main.cpp \
+)
+

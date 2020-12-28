@@ -595,7 +595,7 @@ def main():
     init()
 
     address = False
-    mass_erase = False
+    mass_erase_required = False
     leave = False
 
     if args.address:
@@ -603,11 +603,11 @@ def main():
         if ':' in args.address:
             address_str,modifier = args.address.split(':')
             leave = modifier == 'leave'
-            mass_erase = modifier == 'mass-erase'
+            mass_erase_required = modifier == 'mass-erase'
         if address_str != "":
             address = int(address_str, 16)
 
-    if mass_erase:
+    if mass_erase_required:
         print ("Mass erase...")
         mass_erase()
 
@@ -628,7 +628,7 @@ def main():
         if not elements:
             return
         print("Writing memory...")
-        write_elements(elements, mass_erase, progress=cli_progress)
+        write_elements(elements, mass_erase_required, progress=cli_progress)
 
         if leave:
             print("Exiting DFU...")

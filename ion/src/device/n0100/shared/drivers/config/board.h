@@ -11,7 +11,8 @@ namespace Config {
 
 constexpr static uint32_t StandardBootloaderStartAddress = InternalFlash::Config::StartAddress;
 constexpr static uint32_t RescueBootloaderStartAddress = InternalFlash::Config::StartAddress;
-constexpr static uint32_t KernelFirstBlockStartAddress = InternalFlash::Config::StartAddress;
+constexpr static uint32_t KernelFirstBlockStartAddressVirtual = InternalFlash::Config::StartAddress;
+constexpr static uint32_t KernelFirstBlockStartAddressPhysical = InternalFlash::Config::StartAddress;
 constexpr static uint32_t KernelSecondBlockStartAddress = 0xFFFFFFFF;
 
 }

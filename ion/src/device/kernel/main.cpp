@@ -7,6 +7,7 @@
 #include <kernel/drivers/timing.h>
 #include <ion/display.h>
 #include <kandinsky.h>
+#include <string.h>
 
 extern "C" {
   extern void switch_to_unpriviledged();
@@ -23,29 +24,39 @@ constexpr static const char * sMessages[sNumberOfMessages] = {
   "are unavailable."
 };
 
+void drawString(const char * message, KDCoordinate & yOffset, const KDFont * font) {
+  KDSize glyphSize = font->glyphSize();
+  KDFont::RenderPalette palette = font->renderPalette(KDColorBlack, KDColorWhite);
+  KDFont::GlyphBuffer glyphBuffer;
+  size_t len = strlen(message);
+  KDPoint position((Ion::Display::Width - len*glyphSize.width())/2, yOffset);
+
+  while (*message) {
+    font->setGlyphGrayscalesForCharacter(*message++, &glyphBuffer);
+    font->colorizeGlyphBuffer(&palette, &glyphBuffer);
+    // Push the character on the screen
+    Ion::Device::Display::pushRect(KDRect(position, glyphSize), glyphBuffer.colorBuffer());
+    position = position.translatedBy(KDPoint(glyphSize.width(), 0));
+  }
+  yOffset += glyphSize.height();
+}
+
 void displayWarningMessage() {
   KDRect screen = KDRect(0,0,Ion::Display::Width,Ion::Display::Height);
   Ion::Device::Display::pushRectUniform(screen, KDColorWhite);
   // TODO EMILIE untangle this from kandinsky -->
   // in kernel build font and make an API to access font!
-  /*KDContext * ctx = KDIonContext::sharedContext();
-  ctx->setOrigin(KDPointZero);
-  ctx->setClippingRect(screen);
-  KDCoordinate margin = 60;
-  KDCoordinate currentHeight = 0;
-  currentHeight += margin;
   const char * title = sMessages[0];
-  KDSize titleSize = KDFont::LargeFont->stringSize(title);
-  ctx->drawString(title, KDPoint((Ion::Display::Width-titleSize.width())/2, currentHeight), KDFont::LargeFont);
-  currentHeight += 2*titleSize.height();
+  KDCoordinate currentHeight = 60;
+  drawString(title, currentHeight, KDFont::LargeFont);
+  currentHeight += KDFont::LargeFont->glyphSize().height();
   for (int j = 1; j < sNumberOfMessages; j++) {
     const char * message = sMessages[j];
-    KDSize messageSize = KDFont::SmallFont->stringSize(message);
-    ctx->drawString(message, KDPoint((Ion::Display::Width-messageSize.width())/2, currentHeight), KDFont::SmallFont);
-    currentHeight += messageSize.height();
-  }*/
+    drawString(message, currentHeight, KDFont::SmallFont);
+  }
   Ion::Device::Timing::msleep(5000);
 }
+
 typedef void (*EntryPoint)();
 
 void kernel_main(bool numworksAuthentication) {

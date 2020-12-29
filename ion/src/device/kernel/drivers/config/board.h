@@ -17,7 +17,7 @@ namespace Config {
  * | EXAM MODE BUFFER - SIZE - PARTIAL KERNEL - SIGNATURE | SIZE - USERLAND - SIGNATURE |
  */
 
-constexpr static uint32_t KernelExternalLength = 8*1024;
+constexpr static uint32_t KernelExternalLength = 64*1024;
 constexpr static uint32_t UserlandAddress = ExternalFlash::Config::StartAddress + ExamMode::Config::ExamModeBufferSize + 2*SizeSize + KernelExternalLength + SignatureSize;
 
 }

@@ -4,6 +4,7 @@ include ion/src/device/bench/Makefile
 include ion/src/device/bootloader/Makefile
 include ion/src/device/kernel/Makefile
 include ion/src/device/flasher/Makefile
+include ion/src/device/userland/Makefile
 include ion/src/device/$(MODEL)/Makefile
 
 ion_device_bootloader_src += $(ion_device_shared_src)
@@ -23,7 +24,10 @@ ION_DEVICE_BOOTLOADER_SFLAGS += -Iion/src/device/$(MODEL)/bootloader -Iion/src/d
 
 ION_DEVICE_KERNEL_SFLAGS += -Iion/src/device/$(MODEL)/kernel -Iion/src/device/kernel
 
+ION_DEVICE_USERLAND_SFLAGS += -Iion/src/device/userland
+
 $(call object_for,$(ion_device_bootloader_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(ION_DEVICE_BOOTLOADER_SFLAGS)
 $(call object_for,$(ion_device_kernel_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(ION_DEVICE_KERNEL_SFLAGS)
+$(call object_for,$(ion_device_userland_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(ION_DEVICE_USERLAND_SFLAGS)
 
 ion_src += $(ion_device_src)

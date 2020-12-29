@@ -1,10 +1,10 @@
-#include "isr.h"
 #include <stdint.h>
 #include <string.h>
 
 typedef void (*cxx_constructor)();
 
 extern "C" {
+  void abort();
   extern char _data_section_start_flash;
   extern char _data_section_start_ram;
   extern char _data_section_end_ram;

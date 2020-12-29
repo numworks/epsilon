@@ -346,6 +346,11 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("diff(3x,x,0)y-2", variableBuffer8, 1);
   const char * variableBuffer9[] = {"a", "b", "c", "d", "e", "f"};
   assert_expression_has_variables("a+b+c+d+e+f", variableBuffer9, 6);
+
+  const char * variableBuffer10[] = {"c", "z", "a", "b", ""};
+  assert_expression_has_variables("int(c×x×z, x, a, b)", variableBuffer10, 4);
+  const char * variableBuffer11[] = {"box", "y", "z", "a", ""};
+  assert_expression_has_variables("box+y×int(z,x,a,0)", variableBuffer11, 4);
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {

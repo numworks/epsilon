@@ -22,12 +22,15 @@ int ParameteredExpressionNode::getVariables(Context * context, isVariableTest is
   /* Remove the parameter symbol from the list of variable if it was added at
    * the previous line */
   const char * parameterName = ParameteredExpression(this).parameter().name();
-  for (int i = nextVariableIndex; i < numberOfVariables; i++) {
-    if (strcmp(parameterName, &variables[i]) == 0) {
-      variables[i] = 0;
+  for (int index = nextVariableIndex * maxSizeVariable; index < numberOfVariables * maxSizeVariable; index += maxSizeVariable) {
+    if (strcmp(parameterName, &variables[index]) == 0) {
+      memmove(&variables[index], &variables[index + maxSizeVariable], (numberOfVariables - nextVariableIndex) * maxSizeVariable);
       numberOfVariables--;
       break;
     }
+  }
+  if (numberOfVariables < Expression::k_maxNumberOfVariables) {
+    variables[numberOfVariables * maxSizeVariable] = '\0';
   }
   nextVariableIndex = numberOfVariables;
   static_assert(ParameteredExpression::ParameteredChildIndex() == 0 && ParameteredExpression::ParameterChildIndex() == 1,

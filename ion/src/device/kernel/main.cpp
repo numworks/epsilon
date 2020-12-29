@@ -54,12 +54,26 @@ void kernel_main(bool numworksAuthentication) {
     Ion::Device::Backlight::shutdown();
   }
   /* Unprivileged mode */
-  Ion::Device::LED::setColor(KDColorWhite);
+  KDColor c = KDColorWhite;
+  Ion::Device::LED::setColor(c); // TODO: remove me
+
+  while (1) {
+    Ion::Keyboard::State sLastKeyboardState;
+    Ion::Keyboard::State state = Ion::Device::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Device::Keyboard::Queue::sharedQueue()->pop();
+    if (sLastKeyboardState != state) {
+      if (c == KDColorWhite) {
+        c = KDColorBlack;
+        Ion::Device::LED::setColor(c);
+      } else {
+        c = KDColorWhite;
+        Ion::Device::LED::setColor(c);
+      }
+    }
+  }
   switch_to_unpriviledged();
   Ion::Device::Cache::isb();
 
-  while (1) {
-  }
+
   /* Jump to userland */
   StartPointer * userlandFirstAddress = reinterpret_cast<StartPointer *>(Ion::Device::Board::Config::UserlandAddress);
   StartPointer userlandEntry = *userlandFirstAddress;

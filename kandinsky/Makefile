@@ -1,5 +1,12 @@
 SFLAGS += -Ikandinsky/include
 
+kandinsky_kernel_src += $(addprefix kandinsky/src/,\
+  color.cpp \
+  font.cpp\
+  point.cpp \
+  rect.cpp \
+)
+
 kandinsky_src += $(addprefix kandinsky/src/,\
   color.cpp \
   context_line.cpp \
@@ -14,10 +21,13 @@ kandinsky_src += $(addprefix kandinsky/src/,\
   rect.cpp \
 )
 
-kandinsky_src += $(addprefix kandinsky/fonts/, \
+kandinsky_fonts_src += $(addprefix kandinsky/fonts/, \
   LargeFont.ttf \
   SmallFont.ttf \
 )
+
+kandinsky_src += $(kandinsky_fonts_src)
+kandinsky_kernel_src += $(kandinsky_fonts_src)
 
 tests_src += $(addprefix kandinsky/test/,\
   color.cpp\

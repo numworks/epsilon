@@ -24,6 +24,9 @@ include ion/src/shared/tools/Makefile
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
+ion_device_kernel_src += ion/src/shared/decompress.cpp
+ion_device_kernel_src += ion/src/external/lz4/lz4.c
+
 ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   crc32_eat_byte.cpp \

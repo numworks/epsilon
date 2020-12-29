@@ -58,7 +58,7 @@ $(BUILD_DIR)/bootloader.rescue.$(EXE): $(call flavored_object_for,$(bootloader_s
 $(BUILD_DIR)/bootloader.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/bootloader
 $(BUILD_DIR)/bootloader.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/$(subst .,_,$*)_flash.ld
 
-kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_src)
+kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_kernel_src)
 $(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),)
 $(BUILD_DIR)/kernel.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/kernel
 $(BUILD_DIR)/kernel.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/kernel_flash.ld

@@ -1,5 +1,20 @@
 SFLAGS += -Iliba/include
 
+liba_bootloader_src += $(addprefix liba/src/, \
+  assert.c \
+  memcmp.c \
+  memcpy.c \
+  memset.c \
+  strlen.c \
+)
+
+liba_kernel_src += $(addprefix liba/src/, \
+  assert.c \
+  memcmp.c \
+  memcpy.c \
+  memset.c \
+)
+
 liba_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \

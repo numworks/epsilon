@@ -1,7 +1,6 @@
 #include "isr.h"
 #include <stdint.h>
 #include <string.h>
-#include <drivers/board.h>
 
 typedef void (*cxx_constructor)();
 
@@ -53,8 +52,6 @@ void configureRAM() {
     abort();
   }
 #endif
-
-  Ion::Device::Board::init();
 }
 
 }

@@ -46,7 +46,7 @@ void displayWarningMessage() {
   }*/
   Ion::Device::Timing::msleep(5000);
 }
-typedef void (*StartPointer)();
+typedef void (*EntryPoint)();
 
 void kernel_main(bool numworksAuthentication) {
   if (!numworksAuthentication) {
@@ -58,7 +58,7 @@ void kernel_main(bool numworksAuthentication) {
   KDColor c = KDColorWhite;
   Ion::Device::LED::setColor(c); // TODO: remove me
 
-  while (1) {
+  /*while (1) {
     Ion::Keyboard::State sLastKeyboardState;
     Ion::Keyboard::State state = Ion::Device::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Device::Keyboard::Queue::sharedQueue()->pop();
     if (sLastKeyboardState != state) {
@@ -70,13 +70,12 @@ void kernel_main(bool numworksAuthentication) {
         Ion::Device::LED::setColor(c);
       }
     }
-  }
+  }*/
   switch_to_unpriviledged();
   Ion::Device::Cache::isb();
 
 
   /* Jump to userland */
-  StartPointer * userlandFirstAddress = reinterpret_cast<StartPointer *>(Ion::Device::Board::Config::UserlandAddress);
-  StartPointer userlandEntry = *userlandFirstAddress;
-  userlandEntry();
+  EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(Ion::Device::Board::Config::UserlandAddress);
+  (*userlandFirstAddress)();
 }

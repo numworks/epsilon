@@ -1,6 +1,6 @@
 include build/targets.device.$(MODEL).mak
 
-HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash bootloader.standard bootloader.rescue kernel
+HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash bootloader.standard bootloader.rescue kernel userland
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 kernel.dfu: DFUFLAGS += --sign
@@ -62,3 +62,8 @@ kernel_src = $(ion_device_kernel_src) $(liba_src) $(kandinsky_src)
 $(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),)
 $(BUILD_DIR)/kernel.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/kernel
 $(BUILD_DIR)/kernel.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/kernel_flash.ld
+
+userland_src = $(ion_device_userland_src) $(liba_src) $(kandinsky_src)
+$(BUILD_DIR)/userland.$(EXE): $(call flavored_object_for,$(userland_src),)
+$(BUILD_DIR)/userland.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/userland
+$(BUILD_DIR)/userland.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/userland/userland_flash.ld

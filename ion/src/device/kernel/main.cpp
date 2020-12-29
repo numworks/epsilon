@@ -2,6 +2,7 @@
 #include <drivers/cache.h>
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/display.h>
+#include <kernel/drivers/keyboard_queue.h> // TODO EMILIE: remove
 #include <kernel/drivers/led.h> // TODO EMILIE: remove
 #include <kernel/drivers/timing.h>
 #include <ion/display.h>

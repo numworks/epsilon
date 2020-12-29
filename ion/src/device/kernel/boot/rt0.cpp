@@ -65,6 +65,7 @@ void __attribute__((noinline)) start() {
    * Many things are not initialized yet so the code here has to pay attention. */
 
   Ion::Device::Init::configureRAM();
+  Ion::Device::Board::init();
 
   /* At this point, we initialized clocks and the external flash but no other
    * peripherals. */

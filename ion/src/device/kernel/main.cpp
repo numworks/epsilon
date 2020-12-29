@@ -54,10 +54,10 @@ void kernel_main(bool numworksAuthentication) {
     Ion::Device::Backlight::shutdown();
   }
   /* Unprivileged mode */
+  Ion::Device::LED::setColor(KDColorWhite);
   switch_to_unpriviledged();
   Ion::Device::Cache::isb();
 
-  Ion::Device::LED::setColor(KDColorGreen);
   while (1) {
   }
   /* Jump to userland */

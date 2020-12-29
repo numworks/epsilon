@@ -52,13 +52,13 @@ $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),consoleuart usbxip)
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 
-bootloader_src = $(ion_device_bootloader_src) $(liba_src)
+bootloader_src = $(ion_device_bootloader_src) $(liba_bootloader_src)
 $(BUILD_DIR)/bootloader.standard.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
 $(BUILD_DIR)/bootloader.rescue.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
 $(BUILD_DIR)/bootloader.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/bootloader
 $(BUILD_DIR)/bootloader.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/$(subst .,_,$*)_flash.ld
 
-kernel_src = $(ion_device_kernel_src) $(liba_src) $(kandinsky_src)
+kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_src)
 $(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),)
 $(BUILD_DIR)/kernel.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/kernel
 $(BUILD_DIR)/kernel.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/kernel_flash.ld

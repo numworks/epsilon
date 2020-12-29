@@ -80,6 +80,7 @@ SECTIONS {
     *(.text._ZN3Ion6Device8Keyboard5Queue11sharedQueueEv)
     *(.text._ZN3Ion6Device8Keyboard5Queue4pushENS_8Keyboard5StateE)
     *(.text._ZN3Ion6Device8Keyboard4scanEv)
+    *(.text._ZN3Ion6Device8Keyboard11setRowStateEt)
 
     /* 'abort' dependencies */
     *(.text._ZN3Ion6Device5Reset4coreEv)

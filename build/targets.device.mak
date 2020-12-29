@@ -4,6 +4,7 @@ HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash bootloader.
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 kernel.dfu: DFUFLAGS += --sign
+userland.dfu: DFUFLAGS += --sign
 
 $(eval $(call rule_for, \
   RAMSIZE, %_ram_map.png, %.elf, \

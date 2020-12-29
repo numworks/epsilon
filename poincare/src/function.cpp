@@ -38,6 +38,10 @@ int FunctionNode::getPolynomialCoefficients(Context * context, const char * symb
 int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
+  /* Since templatedApproximate always evaluates the argument, some apps (such
+   * as Statistics and Regression) need to be aware of it even when it does not
+   * appear in the formula. */
+  nextVariableIndex = childAtIndex(0)->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
   if (e.isUninitialized()) {
     return nextVariableIndex;
   }

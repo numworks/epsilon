@@ -336,7 +336,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
   const char * variableBuffer6[] = {""};
   assert_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
   assert_expression_has_variables("a+b+c+d+e+f+g", variableBuffer6, -1);
-  // f: x→1+πx+x^2+toto
+  // f: x → 1+πx+x^2+toto
   assert_reduce("1+π×x+x^2+toto→f(x)");
   const char * variableBuffer7[] = {"tata","toto", ""};
   assert_expression_has_variables("f(tata)", variableBuffer7, 2);
@@ -351,6 +351,26 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("int(c×x×z, x, a, b)", variableBuffer10, 4);
   const char * variableBuffer11[] = {"box", "y", "z", "a", ""};
   assert_expression_has_variables("box+y×int(z,x,a,0)", variableBuffer11, 4);
+
+  // f: x → 0
+  assert_reduce("0→f(x)");
+  const char * variableBuffer12[] = {"var", ""};
+  assert_expression_has_variables("f(var)", variableBuffer12, 1);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  // f: x → a, with a = 12
+  assert_reduce("12→a");
+  assert_reduce("a→f(x)");
+  const char * variableBuffer13[] = {"var", ""};
+  assert_expression_has_variables("f(var)", variableBuffer13, 1);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  // f: x → 1, g: x → 2
+  assert_reduce("1→f(x)");
+  assert_reduce("2→g(x)");
+  const char * variableBuffer14[] = {"x", "y", ""};
+  assert_expression_has_variables("f(g(x)+y)", variableBuffer14, 2);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {

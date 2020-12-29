@@ -21,21 +21,27 @@ bool isAuthenticated(void * pointer) {
     // Special case for empty memory block
     return true;
   }
-  uint32_t size = *static_cast<uint32_t *>(pointer);
-  uint8_t * code = static_cast<uint8_t *>(pointer) + Board::Config::SizeSize;
-  uint32_t start = reinterpret_cast<uint32_t>(code);
+  uint32_t start = reinterpret_cast<uint32_t>(pointer);
+  uint32_t size = 0;
+  uint8_t * code = nullptr;
   if (!Flash::AddressIsInInternalFlash(start) && !Flash::AddressIsInExternalFlash(start)) {
     // Out of memory
     return false;
   }
-  if (Flash::AddressIsInInternalFlash(start) && !Flash::AddressIsInInternalFlash(start + size)) {
-    // Overflow of internal memory
-    return false;
+  if (Flash::AddressIsInInternalFlash(start)) {
+    // Internal flash code is unsigned and utterly fills the flash
+    size = Board::Config::KernelInternalLength - Board::Config::SignatureSize;
+    code = static_cast<uint8_t *>(pointer);
   }
-  if (Flash::AddressIsInExternalFlash(start) && !Flash::AddressIsInExternalFlash(start + size)) {
-    // Overflow of external memory
-    return false;
+  if (Flash::AddressIsInExternalFlash(start)) {
+    size = *static_cast<uint32_t *>(pointer);
+    if (!Flash::AddressIsInExternalFlash(start + size)) {
+      // Overflow of external memory
+      return false;
+    }
+    code = static_cast<uint8_t *>(pointer) + Board::Config::SizeSize;
   }
+  assert(code && size > 0);
   uint8_t digest[Ion::Device::Hash::Sha256DigestBytes];
   uint8_t decryptedSignature[Hash::Sha256DigestBytes];
   Hash::sha256(code, size, digest);

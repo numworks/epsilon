@@ -135,6 +135,8 @@ SECTIONS {
     *(.rodata.*)
   } >EXTERNAL_FLASH_KERNEL
 
+  /* Internal flash memory */
+
   .init_array : {
     . = ALIGN(4);
     _init_array_start = .;
@@ -163,6 +165,12 @@ SECTIONS {
     _data_section_end_ram = .;
   } >SRAM_DATA_BSS AT> INTERNAL_FLASH_KERNEL
 
+  .fill :
+  {
+    FILL(0xFF);
+    . = ORIGIN(INTERNAL_FLASH_KERNEL) + LENGTH(INTERNAL_FLASH_KERNEL) - 1;
+    BYTE(0xFF)
+  } > INTERNAL_FLASH_KERNEL
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

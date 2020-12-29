@@ -44,8 +44,7 @@ void drawString(const char * message, KDCoordinate & yOffset, const KDFont * fon
 void displayWarningMessage() {
   KDRect screen = KDRect(0,0,Ion::Display::Width,Ion::Display::Height);
   Ion::Device::Display::pushRectUniform(screen, KDColorWhite);
-  // TODO EMILIE untangle this from kandinsky -->
-  // in kernel build font and make an API to access font!
+  // TODO EMILIE: Would it be more optimized to directly use an image of the warning?
   const char * title = sMessages[0];
   KDCoordinate currentHeight = 60;
   drawString(title, currentHeight, KDFont::LargeFont);

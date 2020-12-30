@@ -12,6 +12,16 @@ public:
   View * accessoryView() const override;
   void setColor(int i);
   int color() { return m_accessoryView.color(); }
+  constexpr static I18n::Message k_textForIndex[Palette::numberOfDataColors()] = {
+    I18n::Message::PythonColorRed,
+    I18n::Message::PythonColorBlue,
+    I18n::Message::PythonColorGreen,
+    I18n::Message::PythonColorYellow,
+    I18n::Message::PythonColorPurple,
+    I18n::Message::PythonColorBlue,
+    I18n::Message::PythonColorPink,
+    I18n::Message::PythonColorOrange
+  };
 private:
   class ColorView : public TransparentView {
   public:
@@ -40,16 +50,6 @@ private:
     int m_index;
   };
   ColorView m_accessoryView;
-  constexpr static I18n::Message k_textForIndex[] = {
-    I18n::Message::PythonColorRed,
-    I18n::Message::PythonColorBlue,
-    I18n::Message::PythonColorGreen,
-    I18n::Message::PythonColorYellow,
-    I18n::Message::PythonColorPurple,
-    I18n::Message::PythonColorBlue,
-    I18n::Message::PythonColorPink,
-    I18n::Message::PythonColorOrange
-  };
 };
 
 }

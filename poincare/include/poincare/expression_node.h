@@ -60,6 +60,7 @@ public:
     Ceiling,
     ComplexArgument,
     Conjugate,
+    Dependency,
     Derivative,
     Determinant,
     DivisionQuotient,

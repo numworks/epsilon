@@ -1,11 +1,10 @@
-#ifndef ION_DEVICE_KERNEL_KEYBOARD_QUEUE_H
-#define ION_DEVICE_KERNEL_KEYBOARD_QUEUE_H
+#ifndef ION_SHARED_KEYBOARD_QUEUE_H
+#define ION_SHARED_KEYBOARD_QUEUE_H
 
 #include <ion/keyboard.h>
 #include <stddef.h>
 
 namespace Ion {
-namespace Device {
 namespace Keyboard {
 
 class Queue {
@@ -23,7 +22,6 @@ private:
   size_t m_end;
 };
 
-}
 }
 }
 

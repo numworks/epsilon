@@ -1,7 +1,6 @@
-#include <kernel/drivers/keyboard_queue.h>
+#include "keyboard_queue.h"
 
 namespace Ion {
-namespace Device {
 namespace Keyboard {
 
 Queue * Queue::sharedQueue() {
@@ -22,6 +21,5 @@ Ion::Keyboard::State Queue::pop() {
   return s;
 }
 
-}
 }
 }

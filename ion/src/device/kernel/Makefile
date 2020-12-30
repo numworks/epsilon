@@ -9,10 +9,13 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/crc32.cpp \
   drivers/display.cpp \
   drivers/keyboard.cpp \
-  drivers/keyboard_queue.cpp \
   drivers/led.cpp \
   drivers/swd.cpp \
   drivers/timing.cpp \
   main.cpp \
+)
+
+ion_device_kernel_src += $(addprefix ion/src/shared/, \
+  keyboard_queue.cpp \
 )
 

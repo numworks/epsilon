@@ -42,8 +42,7 @@
  */
 
 #include <kernel/drivers/keyboard.h>
-#include <kernel/drivers/keyboard_queue.h>
-#include <kernel/drivers/display.h> // TODO EMILIE remove
+#include <ion/keyboard.h>
 
 namespace Ion {
 namespace Device {
@@ -139,9 +138,7 @@ void handleInterruption() {
     uint8_t pin = Config::ColumnPins[i];
     if (EXTI.PR()->get(pin)) {
       EXTI.PR()->set(pin, true);
-      // TODO Emilie: remove
-      //Ion::Device::Display::pushRectUniform(KDRect(0,0,100,100), KDColorRed);
-      Queue::sharedQueue()->push(Keyboard::scan());
+      Ion::Keyboard::Queue::sharedQueue()->push(Keyboard::scan());
     }
   }
 }

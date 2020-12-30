@@ -42,11 +42,14 @@ MessageTableCellWithColor::ColorView::ColorView() :
   {}
 
 void MessageTableCellWithColor::ColorView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::DataColor[m_index]);
+  KDColor Buffer[MessageTableCellWithColor::ColorView::k_colorSize*MessageTableCellWithColor::ColorView::k_colorSize];
+  KDRect Frame(bounds().x(), bounds().y() + bounds().height()/2 - k_colorSize/2, k_colorSize, k_colorSize);
+  ctx->blendRectWithMask(Frame, Palette::DataColor[m_index], (const uint8_t *)colorMask, Buffer);
+  //ctx->fillRect(bounds(), Palette::DataColor[m_index]);
 }
 
 KDSize MessageTableCellWithColor::ColorView::minimalSizeForOptimalDisplay() const {
-  return KDSize(10, 10);
+  return KDSize(k_colorSize, k_colorSize);
 }
 
 }

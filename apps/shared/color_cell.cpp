@@ -1,5 +1,4 @@
 #include "color_cell.h"
-#include <escher/metric.h>
 
 namespace Shared {
 
@@ -43,12 +42,11 @@ MessageTableCellWithColor::ColorView::ColorView() :
   {}
 
 void MessageTableCellWithColor::ColorView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDPoint center(bounds().x() + k_radius, bounds().y() + (Metric::ParameterCellHeight)/2 - k_radius + 5);
-  ctx->fillCircle(center, k_radius, Palette::DataColor[m_index]);
+  ctx->fillRect(bounds(), Palette::DataColor[m_index]);
 }
 
 KDSize MessageTableCellWithColor::ColorView::minimalSizeForOptimalDisplay() const {
-  return KDSize(k_radius*2, k_radius*2);
+  return KDSize(10, 10);
 }
 
 }

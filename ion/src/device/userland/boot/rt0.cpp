@@ -1,5 +1,7 @@
 #include "entry_point.h"
 #include <shared/boot/rt0.h>
+#include <ion.h>
+#include <ion/display.h> // TODO: remove
 
 extern "C" {
   void abort();
@@ -15,6 +17,7 @@ void abort() { //TODO EMILIE: expose in ion API
 }
 
 void ion_main(int argc, const char * const argv[]) {
+  Ion::Display::pushRectUniform(KDRect(0,0,199,100), KDColorRed);
   while (1) {}
 }
 

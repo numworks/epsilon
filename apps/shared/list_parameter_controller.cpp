@@ -8,11 +8,12 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
   ViewController(parentResponder),
   m_selectableTableView(this, this, this, tableDelegate),
   m_record(),
-  m_colorCell(functionColorMessage),
+  m_colorCell(),
   m_enableCell(I18n::Message::ActivateDeactivate),
   m_deleteCell(deleteFunctionMessage),
   m_colorParameterController(parentResponder, functionColorMessage)
 {
+  m_colorCell.setMessage(functionColorMessage);
 }
 
 const char * ListParameterController::title() {
@@ -37,6 +38,16 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if (cell == &m_enableCell) {
     SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
     switchView->setState(function()->isActive());
+  } else if(cell == &m_colorCell) {
+    int index = -1;
+    KDColor color = function()->color();
+    for(int i = 0; i < Palette::numberOfDataColors(); i++) {
+      if(color == Palette::DataColor[i]) {
+        index = i;
+      }
+    }
+    assert(index >= 0);
+    m_colorCell.setSubtitle(MessageTableCellWithColor::k_textForIndex[index]);
   }
 }
 

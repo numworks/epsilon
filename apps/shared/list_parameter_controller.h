@@ -39,7 +39,7 @@ protected:
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-  MessageTableCellWithChevron m_colorCell;
+  MessageTableCellWithChevronAndMessage m_colorCell;
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;
   ColorParameterController m_colorParameterController;

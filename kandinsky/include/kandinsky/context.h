@@ -28,6 +28,10 @@ public:
   void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
+
+  // Circle
+  void fillCircle(KDPoint center, KDCoordinate radius, KDColor c);
+
 protected:
   KDContext(KDPoint origin, KDRect clippingRect) :
     m_origin(origin),
@@ -39,6 +43,8 @@ protected:
 private:
   KDRect absoluteFillRect(KDRect rect);
   KDPoint pushOrPullString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength, bool push, int * result = nullptr);
+  void horizontalLine(KDPoint begin, KDCoordinate length, KDColor c);
+  void verticalLine(KDPoint begin, KDCoordinate length, KDColor c);
   KDPoint m_origin;
   KDRect m_clippingRect;
 };

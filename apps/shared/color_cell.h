@@ -24,6 +24,7 @@ private:
     constexpr static KDCoordinate k_chevronWidth = 8;
   private:
     int m_index;
+    constexpr static int k_radius = 9;
   };
   ColorView m_accessoryView;
   constexpr static I18n::Message k_textForIndex[] = {

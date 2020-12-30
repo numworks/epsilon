@@ -9,7 +9,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/n0110/kernel/drivers/, \
   led.cpp \
 )
 
-ion_device_shared_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
+ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   authentication.cpp \
   reset.cpp \
 )

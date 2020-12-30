@@ -7,8 +7,8 @@ include ion/src/device/flasher/Makefile
 include ion/src/device/userland/Makefile
 include ion/src/device/$(MODEL)/Makefile
 
-ion_device_bootloader_src += $(ion_device_shared_src)
-ion_device_kernel_src += $(ion_device_shared_src)
+ion_device_bootloader_src += $(ion_device_shared_bootloader_kernel_src)
+ion_device_kernel_src += $(ion_device_shared_bootloader_kernel_src)
 
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 

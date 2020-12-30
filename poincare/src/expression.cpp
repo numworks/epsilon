@@ -146,8 +146,9 @@ bool Expression::deepIsMatrix(Context * context) const {
     assert(nbOfChildren > 0);
     return childAtIndex(nbOfChildren-1).deepIsMatrix(context);
   }
-  // Logarithm, Power, Product, Sum are matrices only if their first child is a matrix
-  ExpressionNode::Type types2[] = {ExpressionNode::Type::Logarithm, ExpressionNode::Type::Power, ExpressionNode::Type::Product, ExpressionNode::Type::Sum};
+  /* Logarithm, Power, Product, Sum, Dependency are matrices only if their
+   * first child is a matrix */
+  ExpressionNode::Type types2[] = {ExpressionNode::Type::Logarithm, ExpressionNode::Type::Power, ExpressionNode::Type::Product, ExpressionNode::Type::Sum, ExpressionNode::Type::Dependency};
   if (isOfType(types2, sizeof(types2)/sizeof(ExpressionNode::Type))) {
     assert(numberOfChildren() > 0);
     return childAtIndex(0).deepIsMatrix(context);

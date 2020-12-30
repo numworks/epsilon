@@ -13,9 +13,6 @@ namespace Ion {
 namespace Device {
 namespace Display {
 
-/* TODO Hugo : Factorize the next 4 functions and their SVC equivalent.
- * Maybe they pushRectSVC() should just call pushRect() with retrieved params */
-
 void pushRect(KDRect r, const KDColor * pixels) {
 #if USE_DMA
   waitForPendingDMAUploadCompletion();

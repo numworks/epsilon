@@ -10,6 +10,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/display.cpp \
   drivers/keyboard.cpp \
   drivers/led.cpp \
+  drivers/svcall_handler.cpp \
   drivers/swd.cpp \
   drivers/timing.cpp \
   main.cpp \

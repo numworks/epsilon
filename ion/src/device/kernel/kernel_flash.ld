@@ -46,7 +46,6 @@ SECTIONS {
     . = ALIGN(4);
     *(.text.start)
     *(.text.abort)
-    *(.text.svcall_handler)
     *(.text.keyboard_handler)
     *(.text.isr_systick)
     *(.text.__assert)
@@ -216,8 +215,6 @@ NOCROSSREFS_TO(.text.external .text.internal);
 NOCROSSREFS_TO(.rodata.external .text.internal);
 NOCROSSREFS_TO(.text.external .rodata.internal);
 NOCROSSREFS_TO(.rodata.external .rodata.internal);
-NOCROSSREFS_TO(.text.external .isr_vector_table);
-NOCROSSREFS_TO(.rodata.external .isr_vector_table);
 NOCROSSREFS_TO(.text.external .header);
 NOCROSSREFS_TO(.rodata.external .header);
 

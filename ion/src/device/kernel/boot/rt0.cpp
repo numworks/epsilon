@@ -84,8 +84,3 @@ void __attribute__((interrupt, noinline)) isr_systick() {
 void __attribute__((interrupt, noinline)) keyboard_handler() {
   Ion::Device::Keyboard::handleInterruption();
 }
-
-//TODO EMILIE remove?
-void __attribute__((interrupt, noinline)) svcall_handler() {
-}
-

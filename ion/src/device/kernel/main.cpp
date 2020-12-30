@@ -3,6 +3,7 @@
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/timing.h>
+#include <kernel/drivers/led.h> // TODO: REMOVE ME
 #include <ion/display.h>
 #include <kandinsky.h>
 #include <string.h>

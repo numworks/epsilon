@@ -2,8 +2,6 @@
 #include <drivers/cache.h>
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/display.h>
-#include <kernel/drivers/keyboard_queue.h> // TODO EMILIE: remove
-#include <kernel/drivers/led.h> // TODO EMILIE: remove
 #include <kernel/drivers/timing.h>
 #include <ion/display.h>
 #include <kandinsky.h>
@@ -70,7 +68,7 @@ void kernel_main(bool numworksAuthentication) {
 
   /*while (1) {
     Ion::Keyboard::State sLastKeyboardState;
-    Ion::Keyboard::State state = Ion::Device::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Device::Keyboard::Queue::sharedQueue()->pop();
+    Ion::Keyboard::State state = Ion::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Keyboard::Queue::sharedQueue()->pop();
     if (sLastKeyboardState != state) {
       if (c == KDColorWhite) {
         c = KDColorBlack;

@@ -61,6 +61,7 @@ poincare_src += $(addprefix poincare/src/,\
   constant.cpp \
   cosine.cpp \
   decimal.cpp \
+  dependency.cpp \
   derivative.cpp \
   determinant.cpp \
   division.cpp \

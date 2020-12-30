@@ -1,4 +1,5 @@
 #include <poincare/function.h>
+#include <poincare/dependency.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
@@ -74,10 +75,6 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, ApproximationCon
 
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
-  if (childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
-    return Complex<T>::Undefined();
-  }
-
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true);
   if (e.isUninitialized()) {
@@ -110,9 +107,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
-      || childAtIndex(0).isUndefined())
-  {
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) {
@@ -153,9 +148,11 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * did
   {
     return Expression();
   }
-  replaceWithInPlace(e);
+  Dependency d = Dependency::Builder(e);
+  d.addDependency(childAtIndex(0));
+  replaceWithInPlace(d);
   *didReplace = true;
-  return e;
+  return std::move(d);
 }
 
 }

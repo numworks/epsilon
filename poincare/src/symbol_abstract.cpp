@@ -1,6 +1,7 @@
 #include <poincare/symbol_abstract.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/constant.h>
+#include <poincare/dependency.h>
 #include <poincare/function.h>
 #include <poincare/rational.h>
 #include <poincare/sequence.h>
@@ -78,6 +79,11 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context, shouldNotReplaceSymbols);
+  if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
+    Dependency d = Dependency::Builder(e);
+    d.addDependency(symbol.childAtIndex(0));
+    return std::move(d);
+  }
   return e;
 }
 

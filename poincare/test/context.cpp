@@ -227,5 +227,20 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
 }
 
+QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
+  assert_reduce("0→f(x)");
+  assert_reduce("f(1/0)→a");
+  assert_parsed_expression_simplify_to("a", Undefined::Name());
+  assert_reduce("f(1/0)→g(x)");
+  assert_parsed_expression_simplify_to("g(1)", Undefined::Name());
+  assert_reduce("f(undef)→b");
+  assert_parsed_expression_simplify_to("b", Undefined::Name());
+
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+}
+
 template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, float, float, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
 template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, double, double, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);

@@ -11,11 +11,13 @@ public:
   MessageTableCellWithColor();
   View * accessoryView() const override;
   void setColor(int i);
+  int color() { return m_accessoryView.color(); }
 private:
   class ColorView : public TransparentView {
   public:
     ColorView();
     void setColor(int i) { m_index = i; }
+    int color() { return m_index; }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
     constexpr static KDCoordinate k_chevronHeight = 10;

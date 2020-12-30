@@ -28,6 +28,7 @@ public:
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override { return Palette::numberOfDataColors(); } // FIXME Display issue
+  void willDisplayCellForIndex(HighlightCell * cell, int index);
 private:
   bool handleEnterOnRow(int rowIndex);
   FunctionStore * functionStore();

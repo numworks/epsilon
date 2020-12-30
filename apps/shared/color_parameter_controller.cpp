@@ -11,11 +11,7 @@ ColorParameterController::ColorParameterController(Responder * parentResponder, 
   m_selectableTableView(this),
   m_record(),
   m_title(title)
-{
-  for(int i = 0; i < Palette::numberOfDataColors(); i++){
-    m_cells[i].setColor(i);
-  }
-}
+{}
 
 void ColorParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
@@ -48,6 +44,12 @@ KDCoordinate ColorParameterController::cellHeight() {
 HighlightCell * ColorParameterController::reusableCell(int index) {
   assert(index < numberOfRows());
   return &m_cells[index];
+}
+
+void ColorParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  MessageTableCellWithColor * myCell = (MessageTableCellWithColor *)cell;
+  myCell->setColor(index);
+  cell->reloadCell();
 }
 
 bool ColorParameterController::handleEnterOnRow(int rowIndex) {

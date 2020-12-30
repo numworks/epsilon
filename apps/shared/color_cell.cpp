@@ -1,5 +1,4 @@
 #include "color_cell.h"
-#include <iostream>
 
 namespace Shared {
 
@@ -30,10 +29,12 @@ void MessageTableCellWithColor::setColor(int i) {
       return label->setMessage(k_textForIndex[5]); // FIXME
     case 6:
       return label->setMessage(k_textForIndex[6]); // FIXME
+    case 7:
+      return label->setMessage(k_textForIndex[7]); // FIXME
     default:
       assert(false);
   }
-  //return label->setMessage(k_textForIndex[i]); // FIXME
+  // return label->setMessage(k_textForIndex[i]); // FIXME
 }
 
 MessageTableCellWithColor::ColorView::ColorView() :

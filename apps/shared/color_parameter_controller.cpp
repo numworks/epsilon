@@ -49,6 +49,7 @@ HighlightCell * ColorParameterController::reusableCell(int index) {
 void ColorParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithColor * myCell = (MessageTableCellWithColor *)cell;
   myCell->setColor(index);
+  myCell->setMessageFont(KDFont::LargeFont);
   cell->reloadCell();
 }
 

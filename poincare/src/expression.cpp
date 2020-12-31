@@ -863,7 +863,38 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
   if (sSimplificationHasBeenInterrupted) {
     return *this;
   }
-  return shallowReduce(reductionContext);
+  Expression e = factorDependencies(reductionContext);
+  return e.shallowReduce(reductionContext);
+}
+
+Expression Expression::factorDependencies(ExpressionNode::ReductionContext reductionContext) {
+  if (type() == ExpressionNode::Type::Equal || type() == ExpressionNode::Type::Store) {
+    return *this;
+  }
+  Matrix dependencies = Matrix::Builder();
+  int firstIndex =  isParameteredExpression() ? ParameteredExpression::ParameterChildIndex() + 1 : 0;
+  for (int i = firstIndex; i < numberOfChildren(); i++) {
+    Expression child = childAtIndex(i);
+    if (child.type() == ExpressionNode::Type::Dependency) {
+      static_cast<Dependency &>(child).dumpDependencies(dependencies);
+      Expression trueExpression = child.childAtIndex(0);
+      child.replaceWithInPlace(trueExpression);
+    }
+  }
+  if (dependencies.numberOfChildren() > 0) {
+    Expression copy = clone();
+    Dependency d = Dependency::Builder(copy, dependencies);
+    copy = copy.shallowReduce(reductionContext);
+    if (copy.type() == ExpressionNode::Type::Dependency) {
+      static_cast<Dependency &>(copy).dumpDependencies(dependencies);
+      copy.replaceWithInPlace(copy.childAtIndex(0));
+    }
+    dependencies.shallowReduce(reductionContext.context());
+    replaceWithInPlace(d);
+    return std::move(d);
+  }
+  return *this;
+
 }
 
 Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionContext) {

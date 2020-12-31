@@ -48,6 +48,7 @@ public:
 
   int numberOfDependencies() const { return childAtIndex(1).numberOfChildren(); }
   void addDependency(Expression newDependency);
+  void dumpDependencies(Matrix m);
 };
 
 }

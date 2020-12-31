@@ -1,5 +1,4 @@
 #include <poincare/dependency.h>
-#include <poincare/undefined.h>
 
 namespace Poincare {
 
@@ -54,6 +53,35 @@ void Dependency::addDependency(Expression newDependency) {
   if (dependencies.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild = static_cast<Matrix &>(dependencies);
     matrixChild.addChildAtIndexInPlace(newDependency.clone(), numberOfDependencies(), numberOfDependencies());
+  }
+}
+
+void Dependency::dumpDependencies(Matrix m) {
+  assert(m.numberOfChildren() == 0 || m.numberOfRows() == 1);
+
+  int previousNumberOfChildren = m.numberOfChildren();
+
+  Expression dependencies = childAtIndex(1);
+  if (dependencies.isUndefined()) {
+    m.addChildAtIndexInPlace(dependencies, previousNumberOfChildren, previousNumberOfChildren);
+    return;
+  }
+
+  assert(dependencies.type() == ExpressionNode::Type::Matrix);
+  Matrix matrixChild = static_cast<Matrix &>(dependencies);
+  assert (matrixChild.numberOfRows() == 1);
+  int newNumberOfChildren = previousNumberOfChildren;
+  for (int i = 0; i < matrixChild.numberOfChildren(); i++) {
+    Expression child = matrixChild.childAtIndex(i);
+    bool unique = true;
+    int j = 0;
+    while (j < previousNumberOfChildren && unique) {
+      unique = !child.isIdenticalTo(m.childAtIndex(j++));
+    }
+    if (unique) {
+      m.addChildAtIndexInPlace(child, newNumberOfChildren, newNumberOfChildren);
+      newNumberOfChildren++;
+    }
   }
 }
 

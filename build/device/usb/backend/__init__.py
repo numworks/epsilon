@@ -1,17 +1,32 @@
-# Copyright (C) 2009-2017 Wander Lairson Costa
-# Copyright (C) 2017-2018 Robert Wlodarczyk
+# Copyright 2009-2017 Wander Lairson Costa
+# Copyright 2009-2021 PyUSB contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 r"""usb.backend - Backend interface.
 
@@ -62,7 +77,7 @@ import usb._objfinalizer as _objfinalizer
 
 __author__ = 'Wander Lairson Costa'
 
-__all__ = ['IBackend', 'libusb01', 'libusb10', 'openusb']
+__all__ = ['IBackend', 'libusb0', 'libusb1', 'openusb']
 
 def _not_implemented(func):
     raise NotImplementedError(func.__name__)
@@ -196,7 +211,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
 
         This method should only be called when the interface has more than
         one alternate setting. The dev_handle is the value returned by the
-        open_device() method. intf and altsetting are respectivelly the
+        open_device() method. intf and altsetting are respectively the
         bInterfaceNumber and bAlternateSetting fields of the related interface.
         """
         _not_implemented(self.set_interface_altsetting)
@@ -268,7 +283,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         _not_implemented(self.intr_write)
 
     def intr_read(self, dev_handle, ep, intf, size, timeout):
-        r"""Perform an interrut read.
+        r"""Perform an interrupt read.
 
         dev_handle is the value returned by the open_device() method.
         The ep parameter is the bEndpointAddress field whose endpoint

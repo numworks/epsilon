@@ -24,9 +24,9 @@ public:
   }
 
   static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
-  /* If the tolerance is null, isOrthonormal will adapt the tolerance to take
-   * the loss of significance when changing the ratio into account. */
-  bool isOrthonormal(float tolerance = 0.f) const;
+  /* The method isOrthonormal takes the loss of significance when changing the
+   * ratio into account. */
+  bool isOrthonormal() const;
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
   uint32_t rangeChecksum() override;
@@ -62,7 +62,7 @@ protected:
   constexpr static float k_lowerMaxFloat = 9E+7f;
   constexpr static float k_maxRatioPositionRange = 1E5f;
   /* The tolerance is chosen to normalize sqrt(x) */
-  constexpr static float k_orthonormalTolerance = 0.24f;
+  constexpr static float k_orthonormalTolerance = 1.78f;
   static float clipped(float x, bool isMax) { return Range1D::clipped(x, isMax, k_lowerMaxFloat, k_upperMaxFloat); }
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
    * the screen has size 43.2mm * 57.6mm.
@@ -78,11 +78,13 @@ protected:
    *   2 * 1 unit -> 10.0mm
    * So normalizedYHalfRange = 43.2mm * 170/240 * 1 unit / 10.0mm */
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
+  bool shouldBeNormalized() const;
   virtual bool hasDefaultRange() const { return (xMin() == std::round(xMin())) && (xMax() == std::round(xMax())); }
 
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
   float offscreenYAxis() const override { return m_offscreenYAxis; }
+  int normalizationSignificantBits() const;
 
   float m_offscreenYAxis;
   bool m_zoomAuto;

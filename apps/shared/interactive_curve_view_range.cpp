@@ -157,8 +157,13 @@ void InteractiveCurveViewRange::normalize(bool forceChangeY) {
   m_yRange.setMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
 
-  /* The range should be close to orthonormal, unless it has been clipped because the maximum bounds have been reached. */
-  assert(isOrthonormal() || xMin() <= - k_lowerMaxFloat || xMax() >= k_lowerMaxFloat || yMin() <= - k_lowerMaxFloat || yMax() >= k_lowerMaxFloat);
+  /* The range should be close to orthonormal, unless :
+   *   - it has been clipped because the maximum bounds have been reached.
+   *   - the the bounds are too close and of too large a magnitude, leading to
+   *     a drastic loss of significance. */
+  assert(isOrthonormal()
+      || xMin() <= - k_lowerMaxFloat || xMax() >= k_lowerMaxFloat || yMin() <= - k_lowerMaxFloat || yMax() >= k_lowerMaxFloat
+      || normalizationSignificantBits() <= 0);
   setZoomNormalize(isOrthonormal());
 }
 
@@ -193,7 +198,7 @@ void InteractiveCurveViewRange::setDefault() {
   m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);
 
-  if (m_delegate->defaultRangeIsNormalized() || isOrthonormal(k_orthonormalTolerance)) {
+  if (m_delegate->defaultRangeIsNormalized() || shouldBeNormalized()) {
     /* Normalize the axes, so that a polar circle is displayed as a circle.
      * If we are displaying cartesian functions with a default range, we want
      * the X bounds untouched. */
@@ -276,8 +281,27 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   setZoomNormalize(isOrthonormal());
 }
 
-bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {
-  if (tolerance == 0.f) {
+bool InteractiveCurveViewRange::shouldBeNormalized() const {
+  float ratio = (yMax() - yMin()) / (xMax() - xMin());
+  return ratio >= NormalYXRatio() / k_orthonormalTolerance && ratio <= NormalYXRatio() * k_orthonormalTolerance;
+}
+
+bool InteractiveCurveViewRange::isOrthonormal() const {
+  float significantBits = normalizationSignificantBits();
+  if (significantBits <= 0) {
+    return false;
+  }
+  float ratio = (yMax() - yMin()) / (xMax() - xMin());
+  /* The last N (= 23 - significantBits) bits of "ratio" mantissa have become
+   * insignificant. "tolerance" is the difference between ratio with those N
+   * bits set to 1, and ratio with those N bits set to 0 ; i.e. a measure of
+   * the interval in which numbers are indistinguishable from ratio with this
+   * level of precision. */
+  float tolerance = std::pow(2.f, IEEE754<float>::exponent(ratio) - significantBits);
+  return  ratio - tolerance <= NormalYXRatio() && ratio + tolerance >= NormalYXRatio();
+}
+
+int InteractiveCurveViewRange::normalizationSignificantBits() const {
     float xr = std::fabs(xMin()) > std::fabs(xMax()) ? xMax() / xMin() : xMin() / xMax();
     float yr = std::fabs(yMin()) > std::fabs(yMax()) ? yMax() / yMin() : yMin() / yMax();
     /* The subtraction x - y induces a loss of significance of -log2(1-x/y)
@@ -285,9 +309,11 @@ bool InteractiveCurveViewRange::isOrthonormal(float tolerance) const {
      * the ratio of the normalized range will deviate from the Normal ratio. We
      * add an extra two lost bits to account for loss of precision from other
      * sources. */
-    tolerance = std::pow(2.f, - std::log2(std::min(1.f - xr, 1.f - yr)) - 23.f + 2.f);
-  }
-  float ratio = (yMax() - yMin()) / (xMax() - xMin());
-  return  ratio <= NormalYXRatio() + tolerance && ratio >= NormalYXRatio() - tolerance;
+    float loss = std::log2(std::min(1.f - xr, 1.f - yr));
+    if (loss > 0.f) {
+      loss = 0.f;
+    }
+    return  std::floor(loss + 23.f - 2.f);
 }
+
 }

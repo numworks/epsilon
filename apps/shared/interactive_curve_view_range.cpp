@@ -287,7 +287,7 @@ bool InteractiveCurveViewRange::shouldBeNormalized() const {
 }
 
 bool InteractiveCurveViewRange::isOrthonormal() const {
-  float significantBits = normalizationSignificantBits();
+  int significantBits = normalizationSignificantBits();
   if (significantBits <= 0) {
     return false;
   }

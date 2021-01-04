@@ -20,6 +20,10 @@ void ion_main(int argc, const char * const argv[]) {
   KDRect rect(0,0, 199, 100);
   KDColor c = KDColorRed;
   Ion::Display::pushRectUniform(rect, c);
+  KDRect r(195,0, 10, 10);
+  KDColor pixels[100];
+  Ion::Display::pullRect(r, pixels);
+  Ion::Display::pushRect(KDRect(0,0,10,10), pixels);
   while (1) {}
 }
 

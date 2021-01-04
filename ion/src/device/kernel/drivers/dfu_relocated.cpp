@@ -2,13 +2,14 @@
 #include <string.h>
 #include <assert.h>
 #include <drivers/cache.h>
-#include "../drivers/timing.h"
+#include <kernel/drivers/timing.h>
 
 extern const void * _stack_end;
 extern char _dfu_bootloader_flash_start;
 extern char _dfu_bootloader_flash_end;
 
 namespace Ion {
+namespace Device {
 namespace USB {
 
 typedef void (*PollFunctionPointer)(bool exitWithKeyboard);
@@ -83,5 +84,6 @@ void DFU() {
    * be overwritten when the stack grows. */
 }
 
+}
 }
 }

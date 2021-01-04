@@ -97,7 +97,7 @@ void setStandardFrequency(Frequency f) {
 
 void setClockLowFrequency() {
   // TODO: Update TIM3 prescaler or ARR to avoid irregular LED blinking
-  // Change the systick frequency to compensate the KCLK frequency change
+  // Change the systick frequency to compensate the HCLK frequency change
   Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKLowFrequency);
   RCC.CFGR()->setHPRE(Clocks::Config::AHBLowFrequencyPrescalerReg);
 }

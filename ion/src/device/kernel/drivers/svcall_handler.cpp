@@ -1,6 +1,7 @@
 #include <kernel/boot/isr.h>
 #include <kernel/drivers/display.h>
 #include <shared/drivers/svcall.h>
+#include <shared/drivers/usb.h>
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
@@ -18,9 +19,6 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_POWER_SLEEP_OR_STOP:
       Ion::Device::Power::sleepStopHandler();
       return;
-    case SVC_DFU:
-      Ion::Device::USB::DFUHandler();
-      return;
     case SVC_RESET_CORE:
       Ion::Device::Reset::coreHandler();
       return;
@@ -32,14 +30,14 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       //  But I haven't fully understood passing args to SVChandler yet - the previous code fails with optim...
       Ion::Device::ExamMode::ToggleExamMode();
       return;*/
-    case SVC_PUSH_RECT:
+    case SVC_DISPLAY_PUSH_RECT:
       // Load rect and pixels
       Ion::Device::Display::pushRect(
           *static_cast<KDRect *>(args[0]),
           static_cast<const KDColor *>(args[1])
         );
       return;
-    case SVC_PUSH_RECT_UNIFORM:
+    case SVC_DISPLAY_PUSH_RECT_UNIFORM:
     {
       // Load rect and color
       Ion::Device::Display::pushRectUniform(
@@ -48,19 +46,37 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
         );
       return;
     }
-    case SVC_PULL_RECT:
+    case SVC_DISPLAY_PULL_RECT:
       // Load rect and pixels
       Ion::Device::Display::pullRect(
           *static_cast<KDRect *>(args[0]),
           static_cast<KDColor *>(args[1])
         );
       return;
-    case SVC_POST_PUSH_MULTICOLOR:
+    case SVC_DISPLAY_POST_PUSH_MULTICOLOR:
       // Load rootNumberTiles and tileSize
       Ion::Device::Display::POSTPushMulticolor(
           *static_cast<int *>(args[0]),
           *static_cast<int *>(args[1])
         );
+      return;
+    case SVC_USB_IS_PLUGGED:
+      *static_cast<bool *>(args[0]) = Ion::Device::USB::isPlugged();
+      return;
+    case SVC_USB_IS_ENUMERATED:
+      *static_cast<bool *>(args[0]) = Ion::Device::USB::isEnumerated();
+      return;
+    case SVC_USB_CLEAR_ENUMERATION_INTERRUPT:
+      Ion::Device::USB::clearEnumerationInterrupt();
+      return;
+    case SVC_USB_ENABLE:
+      Ion::Device::USB::enable();
+      return;
+    case SVC_USB_DISABLE:
+      Ion::Device::USB::disable();
+      return;
+    case SVC_USB_DFU:
+      Ion::Device::USB::DFU();
       return;
     default:
       return;

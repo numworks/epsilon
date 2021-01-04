@@ -5,7 +5,7 @@ namespace Ion {
 namespace Display {
 
 void SVC_ATTRIBUTES pushRectSVC(KDRect * r, const KDColor * pixels) {
-  SVC(SVC_PUSH_RECT);
+  SVC(SVC_DISPLAY_PUSH_RECT);
 }
 
 void pushRect(KDRect r, const KDColor * pixels) {
@@ -13,7 +13,7 @@ void pushRect(KDRect r, const KDColor * pixels) {
 }
 
 void SVC_ATTRIBUTES pushRectUniformSVC(KDRect * r, KDColor * c) {
-  SVC(SVC_PUSH_RECT_UNIFORM);
+  SVC(SVC_DISPLAY_PUSH_RECT_UNIFORM);
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
@@ -21,7 +21,7 @@ void pushRectUniform(KDRect r, KDColor c) {
 }
 
 void SVC_ATTRIBUTES pullRectSVC(KDRect * r, KDColor * pixels) {
-  SVC(SVC_PULL_RECT);
+  SVC(SVC_DISPLAY_PULL_RECT);
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
@@ -29,7 +29,7 @@ void pullRect(KDRect r, KDColor * pixels) {
 }
 
 void SVC_ATTRIBUTES POSTPushMulticolorSVC(int * rootNumberTiles, int * tileSize) {
-  SVC(SVC_POST_PUSH_MULTICOLOR);
+  SVC(SVC_DISPLAY_POST_PUSH_MULTICOLOR);
 }
 
 void POSTPushMulticolor(int rootNumberTiles, int tileSize) {

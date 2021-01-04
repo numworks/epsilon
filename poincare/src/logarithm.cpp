@@ -347,18 +347,8 @@ bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Expr
 Expression Logarithm::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
   /* log(x, b)` = (ln(x)/ln(b))`
    *            = 1 / (x * ln(b))
-   *
-   * ln(x) is only defined for x > 0, but 1/x is defined for any x != 0.
-   * Therefore we need to restricted the domain of the derivative function by
-   * adding a part that is undefined for x < 0.
-   * The chosen solution is (√x)^2 / (x * (√x)^2), which has the advantages of :
-   *   - not being reduced with SystemForApproximation, unlike √x/x√x
-   *   - not adding additional undefined points, unlike ln(x)/xln(x) for x = 1
-   *   - not reducing precision, unlike 1/√(x^2)
-   * FIXME: Although the derivative function cannot be observed by the user
-   * directly, me may want to display it one day, which this fix doesn't allow.
    */
-  return Power::Builder(Multiplication::Builder(childAtIndex(0).clone(), NaperianLogarithm::Builder(childAtIndex(1).clone()), Division::Builder(Power::Builder(SquareRoot::Builder(childAtIndex(0).clone()), Rational::Builder(2)), Power::Builder(SquareRoot::Builder(childAtIndex(0).clone()), Rational::Builder(2)))), Rational::Builder(-1));
+  return Power::Builder(Multiplication::Builder(childAtIndex(0).clone(), NaperianLogarithm::Builder(childAtIndex(1).clone())), Rational::Builder(-1));
 }
 
 Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext) {

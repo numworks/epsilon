@@ -163,7 +163,7 @@ void Store::setDefault() {
   m_xRange.setMax(xMax);
   m_yRange.setMin(yMin);
   m_yRange.setMax(yMax);
-  bool revertToOrthonormal = isOrthonormal(k_orthonormalTolerance);
+  bool revertToOrthonormal = shouldBeNormalized();
 
   float range = xMax - xMin;
   setXMin(xMin - k_displayHorizontalMarginRatio * range);

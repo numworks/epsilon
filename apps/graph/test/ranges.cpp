@@ -173,4 +173,44 @@ QUIZ_CASE(graph_ranges_zoom) {
       false);
 }
 
+void assert_orthonormality(float xMin, float xMax, float yMin, float yMax, bool orthonormal) {
+  InteractiveCurveViewRange graphRange;
+  graphRange.setXMin(xMin);
+  graphRange.setXMax(xMax);
+  graphRange.setYMin(yMin);
+  graphRange.setYMax(yMax);
+
+  quiz_assert(graphRange.isOrthonormal() == orthonormal);
+}
+
+void assert_is_orthonormal(float xMin, float xMax, float yMin, float yMax) {
+  assert_orthonormality(xMin, xMax, yMin, yMax, true);
+}
+
+void assert_is_not_orthonormal(float xMin, float xMax, float yMin, float yMax) {
+  assert_orthonormality(xMin, xMax, yMin, yMax, false);
+}
+
+QUIZ_CASE(graph_ranges_orthonormal) {
+  assert_is_orthonormal(-10, 10, -5.8125, 4.8125);
+  assert_is_orthonormal(11.37037, 17.2963, 7.529894, 10.67804);
+  assert_is_orthonormal(-1.94574, -1.165371, -2.476379, -2.061809);
+  assert_is_orthonormal(0, 1000000, 0, 531250);
+  assert_is_orthonormal(-3.2e-3f, 3.2e-3f, -1.7e-3f, 1.7e-3f);
+  assert_is_not_orthonormal(-10, 10, -10, 10);
+  assert_is_not_orthonormal(-10, 10, -5.8125, 4.8126);
+  assert_is_not_orthonormal(1234548, 1234568, 1234556, 1234568);
+
+  /* The ratio is 0.55 instead of 0.53125, but depending on the magnitude of
+   * the bounds, it can land inside the margin of error. */
+  assert_is_not_orthonormal(0, 20, 0, 11);
+  assert_is_orthonormal(1e6, 1e6 + 20, 1e6, 1e6 + 11);
+
+  /* The ration is the desired 0.53125, but if the bounds are near equal
+   * numbers of large magnitude, the loss odf precision leaves us without any
+   * significant bits. */
+  assert_is_orthonormal(0, 3.2, 0, 1.7);
+  assert_is_not_orthonormal(1e7, 1e7 + 3.2, 0, 1.7);
+}
+
 }

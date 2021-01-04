@@ -32,14 +32,13 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       //  But I haven't fully understood passing args to SVChandler yet - the previous code fails with optim...
       Ion::Device::ExamMode::ToggleExamMode();
       return;*/
-    /*case SVC_PUSH_RECT:
+    case SVC_PUSH_RECT:
       // Load rect and pixels
-      //Ion::Device::SVCall::getSvcallArgs(2, arguments);
       Ion::Device::Display::pushRect(
-          reinterpret_cast<KDRect>(args[0]),
-          reinterpret_cast<const KDColor *>(args[1])
+          *static_cast<KDRect *>(args[0]),
+          static_cast<const KDColor *>(args[1])
         );
-      return;*/
+      return;
     case SVC_PUSH_RECT_UNIFORM:
     {
       // Load rect and color
@@ -49,22 +48,20 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
         );
       return;
     }
-    /*case SVC_PULL_RECT:
+    case SVC_PULL_RECT:
       // Load rect and pixels
-      //Ion::Device::SVCall::getSvcallArgs(2, arguments);
       Ion::Device::Display::pullRect(
-          reinterpret_cast<KDRect>(args[0]),
-          reinterpret_cast<KDColor *>(args[1])
+          *static_cast<KDRect *>(args[0]),
+          static_cast<KDColor *>(args[1])
         );
       return;
     case SVC_POST_PUSH_MULTICOLOR:
       // Load rootNumberTiles and tileSize
-      //Ion::Device::SVCall::getSvcallArgs(2, arguments);
       Ion::Device::Display::POSTPushMulticolor(
-          reinterpret_cast<int>(args[0]),
-          reinterpret_cast<int>(args[1])
+          *static_cast<int *>(args[0]),
+          *static_cast<int *>(args[1])
         );
-      return;*/
+      return;
     default:
       return;
   }

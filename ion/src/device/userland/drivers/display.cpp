@@ -4,6 +4,14 @@
 namespace Ion {
 namespace Display {
 
+void SVC_ATTRIBUTES pushRectSVC(KDRect * r, const KDColor * pixels) {
+  SVC(SVC_PUSH_RECT);
+}
+
+void pushRect(KDRect r, const KDColor * pixels) {
+  pushRectSVC(&r, pixels);
+}
+
 void SVC_ATTRIBUTES pushRectUniformSVC(KDRect * r, KDColor * c) {
   SVC(SVC_PUSH_RECT_UNIFORM);
 }
@@ -12,34 +20,21 @@ void pushRectUniform(KDRect r, KDColor c) {
   pushRectUniformSVC(&r, &c);
 }
 
-
-/*void pushRect(KDRect r, const KDColor * pixels) {
-  // Store rect and pixels
-  void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
-  int argc = sizeof(args)/sizeof(void *);
-  Ion::Device::SVCall::svcall(SVC_PUSH_RECT, &argc, args);
-}
-
-void pushRectUniform(KDRect r, KDColor c) {
-  // Store rect and color
-  void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&c) };
-  int argc = sizeof(args)/sizeof(void *);
-  Ion::Device::SVCall::svcall(SVC_PUSH_RECT_UNIFORM, &argc, args);
+void SVC_ATTRIBUTES pullRectSVC(KDRect * r, KDColor * pixels) {
+  SVC(SVC_PULL_RECT);
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
-  // Store rect and pixels
-  void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
-  int argc = sizeof(args)/sizeof(void *);
-  Ion::Device::SVCall::svcall(SVC_PULL_RECT, &argc, args);
+  pullRectSVC(&r, pixels);
+}
+
+void SVC_ATTRIBUTES POSTPushMulticolorSVC(int * rootNumberTiles, int * tileSize) {
+  SVC(SVC_POST_PUSH_MULTICOLOR);
 }
 
 void POSTPushMulticolor(int rootNumberTiles, int tileSize) {
-  // Store rootNumberTiles and tileSize
-  void * args[2] = { static_cast<void *>(&rootNumberTiles), static_cast<void *>(&tileSize) };
-  int argc = sizeof(args)/sizeof(void *);
-  Ion::Device::SVCall::svcall(SVC_POST_PUSH_MULTICOLOR, &argc, args);
-}*/
+  POSTPushMulticolorSVC(&rootNumberTiles, &tileSize);
+}
 
 }
 }

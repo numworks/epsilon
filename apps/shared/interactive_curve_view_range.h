@@ -29,7 +29,6 @@ public:
   bool isOrthonormal() const;
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
-  uint32_t rangeChecksum() override;
 
   bool zoomAuto() const { return m_zoomAuto; }
   void setZoomAuto(bool v);

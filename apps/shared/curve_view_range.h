@@ -12,7 +12,7 @@ public:
     X,
     Y
   };
-  virtual uint32_t rangeChecksum();
+  uint32_t rangeChecksum();
 
   virtual float xMin() const = 0;
   virtual float xMax() const = 0;

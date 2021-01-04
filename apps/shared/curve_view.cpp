@@ -190,6 +190,8 @@ int CurveView::numberOfLabels(Axis axis) const {
   float minLabel = std::ceil(min(axis)/labelStep);
   float maxLabel = std::floor(max(axis)/labelStep);
   int numberOfLabels = maxLabel - minLabel + 1;
+  // Assert labels are up to date
+  assert(m_drawnRangeVersion == m_curveViewRange->rangeChecksum());
   assert(numberOfLabels <= (axis == Axis::Horizontal ? k_maxNumberOfXLabels : k_maxNumberOfYLabels));
   return numberOfLabels;
 }
@@ -226,18 +228,23 @@ void CurveView::computeLabels(Axis axis) {
 
     if (axis == Axis::Horizontal) {
       if (labelBuffer[0] == 0) {
-        /* Some labels are too big and may overlap their neighbours. We write the
+        /* Some labels are too big and may overlap their neighbors. We write the
          * extrema labels only. */
         computeHorizontalExtremaLabels();
-        return;
+        break;
       }
       if (i > 0 && strcmp(labelBuffer, label(axis, i-1)) == 0) {
         /* We need to increase the number if significant digits, otherwise some
          * labels are rounded to the same value. */
         computeHorizontalExtremaLabels(true);
-        return;
+        break;
       }
     }
+  }
+  int maxNumberOfLabels = (axis == Axis::Horizontal ? k_maxNumberOfXLabels : k_maxNumberOfYLabels);
+  // All remaining labels are empty. They shouldn't be accessed anyway.
+  for (int i = axisLabelsCount; i < maxNumberOfLabels; i++) {
+    label(axis, i)[0] = 0;
   }
 }
 

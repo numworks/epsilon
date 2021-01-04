@@ -19,13 +19,6 @@ void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * 
   }
 }
 
-uint32_t InteractiveCurveViewRange::rangeChecksum() {
-  float data[] = {xMin(), xMax(), yMin(), yMax()};
-  size_t dataLengthInBytes = sizeof(data);
-  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32Word((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
-}
-
 void InteractiveCurveViewRange::setZoomAuto(bool v) {
   if (m_zoomAuto == v) {
     return;

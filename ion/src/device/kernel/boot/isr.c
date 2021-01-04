@@ -23,7 +23,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // BusFault service routine,
   0, // UsageFault service routine,
   0, 0, 0, 0, // Reserved
-  (ISR)svcall_handler, // SVCall service routine,
+  svcall_handler_as, // SVCall service routine,
   0, // DebugMonitor service routine,
   0, // Reserved
   0, // PendSV service routine,

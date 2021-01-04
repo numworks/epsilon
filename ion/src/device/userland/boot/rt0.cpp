@@ -17,7 +17,9 @@ void abort() { //TODO EMILIE: expose in ion API
 }
 
 void ion_main(int argc, const char * const argv[]) {
-  Ion::Display::pushRectUniform(KDRect(0,0,199,100), KDColorRed);
+  KDRect rect(0,0, 199, 100);
+  KDColor c = KDColorRed;
+  Ion::Display::pushRectUniform(&rect, &c);
   while (1) {}
 }
 

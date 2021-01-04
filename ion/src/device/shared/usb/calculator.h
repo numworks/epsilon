@@ -25,6 +25,10 @@ namespace USB {
 
 class Calculator : public Device {
 public:
+  static void PollAndReset(bool exitWithKeyboard)
+    __attribute__((section(".dfu_entry_point"))) // Needed to pinpoint this symbol in the linker script
+    __attribute__((used)) // Make sure this symbol is not discarded at link time
+    ;
   Calculator(const char * serialNumber) :
     Device(&m_dfuInterface),
     m_deviceDescriptor(

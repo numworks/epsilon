@@ -2,6 +2,7 @@
 #include <shared/boot/rt0.h>
 #include <ion.h>
 #include <ion/display.h> // TODO: remove
+#include <ion/usb.h> // TODO: remove
 
 extern "C" {
   void abort();
@@ -24,6 +25,16 @@ void ion_main(int argc, const char * const argv[]) {
   KDColor pixels[100];
   Ion::Display::pullRect(r, pixels);
   Ion::Display::pushRect(KDRect(0,0,10,10), pixels);
+
+  Ion::USB::enable();
+  while (!Ion::USB::isEnumerated()) {
+    for (volatile uint32_t i=0; i<10000; i++) {
+      __asm volatile("nop");
+    }
+  }
+  Ion::USB::DFU();
+  Ion::USB::disable();
+
   while (1) {}
 }
 

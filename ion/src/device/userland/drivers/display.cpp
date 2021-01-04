@@ -4,11 +4,14 @@
 namespace Ion {
 namespace Display {
 
-void pushRectUniform(KDRect * r, KDColor * c) {
-  // Store rect and color
-  //void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&c) };
-  svc(SVC_PUSH_RECT_UNIFORM);
+void SVC_ATTRIBUTES pushRectUniformSVC(KDRect * r, KDColor * c) {
+  SVC(SVC_PUSH_RECT_UNIFORM);
 }
+
+void pushRectUniform(KDRect r, KDColor c) {
+  pushRectUniformSVC(&r, &c);
+}
+
 
 /*void pushRect(KDRect r, const KDColor * pixels) {
   // Store rect and pixels

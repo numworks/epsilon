@@ -7,11 +7,8 @@ namespace Ion {
 namespace Device {
 namespace SVCall {
 
-#define svc(code) asm volatile ("svc %[immediate]"::[immediate] "I" (code))
-
-void svcall(unsigned int svcNumber, int * argcPointer = nullptr, void * argv[] = nullptr);
-
-void setSvcallArgs(int argc, void * argv[]);
+#define SVC(code) asm volatile ("svc %[immediate]"::[immediate] "I" (code))
+#define SVC_ATTRIBUTES __attribute__((noinline,optimize("O0")))
 
 }
 }

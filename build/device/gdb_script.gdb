@@ -23,6 +23,20 @@ define load_isr
   set $pc = *(InitialisationVector+1)
 end
 
+define kernel_symbols
+# Discard previous symbol file
+  symbol-file
+# Load new symbol file
+  add-symbol-file output/debug/device/n0110/kernel.elf
+end
+
+define userland_symbols
+# Discard previous symbol file
+  symbol-file
+# Load new symbol file
+  add-symbol-file output/debug/device/n0110/userland.elf
+end
+
 
 define use_dfu_symbol_file
 # Discard previous symbol file

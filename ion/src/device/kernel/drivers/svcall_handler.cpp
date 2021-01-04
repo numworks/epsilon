@@ -5,7 +5,6 @@
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
 void svcall_handler(unsigned svcNumber, void * args[]) {
-  //void * arguments[2];
   switch (svcNumber) {
     /*case SVC_CLOCK_STANDARD_FREQUENCY:
       Ion::Device::Board::setStandardClockFrequencyHandler();
@@ -44,10 +43,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_PUSH_RECT_UNIFORM:
     {
       // Load rect and color
-      //Ion::Device::SVCall::getSvcallArgs(2, arguments);
       Ion::Device::Display::pushRectUniform(
-          //KDRect(0,0,100,100),
-          //KDColorBlue
           *static_cast<KDRect *>(args[0]),
           *static_cast<KDColor *>(args[1])
         );

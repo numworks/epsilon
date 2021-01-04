@@ -26,8 +26,12 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
 
 void HistogramParameterController::viewWillAppear() {
   // Initialize temporary parameters to the extracted value.
+  /* setParameterAtIndex uses the value of the other parameter, so we need to
+   * manually set the value of the second parameter before the first call. */
+  double parameterAtIndex1 = extractParameterAtIndex(1);
+  m_tempFirstDrawnBarAbscissa = parameterAtIndex1;
   setParameterAtIndex(0, extractParameterAtIndex(0));
-  setParameterAtIndex(1, extractParameterAtIndex(1));
+  setParameterAtIndex(1, parameterAtIndex1);
   FloatParameterController::viewWillAppear();
 }
 

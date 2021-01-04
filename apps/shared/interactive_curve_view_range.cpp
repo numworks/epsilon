@@ -112,8 +112,8 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
     m_yRange.setMax(yMa, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(yMi, k_lowerMaxFloat, k_upperMaxFloat);
   }
-  setZoomNormalize(isOrthonormal());
   m_offscreenYAxis *= ratio;
+  setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
@@ -291,7 +291,7 @@ bool InteractiveCurveViewRange::isOrthonormal() const {
   if (significantBits <= 0) {
     return false;
   }
-  float ratio = (yMax() - yMin()) / (xMax() - xMin());
+  float ratio = (yMax() - yMin() + offscreenYAxis()) / (xMax() - xMin());
   /* The last N (= 23 - significantBits) bits of "ratio" mantissa have become
    * insignificant. "tolerance" is the difference between ratio with those N
    * bits set to 1, and ratio with those N bits set to 0 ; i.e. a measure of

@@ -35,32 +35,33 @@ namespace SVCall {
 
 #define SVC_STORE_ARG(reg, argv) asm volatile ("mov " reg ",%0"::"r"(argv));
 
-void setSvcallArgs(int argc, void * argv[]) {
-  if (argc > 0) {
-    SVC_STORE_ARG(SVC_ARGS_REGISTER_0, argv[0]);
-    if (argc > 1) {
-      SVC_STORE_ARG(SVC_ARGS_REGISTER_1, argv[1]);
-    }
+void setSvcallArgs(void * argv[]) {
+  if (argv) {
+    SVC_STORE_ARG(SVC_ARGS_REGISTER, argv);
   }
 }
 
-void svcall(unsigned int svcNumber, int * argcPointer, void * argv[]) {
-  int argc;
+void svcall(unsigned int svcNumber, void * argv[]) {
+  /*int argc;
   if (argcPointer == nullptr) {
     assert(argv == nullptr);
     argc = 0;
   } else {
     assert(argcPointer);
     argc = *argcPointer;
-  }
+  }*/
   // Save previous registers state
-  void * regState[2];
-  getSvcallArgs(argc, regState);
+  //void * regState[2];
+  //getSvcallArgs(argc, regState);
   // Write registers
-  setSvcallArgs(argc, argv);
+  //setSvcallArgs(argv);
+  svc(SVC_PUSH_RECT_UNIFORM);
+  //int svcalls[] = {SVC_CALLS};
+  //svc(svcNumber);
   /* TODO Hugo : The following line triggers a compilation error :
    * svc(svcNumber); -> asm operand 0 probably doesn't match constraints
    * Current fix is to switch on SVC calls */
+#if 0
   switch (svcNumber) {
     case SVC_PUSH_RECT:
       svc(SVC_PUSH_RECT);
@@ -84,11 +85,11 @@ void svcall(unsigned int svcNumber, int * argcPointer, void * argv[]) {
       // svc(SVC_POST_PUSH_MULTICOLOR);
       break;
   }
-
+#endif
   // Get svc_handler results in args
-  getSvcallArgs(argc, argv);
+  getSvcallArgs(argv);
   // Restore registers state
-  setSvcallArgs(argc, regState);
+  //setSvcallArgs(argc, regState);
 }
 
 }

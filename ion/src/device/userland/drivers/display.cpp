@@ -4,7 +4,13 @@
 namespace Ion {
 namespace Display {
 
-void pushRect(KDRect r, const KDColor * pixels) {
+void pushRectUniform(KDRect * r, KDColor * c) {
+  // Store rect and color
+  //void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&c) };
+  svc(SVC_PUSH_RECT_UNIFORM);
+}
+
+/*void pushRect(KDRect r, const KDColor * pixels) {
   // Store rect and pixels
   void * args[2] = { static_cast<void *>(&r), static_cast<void *>(&pixels) };
   int argc = sizeof(args)/sizeof(void *);
@@ -30,7 +36,7 @@ void POSTPushMulticolor(int rootNumberTiles, int tileSize) {
   void * args[2] = { static_cast<void *>(&rootNumberTiles), static_cast<void *>(&tileSize) };
   int argc = sizeof(args)/sizeof(void *);
   Ion::Device::SVCall::svcall(SVC_POST_PUSH_MULTICOLOR, &argc, args);
-}
+}*/
 
 }
 }

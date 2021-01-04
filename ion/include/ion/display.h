@@ -18,7 +18,7 @@ namespace Ion {
 namespace Display {
 
 void pushRect(KDRect r, const KDColor * pixels);
-void pushRectUniform(KDRect r, KDColor c);
+void pushRectUniform(KDRect * r, KDColor * c);
 void pullRect(KDRect r, KDColor * pixels);
 
 /* TODO Hugo : Implement SVC for all the methods that are exposed to the

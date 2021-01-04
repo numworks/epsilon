@@ -17,7 +17,7 @@ void KDIonContext::pushRect(KDRect rect, const KDColor * pixels) {
 }
 
 void KDIonContext::pushRectUniform(KDRect rect, KDColor color) {
-  Ion::Display::pushRectUniform(rect, color);
+  Ion::Display::pushRectUniform(&rect, &color);
 }
 
 void KDIonContext::pullRect(KDRect rect, KDColor * pixels) {

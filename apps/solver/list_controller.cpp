@@ -20,7 +20,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     return true;
   }, this), KDFont::LargeFont, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
-  m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
+  m_modelsStackController(nullptr, &m_modelsParameterController)
 {
   m_addNewModel.setAlignment(0.3f, 0.5f); // (EquationListView::k_braceTotalWidth+k_expressionMargin) / (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
   for (int i = 0; i < k_maxNumberOfRows; i++) {

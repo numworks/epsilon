@@ -210,7 +210,7 @@ void ListController::reloadButtonMessage() {
 }
 
 void ListController::addEmptyModel() {
-  Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
+  Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {

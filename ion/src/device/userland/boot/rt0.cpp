@@ -3,6 +3,7 @@
 #include <ion.h>
 #include <ion/display.h> // TODO: remove
 #include <ion/usb.h> // TODO: remove
+#include <ion/events.h> // TODO: remove
 
 extern "C" {
   void abort();
@@ -26,6 +27,7 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::Display::pullRect(r, pixels);
   Ion::Display::pushRect(KDRect(0,0,10,10), pixels);
 
+#if 0
   Ion::USB::enable();
   while (!Ion::USB::isEnumerated()) {
     for (volatile uint32_t i=0; i<10000; i++) {
@@ -34,8 +36,20 @@ void ion_main(int argc, const char * const argv[]) {
   }
   Ion::USB::DFU();
   Ion::USB::disable();
+#endif
 
-  while (1) {}
+  c = KDColorBlue;
+  while (1) {
+    int timeout = 300;
+    Ion::Events::Event e = Ion::Events::getEvent(&timeout);
+    if (e != Ion::Events::None) {
+      Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
+      c = c == KDColorBlue ? KDColorGreen : KDColorBlue;
+    }
+    /*for (volatile uint32_t i=0; i<10000; i++) {
+      __asm volatile("nop");
+    }*/
+  }
 }
 
 void __attribute__((noinline)) start() {

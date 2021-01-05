@@ -1,5 +1,4 @@
 #include <ion/events.h>
-#include <ion/keyboard.h>
 #include <ion/timing.h>
 #include <assert.h>
 
@@ -51,11 +50,7 @@ void resetLongRepetition() {
   ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
-static Keyboard::Key keyFromState(Keyboard::State state) {
-  return static_cast<Keyboard::Key>(63 - __builtin_clzll(state));
-}
-
-static inline Event innerGetEvent(int * timeout) {
+Event getEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
   int time = 0;
@@ -67,13 +62,10 @@ static inline Event innerGetEvent(int * timeout) {
       return platformEvent;
     }
 
-    Keyboard::State state = Ion::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Keyboard::Queue::sharedQueue()->pop();
+    Keyboard::State state = Ion::Keyboard::hasNextState() ? Ion::Keyboard::nextState() : Keyboard::State(0);
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;
 
-    Keyboard::Key key;
-    bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
-    bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
     bool lock = isLockActive();
 
     if (keysSeenTransitionningFromUpToDown != 0) {
@@ -85,7 +77,9 @@ static inline Event innerGetEvent(int * timeout) {
        * processors have an instruction (ARM thumb uses CLZ).
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
-      key = keyFromState(keysSeenTransitionningFromUpToDown);
+      Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
+      bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
+      bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
       Event event(key, shift, alpha, lock);
       sLastEventShift = shift;
       sLastEventAlpha = alpha;
@@ -104,11 +98,10 @@ static inline Event innerGetEvent(int * timeout) {
 
     // At this point, we know that keysSeenTransitionningFromUpToDown has *always* been zero
     // In other words, no new key has been pressed
-    key = keyFromState(state);
-    Event event(key, shift, alpha, lock);
     if (canRepeatEvent(sLastEvent)
         && state == sLastKeyboardState
-        && sLastEvent == event)
+        && sLastEventShift == state.keyDown(Keyboard::Key::Shift)
+        && sLastEventAlpha == (state.keyDown(Keyboard::Key::Alpha) || lock))
     {
       int delay = (sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat);
       if (time >= delay) {
@@ -120,37 +113,6 @@ static inline Event innerGetEvent(int * timeout) {
     }
   }
 }
-
-#if ION_EVENTS_JOURNAL
-
-static Journal * sSourceJournal = nullptr;
-static Journal * sDestinationJournal = nullptr;
-void replayFrom(Journal * l) { sSourceJournal = l; }
-void logTo(Journal * l) { sDestinationJournal = l; }
-
-Event getEvent(int * timeout) {
-  if (sSourceJournal != nullptr) {
-    if (sSourceJournal->isEmpty()) {
-      sSourceJournal = nullptr;
-    } else {
-      return sSourceJournal->popEvent();
-    }
-  }
-  Event e = innerGetEvent(timeout);
-  if (sDestinationJournal != nullptr && e != None) {
-    sDestinationJournal->pushEvent(e);
-  }
-  return e;
-}
-
-#else
-
-Event getEvent(int * timeout) {
-  return innerGetEvent(timeout);
-}
-
-#endif
-
 
 }
 }

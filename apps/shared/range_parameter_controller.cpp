@@ -54,7 +54,7 @@ void RangeParameterController::setRange(InteractiveCurveViewRange * range){
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && m_interactiveRange->rangeChecksum() != m_tempInteractiveRange.rangeChecksum()) {
     // Open pop-up to confirm discarding values
-    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
   return FloatParameterController::handleEvent(event);

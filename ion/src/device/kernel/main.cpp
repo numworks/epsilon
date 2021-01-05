@@ -69,7 +69,7 @@ void kernel_main(bool numworksAuthentication) {
 
   /*while (1) {
     Ion::Keyboard::State sLastKeyboardState;
-    Ion::Keyboard::State state = Ion::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Keyboard::Queue::sharedQueue()->pop();
+    Ion::Keyboard::State state = Ion::Device::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Device::Keyboard::Queue::sharedQueue()->pop();
     if (sLastKeyboardState != state) {
       if (c == KDColorWhite) {
         c = KDColorBlack;

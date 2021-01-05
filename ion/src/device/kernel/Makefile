@@ -11,6 +11,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/dfu_relocated.cpp \
   drivers/display.cpp \
   drivers/keyboard.cpp \
+  drivers/keyboard_queue.cpp \
   drivers/led.cpp \
   drivers/svcall_handler.cpp \
   drivers/svcall_handler_as.s \
@@ -18,8 +19,3 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/timing.cpp \
   main.cpp \
 )
-
-ion_device_kernel_src += $(addprefix ion/src/shared/, \
-  keyboard_queue.cpp \
-)
-

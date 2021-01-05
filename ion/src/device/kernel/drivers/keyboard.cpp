@@ -42,7 +42,7 @@
  */
 
 #include <kernel/drivers/keyboard.h>
-#include <ion/keyboard.h>
+#include <kernel/drivers/keyboard_queue.h>
 
 namespace Ion {
 namespace Device {
@@ -138,9 +138,18 @@ void handleInterruption() {
     uint8_t pin = Config::ColumnPins[i];
     if (EXTI.PR()->get(pin)) {
       EXTI.PR()->set(pin, true);
-      Ion::Keyboard::Queue::sharedQueue()->push(Keyboard::scan());
+      Queue::sharedQueue()->push(Keyboard::scan());
     }
   }
+}
+
+bool hasNextState() {
+  return !Queue::sharedQueue()->isEmpty();
+}
+
+Ion::Keyboard::State nextState() {
+  assert(!Queue::sharedQueue()->isEmpty());
+  return Queue::sharedQueue()->pop();
 }
 
 }

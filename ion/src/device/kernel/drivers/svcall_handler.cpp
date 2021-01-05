@@ -1,5 +1,7 @@
 #include <kernel/boot/isr.h>
 #include <kernel/drivers/display.h>
+#include <kernel/drivers/keyboard.h>
+#include <kernel/drivers/timing.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>
 
@@ -30,6 +32,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       //  But I haven't fully understood passing args to SVChandler yet - the previous code fails with optim...
       Ion::Device::ExamMode::ToggleExamMode();
       return;*/
+    // DISPLAY
     case SVC_DISPLAY_PUSH_RECT:
       // Load rect and pixels
       Ion::Device::Display::pushRect(
@@ -60,6 +63,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
           *static_cast<int *>(args[1])
         );
       return;
+    // USB
     case SVC_USB_IS_PLUGGED:
       *static_cast<bool *>(args[0]) = Ion::Device::USB::isPlugged();
       return;
@@ -77,6 +81,23 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_USB_DFU:
       Ion::Device::USB::DFU();
+      return;
+    // TIMING
+    case SVC_TIMING_USLEEP:
+      Ion::Device::Timing::usleep(*static_cast<uint32_t *>(args[0]));
+      return;
+    case SVC_TIMING_MSLEEP:
+      Ion::Device::Timing::msleep(*static_cast<uint32_t *>(args[0]));
+      return;
+    case SVC_TIMING_MILLIS:
+      *static_cast<uint64_t *>(args[0]) = Ion::Device::Timing::millis();
+      return;
+    // KEYBOARD
+    case SVC_KEYBOARD_HAS_NEXT_STATE:
+      *static_cast<bool *>(args[0]) = Ion::Device::Keyboard::hasNextState();
+      return;
+    case SVC_KEYBOARD_NEXT_STATE:
+      *static_cast<Ion::Keyboard::State *>(args[0]) = Ion::Device::Keyboard::nextState();
       return;
     default:
       return;

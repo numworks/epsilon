@@ -64,8 +64,9 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Board7initMPUEv)
     *(.text._ZN3Ion6Device5Board21initPeripheralsClocksEv)
     *(.text._ZN3Ion6Device5Board17initInterruptionsEv)
-    *(.text._ZNV3Ion6Device4Regs*)
     *(.text._ZN3Ion6Device4Regs*)
+    *(.text._ZNK3Ion6Device4Regs*)
+    *(.text._ZNV3Ion6Device4Regs*)
     *(.text.*3Ion6Device4Regs4GPIO5PUPDR*)
     *(.text._ZNK3Ion6Device4Regs9AFGPIOPin*)
     *(.text._ZN3Ion6Device13ExternalFlash*)
@@ -76,10 +77,15 @@ SECTIONS {
 
     /* 'keyboard_handler' dependencies '*/
     *(.text._ZN3Ion6Device8Keyboard18handleInterruptionEv)
-    *(.text._ZN3Ion8Keyboard5Queue11sharedQueueEv)
-    *(.text._ZN3Ion8Keyboard5Queue4pushENS0_5StateE)
+    *(.text._ZN3Ion6Device8Keyboard5Queue11sharedQueueEv)
     *(.text._ZN3Ion6Device8Keyboard4scanEv)
     *(.text._ZN3Ion6Device8Keyboard11setRowStateEt)
+    *(.text._ZN3Ion8Keyboard5State*)
+    *(.text._ZN3Ion6Device8Keyboard15activateAllRowsEv)
+    *(.text._ZN3Ion6Device8Keyboard5QueueC*)
+    *(.text._ZN3Ion6Device8Keyboard11activateRowEh)
+    *(.text._ZN3Ion6Device8Keyboard5Queue4pushENS_8Keyboard5StateE)
+    *(.text._ZN3Ion6Device8Keyboard6Config9ValidKeysEy)
 
     /* 'abort' dependencies */
     *(.text._ZN3Ion6Device5Reset4coreEv)
@@ -103,6 +109,7 @@ SECTIONS {
 
   .rodata.internal : {
     . = ALIGN(4);
+    *(.rodata)
     *(.rodata._ZN3Ion6Device13ExternalFlash*)
     /* 'start' dependencies */
     *(.rodata._ZN3Ion6Device4RegsL5GPIOAE)
@@ -112,6 +119,8 @@ SECTIONS {
     *(.rodata._ZN3Ion6Device8Keyboard6ConfigL10ColumnPinsE)
     *(.rodata._ZN3Ion6Device8Keyboard6ConfigL7RowPinsE)
     *(.rodata._ZN3Ion6Device5Cache35privateCleanInvalidateDisableDCacheEbbb.str1.4)
+    *(.rodata._ZN3Ion6Device4Regs*)
+    *(.rodata._ZN3Ion6Device8Keyboard6Config*)
   } >INTERNAL_FLASH_KERNEL
 
   /* External flash memory */

@@ -2,6 +2,7 @@
 #define ION_DEVICE_KERNEL_DRIVERS_BATTERY_H
 
 #include <stdint.h>
+#include <ion/battery.h>
 
 /*
  *
@@ -18,14 +19,7 @@ namespace Battery {
 
 bool isCharging();
 
-enum class Charge : uint8_t {
-  EMPTY = 0,
-  LOW = 1,
-  SOMEWHERE_INBETWEEN = 2,
-  FULL = 3
-};
-
-Charge level();
+Ion::Battery::Charge level();
 
 float voltage();
 

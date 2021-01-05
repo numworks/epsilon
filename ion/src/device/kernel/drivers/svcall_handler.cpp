@@ -1,4 +1,5 @@
 #include <kernel/boot/isr.h>
+#include <kernel/drivers/battery.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
@@ -98,6 +99,16 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_KEYBOARD_NEXT_STATE:
       *static_cast<Ion::Keyboard::State *>(args[0]) = Ion::Device::Keyboard::nextState();
+      return;
+    // BATTERY
+    case SVC_BATTERY_IS_CHARGING:
+      *static_cast<bool *>(args[0]) = Ion::Device::Battery::isCharging();
+      return;
+    case SVC_BATTERY_LEVEL:
+      *static_cast<Ion::Battery::Charge *>(args[0]) = Ion::Device::Battery::level();
+      return;
+    case SVC_BATTERY_VOLTAGE:
+      *static_cast<float *>(args[0]) = Ion::Device::Battery::voltage();
       return;
     default:
       return;

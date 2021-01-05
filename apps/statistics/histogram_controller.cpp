@@ -27,6 +27,9 @@ HistogramController::HistogramController(Responder * parentResponder, InputEvent
 
 void HistogramController::setCurrentDrawnSeries(int series) {
   initYRangeParameters(series);
+  /* The range of it CurveView has changed, the CurveView must be reloaded.
+   * See comment in HistogramView::drawRect. */
+  m_view.dataViewAtIndex(series)->CurveView::reload();
 }
 
 StackViewController * HistogramController::stackController() {

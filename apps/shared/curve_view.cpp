@@ -193,8 +193,6 @@ int CurveView::numberOfLabels(Axis axis) const {
   float minLabel = std::ceil(min(axis)/labelStep);
   float maxLabel = std::floor(max(axis)/labelStep);
   int numberOfLabels = maxLabel - minLabel + 1;
-  // Assert labels are up to date
-  assert(m_drawnRangeVersion == m_curveViewRange->rangeChecksum());
   assert(numberOfLabels <= (axis == Axis::Horizontal ? k_maxNumberOfXLabels : k_maxNumberOfYLabels));
   return numberOfLabels;
 }
@@ -377,6 +375,9 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   if (graduationOnly) {
     return;
   }
+
+  // Labels will be pulled. They must be up to date with current curve view.
+  assert(m_drawnRangeVersion == m_curveViewRange->rangeChecksum());
 
   // Draw the labels
   for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {

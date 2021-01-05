@@ -46,6 +46,11 @@ void ion_main(int argc, const char * const argv[]) {
       Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
       c = c == KDColorBlue ? KDColorGreen : KDColorBlue;
     }
+    if (Ion::Battery::isCharging()) {
+      Ion::Display::pushRectUniform(KDRect(0,40,100,100), KDColorWhite);
+    } else {
+      Ion::Display::pushRectUniform(KDRect(0,40,100,100), KDColorBlack);
+    }
     /*for (volatile uint32_t i=0; i<10000; i++) {
       __asm volatile("nop");
     }*/

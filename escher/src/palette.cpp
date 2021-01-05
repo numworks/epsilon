@@ -16,6 +16,7 @@ constexpr KDColor Palette::Select;
 constexpr KDColor Palette::SelectDark;
 constexpr KDColor Palette::WallScreen;
 constexpr KDColor Palette::WallScreenDark;
+constexpr KDColor Palette::PopUpTitleBackground;
 constexpr KDColor Palette::SubTab;
 constexpr KDColor Palette::LowBattery;
 constexpr KDColor Palette::Red;

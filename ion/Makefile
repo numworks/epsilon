@@ -42,6 +42,13 @@ ion_src += $(addprefix ion/src/shared/, \
   unicode/utf8_helper.cpp\
 )
 
+ion_device_userland_src += $(addprefix ion/src/shared/, \
+  events.cpp \
+  events_keyboard.cpp \
+  events_modifier.cpp \
+)
+ion_device_userland_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
+
 ion_src += ion/src/external/lz4/lz4.c
 
 tests_src += $(addprefix ion/test/,\

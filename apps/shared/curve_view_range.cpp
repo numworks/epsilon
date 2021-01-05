@@ -11,7 +11,7 @@ namespace Shared {
 
 uint32_t CurveViewRange::rangeChecksum() {
   float data[7] = {xMin(), xMax(), yMin(), yMax(), xGridUnit(), yGridUnit(), offscreenYAxis()};
-  size_t dataLengthInBytes = 7*sizeof(float);
+  size_t dataLengthInBytes = sizeof(data);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   return Ion::crc32Word((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }

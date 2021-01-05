@@ -27,8 +27,14 @@ HistogramController::HistogramController(Responder * parentResponder, InputEvent
 
 void HistogramController::setCurrentDrawnSeries(int series) {
   initYRangeParameters(series);
-  /* The range of it CurveView has changed, the CurveView must be reloaded.
-   * See comment in HistogramView::drawRect. */
+  /* The histogram's CurveView range has been updated along the Vertical axis.
+   * To call drawLabelsAndGraduations (in HistogramView::drawRect()), the
+   * CurveView must be reloaded so that labels and their values match the new
+   * range.
+   * In this situation, we update CurveView's Vertical axis, and draw horizontal
+   * labels, which are independent. To avoid having to call CurveView::reload(),
+   * axis could be taken into account when checking if labels are up to date,
+   * instead of using rangeChecksum(), which mixes all axis. */
   m_view.dataViewAtIndex(series)->CurveView::reload();
 }
 

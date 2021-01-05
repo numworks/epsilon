@@ -38,14 +38,6 @@ void HistogramView::reloadSelectedBar() {
 }
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
-  /* When setting the current drawn series, the histogram's CurveView range is
-   * updated along the Vertical axis. To call drawLabelsAndGraduations,
-   * CurveView must be reloaded (in setCurrentDrawnSeries method) so that labels
-   * and their values match the new range.
-   * In this situation, we update CurveView's Vertical axis, and draw horizontal
-   * labels, which are independent. To avoid having to call CurveView::reload(),
-   * axis could be taken into account when checking if labels are up to date,
-   * instead of using rangeChecksum(), which mixes all axis. */
   m_controller->setCurrentDrawnSeries(m_series);
   ctx->fillRect(rect, KDColorWhite);
   drawAxis(ctx, rect, Axis::Horizontal);

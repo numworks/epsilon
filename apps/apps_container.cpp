@@ -295,7 +295,7 @@ void AppsContainer::reloadTitleBarView() {
 
 void AppsContainer::displayExamModePopUp(GlobalPreferences::ExamMode mode) {
   m_examPopUpController.setTargetExamMode(mode);
-  s_activeApp->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+  s_activeApp->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
 }
 
 void AppsContainer::shutdownDueToLowBattery() {

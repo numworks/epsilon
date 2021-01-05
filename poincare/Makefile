@@ -172,6 +172,7 @@ tests_src += $(addprefix poincare/test/,\
   arithmetic.cpp\
   context.cpp\
   erf_inv.cpp \
+  dependency.cpp\
   derivative.cpp\
   expression.cpp\
   expression_order.cpp\

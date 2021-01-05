@@ -12,7 +12,7 @@ constexpr uint8_t kMaxNumberOfStacks = 4;
 class StackViewController : public ViewController {
 public:
   StackViewController(Responder * parentResponder, ViewController * rootViewController,
-    KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright);
+    KDColor textColor = KDColorWhite, KDColor backgroundColor = Palette::PopUpTitleBackground, KDColor separatorColor = Palette::PurpleDark);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright);

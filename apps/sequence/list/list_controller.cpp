@@ -16,7 +16,7 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
   m_expressionCells{},
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this, TableCell::Layout::Vertical),
-  m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
+  m_typeStackController(nullptr, &m_typeParameterController),
   m_sequenceToolbox()
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {

@@ -46,7 +46,8 @@ void ion_main(int argc, const char * const argv[]) {
     int timeout = 300;
     Ion::Events::Event e = Ion::Events::getEvent(&timeout);
     if (e != Ion::Events::None) {
-      Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
+      //Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
+      Ion::Display::displayColoredTilingSize10();
       c = c == KDColorBlue ? KDColorGreen : KDColorBlue;
     }
     if (e == Ion::Events::OK) {

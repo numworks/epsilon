@@ -61,7 +61,6 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/kernel/drivers/, \
   backlight.cpp \
   battery.cpp \
   board.cpp \
-  console_dummy.cpp \
   crc32.cpp \
   display.cpp \
   keyboard.cpp \

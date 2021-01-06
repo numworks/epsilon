@@ -1151,7 +1151,6 @@ double Expression::nextIntersectionWithExpression(const char * symbol, double st
 
 void Expression::bracketRoot(const char * symbol, double start, double step, double max, double result[2], Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
   double b = start;
-  double a = b;
   double c = start+step;
   double fb = evaluation(b, context, complexFormat, angleUnit, this, symbol, &expression);
   double fa = fb;
@@ -1171,7 +1170,6 @@ void Expression::bracketRoot(const char * symbol, double start, double step, dou
       result[1] = c;
       return;
     }
-    a = b;
     fa = fb;
     b = c;
     fb = fc;

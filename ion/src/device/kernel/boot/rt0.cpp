@@ -30,7 +30,7 @@ static void __attribute__((noinline)) external_flash_start() {
    * after the Power-On Self-Test if there is one or before switching to the
    * home app otherwise. */
   bool numworksAuthentication = Ion::Device::Authentication::isAuthenticated(reinterpret_cast<void *>(Ion::Device::Board::Config::UserlandAddress - Ion::Device::Board::Config::SizeSize));
-  Ion::Device::Board::initPeripherals(numworksAuthentication, false);
+  Ion::Device::Board::initPeripherals(numworksAuthentication, true);
   return kernel_main(numworksAuthentication);
 }
 

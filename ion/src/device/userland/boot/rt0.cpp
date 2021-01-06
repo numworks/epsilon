@@ -2,6 +2,7 @@
 #include <shared/boot/rt0.h>
 #include <ion.h>
 #include <ion/backlight.h> // TODO: remove
+#include <ion/console.h> // TODO: remove
 #include <ion/display.h> // TODO: remove
 #include <ion/usb.h> // TODO: remove
 #include <ion/events.h> // TODO: remove
@@ -49,9 +50,10 @@ void ion_main(int argc, const char * const argv[]) {
       c = c == KDColorBlue ? KDColorGreen : KDColorBlue;
     }
     if (e == Ion::Events::OK) {
-      uint8_t b = Ion::Backlight::brightness();
+      Ion::Console::writeChar('a');
+      /*uint8_t b = Ion::Backlight::brightness();
       b = (b + 240/12) % 240;
-      Ion::Backlight::setBrightness(12);
+      Ion::Backlight::setBrightness(12);*/
     }
     if (e == Ion::Events::Home) {
       if (Ion::Backlight::isInitialized()) {

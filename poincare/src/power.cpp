@@ -205,6 +205,9 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 // Serialize
 
 bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
+  if (childAtIndex(0)->type() == Type::Constant && static_cast<const ConstantNode *>(childAtIndex(0))->isExponential() && indexOfChild(child) == 1) {
+    return static_cast<const ExpressionNode *>(child)->type() != Type::Parenthesis;
+  }
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }

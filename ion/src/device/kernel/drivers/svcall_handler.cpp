@@ -1,4 +1,5 @@
 #include <kernel/boot/isr.h>
+#include <kernel/drivers/backlight.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/keyboard.h>
@@ -109,6 +110,21 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_BATTERY_VOLTAGE:
       *static_cast<float *>(args[0]) = Ion::Device::Battery::voltage();
+      return;
+    // BACKLIGHT
+    case SVC_BACKLIGHT_INIT:
+      Ion::Device::Backlight::init();
+      return;
+    case SVC_BACKLIGHT_SHUTDOWN:
+      Ion::Device::Backlight::shutdown();
+    case SVC_BACKLIGHT_IS_INITIALIZED:
+      *static_cast<bool *>(args[0]) = Ion::Device::Backlight::isInitialized();
+      return;
+    case SVC_BACKLIGHT_SET_BRIGHTNESS:
+      Ion::Device::Backlight::setBrightness(*static_cast<uint8_t *>(args[0]));
+      return;
+    case SVC_BACKLIGHT_BRIGHTNESS:
+      *static_cast<uint8_t *>(args[0]) = Ion::Device::Backlight::brightness();
       return;
     default:
       return;

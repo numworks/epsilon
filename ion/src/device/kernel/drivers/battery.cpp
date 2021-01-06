@@ -20,9 +20,8 @@ bool isCharging() {
   return !Config::ChargingPin.group().IDR()->get(Config::ChargingPin.pin());
 }
 
-Charge level() {
-  static Charge previousLevel = Charge::FULL;
-
+Ion::Battery::Charge level() {
+  static Ion::Battery::Charge previousLevel = Ion::Battery::Charge::FULL;
 
   // Get the current voltage
   float currentVoltage = voltage();
@@ -39,9 +38,9 @@ Charge level() {
     }
   }
   if (nextLevel < 0) {
-    nextLevel = (int) Charge::FULL;
+    nextLevel = (int) Ion::Battery::Charge::FULL;
   }
-  previousLevel = (Charge)nextLevel;
+  previousLevel = (Ion::Battery::Charge)nextLevel;
   return previousLevel;
 }
 

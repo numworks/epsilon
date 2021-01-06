@@ -96,7 +96,7 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("(-inf)^√(2)", "inf×(-1)^√(2)");
   assert_parsed_expression_simplify_to("inf^x", "inf^x");
   assert_parsed_expression_simplify_to("1/inf+24", "24");
-  assert_parsed_expression_simplify_to("ℯ^(inf)/inf", "0×ℯ^inf");
+  assert_parsed_expression_simplify_to("ℯ^(inf)/inf", "0×ℯ^\u0012inf\u0013");
 
   // Logarithm
   assert_parsed_expression_simplify_to("log(inf,0)", "undef");
@@ -141,7 +141,7 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("1/x^2+1/(x^2×π)", "\u0012π+1\u0013/\u0012π×x^2\u0013");
   assert_parsed_expression_simplify_to("1/x^2+1/(x^3×π)", "\u0012π×x+1\u0013/\u0012π×x^3\u0013");
   assert_parsed_expression_simplify_to("4x/x^2+3π/(x^3×π)", "\u00124×x^2+3\u0013/x^3");
-  assert_parsed_expression_simplify_to("3^(1/2)+2^(-2×3^(1/2)×ℯ^π)/2", "\u00122×2^\u00122×√(3)×ℯ^π\u0013×√(3)+1\u0013/\u00122×2^\u00122×√(3)×ℯ^π\u0013\u0013");
+  assert_parsed_expression_simplify_to("3^(1/2)+2^(-2×3^(1/2)×ℯ^π)/2", "\u00122×2^\u00122×√(3)×ℯ^\u0012π\u0013\u0013×√(3)+1\u0013/\u00122×2^\u00122×√(3)×ℯ^\u0012π\u0013\u0013\u0013");
   assert_parsed_expression_simplify_to("[[1,2+𝐢][3,4][5,6]]+[[1,2+𝐢][3,4][5,6]]", "[[2,4+2×𝐢][6,8][10,12]]");
   assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", "undef");
   assert_parsed_expression_simplify_to("[[1][3][5]]+[[1,2+𝐢][3,4][5,6]]", "undef");

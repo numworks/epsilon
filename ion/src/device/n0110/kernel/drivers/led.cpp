@@ -1,6 +1,6 @@
 #include <kernel/drivers/led.h>
 #include <ion/battery.h>
-#include <ion/exam_mode_unprivileged.h>
+#include <ion/exam_mode.h>
 #include <ion/usb.h>
 
 namespace Ion {

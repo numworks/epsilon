@@ -1,4 +1,7 @@
-#include "memory_privileged.h"
+#include "memory.h"
+#include <drivers/cache.h>
+#include <drivers/flash.h>
+#include <assert.h>
 
 namespace Ion {
 namespace Device {
@@ -30,8 +33,8 @@ uint8_t * SignificantPersistedByteAddress() {
     // Scan by groups of 4 bytes to reach last non-one uint32_t
     persitence_start_32++;
   }
-  uint8_t * persitence_start_8 = reinterpret_cast<uint32_t *>(persitence_start_32);
-  uint8_t * persitence_end_8 = reinterpret_cast<uint32_t *>(persitence_end_32);
+  uint8_t * persitence_start_8 = reinterpret_cast<uint8_t *>(persitence_start_32);
+  uint8_t * persitence_end_8 = reinterpret_cast<uint8_t *>(persitence_end_32);
   while ((persitence_start_8 + 1) < persitence_end_8 && *(persitence_start_8 + 1) != 0xFF) {
     // Scan by byte to reach last non-one byte
     persitence_start_8++;
@@ -56,7 +59,7 @@ void PersistByte(uint8_t byte) {
   }
 
   // Write the value in flash
-  Ion::Device::Flash::WriteMemory(writingAddress, byte, 1);
+  Ion::Device::Flash::WriteMemory(writingAddress, &byte, 1);
   Ion::Device::Cache::invalidateDCache();
 }
 

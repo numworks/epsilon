@@ -3,6 +3,7 @@
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/keyboard.h>
+#include <kernel/drivers/memory.h>
 #include <kernel/drivers/timing.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>

@@ -104,7 +104,7 @@ int displayUniformTilingSize10(KDColor c) {
 
     for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
       for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
-        Ion::Display::pushRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
+        pushRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
       }
     }
   }
@@ -119,7 +119,7 @@ int displayUniformTilingSize10(KDColor c) {
       for (int k=0; k<stampWidthPull*stampHeightPull; k++) {
         stamp[k] = KDColorBlack;
       }
-      Ion::Display::pullRect(KDRect(i*stampWidthPull, j*stampHeightPull, stampWidthPull, stampHeightPull), stamp);
+      pullRect(KDRect(i*stampWidthPull, j*stampHeightPull, stampWidthPull, stampHeightPull), stamp);
       for (int k=0; k<stampWidthPull*stampHeightPull; k++) {
         if (stamp[k] != c) {
           numberOfInvalidPixels++;
@@ -174,14 +174,14 @@ int displayColoredTilingSize10() {
     for (int j=0; j<numberOfVerticalTiles; j++) {
       for (int i=0; i<numberOfHorizontalTiles; i++) {
         KDRect tile(i*stampSize, j*stampSize, stampSize, stampSize);
-        Ion::Display::pushRect(tile, (i+j)%2 == 0 ? firstStamp : secondStamp);
+        pushRect(tile, (i+j)%2 == 0 ? firstStamp : secondStamp);
       }
     }
     // Check the pattern
     for (int j=0; j<numberOfVerticalTiles; j++) {
       for (int i=0; i<numberOfHorizontalTiles; i++) {
         KDRect tile((i+1)*stampSize-stampWidthPull, (j+1)*stampSize-stampHeightPull, stampWidthPull, stampHeightPull);
-        Ion::Display::pullRect(tile, resultStamp);
+        pullRect(tile, resultStamp);
         KDColor c = colorForStamp[(i+j)%2 == 0 ? firstColorIndex : secondColorIndex];
         for (int k = 0; k < stampWidthPull * stampHeightPull; k++) {
           if (resultStamp[k] != c) {

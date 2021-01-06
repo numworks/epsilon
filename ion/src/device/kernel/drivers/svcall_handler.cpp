@@ -58,6 +58,15 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
           static_cast<KDColor *>(args[1])
         );
       return;
+    case SVC_DISPLAY_WAIT_FOR_V_BLANK:
+      *static_cast<bool *>(args[0]) = Ion::Device::Display::waitForVBlank();
+      return;
+    case SVC_DISPLAY_UNIFORM_TILING_SIZE_10:
+      *static_cast<int *>(args[1]) = Ion::Device::Display::displayUniformTilingSize10(*static_cast<KDColor *>(args[0]));
+      return;
+    case SVC_DISPLAY_COLORED_TILING_SIZE_10:
+      *static_cast<int *>(args[0]) = Ion::Device::Display::displayColoredTilingSize10();
+      return;
     case SVC_DISPLAY_POST_PUSH_MULTICOLOR:
       // Load rootNumberTiles and tileSize
       Ion::Device::Display::POSTPushMulticolor(

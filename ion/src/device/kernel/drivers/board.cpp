@@ -3,7 +3,6 @@
 #include <drivers/config/clocks.h>
 #include <drivers/backlight.h>
 #include <drivers/battery.h>
-#include <drivers/console.h>
 #include <drivers/display.h>
 #include <drivers/external_flash.h>
 #include <drivers/keyboard.h>
@@ -44,7 +43,6 @@ void initPeripherals(bool numworksAuthentication, bool fromBootloader) {
     // USB has already be initialized by the bootloader
     USB::init();
   }
-  Console::init();
   SWD::init();
   Timing::init();
 }
@@ -52,7 +50,6 @@ void initPeripherals(bool numworksAuthentication, bool fromBootloader) {
 void shutdownPeripherals(bool keepLEDAwake) {
   Timing::shutdown();
   SWD::shutdown();
-  Console::shutdown();
   USB::shutdown();
   Battery::shutdown();
   if (!keepLEDAwake) {

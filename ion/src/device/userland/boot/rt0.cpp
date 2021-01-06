@@ -1,6 +1,7 @@
 #include "entry_point.h"
 #include <shared/boot/rt0.h>
 #include <ion.h>
+#include <ion/backlight.h> // TODO: remove
 #include <ion/display.h> // TODO: remove
 #include <ion/usb.h> // TODO: remove
 #include <ion/events.h> // TODO: remove
@@ -19,6 +20,7 @@ void abort() { //TODO EMILIE: expose in ion API
 }
 
 void ion_main(int argc, const char * const argv[]) {
+  Ion::Backlight::init();
   KDRect rect(0,0, 199, 100);
   KDColor c = KDColorRed;
   Ion::Display::pushRectUniform(rect, c);
@@ -45,6 +47,18 @@ void ion_main(int argc, const char * const argv[]) {
     if (e != Ion::Events::None) {
       Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
       c = c == KDColorBlue ? KDColorGreen : KDColorBlue;
+    }
+    if (e == Ion::Events::OK) {
+      uint8_t b = Ion::Backlight::brightness();
+      b = (b + 240/12) % 240;
+      Ion::Backlight::setBrightness(12);
+    }
+    if (e == Ion::Events::Home) {
+      if (Ion::Backlight::isInitialized()) {
+        Ion::Backlight::shutdown();
+      } else {
+        Ion::Backlight::init();
+      }
     }
     if (Ion::Battery::isCharging()) {
       Ion::Display::pushRectUniform(KDRect(0,40,100,100), KDColorWhite);

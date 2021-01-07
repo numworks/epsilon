@@ -4,6 +4,7 @@
 #include <ion/backlight.h> // TODO: remove
 #include <ion/console.h> // TODO: remove
 #include <ion/display.h> // TODO: remove
+#include <ion/persisting_bytes.h> // TODO: remove
 #include <ion/usb.h> // TODO: remove
 #include <ion/events.h> // TODO: remove
 
@@ -24,6 +25,10 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::Backlight::init();
   KDRect rect(0,0, 199, 100);
   KDColor c = KDColorRed;
+  uint8_t e = Ion::PersistingBytes::read();
+  if (e % 2) {
+    c = KDColorGreen;
+  }
   Ion::Display::pushRectUniform(rect, c);
   KDRect r(195,0, 10, 10);
   KDColor pixels[100];
@@ -46,8 +51,9 @@ void ion_main(int argc, const char * const argv[]) {
     int timeout = 300;
     Ion::Events::Event e = Ion::Events::getEvent(&timeout);
     if (e != Ion::Events::None) {
-      //Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
-      Ion::Display::displayColoredTilingSize10();
+      Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
+      //Ion::Display::displayColoredTilingSize10();
+      Ion::PersistingBytes::write(Ion::PersistingBytes::read() + 1);
       c = c == KDColorBlue ? KDColorGreen : KDColorBlue;
     }
     if (e == Ion::Events::OK) {

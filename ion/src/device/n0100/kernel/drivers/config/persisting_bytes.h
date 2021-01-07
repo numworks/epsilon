@@ -1,8 +1,9 @@
-#ifndef ION_DEVICE_N0100_KERNEL_DRIVERS_CONFIG_EXAM_MODE_H
-#define ION_DEVICE_N0100_KERNEL_DRIVERS_CONFIG_EXAM_MODE_H
+#ifndef ION_DEVICE_N0100_KERNEL_DRIVERS_CONFIG_PERSISTING_BYTES_H
+#define ION_DEVICE_N0100_KERNEL_DRIVERS_CONFIG_PERSISTING_BYTES_H
 
 namespace Ion {
-namespace ExamMode {
+namespace Device {
+namespace PersistingBytes {
 namespace Config {
 
 // TODO: factorize the macro with equivalent macro on N110
@@ -21,10 +22,11 @@ namespace Config {
 #define byte8K byte4K, byte4K
 #define byte16K byte8K, byte8K
 
-#define EXAM_BUFFER_CONTENT byte16K
+#define PERSISTING_BYTES_BUFFER_CONTENT byte16K
 
-constexpr static int ExamModeBufferSize = 16*1024;
+constexpr static int BufferSize = 16*1024;
 
+}
 }
 }
 }

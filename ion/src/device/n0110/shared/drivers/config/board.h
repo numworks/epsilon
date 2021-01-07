@@ -17,6 +17,8 @@ constexpr static uint32_t RescueBootloaderStartAddress = ITCMInterface + Bootloa
 constexpr static uint32_t KernelFirstBlockStartAddressVirtual = ITCMInterface + 2*BootloaderLength;
 constexpr static uint32_t KernelFirstBlockStartAddressPhysical = AXIMInterface + 2*BootloaderLength;
 constexpr static uint32_t KernelSecondBlockStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::FirstSectorSize;
+constexpr static uint32_t PersistedBytesStartAddress = ExternalFlash::Config::StartAddress;
+constexpr static uint32_t PersistedBytesEndAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::FirstSectorSize;
 
 }
 }

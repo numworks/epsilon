@@ -12,7 +12,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/keyboard.cpp \
   drivers/keyboard_queue.cpp \
   drivers/led.cpp \
-  drivers/memory.cpp \
+  drivers/persisting_bytes.cpp \
   drivers/svcall_handler.cpp \
   drivers/svcall_handler_as.s \
   drivers/swd.cpp \

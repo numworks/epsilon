@@ -13,7 +13,7 @@ INCLUDE config_flash.ld
 
 MEMORY {
   INTERNAL_FLASH_KERNEL (rx) : ORIGIN = INTERNAL_FLASH_KERNEL_ORIGIN, LENGTH = INTERNAL_FLASH_KERNEL_LENGTH
-  EXTERNAL_FLASH_EXAM_MODE (rx) : ORIGIN = EXAM_MODE_ORIGIN, LENGTH = EXAM_MODE_LENGTH
+  EXTERNAL_FLASH_PERSITING_BYTES (rx) : ORIGIN = PERSITING_BYTES_ORIGIN, LENGTH = PERSITING_BYTES_LENGTH
   EXTERNAL_FLASH_KERNEL (rx) : ORIGIN = EXTERNAL_FLASH_KERNEL_ORIGIN, LENGTH = EXTERNAL_FLASH_KERNEL_LENGTH
   SRAM_DATA_BSS (rw) : ORIGIN = KERNEL_SRAM_ORIGIN, LENGTH = KERNEL_SRAM_DATA_BSS_LENGTH
   SRAM_HEAP_STACK (rw) : ORIGIN = KERNEL_SRAM_ORIGIN + KERNEL_SRAM_DATA_BSS_LENGTH, LENGTH = SRAM_LENGTH - KERNEL_SRAM_DATA_BSS_LENGTH
@@ -125,13 +125,13 @@ SECTIONS {
 
   /* External flash memory */
 
-  .exam_mode_buffer ORIGIN(EXTERNAL_FLASH_EXAM_MODE) : {
-    _exam_mode_buffer_start = .;
-    KEEP(*(.exam_mode_buffer))
+  .persisting_bytes_buffer ORIGIN(EXTERNAL_FLASH_PERSITING_BYTES) : {
+    _persisting_bytes_buffer_start = .;
+    KEEP(*(.persisting_bytes_buffer))
     /* Note: We don't increment "." here, we set it. */
-    . = ORIGIN(EXTERNAL_FLASH_EXAM_MODE) + FIRST_EXTERNAL_FLASH_SECTOR_SIZE;
-    _exam_mode_buffer_end = .;
-  } >EXTERNAL_FLASH_EXAM_MODE
+    . = ORIGIN(EXTERNAL_FLASH_PERSITING_BYTES) + FIRST_EXTERNAL_FLASH_SECTOR_SIZE;
+    _persisting_bytes_buffer_end = .;
+  } >EXTERNAL_FLASH_PERSITING_BYTES
 
   .text.external ORIGIN(EXTERNAL_FLASH_KERNEL) : {
     . = ALIGN(4);
@@ -227,7 +227,7 @@ NOCROSSREFS_TO(.rodata.external .rodata.internal);
 NOCROSSREFS_TO(.text.external .header);
 NOCROSSREFS_TO(.rodata.external .header);
 
-NOCROSSREFS_TO(.exam_mode_buffer .text.internal);
-NOCROSSREFS_TO(.exam_mode_buffer .rodata.internal);
-NOCROSSREFS_TO(.exam_mode_buffer .isr_vector_table);
-NOCROSSREFS_TO(.exam_mode_buffer .header);
+NOCROSSREFS_TO(.persisting_bytes_buffer .text.internal);
+NOCROSSREFS_TO(.persisting_bytes_buffer .rodata.internal);
+NOCROSSREFS_TO(.persisting_bytes_buffer .isr_vector_table);
+NOCROSSREFS_TO(.persisting_bytes_buffer .header);

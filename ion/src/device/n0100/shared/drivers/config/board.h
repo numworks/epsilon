@@ -9,11 +9,14 @@ namespace Device {
 namespace Board {
 namespace Config {
 
+//TODO EMILIE: complete!
 constexpr static uint32_t StandardBootloaderStartAddress = InternalFlash::Config::StartAddress;
 constexpr static uint32_t RescueBootloaderStartAddress = InternalFlash::Config::StartAddress;
 constexpr static uint32_t KernelFirstBlockStartAddressVirtual = InternalFlash::Config::StartAddress;
 constexpr static uint32_t KernelFirstBlockStartAddressPhysical = InternalFlash::Config::StartAddress;
 constexpr static uint32_t KernelSecondBlockStartAddress = 0xFFFFFFFF;
+constexpr static uint32_t PersistedBytesStartAddress = InternalFlash::Config::StartAddress;
+constexpr static uint32_t PersistedBytesEndAddress = InternalFlash::Config::StartAddress;
 
 }
 }

@@ -3,7 +3,7 @@
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/keyboard.h>
-#include <kernel/drivers/memory.h>
+#include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/timing.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>
@@ -136,12 +136,12 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_BACKLIGHT_BRIGHTNESS:
       *static_cast<uint8_t *>(args[0]) = Ion::Device::Backlight::brightness();
       return;
-    // MEMORY
-    case SVC_MEMORY_PERSIST_BYTE:
-      Ion::Device::Memory::PersistByte(*static_cast<uint8_t *>(args[0]));
+    // PERSISTING BYTES
+    case SVC_PERSISTING_BYTES_WRITE:
+      Ion::Device::PersistingBytes::write(*static_cast<uint8_t *>(args[0]));
       return;
-    case SVC_MEMORY_READ_PERSISTED_BYTE:
-      *static_cast<uint8_t *>(args[0]) = Ion::Device::Memory::PersistedByte();
+    case SVC_PERSISTING_BYTES_READ:
+      *static_cast<uint8_t *>(args[0]) = Ion::Device::PersistingBytes::read();
       return;
     default:
       return;

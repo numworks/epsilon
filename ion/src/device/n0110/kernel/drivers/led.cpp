@@ -1,7 +1,7 @@
 #include <kernel/drivers/led.h>
-#include <ion/battery.h>
-#include <ion/exam_mode.h>
-#include <ion/usb.h>
+#include <drivers/usb.h>
+#include <kernel/drivers/battery.h>
+#include <kernel/drivers/persisting_bytes.h>
 
 namespace Ion {
 namespace Device {
@@ -9,7 +9,7 @@ namespace LED {
 
 KDColor updateColorWithPlugAndCharge() {
   KDColor ledColor = getColor();
-  if (Ion::ExamMode::FetchExamMode() == 0) { // If exam mode is on, we do not update the LED with the plugged/charging state
+  if (PersistingBytes::read() == 0xFF) { // If exam mode is on, we do not update the LED with the plugged/charging state
     if (USB::isPlugged()) {
       ledColor = Battery::isCharging() ? KDColorOrange : KDColorGreen;
     } else {

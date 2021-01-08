@@ -62,6 +62,13 @@ void ion_main(int argc, const char * const argv[]) {
       b = (b + 240/12) % 240;
       Ion::Backlight::setBrightness(12);*/
     }
+    if (e == Ion::Events::OnOff) {
+      //Ion::Power::standby();
+      Ion::Power::suspend(true);
+      /*uint8_t b = Ion::Backlight::brightness();
+      b = (b + 240/12) % 240;
+      Ion::Backlight::setBrightness(12);*/
+    }
     if (e == Ion::Events::Home) {
       if (Ion::Backlight::isInitialized()) {
         Ion::Backlight::shutdown();

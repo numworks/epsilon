@@ -1,8 +1,8 @@
 #include <kernel/drivers/power.h>
-#include <drivers/authentication.h>
 #include <drivers/external_flash.h>
 #include <drivers/reset.h>
 #include <drivers/usb.h>
+#include <kernel/drivers/authentication.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/config/board.h>

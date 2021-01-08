@@ -125,29 +125,6 @@ SECTIONS {
     *(.rodata._ZN3Ion6Device8Keyboard6Config*)
   } >INTERNAL_FLASH_KERNEL
 
-  /* External flash memory */
-
-  .persisting_bytes_buffer ORIGIN(EXTERNAL_FLASH_PERSITING_BYTES) : {
-    _persisting_bytes_buffer_start = .;
-    KEEP(*(.persisting_bytes_buffer))
-    /* Note: We don't increment "." here, we set it. */
-    . = ORIGIN(EXTERNAL_FLASH_PERSITING_BYTES) + FIRST_EXTERNAL_FLASH_SECTOR_SIZE;
-    _persisting_bytes_buffer_end = .;
-  } >EXTERNAL_FLASH_PERSITING_BYTES
-
-  .text.external ORIGIN(EXTERNAL_FLASH_KERNEL) : {
-    . = ALIGN(4);
-    *(.text)
-    *(.text.*)
-  } >EXTERNAL_FLASH_KERNEL
-
-  .rodata.external : {
-    *(.rodata)
-    *(.rodata.*)
-  } >EXTERNAL_FLASH_KERNEL
-
-  /* Internal flash memory */
-
   .init_array : {
     . = ALIGN(4);
     _init_array_start = .;
@@ -176,12 +153,40 @@ SECTIONS {
     _data_section_end_ram = .;
   } >SRAM_DATA_BSS AT> INTERNAL_FLASH_KERNEL
 
-  .fill :
+  .fill.internal :
   {
     FILL(0xFF);
     . = ORIGIN(INTERNAL_FLASH_KERNEL) + LENGTH(INTERNAL_FLASH_KERNEL) - 1;
     BYTE(0xFF)
   } > INTERNAL_FLASH_KERNEL
+
+  /* External flash memory */
+
+  .persisting_bytes_buffer ORIGIN(EXTERNAL_FLASH_PERSITING_BYTES) : {
+    _persisting_bytes_buffer_start = .;
+    KEEP(*(.persisting_bytes_buffer))
+    /* Note: We don't increment "." here, we set it. */
+    . = ORIGIN(EXTERNAL_FLASH_PERSITING_BYTES) + LENGTH(EXTERNAL_FLASH_PERSITING_BYTES);
+    _persisting_bytes_buffer_end = .;
+  } >EXTERNAL_FLASH_PERSITING_BYTES
+
+  .text.external ORIGIN(EXTERNAL_FLASH_KERNEL) : {
+    . = ALIGN(4);
+    *(.text)
+    *(.text.*)
+  } >EXTERNAL_FLASH_KERNEL
+
+  .rodata.external : {
+    *(.rodata)
+    *(.rodata.*)
+  } >EXTERNAL_FLASH_KERNEL
+
+  .fill.external :
+  {
+    FILL(0xFF);
+    . = ORIGIN(EXTERNAL_FLASH_KERNEL) + LENGTH(EXTERNAL_FLASH_KERNEL) - 1;
+    BYTE(0xFF)
+  } > EXTERNAL_FLASH_KERNEL
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

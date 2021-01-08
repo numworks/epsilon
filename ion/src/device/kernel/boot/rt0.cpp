@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <boot/rt0.h>
-#include <drivers/authentication.h>
 #include <drivers/reset.h>
+#include <kernel/drivers/authentication.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/config/board.h>
 #include <kernel/drivers/keyboard.h>

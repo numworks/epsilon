@@ -11,6 +11,7 @@ namespace Config {
 constexpr static int NumberOfForbiddenFirstSectors = 2;
 constexpr static uint32_t StartAddress = 0x08000000;
 constexpr static uint32_t EndAddress = 0x08010000;
+constexpr static uint32_t TotalSize = EndAddress - StartAddress;
 constexpr static int NumberOfSectors = 4;
 constexpr static uint32_t SectorAddresses[NumberOfSectors+1] = {
   0x08000000, 0x08004000, 0x08008000, 0x0800C000,

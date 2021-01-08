@@ -1,14 +1,11 @@
-#include <drivers/authentication.h>
+#include <shared/drivers/authentication.h>
 
 namespace Ion {
 namespace Device {
 namespace Authentication {
 
-bool isAuthenticated(void * pointer) {
-  return true;
-}
+void decrypt(uint8_t * signature, uint8_t * decryptedSignature) {}
 
 }
 }
 }
-

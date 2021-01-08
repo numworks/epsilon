@@ -37,7 +37,6 @@ define userland_symbols
   add-symbol-file output/debug/device/n0110/userland.elf
 end
 
-
 define use_dfu_symbol_file
 # Discard previous symbol file
   symbol-file

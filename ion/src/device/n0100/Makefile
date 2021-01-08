@@ -7,6 +7,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/n0100/kernel/drivers/, \
   cache.cpp \
   fcc_id.cpp \
   led.cpp \
+  power.cpp \
 )
 
 ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0100/shared/drivers/, \

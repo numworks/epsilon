@@ -15,6 +15,7 @@ void init();
 void shutdown();
 void handleInterruption();
 
+State scan();
 bool hasNextState();
 Ion::Keyboard::State nextState();
 

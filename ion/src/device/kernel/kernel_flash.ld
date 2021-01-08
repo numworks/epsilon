@@ -70,6 +70,7 @@ SECTIONS {
     *(.text.*3Ion6Device4Regs4GPIO5PUPDR*)
     *(.text._ZNK3Ion6Device4Regs9AFGPIOPin*)
     *(.text._ZN3Ion6Device13ExternalFlash*)
+    *(.text._ZZN3Ion6Device13ExternalFlash*)
     *(.text._ZN3Ion6Device5Cache*)
     *(.text._ZN3Ion6Device6Timing6usleepEj)
     *(.text._ZN3Ion6Device4Init12configureRAMEv)
@@ -95,6 +96,7 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Power17enterLowPowerModeEv)
     *(.text._ZN3Ion6Device5Board14shutdownClocksEb)
     *(.text._ZN3Ion6Device5Reset16coreWhilePluggedEv)
+    *(.text._ZN3Ion6Device5Board25shutdownPeripheralsClocksEb)
 
     /* 'suspend' dependencies '*/
     *(.text._ZN3Ion6Device5Power20internalFlashSuspendEb)

@@ -2,8 +2,10 @@
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/display.h>
+#include <kernel/drivers/events_keyboard_platform.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/persisting_bytes.h>
+#include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>
@@ -142,6 +144,17 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_PERSISTING_BYTES_READ:
       *static_cast<uint8_t *>(args[0]) = Ion::Device::PersistingBytes::read();
+      return;
+    // EVENTS
+    case SVC_EVENTS_GET_PLATFORM_EVENT:
+      *static_cast<Ion::Events::Event *>(args[0]) = Ion::Device::Events::getPlatformEvent();
+      return;
+    // POWER
+    case SVC_POWER_STANDBY:
+      Ion::Device::Power::standby();
+      return;
+    case SVC_POWER_SUSPEND:
+      Ion::Device::Power::suspend(*static_cast<bool *>(args[0]));
       return;
     default:
       return;

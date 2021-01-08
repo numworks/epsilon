@@ -7,7 +7,7 @@ namespace Ion {
 namespace Device {
 namespace Authentication {
 
-bool isAuthenticated(void * pointer);
+void decrypt(uint8_t * signature, uint8_t * decryptedSignature);
 
 }
 }

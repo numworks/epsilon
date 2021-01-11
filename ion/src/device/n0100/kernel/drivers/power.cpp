@@ -1,6 +1,6 @@
 #include <drivers/power.h>
-#include <drivers/board.h>
 #include <drivers/wakeup.h>
+#include <kernel/drivers/board.h>
 
 namespace Ion {
 namespace Device {

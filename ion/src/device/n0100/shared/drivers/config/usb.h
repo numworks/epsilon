@@ -2,6 +2,8 @@
 #define ION_DEVICE_N0100_CONFIG_USB_H
 
 #include <regs/regs.h>
+#include <drivers/config/board.h>
+#include <drivers/config/internal_flash.h>
 
 namespace Ion {
 namespace Device {

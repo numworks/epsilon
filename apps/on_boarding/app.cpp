@@ -17,7 +17,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 App::App(Snapshot * snapshot) :
   ::App(snapshot, &m_localizationController),
-  m_localizationController(&m_modalViewController, Metric::CommonTopMargin, LocalizationController::Mode::Language),
+  m_localizationController(&m_modalViewController, LocalizationController::Mode::Language),
   m_logoController()
 {
 }

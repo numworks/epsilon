@@ -32,6 +32,7 @@ public:
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override;
   Poincare::Expression expressionReduced(Poincare::Context * context) const override;
+  Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
 
   static constexpr int k_numberOfPlotTypes = 3;
   enum class PlotType : uint8_t {
@@ -123,9 +124,16 @@ private:
     //char m_expression[0];
   };
   class Model : public ExpressionModel {
+  public:
+    Model() : ExpressionModel(),
+        m_expressionDerivate()
+        {}
+    Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    void tidy() const override;
   private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
+    mutable Poincare::Expression m_expressionDerivate;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel * model() const override { return &m_model; }

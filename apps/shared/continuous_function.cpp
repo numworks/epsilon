@@ -241,7 +241,7 @@ double ContinuousFunction::approximateDerivative(double x, Poincare::Context * c
   char unknown[bufferSize];
   Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknown);
   // Derivative is simplified once and for all
-  return PoincareHelpers::ApproximateWithValueForSymbol(ExpressionModelHandle::expressionDerivateReduced(context), unknown, x, context);
+  return PoincareHelpers::ApproximateWithValueForSymbol(expressionDerivateReduced(context), unknown, x, context);
 }
 
 float ContinuousFunction::tMin() const {
@@ -324,12 +324,29 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
   *yMax = NAN;
 }
 
+void ContinuousFunction::Model::tidy() const {
+  m_expressionDerivate = Expression();
+  ExpressionModel::tidy();
+}
+
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
   return (char *)record->value().buffer+sizeof(RecordDataBuffer);
 }
 
 size_t ContinuousFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
   return record->value().size-sizeof(RecordDataBuffer);
+}
+
+Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const {
+  if (m_expressionDerivate.isUninitialized()) {
+    m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+    PoincareHelpers::Simplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    // simplify might return an uninitialized Expression if interrupted
+    if (m_expressionDerivate.isUninitialized()) {
+      m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+    }
+  }
+  return m_expressionDerivate;
 }
 
 ContinuousFunction::RecordDataBuffer * ContinuousFunction::recordData() const {

@@ -23,7 +23,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_selectableTableView(this),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
-  m_localizationController(this, Metric::CommonTopMargin, LocalizationController::Mode::Language),
+  m_localizationController(this, LocalizationController::Mode::Language),
   m_examModeController(this),
   m_aboutController(this)
 {

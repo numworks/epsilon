@@ -145,6 +145,11 @@ Coordinate2D<double> Solver::NextMinimum(ValueAtAbscissa evaluation, Context * c
   return result;
 }
 
+double Solver::DefaultMaximalStep(double start, double stop) {
+  double width = std::fabs(stop - start);
+  return std::fmax(k_minimalStep, k_relativePrecision * width);
+}
+
 double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
   if (ax > bx) {
     return BrentRoot(bx, ax, precision, evaluation, context, auxiliary);

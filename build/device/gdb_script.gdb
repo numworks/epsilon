@@ -23,6 +23,13 @@ define load_isr
   set $pc = *(InitialisationVector+1)
 end
 
+define bootloader_symbols
+# Discard previous symbol file
+  symbol-file
+# Load new symbol file
+  add-symbol-file output/release/device/n0110/bootloader.standard.elf
+end
+
 define kernel_symbols
 # Discard previous symbol file
   symbol-file

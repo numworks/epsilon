@@ -82,8 +82,17 @@ QUIZ_CASE(equation_solve) {
   assert_solves_numerically_to("cos(x)=0", -100, 100, {-90.0, 90.0});
   assert_solves_numerically_to("cos(x)=0", -900, 1000, {-810.0, -630.0, -450.0, -270.0, -90.0, 90.0, 270.0, 450.0, 630.0, 810.0});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0}, "y");
+  assert_solves_numerically_to("√(y+1)=0", -900, 1000, {-1}, "y");
   assert_solves_numerically_to("ℯ^x=0", -1000, 1000, {});
   assert_solves_numerically_to("ℯ^x/1000=0", -1000, 1000, {});
+  assert_solves_numerically_to("(x-1)/(2×(x-2)^2)=20.8", -10, 10, {1.856511, 2.167528});
+  assert_solves_numerically_to("8x^4-22x^2+15=0", -10, 10, {-1.224745, -1.118034, 1.118034, 1.224745});
+  assert_solves_numerically_to("(3x)^3/(0.1-3x)^3=10^(-8)", -10, 10, {0.000071660});
+
+  // The ends of the interval are solutions
+  assert_solves_numerically_to("sin(x)=0", -180, 180, {-180, 0, 180});
+  assert_solves_numerically_to("(x-1)^2×(x+1)^2=0", -1, 1, {-1, 1});
+  assert_solves_numerically_to("(x-1.00001)^2×(x+1.00001)^2=0", -1, 1, {});
 
   // Long variable names
   assert_solves_to("2abcde+3=4", "abcde=1/2");

@@ -84,7 +84,7 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force,
   KDCoordinate tableHeight = std::min<KDCoordinate>(
       bounds().height() - verticalOrigin,
       m_selectableTableView.minimalSizeForOptimalDisplay().height());
-  KDCoordinate tableHeightSansMargin = tableHeight - m_selectableTableView.bottomMargin();
+  KDCoordinate tableHeightSansMargin = tableHeight - k_verticalMargin;
 
   if (m_controller->shouldDisplayWarning()) {
     /* If the top cell is cut, bot not enough to hide part of the text, it will
@@ -134,13 +134,13 @@ I18n::Country LocalizationController::CountryAtIndex(int i) {
   return (I18n::Country)0;
 }
 
-LocalizationController::LocalizationController(Responder * parentResponder, KDCoordinate verticalMargin, LocalizationController::Mode mode) :
+LocalizationController::LocalizationController(Responder * parentResponder, LocalizationController::Mode mode) :
   ViewController(parentResponder),
   m_contentView(this, this),
   m_mode(mode)
 {
-  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : verticalMargin);
-  selectableTableView()->setBottomMargin(verticalMargin);
+  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
+  selectableTableView()->setBottomMargin(k_verticalMargin);
   for (int i = 0; i < k_numberOfCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
   }
@@ -154,7 +154,7 @@ void LocalizationController::resetSelection() {
 void LocalizationController::setMode(LocalizationController::Mode mode) {
   selectableTableView()->deselectTable();
   m_mode = mode;
-  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : selectableTableView()->bottomMargin());
+  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
   m_contentView.modeHasChanged();
 }
 

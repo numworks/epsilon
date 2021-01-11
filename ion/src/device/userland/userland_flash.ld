@@ -12,34 +12,34 @@
 INCLUDE config_flash.ld
 
 MEMORY {
-  EXTERNAL_FLASH_USERLAND (rx) : ORIGIN = EXTERNAL_FLASH_USERLAND_ORIGIN, LENGTH = EXTERNAL_FLASH_USERLAND_LENGTH
+  FLASH_USERLAND (rx) : ORIGIN = FLASH_USERLAND_ORIGIN, LENGTH = FLASH_USERLAND_LENGTH
   SRAM (rw) : ORIGIN = USERLAND_SRAM_ORIGIN, LENGTH = USERLAND_SRAM_LENGTH
 }
 
 
 SECTIONS {
-  .entry_point ORIGIN(EXTERNAL_FLASH_USERLAND) : {
+  .entry_point ORIGIN(FLASH_USERLAND) : {
     KEEP(*(.entry_point))
-  } >EXTERNAL_FLASH_USERLAND
+  } >FLASH_USERLAND
 
   .text : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >EXTERNAL_FLASH_USERLAND
+  } >FLASH_USERLAND
 
   .rodata : {
     . = ALIGN(4);
     *(.rodata)
     *(.rodata.*)
-  } >EXTERNAL_FLASH_USERLAND
+  } >FLASH_USERLAND
 
   .init_array : {
     . = ALIGN(4);
     _init_array_start = .;
     KEEP (*(.init_array*))
     _init_array_end = .;
-  } >EXTERNAL_FLASH_USERLAND
+  } >FLASH_USERLAND
 
   .data : {
     /* The data section is written to Flash but linked as if it were in RAM.
@@ -60,7 +60,7 @@ SECTIONS {
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
-  } >SRAM AT> EXTERNAL_FLASH_USERLAND
+  } >SRAM AT> FLASH_USERLAND
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

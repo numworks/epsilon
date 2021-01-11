@@ -18,8 +18,6 @@ void init() {
   // The bootloader leaves its own after flashing
   SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
   CORTEX.VTOR()->setVTOR((void*)&InitialisationVector);
-  // GPIO default states
-  setDefaultGPIO();
 }
 
 void initPeripheralsClocks() {

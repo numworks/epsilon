@@ -23,7 +23,7 @@ class ScrollViewBar : public ScrollViewIndicator {
 public:
   ScrollViewBar();
   bool update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength);
-  bool visible() const { return 0 < m_offset || m_visibleLength < 1; }
+  bool visible() const { return 0.0f < m_offset || m_visibleLength < 1.0f; }
 protected:
   constexpr static KDCoordinate k_indicatorThickness = 4;
   float m_offset;

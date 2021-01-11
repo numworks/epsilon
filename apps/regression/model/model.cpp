@@ -23,11 +23,11 @@ Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poi
   return e;
 }
 
-double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
+double Model::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
   Expression yExpression = Number::DecimalNumber(y);
   PoincareHelpers::Simplify(&yExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   Expression modelExpression = simplifiedExpression(modelCoefficients, context);
-  double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, step, xMax, context, yExpression).x1();
+  double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, xMax, context, yExpression, Solver::k_relativePrecision, Solver::k_minimalStep, DBL_MAX).x1();
   return result;
 }
 

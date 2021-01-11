@@ -1,5 +1,4 @@
-#include <drivers/board.h>
-#include <drivers/console.h>
+#include <kernel/drivers/board.h>
 #include <drivers/config/clocks.h>
 #include <regs/regs.h>
 

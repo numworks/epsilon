@@ -991,7 +991,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
 
 /* Expression roots/extrema solver*/
 
-Coordinate2D<double> Expression::nextMinimum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Coordinate2D<double> Expression::nextMinimum(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const {
   const void * pack[] = { this, symbol, &complexFormat, &angleUnit };
   Solver::ValueAtAbscissa evaluation = [](double x, Context * ctx, const void * aux) {
     const Expression * expr = static_cast<const Expression * const *>(aux)[0];
@@ -1000,10 +1000,10 @@ Coordinate2D<double> Expression::nextMinimum(const char * symbol, double start, 
     Preferences::AngleUnit angleUnit = static_cast<const Preferences::AngleUnit * const *>(aux)[3][0];
     return expr->approximateWithValueForSymbol(sym, x, ctx, complexFormat, angleUnit);
   };
-  return Solver::NextMinimum(evaluation, context, pack, start, max, k_solverMinimalStep, k_solverStepPrecision);
+  return Solver::NextMinimum(evaluation, context, pack, start, max, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> Expression::nextMaximum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Coordinate2D<double> Expression::nextMaximum(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const {
   const void * pack[] = { this, symbol, &complexFormat, &angleUnit };
   Solver::ValueAtAbscissa evaluation = [](double x, Context * ctx, const void * aux) {
     const Expression * expr = static_cast<const Expression * const *>(aux)[0];
@@ -1012,35 +1012,34 @@ Coordinate2D<double> Expression::nextMaximum(const char * symbol, double start, 
     Preferences::AngleUnit angleUnit = static_cast<const Preferences::AngleUnit * const *>(aux)[3][0];
     return -expr->approximateWithValueForSymbol(sym, x, ctx, complexFormat, angleUnit);
   };
-  Coordinate2D<double> result = Solver::NextMinimum(evaluation, context, pack, start, max, k_solverMinimalStep, k_solverStepPrecision);
+  Coordinate2D<double> result = Solver::NextMinimum(evaluation, context, pack, start, max, relativePrecision, minimalStep, maximalStep);
   return Coordinate2D<double>(result.x1(), -result.x2());
 }
 
-double Expression::nextRoot(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+double Expression::nextRoot(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const {
   /* The algorithms used to numerically find roots require either the function
    * to change sign around the root or for the root to be an extremum. Neither
    * is true for the null function, which we handle here. */
   if (nullStatus(context) == ExpressionNode::NullStatus::Null) {
-    return start + step;
+    return start + maximalStep;
   }
   if (type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot || type() == ExpressionNode::Type::SquareRoot) {
     /* A power such as sqrt(x) can have a vertical derivative around its root,
      * making the tolerance used for finding zeroes ill-suited. As such, we
      * make use of the fact that the base of the power needs to be null for the
      * root to be null. */
-    double result = childAtIndex(0).nextRoot(symbol, start, step, max, context, complexFormat, angleUnit);
+    double result = childAtIndex(0).nextRoot(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
     if (std::isnan(result)) {
       return NAN;
     }
     double exponent = type() == ExpressionNode::Type::SquareRoot ? 0.5 : childAtIndex(1).approximateWithValueForSymbol(symbol, result, context, complexFormat, angleUnit);
-    if (std::isnan(exponent) || exponent < k_solverStepPrecision * Solver::k_zeroPrecision) {
-      return NAN;
+    if (!std::isnan(exponent) && exponent > relativePrecision * Solver::k_zeroPrecision) {
+      double valueAtRoot = approximateWithValueForSymbol(symbol, result, context, complexFormat, angleUnit);
+      if (std::isfinite(valueAtRoot) && std::fabs(valueAtRoot) <= std::pow(relativePrecision * Solver::k_zeroPrecision, exponent)) {
+        return result;
+      }
     }
-    double valueAtRoot = approximateWithValueForSymbol(symbol, result, context, complexFormat, angleUnit);
-    if (std::isfinite(valueAtRoot) && std::fabs(valueAtRoot) <= std::pow(k_solverStepPrecision * Solver::k_zeroPrecision, exponent)) {
-      return result;
-    }
-    return nextRoot(symbol, result, step, max, context, complexFormat, angleUnit);
+    return nextRoot(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
   }
   const void * pack[] = { this, symbol, &complexFormat, &angleUnit };
   Solver::ValueAtAbscissa evaluation = [](double x, Context * ctx, const void * aux) {
@@ -1050,10 +1049,10 @@ double Expression::nextRoot(const char * symbol, double start, double step, doub
     Preferences::AngleUnit angleUnit = static_cast<const Preferences::AngleUnit * const *>(aux)[3][0];
     return expr->approximateWithValueForSymbol(sym, x, ctx, complexFormat, angleUnit);
   };
-  return Solver::NextRoot(evaluation, context, pack, start, max, k_solverMinimalStep, k_solverStepPrecision);
+  return Solver::NextRoot(evaluation, context, pack, start, max, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> Expression::nextIntersection(const char * symbol, double start, double step, double max, Poincare::Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
+Coordinate2D<double> Expression::nextIntersection(const char * symbol, double start, double max, Poincare::Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression, double relativePrecision, double minimalStep, double maximalStep) const {
   const void * pack[] = { this, &expression, symbol, &complexFormat, &angleUnit };
   Solver::ValueAtAbscissa evaluation = [](double x, Context * ctx, const void * aux) {
     const Expression * expr = static_cast<const Expression * const *>(aux)[0];
@@ -1063,7 +1062,7 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
     Preferences::AngleUnit angleUnit = static_cast<const Preferences::AngleUnit * const *>(aux)[4][0];
     return expr->approximateWithValueForSymbol(sym, x, ctx, complexFormat, angleUnit) - expr2->approximateWithValueForSymbol(sym, x, ctx, complexFormat, angleUnit);
   };
-  double resultX = Solver::NextRoot(evaluation, context, pack, start, max, k_solverMinimalStep, k_solverStepPrecision);
+  double resultX = Solver::NextRoot(evaluation, context, pack, start, max, relativePrecision, minimalStep, maximalStep);
   return Coordinate2D<double>(resultX, approximateWithValueForSymbol(symbol, resultX, context, complexFormat, angleUnit));
 }
 

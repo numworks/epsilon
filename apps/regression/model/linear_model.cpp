@@ -22,7 +22,7 @@ double LinearModel::evaluate(double * modelCoefficients, double x) const {
   return a*x+b;
 }
 
-double LinearModel::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
+double LinearModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   if (a == 0) {

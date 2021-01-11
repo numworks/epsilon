@@ -17,28 +17,31 @@ public:
       ValueAtAbscissa evaluation, Context * context, const void * auxiliary,
       BracketSearch search,
       T start, T end,
-      T relativePrecision, T maximalPrecision);
+      T relativePrecision,
+      T minimalStep, T maximalStep);
 
   static bool RootExistsOnInterval(T fa, T fb, T fc);
   static bool MinimumExistsOnInterval(T fa, T fb, T fc) { return (std::isnan(fa) || fa > fb) && (std::isnan(fc) || fb < fc) && (!std::isnan(fa) || !std::isnan(fc)); }
   static bool MaximumExistsOnInterval(T fa, T fb, T fc) { return (std::isnan(fa) || fa < fb) && (std::isnan(fc) || fb > fc) && (!std::isnan(fa) || !std::isnan(fc)); }
 
 private:
-  static Coordinate2D<T> NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T maximalPrecision);
-  static T Step(T x, T growthSpeed, T minimalGrowth);
+  static Coordinate2D<T> NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep);
+  static T Step(T x, T growthSpeed, T minimalStep, T maximalStep);
 };
 
 class Solver {
 public:
   static constexpr double k_zeroPrecision = 1e-5;
+  static constexpr double k_relativePrecision = 1e-2;
+  static constexpr double k_minimalStep = 1e-3;
 
   typedef SolverHelper<double>::ValueAtAbscissa ValueAtAbscissa;
 
   // Minimum
-  static Coordinate2D<double> NextMinimum(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double minimalStep, double stepPrecision);
+  static Coordinate2D<double> NextMinimum(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double relativePrecision, double minimalStep, double maximalStep);
 
   // Root
-  static double NextRoot(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double minimalStep, double stepPrecision);
+  static double NextRoot(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double relativePrecision, double minimalStep, double maximalStep);
   static Coordinate2D<double> IncreasingFunctionRoot(double ax, double bx, double resultPrecision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double * resultEvaluation = nullptr);
 
   // Probabilities

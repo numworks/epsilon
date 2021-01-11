@@ -95,12 +95,24 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   m_userVariablesUsed = !shouldReplaceFunctionsButNotSymbols;
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
+  assert(m_intervalApproximateSolutions[0] < m_intervalApproximateSolutions[1]);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
-  double root;
   double maximalStep = Poincare::Solver::DefaultMaximalStep(start, m_intervalApproximateSolutions[1]);
+  /* In order to be able to call NextRoot on the previously found root, the method cannot return its starting value. To allow the bound of the interval to be part of the solutions, we need to start the search a little sooner. */
+  start -= maximalStep;
+  double root;
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
     root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, m_intervalApproximateSolutions[1], context, Poincare::Solver::k_relativePrecision, Poincare::Solver::k_minimalStep, maximalStep);
+    if (std::isfinite(root)
+     && (root < m_intervalApproximateSolutions[0]) == (root < m_intervalApproximateSolutions[1])
+     && std::fabs(root - m_intervalApproximateSolutions[0]) > maximalStep * Poincare::Solver::k_zeroPrecision
+     && std::fabs(root - m_intervalApproximateSolutions[1]) > maximalStep * Poincare::Solver::k_zeroPrecision) {
+      /* The root is outside of the interval */
+      start = root;
+      i--;
+      continue;
+    }
     if (i == k_maxNumberOfApproximateSolutions) {
       m_hasMoreThanMaxNumberOfApproximateSolution = !std::isnan(root);
       break;

@@ -98,7 +98,7 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double root;
-  double maximalStep = DBL_MAX;
+  double maximalStep = Poincare::Solver::DefaultMaximalStep(start, m_intervalApproximateSolutions[1]);
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
     root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, m_intervalApproximateSolutions[1], context, Poincare::Solver::k_relativePrecision, Poincare::Solver::k_minimalStep, maximalStep);
     if (i == k_maxNumberOfApproximateSolutions) {

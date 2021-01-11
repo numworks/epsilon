@@ -39,9 +39,21 @@ ScrollView::ScrollView(ScrollView&& other) :
 
 KDSize ScrollView::minimalSizeForOptimalDisplay() const {
   KDSize contentSize = m_contentView->minimalSizeForOptimalDisplay();
-  return KDSize(
-    contentSize.width() + m_leftMargin + m_rightMargin,
-    contentSize.height() + m_topMargin + m_bottomMargin);
+  KDCoordinate width = contentSize.width() + m_leftMargin + m_rightMargin;
+  KDCoordinate height = contentSize.height() + m_topMargin + m_bottomMargin;
+
+  // Crop right or bottom margins if content fits without a portion of them.
+  float marginPortionTolerance = 0.8f; // 0.0 to never crop, 1.0 to always crop
+  KDCoordinate excessWidth = width - m_frame.width();
+  if (excessWidth > 0 && excessWidth <= marginPortionTolerance * m_rightMargin) {
+    width -= excessWidth;
+  }
+  KDCoordinate excessHeight = height - m_frame.height();
+  if (excessHeight > 0 && excessHeight <= marginPortionTolerance * m_bottomMargin) {
+    height -= excessHeight;
+  }
+
+  return KDSize(width, height);
 }
 
 void ScrollView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) {

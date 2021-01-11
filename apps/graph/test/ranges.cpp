@@ -75,36 +75,36 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("0.01", -10, 10, -5.81249952, 4.81249952);
 
   assert_best_cartesian_range_is("x", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("x+1", -12, 10, -6.19374943, 5.49374962);
-  assert_best_cartesian_range_is("-x+5", -6, 17, -6.55937433, 5.65937471);
-  assert_best_cartesian_range_is("x/2+2", -15, 7, -6.19374943, 5.49374962);
+  assert_best_cartesian_range_is("x+1", -12, 10, -6.09374952, 5.59374952);
+  assert_best_cartesian_range_is("-x+5", -7, 16, -6.30937481, 5.90937424);
+  assert_best_cartesian_range_is("x/2+2", -15, 8, -6.35937452, 5.85937452);
 
 
   assert_best_cartesian_range_is("x^2", -10, 10, -1.31249952, 9.3125);
   assert_best_cartesian_range_is("x^3", -10, 10, -5.16249943, 5.46249962);
   assert_best_cartesian_range_is("-2x^6", -10, 10, -16000, 2000);
-  assert_best_cartesian_range_is("3x^2+x+10", -12, 11, 7.84062624, 20.0593758);
+  assert_best_cartesian_range_is("3x^2+x+10", -12, 11, 7.74062586, 19.9593754);
 
-  assert_best_cartesian_range_is("1/x", -4.51764774, 4.51764774, -2.60000014, 2.20000005);
-  assert_best_cartesian_range_is("1/(1-x)", -3.51176548, 5.71176529, -2.60000014, 2.29999995);
-  assert_best_cartesian_range_is("1/(x^2+1)", -3.4000001, 3.4000001, -0.200000003, 1.10000002);
+  assert_best_cartesian_range_is("1/x", -4.98823595, 4.98823595, -2.79999995, 2.5);
+  assert_best_cartesian_range_is("1/(1-x)", -4.17647123, 6.17647123, -2.9000001, 2.60000014);
+  assert_best_cartesian_range_is("1/(x^2+1)", -3.10000014, 3.10000014, -0.200000003, 1.10000002);
 
   assert_best_cartesian_range_is("sin(x)", -15, 15, -1.39999998, 1.20000005, Radian);
   assert_best_cartesian_range_is("cos(x)", -1000, 1000, -1.39999998, 1.20000005, Degree);
-  assert_best_cartesian_range_is("tan(x)", -1000, 1000, -3.9000001, 3.4000001, Gradian);
-  assert_best_cartesian_range_is("tan(x-100)", -1200, 1200, -4, 3.5, Gradian);
+  assert_best_cartesian_range_is("tan(x)", -900, 900, -3.60000014, 3.10000014, Gradian);
+  assert_best_cartesian_range_is("tan(x-100)", -1100, 1100, -3.20000005, 2.79999995, Gradian);
 
   assert_best_cartesian_range_is("ℯ^x", -10, 10, -1.71249962, 8.91249943);
   assert_best_cartesian_range_is("ℯ^x+4", -10, 10, 2.28750038, 12.9124994);
   assert_best_cartesian_range_is("ℯ^(-x)", -10, 10, -1.71249962, 8.91249943);
-  assert_best_cartesian_range_is("(1-x)ℯ^(1/(1-x))", -1.8, 2.9, -3, 5.1);
+  assert_best_cartesian_range_is("(1-x)ℯ^(1/(1-x))", -1.60000002, 2.70000005, -3, 5.0999999);
 
-  assert_best_cartesian_range_is("ln(x)", -2.85294199, 8.25294113, -3.5, 2.4000001);
-  assert_best_cartesian_range_is("log(x)", -0.900000036, 3.20000005, -1.23906231, 0.939062357);
+  assert_best_cartesian_range_is("ln(x)", -2.82058883, 7.72058868, -3.29999995, 2.29999995);
+  assert_best_cartesian_range_is("log(x)", -0.900000036, 3.10000014, -1.21249986, 0.912499905);
 
-  assert_best_cartesian_range_is("√(x)", -3, 10, -2.10312462, 4.80312443);
+  assert_best_cartesian_range_is("√(x)", -3, 9, -1.88749945, 4.48749971);
   assert_best_cartesian_range_is("√(x^2+1)-x", -10, 10, -1.26249981, 9.36249924);
-  assert_best_cartesian_range_is("root(x^3+1,3)-x", -2, 2.5, -0.445312381, 1.94531238);
+  assert_best_cartesian_range_is("root(x^3+1,3)-x", -2, 2.29999995, -0.392187476, 1.89218748);
 }
 
 QUIZ_CASE(graph_ranges_several_functions) {
@@ -116,7 +116,7 @@ QUIZ_CASE(graph_ranges_several_functions) {
   {
     const char * definitions[] = {"x/2+2", "-x+5"};
     ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
-    assert_best_range_is(definitions, types, -16, 17, -9.21562386, 8.31562424);
+    assert_best_range_is(definitions, types, -16, 17, -9.01562405, 8.51562405);
   }
   {
     const char * definitions[] = {"sin(θ)", "cos(θ)"};

@@ -50,6 +50,8 @@ public:
   // Cumulative distributive function for function defined on N (positive integers)
   template<typename T> static T CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
 
+  static double DefaultMaximalStep(double start, double stop);
+
 private:
   constexpr static int k_maxNumberOfOperations = 1000000;
   constexpr static double k_maxProbability = 0.9999995;

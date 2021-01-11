@@ -27,7 +27,7 @@ double Model::levelSet(double * modelCoefficients, double xMin, double xMax, dou
   Expression yExpression = Number::DecimalNumber(y);
   PoincareHelpers::Simplify(&yExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   Expression modelExpression = simplifiedExpression(modelCoefficients, context);
-  double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, xMax, context, yExpression, Solver::k_relativePrecision, Solver::k_minimalStep, DBL_MAX).x1();
+  double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, xMax, context, yExpression, Solver::k_relativePrecision, Solver::k_minimalStep, Solver::DefaultMaximalStep(xMin, xMax)).x1();
   return result;
 }
 

@@ -49,10 +49,8 @@ void CalculationGraphController::reloadBannerView() {
 }
 
 Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, int direction) {
-  double step = m_graphRange->xGridUnit()/10.0;
-  step = direction < 0 ? -step : step;
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
-  return computeNewPointOfInterest(start, step, max, textFieldDelegateApp()->localContext());
+  return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext(), Solver::k_relativePrecision, Solver::k_minimalStep, DBL_MAX);
 }
 
 ContinuousFunctionStore * CalculationGraphController::functionStore() const {

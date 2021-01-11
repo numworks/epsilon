@@ -3,12 +3,13 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
+#include <algorithm>
 
 namespace Poincare {
 
 template<typename T>
-Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T maximalPrecision) {
-  assert(relativePrecision > static_cast<T>(0) && maximalPrecision > static_cast<T>(0));
+Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep) {
+  assert(relativePrecision > static_cast<T>(0) && minimalStep >= static_cast<T>(0) && maximalStep >= minimalStep);
 
   constexpr T overflow = sizeof(T) == sizeof(float) ? FLT_MAX : DBL_MAX;
   constexpr T underflow = sizeof(T) == sizeof(float) ? FLT_MIN : DBL_MIN;
@@ -23,18 +24,18 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation,
   } else if (end == static_cast<T>(-INFINITY)) {
     end = -overflow;
   }
-  if (maximalPrecision == 0) {
-    maximalPrecision = underflow;
+  if (minimalStep == 0) {
+    minimalStep = underflow;
   }
 
   if (start == static_cast<T>(0)
    || end == static_cast<T>(0)
    || ((start < static_cast<T>(0)) == (end < static_cast<T>(0)))) {
-    return NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, end, relativePrecision, maximalPrecision);
+    return NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, end, relativePrecision, minimalStep, maximalStep);
   }
 
   assert((start < static_cast<T>(0) && end > static_cast<T>(0)) || (start > static_cast<T>(0) && end < static_cast<T>(0)));
-  Coordinate2D<T> result = NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, static_cast<T>(0), relativePrecision, maximalPrecision);
+  Coordinate2D<T> result = NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, static_cast<T>(0), relativePrecision, minimalStep, maximalStep);
   if (std::isfinite(result.x1())) {
     return result;
   }
@@ -43,18 +44,26 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation,
   if (std::isfinite(result.x1())) {
     return result;
   }
-  return NextPointOfInterestHelper(evaluation, context, auxiliary, search, static_cast<T>(0), end, relativePrecision, maximalPrecision);
+  return NextPointOfInterestHelper(evaluation, context, auxiliary, search, static_cast<T>(0), end, relativePrecision, minimalStep, maximalStep);
 }
 
 template<typename T>
-Coordinate2D<T> SolverHelper<T>::NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T maximalPrecision) {
+Coordinate2D<T> SolverHelper<T>::NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep) {
   assert(start == static_cast<T>(0) || end == static_cast<T>(0) || (start > static_cast<T>(0) && end > static_cast<T>(0)) || (start < static_cast<T>(0) && end < static_cast<T>(0)));
   assert(relativePrecision > static_cast<T>(0));
 
   T h = std::fabs(start) < std::fabs(end) ? relativePrecision : -relativePrecision;
-  T m = start < end ? maximalPrecision : -maximalPrecision;
-  T x1 = start, x2 = Step(start, h, m);
-  T x3 = Step(x2, h, m);
+  T m, M;
+  if (start < end) {
+    m = minimalStep;
+    M = maximalStep;
+  } else {
+    m = -minimalStep;
+    M = -maximalStep;
+  }
+
+  T x1 = start, x2 = Step(start, h, m, M);
+  T x3 = Step(x2, h, m, M);
   T y1 = evaluation(x1, context, auxiliary), y2 = evaluation(x2, context, auxiliary), y3 = evaluation(x3, context, auxiliary);
 
   Coordinate2D<T> result(NAN, NAN);
@@ -66,7 +75,7 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterestHelper(ValueAtAbscissa evalu
     y1 = y2;
     x2 = x3;
     y2 = y3;
-    x3 = Step(x2, h, m);
+    x3 = Step(x2, h, m, M);
     y3 = evaluation(x3, context, auxiliary);
   }
 
@@ -74,13 +83,16 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterestHelper(ValueAtAbscissa evalu
 }
 
 template<typename T>
-T SolverHelper<T>::Step(T x, T growthSpeed, T minimalGrowth) {
+T SolverHelper<T>::Step(T x, T growthSpeed, T minimalStep, T maximalStep) {
+  assert(std::fabs(minimalStep) <= std::fabs(maximalStep));
   T acceleration = std::fmax(std::fabs(std::log10(std::fabs(x))-1)-2, 0);
-  T quickstep = x * growthSpeed * (1 + acceleration);
-  if (!std::isfinite(quickstep) || std::fabs(minimalGrowth) > std::fabs(quickstep)) {
-    return x + minimalGrowth;
+  T step = x * growthSpeed * (1 + acceleration);
+  if (!std::isfinite(step) || std::fabs(minimalStep) > std::fabs(step)) {
+    step = minimalStep;
+  } else if (std::fabs(maximalStep) < std::fabs(step)) {
+    step = maximalStep;
   }
-  return x + quickstep;
+  return x + step;
 }
 
 template<typename T>
@@ -89,7 +101,7 @@ bool SolverHelper<T>::RootExistsOnInterval(T fa, T fb, T fc) {
        || ((fb < static_cast<T>(0) && fc > static_cast<T>(0)) || (fb > static_cast<T>(0) && fc < static_cast<T>(0))));
 }
 
-double Solver::NextRoot(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double minimalStep, double stepPrecision) {
+double Solver::NextRoot(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double relativePrecision, double minimalStep, double maximalStep) {
   SolverHelper<double>::BracketSearch search = [](double a, double b, double c, double fa, double fb, double fc, SolverHelper<double>::ValueAtAbscissa f, Context * context, const void * auxiliary) {
     Coordinate2D<double> result(NAN, NAN);
     if (SolverHelper<double>::RootExistsOnInterval(fa, fb, fc)) {
@@ -111,20 +123,20 @@ double Solver::NextRoot(ValueAtAbscissa evaluation, Context * context, const voi
     }
     return Coordinate2D<double>(NAN, NAN);
   };
-  double result = SolverHelper<double>::NextPointOfInterest(evaluation, context, auxiliary, search, start, end, stepPrecision, minimalStep).x1();
+  double result = SolverHelper<double>::NextPointOfInterest(evaluation, context, auxiliary, search, start, end, relativePrecision, minimalStep, maximalStep).x1();
   // Because of float approximation, exact zero is never reached
-  if (std::fabs(result) < stepPrecision * k_zeroPrecision) {
+  if (std::fabs(result) < relativePrecision * k_zeroPrecision) {
     return 0.;
   }
   return result;
 }
 
-Coordinate2D<double> Solver::NextMinimum(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double minimalStep, double stepPrecision) {
+Coordinate2D<double> Solver::NextMinimum(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double relativePrecision, double minimalStep, double maximalStep) {
   SolverHelper<double>::BracketSearch search = [](double a, double b, double c, double fa, double fb, double fc, SolverHelper<double>::ValueAtAbscissa f, Context * context, const void * auxiliary) {
     Coordinate2D<double> res = SolverHelper<double>::MinimumExistsOnInterval(fa, fb, fc) ? BrentMinimum(a, c, f, context, auxiliary) : Coordinate2D<double>(NAN, NAN);
     return RoundCoordinatesToZero(res, a, c, f, context, auxiliary);
   };
-  Coordinate2D<double> result = SolverHelper<double>::NextPointOfInterest(evaluation, context, auxiliary, search, start, end, stepPrecision, minimalStep);
+  Coordinate2D<double> result = SolverHelper<double>::NextPointOfInterest(evaluation, context, auxiliary, search, start, end, relativePrecision, minimalStep, maximalStep);
   /* Ignore extremum whose value is undefined or too big because they are
    * really unlikely to be local extremum. */
   if (std::isnan(result.x2()) || std::fabs(result.x2()) > k_maxFloat) {
@@ -408,7 +420,7 @@ Coordinate2D<double> Solver::RoundCoordinatesToZero(Coordinate2D<double> xy, dou
   return result;
 }
 
-template Coordinate2D<float> SolverHelper<float>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, float start, float end, float relativePrecision, float maximalPrecision);
+template Coordinate2D<float> SolverHelper<float>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, float start, float end, float relativePrecision, float minimalStep, float maximalStep);
 template bool SolverHelper<float>::RootExistsOnInterval(float fa, float fb, float fc);
 
 template float Solver::CumulativeDistributiveInverseForNDefinedFunction(float *, ValueAtAbscissa, Context *, const void *);

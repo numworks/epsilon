@@ -87,10 +87,10 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   while (direction != 0) {
     Coordinate2D<float> pointOfInterest;
     if (direction > 0) {
-      pointOfInterest = SolverHelper<float>::NextPointOfInterest(evaluation, context, auxiliary, search, searchXRight, center + maxDistance, k_stepFactor - 1.f, k_minimalDistance);
+      pointOfInterest = SolverHelper<float>::NextPointOfInterest(evaluation, context, auxiliary, search, searchXRight, center + maxDistance, k_stepFactor - 1.f, k_minimalDistance, FLT_MAX);
       searchXRight = pointOfInterest.x1();
     } else /* direction < 0 */ {
-      pointOfInterest = SolverHelper<float>::NextPointOfInterest(evaluation, context, auxiliary, search, searchXLeft, center - maxDistance, k_stepFactor - 1.f, k_minimalDistance);
+      pointOfInterest = SolverHelper<float>::NextPointOfInterest(evaluation, context, auxiliary, search, searchXLeft, center - maxDistance, k_stepFactor - 1.f, k_minimalDistance, FLT_MAX);
       searchXLeft = pointOfInterest.x1();
     }
 

@@ -6,6 +6,7 @@
 #include "../regression_context.h"
 #include "../store.h"
 #include <poincare/helpers.h>
+#include <poincare/trigonometry.h>
 #include <poincare/test/helper.h>
 
 using namespace Poincare;

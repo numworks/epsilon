@@ -72,19 +72,19 @@ KDCoordinate CalculationTypeController::cellWidth() {
   return ImageCell::k_width;
 }
 
-KDCoordinate CalculationTypeController::cellHeight() {
-  return ImageCell::k_height;
-}
+// KDCoordinate CalculationTypeController::cellHeight() {
+//   return ImageCell::k_height;
+// }
 
-HighlightCell * CalculationTypeController::reusableCell(int index) {
+HighlightCell * CalculationTypeController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_numberOfImages);
   return &m_imageCells[index];
 }
 
-int CalculationTypeController::reusableCellCount() const {
-  return k_numberOfImages;
-}
+// int CalculationTypeController::reusableCellCount() const {
+//   return k_numberOfImages;
+// }
 
 void CalculationTypeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ImageCell * myCell = (ImageCell *)cell;

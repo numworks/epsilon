@@ -20,8 +20,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  // KDCoordinate cumulatedHeightFromIndex(int j) override;
+  // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setMessageTreeModel(const Escher::MessageTree * messageTreeModel);

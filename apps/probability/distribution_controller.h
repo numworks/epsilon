@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class DistributionController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class DistributionController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   DistributionController(Escher::Responder * parentResponder, Distribution * m_distribution, ParametersController * parametersController);
   Escher::View * view() override { return &m_contentView; }
@@ -18,9 +18,9 @@ public:
   TELEMETRY_ID("Distribution");
   int numberOfRows() const override { return k_totalNumberOfModels; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  KDCoordinate cellHeight() override { return k_cellHeight; }
-  Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const override { return k_numberOfCells; }
+  KDCoordinate rowHeight(int j) override; // { return k_cellHeight; }
+  Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override { return k_numberOfCells; }
 private:
   class ContentView : public Escher::View {
   public:
@@ -39,7 +39,7 @@ private:
   void setDistributionAccordingToIndex(int index);
   constexpr static KDCoordinate k_cellHeight = Escher::Metric::ParameterCellHeight;
   constexpr static int k_totalNumberOfModels = 9;
-  constexpr static int k_numberOfCells = (Ion::Display::Height - Escher::Metric::TitleBarHeight - 14 - ContentView::k_titleMargin) /k_cellHeight + 1 + 1; // 14 for the small font height, + 1 to get the upper rounding and + 1 for half-displayed rows
+  constexpr static int k_numberOfCells = 9; // (Ion::Display::Height - Escher::Metric::TitleBarHeight - 14 - ContentView::k_titleMargin) /k_cellHeight + 1 + 1; // 14 for the small font height, + 1 to get the upper rounding and + 1 for half-displayed rows
   Cell m_cells[k_numberOfCells];
   Escher::SelectableTableView m_selectableTableView;
   ContentView m_contentView;

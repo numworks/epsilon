@@ -13,7 +13,7 @@ namespace Probability {
 
 class CalculationController;
 
-class CalculationTypeController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class CalculationTypeController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   CalculationTypeController(Escher::Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController);
   Escher::View * view() override;
@@ -23,9 +23,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   KDCoordinate cellWidth() override;
-  KDCoordinate cellHeight() override;
-  Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const override;
+  // KDCoordinate rowHeight(int j) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
+  // int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   constexpr static int k_numberOfImages = 4;
 private:

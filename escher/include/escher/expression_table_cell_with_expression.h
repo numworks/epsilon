@@ -5,7 +5,7 @@
 #include <escher/i18n.h>
 
 namespace Escher {
-
+// Cell : Varbox Calculation (expression)
 class ExpressionTableCellWithExpression : public ExpressionTableCell {
 public:
   ExpressionTableCellWithExpression(Responder * parentResponder = nullptr);

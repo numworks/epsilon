@@ -57,7 +57,11 @@ int GenericSubController::numberOfRows() const {
   return 0;
 }
 
-KDCoordinate GenericSubController::rowHeight(int j) {
+KDCoordinate GenericSubController::rowHeight(int index) {
+  MessageTableCell tempCell = MessageTableCell();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+#if 0
   return Metric::ParameterCellHeight;
 }
 
@@ -71,6 +75,7 @@ int GenericSubController::indexFromCumulatedHeight(KDCoordinate offsetY) {
     return 0;
   }
   return (offsetY - 1) / height;
+#endif
 }
 
 int GenericSubController::typeAtLocation(int i, int j) {

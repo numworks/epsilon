@@ -1,7 +1,12 @@
 #include <escher/metric.h>
 
 namespace Escher {
-
+constexpr KDCoordinate Metric::CellTopMargin;
+constexpr KDCoordinate Metric::CellRightMargin;
+constexpr KDCoordinate Metric::CellLeftMargin;
+constexpr KDCoordinate Metric::CellBottomMargin;
+constexpr KDCoordinate Metric::CellHorizontalElementMargin;
+constexpr KDCoordinate Metric::CellVerticalElementMargin;
 constexpr KDCoordinate Metric::CellMargin;
 constexpr KDCoordinate Metric::CommonLeftMargin;
 constexpr KDCoordinate Metric::CommonRightMargin;

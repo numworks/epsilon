@@ -27,9 +27,9 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_examModeController(this),
   m_aboutController(this)
 {
-  for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-  }
+  // for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
+  //   m_cells[i].setMessageFont(KDFont::LargeFont);
+  // }
 }
 
 View * MainController::view() {
@@ -110,26 +110,62 @@ int MainController::numberOfRows() const {
   return model()->numberOfChildren();
 };
 
-KDCoordinate MainController::rowHeight(int j) {
+KDCoordinate MainController::rowHeight(int index) {
+  if (index == k_indexOfBrightnessCell) {
+    willDisplayCellForIndex((HighlightCell *)&m_brightnessCell, index);
+    return m_brightnessCell.minimalSizeForOptimalDisplay().height();
+  }
+  // if (index == k_indexOfLanguageCell) {
+  //   MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
+  //   willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  //   return tempCell.minimalSizeForOptimalDisplay().height();
+  // }
+  // if (index == k_indexOfCountryCell) {
+  //   MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
+  //   willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  //   return tempCell.minimalSizeForOptimalDisplay().height();
+  // }
+  if (hasPrompt() && index == k_indexOfPopUpCell) {
+    willDisplayCellForIndex((HighlightCell *)&m_popUpCell, index);
+    return m_popUpCell.minimalSizeForOptimalDisplay().height();
+  }
+  MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
+  tempCell.setMessageFont(KDFont::LargeFont);
+  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+#if 0
   if (j == k_indexOfBrightnessCell) {
     return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
   }
   return Metric::ParameterCellHeight;
+#endif
 }
 
 KDCoordinate MainController::cumulatedHeightFromIndex(int j) {
+  // if (j > k_indexOfBrightnessCell) {
+  //   return ListViewDataSource::cumulatedHeightFromIndex(j) + CellWithSeparator::k_margin;
+  // }
+  return ListViewDataSource::cumulatedHeightFromIndex(j);
+#if 0
   KDCoordinate height = j * rowHeight(0);
   if (j > k_indexOfBrightnessCell) {
     height += CellWithSeparator::k_margin;
   }
   return height;
+#endif
 }
 
 int MainController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  // if (offsetY < ) {
+  //   return ListViewDataSource::indexFromCumulatedHeight(offsetY);
+  // }
+  return ListViewDataSource::indexFromCumulatedHeight(offsetY);// - CellWithSeparator::k_margin);
+#if 0
   if (offsetY < rowHeight(0)*k_indexOfBrightnessCell + CellWithSeparator::k_margin) {
     return offsetY/rowHeight(0);
   }
   return (offsetY - CellWithSeparator::k_margin)/rowHeight(0);
+#endif
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {
@@ -193,6 +229,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
+  myTextCell->setMessageFont(KDFont::LargeFont);
   int childIndex = -1;
   switch (index) {
     case k_indexOfAngleUnitCell:

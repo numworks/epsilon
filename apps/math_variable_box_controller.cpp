@@ -138,6 +138,15 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 }
 
 KDCoordinate MathVariableBoxController::rowHeight(int index) {
+  if (m_currentPage == Page::RootMenu) {
+    MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
+    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    return tempCell.minimalSizeForOptimalDisplay().height();
+  }
+  ExpressionTableCellWithExpression tempCell = ExpressionTableCellWithExpression();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+#if 0
   if (m_currentPage != Page::RootMenu) {
     Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
     if (!layoutR.isUninitialized()) {
@@ -145,6 +154,7 @@ KDCoordinate MathVariableBoxController::rowHeight(int index) {
     }
   }
   return AlternateEmptyNestedMenuController::rowHeight(index);
+#endif
 }
 
 int MathVariableBoxController::typeAtLocation(int i, int j) {

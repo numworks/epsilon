@@ -4,8 +4,8 @@
 
 namespace Escher {
 
-MessageTableCell::MessageTableCell(I18n::Message label, const KDFont * font, Layout layout) :
-  TableCell(layout),
+MessageTableCell::MessageTableCell(I18n::Message label, const KDFont * font) :
+  TableCell(),
   m_messageTextView(font, label, 0, 0.5, KDColorBlack, KDColorWhite),
   m_backgroundColor(KDColorWhite)
 {

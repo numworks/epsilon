@@ -4,13 +4,13 @@
 
 namespace Escher {
 
-MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, Layout layout) :
-  MessageTableCell(message, KDFont::SmallFont, layout),
+MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message) :
+  MessageTableCell(message, KDFont::SmallFont),
   m_accessoryView(KDFont::SmallFont, (I18n::Message)0, 0.0f, 0.5f)
 {
-  if (layout != Layout::Vertical) {
-    m_accessoryView.setAlignment(1.0f, 0.5f);
-  }
+  // if (layout != Layout::Vertical) {
+  //   m_accessoryView.setAlignment(1.0f, 0.5f);
+  // }
 }
 
 void MessageTableCellWithMessage::setAccessoryMessage(I18n::Message textBody) {

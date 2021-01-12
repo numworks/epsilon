@@ -17,7 +17,7 @@ class ListController;
 class TypeParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   TypeParameterController(Escher::Responder * parentResponder, ListController * list,
-    Escher::TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
+    KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   const char * title() override;
   Escher::View * view() override;

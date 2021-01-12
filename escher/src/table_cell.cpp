@@ -6,10 +6,9 @@
 
 namespace Escher {
 
-TableCell::TableCell(Layout layout) :
+TableCell::TableCell() :
   Bordered(),
-  HighlightCell(),
-  m_layout(layout)
+  HighlightCell()
 {
 }
 
@@ -87,7 +86,7 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subL
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
   // Find a way to get bounds().width(). Can be 280 instead of 266 with params + handle max nb of rows
   KDCoordinate expectedWidth = Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin;
-  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), subAccessoryView(), accessoryView(), expectedWidth));
+  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), subAccessoryView(), accessoryView(), expectedWidth)*2);
 }
 
 void TableCell::layoutSubviews(bool force) {

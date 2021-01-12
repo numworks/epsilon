@@ -8,7 +8,7 @@ namespace Escher {
 // Cell : Varbox Calculation (expression)
 class ExpressionTableCell : public Responder, public TableCell {
 public:
-  ExpressionTableCell(Responder * responder = nullptr, Layout layout = Layout::HorizontalRightOverlap);
+  ExpressionTableCell(Responder * responder = nullptr);
   View * labelView() const override;
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);

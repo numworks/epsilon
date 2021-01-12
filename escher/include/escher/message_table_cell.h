@@ -9,7 +9,7 @@ namespace Escher {
 // Cell : Toolbox Calculation
 class MessageTableCell : public TableCell {
 public:
-  MessageTableCell(I18n::Message label = (I18n::Message)0, const KDFont * font = KDFont::SmallFont, Layout layout = Layout::HorizontalLeftOverlap);
+  MessageTableCell(I18n::Message label = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
   View * labelView() const override;
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message message);

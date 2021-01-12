@@ -76,7 +76,7 @@ float InteractiveCurveViewRange::yGridUnit() const {
      * that it allows enough graduations on the Y axis, but if the standard
      * unit would lead to too many graduations on the X axis, we force the
      * larger unit anyways. */
-    float numberOfUnits = (yMax() - yMin()) / res;
+    float numberOfUnits = (yMax() - yMin() + offscreenYAxis()) / res;
     if (numberOfUnits > k_maxNumberOfXGridUnits || numberOfUnits / 2.f > k_minNumberOfYGridUnits) {
       return 2 * res;
     }

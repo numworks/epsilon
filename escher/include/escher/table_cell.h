@@ -24,6 +24,8 @@ public:
   virtual View * accessoryView() const;
   virtual View * subAccessoryView() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override;
+  static KDCoordinate minimalHeightForOptimalDisplay(View * label, View * subLabel, View * accessory, KDCoordinate width);
 protected:
   virtual KDColor backgroundColor() const { return KDColorWhite; }
   virtual KDCoordinate labelMargin() const { return k_horizontalMargin; }

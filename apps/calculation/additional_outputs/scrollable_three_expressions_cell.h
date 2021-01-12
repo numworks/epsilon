@@ -39,6 +39,7 @@ private:
   ContentCell m_contentCell;
 };
 
+// Cell : Calculation cell
 class ScrollableThreeExpressionsCell : public Escher::TableCell, public Escher::Responder {
 public:
   static KDCoordinate Height(Calculation * calculation);

@@ -5,7 +5,7 @@
 #include <escher/table_cell.h>
 
 namespace Escher {
-
+// Cell : Varbox Calculation (expression)
 class ExpressionTableCell : public Responder, public TableCell {
 public:
   ExpressionTableCell(Responder * responder = nullptr, Layout layout = Layout::HorizontalRightOverlap);

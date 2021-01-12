@@ -54,8 +54,14 @@ void TypeParameterController::viewWillAppear() {
 }
 
 KDCoordinate TypeParameterController::rowHeight(int j) {
+  MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+}
+#if 0
   return PlotTypeHelper::Layout(j).layoutSize().height() + 14;
 }
+#endif
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < k_numberOfTypes);

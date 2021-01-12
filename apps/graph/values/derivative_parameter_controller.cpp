@@ -64,7 +64,7 @@ int DerivativeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * DerivativeParameterController::reusableCell(int index) {
+HighlightCell * DerivativeParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
 #if COPY_COLUMN
@@ -75,13 +75,13 @@ HighlightCell * DerivativeParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int DerivativeParameterController::reusableCellCount() const {
-  return k_totalNumberOfCell;
-}
+// int DerivativeParameterController::reusableCellCount() const {
+//   return k_totalNumberOfCell;
+// }
 
-KDCoordinate DerivativeParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
-}
+// KDCoordinate DerivativeParameterController::cellHeight() {
+//   return Metric::ParameterCellHeight;
+// }
 
 ContinuousFunctionStore * DerivativeParameterController::functionStore() {
   return App::app()->functionStore();

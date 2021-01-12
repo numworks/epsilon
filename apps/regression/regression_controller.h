@@ -27,11 +27,11 @@ public:
 
   // ListViewDataSource
   KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  // KDCoordinate cumulatedHeightFromIndex(int j) override;
+  // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfCells; }
-  int typeAtLocation(int i, int j) override { return 0; }
+  // int typeAtLocation(int i, int j) override { return 0; }
   int numberOfRows() const override { return k_numberOfRows; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 private:

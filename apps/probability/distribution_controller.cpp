@@ -85,7 +85,13 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   return false;
 }
 
-HighlightCell * Probability::DistributionController::reusableCell(int index) {
+KDCoordinate Probability::DistributionController::rowHeight(int j) {
+  Cell tempCell = Cell();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+}
+
+HighlightCell * Probability::DistributionController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_numberOfCells);
   return &m_cells[index];

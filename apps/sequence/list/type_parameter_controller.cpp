@@ -98,25 +98,25 @@ int TypeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * TypeParameterController::reusableCell(int index) {
+HighlightCell * TypeParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_explicitCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
   return cells[index];
 }
 
-int TypeParameterController::reusableCellCount() const {
+int TypeParameterController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-KDCoordinate TypeParameterController::cellHeight() {
-  if (m_record.isNull()) {
-    return 50;
-  }
-  return Metric::ParameterCellHeight;
-}
+// KDCoordinate TypeParameterController::cellHeight() {
+//   if (m_record.isNull()) {
+//     return 50;
+//   }
+//   return Metric::ParameterCellHeight;
+// }
 
-void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   const char * nextName = sequenceStore()->firstAvailableName();
   const KDFont * font = KDFont::LargeFont;
   if (!m_record.isNull()) {
@@ -130,6 +130,12 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
       );
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setLayout(m_layouts[j]);
+}
+
+KDCoordinate TypeParameterController::rowHeight(int j) {
+  ExpressionTableCellWithPointer tempCell = ExpressionTableCellWithPointer();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  return tempCell.minimalSizeForOptimalDisplay().height();
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

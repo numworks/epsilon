@@ -84,19 +84,19 @@ int ValuesParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * ValuesParameterController::reusableCell(int index) {
+HighlightCell * ValuesParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_deleteColumn, &m_setInterval}; //{&m_deleteColumn, &m_copyColumn, &m_setInterval};
   return cells[index];
 }
 
-int ValuesParameterController::reusableCellCount() const {
-  return k_totalNumberOfCell;
-}
+// int ValuesParameterController::reusableCellCount() const {
+//   return k_totalNumberOfCell;
+// }
 
-KDCoordinate ValuesParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
-}
+// KDCoordinate ValuesParameterController::cellHeight() {
+//   return Metric::ParameterCellHeight;
+// }
 
 }

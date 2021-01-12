@@ -43,7 +43,7 @@ int FunctionParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * FunctionParameterController::reusableCell(int index) {
+HighlightCell * FunctionParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
 #if COPY_COLUMN
@@ -54,8 +54,8 @@ HighlightCell * FunctionParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int FunctionParameterController::reusableCellCount() const {
-  return k_totalNumberOfCell;
+int FunctionParameterController::reusableCellCount(int type) {
+  return numberOfRows();
 }
 
 void FunctionParameterController::viewWillAppear() {

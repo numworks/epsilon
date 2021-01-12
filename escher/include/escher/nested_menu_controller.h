@@ -8,7 +8,7 @@
 #include <escher/stack_view_controller.h>
 
 namespace Escher {
-
+// Pop-up - Toolbox
 class NestedMenuController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
@@ -22,7 +22,7 @@ public:
   void viewDidDisappear() override;
 
   //ListViewDataSource
-  KDCoordinate rowHeight(int j) override;
+  // KDCoordinate rowHeight(int j) override;//
   HighlightCell * reusableCell(int index, int type) override;
 protected:
   class Stack {

@@ -30,8 +30,14 @@ bool FunctionCurveParameterController::handleGotoSelection() {
   return true;
 }
 
-KDCoordinate FunctionCurveParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
+// KDCoordinate FunctionCurveParameterController::cellHeight() {
+//   return Metric::ParameterCellHeight;
+// }
+
+KDCoordinate FunctionCurveParameterController::rowHeight(int j) {
+  Escher::HighlightCell * cell = reusableCell(j, typeAtLocation(0, j));
+  willDisplayCellForIndex(cell, j);
+  return cell->minimalSizeForOptimalDisplay().height();
 }
 
 }

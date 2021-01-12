@@ -53,6 +53,23 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MathToolbox::willDisplayCellForIndex(cell, index - stackRowOffset());
 }
 
+KDCoordinate SequenceToolbox::rowHeight(int index) {
+  if (typeAtLocation(0, index) == 2) {
+    ExpressionTableCell tempCell = ExpressionTableCell();
+    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    return tempCell.minimalSizeForOptimalDisplay().height();
+  }
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(mathToolboxIndex(index));
+  if (messageTree->numberOfChildren() == 0) {
+    MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
+    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    return tempCell.minimalSizeForOptimalDisplay().height();
+  }
+  MessageTableCell tempCell = MessageTableCell();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+}
+
 int SequenceToolbox::typeAtLocation(int i, int j) {
   if (stackDepth() == 0 && j < m_numberOfAddedCells) {
     return 2;

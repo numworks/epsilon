@@ -27,4 +27,10 @@ void CellWithSeparator::layoutSubviews(bool force) {
   cell()->setFrame(KDRect(0, k_margin, bounds().width(), bounds().height()-k_margin), force);
 }
 
+KDSize CellWithSeparator::minimalSizeForOptimalDisplay() const {
+  // KDSize cellSize = const_cast<Escher::HighlightCell *>(cell())->minimalSizeForOptimalDisplay(); // cell() not const
+  // return KDSize(cellSize.width(), k_margin + cellSize.height());
+  return KDSize(0,k_margin);
+}
+
 }

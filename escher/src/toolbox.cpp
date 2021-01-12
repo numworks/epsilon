@@ -40,6 +40,18 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   myCell->reloadCell();
 }
 
+KDCoordinate Toolbox::rowHeight(int index) {
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
+  if (messageTree->numberOfChildren() == 0) {
+    MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
+    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    return tempCell.minimalSizeForOptimalDisplay().height();
+  }
+  MessageTableCell tempCell = MessageTableCell();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+}
+
 int Toolbox::typeAtLocation(int i, int j) {
   const MessageTree * messageTree = m_messageTreeModel->childAtIndex(j);
   if (messageTree->numberOfChildren() == 0) {

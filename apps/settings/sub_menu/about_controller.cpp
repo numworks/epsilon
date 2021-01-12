@@ -11,11 +11,11 @@ AboutController::AboutController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_view(&m_selectableTableView)
 {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-    m_cells[i].setAccessoryFont(KDFont::SmallFont);
-    m_cells[i].setAccessoryTextColor(Palette::GrayDark);
-  }
+  // for (int i = 0; i < k_totalNumberOfCell; i++) {
+  //   m_cells[i].setMessageFont(KDFont::LargeFont);
+  //   m_cells[i].setAccessoryFont(KDFont::SmallFont);
+  //   m_cells[i].setAccessoryTextColor(Palette::GrayDark);
+  // }
 }
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
@@ -54,6 +54,9 @@ int AboutController::reusableCellCount(int type) {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+  myCell->setMessageFont(KDFont::LargeFont);
+  myCell->setAccessoryFont(KDFont::SmallFont);
+  myCell->setAccessoryTextColor(Palette::GrayDark);
   const char * messages[] = {
     Ion::softwareVersion(),
     Ion::serialNumber(),
@@ -61,6 +64,12 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   };
   assert(index >= 0 && index < 3);
   myCell->setAccessoryText(messages[index]);
+}
+
+KDCoordinate AboutController::rowHeight(int index) {
+  MessageTableCellWithBuffer tempCell = MessageTableCellWithBuffer();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
 }
 
 }

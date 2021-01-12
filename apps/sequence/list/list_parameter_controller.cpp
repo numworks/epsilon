@@ -117,6 +117,21 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
   }
 }
 
+KDCoordinate ListParameterController::rowHeight(int j) {
+  switch (j) {
+  case 0:
+    willDisplayCellForIndex((HighlightCell *)&m_typeCell, j);
+    return m_typeCell.minimalSizeForOptimalDisplay().height();
+  case 1:
+    if (hasInitialRankRow()) {
+      willDisplayCellForIndex((HighlightCell *)&m_initialRankCell, j);
+      return m_initialRankCell.minimalSizeForOptimalDisplay().height();
+    }
+  default:
+    return Shared::ListParameterController::rowHeight(j - 1 - hasInitialRankRow());
+  }
+}
+
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
   switch (type) {
     /*case 0:
@@ -133,7 +148,7 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
+  // cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData() // TODO
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
     m_typeCell.setLayout(sequence()->definitionName());

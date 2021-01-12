@@ -16,6 +16,7 @@ public:
   ListParameterController(ListController * listController, Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;
   // ListViewDataSource
+  KDCoordinate rowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:

@@ -12,7 +12,7 @@
 namespace Calculation {
 
 class EditExpressionController;
-
+// Pop-up - additional output
 class ListController : public Escher::StackViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);

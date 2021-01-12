@@ -7,7 +7,7 @@ namespace Escher {
 
 class MessageTableCellWithMessage : public MessageTableCell {
 public:
-  MessageTableCellWithMessage(I18n::Message message = (I18n::Message)0, Layout layout = Layout::Vertical);
+  MessageTableCellWithMessage(I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setAccessoryMessage(I18n::Message textBody);

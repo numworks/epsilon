@@ -13,12 +13,12 @@ using namespace Escher;
 
 namespace Sequence {
 
-TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list, TableCell::Layout cellLayout,
+TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_explicitCell(&m_selectableTableView, I18n::Message::Explicit, cellLayout),
-  m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence, cellLayout),
-  m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence, cellLayout),
+  m_explicitCell(&m_selectableTableView, I18n::Message::Explicit),
+  m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence),
+  m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence),
   m_layouts{},
   m_selectableTableView(this),
   m_record(),

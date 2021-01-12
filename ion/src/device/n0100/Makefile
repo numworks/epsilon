@@ -1,6 +1,7 @@
 ion_device_bootloader_src += $(addprefix ion/src/device/n0100/bootloader/drivers/, \
   authentication.cpp \
   board.cpp \
+  option_bytes.cpp \
 )
 
 ion_device_kernel_src += $(addprefix ion/src/device/n0100/kernel/drivers/, \

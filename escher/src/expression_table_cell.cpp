@@ -5,9 +5,9 @@
 
 namespace Escher {
 
-ExpressionTableCell::ExpressionTableCell(Responder * parentResponder, Layout layout) :
+ExpressionTableCell::ExpressionTableCell(Responder * parentResponder) :
   Responder(parentResponder),
-  TableCell(layout),
+  TableCell(),
   m_labelExpressionView(this, k_horizontalMargin, 0, 0.0f, 0.5f, KDColorBlack, KDColorWhite)
 {
 }

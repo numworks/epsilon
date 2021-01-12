@@ -19,7 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Zoom");
 private:
-  constexpr static KDCoordinate k_standardViewHeight = 175;
+  constexpr static KDCoordinate k_standardViewHeight = 174;
 
   class ContentView : public Escher::View {
   public:

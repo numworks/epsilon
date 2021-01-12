@@ -67,12 +67,16 @@ int EquationModelsParameterController::numberOfRows() const {
 };
 
 KDCoordinate EquationModelsParameterController::rowHeight(int j) {
-  return Metric::ToolboxRowHeight;
+  if (typeAtLocation(j,0) == 0) {
+    return m_emptyModelCell.minimalSizeForOptimalDisplay().height();
+  }
+  return m_modelCells[j-1].minimalSizeForOptimalDisplay().height();
+  // return Metric::ToolboxRowHeight;
 }
 
-KDCoordinate EquationModelsParameterController::cumulatedHeightFromIndex(int j) {
-  return rowHeight(0) * j;
-}
+// KDCoordinate EquationModelsParameterController::cumulatedHeightFromIndex(int j) {
+//   return rowHeight(0) * j;
+// }
 
 int EquationModelsParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   KDCoordinate height = rowHeight(0);

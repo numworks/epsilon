@@ -67,7 +67,20 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
   displayEmptyControllerIfNeeded();
 }
 
-KDCoordinate VariableBoxController::rowHeight(int j) {
+KDCoordinate VariableBoxController::rowHeight(int index) {
+  assert(index >= 0 && index < numberOfRows());
+  NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
+  int cumulatedOriginsCount = 0;
+  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
+  if (cellType == k_itemCellType) {
+    ScriptNodeCell tempCell = ScriptNodeCell();
+    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    return tempCell.minimalSizeForOptimalDisplay().height();
+  }
+  MessageTableCell tempCell = MessageTableCell();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+#if 0
   NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(j, &cellOrigin, &cumulatedOriginsCount);
@@ -81,6 +94,7 @@ KDCoordinate VariableBoxController::rowHeight(int j) {
   assert(m_displaySubtitles);
   assert(cellType == k_subtitleCellType);
   return k_subtitleRowHeight;
+#endif
 }
 
 int VariableBoxController::numberOfRows() const {

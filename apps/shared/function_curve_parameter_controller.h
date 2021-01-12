@@ -7,13 +7,13 @@
 
 namespace Shared {
 
-class FunctionCurveParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class FunctionCurveParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   FunctionCurveParameterController();
   Escher::View * view() override { return &m_selectableTableView; }
   TELEMETRY_ID("CurveParameter");
   void didBecomeFirstResponder() override;
-  KDCoordinate cellHeight() override;
+  KDCoordinate rowHeight(int j) override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   bool handleGotoSelection();

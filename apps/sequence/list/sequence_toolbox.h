@@ -12,6 +12,7 @@ public:
   SequenceToolbox();
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
+  KDCoordinate rowHeight(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;

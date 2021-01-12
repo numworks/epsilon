@@ -55,26 +55,28 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
 }
 KDCoordinate RegressionController::rowHeight(int j) {
   assert (j >= 0 && j < numberOfRows());
-  return j == numberOfRows() -1 ? k_logisticCellHeight : Metric::ParameterCellHeight;
+  MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  return tempCell.minimalSizeForOptimalDisplay().height();
 }
 
-KDCoordinate RegressionController::cumulatedHeightFromIndex(int j) {
-  assert (j >= 0 && j <= numberOfRows());
-  KDCoordinate result = 0;
-  for (int i = 0; i < j; i++) {
-    result+= rowHeight(i);
-  }
-  return result;
-}
+// KDCoordinate RegressionController::cumulatedHeightFromIndex(int j) {
+//   assert (j >= 0 && j <= numberOfRows());
+//   KDCoordinate result = 0;
+//   for (int i = 0; i < j; i++) {
+//     result+= rowHeight(i);
+//   }
+//   return result;
+// }
 
-int RegressionController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  int result = 0;
-  int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
-    result += rowHeight(j++);
-  }
-  return (result < offsetY || offsetY == 0) ? j : j - 1;
-}
+// int RegressionController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+//   int result = 0;
+//   int j = 0;
+//   while (result < offsetY && j < numberOfRows()) {
+//     result += rowHeight(j++);
+//   }
+//   return (result < offsetY || offsetY == 0) ? j : j - 1;
+// }
 
 HighlightCell * RegressionController::reusableCell(int index, int type) {
   assert(index >= 0);

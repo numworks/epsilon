@@ -87,10 +87,10 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force,
   KDCoordinate tableHeightSansMargin = tableHeight - k_verticalMargin;
 
   if (m_controller->shouldDisplayWarning()) {
-    /* If the top cell is cut, bot not enough to hide part of the text, it will
+    /* If the top cell is cut, but not enough to hide part of the text, it will
      * appear squashed. To prevent that, we increase the top margin slightly,
      * so that the top cell will be cropped in the middle. */
-    KDCoordinate rowHeight = m_controller->cellHeight() + Metric::CellSeparatorThickness;
+    KDCoordinate rowHeight = m_controller->reusableCell(0, 0)->minimalSizeForOptimalDisplay().height();
     KDCoordinate incompleteCellHeight = tableHeightSansMargin - (tableHeightSansMargin / rowHeight) * rowHeight;
     KDCoordinate offset = std::max(0, incompleteCellHeight - rowHeight / 2);
     tableHeight -= offset;
@@ -103,7 +103,7 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force,
 }
 
 // LocalizationController
-constexpr int LocalizationController::k_numberOfCells;
+// constexpr int LocalizationController::k_numberOfCells;
 
 int LocalizationController::IndexOfCountry(I18n::Country country) {
   /* As we want to order the countries alphabetically in the selected language,
@@ -141,9 +141,9 @@ LocalizationController::LocalizationController(Responder * parentResponder, Loca
 {
   selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
   selectableTableView()->setBottomMargin(k_verticalMargin);
-  for (int i = 0; i < k_numberOfCells; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-  }
+  // for (int i = 0; i < k_numberOfCells; i++) {
+  //   m_cells[i].setMessageFont(KDFont::LargeFont);
+  // }
 }
 
 void LocalizationController::resetSelection() {
@@ -191,7 +191,14 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+KDCoordinate LocalizationController::rowHeight(int j) {
+  MessageTableCell tempCell = MessageTableCell();
+  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+}
+
 void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  static_cast<MessageTableCell *>(cell)->setMessageFont(KDFont::LargeFont);
   if (mode() == Mode::Language) {
     static_cast<MessageTableCell *>(cell)->setMessage(I18n::LanguageNames[index]);
     return;

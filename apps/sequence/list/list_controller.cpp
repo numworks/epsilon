@@ -15,7 +15,7 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
   m_sequenceTitleCells{},
   m_expressionCells{},
   m_parameterController(inputEventHandlerDelegate, this),
-  m_typeParameterController(this, this, TableCell::Layout::Vertical),
+  m_typeParameterController(this, this),
   m_typeStackController(nullptr, &m_typeParameterController),
   m_sequenceToolbox()
 {

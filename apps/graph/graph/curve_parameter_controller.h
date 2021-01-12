@@ -17,8 +17,8 @@ public:
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:

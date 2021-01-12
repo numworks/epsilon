@@ -22,9 +22,16 @@ DisplayModeController::DisplayModeController(Responder * parentResponder, InputE
 
 KDCoordinate DisplayModeController::rowHeight(int j) {
   if (j == numberOfRows()-1) {
+#if 0
     return Metric::ParameterCellHeight+MessageTableCellWithEditableTextWithSeparator::k_margin;
   }
   return Metric::ParameterCellHeight;
+#endif
+    MessageTableCellWithEditableTextWithSeparator tempCell = MessageTableCellWithEditableTextWithSeparator();
+    willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+    return tempCell.minimalSizeForOptimalDisplay().height();
+  }
+  return PreferencesController::rowHeight(j);
 }
 
 KDCoordinate DisplayModeController::cumulatedHeightFromIndex(int j) {

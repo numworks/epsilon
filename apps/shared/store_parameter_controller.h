@@ -28,17 +28,17 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
-  KDCoordinate rowHeight(int j) override { return Escher::Metric::ParameterCellHeight; }
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  // KDCoordinate rowHeight(int j) override { return Escher::Metric::ParameterCellHeight; }
+  // KDCoordinate cumulatedHeightFromIndex(int j) override;
+  // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override {
-    assert(type == k_standardCellType);
-    return k_totalNumberOfCell;
-  }
-  int typeAtLocation(int i, int j) override { return k_standardCellType; }
+  // int reusableCellCount(int type) override {
+  //   assert(type == k_standardCellType);
+  //   return k_totalNumberOfCell;
+  // }
+  // int typeAtLocation(int i, int j) override { return k_standardCellType; }
 protected:
-  static constexpr int k_standardCellType = 0;
+  // static constexpr int k_standardCellType = 0;
   DoublePairStore * m_store;
   int m_series;
   Escher::SelectableTableView m_selectableTableView;

@@ -64,17 +64,17 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int CurveParameterController::numberOfRows() const {
-  return reusableCellCount();
+  return 1 + (shouldDisplayCalculationAndDerivative() ? 2 : 0);
 };
 
-HighlightCell * CurveParameterController::reusableCell(int index) {
-  assert(0 <= index && index < reusableCellCount());
+HighlightCell * CurveParameterController::reusableCell(int index, int type) {
+  assert(0 <= index && index < reusableCellCount(type));
   HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
   return cells[cellIndex(index)];
 }
 
-int CurveParameterController::reusableCellCount() const {
-  return 1 + (shouldDisplayCalculationAndDerivative() ? 2 : 0);
+int CurveParameterController::reusableCellCount(int type) {
+  return numberOfRows();
 }
 
 void CurveParameterController::viewWillAppear() {

@@ -39,7 +39,9 @@ void ListParameterController::viewWillAppear() {
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_enableCell) {
     SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
-    switchView->setState(function()->isActive());
+    if (!m_record.isNull()) {
+      switchView->setState(function()->isActive());
+    }
   }
 }
 
@@ -55,6 +57,30 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+KDCoordinate ListParameterController::rowHeight(int j) {
+  switch (j) {
+#if FUNCTION_COLOR_CHOICE
+    case 0:
+      willDisplayCellForIndex((HighlightCell *)&m_colorCell, j);
+      return m_colorCell.minimalSizeForOptimalDisplay().height();
+    case 1:
+#else
+    case 0:
+#endif
+      willDisplayCellForIndex((HighlightCell *)&m_enableCell, j);
+      return m_enableCell.minimalSizeForOptimalDisplay().height();
+#if FUNCTION_COLOR_CHOICE
+    case 2:
+#else
+    case 1:
+#endif
+      willDisplayCellForIndex((HighlightCell *)&m_deleteCell, j);
+      return m_deleteCell.minimalSizeForOptimalDisplay().height();
+    default:
+      assert(false);
+  }
+}
+#if 0
 KDCoordinate ListParameterController::cumulatedHeightFromIndex(int j) {
   return Metric::ParameterCellHeight * j;
 }
@@ -62,7 +88,7 @@ KDCoordinate ListParameterController::cumulatedHeightFromIndex(int j) {
 int ListParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return (offsetY - 1) / Metric::ParameterCellHeight;
 }
-
+#endif
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
   assert(index == 0);
   assert(index < totalNumberOfCells());

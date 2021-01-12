@@ -14,7 +14,7 @@ namespace Graph {
 
 class ValuesController;
 
-class DerivativeParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class DerivativeParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   DerivativeParameterController(ValuesController * valuesController);
 
@@ -24,9 +24,8 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
-  KDCoordinate cellHeight() override;
-  Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const  override;
+  // KDCoordinate rowHeight(int j) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   void setRecord(Ion::Storage::Record record) {
     m_record = record;
   }

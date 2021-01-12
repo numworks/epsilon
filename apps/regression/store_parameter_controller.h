@@ -18,7 +18,7 @@ public:
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override { return Shared::StoreParameterController::numberOfRows() + 1; }
-  KDCoordinate rowHeight(int j) override;
+  // KDCoordinate rowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;

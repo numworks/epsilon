@@ -7,6 +7,12 @@ namespace Escher {
 
 class Metric {
 public:
+  constexpr static KDCoordinate CellTopMargin = 8;
+  constexpr static KDCoordinate CellRightMargin = 8;
+  constexpr static KDCoordinate CellLeftMargin = 8;
+  constexpr static KDCoordinate CellBottomMargin = 8;
+  constexpr static KDCoordinate CellHorizontalElementMargin = 8;
+  constexpr static KDCoordinate CellVerticalElementMargin = 4;
   constexpr static KDCoordinate CellMargin = 2;
   constexpr static KDCoordinate CommonLeftMargin = 20;
   constexpr static KDCoordinate CommonRightMargin = 20;

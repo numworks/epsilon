@@ -20,4 +20,10 @@ void ValuesFunctionParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
+KDCoordinate ValuesFunctionParameterController::rowHeight(int j) {
+  Escher::HighlightCell * cell = reusableCell(j, typeAtLocation(0, j));
+  willDisplayCellForIndex(cell, j);
+  return cell->minimalSizeForOptimalDisplay().height();
+}
+
 }

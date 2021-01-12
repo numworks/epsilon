@@ -2,6 +2,7 @@
 #include <escher/palette.h>
 #include <escher/metric.h>
 #include <algorithm>
+#include <ion.h>
 
 namespace Escher {
 
@@ -46,7 +47,145 @@ KDCoordinate withMargin(KDCoordinate length, KDCoordinate margin) {
   return length == 0 ? 0 : length + margin;
 }
 
+KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subLabel, View * accessory, KDCoordinate width) {
+  if (accessory && !subLabel) {
+    subLabel = accessory;
+    accessory = nullptr;
+  }
+
+  KDSize labelSize = label ? label->minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize subLabelSize = subLabel ? subLabel->minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize accessorySize = accessory ? accessory->minimalSizeForOptimalDisplay() : KDSizeZero;
+
+  KDCoordinate labelHeight = labelSize.height();
+  KDCoordinate labelWidth = labelSize.width();
+  KDCoordinate subLabelHeight = subLabelSize.height();
+  KDCoordinate subLabelWidth = subLabelSize.width();
+  KDCoordinate accessoryHeight = accessorySize.height();
+  KDCoordinate accessoryWidth = accessorySize.width();
+
+  width -= Metric::CellLeftMargin + Metric::CellRightMargin;
+  if (accessory) {
+    width -= Metric::CellHorizontalElementMargin + accessoryWidth;
+  }
+
+  bool singleRow = true;
+  if (label && subLabel && labelWidth + Metric::CellHorizontalElementMargin + subLabelWidth > width) {
+    singleRow = false;
+  }
+  KDCoordinate labelsHeight;
+
+  if (singleRow) {
+    labelsHeight = std::max<KDCoordinate>(labelHeight, subLabelHeight);
+  } else {
+    labelsHeight = labelHeight + Metric::CellVerticalElementMargin + subLabelHeight;
+  }
+
+  return k_separatorThickness + Metric::CellTopMargin + std::max<KDCoordinate>(labelsHeight, accessoryHeight) + Metric::CellBottomMargin;
+}
+
+KDSize TableCell::minimalSizeForOptimalDisplay() const {
+  // Find a way to get bounds().width(). Can be 280 instead of 266 with params + handle max nb of rows
+  KDCoordinate expectedWidth = Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin;
+  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), subAccessoryView(), accessoryView(), expectedWidth));
+}
+
 void TableCell::layoutSubviews(bool force) {
+  // TODO : rename label, accessory and subAccessory
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
+
+  if (width == 0 && height == 0) {
+    return;
+  }
+
+  View * label = labelView();
+  View * subLabel = subAccessoryView();
+  View * accessory = accessoryView();
+
+  if (accessory && !subLabel) {
+    subLabel = accessory;
+    accessory = nullptr;
+  }
+
+  KDSize labelSize = label ? label->minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize subLabelSize = subLabel ? subLabel->minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize accessorySize = accessory ? accessory->minimalSizeForOptimalDisplay() : KDSizeZero;
+
+  KDCoordinate y = 0;
+  KDCoordinate x = 0;
+  // Apply margins on every side
+  width -= Metric::CellLeftMargin + Metric::CellRightMargin;
+  x += Metric::CellLeftMargin;
+  height -= k_separatorThickness + Metric::CellTopMargin + Metric::CellBottomMargin;
+  y += k_separatorThickness + Metric::CellTopMargin;
+
+  assert(width > 0 && height > 0);
+
+  // If cell contains an accessory, place it first and update remaining space.
+  if (accessory) {
+    // TODO replace these with assert
+    KDCoordinate accessoryWidth = std::min<KDCoordinate>(accessorySize.width(), width);
+    // Accessory must be vertically centered on the entire cell height.
+    accessory->setFrame(
+      KDRect(
+        x + width - accessoryWidth,
+        y,
+        accessoryWidth,
+        height) //accessoryHeight center might be automatic
+      , force);
+    // Update remaining space
+    width -= accessoryWidth + Metric::CellHorizontalElementMargin;
+  }
+  // TODO First element is the principal content of the cell, it has a big font and black color.
+  // TODO Second element is small font and gray
+  // TODO replace these with assert
+  KDCoordinate labelHeight = std::min<KDCoordinate>(labelSize.height(), height);
+  KDCoordinate labelWidth = std::min<KDCoordinate>(labelSize.width(), width);
+  KDCoordinate subLabelHeight = std::min<KDCoordinate>(subLabelSize.height(), height);
+  KDCoordinate subLabelWidth = std::min<KDCoordinate>(subLabelSize.width(), width);
+
+  bool singleRow = true;
+  // If there are two elements on the same row, the shortest is vertically centered.
+  KDCoordinate maxHeight = std::max<KDCoordinate>(labelHeight, subLabelHeight);
+  if (label && subLabel && labelWidth + Metric::CellHorizontalElementMargin + subLabelWidth > width) {
+    // Two rows are needed to fit both label and subLabel.
+    singleRow = false;
+    maxHeight = labelHeight;
+  }
+
+  if (label) {
+    // KDCoordinate verticalCenterOffset = (maxHeight - labelHeight) / 2; // might be automatic
+    label->setFrame(
+      KDRect(
+        x,
+        y, //  + verticalCenterOffset
+        labelWidth,
+        maxHeight)
+      , force);
+  }
+
+  if (subLabel) {
+      // Update remaining space
+    if (singleRow) {
+      // SubLabel is aligned to the right
+      x += width - subLabelWidth;
+    } else {
+      // SubLabel is aligned to the left
+      maxHeight = subLabelHeight;
+      // Add vertical separation margin if there was a label
+      y += labelHeight + (label ? Metric::CellVerticalElementMargin : 0);
+    }
+    // KDCoordinate verticalCenterOffset = (maxHeight - labelHeight) / 2; // might be automatic
+    subLabel->setFrame(
+      KDRect(
+        x,
+        y, //  + verticalCenterOffset
+        subLabelWidth,
+        maxHeight)// row height
+      , force);
+  }
+#if 0
   /* TODO: this code is awful. However, this should handle multiples cases
    * (subviews are not defined, margins are overriden...) */
   KDCoordinate width = bounds().width();
@@ -164,6 +303,7 @@ void TableCell::layoutSubviews(bool force) {
       accessory->setFrame(KDRect(x, verticalMargin, accessoryWidth, height-2*verticalMargin), force);
     }
   }
+#endif
 }
 
 void TableCell::drawRect(KDContext * ctx, KDRect rect) const {

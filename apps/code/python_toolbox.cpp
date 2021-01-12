@@ -481,22 +481,22 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate PythonToolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == Toolbox::LeafCellType && m_messageTreeModel->label() == I18n::Message::IfStatementMenu) {
-      /* To get the exact height needed for each cell, we have to compute its
-       * text size, which means scan the text char by char to look for '\n'
-       * chars. This is very costly and ruins the speed performance when
-       * scrolling at the bottom of a long table: to compute a position on the
-       * kth row, we call cumulatedHeightFromIndex(k), which calls rowHeight k
-       * times.
-       * We thus decided to compute the real height only for the ifStatement
-       * children of the toolbox, which is the only menu that has special height
-       * rows. */
-    const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(j));
-    return k_font->stringSize(I18n::translate(messageTree->label())).height() + 2*Metric::TableCellVerticalMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
-  }
-  return Toolbox::rowHeight(j);
-}
+// KDCoordinate PythonToolbox::rowHeight(int j) {
+//   if (typeAtLocation(0, j) == Toolbox::LeafCellType && m_messageTreeModel->label() == I18n::Message::IfStatementMenu) {
+//        To get the exact height needed for each cell, we have to compute its
+//        * text size, which means scan the text char by char to look for '\n'
+//        * chars. This is very costly and ruins the speed performance when
+//        * scrolling at the bottom of a long table: to compute a position on the
+//        * kth row, we call cumulatedHeightFromIndex(k), which calls rowHeight k
+//        * times.
+//        * We thus decided to compute the real height only for the ifStatement
+//        * children of the toolbox, which is the only menu that has special height
+//        * rows.
+//     const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(j));
+//     return k_font->stringSize(I18n::translate(messageTree->label())).height() + 2*Metric::TableCellVerticalMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
+//   }
+//   return Toolbox::rowHeight(j);
+// }
 
 bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();

@@ -26,9 +26,9 @@ public:
   int numberOfRows() const override { return totalNumberOfCells(); }
 
   // ListViewDataSource
-  KDCoordinate rowHeight(int j) override { return Escher::Metric::ParameterCellHeight; }
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  KDCoordinate rowHeight(int j) override; // { return Escher::Metric::ParameterCellHeight; }
+  // KDCoordinate cumulatedHeightFromIndex(int j) override;
+  // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
   int typeAtLocation(int i, int j) override;

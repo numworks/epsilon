@@ -81,7 +81,10 @@ int CalculationParameterController::numberOfRows() const {
 };
 
 KDCoordinate CalculationParameterController::rowHeight(int j) {
-  return Metric::ParameterCellHeight;
+  int reusableCellIndex = (j == 0 ? 0 : j - 1 + !shouldDisplayIntersection());
+  HighlightCell * cell = reusableCell(reusableCellIndex, typeAtLocation(0, reusableCellIndex));
+  willDisplayCellForIndex(cell, j);
+  return cell->minimalSizeForOptimalDisplay().height();
 }
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {

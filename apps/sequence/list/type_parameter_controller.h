@@ -6,7 +6,7 @@
 #include <escher/expression_table_cell_with_pointer.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <poincare/layout.h>
 #include "../../shared/sequence_store.h"
 
@@ -14,7 +14,7 @@ namespace Sequence {
 
 class ListController;
 
-class TypeParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class TypeParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   TypeParameterController(Escher::Responder * parentResponder, ListController * list,
     Escher::TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
@@ -22,14 +22,15 @@ public:
   const char * title() override;
   Escher::View * view() override;
   void viewWillAppear() override;
+
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate cellHeight() override;
-  Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const override;
-  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  KDCoordinate rowHeight(int j) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
   void setRecord(Ion::Storage::Record record);
 private:
   Escher::StackViewController * stackController() const;

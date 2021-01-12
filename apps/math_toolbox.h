@@ -14,7 +14,7 @@ protected:
   Escher::MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
-  constexpr static int k_maxNumberOfDisplayedRows = 6; // = 240/40
+  constexpr static int k_maxNumberOfDisplayedRows = 10; // = 240/40
 private:
   int indexAfterFork() const override;
 

@@ -28,7 +28,7 @@ inline uint8_t columnForKey(Key key) {
 
 inline void setRowState(uint16_t rowState) {
   // TODO: Assert pin numbers are sequentials and dynamically find 9 and 0
-  Config::RowGPIO.ODR()->setBitRange(9, 0, rowState);
+  Config::RowGPIO.ODR()->setBitRange(8, 0, rowState);
 
   // TODO: 100 us seems to work, but wasn't really calculated
   Timing::usleep(100);

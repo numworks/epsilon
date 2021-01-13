@@ -58,7 +58,7 @@ void ExpressionsListController::willDisplayCellForIndex(HighlightCell * cell, in
    * here, when setting cell's layout. */
   ExpressionTableCellWithPointer * myCell = static_cast<ExpressionTableCellWithPointer *>(cell);
   myCell->setLayout(layoutAtIndex(index));
-  myCell->setAccessoryMessage(messageAtIndex(index));
+  myCell->setSubLabelMessage(messageAtIndex(index));
   myCell->reloadScroll();
 }
 

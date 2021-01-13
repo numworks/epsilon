@@ -17,7 +17,7 @@ DisplayModeController::DisplayModeController(Responder * parentResponder, InputE
   m_editableCell(&m_selectableTableView, inputEventHandlerDelegate, this)
 {
   m_editableCell.messageTableCellWithEditableText()->setMessage(I18n::Message::SignificantFigures);
-  m_editableCell.messageTableCellWithEditableText()->setMessageFont(KDFont::LargeFont);
+  // m_editableCell.messageTableCellWithEditableText()->setMessageFont(KDFont::LargeFont);
 }
 
 KDCoordinate DisplayModeController::rowHeight(int j) {
@@ -70,7 +70,7 @@ void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int in
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
     Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, bufferSize);
-    myCell->messageTableCellWithEditableText()->setAccessoryText(buffer);
+    myCell->messageTableCellWithEditableText()->setSubLabelText(buffer);
     return;
   }
   PreferencesController::willDisplayCellForIndex(cell, index);

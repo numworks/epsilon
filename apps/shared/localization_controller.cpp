@@ -198,7 +198,7 @@ KDCoordinate LocalizationController::rowHeight(int j) {
 }
 
 void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  static_cast<MessageTableCell *>(cell)->setMessageFont(KDFont::LargeFont);
+  // static_cast<MessageTableCell *>(cell)->setMessageFont(KDFont::LargeFont);
   if (mode() == Mode::Language) {
     static_cast<MessageTableCell *>(cell)->setMessage(I18n::LanguageNames[index]);
     return;

@@ -130,7 +130,7 @@ void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell * cell, 
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-  myCell->setAccessoryText(buffer);
+  myCell->setSubLabelText(buffer);
 }
 
 template<typename T>

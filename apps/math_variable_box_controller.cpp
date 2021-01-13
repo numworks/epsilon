@@ -46,7 +46,7 @@ void MathVariableBoxController::viewDidDisappear() {
   // Tidy the layouts displayed in the MathVariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
-    m_leafCells[i].setAccessoryLayout(Layout());
+    m_leafCells[i].setSubLabelLayout(Layout());
   }
   /* We reset the page when view disappears rather than when it appears because
    * subview layout is done before viewWillAppear. If the page at that point is
@@ -132,7 +132,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   }
   myCell->setLayout(symbolLayout);
-  myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
+  myCell->setSubLabelLayout(expressionLayoutForRecord(record, index));
   myCell->reloadScroll();
   myCell->reloadCell();
 }

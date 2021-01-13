@@ -72,7 +72,7 @@ public:
   }
 private:
   // Remove label margin added by TableCell because they're already handled by ScrollableThreeExpressionsView
-  KDCoordinate labelMargin() const override { return 0; }
+  // KDCoordinate labelMargin() const override { return 0; }
   ScrollableThreeExpressionsView m_view;
 };
 

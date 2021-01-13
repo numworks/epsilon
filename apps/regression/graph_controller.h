@@ -36,7 +36,7 @@ private:
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   Shared::CurveView * curveView() override;
-  bool handleEnter() override;
+  bool openMenu() override;
 
   // InteractiveCurveViewController
   void initCursorParameters() override;

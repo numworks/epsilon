@@ -45,6 +45,7 @@ protected:
   bool isCursorVisible();
   // The cursor does not match if selected model has been edited or deleted
   virtual bool cursorMatchesModel() = 0;
+  virtual bool openMenu() = 0;
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
@@ -56,6 +57,7 @@ protected:
 
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() override;
+  bool handleEnter() override { return openMenu(); }
 
   InteractiveCurveViewRange * interactiveRange() { return m_interactiveRange; }
 

@@ -17,7 +17,7 @@ public:
 
   enum class HomeAppsLayout : uint8_t {
     Default,
-    HidePython
+    Variant1
   };
 
   enum class DiscriminantSymbol : uint8_t {

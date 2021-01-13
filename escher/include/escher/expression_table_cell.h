@@ -21,7 +21,7 @@ public:
   virtual void reloadScroll() { m_labelExpressionView.reloadScroll(); }
 private:
   // Remove margins added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView
-  KDCoordinate labelMargin() const override { return 0; }
+  // KDCoordinate labelMargin() const override { return 0; }
   ScrollableExpressionView m_labelExpressionView;
 };
 

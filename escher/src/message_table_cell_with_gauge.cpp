@@ -3,8 +3,8 @@
 
 namespace Escher {
 
-MessageTableCellWithGauge::MessageTableCellWithGauge(I18n::Message message, const KDFont * font) :
-  MessageTableCell(message, font),
+MessageTableCellWithGauge::MessageTableCellWithGauge(I18n::Message message) :
+  MessageTableCell(message),
   m_accessoryView()
 {
 }

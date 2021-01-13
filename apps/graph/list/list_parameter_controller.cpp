@@ -94,7 +94,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       if (glyphLength > numberOfAvailableGlyphs) {
         writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits-1, Preferences::PrintFloatMode::Scientific);
       }
-      m_functionDomain.setAccessoryText(buffer);
+      m_functionDomain.setSubLabelText(buffer);
     }
   }
 }

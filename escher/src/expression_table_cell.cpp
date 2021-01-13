@@ -8,7 +8,7 @@ namespace Escher {
 ExpressionTableCell::ExpressionTableCell(Responder * parentResponder) :
   Responder(parentResponder),
   TableCell(),
-  m_labelExpressionView(this, k_horizontalMargin, 0, 0.0f, 0.5f, KDColorBlack, KDColorWhite)
+  m_labelExpressionView(this, 0, 0, 0.0f, 0.5f, KDColorBlack, KDColorWhite)
 {
 }
 

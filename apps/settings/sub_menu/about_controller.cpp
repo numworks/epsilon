@@ -13,8 +13,8 @@ AboutController::AboutController(Responder * parentResponder) :
 {
   // for (int i = 0; i < k_totalNumberOfCell; i++) {
   //   m_cells[i].setMessageFont(KDFont::LargeFont);
-  //   m_cells[i].setAccessoryFont(KDFont::SmallFont);
-  //   m_cells[i].setAccessoryTextColor(Palette::GrayDark);
+  //   m_cells[i].setSubLabelFont(KDFont::SmallFont);
+  //   m_cells[i].setSubLabelTextColor(Palette::GrayDark);
   // }
 }
 
@@ -28,11 +28,11 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == 0) {
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-      if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
-        myCell->setAccessoryText(Ion::softwareVersion());
+      if (strcmp(myCell->subLabelText(), Ion::patchLevel()) == 0) {
+        myCell->setSubLabelText(Ion::softwareVersion());
         return true;
       }
-      myCell->setAccessoryText(Ion::patchLevel());
+      myCell->setSubLabelText(Ion::patchLevel());
       return true;
     }
     return false;
@@ -54,16 +54,16 @@ int AboutController::reusableCellCount(int type) {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-  myCell->setMessageFont(KDFont::LargeFont);
-  myCell->setAccessoryFont(KDFont::SmallFont);
-  myCell->setAccessoryTextColor(Palette::GrayDark);
+  // myCell->setMessageFont(KDFont::LargeFont);
+  // myCell->setSubLabelFont(KDFont::SmallFont);
+  // myCell->setSubLabelTextColor(Palette::GrayDark);
   const char * messages[] = {
     Ion::softwareVersion(),
     Ion::serialNumber(),
     Ion::fccId()
   };
   assert(index >= 0 && index < 3);
-  myCell->setAccessoryText(messages[index]);
+  myCell->setSubLabelText(messages[index]);
 }
 
 KDCoordinate AboutController::rowHeight(int index) {

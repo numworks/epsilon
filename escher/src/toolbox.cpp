@@ -31,8 +31,8 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (messageTree->numberOfChildren() == 0) {
     MessageTableCellWithMessage * myCell = (MessageTableCellWithMessage *)cell;
     myCell->setMessage(messageTree->label());
-    myCell->setAccessoryMessage(messageTree->text());
-    myCell->setAccessoryTextColor(Palette::GrayDark);
+    myCell->setSubLabelMessage(messageTree->text());
+    // myCell->setSubLabelTextColor(Palette::GrayDark);
     return;
   }
   MessageTableCell * myCell = (MessageTableCell *)cell;

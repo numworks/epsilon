@@ -8,12 +8,12 @@ namespace Escher {
 
 class MessageTableCellWithChevronAndBuffer : public MessageTableCellWithChevron {
 public:
-  MessageTableCellWithChevronAndBuffer(const KDFont * labelFont = KDFont::SmallFont, const KDFont * subAccessoryFont = KDFont::SmallFont);
-  View * subAccessoryView() const override;
+  MessageTableCellWithChevronAndBuffer();
+  View * subLabelView() const override;
   void setHighlighted(bool highlight) override;
-  void setAccessoryText(const char * textBody);
+  void setSubLabelText(const char * textBody);
 private:
-  BufferTextView m_subAccessoryView;
+  BufferTextView m_subLabelView;
 };
 
 }

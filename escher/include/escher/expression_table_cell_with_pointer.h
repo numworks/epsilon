@@ -9,12 +9,12 @@ namespace Escher {
 // Cell : Additional results
 class ExpressionTableCellWithPointer : public ExpressionTableCell {
 public:
-  ExpressionTableCellWithPointer(Responder * responder = nullptr, I18n::Message accessoryMessage = (I18n::Message)0);
-  View * accessoryView() const override;
+  ExpressionTableCellWithPointer(Responder * responder = nullptr, I18n::Message subLabelMessage = (I18n::Message)0);
+  View * subLabelView() const override;
   void setHighlighted(bool highlight) override;
-  void setAccessoryMessage(I18n::Message messageBody);
+  void setSubLabelMessage(I18n::Message messageBody);
 private:
-  MessageTextView m_accessoryView;
+  MessageTextView m_subLabelView;
 };
 
 }

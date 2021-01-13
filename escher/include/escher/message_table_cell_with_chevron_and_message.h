@@ -7,8 +7,8 @@ namespace Escher {
 
 class MessageTableCellWithChevronAndMessage : public MessageTableCellWithChevron {
 public:
-  MessageTableCellWithChevronAndMessage(const KDFont * labelFont = KDFont::SmallFont, const KDFont * contentFont = KDFont::SmallFont);
-  View * subAccessoryView() const override;
+  MessageTableCellWithChevronAndMessage();
+  View * subLabelView() const override;
   void setHighlighted(bool highlight) override;
   void setSubtitle(I18n::Message text);
 private:

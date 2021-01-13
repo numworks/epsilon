@@ -160,7 +160,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     }
     char buffer[Shared::Sequence::k_initialRankNumberOfDigits+1];
     Poincare::Integer(sequence()->initialRank()).serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits+1);
-    myCell->setAccessoryText(buffer);
+    myCell->setSubLabelText(buffer);
   }
 }
 

@@ -3,13 +3,13 @@
 
 namespace Escher {
 
-MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message, const KDFont * font) :
-  MessageTableCell(message, font),
+MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message) :
+  MessageTableCell(message),
   m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
 {
 }
 
-View * MessageTableCellWithExpression::accessoryView() const {
+View * MessageTableCellWithExpression::subLabelView() const {
   return (View *)&m_subtitleView;
 }
 
@@ -22,7 +22,6 @@ void MessageTableCellWithExpression::setHighlighted(bool highlight) {
 void MessageTableCellWithExpression::setLayout(Poincare::Layout layout) {
   m_subtitleView.setLayout(layout);
   reloadCell();
-  layoutSubviews();
 }
 
 }

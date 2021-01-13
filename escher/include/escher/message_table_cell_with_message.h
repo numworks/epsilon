@@ -8,13 +8,13 @@ namespace Escher {
 class MessageTableCellWithMessage : public MessageTableCell {
 public:
   MessageTableCellWithMessage(I18n::Message message = (I18n::Message)0);
-  View * accessoryView() const override;
+  View * subLabelView() const override;
   void setHighlighted(bool highlight) override;
-  void setAccessoryMessage(I18n::Message textBody);
-  void setTextColor(KDColor color) override;
-  void setAccessoryTextColor(KDColor color);
+  void setSubLabelMessage(I18n::Message textBody);
+  // void setTextColor(KDColor color) override;
+  // void setSubLabelTextColor(KDColor color);
 protected:
-  MessageTextView m_accessoryView;
+  MessageTextView m_subLabelView;
 };
 
 }

@@ -8,7 +8,7 @@ namespace Escher {
 
 class MessageTableCellWithGauge : public MessageTableCell {
 public:
-  MessageTableCellWithGauge(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
+  MessageTableCellWithGauge(I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
 private:

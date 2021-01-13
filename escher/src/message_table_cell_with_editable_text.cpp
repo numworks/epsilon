@@ -7,12 +7,12 @@ namespace Escher {
 MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, I18n::Message message) :
   Responder(parentResponder),
   MessageTableCell(message),
-  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::maxBufferSize(), inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 1.0f, 0.5f)
+  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::maxBufferSize(), inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 1.0f, 0.5f, KDColorBlack)
 {
   m_textBody[0] = '\0';
 }
 
-View * MessageTableCellWithEditableText::accessoryView() const {
+View * MessageTableCellWithEditableText::subLabelView() const {
   return (View *)&m_textField;
 }
 
@@ -38,29 +38,37 @@ void MessageTableCellWithEditableText::setHighlighted(bool highlight) {
   m_textField.setBackgroundColor(backgroundColor);
 }
 
-void MessageTableCellWithEditableText::setAccessoryText(const char * text) {
+void MessageTableCellWithEditableText::setSubLabelText(const char * text) {
   m_textField.setText(text);
   layoutSubviews();
 }
 
-void MessageTableCellWithEditableText::setTextColor(KDColor color) {
-  m_textField.setTextColor(color);
-  MessageTableCell::setTextColor(color);
-}
+// void MessageTableCellWithEditableText::setTextColor(KDColor color) {
+//   m_textField.setTextColor(color);
+//   MessageTableCell::setTextColor(color);
+// }
 
 void MessageTableCellWithEditableText::layoutSubviews(bool force) {
+  if (bounds().width() == 0 || bounds().height() == 0) {
+    return;
+  }
   TableCell::layoutSubviews(force);
-  KDSize textFieldSize = m_textField.minimalSizeForOptimalDisplay();
   KDSize labelSize = labelView()->minimalSizeForOptimalDisplay();
-  /* Handle textfield that has no defined width (as their width evolves with
+  /* Handle TextField that has no defined width (as their width evolves with
    * the length of edited text */
-  textFieldSize = KDSize(bounds().width() - 2*k_separatorThickness - labelSize.width()-2*labelMargin()-k_horizontalMargin, textFieldSize.height());
+  KDCoordinate marginsAndLabelHorizontalOffset = Metric::CellLeftMargin + labelSize.width() + Metric::CellHorizontalElementMargin;
+  KDCoordinate marginsVerticalOffset = k_separatorThickness + Metric::CellTopMargin;
+
+  assert(!accessoryView());
+  assert(m_textField.minimalSizeForOptimalDisplay().width() <= bounds().width() - marginsAndLabelHorizontalOffset - Metric::CellRightMargin);
+  assert(m_textField.minimalSizeForOptimalDisplay().height() <= bounds().height() - marginsVerticalOffset - Metric::CellBottomMargin);
+
   m_textField.setFrame(KDRect(
-    bounds().width() - textFieldSize.width() - k_separatorThickness-k_horizontalMargin,
-    (bounds().height()-textFieldSize.height()-k_horizontalMargin)/2,
-    textFieldSize.width(),
-    textFieldSize.height()+k_horizontalMargin),
-  force);
+      marginsAndLabelHorizontalOffset,
+      marginsVerticalOffset,
+      bounds().width() - marginsAndLabelHorizontalOffset - Metric::CellRightMargin,
+      bounds().height() - marginsVerticalOffset - Metric::CellBottomMargin)
+    , force);
 }
 
 }

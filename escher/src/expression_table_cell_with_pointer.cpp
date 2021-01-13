@@ -4,27 +4,24 @@
 
 namespace Escher {
 
-ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(Responder * parentResponder, I18n::Message accessoryMessage) :
+ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(Responder * parentResponder, I18n::Message subLabelMessage) :
   ExpressionTableCell(parentResponder),
-  m_accessoryView(KDFont::SmallFont, accessoryMessage, 0.0f, 0.5f, Palette::GrayDark, KDColorWhite)
+  m_subLabelView(KDFont::SmallFont, subLabelMessage, 0.0f, 0.5f, Palette::GrayDark, KDColorWhite)
 {
-  // if (layout != Layout::Vertical) {
-  //   m_accessoryView.setAlignment(1.0f, 0.5f);
-  // }
 }
 
-View * ExpressionTableCellWithPointer::accessoryView() const {
-  return (View *)&m_accessoryView;
+View * ExpressionTableCellWithPointer::subLabelView() const {
+  return (View *)&m_subLabelView;
 }
 
 void ExpressionTableCellWithPointer::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
-  m_accessoryView.setBackgroundColor(backgroundColor);
+  m_subLabelView.setBackgroundColor(backgroundColor);
 }
 
-void ExpressionTableCellWithPointer::setAccessoryMessage(I18n::Message text) {
-  m_accessoryView.setMessage(text);
+void ExpressionTableCellWithPointer::setSubLabelMessage(I18n::Message text) {
+  m_subLabelView.setMessage(text);
 }
 
 }

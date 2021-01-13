@@ -10,9 +10,9 @@ namespace Settings {
 
 class MessageTableCellWithGaugeWithSeparator : public CellWithSeparator {
 public:
-  MessageTableCellWithGaugeWithSeparator(I18n::Message message, const KDFont * font) :
+  MessageTableCellWithGaugeWithSeparator(I18n::Message message) :
     CellWithSeparator(),
-    m_cell(message, font) {}
+    m_cell(message) {}
   Escher::View * accessoryView() const { return m_cell.accessoryView(); }
   void setMessage(I18n::Message message) { return m_cell.setMessage(message); }
   KDSize minimalSizeForOptimalDisplay() const override { return m_cell.minimalSizeForOptimalDisplay() + CellWithSeparator::minimalSizeForOptimalDisplay(); }

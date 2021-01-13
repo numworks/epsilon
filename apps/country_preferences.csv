@@ -8,4 +8,4 @@ GB,StandardOnly,MedianOfSublist,Metric,Default,Delta
 IT,StandardOnly,CumulatedFrequency,Metric,Default,Delta
 NL,All,MedianOfSublist,Metric,Default,D
 PT,StandardOnly,MedianOfSublist,Metric,Default,Delta
-US,StandardOnly,MedianOfSublist,Imperial,HidePython,Delta
+US,StandardOnly,MedianOfSublist,Imperial,Variant1,Delta

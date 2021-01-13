@@ -3,24 +3,24 @@
 
 namespace Escher {
 
-MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer(const KDFont * labelFont, const KDFont * subAccessoryFont) :
-  MessageTableCellWithChevron((I18n::Message)0, labelFont),
-  m_subAccessoryView(subAccessoryFont, 1.0f, 0.5f, Palette::GrayDark)
+MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer() :
+  MessageTableCellWithChevron((I18n::Message)0),
+  m_subLabelView(KDFont::SmallFont, 1.0f, 0.5f, Palette::GrayDark)
 {
 }
 
-View * MessageTableCellWithChevronAndBuffer::subAccessoryView() const {
-  return (View *)&m_subAccessoryView;
+View * MessageTableCellWithChevronAndBuffer::subLabelView() const {
+  return (View *)&m_subLabelView;
 }
 
 void MessageTableCellWithChevronAndBuffer::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
-  m_subAccessoryView.setBackgroundColor(backgroundColor);
+  m_subLabelView.setBackgroundColor(backgroundColor);
 }
 
-void MessageTableCellWithChevronAndBuffer::setAccessoryText(const char * textBody) {
-  m_subAccessoryView.setText(textBody);
+void MessageTableCellWithChevronAndBuffer::setSubLabelText(const char * textBody) {
+  m_subLabelView.setText(textBody);
   layoutSubviews();
 }
 

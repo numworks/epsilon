@@ -11,7 +11,7 @@ namespace Escher {
 class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
 public:
   MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
-  View * accessoryView() const override;
+  View * subLabelView() const override;
   TextField * textField() { return &m_textField; }
   const char * editedText() const;
   void didBecomeFirstResponder() override;
@@ -27,8 +27,8 @@ public:
     }
     return nullptr;
   }
-  void setAccessoryText(const char * text);
-  void setTextColor(KDColor color) override;
+  void setSubLabelText(const char * text);
+  // void setTextColor(KDColor color) override;
 private:
   void layoutSubviews(bool force = false) override;
   TextField m_textField;

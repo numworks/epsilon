@@ -5,7 +5,7 @@ DE,StandardOnly,MedianOfSublist,Metric,Default,D
 ES,StandardOnly,MedianOfSublist,Metric,Default,Delta
 FR,StandardOnly,CumulatedFrequency,Metric,Default,Delta
 GB,StandardOnly,MedianOfSublist,Metric,Default,Delta
-IT,StandardOnly,CumulatedFrequency,Metric,Default,Delta
-NL,All,MedianOfSublist,Metric,Default,D
-PT,StandardOnly,MedianOfSublist,Metric,Default,Delta
+IT,StandardOnly,CumulatedFrequency,Metric,Variant2,Delta
+NL,All,MedianOfSublist,Metric,Variant3,D
+PT,StandardOnly,MedianOfSublist,Metric,Variant1,Delta
 US,StandardOnly,MedianOfSublist,Imperial,Variant1,Delta

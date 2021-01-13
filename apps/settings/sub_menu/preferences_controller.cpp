@@ -125,7 +125,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
 void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithExpression * myCell = (MessageTableCellWithExpression *)cell;
-  myCell->setMessageFont(KDFont::LargeFont);
+  // myCell->setMessageFont(KDFont::LargeFont);
   myCell->setLayout(layoutForPreferences(m_messageTreeModel->childAtIndex(index)->label()));
 }
 

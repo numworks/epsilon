@@ -67,7 +67,7 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(ExamModeConfiguration::examModeActivationMessage(index));
-  myCell->setMessageFont(KDFont::LargeFont);
+  // myCell->setMessageFont(KDFont::LargeFont);
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     myCell->setMessage(I18n::Message::ExamModeActive);
   }

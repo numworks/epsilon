@@ -47,7 +47,7 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
    * order to deselect it). */
   /* As a workaround, datasources can reset the highlighted state in their
    * willDisplayCell callback. */
-  TableView::layoutSubviews();
+  TableView::layoutSubviews(true); // TODO : explain (Toolbox some cells are not layouted otherwise, order with setMessage...)
   selectCellAtLocation(col, row, setFirstResponder, true);
 }
 

@@ -50,10 +50,6 @@ void resetLongRepetition() {
   ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
-static Keyboard::Key keyFromState(Keyboard::State state) {
-  return static_cast<Keyboard::Key>(63 - __builtin_clzll(state));
-}
-
 static inline Event innerGetEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);

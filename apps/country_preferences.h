@@ -17,7 +17,9 @@ public:
 
   enum class HomeAppsLayout : uint8_t {
     Default,
-    Variant1
+    Variant1,
+    Variant2,
+    Variant3
   };
 
   enum class DiscriminantSymbol : uint8_t {

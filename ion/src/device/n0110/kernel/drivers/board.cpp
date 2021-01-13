@@ -33,7 +33,9 @@ void initPeripheralsClocks() {
   ahb1enr.setGPIOCEN(true);
   ahb1enr.setGPIODEN(true);
   ahb1enr.setGPIOEEN(true);
+#if USE_DMA
   ahb1enr.setDMA2EN(true);
+#endif
   RCC.AHB1ENR()->set(ahb1enr);
 
   // AHB2 bus

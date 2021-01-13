@@ -16,17 +16,17 @@ namespace Config {
  *(to flash them easily).
  * The internal memory layout is the following:
  * 4*16k + 64k + 7*128k with the division:
- * +---------------------+-------------------+------------------+---------+----------|
- * |         16k         +        16k        +        16k       + 16k+64k +  7*128k  |
- * +---------------------+-------------------+------------------+---------+----------|
- * | Standard bootloader | Rescue bootloader | Persisting bytes |  Kernel | Userland |
- * +---------------------+-------------------+------------------+---------+----------|
+ * +---------------------+-------------------+-----------+--------------|
+ * |         16k         +         16k       + 2*16k+64k +  64k+7*128k  |
+ * +---------------------+-------------------+-----------+--------------|
+ * | Standard bootloader |  Persisting bytes |  Kernel   |   Userland   |
+ * +---------------------+-------------------+-----------+--------------|
  * Hence the kernel total size.
  *
  * NB: Total size includes signature footer (unlike length)
  */
 
-constexpr static uint32_t KernelTotalSize = 0x4000 + 0x10000;
+constexpr static uint32_t KernelTotalSize = 2*0x4000 + 0x10000; // TODO EMILIE: try with only 2*16k?
 
 }
 }

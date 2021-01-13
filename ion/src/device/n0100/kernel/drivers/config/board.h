@@ -9,7 +9,7 @@ namespace Device {
 namespace Board {
 namespace Config {
 
-constexpr static uint32_t UserlandAddress = InternalFlash::Config::StartAddress + 2*BootloaderTotalSize + PersistingBytes::Config::BufferSize + KernelTotalSize + SizeSize;
+constexpr static uint32_t UserlandAddress = InternalFlash::Config::StartAddress + BootloaderTotalSize + PersistingBytes::Config::BufferSize + KernelTotalSize + SizeSize;
 
 
 }

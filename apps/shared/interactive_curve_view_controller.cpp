@@ -94,6 +94,9 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
+  if (event == Ion::Events::Toolbox) {
+    return openMenu();
+  }
   return SimpleInteractiveCurveViewController::handleEvent(event);
 }
 
@@ -182,7 +185,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
 }
 
 bool InteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if ((event == Ion::Events::Plus || event == Ion::Events::Minus) && !textField->isEditing()) {
+  if ((event == Ion::Events::Plus || event == Ion::Events::Minus || event == Ion::Events::Toolbox) && !textField->isEditing()) {
     return handleEvent(event);
   }
   return SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(textField, event);

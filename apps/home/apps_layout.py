@@ -22,6 +22,10 @@ def build_permutation(apps, appsOrdered):
         if app in apps:
             res[i] = apps.index(app) + 1
             i += 1
+    for app in apps:
+        index = apps.index(app) + 1
+        if not index in res:
+            res[res[1:].index(0)+1]=index # Place the non ordered apps at the end
     return res
 
 def parse_config_file(layouts, apps):

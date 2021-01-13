@@ -48,8 +48,6 @@ namespace Ion {
 namespace Device {
 namespace Keyboard {
 
-using namespace Ion::Device::Keyboard;
-
 State scan() {
   uint64_t state = 0;
 

@@ -8,23 +8,23 @@ namespace Escher {
 
 class MessageTableCellWithBuffer : public MessageTableCell {
 public:
-  MessageTableCellWithBuffer(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont, const KDFont * accessoryFont = KDFont::LargeFont, KDColor accessoryTextColor = KDColorBlack);
-  View * accessoryView() const override;
+  MessageTableCellWithBuffer(I18n::Message message = (I18n::Message)0);
+  View * subLabelView() const override;
   void setHighlighted(bool highlight) override;
-  void setAccessoryText(const char * textBody);
-  const char * accessoryText();
-  void setTextColor(KDColor color) override;
-  void setAccessoryTextColor(KDColor color) {
-    m_accessoryView.setTextColor(color);
-  }
-  void setAccessoryFont(const KDFont * font) {
-    m_accessoryView.setFont(font);
-  }
+  void setSubLabelText(const char * textBody);
+  const char * subLabelText();
+  // void setTextColor(KDColor color) override;
+  // void setSubLabelTextColor(KDColor color) {
+  //   m_subLabelView.setTextColor(color);
+  // }
+  // void setSubLabelFont(const KDFont * font) {
+  //   m_subLabelView.setFont(font);
+  // }
   const char * text() const override {
-    return m_accessoryView.text();
+    return m_subLabelView.text();
   }
 protected:
-  BufferTextView m_accessoryView;
+  BufferTextView m_subLabelView;
 };
 
 }

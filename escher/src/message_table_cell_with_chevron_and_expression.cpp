@@ -4,14 +4,14 @@
 
 namespace Escher {
 
-MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message, const KDFont * font) :
-  MessageTableCellWithChevron(message, font),
-  m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
+MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message) :
+  MessageTableCellWithChevron(message),
+  m_subtitleView(1.0f, 0.5f, Palette::GrayDark) // KDFont::SmallFont TODO (small font layout, big changes) - same in message_table_cell_with_expression
 {
-  m_subtitleView.setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
+  m_subtitleView.setHorizontalMargin(30); // TODO remove and test
 }
 
-View * MessageTableCellWithChevronAndExpression::subAccessoryView() const {
+View * MessageTableCellWithChevronAndExpression::subLabelView() const {
   return (View *)&m_subtitleView;
 }
 

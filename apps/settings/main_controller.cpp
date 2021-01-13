@@ -18,8 +18,8 @@ constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   ViewController(parentResponder),
-  m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
-  m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
+  m_brightnessCell(I18n::Message::Default),
+  m_popUpCell(I18n::Message::Default),
   m_selectableTableView(this),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
@@ -130,7 +130,7 @@ KDCoordinate MainController::rowHeight(int index) {
     return m_popUpCell.minimalSizeForOptimalDisplay().height();
   }
   MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
-  tempCell.setMessageFont(KDFont::LargeFont);
+  // tempCell.setMessageFont(KDFont::LargeFont);
   willDisplayCellForIndex((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
 #if 0
@@ -229,7 +229,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
-  myTextCell->setMessageFont(KDFont::LargeFont);
+  // myTextCell->setMessageFont(KDFont::LargeFont);
   int childIndex = -1;
   switch (index) {
     case k_indexOfAngleUnitCell:

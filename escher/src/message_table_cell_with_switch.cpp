@@ -3,8 +3,8 @@
 
 namespace Escher {
 
-MessageTableCellWithSwitch::MessageTableCellWithSwitch(I18n::Message message, const KDFont * font) :
-  MessageTableCell(message, font),
+MessageTableCellWithSwitch::MessageTableCellWithSwitch(I18n::Message message) :
+  MessageTableCell(message),
   m_accessoryView()
 {
 }

@@ -21,7 +21,7 @@ public:
 protected:
   float cursorTopMarginRatio() override { return 0.068f; }
   void reloadBannerView() override;
-  bool handleEnter() override;
+  bool openMenu() override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorT(Ion::Storage::Record record);

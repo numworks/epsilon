@@ -248,7 +248,7 @@ CurveView * GraphController::curveView() {
   return &m_view;
 }
 
-bool GraphController::handleEnter() {
+bool GraphController::openMenu() {
   stackController()->push(&m_graphOptionsController);
   return true;
 }

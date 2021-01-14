@@ -17,6 +17,7 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
+  void prepareCellForHeightCalculation(HighlightCell * cell, int index);
   virtual void willDisplayCellForIndex(HighlightCell * cell, int index);
 };
 

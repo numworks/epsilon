@@ -55,7 +55,7 @@ void TypeParameterController::viewWillAppear() {
 
 KDCoordinate TypeParameterController::rowHeight(int j) {
   MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 #if 0

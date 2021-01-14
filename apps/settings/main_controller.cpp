@@ -112,26 +112,26 @@ int MainController::numberOfRows() const {
 
 KDCoordinate MainController::rowHeight(int index) {
   if (index == k_indexOfBrightnessCell) {
-    willDisplayCellForIndex((HighlightCell *)&m_brightnessCell, index);
+    prepareCellForHeightCalculation((HighlightCell *)&m_brightnessCell, index);
     return m_brightnessCell.minimalSizeForOptimalDisplay().height();
   }
   // if (index == k_indexOfLanguageCell) {
   //   MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
-  //   willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  //   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   //   return tempCell.minimalSizeForOptimalDisplay().height();
   // }
   // if (index == k_indexOfCountryCell) {
   //   MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
-  //   willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  //   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   //   return tempCell.minimalSizeForOptimalDisplay().height();
   // }
   if (hasPrompt() && index == k_indexOfPopUpCell) {
-    willDisplayCellForIndex((HighlightCell *)&m_popUpCell, index);
+    prepareCellForHeightCalculation((HighlightCell *)&m_popUpCell, index);
     return m_popUpCell.minimalSizeForOptimalDisplay().height();
   }
   MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
   // tempCell.setMessageFont(KDFont::LargeFont);
-  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
 #if 0
   if (j == k_indexOfBrightnessCell) {

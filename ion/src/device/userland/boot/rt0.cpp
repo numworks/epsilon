@@ -47,6 +47,7 @@ void ion_main(int argc, const char * const argv[]) {
 #endif
 
   c = KDColorBlue;
+  const char * patch = Ion::patchLevel();
   while (1) {
     int timeout = 300;
     //Ion::Events::Event e = Ion::Events::getEvent(&timeout);

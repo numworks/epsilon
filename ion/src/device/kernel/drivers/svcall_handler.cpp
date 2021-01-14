@@ -9,6 +9,7 @@
 #include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
+#include <shared/drivers/serial_number.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>
 
@@ -155,6 +156,10 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_CRC32_BYTE:
       *static_cast<uint32_t *>(args[2]) = Ion::Device::crc32Byte(static_cast<const uint8_t *>(args[0]), *static_cast<size_t *>(args[1]));
+      return;
+    // SERIAL NUMBER
+    case SVC_SERIAL_NUMBER:
+      *static_cast<const char **>(args[0]) = Ion::Device::SerialNumber::read();
       return;
     default:
       return;

@@ -65,7 +65,7 @@ $(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),)
 $(BUILD_DIR)/kernel.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/$(MODEL)/kernel
 $(BUILD_DIR)/kernel.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/kernel/kernel_flash.ld
 
-userland_src = $(ion_device_userland_src) $(liba_src) $(kandinsky_src)
+userland_src = $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(apps_src)
 $(BUILD_DIR)/userland.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay)
 $(BUILD_DIR)/userland.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/$(MODEL)/userland
 $(BUILD_DIR)/userland.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/userland/userland_flash.ld

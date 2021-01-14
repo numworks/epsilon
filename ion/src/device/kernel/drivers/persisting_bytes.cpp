@@ -17,10 +17,6 @@ namespace PersistingBytes {
 //
 //TODO LEA Do we want to persist 1 byte only?
 
-/* TODO EMILIE these pointers should be retrieved at linking or this code should
- *  be done in External flash (only the Ion::Device::Flash::WriteMemory should
- *  be done in internal flash)... However, we need FetchExamMode in Updatable bootloader and in main Epsilon. The info of where is the exam mode should be shared between both in a smart way? */
-
 char ones[PersistingBytes::Config::BufferSize]
 __attribute__((section(".persisting_bytes_buffer")))
 __attribute__((used))

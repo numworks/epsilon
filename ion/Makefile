@@ -53,7 +53,7 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   events.cpp \
   events_keyboard.cpp \
   events_modifier.cpp \
-  unicode/utf8_decoder.cpp:+consoledisplay \
+  platform_info.cpp \
   storage.cpp \
   unicode/utf8_decoder.cpp\
   unicode/utf8_helper.cpp\

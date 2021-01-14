@@ -51,7 +51,7 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
-  Arithmetic arithmetic = Arithmetic();
+  Arithmetic arithmetic;
   int n = arithmetic.PrimeFactorization(a);
   quiz_assert_print_if_failure(n == length, failInformationBuffer);
   for (int index = 0; index < length; index++) {

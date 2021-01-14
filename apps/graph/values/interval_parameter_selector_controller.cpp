@@ -61,7 +61,7 @@ int IntervalParameterSelectorController::numberOfRows() const {
 
 KDCoordinate IntervalParameterSelectorController::rowHeight(int j) {
   MessageTableCellWithChevron tempCell = MessageTableCellWithChevron();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 

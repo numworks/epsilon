@@ -44,11 +44,11 @@ KDCoordinate Toolbox::rowHeight(int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
   if (messageTree->numberOfChildren() == 0) {
     MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
-    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
     return tempCell.minimalSizeForOptimalDisplay().height();
   }
   MessageTableCell tempCell = MessageTableCell();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 

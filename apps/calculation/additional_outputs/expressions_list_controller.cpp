@@ -44,7 +44,7 @@ HighlightCell * ExpressionsListController::reusableCell(int index, int type) {
 
 KDCoordinate ExpressionsListController::rowHeight(int index) {
   ExpressionTableCellWithPointer tempCell = ExpressionTableCellWithPointer();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
   // return Escher::TableCell::minimalHeightForOptimalDisplay(layoutAtIndex(index), nullptr, messageAtIndex(index), 266));
   // Layout l = layoutAtIndex(j);

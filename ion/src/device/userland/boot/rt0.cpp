@@ -21,6 +21,7 @@ void abort() { //TODO EMILIE: expose in ion API
 #endif
 }
 
+#if 0
 void ion_main(int argc, const char * const argv[]) {
   Ion::Backlight::init();
   KDRect rect(0,0, 199, 100);
@@ -99,6 +100,7 @@ void ion_main(int argc, const char * const argv[]) {
     }*/
   }
 }
+#endif
 
 void __attribute__((noinline)) start() {
   Ion::Device::Init::configureRAM();

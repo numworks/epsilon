@@ -24,9 +24,6 @@ include ion/src/shared/tools/Makefile
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
-ion_device_kernel_src += ion/src/shared/decompress.cpp
-ion_device_kernel_src += ion/src/external/lz4/lz4.c
-
 ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   crc32_eat_byte.cpp \
@@ -42,12 +39,24 @@ ion_src += $(addprefix ion/src/shared/, \
   unicode/utf8_helper.cpp\
 )
 
+# TODO EMILIE: tidy makefiles: these following should go in ion/src/device/Makefile?
+
+ion_device_kernel_src += $(addprefix ion/src/shared/, \
+  crc32_eat_byte.cpp \
+  decompress.cpp \
+)
+
+ion_device_kernel_src += ion/src/external/lz4/lz4.c
+
 ion_device_userland_src += $(addprefix ion/src/shared/, \
   decompress.cpp:+consoledisplay \
   events.cpp \
   events_keyboard.cpp \
   events_modifier.cpp \
   unicode/utf8_decoder.cpp:+consoledisplay \
+  storage.cpp \
+  unicode/utf8_decoder.cpp\
+  unicode/utf8_helper.cpp\
 )
 ion_device_userland_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
 ion_device_userland_src += ion/src/external/lz4/lz4.c:+consoledisplay

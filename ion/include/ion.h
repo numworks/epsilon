@@ -36,11 +36,6 @@ const char * fccId();
 // CRC32 : non xor-ed, non reversed, direct, polynomial 4C11DB7
 uint32_t crc32Word(const uint32_t * data, size_t length); // Only accepts whole 32bit values
 uint32_t crc32Byte(const uint8_t * data, size_t length);
-uint32_t crc32EatByte(uint32_t previousCRC, uint8_t data);
-
-// SHA-256
-constexpr size_t Sha256DigestBytes = 32;
-void sha256(const uint8_t * data, uint32_t dataLength, uint8_t * digest);
 
 // Provides a true random number
 uint32_t random();

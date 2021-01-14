@@ -41,6 +41,8 @@ namespace SVCall {
 #define SVC_LED_SET_COLOR 33
 #define SVC_LED_SET_BLINKING 34
 #define SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE 35
+#define SVC_CRC32_WORD 36
+#define SVC_CRC32_BYTE 37
 
 }
 }

@@ -52,8 +52,11 @@ void ion_main(int argc, const char * const argv[]) {
     //Ion::Events::Event e = Ion::Events::getEvent(&timeout);
     Ion::Keyboard::State s = Ion::Keyboard::scan();
     if (s.keyDown(Ion::Keyboard::Key::Shift)) {
-      Ion::LED::setColor(KDColorRed);
+      uint32_t data[2] = {0xAABBEEFF, 0xCCDD0011};
+      Ion::crc32Word(data, 2);
+      Ion::crc32Byte(reinterpret_cast<uint8_t *>(data), 2*4);
       Ion::Display::pushRectUniform(KDRect(100,100,20,20), KDColorRed);
+      Ion::LED::setColor(KDColorRed);
     }
 #if 0
     if (e != Ion::Events::None) {

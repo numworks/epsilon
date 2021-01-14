@@ -1,5 +1,5 @@
 #include "global_preferences.h"
-#include <ion/include/ion/exam_mode_unprivileged.h>
+#include <ion/include/ion/persisting_bytes.h>
 
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
   static GlobalPreferences globalPreferences;
@@ -8,9 +8,9 @@ GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
 
 GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
   if (m_examMode == ExamMode::Unknown) {
-    uint8_t mode = Ion::ExamMode::FetchExamMode();
+    uint8_t mode = Ion::PersistingBytes::read();
     assert(mode >= 0 && mode < 3); // mode can be cast in ExamMode (Off, Standard or Dutch)
-    m_examMode = (ExamMode)mode;
+    m_examMode = static_cast<ExamMode>(mode);
   }
   return m_examMode;
 }
@@ -21,10 +21,7 @@ void GlobalPreferences::setExamMode(ExamMode mode) {
     return;
   }
   assert(mode != ExamMode::Unknown);
-  int8_t deltaMode = (int8_t)mode - (int8_t)currentMode;
-  deltaMode = deltaMode < 0 ? deltaMode + 3 : deltaMode;
-  assert(deltaMode > 0);
-  Ion::ExamMode::IncrementExamMode(deltaMode);
+  Ion::PersistingBytes::write(static_cast<uint8_t>(mode));
   m_examMode = mode;
 }
 

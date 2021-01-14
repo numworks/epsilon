@@ -16,7 +16,7 @@ ifeq ($(EPSILON_TELEMETRY),1)
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
-ion_src += ion/src/shared/collect_registers.cpp
+ion_device_userland_src += ion/src/shared/collect_registers.cpp
 
 ION_DEVICE_SFLAGS += -Iion/src/device/$(MODEL)/shared -Iion/src/device/$(MODEL) -Iion/src/device/shared -Iion/src/device #TODO EMILIE: remove */shared and specify shared in inclusions
 

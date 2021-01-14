@@ -14,6 +14,7 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/led.cpp \
   drivers/persisting_bytes.cpp \
   drivers/power.cpp \
+  drivers/random.cpp \
   drivers/serial_number.cpp \
   drivers/timing.cpp \
   drivers/usb.cpp \

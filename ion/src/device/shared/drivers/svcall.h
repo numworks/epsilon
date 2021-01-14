@@ -45,6 +45,7 @@ namespace SVCall {
 #define SVC_CRC32_BYTE 37
 #define SVC_SERIAL_NUMBER 38
 #define SVC_FCC_ID 39
+#define SVC_RANDOM 40
 
 }
 }

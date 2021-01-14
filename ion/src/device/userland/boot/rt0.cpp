@@ -49,7 +49,12 @@ void ion_main(int argc, const char * const argv[]) {
   c = KDColorBlue;
   while (1) {
     int timeout = 300;
-    Ion::Events::Event e = Ion::Events::getEvent(&timeout);
+    //Ion::Events::Event e = Ion::Events::getEvent(&timeout);
+    Ion::Keyboard::State s = Ion::Keyboard::scan();
+    if (s.keyDown(Ion::Keyboard::Key::Shift)) {
+      Ion::Display::pushRectUniform(KDRect(100,100,20,20), KDColorGreen);
+    }
+#if 0
     if (e != Ion::Events::None) {
       Ion::Display::pushRectUniform(KDRect(0,0,100,100), c);
       //Ion::Display::displayColoredTilingSize10();
@@ -76,6 +81,7 @@ void ion_main(int argc, const char * const argv[]) {
         Ion::Backlight::init();
       }
     }
+#endif
     if (Ion::Battery::isCharging()) {
       Ion::Display::pushRectUniform(KDRect(0,40,100,100), KDColorWhite);
     } else {

@@ -14,30 +14,6 @@
 
 void svcall_handler(unsigned svcNumber, void * args[]) {
   switch (svcNumber) {
-    /*case SVC_CLOCK_STANDARD_FREQUENCY:
-      Ion::Device::Board::setStandardClockFrequencyHandler();
-      return;
-    case SVC_CLOCK_LOW_FREQUENCY:
-      Ion::Device::Board::setLowClockFrequencyHandler();
-      return;
-    case SVC_POWER_STANDBY:
-      Ion::Device::Power::standbyHandler();
-      return;
-    case SVC_POWER_SLEEP_OR_STOP:
-      Ion::Device::Power::sleepStopHandler();
-      return;
-    case SVC_RESET_CORE:
-      Ion::Device::Reset::coreHandler();
-      return;
-    case SVC_EXAM_MODE_TOGGLE:
-      // TODO EMILIE:
-      // We probably want to change the API here to something like:
-      // case SVC_EXTERNAL_FLASH_WRITE:
-      //  Ion::Device::ExamMode::externalFlashWrite((uint8_t *)args[0], (uint8_t *)args[1]);
-      //  But I haven't fully understood passing args to SVChandler yet - the previous code fails with optim...
-      Ion::Device::ExamMode::ToggleExamMode();
-      return;*/
-    // DISPLAY
     case SVC_DISPLAY_PUSH_RECT:
       // Load rect and pixels
       Ion::Device::Display::pushRect(
@@ -112,6 +88,9 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_KEYBOARD_NEXT_STATE:
       *static_cast<Ion::Keyboard::State *>(args[0]) = Ion::Device::Keyboard::nextState();
+      return;
+    case SVC_KEYBOARD_SCAN:
+      *static_cast<Ion::Keyboard::State *>(args[0]) = Ion::Device::Keyboard::scan();
       return;
     // BATTERY
     case SVC_BATTERY_IS_CHARGING:

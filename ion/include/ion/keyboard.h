@@ -55,6 +55,8 @@ private:
   uint64_t m_bitField;
 };
 
+State scan();
+
 bool hasNextState();
 State nextState();
 

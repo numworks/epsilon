@@ -4,6 +4,7 @@
 #include <kernel/drivers/crc32.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/events_keyboard_platform.h>
+#include <kernel/drivers/fcc_id.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/led.h>
 #include <kernel/drivers/persisting_bytes.h>
@@ -160,6 +161,10 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     // SERIAL NUMBER
     case SVC_SERIAL_NUMBER:
       *static_cast<const char **>(args[0]) = Ion::Device::SerialNumber::read();
+      return;
+    // FCC_ID
+    case SVC_FCC_ID:
+      *static_cast<const char **>(args[0]) = Ion::Device::fccId();
       return;
     default:
       return;

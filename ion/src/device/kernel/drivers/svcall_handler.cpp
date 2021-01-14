@@ -4,6 +4,7 @@
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/events_keyboard_platform.h>
 #include <kernel/drivers/keyboard.h>
+#include <kernel/drivers/led.h>
 #include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
@@ -134,6 +135,18 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_POWER_SUSPEND:
       Ion::Device::Power::suspend(*static_cast<bool *>(args[0]));
+      return;
+    case SVC_LED_GET_COLOR:
+      *static_cast<KDColor *>(args[0]) = Ion::Device::LED::getColor();
+      return;
+    case SVC_LED_SET_COLOR:
+      Ion::Device::LED::setColor(*static_cast<KDColor *>(args[0]));
+      return;
+    case SVC_LED_SET_BLINKING:
+      Ion::Device::LED::setBlinking(*static_cast<uint16_t *>(args[0]), *static_cast<float *>(args[1]));
+      return;
+    case SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE:
+      *static_cast<KDColor *>(args[0]) = Ion::Device::LED::updateColorWithPlugAndCharge();
       return;
     default:
       return;

@@ -13,7 +13,7 @@ void usleep(uint32_t us) {
 }
 
 void SVC_ATTRIBUTES msleepSVC(uint32_t * ms) {
-  SVC(SVC_TIMING_USLEEP);
+  SVC(SVC_TIMING_MSLEEP);
 }
 
 void msleep(uint32_t ms) {

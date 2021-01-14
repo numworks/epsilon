@@ -1142,7 +1142,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   Integer r2(1);
   {
     // Performing PrimeFactorization in this scope to free resources earlier.
-    Arithmetic arithmetic = Arithmetic();
+    Arithmetic arithmetic;
     int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
     if (numberOfPrimeFactors < 0) {
       /* We could not break i in prime factors (it might take either too many

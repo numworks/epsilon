@@ -363,7 +363,7 @@ Expression Logarithm::unaryFunctionDifferential(ExpressionNode::ReductionContext
 Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext) {
   assert(!i.isZero());
   assert(!i.isNegative());
-  Arithmetic arithmetic = Arithmetic();
+  Arithmetic arithmetic;
   int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
   if (numberOfPrimeFactors == 0) {
     return Rational::Builder(0);

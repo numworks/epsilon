@@ -1,6 +1,7 @@
 include build/targets.device.$(MODEL).mak
 
 HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash bootloader.standard bootloader.rescue kernel userland
+# TODO EMILIE: move rescue to N110 only
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 kernel.dfu: DFUFLAGS += --signed

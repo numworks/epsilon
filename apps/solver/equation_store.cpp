@@ -26,6 +26,7 @@ namespace Solver {
 EquationStore::EquationStore() :
   ExpressionModelStore(),
   m_type(Type::LinearSystem),
+  m_degree(-1),
   m_numberOfSolutions(0),
   m_exactSolutionExactLayouts{},
   m_exactSolutionApproximateLayouts{},
@@ -258,13 +259,14 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   EquationStore::Error error;
 
   if (isLinear) {
+    m_degree = 1;
     m_type = Type::LinearSystem;
     error = resolveLinearSystem(exactSolutions, exactSolutionsApproximations, coefficients, constants, context);
   } else {
     // Step 3. Polynomial & Monovariable?
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = simplifiedExpressions[0]
+    m_degree = simplifiedExpressions[0]
       .getPolynomialReducedCoefficients(
           m_variables[0],
           polynomialCoefficients,
@@ -275,10 +277,10 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
           replaceFunctionsButNotSymbols ?
             ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions :
             ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-    if (degree == 2) {
+    if (m_degree == 2) {
       // Polynomial degree <= 2
       m_type = Type::PolynomialMonovariable;
-      error = oneDimensialPolynomialSolve(exactSolutions, exactSolutionsApproximations, polynomialCoefficients, degree, context);
+      error = oneDimensialPolynomialSolve(exactSolutions, exactSolutionsApproximations, polynomialCoefficients, context);
     } else {
       // Step 4. Monovariable non-polynomial or polynomial with degree > 2
       m_type = Type::Monovariable;
@@ -373,9 +375,9 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   return Error::NoError;
 }
 
-EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
+EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients], Context * context) {
   /* Equation ax^2+bx+c = 0 */
-  assert(degree == 2);
+  assert(m_degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), coefficients[0].clone(), coefficients[2].clone()));
   delta = delta.simplify(ExpressionNode::ReductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
@@ -400,7 +402,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   return Error::NoError;
 #if 0
-  if (degree == 3) {
+  if (m_degree == 3) {
     Expression * a = coefficients[3];
     Expression * b = coefficients[2];
     Expression * c = coefficients[1];

@@ -31,9 +31,8 @@ public:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
 
   /* EquationStore */
-  Type type() const {
-    return m_type;
-  }
+  Type type() const { return m_type; }
+  int degree() const { return m_degree; }
   const char * variableAtIndex(size_t i) {
     assert(i < Poincare::Expression::k_maxNumberOfVariables && m_variables[i][0] != 0);
     return m_variables[i];
@@ -42,15 +41,10 @@ public:
     assert(i < Poincare::Expression::k_maxNumberOfVariables && m_userVariables[i][0] != 0);
     return m_userVariables[i];
   }
-  int numberOfUserVariables() const {
-    return m_numberOfUserVariables;
-  }
-  bool userVariablesUsed() const {
-    return m_userVariablesUsed;
-  }
-  int numberOfSolutions() const {
-    return m_numberOfSolutions;
-  }
+  int numberOfUserVariables() const { return m_numberOfUserVariables; }
+  bool userVariablesUsed() const { return m_userVariablesUsed; }
+  int numberOfSolutions() const { return m_numberOfSolutions; }
+
   /* Exact resolution */
   Error exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols);
   /* The exact solutions are displayed in a table with 2 layouts: an exact
@@ -71,6 +65,7 @@ public:
     assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
     return m_exactSolutionEquality[i];
   }
+
   /* Approximate resolution */
   double intervalBound(int index) const;
   void setIntervalBound(int index, double value);
@@ -100,13 +95,14 @@ private:
 
   Error privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols);
   Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
-  Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
+  Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], Poincare::Context * context);
   void tidySolution();
   bool isExplictlyComplex(Poincare::Context * context);
   Poincare::Preferences::ComplexFormat updatedComplexFormat(Poincare::Context * context);
 
   mutable Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
+  int m_degree;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   char m_userVariables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   int m_numberOfSolutions;

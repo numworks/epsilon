@@ -45,7 +45,7 @@ private:
   /* When decomposing an integer into primes factors, we look for its prime
    * factors among integer from 2 to 10000. */
   constexpr static int k_biggestPrimeFactor = 10000;
-  static bool k_factorizationLock;
+  static bool s_factorizationLock;
   static Integer k_factorizationFactors[k_maxNumberOfPrimeFactors];
   static Integer k_factorizationCoefficients[k_maxNumberOfPrimeFactors];
 };

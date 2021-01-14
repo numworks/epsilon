@@ -50,7 +50,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
-  Arithmetic arithmetic = Arithmetic();
+  Arithmetic arithmetic;
   int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
   if (numberOfPrimeFactors == 0) {
     m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);

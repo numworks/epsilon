@@ -105,16 +105,19 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_equationStore(equationStore),
   m_deltaCell(0.5f, 0.5f),
   m_delta2Layout(),
+  m_delta3Layout(),
   m_contentView(this)
 {
   const char * delta = GlobalPreferences::sharedGlobalPreferences()->discriminantSymbol();
+  size_t lenDelta = strlen(delta);
   const char * equalB = "=b";
   m_delta2Layout = HorizontalLayout::Builder(
-    LayoutHelper::String(delta, strlen(delta), KDFont::SmallFont),
+    LayoutHelper::String(delta, lenDelta, KDFont::SmallFont),
     LayoutHelper::String(equalB, strlen(equalB), KDFont::SmallFont),
     VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript),
     LayoutHelper::String("-4ac", 4, KDFont::SmallFont)
   );
+  m_delta3Layout = LayoutHelper::String(delta, lenDelta, KDFont::SmallFont);
   for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }
@@ -195,8 +198,9 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   if (i == 0) {
     if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == numberOfDisplayedSolutions() - 1) {
       // Formula of the discriminant
+      assert(m_equationStore->degree() == 2 || m_equationStore->degree() == 3);
       EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
-      deltaCell->setLayout(m_delta2Layout);
+      deltaCell->setLayout(m_equationStore->degree() == 2 ? m_delta2Layout : m_delta3Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
       char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+2]; // Holds at maximum the variable name + 2 digits (for 10)

@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-bool Arithmetic::k_factorizationLock = false;
+bool Arithmetic::s_factorizationLock = false;
 Integer Arithmetic::k_factorizationFactors[k_maxNumberOfPrimeFactors];
 Integer Arithmetic::k_factorizationCoefficients[k_maxNumberOfPrimeFactors];
 
@@ -149,12 +149,12 @@ const short primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 
 int Arithmetic::PrimeFactorization(const Integer & n) {
   assert(!n.isOverflow());
   // Check no other Arithmetic instance is under lock
-  if (k_factorizationLock) {
+  if (s_factorizationLock) {
     assert(false);
     return -3;
   }
   // Lock Prime factorization
-  k_factorizationLock = true;
+  s_factorizationLock = true;
 
   // Compute the absolute value of n
   Integer m = n;
@@ -217,7 +217,7 @@ Arithmetic::~Arithmetic() {
     k_factorizationCoefficients[i] = Integer();
   }
   // Unlock Prime Factorization
-  k_factorizationLock = false;
+  s_factorizationLock = false;
 }
 
 template Evaluation<double> Arithmetic::GCD<double>(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);

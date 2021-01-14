@@ -121,6 +121,7 @@ private:
   Escher::EvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];
   Escher::EvenOddExpressionCell m_deltaCell;
   Poincare::Layout m_delta2Layout;
+  Poincare::Layout m_delta3Layout;
   Shared::ScrollableTwoExpressionsCell m_exactValueCells[k_numberOfExactValueCells];
   Escher::EvenOddBufferTextCell m_approximateValueCells[k_numberOfApproximateValueCells];
   MessageCell m_messageCells[k_numberOfMessageCells];

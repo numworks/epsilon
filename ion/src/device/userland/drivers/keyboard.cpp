@@ -14,7 +14,6 @@ bool hasNextState() {
   return res;
 }
 
-
 void SVC_ATTRIBUTES nextStateSVC(State * s) {
   SVC(SVC_KEYBOARD_NEXT_STATE);
 }
@@ -22,6 +21,16 @@ void SVC_ATTRIBUTES nextStateSVC(State * s) {
 State nextState() {
   State res;
   nextStateSVC(&res);
+  return res;
+}
+
+void SVC_ATTRIBUTES scanSVC(State * s) {
+  SVC(SVC_KEYBOARD_SCAN);
+}
+
+State scan() {
+  State res;
+  scanSVC(&res);
   return res;
 }
 

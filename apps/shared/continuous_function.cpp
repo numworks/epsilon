@@ -68,7 +68,7 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
     return ContinuousFunction();
   }
 
-  // Return the ContinuousFunction withthe new record
+  // Return the ContinuousFunction with the new record
   return ContinuousFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
@@ -340,6 +340,10 @@ size_t ContinuousFunction::Model::expressionSize(const Ion::Storage::Record * re
 Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const {
   if (m_expressionDerivate.isUninitialized()) {
     m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+    /* On complex functions, this step can take a significant time.
+     * A workaround could be to identify big functions to skip simplification at
+     * the cost of possible inaccurate evaluations (such as diff(abs(x),x,0) not
+     * being undefined). */
     PoincareHelpers::Simplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
     // simplify might return an uninitialized Expression if interrupted
     if (m_expressionDerivate.isUninitialized()) {

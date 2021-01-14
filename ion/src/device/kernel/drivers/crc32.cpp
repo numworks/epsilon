@@ -2,6 +2,9 @@
 #include <regs/regs.h>
 
 namespace Ion {
+
+uint32_t crc32EatByte(uint32_t crc, uint8_t data);
+
 namespace Device {
 
 using namespace Device::Regs;
@@ -30,7 +33,7 @@ uint32_t crc32Byte(const uint8_t * data, size_t length) {
 #else
   result = CRC.DR_WordAccess()->get();
   while (data < end) {
-    result = Ion::Device::crc32EatByte(result, *data++);
+    result = Ion::crc32EatByte(result, *data++);
   }
 #endif
 

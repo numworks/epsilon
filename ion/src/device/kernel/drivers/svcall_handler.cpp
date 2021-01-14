@@ -1,6 +1,7 @@
 #include <kernel/boot/isr.h>
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/battery.h>
+#include <kernel/drivers/crc32.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/events_keyboard_platform.h>
 #include <kernel/drivers/keyboard.h>
@@ -147,6 +148,13 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     case SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE:
       *static_cast<KDColor *>(args[0]) = Ion::Device::LED::updateColorWithPlugAndCharge();
+      return;
+    // CRC32
+    case SVC_CRC32_WORD:
+      *static_cast<uint32_t *>(args[2]) = Ion::Device::crc32Word(static_cast<const uint32_t *>(args[0]), *static_cast<size_t *>(args[1]));
+      return;
+    case SVC_CRC32_BYTE:
+      *static_cast<uint32_t *>(args[2]) = Ion::Device::crc32Byte(static_cast<const uint8_t *>(args[0]), *static_cast<size_t *>(args[1]));
       return;
     default:
       return;

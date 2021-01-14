@@ -56,7 +56,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
 KDCoordinate RegressionController::rowHeight(int j) {
   assert (j >= 0 && j < numberOfRows());
   MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 

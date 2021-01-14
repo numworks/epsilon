@@ -134,7 +134,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 
 KDCoordinate TypeParameterController::rowHeight(int j) {
   ExpressionTableCellWithPointer tempCell = ExpressionTableCellWithPointer();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 

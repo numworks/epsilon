@@ -56,17 +56,17 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 KDCoordinate SequenceToolbox::rowHeight(int index) {
   if (typeAtLocation(0, index) == 2) {
     ExpressionTableCell tempCell = ExpressionTableCell();
-    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
     return tempCell.minimalSizeForOptimalDisplay().height();
   }
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(mathToolboxIndex(index));
   if (messageTree->numberOfChildren() == 0) {
     MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
-    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
     return tempCell.minimalSizeForOptimalDisplay().height();
   }
   MessageTableCell tempCell = MessageTableCell();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 

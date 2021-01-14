@@ -61,20 +61,20 @@ KDCoordinate ListParameterController::rowHeight(int j) {
   switch (j) {
 #if FUNCTION_COLOR_CHOICE
     case 0:
-      willDisplayCellForIndex((HighlightCell *)&m_colorCell, j);
+      prepareCellForHeightCalculation((HighlightCell *)&m_colorCell, j);
       return m_colorCell.minimalSizeForOptimalDisplay().height();
     case 1:
 #else
     case 0:
 #endif
-      willDisplayCellForIndex((HighlightCell *)&m_enableCell, j);
+      prepareCellForHeightCalculation((HighlightCell *)&m_enableCell, j);
       return m_enableCell.minimalSizeForOptimalDisplay().height();
 #if FUNCTION_COLOR_CHOICE
     case 2:
 #else
     case 1:
 #endif
-      willDisplayCellForIndex((HighlightCell *)&m_deleteCell, j);
+      prepareCellForHeightCalculation((HighlightCell *)&m_deleteCell, j);
       return m_deleteCell.minimalSizeForOptimalDisplay().height();
     default:
       assert(false);

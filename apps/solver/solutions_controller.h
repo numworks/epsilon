@@ -27,7 +27,7 @@ public:
   TELEMETRY_ID("Solutions");
 
   /* AlternateEmptyViewDefaultDelegate */
-  bool isEmpty() const override { return false; };  // View cannot be empty
+  bool isEmpty() const override { return false; }  // View cannot be empty
   I18n::Message emptyMessage() override { assert(false); }
   Escher::Responder * defaultController() override;
   /* TableViewDataSource */
@@ -97,9 +97,9 @@ private:
   static_assert(k_maxNumberOfVisibleCells == 10, "k_maxNumberOfVisibleCells has changed"); //This assert is just for information purposes
   static_assert(k_maxNumberOfVisibleCells <= EquationStore::k_maxNumberOfSolutions + Poincare::Expression::k_maxNumberOfVariables, "We can reduce the number of cells in Solver:SolutionsController.");
   constexpr static int k_maxNumberOfSymbols = EquationStore::k_maxNumberOfSolutions + Poincare::Expression::k_maxNumberOfVariables;
-  constexpr static int k_numberOfSymbolCells = k_maxNumberOfVisibleCells < k_maxNumberOfSymbols ? k_maxNumberOfVisibleCells : k_maxNumberOfSymbols;
+  constexpr static int k_numberOfSymbolCells = (k_maxNumberOfVisibleCells < k_maxNumberOfSymbols) ? k_maxNumberOfVisibleCells : k_maxNumberOfSymbols;
   constexpr static int k_maxNumberOfExactValues = EquationStore::k_maxNumberOfExactSolutions + Poincare::Expression::k_maxNumberOfVariables;
-  constexpr static int k_numberOfExactValueCells = k_maxNumberOfVisibleCells < k_maxNumberOfExactValues ? k_maxNumberOfVisibleCells : k_maxNumberOfExactValues;
+  constexpr static int k_numberOfExactValueCells = (k_maxNumberOfVisibleCells < k_maxNumberOfExactValues) ? k_maxNumberOfVisibleCells : k_maxNumberOfExactValues;
   constexpr static int k_numberOfApproximateValueCells = 1 + (k_maxNumberOfVisibleCells < EquationStore::k_maxNumberOfApproximateSolutions ? k_maxNumberOfVisibleCells : EquationStore::k_maxNumberOfApproximateSolutions);
   constexpr static int k_numberOfMessageCells = 2;
 
@@ -107,7 +107,7 @@ private:
     return m_equationStore->userVariablesUsed();
   }
   int userVariablesMessageRow() const;
-  int displayedSolutions() const;
+  int numberOfDisplayedSolutions() const;
   I18n::Message noSolutionMessage();
 
   EquationStore * m_equationStore;

@@ -22,7 +22,7 @@ void ValuesFunctionParameterController::didBecomeFirstResponder() {
 
 KDCoordinate ValuesFunctionParameterController::rowHeight(int j) {
   Escher::HighlightCell * cell = reusableCell(j, typeAtLocation(0, j));
-  willDisplayCellForIndex(cell, j);
+  prepareCellForHeightCalculation(cell, j);
   return cell->minimalSizeForOptimalDisplay().height();
 }
 

@@ -74,11 +74,11 @@ KDCoordinate VariableBoxController::rowHeight(int index) {
   int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
     ScriptNodeCell tempCell = ScriptNodeCell();
-    willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+    prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
     return tempCell.minimalSizeForOptimalDisplay().height();
   }
   MessageTableCell tempCell = MessageTableCell();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
 #if 0
   NodeOrigin cellOrigin = NodeOrigin::CurrentScript;

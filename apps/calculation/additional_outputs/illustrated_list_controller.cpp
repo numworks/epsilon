@@ -81,7 +81,7 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
     return 0;
   }
   ScrollableThreeExpressionsCell tempCell = ScrollableThreeExpressionsCell();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 #if 0
   Shared::ExpiringPointer<Calculation> calculation = m_calculationStore.calculationAtIndex(calculationIndex);

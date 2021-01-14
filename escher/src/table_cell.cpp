@@ -3,7 +3,7 @@
 #include <escher/metric.h>
 #include <algorithm>
 #include <ion.h>
-// #include <iostream>
+#include <iostream>
 
 namespace Escher {
 

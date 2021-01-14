@@ -131,7 +131,7 @@ void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int in
 
 KDCoordinate PreferencesController::rowHeight(int index) {
   MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
 #if 0
   /* We cheat for the Writing format subcontroller, because the Edition2D layout

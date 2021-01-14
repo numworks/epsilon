@@ -120,11 +120,11 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
 KDCoordinate ListParameterController::rowHeight(int j) {
   switch (j) {
   case 0:
-    willDisplayCellForIndex((HighlightCell *)&m_typeCell, j);
+    prepareCellForHeightCalculation((HighlightCell *)&m_typeCell, j);
     return m_typeCell.minimalSizeForOptimalDisplay().height();
   case 1:
     if (hasInitialRankRow()) {
-      willDisplayCellForIndex((HighlightCell *)&m_initialRankCell, j);
+      prepareCellForHeightCalculation((HighlightCell *)&m_initialRankCell, j);
       return m_initialRankCell.minimalSizeForOptimalDisplay().height();
     }
   default:

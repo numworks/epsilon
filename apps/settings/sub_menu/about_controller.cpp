@@ -68,7 +68,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
 KDCoordinate AboutController::rowHeight(int index) {
   MessageTableCellWithBuffer tempCell = MessageTableCellWithBuffer();
-  willDisplayCellForIndex((HighlightCell *)&tempCell, index);
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 

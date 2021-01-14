@@ -28,7 +28,7 @@ KDCoordinate DisplayModeController::rowHeight(int j) {
   return Metric::ParameterCellHeight;
 #endif
     MessageTableCellWithEditableTextWithSeparator tempCell = MessageTableCellWithEditableTextWithSeparator();
-    willDisplayCellForIndex((HighlightCell *)&tempCell, j);
+    prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
     return tempCell.minimalSizeForOptimalDisplay().height();
   }
   return PreferencesController::rowHeight(j);

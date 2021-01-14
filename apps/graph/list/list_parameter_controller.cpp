@@ -102,13 +102,13 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 KDCoordinate ListParameterController::rowHeight(int j) {
   switch (j) {
   case 0:
-    willDisplayCellForIndex((HighlightCell *)&m_typeCell, j);
+    prepareCellForHeightCalculation((HighlightCell *)&m_typeCell, j);
     return m_typeCell.minimalSizeForOptimalDisplay().height();
   case 1:
-    willDisplayCellForIndex((HighlightCell *)&m_functionDomain, j);
+    prepareCellForHeightCalculation((HighlightCell *)&m_functionDomain, j);
     return m_functionDomain.minimalSizeForOptimalDisplay().height();
   case 2:
-    willDisplayCellForIndex((HighlightCell *)&m_renameCell, j);
+    prepareCellForHeightCalculation((HighlightCell *)&m_renameCell, j);
     return m_renameCell.minimalSizeForOptimalDisplay().height();
   default:
     return Shared::ListParameterController::rowHeight(j - 3);

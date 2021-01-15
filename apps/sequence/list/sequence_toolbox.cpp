@@ -59,7 +59,7 @@ KDCoordinate SequenceToolbox::rowHeight(int index) {
     prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
     return tempCell.minimalSizeForOptimalDisplay().height();
   }
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(mathToolboxIndex(index));
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index - stackRowOffset());
   if (messageTree->numberOfChildren() == 0) {
     MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
     prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);

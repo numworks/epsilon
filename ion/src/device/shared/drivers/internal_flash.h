@@ -8,8 +8,6 @@ namespace Ion {
 namespace Device {
 namespace InternalFlash {
 
-void MassErase();
-
 int SectorAtAddress(uint32_t address);
 void EraseSector(int i);
 

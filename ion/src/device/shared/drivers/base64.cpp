@@ -1,5 +1,7 @@
-namespace Ion {
+#include "base64.h"
 
+namespace Ion {
+namespace Device {
 namespace Base64 {
 
 static constexpr char encodeTable[] = {
@@ -48,5 +50,5 @@ void encode(const unsigned char * input, unsigned int inputLength, char * output
 }
 
 }
-
+}
 }

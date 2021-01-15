@@ -1,0 +1,187 @@
+Google Tag Manager SDK for iOS Changelog
+--------------------------------------------
+Version: 3.17 (September 2016)
+--------------------------------------------
+* No Changes.
+
+--------------------------------------------
+Version: 3.16 (July 2016)
+--------------------------------------------
+* No Changes.
+
+--------------------------------------------
+Version: 3.15 (November 2015)
+--------------------------------------------
+* Removed UIViewController category implementation causing issues with Xcode 7 unit testing.
+
+--------------------------------------------
+Version: 3.14 (October 2015)
+--------------------------------------------
+* Added support for bitcode.
+
+--------------------------------------------
+Version: 3.13 (July 2015)
+--------------------------------------------
+* No Changes.
+
+--------------------------------------------
+Version: 3.12 (April 2015)
+--------------------------------------------
+* Fixed a class name conflict.
+
+--------------------------------------------
+Version: 3.11 (April 2015)
+--------------------------------------------
+* Fixed a nil string crash in TAGDispatcher.
+
+--------------------------------------------
+Version: 3.10 (November, 2014)
+--------------------------------------------
+* Deprecate TAGContainerFuture based openContainerWithId.  Using this
+  API on iOS8 results in errors if the get is called during some phases
+  of the UIAppDelegate lifecycle.
+* Added support for custom metrics and custom dimensions to
+  Enhanced Ecommerce for the Google Universal Analytics tag.
+* Fixed a bug which required products for Enhanced Ecommerce
+  actions that have optional products.
+* Support Advertising ID Features for the Google Universal Analytics tag.
+* Updated CuteAnimals sample application to demonstrate how to send data
+  when the app is going into the background.
+
+--------------------------------------------
+Version: 3.09 (July, 2014)
+--------------------------------------------
+* Added support for Enhanced Ecommerce to Google Universal Analytics tag.
+* Added dispatch: and dispatchWithCompletionHandler: method to TAGManager to
+  support sending pending network traffic on demand.
+
+--------------------------------------------
+Version: 3.08 (June, 2014)
+--------------------------------------------
+* No Changes
+
+--------------------------------------------
+Version: 3.07 (May, 2014)
+--------------------------------------------
+* Fixed a bug in Id for Advertising Macro so that it can correctly
+  return identifier for advertiser(IDFA) if available.
+* Fixed an issue so users can use NSNumber for ecommerce data.
+
+--------------------------------------------
+Version: 3.06 (March, 2014)
+--------------------------------------------
+* Added support for Google Analytics Content Experiments Macro.
+
+--------------------------------------------
+Version: 3.03c (February, 2014)
+--------------------------------------------
+* Functions that call AdSupport.framework API are broken out into a separate
+  library, libAdIdAccess.a. Apps need to link with that library to have access
+  to the advertising identifier (IDFA) string and advertiser tracking enabled
+  flag.
+
+--------------------------------------------
+Version: 3.03a (February, 2014)
+--------------------------------------------
+* No Changes.
+
+--------------------------------------------
+Version: 3.03 (January, 2014)
+--------------------------------------------
+* Added support for 64-bit iOS SDK 7.0.
+
+--------------------------------------------
+Version: 3.02 (October, 2013)
+--------------------------------------------
+* Fixed conflict with Google Games SDK and protocol buffer SDK.
+* Fixed linker error when code stripping was enabled.
+* Updated the example application to include new needed library libz.dylib.
+
+--------------------------------------------
+Version: 3.01 (September, 2013)
+--------------------------------------------
+* Fixed link error when targeting iOS 7.0
+
+--------------------------------------------
+Version: 3.0 (August 16, 2013)
+--------------------------------------------
+* Added support for AdWords Conversion Tracking Tag, AdWords Remarketing Tag,
+  and Custom Image Tag.
+
+* Added Advertising Enabled Macro, Application ID Macro, and ID for
+  Advertising Macro.
+
+* Pushing a link to the data layer as "gtm.url" will now cache the
+  Click Referrer for AdWords Tags.
+
+* Updated cuteAnimals sample app to demonstrate how to use Function Call Macro
+  and Function Call Tag.
+
+--------------------------------------------
+Version: 3.0b1 (July 26, 2013)
+--------------------------------------------
+* libGoogleAnalyticsServices.a replaces libTagManager.a in the
+  downloaded SDK. libGoogleAnalyticsServices.a includes all functions
+  in libTagManager.a plus version 3 of the Google Analytics SDK.
+  Note that an application can't include both libGoogleAnalyticsServices.a
+  and the old libGoogleAnalytics.a or libTagManager.a file.
+  An application that wants to use GTM and also do analytics tracking should
+  either update their GA calls to use version 3 of the SDK, or replace GA
+  calls with data layer push calls and add appropriate rules to their
+  container to fire Universal Analytics hits.
+
+* Added Tag support in SDK. There are 2 types of tags currently supported:
+  Universal Analytics (beta) tag and Custom Function Tag.
+
+* Added DataLayer support to hold generic information about the application.
+  An app can obtain the DataLayer object by calling TagManager::dataLayer.
+
+* Added 2 new macros: data layer variable macro and custom event macro.
+
+* Added LogLevel support into Logger. This allows adjusting the threshold of
+  what gets logged without having to write a new logger.
+
+* Added preview exit link support to allow exiting preview mode of a container
+  without killing the app.
+
+* Fixed a bug that prevented developers from using both GTM and open-sourced
+  proto buffer library.
+
+* Modified the cuteAnimals example to show how to instrument an application
+  by pushing events to the data layer. A sample container is provided that
+  uses the pushed events to fire Google Universal Analytics tag.
+
+--------------------------------------------
+Version: 1.0b3 (June 26, 2013)
+--------------------------------------------
+* TagManager::openContainer no longer allows opening multiple containers with
+  the same container ID.
+
+* ContainerOpener no longer has the two methods
+  openNonDefaultContainerWithId:tagManager:timeout:notifier and
+  openFreshContainerWithId:tagManager:timeout:notifier:.
+  Instead, there are now two openContainer methods:
+  openContainerWithId:tagManager:openType:timeout: and
+  openContainerWithId:tagManager:openType:timeout:notifier.
+  The first returns a TAGContainerFuture, while the other takes a notifier.
+  Both of these methods take a parameter specifying how the container should
+  be opened (kTAGPreferNonDefault or kTAGPreferFresh).  This should reduce
+  confusion as to how TAGContainerFutures and notifiers interact.
+
+  These two new methods can be called more than once with the same
+  container ID; if the container is already open, it'll be returned (via the
+  future or notifier).
+
+* In container preview mode, containers that are already open will be
+  auto-updated (was just updating the container on the next open).
+
+--------------------------------------------
+Version: 1.0b2 (June 3, 2013)
+--------------------------------------------
+* Initial beta release.
+
+--------------------------------------------
+Version: 1.0b1
+--------------------------------------------
+* Unreleased internal version.
+

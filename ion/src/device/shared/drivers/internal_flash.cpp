@@ -217,16 +217,6 @@ int SectorAtAddress(uint32_t address) {
   return -1;
 }
 
-void MassErase() {
-  open();
-  FLASH.CR()->setMER(true);
-  FLASH.CR()->setSTRT(true);
-  wait();
-  FLASH.CR()->setMER(false);
-  close();
-}
-
-
 void EraseSector(int i) {
   assert(i >= 0 && i < Config::NumberOfSectors);
   open();

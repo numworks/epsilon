@@ -28,6 +28,9 @@ public:
   class KEYR : public Register32 {
   };
 
+  class OPTKEYR : public Register32 {
+  };
+
   class CR : public Register32 {
   public:
     enum class PSIZE : uint8_t {
@@ -56,11 +59,48 @@ public:
     REGS_BOOL_FIELD(EOP, 0);
   };
 
+  class OPTCR : public Register32 {
+  public:
+    using Register32::Register32;
+    REGS_BOOL_FIELD(OPTLOCK, 0);
+    REGS_BOOL_FIELD(OPTSTRT, 1);
+    enum class RDP : uint8_t {
+      Level0 = 0xAA,
+      Level1 = 0x00,
+      Level2 = 0xCC
+    };
+    REGS_TYPE_FIELD(RDP, 15, 8);
+  };
+
+  class OPTCR1 : public Register32 {
+  public:
+    using Register32::Register32;
+    uint32_t getBootAddress0() volatile {
+      return (uint32_t)getBOOT_ADD0()*k_granularity;
+    }
+    uint32_t getBootAddress1() volatile {
+      return (uint32_t)getBOOT_ADD1()*k_granularity;
+    }
+    void setBootAddress0(uint32_t add) volatile {
+      setBOOT_ADD0(add/k_granularity);
+    }
+    void setBootAddress1(uint32_t add) volatile {
+      setBOOT_ADD1(add/k_granularity);
+    }
+  private:
+    static constexpr uint32_t k_granularity = 0x4000;
+    REGS_FIELD(BOOT_ADD1, uint16_t, 31, 16);
+    REGS_FIELD(BOOT_ADD0, uint16_t, 15, 0);
+  };
+
   constexpr FLASH() {};
   REGS_REGISTER_AT(ACR, 0x00);
   REGS_REGISTER_AT(KEYR, 0x04);
+  REGS_REGISTER_AT(OPTKEYR, 0x08);
   REGS_REGISTER_AT(SR, 0x0C);
   REGS_REGISTER_AT(CR, 0x10);
+  REGS_REGISTER_AT(OPTCR, 0x14);
+  REGS_REGISTER_AT(OPTCR1, 0x18);
 private:
   constexpr uint32_t Base() const {
     return 0x40023C00;

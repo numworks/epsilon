@@ -1,0 +1,211 @@
+Google Analytics SDK for iOS Changelog
+--------------------------------------------
+Version: 3.17 (September 2016)
+--------------------------------------------
+* Fixed crash in GAITrackerModel on iOS 10.
+
+--------------------------------------------
+Version: 3.16 (July 2016)
+--------------------------------------------
+* Fixed bad memory access crash under rare conditions.
+
+--------------------------------------------
+Version: 3.15 (November 2015)
+--------------------------------------------
+* No change.
+
+--------------------------------------------
+Version: 3.14 (October 2015)
+--------------------------------------------
+* Added support for bitcode.
+
+--------------------------------------------
+Version: 3.13 (July 2015)
+--------------------------------------------
+* Fixed an issue which caused crashes when using setCampaignParametersFromUrl.
+
+--------------------------------------------
+Version: 3.12 (April 2015)
+--------------------------------------------
+* No change.
+
+--------------------------------------------
+Version: 3.11 (April 2015)
+--------------------------------------------
+* Report screen resolution using nativeBounds on iOS 8.0 and newer.
+* Added support for click-related campaign parameters.
+* Report iOS hardware model in addition to the device OS version.
+* Report iAd install attribution on iOS 7.1 and newer. This requires the iAd framework.
+* Added deprecation warning for the appview hit type.
+* sqlite3 is now a required library.
+
+--------------------------------------------
+Version: 3.10 (November 2014)
+--------------------------------------------
+* Fixed an issue which prevented all beacons from being sent when dispatching
+  beacons.
+* Updated CuteAnimals sample application to demonstrate how to dispatch when
+  the app goes into the background.
+* Added support for additional Enhanced Ecommerce fields.
+* Removed warning messages about GAIHit and GAIProperty classes missing when
+  compiling against iOS SDK 8.0; those classes were removed.
+* Dispatching beacons is now more efficient, with multiple beacons being
+  dispatched in a single HTTPS request.
+* Requests will be compressed to save on data plan usage under certain
+  circumstances.
+
+--------------------------------------------
+Version: 3.09 (July 2014)
+-------------------------------------------
+* No change.
+
+--------------------------------------------
+Version: 3.08 (June 2014)
+-------------------------------------------
+* The SDK will now collect IDFA and the advertiser tracking enabled flag if the
+  library libAdIdAccess.a (provided as part of the SDK) is included in the
+  application and the allowIDFACollection property is set to true on the
+  tracker.
+* Enhanced Ecommerce support has been added.
+* Added screenview hit type to replace appview hit type.
+* A hit id parameter is now added to each hit.  It is changed every time an
+  appview, screenview or pageview hit is generated.
+* ClientId will now be reset every time the idfa value is changes.  This only
+  happens when idfa is collected in a tracker.
+* A new dispatchWithCompletionHandler method has been added to the GAI class.
+* Fixed an issue where the SDK could send a beacon without a clientId or
+  with an empty clientId.
+
+--------------------------------------------
+Version: 3.07 (May 2014)
+-------------------------------------------
+* Added User Id field.
+* Fixed an issue so GTM users can use NSNumber for ecommerce data.
+
+--------------------------------------------
+Version: 3.06 (March 2014)
+-------------------------------------------
+* SDK will now populate the Application Id parameter (&aid) by default.
+
+--------------------------------------------
+Version: 3.03c (February 2014)
+-------------------------------------------
+* No change.
+
+--------------------------------------------
+Version: 3.03b (February 2014)
+-------------------------------------------
+* No change.
+
+--------------------------------------------
+Version: 3.03a (February 2014)
+-------------------------------------------
+* Removed need for Adsupport.framework.
+* Removed unused code.
+
+--------------------------------------------
+Version: 3.03 (January 2014)
+-------------------------------------------
+* Support 64-bit iOS 7.0 SDK.
+* Removed libGoogleAnalytics_debug.a, it’s part of the libGoogleAnalyticsServices.a
+  library.
+* Cleaned up CuteAnimals build file for Google Analytics.
+
+--------------------------------------------
+Version: 3.02 (October 2013)
+-------------------------------------------
+* Fixed conflict with protocol buffer SDK.
+* Fixed linker error when code stripping was enabled.
+
+--------------------------------------------
+Version: 3.01 (September 2013)
+-------------------------------------------
+* Fixed link error when targeting iOS 7.0.
+
+--------------------------------------------
+Version: 3.00 (August 2013)
+-------------------------------------------
+* SDK API change to align with analytics.js. The track<hittype> and
+  send<hittype> methods have been removed.  Use send and the
+  GAIDictionaryBuilder construct methods instead.
+* Most properties on the GAITracker protocol have been removed.  Use
+  set on the various fields instead.
+* All parameters set using the set method will be persisted.  Previously,
+  several parameters would only be set for the next send/track call.
+* GAILogger protocol is available for those wanting to implement their
+  own custom logging for the SDK.
+* Minimium system requirements have changed.  See Readme.txt for details.
+* All SDK activity (database and network access) is now done on a separate
+  thread.
+* Clientid can now be read.  Call [tracker get:kGAIClientId].  Note that
+  this call will block until the client id can be read from the database.
+* SDK no longer uses POST unless the hit is larger than 2000 bytes.  It
+  will use GET instead.
+* SDK will no longer retry sending hits based off the HTTP response code.
+
+--------------------------------------------
+Version: 2.0beta4 Update (Jan 2013)
+--------------------------------------------
+* Change default appVersion to the value in CFBundleShortVersionString
+    instead of CFBundleVersionKey.
+* Use HTTPS as the default protocol instead of HTTP.
+* Track methods changed to Send (e.g. trackView now called sendView).
+* Some minor bug fixes.
+
+--------------------------------------------
+Version: 2.0beta3 iOS6 Update (Sep 2012)
+--------------------------------------------
+* Add armv7s architecture to libGoogleAnalytics.a.
+* Remove armv6 architecture from libGoogleAnalytics.a.
+
+--------------------------------------------
+Version: 2.0beta3 (Aug 2012)
+--------------------------------------------
+* Third beta release.
+* Added social tracking method to GAITracker:
+    trackSocial:withAction:withTarget:
+* Timing method signature changed to:
+    trackTiming:withValue:withName:withLabel:
+* Manual construction and dispatch methods added to GAITracker:
+    set:value:
+    get:
+    send:params:
+* Custom dimension setter methods added to GAITracker:
+    setCustom:dimension:
+    setCustom:metric:
+* Architecture of data store refactored to prevent reported CoreData issues.
+
+--------------------------------------------
+Version: 2.0beta2 (Jun 2012)
+--------------------------------------------
+* Second beta release.
+* Updated to latest wire format.
+* sampleRate changed to double-precision float.
+* Excessive tracking is throttled.
+* Undispatched tracking information is deleted when opt-out is enabled.
+* Undispatched tracking information older than 30 days will be deleted.
+* Enhancements to hit dispatcher.
+* Rather than periodically retry, the dispatcher will use the Reachability API
+  when connectivity is lost to get notified when connectivity is reestablished.
+* Updated example app.
+* Other bugfixes and enhancements.
+
+--------------------------------------------
+Version: 2.0beta1 (May 2012)
+--------------------------------------------
+* Initial internal beta release.
+* Added uncaught exception handling facility.
+* Removed 'dispatchEnabled' property from GAI.
+* Added 'defaultTracker' property to GAI.
+* Added 'close' method to GAITracker.
+* Added timing tracking method to GAITracker.
+* Added trackView method to GAITracker which takes no argument.
+* Transaction item field names updated.
+* Updated to latest wire format.
+* Event value is interpreted as a 64-bit integer.
+* ARMV6 code generation switched from THUMB to ARM.
+
+--------------------------------------------
+Version: 2.0alpha1 (April 2012)
+--------------------------------------------
+* Initial internal alpha release.

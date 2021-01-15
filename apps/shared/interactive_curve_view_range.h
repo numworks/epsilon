@@ -86,6 +86,10 @@ private:
   int normalizationSignificantBits() const;
 
   float m_offscreenYAxis;
+=======
+  InteractiveCurveViewRangeDelegate * m_delegate;
+private:
+>>>>>>> secure-bootloader
   bool m_zoomAuto;
   bool m_zoomNormalize;
 };

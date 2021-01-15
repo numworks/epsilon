@@ -27,6 +27,9 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_examModeController(this),
   m_aboutController(this)
 {
+  m_examModeController(this),
+  m_aboutController(this)
+{
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
   }

@@ -11,6 +11,7 @@
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/drivers/random.h>
+#include <shared/drivers/reset.h>
 #include <shared/drivers/serial_number.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>
@@ -170,6 +171,10 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     // RANDOM
     case SVC_RANDOM:
       *static_cast<uint32_t *>(args[0]) = Ion::Device::random();
+      return;
+    // RESET
+    case SVC_RESET_CORE:
+      Ion::Device::Reset::coreWhilePlugged();
       return;
     default:
       return;

@@ -5,8 +5,22 @@ test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(kandinsky_src) 
 $(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_read_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_read_src))
 $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
 
+
+bootloader_permanent_src = $(ion_src) $(ion_device_n0110_bootloader_permanent_src) $(liba_src) $(kandinsky_src)
+$(BUILD_DIR)/bootloader.permanent.$(EXE): $(call flavored_object_for,$(bootloader_permanent_src), usbxip privileged)
+$(BUILD_DIR)/bootloader.permanent.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash_permanent.ld
+
+bootloader_updatable_src = $(ion_src) $(ion_device_n0110_bootloader_updatable_src) $(liba_src) $(kandinsky_src)
+$(BUILD_DIR)/bootloader.updatable.$(EXE): $(call flavored_object_for,$(bootloader_updatable_src), usbxip svcallhandler privileged)
+$(BUILD_DIR)/bootloader.updatable.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash_updatable.ld
+$(BUILD_DIR)/bootloader.updatable.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)
+
+.PHONY: secure_bootloader_external
+secure_bootloader_external: $(BUILD_DIR)/bootloader.updatable.elf $(BUILD_DIR)/epsilon.official.onboarding.beta.elf
+	$(Q) python3 build/device/elf2dfuTwoElf.py $< $(word 2,$^) $(BUILD_DIR)/epsilon.dfu #TODO LEA warning,t he files ned to be called in this order for now, see TODO in elf2dfuTwoElf.py
+
 .PHONY: %_flash
-%_flash: $(BUILD_DIR)/%.dfu $(BUILD_DIR)/flasher.light.dfu
+%_flash: $(BUILD_DIR)/%.dfu flasher.dfu
 	@echo "DFU     $@"
 	@echo "INFO    About to flash your device. Please plug your device to your computer"
 	@echo "        using an USB cable and press at the same time the 6 key and the RESET"
@@ -15,16 +29,16 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 	$(eval DFU_SLAVE := $(shell $(PYTHON) build/device/dfu.py -l | grep -E "0483:a291|0483:df11"))
 	$(Q) if [[ "$(DFU_SLAVE)" == *"0483:df11"* ]]; \
 	  then \
-	    $(PYTHON) build/device/dfu.py -u $(word 2,$^); \
+	    $(PYTHON) build/device/dfu.py -D $(word 2,$^); \
 	    sleep 2; \
 	fi
-	$(Q) $(PYTHON) build/device/dfu.py -u $(word 1,$^)
+	$(Q) $(PYTHON) build/device/dfu.py -D $(word 1,$^)
 
 .PHONY: %.two_binaries
 %.two_binaries: %.elf
 	@echo "Building an internal and an external binary for     $<"
-	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external -j .exam_mode_buffer $(BUILD_DIR)/$< $(BUILD_DIR)/$(basename $<).external.bin
-	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external -R .exam_mode_buffer $(BUILD_DIR)/$< $(BUILD_DIR)/$(basename $<).internal.bin
+	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external -j .persisting_bytes_buffer $(BUILD_DIR)/$< $(BUILD_DIR)/$(basename $<).external.bin
+	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external -R .persisting_bytes_buffer $(BUILD_DIR)/$< $(BUILD_DIR)/$(basename $<).internal.bin
 	@echo "Padding $(basename $<).external.bin and $(basename $<).internal.bin"
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(BUILD_DIR)/$(basename $<).external.bin
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(BUILD_DIR)/$(basename $<).internal.bin

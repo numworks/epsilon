@@ -1,7 +1,7 @@
 #include "dfu_interface.h"
 #include <string.h>
 #include <drivers/flash.h>
-#include <ion/timing.h>
+#include <drivers/timing.h>
 
 namespace Ion {
 namespace Device {
@@ -66,7 +66,7 @@ void DFUInterface::wholeDataSentCallback(SetupPacket * request, uint8_t * transf
        * This error might be due to the USB connection being cut too soon after
        * the last USB exchange, so the host does not have time to process the
        * answer received for the last GetStatus request. */
-      Ion::Timing::msleep(1);
+      Ion::Device::Timing::msleep(1);
       // Leave DFU routine: Leave DFU, reset device, jump to application code
       leaveDFUAndReset();
     } else if (m_state == State::dfuDNBUSY) {
@@ -124,7 +124,7 @@ bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferB
 }
 
 bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  if (m_state != State::dfuIDLE && m_state !=  State::dfuUPLOADIDLE) {
+  if (m_state != State::dfuIDLE && m_state != State::dfuUPLOADIDLE) {
     m_ep0->stallTransaction();
     return false;
   }
@@ -195,8 +195,8 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
     + (transferBuffer[4] << 24);
 
   m_erasePage = Flash::SectorAtAddress(eraseAddress);
-  if (m_erasePage < 0) {
-    // Unrecognized sector
+  if (m_erasePage < 0 || !Flash::SectorIsWritableViaDFU(m_erasePage)) {
+    // Unrecognized or unwritable sector
     m_state = State::dfuERROR;
     m_status = Status::errTARGET;
   }
@@ -213,6 +213,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
   if (m_erasePage == Flash::TotalNumberOfSectors()) {
     Flash::MassErase();
   } else {
+    assert(Flash::SectorIsWritableViaDFU(m_erasePage));
     Flash::EraseSector(m_erasePage);
   }
 
@@ -223,19 +224,23 @@ void DFUInterface::eraseMemoryIfNeeded() {
   m_status = Status::OK;
 }
 
+// TODO: SectorIsAccessibleViaDFU??
 void DFUInterface::writeOnMemory() {
   if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
-  } else if (Flash::SectorAtAddress(m_writeAddress) >= 0) {
-    Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
   } else {
-    // Invalid write address
-    m_largeBufferLength = 0;
-    m_state = State::dfuERROR;
-    m_status = Status::errTARGET;
-    return;
+    int writeSector = Flash::SectorAtAddress(m_writeAddress);
+    if (writeSector >= 0 && Flash::SectorIsWritableViaDFU(writeSector)) {
+      Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
+    } else {
+      // Invalid write address
+      m_largeBufferLength = 0;
+      m_state = State::dfuERROR;
+      m_status = Status::errTARGET;
+      return;
+    }
   }
 
   // Reset the buffer length

@@ -60,6 +60,7 @@ private:
     m_stripInsertedText(stripInsertedText),
     m_childrenConsecutive(false)
   {}
+>>>>>>> secure-bootloader
 
   union Children {
   public:

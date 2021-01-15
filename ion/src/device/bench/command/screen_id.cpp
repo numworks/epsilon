@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/src/device/shared/drivers/display.h>
+#include <ion/display.h>
 #include <poincare/print_int.h>
 
 namespace Ion {

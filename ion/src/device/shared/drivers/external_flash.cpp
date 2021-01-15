@@ -1,7 +1,7 @@
 #include "external_flash.h"
 #include <drivers/config/external_flash.h>
 #include <drivers/config/clocks.h>
-#include <ion/timing.h>
+#include <drivers/timing.h>
 
 namespace Ion {
 namespace Device {
@@ -346,7 +346,7 @@ static void shutdownChip() {
   send_command(Command::EnableReset);
   send_command(Command::Reset);
   sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
-  Ion::Timing::usleep(30);
+  Timing::usleep(30);
 
   // Sleep deep
   send_command(Command::DeepPowerDown, sOperatingMode);
@@ -382,8 +382,8 @@ int SectorAtAddress(uint32_t address) {
   }
   i = address >> NumberOfAddressBitsIn32KbyteBlock;
   if (i >= 1) {
-    i = Config::NumberOf4KSectors + i - 1;
     assert(i >= 0 && i <= Config::NumberOf32KSectors);
+    i = Config::NumberOf4KSectors + i - 1;
     return i;
   }
   i = address >> NumberOfAddressBitsIn4KbyteBlock;

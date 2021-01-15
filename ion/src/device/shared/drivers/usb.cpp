@@ -1,12 +1,12 @@
 #include "usb.h"
-#include <ion/usb.h>
 #include <drivers/config/usb.h>
 
 namespace Ion {
+namespace Device {
 namespace USB {
 
-using namespace Device::USB;
-using namespace Device::Regs;
+using namespace Regs;
+using namespace USB;
 
 bool isPlugged() {
   return Config::VbusPin.group().IDR()->get(Config::VbusPin.pin());
@@ -32,15 +32,6 @@ void disable() {
   // Get into soft-disconnected state
   OTG.DCTL()->setSDIS(true);
 }
-
-}
-}
-
-namespace Ion {
-namespace Device {
-namespace USB {
-
-using namespace Regs;
 
 void init() {
   initGPIO();

@@ -38,6 +38,10 @@ void KDFont::setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * g
   fetchGrayscaleGlyphAtIndex(indexForCodePoint(codePoint), glyphBuffer->grayscaleBuffer());
 }
 
+void KDFont::setGlyphGrayscalesForCharacter(const char c, GlyphBuffer * glyphBuffer) const {
+  fetchGrayscaleGlyphAtIndex(signedCharAsIndex(c), glyphBuffer->grayscaleBuffer());
+}
+
 void KDFont::accumulateGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
   uint8_t * grayscaleBuffer = glyphBuffer->grayscaleBuffer();
   uint8_t * accumulationGrayscaleBuffer = glyphBuffer->secondaryGrayscaleBuffer();

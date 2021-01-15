@@ -1,11 +1,29 @@
 #include "calculator.h"
+#include <drivers/serial_number.h>
+#include <drivers/usb.h>
 
 namespace Ion {
+namespace Device {
 namespace USB {
 
-void DFU(bool exitWithKeyboard) {
-  Ion::Device::USB::Calculator::PollAndReset(exitWithKeyboard);
+void DFU() {
+  char serialNumber[Ion::Device::SerialNumber::Length+1];
+  Ion::Device::SerialNumber::copy(serialNumber);
+  USB::Calculator c(serialNumber);
+
+  while (USB::isPlugged() && !c.isSoftDisconnected()) {
+    c.poll();
+  }
+  if (!c.isSoftDisconnected()) {
+    c.detach();
+  }
+  /* XIP DFU doest not jump after flashing
+    if (c.resetOnDisconnect()) {
+    c.leave(c.addressPointer());
+  }*/
+>>>>>>> secure-bootloader
 }
 
+}
 }
 }

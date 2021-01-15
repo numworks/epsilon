@@ -13,7 +13,10 @@ public:
     m_cell(parentResponder, inputEventHandlerDelegate, textFieldDelegate, message) {}
   const char * text() const override { return m_cell.text(); }
   Poincare::Layout layout() const override{ return m_cell.layout(); }
-  Escher::MessageTableCellWithEditableText * messageTableCellWithEditableText() { return &m_cell; }
+  Escher::MessageTableCellWithEditableText * messageTableCellWithEditableText() {
+    m_cell.setSize(KDSize(bounds().width(), m_cell.bounds().height()));
+    return &m_cell;
+  }
   KDSize minimalSizeForOptimalDisplay() const override { return m_cell.minimalSizeForOptimalDisplay() + CellWithSeparator::minimalSizeForOptimalDisplay(); }
 private:
   Escher::HighlightCell * cell() override { return &m_cell; }

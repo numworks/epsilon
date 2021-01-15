@@ -27,6 +27,12 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+    // assert(m_selectableTableView.columnWidth(0) == 266);
+    // return m_selectableTableView.columnWidth(0);
+  }
   KDCoordinate rowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

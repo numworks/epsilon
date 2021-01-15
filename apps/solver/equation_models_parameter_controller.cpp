@@ -67,10 +67,10 @@ int EquationModelsParameterController::numberOfRows() const {
 };
 
 KDCoordinate EquationModelsParameterController::rowHeight(int j) {
-  if (typeAtLocation(j,0) == 0) {
-    return m_emptyModelCell.minimalSizeForOptimalDisplay().height();
+  if (typeAtLocation(j,0) == 1) {
+    j-=1;
   }
-  return m_modelCells[j-1].minimalSizeForOptimalDisplay().height();
+  return ListViewDataSource::rowHeight(j);
   // return Metric::ToolboxRowHeight;
 }
 
@@ -78,13 +78,13 @@ KDCoordinate EquationModelsParameterController::rowHeight(int j) {
 //   return rowHeight(0) * j;
 // }
 
-int EquationModelsParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  KDCoordinate height = rowHeight(0);
-  if (height == 0) {
-    return 0;
-  }
-  return (offsetY - 1) / height;
-}
+// int EquationModelsParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+//   KDCoordinate height = rowHeight(0);
+//   if (height == 0) {
+//     return 0;
+//   }
+//   return (offsetY - 1) / height;
+// }
 
 HighlightCell * EquationModelsParameterController::reusableCell(int index, int type) {
   if (type == 0) {

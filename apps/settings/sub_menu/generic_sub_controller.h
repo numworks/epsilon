@@ -19,6 +19,12 @@ public:
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
+  KDCoordinate cellWidth() override {
+    if (m_selectableTableView.columnWidth(0) <= 0) {
+      return 320;
+    }
+    return m_selectableTableView.columnWidth(0);
+  }
   KDCoordinate rowHeight(int j) override;
   // KDCoordinate cumulatedHeightFromIndex(int j) override;
   // int indexFromCumulatedHeight(KDCoordinate offsetY) override;

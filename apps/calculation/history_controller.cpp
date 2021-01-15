@@ -117,7 +117,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       }
       if (vc) {
         vc->setExpression(e);
-        Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+        Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
       }
     }
     return true;

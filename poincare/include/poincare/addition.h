@@ -60,9 +60,6 @@ private:
   // Derivation
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
-  // Derivation
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
-
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
     return MatrixComplex<T>::Undefined();

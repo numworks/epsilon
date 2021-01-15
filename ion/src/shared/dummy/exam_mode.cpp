@@ -1,4 +1,4 @@
-#include <ion/exam_mode.h>
+#include <ion/exam_mode_unprivileged.h>
 
 namespace Ion {
 namespace ExamMode {

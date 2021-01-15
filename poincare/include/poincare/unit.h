@@ -431,6 +431,8 @@ public:
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override { return nullptr; }
     bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
+=======
+>>>>>>> secure-bootloader
   private:
     using Representative::Representative;
   };

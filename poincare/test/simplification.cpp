@@ -242,6 +242,26 @@ void assert_parsed_unit_simplify_to_with_prefixes(const Unit::Representative * r
   }
 }
 
+void assert_parsed_unit_simplify_to_with_prefixes(const Unit::Representative * representative) {
+  int numberOfPrefixes;
+  const Unit::Prefix * prefixes;
+  static constexpr size_t bufferSize = 12;
+  char buffer[bufferSize] = "1×";
+  if (representative->isOutputPrefixable()) {
+    numberOfPrefixes = Unit::Prefix::k_numberOfPrefixes;
+    prefixes = Unit::k_prefixes;
+  } else {
+    numberOfPrefixes = 1;
+    prefixes = Unit::Prefix::EmptyPrefix();
+  }
+  for (int i = 0; i < numberOfPrefixes; i++) {
+    if (representative->canPrefix(prefixes + i, true) && representative->canPrefix(prefixes + i, false)) {
+      Unit::Builder(representative, prefixes + i).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+      assert_parsed_expression_simplify_to(buffer, buffer);
+    }
+  }
+}
+
 QUIZ_CASE(poincare_simplification_units) {
   /* SI base units */
   assert_parsed_expression_simplify_to("_s", "1×_s");

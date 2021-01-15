@@ -3,6 +3,9 @@
 # Copyright (c) 2013/2014 Ibrahim Abdelkader <i.abdalkader@gmail.com>
 # This work is licensed under the MIT license, see the file LICENSE for
 # details.
+#
+# Some minor changes were made by NumWorks team.
+#
 
 """This module implements enough functionality to program the STM32F4xx over
 DFU, without requiring dfu-util.
@@ -313,6 +316,20 @@ def compute_crc(data):
     """Computes the CRC32 value for the data passed in."""
     return 0xFFFFFFFF & -zlib.crc32(data) - 1
 
+def read_bin_file(filename):
+    """Reads a bin file
+    Returns an element which is a dictionary with the
+    following keys:
+        size    - The size of the element ddata.
+        data    - The element data.
+    If an error occurs while parsing the file, then None is returned.
+    """
+
+    print("File: {}".format(filename))
+    with open(filename, 'rb') as fin:
+        data = fin.read()
+
+    return {'data': data, 'size': len(data)}
 
 def read_dfu_file(filename):
     """Reads a DFU file, and parses the individual elements from the file.
@@ -545,20 +562,20 @@ def main():
     #parser.add_argument("path", help="file path")
     parser.add_argument(
         "-l", "--list",
-        help="list available DFU devices",
+        help="List currently attached DFU capable devices",
         action="store_true",
         default=False
     )
     parser.add_argument(
-        "-m", "--mass-erase",
-        help="mass erase device",
-        action="store_true",
-        default=False
-    )
-    parser.add_argument(
-        "-u", "--upload",
-        help="read file from DFU device",
+        "-D", "--download",
+        help="Write firmware from file to DFU device",
         dest="path",
+        default=False
+    )
+    parser.add_argument(
+        "-s", "--dfuse-address",
+        help="Specify target address for raw binary download on DfuSe devices, modifiers can be added to the address, separated by a colon, to perform special DfuSE commands such as 'leave' DFU mode, and 'mass-erase'",
+        dest="address",
         default=False
     )
     parser.add_argument(
@@ -577,19 +594,45 @@ def main():
 
     init()
 
-    if args.mass_erase:
+    address = False
+    mass_erase_required = False
+    leave = False
+
+    if args.address:
+        address_str = args.address
+        if ':' in args.address:
+            address_str,modifier = args.address.split(':')
+            leave = modifier == 'leave'
+            mass_erase_required = modifier == 'mass-erase'
+        if address_str != "":
+            address = int(address_str, 16)
+
+    if mass_erase_required:
         print ("Mass erase...")
         mass_erase()
 
     if args.path:
-        elements = read_dfu_file(args.path)
+        elements = []
+
+        if args.path.endswith('.dfu'):
+            elements = read_dfu_file(args.path)
+        else:
+            if not address:
+                print('Missing address: for raw binary download, use the --dfuse-address option')
+                return
+            element = read_bin_file(args.path)
+            element['addr'] = address
+            element['num'] = 0
+            elements.append(element)
+
         if not elements:
             return
         print("Writing memory...")
-        write_elements(elements, args.mass_erase, progress=cli_progress)
+        write_elements(elements, mass_erase_required, progress=cli_progress)
 
-        print("Exiting DFU...")
-        exit_dfu(elements[0]['addr'])
+        if leave:
+            print("Exiting DFU... on address " + str(hex(address)))
+            exit_dfu(address)
         return
 
     print("No command specified")

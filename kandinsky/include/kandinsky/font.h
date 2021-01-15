@@ -65,6 +65,7 @@ public:
   GlyphIndex indexForCodePoint(CodePoint c) const;
 
   void setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
+  void setGlyphGrayscalesForCharacter(char c, GlyphBuffer * glyphBuffer) const;
   void accumulateGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
 
   using RenderPalette = KDPalette<(1<<k_bitsPerPixel)>;
@@ -86,6 +87,16 @@ private:
 
   uint16_t compressedGlyphDataSize(GlyphIndex index) const {
     return m_glyphDataOffset[index+1] - m_glyphDataOffset[index];
+  }
+  int signedCharAsIndex(const char c) const {
+    static constexpr uint8_t k_magicCharOffsetValue = 0x20; // FIXME: Value from kandinsky/fonts/rasterizer.c (CHARACTER_RANGE_START). 0x20 because we do not want have a glyph for the first 20 ASCII characters
+    int cInt = c;
+    if (cInt < 0) {
+      /* A char casted as int takes its value between -127 and +128, but we want
+       * a positive value. -127 is thus 129, -126 is 130, etc. */
+      cInt=128+(cInt-(-127)+1);
+    }
+    return cInt - k_magicCharOffsetValue;
   }
 
   size_t m_tableLength;

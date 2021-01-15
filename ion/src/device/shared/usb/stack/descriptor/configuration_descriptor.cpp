@@ -17,10 +17,6 @@ void ConfigurationDescriptor::push(Channel * c) const {
   }
 }
 
-uint8_t ConfigurationDescriptor::bLength() const {
-  return Descriptor::bLength() + sizeof(uint16_t) + 5*sizeof(uint8_t);
-}
-
 }
 }
 }

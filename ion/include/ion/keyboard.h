@@ -2,6 +2,7 @@
 #define ION_KEYBOARD_H
 
 extern "C" {
+#include <stddef.h>
 #include <stdint.h>
 #include <assert.h>
 }
@@ -56,8 +57,10 @@ private:
 
 State scan();
 
-static_assert(sizeof(State)*8>NumberOfKeys, "Ion::Keyboard::State cannot hold a keyboard snapshot");
+bool hasNextState();
+State nextState();
 
+static_assert(sizeof(State)*8>NumberOfKeys, "Ion::Keyboard::State cannot hold a keyboard snapshot");
 
 }
 }

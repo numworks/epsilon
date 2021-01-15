@@ -1,8 +1,19 @@
-ion_device_src += $(addprefix ion/src/device/n0100/drivers/, \
+ion_device_bootloader_src += $(addprefix ion/src/device/n0100/bootloader/drivers/, \
+  authentication.cpp \
   board.cpp \
-  led.cpp \
-  power.cpp \
-  reset.cpp \
+  option_bytes.cpp \
 )
 
-LDSCRIPT ?= ion/src/device/n0100/flash.ld
+ion_device_kernel_src += $(addprefix ion/src/device/n0100/kernel/drivers/, \
+  authentication.cpp \
+  board.cpp \
+  cache.cpp \
+  fcc_id.cpp \
+  led.cpp \
+  power.cpp \
+)
+
+ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0100/shared/drivers/, \
+  authentication.cpp \
+  reset.cpp \
+)

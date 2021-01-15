@@ -7,7 +7,6 @@
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
-#include <ion/exam_mode.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
@@ -38,8 +37,6 @@ const char * fccId();
 // CRC32 : non xor-ed, non reversed, direct, polynomial 4C11DB7
 uint32_t crc32Word(const uint32_t * data, size_t length); // Only accepts whole 32bit values
 uint32_t crc32Byte(const uint8_t * data, size_t length);
-uint32_t crc32EatByte(uint32_t previousCRC, uint8_t data);
-
 
 // Provides a true random number
 uint32_t random();

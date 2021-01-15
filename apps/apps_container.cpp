@@ -53,6 +53,7 @@ AppsContainer::AppsContainer() :
 }
 
 bool AppsContainer::poincareCircuitBreaker() {
+  // TODO EMILIE: implement the checkpoint!
   constexpr uint64_t minimalPressDuration = 20;
   static uint64_t beginningOfInterruption = 0;
   Ion::Keyboard::State state = Ion::Keyboard::scan();

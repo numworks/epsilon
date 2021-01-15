@@ -207,6 +207,8 @@ public:
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
     UnitConversion unitConversion() const { return m_unitConversion; }
   private:
+=======
+>>>>>>> secure-bootloader
     Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;

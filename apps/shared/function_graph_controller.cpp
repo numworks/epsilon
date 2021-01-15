@@ -80,6 +80,11 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
     return resLeft;
   }
   return resRight;
+=======
+
+double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
+  return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+>>>>>>> secure-bootloader
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {

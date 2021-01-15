@@ -788,6 +788,118 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   }
 }
 
+float PolarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {
+  // Return θ, between -π and π in given angleUnit for a (x,y) position.
+  return Trigonometry::ConvertRadianToAngleUnit<float>(std::arg(std::complex<float>(x,y)), angleUnit).real();
+}
+
+void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+  // Compute rect limits
+  float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+  float rectUp = pixelToFloat(Axis::Vertical, rect.top() + k_externRectMargin);
+  float rectDown = pixelToFloat(Axis::Vertical, rect.bottom() - k_externRectMargin);
+
+  const Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
+  /* Cancel optimization if :
+   * - One of rect limits is nan.
+   * - Step is too large, see cache optimization comments
+   *   ("To optimize cache..."). */
+  bool cancelOptimization = std::isnan(rectLeft + rectRight + rectUp + rectDown) || tStep >= piInAngleUnit;
+
+  bool rectOverlapsNegativeAbscissaAxis = false;
+  if (cancelOptimization || (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f)) {
+    if (cancelOptimization || rectRight > 0.0f) {
+      // Origin is inside rect, tStart and tEnd cannot be optimized
+      return drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+    }
+    // Rect view overlaps the abscissa, on the left of the origin.
+    rectOverlapsNegativeAbscissaAxis = true;
+  }
+
+  float tMin, tMax;
+  /* Compute angular coordinate of each corners of rect.
+   * t3 --- t2
+   *  |      |
+   * t4 --- t1 */
+  float t1 = PolarThetaFromCoordinates(rectRight, rectDown, angleUnit);
+  float t2 = PolarThetaFromCoordinates(rectRight, rectUp, angleUnit);
+  if (!rectOverlapsNegativeAbscissaAxis) {
+    float t3 = PolarThetaFromCoordinates(rectLeft, rectUp, angleUnit);
+    float t4 = PolarThetaFromCoordinates(rectLeft, rectDown, angleUnit);
+    /* The area between tMin and tMax (modulo π) is the only area where
+     * something needs to be plotted. */
+    tMin = std::min(std::min(t1,t2),std::min(t3,t4));
+    tMax = std::max(std::max(t1,t2),std::max(t3,t4));
+  } else {
+    /* PolarThetaFromCoordinates yields coordinates between -π and π. When rect
+     * is overlapping the negative abscissa (at this point, the origin cannot be
+     * inside rect), t1 and t4 have a negative angle whereas t2 and t3 have a
+     * positive angle. We ensure here that tMin is t2 (modulo 2π), tMax is t1,
+     * and that tMax-tMin is minimal and positive. */
+    tMin = t2 - 2 * piInAngleUnit;
+    tMax = t1;
+  }
+
+  /* To optimize cache hits, the area actually drawn will be extended to nearest
+   * cached θ. tStep being a multiple of cache steps (see
+   * ComputeNonCartesianSteps), we extend segments on both ends to the closest
+   * θ = tStart + tStep * i
+   * If the drawn segment is extended too much, it might overlap with the next
+   * extended segment.
+   * For example, with * the segments that must be drawn and piInAngleUnit=7 :
+   *                 tStart                                            tEnd
+   *              kπ   | (k+1)π  (k+2)π  (k+3)π  (k+4)π  (k+5)π  (k+6)π  |(k+7)π
+   *               |-------|-------|-------|-------|-------|-------|-------|--
+   * tMax-tMin=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   * A - tStep=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   *               |---^^^-|--^^^^^|^^^^^^^|---^^^-|--^^^^^|^^^^^^^|---^^^-|--
+   *
+   * B - tStep=6 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   *               |---^^^^|^^     | ^^^^^^|      ^|^^^^^^^|^^^^   |   ^^^^|^^
+   *               |       |  ^^^^^|^      |^^^^^^ |     ^^|^^^^^^^|^^^    |
+   * In situation A, Step are small enough, not all segments must be drawn.
+   * In situation B, The entire range should be drawn, and two extended segments
+   * overlap (at tStart+5*tStep). Optimization is useless.
+   * If tStep < piInAngleUnit - (tMax - tMin), situation B cannot happen. */
+  if (tStep >= piInAngleUnit - tMax + tMin) {
+    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+  }
+
+  /* The number of segments to draw can be reduced by drawing curve on intervals
+   * where (tMin%π, tMax%π) intersects (tStart, tEnd).For instance :
+   * if tStart=-π, tEnd=3π, tMin=π/4 and tMax=π/3, a curve is drawn between :
+   * - [ π/4, π/3 ], [ 2π + π/4, 2π + π/3 ]
+   * - [ -π + π/4, -π + π/3 ], [ π + π/4, π + π/3 ] in case f(θ) is negative */
+
+  // 1 - Set offset so that tStart <= tMax+thetaOffset < piInAngleUnit+tStart
+  float thetaOffset = std::ceil((tStart - tMax)/piInAngleUnit) * piInAngleUnit;
+
+  // 2 - Increase offset until tMin + thetaOffset > tEnd
+  float tCache2 = tStart;
+  while (tMin + thetaOffset <= tEnd) {
+    float tS = std::max(tMin + thetaOffset, tStart);
+    float tE = std::min(tMax + thetaOffset, tEnd);
+    // Draw curve if there is an intersection
+    if (tS <= tE) {
+      /* To maximize cache hits, we floor (and ceil) tS (and tE) to the closest
+       * cached value. Step is small enough so that the extra drawn curve cannot
+       * overlap as tMax + tStep < piInAngleUnit + tMin) */
+      int i = std::floor((tS - tStart) / tStep);
+      assert(tStart + tStep * i >= tCache2);
+      float tCache1 = tStart + tStep * i;
+
+      int j = std::ceil((tE - tStart) / tStep);
+      tCache2 = std::min(tStart + tStep * j, tEnd);
+
+      assert(tCache1 < tCache2);
+      drawCurve(ctx, rect, tCache1, tCache2, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+    }
+    thetaOffset += piInAngleUnit;
+  }
+}
+
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound, float highlightUpperBound) const {
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());

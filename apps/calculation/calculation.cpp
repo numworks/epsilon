@@ -260,6 +260,8 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     return (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())) ? AdditionalInformationType::Unit : AdditionalInformationType::None;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
+  }
+  if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;
   }
   // Find forms like [12]/[23] or -[12]/[23]

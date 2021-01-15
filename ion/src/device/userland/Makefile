@@ -1,0 +1,24 @@
+ion_device_userland_src += $(addprefix ion/src/device/userland/, \
+  boot/entry_point.c \
+  boot/rt0.cpp \
+  drivers/backlight.cpp \
+  drivers/battery.cpp \
+  drivers/crc32.cpp \
+  drivers/display.cpp \
+  drivers/clipboard.cpp \
+  drivers/console_display.cpp:+consoledisplay \
+  drivers/console_dummy.cpp:-consoledisplay \
+  drivers/events.cpp \
+  drivers/events_keyboard_platform.cpp \
+  drivers/fcc_id.cpp \
+  drivers/keyboard.cpp \
+  drivers/led.cpp \
+  drivers/persisting_bytes.cpp \
+  drivers/power.cpp \
+  drivers/random.cpp \
+  drivers/serial_number.cpp \
+  drivers/stack.cpp \
+  drivers/timing.cpp \
+  drivers/usb.cpp \
+)
+

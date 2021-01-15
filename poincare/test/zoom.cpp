@@ -288,4 +288,3 @@ QUIZ_CASE(poincare_zoom_utility) {
       -10, 10, -5, 5,
       -1, 4, -2.75, -0.25);
 }
-

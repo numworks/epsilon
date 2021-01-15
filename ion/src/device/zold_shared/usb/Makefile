@@ -1,0 +1,95 @@
+# USB code
+
+ion_device_usb_src += $(addprefix ion/src/device/shared/usb/, \
+  calculator.cpp:+privileged \
+  dfu_interface.cpp:+privileged \
+)
+
+ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/, \
+  device.cpp:+privileged \
+  endpoint0.cpp:+privileged \
+  interface.cpp:+privileged \
+  request_recipient.cpp:+privileged \
+  setup_packet.cpp:+privileged \
+  streamable.cpp:+privileged \
+)
+
+ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
+  bos_descriptor.cpp:+privileged \
+  configuration_descriptor.cpp:+privileged \
+  descriptor.cpp:+privileged \
+  device_descriptor.cpp:+privileged \
+  device_capability_descriptor.cpp:+privileged \
+  dfu_functional_descriptor.cpp:+privileged \
+  extended_compat_id_descriptor.cpp:+privileged \
+  interface_descriptor.cpp:+privileged \
+  language_id_string_descriptor.cpp:+privileged \
+  microsoft_os_string_descriptor.cpp:+privileged \
+  platform_device_capability_descriptor.cpp:+privileged \
+  string_descriptor.cpp:+privileged \
+  url_descriptor.cpp:+privileged \
+  webusb_platform_descriptor.cpp:+privileged \
+)
+
+# DFU code
+
+# TODO: remove? or at least update the sources from shared/drivers to select the privileged version?
+ion_device_dfu_src += liba/src/abs.c
+ion_device_dfu_src += liba/src/assert.c
+ion_device_dfu_src += liba/src/strlen.c
+ion_device_dfu_src += liba/src/strlcpy.c
+ion_device_dfu_src += liba/src/memset.c
+ion_device_dfu_src += liba/src/memcpy.c
+ion_device_dfu_src += libaxx/src/cxxabi/pure_virtual.cpp
+ion_device_dfu_src += ion/src/device/shared/usb/boot.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/board.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/cache.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/reset.cpp
+ion_device_dfu_src += $(addprefix ion/src/device/shared/drivers/, \
+  backlight.cpp \
+  battery.cpp \
+  base64.cpp \
+  board.cpp \
+  console_uart.cpp \
+  crc32.cpp \
+  display.cpp \
+  events_keyboard_platform.cpp \
+  external_flash.cpp \
+  flash.cpp \
+  internal_flash.cpp \
+  keyboard.cpp \
+  led.cpp \
+  power.cpp\
+  random.cpp\
+  reset.cpp \
+  serial_number.cpp \
+  swd.cpp \
+  timing.cpp \
+  usb.cpp \
+  wakeup.cpp \
+)
+
+# Sources required to execute DFU in place
+ion_device_src += ion/src/device/shared/usb/dfu_xip_privileged.cpp:+usbxip,+privileged
+ion_device_src += ion/src/device/shared/usb/dfu_xip_unprivileged.cpp:+usbxip,-privileged
+ion_device_src += $(addsuffix :+usbxip,$(ion_device_usb_src))
+
+# Sources required to execute DFU in RAM
+
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(ion_device_usb_src) $(ion_device_dfu_src))
+
+# In order to link the dfu bootloader inside the epsilon firmware, we need to
+# turn the dfu binary (dfu.bin) into an elf object.
+# By default, 'objcpy' generates a section 'data' and two symbols to the
+# start and the end of the binary input respectively named:
+# - '_binary_[file name]_[file extension]_start'
+# - '_binary_[file name]_[file extension]_end'.
+# For our purpose, dfu.o can go in rodata section and we rename the start and
+# end of binary symbols: _dfu_bootloader_flash_[start/end]
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared/usb/dfu.bin
+	$(call rule_label,OBJCOPY)
+	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata.dfu_bootloader --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)
+
+ion_device_src += ion/src/device/shared/usb/dfu.cpp:-usbxip
+ion_device_src += ion/src/device/shared/usb/dfu_relocated.cpp:-usbxip

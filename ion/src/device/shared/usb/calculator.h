@@ -28,7 +28,7 @@ public:
   static void PollAndReset(bool exitWithKeyboard)
     __attribute__((section(".dfu_entry_point"))) // Needed to pinpoint this symbol in the linker script
     __attribute__((used)) // Make sure this symbol is not discarded at link time
-    ; // Return true if reset is needed
+    ;
   Calculator(const char * serialNumber) :
     Device(&m_dfuInterface),
     m_deviceDescriptor(
@@ -40,7 +40,7 @@ public:
         64,     // bMaxPacketSize0: Maximum packet size for endpoint 0
         0x0483, // idVendor
         0xA291, // idProduct
-        0x0100, // bcdDevice: Device Release Number
+        Config::BCDDevice, // bcdDevice: Device Release Number
         1,      // iManufacturer: Index of the manufacturer name string, see m_descriptor
         2,      // iProduct: Index of the product name string, see m_descriptor
         3,      // iSerialNumber: Index of the SerialNumber string, see m_descriptor
@@ -62,17 +62,26 @@ public:
                  * switching to DFU mode. It does not apply to the calculator.*/
         2048,   // wTransferSize: Maximum number of bytes that the device can accept per control-write transaction
         0x0100),// bcdDFUVersion
-    m_interfaceDescriptor(
+    m_interfaceFlashDescriptor(
         0,      // bInterfaceNumber
-        k_dfuInterfaceAlternateSetting,      // bAlternateSetting
+        k_dfuFlashInterfaceAlternateSetting,      // bAlternateSetting
         0,      // bNumEndpoints: Other than endpoint 0
         0xFE,   // bInterfaceClass: DFU (https://www.usb.org/defined-class-codes)
         1,      // bInterfaceSubClass: DFU
         2,      // bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be 1)
         4,      // iInterface: Index of the Interface string, see m_descriptor
+        &m_interfaceSRAMDescriptor),
+    m_interfaceSRAMDescriptor(
+        0,      // bInterfaceNumber
+        k_dfuSRAMInterfaceAlternateSetting,      // bAlternateSetting
+        0,      // bNumEndpoints: Other than endpoint 0
+        0xFE,   // bInterfaceClass: DFU (http://www.usb.org/developers/defined_class)
+        1,      // bInterfaceSubClass: DFU
+        2,      // bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be 1)
+        5,      // iInterface: Index of the Interface string, see m_descriptor
         &m_dfuFunctionalDescriptor),
     m_configurationDescriptor(
-        9 + 9 + 9, // wTotalLength: configuration descriptor + interface descriptor + dfu functional descriptor lengths
+        m_configurationDescriptor.BLength() + m_interfaceFlashDescriptor.BLength() + m_interfaceSRAMDescriptor.BLength() + m_dfuFunctionalDescriptor.BLength(), // wTotalLength
         1,      // bNumInterfaces
         k_bConfigurationValue, // bConfigurationValue
         0,      // iConfiguration: No string descriptor for the configuration
@@ -82,22 +91,20 @@ public:
                  * Bit 5: Remote Wakeup (allows the device to wake up the host when the host is in suspend)
                  * Bit 4..0: Reserved, set to 0 */
         0x32,   // bMaxPower: half of the Maximum Power Consumption
-        &m_interfaceDescriptor),
+        &m_interfaceFlashDescriptor),
     m_webUSBPlatformDescriptor(
         k_webUSBVendorCode,
         k_webUSBLandingPageIndex),
     m_bosDescriptor(
-        5 + 24, // wTotalLength: BOS descriptor + webusb platform descriptor lengths
+        m_bosDescriptor.BLength() + m_webUSBPlatformDescriptor.BLength(), // wTotalLength
         1,      // bNumDeviceCapabilities
         &m_webUSBPlatformDescriptor),
     m_languageStringDescriptor(),
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("NumWorks Calculator"),
     m_serialNumberStringDescriptor(serialNumber),
-    m_interfaceStringDescriptor(Config::InterfaceStringDescriptor),
-    //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"),
-    /* Switch to this descriptor to use dfu-util to write in the SRAM.
-     * FIXME Should be an alternate Interface. */
+    m_interfaceFlashStringDescriptor(Config::InterfaceFlashStringDescriptor),
+    m_interfaceSRAMStringDescriptor("@SRAM/0x20000000/01*256Ke"), // See note at the end of the file
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
     m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),
     m_extendedCompatIdDescriptor("WINUSB"),
@@ -108,10 +115,11 @@ public:
       &m_manufacturerStringDescriptor, // Type = String, Index = 1
       &m_productStringDescriptor,      // Type = String, Index = 2
       &m_serialNumberStringDescriptor, // Type = String, Index = 3
-      &m_interfaceStringDescriptor,    // Type = String, Index = 4
+      &m_interfaceFlashStringDescriptor,    // Type = String, Index = 4
+      &m_interfaceSRAMStringDescriptor, // Type = String, Index = 5
       &m_bosDescriptor                 // Type = BOS, Index = 0
     },
-    m_dfuInterface(this, &m_ep0, k_dfuInterfaceAlternateSetting)
+    m_dfuInterface(this, &m_ep0, k_dfuFlashInterfaceAlternateSetting)
   {
   }
   uint32_t addressPointer() const { return m_dfuInterface.addressPointer(); }
@@ -128,7 +136,8 @@ protected:
 
 private:
   static constexpr uint8_t k_bConfigurationValue = 1;
-  static constexpr uint8_t k_dfuInterfaceAlternateSetting = 0;
+  static constexpr uint8_t k_dfuFlashInterfaceAlternateSetting = 0;
+  static constexpr uint8_t k_dfuSRAMInterfaceAlternateSetting = 1;
   static constexpr uint8_t k_webUSBVendorCode = 1;
   static constexpr uint8_t k_webUSBLandingPageIndex = 1;
   static constexpr uint8_t k_microsoftOSVendorCode = 2;
@@ -140,7 +149,8 @@ private:
   // Descriptors
   DeviceDescriptor m_deviceDescriptor;
   DFUFunctionalDescriptor m_dfuFunctionalDescriptor;
-  InterfaceDescriptor m_interfaceDescriptor;
+  InterfaceDescriptor m_interfaceFlashDescriptor;
+  InterfaceDescriptor m_interfaceSRAMDescriptor;
   ConfigurationDescriptor m_configurationDescriptor;
   WebUSBPlatformDescriptor m_webUSBPlatformDescriptor;
   BOSDescriptor m_bosDescriptor;
@@ -148,12 +158,13 @@ private:
   StringDescriptor m_manufacturerStringDescriptor;
   StringDescriptor m_productStringDescriptor;
   StringDescriptor m_serialNumberStringDescriptor;
-  StringDescriptor m_interfaceStringDescriptor;
+  StringDescriptor m_interfaceFlashStringDescriptor;
+  StringDescriptor m_interfaceSRAMStringDescriptor;
   MicrosoftOSStringDescriptor m_microsoftOSStringDescriptor;
   URLDescriptor m_workshopURLDescriptor;
   ExtendedCompatIDDescriptor m_extendedCompatIdDescriptor;
 
-  Descriptor * m_descriptors[8];
+  Descriptor * m_descriptors[9];
   /* m_descriptors contains only descriptors that sould be returned via the
    * method descriptor(uint8_t type, uint8_t index), so do not count descriptors
    * included in other descriptors or returned by other functions. */
@@ -161,6 +172,28 @@ private:
   // Interface
   DFUInterface m_dfuInterface;
 };
+
+/* To write an interface string descriptor, see Device firmware upgrade UM0424
+ * STM32 USB-FS-Device development kit, Doc ID 13465 Rev 12.
+ *
+ * ● @: To detect that this is a special mapping descriptor (to avoid decoding
+ *   standard descriptor)
+ * ● /: for separator between zones
+ * ● Maximum 8 digits per address starting by “0x”
+ * ● /: for separator between zones
+ * ● Maximum of 2 digits for the number of sectors
+ * ● *: For separator between number of sectors and sector size
+ * ● Maximum 3 digits for sector size between 0 and 999
+ * ● 1 digit for the sector size multiplier. Valid entries are: B (byte), K (Kilo),
+ *   M (Mega)
+ * ● 1 digit for the sector type as follows:
+ * – a (0x41): Readable
+ * – b (0x42): Erasable
+ * – c (0x43): Readable and Erasabled (0x44): Writeable
+ * – e (0x45): Readable and Writeable
+ * – f (0x46): Erasable and Writeable
+ * – g (0x47): Readable, Erasable and Writeable
+*/
 
 }
 }

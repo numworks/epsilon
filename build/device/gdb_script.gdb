@@ -23,6 +23,26 @@ define load_isr
   set $pc = *(InitialisationVector+1)
 end
 
+define bootloader_symbols
+# Discard previous symbol file
+  symbol-file
+# Load new symbol file
+  add-symbol-file output/release/device/n0110/bootloader.standard.elf
+end
+
+define kernel_symbols
+# Discard previous symbol file
+  symbol-file
+# Load new symbol file
+  add-symbol-file output/debug/device/n0110/kernel.elf
+end
+
+define userland_symbols
+# Discard previous symbol file
+  symbol-file
+# Load new symbol file
+  add-symbol-file output/debug/device/n0110/userland.elf
+end
 
 define use_dfu_symbol_file
 # Discard previous symbol file
@@ -37,17 +57,18 @@ xPSR, ReturnAddress, LR (R14), R12, R3, R2, R1, and R0
 end
 
 # Let's connect to OpenOCD
-target remote localhost:3333
+target extended-remote localhost:3333
 
-# GDB pagniation is annoying
+# GDB pagination is annoying
 set pagination off
 
 # Load our executable
-load
+#load
+
 
 # Tell OpenOCD to reset and halt
 # monitor itm ports on
 # monitor tpiu config internal swo.log.bin uart off 16000000
-# monitor reset halt
+#monitor reset halt
 
 # continue

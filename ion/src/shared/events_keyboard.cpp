@@ -62,7 +62,7 @@ static inline Event innerGetEvent(int * timeout) {
       return platformEvent;
     }
 
-    Keyboard::State state = Keyboard::scan();
+    Keyboard::State state = Ion::Keyboard::hasNextState() ? Ion::Keyboard::nextState() : Keyboard::State(0);
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;
 

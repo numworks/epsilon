@@ -60,15 +60,3 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 }
-=======
-
-
-  KDCoordinate onOffX = width - (m_state ? k_onOffSize : k_switchWidth);
-  KDRect onOffFrame(onOffX, heightCenter - halfHeight, k_onOffSize, k_onOffSize);
-  ctx->blendRectWithMask(
-    onOffFrame,
-    KDColorWhite,
-    reinterpret_cast<const uint8_t *>(onOffMask),
-    workingBuffer);
-}
->>>>>>> secure-bootloader

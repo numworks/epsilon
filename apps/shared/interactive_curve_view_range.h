@@ -1,4 +1,3 @@
-#ifndef SHARED_INTERACTIVE_CURVE_VIEW_RANGE_H
 #define SHARED_INTERACTIVE_CURVE_VIEW_RANGE_H
 
 #include <stdint.h>
@@ -86,10 +85,6 @@ private:
   int normalizationSignificantBits() const;
 
   float m_offscreenYAxis;
-=======
-  InteractiveCurveViewRangeDelegate * m_delegate;
-private:
->>>>>>> secure-bootloader
   bool m_zoomAuto;
   bool m_zoomNormalize;
 };

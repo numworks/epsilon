@@ -39,10 +39,7 @@ private:
   Escher::ExpressionTableCellWithPointer m_cells[k_maxNumberOfRows];
 };
 
-}
-};
 
 }
 
 #endif
-

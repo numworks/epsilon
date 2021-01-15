@@ -176,30 +176,6 @@ void Store::setDefault() {
   if (revertToOrthonormal) {
     normalize();
   }
-=======
-  }
-  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &yMin, &yMax);
-
-  Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalYXRatio());
-
-  m_xRange.setMin(xMin);
-  m_xRange.setMax(xMax);
-  m_yRange.setMin(yMin);
-  m_yRange.setMax(yMax);
-  bool revertToOrthonormal = isOrthonormal(k_orthonormalTolerance);
-
-  float range = xMax - xMin;
-  setXMin(xMin - k_displayHorizontalMarginRatio * range);
-  setXMax(xMax + k_displayHorizontalMarginRatio * range);
-
-  range = yMax - yMin;
-  setYMin(roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true));
-  setYMax(roundLimit(m_delegate->addMargin(yMax, range, true, false), range, false));
-
-  if (revertToOrthonormal) {
-    normalize();
-  }
->>>>>>> secure-bootloader
   setZoomAuto(true);
 }
 
@@ -368,6 +344,34 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
    * constant set to the series average. It should not happen with regression
    * models that can fit a constant observation. */
   // Residual sum of squares
+  double ssr = 0;
+  // Total sum of squares
+  double sst = 0;
+  double mean = meanOfColumn(series, 1);
+  const int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
+    // Difference between the observation and the estimated value of the model
+    double evaluation = yValueForXValue(series, m_data[series][0][k], globalContext);
+    if (std::isnan(evaluation) || std::isinf(evaluation)) {
+      // Data Not Suitable for evaluation
+      return NAN;
+    }
+    double residual = m_data[series][1][k] - evaluation;
+    ssr += residual * residual;
+    // Difference between the observation and the overall observations mean
+    double difference = m_data[series][1][k] - mean;
+    sst += difference * difference;
+  }
+  if (sst == 0.0) {
+    /* Observation was constant, r2 is undefined. Return 1 if estimations
+     * exactly matched observations. 0 is usually returned otherwise. */
+    return (ssr <= DBL_EPSILON) ? 1.0 : 0.0;
+  }
+  double r2 = 1.0 - ssr / sst;
+  // Check if regression fit was optimal.
+  // TODO : Optimize regression fitting so that r2 cannot be negative.
+  // assert(r2 >= 0 || seriesRegressionType(series) == Model::Type::Proportional);
+  return r2;
 }
 
 Model * Store::regressionModel(int index) {

@@ -12,14 +12,14 @@ using namespace Poincare;
 
 namespace Shared {
 
-  void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
-    m_delegate = delegate;
-    if (delegate) {
-      m_delegate->updateZoomButtons();
-    }
+void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
+  m_delegate = delegate;
+  if (delegate) {
+    m_delegate->updateZoomButtons();
   }
+}
 
-  void InteractiveCurveViewRange::setZoomAuto(bool v) {
+void InteractiveCurveViewRange::setZoomAuto(bool v) {
   if (m_zoomAuto == v) {
     return;
   }
@@ -89,7 +89,6 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float xMa = xMax();
   float yMi = yMin();
   float yMa = yMax();
-  setZoomAuto(false);
   if (ratio*std::fabs(xMa-xMi) < Range1D::k_minFloat || ratio*std::fabs(yMa-yMi) < Range1D::k_minFloat) {
     return;
   }
@@ -197,27 +196,6 @@ void InteractiveCurveViewRange::setDefault() {
      * If we are displaying cartesian functions with a default range, we want
      * the X bounds untouched. */
     normalize(isDefaultRange && !m_delegate->defaultRangeIsNormalized());
-=======
-   * yGridUnit, even if the ranger were not truly normalized. */
-  m_zoomNormalize = false;
-
-  // Compute the interesting range
-  m_delegate->interestingRanges(this);
-  bool revertToNormalized = isOrthonormal(k_orthonormalTolerance);
-
-  // Add margins, then round limits.
-  float xRange = xMax() - xMin();
-  float yRange = yMax() - yMin();
-  m_xRange.setMin(roundLimit(m_delegate->addMargin(xMin(), xRange, false, true), xRange, true), k_lowerMaxFloat, k_upperMaxFloat);
-  // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
-  MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(xMax(), xRange, false, false), xRange, false), k_lowerMaxFloat, k_upperMaxFloat);
-  m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);
-
-  if (m_delegate->defaultRangeIsNormalized() || revertToNormalized) {
-    // Normalize the axes, so that a polar circle is displayed as a circle
-    normalize();
->>>>>>> secure-bootloader
   }
 
   setZoomAuto(true);

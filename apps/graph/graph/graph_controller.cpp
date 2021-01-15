@@ -13,9 +13,6 @@ GraphController::GraphController(Responder * parentResponder, ::InputEventHandle
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
-  m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
-  m_graphRange(curveViewRange),
   m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
   m_displayDerivativeInBanner(false)
 {

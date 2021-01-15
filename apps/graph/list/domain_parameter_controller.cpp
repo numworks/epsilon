@@ -73,7 +73,7 @@ bool DomainParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Back && !equalTempParameters()) {
     // Open pop-up to confirm discarding values
-    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
   return false;

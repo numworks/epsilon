@@ -10,6 +10,7 @@
 #include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
+#include <kernel/drivers/random.h>
 #include <shared/drivers/serial_number.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>
@@ -165,6 +166,10 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     // FCC_ID
     case SVC_FCC_ID:
       *static_cast<const char **>(args[0]) = Ion::Device::fccId();
+      return;
+    // RANDOM
+    case SVC_RANDOM:
+      *static_cast<uint32_t *>(args[0]) = Ion::Device::random();
       return;
     default:
       return;

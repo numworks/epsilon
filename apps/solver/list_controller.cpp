@@ -20,7 +20,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     return true;
   }, this), KDFont::LargeFont, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
-  m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
+  m_modelsStackController(nullptr, &m_modelsParameterController)
 {
   m_addNewModel.setAlignment(0.3f, 0.5f); // (EquationListView::k_braceTotalWidth+k_expressionMargin) / (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
   for (int i = 0; i < k_maxNumberOfRows; i++) {
@@ -210,7 +210,7 @@ void ListController::reloadButtonMessage() {
 }
 
 void ListController::addEmptyModel() {
-  Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
+  Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {

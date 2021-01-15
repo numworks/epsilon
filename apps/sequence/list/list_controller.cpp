@@ -16,7 +16,7 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
   m_expressionCells{},
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this, TableCell::Layout::Vertical),
-  m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
+  m_typeStackController(nullptr, &m_typeParameterController),
   m_sequenceToolbox()
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
@@ -251,7 +251,7 @@ int ListController::sequenceDefinitionForRow(int j) {
 }
 
 void ListController::addEmptyModel() {
-  Container::activeApp()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
+  Container::activeApp()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

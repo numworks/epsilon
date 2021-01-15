@@ -84,6 +84,13 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
         double * contextAOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + a);
         double * contextBOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + b);
+        return *contextAOtherColumn > *contextBOtherColumn;
+      };
+      double * seriesContext = m_store->data() + m_series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
+      if (m_xColumnSelected) {
+        Poincare::Helpers::Sort(swapRows, compareX, seriesContext, m_store->numberOfPairsOfSeries(m_series));
+      } else {
+        Poincare::Helpers::Sort(swapRows, compareY, seriesContext, m_store->numberOfPairsOfSeries(m_series));
       }
       break;
     }

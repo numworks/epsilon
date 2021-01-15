@@ -21,7 +21,6 @@ void DFU() {
     if (c.resetOnDisconnect()) {
     c.leave(c.addressPointer());
   }*/
->>>>>>> secure-bootloader
 }
 
 }

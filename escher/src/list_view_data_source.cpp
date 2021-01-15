@@ -23,7 +23,7 @@ void ListViewDataSource::prepareCellForHeightCalculation(HighlightCell * cell, i
   // KDCoordinate cellWidth = reusableCell(0,0)->bounds().width();
   // assert(cellWidth != 0 && (cell->bounds().width() == 0 || cell->bounds().width() == cellWidth));
   assert(cellWidth() != 0);
-  cell->setSize(KDSize(cellWidth(),0));
+  cell->setSize(KDSize(cellWidth(), cell->bounds().height()));
   willDisplayCellForIndex(cell, index);
 }
 

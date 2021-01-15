@@ -14,8 +14,12 @@ public:
     CellWithSeparator(),
     m_cell(message) {}
   Escher::View * accessoryView() const { return m_cell.accessoryView(); }
-  void setMessage(I18n::Message message) { return m_cell.setMessage(message); }
-  KDSize minimalSizeForOptimalDisplay() const override { return m_cell.minimalSizeForOptimalDisplay() + CellWithSeparator::minimalSizeForOptimalDisplay(); }
+  void setMessage(I18n::Message message) {
+    m_cell.setSize(KDSize(bounds().width(), m_cell.bounds().height()));
+    return m_cell.setMessage(message); }
+  KDSize minimalSizeForOptimalDisplay() const override {
+    return m_cell.minimalSizeForOptimalDisplay() + CellWithSeparator::minimalSizeForOptimalDisplay();
+  }
 private:
   Escher::HighlightCell * cell() override { return &m_cell; }
   Escher::MessageTableCellWithGauge m_cell;

@@ -29,6 +29,10 @@ public:
   KDCoordinate rowHeight(int j) override;
   // KDCoordinate cumulatedHeightFromIndex(int j) override;
   // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfCells; }
   // int typeAtLocation(int i, int j) override { return 0; }

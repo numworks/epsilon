@@ -27,7 +27,13 @@ public:
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
+  KDCoordinate cellWidth() override {
+    if (m_selectableTableView.columnWidth(0) <= 0) {
+      return 200; // TODO
+    }
+    return m_selectableTableView.columnWidth(0);
+  }
+  // KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;

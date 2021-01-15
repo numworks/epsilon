@@ -26,6 +26,10 @@ public:
   int numberOfRows() const override { return totalNumberOfCells(); }
 
   // ListViewDataSource
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
   KDCoordinate rowHeight(int j) override; // { return Escher::Metric::ParameterCellHeight; }
   // KDCoordinate cumulatedHeightFromIndex(int j) override;
   // int indexFromCumulatedHeight(KDCoordinate offsetY) override;

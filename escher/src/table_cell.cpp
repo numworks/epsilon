@@ -3,7 +3,6 @@
 #include <escher/metric.h>
 #include <algorithm>
 #include <ion.h>
-#include <iostream>
 
 namespace Escher {
 
@@ -58,7 +57,8 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subL
 
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
   // Find a way to get bounds().width(). Can be 280 instead of 266 with params + handle max nb of rows
-  KDCoordinate expectedWidth = Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin; // m_frame.width(); //
+  KDCoordinate expectedWidth = m_frame.width(); // Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin; // m_frame.width(); //
+  assert(expectedWidth > 0);
   // if (m_frame.width() + m_frame.height() + bounds().width() + bounds().height() > 0) {
   //   std::cout << m_frame.width() << " , " << m_frame.height() << " - " << bounds().width() << " , " << bounds().height() << "\n";
   // }

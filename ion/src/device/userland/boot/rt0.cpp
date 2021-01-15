@@ -1,6 +1,7 @@
 #include "entry_point.h"
 #include <shared/boot/rt0.h>
 #include <ion.h>
+#include <userland/drivers/svcall.h>
 #include <ion/backlight.h> // TODO: remove
 #include <ion/console.h> // TODO: remove
 #include <ion/display.h> // TODO: remove
@@ -12,9 +13,9 @@ extern "C" {
   void abort();
 }
 
-void abort() { //TODO EMILIE: expose in ion API
+void abort() {
 #ifdef NDEBUG
-  //svc(SVC_RESET_CORE);
+  SVC(SVC_RESET_CORE);
 #else
   while (1) {
   }

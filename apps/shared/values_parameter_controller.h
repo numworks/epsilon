@@ -17,6 +17,10 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
   // KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override { return 0; }
   Escher::HighlightCell * reusableCell(int index, int type) override;

@@ -19,6 +19,10 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override; //  { return Escher::Metric::ParameterCellHeight; }
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

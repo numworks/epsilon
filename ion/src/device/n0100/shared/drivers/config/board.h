@@ -26,7 +26,7 @@ namespace Config {
  * NB: Total size includes signature footer (unlike length)
  */
 
-constexpr static uint32_t KernelTotalSize = 2*0x4000 + 0x10000; // TODO EMILIE: try with only 2*16k?
+constexpr static uint32_t KernelTotalSize = 2*0x4000;
 
 }
 }

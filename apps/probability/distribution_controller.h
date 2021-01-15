@@ -19,6 +19,10 @@ public:
   int numberOfRows() const override { return k_totalNumberOfModels; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override; // { return k_cellHeight; }
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfCells; }
 private:

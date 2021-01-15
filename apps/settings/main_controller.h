@@ -30,6 +30,10 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;

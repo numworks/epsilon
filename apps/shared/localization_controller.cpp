@@ -90,7 +90,7 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force,
     /* If the top cell is cut, but not enough to hide part of the text, it will
      * appear squashed. To prevent that, we increase the top margin slightly,
      * so that the top cell will be cropped in the middle. */
-    KDCoordinate rowHeight = m_controller->reusableCell(0, 0)->minimalSizeForOptimalDisplay().height();
+    KDCoordinate rowHeight = TableCell::minimalHeightForOptimalDisplay(&m_countryTitleMessage, nullptr, nullptr, bounds().width());
     KDCoordinate incompleteCellHeight = tableHeightSansMargin - (tableHeightSansMargin / rowHeight) * rowHeight;
     KDCoordinate offset = std::max(0, incompleteCellHeight - rowHeight / 2);
     tableHeight -= offset;

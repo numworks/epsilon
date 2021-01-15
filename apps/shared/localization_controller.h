@@ -41,6 +41,12 @@ public:
 
   int numberOfRows() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
   KDCoordinate rowHeight(int j) override;
+  KDCoordinate cellWidth() override {
+    if (m_contentView.selectableTableView()->columnWidth(0) <= 0) {
+      return 320;
+    }
+    return m_contentView.selectableTableView()->columnWidth(0);
+  }
   Escher::HighlightCell * reusableCell(int index, int type) override { return &m_cells[index]; }
   // int reusableCellCount() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
 

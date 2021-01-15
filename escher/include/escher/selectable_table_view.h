@@ -34,6 +34,8 @@ public:
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   bool selectCellAtClippedLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   HighlightCell * selectedCell();
+  KDCoordinate columnWidth(int i) { return (bounds().width() - rightMargin() - leftMargin()) / numberOfDisplayableColumns(); }
+  // KDCoordinate cellWidth() { return (bounds().width() - rightMargin() - leftMargin()) / numberOfDisplayableColumns(); }
 protected:
   void unhighlightSelectedCell();
   SelectableTableViewDataSource * m_selectionDataSource;

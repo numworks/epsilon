@@ -95,19 +95,22 @@ HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
 
 template<typename T>
 KDCoordinate FloatParameterController<T>::rowHeight(int j) {
-  if (j == numberOfRows()-1) {
-    return Metric::ParameterCellHeight+k_buttonMargin;
-  }
-  return Metric::ParameterCellHeight;
+  MessageTableCellWithEditableText tempCell = MessageTableCellWithEditableText();
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
+  return tempCell.minimalSizeForOptimalDisplay().height() + ((j == numberOfRows()-1) ? k_buttonMargin : 0);
+  // if (j == numberOfRows()-1) {
+  //   return Metric::ParameterCellHeight+k_buttonMargin;
+  // }
+  // return Metric::ParameterCellHeight;
 }
 
-template<typename T>
-KDCoordinate FloatParameterController<T>::cumulatedHeightFromIndex(int j) {
-  if (j == numberOfRows()) {
-    return j*Metric::ParameterCellHeight+k_buttonMargin;
-  }
-  return Metric::ParameterCellHeight*j;
-}
+// template<typename T>
+// KDCoordinate FloatParameterController<T>::cumulatedHeightFromIndex(int j) {
+//   if (j == numberOfRows()) {
+//     return j*Metric::ParameterCellHeight+k_buttonMargin;
+//   }
+//   return Metric::ParameterCellHeight*j;
+// }
 
 template<typename T>
 int FloatParameterController<T>::indexFromCumulatedHeight(KDCoordinate offsetY) {
@@ -115,6 +118,7 @@ int FloatParameterController<T>::indexFromCumulatedHeight(KDCoordinate offsetY) 
     return numberOfRows();
   }
   return (offsetY - 1) / Metric::ParameterCellHeight;
+  // TODO HUGO : This function should not be overwritten, but doing so breaks float inputs (when rowHeight(0) is called)
 }
 
 template<typename T>

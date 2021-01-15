@@ -32,6 +32,10 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
 
 private:
   constexpr static int k_totalNumberOfCell = 4;

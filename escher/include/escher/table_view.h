@@ -18,6 +18,7 @@ public:
   int firstDisplayedColumnIndex() const { return m_contentView.columnsScrollingOffset(); }
   int numberOfDisplayableRows() const { return m_contentView.numberOfDisplayableRows(); }
   int numberOfDisplayableColumns() const { return m_contentView.numberOfDisplayableColumns(); }
+  // KDCoordinate columnWidth(int i) const { return m_contentView.columnWidth(i);}
 
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
@@ -45,6 +46,7 @@ protected:
     int numberOfDisplayableColumns() const;
     KDRect cellFrame(int i, int j) const;
     void layoutSubviews(bool force = false) override;
+    // KDCoordinate columnWidth(int i) const { return m_dataSource->columnWidth(i); }
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;

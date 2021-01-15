@@ -6,6 +6,7 @@
 #include <escher/list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
+#include <ion/display.h>
 
 namespace Escher {
 // Pop-up - Toolbox
@@ -21,7 +22,13 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
 
-  //ListViewDataSource
+  //ListViewDataSource TODO : Improve value
+  KDCoordinate cellWidth() override {
+    assert(m_listController.selectableTableView()->columnWidth(0) == 266);
+    return m_listController.selectableTableView()->columnWidth(0);
+    // assert(m_listController.selectableTableView()->bounds().width() - m_listController.selectableTableView()->rightMargin() - m_listController.selectableTableView()->leftMargin() == 266);
+    // return m_listController.selectableTableView()->bounds().width() - m_listController.selectableTableView()->rightMargin() - m_listController.selectableTableView()->leftMargin();
+  }
   // KDCoordinate rowHeight(int j) override;//
   HighlightCell * reusableCell(int index, int type) override;
 protected:
@@ -55,6 +62,7 @@ protected:
     View * view() override;
     void didBecomeFirstResponder() override;
     void setFirstSelectedRow(int firstSelectedRow);
+    SelectableTableView * selectableTableView() { return m_selectableTableView; };
   private:
     SelectableTableView * m_selectableTableView;
     int m_firstSelectedRow;

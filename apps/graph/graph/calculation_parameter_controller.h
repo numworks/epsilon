@@ -25,6 +25,11 @@ public:
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
+  KDCoordinate cellWidth() override {
+    assert(m_selectableTableView.columnWidth(0) > 0);
+    return m_selectableTableView.columnWidth(0);
+  }
+
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;

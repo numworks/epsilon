@@ -13,7 +13,7 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
   // If it exists, draw the description name.
   const char * descriptionName = m_scriptNode->description();
   if (descriptionName != nullptr) {
-    ctx->drawString(descriptionName, KDPoint(0, m_frame.height() - k_bottomMargin - k_font->glyphSize().height()), k_font, Palette::GreyDark, backgroundColor);
+    ctx->drawString(descriptionName, KDPoint(0, m_frame.height() - k_bottomMargin - k_font->glyphSize().height()), k_font, Palette::GrayDark, backgroundColor);
   }
 
   // Draw the node name
@@ -32,7 +32,7 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
   const char * sourceName = m_scriptNode->nodeSourceName();
   if (sourceName != nullptr) {
     KDSize sourceNameSize = k_font->stringSize(sourceName);
-    ctx->drawString(sourceName, KDPoint(m_frame.width() - sourceNameSize.width(), nodeNameY), k_font, Palette::GreyDark, backgroundColor);
+    ctx->drawString(sourceName, KDPoint(m_frame.width() - sourceNameSize.width(), nodeNameY), k_font, Palette::GrayDark, backgroundColor);
   }
 }
 

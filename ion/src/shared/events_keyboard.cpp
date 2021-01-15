@@ -25,7 +25,6 @@ bool sEventIsRepeating = 0;
 int sEventRepetitionCount = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
-constexpr int numberOfRepetitionsBeforeLongRepetition = 20;
 
 static bool canRepeatEvent(Event e) {
   return e == Events::Left
@@ -41,9 +40,14 @@ static bool canRepeatEvent(Event e) {
 
 Event getPlatformEvent();
 
+void ComputeAndSetRepetionFactor(int eventRepetitionCount) {
+  // The Repetition factor is increased by 4 every 20 loops in getEvent(2 sec)
+  setLongRepetition((eventRepetitionCount / 20) * 4 + 1);
+}
+
 void resetLongRepetition() {
   sEventRepetitionCount = 0;
-  setLongRepetition(false);
+  ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
 Event getEvent(int * timeout) {
@@ -62,6 +66,8 @@ Event getEvent(int * timeout) {
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;
 
+    bool lock = isLockActive();
+
     if (keysSeenTransitionningFromUpToDown != 0) {
       sEventIsRepeating = false;
       resetLongRepetition();
@@ -74,7 +80,6 @@ Event getEvent(int * timeout) {
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
       bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
       bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
-      bool lock = isLockActive();
       Event event(key, shift, alpha, lock);
       sLastEventShift = shift;
       sLastEventAlpha = alpha;
@@ -85,7 +90,7 @@ Event getEvent(int * timeout) {
     }
 
     if (sleepWithTimeout(10, timeout)) {
-      // Timeout occured
+      // Timeout occurred
       resetLongRepetition();
       return Events::None;
     }
@@ -96,17 +101,13 @@ Event getEvent(int * timeout) {
     if (canRepeatEvent(sLastEvent)
         && state == sLastKeyboardState
         && sLastEventShift == state.keyDown(Keyboard::Key::Shift)
-        && sLastEventAlpha == state.keyDown(Keyboard::Key::Alpha))
+        && sLastEventAlpha == (state.keyDown(Keyboard::Key::Alpha) || lock))
     {
       int delay = (sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat);
       if (time >= delay) {
         sEventIsRepeating = true;
-        if (sEventRepetitionCount < numberOfRepetitionsBeforeLongRepetition) {
-          sEventRepetitionCount++;
-          if (sEventRepetitionCount == numberOfRepetitionsBeforeLongRepetition) {
-            setLongRepetition(true);
-          }
-        }
+        sEventRepetitionCount++;
+        ComputeAndSetRepetionFactor(sEventRepetitionCount);
         return sLastEvent;
       }
     }

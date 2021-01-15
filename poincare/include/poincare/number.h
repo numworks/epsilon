@@ -26,13 +26,15 @@ public:
 
   double doubleApproximation() const;
 
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+
 };
 
 class Number : public Expression {
 public:
   Number(const NumberNode * node) : Expression(node) {}
   /* Return either a Rational, a Decimal or an Infinity. */
-  static Number ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLenght, bool exponentIsNegative, const char * exponentPart, size_t exponentLength);
+  static Number ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLength, bool exponentIsNegative, const char * exponentPart, size_t exponentLength);
   /* Return either a Decimal or an Infinity or an Undefined. */
   template <typename T> static Number DecimalNumber(T f);
   /* Return either a Float or an Infinity or an Undefined */
@@ -51,8 +53,10 @@ public:
   ExpressionNode::Sign sign() const { return Expression::sign(nullptr); }
   Number setSign(ExpressionNode::Sign s) {
     assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-    return Expression::setSign(s, ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User)).convert<Number>();
+    return Expression::setSign(s, ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User)).convert<Number>();
   }
+
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

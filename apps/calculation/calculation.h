@@ -21,6 +21,7 @@ class CalculationStore;
 class Calculation {
 friend CalculationStore;
 public:
+  static constexpr int k_numberOfExpressions = 4;
   enum class EqualSign : uint8_t {
     Unknown,
     Approximation,
@@ -40,6 +41,7 @@ public:
     Rational,
     Trigonometry,
     Unit,
+    Matrix,
     Complex
   };
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }
@@ -48,7 +50,7 @@ public:
    * calculations instead of clearing less space, then fail to serialize, clear
    * more space, fail to serialize, clear more space, etc., until reaching
    * sufficient free space. */
-  static int MinimalSize() { return sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + 3*Constant::MaxSerializedExpressionSize; }
+  static int MinimalSize() { return sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + 3*Constant::MaxSerializedExpressionSize + sizeof(Calculation *); }
 
   Calculation() :
     m_displayOutput(DisplayOutput::Unknown),
@@ -93,7 +95,6 @@ public:
   // Additional Information
   AdditionalInformationType additionalInformationType(Poincare::Context * context);
 private:
-  static constexpr int k_numberOfExpressions = 4;
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
 

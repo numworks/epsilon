@@ -36,6 +36,8 @@ public:
   bool isDefined() const;
   static constexpr int PageSize = Keyboard::NumberOfKeys;
 private:
+  const char * defaultText() const;
+
   uint8_t m_id;
 };
 
@@ -57,8 +59,8 @@ void removeShift();
 bool isShiftActive();
 bool isAlphaActive();
 bool isLockActive();
-void setLongRepetition(bool longRepetition);
-bool isLongRepetition();
+void setLongRepetition(int longRepetition);
+int repetitionFactor();
 void updateModifiersFromEvent(Event e);
 void didPressNewKey();
 
@@ -229,6 +231,9 @@ constexpr Event TimerFire = Event::Special(2);
 constexpr Event USBEnumeration = Event::Special(3);
 constexpr Event USBPlug = Event::Special(4);
 constexpr Event BatteryCharging = Event::Special(5);
+/* This event is only used in the simulator, to handle text that cannot be
+ * associated with a key. */
+constexpr Event ExternalText = Event::Special(6);
 
 }
 }

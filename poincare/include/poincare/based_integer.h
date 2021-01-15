@@ -17,7 +17,7 @@ public:
   size_t size() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "Based Integer";
+    stream << "BasedInteger";
   }
   virtual void logAttributes(std::ostream & stream) const override;
 #endif
@@ -28,16 +28,18 @@ public:
   // Expression subclassing
   Type type() const override { return Type::BasedInteger; }
   Sign sign(Context * context) const override { return Sign::Positive; }
+  NullStatus nullStatus(Context * context) const override { return integer().isZero() ? NullStatus::Null : NullStatus::NonNull; }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
   template<typename T> T templatedApproximate() const;
 
 private:
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return m_base == Integer::Base::Decimal ? LayoutShape::Integer : LayoutShape::BinaryHexadecimal; }
   Integer::Base m_base;

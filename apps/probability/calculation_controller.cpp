@@ -26,7 +26,7 @@ namespace Probability {
 constexpr int CalculationController::k_titleBufferSize;
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView),
   m_distributionCurveView(distribution, calculation)
 {

@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 #include <float.h>
+#include <complex>
+#include <poincare/trigonometry.h>
 
 using namespace Poincare;
 
@@ -110,32 +112,40 @@ float CurveView::pixelHeight() const {
   return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
 }
 
+float CurveView::pixelLength(Axis axis) const {
+  return axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
+}
+
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
   return (axis == Axis::Horizontal) ?
     m_curveViewRange->xMin() + p * pixelWidth() :
     m_curveViewRange->yMax() - p * pixelHeight();
 }
 
+static float clippedFloat(float f) {
+  /* Make sure that the returned value is between the maximum and minimum
+   * possible values of KDCoordinate. */
+  if (f == NAN) {
+    return NAN;
+  } else if (f < KDCOORDINATE_MIN) {
+    return KDCOORDINATE_MIN;
+  } else if (f > KDCOORDINATE_MAX) {
+    return KDCOORDINATE_MAX;
+  } else {
+    return f;
+  }
+}
+
 float CurveView::floatToPixel(Axis axis, float f) const {
   float result = (axis == Axis::Horizontal) ?
     (f - m_curveViewRange->xMin()) / pixelWidth() :
     (m_curveViewRange->yMax() - f) / pixelHeight();
-  /* Make sure that the returned value is between the maximum and minimum
-   * possible values of KDCoordinate. */
-  if (result == NAN) {
-    return NAN;
-  } else if (result < KDCOORDINATE_MIN) {
-    return KDCOORDINATE_MIN;
-  } else if (result > KDCOORDINATE_MAX) {
-    return KDCOORDINATE_MAX;
-  } else {
-    return result;
-  }
+  return clippedFloat(result);
 }
 
 float CurveView::floatLengthToPixelLength(Axis axis, float f) const {
-  float dist = floatToPixel(axis, f) - floatToPixel(axis, 0.0f);
-  return axis == Axis::Vertical ? - dist : dist;
+  float dist = f / pixelLength(axis);
+  return clippedFloat(dist);
 }
 
 float CurveView::floatLengthToPixelLength(float dx, float dy) const {
@@ -145,8 +155,7 @@ float CurveView::floatLengthToPixelLength(float dx, float dy) const {
 }
 
 float CurveView::pixelLengthToFloatLength(Axis axis, float f) const {
-  f = axis == Axis::Vertical ? -f : f;
-  return pixelToFloat(axis, floatToPixel(axis, 0.0f) + f);
+  return f*pixelLength(axis);
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
@@ -178,6 +187,9 @@ float CurveView::gridUnit(Axis axis) const {
 
 int CurveView::numberOfLabels(Axis axis) const {
   float labelStep = 2.0f * gridUnit(axis);
+  if (labelStep <= 0.0f) {
+    return 0;
+  }
   float minLabel = std::ceil(min(axis)/labelStep);
   float maxLabel = std::floor(max(axis)/labelStep);
   int numberOfLabels = maxLabel - minLabel + 1;
@@ -217,18 +229,23 @@ void CurveView::computeLabels(Axis axis) {
 
     if (axis == Axis::Horizontal) {
       if (labelBuffer[0] == 0) {
-        /* Some labels are too big and may overlap their neighbours. We write the
+        /* Some labels are too big and may overlap their neighbors. We write the
          * extrema labels only. */
         computeHorizontalExtremaLabels();
-        return;
+        break;
       }
       if (i > 0 && strcmp(labelBuffer, label(axis, i-1)) == 0) {
         /* We need to increase the number if significant digits, otherwise some
          * labels are rounded to the same value. */
         computeHorizontalExtremaLabels(true);
-        return;
+        break;
       }
     }
+  }
+  int maxNumberOfLabels = (axis == Axis::Horizontal ? k_maxNumberOfXLabels : k_maxNumberOfYLabels);
+  // All remaining labels are empty. They shouldn't be accessed anyway.
+  for (int i = axisLabelsCount; i < maxNumberOfLabels; i++) {
+    label(axis, i)[0] = 0;
   }
 }
 
@@ -359,6 +376,9 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
     return;
   }
 
+  // Labels will be pulled. They must be up to date with current curve view.
+  assert(m_drawnRangeVersion == m_curveViewRange->rangeChecksum());
+
   // Draw the labels
   for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
     KDCoordinate labelPosition = std::round(floatToPixel(axis, labelValueAtIndex(axis, i)));
@@ -449,13 +469,13 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   KDCoordinate diameter = 0;
   const uint8_t * mask = nullptr;
   switch (size) {
+    case Size::Tiny:
+      diameter = Dots::TinyDotDiameter;
+      mask = (const uint8_t *)Dots::TinyDotMask;
+      break;
     case Size::Small:
       diameter = Dots::SmallDotDiameter;
       mask = (const uint8_t *)Dots::SmallDotMask;
-      break;
-    case Size::Medium:
-      diameter = Dots::MediumDotDiameter;
-      mask = (const uint8_t *)Dots::MediumDotMask;
       break;
     default:
       assert(size == Size::Large);
@@ -536,8 +556,8 @@ void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float 
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
-  KDColor boldColor = Palette::GreyMiddle;
-  KDColor lightColor = Palette::GreyWhite;
+  KDColor boldColor = Palette::GrayMiddle;
+  KDColor lightColor = Palette::GrayWhite;
   drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->xGridUnit(), boldColor, lightColor);
   drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->yGridUnit(), boldColor, lightColor);
 }
@@ -610,6 +630,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
   float previousY = NAN;
   float y = NAN;
   int i = 0;
+  bool isLastSegment = false;
   do {
     previousT = t;
     t = tStart + (i++) * tStep;
@@ -618,9 +639,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     }
     if (t >= tEnd) {
       t = tEnd - FLT_EPSILON;
+      isLastSegment = true;
     }
     if (previousT == t) {
-      break;
+      // No need to draw segment. Happens when tStep << tStart .
+      continue;
     }
     previousX = x;
     previousY = y;
@@ -631,7 +654,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, std::min(0.0f, y), std::max(0.0f, y), color, 1);
     }
     joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
-  } while (true);
+  } while (!isLastSegment);
 }
 
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
@@ -645,6 +668,123 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, flo
   }
   float tStep = pixelWidth();
   drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+}
+
+float PolarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {
+  // Return θ, between -π and π in given angleUnit for a (x,y) position.
+  return Trigonometry::ConvertRadianToAngleUnit<float>(std::arg(std::complex<float>(x,y)), angleUnit).real();
+}
+
+void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
+  // Compute rect limits
+  float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+  float rectUp = pixelToFloat(Axis::Vertical, rect.top() + k_externRectMargin);
+  float rectDown = pixelToFloat(Axis::Vertical, rect.bottom() - k_externRectMargin);
+
+  const Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
+  /* Cancel optimization if :
+   * - One of rect limits is nan.
+   * - Step is too large, see cache optimization comments
+   *   ("To optimize cache..."). */
+  bool cancelOptimization = std::isnan(rectLeft + rectRight + rectUp + rectDown) || tStep >= piInAngleUnit;
+
+  bool rectOverlapsNegativeAbscissaAxis = false;
+  if (cancelOptimization || (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f)) {
+    if (cancelOptimization || rectRight > 0.0f) {
+      // Origin is inside rect, tStart and tEnd cannot be optimized
+      return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+    }
+    // Rect view overlaps the abscissa, on the left of the origin.
+    rectOverlapsNegativeAbscissaAxis = true;
+  }
+
+  float tMin, tMax;
+  /* Compute angular coordinate of each corners of rect.
+   * t3 --- t2
+   *  |      |
+   * t4 --- t1 */
+  float t1 = PolarThetaFromCoordinates(rectRight, rectDown, angleUnit);
+  float t2 = PolarThetaFromCoordinates(rectRight, rectUp, angleUnit);
+  if (!rectOverlapsNegativeAbscissaAxis) {
+    float t3 = PolarThetaFromCoordinates(rectLeft, rectUp, angleUnit);
+    float t4 = PolarThetaFromCoordinates(rectLeft, rectDown, angleUnit);
+    /* The area between tMin and tMax (modulo π) is the only area where
+     * something needs to be plotted. */
+    tMin = std::min(std::min(t1,t2),std::min(t3,t4));
+    tMax = std::max(std::max(t1,t2),std::max(t3,t4));
+  } else {
+    /* PolarThetaFromCoordinates yields coordinates between -π and π. When rect
+     * is overlapping the negative abscissa (at this point, the origin cannot be
+     * inside rect), t1 and t4 have a negative angle whereas t2 and t3 have a
+     * positive angle. We ensure here that tMin is t2 (modulo 2π), tMax is t1,
+     * and that tMax-tMin is minimal and positive. */
+    tMin = t2 - 2 * piInAngleUnit;
+    tMax = t1;
+  }
+
+  // Add a thousandth of π as a margin to avoid visible approximation errors.
+  tMax += piInAngleUnit / 1000.0f;
+  tMin -= piInAngleUnit / 1000.0f;
+
+  /* To optimize cache hits, the area actually drawn will be extended to nearest
+   * cached θ. tStep being a multiple of cache steps (see
+   * ComputeNonCartesianSteps), we extend segments on both ends to the closest
+   * θ = tStart + tStep * i
+   * If the drawn segment is extended too much, it might overlap with the next
+   * extended segment.
+   * For example, with * the segments that must be drawn and piInAngleUnit=7 :
+   *                 tStart                                            tEnd
+   *              kπ   | (k+1)π  (k+2)π  (k+3)π  (k+4)π  (k+5)π  (k+6)π  |(k+7)π
+   *               |-------|-------|-------|-------|-------|-------|-------|--
+   * tMax-tMin=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   * A - tStep=3 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   *               |___^^^_|__     | ^^^^^^|___   _|__^^^^^|^      |___^^^_|__
+   *               |       |  ^^^^^|^      |   ^^^ |       | ^^^^^^|       |
+   *
+   * B - tStep=6 : |---***-|---***-|---***-|---***-|---***-|---***-|---***-|--
+   *               |___^^^^|^^     | ^^^^^^|      ^|^^^^^^^|^^^^   |   ^^^^|^^
+   *               |       |  ^^^^^|^      |^^^^^^ |     ^^|^^^^^^^|^^^    |
+   * In situation A, Step are small enough, not all segments must be drawn.
+   * In situation B, The entire range should be drawn, and two extended segments
+   * overlap (at tStart+5*tStep). Optimization is useless.
+   * If tStep < piInAngleUnit - (tMax - tMin), situation B cannot happen. */
+  if (tStep >= piInAngleUnit - tMax + tMin) {
+    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+  }
+
+  /* The number of segments to draw can be reduced by drawing curve on intervals
+   * where (tMin%π, tMax%π) intersects (tStart, tEnd).For instance :
+   * if tStart=-π, tEnd=3π, tMin=π/4 and tMax=π/3, a curve is drawn between :
+   * - [ π/4, π/3 ], [ 2π + π/4, 2π + π/3 ]
+   * - [ -π + π/4, -π + π/3 ], [ π + π/4, π + π/3 ] in case f(θ) is negative */
+
+  // 1 - Set offset so that tStart <= tMax+thetaOffset < piInAngleUnit+tStart
+  float thetaOffset = std::ceil((tStart - tMax)/piInAngleUnit) * piInAngleUnit;
+
+  // 2 - Increase offset until tMin + thetaOffset > tEnd
+  float tCache2 = tStart;
+  while (tMin + thetaOffset <= tEnd) {
+    float tS = std::max(tMin + thetaOffset, tStart);
+    float tE = std::min(tMax + thetaOffset, tEnd);
+    // Draw curve if there is an intersection
+    if (tS <= tE) {
+      /* To maximize cache hits, we floor (and ceil) tS (and tE) to the closest
+       * cached value. Step is small enough so that the extra drawn curve cannot
+       * overlap as tMax + tStep < piInAngleUnit + tMin) */
+      int i = std::floor((tS - tStart) / tStep);
+      assert(tStart + tStep * i >= tCache2);
+      float tCache1 = tStart + tStep * i;
+
+      int j = std::ceil((tE - tStart) / tStep);
+      tCache2 = std::min(tStart + tStep * j, tEnd);
+
+      assert(tCache1 <= tCache2);
+      drawCurve(ctx, rect, tCache1, tCache2, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+    }
+    thetaOffset += piInAngleUnit;
+  }
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
@@ -710,7 +850,7 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
     const float deltaX = pxf - puf;
     const float deltaY = pyf - pvf;
     if (isFirstDot // First dot has to be stamped
-       || (!isLeftDotValid && maxNumberOfRecursion == 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
+       || (!isLeftDotValid && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
        || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
       // the dots are already joined
       /* We need to be sure that the point is not an artifact caused by error
@@ -747,8 +887,27 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
     }
   }
   if (maxNumberOfRecursion > 0) {
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1, xyDoubleEvaluation);
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, maxNumberOfRecursion-1, xyDoubleEvaluation);
+    float xmin = min(Axis::Horizontal);
+    float xmax = max(Axis::Horizontal);
+    float ymax = max(Axis::Vertical);
+    float ymin = min(Axis::Vertical);
+
+    int nextMaxNumberOfRecursion = maxNumberOfRecursion - 1;
+    // If both dots are out of rect bounds, and on a same side
+    if ((xmax < x && xmax < u) || (x < xmin && u < xmin) ||
+        (ymax < y && ymax < v) || (y < ymin && v < ymin)) {
+      /* Discard a recursion step to save computation time on dots that are
+       * likely not to be drawn. It can alter precision with some functions when
+       * zooming excessively (compared to plot range) on local minimums
+       * For instance, plotting parametric function [t,|t-π|] with t in [0,360],
+       * x in [-1,20] and y in [-1,3] will show inaccuracies that would
+       * otherwise have been visible at higher zoom only, with x in [2,4] and y
+       * in [-0.2,0.2] in this case. */
+      nextMaxNumberOfRecursion--;
+    }
+
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation);
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation);
   }
 }
 
@@ -861,14 +1020,32 @@ void CurveView::layoutSubviews(bool force) {
 
 KDRect CurveView::cursorFrame() {
   KDRect cursorFrame = KDRectZero;
-  if (m_cursorView && m_mainViewSelected && !std::isnan(m_curveViewCursor->x()) && !std::isnan(m_curveViewCursor->y())) {
+  if (m_cursorView && m_mainViewSelected && std::isfinite(m_curveViewCursor->x()) && std::isfinite(m_curveViewCursor->y())) {
     KDSize cursorSize = m_cursorView->minimalSizeForOptimalDisplay();
-    KDCoordinate xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
-    KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, yCursorPixelPosition - (cursorSize.height()-1)/2, cursorSize.width(), cursorSize.height());
+    float xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
+    float yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
+
+    /* If the cursor is not visible, put its frame to zero, because it might be
+     * very far out of the visible frame and thus later overflow KDCoordinate.
+     * The "2" factor is a big safety margin. */
+    constexpr int maxCursorPixel = KDCOORDINATE_MAX / 2;
+    // Assert we are not removing visible cursors
+    static_assert((Ion::Display::Width * 2 < maxCursorPixel)
+        && (Ion::Display::Height * 2 < maxCursorPixel),
+        "maxCursorPixel is should be bigger");
+    if (std::abs(yCursorPixelPosition) > maxCursorPixel
+        || std::abs(xCursorPixelPosition) > maxCursorPixel)
+    {
+      return KDRectZero;
+    }
+
+    KDCoordinate xCursor = xCursorPixelPosition;
+    KDCoordinate yCursor = yCursorPixelPosition;
+    KDCoordinate xCursorFrame = xCursor - (cursorSize.width()-1)/2;
+    cursorFrame = KDRect(xCursorFrame, yCursor - (cursorSize.height()-1)/2, cursorSize);
     if (cursorSize.height() == 0) {
       KDCoordinate bannerHeight = (m_bannerView != nullptr) ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
-      cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, 0, cursorSize.width(),bounds().height()-bannerHeight);
+      cursorFrame = KDRect(xCursorFrame, 0, cursorSize.width(), bounds().height() - bannerHeight);
     }
   }
   return cursorFrame;

@@ -1,4 +1,5 @@
 #include "store.h"
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -88,6 +89,15 @@ bool Store::seriesIsEmpty(int i) const {
   return m_seriesEmpty[i];
 }
 
+bool Store::frequenciesAreInteger(int series) const {
+  for (const double freq : m_data[series][1]) {
+    if (std::fabs(freq - std::round(freq)) > DBL_EPSILON) {
+      return false;
+    }
+  }
+  return true;
+}
+
 int Store::numberOfNonEmptySeries() const {
   return m_numberOfNonEmptySeries;
 }
@@ -153,8 +163,10 @@ double Store::mean(int series) const {
 }
 
 double Store::variance(int series) const {
+  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
+   * to ensure a positive result and to minimize rounding errors */
   double m = mean(series);
-  return squaredValueSum(series)/sumOfOccurrences(series) - m*m;
+  return squaredOffsettedValueSum(series, m)/sumOfOccurrences(series);
 }
 
 double Store::standardDeviation(int series) const {
@@ -167,12 +179,38 @@ double Store::sampleStandardDeviation(int series) const {
   return s*standardDeviation(series);
 }
 
+/* Below is the equivalence between quartiles and cumulated population, for the
+ * international definition of quartiles (as medians of the lower and upper
+ * half-lists). Let N be the total population, and k an integer.
+ *
+ *           Data repartition   Cumulated population
+ *              Q1      Q3        Q1       Q3
+ *
+ * N = 4k    --- --- --- ---      k        3k                --- k elements
+ * N = 4k+1  --- ---O––– ---      k        3k+1               O  1 element
+ * N = 4k+2  ---O--- ---O---      k+1/2    3k+1+1/2
+ * N = 4k+3  ---O---O---O---      k+1/2    3k+2+1/2
+ *
+ * Using floor(N/2)/2 as the cumulated population for Q1 and ceil(3N/2)/2 for
+ * Q3 gives the right results.
+ *
+ * As this method is not well defined for rational frequencies, we escape to
+ * the more general definition if non-integral frequencies are found.
+ * */
 double Store::firstQuartile(int series) const {
-  return sortedElementAtCumulatedFrequency(series, 1.0/4.0);
+  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !frequenciesAreInteger(series)) {
+    return sortedElementAtCumulatedFrequency(series, 1.0/4.0);
+  }
+  assert(GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::MedianOfSublist);
+  return sortedElementAtCumulatedPopulation(series, std::floor(sumOfOccurrences(series) / 2.) / 2., true);
 }
 
 double Store::thirdQuartile(int series) const {
-  return sortedElementAtCumulatedFrequency(series, 3.0/4.0);
+  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !frequenciesAreInteger(series)) {
+    return sortedElementAtCumulatedFrequency(series, 3.0/4.0);
+  }
+  assert(GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::MedianOfSublist);
+  return sortedElementAtCumulatedPopulation(series, std::ceil(3./2. * sumOfOccurrences(series)) / 2., true);
 }
 
 double Store::quartileRange(int series) const {
@@ -193,10 +231,15 @@ double Store::sum(int series) const {
 }
 
 double Store::squaredValueSum(int series) const {
+  return squaredOffsettedValueSum(series, 0.0);
+}
+
+double Store::squaredOffsettedValueSum(int series, double offset) const {
   double result = 0;
-  int numberOfPairs = numberOfPairsOfSeries(series);
+  const int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    result += m_data[series][0][k]*m_data[series][0][k]*m_data[series][1][k];
+    double value = m_data[series][0][k] - offset;
+    result += value*value*m_data[series][1][k];
   }
   return result;
 }
@@ -247,22 +290,24 @@ double Store::sumOfValuesBetween(int series, double x1, double x2) const {
 }
 
 double Store::sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement) const {
-  // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
   assert(k >= 0.0 && k <= 1.0);
-  double totalNumberOfElements = sumOfOccurrences(series);
-  double numberOfElementsAtFrequencyK = totalNumberOfElements * k;
+  return sortedElementAtCumulatedPopulation(series, k * sumOfOccurrences(series), createMiddleElement);
+}
+
+double Store::sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement) const {
+  // TODO: use another algorithm (ex quickselect) to avoid quadratic complexity
   int numberOfPairs = numberOfPairsOfSeries(series);
-  double bufferValues[numberOfPairs];
+  double bufferValues[k_maxNumberOfPairs];
   memcpy(bufferValues, m_data[series][0], numberOfPairs*sizeof(double));
   int sortedElementIndex = 0;
   double cumulatedNumberOfElements = 0.0;
-  while (cumulatedNumberOfElements < numberOfElementsAtFrequencyK-DBL_EPSILON) {
+  while (cumulatedNumberOfElements < population-DBL_EPSILON) {
     sortedElementIndex = minIndex(bufferValues, numberOfPairs);
     bufferValues[sortedElementIndex] = DBL_MAX;
     cumulatedNumberOfElements += m_data[series][1][sortedElementIndex];
   }
 
-  if (createMiddleElement && std::fabs(cumulatedNumberOfElements - numberOfElementsAtFrequencyK) < DBL_EPSILON) {
+  if (createMiddleElement && std::fabs(cumulatedNumberOfElements - population) < DBL_EPSILON) {
     /* There is an element of cumulated frequency k, so the result is the mean
      * between this element and the next element (in terms of cumulated
      * frequency) that has a non-null frequency. */

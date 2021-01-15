@@ -64,29 +64,8 @@ int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char 
   return nextVariableIndex;
 }
 
-float SymbolNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  return isUnknown() ? NAN : 0.0f;
-}
-
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(!isUnknown());
-  // TODO return Parse(m_name).createLayout() ?
-  // Special case for the symbol names: u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
-  const char * sequenceIndex[] = {"n", "n+1"};
-  for (char sequenceName = 'u'; sequenceName <= 'w'; sequenceName++) {
-    if (m_name[0] == sequenceName) {
-      for (size_t i = 0; i < sizeof(sequenceIndex)/sizeof(char *); i++) {
-        size_t sequenceIndexLength = strlen(sequenceIndex[i]);
-        if (m_name[1] == '(' && strncmp(sequenceIndex[i], m_name+2, sequenceIndexLength) == 0 && m_name[2+sequenceIndexLength] == ')' && m_name[3+sequenceIndexLength] == 0) {
-      return HorizontalLayout::Builder(
-          CodePointLayout::Builder(sequenceName),
-          VerticalOffsetLayout::Builder(
-            LayoutHelper::String(sequenceIndex[i], sequenceIndexLength),
-            VerticalOffsetLayoutNode::Position::Subscript));
-        }
-      }
-    }
-  }
   return LayoutHelper::String(m_name, strlen(m_name));
 }
 
@@ -107,14 +86,18 @@ ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
   return LayoutShape::MoreLetters;
 }
 
+bool SymbolNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Symbol(this).derivate(reductionContext, symbol, symbolValue);
+}
+
 template<typename T>
-Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> SymbolNode::templatedApproximate(ApproximationContext approximationContext) const {
   Symbol s(this);
-  Expression e = SymbolAbstract::Expand(s, context, false);
+  Expression e = SymbolAbstract::Expand(s, approximationContext.context(), false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, complexFormat, angleUnit);
+  return e.node()->approximate(T(), approximationContext);
 }
 
 bool SymbolNode::isUnknown() const {
@@ -190,6 +173,11 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   replaceWithInPlace(result);
   // The stored expression is as entered by the user, so we need to call reduce
   return result.deepReduce(reductionContext);
+}
+
+bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.convert<Symbol>().name()) == 0));
+  return true;
 }
 
 Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

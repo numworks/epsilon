@@ -1,7 +1,10 @@
 #include <poincare/tangent.h>
 #include <poincare/cosine.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 
 #include <poincare/sine.h>
@@ -13,10 +16,6 @@ namespace Poincare {
 constexpr Expression::FunctionHelper Tangent::s_functionHelper;
 
 int TangentNode::numberOfChildren() const { return Tangent::s_functionHelper.numberOfChildren(); }
-
-float TangentNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
-}
 
 Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.name());
@@ -37,6 +36,13 @@ Expression TangentNode::shallowReduce(ReductionContext reductionContext) {
   return Tangent(this).shallowReduce(reductionContext);
 }
 
+bool TangentNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Tangent(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+Expression TangentNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return Tangent(this).unaryFunctionDifferential(reductionContext);
+}
 
 Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
@@ -58,6 +64,15 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
     return d.shallowReduce(reductionContext);
   }
   return newExpression;
+}
+
+bool Tangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
+  return true;
+}
+
+Expression Tangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+  return Multiplication::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Power::Builder(Cosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2)));
 }
 
 }

@@ -25,7 +25,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
 
   assert(!std::isnan(real) && !std::isnan(imag) && !std::isinf(real) && !std::isinf(imag));
   // Draw the segment from the origin to the dot (real, imag)
-  drawSegment(ctx, rect, 0.0f, 0.0f, m_complex->real(), m_complex->imag(), Palette::GreyDark, false);
+  drawSegment(ctx, rect, 0.0f, 0.0f, m_complex->real(), m_complex->imag(), Palette::GrayDark, false);
 
   /* Draw the partial ellipse indicating the angle θ
    * - the ellipse parameters are a = |real|/5 and b = |imag|/5,
@@ -58,7 +58,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float a = parameters.real();
         float b = parameters.imag();
         return Poincare::Coordinate2D<float>(a*std::cos(t*th), b*std::sin(t*th));
-    }, &parameters, &th, false, Palette::GreyDark, false);
+    }, &parameters, &th, false, Palette::GrayDark, false);
 
   // Draw dashed segment to indicate real and imaginary
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);

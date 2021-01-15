@@ -43,9 +43,9 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::useInsertionCursor() {
   if (m_insertionCursor.isDefined()) {
-    m_cursor.layout().removeGreySquaresFromAllMatrixAncestors();
+    m_cursor.layout().removeGraySquaresFromAllMatrixAncestors();
     m_cursor = m_insertionCursor;
-    m_cursor.layout().addGreySquaresToAllMatrixAncestors();
+    m_cursor.layout().addGraySquaresToAllMatrixAncestors();
   }
 }
 
@@ -241,7 +241,7 @@ void LayoutField::ContentView::deleteSelection() {
 void LayoutField::ContentView::updateInsertionCursor() {
   if (!m_insertionCursor.isDefined()) {
     Layout l = m_cursor.layout();
-    if (l.type() == LayoutNode::Type::EmptyLayout && static_cast<EmptyLayout &>(l).color() == EmptyLayoutNode::Color::Grey) {
+    if (l.type() == LayoutNode::Type::EmptyLayout && static_cast<EmptyLayout &>(l).color() == EmptyLayoutNode::Color::Gray) {
       // Don't set m_insertionCursor pointing to a layout which might disappear
       return;
     }
@@ -262,7 +262,11 @@ void LayoutField::ContentView::layoutSubviews(bool force) {
 
 void LayoutField::ContentView::layoutCursorSubview(bool force) {
   if (!m_isEditing) {
-    m_cursorView.setFrame(KDRectZero, force);
+    /* We keep track of the cursor's position to prevent the input field from
+     * scrolling to the beginning when switching to the history. This way,
+     * when calling scrollToCursor after layoutCursorSubview, we don't lose
+     * sight of the cursor. */
+    m_cursorView.setFrame(KDRect(cursorRect().x(), cursorRect().y(), 0, 0), force);
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
@@ -314,6 +318,14 @@ void LayoutField::clearLayout() {
   reloadScroll(); // Put the scroll to offset 0
 }
 
+void LayoutField::setLayout(Poincare::Layout newLayout) {
+  m_contentView.clearLayout();
+  KDSize previousSize = minimalSizeForOptimalDisplay();
+  const_cast<ExpressionView *>(m_contentView.expressionView())->setLayout(newLayout);
+  putCursorRightOfLayout();
+  reload(previousSize);
+}
+
 Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
@@ -327,7 +339,8 @@ CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 void LayoutField::putCursorRightOfLayout() {
-  m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixAncestors();
+  m_contentView.cursor()->layout().removeGraySquaresFromAllMatrixAncestors();
+  m_contentView.cursor()->showEmptyLayoutIfNeeded();
   m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Right));
 }
 
@@ -438,11 +451,11 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
         Layout p = selectStart->parent();
         assert(p == selectEnd->parent());
         assert(p.type() == LayoutNode::Type::HorizontalLayout);
-        removedSquares = p.removeGreySquaresFromAllMatrixChildren();
+        removedSquares = p.removeGraySquaresFromAllMatrixChildren();
       } else {
-        removedSquares = selectStart->removeGreySquaresFromAllMatrixChildren();
+        removedSquares = selectStart->removeGraySquaresFromAllMatrixChildren();
       }
-      shouldRecomputeLayout = m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixChildren() || removedSquares || shouldRecomputeLayout;
+      shouldRecomputeLayout = m_contentView.cursor()->layout().removeGraySquaresFromAllMatrixChildren() || removedSquares || shouldRecomputeLayout;
     }
   } else if (privateHandleEvent(event)) {
     shouldRecomputeLayout = true;
@@ -591,7 +604,8 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     return true;
   }
   LayoutCursor result;
-  result = m_contentView.cursor()->cursorAtDirection(DirectionForMoveEvent(event), shouldRecomputeLayout);
+  int step = Ion::Events::repetitionFactor();
+  result = m_contentView.cursor()->cursorAtDirection(DirectionForMoveEvent(event), shouldRecomputeLayout, false, step);
   if (result.isDefined()) {
     if (eventShouldUpdateInsertionCursor(event)) {
       m_contentView.updateInsertionCursor();
@@ -627,18 +641,26 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
   if (!IsSelectionEvent(event)) {
     return false;
   }
-  Layout addedSelection;
-  LayoutCursor result = m_contentView.cursor()->selectAtDirection(
-    DirectionForSelectionEvent(event),
-    shouldRecomputeLayout,
-    &addedSelection
-  );
-  if (addedSelection.isUninitialized()) {
-    return false;
+  int step = Ion::Events::repetitionFactor();
+  // Selection is handled one step at a time. Repeat selection for each step.
+  for (int i = 0; i < step; ++i) {
+    Layout addedSelection;
+    LayoutCursor result = m_contentView.cursor()->selectAtDirection(
+      DirectionForSelectionEvent(event),
+      shouldRecomputeLayout,
+      &addedSelection
+    );
+    if (addedSelection.isUninitialized()) {
+      // Successful event if at least one step succeeded.
+      return i > 0;
+    }
+    /* TODO : addSelection() is built so that it should be called steps by steps
+     *        It could be reworked to handle selection with steps > 1 and match
+     *        text_input's implementation */
+    m_contentView.addSelection(addedSelection);
+    assert(result.isDefined());
+    m_contentView.setCursor(result);
   }
-  m_contentView.addSelection(addedSelection);
-  assert(result.isDefined());
-  m_contentView.setCursor(result);
   return true;
 }
 
@@ -731,7 +753,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   }
 
   // Handle matrices
-  cursor->layout().addGreySquaresToAllMatrixAncestors();
+  cursor->layout().addGraySquaresToAllMatrixAncestors();
 
   // Handle empty layouts
   cursor->hideEmptyLayoutIfNeeded();

@@ -25,6 +25,7 @@ public:
     assert(isUninitialized() || !TreeHandle::node()->isGhost());
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
+  static Layout LayoutFromAddress(const void * address, size_t size);
 
   // Properties
   LayoutNode::Type type() const { return node()->type(); }
@@ -59,9 +60,9 @@ public:
 
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
-  bool removeGreySquaresFromAllMatrixAncestors() { return node()->removeGreySquaresFromAllMatrixAncestors(); }
-  bool removeGreySquaresFromAllMatrixChildren() { return node()->removeGreySquaresFromAllMatrixChildren(); }
-  bool addGreySquaresToAllMatrixAncestors() { return node()->addGreySquaresToAllMatrixAncestors(); }
+  bool removeGraySquaresFromAllMatrixAncestors() { return node()->removeGraySquaresFromAllMatrixAncestors(); }
+  bool removeGraySquaresFromAllMatrixChildren() { return node()->removeGraySquaresFromAllMatrixChildren(); }
+  bool addGraySquaresToAllMatrixAncestors() { return node()->addGraySquaresToAllMatrixAncestors(); }
   Layout layoutToPointWhenInserting(Expression * correspondingExpression) {
     // Pointer to correspondingExpr because expression.h includes layout.h
     assert(correspondingExpression != nullptr);

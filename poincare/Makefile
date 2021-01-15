@@ -101,8 +101,12 @@ poincare_src += $(addprefix poincare/src/,\
   matrix_inverse.cpp \
   matrix_trace.cpp \
   matrix_transpose.cpp \
+  matrix_echelon_form.cpp \
+  matrix_row_echelon_form.cpp \
+  matrix_reduced_row_echelon_form.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
+  n_ary_infix_expression.cpp \
   naperian_logarithm.cpp \
   norm_cdf.cpp \
   norm_cdf2.cpp \
@@ -133,6 +137,7 @@ poincare_src += $(addprefix poincare/src/,\
   solver.cpp \
   square_root.cpp \
   store.cpp \
+  sum_and_product.cpp \
   subtraction.cpp \
   sum.cpp \
   symbol.cpp \
@@ -148,6 +153,10 @@ poincare_src += $(addprefix poincare/src/,\
   unit_convert.cpp \
   unreal.cpp \
   variable_context.cpp \
+  vector_cross.cpp \
+  vector_dot.cpp \
+  vector_norm.cpp \
+  zoom.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/parsing/,\
@@ -162,6 +171,7 @@ tests_src += $(addprefix poincare/test/,\
   arithmetic.cpp\
   context.cpp\
   erf_inv.cpp \
+  derivative.cpp\
   expression.cpp\
   expression_order.cpp\
   expression_properties.cpp\
@@ -170,7 +180,6 @@ tests_src += $(addprefix poincare/test/,\
   function_solver.cpp\
   helper.cpp\
   helpers.cpp\
-  ieee754.cpp\
   integer.cpp\
   layout.cpp\
   layout_cursor.cpp\
@@ -182,6 +191,7 @@ tests_src += $(addprefix poincare/test/,\
   rational.cpp\
   regularized_incomplete_beta_function.cpp \
   simplification.cpp\
+  zoom.cpp\
 )
 
 ifeq ($(DEBUG),1)

@@ -101,6 +101,7 @@ void TableCell::layoutSubviews(bool force) {
     y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), k_verticalMargin) - withMargin(subAccessorySize.height(), 0));
     if (subAccessory) {
       KDCoordinate subAccessoryHeight = std::min<KDCoordinate>(subAccessorySize.height(), height - y - k_separatorThickness - k_verticalMargin);
+      assert(accessory);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, subAccessoryHeight), force);
       y += subAccessoryHeight;
     }
@@ -166,5 +167,5 @@ void TableCell::layoutSubviews(bool force) {
 void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backColor = isHighlighted() ? Palette::Select : backgroundColor();
   drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(), Palette::GreyBright);
+  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }

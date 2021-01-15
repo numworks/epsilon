@@ -2,14 +2,14 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/n_ary_expression.h>
+#include <poincare/n_ary_infix_expression.h>
 
 namespace Poincare {
 
-class MultiplicationNode final : public NAryExpressionNode {
+class MultiplicationNode final : public NAryInfixExpressionNode {
   friend class Addition;
 public:
-  using NAryExpressionNode::NAryExpressionNode;
+  using NAryInfixExpressionNode::NAryInfixExpressionNode;
 
   // Tree
   size_t size() const override { return sizeof(MultiplicationNode); }
@@ -47,18 +47,20 @@ private:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const override;
+  // Derivation
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
   // Approximation
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
   }
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::MapReduce<float>(this, context, complexFormat, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::MapReduce<float>(this, approximationContext, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::MapReduce<double>(this, context, complexFormat, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::MapReduce<double>(this, approximationContext, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 
@@ -83,11 +85,13 @@ public:
   // Simplification
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);
   }
+  // Derivation
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 private:
   // Unit
   Expression removeUnit(Expression * unit);
@@ -103,6 +107,7 @@ private:
   static bool HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalBase(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2);
+  static bool TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, ExpressionNode::ReductionContext reductionContext);
   static bool TermHasNumeralBase(const Expression & e);
   static bool TermHasNumeralExponent(const Expression & e);
   static const Expression CreateExponent(Expression e);

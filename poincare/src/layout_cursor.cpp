@@ -69,9 +69,30 @@ void LayoutCursor::move(Direction direction, bool * shouldRecomputeLayout, bool 
   }
 }
 
-LayoutCursor LayoutCursor::cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection) {
+LayoutCursor LayoutCursor::cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection, int step) {
   LayoutCursor result = clone();
+  if (step <= 0) {
+    return result;
+  }
+  // First step
   result.move(direction, shouldRecomputeLayout, forSelection);
+
+  if (step == 1 || !result.isDefined()) {
+    // If first step is undefined, it is returned so the situation is handled
+    return result;
+  }
+  // Otherwise, as many steps as possible are performed
+  LayoutCursor result_temp = result;
+  for (int i = 1; i < step; ++i) {
+    result_temp.move(direction, shouldRecomputeLayout, forSelection);
+    if (!result_temp.isDefined()) {
+      // Return last successful result
+      return result;
+    }
+    // Update last successful result
+    result = result_temp;
+    assert(result.isDefined());
+  }
   return result;
 }
 
@@ -83,6 +104,12 @@ void LayoutCursor::select(Direction direction, bool * shouldRecomputeLayout, Lay
   } else {
     selectUpDown(direction == Direction::Up, shouldRecomputeLayout, selection);
   }
+}
+
+LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
+  LayoutCursor result = clone();
+  result.select(direction, shouldRecomputeLayout, selection);
+  return result;
 }
 
 /* Layout modification */
@@ -99,9 +126,9 @@ void LayoutCursor::addEmptyExponentialLayout() {
 void LayoutCursor::addEmptyMatrixLayout() {
   MatrixLayout matrixLayout = MatrixLayout::Builder(
       EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey));
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray));
   m_layout.addSibling(this, matrixLayout, false);
   m_layout = matrixLayout.childAtIndex(0);
   m_position = Position::Right;
@@ -126,6 +153,8 @@ void LayoutCursor::addEmptyPowerLayout() {
 void LayoutCursor::addEmptySquarePowerLayout() {
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
+  m_layout = offsetLayout;
+  m_position = Position::Right;
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {
@@ -170,12 +199,12 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText) {
     }
     if (codePoint == UCodePointMultiplicationSign) {
       newChild = CodePointLayout::Builder(UCodePointMultiplicationSign);
-    } else if (codePoint == '(') {
+    } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
-    } else if (codePoint == ')') {
+    } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
       newChild = RightParenthesisLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the
@@ -381,7 +410,7 @@ void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * 
    * position). This ancestor will be the added selection.
    *
    * The current layout might have been detached from its parent, for instance
-   * if it was a grey empty layout of a matrix and the cursor move exited this
+   * if it was a gray empty layout of a matrix and the cursor move exited this
    * matrix. In this case, use the layout parent (it should still be attached to
    * the main layout). */
 

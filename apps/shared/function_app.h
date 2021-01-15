@@ -6,19 +6,17 @@
 #include "function_store.h"
 #include "curve_view_cursor.h"
 #include "values_controller.h"
+#include "shared_app.h"
 
 namespace Shared {
 
 class FunctionApp : public ExpressionFieldDelegateApp {
 public:
-  class Snapshot : public ::App::Snapshot, public TabViewDataSource {
+  class Snapshot : public ::SharedApp::Snapshot, public TabViewDataSource {
   public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
-    uint32_t * modelVersion() { return &m_modelVersion; }
-    uint32_t * previousModelsVersions() { return m_previousModelsVersions; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
-    Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
     virtual FunctionStore * functionStore() = 0;
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
@@ -27,10 +25,7 @@ public:
     CurveViewCursor m_cursor;
   private:
     int m_indexFunctionSelectedByCursor;
-    uint32_t m_modelVersion;
-    uint32_t m_previousModelsVersions[FunctionGraphController::sNumberOfMemoizedModelVersions];
     uint32_t m_rangeVersion;
-    Poincare::Preferences::AngleUnit m_angleUnitVersion;
   };
   static FunctionApp * app() {
     return static_cast<FunctionApp *>(Container::activeApp());

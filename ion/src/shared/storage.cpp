@@ -99,6 +99,7 @@ void Storage::log() {
 size_t Storage::availableSize() {
   /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
    * is needed after calling availableSize */
+  assert(k_storageSize >= (endBuffer() - m_buffer) + sizeof(record_size_t));
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
 }
 
@@ -479,7 +480,7 @@ bool Storage::isBaseNameWithExtensionTaken(const char * baseName, const char * e
 bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
   if (r == Record()) {
     /* If the CRC32 of fullName is 0, we want to refuse the name as it would
-     * interfere with our escape case in the Record contructor, when the given
+     * interfere with our escape case in the Record constructor, when the given
      * name is nullptr. */
     return true;
   }

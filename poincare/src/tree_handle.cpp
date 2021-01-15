@@ -311,7 +311,7 @@ template FloorLayout TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>
 template FracPart TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(const Tuple &);
 template FractionLayout TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(const Tuple &);
 template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
-template GreatCommonDivisor TreeHandle::FixedArityBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
+template GreatCommonDivisor TreeHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
 template HorizontalLayout TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(const Tuple &);
 template HyperbolicArcCosine TreeHandle::FixedArityBuilder<HyperbolicArcCosine, HyperbolicArcCosineNode>(const Tuple &);
 template HyperbolicArcSine TreeHandle::FixedArityBuilder<HyperbolicArcSine, HyperbolicArcSineNode>(const Tuple &);
@@ -324,7 +324,7 @@ template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(const Tu
 template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(const Tuple &);
 template InvBinom TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(const Tuple &);
 template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(const Tuple &);
-template LeastCommonMultiple TreeHandle::FixedArityBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
+template LeastCommonMultiple TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
 template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(const Tuple &);
 template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(const Tuple &);
 template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(const Tuple &);
@@ -336,6 +336,8 @@ template MatrixIdentity TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIden
 template MatrixInverse TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(const Tuple &);
 template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(const Tuple &);
 template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(const Tuple &);
+template MatrixRowEchelonForm TreeHandle::FixedArityBuilder<MatrixRowEchelonForm, MatrixRowEchelonFormNode>(const Tuple &);
+template MatrixReducedRowEchelonForm TreeHandle::FixedArityBuilder<MatrixReducedRowEchelonForm, MatrixReducedRowEchelonFormNode>(const Tuple &);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(const Tuple &);
 template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(const Tuple &);
@@ -367,6 +369,10 @@ template Tangent TreeHandle::FixedArityBuilder<Tangent, TangentNode>(const Tuple
 template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(const Tuple &);
 template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(const Tuple &);
 template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(const Tuple &);
+template VectorCross TreeHandle::FixedArityBuilder<VectorCross, VectorCrossNode>(const Tuple &);
+template VectorDot TreeHandle::FixedArityBuilder<VectorDot, VectorDotNode>(const Tuple &);
+template VectorNorm TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>(const Tuple &);
+template VectorNormLayout TreeHandle::FixedArityBuilder<VectorNormLayout, VectorNormLayoutNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 
 }

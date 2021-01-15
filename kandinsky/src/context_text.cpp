@@ -28,6 +28,7 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
   while (codePoint != UCodePointNull && (maxByteLength < 0 || codePointPointer < text + maxByteLength)) {
     codePointPointer = decoder.stringPosition();
     if (codePoint == UCodePointLineFeed) {
+      assert(position.y() < KDCOORDINATE_MAX - glyphSize.height());
       position = KDPoint(0, position.y() + glyphSize.height());
       codePoint = decoder.nextCodePoint();
     } else if (codePoint == UCodePointTabulation) {
@@ -35,10 +36,10 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
       codePoint = decoder.nextCodePoint();
     } else {
       assert(!codePoint.isCombining());
-      font->setGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+      font->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
       codePoint = decoder.nextCodePoint();
       while (codePoint.isCombining()) {
-        font->accumulateGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+        font->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
         codePointPointer = decoder.stringPosition();
         codePoint = decoder.nextCodePoint();
       }

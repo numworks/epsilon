@@ -145,7 +145,9 @@ void TextInput::scrollToCursor() {
    * In order to avoid requiring two layouts, we allow overscrolling in
    * scrollToContentRect, and the last layout of the scroll view corrects the
    * size of the scroll view only once. */
-  scrollToContentRect(contentView()->cursorRect(), true);
+  KDRect cursorRect = contentView()->cursorRect();
+  assert(cursorRect.top() >= 0 && cursorRect.right() >= 0 && cursorRect.bottom() >= 0 && cursorRect.left() >= 0);
+  scrollToContentRect(cursorRect, true);
 }
 
 void TextInput::deleteSelection() {
@@ -187,28 +189,46 @@ bool TextInput::removeEndOfLine() {
   return false;
 }
 
-bool TextInput::moveCursorLeft() {
-  if (cursorLocation() <= text()) {
-    assert(cursorLocation() == text());
-    return false;
+bool TextInput::moveCursorLeft(int step) {
+  // Move the cursor to the left step times, or until limit is reached.
+  int i = 0;
+  bool canMove = true;
+  while (canMove && i < step) {
+    if (cursorLocation() <= text()) {
+      assert(cursorLocation() == text());
+      canMove = false;
+    } else {
+      UTF8Decoder decoder(text(), cursorLocation());
+      canMove = setCursorLocation(decoder.previousGlyphPosition());
+    }
+    i++;
   }
-  UTF8Decoder decoder(text(), cursorLocation());
-  return setCursorLocation(decoder.previousGlyphPosition());
+  // true is returned if there was at least one successful cursor movement
+  return (i > 1 || canMove);
 }
 
-bool TextInput::moveCursorRight() {
-  if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
-    return false;
+bool TextInput::moveCursorRight(int step) {
+  // Move the cursor to the right step times, or until limit is reached.
+  int i = 0;
+  bool canMove = true;
+  while (canMove && i < step) {
+    if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
+      canMove = false;
+    } else {
+      UTF8Decoder decoder(cursorLocation());
+      canMove = setCursorLocation(decoder.nextGlyphPosition());
+    }
+    i++;
   }
-  UTF8Decoder decoder(cursorLocation());
-  return setCursorLocation(decoder.nextGlyphPosition());
+  // true is returned if there was at least one successful cursor movement
+  return (i > 1 || canMove);
 }
 
-bool TextInput::selectLeftRight(bool left, bool all) {
+bool TextInput::selectLeftRight(bool left, bool all, int step) {
   const char * cursorLoc = cursorLocation();
   const char * nextCursorLoc = nullptr;
   if (!all) {
-    bool moved = left ? moveCursorLeft() : moveCursorRight();
+    bool moved = left ? moveCursorLeft(step) : moveCursorRight(step);
     if (!moved) {
       return false;
     }

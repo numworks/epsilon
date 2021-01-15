@@ -1,5 +1,5 @@
 #include <poincare/n_ary_expression.h>
-#include <poincare/number.h>
+#include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -7,21 +7,6 @@ extern "C" {
 #include <utility>
 
 namespace Poincare {
-
-bool NAryExpressionNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
-  /* Expressions like "-2" require parentheses in Addition/Multiplication except
-   * when they are the first operand. */
-  if (childIndex != 0
-    && ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
-      || child.type() == Type::Opposite))
-  {
-    return true;
-  }
-  if (child.type() == Type::Conjugate) {
-    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
-  }
-  return false;
-}
 
 void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {
   Expression reference(this);
@@ -59,44 +44,6 @@ Expression NAryExpressionNode::squashUnaryHierarchyInPlace() {
   return std::move(reference);
 }
 
-// Private
-
-int NAryExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
-  int m = numberOfChildren();
-  int n = e->numberOfChildren();
-  for (int i = 1; i <= m; i++) {
-    // The NULL node is the least node type.
-    if (n < i) {
-      return 1;
-    }
-    int order = SimplificationOrder(childAtIndex(m-i), e->childAtIndex(n-i), ascending, canBeInterrupted, ignoreParentheses);
-    if (order != 0) {
-      return order;
-    }
-  }
-  // The NULL node is the least node type.
-  if (n > m) {
-    return ascending ? -1 : 1;
-  }
-  return 0;
-}
-
-int NAryExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
-  int m = numberOfChildren();
-  if (m == 0) {
-    return -1;
-  }
-  /* Compare e to last term of hierarchy. */
-  int order = SimplificationOrder(childAtIndex(m-1), e, ascending, canBeInterrupted, ignoreParentheses);
-  if (order != 0) {
-    return order;
-  }
-  if (m > 1) {
-    return ascending ? 1 : -1;
-  }
-  return 0;
-}
-
 void NAryExpression::mergeSameTypeChildrenInPlace() {
   // Multiplication is associative: a*(b*c)->a*b*c
   // The same goes for Addition
@@ -125,6 +72,35 @@ int NAryExpression::allChildrenAreReal(Context * context) const {
     i++;
   }
   return result;
+}
+
+Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(ExpressionNode::ReductionContext reductionContext) {
+  for (int i = 0; i < numberOfChildren(); ++i) {
+    Expression c = childAtIndex(i);
+    if (c.deepIsMatrix(reductionContext.context())) {
+      return replaceWithUndefinedInPlace();
+    }
+    if (c.type() != ExpressionNode::Type::Rational) {
+      /* Replace expression with undefined if child can be approximated to a
+       * complex or finite non-integer number. Otherwise, rely on template
+       * approximations. hasDefinedComplexApproximation is given Cartesian
+       * complex format to force imaginary part approximation. */
+      if (!c.isReal(reductionContext.context()) && c.hasDefinedComplexApproximation(reductionContext.context(), Preferences::ComplexFormat::Cartesian, reductionContext.angleUnit())) {
+        return replaceWithUndefinedInPlace();
+      }
+      // If c was complex but with a null imaginary part, real part is checked.
+      float app = c.approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+      if (std::isfinite(app) && app != std::round(app)) {
+        return replaceWithUndefinedInPlace();
+      }
+      // Note : Child could be replaced with the approximation (if finite) here.
+      return *this;
+    }
+    if (!static_cast<Rational &>(c).isInteger()) {
+      return replaceWithUndefinedInPlace();
+    }
+  }
+  return Expression();
 }
 
 }

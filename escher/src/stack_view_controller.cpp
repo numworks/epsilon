@@ -13,7 +13,7 @@ StackViewController::ControllerView::ControllerView() :
 {
 }
 
-void StackViewController::ControllerView::shouldDisplayStackHearders(bool shouldDisplay) {
+void StackViewController::ControllerView::shouldDisplayStackHeaders(bool shouldDisplay) {
   m_displayStackHeaders = shouldDisplay;
 }
 
@@ -136,7 +136,7 @@ void StackViewController::pushModel(Frame frame) {
 void StackViewController::setupActiveViewController() {
   ViewController * vc = topViewController();
   vc->setParentResponder(this);
-  m_view.shouldDisplayStackHearders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
+  m_view.shouldDisplayStackHeaders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
   m_view.setContentView(vc->view());
   vc->viewWillAppear();
   vc->setParentResponder(this);
@@ -172,7 +172,7 @@ void StackViewController::viewWillAppear() {
   ViewController * vc = topViewController();
   if (m_numberOfChildren > 0 && vc) {
     m_view.setContentView(vc->view());
-    m_view.shouldDisplayStackHearders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
+    m_view.shouldDisplayStackHeaders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
     vc->viewWillAppear();
   }
   m_isVisible = true;

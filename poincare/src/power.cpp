@@ -4,6 +4,7 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/constant.h>
 #include <poincare/cosine.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
@@ -224,7 +225,7 @@ Expression PowerNode::shallowReduce(ReductionContext reductionContext) {
   return Power(this).shallowReduce(reductionContext);
 }
 
-Expression PowerNode::shallowBeautify(ReductionContext reductionContext) {
+Expression PowerNode::shallowBeautify(ReductionContext * reductionContext) {
   return Power(this).shallowBeautify(reductionContext);
 }
 
@@ -249,6 +250,10 @@ int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascend
 
 Expression PowerNode::denominator(ReductionContext reductionContext) const {
   return Power(this).denominator(reductionContext);
+}
+
+bool PowerNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Power(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 // Evaluation
@@ -288,12 +293,12 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixC
   return MatrixComplex<T>::Undefined();
 }
 
-template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> PowerNode::templatedApproximate(ApproximationContext approximationContext) const {
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "unreal". */
-  if (complexFormat == Preferences::ComplexFormat::Real) {
-    Evaluation<T> base = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  if (approximationContext.complexFormat() == Preferences::ComplexFormat::Real) {
+    Evaluation<T> base = childAtIndex(0)->approximate(T(), approximationContext);
     if (base.type() != EvaluationNode<T>::Type::Complex) {
       goto defaultApproximation;
     }
@@ -329,7 +334,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
     }
   }
 defaultApproximation:
-  return ApproximationHelper::MapReduce<T>(this, context, complexFormat, angleUnit, compute<T>, computeOnComplexAndMatrix<T>, computeOnMatrixAndComplex<T>, computeOnMatrices<T>);
+  return ApproximationHelper::MapReduce<T>(this, approximationContext, compute<T>, computeOnComplexAndMatrix<T>, computeOnMatrixAndComplex<T>, computeOnMatrices<T>);
 }
 
 // Power
@@ -413,8 +418,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
     assert(index == childAtIndex(1));
     if (base.hasUnit()) {
-      if (index.type() != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
-        // The exponent must be an Integer
+      if (index.type() != ExpressionNode::Type::Rational) {
+        // The exponent must be an Rational
         return replaceWithUndefinedInPlace();
       }
     }
@@ -496,7 +501,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     // x^0
     if (rationalIndex.isZero()) {
       // 0^0 = undef or (±inf)^0 = undef
-      if (base.isRationalZero() || baseType == ExpressionNode::Type::Infinity) {
+      if (base.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null || baseType == ExpressionNode::Type::Infinity) {
         return replaceWithUndefinedInPlace();
       }
       // x^0
@@ -584,7 +589,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
       if (!result.isUninitialized()) {
         replaceWithInPlace(result);
-        return result.shallowReduce();
+        return result.shallowReduce(reductionContext);
       }
     }
   }
@@ -601,7 +606,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     complexIndex = indexType == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational::Builder(0));
     result = complexBase.power(complexIndex, reductionContext);
     replaceWithInPlace(result);
-    return result.shallowReduce();
+    return result.shallowReduce(reductionContext);
   }
 
   /* Step 6: We look for square root and sum of square roots (two terms maximum
@@ -774,7 +779,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * - (a^b)^(-1) has to be reduced to avoid infinite loop discussed above;
      * - if a^b is unreal, a^(-b) also. */
     if (!cMinusOne && reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-      Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
       if (approximation.type() == ExpressionNode::Type::Unreal) {
         // The inner power is unreal, return "unreal"
         replaceWithInPlace(approximation);
@@ -980,18 +985,18 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   return *this;
 }
 
-Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression Power::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
   // Step 1: X^-y -> 1/(X->shallowBeautify)^y
-  Expression p = denominator(reductionContext);
+  Expression p = denominator(*reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
     Division d = Division::Builder(Rational::Builder(1), p);
     replaceWithInPlace(d);
-    p.shallowReduce(reductionContext);
+    p.shallowReduce(*reductionContext);
     return d.shallowBeautify(reductionContext);
   }
-  // Step 2: Turn a^(1/n) into root(a, n)
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne()) {
+  // Step 2: Turn a^(1/n) into root(a, n), unless base is a unit
+  if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne() && childAtIndex(0).type() != ExpressionNode::Type::Unit) {
     Integer index = childAtIndex(1).convert<Rational>().integerDenominator();
     // Special case: a^(1/2) --> sqrt(a)
     if (index.isEqualTo(Integer(2))) {
@@ -1013,6 +1018,47 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
   }
 
   return *this;
+}
+
+bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  /* Generalized power derivation formula
+   * (f^g)` = (e^(g * ln(f)))`
+   *       = (g * ln(f))` * f^g
+   *        = (g`ln(f) + gf`/f) * f^g
+   *        = g`ln(f)f^g + gf`f^(g-1)
+   *
+   * Valid whenever f,g are derivable and f > 0 */
+
+  /* We might want to be able to derivate f^n when f <= 0 and n is a positive
+   * integer */
+
+  Expression base = childAtIndex(0);
+  Expression exponent = childAtIndex(1);
+  Multiplication derivedFromBase = Multiplication::Builder();
+  Multiplication derivedFromExponent = Multiplication::Builder();
+
+  derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 0, 0);
+  derivedFromExponent.addChildAtIndexInPlace(clone(), 1, 1);
+  derivedFromExponent.addChildAtIndexInPlace(Derivative::Builder(
+    exponent.clone(),
+    symbol.clone().convert<Symbol>(),
+    symbolValue.clone()
+    ), 2, 2);
+
+  derivedFromBase.addChildAtIndexInPlace(exponent.clone() , 0, 0);
+  derivedFromBase.addChildAtIndexInPlace(Power::Builder(
+    base.clone(),
+    Subtraction::Builder(exponent.clone(), Rational::Builder(1))
+    ), 1, 1);
+  derivedFromBase.addChildAtIndexInPlace(Derivative::Builder(
+    base.clone(),
+    symbol.clone().convert<Symbol>(),
+    symbolValue.clone()
+    ), 2, 2);
+
+  Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
+  replaceWithInPlace(result);
+  return true;
 }
 
 // Private
@@ -1347,9 +1393,9 @@ Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::Re
 #if 0
   const Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
   const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
-  Expression op = Multiplication::Builder(pi, r).shallowReduce(context, complexFormat, angleUnit, false);
-  Cosine cos = Cosine(op).shallowReduce(context, complexFormat, angleUnit, false);;
-  Sine sin = Sine(op).shallowReduce(context, complexFormat, angleUnit, false);
+  Expression op = Multiplication::Builder(pi, r).shallowReduce(reductionContext, false);
+  Cosine cos = Cosine(op).shallowReduce(reductionContext, false);;
+  Sine sin = Sine(op).shallowReduce(reductionContext, false);
   Expression m = Multiplication::Builder(iComplex, sin);
   Expression a = Addition::Builder(cos, m);
   const Expression * multExpOperands[3] = {pi, r->clone()};
@@ -1437,5 +1483,7 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
 
 template Complex<float> PowerNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
 template Complex<double> PowerNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
+template Complex<double> PowerNode::computeNotPrincipalRealRootOfRationalPow<double>(std::complex<double>, double, double);
+template Complex<float> PowerNode::computeNotPrincipalRealRootOfRationalPow<float>(std::complex<float>, float, float);
 
 }

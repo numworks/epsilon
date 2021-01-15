@@ -8,15 +8,35 @@ namespace Escher {
 
 class SimpleListViewDataSource : public ListViewDataSource {
 public:
-  virtual KDCoordinate cellHeight() = 0;
-  KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
+  SimpleListViewDataSource();
+  void prepareCellForHeightCalculation(HighlightCell * cell, int index);
+
+  // ListViewDataSource
+  KDCoordinate cumulatedHeightFromIndex(int index) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  virtual HighlightCell * reusableCell(int index) = 0;
-  virtual int reusableCellCount() const = 0;
-  HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  KDCoordinate rowHeight(int j) override;
+
+  // Non memoized
+  virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) { return ListViewDataSource::cumulatedHeightFromIndex(index); }
+  virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
+
+  // Default behaviors : All cells are reusable, and of only 1 type
+  virtual KDCoordinate nonMemoizedRowHeight(int index);
+  int reusableCellCount(int type) override { return numberOfRows(); }
+  int typeAtIndex(int index) override { return 0; }
+
+private:
+  // Memoization
+  static constexpr int k_memoizedCellsCount = 7;
+  static_assert(SimpleListViewDataSource::k_memoizedCellsCount % 2 == 1, "SimpleListViewDataSource::k_memoizedCellsCount should be odd.");
+  static constexpr int k_resetedMemoizedValue = -1;
+  int getMemoizedIndex(int index);
+  void resetMemoizationForIndex(int index);
+  void shiftMemoization(bool newCellIsUnder);
+  void resetMemoization();
+  int m_memoizedIndexOffset;
+  KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
+  KDCoordinate m_memoizedCumulatedHeightOffset;
 };
 
 }

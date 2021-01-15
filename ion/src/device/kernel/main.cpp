@@ -5,7 +5,7 @@
 #include <kernel/drivers/timing.h>
 #include <kernel/drivers/led.h> // TODO: REMOVE ME
 #include <ion/display.h>
-#include <kandinsky.h>
+#include <kandinsky/font.h>
 #include <string.h>
 
 extern "C" {

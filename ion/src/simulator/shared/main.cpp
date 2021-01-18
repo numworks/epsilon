@@ -84,9 +84,7 @@ int main(int argc, char * argv[]) {
 #ifndef __WIN32__
   if (args.popFlag("--limit-stack-usage")) {
     // Limit stack usage
-    /* TODO : Reduce stack memory cost in prime factorization to allow running
-     * tests with the actual stack size */
-    constexpr int kStackSize = 32768*10;
+    constexpr int kStackSize = 32768;
     struct rlimit stackLimits = {kStackSize, kStackSize};
     setrlimit(RLIMIT_STACK, &stackLimits);
   }

@@ -125,6 +125,7 @@ poincare_src += $(addprefix poincare/src/,\
   parametered_expression.cpp \
   parenthesis.cpp \
   permute_coefficient.cpp \
+  polynomial.cpp \
   power.cpp \
   prediction_interval.cpp \
   preferences.cpp \

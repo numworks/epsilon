@@ -1,5 +1,6 @@
 #include <escher/simple_list_view_data_source.h>
 #include <assert.h>
+// #include <iostream>
 
 namespace Escher {
 
@@ -17,24 +18,35 @@ void SimpleListViewDataSource::prepareCellForHeightCalculation(HighlightCell * c
 }
 
 KDCoordinate SimpleListViewDataSource::rowHeight(int j) {
-  // if (j < m_memoizedIndexOffset || j >= m_memoizedIndexOffset + k_memoizedCellsCount) {
-    // setMemoizedOffset(min(numberOfRows() - k_memoizedCellsCount, max(0, j))); TODO : ! infinite loops
-  // }
+  if (j == m_memoizedIndexOffset - 1) {
+    shiftMemoization(true);
+  } else if (j == m_memoizedIndexOffset + k_memoizedCellsCount) {
+    shiftMemoization(false);
+  } else if (j == 0 && m_memoizedIndexOffset != 0) {
+    resetMemoization(false);
+  }
   if (j >= m_memoizedIndexOffset && j < m_memoizedIndexOffset + k_memoizedCellsCount) {
     // Value might is memoized
     KDCoordinate memoizedRowHeight = m_memoizedCellHeight[getMemoizedIndex(j)];
     if (memoizedRowHeight == k_resetedMemoizedValue) {
       // memoize value
       memoizedRowHeight = nonMemoizedRowHeight(j);
+      // std::cout << "|";
       m_memoizedCellHeight[getMemoizedIndex(j)] = memoizedRowHeight;
+    // } else {
+      // std::cout << "_";
     }
     return memoizedRowHeight;
   }
-  // TODO Hugo : Consider updating m_memoizedIndexOffset
+  // std::cout << "\n" << m_memoizedIndexOffset << " --> " << j << "\n";
   return nonMemoizedRowHeight(j);
 }
 
 KDCoordinate SimpleListViewDataSource::cumulatedHeightFromIndex(int j) {
+  if (j == numberOfRows() && m_memoizedTotalHeight != k_resetedMemoizedValue) {
+    // Return a memoizedTotal Height to save computation time
+    return m_memoizedTotalHeight;
+  }
   // Recompute the memoized cumulatedHeight if needed
   if (m_memoizedCumulatedHeightOffset == k_resetedMemoizedValue && j > m_memoizedIndexOffset / 2) {
     m_memoizedCumulatedHeightOffset = nonMemoizedCumulatedHeightFromIndex(m_memoizedIndexOffset);
@@ -44,19 +56,25 @@ KDCoordinate SimpleListViewDataSource::cumulatedHeightFromIndex(int j) {
   if (j >= m_memoizedIndexOffset) {
     for (int i = m_memoizedIndexOffset; i < numberOfRows(); i++) {
       if (i == j) {
+        // assert(nonMemoizedCumulatedHeightFromIndex(j) == cumulatedHeight);
         return cumulatedHeight;
       }
       cumulatedHeight += rowHeight(i);
     }
-    assert(false);
+    // assert(nonMemoizedCumulatedHeightFromIndex(j) == cumulatedHeight);
+    assert(j == numberOfRows());
+    m_memoizedTotalHeight = cumulatedHeight;
+    return cumulatedHeight;
   } else if (j > m_memoizedIndexOffset / 2) {
     for (int i = m_memoizedIndexOffset - 1; i >= 0; i--) {
       cumulatedHeight -= rowHeight(i);
       if (i == j) {
+        // assert(nonMemoizedCumulatedHeightFromIndex(j) == cumulatedHeight);
         return cumulatedHeight;
       }
     }
-    assert(false);
+    // assert(nonMemoizedCumulatedHeightFromIndex(j) == 0);
+    return KDCoordinate(0);
   }
   return nonMemoizedCumulatedHeightFromIndex(j);
 }
@@ -68,22 +86,26 @@ int SimpleListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   }
   // If advantageous, search index around m_memoizedIndexOffset
   KDCoordinate cumulatedHeight = m_memoizedCumulatedHeightOffset;
-  if (offsetY >= m_memoizedCumulatedHeightOffset) {
+  if (offsetY > m_memoizedCumulatedHeightOffset) {
     for (int i = m_memoizedIndexOffset; i < numberOfRows(); i++) {
       cumulatedHeight += rowHeight(i);
-      if (offsetY < cumulatedHeight) {
+      if (offsetY <= cumulatedHeight) {
+        // assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == i);
         return i;
       }
     }
-    assert(false);
+    // assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == numberOfRows());
+    return numberOfRows();
   } else if (offsetY > m_memoizedCumulatedHeightOffset / 2) {
     for (int i = m_memoizedIndexOffset - 1; i >= 0; i--) {
       cumulatedHeight -= rowHeight(i);
-      if (offsetY >= cumulatedHeight) {
+      if (offsetY > cumulatedHeight) {
+        // assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == i);
         return i;
       }
     }
-    assert(false);
+    // assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == 0);
+    return 0;
   }
   return nonMemoizedIndexFromCumulatedHeight(offsetY);
 }
@@ -125,11 +147,17 @@ void SimpleListViewDataSource::shiftMemoization(bool newCellIsUnder) {
   // The new unknown value must be reseted.
   if (newCellIsUnder) {
     assert(m_memoizedIndexOffset > 0);
+    // std::cout << " < ";
     m_memoizedIndexOffset--;
     // Unknown value is the new one
-    m_memoizedCellHeight[getMemoizedIndex(m_memoizedIndexOffset)] = k_resetedMemoizedValue;
-    m_memoizedCumulatedHeightOffset-=rowHeight(m_memoizedIndexOffset);
+    KDCoordinate height = nonMemoizedRowHeight(m_memoizedIndexOffset);
+    // Compute and set memoized index height
+    // std::cout << "|";
+    m_memoizedCellHeight[getMemoizedIndex(m_memoizedIndexOffset)] = height;
+    // Update cumulated height
+    m_memoizedCumulatedHeightOffset-= height;
   } else {
+    // std::cout << " > ";
     assert(m_memoizedIndexOffset <= numberOfRows() - k_memoizedCellsCount);
     m_memoizedCumulatedHeightOffset+=rowHeight(m_memoizedIndexOffset);
     // Unknown value is the previous one
@@ -138,11 +166,22 @@ void SimpleListViewDataSource::shiftMemoization(bool newCellIsUnder) {
   }
 }
 
-void SimpleListViewDataSource::resetMemoization() {
+void SimpleListViewDataSource::resetMemoization(bool force) {
+  // std::cout << "\n0\n";
   m_memoizedIndexOffset = 0;
   m_memoizedCumulatedHeightOffset = k_resetedMemoizedValue;
+  if (force) {
+    // No need to always reset total height
+    m_memoizedTotalHeight = k_resetedMemoizedValue;
+  }
   for (int i = 0; i < k_memoizedCellsCount; i++) {
     m_memoizedCellHeight[i] = k_resetedMemoizedValue;
+  }
+}
+
+void SimpleListViewDataSource::resetMemoizationForIndex(int j) {
+  if (j >= m_memoizedIndexOffset && j < m_memoizedIndexOffset + k_memoizedCellsCount) {
+    m_memoizedCellHeight[getMemoizedIndex(j)] = k_resetedMemoizedValue;
   }
 }
 

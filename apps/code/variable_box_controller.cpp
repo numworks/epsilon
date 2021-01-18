@@ -67,7 +67,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
   displayEmptyControllerIfNeeded();
 }
 
-KDCoordinate VariableBoxController::rowHeight(int index) {
+KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
   assert(index >= 0 && index < numberOfRows());
   NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
   int cumulatedOriginsCount = 0;
@@ -80,21 +80,6 @@ KDCoordinate VariableBoxController::rowHeight(int index) {
   MessageTableCell tempCell = MessageTableCell();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
-#if 0
-  NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
-  int cumulatedOriginsCount = 0;
-  int cellType = typeAndOriginAtLocation(j, &cellOrigin, &cumulatedOriginsCount);
-  if (cellType == k_itemCellType) {
-    if (scriptNodeAtIndex(j - (m_displaySubtitles ? cumulatedOriginsCount : 0))->description() != nullptr) {
-      // If there is a node description, the cell is bigger
-      return ScriptNodeCell::k_complexItemHeight;
-    }
-    return ScriptNodeCell::k_simpleItemHeight;
-  }
-  assert(m_displaySubtitles);
-  assert(cellType == k_subtitleCellType);
-  return k_subtitleRowHeight;
-#endif
 }
 
 int VariableBoxController::numberOfRows() const {
@@ -153,7 +138,7 @@ void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t,
   }
   // Make sure subtitle cells cannot be selected
   const int currentSelectedRow = selectedRow();
-  if (currentSelectedRow >= 0 && typeAtLocation(0, currentSelectedRow) == k_subtitleCellType) {
+  if (currentSelectedRow >= 0 && typeAtIndex(currentSelectedRow) == k_subtitleCellType) {
     if (currentSelectedRow == 0) {
       // We scroll to the first cell, otherwise it will never appear again
       t->scrollToCell(0, 0);
@@ -164,9 +149,8 @@ void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t,
   }
 }
 
-int VariableBoxController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  return typeAndOriginAtLocation(j);
+int VariableBoxController::typeAtIndex(int index) {
+  return typeAndOriginAtLocation(index);
 }
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {

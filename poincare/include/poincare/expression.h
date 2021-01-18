@@ -20,6 +20,8 @@ class Symbol;
 class Expression : public TreeHandle {
   friend class AbsoluteValue;
   friend class Addition;
+  friend class And;
+  friend class AndExplicit;
   friend class ArcCosine;
   friend class ArcSine;
   friend class ArcTangent;
@@ -69,14 +71,22 @@ class Expression : public TreeHandle {
   friend class MatrixReducedRowEchelonForm;
   friend class Multiplication;
   friend class MultiplicationNode;
+  friend class Nand;
+  friend class NandExplicit;
   friend class NaperianLogarithm;
+  friend class Nor;
+  friend class NorExplicit;
   friend class NormalDistributionFunction;
   friend class NormCDF;
   friend class NormCDF2;
   friend class NormPDF;
+  friend class Not;
+  friend class NotExplicit;
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
+  friend class Or;
+  friend class OrExplicit;
   friend class ParameteredExpression;
   friend class Parenthesis;
   friend class PermuteCoefficient;
@@ -109,6 +119,10 @@ class Expression : public TreeHandle {
   friend class VectorCross;
   friend class VectorDot;
   friend class VectorNorm;
+  friend class Xnor;
+  friend class XnorExplicit;
+  friend class Xor;
+  friend class XorExplicit;
 
   friend class AdditionNode;
   friend class DerivativeNode;

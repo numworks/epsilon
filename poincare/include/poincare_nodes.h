@@ -3,6 +3,8 @@
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
+#include <poincare/and.h>
+#include <poincare/and_explicit.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
@@ -57,13 +59,21 @@
 #include <poincare/matrix_row_echelon_form.h>
 #include <poincare/matrix_reduced_row_echelon_form.h>
 #include <poincare/multiplication.h>
+#include <poincare/nand.h>
+#include <poincare/nand_explicit.h>
 #include <poincare/naperian_logarithm.h>
+#include <poincare/nor.h>
+#include <poincare/nor_explicit.h>
 #include <poincare/norm_cdf.h>
 #include <poincare/norm_cdf2.h>
 #include <poincare/norm_pdf.h>
 #include <poincare/nth_root.h>
+#include <poincare/not.h>
+#include <poincare/not_explicit.h>
 #include <poincare/number.h>
 #include <poincare/opposite.h>
+#include <poincare/or.h>
+#include <poincare/or_explicit.h>
 #include <poincare/parenthesis.h>
 #include <poincare/permute_coefficient.h>
 #include <poincare/power.h>
@@ -93,5 +103,9 @@
 #include <poincare/vector_cross.h>
 #include <poincare/vector_dot.h>
 #include <poincare/vector_norm.h>
+#include <poincare/xnor.h>
+#include <poincare/xnor_explicit.h>
+#include <poincare/xor.h>
+#include <poincare/xor_explicit.h>
 
 #endif

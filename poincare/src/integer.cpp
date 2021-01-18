@@ -452,6 +452,210 @@ Integer Integer::Factorial(const Integer & i) {
   return result;
 }
 
+Integer Integer::Xor(const Integer &a, const Integer &b, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!b.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || b.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  uint8_t digits = std::max(a.numberOfDigits(), b.numberOfDigits());
+  for (size_t i = 0; i < digits; i++)
+  {
+
+    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
+    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
+    s_workingBuffer[i] = abits ^ bbits;
+  }
+
+  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
+  return uint_final;
+}
+
+Integer Integer::Xnor(const Integer &a, const Integer &b, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!b.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || b.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  for (size_t i = 0; i < digits; i++)
+  {
+
+    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
+    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
+    s_workingBuffer[i] = ~(abits ^ bbits);
+  }
+
+  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
+  return uint_final;
+}
+
+//TODO
+Integer Integer::And(const Integer &a, const Integer &b, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!b.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || b.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  uint8_t digits = std::max(a.numberOfDigits(), b.numberOfDigits());
+  for (size_t i = 0; i < digits; i++)
+  {
+
+    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
+    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
+    s_workingBuffer[i] = abits & bbits;
+  }
+
+  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
+  return uint_final;
+}
+
+//TODO
+Integer Integer::Nand(const Integer &a, const Integer &b, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!b.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || b.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  for (size_t i = 0; i < digits; i++)
+  {
+
+    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
+    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
+    s_workingBuffer[i] = ~(abits & bbits);
+  }
+
+  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
+  return uint_final;
+}
+
+//TODO
+Integer Integer::Or(const Integer &a, const Integer &b, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!b.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || b.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  uint8_t digits = std::max(a.numberOfDigits(), b.numberOfDigits());
+  for (size_t i = 0; i < digits; i++)
+  {
+
+    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
+    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
+    s_workingBuffer[i] = abits | bbits;
+  }
+
+  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
+  return uint_final;
+}
+
+Integer Integer::Nor(const Integer &a, const Integer &b, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!b.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || b.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  for (size_t i = 0; i < digits; i++)
+  {
+
+    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
+    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
+    s_workingBuffer[i] = ~(abits | bbits);
+  }
+
+  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
+  return uint_final;
+}
+
+Integer Integer::Not(const Integer &a, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  uint8_t digits = std::max(a.numberOfDigits(), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  for (size_t i = 0; i < digits; i++)
+  {
+    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
+    s_workingBuffer[i] = ~abits;
+  }
+
+  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
+  return uint_final;
+}
+
+Integer Integer::Truncate(const Integer &a, const Integer &num_bits)
+{
+  if (a.isZero() || num_bits.isZero())
+  {
+    return Integer(0);
+  }
+  assert(!num_bits.isNegative());
+
+  native_uint_t n = num_bits.extractedInt();
+
+  uint8_t num_digits = std::min((uint8_t)a.numberOfDigits(), (uint8_t)((n / 33) + 1));
+
+  for (size_t i = 0; i < (uint8_t)((n / 33) + 1); i++)
+  {
+    s_workingBuffer[i] = a.numberOfDigits() > i ? a.digit(i) : 0;
+  }
+
+  for (uint16_t i = num_digits * 32 - 1; i >= n; i--)
+  {
+    bool bit_i = (s_workingBuffer[i / 32] & (1 << i)) >> i;
+    if (bit_i)
+    {
+      s_workingBuffer[i / 32] = s_workingBuffer[i / 32] ^ (1 << i); //flip bit
+    }
+  }
+
+  // clear all zero-valued digits
+  if (num_digits > 1)
+  {
+    for (uint16_t i = num_digits - 1; i > 0; i--)
+    {
+      if (s_workingBuffer[i] == 0)
+      {
+        num_digits--;
+      }
+    }
+  }
+
+  Integer uint_final = BuildInteger(s_workingBuffer, num_digits, false);
+
+  return uint_final;
+}
+
 Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative, bool oneDigitOverflow) {
   bool bNegative = (inverseBNegative ? !b.m_negative : b.m_negative);
   if (a.m_negative == bNegative) {

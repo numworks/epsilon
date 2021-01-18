@@ -92,11 +92,13 @@ private:
   bool m_symbolPlusParenthesesAreFunctions;
 
   // The array of reserved functions' helpers
-  static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
+static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     // Ordered according to name and numberOfChildren
     &AbsoluteValue::s_functionHelper,
     &ArcCosine::s_functionHelper,
     &HyperbolicArcCosine::s_functionHelper,
+    &And::s_functionHelper,
+    &AndExplicit::s_functionHelper,
     &ComplexArgument::s_functionHelper,
     &ArcSine::s_functionHelper,
     &HyperbolicArcSine::s_functionHelper,
@@ -130,9 +132,17 @@ private:
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
     &VectorNorm::s_functionHelper,
+    &Nand::s_functionHelper,
+    &NandExplicit::s_functionHelper,
+    &Nor::s_functionHelper,
+    &NorExplicit::s_functionHelper,
     &NormCDF::s_functionHelper,
     &NormCDF2::s_functionHelper,
     &NormPDF::s_functionHelper,
+    &Not::s_functionHelper,
+    &NotExplicit::s_functionHelper,
+    &Or::s_functionHelper,
+    &OrExplicit::s_functionHelper,
     &PermuteCoefficient::s_functionHelper,
     &SimplePredictionInterval::s_functionHelper,
     &PredictionInterval::s_functionHelper,
@@ -154,6 +164,10 @@ private:
     &HyperbolicTangent::s_functionHelper,
     &MatrixTrace::s_functionHelper,
     &MatrixTranspose::s_functionHelper,
+    &Xnor::s_functionHelper,
+    &XnorExplicit::s_functionHelper,
+    &Xor::s_functionHelper,
+    &XorExplicit::s_functionHelper,
     &SquareRoot::s_functionHelper
   };
   static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));

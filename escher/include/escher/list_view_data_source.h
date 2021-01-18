@@ -10,9 +10,9 @@ class ListViewDataSource : public TableViewDataSource {
 public:
   // < TEMP
   KDCoordinate rowHeight(int j) override;
-  void prepareCellForHeightCalculation(HighlightCell * cell, int index);
+  virtual void prepareCellForHeightCalculation(HighlightCell * cell, int index);
   int reusableCellCount(int type) override { return numberOfRows(); }
-  virtual int typeAtIndex(int index) { return 0; }
+  // virtual int typeAtIndex(int index) { return 0; }
   // TEMP />
 
 
@@ -28,7 +28,7 @@ public:
   virtual void willDisplayCellForIndex(HighlightCell * cell, int index) {}
   void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override { willDisplayCellForIndex(cell, y); }
 
-  // virtual int typeAtIndex(int index); TODO : remove temp and uncomment it
+  virtual int typeAtIndex(int index) { assert(false); return 0; } // TODO : remove temp and make it virtual pure
   int typeAtLocation(int i, int j) override { return typeAtIndex(j); }
 };
 

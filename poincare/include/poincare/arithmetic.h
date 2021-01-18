@@ -34,11 +34,11 @@ public:
   int PrimeFactorization(const Integer & i);
   Integer * getFactorizationFactor(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
-    return k_factorizationFactors + index;
+    return s_factorizationFactors + index;
   }
   Integer * getFactorizationCoefficient(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
-    return k_factorizationCoefficients + index;
+    return s_factorizationCoefficients + index;
   }
 
 private:
@@ -46,8 +46,8 @@ private:
    * factors among integer from 2 to 10000. */
   constexpr static int k_biggestPrimeFactor = 10000;
   static bool s_factorizationLock;
-  static Integer k_factorizationFactors[k_maxNumberOfPrimeFactors];
-  static Integer k_factorizationCoefficients[k_maxNumberOfPrimeFactors];
+  static Integer s_factorizationFactors[k_maxNumberOfPrimeFactors];
+  static Integer s_factorizationCoefficients[k_maxNumberOfPrimeFactors];
 };
 
 }

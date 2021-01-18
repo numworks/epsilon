@@ -20,11 +20,11 @@ public:
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
 
   /* TableViewDataSource */
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int i) override;
   /* ListViewDataSource */
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   /* SelectableTableViewDelegate */

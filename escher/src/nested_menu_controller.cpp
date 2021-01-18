@@ -112,6 +112,7 @@ void NestedMenuController::didBecomeFirstResponder() {
 }
 
 void NestedMenuController::viewWillAppear() {
+  resetMemoization();
   StackViewController::viewWillAppear();
   m_selectableTableView.reloadData();
   m_stack.resetStack();
@@ -159,6 +160,7 @@ bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIn
 }
 
 bool NestedMenuController::selectSubMenu(int selectedRow) {
+  resetMemoization();
   m_stack.push(selectedRow, m_selectableTableView.contentOffset().y());
   m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
@@ -167,6 +169,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
 
 bool NestedMenuController::returnToPreviousMenu() {
   assert(m_stack.depth() > 0);
+  resetMemoization();
   NestedMenuController::Stack::State state = m_stack.pop();
   m_listController.setFirstSelectedRow(state.selectedRow() + stackRowOffset());
   KDPoint scroll = m_selectableTableView.contentOffset();

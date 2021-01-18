@@ -9,7 +9,9 @@ namespace Escher {
 class SimpleListViewDataSource : public ListViewDataSource {
 public:
   SimpleListViewDataSource();
-  void prepareCellForHeightCalculation(HighlightCell * cell, int index);
+  void prepareCellForHeightCalculation(HighlightCell * cell, int index) override;
+  void resetMemoizationForIndex(int index);
+  void resetMemoization(bool force = true);
 
   // ListViewDataSource
   KDCoordinate cumulatedHeightFromIndex(int index) override;
@@ -31,12 +33,11 @@ private:
   static_assert(SimpleListViewDataSource::k_memoizedCellsCount % 2 == 1, "SimpleListViewDataSource::k_memoizedCellsCount should be odd.");
   static constexpr int k_resetedMemoizedValue = -1;
   int getMemoizedIndex(int index);
-  void resetMemoizationForIndex(int index);
   void shiftMemoization(bool newCellIsUnder);
-  void resetMemoization();
   int m_memoizedIndexOffset;
   KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
   KDCoordinate m_memoizedCumulatedHeightOffset;
+  KDCoordinate m_memoizedTotalHeight;
 };
 
 }

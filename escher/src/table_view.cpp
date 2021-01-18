@@ -175,7 +175,12 @@ void TableView::ContentView::layoutSubviews(bool force) {
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
     m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
-    cell->setFrame(cellFrame(i,j), force);
+    // TODO : Hugo Fix That :
+    // Forcing relayout here because cell's attributes might have changed, and,
+    // as it is here only an higlightcell, we cannot access this attribute and
+    // check a CRC32 or something equivalent. Might as well force ScrollView::setContentOffset
+    // See ((Escher::MessageTextView *)(((Escher::TableCell *)cell)->subLabelView()))->text() before and after willDisplayCellAtLocation
+    cell->setFrame(cellFrame(i,j), true);
   }
 }
 

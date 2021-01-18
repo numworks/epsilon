@@ -460,6 +460,30 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results35, types, definitions, conditions1, conditions2);
 }
 
+QUIZ_CASE(sequence_order) {
+  Shared::GlobalContext globalContext;
+  SequenceStore * store = globalContext.sequenceStore();
+  SequenceContext sequenceContext(&globalContext, store);
+
+  Sequence * u = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, &sequenceContext);
+  assert(u->fullName()[0] == 'u');
+  Sequence * v = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, &sequenceContext);
+  assert(v->fullName()[0] == 'v');
+  Sequence * w = addSequence(store, Sequence::Type::Explicit, "3", nullptr, nullptr, &sequenceContext);
+  assert(w->fullName()[0] == 'w');
+  Ion::Storage::sharedStorage()->recordNamed("u.seq").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("v.seq").destroy();
+  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
+  assert(u->fullName()[0] == 'u');
+  v = addSequence(store, Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr, &sequenceContext);
+  assert(v->fullName()[0] == 'v');
+
+  quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 4.);
+
+  store->removeAll();
+  store->tidy();
+}
+
 QUIZ_CASE(sequence_sum_evaluation) {
   check_sum_of_sequence_between_bounds(33.0, 3.0, 8.0, Sequence::Type::Explicit, "n", nullptr, nullptr);
   check_sum_of_sequence_between_bounds(70.0, 2.0, 8.0, Sequence::Type::SingleRecurrence, "u(n)+2", "0", nullptr);

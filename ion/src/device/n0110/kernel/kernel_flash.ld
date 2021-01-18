@@ -81,6 +81,7 @@ SECTIONS {
     *(.text._ZN3Ion6Device8Keyboard5Queue11sharedQueueEv)
     *(.text._ZN3Ion6Device8Keyboard4scanEv)
     *(.text._ZN3Ion6Device8Keyboard11setRowStateEt)
+    *(.text._ZNK3Ion6Device8Keyboard5Queue16clippedIncrementEj)
     *(.text._ZN3Ion8Keyboard5State*)
     *(.text._ZN3Ion6Device8Keyboard15activateAllRowsEv)
     *(.text._ZN3Ion6Device8Keyboard5QueueC*)

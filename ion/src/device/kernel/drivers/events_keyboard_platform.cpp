@@ -1,5 +1,7 @@
 #include <kernel/drivers/events_keyboard_platform.h>
 #include <assert.h>
+#include <drivers/battery.h>
+#include <drivers/usb.h>
 
 namespace Ion {
 namespace Device {
@@ -10,7 +12,6 @@ bool sLastUSBEnumerated = false;
 bool sLastBatteryCharging = false;
 
 Ion::Events::Event getPlatformEvent() {
-#if 0
   // First, check if the USB device has been connected to an USB host
   bool usbEnumerated = USB::isEnumerated();
   if (usbEnumerated != sLastUSBEnumerated) {
@@ -18,7 +19,7 @@ Ion::Events::Event getPlatformEvent() {
     sLastBatteryCharging = Battery::isCharging();
     sLastUSBEnumerated = usbEnumerated;
     if (usbEnumerated) {
-      return Events::USBEnumeration;
+      return Ion::Events::USBEnumeration;
     }
   }
 
@@ -27,16 +28,15 @@ Ion::Events::Event getPlatformEvent() {
   if (usbPlugged != sLastUSBPlugged) {
     sLastUSBPlugged = usbPlugged;
     sLastBatteryCharging = Battery::isCharging();
-    return Events::USBPlug;
+    return Ion::Events::USBPlug;
   }
 
   // Third, check if the battery changed charging state
   bool batteryCharging = Battery::isCharging();
   if (batteryCharging != sLastBatteryCharging) {
     sLastBatteryCharging = batteryCharging;
-    return Events::BatteryCharging;
+    return Ion::Events::BatteryCharging;
   }
-#endif
   return Ion::Events::None;
 }
 

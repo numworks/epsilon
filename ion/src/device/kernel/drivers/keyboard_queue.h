@@ -16,6 +16,7 @@ public:
   bool isEmpty() const { return m_begin == m_end; }
 private:
   static constexpr size_t k_maximalNumberOfStates = 5;
+  size_t clippedIncrement(size_t index) const;
   // Ring buffer
   Ion::Keyboard::State m_states[k_maximalNumberOfStates];
   size_t m_begin;

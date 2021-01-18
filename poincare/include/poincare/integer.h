@@ -146,6 +146,14 @@ public:
   static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
   static Integer Power(const Integer & i, const Integer & j);
   static Integer Factorial(const Integer & i);
+  static Integer Xor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer Xnor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer And(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer Nand(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer Or(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer Nor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer Not(const Integer &a, const Integer &num_bits = Integer(32));
+  static Integer Truncate(const Integer &a, const Integer &num_bits);
 
   // Derived expression builder
   static Expression CreateMixedFraction(const Integer & num, const Integer & denom);

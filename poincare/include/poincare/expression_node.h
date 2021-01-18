@@ -23,7 +23,8 @@ class ExpressionNode : public TreeNode {
   friend class PowerNode;
   friend class SymbolNode;
 public:
-   enum class Type : uint8_t {
+  enum class Type : uint8_t
+  {
     Uninitialized = 0,
     Undefined = 1,
     Unreal,
@@ -46,6 +47,8 @@ public:
     Cosine,
     Tangent,
     AbsoluteValue,
+    And,
+    AndExplicit,
     ArcCosine,
     ArcSine,
     ArcTangent,
@@ -77,12 +80,20 @@ public:
     LeastCommonMultiple,
     Logarithm,
     MatrixTrace,
+    Nand,
+    NandExplicit,
     NaperianLogarithm,
+    Nor,
+    NorExplicit,
     NormCDF,
     NormCDF2,
     NormPDF,
+    Not,
+    NotExplicit,
     NthRoot,
     Opposite,
+    Or,
+    OrExplicit,
     Parenthesis,
     PermuteCoefficient,
     Product,
@@ -94,6 +105,10 @@ public:
     SquareRoot,
     Subtraction,
     Sum,
+    Xnor,
+    XnorExplicit,
+    Xor,
+    XorExplicit,
 
     Unit,
     ComplexCartesian,
@@ -106,7 +121,7 @@ public:
     PredictionInterval,
     Matrix,
     EmptyExpression
-   };
+  };
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;

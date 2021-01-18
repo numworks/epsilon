@@ -6,8 +6,8 @@
 namespace Poincare {
 
 bool Arithmetic::s_factorizationLock = false;
-Integer Arithmetic::k_factorizationFactors[k_maxNumberOfPrimeFactors];
-Integer Arithmetic::k_factorizationCoefficients[k_maxNumberOfPrimeFactors];
+Integer Arithmetic::s_factorizationFactors[k_maxNumberOfPrimeFactors];
+Integer Arithmetic::s_factorizationCoefficients[k_maxNumberOfPrimeFactors];
 
 Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
   if (a.isOverflow() || b.isOverflow()) {
@@ -175,21 +175,21 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
   int t = 0; // n prime factor index
   int k = 0; // prime factor index
   Integer testedPrimeFactor((int)primeFactors[k]); // prime factor
-  k_factorizationFactors[t] = testedPrimeFactor;
+  s_factorizationFactors[t] = testedPrimeFactor;
   IntegerDivision d = {.quotient = 0, .remainder = 0};
   bool stopCondition;
   do {
     stopCondition = Integer::NaturalOrder(Integer::Power(testedPrimeFactor, Integer(2)), m) < 0;
     d = Integer::Division(m, testedPrimeFactor);
     if (d.remainder.isZero()) {
-      k_factorizationCoefficients[t] = Integer::Addition(k_factorizationCoefficients[t], Integer(1));
+      s_factorizationCoefficients[t] = Integer::Addition(s_factorizationCoefficients[t], Integer(1));
       m = d.quotient;
       if (m.isOne()) {
         return t+1;
       }
       continue;
     }
-    if (!k_factorizationCoefficients[t].isZero()) {
+    if (!s_factorizationCoefficients[t].isZero()) {
       t++;
     }
     k++;
@@ -197,7 +197,7 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
      * the prime factorization for low numbers). When k_numberOfPrimeFactors is
      * overflow, try every odd number as divisor. */
     testedPrimeFactor = k < k_numberOfPrimeFactors ? Integer((int)primeFactors[k]) : Integer::Addition(testedPrimeFactor, Integer(2));
-    k_factorizationFactors[t] = testedPrimeFactor;
+    s_factorizationFactors[t] = testedPrimeFactor;
   } while (stopCondition && Integer::NaturalOrder(testedPrimeFactor,Integer(k_biggestPrimeFactor)) < 0);
   if (Integer::NaturalOrder(Integer::Power(Integer(k_biggestPrimeFactor), Integer(2)), m) < 0) {
     /* Special case 2: We do not want to break i in prime factor because it
@@ -205,16 +205,16 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
      * k_biggestPrimeFactor. -2 is returned to indicate a special case. */
     return -2;
   }
-  k_factorizationFactors[t] = m;
-  k_factorizationCoefficients[t] = Integer::Addition(k_factorizationCoefficients[t], Integer(1));
+  s_factorizationFactors[t] = m;
+  s_factorizationCoefficients[t] = Integer::Addition(s_factorizationCoefficients[t], Integer(1));
   return t+1;
 }
 
 Arithmetic::~Arithmetic() {
   // Clean Factors and coefficients arrays
   for (int i = 0; i < k_maxNumberOfPrimeFactors; ++i) {
-    k_factorizationFactors[i] = Integer();
-    k_factorizationCoefficients[i] = Integer();
+    s_factorizationFactors[i] = Integer();
+    s_factorizationCoefficients[i] = Integer();
   }
   // Unlock Prime Factorization
   s_factorizationLock = false;

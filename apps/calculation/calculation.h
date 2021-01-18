@@ -96,7 +96,7 @@ public:
   AdditionalInformationType additionalInformationType(Poincare::Context * context);
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
-  static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
+  static constexpr const char *k_maximalIntegerWithAdditionalInformation = "1267650600228229401496703205376"; // 2^100 + 1
 
   void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
 

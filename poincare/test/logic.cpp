@@ -213,21 +213,38 @@ QUIZ_CASE(poincare_logic_not_compare)
   assert_equal(Integer::Not(Integer(0), Integer(64)), hFFFF_FFFF_FFFF_FFFF);
 }
 
-//Serialize
-static inline void assert_integer_serializes_to(const Integer i, const char *serialization, Integer::Base base = Integer::Base::Decimal)
+QUIZ_CASE(poincare_logic_sll_compare)
 {
-  char buffer[500];
-  i.serialize(buffer, 500, base);
-  quiz_assert(strcmp(buffer, serialization) == 0);
+  Integer hFFFF_FFFF = Integer("4294967295");
+  Integer h1_0000_0000 = Integer("4294967296");
+  Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
+  Integer hFFFF_FFFF_0000_0000 = Integer("18446744069414584320");
+  assert_equal(Integer::Sll(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
+  assert_equal(Integer::Sll(Integer(0), Integer(6)), Integer(0));
+  assert_equal(Integer::Sll(Integer(0), Integer(36)), Integer(0));
+  assert_equal(Integer::Sll(h1_0000_0000, Integer(32)), Integer(0));
+  //explicit num_bits
+  assert_equal(Integer::Sll(Integer(1), Integer(32), Integer(33)), h1_0000_0000);
+  assert_equal(Integer::Sll(h0000_FFFF_FFFF_0000, Integer(16), Integer(64)), hFFFF_FFFF_0000_0000);
+  assert_equal(Integer::Sll(h0000_FFFF_FFFF_0000, Integer(16), Integer(65)), hFFFF_FFFF_0000_0000);
 }
 
-QUIZ_CASE(poincare_logic_serialize)
+QUIZ_CASE(poincare_logic_srl_compare)
 {
-  assert_integer_serializes_to(Integer(-2), "-2");
-  assert_integer_serializes_to(Integer("2345678909876"), "2345678909876");
-  assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
-  assert_integer_serializes_to(Integer(9), "0b1001", Integer::Base::Binary);
-  assert_integer_serializes_to(Integer(9131), "0x23AB", Integer::Base::Hexadecimal);
-  assert_integer_serializes_to(Integer(123), "123", Integer::Base::Decimal);
-  assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
+  Integer hFFFF = Integer("65535");
+  Integer hFFFF_FFFF = Integer("4294967295");
+  Integer h1_0000_0000 = Integer("4294967296");
+  Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
+  Integer hFFFF_FFFF_0000_0000 = Integer("18446744069414584320");
+  assert_equal(Integer::Srl(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
+  assert_equal(Integer::Srl(Integer(0), Integer(6)), Integer(0));
+  assert_equal(Integer::Srl(Integer(0), Integer(36)), Integer(0));
+  assert_equal(Integer::Srl(h1_0000_0000, Integer(32)), Integer(0));
+  assert_equal(Integer::Srl(hFFFF_FFFF, Integer(32)), Integer(0));
+  assert_equal(Integer::Srl(hFFFF_FFFF, Integer(31)), Integer(1));
+  assert_equal(Integer::Srl(hFFFF_FFFF, Integer(30)), Integer(3));
+  //explicit num_bits
+  assert_equal(Integer::Srl(h0000_FFFF_FFFF_0000, Integer(32), Integer(33)), Integer(1));
+  assert_equal(Integer::Srl(h0000_FFFF_FFFF_0000, Integer(32), Integer(64)), hFFFF);
+  assert_equal(Integer::Srl(h0000_FFFF_FFFF_0000, Integer(32), Integer(66)), hFFFF);
 }

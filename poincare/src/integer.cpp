@@ -498,7 +498,6 @@ Integer Integer::Xnor(const Integer &a, const Integer &b, const Integer &num_bit
   return uint_final;
 }
 
-//TODO
 Integer Integer::And(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
@@ -522,7 +521,6 @@ Integer Integer::And(const Integer &a, const Integer &b, const Integer &num_bits
   return uint_final;
 }
 
-//TODO
 Integer Integer::Nand(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
@@ -546,7 +544,6 @@ Integer Integer::Nand(const Integer &a, const Integer &b, const Integer &num_bit
   return uint_final;
 }
 
-//TODO
 Integer Integer::Or(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
@@ -612,6 +609,69 @@ Integer Integer::Not(const Integer &a, const Integer &num_bits)
   Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
   return uint_final;
 }
+
+Integer Integer::Sll(const Integer &a, const Integer &shift, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!shift.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || shift.isOverflow())
+  {
+    return Overflow(false);
+  }
+  if (a.isZero())
+  {
+    return a;
+  }
+
+  uint8_t points = shift.extractedInt();
+  Integer uint_final = a;
+  while (points > 0)
+  {
+    uint8_t power = (points == 31) ? 31 : points % 31;
+    //multiplyByPowerOf2 prohibits powers greater than 31...
+    uint_final = uint_final.multiplyByPowerOf2(power);
+    points -= power;
+  }
+
+  return Truncate(uint_final, num_bits);
+}
+
+Integer Integer::Srl(const Integer &a, const Integer &shift, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!shift.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || shift.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer uint_final = Truncate(a, num_bits); // Make sure input is at the correct precision
+  if (uint_final.isZero())
+  {
+    return uint_final;
+  }
+
+  uint8_t points = shift.extractedInt();
+  while (points > 0)
+  {
+    uint8_t power = (points == 31) ? 31 : points % 31;
+    //multiplyByPowerOf2 prohibits powers greater than 31...
+    uint_final = uint_final.divideByPowerOf2(power);
+    points -= power;
+  }
+
+  return Truncate(uint_final, num_bits);
+}
+Integer Integer::Sra(const Integer &a, const Integer &shift, const Integer &num_bits) {}
+Integer Integer::Ror(const Integer &a, const Integer &rotate, const Integer &num_bits) {}
+Integer Integer::Rol(const Integer &a, const Integer &rotate, const Integer &num_bits) {}
+Integer Integer::Bic(const Integer &a, const Integer &b, const Integer &num_bits) {}
+Integer Integer::Bit(const Integer &a, const Integer &bit) {}
+Integer Integer::Bclr(const Integer &a, const Integer &bit) {}
+Integer Integer::Bset(const Integer &a, const Integer &bit) {}
+Integer Integer::Bflp(const Integer &a, const Integer &bit) {}
 
 Integer Integer::Truncate(const Integer &a, const Integer &num_bits)
 {

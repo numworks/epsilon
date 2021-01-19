@@ -25,6 +25,7 @@ public:
     Descriptor * descriptor() override;
     void reset() override;
     EquationStore * equationStore() { return &m_equationStore; }
+    void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   private:
     void tidy() override;
     EquationStore m_equationStore;

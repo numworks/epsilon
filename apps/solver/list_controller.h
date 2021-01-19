@@ -50,7 +50,7 @@ private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
   Escher::SelectableTableView * selectableTableView() override;
   void reloadButtonMessage();
-  void addEmptyModel() override;
+  void addModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
   EquationStore * modelStore() override;

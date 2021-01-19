@@ -579,6 +579,26 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
       parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
     }
     nlr_pop();
+  } else if (textToAutocomplete != nullptr && nlr_push(&nlr) == 0) {
+    /* When VariableBoxController has been emptied and ImportedVariables are
+     * being reloaded, an unfinished Autocompletion might remain. Parsing
+     * this unfinished line may fail because of it, which might prevent it from
+     * being reloaded and lead to errors. In that case we try again parsing this
+     * line from the start to the end of the text to autocomplete only to make
+     * sure ongoing autocompletion will still be available. */
+    assert(textToAutocomplete >= scriptContent);
+    const char * parseStart = textToAutocomplete;
+    // Search for the beginning of the line
+    while (parseStart != scriptContent && *(parseStart-1) != '\n') {
+      parseStart--;
+    }
+    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, parseStart, textToAutocomplete + textToAutocompleteLength - parseStart, 0);
+    mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
+    mp_parse_node_t pn = parseTree.root;
+    if (MP_PARSE_NODE_IS_STRUCT(pn)) {
+        addNodesFromImportMaybe((mp_parse_node_struct_t *) pn, textToAutocomplete, textToAutocompleteLength);
+    }
+    nlr_pop();
   }
 }
 

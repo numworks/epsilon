@@ -14,7 +14,6 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
-  void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Zoom");
@@ -61,7 +60,6 @@ private:
 
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;
-  bool m_restoreZoomAuto;
 };
 
 }

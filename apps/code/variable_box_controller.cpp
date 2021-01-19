@@ -248,6 +248,12 @@ void VariableBoxController::empty() {
 
 void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
   ScriptNode * selectedScriptNode = scriptNodeAtIndex(index);
+  if (selectedScriptNode == nullptr) {
+    /* Autocompletion has not been found. It can happen if the index is no
+     * longer valid, when the VariableBoxController has been emptied and
+     * recomputed differently between the index initialization and this call.*/
+    return;
+  }
 
   /* We need to check now if we need to add parentheses: insertTextInCaller
    * calls handleEventWithText, which will reload the autocompletion for the

@@ -181,7 +181,7 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (isAddEmptyRow(selectedRow())) {
-      addEmptyModel();
+      addModel();
       return true;
     }
     editExpression(event);
@@ -203,7 +203,7 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   }
   if (event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var) {
     if (isAddEmptyRow(selectedRow())) {
-      addEmptyModelWithoutEditing();
+      addEmptyModel();
     }
     if (!isAddEmptyRow(selectedRow())) {
       editExpression(event);
@@ -213,12 +213,12 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   return false;
 }
 
-void ExpressionModelListController::addEmptyModel() {
-  addEmptyModelWithoutEditing();
+void ExpressionModelListController::addModel() {
+  addEmptyModel();
   editExpression(Ion::Events::OK);
 }
 
-void ExpressionModelListController::addEmptyModelWithoutEditing() {
+void ExpressionModelListController::addEmptyModel() {
   Ion::Storage::Record::ErrorStatus error = modelStore()->addEmptyModel();
   if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
     return;

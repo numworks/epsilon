@@ -250,7 +250,7 @@ int ListController::sequenceDefinitionForRow(int j) {
   return sequence->numberOfElements()-rowIndex+j;
 }
 
-void ListController::addEmptyModel() {
+void ListController::addModel() {
   Container::activeApp()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 

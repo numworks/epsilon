@@ -38,6 +38,10 @@ void App::Snapshot::reset() {
   m_equationStore.removeAll();
 }
 
+void App::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
+  m_equationStore.storageDidChangeForRecord(record);
+}
+
 void App::Snapshot::tidy() {
   // Delete all expressions of equations
   m_equationStore.tidy();

@@ -205,10 +205,9 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
     if (isAddEmptyRow(selectedRow())) {
       addEmptyModel();
     }
-    if (!isAddEmptyRow(selectedRow())) {
-      editExpression(event);
-      return true;
-    }
+    assert(!isAddEmptyRow(selectedRow()));
+    editExpression(event);
+    return true;
   }
   return false;
 }

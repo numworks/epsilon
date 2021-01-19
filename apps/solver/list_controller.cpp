@@ -209,7 +209,7 @@ void ListController::reloadButtonMessage() {
   footer()->setMessageOfButtonAtIndex(modelStore()->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, 0);
 }
 
-void ListController::addEmptyModel() {
+void ListController::addModel() {
   Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 

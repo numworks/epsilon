@@ -34,11 +34,11 @@ public:
   int PrimeFactorization(const Integer & i);
   Integer * getFactorizationFactor(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
-    return s_factorizationFactors + index;
+    return factorizationFactors() + index;
   }
   Integer * getFactorizationCoefficient(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
-    return s_factorizationCoefficients + index;
+    return factorizationCoefficients() + index;
   }
 
 private:
@@ -46,8 +46,19 @@ private:
    * factors among integer from 2 to 10000. */
   constexpr static int k_biggestPrimeFactor = 10000;
   static bool s_factorizationLock;
-  static Integer s_factorizationFactors[k_maxNumberOfPrimeFactors];
-  static Integer s_factorizationCoefficients[k_maxNumberOfPrimeFactors];
+  /* The following methods are equivalent to a simple static array declaration
+   * in the header and an initialization in the source file. However, as Integer
+   * itself rely on static objects, such a declaration could cause a static
+   * init order fiasco. Here, the object is created on first use only. */
+  static Integer * factorizationFactors() {
+    static Integer staticFactorizationFactors[k_maxNumberOfPrimeFactors];
+    return staticFactorizationFactors;
+  }
+
+  static Integer * factorizationCoefficients() {
+    static Integer staticFactorizationCoefficients[k_maxNumberOfPrimeFactors];
+    return staticFactorizationCoefficients;
+  }
 };
 
 }

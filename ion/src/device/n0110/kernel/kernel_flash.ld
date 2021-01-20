@@ -46,7 +46,6 @@ SECTIONS {
     . = ALIGN(4);
     *(.text.start)
     *(.text.abort)
-    *(.text.keyboard_handler)
     *(.text.isr_systick)
     *(.text.__assert)
     *(.text.memcpy)
@@ -76,18 +75,8 @@ SECTIONS {
     *(.text._ZN3Ion6Device4Init12configureRAMEv)
     *(.text._ZN3Ion6Device5Board14setDefaultGPIOEv)
 
-    /* 'keyboard_handler' dependencies '*/
-    *(.text._ZN3Ion6Device8Keyboard18handleInterruptionEv)
-    *(.text._ZN3Ion6Device8Keyboard5Queue11sharedQueueEv)
-    *(.text._ZN3Ion6Device8Keyboard4scanEv)
-    *(.text._ZN3Ion6Device8Keyboard11setRowStateEt)
-    *(.text._ZNK3Ion6Device8Keyboard5Queue16clippedIncrementEj)
-    *(.text._ZN3Ion8Keyboard5State*)
-    *(.text._ZN3Ion6Device8Keyboard15activateAllRowsEv)
-    *(.text._ZN3Ion6Device8Keyboard5QueueC*)
-    *(.text._ZN3Ion6Device8Keyboard11activateRowEh)
-    *(.text._ZN3Ion6Device8Keyboard5Queue4pushENS_8Keyboard5StateE)
-    *(.text._ZN3Ion6Device8Keyboard6Config9ValidKeysEy)
+    /* keyboard_handler does not need to be in internal flash, the interruption
+     * is activated after initializing the external flash. */
 
     /* 'abort' dependencies */
     *(.text._ZN3Ion6Device5Reset4coreEv)
@@ -98,6 +87,8 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Board14shutdownClocksEb)
     *(.text._ZN3Ion6Device5Reset16coreWhilePluggedEv)
     *(.text._ZN3Ion6Device5Board25shutdownPeripheralsClocksEb)
+    *(.text._ZN3Ion6Device5Power41shutdownExternalFlashAndEnterLowPowerModeEb)
+    *(.text._ZN3Ion6Device5Board21shutdownInterruptionsEv)
 
     /* 'suspend' dependencies '*/
     *(.text._ZN3Ion6Device5Power20internalFlashSuspendEb)
@@ -124,6 +115,7 @@ SECTIONS {
     *(.rodata._ZN3Ion6Device5Cache35privateCleanInvalidateDisableDCacheEbbb.str1.4)
     *(.rodata._ZN3Ion6Device4Regs*)
     *(.rodata._ZN3Ion6Device8Keyboard6Config*)
+    *(.rodata._ZZN3Ion6Device5Board17initInterruptionsEvE21extiInterruptionIndex)
   } >INTERNAL_FLASH_KERNEL
 
   .init_array : {

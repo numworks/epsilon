@@ -98,14 +98,19 @@ void waitUntilOnOffKeyReleased() {
   Timing::msleep(100);
 }
 
-void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
+void inline shutdownExternalFlashAndEnterLowPowerMode(bool keepLEDActive) {
+  /* Disable interruption before shutdowning the external flash (interrupt
+   * handlers code might be in external flash) */
+  Board::shutdownInterruptions();
   // Shutdown the external flash
   ExternalFlash::shutdown();
   // Shutdown all clocks (except the ones used by LED if active)
-  Board::shutdownPeripheralsClocks(isLEDActive);
-
+  Board::shutdownPeripheralsClocks(keepLEDActive);
   enterLowPowerMode();
+}
 
+void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
+  shutdownExternalFlashAndEnterLowPowerMode(isLEDActive);
   /* A hardware event triggered a wake up, we determine if the device should
    * wake up. We wake up when:
    * - only the power key was down
@@ -114,12 +119,11 @@ void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
   Board::initPeripheralsClocks();
   // Init external flash
   ExternalFlash::init();
+  Board::initInterruptions();
 }
 
 void __attribute__((noinline)) internalFlashStandby() {
-  ExternalFlash::shutdown();
-  Board::shutdownPeripheralsClocks();
-  enterLowPowerMode();
+  shutdownExternalFlashAndEnterLowPowerMode(false);
   Reset::coreWhilePlugged();
 }
 

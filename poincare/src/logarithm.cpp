@@ -382,11 +382,11 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
   Addition a = Addition::Builder();
   for (int index = 0; index < numberOfPrimeFactors; index++) {
     if (isDenominator) {
-      arithmetic.getFactorizationCoefficient(index)->setNegative(true);
+      arithmetic.factorizationCoefficientAtIndex(index)->setNegative(true);
     }
     Logarithm e = clone().convert<Logarithm>();
-    e.replaceChildAtIndexInPlace(0, Rational::Builder(*arithmetic.getFactorizationFactor(index)));
-    Multiplication m = Multiplication::Builder(Rational::Builder(*arithmetic.getFactorizationCoefficient(index)), e);
+    e.replaceChildAtIndexInPlace(0, Rational::Builder(*arithmetic.factorizationFactorAtIndex(index)));
+    Multiplication m = Multiplication::Builder(Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)), e);
     e.simpleShallowReduce(reductionContext);
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(reductionContext);

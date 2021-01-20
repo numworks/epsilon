@@ -1,4 +1,4 @@
-#include <ion.h>
+#include "events_modifier.h"
 #include <assert.h>
 
 namespace Ion {
@@ -6,6 +6,9 @@ namespace Events {
 
 static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
 static int sLongRepetition = 1;
+int sEventRepetitionCount = 0;
+constexpr int delayBeforeRepeat = 200;
+constexpr int delayBetweenRepeat = 50;
 
 ShiftAlphaStatus shiftAlphaStatus() {
   return sShiftAlphaStatus;
@@ -44,6 +47,17 @@ int repetitionFactor() {
 void setShiftAlphaStatus(ShiftAlphaStatus s) {
   sShiftAlphaStatus = s;
 }
+
+static void ComputeAndSetRepetionFactor(int eventRepetitionCount) {
+  // The Repetition factor is increased by 4 every 20 loops in getEvent(2 sec)
+  setLongRepetition((eventRepetitionCount / 20) * 4 + 1);
+}
+
+void resetLongRepetition() {
+  sEventRepetitionCount = 0;
+  ComputeAndSetRepetionFactor(sEventRepetitionCount);
+}
+
 
 void updateModifiersFromEvent(Event e) {
   assert(e.isKeyboardEvent());

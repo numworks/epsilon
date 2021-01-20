@@ -6,7 +6,7 @@
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/config/board.h>
-#include <kernel/drivers/events_keyboard_platform.h>
+#include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/led.h>
 #include <regs/regs.h>

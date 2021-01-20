@@ -9,7 +9,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/dfu.cpp \
   drivers/dfu_relocated.cpp \
   drivers/display.cpp \
-  drivers/events_keyboard_platform.cpp \
+  drivers/events.cpp \
   drivers/keyboard.cpp \
   drivers/keyboard_queue.cpp \
   drivers/led.cpp \

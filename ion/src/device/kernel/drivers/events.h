@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_KERNEL_DRIVERS_EVENTS_KEYBOARD_PLATFORM_H
-#define ION_DEVICE_KERNEL_DRIVERS_EVENTS_KEYBOARD_PLATFORM_H
+#ifndef ION_DEVICE_KERNEL_EVENTS_H
+#define ION_DEVICE_KERNEL_EVENTS_H
 
 #include <ion/events.h>
 
@@ -7,6 +7,7 @@ namespace Ion {
 namespace Device {
 namespace Events {
 
+Ion::Events::Event getEvent();
 Ion::Events::Event getPlatformEvent();
 
 }

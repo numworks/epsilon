@@ -5,6 +5,7 @@
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/drivers/led.h> // TODO: REMOVE ME
+#include <kernel/drivers/events.h> // TODO: REMOVE ME
 #include <ion/display.h>
 #include <kandinsky/font.h>
 #include <string.h>

@@ -197,6 +197,7 @@ tests_src += $(addprefix poincare/test/,\
   layout_serialization.cpp\
   layout_to_expression.cpp\
   parsing.cpp\
+  polynomial.cpp\
   print_float.cpp\
   print_int.cpp\
   rational.cpp\

@@ -32,11 +32,11 @@ public:
    * Before calling PrimeFactorization, we instantiate an Arithmetic object.
    * Outputs are retrieved using getFactorization_(index) methods. */
   int PrimeFactorization(const Integer & i);
-  Integer * getFactorizationFactor(int index) {
+  Integer * factorizationFactorAtIndex(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
     return factorizationFactors() + index;
   }
-  Integer * getFactorizationCoefficient(int index) {
+  Integer * factorizationCoefficientAtIndex(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
     return factorizationCoefficients() + index;
   }

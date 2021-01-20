@@ -62,6 +62,26 @@ public:
     REGS_BOOL_FIELD(DC, 16);
   };
 
+  class SHPR1 : public Register32 {
+  public:
+    REGS_FIELD(USAGE_FAULT_PRI, uint8_t, 23, 20);
+    REGS_FIELD(BUS_FAULT_PRI, uint8_t, 15, 12);
+    REGS_FIELD(MEM_MANAGE_PRI, uint8_t, 7, 4);
+  };
+
+  class SHPR2 : public Register32 {
+  public:
+    /* STM32 implements only 16 programable priority levels - when Cortex M(4/7)
+     * would offer a maximal range of 256. */
+    REGS_FIELD(SVCALL_PRI, uint8_t, 31, 28);
+  };
+
+  class SHPR3 : public Register32 {
+  public:
+    REGS_FIELD(SYSTICK_PRI, uint8_t, 31, 28);
+    REGS_FIELD(PENDSV_PRI, uint8_t, 23, 20);
+  };
+
   class SHCRS : public Register32 {
   public:
     REGS_BOOL_FIELD(USGFAULTENA, 18);
@@ -126,6 +146,9 @@ public:
   REGS_REGISTER_AT(AIRCR, 0xD0C);
   REGS_REGISTER_AT(SCR, 0xD10);
   REGS_REGISTER_AT(CCR, 0xD14);
+  REGS_REGISTER_AT(SHPR1, 0xD18);
+  REGS_REGISTER_AT(SHPR2, 0xD1C);
+  REGS_REGISTER_AT(SHPR3, 0xD20);
   REGS_REGISTER_AT(SHCRS, 0xD24);
 #if REGS_CORTEX_CONFIG_CACHE
   REGS_REGISTER_AT(CCSIDR, 0xD80);

@@ -33,14 +33,16 @@ public:
 
   class NVIC_IPR  {
   public:
+    /* STM32 implements only 16 programable priority levels - when Cortex M(4/7)
+     * would offer a maximal range of 256. */
     uint8_t getPriority(int interruptIndex) volatile {
       int indexMod4 = interruptIndex % 4;
-      return m_values[interruptIndex / 4].getBitRange(4 * indexMod4 + 3, 4 * indexMod4);
+      return m_values[interruptIndex / 4].getBitRange( 4 * indexMod4 + 7, 4 * indexMod4 + 4);
     }
 
     void setPriority(int interruptIndex, uint8_t priority) volatile {
       int indexMod4 = interruptIndex % 4;
-      m_values[interruptIndex / 4].setBitRange(4 * indexMod4 + 3, 4 * indexMod4, priority);
+      m_values[interruptIndex / 4].setBitRange(4 * indexMod4 + 7, 4 * indexMod4 + 3, priority);
     }
   private:
     Register32 m_values[60];

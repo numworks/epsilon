@@ -29,12 +29,10 @@ void RunLoop::runWhile(bool (*callback)(void * ctx), void * ctx) {
 bool RunLoop::step() {
   // Fetch the event, if any
   int eventDuration = Timer::TickDuration;
-  int timeout = eventDuration;
 
-  Ion::Events::Event event = Ion::Events::getEvent(&timeout);
+  Ion::Events::Event event = Ion::Events::getEvent();
   assert(event.isDefined());
 
-  eventDuration -= timeout;
   assert(eventDuration >= 0);
   assert(eventDuration <= Timer::TickDuration);
 
@@ -45,7 +43,7 @@ bool RunLoop::step() {
 
   m_time += eventDuration;
 
-  if (m_time >= Timer::TickDuration) {
+  /*if (m_time >= Timer::TickDuration) {
     m_time -= Timer::TickDuration;
     for (int i=0; i<numberOfTimers(); i++) {
       Timer * timer = timerAtIndex(i);
@@ -53,7 +51,7 @@ bool RunLoop::step() {
         dispatchEvent(Ion::Events::TimerFire);
       }
     }
-  }
+  }*/
 
 #if ESCHER_LOG_EVENTS_BINARY
   Ion::Console::writeChar(static_cast<uint8_t>(event));

@@ -62,27 +62,21 @@ void shutdownPeripherals(bool keepLEDAwake) {
 }
 
 void initInterruptions() {
+  static constexpr int extiInterruptionIndex[] = {6, 7, 8, 9, 10, 23};
   // Init EXTI interrupts (corresponding to keyboard column pins)
   class NVIC::NVIC_ISER0 iser0(0); // Reset value
-  iser0.setBit(6, true);
-  iser0.setBit(7, true);
-  iser0.setBit(8, true);
-  iser0.setBit(9, true);
-  iser0.setBit(10, true);
-  iser0.setBit(23, true);
+  for (size_t i = 0; i < sizeof(extiInterruptionIndex)/sizeof(int); i++) {
+    iser0.setBit(extiInterruptionIndex[i], true);
+  }
   NVIC.NVIC_ISER0()->set(iser0);
+  /* Interruption priorities determine the order exceptions are handled. But it does not tamper with the handler preemption. However, */
+  // Init SVCall interrupt priorities
+  // SVCall should be interruptible by EXTI
+  CORTEX.SHPR2()->setSVCALL_PRI(255);
+}
 
-  // Init EXTI interrupt priorities
-  /*
-  class NVIC::NVIC_IPR ipr(0); // Reset value
-  ipr.set(6, 0);
-  ipr.set(7, 0);
-  ipr.set(8, 0);
-  ipr.set(9, 0);
-  ipr.set(10, 0);
-  ipr.set(23, 0);
-  NVIC::NVIC_IPR()->set(ipr);
-  */
+void shutdownInterruptions() {
+  NVIC.NVIC_ISER0()->set(0);
 }
 
 static Frequency sStandardFrequency = Frequency::High;

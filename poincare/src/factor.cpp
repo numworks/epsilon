@@ -61,9 +61,9 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
     return m;
   }
   for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Expression factor = Rational::Builder(*arithmetic.getFactorizationFactor(index));
-    if (!arithmetic.getFactorizationCoefficient(index)->isOne()) {
-      factor = Power::Builder(factor, Rational::Builder(*arithmetic.getFactorizationCoefficient(index)));
+    Expression factor = Rational::Builder(*arithmetic.factorizationFactorAtIndex(index));
+    if (!arithmetic.factorizationCoefficientAtIndex(index)->isOne()) {
+      factor = Power::Builder(factor, Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)));
     }
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }

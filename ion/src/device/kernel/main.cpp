@@ -1,16 +1,13 @@
 #include <kernel/drivers/config/board.h>
 #include <drivers/cache.h>
 #include <kernel/drivers/backlight.h>
+#include <kernel/drivers/cortex_control.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/drivers/led.h> // TODO: REMOVE ME
 #include <ion/display.h>
 #include <kandinsky/font.h>
 #include <string.h>
-
-extern "C" {
-  extern void switch_to_unpriviledged();
-}
 
 constexpr static int sNumberOfMessages = 7;
 constexpr static const char * sMessages[sNumberOfMessages] = {
@@ -82,7 +79,6 @@ void kernel_main(bool numworksAuthentication) {
   }*/
   switch_to_unpriviledged();
   Ion::Device::Cache::isb();
-
 
   /* Jump to userland */
   EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(Ion::Device::Board::Config::UserlandAddress);

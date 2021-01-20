@@ -34,10 +34,16 @@ private:
   static constexpr int k_resetedMemoizedValue = -1;
   int getMemoizedIndex(int index);
   void shiftMemoization(bool newCellIsUnder);
+  bool updateMemoizationLock(bool state) {
+    m_memoizationLockedLevel += (state ? 1 : -1);
+    assert(m_memoizationLockedLevel >= 0);
+    return m_memoizationLockedLevel >= 0;
+  }
   int m_memoizedIndexOffset;
   KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
   KDCoordinate m_memoizedCumulatedHeightOffset;
   KDCoordinate m_memoizedTotalHeight;
+  int m_memoizationLockedLevel;
 };
 
 }

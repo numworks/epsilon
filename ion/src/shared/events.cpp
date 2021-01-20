@@ -48,10 +48,6 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   assert(m_id != Events::None.m_id);
 }
 
-bool Event::hasText() const {
-  return text() != nullptr;
-}
-
 bool Event::isDefined() const  {
   if (isKeyboardEvent()) {
     return s_dataForEvent[m_id].isDefined();

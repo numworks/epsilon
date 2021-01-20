@@ -9,7 +9,6 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/console_display.cpp:+consoledisplay \
   drivers/console_dummy.cpp:-consoledisplay \
   drivers/events.cpp \
-  drivers/events_keyboard_platform.cpp \
   drivers/fcc_id.cpp \
   drivers/keyboard.cpp \
   drivers/led.cpp \

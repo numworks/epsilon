@@ -30,14 +30,14 @@ public:
     return (m_id != other.m_id);
   }
   const char * text() const;
-  bool hasText() const;
+  bool hasText() const { return text() != nullptr; }
   bool isKeyboardEvent() const { return m_id < 4*PageSize; }
   bool isSpecialEvent() const { return m_id >= 4*PageSize; }
   bool isDefined() const;
   static constexpr int PageSize = Keyboard::NumberOfKeys;
-private:
+  // TODO: make defaultText private?
   const char * defaultText() const;
-
+private:
   uint8_t m_id;
 };
 
@@ -50,8 +50,7 @@ enum class ShiftAlphaStatus {
   ShiftAlphaLock,
 };
 
-// Timeout is decremented
-Event getEvent(int * timeout);
+Event getEvent();
 
 #if ION_EVENTS_JOURNAL
 class Journal {
@@ -65,16 +64,12 @@ void replayFrom(Journal * l);
 void logTo(Journal * l);
 #endif
 
+// TODO EMILIE: Clean --> these are needed by userland
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
-void removeShift();
-bool isShiftActive();
-bool isAlphaActive();
-bool isLockActive();
-void setLongRepetition(int longRepetition);
 int repetitionFactor();
-void updateModifiersFromEvent(Event e);
-void didPressNewKey();
+
+//void didPressNewKey(); // TODO EMILIE --> only for simulators
 
 // Plain
 
@@ -246,6 +241,18 @@ constexpr Event BatteryCharging = Event::Special(5);
 /* This event is only used in the simulator, to handle text that cannot be
  * associated with a key. */
 constexpr Event ExternalText = Event::Special(6);
+
+inline bool canRepeatEvent(Event e) {
+  return e == Events::Left
+    || e == Events::Up
+    || e == Events::Down
+    || e == Events::Right
+    || e == Events::Backspace
+    || e == Events::ShiftLeft
+    || e == Events::ShiftRight
+    || e == Events::ShiftUp
+    || e == Events::ShiftDown;
+}
 
 }
 }

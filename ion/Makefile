@@ -44,22 +44,21 @@ ion_src += $(addprefix ion/src/shared/, \
 ion_device_kernel_src += $(addprefix ion/src/shared/, \
   crc32_eat_byte.cpp \
   decompress.cpp \
+  events.cpp \
+  events_modifier.cpp \
 )
 
 ion_device_kernel_src += ion/src/external/lz4/lz4.c
 
 ion_device_userland_src += $(addprefix ion/src/shared/, \
   decompress.cpp:+consoledisplay \
-  events.cpp \
-  events_keyboard.cpp \
-  events_modifier.cpp \
   platform_info.cpp \
   stack_position.cpp \
   storage.cpp \
   unicode/utf8_decoder.cpp\
   unicode/utf8_helper.cpp\
 )
-ion_device_userland_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
+ion_device_kernel_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
 ion_device_userland_src += ion/src/external/lz4/lz4.c:+consoledisplay
 
 ion_src += ion/src/external/lz4/lz4.c

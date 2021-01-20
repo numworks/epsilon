@@ -5,6 +5,7 @@
 namespace Ion {
 namespace Events {
 
+#if 0
 static bool sleepWithTimeout(int duration, int * timeout) {
   if (*timeout >= duration) {
     Timing::msleep(duration);
@@ -16,29 +17,18 @@ static bool sleepWithTimeout(int duration, int * timeout) {
     return true;
   }
 }
+#endif
 
-Event sLastEvent = Events::None;
-Keyboard::State sLastKeyboardState;
-bool sLastEventShift;
-bool sLastEventAlpha;
-bool sEventIsRepeating = 0;
+//Event sLastEvent = Events::None;
+//Keyboard::State sLastKeyboardState;
+//bool sLastEventShift;
+//bool sLastEventAlpha;
+//bool sEventIsRepeating = false;
 int sEventRepetitionCount = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
 
-static bool canRepeatEvent(Event e) {
-  return e == Events::Left
-    || e == Events::Up
-    || e == Events::Down
-    || e == Events::Right
-    || e == Events::Backspace
-    || e == Events::ShiftLeft
-    || e == Events::ShiftRight
-    || e == Events::ShiftUp
-    || e == Events::ShiftDown;
-}
-
-Event getPlatformEvent();
+//Event getPlatformEvent();
 
 void ComputeAndSetRepetionFactor(int eventRepetitionCount) {
   // The Repetition factor is increased by 4 every 20 loops in getEvent(2 sec)
@@ -50,6 +40,7 @@ void resetLongRepetition() {
   ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
+#if 0
 static inline Event innerGetEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
@@ -113,6 +104,7 @@ static inline Event innerGetEvent(int * timeout) {
     }
   }
 }
+#endif
 
 #if ION_EVENTS_JOURNAL
 

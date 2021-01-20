@@ -3,7 +3,7 @@
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/crc32.h>
 #include <kernel/drivers/display.h>
-#include <kernel/drivers/events_keyboard_platform.h>
+#include <kernel/drivers/events.h>
 #include <kernel/drivers/fcc_id.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/led.h>
@@ -89,12 +89,6 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       *static_cast<uint64_t *>(args[0]) = Ion::Device::Timing::millis();
       return;
     // KEYBOARD
-    case SVC_KEYBOARD_HAS_NEXT_STATE:
-      *static_cast<bool *>(args[0]) = Ion::Device::Keyboard::hasNextState();
-      return;
-    case SVC_KEYBOARD_NEXT_STATE:
-      *static_cast<Ion::Keyboard::State *>(args[0]) = Ion::Device::Keyboard::nextState();
-      return;
     case SVC_KEYBOARD_SCAN:
       *static_cast<Ion::Keyboard::State *>(args[0]) = Ion::Device::Keyboard::scan();
       return;
@@ -131,8 +125,23 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       *static_cast<uint8_t *>(args[0]) = Ion::Device::PersistingBytes::read();
       return;
     // EVENTS
-    case SVC_EVENTS_GET_PLATFORM_EVENT:
-      *static_cast<Ion::Events::Event *>(args[0]) = Ion::Device::Events::getPlatformEvent();
+    case SVC_EVENTS_DEFAULT_TEXT:
+      *static_cast<const char **>(args[1]) = static_cast<const Ion::Events::Event *>(args[0])->defaultText();
+      return;
+    case SVC_EVENTS_GET_EVENT:
+      *static_cast<Ion::Events::Event *>(args[0]) = Ion::Device::Events::getEvent();
+      return;
+    case SVC_EVENTS_IS_DEFINED:
+      *static_cast<bool *>(args[1]) = static_cast<const Ion::Events::Event *>(args[0])->isDefined();
+      return;
+    case SVC_EVENTS_REPETITION_FACTOR:
+      *static_cast<int *>(args[0]) = Ion::Events::repetitionFactor();
+      return;
+    case SVC_EVENTS_SET_SHIFT_ALPHA_STATUS:
+      Ion::Events::setShiftAlphaStatus(*static_cast<Ion::Events::ShiftAlphaStatus *>(args[0]));
+      return;
+    case SVC_EVENTS_SHIFT_ALPHA_STATUS:
+      *static_cast<Ion::Events::ShiftAlphaStatus *>(args[0]) = Ion::Events::shiftAlphaStatus();
       return;
     // POWER
     case SVC_POWER_STANDBY:

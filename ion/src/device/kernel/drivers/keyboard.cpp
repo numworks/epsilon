@@ -42,6 +42,7 @@
  */
 
 #include <kernel/drivers/keyboard.h>
+#include <drivers/config/clocks.h>
 #include <kernel/drivers/keyboard_queue.h>
 
 namespace Ion {
@@ -73,6 +74,36 @@ State scan() {
 
 using namespace Regs;
 
+void initInterruptions() {
+  // Init interruption
+  /*
+   * GPIO Pin Number|EXTI_EMR|EXTI_FTSR|EXTI_RTSR|EXTICR1|EXTICR2|EXTICR3| Wake up
+   * ---------------+--------+---------+---------+-------+-------+-------+-------------------------
+   *        0       |   1    |    0    |    1    |   C   | ***** | ***** | Falling edge GPIO C pin 0
+   *        1       |   1    |    1    |    0    |   C   | ***** | ***** | Falling edge GPIO C pin 1
+   *        2       |   0    |    0    |    0    |   C   | ***** | ***** | Falling edge GPIO C pin 2
+   *        3       |   0    |    0    |    0    |   C   | ***** | ***** | Falling edge GPIO C pin 3
+   *        4       |   0    |    0    |    0    | ***** |   C   | ***** | Falling edge GPIO C pin 4
+   *        5       |   0    |    0    |    0    | ***** |   C   | ***** | Falling edge GPIO C pin 5
+   *
+   */
+  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
+    uint8_t pin = Config::ColumnPins[i];
+    SYSCFG.EXTICR()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
+    EXTI.IMR()->set(pin, true);
+    EXTI.FTSR()->set(pin, true);
+    EXTI.RTSR()->set(pin, true);
+  }
+}
+/* We want to prescale the timer to be able to set the auto-reload in
+ * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
+ * not to overflow PSC. */
+int sPrescalerFactor = 4;
+
+void initTimer() {
+  TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/sPrescalerFactor-1);
+}
+
 void init() {
 #if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   /* PA0 pin is also used as the wake up pin of the standby mode. It has to be
@@ -96,25 +127,8 @@ void init() {
   // Detecting interruption requires all row to be pulled-down
   activateAllRows();
 
-  // Init interruption
-  /*
-   * GPIO Pin Number|EXTI_EMR|EXTI_FTSR|EXTI_RTSR|EXTICR1|EXTICR2|EXTICR3| Wake up
-   * ---------------+--------+---------+---------+-------+-------+-------+-------------------------
-   *        0       |   1    |    0    |    1    |   C   | ***** | ***** | Falling edge GPIO C pin 0
-   *        1       |   1    |    1    |    0    |   C   | ***** | ***** | Falling edge GPIO C pin 1
-   *        2       |   0    |    0    |    0    |   C   | ***** | ***** | Falling edge GPIO C pin 2
-   *        3       |   0    |    0    |    0    |   C   | ***** | ***** | Falling edge GPIO C pin 3
-   *        4       |   0    |    0    |    0    | ***** |   C   | ***** | Falling edge GPIO C pin 4
-   *        5       |   0    |    0    |    0    | ***** |   C   | ***** | Falling edge GPIO C pin 5
-   *
-   */
-  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
-    uint8_t pin = Config::ColumnPins[i];
-    SYSCFG.EXTICR()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
-    EXTI.IMR()->set(pin, true);
-    EXTI.FTSR()->set(pin, true);
-    EXTI.RTSR()->set(pin, true);
-  }
+  initTimer();
+  initInterruptions();
 }
 
 void shutdown() {
@@ -131,15 +145,36 @@ void shutdown() {
   }
 }
 
+void launchTimer(uint16_t ms) {
+  TIM2.ARR()->set(ms*sPrescalerFactor);
+  TIM2.DIER()->setUIE(true);
+  TIM2.CR1()->setCEN(true);
+}
+
+void stopTimer() {
+  TIM2.DIER()->setUIE(false);
+  TIM2.CR1()->setCEN(false);
+}
+
+static bool sBouncing = false;
+
+void debounce() {
+  sBouncing = false;
+  stopTimer();
+}
+
 void handleInterruption() {
   for (uint8_t i=0; i<Config::numberOfColumns; i++) {
     uint8_t pin = Config::ColumnPins[i];
     if (EXTI.PR()->get(pin)) {
       EXTI.PR()->set(pin, true);
-      Queue::sharedQueue()->push(Keyboard::scan());
     }
   }
-  // TODO EMILIE: add a timer for debouncing issues! https://www.instructables.com/STM32CubeMX-Button-Debounce-With-Interrupt/
+  if (!sBouncing) {
+    sBouncing = true;
+    Queue::sharedQueue()->push(Keyboard::scan());
+    launchTimer(10);
+  }
 }
 
 }

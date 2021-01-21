@@ -13,6 +13,7 @@ using namespace Ion::Keyboard;
 
 void init();
 void shutdown();
+void debounce();
 void handleInterruption();
 
 State scan();

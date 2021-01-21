@@ -56,7 +56,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // TIM1 update interrupt and TIM10 global interrupt
   0, // TIM1 Trigger & Commutation interrupts and TIM11 global interrupt
   0, // TIM1 Capture Compare interrupt
-  0, // TIM2 global interrupt
+  tim2_handler, // TIM2 global interrupt
   0, // TIM3 global interrupt
   0, // TIM4 global interrupt
   0, // I2C1 global event interrupt

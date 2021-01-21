@@ -7,8 +7,6 @@ namespace Events {
 static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
 static int sLongRepetition = 1;
 int sEventRepetitionCount = 0;
-constexpr int delayBeforeRepeat = 200;
-constexpr int delayBetweenRepeat = 50;
 
 ShiftAlphaStatus shiftAlphaStatus() {
   return sShiftAlphaStatus;
@@ -58,6 +56,10 @@ void resetLongRepetition() {
   ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
+void incrementRepetitionFactor() {
+  sEventRepetitionCount++;
+  ComputeAndSetRepetionFactor(sEventRepetitionCount);
+}
 
 void updateModifiersFromEvent(Event e) {
   assert(e.isKeyboardEvent());

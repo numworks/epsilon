@@ -50,7 +50,7 @@ enum class ShiftAlphaStatus {
   ShiftAlphaLock,
 };
 
-Event getEvent();
+Event getEvent(int * timeout);
 
 #if ION_EVENTS_JOURNAL
 class Journal {

@@ -16,8 +16,6 @@ void shutdown();
 void handleInterruption();
 
 State scan();
-bool hasNextState();
-Ion::Keyboard::State nextState();
 
 inline uint8_t rowForKey(Key key) {
   return (int)key/Config::numberOfColumns;

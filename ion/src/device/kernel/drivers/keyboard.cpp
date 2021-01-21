@@ -139,15 +139,7 @@ void handleInterruption() {
       Queue::sharedQueue()->push(Keyboard::scan());
     }
   }
-}
-
-bool hasNextState() {
-  return !Queue::sharedQueue()->isEmpty();
-}
-
-Ion::Keyboard::State nextState() {
-  assert(!Queue::sharedQueue()->isEmpty());
-  return Queue::sharedQueue()->pop();
+  // TODO EMILIE: add a timer for debouncing issues! https://www.instructables.com/STM32CubeMX-Button-Debounce-With-Interrupt/
 }
 
 }

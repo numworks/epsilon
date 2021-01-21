@@ -56,13 +56,13 @@ int repetitionFactor() {
   return res;
 }
 
-void SVC_ATTRIBUTES getEventSVC(Event * e) {
+void SVC_ATTRIBUTES getEventSVC(int * timeout, Event * e) {
   SVC(SVC_EVENTS_GET_EVENT);
 }
 
-Event getEvent() {
+Event getEvent(int * timeout) {
   Event e;
-  getEventSVC(&e);
+  getEventSVC(timeout, &e);
   return e;
 }
 

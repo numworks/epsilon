@@ -7,7 +7,7 @@ namespace Ion {
 namespace Device {
 namespace Events {
 
-Ion::Events::Event getEvent();
+Ion::Events::Event getEvent(int * timeout);
 Ion::Events::Event getPlatformEvent();
 
 }

@@ -1,57 +1,17 @@
 #include <kernel/drivers/events.h>
+#include <algorithm>
+#include <assert.h>
 #include <drivers/battery.h>
 #include <drivers/usb.h>
 #include <kernel/drivers/config/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
+#include <kernel/drivers/timing.h>
 #include <ion/src/shared/events_modifier.h>
-#include <assert.h>
+#include <limits.h>
 
 namespace Ion {
 namespace Device {
 namespace Events {
-
-Ion::Events::Event sLastEvent = Ion::Events::None;
-Ion::Keyboard::State sLastKeyboardState;
-bool sLastEventShift;
-bool sLastEventAlpha;
-
-Ion::Events::Event eventFromKeyboard(Ion::Keyboard::State state) {
-// Initialize all keys as up
-  static uint64_t keysSeenUp = Keyboard::Config::ValidKeys(-1);
-  uint64_t keysSeenTransitionningFromUpToDown = 0;
-  keysSeenUp |= ~state;
-  keysSeenTransitionningFromUpToDown = keysSeenUp & state;
-  bool lock = Ion::Events::isLockActive();
-
-  // Keyboard state changed so we reinitialize the repetition tracker
-  Ion::Events::resetLongRepetition();
-
-  if (keysSeenTransitionningFromUpToDown == 0) {
-    // Keys might only have transitionned from down to up
-    return Ion::Events::None;
-  }
-
-  /* The key that triggered the event corresponds to the first non-zero bit
-   * in "match". This is a rather simple logic operation for the which many
-   * processors have an instruction (ARM thumb uses CLZ).
-   * Unfortunately there's no way to express this in standard C, so we have
-   * to resort to using a builtin function. */
-  Ion::Keyboard::Key key = (Ion::Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-  bool shift = Ion::Events::isShiftActive() || state.keyDown(Ion::Keyboard::Key::Shift);
-  bool alpha = Ion::Events::isAlphaActive() || state.keyDown(Ion::Keyboard::Key::Alpha);
-  Ion::Events::Event event(key, shift, alpha, lock);
-  sLastEventShift = shift;
-  sLastEventAlpha = alpha;
-  Ion::Events::updateModifiersFromEvent(event);
-  sLastEvent = event;
-  sLastKeyboardState = state;
-
-  if (Ion::Events::canRepeatEvent(sLastEvent)) {
-    // TODO EMILIE:
-    // Launch a timer whose delay depends on delayBeforeRepeat and that will do nothing or call dispatchEvent with the same event and relaunch the timer for sEventIsRepeating
-   }
-  return event;
-}
 
 bool sLastUSBPlugged = false;
 bool sLastUSBEnumerated = false;
@@ -86,13 +46,111 @@ Ion::Events::Event getPlatformEvent() {
   return Ion::Events::None;
 }
 
-Ion::Events::Event getEvent() {
-  // TODO EMILIE: Make sure to time out at one point by launching a timer
-  if (!Keyboard::Queue::sharedQueue()->isEmpty()) {
-    return eventFromKeyboard(Keyboard::Queue::sharedQueue()->pop());
+constexpr int delayBeforeRepeat = 200;
+constexpr int delayBetweenRepeat = 50;
+Ion::Events::Event sLastEvent = Ion::Events::None;
+Ion::Keyboard::State sCurrentKeyboardState(0);
+Ion::Keyboard::State sLastKeyboardState(0);
+bool sLastEventShift;
+bool sLastEventAlpha;
+bool sEventIsRepeating = false;
+
+bool canRepeatEventWithState() {
+  return canRepeatEvent(sLastEvent)
+    && sCurrentKeyboardState == sLastKeyboardState
+    && sLastEventShift == sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Shift)
+    && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Alpha) || Ion::Events::isLockActive());
+}
+
+Ion::Events::Event getEvent(int * timeout) {
+  assert(*timeout > delayBeforeRepeat);
+  assert(*timeout > delayBetweenRepeat);
+  uint64_t keysSeenUp = -1;
+  uint64_t keysSeenTransitionningFromUpToDown = 0;
+  uint64_t startTime = Timing::millis();
+  while (true) {
+    while (!Keyboard::Queue::sharedQueue()->isEmpty()) {
+      sCurrentKeyboardState = Keyboard::Queue::sharedQueue()->pop();
+
+      /*
+         if (state.keyDown(platform)) {
+         assert(state == ??);
+         Event platformEvent = getPlatformEvent();
+         if (platformEvent != None) {
+         return platformEvent;
+         }*/
+
+      keysSeenUp |= ~sCurrentKeyboardState;
+      keysSeenTransitionningFromUpToDown = keysSeenUp & sCurrentKeyboardState;
+
+      if (keysSeenTransitionningFromUpToDown != 0) {
+        sEventIsRepeating = false;
+        Ion::Events::resetLongRepetition();
+        /* The key that triggered the event corresponds to the first non-zero bit
+         * in "match". This is a rather simple logic operation for the which many
+         * processors have an instruction (ARM thumb uses CLZ).
+         * Unfortunately there's no way to express this in standard C, so we have
+         * to resort to using a builtin function. */
+        Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
+        bool shift = Ion::Events::isShiftActive() || sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Shift);
+        bool alpha = Ion::Events::isAlphaActive() || sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Alpha);
+        Ion::Events::Event event(key, shift, alpha, Ion::Events::isLockActive());
+        sLastEventShift = shift;
+        sLastEventAlpha = alpha;
+        updateModifiersFromEvent(event);
+        sLastEvent = event;
+        sLastKeyboardState = sCurrentKeyboardState;
+        return event;
+      }
+    }
+
+    int delay = *timeout;
+    int delayForRepeat = INT_MAX;
+    bool potentialRepeatingEvent = canRepeatEventWithState();
+    if (potentialRepeatingEvent) {
+      delayForRepeat = (sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat);
+      delay = std::min(delay, delayForRepeat);
+    }
+
+    // TODO EMILIE System LowFrequency --> slow down systick too!
+    //void setClockLowFrequency() {
+    int elapsedTime = 0;
+    bool keyboardInterruptionOccured = false;
+    while (elapsedTime < delay) {
+      // Stop until either systick or a keyboard/platform interruption happens
+      /* TODO: - optimization - we could maybe shutdown systick interrution and
+       *set a longer interrupt timer which would udpate systick millis and
+       optimize the interval of time the execution is stopped. */
+      asm("wfi");
+      if (!Keyboard::Queue::sharedQueue()->isEmpty()) {
+        keyboardInterruptionOccured = true;
+        break;
+      }
+      elapsedTime = static_cast<int>(Timing::millis() - startTime);
+    }
+    *timeout = std::max(0, *timeout - elapsedTime);
+    startTime = Timing::millis();
+
+    // If the wake up was due to a keyboard/platformEvent
+    if (keyboardInterruptionOccured) {
+      continue;
+    }
+
+    // Timeout
+    if (*timeout == 0) {
+      Ion::Events::resetLongRepetition();
+      return Ion::Events::None;
+    }
+
+    /* At this point, we know that keysSeenTransitionningFromUpToDown has
+     * always been zero. In other words, no new key has been pressed. */
+    if (elapsedTime >= delayForRepeat) {
+      assert(potentialRepeatingEvent);
+      sEventIsRepeating = true;
+      Ion::Events::incrementRepetitionFactor();
+      return sLastEvent;
+    }
   }
-  asm("wfi");
-  return Keyboard::Queue::sharedQueue()->isEmpty() ? Ion::Events::None : eventFromKeyboard(Keyboard::Queue::sharedQueue()->pop());
 }
 
 }

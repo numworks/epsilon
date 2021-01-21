@@ -129,7 +129,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       *static_cast<const char **>(args[1]) = static_cast<const Ion::Events::Event *>(args[0])->defaultText();
       return;
     case SVC_EVENTS_GET_EVENT:
-      *static_cast<Ion::Events::Event *>(args[0]) = Ion::Device::Events::getEvent();
+      *static_cast<Ion::Events::Event *>(args[1]) = Ion::Device::Events::getEvent(static_cast<int *>(args[0]));
       return;
     case SVC_EVENTS_IS_DEFINED:
       *static_cast<bool *>(args[1]) = static_cast<const Ion::Events::Event *>(args[0])->isDefined();

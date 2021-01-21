@@ -34,6 +34,9 @@ public:
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override { return *this; }
   std::complex<T> determinant() const override { return *this; }
+  Evaluation<T> cross(Evaluation<T> * e) const override { return Complex<T>::Undefined(); }
+  std::complex<T> dot(Evaluation<T> * e) const override { return std::complex<T>(NAN, NAN); }
+  std::complex<T> norm() const override { return std::complex<T>(NAN, NAN); }
 };
 
 template<typename T>

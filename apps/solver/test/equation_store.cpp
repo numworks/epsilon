@@ -78,9 +78,12 @@ QUIZ_CASE(equation_solve) {
   unset("x");
 
   // Monovariable non-polynomial equation
+  Poincare::Preferences::sharedPreferences()->setAngleUnit(Degree);
   assert_solves_numerically_to("cos(x)=0", -100, 100, {-90.0, 90.0});
   assert_solves_numerically_to("cos(x)=0", -900, 1000, {-810.0, -630.0, -450.0, -270.0, -90.0, 90.0, 270.0, 450.0, 630.0, 810.0});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0}, "y");
+  assert_solves_numerically_to("ℯ^x=0", -1000, 1000, {});
+  assert_solves_numerically_to("ℯ^x/1000=0", -1000, 1000, {});
 
   // Long variable names
   assert_solves_to("2abcde+3=4", "abcde=1/2");
@@ -89,7 +92,11 @@ QUIZ_CASE(equation_solve) {
   // conj(x)*x+1 = 0
   assert_solves_to_error("conj(x)*x+1=0", RequireApproximateSolution);
   assert_solves_numerically_to("conj(x)*x+1=0", -100, 100, {});
+
+  assert_solves_to_error("(x-10)^7=0", RequireApproximateSolution);
+  assert_solves_numerically_to("(x-10)^7=0", -100, 100, {10});
 }
+
 
 QUIZ_CASE(equation_solve_complex_real) {
   set_complex_format(Real);

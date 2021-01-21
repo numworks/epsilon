@@ -29,9 +29,12 @@ public:
   // Simplification
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+  // Derivation
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  Expression unaryFunctionDifferential(ReductionContext reductionContext) override;
   // Evaluation
   template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -39,9 +42,9 @@ public:
      * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
     return Complex<U>::Builder(std::log10(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
-  template<typename U> Evaluation<U> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  template<typename U> Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
 class Logarithm final : public Expression {
@@ -53,10 +56,12 @@ public:
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 
 private:
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
-  Expression simpleShallowReduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression simpleShallowReduce(ExpressionNode::ReductionContext reductionContext);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
   Expression splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext);
   bool parentIsAPowerOfSameBase() const;

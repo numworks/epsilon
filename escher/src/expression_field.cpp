@@ -121,3 +121,58 @@ KDCoordinate ExpressionField::inputViewHeight() const {
         std::min(k_maximalHeight,
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
+
+size_t ExpressionField::moveCursorAndDumpContent(char * buffer, size_t bufferSize) {
+  size_t size;
+  size_t returnValue;
+  char * currentContent;
+  if (editionIsInTextField()) {
+    size = strlen(m_textField.draftTextBuffer()) + 1;
+    m_textField.setCursorLocation(m_textField.cursorLocation() + size - 1);
+    currentContent = m_textField.draftTextBuffer();
+    /* We take advantage of the fact that draftTextBuffer is null terminated to
+     * use a size of 0 as a shorthand for "The buffer contains raw text instead
+     * of layouts", since the size of a layout is at least 32 (the size of an
+     * empty horizontal layout). This way, we can detect when the edition mode
+     * has changed and invalidate the data.*/
+    returnValue = 0;
+  } else {
+    /* moveCursorAndDumpContent will be called whenever Calculation exits,
+     * even when an exception occurs. We thus need to check the validity of the
+     * layout we are dumping (m_layoutField.contentView.expressionView.layout).
+     * However, attempting to get a handle on a layout that has been erased
+     * will crash the program. We need the check to be performed on the
+     * original object in expressionView. */
+    if (!m_layoutField.layoutHasNode()) {
+      buffer[0] = 0;
+      return 0;
+    }
+    m_layoutField.putCursorRightOfLayout();
+    size = m_layoutField.layout().size();
+    currentContent = reinterpret_cast<char *>(m_layoutField.layout().node());
+    returnValue = size;
+  }
+  if (size > bufferSize - 1) {
+    buffer[0] = 0;
+    return 0;
+  }
+  memcpy(buffer, currentContent, size);
+  return returnValue;
+}
+
+void ExpressionField::restoreContent(const char * buffer, size_t size) {
+  if (editionIsInTextField()) {
+    if (size != 0 || buffer[0] == 0) {
+      /* A size other than 0 means the buffer contains Layout information
+       * (instead of raw text) that we don't want to restore. This is most
+       * likely because the edition mode has been changed between use. */
+      return;
+    }
+    setText(buffer);
+    return;
+  }
+  if (size == 0) {
+    return;
+  }
+  m_layoutField.setLayout(Poincare::Layout::LayoutFromAddress(buffer, size));
+}

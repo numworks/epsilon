@@ -19,18 +19,27 @@
 
 namespace Poincare {
 
-Expression ComplexCartesianNode::shallowReduce(ReductionContext reductionContext) {
-  return ComplexCartesian(this).shallowReduce();
+ExpressionNode::NullStatus ComplexCartesianNode::nullStatus(Context * context) const {
+  ExpressionNode::NullStatus realNullStatus = childAtIndex(0)->nullStatus(context);
+  ExpressionNode::NullStatus imagNullStatus = childAtIndex(1)->nullStatus(context);
+  if (realNullStatus == ExpressionNode::NullStatus::NonNull || imagNullStatus == ExpressionNode::NullStatus::NonNull) {
+    return ExpressionNode::NullStatus::NonNull;
+  }
+  return (realNullStatus == ExpressionNode::NullStatus::Null && imagNullStatus == ExpressionNode::NullStatus::Null) ? ExpressionNode::NullStatus::Null : ExpressionNode::NullStatus::Unknown;
 }
 
-Expression ComplexCartesianNode::shallowBeautify(ReductionContext reductionContext) {
+Expression ComplexCartesianNode::shallowReduce(ReductionContext reductionContext) {
+  return ComplexCartesian(this).shallowReduce(reductionContext);
+}
+
+Expression ComplexCartesianNode::shallowBeautify(ReductionContext * reductionContext) {
   return ComplexCartesian(this).shallowBeautify(reductionContext);
 }
 
 template<typename T>
-Complex<T> ComplexCartesianNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> realEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+Complex<T> ComplexCartesianNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> realEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), approximationContext);
   assert(realEvaluation.type() == EvaluationNode<T>::Type::Complex);
   assert(imagEvalution.type() == EvaluationNode<T>::Type::Complex);
   std::complex<T> a = static_cast<Complex<T> &>(realEvaluation).stdComplex();
@@ -52,7 +61,7 @@ Complex<T> ComplexCartesianNode::templatedApproximate(Context * context, Prefere
   return Complex<T>::Builder(a.real(), b.real());
 }
 
-Expression ComplexCartesian::shallowReduce() {
+Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     e = e.defaultHandleUnitsInChildren();
@@ -60,7 +69,7 @@ Expression ComplexCartesian::shallowReduce() {
       return e;
     }
   }
-  if (imag().isRationalZero()) {
+  if (imag().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     Expression r = real();
     replaceWithInPlace(r);
     return r;
@@ -68,11 +77,11 @@ Expression ComplexCartesian::shallowReduce() {
   return *this;
 }
 
-Expression ComplexCartesian::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression ComplexCartesian::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
   Expression a = real();
   Expression b = imag();
-  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(reductionContext);
-  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(reductionContext);
+  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(*reductionContext);
+  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(*reductionContext);
   a = oppositeA.isUninitialized() ? a : oppositeA;
   b = oppositeB.isUninitialized() ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,
@@ -128,9 +137,9 @@ Expression ComplexCartesian::squareNorm(ExpressionNode::ReductionContext reducti
 Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionContext) {
   Expression a;
   // Special case for pure real or pure imaginary cartesian
-  if (imag().isRationalZero()) {
+  if (imag().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     a = real();
-  } else if (real().isRationalZero()) {
+  } else if (real().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     a = imag();
   }
   if (!a.isUninitialized()) {
@@ -149,7 +158,8 @@ Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionCont
 Expression ComplexCartesian::argument(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
-  if (!b.isRationalZero()) {
+  if (b.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
+    // TODO: Handle ExpressionNode::NullStatus::Unknown
     // if b != 0, argument = sign(b) * π/2 - atan(a/b)
     // First, compute atan(a/b) or (π/180)*atan(a/b)
     Expression divab = Division::Builder(a, b.clone());
@@ -242,11 +252,11 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, ExpressionNode::Reduction
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
-  assert(!b.isRationalZero());
+  assert(b.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null);
 
   // Special case: a == 0 (otherwise, we are going to introduce undefined expressions - a^0 = NAN)
   // (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
-  if (a.isRationalZero()) {
+  if (a.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
     ComplexCartesian result;
     Expression bpow = Power::Builder(b, Rational::Builder(n));
     if (n/2%2 == 1) {

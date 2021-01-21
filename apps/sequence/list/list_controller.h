@@ -2,8 +2,8 @@
 #define SEQUENCE_LIST_CONTROLLER_H
 
 #include <escher.h>
-#include "../sequence_title_cell.h"
-#include "../sequence_store.h"
+#include "../../shared/sequence_title_cell.h"
+#include "../../shared/sequence_store.h"
 #include "../../shared/function_expression_cell.h"
 #include "../../shared/function_list_controller.h"
 #include "../../shared/input_event_handler_delegate.h"
@@ -40,9 +40,9 @@ private:
   void reinitSelectedExpression(Shared::ExpiringPointer<Shared::ExpressionModelHandle> model) override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;
-  SequenceStore * modelStore() override;
-  constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
-  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
+  Shared::SequenceStore * modelStore() override;
+  constexpr static int k_maxNumberOfRows = 3*Shared::MaxNumberOfSequences;
+  Shared::SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;

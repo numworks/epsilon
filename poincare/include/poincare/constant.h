@@ -28,13 +28,14 @@ public:
   // Expression Properties
   Type type() const override { return Type::Constant; }
   Sign sign(Context * context) const override;
+  NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Approximation */
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(); }
 
   /* Symbol properties */
   bool isPi() const { return isConstantCodePoint(UCodePointGreekSmallLetterPi); }
@@ -48,6 +49,9 @@ public:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; };
+
+  /* Derivation */
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
 private:
   char m_name[0]; // MUST be the last member variable
@@ -69,6 +73,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 
 private:
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }

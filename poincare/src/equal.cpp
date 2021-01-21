@@ -39,18 +39,14 @@ int EqualNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 }
 
 template<typename T>
-Evaluation<T> EqualNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> EqualNode::templatedApproximate(ApproximationContext approximationContext) const {
   return Complex<T>::Undefined();
 }
 
 
-Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const {
   Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
-  /* When reducing the equation, we specify the reduction target to be
-   * SystemForAnalysis. This enables to expand Newton multinom to be able to
-   * detect polynom correctly ("(x+2)^2" in this form won't be detected
-   * unless expanded). */
-  return sub.reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForAnalysis));
+  return sub.reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, reductionTarget));
 }
 
 Expression Equal::shallowReduce() {

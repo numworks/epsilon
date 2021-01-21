@@ -26,6 +26,7 @@ escher_src += $(addprefix escher/src/,\
   bordered.cpp \
   buffer_text_view.cpp \
   button.cpp \
+  button_state.cpp \
   button_row_controller.cpp \
   chevron_view.cpp \
   clipboard.cpp \
@@ -70,6 +71,7 @@ escher_src += $(addprefix escher/src/,\
   nested_menu_controller.cpp \
   palette.cpp \
   pointer_text_view.cpp \
+  pop_up_controller.cpp \
   responder.cpp \
   run_loop.cpp \
   scroll_view.cpp \
@@ -99,6 +101,8 @@ escher_src += $(addprefix escher/src/,\
   text_view.cpp \
   tiled_view.cpp \
   timer.cpp \
+  toggleable_dot_view.cpp \
+  toggleable_view.cpp \
   toolbox.cpp \
   transparent_view.cpp \
   view.cpp \
@@ -108,6 +112,7 @@ escher_src += $(addprefix escher/src/,\
 )
 
 tests_src += $(addprefix escher/test/,\
+  clipboard.cpp \
   layout_field.cpp\
 )
 

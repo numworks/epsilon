@@ -25,6 +25,7 @@ public:
     stream << "ParenthesisLayout";
   }
 #endif
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
 protected:
   KDSize computeSize() override {

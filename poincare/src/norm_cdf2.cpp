@@ -24,16 +24,16 @@ int NormCDF2Node::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 template<typename T>
-Evaluation<T> NormCDF2Node::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> bEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> muEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> varEvaluation = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> NormCDF2Node::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> bEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
+  Evaluation<T> muEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
+  Evaluation<T> sigmaEvaluation = childAtIndex(3)->approximate(T(), approximationContext);
 
   T a = aEvaluation.toScalar();
   T b = bEvaluation.toScalar();
   T mu = muEvaluation.toScalar();
-  T sigma = std::sqrt(varEvaluation.toScalar());
+  T sigma = sigmaEvaluation.toScalar();
 
   if (std::isnan(a) || std::isnan(b) || !NormalDistribution::MuAndSigmaAreOK(mu,sigma)) {
     return Complex<T>::Undefined();

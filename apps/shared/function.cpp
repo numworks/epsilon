@@ -1,10 +1,16 @@
 #include "function.h"
+#include "interactive_curve_view_range.h"
+#include "range_1D.h"
 #include "poincare_helpers.h"
 #include "poincare/src/parsing/parser.h"
+#include <poincare/zoom.h>
+#include <ion/display.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <string.h>
-#include <cmath>
+#include <algorithm>
 #include <assert.h>
+#include <cmath>
+#include <float.h>
+#include <string.h>
 
 using namespace Poincare;
 
@@ -44,6 +50,9 @@ KDColor Function::color() const {
 
 void Function::setActive(bool active) {
   recordData()->setActive(active);
+  if (!active) {
+    didBecomeInactive();
+  }
 }
 
 int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
@@ -72,6 +81,21 @@ Function::RecordDataBuffer * Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
   return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
+}
+
+void Function::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const {
+  Poincare::Zoom::ValueAtAbscissa evaluation;
+  if (xRange) {
+    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
+      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x1();
+    };
+  } else {
+    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
+      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    };
+  }
+
+  Poincare::Zoom::FullRange(evaluation, tMin, tMax, tStep, min, max, context, this);
 }
 
 }

@@ -2,6 +2,7 @@
 #include "../app.h"
 #include <assert.h>
 #include <algorithm>
+#include <apps/i18n.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -31,7 +32,7 @@ int ListController::numberOfExpressionRows() const {
   SequenceStore * store = const_cast<ListController *>(this)->modelStore();
   const int modelsCount = store->numberOfModels();
   for (int i = 0; i < modelsCount; i++) {
-    Sequence * sequence = store->modelForRecord(store->recordAtIndex(i));
+    Shared::Sequence * sequence = store->modelForRecord(store->recordAtIndex(i));
     numberOfRows += sequence->numberOfElements();
   }
   return numberOfRows + (modelsCount == store->maxNumberOfModels()? 0 : 1);
@@ -42,7 +43,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   if (isAddEmptyRow(j)) {
     return defaultHeight;
   }
-  Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));
+  Shared::Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));
   Layout layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();
@@ -67,7 +68,7 @@ Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textIn
   // Set extra cells
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
+  Shared::Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
@@ -85,7 +86,7 @@ void ListController::selectPreviousNewSequenceCell() {
 
 void ListController::editExpression(int sequenceDefinition, Ion::Events::Event event) {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  Sequence * sequence = modelStore()->modelForRecord(record);
+  Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   InputViewController * inputController = Shared::FunctionApp::app()->inputViewController();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     char initialTextContent[Constant::MaxSerializedExpressionSize];
@@ -147,7 +148,7 @@ bool ListController::editInitialConditionOfSelectedRecordWithText(const char * t
   // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
   resetMemoizationForIndex(k_memoizedCellsCount/2);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  Sequence * sequence = modelStore()->modelForRecord(record);
+  Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   Context * context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text, context) : sequence->setSecondInitialConditionContent(text, context);
   return (error == Ion::Storage::Record::ErrorStatus::None);
@@ -179,7 +180,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   myCell->setBaseline(baseline(j));
   // Set the layout
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
-  Sequence * sequence = modelStore()->modelForRecord(record);
+  Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setLayout(sequence->definitionName());
   }
@@ -197,7 +198,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
-  Sequence * sequence = modelStore()->modelForRecord(record);
+  Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setLayout(sequence->layout());
   }
@@ -223,7 +224,7 @@ int ListController::modelIndexForRow(int j) {
   int sequenceIndex = -1;
   do {
     sequenceIndex++;
-    Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
+    Shared::Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
   return sequenceIndex;
@@ -238,7 +239,7 @@ int ListController::sequenceDefinitionForRow(int j) {
   }
   int rowIndex = 0;
   int sequenceIndex = -1;
-  Sequence * sequence;
+  Shared::Sequence * sequence;
   do {
     sequenceIndex++;
     sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
@@ -259,7 +260,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   // Invalidate the sequences context cache
   App::app()->localContext()->resetCache();
-  Sequence * sequence = static_cast<Sequence *>(model.pointer());
+  Shared::Sequence * sequence = static_cast<Shared::Sequence *>(model.pointer());
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
       if (sequence->firstInitialConditionExpressionClone().isUninitialized()) {

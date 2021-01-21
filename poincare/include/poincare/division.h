@@ -23,20 +23,25 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override;
+  NullStatus nullStatus(Context * context) const override {
+    // NonNull Status can't be returned because denominator could be infinite.
+    return childAtIndex(0)->nullStatus(context) == NullStatus::Null ? NullStatus::Null : NullStatus::Unknown;
+  }
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Approximation
-  virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::MapReduce<float>(
-        this, context, complexFormat, angleUnit, compute<float>,
+        this, approximationContext, compute<float>,
         computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>,
         computeOnMatrices<float>);
   }
-  virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::MapReduce<double>(
-        this, context, complexFormat, angleUnit, compute<double>,
+        this, approximationContext, compute<double>,
         computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>,
         computeOnMatrices<double>);
   }

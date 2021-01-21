@@ -16,8 +16,8 @@
 #include "global_preferences.h"
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
-#include "on_boarding/pop_up_controller.h"
 #include "clock_timer.h"
+#include "on_boarding/prompt_controller.h"
 
 #include <ion/events.h>
 
@@ -47,8 +47,8 @@ public:
   void displayExamModePopUp(GlobalPreferences::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
-  OnBoarding::PopUpController * promptController();
-  void redrawWindow(bool force = false);
+  OnBoarding::PromptController * promptController();
+  void redrawWindow();
   void activateExamMode(GlobalPreferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
@@ -74,7 +74,7 @@ private:
   MathToolbox m_mathToolbox;
   MathVariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
-  OnBoarding::PopUpController m_promptController;
+  OnBoarding::PromptController m_promptController;
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;

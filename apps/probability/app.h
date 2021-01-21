@@ -14,6 +14,7 @@
 #include "calculation/left_integral_calculation.h"
 #include "calculation/right_integral_calculation.h"
 #include "calculation/finite_integral_calculation.h"
+#include "../shared/shared_app.h"
 
 constexpr static size_t max(const int * data, int seed = 0) {
   return (*data == 0 ? seed : max(data+1, *data > seed ? *data : seed));
@@ -30,7 +31,7 @@ public:
       App::Descriptor::ExaminationLevel examinationLevel() override;
       const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     enum class Page {
       Distribution,
@@ -50,14 +51,23 @@ public:
   private:
     constexpr static int k_distributionSizes[] = {sizeof(BinomialDistribution),sizeof(ExponentialDistribution), sizeof(NormalDistribution), sizeof(PoissonDistribution), sizeof(UniformDistribution), 0};
     constexpr static size_t k_distributionSize = max(k_distributionSizes);
+    constexpr static int k_calculationSizes[] = {sizeof(LeftIntegralCalculation),sizeof(FiniteIntegralCalculation), sizeof(RightIntegralCalculation), 0};
+    constexpr static size_t k_calculationSize = max(k_calculationSizes);
 
     void deleteDistributionAndCalculation();
     void initializeDistributionAndCalculation();
 
+#if __EMSCRIPTEN__
+    constexpr static int k_distributionAlignments[] = {alignof(BinomialDistribution),alignof(ExponentialDistribution), alignof(NormalDistribution), alignof(PoissonDistribution), alignof(UniformDistribution), 0};
+    constexpr static size_t k_distributionAlignment = max(k_distributionAlignments);
+    constexpr static int k_calculationAlignments[] = {alignof(LeftIntegralCalculation),alignof(FiniteIntegralCalculation), alignof(RightIntegralCalculation), 0};
+    constexpr static size_t k_calculationAlignment = max(k_calculationAlignments);
+    alignas(k_distributionAlignment) char m_distribution[k_distributionSize];
+    alignas(k_calculationAlignment) char m_calculation[k_calculationSize];
+#else
     char m_distribution[k_distributionSize];
-    constexpr static int k_calculationSizes[] = {sizeof(LeftIntegralCalculation),sizeof(FiniteIntegralCalculation), sizeof(RightIntegralCalculation), 0};
-    constexpr static size_t k_calculationSize = max(k_calculationSizes);
     char m_calculation[k_calculationSize];
+#endif
     Page m_activePage;
   };
   static App * app() {

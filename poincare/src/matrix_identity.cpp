@@ -28,8 +28,8 @@ int MatrixIdentityNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 }
 
 template<typename T>
-Evaluation<T> MatrixIdentityNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> MatrixIdentityNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   T r = input.toScalar(); // Undefined if the child is not real
   if (!std::isnan(r) && !std::isinf(r) && r > (T)0.0 // The child is defined and positive
       && std::ceil(r) == std::floor(r) // The child is an integer

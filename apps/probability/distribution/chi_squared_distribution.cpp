@@ -10,7 +10,7 @@ float ChiSquaredDistribution::xMin() const {
 }
 
 float ChiSquaredDistribution::xMax() const {
-  assert(m_parameter1 != 0.0f);
+  assert(m_parameter1 != 0.0);
   return (m_parameter1 + 5.0f * std::sqrt(m_parameter1)) * (1.0f + k_displayRightMarginRatio);
 }
 
@@ -28,7 +28,7 @@ float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
   if (x < 0.0f) {
     return NAN;
   }
-  const float halfk = m_parameter1/2.0f;
+  const float halfk = m_parameter1/2.0;
   const float halfX = x/2.0f;
   return std::exp(-lgamma(halfk) - halfX + (halfk-1.0f) * std::log(halfX)) / 2.0f;
 }
@@ -43,7 +43,7 @@ double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x
     return 0.0;
   }
   double result = 0.0;
-  if (regularizedGamma(m_parameter1/2.0f, x/2.0, k_regularizedGammaPrecision, k_maxRegularizedGammaIterations, &result)) {
+  if (regularizedGamma(m_parameter1/2.0, x/2.0, k_regularizedGammaPrecision, k_maxRegularizedGammaIterations, &result)) {
     return result;
   }
   return NAN;
@@ -72,9 +72,9 @@ double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(doubl
     return 0.0;
   }
   const double k = m_parameter1;
-  const double ceilKOver2 = std::ceil(k/2.0f);
-  const double kOver2Minus1 = k/2.0f - 1.0f;
-  double xmax = m_parameter1 > 2.0f ?
+  const double ceilKOver2 = std::ceil(k/2.0);
+  const double kOver2Minus1 = k/2.0 - 1.0;
+  double xmax = m_parameter1 > 2.0 ?
     2.0 * *probability * std::exp(std::lgamma(ceilKOver2)) / (exp(-kOver2Minus1) * std::pow(kOver2Minus1, kOver2Minus1)) :
     30.0; // Ad hoc value
   xmax = std::isnan(xmax) ? 1000000000.0 : xmax;

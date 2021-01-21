@@ -8,7 +8,8 @@ namespace Graph {
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::Function::k_parenthesedThetaArgumentByteLength, this, m_textFieldBuffer, k_textFieldBufferSize, k_textFieldBufferSize, nullptr, listController, font, 1.0f, 0.5f)
+  m_textField(Shared::Function::k_parenthesedThetaArgumentByteLength, this, m_textFieldBuffer, k_textFieldBufferSize, k_textFieldBufferSize, nullptr, listController, font, 1.0f, 0.5f),
+  m_textFieldBuffer("")
 {
 }
 
@@ -60,6 +61,11 @@ void TextFieldFunctionTitleCell::layoutSubviews(bool force) {
         1.0f,
         ((float)(maxTextFieldX - k_textFieldRightMargin))/((float)maxTextFieldX)));
   m_textField.setAlignment(horizontalAlignment, verticalAlignment());
+}
+
+void TextFieldFunctionTitleCell::reloadCell() {
+  layoutSubviews();
+  FunctionTitleCell::reloadCell();
 }
 
 void TextFieldFunctionTitleCell::didBecomeFirstResponder() {

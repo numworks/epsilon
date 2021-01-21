@@ -17,6 +17,7 @@ public:
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) { m_negative = negative; }
   bool isInteger() const { return denominator().isOne(); }
+  NullStatus nullStatus(Context * context) const override { return isZero() ? NullStatus::Null : NullStatus::NonNull; }
 
   // TreeNode
   size_t size() const override;
@@ -38,8 +39,8 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
   template<typename T> T templatedApproximate() const;
 
   // Basic test
@@ -57,7 +58,7 @@ public:
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction; };
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   Expression denominator(ReductionContext reductionContext) const override;

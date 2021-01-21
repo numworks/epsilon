@@ -23,17 +23,18 @@ public:
 #endif
 
   // Properties
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::Opposite; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   Sign sign(Context * context) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, compute<float>);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<float>(this, approximationContext, compute<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, compute<double>);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<double>(this, approximationContext, compute<double>);
   }
 
   // Layout

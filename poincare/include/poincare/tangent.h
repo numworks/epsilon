@@ -20,7 +20,6 @@ public:
 
   // Properties
   Type type() const override { return Type::Tangent; }
-  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
 private:
   // Layout
@@ -32,13 +31,17 @@ private:
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
+  // Derivation
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  Expression unaryFunctionDifferential(ReductionContext reductionContext) override;
+
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<double>(this, approximationContext, computeOnComplex<double>);
   }
 };
 
@@ -50,6 +53,9 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, &UntypedBuilderOneChild<Tangent>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

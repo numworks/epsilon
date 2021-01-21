@@ -11,6 +11,8 @@
 #include <poincare/division_remainder.h>
 #include <poincare/equal.h>
 #include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/subtraction.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -685,9 +687,18 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 }
 
 Expression Integer::CreateMixedFraction(const Integer & num, const Integer & denom) {
-  Expression quo = DivisionQuotient::Reduce(num, denom);
-  Expression rem = DivisionRemainder::Reduce(num, denom);
-  return Addition::Builder(quo, Division::Builder(rem, Rational::Builder(denom)));
+  Integer numPositive(num), denomPositive(denom);
+  numPositive.setNegative(false);
+  denomPositive.setNegative(false);
+  Expression quo = DivisionQuotient::Reduce(numPositive, denomPositive);
+  Expression rem = DivisionRemainder::Reduce(numPositive, denomPositive);
+  if (num.isNegative() == denom.isNegative()) {
+    return Addition::Builder(quo, Division::Builder(rem, Rational::Builder(denomPositive)));
+  }
+  return Subtraction::Builder(
+      /* Do not add a minus sign before a zero. */
+      (NaturalOrder(numPositive, denomPositive) < 0) ? quo : Opposite::Builder(quo),
+      Division::Builder(rem, Rational::Builder(denomPositive)));
 
 }
 
@@ -695,7 +706,7 @@ Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer &
   Expression quo = DivisionQuotient::Reduce(num, denom);
   Expression rem = DivisionRemainder::Reduce(num, denom);
   Expression e = Equal::Builder(Rational::Builder(num), Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
-  ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   e = e.deepBeautify(defaultReductionContext);
   return e;
 }

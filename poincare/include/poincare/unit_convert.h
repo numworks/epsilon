@@ -23,11 +23,12 @@ private:
   Expression removeUnit(Expression * unit) override;
   // Simplification
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   // Evalutation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
-  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
 class UnitConvert final : public Expression {
@@ -38,7 +39,8 @@ public:
 
   // Expression
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 private:
   UnitConvertNode * node() const { return static_cast<UnitConvertNode *>(Expression::node()); }
 };

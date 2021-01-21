@@ -35,6 +35,7 @@ void Model::fit(Store * store, int series, double * modelCoefficients, Poincare:
   if (dataSuitableForFit(store, series)) {
     initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false, store, series);
     fitLevenbergMarquardt(store, series, modelCoefficients, context);
+    uniformizeCoefficientsFromFit(modelCoefficients);
   } else {
     initCoefficientsForFit(modelCoefficients, NAN, true);
   }
@@ -64,6 +65,7 @@ void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoeff
   while (smallChi2ChangeCounts < k_consecutiveSmallChi2ChangesLimit && iterationCount < k_maxIterations) {
     // Create the alpha prime matrix (it is symmetric)
     double coefficientsAPrime[Model::k_maxNumberOfCoefficients * Model::k_maxNumberOfCoefficients];
+    assert(n > 0); // Ensure that coefficientsAPrime is initialized
     for (int i = 0; i < n; i++) {
       for (int j = i; j < n; j++) {
         double alphaPrime = alphaPrimeCoefficient(store, series, modelCoefficients, i, j, lambda);

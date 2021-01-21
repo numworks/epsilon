@@ -76,6 +76,70 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_layout_serialize_to(layout, "\u0012\u001212\u0013/\u001234\u0013\u0013+5");
   quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
+
+  /*
+   *  1                      1   3
+   * --- 3|4 -> "Divide" -> --- ---
+   *  2                      2   4
+   * */
+  Layout l1 = HorizontalLayout::Builder(
+      FractionLayout::Builder(
+        HorizontalLayout::Builder(CodePointLayout::Builder('1')),
+        HorizontalLayout::Builder(CodePointLayout::Builder('2'))),
+      CodePointLayout::Builder('3'),
+      CodePointLayout::Builder('4'));
+  LayoutCursor c1(l1.childAtIndex(2), LayoutCursor::Position::Left);
+  c1.addFractionLayoutAndCollapseSiblings();
+  assert_layout_serialize_to(l1, "\u0012\u00121\u0013/\u00122\u0013\u0013\u0012\u00123\u0013/\u00124\u0013\u0013");
+
+  /*
+   *                                sin(x)cos(x)
+   * sin(x)cos(x)|2 -> "Divide" -> --------------
+   *                                     2
+   * */
+
+  Layout l2 = LayoutHelper::String("sin(x)cos(x)2", 13);
+  LayoutCursor c2(l2.childAtIndex(12), LayoutCursor::Position::Left);
+  c2.addFractionLayoutAndCollapseSiblings();
+  assert_layout_serialize_to(l2, "\u0012\u0012sin(x)cos(x)\u0013/\u00122\u0013\u0013");
+}
+
+QUIZ_CASE(poincare_layout_power) {
+  /*
+   *                      2|
+   * 12| -> "Square" -> 12 |
+   *
+   * */
+  Layout l1 = LayoutHelper::String("12", 2);
+  LayoutCursor c1(l1.childAtIndex(1), LayoutCursor::Position::Right);
+  c1.addEmptySquarePowerLayout();
+  assert_layout_serialize_to(l1, "12^\u00122\u0013");
+
+  /*                        2|
+   *  2|                ( 2) |
+   * 1 | -> "Square" -> (1 ) |
+   *
+   * */
+  Layout l2 = HorizontalLayout::Builder(
+      CodePointLayout::Builder('1'),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript));
+  LayoutCursor c2(l2.childAtIndex(1), LayoutCursor::Position::Right);
+  c2.addEmptySquarePowerLayout();
+  assert_layout_serialize_to(l2, "(1^\u00122\u0013)^\u00122\u0013");
+
+  /*                             (    2|)
+   * ( 2)|                       (( 2) |)
+   * (1 )| -> "Left" "Square" -> ((1 ) |)
+   * */
+  Layout l3 = HorizontalLayout::Builder(
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('1'),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript),
+      RightParenthesisLayout::Builder());
+  LayoutCursor c3(l3.childAtIndex(3), LayoutCursor::Position::Right);
+  c3.moveLeft(nullptr);
+  c3.addEmptySquarePowerLayout();
+  assert_layout_serialize_to(l3, "((1^\u00122\u0013)^\u00122\u0013)");
 }
 
 QUIZ_CASE(poincare_layout_parentheses_size) {

@@ -39,7 +39,7 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 int Toolbox::typeAtLocation(int i, int j) {
-  MessageTree * messageTree = (MessageTree *)m_messageTreeModel->childAtIndex(j);
+  const MessageTree * messageTree = m_messageTreeModel->childAtIndex(j);
   if (messageTree->numberOfChildren() == 0) {
     return LeafCellType;
   }
@@ -48,7 +48,11 @@ int Toolbox::typeAtLocation(int i, int j) {
 
 bool Toolbox::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
-  m_messageTreeModel = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
+  m_messageTreeModel = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(selectedRow));
+  if (m_messageTreeModel->isFork()) {
+    assert(m_messageTreeModel->numberOfChildren() < 0);
+    m_messageTreeModel = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(indexAfterFork()));
+  }
   return NestedMenuController::selectSubMenu(selectedRow);
 }
 
@@ -56,15 +60,14 @@ bool Toolbox::returnToPreviousMenu() {
   m_selectableTableView.deselectTable();
   int currentDepth = m_stack.depth();
   int index = 0;
-  // We want to get the current ToolboxMessageTree's parent ToolboxMessageTree,
-  // but there is no ToolboxMessageTree::getParent() method. We thus have to
-  // start from the root ToolboxMessageTree and sequentially get the selected
-  // child until it has the wanted depth.
   ToolboxMessageTree * parentMessageTree = (ToolboxMessageTree *)rootModel();
   Stack::State * previousState = m_stack.stateAtIndex(index++);
   while (currentDepth-- > 1) {
     parentMessageTree = (ToolboxMessageTree *)parentMessageTree->childAtIndex(previousState->selectedRow());
     previousState = m_stack.stateAtIndex(index++);
+    if (parentMessageTree->isFork()) {
+      parentMessageTree = (ToolboxMessageTree *)parentMessageTree->childAtIndex(indexAfterFork());
+    }
   }
   m_messageTreeModel = parentMessageTree;
   return NestedMenuController::returnToPreviousMenu();

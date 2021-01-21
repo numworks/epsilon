@@ -1,5 +1,6 @@
 #include <poincare/addition.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -45,8 +46,13 @@ Expression AdditionNode::shallowReduce(ReductionContext reductionContext) {
   return Addition(this).shallowReduce(reductionContext);
 }
 
-Expression AdditionNode::shallowBeautify(ReductionContext reductionContext) {
+Expression AdditionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Addition(this).shallowBeautify(reductionContext);
+}
+
+// Derivation
+bool AdditionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Addition(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 // Addition
@@ -78,7 +84,7 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
   return deg;
 }
 
-Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
   /* Beautifying AdditionNode essentially consists in adding Subtractions if
    * needed.
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
@@ -92,12 +98,12 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionC
   /* Sort children in decreasing order:
    * 1+x+x^2 --> x^2+x+1
    * 1+R(2) --> R(2)+1 */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext.context(), true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext->context(), true);
 
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     // Try to make the child i positive if any negative numeral factor is found
-    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(reductionContext);
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(*reductionContext);
     if (subtractant.isUninitialized())
     {
       // if subtractant is not initialized, it means the child i had no negative numeral factor
@@ -124,7 +130,6 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionC
   }
 
   Expression result = squashUnaryHierarchyInPlace();
-
   return result;
 }
 
@@ -308,7 +313,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
     real.shallowReduce(reductionContext);
     imag.shallowReduce(reductionContext);
-    return newComplexCartesian.shallowReduce();
+    return newComplexCartesian.shallowReduce(reductionContext);
   }
 
   /* Step 9: Let's put everything under a common denominator.
@@ -320,6 +325,13 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
      result = factorizeOnCommonDenominator(reductionContext);
   }
   return result;
+}
+
+bool Addition::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    replaceChildAtIndexInPlace(i, Derivative::Builder(childAtIndex(i), symbol.clone().convert<Symbol>(), symbolValue.clone()));
+  }
+  return true;
 }
 
 int Addition::NumberOfNonNumeralFactors(const Expression & e) {
@@ -428,6 +440,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
       reductionContext.context(),
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
+      reductionContext.unitFormat(),
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 

@@ -21,17 +21,18 @@ public:
   // Properties
   Type type() const override { return Type::AbsoluteValue; }
   Sign sign(Context * context) const override { return Sign::Positive; }
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
     return Complex<T>::Builder(std::abs(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, computeOnComplex<float>);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<double>(this, approximationContext, computeOnComplex<double>);
   }
 
   // Layout
@@ -41,6 +42,8 @@ public:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+private:
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 };
 
 class AbsoluteValue final : public Expression {
@@ -52,6 +55,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilderOneChild<AbsoluteValue>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 };
 
 }

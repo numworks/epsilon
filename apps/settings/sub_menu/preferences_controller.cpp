@@ -210,7 +210,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   } else if (message == I18n::Message::SymbolMultiplication) {
     preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
   } else if (message == I18n::Message::SymbolFunction) {
-    preferences->setSymbolOfFunction((Preferences::SymbolFunction)valueIndex);  
+    preferences->setSymbolOfFunction((Preferences::SymbolFunction)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
   }

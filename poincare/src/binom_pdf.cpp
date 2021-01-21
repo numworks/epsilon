@@ -24,10 +24,10 @@ int BinomPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 template<typename T>
-Evaluation<T> BinomPDFNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> nEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> pEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> BinomPDFNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> nEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
+  Evaluation<T> pEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
 
   T x = xEvaluation.toScalar();
   T n = nEvaluation.toScalar();

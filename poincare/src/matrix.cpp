@@ -1,12 +1,15 @@
 #include <poincare/matrix.h>
+#include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
 #include <assert.h>
@@ -96,10 +99,10 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 template<typename T>
-Evaluation<T> MatrixNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixNode::templatedApproximate(ApproximationContext approximationContext) const {
   MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   for (ExpressionNode * c : children()) {
-    matrix.addChildAtIndexInPlace(c->approximate(T(), context, complexFormat, angleUnit), matrix.numberOfChildren(), matrix.numberOfChildren());
+    matrix.addChildAtIndexInPlace(c->approximate(T(), approximationContext), matrix.numberOfChildren(), matrix.numberOfChildren());
   }
   matrix.setDimensions(numberOfRows(), numberOfColumns());
   return std::move(matrix);
@@ -125,15 +128,16 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
   setDimensions(previousNumberOfRows + 1, previousNumberOfColumns == 0 ? t.numberOfChildren() : previousNumberOfColumns);
 }
 
-int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace) {
+int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, bool inPlace) {
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
-  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForApproximation);
+  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation);
   m = m.rowCanonize(systemReductionContext, nullptr);
   int rank = m.numberOfRows();
   int i = rank-1;
   while (i >= 0) {
     int j = m.numberOfColumns()-1;
-    while (j >= i && matrixChild(i,j).isRationalZero()) {
+    while (j >= i && matrixChild(i,j).nullStatus(context) == ExpressionNode::NullStatus::Null) {
+      // TODO: Handle ExpressionNode::NullStatus::Unknown
       j--;
     }
     if (j == i-1) {
@@ -144,6 +148,16 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
     i--;
   }
   return rank;
+}
+
+Expression Matrix::createTrace() {
+  assert(numberOfRows() == numberOfColumns());
+  int n = numberOfRows();
+  Addition a = Addition::Builder();
+  for (int i = 0; i < n; i++) {
+    a.addChildAtIndexInPlace(matrixChild(i,i).clone(), i, i);
+  }
+  return std::move(a);
 }
 
 template<typename T>
@@ -159,7 +173,12 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   T operands[2*k_maxNumberOfCoefficients];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      operands[i*2*dim+j] = array[i*numberOfColumns+j];
+      T cell = array[i*numberOfColumns+j];
+      // Using abs function to be compatible with both double and std::complex
+      if (!std::isfinite(std::abs(cell))) {
+        return -2;
+      }
+      operands[i*2*dim+j] = cell;
     }
     for (int j = dim; j < 2*dim; j++) {
       operands[i*2*dim+j] = j-dim == i ? 1.0 : 0.0;
@@ -168,7 +187,8 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   ArrayRowCanonize(operands, dim, 2*dim);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
-    if (std::abs(operands[i*2*dim+i] - (T)1.0) > Expression::Epsilon<float>()) {
+    T cell = operands[i*2*dim+i];
+    if (!std::isfinite(std::abs(cell)) || std::abs(cell - (T)1.0) > Expression::Epsilon<float>()) {
       return -2;
     }
   }
@@ -180,7 +200,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant) {
+Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant, bool reduced) {
   Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
@@ -194,12 +214,36 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
   int k = 0; // column pivot
 
   while (h < m && k < n) {
-    // Find the first non-null pivot
+    /* In non-reduced form, the pivot selection method will affect the output.
+     * Here we prioritize the biggest pivot (in value) to get an output that
+     * does not depends on the order of the rows of the matrix.
+     * We could also take lowest non null pivots, or just first non null as we
+     * already do with reduced forms. Output would be different, but correct. */
+    int iPivot_temp = h;
     int iPivot = h;
-    while (iPivot < m && matrixChild(iPivot, k).isRationalZero()) {
-      iPivot++;
+    float bestPivot = 0.0;
+    while (iPivot_temp < m) {
+      // Using float to find the biggest pivot is sufficient.
+      float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+      // Handle very low pivots
+      if (pivot == 0.0f && matrixChild(iPivot_temp, k).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
+        pivot = FLT_MIN;
+      }
+
+      if (pivot > bestPivot) {
+        // Update best pivot
+        bestPivot = pivot;
+        iPivot = iPivot_temp;
+        if (reduced) {
+          /* In reduced form, taking the first non null pivot is enough, and
+           * more efficient. */
+          break;
+        }
+      }
+      iPivot_temp++;
     }
-    if (iPivot == m) {
+    if (matrixChild(iPivot, k).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+      // TODO: Handle ExpressionNode::NullStatus::Unknown
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {
@@ -231,8 +275,11 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
       }
       replaceChildInPlace(divisor, Rational::Builder(1));
 
-      /* Set to 0 all M[i][j] i != h, j > k by linear combination */
-      for (int i = 0; i < m; i++) {
+      int l = reduced ? 0 : h + 1;
+      /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
+       * non-reduced form is computed (ref), only rows below the pivot are
+       * reduced, i > h as well */
+      for (int i = l; i < m; i++) {
         if (i == h) { continue; }
         Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
@@ -255,17 +302,31 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
 }
 
 template<typename T>
-void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * determinant) {
+void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * determinant, bool reduced) {
   int h = 0; // row pivot
   int k = 0; // column pivot
 
   while (h < numberOfRows && k < numberOfColumns) {
-    // Find the first non-null pivot
+    // Find the biggest pivot (in absolute value). See comment on rowCanonize.
+    int iPivot_temp = h;
     int iPivot = h;
-    while (iPivot < numberOfRows && std::abs(array[iPivot*numberOfColumns+k]) < Expression::Epsilon<double>()) {
-      iPivot++;
+    // Using double to stay accurate with any type T
+    double bestPivot = 0.0;
+    while (iPivot_temp < numberOfRows) {
+      double pivot = std::abs(array[iPivot_temp*numberOfColumns+k]);
+      if (pivot > bestPivot) {
+        // Update best pivot
+        bestPivot = pivot;
+        iPivot = iPivot_temp;
+        if (reduced) {
+          /* In reduced form, taking the first non null pivot is enough, and
+           * more efficient. */
+          break;
+        }
+      }
+      iPivot_temp++;
     }
-    if (iPivot == numberOfRows) {
+    if (bestPivot < DBL_MIN) {
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
@@ -291,8 +352,11 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
       }
       array[h*numberOfColumns+k] = 1;
 
-      /* Set to 0 all M[i][j] i != h, j > k by linear combination */
-      for (int i = 0; i < numberOfRows; i++) {
+      int l = reduced ? 0 : h + 1;
+      /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
+       * non-reduced form is computed (ref), only rows below the pivot are
+       * reduced, i > h as well */
+      for (int i = l; i < numberOfRows; i++) {
         if (i == h) { continue; }
         T factor = array[i*numberOfColumns+k];
         for (int j = k+1; j < numberOfColumns; j++) {
@@ -330,6 +394,36 @@ Matrix Matrix::createTranspose() const {
   return matrix;
 }
 
+Expression Matrix::createRef(ExpressionNode::ReductionContext reductionContext, bool * couldComputeRef, bool reduced) const {
+  // Compute Matrix Row Echelon Form
+  /* If the matrix is too big, the rowCanonization might not be computed exactly
+   * because of a pool allocation error, but we might still be able to compute
+   * it approximately. We thus encapsulate the ref creation in an exception
+   * checkpoint.
+   * We can safely use an exception checkpoint here because we are sure of not
+   * modifying any pre-existing node in the pool. We are sure there is no Store
+   * in the matrix. */
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    /* We clone the current matrix to extract its children later. We can't clone
+     * its children directly. Indeed, the current matrix node (this->node()) is
+     * located before the exception checkpoint. In order to clone its chidlren,
+     * we would temporary increase the reference counter of each child (also
+     * located before the checkpoint). If an exception is raised before
+     * destroying the child handle, its reference counter would be off by one
+     * after the long jump. */
+    Matrix result = clone().convert<Matrix>();
+    *couldComputeRef = true;
+    /* Reduced row echelon form is also called row canonical form. To compute the
+     * row echelon form (non reduced one), fewer steps are required. */
+    result = result.rowCanonize(reductionContext, nullptr, reduced);
+    return std::move(result);
+  } else {
+    *couldComputeRef = false;
+    return Expression();
+  }
+}
+
 Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const {
   int dim = numberOfRows();
   if (dim != numberOfColumns()) {
@@ -342,6 +436,7 @@ Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionConte
 }
 
 Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext, bool * couldComputeDeterminant, bool inPlace) {
+  // Determinant must be called on a reduced matrix only.
   *couldComputeDeterminant = true;
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
   int dim = m.numberOfRows();
@@ -396,6 +491,53 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
   Expression result = computeInverseOrDeterminant(true, reductionContext, couldComputeDeterminant);
   assert(!(*couldComputeDeterminant) || !result.isUninitialized());
   return result;
+}
+
+Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const {
+  // Norm is defined on vectors only
+  assert(vectorType() != Array::VectorType::None);
+  Addition sum = Addition::Builder();
+  for (int j = 0; j < numberOfChildren(); j++) {
+    Expression absValue = AbsoluteValue::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone());
+    Expression squaredAbsValue = Power::Builder(absValue, Rational::Builder(2));
+    absValue.shallowReduce(reductionContext);
+    sum.addChildAtIndexInPlace(squaredAbsValue, sum.numberOfChildren(), sum.numberOfChildren());
+    squaredAbsValue.shallowReduce(reductionContext);
+  }
+  Expression result = SquareRoot::Builder(sum);
+  sum.shallowReduce(reductionContext);
+  return result;
+}
+
+Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
+  // Dot product is defined between two vectors of same size and type
+  assert(vectorType() != Array::VectorType::None && vectorType() == b->vectorType() && numberOfChildren() == b->numberOfChildren());
+  Addition sum = Addition::Builder();
+  for (int j = 0; j < numberOfChildren(); j++) {
+    Expression product = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone(), const_cast<Matrix *>(b)->childAtIndex(j).clone());
+    sum.addChildAtIndexInPlace(product, sum.numberOfChildren(), sum.numberOfChildren());
+    product.shallowReduce(reductionContext);
+  }
+  return std::move(sum);
+}
+
+Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
+  // Cross product is defined between two vectors of size 3 and of same type.
+  assert(vectorType() != Array::VectorType::None && vectorType() == b->vectorType() && numberOfChildren() == 3 && b->numberOfChildren() == 3);
+  Matrix matrix = Matrix::Builder();
+  for (int j = 0; j < 3; j++) {
+    int j1 = (j+1)%3;
+    int j2 = (j+2)%3;
+    Expression a1b2 = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j1).clone(), const_cast<Matrix *>(b)->childAtIndex(j2).clone());
+    Expression a2b1 = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j2).clone(), const_cast<Matrix *>(b)->childAtIndex(j1).clone());
+    Expression difference  = Subtraction::Builder(a1b2, a2b1);
+    a1b2.shallowReduce(reductionContext);
+    a2b1.shallowReduce(reductionContext);
+    matrix.addChildAtIndexInPlace(difference, matrix.numberOfChildren(), matrix.numberOfChildren());
+    difference.shallowReduce(reductionContext);
+  }
+  matrix.setDimensions(numberOfRows(), numberOfColumns());
+  return matrix;
 }
 
 Expression Matrix::shallowReduce(Context * context) {
@@ -475,11 +617,10 @@ Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, Expressi
 }
 
 
-template int Matrix::ArrayInverse<float>(float *, int, int);
 template int Matrix::ArrayInverse<double>(double *, int, int);
 template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float> *, int, int);
 template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double> *, int, int);
-template void Matrix::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*);
-template void Matrix::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*);
+template void Matrix::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*, bool);
+template void Matrix::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*, bool);
 
 }

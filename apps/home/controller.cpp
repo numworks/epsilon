@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "app.h"
+#include <apps/home/apps_layout.h>
 #include "../apps_container.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
@@ -67,7 +68,6 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    int index = selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1;
     
 #ifdef HOME_DISPLAY_EXTERNALS
     if (index >= container->numberOfApps()) {
@@ -96,9 +96,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
       }
     } else {
 #endif
-    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
-    if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->examinationLevel(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
-      App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1));
+    if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
     } else {
       bool switched = container->switchTo(selectedSnapshot);
       assert(switched);
@@ -111,14 +110,14 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
 
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
-    return m_view.selectableTableView()->selectCellAtLocation(0,0);
+    return m_view.selectableTableView()->selectCellAtLocation(0, 0);
   }
 
-  if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows()) {
-    return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow()+1);
+  if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows() - 1) {
+    return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow() + 1);
   }
   if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
-    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns()-1, selectionDataSource()->selectedRow()-1);
+    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns() - 1, selectionDataSource()->selectedRow() - 1);
   }
 
   return false;
@@ -146,7 +145,7 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() const {
-  return ((numberOfIcons()-1)/k_numberOfColumns)+1;
+  return ((numberOfIcons() - 1) / k_numberOfColumns) + 1;
 }
 
 int Controller::numberOfColumns() const {
@@ -172,7 +171,7 @@ int Controller::reusableCellCount() const {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = (j*k_numberOfColumns+i)+1;
+  int appIndex = (j * k_numberOfColumns + i) + 1;
   if (appIndex >= container->numberOfApps()) {
 #ifdef HOME_DISPLAY_EXTERNALS
     External::Archive::File app_file;
@@ -207,7 +206,7 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
 #endif
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(appIndex)->descriptor();
+    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }

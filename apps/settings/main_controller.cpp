@@ -32,7 +32,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
   m_mathOptionsController(this, inputEventHandlerDelegate),
-  m_languageController(this, Metric::CommonTopMargin),
+  m_localizationController(this, Metric::CommonTopMargin, LocalizationController::Mode::Language),
   m_accessibilityController(this),
   m_dateTimeController(this),
   m_examModeController(this),
@@ -83,9 +83,10 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Language) {
+    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Language || model()->childAtIndex(selectedRow())->label() == I18n::Message::Country) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-        stackController()->push(&m_languageController);
+        m_localizationController.setMode(model()->childAtIndex(selectedRow())->label() == I18n::Message::Language ? LocalizationController::Mode::Language : LocalizationController::Mode::Country);
+        stackController()->push(&m_localizationController);
         return true;
       }
       return false;
@@ -189,6 +190,11 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (model()->childAtIndex(index)->label() == I18n::Message::Language) {
     int index = (int)(globalPreferences->language());
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
+    return;
+  }
+  if (model()->childAtIndex(index)->label() == I18n::Message::Country) {
+    int index = (int)(globalPreferences->country());
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::CountryNames[index]);
     return;
   }
   if (model()->childAtIndex(index)->label() == I18n::Message::UpdatePopUp || model()->childAtIndex(index)->label() == I18n::Message::BetaPopUp) {

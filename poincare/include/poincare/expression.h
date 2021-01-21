@@ -9,6 +9,7 @@
 #include <poincare/complex.h>
 #include <poincare/solver.h>
 #include <ion/storage.h>
+#include <utility>
 
 namespace Poincare {
 
@@ -63,6 +64,9 @@ class Expression : public TreeHandle {
   friend class MatrixInverse;
   friend class MatrixTrace;
   friend class MatrixTranspose;
+  friend class MatrixEchelonForm;
+  friend class MatrixRowEchelonForm;
+  friend class MatrixReducedRowEchelonForm;
   friend class Multiplication;
   friend class MultiplicationNode;
   friend class NaperianLogarithm;
@@ -84,6 +88,7 @@ class Expression : public TreeHandle {
   friend class RealPart;
   friend class Round;
   friend class Sequence;
+  friend class SequenceNode;
   friend class SignFunction;
   friend class Sine;
   friend class SquareRoot;
@@ -92,6 +97,8 @@ class Expression : public TreeHandle {
   friend class Subtraction;
   friend class SubtractionNode;
   friend class Sum;
+  friend class SumAndProduct;
+  friend class SumAndProductNode;
   friend class Symbol;
   friend class SymbolAbstractNode;
   friend class Tangent;
@@ -99,6 +106,9 @@ class Expression : public TreeHandle {
   friend class TrigonometryCheatTable;
   friend class Unit;
   friend class UnitConvert;
+  friend class VectorCross;
+  friend class VectorDot;
+  friend class VectorNorm;
 
   friend class AdditionNode;
   friend class DerivativeNode;
@@ -113,6 +123,7 @@ class Expression : public TreeHandle {
   friend class MatrixNode;
   friend class NaperianLogarithmNode;
   friend class NAryExpressionNode;
+  friend class NAryInfixExpressionNode;
   friend class StoreNode;
   friend class SymbolNode;
   friend class UnitNode;
@@ -140,9 +151,10 @@ public:
   ExpressionNode::Type type() const { return node()->type(); }
   bool isOfType(ExpressionNode::Type * types, int length) const { return node()->isOfType(types, length); }
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
+  ExpressionNode::NullStatus nullStatus(Context * context) const { return node()->nullStatus(context); }
+  bool isStrictly(ExpressionNode::Sign s, Context * context) const { return s == node()->sign(context) && node()->nullStatus(context) == ExpressionNode::NullStatus::NonNull;  }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Unreal; }
   bool isNumber() const { return node()->isNumber(); }
-  bool isRationalZero() const;
   bool isRationalOne() const;
   bool isRandom() const { return node()->isRandom(); }
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
@@ -162,15 +174,6 @@ public:
   static bool IsRandom(const Expression e, Context * context);
   static bool IsMatrix(const Expression e, Context * context);
   static bool IsInfinity(const Expression e, Context * context);
-  /* 'characteristicXRange' tries to assess the range on x where the expression
-   * (considered as a function on x) has an interesting evolution. For example,
-   * the period of the function on 'x' if it is periodic. If
-   * the function is x-independent, the return value is 0.0f (because any
-   * x-range is equivalent). If the function does not have an interesting range,
-   * the return value is NAN.
-   * NB: so far, we consider that the only way of building a periodic function
-   * is to use sin/tan/cos(f(x)) with f a linear function. */
-  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const { return node()->characteristicXRange(context, angleUnit); }
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
@@ -188,14 +191,14 @@ public:
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
    * order) and 'constant' with the constant of the expression. */
-  bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const;
+  bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
    * of the first 3 polynomial coefficients and returns the  polynomial degree.
    * It is supposed to be called on a reduced expression.
    * coefficients has up to 3 entries.  */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const;
+  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Units */
@@ -218,7 +221,7 @@ public:
   /* isIdenticalToWithoutParentheses behaves as isIdenticalTo, but without
    * taking into account parentheses: e^(0) is identical to e^0. */
   bool isIdenticalToWithoutParentheses(const Expression e) const;
-  static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat);
 
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
@@ -239,12 +242,13 @@ public:
    *   account the complex format required in the expression they return.
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
-  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
+  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   Expression simplify(ExpressionNode::ReductionContext reductionContext);
 
-  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
-  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
+  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
+  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   Expression reduce(ExpressionNode::ReductionContext context);
+  Expression reduceAndRemoveUnit(ExpressionNode::ReductionContext context, Expression * Unit);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
   /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
@@ -257,9 +261,9 @@ public:
   /* Approximation Helper */
   // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation
   template<typename U> static U Epsilon();
-  template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename U> U approximateToScalar(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
+  template<typename U> U approximateToScalar(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
+  template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
   Coordinate2D<double> nextMinimum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
@@ -313,6 +317,18 @@ protected:
   static Expression UntypedBuilderFourChildren(Expression children) {
     assert(children.type() == ExpressionNode::Type::Matrix);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3));
+  }
+  template<typename U>
+  static Expression UntypedBuilderMultipleChildren(Expression children) {
+    // Only with Expression classes implementing addChildAtIndexInPlace
+    assert(children.type() == ExpressionNode::Type::Matrix);
+    int childrenNumber = children.numberOfChildren();
+    assert(childrenNumber > 0);
+    U expression = U::Builder({children.childAtIndex(0)});
+    for (int i = 1; i < childrenNumber; ++i) {
+      expression.addChildAtIndexInPlace(children.childAtIndex(i), i, i);
+    }
+    return std::move(expression);
   }
 
   template<class T> T convert() const {
@@ -375,10 +391,17 @@ protected:
   Expression makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext);
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const { return node()->denominator(reductionContext); }
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext) { return node()->shallowBeautify(reductionContext); }
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
   // WARNING: this must be called on reduced expressions
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
+
+  /* Derivation */
+  /* This method is used for the reduction of Derivative expressions.
+   * It returns whether the instance is differentiable, and differentiates it if
+   * able. */
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->derivate(reductionContext, symbol, symbolValue); }
+  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
@@ -407,9 +430,15 @@ private:
   Expression defaultHandleUnitsInChildren(); // Children must be reduced
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
+  void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
+    node()->deepBeautifyChildren(reductionContext);
+  }
+  void defaultDeepBeautifyChildren(ExpressionNode::ReductionContext reductionContext);
+  bool defaultDidDerivate() { return false; }
+  Expression defaultUnaryFunctionDifferential() { return *this; }
 
   /* Approximation */
-  template<typename U> Evaluation<U> approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename U> Evaluation<U> approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
 
   /* Properties */
   int defaultGetPolynomialCoefficients(Context * context, const char * symbol, Expression expression[]) const;

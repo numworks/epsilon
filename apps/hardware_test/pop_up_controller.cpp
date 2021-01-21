@@ -1,5 +1,6 @@
 #include "pop_up_controller.h"
 #include "../apps_container.h"
+#include <apps/i18n.h>
 
 namespace HardwareTest {
 
@@ -13,7 +14,8 @@ PopUpController::PopUpController() :
         assert(switched);
         (void) switched; // Silence compilation warning about unused variable.
         return true;
-      }, this)
+      }, this),
+    I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel
   )
 {
   m_contentView.setMessage(0, I18n::Message::HardwareTestLaunch1);

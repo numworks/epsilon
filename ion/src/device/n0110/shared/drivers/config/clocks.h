@@ -41,9 +41,9 @@ constexpr static int AHBFrequency = HCLKFrequency;
 //constexpr static int AHBLowFrequency = HCLKLowFrequency;
 constexpr static Regs::RCC::CFGR::APBPrescaler APB1PrescalerReg = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy4;
 constexpr static int APB1Prescaler = 4;
-//constexpr static int APB1Frequency = HCLKFrequency/APB1Prescaler;
+constexpr static int APB1Frequency = HCLKFrequency/APB1Prescaler;
 constexpr static int APB1LowFrequency = HCLKLowFrequency/APB1Prescaler;
-//constexpr static int APB1TimerFrequency = 2*APB1Frequency;
+constexpr static int APB1TimerFrequency = 2*APB1Frequency;
 constexpr static int APB1TimerLowFrequency = 2*APB1LowFrequency;
 
 constexpr static Regs::RCC::CFGR::APBPrescaler APB2PrescalerReg = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy2;

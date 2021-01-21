@@ -42,6 +42,8 @@ void initPeripheralsClocks() {
   RCC.AHB3ENR()->setFSMCEN(true);
 
   // APB1 bus
+  // We're using TIM2 for the keyboard
+  RCC.APB1ENR()->setTIM2EN(true);
   // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
   RCC.APB1ENR()->setPWREN(true);

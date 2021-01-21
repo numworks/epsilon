@@ -9,6 +9,7 @@ extern "C" {
 
 void isr_systick();
 void keyboard_handler();
+void tim2_handler();
 void svcall_handler_as();
 void svcall_handler(unsigned svcNumber, void * args[]);
 

@@ -84,3 +84,7 @@ void __attribute__((interrupt, noinline)) isr_systick() {
 void __attribute__((interrupt, noinline)) keyboard_handler() {
   Ion::Device::Keyboard::handleInterruption();
 }
+
+void __attribute__((interrupt, noinline)) tim2_handler() {
+  Ion::Device::Keyboard::debounce();
+}

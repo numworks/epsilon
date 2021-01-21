@@ -16,6 +16,12 @@ public:
     REGS_BOOL_FIELD(ARPE, 7);
   };
 
+  class DIER : Register16 {
+  public:
+    REGS_BOOL_FIELD(UIE, 0);
+  };
+
+
   class CCMR : Register64 {
     /* We're declaring CCMR as a 64 bits register. CCMR doesn't exsist per se,
      * it is in fact the consolidation of CCMR1 and CCMR2. Both are 16 bits
@@ -112,6 +118,7 @@ public:
 
   constexpr TIM(int i) : m_index(i) {}
   REGS_REGISTER_AT(CR1, 0x0);
+  REGS_REGISTER_AT(DIER, 0x0C);
   REGS_REGISTER_AT(CCMR, 0x18);
   REGS_REGISTER_AT(CCER, 0x20);
   REGS_REGISTER_AT(PSC, 0x28);
@@ -143,6 +150,7 @@ private:
   int m_index;
 };
 
+constexpr TIM<Register16> TIM2(2);
 constexpr TIM<Register16> TIM3(3);
 
 }

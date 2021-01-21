@@ -62,11 +62,11 @@ void shutdownPeripherals(bool keepLEDAwake) {
 }
 
 void initInterruptions() {
-  static constexpr int extiInterruptionIndex[] = {6, 7, 8, 9, 10, 23};
+  static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28};
   // Init EXTI interrupts (corresponding to keyboard column pins)
   class NVIC::NVIC_ISER0 iser0(0); // Reset value
-  for (size_t i = 0; i < sizeof(extiInterruptionIndex)/sizeof(int); i++) {
-    iser0.setBit(extiInterruptionIndex[i], true);
+  for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
+    iser0.setBit(interruptionIndex[i], true);
   }
   NVIC.NVIC_ISER0()->set(iser0);
   /* Interruption priorities determine the order exceptions are handled. But it does not tamper with the handler preemption. However, */

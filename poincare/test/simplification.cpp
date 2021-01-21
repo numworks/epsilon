@@ -648,6 +648,13 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");
   assert_parsed_expression_simplify_to("(3_m^2)^3", "27×_m^6");
   assert_parsed_expression_simplify_to("(𝐢×floor(-abs(x)))^(2/3)", "(𝐢×floor(-abs(x)))^\u00122/3\u0013");
+  // Denesting of square roots
+  assert_parsed_expression_simplify_to("√(2+√(3))", "\u0012√(6)+√(2)\u0013/2");
+  assert_parsed_expression_simplify_to("√(3-√(7))", "√(-√(7)+3)");
+  assert_parsed_expression_simplify_to("√(-2+√(3))", "\u0012√(6)-√(2)\u0013/2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("√(17+4×√(13))", "√(13)+2");
+  assert_parsed_expression_simplify_to("√(√(1058)-√(896))", "-root(2,4)×√(7)+4×root(2,4)");
+  assert_parsed_expression_simplify_to("√(57×√(17)+68×√(10))", "root(4913,4)+2×√(10)×root(17,4)");
 }
 
 QUIZ_CASE(poincare_simplification_factorial) {

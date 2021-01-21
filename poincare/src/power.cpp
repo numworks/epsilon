@@ -986,6 +986,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 #endif
+
+  /* Step 16: Try to reduce nested roots of the form √(a√b + c√d) */
+  if (indexType == ExpressionNode::Type::Rational && index.convert<Rational>().isHalf()) {
+    return SquareRoot::ReduceNestedRadicals(*this, reductionContext);
+  }
+
   return *this;
 }
 

@@ -25,6 +25,7 @@ QUIZ_CASE(equation_solve) {
     }
   );
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
+  assert_solves_to("(x-√(2))(x-√(3))=0", {"x=√(2)", "x=√(3)", "delta=-2×√(6)+5"});
 
   /* TODO: Cubic
    * x^3-4x^2+6x-24=0

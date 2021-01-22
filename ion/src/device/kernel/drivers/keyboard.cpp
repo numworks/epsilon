@@ -104,7 +104,7 @@ void initTimer() {
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/sPrescalerFactor-1);
 }
 
-void init() {
+void init(bool activateInterruptions) {
 #if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   /* PA0 pin is also used as the wake up pin of the standby mode. It has to be
    * unable to be used in output mode, open-drain for the keyboard. */
@@ -124,11 +124,13 @@ void init() {
     Config::ColumnGPIO.PUPDR()->setPull(pin, GPIO::PUPDR::Pull::Up);
   }
 
-  // Detecting interruption requires all row to be pulled-down
-  activateAllRows();
+  if (activateInterruptions) {
+    // Detecting interruption requires all row to be pulled-down
+    activateAllRows();
 
-  initTimer();
-  initInterruptions();
+    initTimer();
+    initInterruptions();
+  }
 }
 
 void shutdown() {

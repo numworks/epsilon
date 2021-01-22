@@ -102,13 +102,20 @@ void TableCell::layoutSubviews(bool force) {
   if (accessory) {
     KDCoordinate accessoryWidth = cropIfOverflow(accessorySize.width(), width - (label || subLabel ? Metric::CellHorizontalElementMargin : 0));
     KDCoordinate accessoryHeight = cropIfOverflow(accessorySize.height(), height);
-
+    // Depending on alignment, accessory is placed left or right.
+    KDCoordinate accessoryX = x;
+    if (isAcessoryAlignedRight()) {
+      accessoryX += width - accessoryWidth;
+    }
     // Accessory must be vertically centered on the entire cell height.
     KDCoordinate verticalCenterOffset = (height - accessorySize.height() + 1) / 2;
     // Set accessory frame
-    accessory->setFrame(KDRect(x + width - accessoryWidth, y + verticalCenterOffset, accessoryWidth, accessoryHeight), force);
+    accessory->setFrame(KDRect(accessoryX, y + verticalCenterOffset, accessoryWidth, accessoryHeight), force);
     // Update remaining space, add margin before accessory
     width -= accessoryWidth + Metric::CellHorizontalElementMargin;
+    if (!isAcessoryAlignedRight()) {
+      x += accessoryWidth + Metric::CellHorizontalElementMargin;
+    }
   }
 
   KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);

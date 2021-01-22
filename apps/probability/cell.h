@@ -9,18 +9,18 @@
 
 namespace Probability {
 
-// TODO Hugo : Move the accessory to the left of text
 class Cell : public Escher::TableCell {
 public:
   Cell();
   View * labelView() const override { return (View *)&m_labelView; }
-  View * subLabelView() const override { return (View *)&m_iconView; }
-  View * accessoryView() const override { return (View *)&m_chevronView; }
+  View * accessoryView() const override { return (View *)&m_iconView; }
+  View * subLabelView() const override { return (View *)&m_chevronView; }
 
   void reloadCell() override;
   void setLabel(I18n::Message message);
   void setImage(const Escher::Image * image, const Escher::Image * focusedImage);
 private:
+  bool isAcessoryAlignedRight() const override { return false; }
   constexpr static KDCoordinate k_iconWidth = 35;
   constexpr static KDCoordinate k_iconHeight = 19;
   constexpr static KDCoordinate k_iconMargin = 10;

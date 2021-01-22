@@ -30,4 +30,8 @@ void MessageTableCell::setBackgroundColor(KDColor color) {
   m_messageTextView.setBackgroundColor(color);
 }
 
+void MessageTableCell::setMessageFont(const KDFont * font) {
+  m_messageTextView.setFont(font);
+}
+
 }

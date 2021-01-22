@@ -103,7 +103,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
-  // assert(type == k_standardCellType);
+  assert(type == 0);
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   return &m_cells[index];

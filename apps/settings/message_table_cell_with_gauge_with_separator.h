@@ -15,10 +15,14 @@ public:
     m_cell(message) {}
   Escher::View * accessoryView() const { return m_cell.accessoryView(); }
   void setMessage(I18n::Message message) {
+    // TODO Hugo : Improve this workaround
     m_cell.setSize(KDSize(bounds().width(), m_cell.bounds().height()));
     return m_cell.setMessage(message); }
   KDSize minimalSizeForOptimalDisplay() const override {
-    return m_cell.minimalSizeForOptimalDisplay() + CellWithSeparator::minimalSizeForOptimalDisplay();
+    // TODO Hugo : Create a .cpp file or add + operator for KDSize
+    KDSize cellSize = m_cell.minimalSizeForOptimalDisplay();
+    KDSize separatorSize = CellWithSeparator::minimalSizeForOptimalDisplay();
+    return  KDSize(cellSize.width() + separatorSize.width(), cellSize.height() + separatorSize.height());
   }
 private:
   Escher::HighlightCell * cell() override { return &m_cell; }

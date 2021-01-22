@@ -14,10 +14,16 @@ public:
   const char * text() const override { return m_cell.text(); }
   Poincare::Layout layout() const override{ return m_cell.layout(); }
   Escher::MessageTableCellWithEditableText * messageTableCellWithEditableText() {
+    // TODO Hugo : Improve this workaround
     m_cell.setSize(KDSize(bounds().width(), m_cell.bounds().height()));
     return &m_cell;
   }
-  KDSize minimalSizeForOptimalDisplay() const override { return m_cell.minimalSizeForOptimalDisplay() + CellWithSeparator::minimalSizeForOptimalDisplay(); }
+  KDSize minimalSizeForOptimalDisplay() const override {
+    // TODO Hugo : Create a .cpp file or add + operator for KDSize
+    KDSize cellSize = m_cell.minimalSizeForOptimalDisplay();
+    KDSize separatorSize = CellWithSeparator::minimalSizeForOptimalDisplay();
+    return  KDSize(cellSize.width() + separatorSize.width(), cellSize.height() + separatorSize.height());
+  }
 private:
   Escher::HighlightCell * cell() override { return &m_cell; }
   Escher::MessageTableCellWithEditableText m_cell;

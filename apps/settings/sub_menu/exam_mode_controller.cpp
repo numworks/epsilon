@@ -17,10 +17,6 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
   m_contentView(&m_selectableTableView),
   m_cell{}
 {
-  // for (int i = 0; i < k_maxNumberOfCells; i++) {
-  //   m_cell[i].setMessage(ExamModeConfiguration::examModeActivationMessage(i));
-  //   m_cell[i].setMessageFont(KDFont::LargeFont);
-  // }
 }
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
@@ -67,7 +63,6 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(ExamModeConfiguration::examModeActivationMessage(index));
-  // myCell->setMessageFont(KDFont::LargeFont);
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     myCell->setMessage(I18n::Message::ExamModeActive);
   }

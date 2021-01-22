@@ -5,7 +5,7 @@
 #include <escher/table_cell.h>
 
 namespace Escher {
-// Cell : Varbox Calculation (expression)
+
 class ExpressionTableCell : public Responder, public TableCell {
 public:
   ExpressionTableCell(Responder * responder = nullptr);
@@ -21,7 +21,6 @@ public:
   virtual void reloadScroll() { m_labelExpressionView.reloadScroll(); }
 private:
   // Remove margins added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView
-  // KDCoordinate labelMargin() const override { return 0; }
   ScrollableExpressionView m_labelExpressionView;
 };
 

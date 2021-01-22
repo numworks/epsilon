@@ -28,13 +28,4 @@ void MessageTableCellWithMessage::setHighlighted(bool highlight) {
   m_subLabelView.setBackgroundColor(backgroundColor);
 }
 
-// void MessageTableCellWithMessage::setTextColor(KDColor color) {
-//   m_subLabelView.setTextColor(color);
-//   MessageTableCell::setTextColor(color);
-// }
-
-// void MessageTableCellWithMessage::setSubLabelTextColor(KDColor color) {
-//   m_subLabelView.setTextColor(color);
-// }
-
 }

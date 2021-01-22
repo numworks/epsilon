@@ -3,9 +3,9 @@
 
 #include "parameter_text_field_delegate.h"
 #include "button_with_separator.h"
-#include <escher/simple_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include <escher/stack_view_controller.h>
 
 namespace Shared {
@@ -29,7 +29,7 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override {
     if (m_selectableTableView.columnWidth(0) <= 0) {
-      return 200; // TODO
+      return 200; // TODO Hugo : Fix situation where columnWidth is null
     }
     return m_selectableTableView.columnWidth(0);
   }

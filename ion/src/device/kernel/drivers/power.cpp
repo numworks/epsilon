@@ -27,6 +27,13 @@ void suspend(bool checkIfOnOffKeyReleased) {
   if (checkIfOnOffKeyReleased) {
     waitUntilOnOffKeyReleased();
   }
+
+  /* Disable interruption before:
+   * - shutting down the external flash (interrupt handlers code might thereby
+   *   be in external flash)
+   * - shutting down the keyboard driver that would trigger an interruption
+   *   when changing the GPIO mode. */
+    Board::shutdownInterruptions();
   /* First, shutdown all peripherals except LED. Indeed, the charging pin state
    * might change when we shutdown peripherals that draw current. */
   Board::shutdownPeripherals(true);
@@ -77,6 +84,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
 
   // Reset normal frequency
   Board::setStandardFrequency(Board::Frequency::High);
+  Board::initInterruptions();
   Board::initPeripherals(numworksAuthentication, false);
   // Update LED according to plug and charge state
   LED::updateColorWithPlugAndCharge();
@@ -99,9 +107,6 @@ void waitUntilOnOffKeyReleased() {
 }
 
 void inline shutdownExternalFlashAndEnterLowPowerMode(bool keepLEDActive) {
-  /* Disable interruption before shutdowning the external flash (interrupt
-   * handlers code might be in external flash) */
-  Board::shutdownInterruptions();
   // Shutdown the external flash
   ExternalFlash::shutdown();
   // Shutdown all clocks (except the ones used by LED if active)
@@ -119,7 +124,6 @@ void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
   Board::initPeripheralsClocks();
   // Init external flash
   ExternalFlash::init();
-  Board::initInterruptions();
 }
 
 void __attribute__((noinline)) internalFlashStandby() {

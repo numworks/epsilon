@@ -9,7 +9,7 @@
 
 namespace Graph {
 
-class IntervalParameterSelectorController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class IntervalParameterSelectorController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   IntervalParameterSelectorController();
   const char * title() override;
@@ -18,7 +18,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
-  KDCoordinate rowHeight(int j) override; //  { return Escher::Metric::ParameterCellHeight; }
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);

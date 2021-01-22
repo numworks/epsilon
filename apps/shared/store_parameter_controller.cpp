@@ -35,6 +35,7 @@ const char * StoreParameterController::title() {
 }
 
 void StoreParameterController::viewWillAppear() {
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -100,24 +101,6 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   stack->pop();
   return true;
 }
-
-// KDCoordinate StoreParameterController::cumulatedHeightFromIndex(int j) {
-//   assert (j >= 0 && j <= numberOfRows());
-//   KDCoordinate result = 0;
-//   for (int i = 0; i < j; i++) {
-//     result+= rowHeight(i);
-//   }
-//   return result;
-// }
-
-// int StoreParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-//   int result = 0;
-//   int j = 0;
-//   while (result < offsetY && j < numberOfRows()) {
-//     result += rowHeight(j++);
-//   }
-//   return (result < offsetY || offsetY == 0) ? j : j - 1;
-// }
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   // assert(type == k_standardCellType);

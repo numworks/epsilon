@@ -7,7 +7,7 @@
 #include "interval_parameter_controller.h"
 
 namespace Shared {
-class ValuesParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ValuesParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ValuesParameterController(Escher::Responder * parentResponder);
   Escher::View * view() override;
@@ -21,8 +21,6 @@ public:
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);
   }
-  // KDCoordinate rowHeight(int j) override;
-  int typeAtLocation(int i, int j) override { return 0; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
 private:
 #if COPY_COLUMN

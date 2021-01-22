@@ -12,10 +12,10 @@ public:
   SequenceToolbox();
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate rowHeight(int index) override;
+  KDCoordinate nonMemoizedRowHeight(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   void buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth);
 private:
   /* At 0 depth, there are additional rows to display. With the exception of

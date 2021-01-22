@@ -11,11 +11,6 @@ AboutController::AboutController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_view(&m_selectableTableView)
 {
-  // for (int i = 0; i < k_totalNumberOfCell; i++) {
-  //   m_cells[i].setMessageFont(KDFont::LargeFont);
-  //   m_cells[i].setSubLabelFont(KDFont::SmallFont);
-  //   m_cells[i].setSubLabelTextColor(Palette::GrayDark);
-  // }
 }
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
@@ -54,9 +49,6 @@ int AboutController::reusableCellCount(int type) {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-  // myCell->setMessageFont(KDFont::LargeFont);
-  // myCell->setSubLabelFont(KDFont::SmallFont);
-  // myCell->setSubLabelTextColor(Palette::GrayDark);
   const char * messages[] = {
     Ion::softwareVersion(),
     Ion::serialNumber(),
@@ -66,7 +58,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   myCell->setSubLabelText(messages[index]);
 }
 
-KDCoordinate AboutController::rowHeight(int index) {
+KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
   MessageTableCellWithBuffer tempCell = MessageTableCellWithBuffer();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();

@@ -3,7 +3,7 @@
 
 #include "parameter_text_field_delegate.h"
 #include "button_with_separator.h"
-#include <escher/list_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
@@ -14,7 +14,7 @@ namespace Shared {
  * parameterAtIndex and setParameterAtIndex). */
 
 template<typename T>
-class FloatParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public ParameterTextFieldDelegate {
+class FloatParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource, public ParameterTextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
   Escher::View * view() override { return &m_selectableTableView; }
@@ -23,17 +23,16 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override {
     if (m_selectableTableView.columnWidth(0) <= 0) {
       return 200; // TODO
     }
     return m_selectableTableView.columnWidth(0);
   }
-  // KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;

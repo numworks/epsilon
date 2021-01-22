@@ -24,7 +24,7 @@ public:
   KDCoordinate rowHeight(int j) override{ return ExpressionModelListController::memoizedRowHeight(j); }
   KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
   int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override { return isAddEmptyRow(index); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

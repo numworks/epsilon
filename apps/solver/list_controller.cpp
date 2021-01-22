@@ -43,10 +43,6 @@ Button * ListController::buttonAtIndex(int index, ButtonRowController::Position 
   return const_cast<Button *>(&m_resolveButton);
 }
 
-int ListController::typeAtLocation(int i, int j) {
-  return isAddEmptyRow(j);
-}
-
 HighlightCell * ListController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfRows);

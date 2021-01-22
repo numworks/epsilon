@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_pointer.h>
-#include <escher/list_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
@@ -14,7 +14,7 @@ namespace Calculation {
 
 class EditExpressionController;
 // Pop-up - additional output
-class ListController : public Escher::StackViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ListController : public Escher::StackViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
 

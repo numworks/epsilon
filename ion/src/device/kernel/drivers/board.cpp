@@ -61,8 +61,9 @@ void shutdownPeripherals(bool keepLEDAwake) {
   shutdownCompensationCell();
 }
 
+static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28};
+
 void initInterruptions() {
-  static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28};
   // Init EXTI interrupts (corresponding to keyboard column pins)
   class NVIC::NVIC_ISER0 iser0(0); // Reset value
   for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
@@ -76,7 +77,11 @@ void initInterruptions() {
 }
 
 void shutdownInterruptions() {
-  NVIC.NVIC_ISER0()->set(0);
+  class NVIC::NVIC_ICER0 icer0(0); // Reset value
+  for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
+    icer0.setBit(interruptionIndex[i], true);
+  }
+  NVIC.NVIC_ICER0()->set(icer0);
 }
 
 static Frequency sStandardFrequency = Frequency::High;

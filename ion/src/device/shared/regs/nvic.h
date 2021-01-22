@@ -23,7 +23,10 @@ public:
   };
   class NVIC_ISER1 : public MaskRegister { };
   class NVIC_ISER2 : public MaskRegister { };
-  class NVIC_ICER0 : public MaskRegister { };
+  class NVIC_ICER0 : public MaskRegister {
+  public:
+    using MaskRegister::MaskRegister;
+  };
   class NVIC_ICER1 : public MaskRegister { };
   class NVIC_ICER2 : public MaskRegister { };
 

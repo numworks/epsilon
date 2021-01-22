@@ -11,7 +11,7 @@ namespace Keyboard {
 
 using namespace Ion::Keyboard;
 
-void init();
+void init(bool activateInterruption = true);
 void shutdown();
 void debounce();
 void handleInterruption();

@@ -64,7 +64,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
     Power::internalFlashSuspend(isLEDActive);
 
     // Check power key
-    Keyboard::init();
+    Keyboard::init(false); // Don't activate interruptions which would override wake-up configurations
     Keyboard::State scan = Keyboard::scan();
     Keyboard::State OnlyOnOffKeyDown = Keyboard::State(Keyboard::Key::OnOff);
 

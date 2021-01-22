@@ -75,14 +75,6 @@ HighlightCell * DerivativeParameterController::reusableCell(int index, int type)
   return cells[index];
 }
 
-// int DerivativeParameterController::reusableCellCount() const {
-//   return k_totalNumberOfCell;
-// }
-
-// KDCoordinate DerivativeParameterController::cellHeight() {
-//   return Metric::ParameterCellHeight;
-// }
-
 ContinuousFunctionStore * DerivativeParameterController::functionStore() {
   return App::app()->functionStore();
 }

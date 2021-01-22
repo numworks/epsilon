@@ -8,12 +8,11 @@
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/stack_view_controller.h>
-#include <ion/display.h>
 
 namespace Calculation {
 
 class EditExpressionController;
-// Pop-up - additional output
+
 class ListController : public Escher::StackViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);

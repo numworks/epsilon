@@ -43,7 +43,6 @@ View * DistributionController::ContentView::subviewAtIndex(int index) {
 }
 
 void DistributionController::ContentView::layoutSubviews(bool force) {
-  assert(KDFont::SmallFont->glyphSize().height() == 14); // otherwise, k_numberOfCells badly computed
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight), force);
@@ -93,7 +92,7 @@ KDCoordinate Probability::DistributionController::nonMemoizedRowHeight(int j) {
 
 HighlightCell * Probability::DistributionController::reusableCell(int index, int type) {
   assert(index >= 0);
-  assert(index < k_numberOfCells);
+  assert(index < k_totalNumberOfModels);
   return &m_cells[index];
 }
 

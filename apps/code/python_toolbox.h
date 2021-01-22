@@ -23,6 +23,7 @@ protected:
   Escher::MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
+  // TODO Hugo : Improve workaround
   constexpr static int k_maxNumberOfDisplayedRows = 15; // = 240/(13+2*3)
   // 13 = minimal string height size
   // 3 = vertical margins

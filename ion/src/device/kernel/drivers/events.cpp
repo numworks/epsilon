@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <drivers/battery.h>
 #include <drivers/usb.h>
+#include <kernel/drivers/board.h>
 #include <kernel/drivers/config/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/timing.h>
@@ -94,8 +95,6 @@ Ion::Events::Event getEvent(int * timeout) {
     while (!Keyboard::Queue::sharedQueue()->isEmpty()) {
       sCurrentKeyboardState = Keyboard::Queue::sharedQueue()->pop();
 
-
-
       keysSeenUp |= ~sCurrentKeyboardState;
       keysSeenTransitionningFromUpToDown = keysSeenUp & sCurrentKeyboardState;
 
@@ -128,14 +127,13 @@ Ion::Events::Event getEvent(int * timeout) {
       delay = std::min(delay, delayForRepeat);
     }
 
-    // TODO EMILIE System LowFrequency --> slow down systick too!
-    //void setClockLowFrequency() {
     int elapsedTime = 0;
     bool keyboardInterruptionOccured = false;
+    Board::setClockLowFrequency();
     while (elapsedTime < delay) {
       // Stop until either systick or a keyboard/platform interruption happens
       /* TODO: - optimization - we could maybe shutdown systick interrution and
-       *set a longer interrupt timer which would udpate systick millis and
+       * set a longer interrupt timer which would udpate systick millis and
        optimize the interval of time the execution is stopped. */
       asm("wfi");
       if (!Keyboard::Queue::sharedQueue()->isEmpty()) {
@@ -144,6 +142,7 @@ Ion::Events::Event getEvent(int * timeout) {
       }
       elapsedTime = static_cast<int>(Timing::millis() - startTime);
     }
+    Board::setClockStandardFrequency();
     *timeout = std::max(0, *timeout - elapsedTime);
     startTime = Timing::millis();
 

@@ -115,7 +115,7 @@ SECTIONS {
     *(.rodata._ZN3Ion6Device5Cache35privateCleanInvalidateDisableDCacheEbbb.str1.4)
     *(.rodata._ZN3Ion6Device4Regs*)
     *(.rodata._ZN3Ion6Device8Keyboard6Config*)
-    *(.rodata._ZZN3Ion6Device5Board17initInterruptionsEvE17interruptionIndex)
+    *(.rodata._ZN3Ion6Device5BoardL17interruptionIndexE)
   } >INTERNAL_FLASH_KERNEL
 
   .init_array : {

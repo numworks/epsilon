@@ -72,6 +72,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
     USB::initGPIO();
     if (scan == OnlyOnOffKeyDown || (!plugged && USB::isPlugged())) {
       // Wake up
+      waitUntilOnOffKeyReleased();
       break;
     } else {
       /* The wake up event can be an unplug event or a battery charging event.

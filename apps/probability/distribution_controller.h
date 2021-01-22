@@ -24,7 +24,6 @@ public:
     return m_selectableTableView.columnWidth(0);
   }
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override { return k_numberOfCells; }
 private:
   class ContentView : public Escher::View {
   public:
@@ -43,8 +42,7 @@ private:
   void setDistributionAccordingToIndex(int index);
   constexpr static KDCoordinate k_cellHeight = Escher::Metric::ParameterCellHeight;
   constexpr static int k_totalNumberOfModels = 9;
-  constexpr static int k_numberOfCells = 9; // (Ion::Display::Height - Escher::Metric::TitleBarHeight - 14 - ContentView::k_titleMargin) /k_cellHeight + 1 + 1; // 14 for the small font height, + 1 to get the upper rounding and + 1 for half-displayed rows
-  Cell m_cells[k_numberOfCells];
+  Cell m_cells[k_totalNumberOfModels];
   Escher::SelectableTableView m_selectableTableView;
   ContentView m_contentView;
   Distribution * m_distribution;

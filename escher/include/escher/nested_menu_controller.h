@@ -6,10 +6,9 @@
 #include <escher/simple_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
-#include <ion/display.h>
 
 namespace Escher {
-// Pop-up - Toolbox
+
 class NestedMenuController : public StackViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);

@@ -21,7 +21,7 @@ public:
   int numberOfRows() const override;
   KDCoordinate cellWidth() override {
     if (m_selectableTableView.columnWidth(0) <= 0) {
-      return 320; // TODO : FIx this
+      return 320; // TODO Hugo : Fix this situation
     }
     return m_selectableTableView.columnWidth(0);
   }

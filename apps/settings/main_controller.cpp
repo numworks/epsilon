@@ -182,7 +182,6 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
-  // myTextCell->setMessageFont(KDFont::LargeFont);
   int childIndex = -1;
   switch (index) {
     case k_indexOfAngleUnitCell:

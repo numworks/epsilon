@@ -43,7 +43,7 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override {
     if (m_contentView.selectableTableView()->columnWidth(0) <= 0) {
-      return 320;
+      return 320; // TODO Hugo : Fix it
     }
     return m_contentView.selectableTableView()->columnWidth(0);
   }

@@ -2,7 +2,7 @@
 #include <escher/palette.h>
 #include <escher/metric.h>
 #include <algorithm>
-#include <ion.h>
+#include <ion/display.h>
 
 namespace Escher {
 
@@ -26,10 +26,6 @@ View * TableCell::subviewAtIndex(int index) {
   assert(index == 2 || (index == 1 && subLabelView() == nullptr));
   return accessoryView();
 }
-
-/*TODO: uniformize where margins are added. Sometimes the subview has included
- * margins (like ExpressionView), sometimes the subview has no margins (like
- * MessageView) which prevents us to handle margins only here. */
 
 KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subLabel, View * accessory, KDCoordinate width) {
   KDSize labelSize = label ? label->minimalSizeForOptimalDisplay() : KDSizeZero;
@@ -56,18 +52,18 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subL
 }
 
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
-  // Find a way to get bounds().width(). Can be 280 instead of 266 with params + handle max nb of rows
-  KDCoordinate expectedWidth = m_frame.width(); // Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin; // m_frame.width(); //
+  // TODO Hugo : Improve this workaround to find frame's width
+  KDCoordinate expectedWidth = m_frame.width();
   assert(expectedWidth > 0);
-  // if (m_frame.width() + m_frame.height() + bounds().width() + bounds().height() > 0) {
-  //   std::cout << m_frame.width() << " , " << m_frame.height() << " - " << bounds().width() << " , " << bounds().height() << "\n";
-  // }
   return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), subLabelView(), accessoryView(), expectedWidth));
 }
 
 KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
+  // TODO Hugo : Ensure no text overflows
   // assert(value <= max);
   if (value > max) {
+    /* This row is added for development purpose, to visually see when something
+     * is overflowing the cell without interrupting the process. */
     Ion::Display::pushRectUniform(KDRect(0,0,KDSize(10,10)), KDColorRed);
   }
   return value > max ? max : value;
@@ -129,7 +125,6 @@ void TableCell::layoutSubviews(bool force) {
     singleRow = false;
     // No need to center the shortest element
     maxHeight = labelHeight;
-    // assert(labelWidth <= width && subLabelWidth <= width);
     if (labelWidth > width) {
       labelWidth = width;
     }

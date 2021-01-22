@@ -124,18 +124,17 @@ int ExpressionModelListController::memoizedIndexFromCumulatedHeight(KDCoordinate
   }
 
   KDCoordinate currentCumulatedHeight = memoizedCumulatedHeightFromIndex(currentSelectedRow);
-  // Take advantage of currentCumulatedHeight if :
   if (offsetY > currentCumulatedHeight) {
-    // Searched index is above currentSelectedRow
-    for (int i = 0; i < rowsCount - currentSelectedRow; i++) {
+    int iMax = std::min(k_memoizedCellsCount/2 + 1, rowsCount - currentSelectedRow);
+    for (int i = 0; i < iMax; i++) {
       currentCumulatedHeight+= memoizedRowHeight(currentSelectedRow + i);
       if (offsetY <= currentCumulatedHeight) {
         return currentSelectedRow + i;
       }
     }
-  } else if (offsetY > currentCumulatedHeight / 2 || currentSelectedRow <= k_memoizedCellsCount / 2) {
-    // Searched index seems closer to currentSelectedRow than 0.
-    for (int i = 1; i <= currentSelectedRow; i++) {
+  } else {
+    int iMax = std::min(k_memoizedCellsCount/2, currentSelectedRow);
+    for (int i = 1; i <= iMax; i++) {
       currentCumulatedHeight-= memoizedRowHeight(currentSelectedRow-i);
       if (offsetY > currentCumulatedHeight) {
         return currentSelectedRow - i;

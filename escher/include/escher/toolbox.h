@@ -15,7 +15,7 @@ public:
   // StackViewController
   void viewWillAppear() override;
 
-  //ListViewDataSource
+  // SimpleListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
   int numberOfRows() const override;
   int reusableCellCount(int type) override;

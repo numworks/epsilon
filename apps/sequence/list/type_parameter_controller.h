@@ -22,7 +22,6 @@ public:
   const char * title() override;
   Escher::View * view() override;
   void viewWillAppear() override;
-
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

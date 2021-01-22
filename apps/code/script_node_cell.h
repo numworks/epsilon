@@ -7,7 +7,7 @@
 #include <kandinsky/coordinate.h>
 
 namespace Code {
-// Cell : Varbox python
+
 class ScriptNodeCell : public Escher::TableCell {
 public:
   static_assert('\x11' == UCodePointEmpty, "Unicode error");

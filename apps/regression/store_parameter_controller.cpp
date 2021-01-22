@@ -40,20 +40,11 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < reusableCellCount(type) || type == k_regressionCellType);
   if (type == k_regressionCellType) {
-    // assert(index == 0); TODO
+    // assert(index == 0); TODO Hugo : Improve workaround
     return &m_changeRegressionCell;
   }
   return Shared::StoreParameterController::reusableCell(index, type);
 }
-// KDCoordinate StoreParameterController::rowHeight(int j) {
-//   if (j == numberOfRows() - 1) {
-//     if (static_cast<Store *>(m_store)->seriesRegressionType(m_series) == Model::Type::Logistic) {
-//       return RegressionController::k_logisticCellHeight;
-//     }
-//     return Metric::ParameterCellHeight;
-//   }
-//   return Shared::StoreParameterController::rowHeight(j);
-// }
 
 int StoreParameterController::reusableCellCount(int type) {
   if (type == k_regressionCellType) {

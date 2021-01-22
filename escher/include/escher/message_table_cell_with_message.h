@@ -11,8 +11,6 @@ public:
   View * subLabelView() const override;
   void setHighlighted(bool highlight) override;
   void setSubLabelMessage(I18n::Message textBody);
-  // void setTextColor(KDColor color) override;
-  // void setSubLabelTextColor(KDColor color);
 protected:
   MessageTextView m_subLabelView;
 };

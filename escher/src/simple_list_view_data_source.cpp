@@ -1,6 +1,5 @@
 #include <escher/simple_list_view_data_source.h>
 #include <assert.h>
-#include <iostream>
 
 namespace Escher {
 

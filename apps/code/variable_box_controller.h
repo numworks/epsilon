@@ -19,13 +19,12 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
 
-  /* TableViewDataSource */
+  /* SimpleListViewDataSource */
   KDCoordinate nonMemoizedRowHeight(int j) override;
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int i) override;
-  /* ListViewDataSource */
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;

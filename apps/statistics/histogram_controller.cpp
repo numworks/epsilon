@@ -27,6 +27,15 @@ HistogramController::HistogramController(Responder * parentResponder, InputEvent
 
 void HistogramController::setCurrentDrawnSeries(int series) {
   initYRangeParameters(series);
+  /* The histogram's CurveView range has been updated along the Vertical axis.
+   * To call drawLabelsAndGraduations (in HistogramView::drawRect()), the
+   * CurveView must be reloaded so that labels and their values match the new
+   * range.
+   * In this situation, we update CurveView's Vertical axis, and draw horizontal
+   * labels, which are independent. To avoid having to call CurveView::reload(),
+   * axis could be taken into account when checking if labels are up to date,
+   * instead of using rangeChecksum(), which mixes all axis. */
+  m_view.dataViewAtIndex(series)->CurveView::reload();
 }
 
 StackViewController * HistogramController::stackController() {
@@ -131,10 +140,6 @@ void HistogramController::reloadBannerView() {
 
   // Add Size Data
   numberOfChar = 0;
-  legend = ": ";
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, bufferSize);
-  numberOfChar += legendLength;
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
@@ -146,10 +151,6 @@ void HistogramController::reloadBannerView() {
 
   // Add Frequency Data
   numberOfChar = 0;
-  legend = ": ";
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, bufferSize);
-  numberOfChar += legendLength;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);

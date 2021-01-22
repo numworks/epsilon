@@ -51,22 +51,6 @@ int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, c
   return nextVariableIndex;
 }
 
-float ExpressionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  /* A expression has a characteristic range if at least one of its childAtIndex has
-   * one and the other are x-independant. We keep the biggest interesting range
-   * among the childAtIndex interesting ranges. */
-  float range = 0.0f;
-  for (ExpressionNode * c : children()) {
-    float opRange = c->characteristicXRange(context, angleUnit);
-    if (std::isnan(opRange)) {
-      return NAN;
-    } else if (range < opRange) {
-      range = opRange;
-    }
-  }
-  return range;
-}
-
 int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted, bool ignoreParentheses) {
   // Depending on ignoreParentheses, check if e1 or e2 are parenthesis
   ExpressionNode::Type type1 = e1->type();
@@ -119,12 +103,24 @@ void ExpressionNode::deepReduceChildren(ExpressionNode::ReductionContext reducti
   Expression(this).defaultDeepReduceChildren(reductionContext);
 }
 
+void ExpressionNode::deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
+  Expression(this).defaultDeepBeautifyChildren(reductionContext);
+}
+
 Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
   return Expression(this).defaultShallowReduce();
 }
 
-Expression ExpressionNode::shallowBeautify(ReductionContext reductionContext) {
+Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Expression(this).defaultShallowBeautify();
+}
+
+bool ExpressionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Expression(this).defaultDidDerivate();
+}
+
+Expression ExpressionNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return Expression(this).defaultUnaryFunctionDifferential();
 }
 
 bool ExpressionNode::isOfType(Type * types, int length) const {

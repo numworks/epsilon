@@ -41,6 +41,7 @@ public:
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float pixelWidth() const;
   float pixelHeight() const;
+  float pixelLength(Axis axis) const;
 protected:
   CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
@@ -74,11 +75,11 @@ protected:
     KDColor color, bool thick = true
   ) const;
   enum class Size : uint8_t {
+    Tiny,
     Small,
-    Medium,
     Large
   };
-  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
+  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Tiny) const;
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).
    * The parameters defining the shape of the arrow are the length of
@@ -109,6 +110,7 @@ protected:
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
   void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
   void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
+  void drawPolarCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);

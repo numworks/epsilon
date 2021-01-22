@@ -163,6 +163,7 @@ void TitleBarView::refreshPreferences() {
         I18n::Message::Deg :
         (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(angleMessage), bufferSize - numberOfChar);
+    assert(numberOfChar < bufferSize-1);
   }
   
   m_preferenceView.setText(buffer);

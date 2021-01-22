@@ -38,19 +38,14 @@ int FunctionNode::getPolynomialCoefficients(Context * context, const char * symb
 int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
+  /* Since templatedApproximate always evaluates the argument, some apps (such
+   * as Statistics and Regression) need to be aware of it even when it does not
+   * appear in the formula. */
+  nextVariableIndex = childAtIndex(0)->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
   if (e.isUninitialized()) {
     return nextVariableIndex;
   }
   return e.node()->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
-}
-
-float FunctionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  Function f(this);
-  Expression e = SymbolAbstract::Expand(f,context, true);
-  if (e.isUninitialized()) {
-    return 0.0f;
-  }
-  return e.characteristicXRange(context, angleUnit);
 }
 
 Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -69,26 +64,26 @@ Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool *
   return Function(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
 }
 
-Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<float>(context, complexFormat, angleUnit);
+Evaluation<float> FunctionNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<float>(approximationContext);
 }
 
-Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<double>(context, complexFormat, angleUnit);
+Evaluation<double> FunctionNode::approximate(DoublePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<double>(approximationContext);
 }
 
 template<typename T>
-Evaluation<T> FunctionNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  if (childAtIndex(0)->approximate((T)1, context, complexFormat, angleUnit).isUndefined()) {
+Evaluation<T> FunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
+  if (childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
     return Complex<T>::Undefined();
   }
 
   Function f(this);
-  Expression e = SymbolAbstract::Expand(f, context, true);
+  Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, complexFormat, angleUnit);
+  return e.node()->approximate(T(), approximationContext);
 }
 
 Function Function::Builder(const char * name, size_t length, Expression child) {

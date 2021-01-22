@@ -3,6 +3,7 @@
 #include <poincare/constant.h>
 #include <poincare/function.h>
 #include <poincare/rational.h>
+#include <poincare/sequence.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/helpers.h>
@@ -19,7 +20,7 @@ size_t SymbolAbstractNode::size() const {
 
 ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
   SymbolAbstract s(this);
-  Expression e = SymbolAbstract::Expand(s, context, false);
+  Expression e = SymbolAbstract::Expand(s, context, true);
   if (e.isUninitialized()) {
     return Sign::Unknown;
   }
@@ -72,6 +73,7 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
   {
     return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);
   }
+  assert(context);
   Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
@@ -81,6 +83,8 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
 
 template Constant SymbolAbstract::Builder<Constant, ConstantNode>(char const*, int);
 template Function SymbolAbstract::Builder<Function, FunctionNode>(char const*, int);
+template Sequence SymbolAbstract::Builder<Sequence, SequenceNode>(char const*, int);
 template Symbol SymbolAbstract::Builder<Symbol, SymbolNode>(char const*, int);
+
 
 }

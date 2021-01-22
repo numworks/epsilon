@@ -3,6 +3,7 @@
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/derivative.h>
+#include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -14,10 +15,12 @@
 #include <poincare/symbol.h>
 #include <poincare/trigonometry_cheat_table.h>
 #include <poincare/undefined.h>
+#include <poincare/opposite.h>
 #include <ion.h>
 #include <assert.h>
 #include <cmath>
 #include <float.h>
+#include <limits.h>
 
 namespace Poincare {
 
@@ -53,32 +56,6 @@ double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   return 200.0;
 }
 
-float Trigonometry::characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit) {
-  assert(e.numberOfChildren() == 1);
-
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char x[bufferSize];
-  SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknown);
-
-  int d = e.childAtIndex(0).polynomialDegree(context, x);
-  if (d < 0 || d > 1) {
-    // child(0) is not linear so we cannot easily find an interesting range
-    return e.childAtIndex(0).characteristicXRange(context, angleUnit);
-  }
-  // The expression e is x-independent
-  if (d == 0) {
-    return 0.0f;
-  }
-  // e has the form cos/sin/tan(ax+b) so it is periodic of period 2*π/a
-  assert(d == 1);
-  /* To compute a, the slope of the expression child(0), we compute the
-   * derivative of child(0) for any x value. */
-  Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol::Builder(x, 1), Float<float>::Builder(1.0f));
-  double a = derivative.node()->approximate(double(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
-  double pi = PiInAngleUnit(angleUnit);
-  return std::fabs(a) < Expression::Epsilon<double>() ? NAN : 2.0*pi/std::fabs(a);
-}
-
 bool Trigonometry::isDirectTrigonometryFunction(const Expression & e) {
   return e.type() == ExpressionNode::Type::Cosine
     || e.type() == ExpressionNode::Type::Sine
@@ -109,6 +86,14 @@ bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const 
       break;
   }
   return inverseFunction.type() == correspondingType;
+}
+
+Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit) {
+  if (fromUnit == toUnit) {
+    // Just an optimisation to gain some time at reduction
+    return Rational::Builder(1);
+  }
+  return Division::Builder(piExpression(toUnit), piExpression(fromUnit));
 }
 
 bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
@@ -296,7 +281,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
   return e;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceInverseFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseTrigonometryFunction(e));
   // Step 0. Map on matrix child if possible
   {
@@ -310,19 +295,35 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
 
   // Step 1. Look for an expression of type "acos(cos(x))", return x
   if (AreInverseFunctions(e.childAtIndex(0), e)) {
-    float trigoOp = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit).toScalar();
-    if ((e.type() == ExpressionNode::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
-        (e.type() == ExpressionNode::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
-        (e.type() == ExpressionNode::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
+    float x = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
+    if (!(std::isinf(x) || std::isnan(x))) {
       Expression result = e.childAtIndex(0).childAtIndex(0);
+      // We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for asin(sin) and atan(tan)
+      float k = (e.type() == ExpressionNode::Type::ArcCosine) ? std::floor(x/pi) : std::floor((x+pi/2.0f)/pi);
+      if (!std::isinf(k) && !std::isnan(k) && std::fabs(k) <= static_cast<float>(INT_MAX)) {
+        int kInt = static_cast<int>(k);
+        Multiplication mult = Multiplication::Builder(Rational::Builder(-kInt), piExpression(reductionContext.angleUnit()));
+        result = Addition::Builder(result.clone(), mult);
+        mult.shallowReduce(reductionContext);
+        if ((e.type() == ExpressionNode::Type::ArcCosine) && ((int)k%2 == 1)) {
+          Expression sub = Subtraction::Builder(piExpression(reductionContext.angleUnit()), result);
+          result.shallowReduce(reductionContext);
+          result = sub;
+        }
+        if ((e.type() == ExpressionNode::Type::ArcSine) && ((int)k%2 == 1)) {
+          Expression add = result;
+          result = Opposite::Builder(add);
+          add.shallowReduce(reductionContext);
+        }
+      }
       e.replaceWithInPlace(result);
-      return result;
+      return result.shallowReduce(reductionContext);
     }
   }
 
   // Step 2. Special case for atan(sin(x)/cos(x))
   if (e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0))) {
-    float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit).toScalar();
+  float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
       Expression result = e.childAtIndex(0).childAtIndex(1).childAtIndex(0);
       e.replaceWithInPlace(result);
@@ -339,14 +340,16 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
      *   reduced to undef) */
     if (reductionContext.target() == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(UCodePointGreekSmallLetterPi));
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, piExpression(angleUnit));
       sign.shallowReduce(reductionContext);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a = Addition::Builder(m0);
+      m0.shallowReduce(reductionContext);
       e.replaceWithInPlace(a);
       Multiplication m1 = Multiplication::Builder(Rational::Builder(-1), e);
       e.shallowReduce(reductionContext);
       a.addChildAtIndexInPlace(m1, 1, 1);
+      m1.shallowReduce(reductionContext);
       return a.shallowReduce(reductionContext);
     }
   }

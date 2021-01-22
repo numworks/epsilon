@@ -4,11 +4,15 @@
 #include <escher/metric.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/expression.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <algorithm>
+#include <apps/shared/sequence.h>
+#include <apps/apps_container.h>
+#include "global_preferences.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -76,6 +80,8 @@ int MathVariableBoxController::numberOfRows() const {
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::funcExtension);
+    case Page::Sequence:
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
     default:
       return 0;
   }
@@ -101,18 +107,29 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
   Storage::Record record = recordAtIndex(index);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
+  Layout symbolLayout;
   if (m_currentPage == Page::Expression) {
     static_assert(Shared::Function::k_maxNameWithArgumentSize > Poincare::SymbolAbstract::k_maxNameSize, "Forgot argument's size?");
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
-  } else {
-    assert(m_currentPage == Page::Function);
+  } else if (m_currentPage == Page::Function) {
     ContinuousFunction f(record);
     symbolLength = f.nameWithArgument(
         symbolName,
         Shared::Function::k_maxNameWithArgumentSize
     );
+  } else {
+    assert(m_currentPage == Page::Sequence);
+    Shared::Sequence u(record);
+    symbolLength = u.nameWithArgumentAndType(
+        symbolName,
+        Shared::Sequence::k_maxNameWithArgumentSize
+    );
+    Expression symbolExpression = Expression::ParseAndSimplify(symbolName, AppsContainer::sharedAppsContainer()->globalContext(), Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+    symbolLayout = symbolExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
   }
-  Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
+  if (symbolLayout.isUninitialized()) {
+    symbolLayout = LayoutHelper::String(symbolName, symbolLength);
+  }
   myCell->setLayout(symbolLayout);
   myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
   myCell->reloadScroll();
@@ -147,7 +164,7 @@ MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int ind
 }
 
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
-  Page pages[2] = {Page::Expression, Page::Function};
+  Page pages[k_numberOfMenuRows] = {Page::Expression, Page::Function, Page::Sequence};
   return pages[index];
 }
 
@@ -192,7 +209,7 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   char nameToHandle[nameToHandleMaxSize];
   size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
 
-  if (m_currentPage == Page::Function) {
+  if (m_currentPage == Page::Function || m_currentPage == Page::Sequence) {
     // Add parentheses to a function name
     assert(nameLength < nameToHandleMaxSize);
     nameLength += UTF8Decoder::CodePointToChars('(', nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
@@ -212,7 +229,7 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 
 I18n::Message MathVariableBoxController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
-  I18n::Message labels[2] = {I18n::Message::Expressions, I18n::Message::Functions};
+  I18n::Message labels[k_numberOfMenuRows] = {I18n::Message::Expressions, I18n::Message::Functions, I18n::Message::Sequences};
   return labels[index];
 }
 
@@ -248,7 +265,14 @@ Layout MathVariableBoxController::expressionLayoutForRecord(Storage::Record reco
 
 const char * MathVariableBoxController::extension() const {
   assert(m_currentPage != Page::RootMenu);
-  return m_currentPage == Page::Function ? Ion::Storage::funcExtension : Ion::Storage::expExtension;
+  if (m_currentPage == Page::Function) {
+    return Ion::Storage::funcExtension;
+  } else if (m_currentPage == Page::Expression) {
+    return Ion::Storage::expExtension;
+  } else {
+    assert(m_currentPage == Page::Sequence);
+    return Ion::Storage::seqExtension;
+  }
 }
 
 Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {

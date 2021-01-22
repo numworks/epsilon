@@ -5,14 +5,15 @@
 #include "cursor_view.h"
 #include "ok_view.h"
 #include "range_parameter_controller.h"
-#include "zoom_parameter_controller.h"
+#include "function_zoom_and_pan_curve_view_controller.h"
 #include <poincare/coordinate_2D.h>
+#include <escher/button_state.h>
 
 namespace Shared {
 
 class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public ButtonRowDelegate, public AlternateEmptyViewDefaultDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion);
+  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion);
 
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -21,14 +22,11 @@ public:
 
   RangeParameterController * rangeParameterController();
   ViewController * zoomParameterController();
-  virtual ViewController * initialisationParameterController() = 0;
 
   int numberOfButtons(ButtonRowController::Position position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
   Responder * defaultController() override;
-
-  bool previousModelsWereAllDeleted();
 
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -41,10 +39,10 @@ protected:
   virtual StackViewController * stackController() const;
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
-  virtual uint32_t modelVersion() = 0;
-  virtual uint32_t modelVersionAtIndex(int i) = 0;
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
+  // The cursor does not match if selected model has been edited or deleted
+  virtual bool cursorMatchesModel() = 0;
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
@@ -70,18 +68,24 @@ private:
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) override;
+  void updateZoomButtons() override;
 
-  virtual bool shouldSetDefaultOnModelChange() const { return false; }
-  virtual size_t numberOfMemoizedVersions() const = 0;
-  uint32_t * m_modelVersion;
-  uint32_t * m_previousModelsVersions;
+  void setCurveViewAsMainView();
+
+  void navigationButtonAction();
+  /* Those  two methods return the new status for the button, ie either
+   * m_interactiveRange->m_zoomAuto or m_zoomNormalize respectively. */
+  bool autoButtonAction();
+  bool normalizeButtonAction();
+
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
-  ZoomParameterController m_zoomParameterController;
+  FunctionZoomAndPanCurveViewController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;
+  ButtonState m_autoButton;
+  ButtonState m_normalizeButton;
+  Button m_navigationButton;
   Button m_rangeButton;
-  Button m_zoomButton;
-  Button m_defaultInitialisationButton;
 };
 
 }

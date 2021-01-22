@@ -27,7 +27,6 @@ public:
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
-  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
 private:
   char m_name[0]; // MUST be the last member variable
@@ -43,9 +42,9 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
-  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override;
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override;
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
 class Function : public SymbolAbstract {

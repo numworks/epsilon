@@ -107,11 +107,11 @@ constexpr KDColor Palette::YellowDark; // Done
 constexpr KDColor Palette::YellowLight; // Done
 constexpr KDColor Palette::PurpleBright; // Done
 constexpr KDColor Palette::PurpleDark; // Done
-constexpr KDColor Palette::GreyWhite; // Done
-constexpr KDColor Palette::GreyBright; // Done
-constexpr KDColor Palette::GreyMiddle; // Done
-constexpr KDColor Palette::GreyDark; // Done
-constexpr KDColor Palette::GreyVeryDark; // Done
+constexpr KDColor Palette::GrayWhite; // Done
+constexpr KDColor Palette::GrayBright; // Done
+constexpr KDColor Palette::GrayMiddle; // Done
+constexpr KDColor Palette::GrayDark; // Done
+constexpr KDColor Palette::GrayVeryDark; // Done
 constexpr KDColor Palette::Select; // Done
 constexpr KDColor Palette::SelectDark; // Done
 constexpr KDColor Palette::WallScreen; // Done

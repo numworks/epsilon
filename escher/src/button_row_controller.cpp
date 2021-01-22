@@ -72,7 +72,7 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   KDCoordinate widthMargin = 0;
   KDCoordinate buttonHeightMargin = 0;
   KDCoordinate buttonHeight = rowHeight;
-  if (m_style == Style::EmbossedGrey) {
+  if (m_style == Style::EmbossedGray) {
     KDCoordinate totalButtonWidth = 0;
     for (int i = 0; i < nbOfButtons; i++) {
       Button * button = buttonAtIndex(i);

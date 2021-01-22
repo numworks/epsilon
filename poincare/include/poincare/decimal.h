@@ -42,13 +42,14 @@ public:
   // Properties
   Type type() const override { return Type::Decimal; }
   Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  NullStatus nullStatus(Context * context) const override { return unsignedMantissa().isZero() ? NullStatus::Null : NullStatus::NonNull; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return Complex<float>::Builder(templatedApproximate<float>());
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return Complex<double>::Builder(templatedApproximate<double>());
   }
 
@@ -60,7 +61,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::Decimal; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::Decimal; }
 

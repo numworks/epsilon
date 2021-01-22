@@ -20,18 +20,23 @@ class ExpressionNode : public TreeNode {
   friend class AdditionNode;
   friend class DivisionNode;
   friend class NAryExpressionNode;
+  friend class NAryInfixExpressionNode;
   friend class PowerNode;
   friend class SymbolNode;
 public:
-   enum class Type : uint8_t {
+  // The types order is important here.
+  enum class Type : uint8_t {
     Uninitialized = 0,
     Undefined = 1,
     Unreal,
     Rational,
     BasedInteger,
     Decimal,
+    Double,
     Float,
     Infinity,
+    /* When merging number nodes together, we do a linear scan which stops at
+     * the first non-number child. */
     Multiplication,
     Power,
     Addition,
@@ -90,23 +95,33 @@ public:
     Randint,
     RealPart,
     Round,
+    Sequence,
     SignFunction,
     SquareRoot,
     Subtraction,
     Sum,
-
+    VectorDot,
+    VectorNorm,
+    /* When sorting the children of an expression, we assert that the following
+     * nodes are at the end of the list : */
+    // - Units
     Unit,
+    // - Complexes
     ComplexCartesian,
-
+    // - Any kind of matrices :
     ConfidenceInterval,
     MatrixDimension,
     MatrixIdentity,
     MatrixInverse,
     MatrixTranspose,
+    MatrixRowEchelonForm,
+    MatrixReducedRowEchelonForm,
     PredictionInterval,
+    VectorCross,
     Matrix,
+
     EmptyExpression
-   };
+  };
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;
@@ -141,33 +156,82 @@ public:
     Unknown = 0,
     Positive = 1
   };
+  enum class NullStatus {
+    Unknown = -1,
+    NonNull = 0,
+    Null = 1,
+  };
 
-  class ReductionContext {
+  class ComputationContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
+    ComputationContext(
+        Context * context,
+        Preferences::ComplexFormat complexFormat,
+        Preferences::AngleUnit angleUnit) :
       m_context(context),
       m_complexFormat(complexFormat),
-      m_angleUnit(angleUnit),
-      m_target(target),
-      m_symbolicComputation(symbolicComputation),
-      m_unitConversion(unitConversion)
+      m_angleUnit(angleUnit)
     {}
     Context * context() { return m_context; }
+    void setContext(Context * context) { m_context = context; }
     Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
     Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
-    ReductionTarget target() const { return m_target; }
-    SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
-    UnitConversion unitConversion() const { return m_unitConversion; }
   private:
     Context * m_context;
     Preferences::ComplexFormat m_complexFormat;
     Preferences::AngleUnit m_angleUnit;
+  };
+
+  class ReductionContext : public ComputationContext {
+  public:
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
+      ComputationContext(context, complexFormat, angleUnit),
+      m_unitFormat(unitFormat),
+      m_target(target),
+      m_symbolicComputation(symbolicComputation),
+      m_unitConversion(unitConversion)
+    {}
+    static ReductionContext NonInvasiveReductionContext(ReductionContext reductionContext) {
+      return ReductionContext(
+          reductionContext.context(),
+          reductionContext.complexFormat(),
+          reductionContext.angleUnit(),
+          reductionContext.unitFormat(),
+          reductionContext.target(),
+          SymbolicComputation::DoNotReplaceAnySymbol,
+          UnitConversion::None
+        );
+    }
+    Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
+    ReductionTarget target() const { return m_target; }
+    SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
+    UnitConversion unitConversion() const { return m_unitConversion; }
+  private:
+    Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;
     UnitConversion m_unitConversion;
   };
 
+  class ApproximationContext : public ComputationContext {
+  public:
+    ApproximationContext(
+        Context * context,
+        Preferences::ComplexFormat complexFormat,
+        Preferences::AngleUnit angleUnit,
+        bool withinReduce = false) :
+      ComputationContext(context, complexFormat, angleUnit),
+      m_withinReduce(withinReduce)
+    {}
+    ApproximationContext(ReductionContext reductionContext, bool withinReduce) :
+      ApproximationContext(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), withinReduce) {}
+    bool withinReduce() const { return m_withinReduce; }
+  private:
+    bool m_withinReduce;
+  };
+
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
+  virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }
   virtual bool isRandom() const { return false; }
   virtual bool isParameteredExpression() const { return false; }
@@ -183,7 +247,6 @@ public:
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const;
-  virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
 
   virtual Expression removeUnit(Expression * unit); // Only reduced nodes should answer
@@ -216,13 +279,22 @@ public:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   constexpr static int k_maxNumberOfSteps = 10000;
-  virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
-  virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const = 0;
+  virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const = 0;
 
   /* Simplification */
   /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);
+  /*!*/ virtual void deepBeautifyChildren(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
-  /*!*/ virtual Expression shallowBeautify(ReductionContext reductionContext);
+  /* TODO: shallowBeautify takes a pointer to the reduction context, unlike
+   * other methods. The pointer is needed to allow UnitConvert to modify the
+   * context and prevent unit modifications (in Expression::deepBeautify, after
+   * calling UnitConvert::shallowBeautify).
+   * We should uniformize this behaviour and use pointers in other methods using
+   * the reduction context. */
+  /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
+  /*!*/ virtual bool derivate(ReductionContext, Expression symbol, Expression symbolValue);
+  virtual Expression unaryFunctionDifferential(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions. It depends on the "layout syle" of the on the right of the left expression */

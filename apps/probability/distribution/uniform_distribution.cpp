@@ -48,14 +48,16 @@ float UniformDistribution::yMax() const {
 }
 
 float UniformDistribution::evaluateAtAbscissa(float t) const {
-  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
-    if (m_parameter1 - k_diracWidth<= t && t <= m_parameter2 + k_diracWidth) {
+  float parameter1 = m_parameter1;
+  float parameter2 = m_parameter2;
+  if (parameter2 - parameter1 < FLT_EPSILON) {
+    if (parameter1 - k_diracWidth<= t && t <= parameter2 + k_diracWidth) {
       return 2.0f * k_diracMaximum;
     }
     return 0.0f;
   }
-  if (m_parameter1 <= t && t <= m_parameter2) {
-    return (1.0f/(m_parameter2 - m_parameter1));
+  if (parameter1 <= t && t <= parameter2) {
+    return (1.0f/(parameter2 - parameter1));
   }
   return 0.0f;
 }
@@ -73,7 +75,7 @@ bool UniformDistribution::authorizedValueAtIndex(float x, int index) const {
 void UniformDistribution::setParameterAtIndex(float f, int index) {
   TwoParameterDistribution::setParameterAtIndex(f, index);
   if (index == 0 && m_parameter2 < m_parameter1) {
-    m_parameter2 = m_parameter1 + 1.0f;
+    m_parameter2 = m_parameter1 + 1.0;
   }
 }
 

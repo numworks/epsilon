@@ -41,7 +41,7 @@ bool DateTimeController::handleEvent(Ion::Events::Event event) {
   for (int i = 0; i < numberOfRows(); i++) {
     m_selectableTableView.reloadCellAtLocation(0, i);
   }
-  AppsContainer::sharedAppsContainer()->redrawWindow(true);
+  AppsContainer::sharedAppsContainer()->redrawWindow();
   return true;
 }
 

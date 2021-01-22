@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
 #include <cmath>
 #include <algorithm>
@@ -11,14 +12,13 @@ using namespace Shared;
 
 namespace Regression {
 
-GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, modelVersion, previousModelsVersions, rangeVersion),
+GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, rangeVersion),
   m_crossCursorView(),
   m_roundCursorView(),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
-  m_initialisationParameterController(this, m_store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex)
@@ -27,10 +27,6 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
     m_modelType[i] = (Model::Type) -1;
   }
   m_store->setDelegate(this);
-}
-
-ViewController * GraphController::initialisationParameterController() {
-  return &m_initialisationParameterController;
 }
 
 bool GraphController::isEmpty() const {
@@ -200,7 +196,7 @@ void GraphController::reloadBannerView() {
     // Set "r2=..."
     numberOfChar = 0;
     legend = " r2=";
-    double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
+    double r2 = m_store->determinationCoefficientForSeries(*m_selectedSeriesIndex, globalContext());
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(1+index)->setText(buffer);
@@ -219,7 +215,7 @@ void GraphController::reloadBannerView() {
   m_bannerView.reload();
 }
 
-bool GraphController::moveCursorHorizontally(int direction, bool fast) {
+bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
@@ -235,7 +231,8 @@ bool GraphController::moveCursorHorizontally(int direction, bool fast) {
     }
     *m_selectedDotIndex = dotSelected;
   } else {
-    x = m_cursor->x() + direction * m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+    double step = direction * scrollSpeed * m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+    x = m_cursor->x() + step;
     y = yValue(*m_selectedSeriesIndex, x, globalContext());
   }
   m_cursor->moveTo(x, x, y);
@@ -260,10 +257,24 @@ void GraphController::initCursorParameters() {
   double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   m_cursor->moveTo(x, x, y);
-  if (m_store->yAuto()) {
-    m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
-  }
   *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
+}
+
+bool GraphController::cursorMatchesModel() {
+  if (m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
+    return false;
+  }
+  Coordinate2D<double> xy;
+  if (*m_selectedDotIndex == -1) {
+    xy = xyValues(*m_selectedSeriesIndex, m_cursor->t(), globalContext());
+  } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+    xy = Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
+  } else if (*m_selectedDotIndex > m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+    return false;
+  } else {
+    xy = Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+  }
+  return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
 }
 
 bool GraphController::moveCursorVertically(int direction) {
@@ -345,15 +356,6 @@ bool GraphController::moveCursorVertically(int direction) {
   return false;
 }
 
-uint32_t GraphController::modelVersion() {
-  return m_store->storeChecksum();
-}
-
-uint32_t GraphController::modelVersionAtIndex(int i) {
-  assert(i < numberOfMemoizedVersions());
-  return *(m_store->seriesChecksum() + i);
-}
-
 uint32_t GraphController::rangeVersion() {
   return m_store->rangeChecksum();
 }
@@ -380,23 +382,6 @@ int GraphController::numberOfCurves() const {
 
 int GraphController::estimatedBannerNumberOfLines() const {
   return (selectedSeriesIndex() < 0) ? 3 : m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
-}
-
-InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  float minY = FLT_MAX;
-  float maxY = -FLT_MAX;
-  for (int series = 0; series < Store::k_numberOfSeries; series++) {
-    for (int k = 0; k < m_store->numberOfPairsOfSeries(series); k++) {
-      if (m_store->xMin() <= m_store->get(series, 0, k) && m_store->get(series, 0, k) <= m_store->xMax()) {
-        minY = std::min<float>(minY, m_store->get(series, 1, k));
-        maxY = std::max<float>(maxY, m_store->get(series, 1, k));
-      }
-    }
-  }
-  InteractiveCurveViewRangeDelegate::Range range;
-  range.min = minY;
-  range.max = maxY;
-  return range;
 }
 
 void GraphController::setRoundCrossCursorView() {

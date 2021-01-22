@@ -1,6 +1,7 @@
 #include "graph_view.h"
 #include "../app.h"
 #include <assert.h>
+#include <algorithm>
 
 using namespace Shared;
 
@@ -27,7 +28,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
   for (int i = 0; i < activeFunctionsCount ; i++) {
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);;
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
+    ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
     Shared::ContinuousFunction::PlotType type = f->plotType();
     Poincare::Expression e = f->expressionReduced(context());
     if (e.isUndefined() || (
@@ -38,21 +40,24 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }
     float tmin = f->tMin();
     float tmax = f->tMax();
-    /* The step is a fraction of tmax-tmin. We will evaluate the function at
-     * every step and if the consecutive dots are close enough, we won't
-     * evaluate any more dot within the step. We pick a very strange fraction
-     * denominator to avoid evaluating a periodic function periodically. For
-     * example, if tstep was (tmax - tmin)/10, the polar function r(θ) = sin(5θ)
-     * defined on 0..2π would be evaluated on r(0) = 0, r(π/5) = 0, r(2*π/5) = 0
-     * which would lead to no curve at all. With 10.0938275501223, the
-     * problematic functions are the functions whose period is proportionned to
-     * 10.0938275501223 which are hopefully rare enough.
-     * TODO: The drawCurve algorithm should use the derivative function to know
-     * how fast the function moves... */
-    float tstep = (tmax-tmin)/10.0938275501223f;
 
-    // Cartesian
+    float tCacheMin, tCacheStep, tStepNonCartesian;
+    if (type == ContinuousFunction::PlotType::Cartesian) {
+      float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+      /* Here, tCacheMin can depend on rect (and change as the user move)
+       * because cache can be panned for cartesian curves, instead of being
+       * entirely invalidated. */
+      tCacheMin = std::isnan(rectLeft) ? tmin : std::max(tmin, rectLeft);
+      tCacheStep = pixelWidth();
+    } else {
+      tCacheMin = tmin;
+      // Compute tCacheStep and tStepNonCartesian
+      ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
+    }
+    ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
+
     if (type == Shared::ContinuousFunction::PlotType::Cartesian) {
+      // Cartesian
       drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
@@ -72,18 +77,22 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());
         drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GraphTangent, false);
       }
-      continue;
+    } else if (type == Shared::ContinuousFunction::PlotType::Polar) {
+      // Polar
+      drawPolarCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
+            ContinuousFunction * f = (ContinuousFunction *)model;
+            Poincare::Context * c = (Poincare::Context *)context;
+            return f->evaluateXYAtParameter(t, c);
+          }, f.operator->(), context(), false, f->color());
+    } else {
+      // Parametric
+      assert(type == Shared::ContinuousFunction::PlotType::Parametric);
+      drawCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
+          ContinuousFunction * f = (ContinuousFunction *)model;
+          Poincare::Context * c = (Poincare::Context *)context;
+          return f->evaluateXYAtParameter(t, c);
+        }, f.operator->(), context(), false, f->color());
     }
-
-    // Polar or parametric
-    assert(
-        type == Shared::ContinuousFunction::PlotType::Polar ||
-        type == Shared::ContinuousFunction::PlotType::Parametric);
-    drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
-        ContinuousFunction * f = (ContinuousFunction *)model;
-        Poincare::Context * c = (Poincare::Context *)context;
-        return f->evaluateXYAtParameter(t, c);
-      }, f.operator->(), context(), false, f->color());
   }
 }
 

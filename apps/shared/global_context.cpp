@@ -1,6 +1,9 @@
 #include "global_context.h"
 #include "continuous_function.h"
+#include "sequence.h"
 #include "poincare_helpers.h"
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
 
@@ -10,6 +13,11 @@ namespace Shared {
 
 constexpr const char * GlobalContext::k_extensions[];
 
+SequenceStore * GlobalContext::sequenceStore() {
+  static SequenceStore sequenceStore;
+  return &sequenceStore;
+}
+
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }
@@ -18,9 +26,11 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
   if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
-  } else {
-    assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension)));
+  } else if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     return ContinuousFunction(record).layout();
+  } else {
+    assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::seqExtension, strlen(Ion::Storage::seqExtension)));
+    return Sequence(record).layout();
   }
 }
 
@@ -36,22 +46,26 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
   const char * extension = Ion::Storage::sharedStorage()->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
     return Context::SymbolAbstractType::None;
+  } else if (extension == Ion::Storage::expExtension) {
+    return Context::SymbolAbstractType::Symbol;
+  } else if (extension == Ion::Storage::funcExtension) {
+    return Context::SymbolAbstractType::Function;
+  } else {
+    assert(extension == Ion::Storage::seqExtension);
+    return Context::SymbolAbstractType::Sequence;
   }
-  assert(k_numberOfExtensions == 2);
-  assert(extension == Ion::Storage::expExtension || extension == Ion::Storage::funcExtension);
-  return extension == Ion::Storage::expExtension ? Context::SymbolAbstractType::Symbol : Context::SymbolAbstractType::Function;
 }
 
-const Expression GlobalContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
+const Expression GlobalContext::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
-  return ExpressionForSymbolAndRecord(symbol, r);
+  return ExpressionForSymbolAndRecord(symbol, r, this, unknownSymbolValue);
 }
 
 void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
-  Expression e = ExpressionForSymbolAndRecord(symbol, record);
+  Expression e = ExpressionForSymbolAndRecord(symbol, record, this);
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }
@@ -69,12 +83,14 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
   }
 }
 
-const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r) {
+const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue ) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
+  } else if (symbol.type() == ExpressionNode::Type::Function) {
+    return ExpressionForFunction(symbol, r);
   }
-  assert(symbol.type() == ExpressionNode::Type::Function);
-  return ExpressionForFunction(symbol, r);
+  assert(symbol.type() == ExpressionNode::Type::Sequence);
+  return ExpressionForSequence(symbol, r, ctx, unknownSymbolValue);
 }
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
@@ -97,6 +113,38 @@ const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & sym
     e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), symbol.childAtIndex(0));
   }
   return e;
+}
+
+const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue) {
+  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::seqExtension, strlen(Ion::Storage::seqExtension))) {
+    return Expression();
+  }
+  /* An function record value has metadata before the expression. To get the
+   * expression, use the function record handle. */
+  Sequence seq(r);
+  Expression rank = symbol.childAtIndex(0).clone();
+  rank = rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<float>::Builder(unknownSymbolValue));
+  rank = rank.simplify(ExpressionNode::ReductionContext(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
+  if (!rank.isUninitialized()) {
+    bool rankIsInteger = false;
+    double rankValue = rank.approximateToScalar<double>(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
+    if (rank.type() == ExpressionNode::Type::Rational) {
+      Rational n = static_cast<Rational &>(rank);
+      rankIsInteger = n.isInteger();
+    } else if (!std::isnan(unknownSymbolValue)) {
+      /* If unknownSymbolValue is not nan, then we are in the graph app. In order
+       * to allow functions like f(x) = u(x+0.5) to be ploted, we need to
+       * approximate the rank and check if it is an integer. Unfortunatly this
+       * leads to some edge cases were, because of quantification, we have
+       * floor(x) = x while x is not integer.*/
+      rankIsInteger = std::floor(rankValue) == rankValue;
+    }
+    if (rankIsInteger && !seq.badlyReferencesItself(ctx)) {
+      SequenceContext sqctx(ctx, sequenceStore());
+      return Float<double>::Builder(seq.evaluateXYAtParameter(rankValue, &sqctx).x2());
+    }
+  }
+  return Float<double>::Builder(NAN);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

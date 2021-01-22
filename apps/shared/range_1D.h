@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <float.h>
+#include <poincare/zoom.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>
@@ -18,8 +19,8 @@ class __attribute__((packed)) Range1D final {
 public:
   /* If m_min and m_max are too close, we cannot divide properly the range by
    * the number of pixels, which creates a drawing problem. */
-  constexpr static float k_minFloat = 1E-4f;
-  constexpr static float k_default = 10.0f;
+  constexpr static float k_minFloat = Poincare::Zoom::k_minimalRangeLength;
+  constexpr static float k_default = Poincare::Zoom::k_defaultHalfRange;
   Range1D(float min = -k_default, float max = k_default) :
     m_min(min),
     m_max(max)
@@ -32,10 +33,10 @@ public:
   static float defaultRangeLengthFor(float position);
 private:
 #if __EMSCRIPTEN__
-    // See comment about emscripten alignement in Shared::Function::RecordDataBuffer
+    // See comment about emscripten alignment in Shared::Function::RecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_float m_min __attribute__((packed));
-    emscripten_align1_float m_max __attribute__((packed));
+    emscripten_align1_float m_min;
+    emscripten_align1_float m_max;
 #else
   float m_min;
   float m_max;

@@ -39,7 +39,10 @@ protected:
 private:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
   virtual CodePoint expressionSymbol() const = 0;
+  // Set the size of the buffer needed to store the additional calculation
   constexpr static int k_maxNumberOfAdditionalCalculations = 4;
+  constexpr static int k_calculationStoreBufferSize = k_maxNumberOfAdditionalCalculations * (sizeof(Calculation) + Calculation::k_numberOfExpressions * Constant::MaxSerializedExpressionSize + sizeof(Calculation *));
+  char m_calculationStoreBuffer[k_calculationStoreBufferSize];
   // Cells
   virtual HighlightCell * illustrationCell() = 0;
   ScrollableThreeExpressionsCell m_additionalCalculationCells[k_maxNumberOfAdditionalCalculations];

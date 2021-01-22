@@ -7,10 +7,10 @@ namespace Shared {
 
 class Dots {
 public:
-  static constexpr KDCoordinate SmallDotDiameter = 5;
+  static constexpr KDCoordinate TinyDotDiameter = 5;
+  static const uint8_t TinyDotMask[TinyDotDiameter][TinyDotDiameter];
+  static constexpr KDCoordinate SmallDotDiameter = 7;
   static const uint8_t SmallDotMask[SmallDotDiameter][SmallDotDiameter];
-  static constexpr KDCoordinate MediumDotDiameter = 7;
-  static const uint8_t MediumDotMask[MediumDotDiameter][MediumDotDiameter];
   static constexpr KDCoordinate LargeDotDiameter = 10;
   static const uint8_t LargeDotMask[LargeDotDiameter][LargeDotDiameter];
 };

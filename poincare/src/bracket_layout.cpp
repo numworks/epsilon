@@ -59,6 +59,14 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
 
   int currentNumberOfOpenBrackets = 1;
   KDCoordinate result = 0;
+  if (parentLayout->type() != LayoutNode::Type::HorizontalLayout) {
+    /* The bracket has no true sibling. Those that might be founded by
+     * numberOfSiblings = parentLayout->numberOfChildren() are likely children
+     * of Narylayout where the bracket is alone in one of the sublayouts. To
+     * prevent it from defining its height and baseline according to the other
+     * sublayouts, we use this escape case.*/
+    return result;
+  }
   int increment = (type() == Type::LeftParenthesisLayout || type() == Type::LeftSquareBracketLayout) ? 1 : -1;
   for (int i = idxInParent + increment; i >= 0 && i < numberOfSiblings; i+=increment) {
     LayoutNode * sibling = parentLayout->childAtIndex(i);
@@ -101,6 +109,14 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
   assert(parentLayout != nullptr);
   KDCoordinate result = Metric::MinimalBracketAndParenthesisHeight;
   int idxInParent = parentLayout->indexOfChild(this);
+  if (parentLayout->type() != LayoutNode::Type::HorizontalLayout) {
+    /* The bracket has no true sibling. Those that might be founded by
+     * numberOfSiblings = parentLayout->numberOfChildren() are likely children
+     * of Narylayout where the bracket is alone in one of the sublayouts. To
+     * prevent it from defining its height and baseline according to the other
+     * sublayouts, we use this escape case.*/
+    return result;
+  }
   int numberOfSiblings = parentLayout->numberOfChildren();
   if ((type() == Type::LeftParenthesisLayout || type() == Type::LeftSquareBracketLayout)
       && idxInParent < numberOfSiblings - 1
@@ -111,7 +127,6 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
      * needs the superscript height, which needs the bracket height. */
     return result;
   }
-
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
 

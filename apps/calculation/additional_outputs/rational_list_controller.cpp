@@ -9,34 +9,31 @@ using namespace Shared;
 
 namespace Calculation {
 
-int RationalListController::numberOfRows() const {
-  return 2;
-}
-
 Integer extractInteger(const Expression e) {
   assert(e.type() == ExpressionNode::Type::BasedInteger);
   return static_cast<const BasedInteger &>(e).integer();
 }
 
-void RationalListController::computeLayoutAtIndex(int index) {
+void RationalListController::setExpression(Poincare::Expression e) {
+  ExpressionsListController::setExpression(e);
+  assert(!m_expression.isUninitialized());
+  static_assert(k_maxNumberOfRows >= 2, "k_maxNumberOfRows must be greater than 2");
+
   bool negative = false;
   Expression div = m_expression;
   if (m_expression.type() == ExpressionNode::Type::Opposite) {
     negative = true;
     div = m_expression.childAtIndex(0);
   }
+
   assert(div.type() == ExpressionNode::Type::Division);
   Integer numerator = extractInteger(div.childAtIndex(0));
   numerator.setNegative(negative);
   Integer denominator = extractInteger(div.childAtIndex(1));
-  Expression e;
-  if (index == 0) {
-    e = Integer::CreateMixedFraction(numerator, denominator);
-  } else {
-    assert(index == 1);
-    e = Integer::CreateEuclideanDivision(numerator, denominator);
-  }
-  m_layouts[index] = PoincareHelpers::CreateLayout(e);
+
+  int index = 0;
+  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateMixedFraction(numerator, denominator));
+  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateEuclideanDivision(numerator, denominator));
 }
 
 I18n::Message RationalListController::messageAtIndex(int index) {

@@ -68,7 +68,7 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
 bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
   EmptyLayout thisRef(this);
   Layout siblingRef(sibling); // Create the reference now, as the node might be moved
-  if (m_color == Color::Grey) {
+  if (m_color == Color::Gray) {
     /* The parent is a MatrixLayout, and the current empty row or column is
      * being filled in, so add a new empty row or column. */
     LayoutNode * parentNode = parent();

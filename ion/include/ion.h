@@ -3,6 +3,7 @@
 
 #include <ion/backlight.h>
 #include <ion/battery.h>
+#include <ion/clipboard.h>
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
@@ -51,6 +52,9 @@ uint32_t random();
 // Decompress data
 void decompress(const uint8_t * src, uint8_t * dst, int srcSize, int dstSize);
 
+// Sets and returns address to the first object that can be allocated on stack
+void * stackStart();
+void setStackStart(void *);
 // Tells whether the stack pointer is within acceptable bounds
 bool stackSafe();
 

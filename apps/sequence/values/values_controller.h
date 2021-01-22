@@ -1,8 +1,8 @@
 #ifndef SEQUENCE_VALUES_CONTROLLER_H
 #define SEQUENCE_VALUES_CONTROLLER_H
 
-#include "../sequence_store.h"
-#include "../sequence_title_cell.h"
+#include "../../shared/sequence_store.h"
+#include "../../shared/sequence_title_cell.h"
 #include "../../shared/values_controller.h"
 #include "interval_parameter_controller.h"
 
@@ -46,7 +46,7 @@ private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
 
   // Model getters
-  SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::ValuesController::functionStore()); }
+  Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::ValuesController::functionStore()); }
   Shared::Interval * intervalAtColumn(int columnIndex) override;
 
   // Function evaluation memoization
@@ -75,7 +75,7 @@ private:
     assert (j >= 0 && j < abscissaTitleCellsCount());
     return &m_abscissaTitleCell;
   }
-  SequenceTitleCell * functionTitleCells(int j) override {
+  Shared::SequenceTitleCell * functionTitleCells(int j) override {
     assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
     return &m_sequenceTitleCells[j];
   }
@@ -85,7 +85,7 @@ private:
   }
 
   SelectableTableView m_selectableTableView;
-  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
+  Shared::SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
   EvenOddMessageTextCell m_abscissaTitleCell;
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];

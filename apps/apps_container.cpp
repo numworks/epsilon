@@ -59,8 +59,23 @@ AppsContainer::AppsContainer() :
 }
 
 bool AppsContainer::poincareCircuitBreaker() {
+  constexpr uint64_t minimalPressDuration = 20;
+  static uint64_t beginningOfInterruption = 0;
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  return state.keyDown(Ion::Keyboard::Key::Back);
+  bool interrupt = state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::OnOff);
+  if (!interrupt) {
+    beginningOfInterruption = 0;
+    return false;
+  }
+  if (beginningOfInterruption == 0) {
+    beginningOfInterruption = Ion::Timing::millis();
+    return false;
+  }
+  if (Ion::Timing::millis() - beginningOfInterruption > minimalPressDuration) {
+    beginningOfInterruption = 0;
+    return true;
+  }
+  return false;
 }
 
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
@@ -181,7 +196,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       }
       if (changedZoom) {
         KDIonContext::sharedContext()->updatePostProcessingEffects();
-        redrawWindow(true);
+        redrawWindow();
         return true;
       }
     }
@@ -341,7 +356,7 @@ void AppsContainer::shutdownDueToLowBattery() {
    * case. */
     return;
   }
-  while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+  while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY && !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
     if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
@@ -365,15 +380,15 @@ bool AppsContainer::updateAlphaLock() {
   return m_window.updateAlphaLock();
 }
 
-OnBoarding::PopUpController * AppsContainer::promptController() {
+OnBoarding::PromptController * AppsContainer::promptController() {
   if (k_promptNumberOfMessages == 0) {
     return nullptr;
   }
   return &m_promptController;
 }
 
-void AppsContainer::redrawWindow(bool force) {
-  m_window.redraw(force);
+void AppsContainer::redrawWindow() {
+  m_window.redraw();
 }
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {

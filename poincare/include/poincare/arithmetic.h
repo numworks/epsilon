@@ -2,13 +2,20 @@
 #define POINCARE_ARITHMETIC_H
 
 #include <poincare/integer.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
 class Arithmetic final {
 public:
-  static Integer LCM(const Integer & i, const Integer & j);
   static Integer GCD(const Integer & i, const Integer & j);
+  static Integer LCM(const Integer & i, const Integer & j);
+  static Expression GCD(const Expression & expression);
+  static Expression LCM(const Expression & expression);
+  static int GCD(int i, int j);
+  static int LCM(int i, int j);
+  template<typename T> static Evaluation<T> GCD(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
+  template<typename T> static Evaluation<T> LCM(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
   /* When outputCoefficients[0] is set to -1, that indicates a special case:
    * i could not be factorized.
    * Before calling PrimeFactorization, we initiate two tables of Integers

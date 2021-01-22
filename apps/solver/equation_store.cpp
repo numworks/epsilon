@@ -89,28 +89,23 @@ void EquationStore::setIntervalBound(int index, double value) {
   }
 }
 
-double EquationStore::approximateSolutionAtIndex(int i) {
-  assert(m_type == Type::Monovariable && i >= 0 && i < m_numberOfSolutions);
-  return m_approximateSolutions[i];
-}
-
-bool EquationStore::haveMoreApproximationSolutions(Context * context, bool solveWithoutContext) {
-  if (m_numberOfSolutions < k_maxNumberOfEquations) {
-    return false;
-  }
-  double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context, solveWithoutContext), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], context));
-}
-
 void EquationStore::approximateSolve(Poincare::Context * context, bool shouldReplaceFunctionsButNotSymbols) {
+  m_hasMoreThanMaxNumberOfApproximateSolution = false;
+  Expression undevelopedExpression = modelForRecord(definedRecordAtIndex(0))->standardForm(context, shouldReplaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget::SystemForApproximation);
   m_userVariablesUsed = !shouldReplaceFunctionsButNotSymbols;
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context, shouldReplaceFunctionsButNotSymbols), m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
+  double root;
+  for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
+    root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
+    if (i == k_maxNumberOfApproximateSolutions) {
+      m_hasMoreThanMaxNumberOfApproximateSolution = !std::isnan(root);
+      break;
+    }
+    m_approximateSolutions[i] = root;
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -131,6 +126,20 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool
   return e;
 }
 
+/* Equations are solved according to the following procedure :
+ * 1) We develop the equations using the reduction target "SystemForAnalysis".
+ * This expands structures like Newton multinoms and allows us to detect
+ * polynoms afterwards. ("(x+2)^2" in this form is not detected but is if
+ * expanded).
+ * 2) We look for classic forms of equations for which we have algorithms
+ * that output the exact answer. If one is recognized in the input equation,
+ * the exact answer is given to the user.
+ * 3) If no classic form has been found in the developped form, we need to use
+ * numerical approximation. Therefore, to prevent precision losses, we work
+ * with the undevelopped form of the equation. Therefore we set reductionTarget
+ * to SystemForApproximation. Solutions are then numericaly approximated
+ * between the bounds provided by the user. */
+
 EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
   tidySolution();
 
@@ -143,6 +152,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   // TODO we look twice for variables but not the same, is there a way to not do the same work twice?
   m_userVariables[0][0] = 0;
   m_numberOfUserVariables = 0;
+  Expression simplifiedExpressions[k_maxNumberOfEquations];
 
   for (int i = 0; i < numberOfDefinedModels(); i++) {
     Shared::ExpiringPointer<Equation> eq = modelForRecord(definedRecordAtIndex(i));
@@ -150,12 +160,21 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     /* Start by looking for user variables, so that if we escape afterwards, we
      * know  if it might be due to a user variable. */
     if (m_numberOfUserVariables < Expression::k_maxNumberOfVariables) {
-      const Expression eWithSymbols = eq->standardForm(context, true);
+      const Expression eWithSymbols = eq->standardForm(context, true, ExpressionNode::ReductionTarget::SystemForAnalysis);
+      /* if replaceFunctionsButNotSymbols is true we can memoize the expressions
+       * for the rest of the function. Otherwise, we will memoize them at the
+       * next call to standardForm*/
+      if (replaceFunctionsButNotSymbols == true) {
+        simplifiedExpressions[i] = eWithSymbols;
+      }
       int varCount = eWithSymbols.getVariables(context, [](const char * symbol, Poincare::Context * context) { return context->expressionTypeForIdentifier(symbol, strlen(symbol)) == Poincare::Context::SymbolAbstractType::Symbol; }, (char *)m_userVariables, Poincare::SymbolAbstract::k_maxNameSize, m_numberOfUserVariables);
       m_numberOfUserVariables = varCount < 0 ? Expression::k_maxNumberOfVariables : varCount;
     }
-
-    const Expression e = eq->standardForm(context, replaceFunctionsButNotSymbols); // The standard form is memoized so there is no double computation even if replaceFunctionsButNotSymbols is true.
+    if (simplifiedExpressions[i].isUninitialized()) {
+      // The expression was not memoized before.
+      simplifiedExpressions[i] = eq->standardForm(context, replaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    }
+    const Expression e = simplifiedExpressions[i];
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined || e.recursivelyMatches(Expression::IsMatrix, context, replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition)) {
       return Error::EquationUndefined;
     }
@@ -180,7 +199,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+    isLinear = isLinear && simplifiedExpressions[i].getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -211,13 +230,14 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     // Step 3. Polynomial & Monovariable?
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context, replaceFunctionsButNotSymbols)
+    int degree = simplifiedExpressions[0]
       .getPolynomialReducedCoefficients(
           m_variables[0],
           polynomialCoefficients,
           context,
           updatedComplexFormat(context),
           preferences->angleUnit(),
+          GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
           replaceFunctionsButNotSymbols ?
             ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions :
             ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
@@ -259,7 +279,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
        * solutions. */
       m_exactSolutionIdentity[solutionIndex] = forbidExactSolutions || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
-        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit());
+        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
       }
       solutionIndex++;
     }
@@ -269,6 +289,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
 
 EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression constants[k_maxNumberOfEquations], Context * context) {
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
   // n unknown variables
   int n = 0;
   while (n < Expression::k_maxNumberOfVariables && m_variables[n][0] != 0) {
@@ -286,7 +307,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   Ab.setDimensions(m, n+1);
 
   // Compute the rank of (A | b)
-  int rankAb = Ab.rank(context, updatedComplexFormat(context), angleUnit, true);
+  int rankAb = Ab.rank(context, updatedComplexFormat(context), angleUnit, unitFormat, true);
 
   // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;
@@ -295,12 +316,13 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   for (int j = m-1; j >= 0; j--) {
     bool rowWithNullCoefficients = true;
     for (int i = 0; i < n; i++) {
-      if (!Ab.matrixChild(j, i).isRationalZero()) {
+      if (Ab.matrixChild(j, i).nullStatus(context) != ExpressionNode::NullStatus::Null) {
         rowWithNullCoefficients = false;
         break;
       }
     }
-    if (rowWithNullCoefficients && !Ab.matrixChild(j, n).isRationalZero()) {
+    if (rowWithNullCoefficients && Ab.matrixChild(j, n).nullStatus(context) != ExpressionNode::NullStatus::Null) {
+      // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_numberOfSolutions = 0;
     }
   }
@@ -311,7 +333,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
         exactSolutions[i] = Ab.matrixChild(i,n);
-        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), angleUnit, unitFormat);
       }
     }
   }
@@ -323,15 +345,16 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), coefficients[0].clone(), coefficients[2].clone()));
-  delta = delta.simplify(ExpressionNode::ReductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), ExpressionNode::ReductionTarget::SystemForApproximation));
+  delta = delta.simplify(ExpressionNode::ReductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined::Builder();
   }
-  if (delta.isRationalZero()) {
+  if (delta.nullStatus(context) == ExpressionNode::NullStatus::Null) {
     // if delta = 0, x0=x1= -b/(2a)
     exactSolutions[0] = Division::Builder(Opposite::Builder(coefficients[1]), Multiplication::Builder(Rational::Builder(2), coefficients[2]));
     m_numberOfSolutions = 2;
   } else {
+    // TODO: Handle ExpressionNode::NullStatus::Unknown
     // x0 = (-b-sqrt(delta))/(2a)
     exactSolutions[0] = Division::Builder(Subtraction::Builder(Opposite::Builder(coefficients[1].clone()), SquareRoot::Builder(delta.clone())), Multiplication::Builder(Rational::Builder(2), coefficients[2].clone()));
     // x1 = (-b+sqrt(delta))/(2a)
@@ -340,7 +363,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions-1] = delta;
   for (int i = 0; i < m_numberOfSolutions; i++) {
-    exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+    exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
   }
   return Error::NoError;
 #if 0
@@ -362,8 +385,8 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
     Expression * mult5Operands[3] = {new Rational::Builder(3), a->clone(), c->clone()};
     Expression * delta0 = new Subtraction::Builder(new Power::Builder(b->clone(), new Rational::Builder(2), false), new Multiplication::Builder(mult5Operands, 3, false), false);
     Reduce(&delta0, *context);
-    if (delta->isRationalZero()) {
-      if (delta0->isRationalZero()) {
+    if (delta->nullStatus(context) == ExpressionNode::NullStatus::Null) {
+      if (delta0->nullStatus(context) == ExpressionNode::NullStatus::Null) {
         // delta0 = 0 && delta = 0 --> x0 = -b/(3a)
         delete delta0;
         m_exactSolutions[0] = new Opposite::Builder(new Division::Builder(b, new Multiplication::Builder(new Rational::Builder(3), a, false), false), false);

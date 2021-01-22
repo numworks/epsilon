@@ -75,7 +75,7 @@ private:
   Expression parseCommaSeparatedList();
   void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
   void parseSpecialIdentifier(Expression & leftHandSide);
-  void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2);
+  void parseSequence(Expression & leftHandSide, const char * name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2);
   void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 
@@ -110,9 +110,11 @@ private:
     &Conjugate::s_functionHelper,
     &Cosine::s_functionHelper,
     &HyperbolicCosine::s_functionHelper,
+    &VectorCross::s_functionHelper,
     &Determinant::s_functionHelper,
     &Derivative::s_functionHelper,
     &MatrixDimension::s_functionHelper,
+    &VectorDot::s_functionHelper,
     &Factor::s_functionHelper,
     &Floor::s_functionHelper,
     &FracPart::s_functionHelper,
@@ -127,6 +129,7 @@ private:
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
+    &VectorNorm::s_functionHelper,
     &NormCDF::s_functionHelper,
     &NormCDF2::s_functionHelper,
     &NormPDF::s_functionHelper,
@@ -138,9 +141,11 @@ private:
     &Randint::s_functionHelper,
     &Random::s_functionHelper,
     &RealPart::s_functionHelper,
+    &MatrixRowEchelonForm::s_functionHelper,
     &DivisionRemainder::s_functionHelper,
     &NthRoot::s_functionHelper,
     &Round::s_functionHelper,
+    &MatrixReducedRowEchelonForm::s_functionHelper,
     &SignFunction::s_functionHelper,
     &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,

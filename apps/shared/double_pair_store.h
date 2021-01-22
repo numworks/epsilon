@@ -63,6 +63,7 @@ public:
     assert(i < Palette::numberOfLightDataColors());
     return Palette::DataColorLight[i];
   }
+  double * data() { return reinterpret_cast<double*>(&m_data); }
 protected:
   virtual double defaultValue(int series, int i, int j) const;
   double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];

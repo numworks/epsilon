@@ -52,6 +52,10 @@ public:
     Large = 0,
     Small = 1
   };
+  enum class UnitFormat : uint8_t {
+    Metric = 0,
+    Imperial = 1
+  };
   Preferences();
   static Preferences * sharedPreferences();
   AngleUnit angleUnit() const { return m_angleUnit; }

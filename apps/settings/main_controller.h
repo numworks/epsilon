@@ -22,23 +22,21 @@ extern const Shared::SettingsMessageTree s_modelExamChildren[2];
 extern const Shared::SettingsMessageTree s_modelAboutChildren[3];
 extern const Shared::SettingsMessageTree s_model;
 
-class MainController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class MainController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   MainController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   Escher::View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);
   }
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
   TELEMETRY_ID("");

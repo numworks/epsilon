@@ -72,7 +72,7 @@ HighlightCell * IllustratedListController::reusableCell(int index, int type) {
   return &m_additionalCalculationCells[index];
 }
 
-KDCoordinate IllustratedListController::rowHeight(int j) {
+KDCoordinate IllustratedListController::nonMemoizedRowHeight(int j) {
   if (j == 0) {
     return k_illustrationHeight;
   }
@@ -83,15 +83,6 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
   ScrollableThreeExpressionsCell tempCell = ScrollableThreeExpressionsCell();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
-#if 0
-  Shared::ExpiringPointer<Calculation> calculation = m_calculationStore.calculationAtIndex(calculationIndex);
-  constexpr bool expanded = true;
-  return calculation->height(expanded) + Metric::CellSeparatorThickness;
-#endif
-}
-
-int IllustratedListController::typeAtLocation(int i, int j) {
-  return j == 0 ? 0 : 1;
 }
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {

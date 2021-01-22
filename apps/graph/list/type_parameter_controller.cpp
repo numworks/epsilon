@@ -50,18 +50,15 @@ void TypeParameterController::viewWillAppear() {
   Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
   int row = static_cast<int>(function->plotType());
   selectCellAtLocation(0, row);
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
-KDCoordinate TypeParameterController::rowHeight(int j) {
+KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
   MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
-#if 0
-  return PlotTypeHelper::Layout(j).layoutSize().height() + 14;
-}
-#endif
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < k_numberOfTypes);

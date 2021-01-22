@@ -45,6 +45,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 }
 
 void ListController::didBecomeFirstResponder() {
+  resetMemoization();
   Container::activeApp()->setFirstResponder(&m_listController);
 }
 

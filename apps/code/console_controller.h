@@ -47,7 +47,7 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   // SelectableTableViewDelegate

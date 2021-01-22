@@ -17,29 +17,15 @@ DisplayModeController::DisplayModeController(Responder * parentResponder, InputE
   m_editableCell(&m_selectableTableView, inputEventHandlerDelegate, this)
 {
   m_editableCell.messageTableCellWithEditableText()->setMessage(I18n::Message::SignificantFigures);
-  // m_editableCell.messageTableCellWithEditableText()->setMessageFont(KDFont::LargeFont);
 }
 
-KDCoordinate DisplayModeController::rowHeight(int j) {
+KDCoordinate DisplayModeController::nonMemoizedRowHeight(int j) {
   if (j == numberOfRows()-1) {
-#if 0
-    return Metric::ParameterCellHeight+MessageTableCellWithEditableTextWithSeparator::k_margin;
-  }
-  return Metric::ParameterCellHeight;
-#endif
     MessageTableCellWithEditableTextWithSeparator tempCell = MessageTableCellWithEditableTextWithSeparator();
     prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
     return tempCell.minimalSizeForOptimalDisplay().height();
   }
-  return PreferencesController::rowHeight(j);
-}
-
-KDCoordinate DisplayModeController::cumulatedHeightFromIndex(int j) {
-  return TableViewDataSource::cumulatedHeightFromIndex(j);
-}
-
-int DisplayModeController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return TableViewDataSource::indexFromCumulatedHeight(offsetY);
+  return PreferencesController::nonMemoizedRowHeight(j);
 }
 
 HighlightCell * DisplayModeController::reusableCell(int index, int type) {
@@ -56,10 +42,6 @@ int DisplayModeController::reusableCellCount(int type) {
   }
   assert(type == k_significantDigitsType);
   return 1;
-}
-
-int DisplayModeController::typeAtLocation(int i, int j) {
-  return (j == numberOfRows() - 1 ? k_significantDigitsType : k_resultFormatType);
 }
 
 void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {

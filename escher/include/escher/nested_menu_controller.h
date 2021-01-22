@@ -22,14 +22,11 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
 
-  //SimpleListViewDataSource
+  // SimpleListViewDataSource
   KDCoordinate cellWidth() override {
     assert(m_listController.selectableTableView()->columnWidth(0) == 266);
     return m_listController.selectableTableView()->columnWidth(0);
-    // assert(m_listController.selectableTableView()->bounds().width() - m_listController.selectableTableView()->rightMargin() - m_listController.selectableTableView()->leftMargin() == 266);
-    // return m_listController.selectableTableView()->bounds().width() - m_listController.selectableTableView()->rightMargin() - m_listController.selectableTableView()->leftMargin();
   }
-  // KDCoordinate rowHeight(int j) override;//
   HighlightCell * reusableCell(int index, int type) override;
 protected:
   class Stack {

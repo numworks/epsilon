@@ -8,14 +8,6 @@ namespace Escher {
 
 class ListViewDataSource : public TableViewDataSource {
 public:
-  // < TEMP
-  KDCoordinate rowHeight(int j) override;
-  virtual void prepareCellForHeightCalculation(HighlightCell * cell, int index);
-  int reusableCellCount(int type) override { return numberOfRows(); }
-  // virtual int typeAtIndex(int index) { return 0; }
-  // TEMP />
-
-
   // ListViewDataSource has only one column
   int numberOfColumns() const override { return 1; }
   int indexFromCumulatedWidth(KDCoordinate offsetX) override { return 0; }
@@ -28,8 +20,8 @@ public:
   virtual void willDisplayCellForIndex(HighlightCell * cell, int index) {}
   void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override { willDisplayCellForIndex(cell, y); }
 
-  virtual int typeAtIndex(int index) { assert(false); return 0; } // TODO : remove temp and make it virtual pure
-  int typeAtLocation(int i, int j) override { return typeAtIndex(j); }
+  virtual int typeAtIndex(int index) { return 0; }
+  int typeAtLocation(int i, int j) override { assert(i==0); return typeAtIndex(j); }
 };
 
 }

@@ -1,7 +1,7 @@
 #ifndef SHARED_STORE_PARAM_CONTROLLER_H
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
-#include <escher/list_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include <escher/message_table_cell.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
@@ -13,7 +13,7 @@ namespace Shared {
 
 class StoreController;
 
-class StoreParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class StoreParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   StoreParameterController(Escher::Responder * parentResponder, DoublePairStore * store, StoreController * storeController);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
@@ -28,21 +28,12 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
-  // KDCoordinate rowHeight(int j) override { return Escher::Metric::ParameterCellHeight; }
-  // KDCoordinate cumulatedHeightFromIndex(int j) override;
-  // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);
   }
-  // int reusableCellCount(int type) override {
-  //   assert(type == k_standardCellType);
-  //   return k_totalNumberOfCell;
-  // }
-  // int typeAtLocation(int i, int j) override { return k_standardCellType; }
 protected:
-  // static constexpr int k_standardCellType = 0;
   DoublePairStore * m_store;
   int m_series;
   Escher::SelectableTableView m_selectableTableView;

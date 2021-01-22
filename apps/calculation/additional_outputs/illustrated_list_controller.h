@@ -16,12 +16,12 @@ public:
   void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
-  //ListViewDataSource
+  // SimpleListViewDataSource
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  KDCoordinate rowHeight(int j) override;
-  int typeAtLocation(int i, int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
+  int typeAtIndex(int index) override { return index == 0 ? 0 : 1; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   // SelectableTableViewDelegate

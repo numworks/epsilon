@@ -33,6 +33,7 @@ void ListParameterController::viewWillAppear() {
   } else {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -57,7 +58,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate ListParameterController::rowHeight(int j) {
+KDCoordinate ListParameterController::nonMemoizedRowHeight(int j) {
   switch (j) {
 #if FUNCTION_COLOR_CHOICE
     case 0:
@@ -80,15 +81,7 @@ KDCoordinate ListParameterController::rowHeight(int j) {
       assert(false);
   }
 }
-#if 0
-KDCoordinate ListParameterController::cumulatedHeightFromIndex(int j) {
-  return Metric::ParameterCellHeight * j;
-}
 
-int ListParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return (offsetY - 1) / Metric::ParameterCellHeight;
-}
-#endif
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
   assert(index == 0);
   assert(index < totalNumberOfCells());
@@ -98,10 +91,6 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
   HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};
 #endif
   return cells[type];
-}
-
-int ListParameterController::typeAtLocation(int i, int j) {
-  return j;
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
@@ -115,6 +104,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
     case 0:
 #endif
       function()->setActive(!function()->isActive());
+      resetMemoization();
       m_selectableTableView.reloadData();
       return true;
 #if FUNCTION_COLOR_CHOICE

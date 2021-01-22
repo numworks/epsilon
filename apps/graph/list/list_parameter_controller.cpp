@@ -99,7 +99,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-KDCoordinate ListParameterController::rowHeight(int j) {
+KDCoordinate ListParameterController::nonMemoizedRowHeight(int j) {
   switch (j) {
   case 0:
     prepareCellForHeightCalculation((HighlightCell *)&m_typeCell, j);
@@ -111,7 +111,7 @@ KDCoordinate ListParameterController::rowHeight(int j) {
     prepareCellForHeightCalculation((HighlightCell *)&m_renameCell, j);
     return m_renameCell.minimalSizeForOptimalDisplay().height();
   default:
-    return Shared::ListParameterController::rowHeight(j - 3);
+    return Shared::ListParameterController::nonMemoizedRowHeight(j - 3);
   }
 }
 

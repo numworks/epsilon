@@ -19,7 +19,7 @@ namespace Regression {
 
 RegressionController::RegressionController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
-  ListViewDataSource(),
+  SimpleListViewDataSource(),
   SelectableTableViewDataSource(),
   m_selectableTableView(this, this, this),
   m_store(store),
@@ -53,30 +53,12 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
   return false;
 
 }
-KDCoordinate RegressionController::rowHeight(int j) {
+KDCoordinate RegressionController::nonMemoizedRowHeight(int j) {
   assert (j >= 0 && j < numberOfRows());
   MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
-
-// KDCoordinate RegressionController::cumulatedHeightFromIndex(int j) {
-//   assert (j >= 0 && j <= numberOfRows());
-//   KDCoordinate result = 0;
-//   for (int i = 0; i < j; i++) {
-//     result+= rowHeight(i);
-//   }
-//   return result;
-// }
-
-// int RegressionController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-//   int result = 0;
-//   int j = 0;
-//   while (result < offsetY && j < numberOfRows()) {
-//     result += rowHeight(j++);
-//   }
-//   return (result < offsetY || offsetY == 0) ? j : j - 1;
-// }
 
 HighlightCell * RegressionController::reusableCell(int index, int type) {
   assert(index >= 0);
@@ -84,13 +66,12 @@ HighlightCell * RegressionController::reusableCell(int index, int type) {
   return &m_regressionCells[index];
 }
 
-void RegressionController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  assert(i == 0);
-  assert(j >= 0 && j < k_numberOfRows);
+void RegressionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index >= 0 && index < k_numberOfRows);
   I18n::Message messages[k_numberOfRows] = {I18n::Message::Linear, I18n::Message::Proportional, I18n::Message::Quadratic, I18n::Message::Cubic, I18n::Message::Quartic, I18n::Message::Logarithmic, I18n::Message::Exponential, I18n::Message::Power, I18n::Message::Trigonometrical, I18n::Message::Logistic};
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
-  castedCell->setMessage(messages[j]);
-  castedCell->setLayout(m_store->regressionModel((Model::Type) j)->layout());
+  castedCell->setMessage(messages[index]);
+  castedCell->setLayout(m_store->regressionModel((Model::Type) index)->layout());
 }
 
 }

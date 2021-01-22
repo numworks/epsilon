@@ -97,6 +97,7 @@ bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
 
 bool IntervalController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
+    resetMemoization();
     m_selectableTableView.reloadData();
     return true;
   }

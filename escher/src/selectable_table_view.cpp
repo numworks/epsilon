@@ -61,7 +61,7 @@ void SelectableTableView::didEnterResponderChain(Responder * previousFirstRespon
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder != nullptr) {
-    unhighlightSelectedCell();
+    // unhighlightSelectedCell();
   }
 }
 

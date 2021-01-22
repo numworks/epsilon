@@ -46,6 +46,7 @@ void FloatParameterController<T>::viewWillAppear() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -70,8 +71,8 @@ bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {
 }
 
 template<typename T>
-int FloatParameterController<T>::typeAtLocation(int i, int j) {
-  if (j == numberOfRows()-1) {
+int FloatParameterController<T>::typeAtIndex(int index) {
+  if (index == numberOfRows()-1) {
     return 0;
   }
   return 1;
@@ -94,31 +95,21 @@ HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
 }
 
 template<typename T>
-KDCoordinate FloatParameterController<T>::rowHeight(int j) {
+KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
   MessageTableCellWithEditableText tempCell = MessageTableCellWithEditableText();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height() + ((j == numberOfRows()-1) ? k_buttonMargin : 0);
-  // if (j == numberOfRows()-1) {
-  //   return Metric::ParameterCellHeight+k_buttonMargin;
-  // }
-  // return Metric::ParameterCellHeight;
 }
-
-// template<typename T>
-// KDCoordinate FloatParameterController<T>::cumulatedHeightFromIndex(int j) {
-//   if (j == numberOfRows()) {
-//     return j*Metric::ParameterCellHeight+k_buttonMargin;
-//   }
-//   return Metric::ParameterCellHeight*j;
-// }
 
 template<typename T>
 int FloatParameterController<T>::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  // TODO HUGO : This function does not need to be overwritten, but doing so
+  // would breaks float inputs (when rowHeight(0) is called). Fix it. +
+  // Also fix Settings significant number input
   if (offsetY > numberOfRows()*Metric::ParameterCellHeight + k_buttonMargin) {
     return numberOfRows();
   }
   return (offsetY - 1) / Metric::ParameterCellHeight;
-  // TODO HUGO : This function should not be overwritten, but doing so breaks float inputs (when rowHeight(0) is called)
 }
 
 template<typename T>
@@ -155,6 +146,7 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(TextField * textFiel
   if (!setParameterAtIndex(row, floatBody)) {
     return false;
   }
+  resetMemoization();
   m_selectableTableView.reloadCellAtLocation(0, activeCell());
   m_selectableTableView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {

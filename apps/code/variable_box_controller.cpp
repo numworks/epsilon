@@ -45,10 +45,6 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   m_builtinNodesCount(0),
   m_importedNodesCount(0)
 {
-  for (int i = 0; i < k_scriptOriginsCount; i++) {
-    m_subtitleCells[i].setBackgroundColor(Palette::Green); // TODO : Check it
-    // m_subtitleCells[i].setTextColor(Palette::BlueishGray);
-  }
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -241,6 +237,7 @@ void VariableBoxController::empty() {
   m_currentScriptNodesCount = 0;
   m_importedNodesCount = 0;
   m_shortenResultCharCount = 0;
+  resetMemoization();
   m_scriptStore->clearVariableBoxFetchInformation();
 }
 

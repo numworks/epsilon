@@ -55,10 +55,6 @@ HighlightCell * FunctionParameterController::reusableCell(int index, int type) {
   return cells[index];
 }
 
-int FunctionParameterController::reusableCellCount(int type) {
-  return numberOfRows();
-}
-
 void FunctionParameterController::viewWillAppear() {
   ValuesFunctionParameterController::viewWillAppear();
   m_selectedFunctionColumn = m_valuesController->selectedColumn();

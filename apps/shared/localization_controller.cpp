@@ -103,7 +103,6 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force,
 }
 
 // LocalizationController
-// constexpr int LocalizationController::k_numberOfCells;
 
 int LocalizationController::IndexOfCountry(I18n::Country country) {
   /* As we want to order the countries alphabetically in the selected language,
@@ -141,9 +140,6 @@ LocalizationController::LocalizationController(Responder * parentResponder, Loca
 {
   selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
   selectableTableView()->setBottomMargin(k_verticalMargin);
-  // for (int i = 0; i < k_numberOfCells; i++) {
-  //   m_cells[i].setMessageFont(KDFont::LargeFont);
-  // }
 }
 
 void LocalizationController::resetSelection() {
@@ -200,7 +196,6 @@ KDCoordinate LocalizationController::nonMemoizedRowHeight(int j) {
 }
 
 void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  // static_cast<MessageTableCell *>(cell)->setMessageFont(KDFont::LargeFont);
   if (mode() == Mode::Language) {
     static_cast<MessageTableCell *>(cell)->setMessage(I18n::LanguageNames[index]);
     return;

@@ -28,9 +28,10 @@ void CellWithSeparator::layoutSubviews(bool force) {
 }
 
 KDSize CellWithSeparator::minimalSizeForOptimalDisplay() const {
-  // KDSize cellSize = const_cast<Escher::HighlightCell *>(cell())->minimalSizeForOptimalDisplay(); // cell() not const
+  // TODO Hugo : cell() isn't const, find a workaround.
+  // KDSize cellSize = cell()->minimalSizeForOptimalDisplay();
   // return KDSize(cellSize.width(), k_margin + cellSize.height());
-  return KDSize(0,k_margin);
+  return KDSize(0, k_margin);
 }
 
 }

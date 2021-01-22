@@ -50,10 +50,6 @@ HighlightCell * CurveParameterController::reusableCell(int index, int type) {
   return cells[index];
 }
 
-int CurveParameterController::reusableCellCount(int type) {
-  return k_totalNumberOfCells;
-}
-
 GoToParameterController * CurveParameterController::goToParameterController() {
   return &m_goToParameterController;
 }

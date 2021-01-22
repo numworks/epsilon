@@ -148,7 +148,8 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  // cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData() // TODO
+  // TODO Hugo : Uncomment back this line and fix the resulting issue.
+  // cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
     m_typeCell.setLayout(sequence()->definitionName());

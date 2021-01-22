@@ -124,11 +124,6 @@ void NestedMenuController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
 }
 
-// KDCoordinate NestedMenuController::rowHeight(int j) {
-//   return Metric::ToolboxRowHeight;
-//   // TODO : Remove all use of ToolboxRowHeight
-// }
-
 HighlightCell * NestedMenuController::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);

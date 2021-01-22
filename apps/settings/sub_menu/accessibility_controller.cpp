@@ -63,7 +63,7 @@ bool AccessibilityController::handleEvent(Ion::Events::Event event) {
   KDIonContext::sharedContext()->gamma.setGamma(redGamma, greenGamma, blueGamma);
   KDIonContext::sharedContext()->updatePostProcessingEffects();
   m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-  AppsContainer::sharedAppsContainer()->redrawWindow();
+  AppsContainer::sharedAppsContainer()->redrawWindow(true);
   return true;
 }
 

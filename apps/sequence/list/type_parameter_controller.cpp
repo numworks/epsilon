@@ -41,6 +41,7 @@ View * TypeParameterController::view() {
 
 void TypeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -109,19 +110,16 @@ int TypeParameterController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-// KDCoordinate TypeParameterController::cellHeight() {
-//   if (m_record.isNull()) {
-//     return 50;
-//   }
-//   return Metric::ParameterCellHeight;
-// }
-
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   const char * nextName = sequenceStore()->firstAvailableName();
   const KDFont * font = KDFont::LargeFont;
   if (!m_record.isNull()) {
     nextName = sequence()->fullName();
     font = KDFont::SmallFont;
+  }
+  if (nextName == nullptr) {
+    assert(false); // TODO Hugo : fix this issue
+    return;
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   m_layouts[j] = HorizontalLayout::Builder(
@@ -132,7 +130,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   myCell->setLayout(m_layouts[j]);
 }
 
-KDCoordinate TypeParameterController::rowHeight(int j) {
+KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
   ExpressionTableCellWithPointer tempCell = ExpressionTableCellWithPointer();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();

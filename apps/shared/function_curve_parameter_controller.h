@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class FunctionCurveParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class FunctionCurveParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   FunctionCurveParameterController();
   Escher::View * view() override { return &m_selectableTableView; }
@@ -17,7 +17,7 @@ public:
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);
   }
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   bool handleGotoSelection();

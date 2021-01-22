@@ -91,12 +91,4 @@ HighlightCell * ValuesParameterController::reusableCell(int index, int type) {
   return cells[index];
 }
 
-// int ValuesParameterController::reusableCellCount() const {
-//   return k_totalNumberOfCell;
-// }
-
-// KDCoordinate ValuesParameterController::cellHeight() {
-//   return Metric::ParameterCellHeight;
-// }
-
 }

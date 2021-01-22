@@ -22,13 +22,13 @@ protected:
   const Escher::ToolboxMessageTree * rootModel() const override;
   Escher::MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int maxNumberOfDisplayedRows() override;
   // TODO Hugo : Improve workaround
   constexpr static int k_maxNumberOfDisplayedRows = 15; // = 240/(13+2*3)
   // 13 = minimal string height size
   // 3 = vertical margins
 private:
-  constexpr static const KDFont * k_font = KDFont::SmallFont;
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);
   Escher::MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];

@@ -516,6 +516,25 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
 }
 
+void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
+  // Message is leaf
+  if (messageTree->numberOfChildren() == 0) {
+    // Message has no subLabel
+    if (messageTree->text() == I18n::Message::Default && messageTree->label() !=I18n::Message::PythonCommandReturn && messageTree->label() !=I18n::Message::PythonCommandDefWithArg) {
+      /* Label requires more than one row. TODO Hugo :
+       * Implement a change-proof solution */
+      // Upcasting MessageTableCellWithMessage as MessageTableCell to set font.
+      MessageTableCell * myCell = (MessageTableCell *)cell;
+      myCell->setMessageFont(KDFont::SmallFont);
+    } else {
+      MessageTableCell * myCell = (MessageTableCell *)cell;
+      myCell->setMessageFont(KDFont::LargeFont);
+    }
+  }
+  Escher::Toolbox::willDisplayCellForIndex(cell, index);
+}
+
 void PythonToolbox::scrollToLetter(char letter) {
   assert(CodePoint(letter).isLatinLetter());
   /* We look for a child MessageTree that starts with the wanted letter. If we

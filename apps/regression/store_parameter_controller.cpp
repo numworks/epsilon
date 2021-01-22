@@ -14,11 +14,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 {
 }
 
-void StoreParameterController::viewWillAppear() {
-  m_selectableTableView.reloadData();
-  Shared::StoreParameterController::viewWillAppear();
-}
-
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && selectedRow() == numberOfRows() - 1) {
     RegressionController * regressionController = App::app()->regressionController();
@@ -67,12 +62,11 @@ int StoreParameterController::reusableCellCount(int type) {
   return Shared::StoreParameterController::reusableCellCount(type);
 }
 
-int StoreParameterController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  if (j == numberOfRows() -1) {
+int StoreParameterController::typeAtIndex(int index) {
+  if (index == numberOfRows() -1) {
     return k_regressionCellType;
   }
-  return Shared::StoreParameterController::typeAtLocation(i, j);
+  return Shared::StoreParameterController::typeAtIndex(index);
 }
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

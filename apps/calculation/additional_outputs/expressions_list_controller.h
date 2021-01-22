@@ -15,11 +15,10 @@ public:
   void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
-  //ListViewDataSource
+  // SimpleListViewDataSource
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  KDCoordinate rowHeight(int j) override;
-  int typeAtLocation(int i, int j) override { return 0; }
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override;
 

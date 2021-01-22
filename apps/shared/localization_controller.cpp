@@ -153,6 +153,7 @@ void LocalizationController::resetSelection() {
 
 void LocalizationController::setMode(LocalizationController::Mode mode) {
   selectableTableView()->deselectTable();
+  resetMemoization();
   m_mode = mode;
   selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
   m_contentView.modeHasChanged();
@@ -174,6 +175,7 @@ const char * LocalizationController::title() {
 void LocalizationController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetSelection();
+  resetMemoization();
   selectableTableView()->reloadData();
 }
 
@@ -191,7 +193,7 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate LocalizationController::rowHeight(int j) {
+KDCoordinate LocalizationController::nonMemoizedRowHeight(int j) {
   MessageTableCell tempCell = MessageTableCell();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();

@@ -1,7 +1,7 @@
 #ifndef SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 #define SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 
-#include <escher/list_view_data_source.h>
+#include <escher/simple_list_view_data_source.h>
 #include <escher/expression_table_cell.h>
 #include <escher/message_table_cell.h>
 #include <escher/selectable_table_view.h>
@@ -13,7 +13,7 @@ namespace Solver {
 
 class ListController;
 
-class EquationModelsParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class EquationModelsParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   EquationModelsParameterController(Escher::Responder * parentResponder, EquationStore * equationStore, ListController * listController);
   const char * title() override;
@@ -22,16 +22,14 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);
   }
-  // KDCoordinate cumulatedHeightFromIndex(int j) override;
-  // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override { return index == 0 ? 0 : 1; }
 private:
   constexpr static int k_numberOfModels = 6;
   static constexpr const char * k_models[k_numberOfModels] = {

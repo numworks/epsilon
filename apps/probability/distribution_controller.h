@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class DistributionController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class DistributionController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   DistributionController(Escher::Responder * parentResponder, Distribution * m_distribution, ParametersController * parametersController);
   Escher::View * view() override { return &m_contentView; }
@@ -18,7 +18,7 @@ public:
   TELEMETRY_ID("Distribution");
   int numberOfRows() const override { return k_totalNumberOfModels; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  KDCoordinate rowHeight(int j) override; // { return k_cellHeight; }
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);

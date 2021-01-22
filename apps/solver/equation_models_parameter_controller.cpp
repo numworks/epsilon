@@ -66,25 +66,12 @@ int EquationModelsParameterController::numberOfRows() const {
   return k_numberOfExpressionCells+1;
 };
 
-KDCoordinate EquationModelsParameterController::rowHeight(int j) {
-  if (typeAtLocation(j,0) == 1) {
+KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int j) {
+  if (typeAtIndex(j) == 1) {
     j-=1;
   }
-  return ListViewDataSource::rowHeight(j);
-  // return Metric::ToolboxRowHeight;
+  return SimpleListViewDataSource::nonMemoizedRowHeight(j);
 }
-
-// KDCoordinate EquationModelsParameterController::cumulatedHeightFromIndex(int j) {
-//   return rowHeight(0) * j;
-// }
-
-// int EquationModelsParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-//   KDCoordinate height = rowHeight(0);
-//   if (height == 0) {
-//     return 0;
-//   }
-//   return (offsetY - 1) / height;
-// }
 
 HighlightCell * EquationModelsParameterController::reusableCell(int index, int type) {
   if (type == 0) {
@@ -98,13 +85,6 @@ int EquationModelsParameterController::reusableCellCount(int type) {
     return 1;
   }
   return k_numberOfExpressionCells;
-}
-
-int EquationModelsParameterController::typeAtLocation(int i, int j) {
-  if (i == 0 && j == 0) {
-    return 0;
-  }
-  return 1;
 }
 
 }

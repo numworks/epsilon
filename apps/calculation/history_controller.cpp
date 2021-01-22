@@ -213,15 +213,10 @@ KDCoordinate HistoryController::rowHeight(int j) {
   return calculation->height(expanded);
 }
 
-int HistoryController::typeAtLocation(int i, int j) {
-  return 0;
-}
-
 bool HistoryController::calculationAtIndexToggles(int index) {
   Context * context = App::app()->localContext();
   return index >= 0 && index < m_calculationStore->numberOfCalculations() && calculationAtIndex(index)->displayOutput(context) == Calculation::DisplayOutput::ExactAndApproximateToggle;
 }
-
 
 void HistoryController::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX, int previousSelectedY) {
   // Avoid selecting non-displayed ellipsis

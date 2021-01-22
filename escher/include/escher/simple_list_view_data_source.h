@@ -43,6 +43,7 @@ private:
   static constexpr int k_memoizedCellsCount = 7;
   static constexpr int k_resetedMemoizedValue = -1;
   int getMemoizedIndex(int index);
+  void setMemoizationIndex(int index);
   void shiftMemoization(bool newCellIsUnder);
   bool updateMemoizationLock(bool state);
   KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];

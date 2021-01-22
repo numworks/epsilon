@@ -11,7 +11,7 @@ namespace Regression {
 
 class GraphController;
 
-class GraphOptionsController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class GraphOptionsController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   Escher::View * view() override;
@@ -20,18 +20,15 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
-  //ListViewDataSource
+  // SimpleListViewDataSource
   int numberOfRows() const override;
-  // KDCoordinate rowHeight(int j) override;
-  // KDCoordinate cumulatedHeightFromIndex(int j) override;
-  // int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.bounds().width() - m_selectableTableView.rightMargin() - m_selectableTableView.leftMargin() > 0);
     return m_selectableTableView.bounds().width() - m_selectableTableView.rightMargin() - m_selectableTableView.leftMargin();
   }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
   constexpr static int k_regressionCellType = 0;

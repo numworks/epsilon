@@ -39,6 +39,7 @@ void GenericSubController::viewWillAppear() {
   /* A unique SubController is used for all sub pages of settings. We have to
    * reload its data when it is displayed as it could switch from displaying
    * "Angle unit" data to "Complex format" data for instance. */
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -57,29 +58,10 @@ int GenericSubController::numberOfRows() const {
   return 0;
 }
 
-KDCoordinate GenericSubController::rowHeight(int index) {
+KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
   MessageTableCell tempCell = MessageTableCell();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
-#if 0
-  return Metric::ParameterCellHeight;
-}
-
-KDCoordinate GenericSubController::cumulatedHeightFromIndex(int j) {
-  return rowHeight(0) * j;
-}
-
-int GenericSubController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  KDCoordinate height = rowHeight(0);
-  if (height == 0) {
-    return 0;
-  }
-  return (offsetY - 1) / height;
-#endif
-}
-
-int GenericSubController::typeAtLocation(int i, int j) {
-  return 0;
 }
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int index) {

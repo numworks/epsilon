@@ -269,13 +269,12 @@ int ConsoleController::reusableCellCount(int type) {
   }
 }
 
-int ConsoleController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  assert(j >= 0);
-  if (j < m_consoleStore.numberOfLines()) {
+int ConsoleController::typeAtIndex(int index) {
+  assert(index >= 0);
+  if (index < m_consoleStore.numberOfLines()) {
     return LineCellType;
   } else {
-    assert(j == m_consoleStore.numberOfLines());
+    assert(index == m_consoleStore.numberOfLines());
     return EditCellType;
   }
 }

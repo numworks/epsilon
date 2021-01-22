@@ -105,6 +105,7 @@ void ParametersController::didBecomeFirstResponder() {
 }
 
 void ParametersController::viewWillAppear() {
+  resetMemoization();
   m_contentView.setNumberOfParameters(m_distribution->numberOfParameter());
   for (int i = 0; i < m_distribution->numberOfParameter(); i++) {
     m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_distribution->parameterDefinitionAtIndex(i));
@@ -155,6 +156,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
 
 bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
+    resetMemoization();
     m_selectableTableView.reloadData();
     return true;
   }

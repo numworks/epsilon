@@ -52,6 +52,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 2:
       {
         m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
+        resetMemoization();
         m_selectableTableView.reloadData();
         return true;
       }
@@ -79,6 +80,7 @@ int CurveParameterController::reusableCellCount(int type) {
 
 void CurveParameterController::viewWillAppear() {
   Shared::FunctionCurveParameterController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 

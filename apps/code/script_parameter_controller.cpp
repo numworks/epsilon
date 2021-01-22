@@ -45,6 +45,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
         return true;
       case 2:
         m_script.toggleAutoImportation();
+        resetMemoization();
         m_selectableTableView.reloadData();
         m_menuController->reloadConsole();
         Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -64,6 +65,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
 
 void ScriptParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0,0);
 }

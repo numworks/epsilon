@@ -66,6 +66,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     destroyRecordAtRowIndex(rowIndex);
     int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
     selectCellAtLocation(selectedColumn(), newSelectedRow);
+    resetMemoization();
     m_selectableTableView.reloadData();
     displayEmptyControllerIfNeeded();
     return true;
@@ -136,7 +137,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
   myCell->reloadCell();
 }
 
-KDCoordinate MathVariableBoxController::rowHeight(int index) {
+KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
     MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
     prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
@@ -145,18 +146,9 @@ KDCoordinate MathVariableBoxController::rowHeight(int index) {
   ExpressionTableCellWithExpression tempCell = ExpressionTableCellWithExpression();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
-#if 0
-  if (m_currentPage != Page::RootMenu) {
-    Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
-    if (!layoutR.isUninitialized()) {
-      return std::max<KDCoordinate>(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
-    }
-  }
-  return AlternateEmptyNestedMenuController::rowHeight(index);
-#endif
 }
 
-int MathVariableBoxController::typeAtLocation(int i, int j) {
+int MathVariableBoxController::typeAtIndex(int index) {
   if (m_currentPage == Page::RootMenu) {
     return 1;
   }

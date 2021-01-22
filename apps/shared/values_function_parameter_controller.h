@@ -11,7 +11,7 @@
 
 namespace Shared {
 
-class ValuesFunctionParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ValuesFunctionParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ValuesFunctionParameterController() :
     Escher::ViewController(nullptr),
@@ -25,7 +25,6 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return 1; }
-  KDCoordinate rowHeight(int j) override;
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);
@@ -34,7 +33,6 @@ public:
     assert(index == 0);
     return &m_copyColumn;
   }
-  int reusableCellCount(int type) override { return 1; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   Escher::MessageTableCellWithChevron m_copyColumn;

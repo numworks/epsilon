@@ -35,6 +35,7 @@ void GraphOptionsController::didBecomeFirstResponder() {
 }
 
 void GraphOptionsController::viewWillAppear() {
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -59,41 +60,6 @@ int GraphOptionsController::numberOfRows() const {
   return k_numberOfParameterCells + 1;
 }
 
-// KDCoordinate GraphOptionsController::rowHeight(int j) {
-//   if (index == numberOfRows() - 1) {
-//     // MessageTableCellWithChevronAndExpression
-
-//   }
-//   // MessageTableCellWithChevron
-
-
-//   if ((j == numberOfRows() - 1) &&
-//       (static_cast<Store *>(m_store)->seriesRegressionType(m_graphController->selectedSeriesIndex()) == Model::Type::Logistic))
-//   {
-//     return RegressionController::k_logisticCellHeight;
-//   }
-//   return Metric::ParameterCellHeight;
-// }
-
-// KDCoordinate GraphOptionsController::cumulatedHeightFromIndex(int j) {
-//   assert (j >= 0 && j <= numberOfRows());
-//   KDCoordinate result = 0;
-//   for (int i = 0; i < j; i++) {
-//     result+= rowHeight(i);
-//   }
-//   return result;
-// }
-
-// int GraphOptionsController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-//   int result = 0;
-//   int j = 0;
-//   int numberRows = numberOfRows();
-//   while (result < offsetY && j < numberRows) {
-//     result += rowHeight(j++);
-//   }
-//   return (result < offsetY || offsetY == 0) ? j : j - 1;
-// }
-
 HighlightCell * GraphOptionsController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < reusableCellCount(type) || type == k_regressionCellType);
@@ -112,9 +78,8 @@ int GraphOptionsController::reusableCellCount(int type) {
   return k_numberOfParameterCells;
 }
 
-int GraphOptionsController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  if (j == numberOfRows() -1) {
+int GraphOptionsController::typeAtIndex(int index) {
+  if (index == numberOfRows() -1) {
     return k_regressionCellType;
   }
   return k_parameterCelltype;

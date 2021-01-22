@@ -35,6 +35,7 @@ View * CalculationParameterController::view() {
 
 void CalculationParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -80,11 +81,14 @@ int CalculationParameterController::numberOfRows() const {
   return 1 + shouldDisplayIntersection() + k_totalNumberOfReusableCells - 1;
 };
 
-KDCoordinate CalculationParameterController::rowHeight(int j) {
-  int reusableCellIndex = (j == 0 ? 0 : j - 1 + !shouldDisplayIntersection());
-  HighlightCell * cell = reusableCell(reusableCellIndex, typeAtLocation(0, reusableCellIndex));
-  prepareCellForHeightCalculation(cell, j);
-  return cell->minimalSizeForOptimalDisplay().height();
+KDCoordinate CalculationParameterController::nonMemoizedRowHeight(int index) {
+  if (typeAtIndex(index) == 1) {
+    prepareCellForHeightCalculation(&m_preimageCell, index);
+    return m_preimageCell.minimalSizeForOptimalDisplay().height();
+  }
+  MessageTableCell tempCell = MessageTableCell();
+  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
+  return tempCell.minimalSizeForOptimalDisplay().height();
 }
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
@@ -102,11 +106,6 @@ int CalculationParameterController::reusableCellCount(int type) {
     return k_totalNumberOfReusableCells;
   }
   return 1;
-}
-
-int CalculationParameterController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  return j == 0;
 }
 
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

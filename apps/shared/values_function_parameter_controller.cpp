@@ -15,15 +15,10 @@ void ValuesFunctionParameterController::viewWillAppear() {
 }
 
 void ValuesFunctionParameterController::didBecomeFirstResponder() {
+  resetMemoization();
   m_selectableTableView.reloadData();
   selectCellAtLocation(0, 0);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
-}
-
-KDCoordinate ValuesFunctionParameterController::rowHeight(int j) {
-  Escher::HighlightCell * cell = reusableCell(j, typeAtLocation(0, j));
-  prepareCellForHeightCalculation(cell, j);
-  return cell->minimalSizeForOptimalDisplay().height();
 }
 
 }

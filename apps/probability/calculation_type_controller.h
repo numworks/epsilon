@@ -23,9 +23,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   KDCoordinate cellWidth() override;
-  // KDCoordinate rowHeight(int j) override;
+  KDCoordinate rowHeight(int j) override { return ImageCell::k_height; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  // int reusableCellCount(int type) override;
+  int reusableCellCount(int type) override { return k_numberOfImages; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   constexpr static int k_numberOfImages = 4;
 private:

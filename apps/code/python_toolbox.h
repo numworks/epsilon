@@ -18,7 +18,6 @@ public:
   // Toolbox
   bool handleEvent(Ion::Events::Event event) override;
 protected:
-  // KDCoordinate rowHeight(int j) override;
   bool selectLeaf(int selectedRow) override;
   const Escher::ToolboxMessageTree * rootModel() const override;
   Escher::MessageTableCellWithMessage * leafCellAtIndex(int index) override;

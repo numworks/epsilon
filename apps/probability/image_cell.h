@@ -11,6 +11,7 @@ public:
   ImageCell();
   void setHighlighted(bool highlight) override;
   void setImage(const Escher::Image * image, const Escher::Image * focusedImage);
+  KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_width, k_height); }
   constexpr static KDCoordinate k_width = 39;
   constexpr static KDCoordinate k_height = 23;
 private:

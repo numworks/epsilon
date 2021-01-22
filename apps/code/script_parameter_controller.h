@@ -14,7 +14,7 @@ namespace Code {
 
 class MenuController;
 
-class ScriptParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ScriptParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ScriptParameterController(Escher::Responder * parentResponder, I18n::Message title, MenuController * menuController);
   void setScript(Script script);
@@ -28,7 +28,7 @@ public:
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("ScriptParameter");
 
-  /* ListViewDataSource */
+  /* SimpleListViewDataSource */
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

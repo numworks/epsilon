@@ -117,7 +117,7 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
   }
 }
 
-KDCoordinate ListParameterController::rowHeight(int j) {
+KDCoordinate ListParameterController::nonMemoizedRowHeight(int j) {
   switch (j) {
   case 0:
     prepareCellForHeightCalculation((HighlightCell *)&m_typeCell, j);
@@ -128,7 +128,7 @@ KDCoordinate ListParameterController::rowHeight(int j) {
       return m_initialRankCell.minimalSizeForOptimalDisplay().height();
     }
   default:
-    return Shared::ListParameterController::rowHeight(j - 1 - hasInitialRankRow());
+    return Shared::ListParameterController::nonMemoizedRowHeight(j - 1 - hasInitialRankRow());
   }
 }
 

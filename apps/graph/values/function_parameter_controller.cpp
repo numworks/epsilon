@@ -23,6 +23,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
         bool isDisplayingDerivative = function()->displayDerivative();
         function()->setDisplayDerivative(!isDisplayingDerivative);
         m_valuesController->selectCellAtLocation(isDisplayingDerivative ? m_selectedFunctionColumn : m_selectedFunctionColumn + 1, m_valuesController->selectedRow());
+        resetMemoization();
         m_selectableTableView.reloadData();
         return true;
       }

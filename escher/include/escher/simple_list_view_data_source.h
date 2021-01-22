@@ -5,44 +5,50 @@
 #include <escher/highlight_cell.h>
 
 namespace Escher {
-
+// TODO : Rename this class MemoizedListViewDataSource
 class SimpleListViewDataSource : public ListViewDataSource {
+/* SimpleListViewDataSource elements have a dynamically variable height.
+ * This property slows down navigation due to complex cell height calculation.
+ * To avoid that, cells Height and cumulated height is memoized around the most
+ * recently used cells. Total height is also memoized. */
 public:
   SimpleListViewDataSource();
-  void prepareCellForHeightCalculation(HighlightCell * cell, int index) override;
-  void resetMemoizationForIndex(int index);
-  void resetMemoization(bool force = true);
 
   // ListViewDataSource
+  KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int index) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  KDCoordinate rowHeight(int j) override;
 
-  // Non memoized
-  virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) { return ListViewDataSource::cumulatedHeightFromIndex(index); }
-  virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
+  void prepareCellForHeightCalculation(HighlightCell * cell, int index);
+  void resetMemoization(bool force = true);
+  void resetMemoizationForIndex(int index);
 
-  // Default behaviors : All cells are reusable, and of only 1 type
+  // Non memoized. TODO Hugo : Simplify memoization locks
+  virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) {
+    updateMemoizationLock(true);
+    KDCoordinate result = ListViewDataSource::cumulatedHeightFromIndex(index);
+    updateMemoizationLock(false);
+    return result;
+  }
+  virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) {
+    updateMemoizationLock(true);
+    int result = ListViewDataSource::indexFromCumulatedHeight(offsetY);
+    updateMemoizationLock(false);
+    return result;
+  }
+  // Following methods have a default implementation for specific simple lists.
   virtual KDCoordinate nonMemoizedRowHeight(int index);
   int reusableCellCount(int type) override { return numberOfRows(); }
-  int typeAtIndex(int index) override { return 0; }
-
 private:
-  // Memoization
   static constexpr int k_memoizedCellsCount = 7;
-  static_assert(SimpleListViewDataSource::k_memoizedCellsCount % 2 == 1, "SimpleListViewDataSource::k_memoizedCellsCount should be odd.");
   static constexpr int k_resetedMemoizedValue = -1;
   int getMemoizedIndex(int index);
   void shiftMemoization(bool newCellIsUnder);
-  bool updateMemoizationLock(bool state) {
-    m_memoizationLockedLevel += (state ? 1 : -1);
-    assert(m_memoizationLockedLevel >= 0);
-    return m_memoizationLockedLevel >= 0;
-  }
-  int m_memoizedIndexOffset;
+  bool updateMemoizationLock(bool state);
   KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
   KDCoordinate m_memoizedCumulatedHeightOffset;
   KDCoordinate m_memoizedTotalHeight;
+  int m_memoizedIndexOffset;
   int m_memoizationLockedLevel;
 };
 

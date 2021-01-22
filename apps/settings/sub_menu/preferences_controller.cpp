@@ -17,9 +17,6 @@ namespace Settings {
 PreferencesController::PreferencesController(Responder * parentResponder) :
   GenericSubController(parentResponder)
 {
-  // for (int i = 0; i < k_totalNumberOfCell; i++) {
-  //   m_cells[i].setMessageFont(KDFont::LargeFont);
-  // }
 }
 
 void PreferencesController::didBecomeFirstResponder() {
@@ -125,19 +122,13 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
 void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithExpression * myCell = (MessageTableCellWithExpression *)cell;
-  // myCell->setMessageFont(KDFont::LargeFont);
   myCell->setLayout(layoutForPreferences(m_messageTreeModel->childAtIndex(index)->label()));
 }
 
-KDCoordinate PreferencesController::rowHeight(int index) {
+KDCoordinate PreferencesController::nonMemoizedRowHeight(int index) {
   MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
-#if 0
-  /* We cheat for the Writing format subcontroller, because the Edition2D layout
-   * needs more vertical space. */
-  return GenericSubController::rowHeight(j) + (m_messageTreeModel->label() == I18n::Message::EditionMode ? 2 : 0);
-#endif
 }
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {

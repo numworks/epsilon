@@ -42,14 +42,10 @@ HighlightCell * ExpressionsListController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-KDCoordinate ExpressionsListController::rowHeight(int index) {
+KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int index) {
   ExpressionTableCellWithPointer tempCell = ExpressionTableCellWithPointer();
   prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
   return tempCell.minimalSizeForOptimalDisplay().height();
-  // return Escher::TableCell::minimalHeightForOptimalDisplay(layoutAtIndex(index), nullptr, messageAtIndex(index), 266));
-  // Layout l = layoutAtIndex(j);
-  // assert(!l.isUninitialized());
-  // return l.layoutSize().height() + 2 * Metric::CommonSmallMargin + Metric::CellSeparatorThickness;
 }
 
 void ExpressionsListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -74,6 +70,7 @@ int ExpressionsListController::numberOfRows() const {
 
 void ExpressionsListController::setExpression(Poincare::Expression e) {
   // Reinitialize memoization
+  resetMemoization();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_layouts[i] = Layout();
   }

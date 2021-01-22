@@ -69,16 +69,32 @@ Ion::Events::Event getEvent(int * timeout) {
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   uint64_t startTime = Timing::millis();
   while (true) {
+    /* NB: Currently, platform events are polled. They could be instead linked
+     * to EXTI interruptions and their event could be pushed on the
+     * Keyboard::Queue. However, the pins associated with platform events are
+     * the following:
+     * +----------------------+------------+-------+-------+
+     * |   PlatformEvent      |   Pin name | N0100 | N0110 |
+     * +----------------------+------------+-------+-------+
+     * | Battery::isCharging  | CharingPin |   A0  |   E3  |
+     * |  USB::isPlugged      | VBus       |   A9  |   A9  |
+     * +----------------------+------------+-------+-------+
+     *
+     * The EXTI lines 0 and 3 are already used by the keyboard interruptions.
+     * We could linked an interruption to USB::isPlugged and to
+     * USB::isEnumerated (through EXTI 18 - USB On-The-Go FS Wakeup) but we
+     * could not get an interruption on the end of charge. For more consistency,
+     * the three platform events are retrieved through polling.
+     */
+    Ion::Events::Event platformEvent = getPlatformEvent();
+    if (platformEvent != Ion::Events::None) {
+      return platformEvent;
+    }
+
     while (!Keyboard::Queue::sharedQueue()->isEmpty()) {
       sCurrentKeyboardState = Keyboard::Queue::sharedQueue()->pop();
 
-      /*
-         if (state.keyDown(platform)) {
-         assert(state == ??);
-         Event platformEvent = getPlatformEvent();
-         if (platformEvent != None) {
-         return platformEvent;
-         }*/
+
 
       keysSeenUp |= ~sCurrentKeyboardState;
       keysSeenTransitionningFromUpToDown = keysSeenUp & sCurrentKeyboardState;

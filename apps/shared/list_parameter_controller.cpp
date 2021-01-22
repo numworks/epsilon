@@ -79,6 +79,7 @@ KDCoordinate ListParameterController::nonMemoizedRowHeight(int j) {
       return m_deleteCell.minimalSizeForOptimalDisplay().height();
     default:
       assert(false);
+      return KDCoordinate(0);
   }
 }
 

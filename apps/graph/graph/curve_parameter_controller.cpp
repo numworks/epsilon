@@ -74,10 +74,6 @@ HighlightCell * CurveParameterController::reusableCell(int index, int type) {
   return cells[cellIndex(index)];
 }
 
-int CurveParameterController::reusableCellCount(int type) {
-  return numberOfRows();
-}
-
 void CurveParameterController::viewWillAppear() {
   Shared::FunctionCurveParameterController::viewWillAppear();
   resetMemoization();

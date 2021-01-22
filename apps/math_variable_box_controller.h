@@ -36,7 +36,7 @@ public:
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
-  // TODO improve that
+  // TODO Hugo : Find a better value.
   constexpr static int k_maxNumberOfDisplayedRows = 10; // (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::Metric::ToolboxRowHeight + 2; // (240 - 18 - 50 - 20) / 40  = 3.8; the 0.8 cell can be above and below so we add +2 to get 5
   constexpr static int k_numberOfMenuRows = 3;
   constexpr static KDCoordinate k_leafMargin = 20;

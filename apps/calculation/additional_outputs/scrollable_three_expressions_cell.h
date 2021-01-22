@@ -39,7 +39,6 @@ private:
   ContentCell m_contentCell;
 };
 
-// Cell : Calculation cell
 class ScrollableThreeExpressionsCell : public Escher::TableCell, public Escher::Responder {
 public:
   static KDCoordinate Height(Calculation * calculation);
@@ -71,8 +70,6 @@ public:
     return m_view.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
   }
 private:
-  // Remove label margin added by TableCell because they're already handled by ScrollableThreeExpressionsView
-  // KDCoordinate labelMargin() const override { return 0; }
   ScrollableThreeExpressionsView m_view;
 };
 

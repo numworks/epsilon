@@ -218,6 +218,7 @@ bool HistoryController::calculationAtIndexToggles(int index) {
   return index >= 0 && index < m_calculationStore->numberOfCalculations() && calculationAtIndex(index)->displayOutput(context) == Calculation::DisplayOutput::ExactAndApproximateToggle;
 }
 
+
 void HistoryController::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX, int previousSelectedY) {
   // Avoid selecting non-displayed ellipsis
   HistoryViewCell * selectedCell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());

@@ -13,13 +13,6 @@ public:
   void setHighlighted(bool highlight) override;
   void setSubLabelText(const char * textBody);
   const char * subLabelText();
-  // void setTextColor(KDColor color) override;
-  // void setSubLabelTextColor(KDColor color) {
-  //   m_subLabelView.setTextColor(color);
-  // }
-  // void setSubLabelFont(const KDFont * font) {
-  //   m_subLabelView.setFont(font);
-  // }
   const char * text() const override {
     return m_subLabelView.text();
   }

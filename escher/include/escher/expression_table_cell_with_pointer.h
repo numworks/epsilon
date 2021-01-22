@@ -6,7 +6,7 @@
 #include <escher/message_text_view.h>
 
 namespace Escher {
-// Cell : Additional results
+
 class ExpressionTableCellWithPointer : public ExpressionTableCell {
 public:
   ExpressionTableCellWithPointer(Responder * responder = nullptr, I18n::Message subLabelMessage = (I18n::Message)0);

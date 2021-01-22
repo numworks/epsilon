@@ -28,7 +28,6 @@ public:
     return nullptr;
   }
   void setSubLabelText(const char * text);
-  // void setTextColor(KDColor color) override;
 private:
   void layoutSubviews(bool force = false) override;
   TextField m_textField;

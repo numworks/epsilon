@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-class Metric {
+class Metric { // TODO Hugo : Removed unused cell metrics
 public:
   constexpr static KDCoordinate CellTopMargin = 8;
   constexpr static KDCoordinate CellRightMargin = 8;

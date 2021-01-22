@@ -60,6 +60,7 @@ private:
   Escher::StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
+  // TODO Hugo : Find a better value.
   constexpr static int k_numberOfSimpleChevronCells = 15; //  (Ion::Display::Height - Escher::Metric::TitleBarHeight) / Escher::Metric::ParameterCellHeight + 1;
   Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;

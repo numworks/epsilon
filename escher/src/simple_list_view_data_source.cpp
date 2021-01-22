@@ -10,14 +10,9 @@ SimpleListViewDataSource::SimpleListViewDataSource() :
 }
 
 KDCoordinate SimpleListViewDataSource::rowHeight(int j) {
-  // Shift memoization when adjacent non-memoized cells are called (scroll).
-  if (j == m_memoizedIndexOffset - 1) {
-    shiftMemoization(true);
-  } else if (j == m_memoizedIndexOffset + k_memoizedCellsCount) {
-    shiftMemoization(false);
-  } else if (j == 0 && m_memoizedIndexOffset != 0) {
-    // Reset Memoization back to first row. Total height is preserved.
-    resetMemoization(false);
+  if (j < m_memoizedIndexOffset || j >= m_memoizedIndexOffset + k_memoizedCellsCount) {
+    // Update memoization index if new cell is called.
+    setMemoizationIndex(j);
   }
   if (j >= m_memoizedIndexOffset && j < m_memoizedIndexOffset + k_memoizedCellsCount) {
     // Value might be memoized
@@ -34,7 +29,7 @@ KDCoordinate SimpleListViewDataSource::rowHeight(int j) {
   /* Requested row is neither memoized, nor adjacent (unless list is under lock)
    * If such a configuration where to happen, memoization shift pattern should
    * be updated. */
-  // assert(m_memoizationLockedLevel > 0);
+  assert(m_memoizationLockedLevel > 0);
   return nonMemoizedRowHeight(j);
 }
 
@@ -190,6 +185,22 @@ int SimpleListViewDataSource::getMemoizedIndex(int index) {
   assert(index >= m_memoizedIndexOffset && index < m_memoizedIndexOffset + k_memoizedCellsCount);
   int circularOffset = m_memoizedIndexOffset % k_memoizedCellsCount;
   return (circularOffset + index - m_memoizedIndexOffset) % k_memoizedCellsCount;
+}
+
+void SimpleListViewDataSource::setMemoizationIndex(int index) {
+  if (m_memoizationLockedLevel > 0 || index == m_memoizedIndexOffset) {
+    return;
+  }
+
+  if (index < m_memoizedIndexOffset / 2 && m_memoizedIndexOffset - index > k_memoizedCellsCount) {
+    resetMemoization(false);
+    m_memoizedIndexOffset = index;
+  }
+  bool newCellIsUnder = m_memoizedIndexOffset > index;
+  int indexDelta = newCellIsUnder ? m_memoizedIndexOffset - index : index - m_memoizedIndexOffset;
+  for (int i = 0; i < indexDelta; ++i) {
+    shiftMemoization(newCellIsUnder);
+  }
 }
 
 void SimpleListViewDataSource::shiftMemoization(bool newCellIsUnder) {

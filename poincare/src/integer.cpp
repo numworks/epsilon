@@ -483,7 +483,7 @@ Integer Integer::LogicalXnor(const Integer &a, const Integer &b, const Integer &
     return Overflow(false);
   }
 
-  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)std::ceil(num_bits.extractedInt() / 32.0));
   for (size_t i = 0; i < digits; i++)
   {
 
@@ -529,7 +529,7 @@ Integer Integer::LogicalNand(const Integer &a, const Integer &b, const Integer &
     return Overflow(false);
   }
 
-  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)std::ceil(num_bits.extractedInt() / 32.0));
   for (size_t i = 0; i < digits; i++)
   {
 
@@ -575,7 +575,7 @@ Integer Integer::LogicalNor(const Integer &a, const Integer &b, const Integer &n
     return Overflow(false);
   }
 
-  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)std::ceil(num_bits.extractedInt() / 32.0));
   for (size_t i = 0; i < digits; i++)
   {
 
@@ -597,7 +597,7 @@ Integer Integer::LogicalNot(const Integer &a, const Integer &num_bits)
     return Overflow(false);
   }
 
-  uint8_t digits = std::max(a.numberOfDigits(), (uint8_t)((num_bits.extractedInt() / 33) + 1));
+  uint8_t digits = std::max(a.numberOfDigits(), (uint8_t)std::ceil(num_bits.extractedInt() / 32.0));
   for (size_t i = 0; i < digits; i++)
   {
     native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
@@ -869,9 +869,9 @@ Integer Integer::Truncate(const Integer &a, const Integer &num_bits)
 
   native_uint_t n = num_bits.extractedInt();
 
-  uint8_t num_digits = std::min((uint8_t)a.numberOfDigits(), (uint8_t)((n / 33) + 1));
+  uint8_t num_digits = std::min((uint8_t)a.numberOfDigits(), (uint8_t)(std::ceil(n / 32.0)));
 
-  for (size_t i = 0; i < (uint8_t)((n / 33) + 1); i++)
+  for (size_t i = 0; i < (uint8_t)(std::ceil(n / 32.0)); i++)
   {
     s_workingBuffer[i] = a.numberOfDigits() > i ? a.digit(i) : 0;
   }
@@ -888,11 +888,15 @@ Integer Integer::Truncate(const Integer &a, const Integer &num_bits)
   // clear all zero-valued digits
   if (num_digits > 1)
   {
+    bool msb_cleared = true;
     for (uint16_t i = num_digits - 1; i > 0; i--)
     {
-      if (s_workingBuffer[i] == 0)
+      if (s_workingBuffer[i] == 0 && msb_cleared)
       {
         num_digits--;
+        msb_cleared = true;
+      } else {
+        msb_cleared = false;
       }
     }
   }
@@ -902,28 +906,82 @@ Integer Integer::Truncate(const Integer &a, const Integer &num_bits)
   return uint_final;
 }
 
-Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative, bool oneDigitOverflow) {
+Integer Integer::TwosComplementToBits(const Integer &a, const Integer &num_bits)
+{
+  if (a.isZero() || num_bits.isZero())
+  {
+    return Integer(0);
+  }
+  assert(!num_bits.isNegative());
+
+  native_uint_t points = num_bits.extractedInt();
+
+  //convert to signed bits if needed:
+  if (a.isNegative())
+  {
+    Integer buffer = usum(Integer(0), a, true);
+    Integer num_bits_in_a = Integer(32*buffer.numberOfDigits());
+    Integer msb_pointer = Subtraction(num_bits_in_a, Integer(1));
+    Integer sign = LogicalBitGet(buffer, msb_pointer);
+    if(sign.isOne() && num_bits_in_a.isLowerThan(num_bits)) {
+      //sign extend
+      for (size_t i = 0; i < (uint8_t)(std::ceil(points / 32.0)); i++)
+      {
+        s_workingBuffer[i] = buffer.numberOfDigits() > i ? buffer.digit(i) : 4294967295; //4294967295 = all 1's
+      }
+      Integer uint_final = BuildInteger(s_workingBuffer, (uint8_t)(std::ceil(points / 32.0)), false);
+      return Truncate(uint_final, num_bits);
+    }
+    return Truncate(buffer, num_bits);
+  }
+
+  //a is positive
+  Integer msb_pointer = Subtraction(num_bits, Integer(1));
+  Integer a_truncated = Truncate(a, num_bits);
+  Integer sign = LogicalBitGet(a_truncated, msb_pointer);
+  Integer num_bits_plus_1 = Addition(num_bits, Integer(1));
+  if (sign.isOne())
+  {
+    // flip bits back to unsigned from two's comp
+    Integer bias = LogicalShiftLeft(Integer(1), num_bits, num_bits_plus_1);
+    bias.setNegative(true);
+    Integer a_negative = Addition(a_truncated, bias);
+    return a_negative;
+  }
+
+  // a is positive and the msb is 0
+  return a;
+}
+
+Integer Integer::addition(const Integer &a, const Integer &b, bool inverseBNegative, bool oneDigitOverflow)
+{
   bool bNegative = (inverseBNegative ? !b.m_negative : b.m_negative);
-  if (a.m_negative == bNegative) {
+  if (a.m_negative == bNegative)
+  {
     Integer us = usum(a, b, false, oneDigitOverflow);
     us.setNegative(a.m_negative);
     return us;
-  } else {
-    /* The signs are different, this is in fact a subtraction
+  }
+ 
+    else
+ 
+    {
+      /* The signs are different, this is in fact a subtraction
      * s = a+b = (abs(a)-abs(b) OR abs(b)-abs(a))
      * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
      * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
      * sign? sign of the greater! */
-    if (ucmp(a, b) >= 0) {
-      Integer us = usum(a, b, true, oneDigitOverflow);
-      us.setNegative(a.m_negative);
-      return us;
-    } else {
+      if (ucmp(a, b) >= 0)
+      {
+        Integer us = usum(a, b, true, oneDigitOverflow);
+        us.setNegative(a.m_negative);
+        return us;
+      } else {
       Integer us = usum(b, a, true, oneDigitOverflow);
       us.setNegative(bNegative);
       return us;
     }
-  }
+    }
 }
 
 Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDigitOverflow) {
@@ -1154,5 +1212,4 @@ Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer &
 
 template float Integer::approximate<float>() const;
 template double Integer::approximate<double>() const;
-
 }

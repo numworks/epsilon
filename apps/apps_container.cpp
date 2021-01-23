@@ -387,8 +387,8 @@ OnBoarding::PromptController * AppsContainer::promptController() {
   return &m_promptController;
 }
 
-void AppsContainer::redrawWindow() {
-  m_window.redraw();
+void AppsContainer::redrawWindow(bool force) {
+  m_window.redraw(force);
 }
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {

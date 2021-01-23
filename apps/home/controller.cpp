@@ -68,7 +68,8 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    
+
+    int index = selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1;
 #ifdef HOME_DISPLAY_EXTERNALS
     if (index >= container->numberOfApps()) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) {
@@ -96,7 +97,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
       }
     } else {
 #endif
-    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1));
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
     if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
     } else {
       bool switched = container->switchTo(selectedSnapshot);
@@ -176,30 +177,30 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
 #ifdef HOME_DISPLAY_EXTERNALS
     External::Archive::File app_file;
 
-    
+
     if (External::Archive::executableAtIndex(appIndex - container->numberOfApps(), app_file)) {
       char temp_name_buffer[100];
       strlcpy(temp_name_buffer, app_file.name, 94);
       strlcat(temp_name_buffer, ".icon", 99);
-      
+
       int img_index = External::Archive::indexFromName(temp_name_buffer);
-      
+
       if (img_index != -1) {
         External::Archive::File image_file;
         if (External::Archive::fileAtIndex(img_index, image_file)) {
           const Image* img = new Image(55, 56, image_file.data, image_file.dataLength);
           appCell->setExtAppDescriptor(app_file.name, img);
-          
+
         } else {
           appCell->setExtAppDescriptor(app_file.name, ImageStore::ExternalIcon);
         }
       } else {
         appCell->setExtAppDescriptor(app_file.name, ImageStore::ExternalIcon);
       }
-      
+
       appCell->setVisible(true);
     } else {
-      appCell->setVisible(false);      
+      appCell->setVisible(false);
     }
 #else
     appCell->setVisible(false);

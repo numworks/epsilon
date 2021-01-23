@@ -88,7 +88,7 @@ namespace Poincare
 
     Integer aq = ar.signedIntegerNumerator();
     Integer bq = br.signedIntegerNumerator();
-    Integer x = Integer::Xor(aq, bq);
+    Integer x = Integer::LogicalXor(aq, bq);
     Expression result = Rational::Builder(x);
     replaceWithInPlace(result);
     return result.shallowReduce(reductionContext);

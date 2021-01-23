@@ -427,6 +427,22 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("xnor(1,1,1)", XnorExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
   assert_parsed_expression_is("xor(1,1)", Xor::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
   assert_parsed_expression_is("xor(1,1,1)", XorExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bclr(1,1)", BitClear::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bflp(1,1)", BitFlip::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bit(1,1)", BitGet::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bset(1,1)", BitSet::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bic(1,1)", BitsClear::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bic(1,1,1)", BitsClearExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("rol(1,1)", RotateLeft::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("rol(1,1,1)", RotateLeftExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("ror(1,1)", RotateRight::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("ror(1,1,1)", RotateRightExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("sra(1,1)", ShiftArithmeticRight::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("sra(1,1,1)", ShiftArithmeticRightExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("sll(1,1)", ShiftLogicLeft::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("sll(1,1,1)", ShiftLogicLeftExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("srl(1,1)", ShiftLogicRight::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("srl(1,1,1)", ShiftLogicRightExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {

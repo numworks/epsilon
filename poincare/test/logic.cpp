@@ -219,6 +219,7 @@ QUIZ_CASE(poincare_logic_sll_compare)
   Integer h1_0000_0000 = Integer("4294967296");
   Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
   Integer hFFFF_FFFF_0000_0000 = Integer("18446744069414584320");
+  Integer h1_0000_0000_0000_0000 = Integer("18446744073709551616");
   assert_equal(Integer::LogicalShiftLeft(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
   assert_equal(Integer::LogicalShiftLeft(Integer(0), Integer(6)), Integer(0));
   assert_equal(Integer::LogicalShiftLeft(Integer(0), Integer(36)), Integer(0));
@@ -227,6 +228,7 @@ QUIZ_CASE(poincare_logic_sll_compare)
   assert_equal(Integer::LogicalShiftLeft(Integer(1), Integer(32), Integer(33)), h1_0000_0000);
   assert_equal(Integer::LogicalShiftLeft(h0000_FFFF_FFFF_0000, Integer(16), Integer(64)), hFFFF_FFFF_0000_0000);
   assert_equal(Integer::LogicalShiftLeft(h0000_FFFF_FFFF_0000, Integer(16), Integer(65)), hFFFF_FFFF_0000_0000);
+  assert_equal(Integer::LogicalShiftLeft(Integer(1), Integer(64), Integer(65)), h1_0000_0000_0000_0000);
 }
 
 QUIZ_CASE(poincare_logic_srl_compare)
@@ -449,4 +451,36 @@ QUIZ_CASE(poincare_logic_bflip_compare)
   assert_equal(Integer::LogicalBitFlip(h1_0000_0000, Integer(32)), Integer(0));
   assert_equal(Integer::LogicalBitFlip(h7FFF_FFFF_FFFF_FFFF, Integer(63)), hFFFF_FFFF_FFFF_FFFF);
   assert_equal(Integer::LogicalBitFlip(hFFFF_FFFF_FFFF_FFFF, Integer(63)), h7FFF_FFFF_FFFF_FFFF);
+}
+
+QUIZ_CASE(poincare_logic_tc_compare)
+{
+  Integer hFFFF = Integer("65535");
+  Integer hFFFF_FFFF = Integer("4294967295");
+  Integer hFFFF_0000 = Integer("4294901760");
+  Integer h1_0000_0000 = Integer("4294967296");
+  Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
+  Integer hFFFF_FFFF_0000_0000 = Integer("18446744069414584320");
+  Integer hFFFF_FFFF_FFFF_FFFF = Integer("18446744073709551615");
+  Integer h7FFF_FFFF_FFFF_FFFF = Integer("9223372036854775807");
+  Integer hFFFF_0000_0000_FFFF = Integer("18446462598732906495");
+  assert_equal(Integer::TwosComplementToBits(Integer("-1"), Integer(64)), hFFFF_FFFF_FFFF_FFFF);
+  assert_equal(Integer::TwosComplementToBits(Integer("-1"), Integer(63)), h7FFF_FFFF_FFFF_FFFF);
+  assert_equal(Integer::TwosComplementToBits(Integer("-1"), Integer(32)), hFFFF_FFFF);
+  assert_equal(Integer::TwosComplementToBits(Integer("-1"), Integer(16)), hFFFF);
+  assert_equal(Integer::TwosComplementToBits(Integer("-4294967296"), Integer(33)), h1_0000_0000);
+
+  assert_equal(Integer::TwosComplementToBits(hFFFF_FFFF, Integer(32)), Integer("-1"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF, Integer(17)), Integer("65535"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF, Integer(16)), Integer("-1"));
+  assert_equal(Integer::TwosComplementToBits(h7FFF_FFFF_FFFF_FFFF, Integer(63)), Integer("-1"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_FFFF_FFFF_FFFF, Integer(63)), Integer("-1"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_FFFF_FFFF_FFFF, Integer(64)), Integer("-1"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_FFFF_0000_0000, Integer(64)), Integer("-4294967296"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_0000_0000_FFFF, Integer(64)), Integer("-281474976645121"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_0000_0000_FFFF, Integer(63)), Integer("-281474976645121"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_0000_0000_FFFF, Integer(59)), Integer("-281474976645121"));
+  assert_equal(Integer::TwosComplementToBits(h1_0000_0000, Integer(33)), Integer("-4294967296"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_0000, Integer(33)), Integer("4294901760"));
+  assert_equal(Integer::TwosComplementToBits(hFFFF_0000, Integer(17)), Integer("-65536"));
 }

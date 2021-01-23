@@ -174,6 +174,7 @@ poincare_src += $(addprefix poincare/src/,\
   unit_convert.cpp \
   unreal.cpp \
   variable_context.cpp \
+  twos_complement.cpp \
   xnor.cpp \
   xnor_explicit.cpp \
   xor.cpp \

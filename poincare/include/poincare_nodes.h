@@ -113,6 +113,7 @@
 #include <poincare/unit_convert.h>
 #include <poincare/unreal.h>
 #include <poincare/variable_context.h>
+#include <poincare/twos_complement.h>
 #include <poincare/xnor.h>
 #include <poincare/xnor_explicit.h>
 #include <poincare/xor.h>

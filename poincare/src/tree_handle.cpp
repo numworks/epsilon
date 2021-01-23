@@ -394,6 +394,7 @@ template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(const
 template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(const Tuple &);
 template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
+template TwosComplement TreeHandle::FixedArityBuilder<TwosComplement, TwosComplementNode>(const Tuple &);
 template Xnor TreeHandle::FixedArityBuilder<Xnor, XnorNode>(const Tuple &);
 template XnorExplicit TreeHandle::FixedArityBuilder<XnorExplicit, XnorExplicitNode>(const Tuple &);
 template Xor TreeHandle::FixedArityBuilder<Xor, XorNode>(const Tuple &);

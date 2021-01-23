@@ -125,6 +125,7 @@ class Expression : public TreeHandle {
   friend class TrigonometryCheatTable;
   friend class Unit;
   friend class UnitConvert;
+  friend class TwosComplement;
   friend class Xnor;
   friend class XnorExplicit;
   friend class Xor;

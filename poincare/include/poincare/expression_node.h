@@ -121,6 +121,7 @@ public:
     SquareRoot,
     Subtraction,
     Sum,
+    TwosComplement,
     Xnor,
     XnorExplicit,
     Xor,

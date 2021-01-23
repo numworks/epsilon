@@ -173,6 +173,7 @@ private:
       &Sum::s_functionHelper,
       &Tangent::s_functionHelper,
       &HyperbolicTangent::s_functionHelper,
+      &TwosComplement::s_functionHelper,
       &MatrixTrace::s_functionHelper,
       &MatrixTranspose::s_functionHelper,
       &Xnor::s_functionHelper,

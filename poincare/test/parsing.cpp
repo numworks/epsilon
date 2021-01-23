@@ -453,6 +453,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("sll(1,1,1)", ShiftLogicLeftExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
   assert_parsed_expression_is("srl(1,1)", ShiftLogicRight::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
   assert_parsed_expression_is("srl(1,1,1)", ShiftLogicRightExplicit::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("tc(1,1)", TwosComplement::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {

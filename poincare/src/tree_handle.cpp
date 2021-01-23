@@ -400,6 +400,7 @@ template VectorDot TreeHandle::FixedArityBuilder<VectorDot, VectorDotNode>(const
 template VectorNorm TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>(const Tuple &);
 template VectorNormLayout TreeHandle::FixedArityBuilder<VectorNormLayout, VectorNormLayoutNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
+template TwosComplement TreeHandle::FixedArityBuilder<TwosComplement, TwosComplementNode>(const Tuple &);
 template Xnor TreeHandle::FixedArityBuilder<Xnor, XnorNode>(const Tuple &);
 template XnorExplicit TreeHandle::FixedArityBuilder<XnorExplicit, XnorExplicitNode>(const Tuple &);
 template Xor TreeHandle::FixedArityBuilder<Xor, XorNode>(const Tuple &);

@@ -126,6 +126,7 @@ public:
     SquareRoot,
     Subtraction,
     Sum,
+    TwosComplement,
     VectorDot,
     VectorNorm,
     Xnor,

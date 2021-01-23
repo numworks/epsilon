@@ -174,6 +174,7 @@ poincare_src += $(addprefix poincare/src/,\
   tree_pool.cpp \
   trigonometry.cpp \
   trigonometry_cheat_table.cpp \
+  twos_complement.cpp \
   undefined.cpp \
   unit.cpp \
   unit_convert.cpp \

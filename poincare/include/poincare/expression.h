@@ -130,6 +130,7 @@ class Expression : public TreeHandle {
   friend class Tangent;
   friend class Trigonometry;
   friend class TrigonometryCheatTable;
+  friend class TwosComplement;
   friend class Unit;
   friend class UnitConvert;
   friend class VectorCross;

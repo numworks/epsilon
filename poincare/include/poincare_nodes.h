@@ -119,6 +119,7 @@
 #include <poincare/vector_cross.h>
 #include <poincare/vector_dot.h>
 #include <poincare/vector_norm.h>
+#include <poincare/twos_complement.h>
 #include <poincare/xnor.h>
 #include <poincare/xnor_explicit.h>
 #include <poincare/xor.h>

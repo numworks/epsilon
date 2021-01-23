@@ -1,4 +1,4 @@
-#include <poincare/nand_explicit.h>
+#include <poincare/rotate_right_explicit.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
@@ -9,27 +9,27 @@
 namespace Poincare
 {
 
-  constexpr Expression::FunctionHelper NandExplicit::s_functionHelper;
+  constexpr Expression::FunctionHelper RotateRightExplicit::s_functionHelper;
 
-  int NandExplicitNode::numberOfChildren() const { return NandExplicit::s_functionHelper.numberOfChildren(); }
+  int RotateRightExplicitNode::numberOfChildren() const { return RotateRightExplicit::s_functionHelper.numberOfChildren(); }
 
-  Layout NandExplicitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
+  Layout RotateRightExplicitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
   {
-    return LayoutHelper::Prefix(NandExplicit(this), floatDisplayMode, numberOfSignificantDigits, NandExplicit::s_functionHelper.name());
+    return LayoutHelper::Prefix(RotateRightExplicit(this), floatDisplayMode, numberOfSignificantDigits, RotateRightExplicit::s_functionHelper.name());
   }
 
-  int NandExplicitNode::serialize(char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
+  int RotateRightExplicitNode::serialize(char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
   {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NandExplicit::s_functionHelper.name());
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RotateRightExplicit::s_functionHelper.name());
   }
 
-  Expression NandExplicitNode::shallowReduce(ReductionContext reductionContext)
+  Expression RotateRightExplicitNode::shallowReduce(ReductionContext reductionContext)
   {
-    return NandExplicit(this).shallowReduce(reductionContext);
+    return RotateRightExplicit(this).shallowReduce(reductionContext);
   }
 
   template <typename T>
-  Complex<T> NandExplicitNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit)
+  Complex<T> RotateRightExplicitNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit)
   {
     if (c.imag() != 0)
     {
@@ -38,7 +38,7 @@ namespace Poincare
     return Complex<T>::Builder(c.real() - std::floor(c.real()));
   }
 
-  Expression NandExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext)
+  Expression RotateRightExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {
       Expression e = Expression::defaultShallowReduce();
@@ -101,7 +101,7 @@ namespace Poincare
     Integer aq = ar.signedIntegerNumerator();
     Integer bq = br.signedIntegerNumerator();
     Integer cq = cr.signedIntegerNumerator();
-    Integer x = Integer::LogicalNand(aq, bq, cq);
+    Integer x = Integer::LogicalRotateRight(aq, bq, cq);
     Expression result = Rational::Builder(x);
     replaceWithInPlace(result);
     return result.shallowReduce(reductionContext);

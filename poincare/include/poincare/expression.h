@@ -29,6 +29,12 @@ class Expression : public TreeHandle {
   friend class BasedInteger;
   friend class BinomialCoefficient;
   friend class BinomialDistributionFunction;
+  friend class BitClear;
+  friend class BitFlip;
+  friend class BitGet;
+  friend class BitsClear;
+  friend class BitsClearExplicit;
+  friend class BitSet;
   friend class Ceiling;
   friend class CommonLogarithm;
   template<typename T>
@@ -96,9 +102,19 @@ class Expression : public TreeHandle {
   friend class Product;
   friend class Randint;
   friend class RealPart;
+  friend class RotateLeft;
+  friend class RotateLeftExplicit;
+  friend class RotateRight;
+  friend class RotateRightExplicit;
   friend class Round;
   friend class Sequence;
   friend class SequenceNode;
+  friend class ShiftArithmeticRight;
+  friend class ShiftArithmeticRightExplicit;
+  friend class ShiftLogicLeft;
+  friend class ShiftLogicLeftExplicit;
+  friend class ShiftLogicRight;
+  friend class ShiftLogicRightExplicit;
   friend class SignFunction;
   friend class Sine;
   friend class SquareRoot;

@@ -50,6 +50,12 @@ poincare_src += $(addprefix poincare/src/,\
   arc_tangent.cpp \
   arithmetic.cpp \
   based_integer.cpp \
+  bit_clear.cpp \
+  bit_flip.cpp \
+  bit_get.cpp \
+  bit_set.cpp \
+  bits_clear.cpp \
+  bits_clear_explicit.cpp \
   binom_cdf.cpp \
   binomial_coefficient.cpp \
   binomial_distribution_function.cpp \
@@ -139,7 +145,17 @@ poincare_src += $(addprefix poincare/src/,\
   rational.cpp \
   real_part.cpp \
   rightwards_arrow_expression.cpp \
+  rotate_left.cpp \
+  rotate_left_explicit.cpp \
+  rotate_right.cpp \
+  rotate_right_explicit.cpp \
   round.cpp \
+  shift_arithmetic_right.cpp \
+  shift_arithmetic_right_explicit.cpp \
+  shift_logic_left.cpp \
+  shift_logic_left_explicit.cpp \
+  shift_logic_right.cpp \
+  shift_logic_right_explicit.cpp \
   sequence.cpp \
   serialization_helper.cpp \
   sign_function.cpp \

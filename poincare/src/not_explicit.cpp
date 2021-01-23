@@ -86,7 +86,7 @@ namespace Poincare
 
     Integer aq = ar.signedIntegerNumerator();
     Integer bq = br.signedIntegerNumerator();
-    Integer x = Integer::Not(aq, bq);
+    Integer x = Integer::LogicalNot(aq, bq);
     Expression result = Rational::Builder(x);
     replaceWithInPlace(result);
     return result.shallowReduce(reductionContext);

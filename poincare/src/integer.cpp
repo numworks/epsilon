@@ -452,7 +452,7 @@ Integer Integer::Factorial(const Integer & i) {
   return result;
 }
 
-Integer Integer::Xor(const Integer &a, const Integer &b, const Integer &num_bits)
+Integer Integer::LogicalXor(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!b.isNegative());
@@ -475,7 +475,7 @@ Integer Integer::Xor(const Integer &a, const Integer &b, const Integer &num_bits
   return uint_final;
 }
 
-Integer Integer::Xnor(const Integer &a, const Integer &b, const Integer &num_bits)
+Integer Integer::LogicalXnor(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!b.isNegative());
@@ -498,7 +498,7 @@ Integer Integer::Xnor(const Integer &a, const Integer &b, const Integer &num_bit
   return uint_final;
 }
 
-Integer Integer::And(const Integer &a, const Integer &b, const Integer &num_bits)
+Integer Integer::LogicalAnd(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!b.isNegative());
@@ -521,7 +521,7 @@ Integer Integer::And(const Integer &a, const Integer &b, const Integer &num_bits
   return uint_final;
 }
 
-Integer Integer::Nand(const Integer &a, const Integer &b, const Integer &num_bits)
+Integer Integer::LogicalNand(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!b.isNegative());
@@ -544,7 +544,7 @@ Integer Integer::Nand(const Integer &a, const Integer &b, const Integer &num_bit
   return uint_final;
 }
 
-Integer Integer::Or(const Integer &a, const Integer &b, const Integer &num_bits)
+Integer Integer::LogicalOr(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!b.isNegative());
@@ -567,7 +567,7 @@ Integer Integer::Or(const Integer &a, const Integer &b, const Integer &num_bits)
   return uint_final;
 }
 
-Integer Integer::Nor(const Integer &a, const Integer &b, const Integer &num_bits)
+Integer Integer::LogicalNor(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!b.isNegative());
@@ -590,7 +590,7 @@ Integer Integer::Nor(const Integer &a, const Integer &b, const Integer &num_bits
   return uint_final;
 }
 
-Integer Integer::Not(const Integer &a, const Integer &num_bits)
+Integer Integer::LogicalNot(const Integer &a, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
@@ -610,7 +610,7 @@ Integer Integer::Not(const Integer &a, const Integer &num_bits)
   return uint_final;
 }
 
-Integer Integer::Sll(const Integer &a, const Integer &shift, const Integer &num_bits)
+Integer Integer::LogicalShiftLeft(const Integer &a, const Integer &shift, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!shift.isNegative());
@@ -628,7 +628,7 @@ Integer Integer::Sll(const Integer &a, const Integer &shift, const Integer &num_
   Integer uint_final = a;
   while (points > 0)
   {
-    uint8_t power = (points == 31) ? 31 : points % 31;
+    uint8_t power = (points >= 31) ? 31 : points;
     //multiplyByPowerOf2 prohibits powers greater than 31...
     uint_final = uint_final.multiplyByPowerOf2(power);
     points -= power;
@@ -637,7 +637,7 @@ Integer Integer::Sll(const Integer &a, const Integer &shift, const Integer &num_
   return Truncate(uint_final, num_bits);
 }
 
-Integer Integer::Srl(const Integer &a, const Integer &shift, const Integer &num_bits)
+Integer Integer::LogicalShiftRight(const Integer &a, const Integer &shift, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!shift.isNegative());
@@ -656,7 +656,7 @@ Integer Integer::Srl(const Integer &a, const Integer &shift, const Integer &num_
   uint8_t points = shift.extractedInt();
   while (points > 0)
   {
-    uint8_t power = (points == 31) ? 31 : points % 31;
+    uint8_t power = (points >= 31) ? 31 : points;
     //multiplyByPowerOf2 prohibits powers greater than 31...
     uint_final = uint_final.divideByPowerOf2(power);
     points -= power;
@@ -664,14 +664,202 @@ Integer Integer::Srl(const Integer &a, const Integer &shift, const Integer &num_
 
   return Truncate(uint_final, num_bits);
 }
-Integer Integer::Sra(const Integer &a, const Integer &shift, const Integer &num_bits) {}
-Integer Integer::Ror(const Integer &a, const Integer &rotate, const Integer &num_bits) {}
-Integer Integer::Rol(const Integer &a, const Integer &rotate, const Integer &num_bits) {}
-Integer Integer::Bic(const Integer &a, const Integer &b, const Integer &num_bits) {}
-Integer Integer::Bit(const Integer &a, const Integer &bit) {}
-Integer Integer::Bclr(const Integer &a, const Integer &bit) {}
-Integer Integer::Bset(const Integer &a, const Integer &bit) {}
-Integer Integer::Bflp(const Integer &a, const Integer &bit) {}
+
+Integer Integer::LogicalShiftRightArithmetic(const Integer &a, const Integer &shift, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!shift.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || shift.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer uint_final = Truncate(a, num_bits); // Make sure input is at the correct precision
+  if (uint_final.isZero() || shift.isZero())
+  {
+    return uint_final;
+  }
+
+  Integer num_bits_minus_1 = Subtraction(num_bits, Integer(1));
+  Integer sign = LogicalBitGet(uint_final, num_bits_minus_1);
+  uint8_t points = shift.extractedInt();
+  uint8_t power;
+  while (points > 0)
+  {
+    //multiplyByPowerOf2 prohibits powers greater than 31...
+    power = (points >= 31) ? 31 : points;
+    uint_final = uint_final.divideByPowerOf2(power);
+    points -= power;
+  }
+
+  //only bother sign extending if the sign is negative
+  if (!sign.isZero())
+  {
+    points = shift.extractedInt();
+    Integer extend = Integer(1);
+    while (points > 0)
+    {
+      power = (points >= 31) ? 31 : points;
+      extend = extend.multiplyByPowerOf2(power);
+      points -= power;
+    }
+    extend = Subtraction(extend, Integer(1));
+
+    points = num_bits.extractedInt() - shift.extractedInt();
+    while (points > 0)
+    {
+      power = (points >= 31) ? 31 : points;
+      extend = extend.multiplyByPowerOf2(power);
+      points -= power;
+    }
+
+    uint_final = Addition(uint_final, extend);
+  }
+
+  return Truncate(uint_final, num_bits);
+}
+
+Integer Integer::LogicalRotateRight(const Integer &a, const Integer &rotate, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!rotate.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  assert(rotate.isLowerThan(num_bits));
+  if (a.isOverflow() || rotate.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer uint_final = Truncate(a, num_bits); // Make sure input is at the correct precision
+  if (uint_final.isZero() || rotate.isZero())
+  {
+    return uint_final;
+  }
+
+  Integer num_bits_plus_1 = Addition(num_bits, Integer(1));
+  Integer rotate_mask = LogicalShiftLeft(Integer(1), rotate, num_bits_plus_1);
+  rotate_mask = Subtraction(rotate_mask, Integer(1));
+  Integer rotate_word = LogicalAnd(uint_final, rotate_mask, num_bits);
+
+  uint_final = LogicalShiftRight(uint_final, rotate, num_bits);
+
+  //only bother adding if the rotate word is non-zero
+  if (!rotate_word.isZero())
+  {
+    Integer num_bits_minus_rotate = Subtraction(num_bits, rotate);
+    rotate_word = LogicalShiftLeft(rotate_word, num_bits_minus_rotate, num_bits);
+    uint_final = Addition(uint_final, rotate_word);
+  }
+
+  return Truncate(uint_final, num_bits);
+}
+
+Integer Integer::LogicalRotateLeft(const Integer &a, const Integer &rotate, const Integer &num_bits)
+{
+  assert(!a.isNegative());
+  assert(!rotate.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  assert(rotate.isLowerThan(num_bits));
+  if (a.isOverflow() || rotate.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer uint_final = Truncate(a, num_bits); // Make sure input is at the correct precision
+  if (uint_final.isZero() || rotate.isZero())
+  {
+    return uint_final;
+  }
+
+  Integer num_bits_plus_1 = Addition(num_bits, Integer(1));
+  Integer rotate_mask = LogicalShiftLeft(Integer(1), rotate, num_bits_plus_1);
+  rotate_mask = Subtraction(rotate_mask, Integer(1));
+  Integer num_bits_minus_rotate = Subtraction(num_bits, rotate);
+  rotate_mask = LogicalShiftLeft(rotate_mask, num_bits_minus_rotate, num_bits);
+  Integer rotate_word = LogicalAnd(uint_final, rotate_mask, num_bits);
+  rotate_word = LogicalShiftRight(rotate_word, num_bits_minus_rotate, num_bits);
+
+  uint_final = LogicalShiftLeft(uint_final, rotate, num_bits);
+
+  uint_final = Addition(uint_final, rotate_word);
+
+  return Truncate(uint_final, num_bits);
+}
+
+Integer Integer::LogicalBitsClear(const Integer &a, const Integer &b, const Integer &num_bits)
+{
+  //aka. BIC instruction (a & ~b)
+  assert(!a.isNegative());
+  assert(!b.isNegative());
+  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow() || b.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer b_invert = LogicalNot(b, num_bits);
+  Integer bic = LogicalAnd(a, b_invert, num_bits);
+
+  return Truncate(bic, num_bits);
+}
+
+Integer Integer::LogicalBitGet(const Integer &a, const Integer &bit)
+{
+  // (a >> bit) & 1, return the bit-th bit of a
+  assert(!a.isNegative());
+  assert(bit.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer shifted = LogicalShiftRight(a, bit, Integer(100));
+  return LogicalAnd(shifted, Integer(1), Integer(100));
+}
+
+Integer Integer::LogicalBitClear(const Integer &a, const Integer &bit)
+{
+  // x = a & ~(1 << bit), clear tha bit-th bit of a;
+  assert(!a.isNegative());
+  assert(bit.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(100));
+  shifted = LogicalNot(shifted, Integer(100));
+  return LogicalAnd(a, shifted, Integer(100));
+}
+
+Integer Integer::LogicalBitSet(const Integer &a, const Integer &bit)
+{
+  // x = a | (1 << bit), clear tha bit-th bit of a;
+  assert(!a.isNegative());
+  assert(bit.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(100));
+  return LogicalOr(a, shifted, Integer(100));
+}
+
+Integer Integer::LogicalBitFlip(const Integer &a, const Integer &bit)
+{
+  // x = a ^ (1 << bit), flip the bit-th bit of a.
+  assert(!a.isNegative());
+  assert(bit.isLowerThan(Integer(__INT8_MAX__)));
+  if (a.isOverflow())
+  {
+    return Overflow(false);
+  }
+
+  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(100));
+  return LogicalXor(a, shifted, Integer(100));
+}
 
 Integer Integer::Truncate(const Integer &a, const Integer &num_bits)
 {

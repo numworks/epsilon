@@ -1,4 +1,4 @@
-#include <poincare/xnor.h>
+#include <poincare/bits_clear.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
@@ -9,27 +9,27 @@
 namespace Poincare
 {
 
-  constexpr Expression::FunctionHelper Xnor::s_functionHelper;
+  constexpr Expression::FunctionHelper BitsClear::s_functionHelper;
 
-  int XnorNode::numberOfChildren() const { return Xnor::s_functionHelper.numberOfChildren(); }
+  int BitsClearNode::numberOfChildren() const { return BitsClear::s_functionHelper.numberOfChildren(); }
 
-  Layout XnorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
+  Layout BitsClearNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
   {
-    return LayoutHelper::Prefix(Xnor(this), floatDisplayMode, numberOfSignificantDigits, Xnor::s_functionHelper.name());
+    return LayoutHelper::Prefix(BitsClear(this), floatDisplayMode, numberOfSignificantDigits, BitsClear::s_functionHelper.name());
   }
 
-  int XnorNode::serialize(char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
+  int BitsClearNode::serialize(char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const
   {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Xnor::s_functionHelper.name());
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BitsClear::s_functionHelper.name());
   }
 
-  Expression XnorNode::shallowReduce(ReductionContext reductionContext)
+  Expression BitsClearNode::shallowReduce(ReductionContext reductionContext)
   {
-    return Xnor(this).shallowReduce(reductionContext);
+    return BitsClear(this).shallowReduce(reductionContext);
   }
 
   template <typename T>
-  Complex<T> XnorNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit)
+  Complex<T> BitsClearNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit)
   {
     if (c.imag() != 0)
     {
@@ -38,7 +38,7 @@ namespace Poincare
     return Complex<T>::Builder(c.real() - std::floor(c.real()));
   }
 
-  Expression Xnor::shallowReduce(ExpressionNode::ReductionContext reductionContext)
+  Expression BitsClear::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {
       Expression e = Expression::defaultShallowReduce();
@@ -88,7 +88,7 @@ namespace Poincare
 
     Integer aq = ar.signedIntegerNumerator();
     Integer bq = br.signedIntegerNumerator();
-    Integer x = Integer::LogicalXnor(aq, bq);
+    Integer x = Integer::LogicalBitsClear(aq, bq);
     Expression result = Rational::Builder(x);
     replaceWithInPlace(result);
     return result.shallowReduce(reductionContext);

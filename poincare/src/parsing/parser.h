@@ -104,6 +104,12 @@ static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     &HyperbolicArcSine::s_functionHelper,
     &ArcTangent::s_functionHelper,
     &HyperbolicArcTangent::s_functionHelper,
+    &BitClear::s_functionHelper,
+    &BitFlip::s_functionHelper,
+    &BitGet::s_functionHelper,
+    &BitsClear::s_functionHelper,
+    &BitsClearExplicit::s_functionHelper,
+    &BitSet::s_functionHelper,
     &BinomCDF::s_functionHelper,
     &BinomialCoefficient::s_functionHelper,
     &BinomPDF::s_functionHelper,
@@ -154,8 +160,18 @@ static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     &MatrixRowEchelonForm::s_functionHelper,
     &DivisionRemainder::s_functionHelper,
     &NthRoot::s_functionHelper,
+    &RotateLeft::s_functionHelper,
+    &RotateLeftExplicit::s_functionHelper,
+    &RotateRight::s_functionHelper,
+    &RotateRightExplicit::s_functionHelper
     &Round::s_functionHelper,
     &MatrixReducedRowEchelonForm::s_functionHelper,
+    &ShiftArithmeticRight::s_functionHelper,
+    &ShiftArithmeticRightExplicit::s_functionHelper,
+    &ShiftLogicLeft::s_functionHelper,
+    &ShiftLogicLeftExplicit::s_functionHelper,
+    &ShiftLogicRight::s_functionHelper,
+    &ShiftLogicRightExplicit::s_functionHelper,
     &SignFunction::s_functionHelper,
     &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,
@@ -170,6 +186,7 @@ static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     &XorExplicit::s_functionHelper,
     &SquareRoot::s_functionHelper
   };
+
   static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
   /* The method GetReservedFunction passes through the successive
    * entries of the above array in order to determine whether m_currentToken

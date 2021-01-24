@@ -74,6 +74,42 @@ const ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension)
 };
 
+const ToolboxMessageTree logicExplicitChildren[] = {
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalAndExplicitCommandWithArg, I18n::Message::LogicalAnd),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalNandExplicitCommandWithArg, I18n::Message::LogicalNand),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalOrExplicitCommandWithArg, I18n::Message::LogicalOr),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalNorExplicitCommandWithArg, I18n::Message::LogicalNor),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalXorExplicitCommandWithArg, I18n::Message::LogicalXor),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorExplicitCommandWithArg, I18n::Message::LogicalXnor),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalNotExplicitCommandWithArg, I18n::Message::LogicalNot),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftExplicitCommandWithArg, I18n::Message::LogicalShiftLeft),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightExplicitCommandWithArg, I18n::Message::LogicalShiftRight),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightArithmeticExplicitCommandWithArg, I18n::Message::LogicalShiftRightArithmetic),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateLeftExplicitCommandWithArg, I18n::Message::LogicalRotateLeft),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateRightExplicitCommandWithArg, I18n::Message::LogicalRotateRight),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitsClearExplicitCommandWithArg, I18n::Message::LogicalBitsClear)};
+
+const ToolboxMessageTree logicChildren[] = {
+    ToolboxMessageTree::Node(I18n::Message::ExplicitNumberOfBits, logicExplicitChildren),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalAndCommandWithArg, I18n::Message::LogicalAnd),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalNandCommandWithArg, I18n::Message::LogicalNand),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalOrCommandWithArg, I18n::Message::LogicalOr),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalNorCommandWithArg, I18n::Message::LogicalNor),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalXorCommandWithArg, I18n::Message::LogicalXor),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorCommandWithArg, I18n::Message::LogicalXnor),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalNotCommandWithArg, I18n::Message::LogicalNot),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftCommandWithArg, I18n::Message::LogicalShiftLeft),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightCommandWithArg, I18n::Message::LogicalShiftRight),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightArithmeticCommandWithArg, I18n::Message::LogicalShiftRightArithmetic),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateLeftCommandWithArg, I18n::Message::LogicalRotateLeft),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateRightCommandWithArg, I18n::Message::LogicalRotateRight),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitGetCommandWithArg, I18n::Message::LogicalBitGet),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitSetCommandWithArg, I18n::Message::LogicalBitSet),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitClearCommandWithArg, I18n::Message::LogicalBitClear),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitFlipCommandWithArg, I18n::Message::LogicalBitFlip),
+    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitsClearCommandWithArg, I18n::Message::LogicalBitsClear),
+    ToolboxMessageTree::Leaf(I18n::Message::TwosComplementToBitsCommandWithArg, I18n::Message::TwosComplementToBits)};
+
 #if LIST_ARE_DEFINED
 const ToolboxMessageTree listsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::SortCommandWithArg, I18n::Message::Sort),
@@ -275,22 +311,23 @@ const ToolboxMessageTree predictionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence)};
 
 const ToolboxMessageTree menu[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
-  ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
-  ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
-  ToolboxMessageTree::Node(I18n::Message::Calculation, calculChildren),
-  ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
-  ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
-  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
-  ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
-  ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
+    ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
+    ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
+    ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
+    ToolboxMessageTree::Node(I18n::Message::Calculation, calculChildren),
+    ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
+    ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
+    ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
+    ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
+    ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
+    ToolboxMessageTree::Node(I18n::Message::Logic, logicChildren),
 #if LIST_ARE_DEFINED
-  ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
+    ToolboxMessageTree::Node(I18n::Message::Lists, listsChildren),
 #endif
-  ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
-  ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
-  ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
-  ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren)};
+    ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
+    ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
+    ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
+    ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren)};
 
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 

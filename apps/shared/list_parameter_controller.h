@@ -37,21 +37,12 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
   virtual bool handleEnterOnRow(int rowIndex);
-  virtual int totalNumberOfCells() const {
-#if FUNCTION_COLOR_CHOICE
-    return 3;
-#else
-    return 2;
-#endif
-  }
+  virtual int totalNumberOfCells() const { return 2; }
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
   Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-#if FUNCTION_COLOR_CHOICE
-  Escher::MessageTableCellWithChevron m_colorCell;
-#endif
   Escher::MessageTableCellWithSwitch m_enableCell;
   Escher::MessageTableCell m_deleteCell;
 };

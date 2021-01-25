@@ -75,15 +75,20 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
   if (m_displayWarningMoreSolutions) {
     KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
     KDCoordinate topMargin;
+    // Empty warning messages are considered
+    KDCoordinate warningMessage0Height = m_warningMessageView0.text()[0] == 0 ? 0 : textHeight;
+    KDCoordinate warningMessage1Height = m_warningMessageView1.text()[0] == 0 ? 0 : textHeight;
+    // Warning messages are vertically centered within their bounds.
     if (m_selectableTableView.numberOfDisplayableRows() == 0) {
-      // Only the warning are displayed, center them within bounds instead
-      topMargin = bounds().height()/2;
+      topMargin = (bounds().height() - warningMessage0Height - warningMessage1Height) / 2;
     } else {
-      topMargin = k_topMargin/2;
+      // Warning messages must fit into a k_topMargin height bound
+      topMargin = (k_topMargin - warningMessage0Height - warningMessage1Height) / 2;
       m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(), bounds().height()-k_topMargin), force);
     }
-    m_warningMessageView0.setFrame(KDRect(0, topMargin - textHeight, bounds().width(), textHeight), force);
-    m_warningMessageView1.setFrame(KDRect(0, topMargin, bounds().width(), textHeight), force);
+    assert(topMargin >= 0);
+    m_warningMessageView0.setFrame(KDRect(0, topMargin, bounds().width(), warningMessage0Height), force);
+    m_warningMessageView1.setFrame(KDRect(0, topMargin + warningMessage0Height, bounds().width(), warningMessage1Height), force);
   } else {
     m_selectableTableView.setFrame(bounds(), force);
   }
@@ -128,7 +133,7 @@ void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
   bool requireWarning = false;
   if (numberOfDisplayedSolutions() == 0) {
-    m_contentView.setWarningMessages(I18n::Message::Default, noSolutionMessage());
+    m_contentView.setWarningMessages(noSolutionMessage(), I18n::Message::Default);
     requireWarning = true;
   } else if (m_equationStore->type() == EquationStore::Type::Monovariable) {
     m_contentView.setWarningMessages(I18n::Message::OnlyFirstSolutionsDisplayed0, I18n::Message::OnlyFirstSolutionsDisplayed1);
@@ -265,6 +270,10 @@ KDCoordinate SolutionsController::rowHeight(int j) {
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
   if (j == rowOfUserVariablesMessage) {
+    // Add extra margin only if it is not the first row.
+    if (j == 0) {
+      return k_defaultCellHeight;
+    }
     return Metric::CommonTopMargin + k_defaultCellHeight + Metric::CommonBottomMargin;
   }
   // TODO: memoize user symbols if too slow

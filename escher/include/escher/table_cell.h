@@ -15,6 +15,8 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   static KDCoordinate minimalHeightForOptimalDisplay(View * label, View * subLabel, View * accessory, KDCoordinate width);
+  static constexpr KDCoordinate k_minimalLargeFontCellHeight = 35; // = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::LargeFont->glyphSize().height() + Metric::CellTopMargin;
+  static constexpr KDCoordinate k_minimalSmallFontCellHeight = 31; // = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::SmallFont->glyphSize().height() + Metric::CellTopMargin;
 protected:
   virtual KDColor backgroundColor() const { return KDColorWhite; }
   int numberOfSubviews() const override;

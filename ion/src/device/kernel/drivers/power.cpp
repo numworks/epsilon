@@ -8,6 +8,7 @@
 #include <kernel/drivers/config/board.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
+#include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/led.h>
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
@@ -33,7 +34,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
    *   be in external flash)
    * - shutting down the keyboard driver that would trigger an interruption
    *   when changing the GPIO mode. */
-    Board::shutdownInterruptions();
+  Board::shutdownInterruptions();
   /* First, shutdown all peripherals except LED. Indeed, the charging pin state
    * might change when we shutdown peripherals that draw current. */
   Board::shutdownPeripherals(true);
@@ -85,8 +86,10 @@ void suspend(bool checkIfOnOffKeyReleased) {
 
   // Reset normal frequency
   Board::setStandardFrequency(Board::Frequency::High);
-  Board::initInterruptions();
   Board::initPeripherals(numworksAuthentication, false);
+  /* Init interruptions after initializing the keyboard driver (to avoid
+   * triggering an extra interruption by configurating the GPIOs). */
+  Board::initInterruptions();
   // Update LED according to plug and charge state
   LED::updateColorWithPlugAndCharge();
   /* If the USB has been unplugged while sleeping, the USB should have been
@@ -105,6 +108,8 @@ void waitUntilOnOffKeyReleased() {
     isPowerDown = scan.keyDown(Keyboard::Key::OnOff);
   }
   Timing::msleep(100);
+  // Flush the keyboard queue to avoid handling artifacts state at wake-up
+  Keyboard::Queue::sharedQueue()->flush();
 }
 
 void inline shutdownExternalFlashAndEnterLowPowerMode(bool keepLEDActive) {

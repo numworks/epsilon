@@ -26,6 +26,11 @@ Ion::Keyboard::State Queue::pop() {
   return s;
 }
 
+void Queue::flush() {
+  m_begin = 0;
+  m_end = 0;
+}
+
 }
 }
 }

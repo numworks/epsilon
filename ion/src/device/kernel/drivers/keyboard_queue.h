@@ -14,6 +14,7 @@ public:
   void push(Ion::Keyboard::State s);
   Ion::Keyboard::State pop(); // crashes if empty
   bool isEmpty() const { return m_begin == m_end; }
+  void flush();
 private:
   static constexpr size_t k_maximalNumberOfStates = 5;
   size_t clippedIncrement(size_t index) const;

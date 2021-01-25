@@ -24,10 +24,7 @@ protected:
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int maxNumberOfDisplayedRows() override;
-  // TODO Hugo : Improve workaround
-  constexpr static int k_maxNumberOfDisplayedRows = 15; // = 240/(13+2*3)
-  // 13 = minimal string height size
-  // 3 = vertical margins
+  constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalSmallFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
 private:
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);

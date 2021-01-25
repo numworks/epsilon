@@ -8,6 +8,7 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
+void initSystemClocks();
 void initPeripheralsClocks();
 void shutdownPeripheralsClocks(bool keepLEDAwake = false);
 

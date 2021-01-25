@@ -15,5 +15,6 @@ ion_device_kernel_src += $(addprefix ion/src/device/n0100/kernel/drivers/, \
 
 ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0100/shared/drivers/, \
   authentication.cpp \
+  board.cpp \
   reset.cpp \
 )

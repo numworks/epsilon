@@ -127,6 +127,11 @@ void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
    * - only the power key was down
    * - the unplugged device was plugged
    * - the battery stopped charging */
+  CORTEX.SCR()->setSLEEPDEEP(false);
+  if (!isLEDActive) {
+    // When LED are off, the system STOPs which switchs off the PLL
+    Board::initSystemClocks();
+  }
   Board::initPeripheralsClocks();
   // Init external flash
   ExternalFlash::init();
@@ -157,9 +162,6 @@ void stopConfiguration() {
   PWR.CR()->setLPUDS(true); // Low-power regulator in under-drive mode if LPDS bit is set and Flash memory in power-down when the device is in Stop under-drive mode
   PWR.CR()->setLPDS(true); // Low-power Voltage regulator on. Takes longer to wake up.
   PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
-#if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
-  PWR.CR()->setUDEN(PWR::CR::UnderDrive::Enable);
-#endif
 
   CORTEX.SCR()->setSLEEPDEEP(true);
 }

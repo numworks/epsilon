@@ -1,5 +1,6 @@
 #include "python_toolbox.h"
 #include "../shared/toolbox_helpers.h"
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
 extern "C" {
 #include <string.h>
@@ -520,15 +521,12 @@ void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
-    // Message has no subLabel
-    if (messageTree->text() == I18n::Message::Default && messageTree->label() !=I18n::Message::PythonCommandReturn && messageTree->label() !=I18n::Message::PythonCommandDefWithArg) {
-      /* Label requires more than one row. TODO Hugo :
-       * Implement a change-proof solution */
-      // Upcasting MessageTableCellWithMessage as MessageTableCell to set font.
-      MessageTableCell * myCell = (MessageTableCell *)cell;
+    // Upcasting MessageTableCellWithMessage as MessageTableCell to set font.
+    MessageTableCell * myCell = (MessageTableCell *)cell;
+    if (messageTree->text() == I18n::Message::Default && UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
+      // Leaf node with a multiple row label and no subLabel have a small font.
       myCell->setMessageFont(KDFont::SmallFont);
     } else {
-      MessageTableCell * myCell = (MessageTableCell *)cell;
       myCell->setMessageFont(KDFont::LargeFont);
     }
   }

@@ -64,16 +64,20 @@ void shutdownPeripherals(bool keepLEDAwake) {
 static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28};
 
 void initInterruptions() {
-  // Init EXTI interrupts (corresponding to keyboard column pins)
-  class NVIC::NVIC_ISER0 iser0(0); // Reset value
-  for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
-    iser0.setBit(interruptionIndex[i], true);
-  }
-  NVIC.NVIC_ISER0()->set(iser0);
-  /* Interruption priorities determine the order exceptions are handled. But it does not tamper with the handler preemption. However, */
   // Init SVCall interrupt priorities
   // SVCall should be interruptible by EXTI
   CORTEX.SHPR2()->setSVCALL_PRI(255);
+  // Init EXTI interrupts (corresponding to keyboard column pins)
+  class NVIC::NVIC_ISER0 iser0(0); // Reset value
+  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
+  for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
+    iser0.setBit(interruptionIndex[i], true);
+    icpr0.setBit(interruptionIndex[i], true);
+  }
+  // Flush pending interruptions
+  NVIC.NVIC_ICPR0()->set(icpr0);
+  // Enable interruptions
+  NVIC.NVIC_ISER0()->set(iser0);
 }
 
 void shutdownInterruptions() {
@@ -81,6 +85,7 @@ void shutdownInterruptions() {
   for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
     icer0.setBit(interruptionIndex[i], true);
   }
+  // Disable interruptions
   NVIC.NVIC_ICER0()->set(icer0);
 }
 

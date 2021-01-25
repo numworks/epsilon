@@ -211,7 +211,10 @@ void SimpleListViewDataSource::shiftMemoization(bool newCellIsUnder) {
   }
   // The new unknown value must be reseted.
   if (newCellIsUnder) {
-    assert(m_memoizedIndexOffset > 0);
+    if (m_memoizedIndexOffset <= 0) {
+      assert(false);
+      return;
+    }
     m_memoizedIndexOffset--;
     // Unknown value is the new one
     KDCoordinate height = nonMemoizedRowHeight(m_memoizedIndexOffset);
@@ -223,7 +226,10 @@ void SimpleListViewDataSource::shiftMemoization(bool newCellIsUnder) {
       assert(m_memoizedCumulatedHeightOffset != k_resetedMemoizedValue);
     }
   } else {
-    assert(m_memoizedIndexOffset <= numberOfRows() - k_memoizedCellsCount);
+    if (m_memoizedIndexOffset > numberOfRows() - k_memoizedCellsCount) {
+      // No need to shift further.
+      return;
+    }
     if (m_memoizedCumulatedHeightOffset != k_resetedMemoizedValue) {
       m_memoizedCumulatedHeightOffset+=rowHeight(m_memoizedIndexOffset);
       assert(m_memoizedCumulatedHeightOffset != k_resetedMemoizedValue);

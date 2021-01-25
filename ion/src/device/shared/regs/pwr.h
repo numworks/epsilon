@@ -10,8 +10,9 @@ namespace Regs {
 
 class PWR {
 public:
-  class CR : Register32 {
+  class CR : public Register32 {
   public:
+    using Register32::Register32;
     REGS_BOOL_FIELD(LPDS, 0);
     REGS_BOOL_FIELD(PPDS, 1);
     REGS_BOOL_FIELD(CSBF, 3);

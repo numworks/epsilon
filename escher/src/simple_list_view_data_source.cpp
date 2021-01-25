@@ -137,7 +137,7 @@ void SimpleListViewDataSource::resetMemoization(bool force) {
   m_memoizedIndexOffset = 0;
   m_memoizedCumulatedHeightOffset = 0;
   if (force) {
-    // Preserve total height
+    // Do not preserve total height
     m_memoizedTotalHeight = k_resetedMemoizedValue;
   }
   // Reset cell heights
@@ -195,6 +195,7 @@ void SimpleListViewDataSource::setMemoizationIndex(int index) {
   if (index < m_memoizedIndexOffset / 2 && m_memoizedIndexOffset - index > k_memoizedCellsCount) {
     resetMemoization(false);
     m_memoizedIndexOffset = index;
+    m_memoizedCumulatedHeightOffset = index == 0 ? 0 : k_resetedMemoizedValue;
   }
   bool newCellIsUnder = m_memoizedIndexOffset > index;
   int indexDelta = newCellIsUnder ? m_memoizedIndexOffset - index : index - m_memoizedIndexOffset;

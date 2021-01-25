@@ -38,11 +38,10 @@ void StoreParameterController::didBecomeFirstResponder() {
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
-  assert(index < reusableCellCount(type) || type == k_regressionCellType);
   if (type == k_regressionCellType) {
-    // assert(index == 0); TODO Hugo : Improve workaround
     return &m_changeRegressionCell;
   }
+  assert(index < reusableCellCount(type));
   return Shared::StoreParameterController::reusableCell(index, type);
 }
 

@@ -91,6 +91,7 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Board21shutdownInterruptionsEv)
 
     /* 'suspend' dependencies '*/
+    *(.text._ZN3Ion6Device5Board16initSystemClocksEv)
     *(.text._ZN3Ion6Device5Power20internalFlashSuspendEb)
 
     /* 'Reset::jump' dependencies '*/

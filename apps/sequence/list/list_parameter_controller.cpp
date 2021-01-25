@@ -25,38 +25,18 @@ const char * ListParameterController::title() {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   bool hasAdditionalRow = hasInitialRankRow();
-#if FUNCTION_COLOR_CHOICE
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
-#else
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
-#endif
     int selectedRowIndex = selectedRow();
-#if FUNCTION_COLOR_CHOICE
     if (selectedRowIndex == 0) {
-      return handleEnterOnRow(selectedRowIndex);
-    }
-    if (selectedRowIndex == 1) {
-#else
-    if (selectedRowIndex == 0) {
-#endif
       StackViewController * stack = (StackViewController *)(parentResponder());
       m_typeParameterController.setRecord(m_record);
       stack->push(&m_typeParameterController);
       return true;
     }
-#if FUNCTION_COLOR_CHOICE
-    if (selectedRowIndex == 2+hasAdditionalRow) {
-
-#else
     if (selectedRowIndex == 1+hasAdditionalRow) {
-#endif
       return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }
-#if FUNCTION_COLOR_CHOICE
-    if (selectedRowIndex == 3+hasAdditionalRow) {
-#else
     if (selectedRowIndex == 2+hasAdditionalRow) {
-#endif
       App::app()->localContext()->resetCache();
       return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }
@@ -96,22 +76,14 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
   if (!hasInitialRankRow()) {
     return;
   }
-#if FUNCTION_COLOR_CHOICE
-  if (previousSelectedCellY == 2) {
-#else
   if (previousSelectedCellY == 1) {
-#endif
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     if (myCell) {
       myCell->setEditing(false);
     }
     Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
-#if FUNCTION_COLOR_CHOICE
-  if (t->selectedRow() == 2) {
-#else
   if (t->selectedRow() == 1) {
-#endif
     MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
     Container::activeApp()->setFirstResponder(myNewCell);
   }

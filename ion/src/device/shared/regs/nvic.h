@@ -30,7 +30,10 @@ public:
   class NVIC_ICER1 : public MaskRegister { };
   class NVIC_ICER2 : public MaskRegister { };
 
-  class NVIC_ICPR0 : public MaskRegister { };
+  class NVIC_ICPR0 : public MaskRegister {
+  public:
+    using MaskRegister::MaskRegister;
+  };
   class NVIC_ICPR1 : public MaskRegister { };
   class NVIC_ICPR2 : public MaskRegister { };
 

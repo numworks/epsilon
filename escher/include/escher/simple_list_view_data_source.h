@@ -5,7 +5,7 @@
 #include <escher/highlight_cell.h>
 
 namespace Escher {
-// TODO : Rename this class MemoizedListViewDataSource
+// TODO Hugo : Rename this class MemoizedListViewDataSource
 class SimpleListViewDataSource : public ListViewDataSource {
 /* SimpleListViewDataSource elements have a dynamically variable height.
  * This property slows down navigation due to complex cell height calculation.

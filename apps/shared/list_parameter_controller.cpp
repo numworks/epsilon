@@ -55,29 +55,19 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate ListParameterController::nonMemoizedRowHeight(int j) {
-  switch (j) {
-    case 0:
-      prepareCellForHeightCalculation((HighlightCell *)&m_enableCell, j);
-      return m_enableCell.minimalSizeForOptimalDisplay().height();
-    case 1:
-      prepareCellForHeightCalculation((HighlightCell *)&m_deleteCell, j);
-      return m_deleteCell.minimalSizeForOptimalDisplay().height();
-    default:
-      assert(false);
-      return KDCoordinate(0);
-  }
+int ListParameterController::localIndex(int j) {
+  // Shared::ListParameterController rows are always placed last
+  assert(j >= numberOfRows() - k_localNumberOfCell && j < numberOfRows());
+  return j - (numberOfRows() - k_localNumberOfCell);
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  assert(index == 0);
-  assert(index < totalNumberOfCells());
   HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};
-  return cells[type];
+  return cells[localIndex(index)];
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
-  switch (rowIndex) {
+  switch (localIndex(rowIndex)) {
     case 0:
       function()->setActive(!function()->isActive());
       resetMemoization();

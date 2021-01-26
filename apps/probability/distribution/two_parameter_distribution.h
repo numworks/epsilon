@@ -12,11 +12,11 @@ public:
     m_parameter2(parameterValue2)
   {}
   int numberOfParameter() override { return 2; }
-  float parameterValueAtIndex(int index) override;
+  double parameterValueAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;
 protected:
-  float m_parameter1;
-  float m_parameter2;
+  double m_parameter1;
+  double m_parameter2;
 };
 
 }

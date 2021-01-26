@@ -38,6 +38,7 @@ void ion_main(int argc, const char * const argv[]) {
       for (int j = 0; j < I18n::NumberOfLanguages; j++) {
         if (strcmp(requestedLanguageId, I18n::translate(I18n::LanguageISO6391Names[j])) == 0) {
           GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)j);
+          GlobalPreferences::sharedGlobalPreferences()->setCountry(I18n::DefaultCountryForLanguage[j]);
           break;
         }
       }
@@ -60,6 +61,16 @@ void ion_main(int argc, const char * const argv[]) {
     }
   }
 #endif
+
+#if !PLATFORM_DEVICE
+  /* s_stackStart must be defined as early as possible to ensure that there
+   * cannot be allocated memory pointers before. Otherwise, with MicroPython for
+   * example, stack pointer could go backward after initialization and allocated
+   * memory pointers could be overlooked during mark procedure. */
+  volatile int stackTop;
+  Ion::setStackStart((void *)(&stackTop));
+#endif
+
   AppsContainer::sharedAppsContainer()->run();
 }
 

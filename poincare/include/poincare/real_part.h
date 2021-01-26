@@ -19,6 +19,8 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context) == NullStatus::Null ? NullStatus::Null : NullStatus::Unknown; }
   Type type() const override { return Type::RealPart; }
 
 
@@ -34,11 +36,11 @@ private:
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
     return Complex<T>::Builder(std::real(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::Map<double>(this, approximationContext, computeOnComplex<double>);
   }
 };
 

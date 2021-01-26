@@ -51,7 +51,7 @@ size_t numberOfBitsAfterLeadingZeroes(int i) {
 uint8_t * SignificantExamModeAddress() {
   uint32_t * persitence_start_32 = (uint32_t *)&_exam_mode_buffer_start;
   uint32_t * persitence_end_32 = (uint32_t *)&_exam_mode_buffer_end;
-  assert(persitence_end_32 - persitence_start_32 % 4 == 0);
+  assert((persitence_end_32 - persitence_start_32) % 4 == 0);
   while (persitence_start_32 < persitence_end_32 && *persitence_start_32 == 0x0) {
     // Scan by groups of 32 bits to reach first non-zero bit
     persitence_start_32++;

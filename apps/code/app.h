@@ -9,6 +9,7 @@
 #include "script_store.h"
 #include "python_toolbox.h"
 #include "variable_box_controller.h"
+#include "../shared/shared_app.h"
 
 namespace Code {
 
@@ -20,7 +21,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public SharedApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;

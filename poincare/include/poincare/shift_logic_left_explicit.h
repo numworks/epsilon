@@ -23,7 +23,7 @@ namespace Poincare
     // Properties
     Type type() const override { return Type::ShiftLogicLeftExplicit; }
 
-  private:
+private:
     // Layout
     Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
     int serialize(char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -33,16 +33,16 @@ namespace Poincare
     LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
     // Evaluation
+    Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override
+    {
+      return templatedApproximate<float>(approximationContext);
+    }
+    Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override
+    {
+      return templatedApproximate<double>(approximationContext);
+    }
     template <typename T>
-    static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-    Evaluation<float> approximate(SinglePrecision p, Context *context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override
-    {
-      return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, computeOnComplex<float>);
-    }
-    Evaluation<double> approximate(DoublePrecision p, Context *context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override
-    {
-      return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
-    }
+    Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
   };
 
   class ShiftLogicLeftExplicit final : public Expression

@@ -19,16 +19,18 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override { return childAtIndex(1)->nullStatus(context) == NullStatus::Null ? childAtIndex(0)->sign(context) : Sign::Unknown; }
+  NullStatus nullStatus(Context * context) const override;
   Type type() const override { return Type::ComplexCartesian; }
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { assert(false); return Layout(); }
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     /* leftLayoutShape is called after beautifying expression. ComplexCartesian
      * is transformed in another expression at beautifying. */
@@ -36,7 +38,7 @@ private:
     return LayoutShape::BoundaryPunctuation;
   };
 
-  template<typename T> Complex<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Complex<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
 class ComplexCartesian final : public Expression {
@@ -51,8 +53,8 @@ public:
   Expression imag() { return childAtIndex(1); }
 
   // Simplification
-  Expression shallowReduce();
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 
   // Common operations (done in-place)
   Expression squareNorm(ExpressionNode::ReductionContext reductionContext);

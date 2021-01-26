@@ -1,5 +1,17 @@
 name: Continuous integration
-on: [pull_request, push]
+#on: [pull_request, push]
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      triggerIos:
+        description: 'Run iOS tests'
+        required: true
+        default: 'no'
+      triggerMacos:
+        description: 'Run macOS tests'
+        required: true
+        default: 'no'
 
 jobs:
   android:
@@ -97,6 +109,7 @@ jobs:
           name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
   macos:
+    if: github.event.inputs.triggerMacos == 'yes'
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk
@@ -110,6 +123,7 @@ jobs:
           name: epsilon-macos.zip
           path: output/release/simulator/macos/epsilon.app
   ios:
+    if: github.event.inputs.triggerIos == 'yes'
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk

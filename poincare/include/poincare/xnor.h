@@ -1,8 +1,8 @@
 #ifndef POINCARE_XNOR_H
 #define POINCARE_XNOR_H
 
-#include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
+#include <poincare/evaluation.h>
 
 namespace Poincare
 {
@@ -31,18 +31,17 @@ namespace Poincare
     Expression shallowReduce(ReductionContext reductionContext) override;
     LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
     LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
-
     // Evaluation
+    Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override
+    {
+      return templatedApproximate<float>(approximationContext);
+    }
+    Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override
+    {
+      return templatedApproximate<double>(approximationContext);
+    }
     template <typename T>
-    static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-    Evaluation<float> approximate(SinglePrecision p, Context *context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override
-    {
-      return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, computeOnComplex<float>);
-    }
-    Evaluation<double> approximate(DoublePrecision p, Context *context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override
-    {
-      return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
-    }
+    Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
   };
 
   class Xnor final : public Expression
@@ -50,10 +49,10 @@ namespace Poincare
   public:
     Xnor(const XnorNode *n) : Expression(n) {}
     static Xnor Builder(Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<Xnor, XnorNode>({child1, child2}); }
-
     static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("xnor", 2, &UntypedBuilderTwoChildren<Xnor>);
 
     Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+    bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   };
 
 } // namespace Poincare

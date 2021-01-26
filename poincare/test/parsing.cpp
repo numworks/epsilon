@@ -286,18 +286,19 @@ QUIZ_CASE(poincare_parsing_matrices) {
 
 QUIZ_CASE(poincare_parsing_units) {
   // Units
-  for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
-    for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
+  for (int i = 0; i < Unit::Representative::k_numberOfDimensions; i++) {
+    const Unit::Representative * dim = Unit::Representative::DefaultRepresentatives()[i];
+    for (int j = 0; j < dim->numberOfRepresentatives(); j++) {
+      const Unit::Representative * rep = dim->representativesOfSameDimension() + j;
       static constexpr size_t bufferSize = 10;
       char buffer[bufferSize];
-      Unit::Builder(dim, rep, &Unit::EmptyPrefix).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+      Unit::Builder(rep, Unit::Prefix::EmptyPrefix()).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
-      if (rep->isPrefixable()) {
-        size_t numberOfPrefixes = sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix *);
-        for (size_t i = 0; i < numberOfPrefixes; i++) {
-          const Unit::Prefix * pre = Unit::AllPrefixes[i];
-          Unit::Builder(dim, rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+      if (rep->isInputPrefixable()) {
+        for (size_t i = 0; i < Unit::Prefix::k_numberOfPrefixes; i++) {
+          const Unit::Prefix * pre = Unit::Prefix::Prefixes();
+          Unit::Builder(rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
         }
@@ -365,30 +366,37 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("binomial(2,1)", BinomialCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
   assert_parsed_expression_is("ceil(1)", Ceiling::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("confidence(1,2)", ConfidenceInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("cross(1,1)", VectorCross::Builder(BasedInteger::Builder(1),BasedInteger::Builder(1)));
   assert_text_not_parsable("diff(1,2,3)");
   assert_text_not_parsable("diff(0,_s,0)");
   assert_parsed_expression_is("diff(1,x,3)", Derivative::Builder(BasedInteger::Builder(1),Symbol::Builder("x",1),BasedInteger::Builder(3)));
   assert_parsed_expression_is("dim(1)", MatrixDimension::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("conj(1)", Conjugate::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("det(1)", Determinant::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("dot(1,1)", VectorDot::Builder(BasedInteger::Builder(1),BasedInteger::Builder(1)));
   assert_parsed_expression_is("cos(1)", Cosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("cosh(1)", HyperbolicCosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("factor(1)", Factor::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("floor(1)", Floor::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("frac(1)", FracPart::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("gcd(1,2)", GreatCommonDivisor::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("gcd(1,2,3)", GreatCommonDivisor::Builder({BasedInteger::Builder(1),BasedInteger::Builder(2),BasedInteger::Builder(3)}));
+  assert_text_not_parsable("gcd(1)");
+  assert_text_not_parsable("gcd()");
   assert_parsed_expression_is("im(1)", ImaginaryPart::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("int(1,x,2,3)", Integral::Builder(BasedInteger::Builder(1),Symbol::Builder("x",1),BasedInteger::Builder(2),BasedInteger::Builder(3)));
   assert_text_not_parsable("int(1,2,3,4)");
   assert_text_not_parsable("int(1,_s,3,4)");
   assert_parsed_expression_is("inverse(1)", MatrixInverse::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("lcm(1,2)", LeastCommonMultiple::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("lcm(1,2,3)", LeastCommonMultiple::Builder({BasedInteger::Builder(1),BasedInteger::Builder(2),BasedInteger::Builder(3)}));
+  assert_text_not_parsable("lcm(1)");
+  assert_text_not_parsable("lcm()");
   assert_parsed_expression_is("ln(1)", NaperianLogarithm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("log(1)", CommonLogarithm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("log(1,2)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("log{2}(1)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("permute(2,1)", PermuteCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
   assert_parsed_expression_is("prediction95(1,2)", PredictionInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("norm(1)", VectorNorm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("prediction(1,2)", SimplePredictionInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("product(1,n,2,3)", Product::Builder(BasedInteger::Builder(1),Symbol::Builder("n",1),BasedInteger::Builder(2),BasedInteger::Builder(3)));
   assert_text_not_parsable("product(1,2,3,4)");
@@ -397,9 +405,11 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("random()", Random::Builder());
   assert_parsed_expression_is("randint(1,2)", Randint::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("re(1)", RealPart::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("ref(1)", MatrixRowEchelonForm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("rem(1,2)", DivisionRemainder::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("root(1,2)", NthRoot::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("round(1,2)", Round::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("rref(1)", MatrixReducedRowEchelonForm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sin(1)", Sine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sign(1)", SignFunction::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sinh(1)", HyperbolicSine::Builder(BasedInteger::Builder(1)));

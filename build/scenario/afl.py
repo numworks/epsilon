@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import subprocess
+import multiprocessing
 
-NUMBER_OF_FUZZERS=8
+NUMBER_OF_FUZZERS=multiprocessing.cpu_count()
 
 def afl_command(name):
   master_option = "-M" if name.startswith("master") else "-S"

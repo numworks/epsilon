@@ -36,8 +36,9 @@ public:
 #endif
 
   // Properties
-  Type type() const override { return Type::Float; }
+  Type type() const override { return (sizeof(T) == sizeof(float)) ? Type::Float : Type::Double; }
   Sign sign(Context * context) const override { return m_value < 0 ? Sign::Negative : Sign::Positive; }
+  NullStatus nullStatus(Context * context) const override { return m_value == 0.0 ? NullStatus::Null : NullStatus::NonNull; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
@@ -46,13 +47,13 @@ public:
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 private:
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::Decimal; }
 
-  template<typename U> Evaluation<U> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  template<typename U> Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const {
     return Complex<U>::Builder((U)m_value);
   }
   T m_value;

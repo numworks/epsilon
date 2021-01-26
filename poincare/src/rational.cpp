@@ -141,7 +141,7 @@ Expression RationalNode::shallowReduce(ReductionContext reductionContext) {
   return Rational(this).shallowReduce();
 }
 
-Expression RationalNode::shallowBeautify(ReductionContext reductionContext) {
+Expression RationalNode::shallowBeautify(ReductionContext * reductionContext) {
   return Rational(this).shallowBeautify();
 }
 

@@ -13,6 +13,9 @@ private:
   void reloadBannerView() override;
   Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
   Ion::Storage::Record m_intersectedRecord;
+  // Prevent horizontal panning to preserve search interval
+  float cursorRightMarginRatio() override { return 0.0f; }
+  float cursorLeftMarginRatio() override { return 0.0f; }
 };
 
 }

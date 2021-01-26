@@ -1,68 +1,124 @@
 #include <poincare/sequence.h>
-#include <poincare/decimal.h>
-#include <poincare/undefined.h>
-#include <poincare/variable_context.h>
-extern "C" {
-#include <assert.h>
-#include <stdlib.h>
-}
-#include <cmath>
+#include <poincare/integer.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
+#include <poincare/based_integer.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/parenthesis.h>
+#include <poincare/complex.h>
+#include <apps/shared/sequence.h>
 
 namespace Poincare {
 
+SequenceNode::SequenceNode(const char * newName, int length) : SymbolAbstractNode() {
+  strlcpy(const_cast<char*>(name()), newName, length+1);
+}
+
+Expression SequenceNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
+  return Sequence(this).replaceSymbolWithExpression(symbol, expression);
+}
+
+int SequenceNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+  /* This function ensures that terms like u(n) and u(n+1), u(n) and v(n),
+   * u(a) and u(b) do not factorize.
+   * We never want to factorize. The only cases where it could be useful are
+   * like the following : u(n)+u(n). But thanks to the cache system, no
+   * computation is needed for the second term.*/
+  assert(type() == e->type());
+  assert(numberOfChildren() == 1);
+  assert(e->numberOfChildren() == 1);
+  ExpressionNode * seq = const_cast<ExpressionNode*>(e);
+  int delta = strcmp(name(), reinterpret_cast<SequenceNode *>(seq)->name());
+  if (delta == 0) {
+    return SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending, canBeInterrupted, ignoreParentheses);
+  }
+  return delta;
+}
+
 Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return createSequenceLayout(
-    childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-    childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-    childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-    childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits)
-  );
+  assert(name()[0] >= 'u' && name()[0] <= 'w');
+  Layout rank = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  return HorizontalLayout::Builder(
+    CodePointLayout::Builder(name()[0]),
+    VerticalOffsetLayout::Builder(rank, VerticalOffsetLayoutNode::Position::Subscript));
+}
+
+int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
 Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
-  return Sequence(this).shallowReduce(reductionContext.context());
+  return Sequence(this).shallowReduce(reductionContext);
+}
+
+Evaluation<float> SequenceNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<float>(approximationContext);
+}
+
+Evaluation<double> SequenceNode::approximate(DoublePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<double>(approximationContext);
 }
 
 template<typename T>
-Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
-  T start = aInput.toScalar();
-  T end = bInput.toScalar();
-  if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
+Evaluation<T> SequenceNode::templatedApproximate(ApproximationContext approximationContext) const {
+  if (approximationContext.withinReduce() || childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
+    /* If we're inside a reducing routine, we want to escape the sequence
+     * approximation. Indeed, in order to know that the sequence is well defined
+     * (especially for self-referencing or inter-dependently defined sequences),
+     * we need to reduce the sequence definition (done by calling
+     * 'expressionForSymbolAbstract'); if we're within a reduce routine, we
+     * would create an infinite loop. Returning a NAN approximation for
+     * sequences within reduce routine does not really matter: we just have
+     * access to less information in order to simplify (abs(u(n)) might not be
+     * reduced for instance). */
     return Complex<T>::Undefined();
   }
-  VariableContext nContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), context);
-  Evaluation<T> result = Complex<T>::Builder((T)emptySequenceValue());
-  for (int i = (int)start; i <= (int)end; i++) {
-    if (Expression::ShouldStopProcessing()) {
-      return Complex<T>::Undefined();
-    }
-    nContext.setApproximationForVariable<T>((T)i);
-    result = evaluateWithNextTerm(T(), result, childAtIndex(0)->approximate(T(), &nContext, complexFormat, angleUnit), complexFormat);
-    if (result.isUndefined()) {
-      return Complex<T>::Undefined();
-    }
+  Expression e = approximationContext.context()->expressionForSymbolAbstract(this, false);
+  if (e.isUninitialized()) {
+    return Complex<T>::Undefined();
   }
-  return result;
+  return e.node()->approximate(T(), approximationContext);
 }
 
-Expression Sequence::shallowReduce(Context * context) {
-  {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
-      return e;
-    }
+Sequence Sequence::Builder(const char * name, size_t length, Expression child) {
+  Sequence seq = SymbolAbstract::Builder<Sequence, SequenceNode>(name, length);
+  if (!child.isUninitialized()) {
+    seq.replaceChildAtIndexInPlace(0, child);
   }
-  assert(!childAtIndex(1).deepIsMatrix(context));
-  if (childAtIndex(2).deepIsMatrix(context) || childAtIndex(3).deepIsMatrix(context)) {
+  return seq;
+}
+
+Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
+  // Replace the symbol in the child
+  childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
+  if (symbol.type() == ExpressionNode::Type::Sequence && hasSameNameAs(symbol)) {
+    Expression value = expression.clone();
+    Expression p = parent();
+    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {
+      value = Parenthesis::Builder(value);
+    }
+    replaceWithInPlace(value);
+    return value;
+  }
+  return *this;
+}
+
+Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  Expression e = Expression::defaultShallowReduce();
+  e = e.defaultHandleUnitsInChildren();
+  if (e.isUndefined()) {
+    return e;
+  }
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
   return *this;
 }
 
-template Evaluation<float> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+Expression Sequence::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  return *this;
+}
 
 }

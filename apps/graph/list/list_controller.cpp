@@ -167,7 +167,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
     // Set name and color if the name is not being edited
     ExpiringPointer<ContinuousFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
-    KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
+    KDColor functionNameColor = function->isActive() ? function->color() : Palette::GrayDark;
     titleCell->setColor(functionNameColor);
   }
 }
@@ -178,7 +178,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
+  KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);
 }
 

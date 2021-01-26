@@ -1,5 +1,6 @@
 #include "function_graph_controller.h"
 #include "function_app.h"
+#include "poincare_helpers.h"
 #include "../apps_container.h"
 #include <poincare/coordinate_2D.h>
 #include <assert.h>
@@ -11,10 +12,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, previousModelsVersions, rangeVersion),
-  m_initialisationParameterController(this, interactiveRange),
-  m_angleUnitVersion(angleUnitVersion),
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, rangeVersion),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }
@@ -24,10 +23,6 @@ bool FunctionGraphController::isEmpty() const {
     return true;
   }
   return false;
-}
-
-ViewController * FunctionGraphController::initialisationParameterController() {
-  return &m_initialisationParameterController;
 }
 
 void FunctionGraphController::didBecomeFirstResponder() {
@@ -47,11 +42,7 @@ void FunctionGraphController::viewWillAppear() {
   if (functionGraphView()->context() == nullptr) {
     functionGraphView()->setContext(textFieldDelegateApp()->localContext());
   }
-  Preferences::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
-  if (*m_angleUnitVersion != newAngleUnitVersion) {
-    *m_angleUnitVersion = newAngleUnitVersion;
-    initCursorParameters();
-  }
+
   InteractiveCurveViewController::viewWillAppear();
 }
 
@@ -73,56 +64,21 @@ void FunctionGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
 }
 
-InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  float min = FLT_MAX;
-  float max = -FLT_MAX;
-  float xMin = interactiveCurveViewRange->xMin();
-  float xMax = interactiveCurveViewRange->xMax();
-  assert(functionStore()->numberOfActiveFunctions() > 0);
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    /* Scan x-range from the middle to the extrema in order to get balanced
-     * y-range for even functions (y = 1/x). */
-    double tMin = f->tMin();
-    if (std::isnan(tMin)) {
-      tMin = xMin;
-    } else if (f->shouldClipTRangeToXRange()) {
-      tMin = std::max<double>(tMin, xMin);
-    }
-    double tMax = f->tMax();
-    if (std::isnan(tMax)) {
-      tMax = xMax;
-    } else if (f->shouldClipTRangeToXRange()) {
-      tMax = std::min<double>(tMax, xMax);
-    }
-  /* In practice, a step smaller than a pixel's width is needed for sampling
-   * the values of a function. Otherwise some relevant extremal values may be
-   * missed. */
-    float rangeStep = f->rangeStep();
-    const float step = std::isnan(rangeStep) ? curveView()->pixelWidth() / 2.0f : rangeStep;
-    const int balancedBound = std::floor((tMax-tMin)/2/step);
-    for (int j = -balancedBound; j <= balancedBound ; j++) {
-      float t = (tMin+tMax)/2 + step * j;
-      Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
-      float x = xy.x1();
-      if (!std::isnan(x) && !std::isinf(x) && x >= xMin && x <= xMax) {
-        float y = xy.x2();
-        if (!std::isnan(y) && !std::isinf(y)) {
-          min = std::min(min, y);
-          max = std::max(max, y);
-        }
-      }
-    }
-  }
-  InteractiveCurveViewRangeDelegate::Range range;
-  range.min = min;
-  range.max = max;
-  return range;
-}
-
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
-  return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
+  float gridUnit = 2 * interactiveCurveViewRange()->xGridUnit();
+
+  float yMin = interactiveCurveViewRange()->yMin(), yMax = interactiveCurveViewRange()->yMax();
+  float middle = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+  float resLeft = gridUnit * std::floor(middle / gridUnit);
+  float yLeft = function->evaluateXYAtParameter(resLeft, context).x2();
+  float resRight = resLeft + gridUnit;
+  float yRight = function->evaluateXYAtParameter(resRight, context).x2();
+  if ((yMin < yLeft && yLeft < yMax) || !(yMin < yRight && yRight < yMax)) {
+    return resLeft;
+  }
+  return resRight;
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {
@@ -145,9 +101,6 @@ void FunctionGraphController::initCursorParameters() {
     functionIndex = 0;
   }
   m_cursor->moveTo(t, xy.x1(), xy.x2());
-  if (interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
-  }
   selectFunctionWithCursor(functionIndex);
 }
 
@@ -171,16 +124,18 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   return true;
 }
 
+bool FunctionGraphController::cursorMatchesModel() {
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  if (indexFunctionSelectedByCursor() >= functionStore()->numberOfActiveFunctions()) {
+    return false;
+  }
+  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context);
+  return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
+}
+
 CurveView * FunctionGraphController::curveView() {
   return functionGraphView();
-}
-
-uint32_t FunctionGraphController::modelVersion() {
-  return functionStore()->storeChecksum();
-}
-
-uint32_t FunctionGraphController::modelVersionAtIndex(int i) {
-  return functionStore()->storeChecksumAtIndex(i);
 }
 
 uint32_t FunctionGraphController::rangeVersion() {
@@ -197,6 +152,11 @@ Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t,
 
 int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
+}
+
+void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) {
+  float ratio = InteractiveCurveViewRange::NormalYXRatio() / (1 + cursorTopMarginRatio() + cursorBottomMarginRatio());
+  DefaultInterestingRanges(range, textFieldDelegateApp()->localContext(), functionStore(), ratio);
 }
 
 }

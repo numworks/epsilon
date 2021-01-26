@@ -49,6 +49,7 @@ public:
   bool autoImportationStatus() const;
   void toggleAutoimportationStatus();
   const char * content() const;
+  size_t contentSize() { return value().size - k_statusSize; }
 
   /* Fetched status */
   bool fetchedFromConsole() const;

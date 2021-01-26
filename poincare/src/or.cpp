@@ -29,13 +29,9 @@ namespace Poincare
   }
 
   template <typename T>
-  Complex<T> OrNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit)
+  Evaluation<T> OrNode::templatedApproximate(ApproximationContext approximationContext) const
   {
-    if (c.imag() != 0)
-    {
-      return Complex<T>::RealUndefined();
-    }
-    return Complex<T>::Builder(c.real() - std::floor(c.real()));
+    return Complex<T>::RealUndefined();
   }
 
   Expression Or::shallowReduce(ExpressionNode::ReductionContext reductionContext)

@@ -59,7 +59,7 @@ void KeyboardView::drawKey(int keyIndex, KDContext * ctx, KDRect rect) const {
 
 KDColor KeyboardView::keyColor(Ion::Keyboard::Key key) const {
   if (!m_keyboardModel.belongsToTestedKeysSubset(key)) {
-    return Palette::GreyBright;
+    return Palette::GrayBright;
   }
   if (m_keyboardModel.testedKey() == key) {
     return KDColorBlue;

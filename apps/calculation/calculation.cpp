@@ -169,7 +169,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::Sum,
             ExpressionNode::Type::Derivative,
             ExpressionNode::Type::ConfidenceInterval,
-            ExpressionNode::Type::PredictionInterval
+            ExpressionNode::Type::PredictionInterval,
+            ExpressionNode::Type::Sequence
           };
           return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes)/sizeof(ExpressionNode::Type));
         }, context)
@@ -218,7 +219,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
     Preferences * preferences = Preferences::sharedPreferences();
     // TODO: complex format should not be needed here (as it is not used to create layouts)
     Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-    m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, complexFormat, preferences->angleUnit()) ? EqualSign::Equal : EqualSign::Approximation;
+    m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat()) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool
@@ -254,32 +255,9 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   }
   if (o.hasUnit()) {
     Expression unit;
-    PoincareHelpers::Reduce(&o,
-        App::app()->localContext(),
-        ExpressionNode::ReductionTarget::User,
-        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        ExpressionNode::UnitConversion::None);
-    o = o.removeUnit(&unit);
-    // There might be no unit in the end, if the reduction was interrupted.
-    if (!unit.isUninitialized()) {
-      if (Unit::IsSI(unit)) {
-        if (Unit::IsSISpeed(unit) || Unit::IsSIVolume(unit) || Unit::IsSIEnergy(unit)) {
-          /* All these units will provide misc. classic representatives in
-           * addition to the SI unit in additional information. */
-          return AdditionalInformationType::Unit;
-        }
-        if (Unit::IsSITime(unit)) {
-          /* If the number of seconds is above 60s, we can write it in the form
-           * of an addition: 23_min + 12_s for instance. */
-          double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
-          if (value >  Unit::SecondsPerMinute) {
-            return AdditionalInformationType::Unit;
-          }
-        }
-        return AdditionalInformationType::None;
-      }
-      return AdditionalInformationType::Unit;
-    }
+    PoincareHelpers::ReduceAndRemoveUnit(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+    double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
+    return (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())) ? AdditionalInformationType::Unit : AdditionalInformationType::None;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;
@@ -290,6 +268,9 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   }
   if (o.hasDefinedComplexApproximation(context, complexFormat, preferences->angleUnit())) {
     return AdditionalInformationType::Complex;
+  }
+  if (o.type() == ExpressionNode::Type::Matrix) {
+    return AdditionalInformationType::Matrix;
   }
   return AdditionalInformationType::None;
 }

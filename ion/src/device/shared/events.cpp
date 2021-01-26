@@ -6,5 +6,9 @@ namespace Events {
 void didPressNewKey() {
 }
 
+const char * Event::text() const {
+  return defaultText();
+}
+
 }
 }

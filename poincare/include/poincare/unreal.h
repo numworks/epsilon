@@ -20,12 +20,16 @@ public:
   Type type() const override { return Type::Unreal; }
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return templatedApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return templatedApproximate<double>();
   }
+
+  /* Derivation
+   * Unlike Numbers that derivate to 0, Unreal derivates to Unreal. */
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return true; }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

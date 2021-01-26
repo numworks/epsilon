@@ -73,40 +73,12 @@ public:
     }
     return exponentBase10;
   }
-  static T next(T f) {
-    return nextOrPrevious(f, true);
-  }
-
-  static T previous(T f) {
-    return nextOrPrevious(f, false);
-  }
 
 private:
   union uint_float {
     uint64_t ui;
     T f;
   };
-  static T nextOrPrevious(T f, bool isNext) {
-    if (std::isinf(f) || std::isnan(f)) {
-      return f;
-    }
-    uint_float u;
-    u.ui = 0;
-    u.f = f;
-    uint64_t oneBitOnSignBit = (uint64_t)1 << (k_exponentNbBits + k_mantissaNbBits);
-    if ((isNext && (u.ui & oneBitOnSignBit) > 0) // next: Negative float
-     || (!isNext && (u.ui & oneBitOnSignBit) == 0)) { // previous: Positive float
-      if ((isNext && u.ui == oneBitOnSignBit) // next: -0.0
-       || (!isNext && u.ui == 0.0)) { // previous: 0.0
-        u.ui = isNext ? 0 : oneBitOnSignBit;
-      } else {
-        u.ui -= 1;
-      }
-    } else { // next: Positive float, previous: Negative float
-      u.ui += 1;
-    }
-    return u.f;
-  }
 
   constexpr static size_t k_signNbBits = 1;
   constexpr static size_t k_exponentNbBits = sizeof(T) == sizeof(float) ? 8 : 11;

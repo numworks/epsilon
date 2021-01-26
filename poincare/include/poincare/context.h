@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <assert.h>
+#include <cmath>
 
 namespace Poincare {
 
@@ -14,10 +15,11 @@ public:
   enum class SymbolAbstractType : uint8_t {
     None,
     Function,
+    Sequence,
     Symbol
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) = 0;
-  virtual const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) = 0;
+  virtual const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) = 0;
   virtual void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) = 0;
 };
 

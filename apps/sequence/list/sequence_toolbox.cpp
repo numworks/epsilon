@@ -1,5 +1,5 @@
 #include "sequence_toolbox.h"
-#include "../sequence_store.h"
+#include "../../shared/sequence_store.h"
 #include <poincare/layout_helper.h>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
@@ -20,20 +20,17 @@ SequenceToolbox::SequenceToolbox() :
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
-  if (selectedRow() < m_numberOfAddedCells && stackDepth() == 0) {
+  if (stackDepth() == 0 && selectedRow() < m_numberOfAddedCells) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       return selectAddedCell(selectedRow());
     }
     return false;
   }
-  return MathToolbox::handleEventForRow(event, mathToolboxIndex(selectedRow()));
+  return MathToolbox::handleEventForRow(event, selectedRow() - stackRowOffset());
 }
 
 int SequenceToolbox::numberOfRows() const {
-  if (stackDepth() == 0) {
-    return MathToolbox::numberOfRows()+m_numberOfAddedCells;
-  }
-  return MathToolbox::numberOfRows();
+  return MathToolbox::numberOfRows() + stackRowOffset();
 }
 
 HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
@@ -52,14 +49,14 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     cell->reloadCell();
     return;
   }
-  MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));
+  MathToolbox::willDisplayCellForIndex(cell, index - stackRowOffset());
 }
 
 int SequenceToolbox::typeAtLocation(int i, int j) {
   if (stackDepth() == 0 && j < m_numberOfAddedCells) {
     return 2;
   }
-  return MathToolbox::typeAtLocation(i,mathToolboxIndex(j));
+  return MathToolbox::typeAtLocation(i, j - stackRowOffset());
 }
 
 void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth) {
@@ -69,14 +66,14 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
     m_numberOfAddedCells = 0;
     return;
   }
-  /* The cells added reprensent the sequence at smaller ranks than its depth
+  /* The cells added represent the sequence at smaller ranks than its depth
    * and the other sequence at ranks smaller or equal to the depth, ie:
    * if the sequence is u(n+1), we add cells u(n), v(n), v(n+1), w(n), w(n+1).
    * There is a special case for double recurrent sequences because we do not
    * want to parse symbols u(n+2), v(n+2) or w(n+2). */
   m_numberOfAddedCells = 0;
-  int sequenceIndex = SequenceStore::sequenceIndexForName(sequenceName[0]);
-  for (int i = 0; i < MaxNumberOfSequences; i++) {
+  int sequenceIndex = Shared::SequenceStore::sequenceIndexForName(sequenceName[0]);
+  for (int i = 0; i < Shared::MaxNumberOfSequences; i++) {
     for (int j = 0; j < recurrenceDepth+1; j++) {
       // When defining u(n+1) for ex, don't add [u|v|w](n+2) or u(n+1)
       if (j == 2 || (j == recurrenceDepth && sequenceIndex == i)) {
@@ -84,7 +81,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
       }
       const char * indice = j == 0 ? "n" : "n+1";
       m_addedCellLayout[m_numberOfAddedCells++] = HorizontalLayout::Builder(
-          CodePointLayout::Builder(SequenceStore::k_sequenceNames[i][0], KDFont::LargeFont),
+          CodePointLayout::Builder(Shared::SequenceStore::k_sequenceNames[i][0], KDFont::LargeFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
         );
     }
@@ -98,14 +95,6 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   sender()->handleEventWithText(buffer);
   Container::activeApp()->dismissModalViewController();
   return true;
-}
-
-int SequenceToolbox::mathToolboxIndex(int index) {
-  int indexMathToolbox = index;
-  if (stackDepth() == 0) {
-    indexMathToolbox = index - m_numberOfAddedCells;
-  }
-  return indexMathToolbox;
 }
 
 }

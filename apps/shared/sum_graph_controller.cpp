@@ -26,7 +26,7 @@ SumGraphController::SumGraphController(Responder * parentResponder, InputEventHa
 
 void SumGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
   m_graphView->setOkView(nullptr);
@@ -77,7 +77,7 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
     m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
   }
   m_legendView.setEditableZone(m_cursor->x());
-  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->reload();
   return true;
 }
@@ -155,16 +155,16 @@ void SumGraphController::reloadBannerView() {
 /* Legend View */
 
 SumGraphController::LegendView::LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
-  m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_sum(0.0f, 0.5f, KDColorBlack, Palette::GrayMiddle),
+  m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GrayMiddle),
+  m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GrayMiddle),
   m_sumSymbol(sumSymbol)
 {
   m_textBuffer[0] = 0;
 }
 
 void SumGraphController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::GreyMiddle);
+  ctx->fillRect(bounds(), Palette::GrayMiddle);
 }
 
 KDSize SumGraphController::LegendView::minimalSizeForOptimalDisplay() const {

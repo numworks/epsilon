@@ -27,6 +27,8 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   m_calculationStore.deleteAll();
+  m_cacheBuffer[0] = 0;
+  m_cacheBufferInformation = 0;
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -34,14 +36,14 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-void App::Snapshot::tidy() {
-  m_calculationStore.tidy();
+App::Snapshot::Snapshot() : m_calculationStore(m_calculationBuffer, k_calculationBufferSize)
+{
 }
 
 App::App(Snapshot * snapshot) :
   ExpressionFieldDelegateApp(snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
-  m_editExpressionController(&m_modalViewController, this, &m_historyController, snapshot->calculationStore())
+  m_editExpressionController(&m_modalViewController, this, snapshot->cacheBuffer(), snapshot->cacheBufferInformationAddress(), &m_historyController, snapshot->calculationStore())
 {
 }
 
@@ -66,7 +68,17 @@ bool App::isAcceptableExpression(const Poincare::Expression expression) {
       return false;
     }
   }
-  return !expression.isUninitialized();
+  return !(expression.isUninitialized() || expression.type() == ExpressionNode::Type::Equal);
+}
+
+void App::didBecomeActive(Window * window) {
+  m_editExpressionController.restoreInput();
+  Shared::ExpressionFieldDelegateApp::didBecomeActive(window);
+}
+
+void App::willBecomeInactive() {
+  m_editExpressionController.memoizeInput();
+  Shared::ExpressionFieldDelegateApp::willBecomeInactive();
 }
 
 }

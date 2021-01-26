@@ -1,3 +1,4 @@
+#include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
 #include <cmath>
 #include <float.h>
@@ -7,78 +8,63 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   ButtonRowDelegate(header, nullptr),
-  m_modelVersion(modelVersion),
-  m_previousModelsVersions(previousModelsVersions),
   m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
   m_interactiveRange(interactiveRange),
+  m_autoButton(this, I18n::Message::DefaultSetting, Invocation([](void * context, void * sender) {
+    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+    graphController->autoButtonAction();
+    return true;
+  }, this), KDFont::SmallFont),
+  m_normalizeButton(this, I18n::Message::Orthonormal, Invocation([](void * context, void * sender) {
+    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+    graphController->normalizeButtonAction();
+    return true;
+  }, this), KDFont::SmallFont),
+  m_navigationButton(this, I18n::Message::Navigate, Invocation([](void * context, void * sender) {
+    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+    graphController->navigationButtonAction();
+    return true;
+  }, this), KDFont::SmallFont),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->rangeParameterController()->setRange(graphController->interactiveRange());
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
-  }, this), KDFont::SmallFont),
-  m_zoomButton(this, I18n::Message::Zoom, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
-    StackViewController * stack = graphController->stackController();
-    stack->push(graphController->zoomParameterController());
-    return true;
-  }, this), KDFont::SmallFont),
-  m_defaultInitialisationButton(this, I18n::Message::Initialization, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
-    StackViewController * stack = graphController->stackController();
-    stack->push(graphController->initialisationParameterController());
-    return true;
   }, this), KDFont::SmallFont)
 {
 }
 
 float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) {
-  /* The provided min or max range limit y is altered by adding a margin.
-   * In pixels, the view's height occupied by the vertical range is equal to
-   *   viewHeight - topMargin - bottomMargin.
-   * Hence one pixel must correspond to
-   *   range / (viewHeight - topMargin - bottomMargin).
-   * Finally, adding topMargin pixels of margin, say at the top, comes down
-   * to adding
-   *   range * topMargin / (viewHeight - topMargin - bottomMargin)
-   * which is equal to
-   *   range * topMarginRatio / ( 1 - topMarginRatio - bottomMarginRatio)
-   * where
-   *   topMarginRation = topMargin / viewHeight
-   *   bottomMarginRatio = bottomMargin / viewHeight.
-   * The same goes horizontally.
-   */
-  float topMarginRatio = isVertical ? cursorTopMarginRatio() : k_cursorRightMarginRatio;
-  float bottomMarginRatio = isVertical ? cursorBottomMarginRatio() : k_cursorLeftMarginRatio;
-  assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
-  float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
-  float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
-  /* We want to add slightly more than the required margin, so that
-   * InteractiveCurveViewRange::panToMakePointVisible does not think a point is
-   * invisible due to precision problems when checking if it is outside the
-   * required margin. This is why we add a 1.05f factor. */
-  ratio = 1.05f * ratio / ratioDenominator;
-  return y + ratio * range;
+  return DefaultAddMargin(y, range, isVertical, isMin, cursorTopMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), cursorRightMarginRatio());
+}
+
+void InteractiveCurveViewController::updateZoomButtons() {
+  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_normalizeButton.setState(m_interactiveRange->zoomNormalize());
 }
 
 const char * InteractiveCurveViewController::title() {
   return I18n::translate(I18n::Message::GraphTab);
 }
 
+void InteractiveCurveViewController::setCurveViewAsMainView() {
+  header()->setSelectedButton(-1);
+  curveView()->selectMainView(true);
+  Container::activeApp()->setFirstResponder(this);
+  reloadBannerView();
+  curveView()->reload();
+}
+
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->isMainViewSelected()) {
     if (event == Ion::Events::Down) {
-      header()->setSelectedButton(-1);
-      curveView()->selectMainView(true);
-      Container::activeApp()->setFirstResponder(this);
-      reloadBannerView();
-      curveView()->reload();
+      setCurveViewAsMainView();
       return true;
     }
     if (event == Ion::Events::Up) {
@@ -93,7 +79,8 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (moveCursorVertically(direction)) {
       interactiveCurveViewRange()->panToMakePointVisible(
         m_cursor->x(), m_cursor->y(),
-        cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio
+        cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(),
+        curveView()->pixelWidth()
       );
       reloadBannerView();
       curveView()->reload();
@@ -127,11 +114,11 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
   if (isEmpty()) {
     return 0;
   }
-  return 3;
+  return 4;
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[3] = {&m_rangeButton, &m_zoomButton, &m_defaultInitialisationButton};
+  const Button * buttons[] = {&m_autoButton, &m_normalizeButton, &m_navigationButton, &m_rangeButton};
   return (Button *)buttons[index];
 }
 
@@ -139,58 +126,21 @@ Responder * InteractiveCurveViewController::defaultController() {
   return tabController();
 }
 
-bool InteractiveCurveViewController::previousModelsWereAllDeleted() {
-  bool result = true;
-  const int modelsCount = numberOfCurves();
-  const int memoizationCount = numberOfMemoizedVersions();
-
-  // Look for a current model that is the same as in the previous version
-  for (int i = 0; i < modelsCount; i++) {
-    uint32_t currentVersion = modelVersionAtIndex(i);
-    for (int j = 0; j < memoizationCount; j++) {
-      uint32_t * previousVersion = m_previousModelsVersions + j;
-      if (currentVersion == *previousVersion) {
-        result = false;
-        break;
-      }
-    }
-    if (!result) {
-      break;
-    }
-  }
-
-  // Update the memoization
-  for (int i = 0; i < memoizationCount; i++) {
-    uint32_t * previousVersion = m_previousModelsVersions + i;
-    uint32_t newVersion = modelVersionAtIndex(i);
-    if (*previousVersion != newVersion) {
-      *previousVersion = newVersion;
-    }
-  }
-  return result;
-}
-
 void InteractiveCurveViewController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
-  uint32_t newModelVersion = modelVersion();
-  if (*m_modelVersion != newModelVersion) {
-    // Put previousModelsWereAllDeleted first to update the model versions
-    if (previousModelsWereAllDeleted() || *m_modelVersion == 0 || numberOfCurves() == 1 || shouldSetDefaultOnModelChange()) {
-      interactiveCurveViewRange()->setDefault();
-    }
-    *m_modelVersion = newModelVersion;
-    didChangeRange(interactiveCurveViewRange());
-    /* Warning: init cursor parameter before reloading banner view. Indeed,
-     * reloading banner view needs an updated cursor to load the right data. */
+
+  if (m_interactiveRange->zoomAuto()) {
+    m_interactiveRange->setDefault();
+  }
+
+  /* Warning: init cursor parameter before reloading banner view. Indeed,
+   * reloading banner view needs an updated cursor to load the right data. */
+  uint32_t newRangeVersion = rangeVersion();
+  if ((*m_rangeVersion != newRangeVersion && !isCursorVisible()) || !cursorMatchesModel()) {
     initCursorParameters();
   }
-  uint32_t newRangeVersion = rangeVersion();
-  if (*m_rangeVersion != newRangeVersion) {
-    *m_rangeVersion = newRangeVersion;
-    if (!isCursorVisible()) {
-      initCursorParameters();
-    }
-  }
+  *m_rangeVersion = newRangeVersion;
+
   curveView()->setOkView(&m_okView);
   if (!curveView()->isMainViewSelected()) {
     curveView()->selectMainView(true);
@@ -218,9 +168,13 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
+  /* If possible, round floatBody so that we go to the evaluation of the
+   * displayed floatBody */
+  floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), curveView()->pixelWidth(), false);
+
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
   m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   reloadBannerView();
   curveView()->reload();
   return true;
@@ -246,15 +200,18 @@ bool InteractiveCurveViewController::isCursorVisible() {
   float xRange = range->xMax() - range->xMin();
   float yRange = range->yMax() - range->yMin();
   return
-    m_cursor->x() >= range->xMin() +  k_cursorLeftMarginRatio   * xRange &&
-    m_cursor->x() <= range->xMax() - k_cursorRightMarginRatio   * xRange &&
-    m_cursor->y() >= range->yMin() +  cursorBottomMarginRatio() * yRange &&
-    m_cursor->y() <= range->yMax() -     cursorTopMarginRatio() * yRange;
+    m_cursor->x() >= range->xMin() +   cursorLeftMarginRatio() * xRange &&
+    m_cursor->x() <= range->xMax() -  cursorRightMarginRatio() * xRange &&
+    m_cursor->y() >= range->yMin() + cursorBottomMarginRatio() * yRange &&
+    m_cursor->y() <= range->yMax() -    cursorTopMarginRatio() * yRange;
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
   double x = m_cursor->x();
   double y = m_cursor->y();
+  if (std::isnan(y)) {
+    y = goingUp ? -INFINITY : INFINITY;
+  }
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
   int nextCurveIndex = -1;
   int curvesCount = numberOfCurves();
@@ -313,6 +270,30 @@ float InteractiveCurveViewController::cursorBottomMarginRatio() {
 
 float InteractiveCurveViewController::estimatedBannerHeight() const {
   return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
+}
+
+bool InteractiveCurveViewController::autoButtonAction() {
+  if (m_interactiveRange->zoomAuto()) {
+    m_interactiveRange->setZoomAuto(false);
+  } else {
+    m_interactiveRange->setDefault();
+    initCursorParameters();
+    setCurveViewAsMainView();
+  }
+  return m_interactiveRange->zoomAuto();
+}
+
+bool InteractiveCurveViewController::normalizeButtonAction() {
+  if (!m_interactiveRange->zoomNormalize()) {
+    m_interactiveRange->setZoomAuto(false);
+    m_interactiveRange->normalize();
+    setCurveViewAsMainView();
+  }
+  return m_interactiveRange->zoomNormalize();
+}
+
+void InteractiveCurveViewController::navigationButtonAction() {
+  stackController()->push(zoomParameterController());
 }
 
 }

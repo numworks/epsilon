@@ -41,7 +41,10 @@ apps_src += $(addprefix apps/,\
   title_bar_view.cpp \
 )
 
-tests_src += apps/exam_mode_configuration_official.cpp
+tests_src += $(addprefix apps/,\
+  exam_mode_configuration_official.cpp \
+)
+
 
 snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
 apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)
@@ -55,6 +58,9 @@ $(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/m
 
 # I18n file generation
 
+country_preferences = apps/country_preferences.csv
+language_preferences = apps/language_preferences.csv
+
 # The header is refered to as <apps/i18n.h> so make sure it's findable this way
 SFLAGS += -I$(BUILD_DIR)
 
@@ -64,14 +70,14 @@ i18n_files += $(addprefix apps/language_,$(addsuffix _iso6391.universal.i18n, $(
 endif
 
 i18n_files += $(call i18n_with_universal_for,shared)
-i18n_files += $(call i18n_without_universal_for,toolbox)
+i18n_files += $(call i18n_with_universal_for,toolbox)
 i18n_files += $(call i18n_without_universal_for,variables)
 
 $(eval $(call rule_for, \
   I18N, \
   apps/i18n.cpp, \
   $(i18n_files), \
-  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ --generateISO6391locales $$(EPSILON_GETOPT), \
+  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $$^ --generateISO6391locales $$(EPSILON_GETOPT), \
   global \
 ))
 
@@ -84,7 +90,7 @@ $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
-apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
+apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
 
 apps_tests_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \

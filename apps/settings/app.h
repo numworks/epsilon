@@ -3,6 +3,7 @@
 
 #include "main_controller.h"
 #include "../shared/text_field_delegate_app.h"
+#include "../shared/shared_app.h"
 
 namespace Settings {
 
@@ -14,7 +15,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;

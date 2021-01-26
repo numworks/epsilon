@@ -109,8 +109,12 @@ poincare_src += $(addprefix poincare/src/,\
   matrix_inverse.cpp \
   matrix_trace.cpp \
   matrix_transpose.cpp \
+  matrix_echelon_form.cpp \
+  matrix_row_echelon_form.cpp \
+  matrix_reduced_row_echelon_form.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
+  n_ary_infix_expression.cpp \
   nand.cpp \
   nand_explicit.cpp \
   naperian_logarithm.cpp \
@@ -159,6 +163,7 @@ poincare_src += $(addprefix poincare/src/,\
   solver.cpp \
   square_root.cpp \
   store.cpp \
+  sum_and_product.cpp \
   subtraction.cpp \
   sum.cpp \
   symbol.cpp \
@@ -169,16 +174,20 @@ poincare_src += $(addprefix poincare/src/,\
   tree_pool.cpp \
   trigonometry.cpp \
   trigonometry_cheat_table.cpp \
+  twos_complement.cpp \
   undefined.cpp \
   unit.cpp \
   unit_convert.cpp \
   unreal.cpp \
   variable_context.cpp \
-  twos_complement.cpp \
+  vector_cross.cpp \
+  vector_dot.cpp \
+  vector_norm.cpp \
   xnor.cpp \
   xnor_explicit.cpp \
   xor.cpp \
   xor_explicit.cpp \
+  zoom.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/parsing/,\
@@ -193,6 +202,7 @@ tests_src += $(addprefix poincare/test/,\
   arithmetic.cpp\
   context.cpp\
   erf_inv.cpp \
+  derivative.cpp\
   expression.cpp\
   expression_order.cpp\
   expression_properties.cpp\
@@ -201,7 +211,6 @@ tests_src += $(addprefix poincare/test/,\
   function_solver.cpp\
   helper.cpp\
   helpers.cpp\
-  ieee754.cpp\
   integer.cpp\
   layout.cpp\
   layout_cursor.cpp\
@@ -214,6 +223,7 @@ tests_src += $(addprefix poincare/test/,\
   rational.cpp\
   regularized_incomplete_beta_function.cpp \
   simplification.cpp\
+  zoom.cpp\
 )
 
 ifeq ($(DEBUG),1)

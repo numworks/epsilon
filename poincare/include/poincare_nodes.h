@@ -62,6 +62,8 @@
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix_trace.h>
 #include <poincare/matrix_transpose.h>
+#include <poincare/matrix_row_echelon_form.h>
+#include <poincare/matrix_reduced_row_echelon_form.h>
 #include <poincare/multiplication.h>
 #include <poincare/nand.h>
 #include <poincare/nand_explicit.h>
@@ -94,6 +96,7 @@
 #include <poincare/rotate_right.h>
 #include <poincare/rotate_right_explicit.h>
 #include <poincare/round.h>
+#include <poincare/sequence.h>
 #include <poincare/shift_arithmetic_right.h>
 #include <poincare/shift_arithmetic_right_explicit.h>
 #include <poincare/shift_logic_left.h>
@@ -114,6 +117,9 @@
 #include <poincare/unreal.h>
 #include <poincare/variable_context.h>
 #include <poincare/twos_complement.h>
+#include <poincare/vector_cross.h>
+#include <poincare/vector_dot.h>
+#include <poincare/vector_norm.h>
 #include <poincare/xnor.h>
 #include <poincare/xnor_explicit.h>
 #include <poincare/xor.h>

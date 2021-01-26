@@ -13,6 +13,8 @@ namespace Shared {
 
 class ZoomCurveViewController : public ViewController {
 public:
+  static constexpr float k_zoomOutRatio = 3.f / 2.f;
+
   ZoomCurveViewController(Responder * parentResponder) : ViewController(parentResponder) {}
   View * view() override { return curveView(); }
   bool handleEvent(Ion::Events::Event event) override;

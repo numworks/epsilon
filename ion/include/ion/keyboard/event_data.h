@@ -7,12 +7,11 @@ namespace Events {
 class EventData {
 public:
   static constexpr EventData Undefined() { return EventData(nullptr); }
-  static constexpr EventData Textless() { return EventData(k_textless); }
+  static constexpr EventData Textless() { return EventData(""); }
   static constexpr EventData Text(const char * text) { return EventData(text); }
   bool isDefined() const { return (m_data != nullptr); }
   const char * text() const;
 private:
-  static constexpr const char * k_textless = "";
   constexpr EventData(const char * data) : m_data(data) {}
   const char * m_data;
 };

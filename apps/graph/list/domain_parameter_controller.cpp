@@ -10,7 +10,13 @@ namespace Graph {
 DomainParameterController::DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   FloatParameterController<float>(parentResponder),
   m_domainCells{},
-  m_record()
+  m_record(),
+  m_tempDomain(),
+  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+    Container::activeApp()->dismissModalViewController();
+    ((DomainParameterController *)context)->stackController()->pop();
+    return true;
+  }, this))
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_domainCells[i].setParentResponder(&m_selectableTableView);
@@ -18,12 +24,10 @@ DomainParameterController::DomainParameterController(Responder * parentResponder
   }
 }
 
-const char * DomainParameterController::title() {
-  return I18n::translate(I18n::Message::FunctionDomain);
-}
-
-int DomainParameterController::numberOfRows() const {
-  return k_totalNumberOfCell+1;
+void DomainParameterController::viewWillAppear() {
+  // Initialize m_tempParameters to the extracted value.
+  extractParameters();
+  FloatParameterController::viewWillAppear();
 }
 
 void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -56,10 +60,6 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-int DomainParameterController::reusableParameterCellCount(int type) {
-  return k_totalNumberOfCell;
-}
-
 HighlightCell * DomainParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0 && index < k_totalNumberOfCell);
   return &m_domainCells[index];
@@ -70,20 +70,49 @@ bool DomainParameterController::handleEvent(Ion::Events::Event event) {
     stackController()->pop();
     return true;
   }
+  if (event == Ion::Events::Back && !equalTempParameters()) {
+    // Open pop-up to confirm discarding values
+    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+    return true;
+  }
   return false;
 }
 
 float DomainParameterController::parameterAtIndex(int index) {
-  return index == 0 ? function()->tMin() : function()->tMax();
+  return index == 0 ? m_tempDomain.min() : m_tempDomain.max();
+}
+
+void DomainParameterController::extractParameters() {
+  setParameterAtIndex(0, function()->tMin());
+  setParameterAtIndex(1, function()->tMax());
+  /* Setting m_tempDomain tMin might affect m_tempDomain.max(), but setting tMax
+   * right after will not affect m_tempDomain.min() because Function's Range1D
+   * parameters are valid (tMax>tMin), and final tMin value is already set.
+   * Same happens in confirmParameters when setting function's parameters from
+   * valid m_tempDomain parameters. */
+  assert(equalTempParameters());
 }
 
 bool DomainParameterController::setParameterAtIndex(int parameterIndex, float f) {
-  // TODO: what to do if the xmin > xmax?
-  parameterIndex == 0 ? function()->setTMin(f) : function()->setTMax(f);
+  /* Setting Min (or Max) parameter can alter the previously set Max
+   * (or Min) parameter if Max <= Min. */
+  parameterIndex == 0 ? m_tempDomain.setMin(f) : m_tempDomain.setMax(f);
   return true;
 }
 
+void DomainParameterController::confirmParameters() {
+  function()->setTMin(parameterAtIndex(0));
+  function()->setTMax(parameterAtIndex(1));
+  // See comment on Range1D initialization in extractParameters
+  assert(equalTempParameters());
+}
+
+bool DomainParameterController::equalTempParameters() {
+  return function()->tMin() == m_tempDomain.min() && function()->tMax() == m_tempDomain.max();
+}
+
 void DomainParameterController::buttonAction() {
+  confirmParameters();
   StackViewController * stack = stackController();
   stack->pop();
   stack->pop();

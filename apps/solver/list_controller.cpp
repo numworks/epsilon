@@ -190,7 +190,7 @@ void ListController::resolveEquations() {
       return;
     case EquationStore::Error::RequireApproximateSolution:
     {
-      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
+      reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
       stackController()->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
       return;
     }
@@ -198,7 +198,7 @@ void ListController::resolveEquations() {
     {
       assert(e == EquationStore::Error::NoError);
       StackViewController * stack = stackController();
-      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
+      reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
       stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     }
   }

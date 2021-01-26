@@ -34,7 +34,7 @@ public:
   class Snapshot {
   public:
     virtual App * unpack(Container * container) = 0;
-    void pack(App * app);
+    virtual void pack(App * app);
     /* reset all instances to their initial values */
     virtual void reset() {}
     virtual void storageDidChangeForRecord(Ion::Storage::Record) {}

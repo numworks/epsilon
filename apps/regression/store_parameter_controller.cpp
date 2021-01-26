@@ -76,6 +76,7 @@ int StoreParameterController::typeAtLocation(int i, int j) {
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == numberOfRows() -1) {
     m_changeRegressionCell.setLayout(static_cast<Store *>(m_store)->modelForSeries(m_series)->layout());
+    return;
   }
   Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
 }

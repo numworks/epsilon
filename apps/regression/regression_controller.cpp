@@ -29,7 +29,7 @@ const char * RegressionController::title() {
 }
 
 void RegressionController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  selectCellAtLocation(0, static_cast<uint8_t>(m_store->seriesRegressionType(m_series)));
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 

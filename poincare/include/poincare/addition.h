@@ -2,15 +2,15 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/n_ary_expression.h>
+#include <poincare/n_ary_infix_expression.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
 
-class AdditionNode final : public NAryExpressionNode {
+class AdditionNode final : public NAryInfixExpressionNode {
   friend class Addition;
 public:
-  using NAryExpressionNode::NAryExpressionNode;
+  using NAryInfixExpressionNode::NAryInfixExpressionNode;
 
   // Tree
   size_t size() const override { return sizeof(AdditionNode); }
@@ -55,17 +55,20 @@ private:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
+
+  // Derivation
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
     return MatrixComplex<T>::Undefined();
   }
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::MapReduce<float>(this, context, complexFormat, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::MapReduce<float>(this, approximationContext, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
    }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::MapReduce<double>(this, context, complexFormat, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return ApproximationHelper::MapReduce<double>(this, approximationContext, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
    }
 };
 
@@ -80,7 +83,8 @@ public:
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder({e1, e2}); }
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, true, canBeInterrupted);

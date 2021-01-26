@@ -17,8 +17,11 @@ public:
   int typeAtLocation(int i, int j) override;
   void buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth);
 private:
+  /* At 0 depth, there are additional rows to display. With the exception of
+   * NestedMenuController::returnToPreviousMenu(), it must be ignored in
+   * parent's classes. */
+  int stackRowOffset() const override { return stackDepth() == 0 ? m_numberOfAddedCells : 0; }
   bool selectAddedCell(int selectedRow);
-  int mathToolboxIndex(int index);
   ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];
   Poincare::Layout m_addedCellLayout[k_maxNumberOfDisplayedRows];
   int m_numberOfAddedCells;

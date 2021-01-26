@@ -76,6 +76,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
     case 1:
       {
         assert(functionStore()->numberOfModels() > 0);
+        m_selectableTableView.deselectTable();
         functionStore()->removeModel(m_record);
         setRecord(Ion::Storage::Record());
         StackViewController * stack = (StackViewController *)(parentResponder());

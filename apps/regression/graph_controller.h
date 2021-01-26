@@ -28,7 +28,6 @@ public:
 
 private:
   constexpr static int k_maxLegendLength = 16;
-  constexpr static int k_maxNumberOfCharacters = 50;
 
   Poincare::Context * globalContext();
 

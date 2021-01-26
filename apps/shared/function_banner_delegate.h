@@ -9,7 +9,7 @@ namespace Shared {
 
 class FunctionBannerDelegate  {
 public:
-  constexpr static int k_maxNumberOfCharacters = 50;
+  constexpr static size_t k_textBufferSize = 50 + Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   /* getValueDisplayedOnBanner returns the value of t as displayed in the
    * banner, unless the difference from t exceeds deltaThreshold. If so,
    * return t. For instance, when a function is plotted between 1.000001 and

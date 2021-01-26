@@ -184,7 +184,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     // FCC_ID
     case SVC_FCC_ID:
-      *static_cast<const char **>(args[0]) = Ion::Device::fccId();
+      Ion::Device::fccId(static_cast<char *>(args[0]));
       return;
     // RANDOM
     case SVC_RANDOM:

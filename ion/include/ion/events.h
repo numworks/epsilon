@@ -30,14 +30,14 @@ public:
     return (m_id != other.m_id);
   }
   const char * text() const;
-  bool hasText() const { return text() != nullptr; }
+  // Return the length of the copied text (and not the size)
+  size_t copyText(char * buffer, size_t bufferSize) const;
   bool isKeyboardEvent() const { return m_id < 4*PageSize; }
   bool isSpecialEvent() const { return m_id >= 4*PageSize; }
   bool isDefined() const;
   static constexpr int PageSize = Keyboard::NumberOfKeys;
-  // TODO: make defaultText private?
-  const char * defaultText() const;
 private:
+  const char * defaultText() const;
   uint8_t m_id;
 };
 

@@ -1,6 +1,7 @@
 #include <escher/layout_field.h>
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
+#include <layout_events.h>
 #include <poincare/expression.h>
 #include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -357,6 +358,8 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
+typedef void (Poincare::LayoutCursor::*AddLayoutPointer)();
+
 bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
@@ -387,36 +390,36 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
 
   Poincare::LayoutCursor * cursor = m_contentView.cursor();
   // Handle special cases
-  if (strcmp(text, Ion::Events::Division.text()) == 0) {
-    cursor->addFractionLayoutAndCollapseSiblings();
-  } else if (strcmp(text, Ion::Events::Exp.text()) == 0) {
-    cursor->addEmptyExponentialLayout();
-  } else if (strcmp(text, Ion::Events::Power.text()) == 0) {
-    cursor->addEmptyPowerLayout();
-  } else if (strcmp(text, Ion::Events::Sqrt.text()) == 0) {
-    cursor->addEmptySquareRootLayout();
-  } else if (strcmp(text, Ion::Events::Square.text()) == 0) {
-    cursor->addEmptySquarePowerLayout();
-  } else if (strcmp(text, Ion::Events::EE.text()) == 0) {
-    cursor->addEmptyTenPowerLayout();
-  } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
-    cursor->addEmptyMatrixLayout();
-  } else {
-    Expression resultExpression = Expression::Parse(text, nullptr);
-    if (resultExpression.isUninitialized()) {
-      // The text is not parsable (for instance, ",") and is added char by char.
-      KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-      cursor->insertText(text, forceCursorRightOfText);
-      reload(previousLayoutSize);
+  Ion::Events::Event specialEvents[] = {Ion::Events::Division, Ion::Events::Exp, Ion::Events::Power, Ion::Events::Sqrt, Ion::Events::Square, Ion::Events::EE};
+  AddLayoutPointer handleSpecialEvents[] = {&Poincare::LayoutCursor::addFractionLayoutAndCollapseSiblings, &Poincare::LayoutCursor::addEmptyExponentialLayout,  &Poincare::LayoutCursor::addEmptyPowerLayout,  &Poincare::LayoutCursor::addEmptySquareRootLayout, &Poincare::LayoutCursor::addEmptySquarePowerLayout, &Poincare::LayoutCursor::addEmptyTenPowerLayout};
+  int numberOfSpecialEvents = sizeof(specialEvents)/sizeof(Ion::Events::Event);
+  assert(numberOfSpecialEvents == sizeof(handleSpecialEvents)/sizeof(AddLayoutPointer));
+  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+  for (int i = 0; i < numberOfSpecialEvents; i++) {
+    specialEvents[i].copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+    if (strcmp(text, buffer) == 0) {
+      (cursor->*handleSpecialEvents[i])();
       return true;
     }
-    // The text is parsable, we create its layout an insert it.
-    Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-    if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
-      return true;
-    }
-    insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText);
   }
+  if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
+    cursor->addEmptyMatrixLayout();
+    return true;
+  }
+  Expression resultExpression = Expression::Parse(text, nullptr);
+  if (resultExpression.isUninitialized()) {
+    // The text is not parsable (for instance, ",") and is added char by char.
+    KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
+    cursor->insertText(text, forceCursorRightOfText);
+    reload(previousLayoutSize);
+    return true;
+  }
+  // The text is parsable, we create its layout an insert it.
+  Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+  if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+    return true;
+  }
+  insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText);
   return true;
 }
 
@@ -547,12 +550,14 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     m_delegate->layoutFieldDidAbortEditing(this);
     return true;
   }
-  if (event.hasText() || event == Ion::Events::Paste || event == Ion::Events::Backspace) {
+  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+  size_t eventTextLength = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  if (eventTextLength > 0 || event == Ion::Events::Paste || event == Ion::Events::Backspace) {
     if (!isEditing()) {
       setEditing(true);
     }
-    if (event.hasText()) {
-      handleEventWithText(event.text());
+    if (eventTextLength > 0) {
+      handleEventWithText(buffer);
     } else if (event == Ion::Events::Paste) {
       handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
     } else {

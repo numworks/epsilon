@@ -1,6 +1,7 @@
 #include "python_toolbox.h"
 #include "../shared/toolbox_helpers.h"
 #include <assert.h>
+#include <layout_events.h>
 extern "C" {
 #include <string.h>
 #include <ctype.h>
@@ -470,8 +471,10 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;
   }
-  if (event.hasText() && strlen(event.text()) == 1 ) {
-    char c = event.text()[0];
+  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+  size_t length = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  if (length == 1) {
+    char c = buffer[0];
     if (CodePoint(c).isLatinLetter()) {
       scrollToLetter(c);
       return true;

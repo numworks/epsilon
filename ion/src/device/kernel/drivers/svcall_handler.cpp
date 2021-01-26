@@ -15,6 +15,7 @@
 #include <shared/drivers/serial_number.h>
 #include <shared/drivers/svcall.h>
 #include <shared/drivers/usb.h>
+#include <string.h>
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
@@ -125,9 +126,16 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       *static_cast<uint8_t *>(args[0]) = Ion::Device::PersistingBytes::read();
       return;
     // EVENTS
-    case SVC_EVENTS_DEFAULT_TEXT:
-      *static_cast<const char **>(args[1]) = static_cast<const Ion::Events::Event *>(args[0])->defaultText();
+    case SVC_EVENTS_COPY_TEXT:
+    {
+      const char * text = static_cast<const Ion::Events::Event *>(args[0])->text();
+      if (text) {
+        *static_cast<size_t *>(args[2]) = strlcpy(static_cast<char *>(args[1]), text, *static_cast<size_t *>(args[2]));
+      } else {
+        *static_cast<size_t *>(args[2]) = 0;
+      }
       return;
+    }
     case SVC_EVENTS_GET_EVENT:
       *static_cast<Ion::Events::Event *>(args[1]) = Ion::Device::Events::getEvent(static_cast<int *>(args[0]));
       return;

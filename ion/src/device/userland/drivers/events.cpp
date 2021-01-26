@@ -1,11 +1,17 @@
 #include <ion/events.h>
+#include <layout_events.h>
 #include <userland/drivers/svcall.h>
 
 namespace Ion {
 namespace Events {
 
-const char * Event::text() const {
-  return defaultText();
+void SVC_ATTRIBUTES copyTextSVC(const Event * e, const char * buffer, size_t * bufferSize) {
+  SVC(SVC_EVENTS_COPY_TEXT);
+}
+
+size_t Event::copyText(char * buffer, size_t bufferSize) const {
+  copyTextSVC(this, buffer, &bufferSize);
+  return bufferSize;
 }
 
 void SVC_ATTRIBUTES isDefinedSVC(const Event * e, bool * res) {
@@ -15,16 +21,6 @@ void SVC_ATTRIBUTES isDefinedSVC(const Event * e, bool * res) {
 bool Event::isDefined() const {
   bool res;
   isDefinedSVC(this, &res);
-  return res;
-}
-
-void SVC_ATTRIBUTES defaultTextSVC(const Event * e, const char ** res) {
-  SVC(SVC_EVENTS_DEFAULT_TEXT);
-}
-
-const char * Event::defaultText() const {
-  const char * res;
-  defaultTextSVC(this, &res);
   return res;
 }
 

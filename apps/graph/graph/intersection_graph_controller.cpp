@@ -33,7 +33,7 @@ void IntersectionGraphController::reloadBannerView() {
   numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize-numberOfChar-1);
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Poincare::Preferences::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
   bannerView()->ordinateView()->setText(buffer);

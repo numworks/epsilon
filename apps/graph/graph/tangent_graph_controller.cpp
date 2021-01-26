@@ -73,7 +73,7 @@ void TangentGraphController::reloadBannerView() {
   char buffer[bufferSize];
   Poincare::Context * context = textFieldDelegateApp()->localContext();
 
-  constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
+  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);

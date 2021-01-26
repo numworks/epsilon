@@ -31,7 +31,8 @@ namespace Ion {
 
 const char * softwareVersion();
 const char * patchLevel();
-const char * fccId();
+constexpr static int FccIDLength = 11;
+void fccId(char * buffer);
 constexpr static int SerialNumberLength = 16;
 void serialNumber(char * buffer);
 

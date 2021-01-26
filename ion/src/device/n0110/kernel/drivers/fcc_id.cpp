@@ -1,5 +1,7 @@
 #include <kernel/drivers/fcc_id.h>
+#include <ion.h>
+#include <string.h>
 
-const char * Ion::Device::fccId() {
-  return "2ALWP-N0110";
+void Ion::Device::fccId(char * buffer) {
+  strlcpy(buffer, "2ALWP-N0110", FccIDLength + 1);
 }

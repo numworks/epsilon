@@ -1,5 +1,5 @@
 #include <ion.h>
 
-const char * Ion::fccId() {
-  return "NA";
+void Ion::fccId(char * buffer) {
+  strlcpy(buffer, "NA", FccIDLength + 1);
 }

@@ -118,8 +118,12 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     font = KDFont::SmallFont;
   }
   if (nextName == nullptr) {
-    assert(false); // TODO Hugo : fix this issue
-    return;
+    /* When unselecting this controller, rowHeight and willDisplayCellForIndex
+     * might be called with a null record while the sequence still exists.
+     * NextName is then the next available name which is nullptr when dealing
+     * with last sequence. As it won't be actually displayed, we use a default
+     * placeholder. */
+    nextName = "?";
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   m_layouts[j] = HorizontalLayout::Builder(

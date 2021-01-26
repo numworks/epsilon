@@ -24,7 +24,6 @@ const char * ListParameterController::title() {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  bool hasAdditionalRow = hasInitialRankRow();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
     int selectedRowIndex = selectedRow();
     if (selectedRowIndex == 0) {
@@ -33,13 +32,10 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
       stack->push(&m_typeParameterController);
       return true;
     }
-    if (selectedRowIndex == 1+hasAdditionalRow) {
-      return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
-    }
-    if (selectedRowIndex == 2+hasAdditionalRow) {
+    if (selectedRowIndex == localNumberOfCells() + 1) {
       App::app()->localContext()->resetCache();
-      return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }
+    return handleEnterOnRow(selectedRowIndex);
   }
   return false;
 }
@@ -89,39 +85,21 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
   }
 }
 
-KDCoordinate ListParameterController::nonMemoizedRowHeight(int j) {
-  switch (j) {
-  case 0:
-    prepareCellForHeightCalculation((HighlightCell *)&m_typeCell, j);
-    return m_typeCell.minimalSizeForOptimalDisplay().height();
-  case 1:
-    if (hasInitialRankRow()) {
-      prepareCellForHeightCalculation((HighlightCell *)&m_initialRankCell, j);
-      return m_initialRankCell.minimalSizeForOptimalDisplay().height();
-    }
-  default:
-    return Shared::ListParameterController::nonMemoizedRowHeight(j - 1 - hasInitialRankRow());
-  }
-}
-
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  switch (type) {
-    /*case 0:
-      return Shared::ListParameterController::reusableCell(index);*/
-    case 0://1:
+  switch (index) {
+    case 0:
       return &m_typeCell;
     case 1:
       if (hasInitialRankRow()) {
         return &m_initialRankCell;
       }
     default:
-      return Shared::ListParameterController::reusableCell(index, type-1-hasInitialRankRow());
+      return Shared::ListParameterController::reusableCell(index, type);
   }
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  // TODO Hugo : Uncomment back this line and fix the resulting issue.
-  // cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
+  cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
     m_typeCell.setLayout(sequence()->definitionName());
@@ -136,13 +114,6 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     myCell->setSubLabelText(buffer);
   }
 }
-
-int ListParameterController::totalNumberOfCells() const {
-  if (hasInitialRankRow()) {
-    return k_totalNumberOfCell;
-  }
-  return k_totalNumberOfCell-1;
-};
 
 bool ListParameterController::hasInitialRankRow() const {
   return !m_record.isNull() && const_cast<ListParameterController *>(this)->sequence()->type() != Shared::Sequence::Type::Explicit;

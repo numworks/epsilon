@@ -28,12 +28,11 @@ public:
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // SimpleListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  int numberOfRows() const override { return Shared::ListParameterController::numberOfRows() + localNumberOfCells(); }
 private:
-  constexpr static int k_totalNumberOfCell = 4;
-  int totalNumberOfCells() const override;
+  int localNumberOfCells() const { return 1 + (hasInitialRankRow() ? 1 : 0); }
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
   bool hasInitialRankRow() const;
   Escher::MessageTableCellWithChevronAndExpression m_typeCell;

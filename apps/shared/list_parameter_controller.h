@@ -23,26 +23,24 @@ public:
   void setRecord(Ion::Storage::Record record);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  int numberOfRows() const override { return totalNumberOfCells(); }
 
   // SimpleListViewDataSource
+  int numberOfRows() const override { return k_localNumberOfCell; }
   KDCoordinate cellWidth() override {
     assert(m_selectableTableView.columnWidth(0) > 0);
     return m_selectableTableView.columnWidth(0);
   }
-  KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override { return 1; }
-  int typeAtIndex(int index) override { return index; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
   virtual bool handleEnterOnRow(int rowIndex);
-  virtual int totalNumberOfCells() const { return 2; }
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
   Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
+  int localIndex(int j);
+  constexpr static int k_localNumberOfCell = 2;
   Escher::MessageTableCellWithSwitch m_enableCell;
   Escher::MessageTableCell m_deleteCell;
 };

@@ -59,11 +59,14 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (serialNumberBuffer[0] == 0) {
     Ion::serialNumber(serialNumberBuffer);
   }
-  static const char * fcc = Ion::fccId();
+  static char fccIDBuffer[Ion::FccIDLength+1] = {0};
+  if (fccIDBuffer[0] == 0) {
+    Ion::fccId(fccIDBuffer);
+  }
   const char * messages[] = {
     version,
     serialNumberBuffer,
-    fcc
+    fccIDBuffer
   };
   assert(index >= 0 && index < 3);
   myCell->setAccessoryText(messages[index]);

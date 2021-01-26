@@ -16,15 +16,15 @@ ListParameterController::ListParameterController(ListController * listController
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
   m_listController(listController),
   m_typeCell(),
+  m_renameCell(I18n::Message::Rename),
   m_typeParameterController(this),
-  m_domainParameterController(nullptr, inputEventHandlerDelegate),
-  m_renameCell(I18n::Message::Rename)
+  m_domainParameterController(nullptr, inputEventHandlerDelegate)
 {
-  m_selectableTableView.setMargins(Metric::CommonTopMargin, Metric::CommonTopMargin, Metric::CommonBottomMargin, Metric::CommonTopMargin); // Reduce the margins to make te text fit
+  m_selectableTableView.setMargins(Metric::CommonTopMargin, Metric::CommonTopMargin, Metric::CommonBottomMargin, Metric::CommonTopMargin); // Reduce the margins to make the text fit
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  switch (type) {
+  switch (index) {
   case 0:
     return &m_typeCell;
   case 1:
@@ -32,7 +32,7 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
   case 2:
     return &m_renameCell;
   default:
-    return Shared::ListParameterController::reusableCell(index, type - 3);
+    return Shared::ListParameterController::reusableCell(index, type);
   }
 }
 
@@ -99,22 +99,6 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-KDCoordinate ListParameterController::nonMemoizedRowHeight(int j) {
-  switch (j) {
-  case 0:
-    prepareCellForHeightCalculation((HighlightCell *)&m_typeCell, j);
-    return m_typeCell.minimalSizeForOptimalDisplay().height();
-  case 1:
-    prepareCellForHeightCalculation((HighlightCell *)&m_functionDomain, j);
-    return m_functionDomain.minimalSizeForOptimalDisplay().height();
-  case 2:
-    prepareCellForHeightCalculation((HighlightCell *)&m_renameCell, j);
-    return m_renameCell.minimalSizeForOptimalDisplay().height();
-  default:
-    return Shared::ListParameterController::nonMemoizedRowHeight(j - 3);
-  }
-}
-
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
   StackViewController * stack = (StackViewController *)(parentResponder());
   switch (rowIndex) {
@@ -130,7 +114,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
     renameFunction();
     return true;
   default:
-    return Shared::ListParameterController::handleEnterOnRow(rowIndex - 3);
+    return Shared::ListParameterController::handleEnterOnRow(rowIndex);
   }
 }
 

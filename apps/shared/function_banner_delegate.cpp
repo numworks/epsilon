@@ -7,10 +7,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr int k_precision = Preferences::MediumNumberOfSignificantDigits;
 
 int convertDoubleToText(double t, char * buffer, int bufferSize) {
-  return PoincareHelpers::ConvertFloatToText<double>(t, buffer, bufferSize, k_precision);
+  return PoincareHelpers::ConvertFloatToText<double>(t, buffer, bufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
 }
 
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
@@ -31,7 +30,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, "=", k_textBufferSize-numberOfChar);
-  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, k_precision, context);
+  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, Preferences::sharedPreferences()->numberOfSignificantDigits(), context);
   assert(numberOfChar <= k_textBufferSize);
   strlcpy(buffer+numberOfChar, space, k_textBufferSize-numberOfChar);
   bannerView()->ordinateView()->setText(buffer);

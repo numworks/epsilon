@@ -11,6 +11,16 @@
 #include <limits.h>
 
 namespace Ion {
+namespace Events {
+
+const char * Event::text() const {
+  return defaultText();
+}
+
+}
+}
+
+namespace Ion {
 namespace Device {
 namespace Events {
 

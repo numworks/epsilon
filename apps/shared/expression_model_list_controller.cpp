@@ -3,6 +3,8 @@
 #include <escher/container.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/selectable_table_view.h>
+#include <ion/events.h>
+#include <layout_events.h>
 #include <poincare/symbol.h>
 #include <algorithm>
 
@@ -201,7 +203,9 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
     }
     return true;
   }
-  if ((event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var)
+  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+  size_t eventTextLength = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  if ((eventTextLength > 0 || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var)
       && !isAddEmptyRow(selectedRow())) {
     editExpression(event);
     return true;

@@ -14,6 +14,7 @@ liba_kernel_src += $(addprefix liba/src/, \
   memcpy.c \
   memmove.c \
   memset.c \
+  strlcpy.c \
   strlen.c \
 )
 

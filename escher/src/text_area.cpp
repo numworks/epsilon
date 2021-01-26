@@ -1,8 +1,10 @@
 #include <escher/text_area.h>
 #include <escher/clipboard.h>
 #include <escher/text_input_helpers.h>
+#include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <layout_events.h>
 #include <poincare/serialization_helper.h>
 
 #include <stddef.h>
@@ -184,9 +186,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       TextInput::moveCursorLeft(step) :
       TextInput::moveCursorRight(step);
   }
-
-  if (event.hasText()) {
-    return handleEventWithText(event.text());
+  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+  size_t eventTextLength = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  if (eventTextLength > 0) {
+    return handleEventWithText(buffer);
   }
   if (event == Ion::Events::EXE) {
     return handleEventWithText("\n");

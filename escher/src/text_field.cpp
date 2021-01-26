@@ -1,8 +1,10 @@
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
+#include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <layout_events.h>
 #include <poincare/serialization_helper.h>
 #include <assert.h>
 #include <algorithm>
@@ -425,8 +427,6 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     didHandleEvent = true;
   } else if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
-  } else if (event.hasText()) {
-    return handleEventWithText(event.text());
   } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
   } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
@@ -434,6 +434,12 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     setEditing(true);
     setText(previousText);
     didHandleEvent = true;
+  } else {
+    char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+    size_t eventTextLength = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+    if (eventTextLength > 0) {
+      return handleEventWithText(buffer);
+    }
   }
   if (!didHandleEvent) {
     didHandleEvent = privateHandleEvent(event);

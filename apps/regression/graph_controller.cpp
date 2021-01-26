@@ -1,8 +1,8 @@
 #include "graph_controller.h"
+#include "../apps_container.h"
+#include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
-#include "../apps_container.h"
-#include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
 #include <cmath>
 #include <algorithm>
@@ -91,7 +91,7 @@ Poincare::Context * GraphController::globalContext() {
 
 void GraphController::reloadBannerView() {
   // Set point equals: "P(...) ="
-  constexpr size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = Shared::FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   int numberOfChar = 0;
   const char * legend = " P(";

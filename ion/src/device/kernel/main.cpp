@@ -1,11 +1,8 @@
 #include <kernel/drivers/config/board.h>
-#include <drivers/cache.h>
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/cortex_control.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/timing.h>
-#include <kernel/drivers/led.h> // TODO: REMOVE ME
-#include <kernel/drivers/events.h> // TODO: REMOVE ME
 #include <ion/display.h>
 #include <kandinsky/font.h>
 #include <string.h>
@@ -56,32 +53,16 @@ void displayWarningMessage() {
 typedef void (*EntryPoint)();
 
 void kernel_main(bool numworksAuthentication) {
+  // Display warning for unauthenticated software
   if (!numworksAuthentication) {
     Ion::Device::Backlight::init();
     displayWarningMessage();
     Ion::Device::Backlight::shutdown();
   }
-  /* Unprivileged mode */
-  KDColor c = KDColorWhite;
-  Ion::Device::LED::setColor(c); // TODO: remove me
-
-  /*while (1) {
-    Ion::Keyboard::State sLastKeyboardState;
-    Ion::Keyboard::State state = Ion::Device::Keyboard::Queue::sharedQueue()->isEmpty() ? sLastKeyboardState : Ion::Device::Keyboard::Queue::sharedQueue()->pop();
-    if (sLastKeyboardState != state) {
-      if (c == KDColorWhite) {
-        c = KDColorBlack;
-        Ion::Device::LED::setColor(c);
-      } else {
-        c = KDColorWhite;
-        Ion::Device::LED::setColor(c);
-      }
-    }
-  }*/
+  // Unprivileged mode
   switch_to_unpriviledged();
-  Ion::Device::Cache::isb();
 
-  /* Jump to userland */
+  // Jump to userland
   EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(Ion::Device::Board::Config::UserlandAddress);
   (*userlandFirstAddress)();
 }

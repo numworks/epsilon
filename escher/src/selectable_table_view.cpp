@@ -47,10 +47,7 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
    * order to deselect it). */
   /* As a workaround, datasources can reset the highlighted state in their
    * willDisplayCell callback. */
-  // TODO Hugo : Comment why layouting is forced
-  // (cell might keep same frame but change, Toolbox some cells are not layouted
-  // otherwise, order with setMessage...)
-  TableView::layoutSubviews(true);
+  TableView::layoutSubviews();
   selectCellAtLocation(col, row, setFirstResponder, true);
 }
 
@@ -64,8 +61,7 @@ void SelectableTableView::didEnterResponderChain(Responder * previousFirstRespon
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder != nullptr) {
-    // TODO Hugo : Fix this workaround (unhighlight of cells linked to removed objects)
-    // unhighlightSelectedCell();
+    unhighlightSelectedCell();
   }
 }
 

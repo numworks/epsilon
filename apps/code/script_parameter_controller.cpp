@@ -83,7 +83,7 @@ HighlightCell * ScriptParameterController::reusableCell(int index, int type) {
 }
 
 void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (cell == &m_autoImportScript) {
+  if (cell == &m_autoImportScript && !m_script.isNull()) {
     SwitchView * switchView = (SwitchView *)m_autoImportScript.accessoryView();
     switchView->setState(m_script.autoImportation());
   }

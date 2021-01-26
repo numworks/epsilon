@@ -2,6 +2,7 @@
 #define HARDWARE_TEST_CODE_128B_VIEW_H
 
 #include <escher/view.h>
+#include <ion.h>
 
 namespace HardwareTest {
 
@@ -9,7 +10,8 @@ class Code128BView : public Escher::View {
 public:
   Code128BView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setData(const char * data);
+  char * data() { return m_data; }
+  void reloadData();
   void layoutSubviews(bool force = false) override;
 private:
   static constexpr KDCoordinate k_outlineThickness = 1;
@@ -22,7 +24,7 @@ private:
   void drawPatternAt(KDContext * ctx, uint16_t pattern, KDCoordinate * x, KDCoordinate width = k_charPatternWidth) const;
   void drawCharAt(KDContext * ctx, char c, KDCoordinate * x) const;
   int m_moduleWidth;
-  const char * m_data;
+  char m_data[Ion::SerialNumberLength+1];
 };
 
 }

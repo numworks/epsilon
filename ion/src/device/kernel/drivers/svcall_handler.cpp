@@ -1,4 +1,5 @@
 #include <kernel/boot/isr.h>
+#include <ion.h>
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/crc32.h>
@@ -179,7 +180,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     // SERIAL NUMBER
     case SVC_SERIAL_NUMBER:
-      *static_cast<const char **>(args[0]) = Ion::Device::SerialNumber::read();
+      Ion::Device::SerialNumber::copy(static_cast<char *>(args[0]));
       return;
     // FCC_ID
     case SVC_FCC_ID:

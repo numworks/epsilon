@@ -12,7 +12,8 @@ SerialNumberController::SerialNumberController(Responder * parentResponder) :
 }
 
 void SerialNumberController::viewWillAppear() {
-  m_barCodeView.setData(Ion::serialNumber());
+  Ion::serialNumber(m_barCodeView.data());
+  m_barCodeView.reloadData();
 }
 
 bool SerialNumberController::handleEvent(Ion::Events::Event event) {

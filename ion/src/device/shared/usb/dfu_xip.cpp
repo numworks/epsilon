@@ -8,7 +8,7 @@ namespace Device {
 namespace USB {
 
 void DFU() {
-  char serialNumber[Ion::Device::SerialNumber::Length+1];
+  char serialNumber[Ion::SerialNumberLength+1];
   Ion::Device::SerialNumber::copy(serialNumber);
   USB::Calculator c(serialNumber);
 

@@ -52,7 +52,11 @@ void displayWarningMessage() {
 
 typedef void (*EntryPoint)();
 
-void kernel_main(bool numworksAuthentication) {
+/* 'kernel_main' has to be in the external flash since it downgrades the
+ * execution mode to unprivileged and the MPU forbids access to the internal
+ * flash by unprivileged code. To ensure this, we forbid inlining. */
+
+void __attribute__((noinline)) kernel_main(bool numworksAuthentication) {
   // Display warning for unauthenticated software
   if (!numworksAuthentication) {
     Ion::Device::Backlight::init();

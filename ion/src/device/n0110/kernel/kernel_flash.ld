@@ -166,6 +166,10 @@ SECTIONS {
 
   .text.external ORIGIN(EXTERNAL_FLASH_KERNEL) : {
     . = ALIGN(4);
+    /* 'kernel_main' symbol has to be in the external flash: it downgrades the
+     * execution mode to unprivileged before jumping to the userland. However,
+     * unprivileged code can't execute internal flash code. */
+    *(.text._Z11kernel_mainb)
     *(.text)
     *(.text.*)
   } >EXTERNAL_FLASH_KERNEL

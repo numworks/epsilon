@@ -3,14 +3,12 @@
 
 namespace Ion {
 
-void SVC_ATTRIBUTES serialNumberSVC(const char ** res) {
+void SVC_ATTRIBUTES serialNumberSVC(char * buffer) {
   SVC(SVC_SERIAL_NUMBER);
 }
 
-const char * serialNumber() {
-  const char * res;
-  serialNumberSVC(&res);
-  return res;
+void serialNumber(char * buffer) {
+  serialNumberSVC(buffer);
 }
 
 }

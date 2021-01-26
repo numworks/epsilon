@@ -1,6 +1,7 @@
 #include "calculator.h"
 #include <drivers/serial_number.h>
 #include <drivers/usb.h>
+#include <ion.h>
 
 namespace Ion {
 namespace Device {

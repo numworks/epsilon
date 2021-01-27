@@ -80,44 +80,44 @@ const ToolboxMessageTree matricesChildren[] = {
 const ToolboxMessageTree vectorsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DotCommandWithArg, I18n::Message::Dot),
   ToolboxMessageTree::Leaf(I18n::Message::CrossCommandWithArg, I18n::Message::Cross),
-  ToolboxMessageTree::Leaf(I18n::Message::NormVectorCommandWithArg, I18n::Message::NormVector),
+  ToolboxMessageTree::Leaf(I18n::Message::NormVectorCommandWithArg, I18n::Message::NormVector)
 };
 
 const ToolboxMessageTree logicExplicitChildren[] = {
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalAndExplicitCommandWithArg, I18n::Message::LogicalAnd),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalNandExplicitCommandWithArg, I18n::Message::LogicalNand),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalOrExplicitCommandWithArg, I18n::Message::LogicalOr),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalNorExplicitCommandWithArg, I18n::Message::LogicalNor),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalXorExplicitCommandWithArg, I18n::Message::LogicalXor),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorExplicitCommandWithArg, I18n::Message::LogicalXnor),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalNotExplicitCommandWithArg, I18n::Message::LogicalNot),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftExplicitCommandWithArg, I18n::Message::LogicalShiftLeft),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightExplicitCommandWithArg, I18n::Message::LogicalShiftRight),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightArithmeticExplicitCommandWithArg, I18n::Message::LogicalShiftRightArithmetic),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateLeftExplicitCommandWithArg, I18n::Message::LogicalRotateLeft),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateRightExplicitCommandWithArg, I18n::Message::LogicalRotateRight),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitsClearExplicitCommandWithArg, I18n::Message::LogicalBitsClear)};
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalAndExplicitCommandWithArg, I18n::Message::LogicalAnd),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalNandExplicitCommandWithArg, I18n::Message::LogicalNand),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalOrExplicitCommandWithArg, I18n::Message::LogicalOr),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalNorExplicitCommandWithArg, I18n::Message::LogicalNor),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalXorExplicitCommandWithArg, I18n::Message::LogicalXor),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorExplicitCommandWithArg, I18n::Message::LogicalXnor),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalNotExplicitCommandWithArg, I18n::Message::LogicalNot),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftExplicitCommandWithArg, I18n::Message::LogicalShiftLeft),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightExplicitCommandWithArg, I18n::Message::LogicalShiftRight),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightArithmeticExplicitCommandWithArg, I18n::Message::LogicalShiftRightArithmetic),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateLeftExplicitCommandWithArg, I18n::Message::LogicalRotateLeft),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateRightExplicitCommandWithArg, I18n::Message::LogicalRotateRight),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalBitsClearExplicitCommandWithArg, I18n::Message::LogicalBitsClear)};
 
 const ToolboxMessageTree logicChildren[] = {
-    ToolboxMessageTree::Node(I18n::Message::ExplicitNumberOfBits, logicExplicitChildren),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalAndCommandWithArg, I18n::Message::LogicalAnd),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalNandCommandWithArg, I18n::Message::LogicalNand),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalOrCommandWithArg, I18n::Message::LogicalOr),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalNorCommandWithArg, I18n::Message::LogicalNor),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalXorCommandWithArg, I18n::Message::LogicalXor),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorCommandWithArg, I18n::Message::LogicalXnor),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalNotCommandWithArg, I18n::Message::LogicalNot),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftCommandWithArg, I18n::Message::LogicalShiftLeft),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightCommandWithArg, I18n::Message::LogicalShiftRight),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightArithmeticCommandWithArg, I18n::Message::LogicalShiftRightArithmetic),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateLeftCommandWithArg, I18n::Message::LogicalRotateLeft),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateRightCommandWithArg, I18n::Message::LogicalRotateRight),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitGetCommandWithArg, I18n::Message::LogicalBitGet),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitSetCommandWithArg, I18n::Message::LogicalBitSet),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitClearCommandWithArg, I18n::Message::LogicalBitClear),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitFlipCommandWithArg, I18n::Message::LogicalBitFlip),
-    ToolboxMessageTree::Leaf(I18n::Message::LogicalBitsClearCommandWithArg, I18n::Message::LogicalBitsClear),
-    ToolboxMessageTree::Leaf(I18n::Message::TwosComplementToBitsCommandWithArg, I18n::Message::TwosComplementToBits)};
+  ToolboxMessageTree::Node(I18n::Message::ExplicitNumberOfBits, logicExplicitChildren),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalAndCommandWithArg, I18n::Message::LogicalAnd),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalNandCommandWithArg, I18n::Message::LogicalNand),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalOrCommandWithArg, I18n::Message::LogicalOr),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalNorCommandWithArg, I18n::Message::LogicalNor),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalXorCommandWithArg, I18n::Message::LogicalXor),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorCommandWithArg, I18n::Message::LogicalXnor),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalNotCommandWithArg, I18n::Message::LogicalNot),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftCommandWithArg, I18n::Message::LogicalShiftLeft),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightCommandWithArg, I18n::Message::LogicalShiftRight),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightArithmeticCommandWithArg, I18n::Message::LogicalShiftRightArithmetic),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateLeftCommandWithArg, I18n::Message::LogicalRotateLeft),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalRotateRightCommandWithArg, I18n::Message::LogicalRotateRight),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalBitGetCommandWithArg, I18n::Message::LogicalBitGet),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalBitSetCommandWithArg, I18n::Message::LogicalBitSet),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalBitClearCommandWithArg, I18n::Message::LogicalBitClear),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalBitFlipCommandWithArg, I18n::Message::LogicalBitFlip),
+  ToolboxMessageTree::Leaf(I18n::Message::LogicalBitsClearCommandWithArg, I18n::Message::LogicalBitsClear),
+  ToolboxMessageTree::Leaf(I18n::Message::TwosComplementToBitsCommandWithArg, I18n::Message::TwosComplementToBits)};
 
 #if LIST_ARE_DEFINED
 const ToolboxMessageTree listsChildren[] = {
@@ -139,8 +139,7 @@ const ToolboxMessageTree unitTimeChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeDaySymbol, I18n::Message::UnitTimeDay),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeWeekSymbol, I18n::Message::UnitTimeWeek),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeMonthSymbol, I18n::Message::UnitTimeMonth),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeYearSymbol, I18n::Message::UnitTimeYear)
-};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeYearSymbol, I18n::Message::UnitTimeYear)};
 
 constexpr ToolboxMessageTree unitDistanceMeterPico = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterPicoSymbol, I18n::Message::UnitDistanceMeterPico);
 constexpr ToolboxMessageTree unitDistanceMeterNano = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterNanoSymbol, I18n::Message::UnitDistanceMeterNano);
@@ -246,8 +245,7 @@ const ToolboxMessageTree unitFrequencyHertzChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzSymbol, I18n::Message::UnitFrequencyHertz),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzKiloSymbol, I18n::Message::UnitFrequencyHertzKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzMegaSymbol, I18n::Message::UnitFrequencyHertzMega),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga)
-};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga)};
 
 const ToolboxMessageTree unitForceNewtonChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonMilliSymbol, I18n::Message::UnitForceNewtonMilli),
@@ -320,16 +318,13 @@ const ToolboxMessageTree unitInductanceChildren[] = {
 
 const ToolboxMessageTree unitSurfaceChildrenForMetricToolbox[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre)
-};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre)};
 const ToolboxMessageTree unitSurfaceChildrenForImperialToolbox[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)
-};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)};
 const ToolboxMessageTree unitSurfaceFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForMetricToolbox),
-  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForImperialToolbox)
-};
+  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForImperialToolbox)};
 
 constexpr ToolboxMessageTree unitVolumeLiterMilli = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterMilliSymbol, I18n::Message::UnitVolumeLiterMilli);
 constexpr ToolboxMessageTree unitVolumeLiterCenti = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterCentiSymbol, I18n::Message::UnitVolumeLiterCenti);
@@ -429,10 +424,10 @@ const ToolboxMessageTree menu[] = {
 #if LIST_ARE_DEFINED
     ToolboxMessageTree::Node(I18n::Message::Lists, listsChildren),
 #endif
-    ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
-    ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
-    ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
-    ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren)};
+  ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
+  ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
+  ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
+  ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren)};
 
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
@@ -449,7 +444,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   const char * text = I18n::translate(messageTree->insertedText());
   char textToInsert[k_maxMessageSize]; // Has to be in the same scope as handleEventWithText
   if (messageTree->label() == messageTree->insertedText()) {
-  //  Remove the arguments if we kept one message for both inserted and displayed message
+    //  Remove the arguments if we kept one message for both inserted and displayed message
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);
     Shared::ToolboxHelpers::TextToInsertForCommandText(text, -1, textToInsert, maxTextToInsertLength, true);
@@ -469,21 +464,22 @@ MessageTableCellWithMessage * MathToolbox::leafCellAtIndex(int index) {
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron* MathToolbox::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron *MathToolbox::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
 
 int MathToolbox::maxNumberOfDisplayedRows() {
- return k_maxNumberOfDisplayedRows;
+  return k_maxNumberOfDisplayedRows;
 }
 
 int MathToolbox::indexAfterFork() const {
-    Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
-    if (unitFormat == Preferences::UnitFormat::Metric) {
-      return 0;
-    }
-    assert(unitFormat == Preferences::UnitFormat::Imperial);
-    return 1;
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+  if (unitFormat == Preferences::UnitFormat::Metric)
+  {
+    return 0;
+  }
+  assert(unitFormat == Preferences::UnitFormat::Imperial);
+  return 1;
 }
 

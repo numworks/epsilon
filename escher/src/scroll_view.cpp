@@ -150,8 +150,8 @@ KDRect ScrollView::visibleContentRect() {
   return KDRect(
     contentOffset().x(),
     contentOffset().y(),
-    m_frame.width() - m_leftMargin - m_rightMargin,
-    m_frame.height() - m_topMargin - m_bottomMargin);
+    m_frame.width() - m_leftMargin - m_rightMargin + m_excessWidth,
+    m_frame.height() - m_topMargin - m_bottomMargin + m_excessHeight);
 }
 
 void ScrollView::layoutSubviews(bool force) {

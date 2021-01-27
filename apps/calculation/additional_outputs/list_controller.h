@@ -25,10 +25,7 @@ public:
   virtual void setExpression(Poincare::Expression e) = 0;
 
   // ListViewDataSource
-  KDCoordinate cellWidth() override {
-    assert(m_listController.selectableTableView()->columnWidth(0) == 266);
-    return m_listController.selectableTableView()->columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_listController.selectableTableView()->columnWidth(0); }
 protected:
   class InnerListController : public ViewController {
   public:

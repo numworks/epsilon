@@ -22,10 +22,7 @@ public:
 
   // SimpleListViewDataSource
   int numberOfRows() const override;
-  KDCoordinate cellWidth() override {
-    assert(m_selectableTableView.bounds().width() - m_selectableTableView.rightMargin() - m_selectableTableView.leftMargin() > 0);
-    return m_selectableTableView.bounds().width() - m_selectableTableView.rightMargin() - m_selectableTableView.leftMargin();
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) override;

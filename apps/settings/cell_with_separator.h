@@ -11,7 +11,6 @@ public:
   void setHighlighted(bool highlight) override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override { cell()->reloadCell(); }
-  KDSize minimalSizeForOptimalDisplay() const override;
   Escher::Responder * responder() override { return cell()->responder(); }
   constexpr static KDCoordinate k_margin = 10;
 private:

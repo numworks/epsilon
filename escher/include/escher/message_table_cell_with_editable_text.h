@@ -28,6 +28,7 @@ public:
     return nullptr;
   }
   void setSubLabelText(const char * text);
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   void layoutSubviews(bool force = false) override;
   TextField m_textField;

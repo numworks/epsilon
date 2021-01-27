@@ -43,10 +43,14 @@ void MessageTableCellWithEditableText::setSubLabelText(const char * text) {
   layoutSubviews();
 }
 
-// void MessageTableCellWithEditableText::setTextColor(KDColor color) {
-//   m_textField.setTextColor(color);
-//   MessageTableCell::setTextColor(color);
-// }
+KDSize MessageTableCellWithEditableText::minimalSizeForOptimalDisplay() const {
+  /* Overriding this function with a nullptr subLabel because m_textField should
+   * not force a two row table cell as the user write. */
+  // TODO Hugo : Improve this workaround to find frame's width
+  KDCoordinate expectedWidth = m_frame.width();
+  assert(expectedWidth > 0);
+  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), nullptr, accessoryView(), expectedWidth));
+}
 
 void MessageTableCellWithEditableText::layoutSubviews(bool force) {
   if (bounds().width() == 0 || bounds().height() == 0) {

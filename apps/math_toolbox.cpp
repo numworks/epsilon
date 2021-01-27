@@ -427,7 +427,7 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Vectors, vectorsChildren),
   ToolboxMessageTree::Node(I18n::Message::Logic, logicChildren),
 #if LIST_ARE_DEFINED
-  ToolboxMessageTree::Node(I18n::Message::Lists, listsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
 #endif
   ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
   ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
@@ -469,7 +469,7 @@ MessageTableCellWithMessage * MathToolbox::leafCellAtIndex(int index) {
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron * MathToolbox::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron* MathToolbox::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
@@ -480,11 +480,9 @@ int MathToolbox::maxNumberOfDisplayedRows() {
 
 int MathToolbox::indexAfterFork() const {
     Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
-    if (unitFormat == Preferences::UnitFormat::Metric)
-    {
+    if (unitFormat == Preferences::UnitFormat::Metric) {
       return 0;
     }
     assert(unitFormat == Preferences::UnitFormat::Imperial);
     return 1;
 }
-

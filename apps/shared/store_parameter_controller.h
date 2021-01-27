@@ -29,10 +29,7 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  KDCoordinate cellWidth() override {
-    assert(m_selectableTableView.columnWidth(0) > 0);
-    return m_selectableTableView.columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 protected:
   DoublePairStore * m_store;
   int m_series;

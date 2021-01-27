@@ -25,7 +25,8 @@ class ExpressionNode : public TreeNode {
   friend class SymbolNode;
 public:
   // The types order is important here.
-  enum class Type : uint8_t {
+  enum class Type : uint8_t
+  {
     Uninitialized = 0,
     Undefined = 1,
     Unreal,
@@ -150,7 +151,6 @@ public:
     PredictionInterval,
     VectorCross,
     Matrix,
-
     EmptyExpression
   };
 
@@ -159,8 +159,8 @@ public:
 
   /* Properties */
   enum class ReductionTarget {
-    /* Minimal reduction: this at least reduces rationals operations as
-     * "1-0.3-0.7 --> 0" */
+  /* Minimal reduction: this at least reduces rationals operations as
+   * "1-0.3-0.7 --> 0" */
     SystemForApproximation = 0,
     /* Expansion of Newton multinome to be able to identify polynoms */
     SystemForAnalysis,
@@ -195,49 +195,37 @@ public:
 
   class ComputationContext {
   public:
-    ComputationContext(
-        Context * context,
-        Preferences::ComplexFormat complexFormat,
-        Preferences::AngleUnit angleUnit) :
-      m_context(context),
-      m_complexFormat(complexFormat),
-      m_angleUnit(angleUnit)
+    ComputationContext( Context *context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) : m_context(context),
+        m_complexFormat(complexFormat),
+        m_angleUnit(angleUnit)
     {}
-    Context * context() { return m_context; }
+    Context *context() { return m_context; }
     void setContext(Context * context) { m_context = context; }
     Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
     Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
+
   private:
-    Context * m_context;
+    Context *m_context;
     Preferences::ComplexFormat m_complexFormat;
     Preferences::AngleUnit m_angleUnit;
   };
 
-  class ReductionContext : public ComputationContext {
+  class ReductionContext : public ComputationContext
+  {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
-      ComputationContext(context, complexFormat, angleUnit),
-      m_unitFormat(unitFormat),
-      m_target(target),
-      m_symbolicComputation(symbolicComputation),
-      m_unitConversion(unitConversion)
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) : ComputationContext(context, complexFormat, angleUnit), m_unitFormat(unitFormat),
+    m_target(target),
+    m_symbolicComputation(symbolicComputation),
+    m_unitConversion(unitConversion)
     {}
     static ReductionContext NonInvasiveReductionContext(ReductionContext reductionContext) {
-      return ReductionContext(
-          reductionContext.context(),
-          reductionContext.complexFormat(),
-          reductionContext.angleUnit(),
-          reductionContext.unitFormat(),
-          reductionContext.target(),
-          SymbolicComputation::DoNotReplaceAnySymbol,
-          UnitConversion::None
-        );
+      return ReductionContext( reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.target(), SymbolicComputation::DoNotReplaceAnySymbol, UnitConversion::None);
     }
     Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
     ReductionTarget target() const { return m_target; }
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
     UnitConversion unitConversion() const { return m_unitConversion; }
-  private:
+    private:
     Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;
@@ -246,17 +234,11 @@ public:
 
   class ApproximationContext : public ComputationContext {
   public:
-    ApproximationContext(
-        Context * context,
-        Preferences::ComplexFormat complexFormat,
-        Preferences::AngleUnit angleUnit,
-        bool withinReduce = false) :
-      ComputationContext(context, complexFormat, angleUnit),
-      m_withinReduce(withinReduce)
-    {}
-    ApproximationContext(ReductionContext reductionContext, bool withinReduce) :
-      ApproximationContext(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), withinReduce) {}
+    ApproximationContext( Context *context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) : ComputationContext(context, complexFormat, angleUnit), m_withinReduce(withinReduce) {
+    }
+    ApproximationContext(ReductionContext reductionContext, bool withinReduce) : ApproximationContext(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), withinReduce) {}
     bool withinReduce() const { return m_withinReduce; }
+
   private:
     bool m_withinReduce;
   };

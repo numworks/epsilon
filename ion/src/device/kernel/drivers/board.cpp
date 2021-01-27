@@ -66,7 +66,8 @@ static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28};
 void initInterruptions() {
   // Init SVCall interrupt priorities
   // SVCall should be interruptible by EXTI
-  CORTEX.SHPR2()->setSVCALL_PRI(255);
+  CORTEX.SHPR2()->setSVCALL_PRI(20);
+  CORTEX.SHPR3()->setPENDSV_PRI(10);
   // Init EXTI interrupts (corresponding to keyboard column pins)
   class NVIC::NVIC_ISER0 iser0(0); // Reset value
   class NVIC::NVIC_ICPR0 icpr0(0); // Reset value

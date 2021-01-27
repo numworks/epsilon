@@ -81,19 +81,19 @@ void __attribute__((interrupt, noinline)) isr_systick() {
   t++;
   Ion::Device::Timing::MillisElapsed = t;
   auto lastEvent = Ion::Device::Events::lastEventTime();
-  if (lastEvent != 0 && t - lastEvent > 3000) {
+  if (lastEvent != 0 && t - lastEvent > 1000) { // TODO EMILIE: 1s ?
     // Trigger a pendSV interruption
     Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
-    // scan keyboard and if back is down pendSV
   }
 }
 
 #include <drivers/display.h>
 
 void __attribute__((interrupt, noinline)) pendsv_handler() {
-  Ion::Device::Display::pushRectUniform(KDRect(0,0,100,100), KDColorGreen);
-  while(1) {
-  }
+  // TODO: draw a hourglass or spinning circle?
+  static KDColor c = KDColorGreen;
+  Ion::Device::Display::pushRectUniform(KDRect(155,115,10,10), c);
+  c = c == KDColorGreen ? KDColorRed : KDColorGreen;
 }
 
 void __attribute__((interrupt, noinline)) keyboard_handler() {

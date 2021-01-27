@@ -27,11 +27,4 @@ void CellWithSeparator::layoutSubviews(bool force) {
   cell()->setFrame(KDRect(0, k_margin, bounds().width(), bounds().height()-k_margin), force);
 }
 
-KDSize CellWithSeparator::minimalSizeForOptimalDisplay() const {
-  // TODO Hugo : cell() isn't const, find a workaround.
-  // KDSize cellSize = cell()->minimalSizeForOptimalDisplay();
-  // return KDSize(cellSize.width(), k_margin + cellSize.height());
-  return KDSize(0, k_margin);
-}
-
 }

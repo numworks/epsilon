@@ -19,12 +19,7 @@ public:
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate cellWidth() override {
-    if (m_selectableTableView.columnWidth(0) <= 0) {
-      return 320; // TODO Hugo : Fix this situation
-    }
-    return m_selectableTableView.columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setMessageTreeModel(const Escher::MessageTree * messageTreeModel);

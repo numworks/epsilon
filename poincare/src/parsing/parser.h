@@ -11,6 +11,7 @@
 #include "tokenizer.h"
 
 namespace Poincare {
+
 class Parser {
 public:
   enum class Status {
@@ -19,15 +20,14 @@ public:
     Error
   };
 
-  Parser(const char *text, Context *context) :
+  Parser(const char * text, Context * context) :
     m_context(context),
     m_status(Status::Progress),
     m_tokenizer(text),
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(m_tokenizer.popToken()),
     m_pendingImplicitMultiplication(false),
-    m_symbolPlusParenthesesAreFunctions(false)
-  {}
+    m_symbolPlusParenthesesAreFunctions(false) {}
 
   Expression parse();
   Status getStatus() const { return m_status; }
@@ -82,9 +82,9 @@ private:
   // Data members
   Context * m_context;
   Status m_status;
-  /* m_status is initialized to Status::Progress,
-   * is changed to Status::Error if the Parser encounters an error,
-   * and is otherwise changed Status::Success. */
+    /* m_status is initialized to Status::Progress,
+     * is changed to Status::Error if the Parser encounters an error,
+     * and is otherwise changed Status::Success. */
   Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;
@@ -187,7 +187,6 @@ private:
     &XorExplicit::s_functionHelper,
     &SquareRoot::s_functionHelper
   };
-
   static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions) / sizeof(Expression::FunctionHelper *));
   /* The method GetReservedFunction passes through the successive
    * entries of the above array in order to determine whether m_currentToken

@@ -11,13 +11,11 @@ namespace Settings {
 class AboutController : public GenericSubController {
 public:
   AboutController(Escher::Responder * parentResponder);
-  // TODO Hugo : Fix scroll view with some languages
   Escher::View * view() override { return &m_view; }
   void viewWillAppear() override;
   TELEMETRY_ID("About");
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
 private:

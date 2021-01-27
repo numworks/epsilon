@@ -19,6 +19,7 @@ private:
   void layoutSubviews(bool force = false) override;
   Escher::SelectableTableView * m_selectableTableView;
   static constexpr int k_maxNumberOfLines = 4;
+  static constexpr KDCoordinate k_minSelectableTableViewHeight = 60;
   Escher::MessageTextView m_messageLines[k_maxNumberOfLines];
   int m_numberOfMessages;
 };

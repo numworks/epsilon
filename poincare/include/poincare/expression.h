@@ -130,9 +130,9 @@ class Expression : public TreeHandle {
   friend class Tangent;
   friend class Trigonometry;
   friend class TrigonometryCheatTable;
-  friend class TwosComplement;
   friend class Unit;
   friend class UnitConvert;
+  friend class TwosComplement;
   friend class VectorCross;
   friend class VectorDot;
   friend class VectorNorm;
@@ -183,8 +183,8 @@ public:
   bool isOfType(ExpressionNode::Type * types, int length) const { return node()->isOfType(types, length); }
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
   ExpressionNode::NullStatus nullStatus(Context * context) const { return node()->nullStatus(context); }
-  bool isStrictly(ExpressionNode::Sign s, Context * context) const { return s == node()->sign(context) && node()->nullStatus(context) == ExpressionNode::NullStatus::NonNull;  }
-  bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Unreal; }
+  bool isStrictly(ExpressionNode::Sign s, Context * context) const { return s == node()->sign(context) && node()->nullStatus(context) == ExpressionNode::NullStatus::NonNull; }
+  bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined || node()->type() == ExpressionNode::Type::Unreal; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalOne() const;
   bool isRandom() const { return node()->isRandom(); }
@@ -199,12 +199,8 @@ public:
   bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context) const;
-  // Set of ExpressionTest that can be used with recursivelyMatches
-  static bool IsNAry(const Expression e, Context * context);
-  static bool IsApproximate(const Expression e, Context * context);
-  static bool IsRandom(const Expression e, Context * context);
+    // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsMatrix(const Expression e, Context * context);
-  static bool IsInfinity(const Expression e, Context * context);
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
@@ -230,7 +226,7 @@ public:
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const;
-  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
+  Expression replaceSymbolWithExpression(const SymbolAbstract &symbol, const Expression &expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Units */
   Expression removeUnit(Expression * unit) { return node()->removeUnit(unit); }
@@ -358,7 +354,7 @@ protected:
     U expression = U::Builder({children.childAtIndex(0)});
     for (int i = 1; i < childrenNumber; ++i) {
       expression.addChildAtIndexInPlace(children.childAtIndex(i), i, i);
-    }
+     }
     return std::move(expression);
   }
 

@@ -134,6 +134,8 @@ private:
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
+  mutable KDCoordinate m_excessWidth;
+  mutable KDCoordinate m_excessHeight;
 
   InnerView m_innerView;
   Decorator::Type m_decoratorType;

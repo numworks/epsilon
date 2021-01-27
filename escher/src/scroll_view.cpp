@@ -16,6 +16,8 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   m_rightMargin(0),
   m_bottomMargin(0),
   m_leftMargin(0),
+  m_excessWidth(0),
+  m_excessHeight(0),
   m_innerView(this),
   m_decorators(),
   m_backgroundColor(Palette::WallScreen)
@@ -31,6 +33,8 @@ ScrollView::ScrollView(ScrollView&& other) :
   m_rightMargin(other.m_rightMargin),
   m_bottomMargin(other.m_bottomMargin),
   m_leftMargin(other.m_leftMargin),
+  m_excessWidth(other.m_excessWidth),
+  m_excessHeight(other.m_excessHeight),
   m_innerView(this),
   m_backgroundColor(other.m_backgroundColor)
 {
@@ -50,10 +54,12 @@ KDSize ScrollView::minimalSizeForOptimalDisplay() const {
   KDCoordinate excessWidth = width - m_frame.width();
   if (excessWidth > 0 && excessWidth <= marginPortionTolerance * m_rightMargin) {
     width -= excessWidth;
+    m_excessWidth = excessWidth;
   }
   KDCoordinate excessHeight = height - m_frame.height();
   if (excessHeight > 0 && excessHeight <= marginPortionTolerance * m_bottomMargin) {
     height -= excessHeight;
+    m_excessHeight = excessHeight;
   }
 
   return KDSize(width, height);

@@ -9,6 +9,7 @@ namespace Events {
 
 Ion::Events::Event getEvent(int * timeout);
 Ion::Events::Event getPlatformEvent();
+uint64_t lastEventTime();
 
 }
 }

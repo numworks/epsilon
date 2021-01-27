@@ -65,6 +65,7 @@ Ion::Keyboard::State sLastKeyboardState(0);
 bool sLastEventShift;
 bool sLastEventAlpha;
 bool sEventIsRepeating = false;
+uint64_t sLastEventTime = 0;
 
 bool canRepeatEventWithState() {
   return canRepeatEvent(sLastEvent)
@@ -80,6 +81,7 @@ Ion::Events::Event getEvent(int * timeout) {
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   uint64_t startTime = Timing::millis();
   while (true) {
+    sLastEventTime = startTime;
     /* NB: Currently, platform events are polled. They could be instead linked
      * to EXTI interruptions and their event could be pushed on the
      * Keyboard::Queue. However, the pins associated with platform events are
@@ -176,6 +178,10 @@ Ion::Events::Event getEvent(int * timeout) {
       return sLastEvent;
     }
   }
+}
+
+uint64_t lastEventTime() {
+  return sLastEventTime;
 }
 
 }

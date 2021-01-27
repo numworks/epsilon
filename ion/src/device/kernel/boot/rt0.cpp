@@ -6,6 +6,7 @@
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/config/board.h>
+#include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
 #include <main.h>
@@ -79,6 +80,20 @@ void __attribute__((interrupt, noinline)) isr_systick() {
   auto t = Ion::Device::Timing::MillisElapsed;
   t++;
   Ion::Device::Timing::MillisElapsed = t;
+  auto lastEvent = Ion::Device::Events::lastEventTime();
+  if (lastEvent != 0 && t - lastEvent > 3000) {
+    // Trigger a pendSV interruption
+    Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
+    // scan keyboard and if back is down pendSV
+  }
+}
+
+#include <drivers/display.h>
+
+void __attribute__((interrupt, noinline)) pendsv_handler() {
+  Ion::Device::Display::pushRectUniform(KDRect(0,0,100,100), KDColorGreen);
+  while(1) {
+  }
 }
 
 void __attribute__((interrupt, noinline)) keyboard_handler() {

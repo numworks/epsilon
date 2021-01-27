@@ -12,6 +12,7 @@ void keyboard_handler();
 void tim2_handler();
 void svcall_handler_as();
 void svcall_handler(unsigned svcNumber, void * args[]);
+void pendsv_handler();
 
 #ifdef __cplusplus
 }

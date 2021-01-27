@@ -22,10 +22,7 @@ public:
   void viewDidDisappear() override;
 
   // SimpleListViewDataSource
-  KDCoordinate cellWidth() override {
-    assert(m_listController.selectableTableView()->columnWidth(0) == 266);
-    return m_listController.selectableTableView()->columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_listController.selectableTableView()->columnWidth(0); }
   HighlightCell * reusableCell(int index, int type) override;
 protected:
   class Stack {

@@ -25,10 +25,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return 1; }
-  KDCoordinate cellWidth() override {
-    assert(m_selectableTableView.columnWidth(0) > 0);
-    return m_selectableTableView.columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override {
     assert(index == 0);
     return &m_copyColumn;

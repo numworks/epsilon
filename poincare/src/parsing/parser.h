@@ -187,7 +187,7 @@ private:
     &XorExplicit::s_functionHelper,
     &SquareRoot::s_functionHelper
   };
-  static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions) / sizeof(Expression::FunctionHelper *));
+  static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
   /* The method GetReservedFunction passes through the successive
    * entries of the above array in order to determine whether m_currentToken
    * corresponds to an entry. As a helper, the static constexpr

@@ -39,8 +39,17 @@ void TextView::drawRect(KDContext * ctx, KDRect rect) const {
     return;
   }
   KDSize textSize = m_font->stringSize(text());
-  // TODO Hugo : Assert that the text fits in the frame.
-  // assert(m_frame.width() >= textSize.width());e
+  // TODO : Identify and fix any texts that doesn't fit in the frame.
+  // assert(m_frame.width() >= textSize.width());
+  if (m_frame.width() < textSize.width()) {
+    // TODO Hugo : Remove it after development
+    KDPoint origin(
+      m_horizontalAlignment * (m_frame.width() - textSize.width()),
+      m_verticalAlignment * (m_frame.height() - textSize.height()));
+    ctx->fillRect(bounds(), m_textColor);
+    ctx->drawString(text(), origin, m_font, m_backgroundColor, m_textColor);
+    return;
+  }
   KDPoint origin(
       m_horizontalAlignment * (m_frame.width() - textSize.width()),
       m_verticalAlignment * (m_frame.height() - textSize.height()));

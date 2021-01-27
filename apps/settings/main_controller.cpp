@@ -95,6 +95,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     assert(selectedSubController);
     if (model()->childAtIndex(rowIndex)->numberOfChildren() != 0) {
       static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(rowIndex));
+      static_cast<GenericSubController *>(selectedSubController)->resetMemoization();
     }
     stackController()->push(selectedSubController);
     return true;

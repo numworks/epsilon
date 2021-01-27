@@ -96,20 +96,10 @@ HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
 
 template<typename T>
 KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
-  MessageTableCellWithEditableText tempCell = MessageTableCellWithEditableText();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
-  return tempCell.minimalSizeForOptimalDisplay().height() + ((j == numberOfRows()-1) ? k_buttonMargin : 0);
-}
-
-template<typename T>
-int FloatParameterController<T>::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  // TODO HUGO : This function does not need to be overwritten, but doing so
-  // would breaks float inputs (when rowHeight(0) is called). Fix it. +
-  // Also fix Settings significant number input
-  if (offsetY > numberOfRows()*Metric::ParameterCellHeight + k_buttonMargin) {
-    return numberOfRows();
+  if (j == numberOfRows()-1) {
+    return Metric::ParameterCellHeight+k_buttonMargin;
   }
-  return (offsetY - 1) / Metric::ParameterCellHeight;
+  return SimpleListViewDataSource::nonMemoizedRowHeight(j);
 }
 
 template<typename T>

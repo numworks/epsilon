@@ -11,7 +11,6 @@
 #include "tokenizer.h"
 
 namespace Poincare {
-
 class Parser {
 public:
   enum class Status {
@@ -20,14 +19,15 @@ public:
     Error
   };
 
-  Parser(const char * text, Context * context) :
+  Parser(const char *text, Context *context) :
     m_context(context),
     m_status(Status::Progress),
     m_tokenizer(text),
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(m_tokenizer.popToken()),
     m_pendingImplicitMultiplication(false),
-    m_symbolPlusParenthesesAreFunctions(false) {}
+    m_symbolPlusParenthesesAreFunctions(false)
+  {}
 
   Expression parse();
   Status getStatus() const { return m_status; }
@@ -82,9 +82,9 @@ private:
   // Data members
   Context * m_context;
   Status m_status;
-    /* m_status is initialized to Status::Progress,
-     * is changed to Status::Error if the Parser encounters an error,
-     * and is otherwise changed Status::Success. */
+  /* m_status is initialized to Status::Progress,
+   * is changed to Status::Error if the Parser encounters an error,
+   * and is otherwise changed Status::Success. */
   Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;
@@ -92,7 +92,7 @@ private:
   bool m_symbolPlusParenthesesAreFunctions;
 
   // The array of reserved functions' helpers
-static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
+  static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     // Ordered according to name and numberOfChildren
     &AbsoluteValue::s_functionHelper,
     &ArcCosine::s_functionHelper,
@@ -106,13 +106,13 @@ static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     &HyperbolicArcTangent::s_functionHelper,
     &BitClear::s_functionHelper,
     &BitFlip::s_functionHelper,
-    &BitGet::s_functionHelper,
     &BitsClear::s_functionHelper,
     &BitsClearExplicit::s_functionHelper,
-    &BitSet::s_functionHelper,
     &BinomCDF::s_functionHelper,
     &BinomialCoefficient::s_functionHelper,
     &BinomPDF::s_functionHelper,
+    &BitGet::s_functionHelper,
+    &BitSet::s_functionHelper,
     &Ceiling::s_functionHelper,
     &ConfidenceInterval::s_functionHelper,
     &Conjugate::s_functionHelper,
@@ -137,11 +137,11 @@ static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
-    &VectorNorm::s_functionHelper,
     &Nand::s_functionHelper,
     &NandExplicit::s_functionHelper,
     &Nor::s_functionHelper,
     &NorExplicit::s_functionHelper,
+    &VectorNorm::s_functionHelper,
     &NormCDF::s_functionHelper,
     &NormCDF2::s_functionHelper,
     &NormPDF::s_functionHelper,
@@ -159,22 +159,22 @@ static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     &RealPart::s_functionHelper,
     &MatrixRowEchelonForm::s_functionHelper,
     &DivisionRemainder::s_functionHelper,
-    &NthRoot::s_functionHelper,
     &RotateLeft::s_functionHelper,
     &RotateLeftExplicit::s_functionHelper,
+    &NthRoot::s_functionHelper,
     &RotateRight::s_functionHelper,
-    &RotateRightExplicit::s_functionHelper
+    &RotateRightExplicit::s_functionHelper,
     &Round::s_functionHelper,
     &MatrixReducedRowEchelonForm::s_functionHelper,
-    &ShiftArithmeticRight::s_functionHelper,
-    &ShiftArithmeticRightExplicit::s_functionHelper,
-    &ShiftLogicLeft::s_functionHelper,
-    &ShiftLogicLeftExplicit::s_functionHelper,
-    &ShiftLogicRight::s_functionHelper,
-    &ShiftLogicRightExplicit::s_functionHelper,
     &SignFunction::s_functionHelper,
     &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,
+    &ShiftLogicLeft::s_functionHelper,
+    &ShiftLogicLeftExplicit::s_functionHelper,
+    &ShiftArithmeticRight::s_functionHelper,
+    &ShiftArithmeticRightExplicit::s_functionHelper,
+    &ShiftLogicRight::s_functionHelper,
+    &ShiftLogicRightExplicit::s_functionHelper,
     &Sum::s_functionHelper,
     &Tangent::s_functionHelper,
     &HyperbolicTangent::s_functionHelper,
@@ -188,7 +188,7 @@ static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
     &SquareRoot::s_functionHelper
   };
 
-  static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
+  static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions) / sizeof(Expression::FunctionHelper *));
   /* The method GetReservedFunction passes through the successive
    * entries of the above array in order to determine whether m_currentToken
    * corresponds to an entry. As a helper, the static constexpr

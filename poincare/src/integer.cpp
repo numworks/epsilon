@@ -955,35 +955,28 @@ Integer Integer::TwosComplementToBits(const Integer &a, const Integer &num_bits)
   return a;
 }
 
-Integer Integer::addition(const Integer &a, const Integer &b, bool inverseBNegative, bool oneDigitOverflow)
-{
+Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative, bool oneDigitOverflow) {
   bool bNegative = (inverseBNegative ? !b.m_negative : b.m_negative);
-  if (a.m_negative == bNegative)
-  {
+  if (a.m_negative == bNegative) {
     Integer us = usum(a, b, false, oneDigitOverflow);
     us.setNegative(a.m_negative);
     return us;
-  }
- 
-    else
- 
-    {
-      /* The signs are different, this is in fact a subtraction
+  } else {
+    /* The signs are different, this is in fact a subtraction
      * s = a+b = (abs(a)-abs(b) OR abs(b)-abs(a))
      * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
      * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
      * sign? sign of the greater! */
-      if (ucmp(a, b) >= 0)
-      {
-        Integer us = usum(a, b, true, oneDigitOverflow);
-        us.setNegative(a.m_negative);
-        return us;
-      } else {
+    if (ucmp(a, b) >= 0) {
+      Integer us = usum(a, b, true, oneDigitOverflow);
+      us.setNegative(a.m_negative);
+      return us;
+    } else {
       Integer us = usum(b, a, true, oneDigitOverflow);
       us.setNegative(bNegative);
       return us;
     }
-    }
+  }
 }
 
 Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDigitOverflow) {
@@ -1223,4 +1216,5 @@ Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer &
 
 template float Integer::approximate<float>() const;
 template double Integer::approximate<double>() const;
+
 }

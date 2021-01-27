@@ -97,6 +97,9 @@ SECTIONS {
     /* 'Reset::jump' dependencies '*/
     *(.text._ZN3Ion6Device5Reset17internalFlashJumpEj)
 
+    /* systick dependencies */
+    *(.text._ZN3Ion6Device6Events13lastEventTimeEv)
+
     /* Optimization */
     */libgcc.a:(.text)
   } >INTERNAL_FLASH_KERNEL

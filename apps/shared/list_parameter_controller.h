@@ -26,10 +26,7 @@ public:
 
   // SimpleListViewDataSource
   int numberOfRows() const override { return k_localNumberOfCell; }
-  KDCoordinate cellWidth() override {
-    assert(m_selectableTableView.columnWidth(0) > 0);
-    return m_selectableTableView.columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:

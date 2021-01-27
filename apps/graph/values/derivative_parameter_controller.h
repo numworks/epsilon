@@ -28,10 +28,7 @@ public:
   void setRecord(Ion::Storage::Record record) {
     m_record = record;
   }
-  KDCoordinate cellWidth() override {
-    assert(m_selectableTableView.columnWidth(0) > 0);
-    return m_selectableTableView.columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 private:
   ContinuousFunctionStore * functionStore();
 #if COPY_COLUMN

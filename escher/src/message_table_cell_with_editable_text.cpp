@@ -43,10 +43,10 @@ void MessageTableCellWithEditableText::setSubLabelText(const char * text) {
   layoutSubviews();
 }
 
+/* Overriding this function with a nullptr subLabel because m_textField should
+ * not force a two row table cell as the user write. */
 KDSize MessageTableCellWithEditableText::minimalSizeForOptimalDisplay() const {
-  /* Overriding this function with a nullptr subLabel because m_textField should
-   * not force a two row table cell as the user write. */
-  // TODO Hugo : Improve this workaround to find frame's width
+  // Available width is necessary to compute it minimal height.
   KDCoordinate expectedWidth = m_frame.width();
   assert(expectedWidth > 0);
   return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), nullptr, accessoryView(), expectedWidth));

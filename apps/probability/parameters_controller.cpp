@@ -55,8 +55,10 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
 void ParametersController::ContentView::layoutSubviews(bool force) {
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
+  // SelectableTableView must be given a width before computing height.
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), m_selectableTableView->bounds().height()), force);
   KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  tableHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight), force);
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   KDCoordinate defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-textHeight)/2;
   m_secondParameterDefinition.setFrame(KDRectZero, force);

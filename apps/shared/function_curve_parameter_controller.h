@@ -13,10 +13,7 @@ public:
   Escher::View * view() override { return &m_selectableTableView; }
   TELEMETRY_ID("CurveParameter");
   void didBecomeFirstResponder() override;
-  KDCoordinate cellWidth() override {
-    assert(m_selectableTableView.columnWidth(0) > 0);
-    return m_selectableTableView.columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:

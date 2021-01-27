@@ -24,10 +24,7 @@ public:
   TELEMETRY_ID("TypeParameter");
 
   // SimpleListViewDataSource
-  KDCoordinate cellWidth() override {
-    assert(m_selectableTableView.columnWidth(0) > 0);
-    return m_selectableTableView.columnWidth(0);
-  }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   int numberOfRows() const override { return k_numberOfTypes; }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

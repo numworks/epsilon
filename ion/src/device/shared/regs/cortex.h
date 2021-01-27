@@ -32,6 +32,12 @@ public:
     REGS_FIELD(CURRENT, uint32_t, 23, 0);
   };
 
+  class ICSR : Register32 {
+  public:
+    REGS_BOOL_FIELD(PENDSVSET, 28);
+    REGS_BOOL_FIELD(PENDSVCLR, 27);
+  };
+
   // Vector table offset register
   // http://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf
   class VTOR : Register32 {
@@ -142,6 +148,7 @@ public:
   REGS_REGISTER_AT(SYST_CSR, 0x10);
   REGS_REGISTER_AT(SYST_RVR, 0x14);
   REGS_REGISTER_AT(SYST_CVR, 0x18);
+  REGS_REGISTER_AT(ICSR, 0xD04);
   REGS_REGISTER_AT(VTOR, 0xD08);
   REGS_REGISTER_AT(AIRCR, 0xD0C);
   REGS_REGISTER_AT(SCR, 0xD10);

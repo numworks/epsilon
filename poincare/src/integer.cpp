@@ -22,6 +22,8 @@ extern "C" {
 }
 #include <algorithm>
 
+#define __INT8_MAX_MINUS_1__ 0x7E
+
 namespace Poincare {
 
 /* To compute operations between Integers, we need an array where to store the
@@ -814,8 +816,8 @@ Integer Integer::LogicalBitGet(const Integer &a, const Integer &bit)
     return Overflow(false);
   }
 
-  Integer shifted = LogicalShiftRight(a, bit, Integer(100));
-  return LogicalAnd(shifted, Integer(1), Integer(100));
+  Integer shifted = LogicalShiftRight(a, bit, Integer(__INT8_MAX_MINUS_1__));
+  return LogicalAnd(shifted, Integer(1), Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::LogicalBitClear(const Integer &a, const Integer &bit)
@@ -828,9 +830,9 @@ Integer Integer::LogicalBitClear(const Integer &a, const Integer &bit)
     return Overflow(false);
   }
 
-  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(100));
-  shifted = LogicalNot(shifted, Integer(100));
-  return LogicalAnd(a, shifted, Integer(100));
+  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
+  shifted = LogicalNot(shifted, Integer(__INT8_MAX_MINUS_1__));
+  return LogicalAnd(a, shifted, Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::LogicalBitSet(const Integer &a, const Integer &bit)
@@ -843,8 +845,8 @@ Integer Integer::LogicalBitSet(const Integer &a, const Integer &bit)
     return Overflow(false);
   }
 
-  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(100));
-  return LogicalOr(a, shifted, Integer(100));
+  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
+  return LogicalOr(a, shifted, Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::LogicalBitFlip(const Integer &a, const Integer &bit)
@@ -857,8 +859,8 @@ Integer Integer::LogicalBitFlip(const Integer &a, const Integer &bit)
     return Overflow(false);
   }
 
-  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(100));
-  return LogicalXor(a, shifted, Integer(100));
+  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
+  return LogicalXor(a, shifted, Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::Truncate(const Integer &a, const Integer &num_bits)

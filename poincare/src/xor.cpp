@@ -28,16 +28,6 @@ namespace Poincare
     return Xor(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Complex<T> XorNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit)
-  {
-    if (c.imag() != 0)
-    {
-      return Complex<T>::RealUndefined();
-    }
-    return Complex<T>::Builder(c.real() - std::floor(c.real()));
-  }
-
   Expression Xor::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

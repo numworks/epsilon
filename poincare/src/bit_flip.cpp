@@ -28,16 +28,6 @@ namespace Poincare
     return BitFlip(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Complex<T> BitFlipNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit)
-  {
-    if (c.imag() != 0)
-    {
-      return Complex<T>::RealUndefined();
-    }
-    return Complex<T>::Builder(c.real() - std::floor(c.real()));
-  }
-
   Expression BitFlip::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

@@ -196,9 +196,9 @@ public:
   class ComputationContext {
   public:
     ComputationContext(
-      Context *context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit) :
+        Context * context,
+        Preferences::ComplexFormat complexFormat,
+        Preferences::AngleUnit angleUnit) :
       m_context(context),
       m_complexFormat(complexFormat),
       m_angleUnit(angleUnit)
@@ -214,8 +214,7 @@ public:
     Preferences::AngleUnit m_angleUnit;
   };
 
-  class ReductionContext : public ComputationContext
-  {
+  class ReductionContext : public ComputationContext {
   public:
     ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
       ComputationContext(context, complexFormat, angleUnit),
@@ -226,14 +225,14 @@ public:
     {}
     static ReductionContext NonInvasiveReductionContext(ReductionContext reductionContext) {
       return ReductionContext(
-        reductionContext.context(),
-        reductionContext.complexFormat(),
-        reductionContext.angleUnit(),
-        reductionContext.unitFormat(),
-        reductionContext.target(),
-        SymbolicComputation::DoNotReplaceAnySymbol,
-        UnitConversion::None
-      );
+          reductionContext.context(),
+          reductionContext.complexFormat(),
+          reductionContext.angleUnit(),
+          reductionContext.unitFormat(),
+          reductionContext.target(),
+          SymbolicComputation::DoNotReplaceAnySymbol,
+          UnitConversion::None
+        );
     }
     Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
     ReductionTarget target() const { return m_target; }
@@ -249,13 +248,14 @@ public:
   class ApproximationContext : public ComputationContext {
   public:
     ApproximationContext(
-      Context * context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, bool withinReduce = false) :
+        Context * context,
+        Preferences::ComplexFormat complexFormat,
+        Preferences::AngleUnit angleUnit,
+        bool withinReduce = false) :
       ComputationContext(context, complexFormat, angleUnit),
       m_withinReduce(withinReduce)
     {}
-    ApproximationContext(ReductionContext reductionContext, bool withinReduce) : 
+    ApproximationContext(ReductionContext reductionContext, bool withinReduce) :
       ApproximationContext(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), withinReduce) {}
     bool withinReduce() const { return m_withinReduce; }
   private:

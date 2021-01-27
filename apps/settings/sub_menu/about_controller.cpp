@@ -41,11 +41,6 @@ HighlightCell * AboutController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-int AboutController::reusableCellCount(int type) {
-  assert(type == 0);
-  return k_totalNumberOfCell;
-}
-
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
@@ -59,9 +54,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
-  MessageTableCellWithBuffer tempCell = MessageTableCellWithBuffer();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  return SimpleListViewDataSource::nonMemoizedRowHeight(index);
 }
 
 }

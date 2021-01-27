@@ -18,7 +18,7 @@ public:
   /* Being const, we cannot set m_cell width to the expected width. It must then
    * be handled here. */
   KDSize minimalSizeForOptimalDisplay() const override {
-    // TODO Hugo : Improve this workaround to find frame's width
+    // Available width is necessary to compute it minimal height.
     KDCoordinate expectedWidth = m_frame.width();
     assert(expectedWidth > 0);
     return KDSize(expectedWidth, Escher::TableCell::minimalHeightForOptimalDisplay(m_cell.labelView(), m_cell.subLabelView(), m_cell.accessoryView(), expectedWidth) + k_margin);

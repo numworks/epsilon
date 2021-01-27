@@ -1,6 +1,6 @@
 .syntax unified
 
-.section .text
+.section .text.svcall_handler_as
 .align 2
 .thumb
 .global svcall_handler_as

@@ -1,6 +1,6 @@
 .syntax unified
 
-.section .text
+.section .text.switch_to_unpriviledged
 .align 2
 .thumb
 .global switch_to_unpriviledged

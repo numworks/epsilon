@@ -21,10 +21,15 @@ INTERNAL_FLASH_KERNEL_ORIGIN = INTERNAL_FLASH_ORIGIN + 2*INTERNAL_FLASH_BOOTLOAD
 INTERNAL_FLASH_KERNEL_LENGTH = INTERNAL_FLASH_LENGTH - 2*INTERNAL_FLASH_BOOTLOADER_LENGTH - SIGNATURE_LENGTH;
 
 /*
- * |                               EXTERNAL FLASH                                               |
- * |       4K                |               7*4K + 32K           |           127*64K           |
- * |                       KERNEL                                 | USERLAND                    |
- * | PERSISTING BYTES BUFFER - PARTIAL KERNEL - NOISE - SIGNATURE | SIZE - USERLAND - SIGNATURE |
+ * |                                            EXTERNAL FLASH                                                 |
+ * |       4K                |                    7*4K + 32K                     |           127*64K           |
+ * | PERSISTING BYTES        |                       KERNEL                      |           USERLAND          |
+ * |       4K                |          4K          |        6*4K + 32K          |           127*64K           |
+ * | PERSISTING BYTES BUFFER | UNPRIVILEGED KERNEL* | KERNEL | NOISE | SIGNATURE | SIZE - USERLAND - SIGNATURE |
+ *
+ * *UNPRIVILEGED KERNEL is the only subsection of the kernel which is RW by
+ * unprivileged software. We put there only the code responsible for the switch
+ * from privileged to unprivileged mode and jumping to userland.
  *
  */
 
@@ -35,11 +40,16 @@ SMALLEST_EXTERNAL_FLASH_SECTOR_SIZE = 4K;
 PERSITING_BYTES_ORIGIN = EXTERNAL_FLASH_ORIGIN;
 PERSITING_BYTES_LENGTH = SMALLEST_EXTERNAL_FLASH_SECTOR_SIZE;
 
-KERNEL_EXTERNAL_FLASH_SECTOR_SIZE = 8*4K+32K - PERSITING_BYTES_LENGTH; /* TODO EMILIE: try with less (Cf comment n0110/kernel/drivers/config/board.h) */
-EXTERNAL_FLASH_KERNEL_ORIGIN = PERSITING_BYTES_ORIGIN + PERSITING_BYTES_LENGTH;
+EXTERNAL_FLASH_KERNEL_SECTOR_SIZE = 8*4K+32K - PERSITING_BYTES_LENGTH; /* TODO EMILIE: try with less (Cf comment n0110/kernel/drivers/config/board.h) */
+EXTERNAL_FLASH_UNPRIVILEGED_KERNEL_ORIGIN = PERSITING_BYTES_ORIGIN + PERSITING_BYTES_LENGTH;
+/* The length of the unprivileged kernel is chosen to be a 8th of the
+ * privileged-only external flash to be able to use a mask to configurate the
+ * MPU. */
+EXTERNAL_FLASH_UNPRIVILEGED_KERNEL_LENGTH = 4K;
+EXTERNAL_FLASH_PRIVILEGED_KERNEL_ORIGIN = EXTERNAL_FLASH_UNPRIVILEGED_KERNEL_ORIGIN + EXTERNAL_FLASH_UNPRIVILEGED_KERNEL_LENGTH;
 /* External flash kernel length is computed to be hold within the 8x4k+1x32k
  * first sectors. */
-EXTERNAL_FLASH_KERNEL_LENGTH = KERNEL_EXTERNAL_FLASH_SECTOR_SIZE - SIGNATURE_LENGTH;
+EXTERNAL_FLASH_PRIVILEGED_KERNEL_LENGTH = EXTERNAL_FLASH_KERNEL_SECTOR_SIZE - EXTERNAL_FLASH_UNPRIVILEGED_KERNEL_LENGTH - SIGNATURE_LENGTH;
 
-FLASH_USERLAND_ORIGIN = EXTERNAL_FLASH_KERNEL_ORIGIN + EXTERNAL_FLASH_KERNEL_LENGTH + SIGNATURE_LENGTH + SIZE_LENGTH;
-FLASH_USERLAND_LENGTH = EXTERNAL_FLASH_LENGTH - PERSITING_BYTES_LENGTH - EXTERNAL_FLASH_KERNEL_LENGTH - SIZE_LENGTH - 2*SIGNATURE_LENGTH;
+FLASH_USERLAND_ORIGIN = EXTERNAL_FLASH_PRIVILEGED_KERNEL_ORIGIN + EXTERNAL_FLASH_PRIVILEGED_KERNEL_LENGTH + SIGNATURE_LENGTH + SIZE_LENGTH;
+FLASH_USERLAND_LENGTH = EXTERNAL_FLASH_LENGTH - PERSITING_BYTES_LENGTH - EXTERNAL_FLASH_KERNEL_SECTOR_SIZE - SIZE_LENGTH - SIGNATURE_LENGTH;

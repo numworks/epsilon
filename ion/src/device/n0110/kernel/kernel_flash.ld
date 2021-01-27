@@ -14,7 +14,8 @@ INCLUDE config_flash.ld
 MEMORY {
   INTERNAL_FLASH_KERNEL (rx) : ORIGIN = INTERNAL_FLASH_KERNEL_ORIGIN, LENGTH = INTERNAL_FLASH_KERNEL_LENGTH
   EXTERNAL_FLASH_PERSITING_BYTES (rx) : ORIGIN = PERSITING_BYTES_ORIGIN, LENGTH = PERSITING_BYTES_LENGTH
-  EXTERNAL_FLASH_KERNEL (rx) : ORIGIN = EXTERNAL_FLASH_KERNEL_ORIGIN, LENGTH = EXTERNAL_FLASH_KERNEL_LENGTH
+  EXTERNAL_FLASH_UNPRIVILEGED_KERNEL (rx) : ORIGIN = EXTERNAL_FLASH_UNPRIVILEGED_KERNEL_ORIGIN, LENGTH = EXTERNAL_FLASH_UNPRIVILEGED_KERNEL_LENGTH
+  EXTERNAL_FLASH_PRIVILEGED_KERNEL (rx) : ORIGIN = EXTERNAL_FLASH_PRIVILEGED_KERNEL_ORIGIN, LENGTH = EXTERNAL_FLASH_PRIVILEGED_KERNEL_LENGTH
   SRAM_DATA_BSS (rw) : ORIGIN = KERNEL_SRAM_ORIGIN, LENGTH = KERNEL_SRAM_DATA_BSS_LENGTH
   SRAM_HEAP_STACK (rw) : ORIGIN = KERNEL_SRAM_ORIGIN + KERNEL_SRAM_DATA_BSS_LENGTH, LENGTH = SRAM_LENGTH - KERNEL_SRAM_DATA_BSS_LENGTH
 }
@@ -167,27 +168,34 @@ SECTIONS {
     _persisting_bytes_buffer_end = .;
   } >EXTERNAL_FLASH_PERSITING_BYTES
 
-  .text.external ORIGIN(EXTERNAL_FLASH_KERNEL) : {
+  .text.unprivileged.external ORIGIN(EXTERNAL_FLASH_UNPRIVILEGED_KERNEL) : {
     . = ALIGN(4);
-    /* 'kernel_main' symbol has to be in the external flash: it downgrades the
-     * execution mode to unprivileged before jumping to the userland. However,
-     * unprivileged code can't execute internal flash code. */
-    *(.text._Z11kernel_mainb)
+    /* 'kernel_main' symbol has to be in a specific sector of the external
+     * flash: it downgrades the execution mode to unprivileged before jumping
+     * to the userland. It's the only kernel code that should be executable in
+     * unprivileged mode.
+     */
+    *(.text.switch_to_unpriviledged)
+    *(.text._Z17unprivileged_mainv)
+  } >EXTERNAL_FLASH_UNPRIVILEGED_KERNEL
+
+  .text.external ORIGIN(EXTERNAL_FLASH_PRIVILEGED_KERNEL) : {
+    . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >EXTERNAL_FLASH_KERNEL
+  } >EXTERNAL_FLASH_PRIVILEGED_KERNEL
 
   .rodata.external : {
     *(.rodata)
     *(.rodata.*)
-  } >EXTERNAL_FLASH_KERNEL
+  } >EXTERNAL_FLASH_PRIVILEGED_KERNEL
 
   .fill.external :
   {
     FILL(0xFF);
-    . = ORIGIN(EXTERNAL_FLASH_KERNEL) + LENGTH(EXTERNAL_FLASH_KERNEL) - 1;
+    . = ORIGIN(EXTERNAL_FLASH_PRIVILEGED_KERNEL) + LENGTH(EXTERNAL_FLASH_PRIVILEGED_KERNEL) - 1;
     BYTE(0xFF)
-  } > EXTERNAL_FLASH_KERNEL
+  } > EXTERNAL_FLASH_PRIVILEGED_KERNEL
 
   .bss : {
     /* The bss section contains data for all uninitialized variables
@@ -228,14 +236,36 @@ SECTIONS {
   }
 }
 
+/* Internal flash code should not references any external flash code: the
+ * external flash might not be initialized when executing it. Only the
+ * internal_to_external section should reference the external flash. */
 NOCROSSREFS_TO(.text.external .text.internal);
+NOCROSSREFS_TO(.text.unprivileged.external .text.internal);
 NOCROSSREFS_TO(.rodata.external .text.internal);
-NOCROSSREFS_TO(.text.external .rodata.internal);
-NOCROSSREFS_TO(.rodata.external .rodata.internal);
-NOCROSSREFS_TO(.text.external .header);
-NOCROSSREFS_TO(.rodata.external .header);
-
 NOCROSSREFS_TO(.persisting_bytes_buffer .text.internal);
+
+NOCROSSREFS_TO(.text.external .rodata.internal);
+NOCROSSREFS_TO(.text.unprivileged.external .rodata.internal);
+NOCROSSREFS_TO(.rodata.external .rodata.internal);
 NOCROSSREFS_TO(.persisting_bytes_buffer .rodata.internal);
-NOCROSSREFS_TO(.persisting_bytes_buffer .isr_vector_table);
+
+NOCROSSREFS_TO(.text.external .header);
+NOCROSSREFS_TO(.text.unprivileged.external .header);
+NOCROSSREFS_TO(.rodata.external .header);
 NOCROSSREFS_TO(.persisting_bytes_buffer .header);
+
+/*NOCROSSREFS_TO(.text.external .isr_vector_table);*/
+NOCROSSREFS_TO(.text.unprivileged.external .isr_vector_table);
+NOCROSSREFS_TO(.rodata.external .isr_vector_table);
+NOCROSSREFS_TO(.persisting_bytes_buffer .isr_vector_table);
+
+/* Unprivileged code references none other code would are executable in
+ * privileged mode only. */
+NOCROSSREFS_TO(.persisting_bytes_buffer .text.unprivileged.external);
+NOCROSSREFS_TO(.text.internal .text.unprivileged.external);
+NOCROSSREFS_TO(.text.internal_to_external .text.unprivileged.external);
+NOCROSSREFS_TO(.text.external .text.unprivileged.external);
+NOCROSSREFS_TO(.rodata.internal .text.unprivileged.external);
+NOCROSSREFS_TO(.rodata.external .text.unprivileged.external);
+NOCROSSREFS_TO(.header .text.unprivileged.external);
+NOCROSSREFS_TO(.isr_vector_table .text.unprivileged.external);

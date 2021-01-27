@@ -33,7 +33,6 @@ public:
     }
     return m_selectableTableView.columnWidth(0);
   }
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;

@@ -21,9 +21,9 @@ DisplayModeController::DisplayModeController(Responder * parentResponder, InputE
 
 KDCoordinate DisplayModeController::nonMemoizedRowHeight(int j) {
   if (j == numberOfRows()-1) {
-    MessageTableCellWithEditableTextWithSeparator tempCell = MessageTableCellWithEditableTextWithSeparator();
-    prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
-    return tempCell.minimalSizeForOptimalDisplay().height();
+    // Do not call prepareCellForHeightCalculation as it will reset edited text.
+    m_editableCell.setSize(KDSize(cellWidth(), m_editableCell.bounds().height()));
+    return m_editableCell.minimalSizeForOptimalDisplay().height();
   }
   return PreferencesController::nonMemoizedRowHeight(j);
 }

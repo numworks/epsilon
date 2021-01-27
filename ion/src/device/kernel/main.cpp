@@ -52,21 +52,26 @@ void displayWarningMessage() {
 
 typedef void (*EntryPoint)();
 
-/* 'kernel_main' has to be in the external flash since it downgrades the
- * execution mode to unprivileged and the MPU forbids access to the internal
- * flash by unprivileged code. To ensure this, we forbid inlining. */
+/* 'unprivileged_main' has to be in a special memory sector whose access is
+ * enabled for unprivileged code since it downgrades the execution mode to
+ * unprivileged and the MPU forbids access to most of the kernel code by
+ * unprivileged code. To ensure this, we need to forbid inlining. */
 
-void __attribute__((noinline)) kernel_main(bool numworksAuthentication) {
-  // Display warning for unauthenticated software
-  if (!numworksAuthentication) {
-    Ion::Device::Backlight::init();
-    displayWarningMessage();
-    Ion::Device::Backlight::shutdown();
-  }
+void __attribute__((noinline)) unprivileged_main() {
   // Unprivileged mode
   switch_to_unpriviledged();
 
   // Jump to userland
   EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(Ion::Device::Board::Config::UserlandAddress);
   (*userlandFirstAddress)();
+}
+
+void kernel_main(bool numworksAuthentication) {
+  // Display warning for unauthenticated software
+  if (!numworksAuthentication) {
+    Ion::Device::Backlight::init();
+    displayWarningMessage();
+    Ion::Device::Backlight::shutdown();
+  }
+  unprivileged_main();
 }

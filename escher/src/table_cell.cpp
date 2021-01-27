@@ -59,13 +59,6 @@ KDSize TableCell::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
-  // TODO Hugo : Ensure no text overflows
-  // assert(value <= max);
-  if (value > max) {
-    /* This row is added for development purpose, to visually see when something
-     * is overflowing the cell without interrupting the process. */
-    Ion::Display::pushRectUniform(KDRect(0,0,KDSize(10,10)), KDColorRed);
-  }
   return value > max ? max : value;
 }
 

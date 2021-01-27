@@ -52,7 +52,7 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subL
 }
 
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
-  // TODO Hugo : Improve this workaround to find frame's width
+  // TableCell's available width is necessary to compute it minimal height.
   KDCoordinate expectedWidth = m_frame.width();
   assert(expectedWidth > 0);
   return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), subLabelView(), accessoryView(), expectedWidth));

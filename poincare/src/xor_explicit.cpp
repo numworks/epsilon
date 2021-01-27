@@ -28,12 +28,6 @@ namespace Poincare
     return XorExplicit(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> XorExplicitNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression XorExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

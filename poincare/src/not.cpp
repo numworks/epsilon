@@ -28,12 +28,6 @@ namespace Poincare
     return Not(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> NotNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression Not::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

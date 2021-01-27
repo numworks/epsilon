@@ -28,12 +28,6 @@ namespace Poincare
     return TwosComplement(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> TwosComplementNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression TwosComplement::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

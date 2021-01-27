@@ -28,12 +28,6 @@ namespace Poincare
     return Xnor(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> XnorNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression Xnor::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

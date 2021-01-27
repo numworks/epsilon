@@ -28,12 +28,6 @@ namespace Poincare
     return ShiftLogicLeftExplicit(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> ShiftLogicLeftExplicitNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression ShiftLogicLeftExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

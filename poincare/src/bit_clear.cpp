@@ -28,12 +28,6 @@ namespace Poincare
     return BitClear(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> BitClearNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression BitClear::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

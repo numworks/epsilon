@@ -28,12 +28,6 @@ namespace Poincare
     return BitGet(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> BitGetNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression BitGet::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

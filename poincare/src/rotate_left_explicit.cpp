@@ -28,12 +28,6 @@ namespace Poincare
     return RotateLeftExplicit(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> RotateLeftExplicitNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression RotateLeftExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

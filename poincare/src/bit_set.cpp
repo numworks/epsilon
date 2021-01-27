@@ -28,12 +28,6 @@ namespace Poincare
     return BitSet(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> BitSetNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression BitSet::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

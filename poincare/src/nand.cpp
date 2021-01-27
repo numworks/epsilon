@@ -28,12 +28,6 @@ namespace Poincare
     return Nand(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> NandNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
-
   Expression Nand::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

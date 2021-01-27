@@ -28,11 +28,6 @@ namespace Poincare
     return AndExplicit(this).shallowReduce(reductionContext);
   }
 
-  template <typename T>
-  Evaluation<T> AndExplicitNode::templatedApproximate(ApproximationContext approximationContext) const
-  {
-    return Complex<T>::RealUndefined();
-  }
   Expression AndExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext)
   {
     {

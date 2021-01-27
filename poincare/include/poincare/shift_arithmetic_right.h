@@ -33,16 +33,13 @@ private:
     LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
     // Evaluation
-    Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override
-    {
-      return templatedApproximate<float>(approximationContext);
-    }
-    Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override
-    {
-      return templatedApproximate<double>(approximationContext);
-    }
+    Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+    Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
     template <typename T>
-    Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
+    Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const
+    {
+      return Complex<T>::RealUndefined();
+    }
   };
 
   class ShiftArithmeticRight final : public Expression

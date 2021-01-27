@@ -139,7 +139,8 @@ const ToolboxMessageTree unitTimeChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeDaySymbol, I18n::Message::UnitTimeDay),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeWeekSymbol, I18n::Message::UnitTimeWeek),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeMonthSymbol, I18n::Message::UnitTimeMonth),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeYearSymbol, I18n::Message::UnitTimeYear)};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeYearSymbol, I18n::Message::UnitTimeYear)
+};
 
 constexpr ToolboxMessageTree unitDistanceMeterPico = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterPicoSymbol, I18n::Message::UnitDistanceMeterPico);
 constexpr ToolboxMessageTree unitDistanceMeterNano = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterNanoSymbol, I18n::Message::UnitDistanceMeterNano);
@@ -245,7 +246,8 @@ const ToolboxMessageTree unitFrequencyHertzChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzSymbol, I18n::Message::UnitFrequencyHertz),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzKiloSymbol, I18n::Message::UnitFrequencyHertzKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzMegaSymbol, I18n::Message::UnitFrequencyHertzMega),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga)};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga)
+};
 
 const ToolboxMessageTree unitForceNewtonChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonMilliSymbol, I18n::Message::UnitForceNewtonMilli),
@@ -318,13 +320,16 @@ const ToolboxMessageTree unitInductanceChildren[] = {
 
 const ToolboxMessageTree unitSurfaceChildrenForMetricToolbox[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre)};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre)
+};
 const ToolboxMessageTree unitSurfaceChildrenForImperialToolbox[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)
+};
 const ToolboxMessageTree unitSurfaceFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForMetricToolbox),
-  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForImperialToolbox)};
+  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForImperialToolbox)
+};
 
 constexpr ToolboxMessageTree unitVolumeLiterMilli = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterMilliSymbol, I18n::Message::UnitVolumeLiterMilli);
 constexpr ToolboxMessageTree unitVolumeLiterCenti = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterCentiSymbol, I18n::Message::UnitVolumeLiterCenti);
@@ -422,7 +427,7 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Vectors, vectorsChildren),
   ToolboxMessageTree::Node(I18n::Message::Logic, logicChildren),
 #if LIST_ARE_DEFINED
-    ToolboxMessageTree::Node(I18n::Message::Lists, listsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Lists, listsChildren),
 #endif
   ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
   ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
@@ -444,7 +449,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   const char * text = I18n::translate(messageTree->insertedText());
   char textToInsert[k_maxMessageSize]; // Has to be in the same scope as handleEventWithText
   if (messageTree->label() == messageTree->insertedText()) {
-    //  Remove the arguments if we kept one message for both inserted and displayed message
+  //  Remove the arguments if we kept one message for both inserted and displayed message
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);
     Shared::ToolboxHelpers::TextToInsertForCommandText(text, -1, textToInsert, maxTextToInsertLength, true);
@@ -464,22 +469,22 @@ MessageTableCellWithMessage * MathToolbox::leafCellAtIndex(int index) {
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron *MathToolbox::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron * MathToolbox::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
 
 int MathToolbox::maxNumberOfDisplayedRows() {
-  return k_maxNumberOfDisplayedRows;
+ return k_maxNumberOfDisplayedRows;
 }
 
 int MathToolbox::indexAfterFork() const {
-  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
-  if (unitFormat == Preferences::UnitFormat::Metric)
-  {
-    return 0;
-  }
-  assert(unitFormat == Preferences::UnitFormat::Imperial);
-  return 1;
+    Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+    if (unitFormat == Preferences::UnitFormat::Metric)
+    {
+      return 0;
+    }
+    assert(unitFormat == Preferences::UnitFormat::Imperial);
+    return 1;
 }
 

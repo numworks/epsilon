@@ -11,7 +11,7 @@ namespace Regression {
 
 class GraphController;
 
-class GraphOptionsController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class GraphOptionsController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   Escher::View * view() override;
@@ -20,7 +20,7 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   int numberOfRows() const override;
   KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override;

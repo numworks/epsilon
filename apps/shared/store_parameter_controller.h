@@ -1,7 +1,7 @@
 #ifndef SHARED_STORE_PARAM_CONTROLLER_H
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/message_table_cell.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
@@ -13,7 +13,7 @@ namespace Shared {
 
 class StoreController;
 
-class StoreParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class StoreParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   StoreParameterController(Escher::Responder * parentResponder, DoublePairStore * store, StoreController * storeController);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }

@@ -5,13 +5,13 @@
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/view_controller.h>
 #include "function.h"
 
 namespace Shared {
 
-class ValuesFunctionParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ValuesFunctionParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ValuesFunctionParameterController() :
     Escher::ViewController(nullptr),

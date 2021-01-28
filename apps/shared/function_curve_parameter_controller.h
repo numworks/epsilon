@@ -3,11 +3,11 @@
 
 #include "function_go_to_parameter_controller.h"
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 
 namespace Shared {
 
-class FunctionCurveParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class FunctionCurveParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   FunctionCurveParameterController();
   Escher::View * view() override { return &m_selectableTableView; }

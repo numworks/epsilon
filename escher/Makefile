@@ -34,6 +34,7 @@ escher_src += $(addprefix escher/src/,\
   key_view.cpp \
   layout_field.cpp \
   list_view_data_source.cpp \
+  memoized_list_view_data_source.cpp \
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
   message_table_cell_with_chevron.cpp \
@@ -61,7 +62,6 @@ escher_src += $(addprefix escher/src/,\
   scrollable_expression_view.cpp \
   scrollable_view.cpp \
   selectable_table_view.cpp \
-  simple_list_view_data_source.cpp \
   simple_table_view_data_source.cpp \
   solid_color_view.cpp \
   stack_view.cpp \

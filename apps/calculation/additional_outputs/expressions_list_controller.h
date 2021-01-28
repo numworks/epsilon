@@ -15,7 +15,7 @@ public:
   void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;

@@ -20,21 +20,10 @@ public:
 
   void prepareCellForHeightCalculation(HighlightCell * cell, int index);
   void resetMemoization(bool force = true);
-  void resetMemoizationForIndex(int index);
 
-  // Non memoized. TODO Hugo : Simplify memoization locks
-  virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) {
-    updateMemoizationLock(true);
-    KDCoordinate result = ListViewDataSource::cumulatedHeightFromIndex(index);
-    updateMemoizationLock(false);
-    return result;
-  }
-  virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) {
-    updateMemoizationLock(true);
-    int result = ListViewDataSource::indexFromCumulatedHeight(offsetY);
-    updateMemoizationLock(false);
-    return result;
-  }
+  // Non memoized.
+  virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) { return ListViewDataSource::cumulatedHeightFromIndex(index); }
+  virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
   // Following methods have a default implementation for specific simple lists.
   virtual KDCoordinate nonMemoizedRowHeight(int index);
   int reusableCellCount(int type) override { return numberOfRows(); }
@@ -44,7 +33,7 @@ private:
   int getMemoizedIndex(int index);
   void setMemoizationIndex(int index);
   void shiftMemoization(bool newCellIsUnder);
-  bool updateMemoizationLock(bool state);
+  void updateMemoizationLock(bool state);
   KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
   KDCoordinate m_memoizedCumulatedHeightOffset;
   KDCoordinate m_memoizedTotalHeight;

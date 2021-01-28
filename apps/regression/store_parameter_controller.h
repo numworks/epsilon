@@ -15,7 +15,7 @@ public:
   StoreParameterController(Escher::Responder * parentResponder, Store * store, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   int numberOfRows() const override { return Shared::StoreParameterController::numberOfRows() + 1; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

@@ -15,7 +15,7 @@ class ListParameterController : public Shared::ListParameterController {
 public:
   ListParameterController(ListController * listController, Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override { return Shared::ListParameterController::numberOfRows() + k_localNumberOfCell; }

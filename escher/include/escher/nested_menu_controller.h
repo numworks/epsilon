@@ -3,13 +3,13 @@
 
 #include <escher/input_event_handler.h>
 #include <escher/highlight_cell.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 
 namespace Escher {
 
-class NestedMenuController : public StackViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
+class NestedMenuController : public StackViewController, public MemoizedListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
   void setSender(InputEventHandler * sender) { m_sender = sender; }
@@ -21,7 +21,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
 
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   KDCoordinate cellWidth() override { return m_listController.selectableTableView()->columnWidth(0); }
   HighlightCell * reusableCell(int index, int type) override;
 protected:

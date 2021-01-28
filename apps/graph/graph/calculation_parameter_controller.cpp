@@ -10,9 +10,8 @@ using namespace Escher;
 namespace Graph {
 
 CalculationParameterController::CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_preimageCell(I18n::Message::Preimage),
-  m_selectableTableView(this),
   m_record(),
   m_preimageParameterController(nullptr, inputEventHandlerDelegate, range, cursor, &m_preimageGraphController),
   m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
@@ -27,10 +26,6 @@ CalculationParameterController::CalculationParameterController(Responder * paren
 
 const char * CalculationParameterController::title() {
   return I18n::translate(I18n::Message::Compute);
-}
-
-View * CalculationParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void CalculationParameterController::viewWillAppear() {

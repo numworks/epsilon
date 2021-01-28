@@ -9,8 +9,7 @@ using namespace Escher;
 namespace Graph {
 
 TypeParameterController::TypeParameterController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_selectableTableView(this, this, this, nullptr),
+  SelectableListViewController(parentResponder),
   m_record()
 {
 }

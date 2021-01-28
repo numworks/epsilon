@@ -4,9 +4,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/expression_table_cell_with_pointer.h>
-#include <escher/selectable_table_view.h>
-#include <escher/selectable_table_view_data_source.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/selectable_list_view_controller.h>
 #include <poincare/layout.h>
 #include "../../shared/sequence_store.h"
 
@@ -14,19 +12,17 @@ namespace Sequence {
 
 class ListController;
 
-class TypeParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
+class TypeParameterController : public Escher::SelectableListViewController {
 public:
   TypeParameterController(Escher::Responder * parentResponder, ListController * list,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   const char * title() override;
-  Escher::View * view() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -44,7 +40,6 @@ private:
   Escher::ExpressionTableCellWithPointer m_singleRecurrenceCell;
   Escher::ExpressionTableCellWithPointer m_doubleRecurenceCell;
   Poincare::Layout m_layouts[k_totalNumberOfCell];
-  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
   ListController * m_listController;
 };

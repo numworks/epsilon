@@ -1,6 +1,7 @@
 #ifndef PROBABILITY_DISTRIBUTION_CONTROLLER_H
 #define PROBABILITY_DISTRIBUTION_CONTROLLER_H
 
+#include <escher/selectable_list_view_controller.h>
 #include "cell.h"
 #include "distribution/distribution.h"
 #include "parameters_controller.h"
@@ -8,7 +9,7 @@
 
 namespace Probability {
 
-class DistributionController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
+class DistributionController : public Escher::SelectableListViewController {
 public:
   DistributionController(Escher::Responder * parentResponder, Distribution * m_distribution, ParametersController * parametersController);
   Escher::View * view() override { return &m_contentView; }
@@ -19,7 +20,6 @@ public:
   int numberOfRows() const override { return k_totalNumberOfModels; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
 private:
   class ContentView : public Escher::View {
@@ -39,7 +39,6 @@ private:
   void setDistributionAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 9;
   Cell m_cells[k_totalNumberOfModels];
-  Escher::SelectableTableView m_selectableTableView;
   ContentView m_contentView;
   Distribution * m_distribution;
   ParametersController * m_parametersController;

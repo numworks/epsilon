@@ -4,21 +4,17 @@
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_table_cell_with_editable_text.h>
-#include <escher/selectable_table_view.h>
-#include <escher/selectable_table_view_data_source.h>
-#include <escher/memoized_list_view_data_source.h>
-#include <escher/view_controller.h>
+#include <escher/selectable_list_view_controller.h>
 #include "../continuous_function_store.h"
 
 namespace Graph {
 
 class ValuesController;
 
-class DerivativeParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
+class DerivativeParameterController : public Escher::SelectableListViewController {
 public:
   DerivativeParameterController(ValuesController * valuesController);
 
-  Escher::View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -28,7 +24,6 @@ public:
   void setRecord(Ion::Storage::Record record) {
     m_record = record;
   }
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 private:
   ContinuousFunctionStore * functionStore();
 #if COPY_COLUMN
@@ -42,7 +37,6 @@ private:
 #if COPY_COLUMN
   Escher::MessageTableCellWithChevron m_copyColumn;
 #endif
-  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
   ValuesController * m_valuesController;
 };

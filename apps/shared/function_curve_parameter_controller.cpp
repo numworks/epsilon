@@ -6,9 +6,8 @@ using namespace Escher;
 namespace Shared {
 
 FunctionCurveParameterController::FunctionCurveParameterController() :
-  ViewController(nullptr),
+  SelectableListViewController(nullptr),
   m_goToCell(I18n::Message::Goto),
-  m_selectableTableView(this, this, this),
   m_record()
 {
 }

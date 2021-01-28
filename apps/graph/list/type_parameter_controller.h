@@ -2,7 +2,7 @@
 #define GRAPH_LIST_TYPE_PARAMATER_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/stack_view_controller.h>
@@ -10,7 +10,7 @@
 
 namespace Graph {
 
-class TypeParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
+class TypeParameterController : public Escher::SelectableListViewController {
 public:
   TypeParameterController(Escher::Responder * parentResponder);
 
@@ -19,12 +19,10 @@ public:
 
   // ViewController
   const char * title() override;
-  Escher::View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   TELEMETRY_ID("TypeParameter");
 
   // MemoizedListViewDataSource
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   int numberOfRows() const override { return k_numberOfTypes; }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
@@ -36,7 +34,6 @@ public:
 private:
   constexpr static int k_numberOfTypes = 3;
   Escher::StackViewController * stackController() const;
-  Escher::SelectableTableView m_selectableTableView;
   Escher::MessageTableCellWithExpression m_cells[k_numberOfTypes];
   Ion::Storage::Record m_record;
 };

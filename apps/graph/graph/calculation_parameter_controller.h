@@ -2,7 +2,7 @@
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/selectable_list_view_controller.h>
 #include "preimage_parameter_controller.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
@@ -15,10 +15,9 @@
 
 namespace Graph {
 
-class CalculationParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
+class CalculationParameterController : public Escher::SelectableListViewController {
 public:
   CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
-  Escher::View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -26,7 +25,6 @@ public:
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -38,7 +36,6 @@ private:
   Escher::MessageTableCellWithChevron m_preimageCell;
   constexpr static int k_totalNumberOfReusableCells = 6;
   Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
-  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
   PreimageParameterController m_preimageParameterController;
   PreimageGraphController m_preimageGraphController;

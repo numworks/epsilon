@@ -12,8 +12,7 @@ namespace Shared {
 
 template<typename T>
 FloatParameterController<T>::FloatParameterController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_selectableTableView(this, this, this),
+  SelectableListViewController(parentResponder),
   m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation([](void * context, void * sender) {
       FloatParameterController * parameterController = (FloatParameterController *) context;
       parameterController->buttonAction();

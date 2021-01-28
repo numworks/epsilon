@@ -8,12 +8,11 @@ using namespace Escher;
 namespace Graph {
 
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
-  ViewController(valuesController),
+  SelectableListViewController(valuesController),
   m_hideColumn(I18n::Message::HideDerivativeColumn),
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::CopyColumnInList),
 #endif
-  m_selectableTableView(this),
   m_record(),
   m_valuesController(valuesController)
 {
@@ -25,10 +24,6 @@ void DerivativeParameterController::viewWillAppear() {
 
 const char * DerivativeParameterController::title() {
   return m_pageTitle;
-}
-
-View * DerivativeParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void DerivativeParameterController::didBecomeFirstResponder() {

@@ -15,12 +15,11 @@ namespace Sequence {
 
 TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_explicitCell(&m_selectableTableView, I18n::Message::Explicit),
   m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence),
   m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence),
   m_layouts{},
-  m_selectableTableView(this),
   m_record(),
   m_listController(list)
 {
@@ -33,10 +32,6 @@ const char * TypeParameterController::title() {
     return I18n::translate(I18n::Message::ChooseSequenceType);
   }
   return I18n::translate(I18n::Message::SequenceType);
-}
-
-View * TypeParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void TypeParameterController::viewWillAppear() {

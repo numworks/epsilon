@@ -18,10 +18,7 @@ using namespace Escher;
 namespace Regression {
 
 RegressionController::RegressionController(Responder * parentResponder, Store * store) :
-  ViewController(parentResponder),
-  MemoizedListViewDataSource(),
-  SelectableTableViewDataSource(),
-  m_selectableTableView(this, this, this),
+  SelectableListViewController(parentResponder),
   m_store(store),
   m_series(-1)
 {

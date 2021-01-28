@@ -10,10 +10,9 @@ using namespace Escher;
 namespace Shared {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_store(store),
   m_series(0),
-  m_selectableTableView(this, this, this),
   m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula},
   m_storeController(storeController),
   m_xColumnSelected(true)

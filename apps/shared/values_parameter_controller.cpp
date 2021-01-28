@@ -7,22 +7,17 @@ using namespace Escher;
 namespace Shared {
 
 ValuesParameterController::ValuesParameterController(Responder * parentResponder) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_deleteColumn(I18n::Message::Default),
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::Default),
 #endif
-  m_setInterval(I18n::Message::Default),
-  m_selectableTableView(this, this, this)
+  m_setInterval(I18n::Message::Default)
 {
 }
 
 const char * ValuesParameterController::title() {
   return I18n::translate(m_pageTitle);
-}
-
-View * ValuesParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

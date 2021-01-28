@@ -7,8 +7,7 @@ using namespace Escher;
 namespace Shared {
 
 ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
-  ViewController(parentResponder),
-  m_selectableTableView(this, this, this, tableDelegate),
+  SelectableListViewController(parentResponder, tableDelegate),
   m_record(),
   m_enableCell(I18n::Message::ActivateDeactivate),
   m_deleteCell(deleteFunctionMessage)

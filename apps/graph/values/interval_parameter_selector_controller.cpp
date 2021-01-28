@@ -9,8 +9,7 @@ using namespace Escher;
 namespace Graph {
 
 IntervalParameterSelectorController::IntervalParameterSelectorController() :
-  ViewController(nullptr),
-  m_selectableTableView(this, this, this)
+  SelectableListViewController(nullptr)
 {
 }
 

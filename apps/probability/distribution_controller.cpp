@@ -49,8 +49,7 @@ void DistributionController::ContentView::layoutSubviews(bool force) {
 }
 
 DistributionController::DistributionController(Responder * parentResponder, Distribution * distribution, ParametersController * parametersController) :
-  ViewController(parentResponder),
-  m_selectableTableView(this),
+  SelectableListViewController(parentResponder),
   m_contentView(&m_selectableTableView),
   m_distribution(distribution),
   m_parametersController(parametersController)

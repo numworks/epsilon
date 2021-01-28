@@ -67,11 +67,11 @@ namespace Poincare
     {
       return Undefined::Builder();
     }
-    if (ar.integerDenominator().isNegative())
+    if (ar.signedIntegerNumerator().isNegative())
     {
       return Undefined::Builder();
     }
-    if (br.integerDenominator().isNegative())
+    if (br.signedIntegerNumerator().isNegative())
     {
       return Undefined::Builder();
     }

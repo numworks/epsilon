@@ -2,7 +2,7 @@
 #define GRAPH_LIST_TYPE_PARAMATER_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/stack_view_controller.h>
@@ -10,7 +10,7 @@
 
 namespace Graph {
 
-class TypeParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class TypeParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   TypeParameterController(Escher::Responder * parentResponder);
 
@@ -23,7 +23,7 @@ public:
   void viewWillAppear() override;
   TELEMETRY_ID("TypeParameter");
 
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   int numberOfRows() const override { return k_numberOfTypes; }
   KDCoordinate nonMemoizedRowHeight(int j) override;

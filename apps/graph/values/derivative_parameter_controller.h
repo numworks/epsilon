@@ -6,7 +6,7 @@
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/view_controller.h>
 #include "../continuous_function_store.h"
 
@@ -14,7 +14,7 @@ namespace Graph {
 
 class ValuesController;
 
-class DerivativeParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class DerivativeParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   DerivativeParameterController(ValuesController * valuesController);
 

@@ -99,7 +99,7 @@ KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
   if (j == numberOfRows()-1) {
     return m_okButton.minimalSizeForOptimalDisplay().height();
   }
-  return SimpleListViewDataSource::nonMemoizedRowHeight(j);
+  return MemoizedListViewDataSource::nonMemoizedRowHeight(j);
 }
 
 template<typename T>

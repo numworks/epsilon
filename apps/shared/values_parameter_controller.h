@@ -3,11 +3,11 @@
 
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include "interval_parameter_controller.h"
 
 namespace Shared {
-class ValuesParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ValuesParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ValuesParameterController(Escher::Responder * parentResponder);
   Escher::View * view() override;

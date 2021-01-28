@@ -70,7 +70,7 @@ KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == 1) {
     j-=1;
   }
-  return SimpleListViewDataSource::nonMemoizedRowHeight(j);
+  return MemoizedListViewDataSource::nonMemoizedRowHeight(j);
 }
 
 HighlightCell * EquationModelsParameterController::reusableCell(int index, int type) {

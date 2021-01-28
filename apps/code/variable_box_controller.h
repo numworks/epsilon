@@ -19,7 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
 
-  /* SimpleListViewDataSource */
+  /* MemoizedListViewDataSource */
   KDCoordinate nonMemoizedRowHeight(int j) override;
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;

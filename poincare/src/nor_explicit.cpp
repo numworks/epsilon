@@ -83,7 +83,7 @@ namespace Poincare
     {
       return Undefined::Builder();
     }
-    if (cr.signedIntegerNumerator().isNegative())
+    if (cr.signedIntegerNumerator().isNegative() || !cr.signedIntegerNumerator().isLowerThan(Integer(__INT8_MAX__)))
     {
       return Undefined::Builder();
     }

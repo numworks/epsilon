@@ -97,7 +97,7 @@ HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
 template<typename T>
 KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
   if (j == numberOfRows()-1) {
-    return Metric::ParameterCellHeight+k_buttonMargin;
+    return m_okButton.minimalSizeForOptimalDisplay().height();
   }
   return SimpleListViewDataSource::nonMemoizedRowHeight(j);
 }

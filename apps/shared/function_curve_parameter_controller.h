@@ -3,23 +3,20 @@
 
 #include "function_go_to_parameter_controller.h"
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/selectable_list_view_controller.h>
 
 namespace Shared {
 
-class FunctionCurveParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
+class FunctionCurveParameterController : public Escher::SelectableListViewController {
 public:
   FunctionCurveParameterController();
-  Escher::View * view() override { return &m_selectableTableView; }
   TELEMETRY_ID("CurveParameter");
   void didBecomeFirstResponder() override;
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   bool handleGotoSelection();
   Escher::MessageTableCellWithChevron m_goToCell;
-  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
   virtual FunctionGoToParameterController * goToParameterController() = 0;

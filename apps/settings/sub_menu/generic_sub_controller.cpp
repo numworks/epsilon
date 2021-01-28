@@ -10,8 +10,7 @@ using namespace Escher;
 namespace Settings {
 
 GenericSubController::GenericSubController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_selectableTableView(this),
+  SelectableListViewController(parentResponder),
   m_messageTreeModel(nullptr)
 {
   m_selectableTableView.setTopMargin(k_topBottomMargin);

@@ -6,7 +6,7 @@
 #include <escher/expression_table_cell_with_pointer.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <poincare/layout.h>
 #include "../../shared/sequence_store.h"
 
@@ -14,7 +14,7 @@ namespace Sequence {
 
 class ListController;
 
-class TypeParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class TypeParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   TypeParameterController(Escher::Responder * parentResponder, ListController * list,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,

@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class DistributionController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class DistributionController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   DistributionController(Escher::Responder * parentResponder, Distribution * m_distribution, ParametersController * parametersController);
   Escher::View * view() override { return &m_contentView; }

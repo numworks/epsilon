@@ -2,7 +2,7 @@
 #define SHARED_LIST_PARAM_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/message_table_cell_with_switch.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
@@ -12,7 +12,7 @@
 
 namespace Shared {
 
-class ListParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ListParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::SelectableTableViewDelegate * tableDelegate = nullptr);
 
@@ -24,7 +24,7 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   int numberOfRows() const override { return k_localNumberOfCell; }
   KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override;

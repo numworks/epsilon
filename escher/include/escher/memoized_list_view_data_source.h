@@ -1,5 +1,5 @@
-#ifndef ESCHER_SIMPLE_LIST_VIEW_DATA_SOURCE_H
-#define ESCHER_SIMPLE_LIST_VIEW_DATA_SOURCE_H
+#ifndef ESCHER_MEMOIZED_LIST_VIEW_DATA_SOURCE_H
+#define ESCHER_MEMOIZED_LIST_VIEW_DATA_SOURCE_H
 
 #include <escher/list_view_data_source.h>
 #include <escher/highlight_cell.h>

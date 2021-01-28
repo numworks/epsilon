@@ -5,23 +5,21 @@
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_switch.h>
 #include <escher/stack_view_controller.h>
-#include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/selectable_list_view_controller.h>
 #include "script_store.h"
 
 namespace Code {
 
 class MenuController;
 
-class ScriptParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ScriptParameterController : public Escher::SelectableListViewController {
 public:
   ScriptParameterController(Escher::Responder * parentResponder, I18n::Message title, MenuController * menuController);
   void setScript(Script script);
   void dismissScriptParameterController();
 
   /* ViewController */
-  Escher::View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -32,7 +30,6 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 
 private:
   constexpr static int k_totalNumberOfCell = 4;
@@ -42,7 +39,6 @@ private:
   Escher::MessageTableCell m_renameScript;
   Escher::MessageTableCellWithSwitch m_autoImportScript;
   Escher::MessageTableCell m_deleteScript;
-  Escher::SelectableTableView m_selectableTableView;
   Script m_script;
   MenuController * m_menuController;
 };

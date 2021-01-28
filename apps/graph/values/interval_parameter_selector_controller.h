@@ -3,13 +3,13 @@
 
 #include <apps/shared/interval_parameter_controller.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/view_controller.h>
 #include "../../shared/continuous_function.h"
 
 namespace Graph {
 
-class IntervalParameterSelectorController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class IntervalParameterSelectorController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   IntervalParameterSelectorController();
   const char * title() override;

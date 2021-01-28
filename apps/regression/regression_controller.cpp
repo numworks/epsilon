@@ -19,7 +19,7 @@ namespace Regression {
 
 RegressionController::RegressionController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
-  SimpleListViewDataSource(),
+  MemoizedListViewDataSource(),
   SelectableTableViewDataSource(),
   m_selectableTableView(this, this, this),
   m_store(store),

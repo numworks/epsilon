@@ -54,7 +54,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
-  return SimpleListViewDataSource::nonMemoizedRowHeight(index);
+  return MemoizedListViewDataSource::nonMemoizedRowHeight(index);
 }
 
 }

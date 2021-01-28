@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-class Metric { // TODO Hugo : Removed unused cell metrics
+class Metric {
 public:
   constexpr static KDCoordinate CellTopMargin = 8;
   constexpr static KDCoordinate CellRightMargin = 8;
@@ -22,9 +22,6 @@ public:
   constexpr static KDCoordinate CommonSmallMargin = 5;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
   constexpr static KDCoordinate TitleBarHeight = 18;
-  constexpr static KDCoordinate ParameterCellHeight = 35;
-  constexpr static KDCoordinate TableCellVerticalMargin = 3;
-  constexpr static KDCoordinate TableCellHorizontalMargin = 10;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate ScrollStep = 10;
   constexpr static KDCoordinate PopUpLeftMargin = 27;
@@ -32,7 +29,6 @@ public:
   constexpr static KDCoordinate PopUpTopMargin = 27;
   constexpr static KDCoordinate PopUpBottomMargin = 55;
   constexpr static KDCoordinate StoreRowHeight = 50;
-  constexpr static KDCoordinate ToolboxRowHeight = 40;
   constexpr static KDCoordinate StackTitleHeight = 20;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;

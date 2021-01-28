@@ -78,10 +78,10 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
 }
 
 int Store::nextDot(int series, int direction, int dot) {
-  float nextX = INFINITY;
+  double nextX = INFINITY;
   int selectedDot = -1;
   double meanX = meanOfColumn(series, 0);
-  float x = meanX;
+  double x = meanX;
   if (dot >= 0 && dot < numberOfPairsOfSeries(series)) {
     x = get(series, 0, dot);
   }

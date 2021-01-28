@@ -89,11 +89,8 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       double max = function->tMax();
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
-      int glyphLength = writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
-      int numberOfAvailableGlyphs = (m_functionDomain.bounds().width() - m_functionDomain.labelView()->bounds().width() - m_functionDomain.accessoryView()->bounds().width() - 2*Metric::TableCellHorizontalMargin)/KDFont::SmallFont->glyphSize().width();
-      if (glyphLength > numberOfAvailableGlyphs) {
-        writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits-1, Preferences::PrintFloatMode::Scientific);
-      }
+      writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
+      // Cell's layout will adapt to fit the subLabel.
       m_functionDomain.setSubLabelText(buffer);
     }
   }

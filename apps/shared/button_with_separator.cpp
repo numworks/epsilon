@@ -30,4 +30,9 @@ void ButtonWithSeparator::layoutSubviews(bool force) {
   m_messageTextView.setFrame(KDRect(k_lineThickness, k_margin + k_lineThickness, width-2*k_lineThickness, height - 4*k_lineThickness-k_margin), force);
 }
 
+KDSize ButtonWithSeparator::minimalSizeForOptimalDisplay() const {
+  KDSize buttonSize = Escher::Button::minimalSizeForOptimalDisplay();
+  return KDSize(buttonSize.width(), buttonSize.height() + k_margin + k_lineThickness);
+}
+
 }

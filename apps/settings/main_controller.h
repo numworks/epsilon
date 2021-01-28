@@ -22,7 +22,7 @@ extern const Shared::SettingsMessageTree s_modelExamChildren[2];
 extern const Shared::SettingsMessageTree s_modelAboutChildren[3];
 extern const Shared::SettingsMessageTree s_model;
 
-class MainController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class MainController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   MainController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   Escher::View * view() override;

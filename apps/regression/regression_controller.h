@@ -2,7 +2,7 @@
 #define REGRESSION_REGRESSION_CONTROLLER_H
 
 #include <escher/message_table_cell_with_expression.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/view_controller.h>
@@ -11,7 +11,7 @@
 
 namespace Regression {
 
-class RegressionController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class RegressionController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   constexpr static KDCoordinate k_logisticCellHeight = 47;
   RegressionController(Escher::Responder * parentResponder, Store * store);
@@ -25,7 +25,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
-  // SimpleListViewDataSource
+  // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
   KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override;

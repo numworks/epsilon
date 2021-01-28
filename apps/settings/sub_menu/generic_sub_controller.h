@@ -2,7 +2,7 @@
 #define SETTINGS_GENERIC_SUB_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/stack_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
@@ -10,7 +10,7 @@
 
 namespace Settings {
 
-class GenericSubController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class GenericSubController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   GenericSubController(Escher::Responder * parentResponder);
   const char * title() override;

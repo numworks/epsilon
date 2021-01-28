@@ -5,7 +5,7 @@
 #include "button_with_separator.h"
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/stack_view_controller.h>
 
 namespace Shared {
@@ -14,7 +14,7 @@ namespace Shared {
  * parameterAtIndex and setParameterAtIndex). */
 
 template<typename T>
-class FloatParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource, public ParameterTextFieldDelegate {
+class FloatParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource, public ParameterTextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
   Escher::View * view() override { return &m_selectableTableView; }

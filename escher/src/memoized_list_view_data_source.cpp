@@ -1,15 +1,15 @@
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <assert.h>
 
 namespace Escher {
 
-SimpleListViewDataSource::SimpleListViewDataSource() :
+MemoizedListViewDataSource::MemoizedListViewDataSource() :
   m_memoizationLockedLevel(0)
 {
   resetMemoization(true);
 }
 
-KDCoordinate SimpleListViewDataSource::rowHeight(int j) {
+KDCoordinate MemoizedListViewDataSource::rowHeight(int j) {
   if (j < m_memoizedIndexOffset || j >= m_memoizedIndexOffset + k_memoizedCellsCount) {
     // Update memoization index if new cell is called.
     setMemoizationIndex(j);
@@ -33,7 +33,7 @@ KDCoordinate SimpleListViewDataSource::rowHeight(int j) {
   return nonMemoizedRowHeight(j);
 }
 
-KDCoordinate SimpleListViewDataSource::cumulatedHeightFromIndex(int j) {
+KDCoordinate MemoizedListViewDataSource::cumulatedHeightFromIndex(int j) {
   if (j == numberOfRows() && m_memoizedTotalHeight != k_resetedMemoizedValue) {
     // Total Height is memoized to save time and preserve memoization.
     assert(m_memoizedTotalHeight == nonMemoizedCumulatedHeightFromIndex(j)); // TODO Hugo : Remove this very costly assert
@@ -79,7 +79,7 @@ KDCoordinate SimpleListViewDataSource::cumulatedHeightFromIndex(int j) {
   return nonMemoizedCumulatedHeightFromIndex(j);
 }
 
-int SimpleListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
+int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   /* Take advantage of m_memoizedCumulatedHeightOffset if offsetY is closer to
    * m_memoizedCumulatedHeightOffset than 0. */
   if (offsetY >= m_memoizedCumulatedHeightOffset / 2) {
@@ -117,7 +117,7 @@ int SimpleListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return nonMemoizedIndexFromCumulatedHeight(offsetY);
 }
 
-void SimpleListViewDataSource::prepareCellForHeightCalculation(HighlightCell * cell, int index) {
+void MemoizedListViewDataSource::prepareCellForHeightCalculation(HighlightCell * cell, int index) {
   // A non-null implementation of cellWidth is required to compute cell height.
   assert(cellWidth() != 0);
   // Set cell's frame width
@@ -126,7 +126,7 @@ void SimpleListViewDataSource::prepareCellForHeightCalculation(HighlightCell * c
   willDisplayCellForIndex(cell, index);
 }
 
-void SimpleListViewDataSource::resetMemoization(bool force) {
+void MemoizedListViewDataSource::resetMemoization(bool force) {
   if (m_memoizationLockedLevel > 0) {
     /* Prevent any memoization reset. List should not be locked if called from
      * outside (with force). */
@@ -146,7 +146,7 @@ void SimpleListViewDataSource::resetMemoization(bool force) {
   }
 }
 
-void SimpleListViewDataSource::resetMemoizationForIndex(int j) {
+void MemoizedListViewDataSource::resetMemoizationForIndex(int j) {
   // Memoization shouldn't be under lock
   assert(m_memoizationLockedLevel == 0);
   // reset cell height if memoized
@@ -160,7 +160,7 @@ void SimpleListViewDataSource::resetMemoizationForIndex(int j) {
   m_memoizedTotalHeight = k_resetedMemoizedValue;
 }
 
-KDCoordinate SimpleListViewDataSource::nonMemoizedRowHeight(int j) {
+KDCoordinate MemoizedListViewDataSource::nonMemoizedRowHeight(int j) {
   /* This default implementation must be used carefully, only when all cells are
    * stored as reusable cells.
    * TODO Hugo : Find an assert that could catch that, such as :
@@ -177,7 +177,7 @@ KDCoordinate SimpleListViewDataSource::nonMemoizedRowHeight(int j) {
   return cell->minimalSizeForOptimalDisplay().height();
 }
 
-int SimpleListViewDataSource::getMemoizedIndex(int index) {
+int MemoizedListViewDataSource::getMemoizedIndex(int index) {
   /* Values are memoized in a circular way : m_memoizedCellHeight[i] only
    * stores values for index such that index%k_memoizedCellsCount == i
    * Eg : 0 1 2 3 4 5 6 shifts to 7 1 2 3 4 5 6 which shifts to 7 8 2 3 4 5 6
@@ -187,7 +187,7 @@ int SimpleListViewDataSource::getMemoizedIndex(int index) {
   return (circularOffset + index - m_memoizedIndexOffset) % k_memoizedCellsCount;
 }
 
-void SimpleListViewDataSource::setMemoizationIndex(int index) {
+void MemoizedListViewDataSource::setMemoizationIndex(int index) {
   if (m_memoizationLockedLevel > 0 || index == m_memoizedIndexOffset) {
     return;
   }
@@ -204,7 +204,7 @@ void SimpleListViewDataSource::setMemoizationIndex(int index) {
   }
 }
 
-void SimpleListViewDataSource::shiftMemoization(bool newCellIsUnder) {
+void MemoizedListViewDataSource::shiftMemoization(bool newCellIsUnder) {
   // Only a limited number of cells' height are memoized.
   if (m_memoizationLockedLevel > 0) {
     // Memoization is locked, do not shift
@@ -241,7 +241,7 @@ void SimpleListViewDataSource::shiftMemoization(bool newCellIsUnder) {
   }
 }
 
-bool SimpleListViewDataSource::updateMemoizationLock(bool lockUp) {
+bool MemoizedListViewDataSource::updateMemoizationLock(bool lockUp) {
   /* This lock system is mainly used during development, to avoid infinite loops
    * an volatile memoized values when asserting that a memoized height was
    * correct, which heavily slows down navigation. TODO Hugo : Remove it. */

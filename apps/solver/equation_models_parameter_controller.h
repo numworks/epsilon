@@ -1,7 +1,7 @@
 #ifndef SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 #define SOLVER_EQUATION_MODELS_PARAMETER_CONTROLLER_H
 
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/expression_table_cell.h>
 #include <escher/message_table_cell.h>
 #include <escher/selectable_table_view.h>
@@ -13,7 +13,7 @@ namespace Solver {
 
 class ListController;
 
-class EquationModelsParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class EquationModelsParameterController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   EquationModelsParameterController(Escher::Responder * parentResponder, EquationStore * equationStore, ListController * listController);
   const char * title() override;

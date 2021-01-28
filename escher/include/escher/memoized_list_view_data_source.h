@@ -5,14 +5,13 @@
 #include <escher/highlight_cell.h>
 
 namespace Escher {
-// TODO Hugo : Rename this class MemoizedListViewDataSource
-class SimpleListViewDataSource : public ListViewDataSource {
-/* SimpleListViewDataSource elements have a dynamically variable height.
+class MemoizedListViewDataSource : public ListViewDataSource {
+/* MemoizedListViewDataSource elements have a dynamically variable height.
  * This property slows down navigation due to complex cell height calculation.
  * To avoid that, cells Height and cumulated height is memoized around the most
  * recently used cells. Total height is also memoized. */
 public:
-  SimpleListViewDataSource();
+  MemoizedListViewDataSource();
 
   // ListViewDataSource
   KDCoordinate rowHeight(int j) override;

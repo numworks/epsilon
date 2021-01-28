@@ -19,10 +19,10 @@ KDCoordinate MemoizedListViewDataSource::rowHeight(int j) {
     KDCoordinate memoizedRowHeight = m_memoizedCellHeight[getMemoizedIndex(j)];
     if (memoizedRowHeight == k_resetedMemoizedValue) {
       // Compute and memoize value
+      updateMemoizationLock(true);
       memoizedRowHeight = nonMemoizedRowHeight(j);
+      updateMemoizationLock(false);
       m_memoizedCellHeight[getMemoizedIndex(j)] = memoizedRowHeight;
-    } else {
-      assert(memoizedRowHeight == nonMemoizedRowHeight(j)); // TODO Hugo : Remove this very costly assert
     }
     return memoizedRowHeight;
   }
@@ -36,7 +36,6 @@ KDCoordinate MemoizedListViewDataSource::rowHeight(int j) {
 KDCoordinate MemoizedListViewDataSource::cumulatedHeightFromIndex(int j) {
   if (j == numberOfRows() && m_memoizedTotalHeight != k_resetedMemoizedValue) {
     // Total Height is memoized to save time and preserve memoization.
-    assert(m_memoizedTotalHeight == nonMemoizedCumulatedHeightFromIndex(j)); // TODO Hugo : Remove this very costly assert
     return m_memoizedTotalHeight;
   }
   /* Take advantage of m_memoizedCumulatedHeightOffset if j is closer to
@@ -44,21 +43,19 @@ KDCoordinate MemoizedListViewDataSource::cumulatedHeightFromIndex(int j) {
   if (j >= m_memoizedIndexOffset / 2) {
     if (m_memoizedCumulatedHeightOffset == k_resetedMemoizedValue) {
       // Memoized cumulatedHeight is required and must be recomputed
+      updateMemoizationLock(true);
       m_memoizedCumulatedHeightOffset = nonMemoizedCumulatedHeightFromIndex(m_memoizedIndexOffset);
-    } else {
-      assert(m_memoizedCumulatedHeightOffset == nonMemoizedCumulatedHeightFromIndex(m_memoizedIndexOffset)); // TODO Hugo : Remove this very costly assert
+      updateMemoizationLock(false);
     }
     // Search cumulatedHeight around m_memoizedCumulatedHeightOffset
     KDCoordinate cumulatedHeight = m_memoizedCumulatedHeightOffset;
     if (j >= m_memoizedIndexOffset) {
       for (int i = m_memoizedIndexOffset; i < numberOfRows(); i++) {
         if (i == j) {
-          assert(nonMemoizedCumulatedHeightFromIndex(j) == cumulatedHeight); // TODO Hugo : Remove this very costly assert
           return cumulatedHeight;
         }
         cumulatedHeight += rowHeight(i);
       }
-      assert(nonMemoizedCumulatedHeightFromIndex(j) == cumulatedHeight); // TODO Hugo : Remove this very costly assert
       assert(j == numberOfRows());
       // Update memoized total height
       m_memoizedTotalHeight = cumulatedHeight;
@@ -67,11 +64,9 @@ KDCoordinate MemoizedListViewDataSource::cumulatedHeightFromIndex(int j) {
       for (int i = m_memoizedIndexOffset - 1; i >= 0; i--) {
         cumulatedHeight -= rowHeight(i);
         if (i == j) {
-          assert(nonMemoizedCumulatedHeightFromIndex(j) == cumulatedHeight); // TODO Hugo : Remove this very costly assert
           return cumulatedHeight;
         }
       }
-      assert(nonMemoizedCumulatedHeightFromIndex(j) == KDCoordinate(0)); // TODO Hugo : Remove this very costly assert
       assert(cumulatedHeight == 0 && j == 0);
       return KDCoordinate(0);
     }
@@ -85,9 +80,9 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   if (offsetY >= m_memoizedCumulatedHeightOffset / 2) {
     if (m_memoizedCumulatedHeightOffset == k_resetedMemoizedValue) {
       // Memoized cumulatedHeight is required and must be recomputed
+      updateMemoizationLock(true);
       m_memoizedCumulatedHeightOffset = nonMemoizedCumulatedHeightFromIndex(m_memoizedIndexOffset);
-    } else {
-      assert(m_memoizedCumulatedHeightOffset == nonMemoizedCumulatedHeightFromIndex(m_memoizedIndexOffset)); // TODO Hugo : Remove this very costly assert
+      updateMemoizationLock(false);
     }
     // Search index around m_memoizedIndexOffset
     KDCoordinate cumulatedHeight = m_memoizedCumulatedHeightOffset;
@@ -95,21 +90,17 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
       for (int i = m_memoizedIndexOffset; i < numberOfRows(); i++) {
         cumulatedHeight += rowHeight(i);
         if (offsetY <= cumulatedHeight) {
-          assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == i); // TODO Hugo : Remove this very costly assert
           return i;
         }
       }
-      assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == numberOfRows()); // TODO Hugo : Remove this very costly assert
       return numberOfRows();
     } else {
       for (int i = m_memoizedIndexOffset - 1; i >= 0; i--) {
         cumulatedHeight -= rowHeight(i);
         if (offsetY > cumulatedHeight) {
-          assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == i); // TODO Hugo : Remove this very costly assert
           return i;
         }
       }
-      assert(nonMemoizedIndexFromCumulatedHeight(offsetY) == 0); // TODO Hugo : Remove this very costly assert
       assert(cumulatedHeight == 0);
       return 0;
     }
@@ -128,8 +119,7 @@ void MemoizedListViewDataSource::prepareCellForHeightCalculation(HighlightCell *
 
 void MemoizedListViewDataSource::resetMemoization(bool force) {
   if (m_memoizationLockedLevel > 0) {
-    /* Prevent any memoization reset. List should not be locked if called from
-     * outside (with force). */
+    // Memoization shouldn't be under lock if called with force
     assert(!force);
     return;
   }
@@ -146,26 +136,10 @@ void MemoizedListViewDataSource::resetMemoization(bool force) {
   }
 }
 
-void MemoizedListViewDataSource::resetMemoizationForIndex(int j) {
-  // Memoization shouldn't be under lock
-  assert(m_memoizationLockedLevel == 0);
-  // reset cell height if memoized
-  if (j >= m_memoizedIndexOffset && j < m_memoizedIndexOffset + k_memoizedCellsCount) {
-    m_memoizedCellHeight[getMemoizedIndex(j)] = k_resetedMemoizedValue;
-  } else if (j < m_memoizedIndexOffset) {
-    // Cumulated Height depends on reset cell
-    m_memoizedCumulatedHeightOffset = k_resetedMemoizedValue;
-  }
-  // Total Height depends on reset cell
-  m_memoizedTotalHeight = k_resetedMemoizedValue;
-}
-
 KDCoordinate MemoizedListViewDataSource::nonMemoizedRowHeight(int j) {
   /* This default implementation must be used carefully, only when all cells are
-   * stored as reusable cells.
-   * TODO Hugo : Find an assert that could catch that, such as :
-   * Sum of every reusableCellCount for every types equals number of rows */
-  assert(j < numberOfRows());
+   * stored as reusable cells. */
+  assert(j < numberOfRows() && reusableCellCount(typeAtIndex(j)) > 0);
   /* Most nonMemoizedRowHeight implementations boils down to instantiating a
    * temporary cell on which calling prepareCellForHeightCalculation, and return
    * minimalSizeForOptimalDisplay. However, temporary cell must be instantiated
@@ -193,12 +167,16 @@ void MemoizedListViewDataSource::setMemoizationIndex(int index) {
   }
 
   if (index < m_memoizedIndexOffset / 2 && m_memoizedIndexOffset - index > k_memoizedCellsCount) {
+    // New memoization index is too far to be updated by shifting.
     resetMemoization(false);
     m_memoizedIndexOffset = index;
     m_memoizedCumulatedHeightOffset = index == 0 ? 0 : k_resetedMemoizedValue;
+    return;
   }
+
   bool newCellIsUnder = m_memoizedIndexOffset > index;
-  int indexDelta = newCellIsUnder ? m_memoizedIndexOffset - index : index - m_memoizedIndexOffset;
+  // If cell is above new memoization index profit from k_memoizedCellsCount
+  int indexDelta = newCellIsUnder ? m_memoizedIndexOffset - index : index - m_memoizedIndexOffset - k_memoizedCellsCount + 1;
   for (int i = 0; i < indexDelta; ++i) {
     shiftMemoization(newCellIsUnder);
   }
@@ -218,7 +196,9 @@ void MemoizedListViewDataSource::shiftMemoization(bool newCellIsUnder) {
     }
     m_memoizedIndexOffset--;
     // Unknown value is the new one
+    updateMemoizationLock(true);
     KDCoordinate height = nonMemoizedRowHeight(m_memoizedIndexOffset);
+    updateMemoizationLock(false);
     // Compute and set memoized index height
     m_memoizedCellHeight[getMemoizedIndex(m_memoizedIndexOffset)] = height;
     // Update cumulated height
@@ -232,7 +212,9 @@ void MemoizedListViewDataSource::shiftMemoization(bool newCellIsUnder) {
       return;
     }
     if (m_memoizedCumulatedHeightOffset != k_resetedMemoizedValue) {
+      updateMemoizationLock(true);
       m_memoizedCumulatedHeightOffset+=rowHeight(m_memoizedIndexOffset);
+      updateMemoizationLock(false);
       assert(m_memoizedCumulatedHeightOffset != k_resetedMemoizedValue);
     }
     // Unknown value is the previous one
@@ -241,13 +223,12 @@ void MemoizedListViewDataSource::shiftMemoization(bool newCellIsUnder) {
   }
 }
 
-bool MemoizedListViewDataSource::updateMemoizationLock(bool lockUp) {
-  /* This lock system is mainly used during development, to avoid infinite loops
-   * an volatile memoized values when asserting that a memoized height was
-   * correct, which heavily slows down navigation. TODO Hugo : Remove it. */
+void MemoizedListViewDataSource::updateMemoizationLock(bool lockUp) {
+  /* This lock system is used to ensure the memoization state
+   * (m_memoizedIndexOffset) is preserved when performing an action that could
+   * potentially alter it. */
   m_memoizationLockedLevel += (lockUp ? 1 : -1);
   assert(m_memoizationLockedLevel >= 0);
-  return m_memoizationLockedLevel >= 0;
 }
 
 }

@@ -37,7 +37,6 @@ private:
     Escher::SelectableTableView * m_selectableTableView;
   };
   void setDistributionAccordingToIndex(int index);
-  constexpr static KDCoordinate k_cellHeight = Escher::Metric::ParameterCellHeight;
   constexpr static int k_totalNumberOfModels = 9;
   Cell m_cells[k_totalNumberOfModels];
   Escher::SelectableTableView m_selectableTableView;

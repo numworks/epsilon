@@ -9,6 +9,7 @@ class ButtonWithSeparator : public Escher::Button {
 public:
   ButtonWithSeparator(Responder * parentResponder, I18n::Message textBody, Escher::Invocation invocation);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   constexpr static KDCoordinate k_margin = 5;
   constexpr static KDCoordinate k_lineThickness = 1;

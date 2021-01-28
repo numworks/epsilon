@@ -17,20 +17,15 @@ constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n
 constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_brightnessCell(I18n::Message::Default),
   m_popUpCell(I18n::Message::Default),
-  m_selectableTableView(this),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_localizationController(this, LocalizationController::Mode::Language),
   m_examModeController(this),
   m_aboutController(this)
 {
-}
-
-View * MainController::view() {
-  return &m_selectableTableView;
 }
 
 void MainController::didBecomeFirstResponder() {

@@ -13,10 +13,9 @@ namespace Solver {
 constexpr const char * EquationModelsParameterController::k_models[k_numberOfModels];
 
 EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_emptyModelCell(I18n::Message::Empty),
   m_layouts{},
-  m_selectableTableView(this),
   m_equationStore(equationStore),
   m_listController(listController)
 {
@@ -32,10 +31,6 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
 
 const char * EquationModelsParameterController::title() {
   return I18n::translate(I18n::Message::UseEquationModel);
-}
-
-View * EquationModelsParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void EquationModelsParameterController::viewWillAppear() {

@@ -14,7 +14,7 @@ ToDeactivateExamMode3 = "vagy egy konnektorhoz."
 # --------------------- Please do not edit these messages ---------------------
 ExamModeWarning1 = "Vigyázat: ennek betartása"
 ExamModeWarning2 = "nem hivatalos szoftver vizsgálati módja"
-ExamModeWarning3 = "a NumWorks nem garantálja."
+ExamModeWarning3 = "a NumWorks/Omega nem garantálja."
 AboutWarning1 = "Vigyázat: egy"
 AboutWarning2 = "nem hivatalos szoftververzió."
 AboutWarning3 = "A NumWorks nem vállal felelösséget"

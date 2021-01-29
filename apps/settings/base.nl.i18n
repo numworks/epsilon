@@ -14,7 +14,7 @@ ToDeactivateExamMode3 = "een computer of stopcontact."
 # --------------------- Please do not edit these messages - Discuss with Leo (remove this later) ---------------------
 ExamModeWarning1 = "Let op: naleving van de examenstand"
 ExamModeWarning2 = "op deze onofficiële software wordt"
-ExamModeWarning3 = "door NumWorks niet gegarandeerd."
+ExamModeWarning3 = "door NumWorks/Omega niet gegarandeerd."
 AboutWarning1 = "Let op: je gebruikt een"
 AboutWarning2 = "onofficiële softwareversie."
 AboutWarning3 = "NumWorks is niet verantwoordelijk"

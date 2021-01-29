@@ -14,7 +14,7 @@ ToDeactivateExamMode3 = "computer o a una presa di corrente."
 # --------------------- Please do not edit these messages ---------------------
 ExamModeWarning1 = "Attenzione, la conformità della modalità"
 ExamModeWarning2 = "esame di questo software non ufficiale"
-ExamModeWarning3 = "non è garantita da NumWorks."
+ExamModeWarning3 = "non è garantita da NumWorks/Omega."
 AboutWarning1 = "Attenzione, voi utilizzate una versione"
 AboutWarning2 = "non ufficiale del software. NumWorks"
 AboutWarning3 = "non potrà essere ritenuto responsabile dei"

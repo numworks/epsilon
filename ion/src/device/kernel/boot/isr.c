@@ -26,7 +26,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   svcall_handler_as, // SVCall service routine,
   0, // DebugMonitor service routine,
   0, // Reserved
-  pendsv_handler, // PendSV service routine,
+  pendsv_handler_as, // PendSV service routine,
   isr_systick, // SysTick service routine
   0, // WWDG service routine
   0, // PVD service routine

@@ -100,6 +100,7 @@ SECTIONS {
 
     /* systick dependencies */
     *(.text._ZN3Ion6Device6Events13lastEventTimeEv)
+    *(.text._ZN3Ion6Device10Checkpoint13setCheckpointEv)
 
     /* Optimization */
     */libgcc.a:(.text)

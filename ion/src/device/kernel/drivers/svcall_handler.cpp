@@ -2,6 +2,7 @@
 #include <ion.h>
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/battery.h>
+#include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/crc32.h>
 #include <kernel/drivers/display.h>
 #include <kernel/drivers/events.h>
@@ -193,6 +194,19 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     // RESET
     case SVC_RESET_CORE:
       Ion::Device::Reset::coreWhilePlugged();
+      return;
+    // CIRCUIT BREAKER
+    case SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT:
+      *static_cast<bool *>(args[0]) = Ion::Device::Checkpoint::hasCheckpoint();
+      return;
+    case SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT:
+      Ion::Device::Checkpoint::loadCheckpoint();
+      return;
+    case SVC_CIRCUIT_BREAKER_SET_CHECKPOINT:
+      *static_cast<bool *>(args[0]) = Ion::Device::Checkpoint::setCheckpoint();
+      return;
+    case SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT:
+      Ion::Device::Checkpoint::unsetCheckpoint();
       return;
     default:
       return;

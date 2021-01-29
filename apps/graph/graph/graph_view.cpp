@@ -2,6 +2,7 @@
 #include "../app.h"
 #include <assert.h>
 #include <algorithm>
+#include <ion/circuit_breaker.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -27,7 +28,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
+  if (Ion::CircuitBreaker::setCheckpoint()) {
+    return;
+  }
   for (int i = 0; i < activeFunctionsCount ; i++) {
+    if (i == 1) {
+      Ion::CircuitBreaker::loadCheckpoint();
+    }
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
     ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);

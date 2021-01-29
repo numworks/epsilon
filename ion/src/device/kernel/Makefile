@@ -4,6 +4,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/backlight.cpp \
   drivers/battery.cpp \
   drivers/board.cpp \
+  drivers/circuit_breaker.cpp \
   drivers/cortex_control.s \
   drivers/crc32.cpp \
   drivers/dfu.cpp \
@@ -13,6 +14,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/keyboard.cpp \
   drivers/keyboard_queue.cpp \
   drivers/led.cpp \
+  drivers/pendsv_handler_as.s \
   drivers/persisting_bytes.cpp \
   drivers/power.cpp \
   drivers/random.cpp \

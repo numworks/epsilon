@@ -187,8 +187,12 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->moveCursorGeo(0, INT_MAX/2);
     TextInput::scrollToCursor();
   } else if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    selectUpDown(event == Ion::Events::ShiftUp, step);
-    return true;
+    if (contentView()->resetSelection()) {
+      return true;
+    }
+    return (event == Ion::Events::Left) ?
+      TextInput::moveCursorLeft(step) :
+      TextInput::moveCursorRight(step);
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     if (contentView()->resetSelection()) {

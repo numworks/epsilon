@@ -5,6 +5,7 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/battery.cpp \
   drivers/crc32.cpp \
   drivers/display.cpp \
+  drivers/circuit_breaker.cpp \
   drivers/clipboard.cpp \
   drivers/console_display.cpp:+consoledisplay \
   drivers/console_dummy.cpp:-consoledisplay \

@@ -1,7 +1,6 @@
 #include "entry_point.h"
 #include <shared/boot/rt0.h>
 #include <ion.h>
-#include <userland/drivers/svcall.h>
 #include <ion/backlight.h> // TODO: remove
 #include <ion/console.h> // TODO: remove
 #include <ion/display.h> // TODO: remove

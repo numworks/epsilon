@@ -26,6 +26,8 @@ app_settings_src = $(addprefix apps/settings/,\
   sub_menu/selectable_view_with_messages.cpp \
 )
 
+SFLAGS += -DOMEGA_STATE="$(OMEGA_STATE)"
+
 app_settings_src += $(app_settings_test_src)
 apps_src += $(app_settings_src)
 

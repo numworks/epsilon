@@ -9,7 +9,7 @@ pendsv_handler_as:
   push {r0,r1}
   // Extract the address of the context frame
   mov r0,sp
-  // Don't forget we pushed some register to the stack in the prologue
+  // Don't forget we pushed some registers to the stack in the prologue
   add r0,0x8
   // Extract the exception return value in
   mov r1,lr

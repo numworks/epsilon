@@ -18,8 +18,8 @@ pendsv_handler_as:
   // Call svcall_handler with r0 = frame address and r1 = exception return
   bl pendsv_handler
   // Restore registers
-  ldmia.w sp!,{lr}
-  ldmia.w sp!,{r0,r1}
+  pop {lr}
+  pop {r0,r1}
   // Return from exception
   bx lr
 .type pendsv_handler_as, function

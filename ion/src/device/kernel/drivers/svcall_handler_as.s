@@ -28,7 +28,7 @@ svcall_handler_as:
   // STEP 3: jump to svcall_handler with r0 = SVC_NUMBER and r1 = args pointer
   bl svcall_handler
   // Restore register
-  ldmia.w sp!,{r0,r1,lr}
+  pop {r0,r1,lr}
   // Return from exception
   bx lr
 .type svcall_handler_as, function

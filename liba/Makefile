@@ -9,6 +9,8 @@ liba_bootloader_src += $(addprefix liba/src/, \
 )
 
 liba_kernel_src += $(addprefix liba/src/, \
+  armv7m/setjmp.s \
+  armv7m/longjmp.s \
   assert.c \
   memcmp.c \
   memcpy.c \

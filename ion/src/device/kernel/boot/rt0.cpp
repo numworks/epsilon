@@ -84,11 +84,9 @@ void __attribute__((interrupt, noinline)) isr_systick() {
   if (lastEvent != 0 && t - lastEvent > 1000) { // TODO EMILIE: 1s ? TODO: reboot Millis???
     // Use watchdog??
     // Trigger a pendSV interruption
-    //Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
+    Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
   }
 }
-
-#if 0
 
 // TODO: implement via a watchdog:
 // - everytime an event is handled, reset the spinner watchdog and the kill-the-app watchdog
@@ -103,8 +101,6 @@ void __attribute__((interrupt, noinline)) pendsv_handler() {
   Ion::Device::Display::pushRectUniform(KDRect(155,115,10,10), c);
   c = c == KDColorGreen ? KDColorRed : KDColorGreen;
 }
-
-#endif
 
 void __attribute__((interrupt, noinline)) keyboard_handler() {
   Ion::Device::Keyboard::handleInterruption();

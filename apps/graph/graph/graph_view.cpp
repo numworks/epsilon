@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <ion/circuit_breaker.h>
+#include <ion/src/device/userland/drivers/svcall.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -28,17 +29,18 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
-  if (Ion::CircuitBreaker::setCheckpoint()) {
-    return;
-  }
-  for (int i = 0; i < activeFunctionsCount ; i++) {
-    if (i == 1) {
-      Ion::CircuitBreaker::loadCheckpoint();
-    }
-    Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
-    ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
-    Shared::ContinuousFunction::PlotType type = f->plotType();
+
+  SVC(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT);
+
+  if (Ion::CircuitBreaker::hasCheckpoint()) {
+    for (int i = 0; i < activeFunctionsCount ; i++) {
+      if (i == 1) {
+        SVC(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT);
+      }
+      Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
+      ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
+      ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
+      Shared::ContinuousFunction::PlotType type = f->plotType();
     Poincare::Expression e = f->expressionReduced(context());
     if (e.isUndefined() || (
         type == Shared::ContinuousFunction::PlotType::Parametric &&
@@ -100,6 +102,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           Poincare::Context * c = (Poincare::Context *)context;
           return f->evaluateXYAtParameter(t, c);
         }, f.operator->(), context(), false, f->color());
+    }
     }
   }
 }

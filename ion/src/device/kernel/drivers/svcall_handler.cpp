@@ -21,7 +21,7 @@
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
-void svcall_handler(unsigned svcNumber, void * args[]) {
+void svcall_handler(unsigned svcNumber, void * args[], uint8_t * frameAddress, uint32_t excReturn) {
   switch (svcNumber) {
     case SVC_DISPLAY_PUSH_RECT:
       // Load rect and pixels
@@ -200,10 +200,11 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       *static_cast<bool *>(args[0]) = Ion::Device::Checkpoint::hasCheckpoint();
       return;
     case SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT:
-      Ion::Device::Checkpoint::loadCheckpoint();
+      Ion::Device::Checkpoint::loadCheckpoint(frameAddress);
       return;
     case SVC_CIRCUIT_BREAKER_SET_CHECKPOINT:
-      *static_cast<bool *>(args[0]) = Ion::Device::Checkpoint::setCheckpoint();
+      //*static_cast<bool *>(args[0]) = Ion::Device::Checkpoint::setCheckpoint(frameAddress, excReturn);
+      Ion::Device::Checkpoint::setCheckpoint(frameAddress, excReturn);
       return;
     case SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT:
       Ion::Device::Checkpoint::unsetCheckpoint();

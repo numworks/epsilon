@@ -272,6 +272,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   for (int i = 0; i < sampleSize; i++) {
     sample[i] = evaluation(*xMin + i * step, context, auxiliary);
   }
+  bool monotonous = (sample[0] <= sample[sampleSize / 2]) == (sample[sampleSize / 2] <= sample[sampleSize - 1]);
   Helpers::Sort(
       [](int i, int j, void * ctx, int size) {
         float * array = static_cast<float *>(ctx);
@@ -296,8 +297,10 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
    * The fact that the sample is sorted makes it possible to find i and j in
    * linear time.
    * In case of pairs having the same breadth, we chose the pair that minimizes
-   * the criteria distanceFromCenter, which makes the window symmetrical when
-   * dealing with linear functions. */
+   * the criteria distanceFromCenter if the function is monotonous, which makes
+   * the window symmetrical when dealing with linear functions. If the function
+   * is not monotonous, it is better to maximize distanceFromCenter to focus on
+   * the extremum. */
   float yRange = yxRatio * xRange;
   int j = 1;
   int bestIndex = 0, bestBreadth = 0, bestDistanceToCenter;
@@ -305,14 +308,14 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
     if (sampleSize - i < bestBreadth) {
       break;
     }
-    while (j < sampleSize && sample[j] < sample[i] + yRange) {
+    while (j < sampleSize - 1 && sample[j] < sample[i] + yRange) {
       j++;
     }
     int breadth = j - i;
     int distanceToCenter = std::fabs(static_cast<float>(i + j - sampleSize));
     if (breadth > bestBreadth
-     || (breadth == bestBreadth
-      && distanceToCenter <= bestDistanceToCenter)) {
+     || (breadth == bestBreadth && monotonous == (distanceToCenter <= bestDistanceToCenter)))
+    {
       bestIndex = i;
       bestBreadth = breadth;
       bestDistanceToCenter = distanceToCenter;

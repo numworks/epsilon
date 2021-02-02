@@ -22,7 +22,6 @@ public:
 protected:
   Escher::StackViewController * stackController() const;
   virtual int initialSelectedRow() const { return 0; }
-  constexpr static KDCoordinate k_topBottomMargin = 13;
   Escher::MessageTree * m_messageTreeModel;
 };
 

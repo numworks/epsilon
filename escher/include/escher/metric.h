@@ -15,12 +15,13 @@ public:
   constexpr static KDCoordinate CellBottomMargin = BigCellMargin;
   constexpr static KDCoordinate CellHorizontalElementMargin = BigCellMargin;
   constexpr static KDCoordinate CellVerticalElementMargin = 4;
-  constexpr static KDCoordinate CommonLeftMargin = 20;
-  constexpr static KDCoordinate CommonRightMargin = 20;
-  constexpr static KDCoordinate CommonTopMargin = 15;
-  constexpr static KDCoordinate CommonBottomMargin = 15;
+  constexpr static KDCoordinate CommonLeftMargin = 14;
+  constexpr static KDCoordinate CommonRightMargin = 14;
+  constexpr static KDCoordinate CommonTopMargin = 9;
+  constexpr static KDCoordinate CommonBottomMargin = 9;
   constexpr static KDCoordinate CommonLargeMargin = 10;
   constexpr static KDCoordinate CommonSmallMargin = 5;
+  constexpr static KDCoordinate CommonMenuMargin = 5;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
   constexpr static KDCoordinate TitleBarHeight = 18;
   constexpr static KDCoordinate TabHeight = 27;

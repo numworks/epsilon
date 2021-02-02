@@ -12,7 +12,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
-  constexpr static KDCoordinate k_margin = 5;
+  constexpr static KDCoordinate k_margin = Escher::Metric::CommonMenuMargin;
   constexpr static KDCoordinate k_lineThickness = Escher::Metric::CellSeparatorThickness;
   void layoutSubviews(bool force = false) override;
 };

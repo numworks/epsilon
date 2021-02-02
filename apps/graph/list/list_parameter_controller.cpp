@@ -20,7 +20,6 @@ ListParameterController::ListParameterController(ListController * listController
   m_typeParameterController(this),
   m_domainParameterController(nullptr, inputEventHandlerDelegate)
 {
-  m_selectableTableView.setMargins(Metric::CommonTopMargin, Metric::CommonTopMargin, Metric::CommonBottomMargin, Metric::CommonTopMargin); // Reduce the margins to make the text fit
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {

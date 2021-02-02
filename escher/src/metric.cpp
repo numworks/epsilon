@@ -15,6 +15,7 @@ constexpr KDCoordinate Metric::CommonTopMargin;
 constexpr KDCoordinate Metric::CommonBottomMargin;
 constexpr KDCoordinate Metric::CommonLargeMargin;
 constexpr KDCoordinate Metric::CommonSmallMargin;
+constexpr KDCoordinate Metric::CommonMenuMargin;
 constexpr KDCoordinate Metric::TitleBarExternHorizontalMargin;
 constexpr KDCoordinate Metric::TitleBarHeight;
 constexpr KDCoordinate Metric::TabHeight;

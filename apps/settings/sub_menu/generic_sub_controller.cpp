@@ -13,8 +13,6 @@ GenericSubController::GenericSubController(Responder * parentResponder) :
   SelectableListViewController(parentResponder),
   m_messageTreeModel(nullptr)
 {
-  m_selectableTableView.setTopMargin(k_topBottomMargin);
-  m_selectableTableView.setBottomMargin(k_topBottomMargin);
 }
 
 const char * GenericSubController::title() {

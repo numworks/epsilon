@@ -2,6 +2,7 @@
 #define ESCHER_SCROLL_VIEW_H
 
 #include <escher/view.h>
+#include <escher/metric.h>
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 
@@ -59,7 +60,7 @@ public:
   private:
     ScrollViewVerticalBar m_verticalBar;
     ScrollViewHorizontalBar m_horizontalBar;
-    static constexpr KDCoordinate k_barsFrameBreadth = 13;
+    static constexpr KDCoordinate k_barsFrameBreadth = Metric::CommonRightMargin;
   };
 
   class ArrowDecorator : public Decorator {

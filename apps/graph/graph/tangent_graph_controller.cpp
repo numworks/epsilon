@@ -25,12 +25,12 @@ const char * TangentGraphController::title() {
 
 void TangentGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->drawTangent(true);
   m_graphView->setOkView(nullptr);
   m_graphView->selectMainView(true);
   m_bannerView->setNumberOfSubviews(BannerView::k_numberOfSubviews);
   reloadBannerView();
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->reload();
 }
 

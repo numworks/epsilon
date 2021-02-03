@@ -69,10 +69,12 @@ private:
   constexpr static float k_viewHeight = Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 21;
   float estimatedBannerHeight() const;
   virtual int estimatedBannerNumberOfLines() const { return 1; }
+  void refreshCursor();
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) override;
   void updateZoomButtons() override;
+  void xRangeIsReady() override { refreshCursor(); }
 
   void setCurveViewAsMainView();
 

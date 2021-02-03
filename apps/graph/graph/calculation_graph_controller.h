@@ -17,7 +17,7 @@ public:
   void viewWillAppear() override;
   void setRecord(Ion::Storage::Record record);
 protected:
-  float cursorBottomMarginRatio() override { return 0.15f; }
+  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);

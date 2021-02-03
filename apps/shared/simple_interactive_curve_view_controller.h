@@ -19,6 +19,8 @@ protected:
   virtual float cursorLeftMarginRatio() { return 0.04f; }  // (cursorWidth/2)/(graphViewWidth-1)
   virtual float cursorTopMarginRatio() { return 0.07f; }   // (cursorHeight/2)/(graphViewHeight-1)
   virtual float cursorBottomMarginRatio() = 0;             // (cursorHeight/2+bannerHeight)/(graphViewHeight-1)
+  float cursorBottomMarginRatioForBannerHeight(float bannerHeight) { return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2.f + bannerHeight) / (curveView()->bounds().height() - 1); }
+
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
   // ZoomCurveViewController
   float xFocus() override { return m_cursor->x(); }

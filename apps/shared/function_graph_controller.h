@@ -20,6 +20,7 @@ public:
 
 protected:
   float cursorTopMarginRatio() override { return 0.068f; }
+  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
   bool openMenu() override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }

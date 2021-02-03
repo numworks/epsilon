@@ -31,9 +31,9 @@ void CalculationGraphController::viewWillAppear() {
     m_isActive = true;
     assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == Shared::ContinuousFunction::PlotType::Cartesian);
     m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(), pointOfInterest.x2());
-    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
+    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }
   m_graphView->setOkView(nullptr);
   m_graphView->reload();

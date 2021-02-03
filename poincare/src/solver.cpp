@@ -106,9 +106,9 @@ double Solver::NextRoot(ValueAtAbscissa evaluation, Context * context, const voi
     Coordinate2D<double> result(NAN, NAN);
     if (SolverHelper<double>::RootExistsOnInterval(fa, fb, fc)) {
       result = Coordinate2D<double>(BrentRoot(a, c, std::fabs(c-b)/k_precisionByGradUnit, f, context, auxiliary), 0.);
-    } else if (SolverHelper<double>::MinimumExistsOnInterval(fa, fb, fc)) {
+    } else if (SolverHelper<double>::MinimumExistsOnInterval(fa, fb, fc) && fb >= 0) {
       result = BrentMinimum(a, c, f, context, auxiliary);
-    } else if (SolverHelper<double>::MaximumExistsOnInterval(fa, fb, fc)) {
+    } else if (SolverHelper<double>::MaximumExistsOnInterval(fa, fb, fc) && fb <= 0) {
       const void * pack[2] = { &f, auxiliary };
       ValueAtAbscissa fOpposite = [](double x, Context * ctx, const void * aux) {
         ValueAtAbscissa fOriginal = static_cast<const ValueAtAbscissa * const *>(aux)[0][0];

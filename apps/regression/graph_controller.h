@@ -32,6 +32,7 @@ private:
   Poincare::Context * globalContext();
 
   // SimpleInteractiveCurveViewController
+  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   Shared::CurveView * curveView() override;
@@ -47,7 +48,6 @@ private:
   double yValue(int curveIndex, double x, Poincare::Context * context) const;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
-  int estimatedBannerNumberOfLines() const override;
 
   void setRoundCrossCursorView();
   Shared::CursorView m_crossCursorView;

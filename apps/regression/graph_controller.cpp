@@ -381,10 +381,6 @@ int GraphController::numberOfCurves() const {
   return Store::k_numberOfSeries;
 }
 
-int GraphController::estimatedBannerNumberOfLines() const {
-  return (selectedSeriesIndex() < 0) ? 3 : m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
-}
-
 void GraphController::setRoundCrossCursorView() {
   /* At this point, the model (selected series and dot indices) should be up
    * to date. */

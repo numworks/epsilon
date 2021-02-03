@@ -13,7 +13,6 @@ public:
   double evaluate(double * modelCoefficients, double x) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 4; }
-  int bannerLinesCount() const override { return 4; }
 private:
   Poincare::Expression expression(double * modelCoefficients) override;
 };

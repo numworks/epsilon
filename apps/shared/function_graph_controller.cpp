@@ -156,7 +156,10 @@ int FunctionGraphController::numberOfCurves() const {
 }
 
 void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) {
-  float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - cursorBottomMarginRatio());
+  /* Since the banner has not yet been computed, cursorBottomMarginRatio cannot be called. We compute it manually with an estimation of the banner size. */
+  constexpr int estimateNumberOfBannerLines = 1;
+  float bottomRatio = cursorBottomMarginRatioForBannerHeight(BannerView::HeightGivenNumberOfLines(estimateNumberOfBannerLines));
+  float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - bottomRatio);
   DefaultInterestingRanges(range, textFieldDelegateApp()->localContext(), functionStore(), ratio);
 }
 

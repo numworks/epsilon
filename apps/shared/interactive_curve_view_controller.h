@@ -56,7 +56,6 @@ protected:
   virtual int numberOfCurves() const = 0;
 
   // SimpleInteractiveCurveViewController
-  float cursorBottomMarginRatio() override;
   bool handleEnter() override { return openMenu(); }
 
   InteractiveCurveViewRange * interactiveRange() { return m_interactiveRange; }
@@ -67,8 +66,6 @@ private:
    * ButtonRowController::ContentView::k_plainStyleHeight + 1.
    * That value is not public though. */
   constexpr static float k_viewHeight = Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 21;
-  float estimatedBannerHeight() const;
-  virtual int estimatedBannerNumberOfLines() const { return 1; }
   void refreshCursor();
 
   // InteractiveCurveViewRangeDelegate

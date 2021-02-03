@@ -168,8 +168,10 @@ void InteractiveCurveViewRange::setDefault() {
     return;
   }
 
+  assert(offscreenYAxis() == 0.f);
+
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of
-   * yGridUnit, even if the ranger were not truly normalized. We use
+   * yGridUnit, even if the range were not truly normalized. We use
    * setZoomNormalize to refresh the button in case the graph does not end up
    * normalized. */
   setZoomNormalize(false);
@@ -190,6 +192,11 @@ void InteractiveCurveViewRange::setDefault() {
   m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
   MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+
+  /* We notify the delegate to refresh the cursor's position and update the
+   * bottom margin (which depends on the banner height). */
+  m_delegate->xRangeIsReady();
+
   float yRange = yMax() - yMin();
   m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);

@@ -139,23 +139,29 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   if (m_interactiveRange->zoomAuto()) {
     m_interactiveRange->setDefault();
+    /* Here refreshCursor will have been called via xRangeIsReady. */
+  } else {
+    refreshCursor();
   }
 
-  /* Warning: init cursor parameter before reloading banner view. Indeed,
-   * reloading banner view needs an updated cursor to load the right data. */
-  uint32_t newRangeVersion = rangeVersion();
-  if ((*m_rangeVersion != newRangeVersion && !isCursorVisible()) || !cursorMatchesModel()) {
-    initCursorParameters();
-  }
-  *m_rangeVersion = newRangeVersion;
+  *m_rangeVersion = rangeVersion();
 
   curveView()->setOkView(&m_okView);
   if (!curveView()->isMainViewSelected()) {
     curveView()->selectMainView(true);
     header()->setSelectedButton(-1);
   }
-  reloadBannerView();
+
   curveView()->reload();
+}
+
+void InteractiveCurveViewController::refreshCursor() {
+  /* Warning: init cursor parameter before reloading banner view. Indeed,
+   * reloading banner view needs an updated cursor to load the right data. */
+  if (!cursorMatchesModel() || !isCursorVisible()) {
+    initCursorParameters();
+  }
+  reloadBannerView();
 }
 
 void InteractiveCurveViewController::viewDidDisappear() {
@@ -285,7 +291,7 @@ bool InteractiveCurveViewController::autoButtonAction() {
     m_interactiveRange->setZoomAuto(false);
   } else {
     m_interactiveRange->setDefault();
-    initCursorParameters();
+    *m_rangeVersion = rangeVersion();
     setCurveViewAsMainView();
   }
   return m_interactiveRange->zoomAuto();

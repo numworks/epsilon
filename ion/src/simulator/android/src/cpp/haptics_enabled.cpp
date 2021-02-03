@@ -10,9 +10,12 @@ bool isEnabled() {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
   jclass j_class = env->FindClass("com/numworks/calculator/EpsilonActivity");
+  // TODO : GetMethodID is relatively costly, and could be performed only once.
   jmethodID j_methodId = env->GetMethodID(j_class,"hapticFeedbackIsEnabled", "()Z");
-
-  return env->CallObjectMethod(activity, j_methodId);
+  if (j_methodId == 0) {
+    return false;
+  }
+  return (env->CallBooleanMethod(activity, j_methodId) != JNI_FALSE);
 }
 
 }

@@ -37,7 +37,6 @@ public:
   virtual double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context);
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   virtual int numberOfCoefficients() const = 0;
-  virtual int bannerLinesCount() const { return 2; }
 protected:
   // Fit
   virtual bool dataSuitableForFit(Store * store, int series) const;

@@ -15,7 +15,6 @@ public:
   void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
-  int bannerLinesCount() const override { return 2; }
 };
 
 }

@@ -14,11 +14,12 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
+  DisplayParameter displayParameter() override { return DisplayParameter::WantsMaximumSpace; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Zoom");
 private:
-  constexpr static KDCoordinate k_standardViewHeight = 174;
+  constexpr static KDCoordinate k_standardViewHeight = 195;
 
   class ContentView : public Escher::View {
   public:

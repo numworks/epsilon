@@ -14,6 +14,7 @@ public:
   int activeTab() const;
   void setSelectedTab(int8_t index);
   void setActiveTab(int8_t index);
+  void setDisplayTabs(bool display) { m_view.setDisplayTabs(display); }
   uint8_t numberOfTabs();
 
   const char * tabName(uint8_t index);
@@ -31,6 +32,7 @@ private:
     ContentView();
 
     void setActiveView(View * view);
+    void setDisplayTabs(bool display);
     TabView m_tabView;
   protected:
 #if ESCHER_VIEW_LOGGING
@@ -42,6 +44,7 @@ private:
     void layoutSubviews(bool force = false) override;
 
     View * m_activeView;
+    bool m_displayTabs;
   };
 
   ContentView m_view;

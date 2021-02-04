@@ -1,5 +1,6 @@
 #include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
+#include <escher/tab_view_controller.h>
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -131,6 +132,9 @@ Responder * InteractiveCurveViewController::defaultController() {
 }
 
 void InteractiveCurveViewController::viewWillAppear() {
+  /* Set to true in case we come from the Navigate menu. */
+  static_cast<TabViewController *>(tabController())->setDisplayTabs(true);
+
   SimpleInteractiveCurveViewController::viewWillAppear();
 
   if (m_interactiveRange->zoomAuto()) {
@@ -297,6 +301,7 @@ bool InteractiveCurveViewController::normalizeButtonAction() {
 }
 
 void InteractiveCurveViewController::navigationButtonAction() {
+  static_cast<TabViewController *>(tabController())->setDisplayTabs(false);
   stackController()->push(zoomParameterController());
 }
 

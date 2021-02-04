@@ -148,11 +148,8 @@ public:
   static Integer Factorial(const Integer & i);
   // logical operations
   static Integer LogicalXor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
-  static Integer LogicalXnor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
   static Integer LogicalAnd(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
-  static Integer LogicalNand(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
   static Integer LogicalOr(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
-  static Integer LogicalNor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
   static Integer LogicalNot(const Integer &a, const Integer &num_bits = Integer(32));
   static Integer LogicalShiftLeft(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
   static Integer LogicalShiftRight(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));

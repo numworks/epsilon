@@ -150,6 +150,8 @@ class Expression : public TreeHandle {
   friend class FunctionNode;
   friend class IntegralNode;
   template<int T>
+  friend class BinaryOperationNode;
+  template<int T>
   friend class LogarithmNode;
   friend class MatrixNode;
   friend class NaperianLogarithmNode;

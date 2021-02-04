@@ -477,29 +477,6 @@ Integer Integer::LogicalXor(const Integer &a, const Integer &b, const Integer &n
   return uint_final;
 }
 
-Integer Integer::LogicalXnor(const Integer &a, const Integer &b, const Integer &num_bits)
-{
-  assert(!a.isNegative());
-  assert(!b.isNegative());
-  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
-  if (a.isOverflow() || b.isOverflow())
-  {
-    return Overflow(false);
-  }
-
-  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)std::ceil(num_bits.extractedInt() / 32.0));
-  for (size_t i = 0; i < digits; i++)
-  {
-
-    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
-    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
-    s_workingBuffer[i] = ~(abits ^ bbits);
-  }
-
-  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
-  return uint_final;
-}
-
 Integer Integer::LogicalAnd(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
@@ -523,29 +500,6 @@ Integer Integer::LogicalAnd(const Integer &a, const Integer &b, const Integer &n
   return uint_final;
 }
 
-Integer Integer::LogicalNand(const Integer &a, const Integer &b, const Integer &num_bits)
-{
-  assert(!a.isNegative());
-  assert(!b.isNegative());
-  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
-  if (a.isOverflow() || b.isOverflow())
-  {
-    return Overflow(false);
-  }
-
-  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)std::ceil(num_bits.extractedInt() / 32.0));
-  for (size_t i = 0; i < digits; i++)
-  {
-
-    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
-    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
-    s_workingBuffer[i] = ~(abits & bbits);
-  }
-
-  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
-  return uint_final;
-}
-
 Integer Integer::LogicalOr(const Integer &a, const Integer &b, const Integer &num_bits)
 {
   assert(!a.isNegative());
@@ -563,29 +517,6 @@ Integer Integer::LogicalOr(const Integer &a, const Integer &b, const Integer &nu
     native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
     native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
     s_workingBuffer[i] = abits | bbits;
-  }
-
-  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
-  return uint_final;
-}
-
-Integer Integer::LogicalNor(const Integer &a, const Integer &b, const Integer &num_bits)
-{
-  assert(!a.isNegative());
-  assert(!b.isNegative());
-  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
-  if (a.isOverflow() || b.isOverflow())
-  {
-    return Overflow(false);
-  }
-
-  uint8_t digits = std::max(std::max(a.numberOfDigits(), b.numberOfDigits()), (uint8_t)std::ceil(num_bits.extractedInt() / 32.0));
-  for (size_t i = 0; i < digits; i++)
-  {
-
-    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
-    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
-    s_workingBuffer[i] = ~(abits | bbits);
   }
 
   Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);

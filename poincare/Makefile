@@ -42,8 +42,6 @@ poincare_src += $(addprefix poincare/src/,\
 poincare_src += $(addprefix poincare/src/,\
   absolute_value.cpp \
   addition.cpp \
-  and.cpp \
-  and_explicit.cpp \
   approximation_helper.cpp \
   arc_cosine.cpp \
   arc_sine.cpp \
@@ -56,6 +54,7 @@ poincare_src += $(addprefix poincare/src/,\
   bit_set.cpp \
   bits_clear.cpp \
   bits_clear_explicit.cpp \
+  binary_operation.cpp \
   binom_cdf.cpp \
   binomial_coefficient.cpp \
   binomial_distribution_function.cpp \
@@ -115,22 +114,14 @@ poincare_src += $(addprefix poincare/src/,\
   multiplication.cpp \
   n_ary_expression.cpp \
   n_ary_infix_expression.cpp \
-  nand.cpp \
-  nand_explicit.cpp \
   naperian_logarithm.cpp \
-  nor.cpp \
-  nor_explicit.cpp \
   norm_cdf.cpp \
   norm_cdf2.cpp \
   norm_pdf.cpp \
   normal_distribution_function.cpp \
-  not.cpp \
-  not_explicit.cpp \
   nth_root.cpp \
   number.cpp \
   opposite.cpp \
-  or.cpp \
-  or_explicit.cpp \
   parametered_expression.cpp \
   parenthesis.cpp \
   permute_coefficient.cpp \
@@ -184,10 +175,6 @@ poincare_src += $(addprefix poincare/src/,\
   vector_dot.cpp \
   vector_norm.cpp \
   zoom.cpp \
-  xnor.cpp \
-  xnor_explicit.cpp \
-  xor.cpp \
-  xor_explicit.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/parsing/,\

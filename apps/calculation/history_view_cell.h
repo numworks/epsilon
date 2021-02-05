@@ -37,7 +37,7 @@ public:
   constexpr static KDCoordinate k_inputViewHorizontalMargin = Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
   static KDCoordinate Height(Calculation * calculation, bool expanded);
   HistoryViewCell(Responder * parentResponder = nullptr);
-  static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth);
+  static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth, KDCoordinate ellipsisViewWidth);
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType = HistoryViewCellDataSource::SubviewType::None);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;

@@ -200,6 +200,56 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     switchTo(appSnapshotAtIndex(0));
     return true;
   }
+  if (event == Ion::Events::ShiftZero) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(0));
+    return true;
+  }
+  if (event == Ion::Events::ShiftOne) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(1));
+    return true;
+  }
+  if (event == Ion::Events::ShiftTwo) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(2));
+    return true;
+  }
+  if (event == Ion::Events::ShiftThree) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(3));
+    return true;
+  }
+  if (event == Ion::Events::ShiftFour) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(4));
+    return true;
+  }
+  if (event == Ion::Events::ShiftFive) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(5));
+    return true;
+  }
+  if (event == Ion::Events::ShiftSix) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(6));
+    return true;
+  }
+  if (event == Ion::Events::ShiftSeven) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(7));
+    return true;
+  }
+  if (event == Ion::Events::ShiftEight) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(8));
+    return true;
+  }
+  if (event == Ion::Events::ShiftNine) {
+    m_window.redraw(true);
+    switchTo(appSnapshotAtIndex(9));
+    return true;
+  }
   if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;

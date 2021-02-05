@@ -45,6 +45,10 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   m_builtinNodesCount(0),
   m_importedNodesCount(0)
 {
+  for (int i = 0; i < k_scriptOriginsCount; i++) {
+    m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
+    m_subtitleCells[i].setTextColor(Palette::BlueishGray);
+  }
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -125,7 +129,11 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
     I18n::Message::BuiltinsAndKeywords,
     I18n::Message::ImportedModulesAndScripts
   };
-  static_cast<MessageTableCell *>(cell)->setMessage(subtitleMessages[(int)cellOrigin]);
+  /* Unlike text and background color, message font impacts cell's size.
+   * It is therefore set here to apply on temporary cells as well. */
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
+  myCell->setMessage(subtitleMessages[(int)cellOrigin]);
+  myCell->setMessageFont(KDFont::SmallFont);
 }
 
 void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

@@ -21,7 +21,7 @@ public:
     // Available width is necessary to compute it minimal height.
     KDCoordinate expectedWidth = m_frame.width();
     assert(expectedWidth > 0);
-    return KDSize(expectedWidth, Escher::TableCell::minimalHeightForOptimalDisplay(m_cell.labelView(), nullptr, m_cell.accessoryView(), expectedWidth) + k_margin);
+    return KDSize(expectedWidth, Escher::TableCell::minimalHeightForOptimalDisplay(m_cell.labelView(), nullptr, m_cell.accessoryView(), expectedWidth) + k_margin + Escher::Metric::CellSeparatorThickness);
   }
 private:
   Escher::HighlightCell * cell() override { return &m_cell; }

@@ -32,7 +32,7 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subL
   KDSize subLabelSize = subLabel ? subLabel->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize accessorySize = accessory ? accessory->minimalSizeForOptimalDisplay() : KDSizeZero;
   // Compute available width for Label and subLabel
-  width -= Metric::CellLeftMargin + Metric::CellRightMargin;
+  width -= Metric::CellLeftMargin + Metric::CellRightMargin + 2*k_separatorThickness ;
   if (accessory) {
     width -= Metric::CellHorizontalElementMargin + accessorySize.width();
   }
@@ -48,6 +48,9 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subL
     // Label and subLabel fit in the same row
     labelsHeight = std::max<KDCoordinate>(labelHeight, subLabelHeight);
   }
+  /* Space required for bottom separator is not accounted for as it overlaps
+   * with neighbor cells. It is added to the frame in TableView, and exploited
+   * when layouting subviews. */
   return k_separatorThickness + Metric::CellTopMargin + std::max<KDCoordinate>(labelsHeight, accessorySize.height()) + Metric::CellBottomMargin;
 }
 
@@ -59,6 +62,8 @@ KDSize TableCell::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
+  // TODO : identify and fix all layouts where cell's frame does not fit content
+  // assert(value <= max);
   return value > max ? max : value;
 }
 
@@ -80,10 +85,12 @@ void TableCell::layoutSubviews(bool force) {
 
   KDCoordinate y = 0;
   KDCoordinate x = 0;
-  // Apply margins on every side
-  width -= Metric::CellLeftMargin + Metric::CellRightMargin;
-  x += Metric::CellLeftMargin;
-  height -= k_separatorThickness + Metric::CellTopMargin + Metric::CellBottomMargin;
+  /* Apply margins and separators on every side. At this point, we assume cell's
+   * frame has been updated to add bottom and right overlapping borders. */
+  // TODO : improve overlapping borders so that we don't need to assume that.
+  width -= Metric::CellLeftMargin + Metric::CellRightMargin + 2*k_separatorThickness;
+  x += k_separatorThickness + Metric::CellLeftMargin;
+  height -= Metric::CellTopMargin + Metric::CellBottomMargin + 2*k_separatorThickness ;
   y += k_separatorThickness + Metric::CellTopMargin;
 
   if (width < 0 || height < 0) {
@@ -101,7 +108,7 @@ void TableCell::layoutSubviews(bool force) {
       accessoryX += width - accessoryWidth;
     }
     // Accessory must be vertically centered on the entire cell height.
-    KDCoordinate verticalCenterOffset = (height - accessorySize.height() + 1) / 2;
+    KDCoordinate verticalCenterOffset = (height - accessorySize.height()) / 2;
     // Set accessory frame
     accessory->setFrame(KDRect(accessoryX, y + verticalCenterOffset, accessoryWidth, accessoryHeight), force);
     // Update remaining space, add margin before accessory
@@ -135,6 +142,9 @@ void TableCell::layoutSubviews(bool force) {
   }
 
   if (label) {
+    /* Label is vertically centered. If available space is odd, the extra pixel
+     * is placed above label as it is often text, which often appears to be
+     * elevated due to descenders such as j. */
     KDCoordinate verticalCenterOffset = (maxHeight - labelHeight + 1) / 2;
     label->setFrame(KDRect(x, y + verticalCenterOffset, labelWidth, labelHeight), force);
   }
@@ -152,6 +162,7 @@ void TableCell::layoutSubviews(bool force) {
         y += labelHeight + Metric::CellVerticalElementMargin;
       }
     }
+    // SubLabel is vertically centered, see label's vertical centering comment.
     KDCoordinate verticalCenterOffset = (maxHeight - subLabelHeight + 1) / 2;
     subLabel->setFrame(KDRect(x, y + verticalCenterOffset, subLabelWidth, subLabelHeight), force);
   }

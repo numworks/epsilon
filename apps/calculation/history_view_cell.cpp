@@ -273,6 +273,9 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, b
         Poincare::ExceptionCheckpoint::Raise();
       }
     }
+    if (canChangeDisplayOutput && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate && exactOutputLayout.layoutSize().width() > Ion::Display::Width) {
+      calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
+    }
   }
 
   // Create the approximate output layout

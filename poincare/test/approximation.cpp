@@ -217,8 +217,8 @@ QUIZ_CASE(poincare_approximation_logarithm) {
   assert_expression_approximates_to<float>("log(5+2×𝐢)", "0.731199+0.1652518×𝐢");
   assert_expression_approximates_to<double>("ln(5+2×𝐢)", "1.6836479149932+3.8050637711236ᴇ-1×𝐢");
   assert_expression_approximates_to<double>("log(0,0)", Undefined::Name());
-  assert_expression_approximates_to<double>("log(0)", "-inf");
-  assert_expression_approximates_to<double>("log(2,0)", "0");
+  assert_expression_approximates_to<double>("log(0)", Undefined::Name());
+  assert_expression_approximates_to<double>("log(2,0)", Undefined::Name());
 
   // WARNING: evaluate on branch cut can be multivalued
   assert_expression_approximates_to<double>("ln(-4)", "1.3862943611199+3.1415926535898×𝐢");

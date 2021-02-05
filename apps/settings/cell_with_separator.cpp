@@ -24,7 +24,8 @@ View * CellWithSeparator::subviewAtIndex(int index) {
 }
 
 void CellWithSeparator::layoutSubviews(bool force) {
-  cell()->setFrame(KDRect(0, k_margin, bounds().width(), bounds().height()-k_margin), force);
+  // With the separator, an additional border is visible.
+  cell()->setFrame(KDRect(0, k_margin + Metric::CellSeparatorThickness, bounds().width(), bounds().height() - k_margin - Metric::CellSeparatorThickness), force);
 }
 
 }

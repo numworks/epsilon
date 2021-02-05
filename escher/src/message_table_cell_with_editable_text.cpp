@@ -60,18 +60,18 @@ void MessageTableCellWithEditableText::layoutSubviews(bool force) {
   KDSize labelSize = labelView()->minimalSizeForOptimalDisplay();
   /* Handle TextField that has no defined width (as their width evolves with
    * the length of edited text */
-  KDCoordinate marginsAndLabelHorizontalOffset = Metric::CellLeftMargin + labelSize.width() + Metric::CellHorizontalElementMargin;
+  KDCoordinate marginsAndLabelHorizontalOffset = k_separatorThickness + Metric::CellLeftMargin + labelSize.width() + Metric::CellHorizontalElementMargin;
   KDCoordinate marginsVerticalOffset = k_separatorThickness + Metric::CellTopMargin;
 
   assert(!accessoryView());
-  assert(m_textField.minimalSizeForOptimalDisplay().width() <= bounds().width() - marginsAndLabelHorizontalOffset - Metric::CellRightMargin);
-  assert(m_textField.minimalSizeForOptimalDisplay().height() <= bounds().height() - marginsVerticalOffset - Metric::CellBottomMargin);
+  assert(m_textField.minimalSizeForOptimalDisplay().width() <= bounds().width() - marginsAndLabelHorizontalOffset - Metric::CellRightMargin - k_separatorThickness);
+  assert(m_textField.minimalSizeForOptimalDisplay().height() <= bounds().height() - marginsVerticalOffset - Metric::CellBottomMargin - k_separatorThickness);
 
   m_textField.setFrame(KDRect(
       marginsAndLabelHorizontalOffset,
       marginsVerticalOffset,
-      bounds().width() - marginsAndLabelHorizontalOffset - Metric::CellRightMargin,
-      bounds().height() - marginsVerticalOffset - Metric::CellBottomMargin)
+      bounds().width() - marginsAndLabelHorizontalOffset - Metric::CellRightMargin - k_separatorThickness,
+      bounds().height() - marginsVerticalOffset - Metric::CellBottomMargin - k_separatorThickness)
     , force);
 }
 

@@ -310,4 +310,9 @@ bool AbstractScrollableMultipleExpressionsView::handleEvent(Ion::Events::Event e
   return ScrollableView::handleEvent(event);
 }
 
+KDSize ScrollableTwoExpressionsView::minimalSizeForOptimalDisplayFullSize() const {
+  KDSize res = constContentCell()->minimalSizeForOptimalDisplayFullSize();
+  return KDSize(res.width() + leftMargin() + rightMargin(), res.height() + topMargin() + bottomMargin());
+}
+
 }

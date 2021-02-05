@@ -102,9 +102,7 @@ public:
         Escher::Metric::CommonLargeMargin
     );
   }
-  KDSize minimalSizeForOptimalDisplayFullSize() const {
-    return constContentCell()->minimalSizeForOptimalDisplayFullSize();
-  }
+  KDSize minimalSizeForOptimalDisplayFullSize() const;
 private:
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };

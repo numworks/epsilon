@@ -107,6 +107,7 @@ protected:
   KDRect visibleContentRect();
   void layoutSubviews(bool force = false) override;
   virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
+  virtual float marginPortionTolerance() const { return 0.8f; }
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
   void logAttributes(std::ostream &os) const override;

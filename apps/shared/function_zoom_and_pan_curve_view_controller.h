@@ -19,7 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Zoom");
 private:
-  constexpr static KDCoordinate k_standardViewHeight = 222;
+  constexpr static KDCoordinate k_standardViewHeight = 174;
 
   class ContentView : public Escher::View {
   public:
@@ -51,9 +51,11 @@ private:
     bool m_displayLegend;
   };
 
-  void adaptCurveRange(bool legendWillAppear);
+  /* Warning : these methods do not reload the curve view. It should be done
+   * manually after calling either or both. */
+  void adaptRangeForHeaders(bool viewWillAppear);
   /* Returns true if the legend visibility has changed. */
-  bool setLegendVisible(bool visible);
+  bool setLegendVisible(bool legendWillAppear);
 
   // ZoomAndPanCurveViewController
   InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_interactiveRange; }

@@ -10,7 +10,7 @@ namespace Escher {
 
 TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource) :
   ScrollView(&m_contentView, scrollDataSource),
-  m_contentView(this, dataSource, 0, 1)
+  m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness)
 {
 }
 

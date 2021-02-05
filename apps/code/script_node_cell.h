@@ -2,9 +2,8 @@
 #define CODE_SCRIPT_NODE_CELL_H
 
 #include "script_node.h"
-#include "script_store.h"
 #include <escher/table_cell.h>
-#include <kandinsky/coordinate.h>
+#include <escher/buffer_text_view.h>
 
 namespace Code {
 
@@ -13,45 +12,27 @@ public:
   static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
   constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
-  constexpr static KDCoordinate k_simpleItemHeight = 27;
-  constexpr static KDCoordinate k_complexItemHeight = 42;
-
   ScriptNodeCell() :
     TableCell(),
-    m_scriptNodeView()
+    m_labelView(KDFont::LargeFont),
+    m_subLabelView(KDFont::SmallFont, 0.5f, 0.5f, Escher::Palette::GrayDark),
+    m_accessoryView(KDFont::SmallFont, 0.5f, 0.5f)
   {}
   void setScriptNode(ScriptNode * node);
-  static bool CanDisplayNameAndSource(int nameLength, const char * source);
 
   /* TableCell */
-  Escher::View * labelView() const override { return const_cast<View *>(static_cast<const View *>(&m_scriptNodeView)); }
+  Escher::View * labelView() const override { return (Escher::View *)&m_labelView; }
+  Escher::View * subLabelView() const override { return (Escher::View *)&m_subLabelView; }
+  // TODO : Remove source from cell, and handle it as a subtitle Cell in VarBox.
+  Escher::View * accessoryView() const override { return (Escher::View *)&m_accessoryView; }
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
-  const char * text() const override { return m_scriptNodeView.text(); }
-
-protected:
-  class ScriptNodeView : public Escher::HighlightCell {
-  public:
-    constexpr static const KDFont * k_font = KDFont::SmallFont;
-    constexpr static KDCoordinate k_optimalWidth = Ion::Display::Width - Escher::Metric::PopUpLeftMargin - Escher::Metric::PopUpRightMargin;
-    ScriptNodeView() :
-      Escher::HighlightCell(),
-      m_scriptNode(nullptr)
-    {}
-    void setScriptNode(ScriptNode * node) { m_scriptNode = node; }
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    virtual KDSize minimalSizeForOptimalDisplay() const override;
-    const char * text() const override {
-      return m_scriptNode->description();
-    }
-  private:
-    constexpr static KDCoordinate k_bottomMargin = 5;
-    constexpr static KDCoordinate k_topMargin = k_bottomMargin + k_separatorThickness;
-    ScriptNode * m_scriptNode;
-  };
-  ScriptNodeView m_scriptNodeView;
+private:
+  Escher::BufferTextView m_labelView;
+  Escher::BufferTextView m_subLabelView;
+  Escher::BufferTextView m_accessoryView;
 };
 
 }

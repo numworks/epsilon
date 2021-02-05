@@ -50,14 +50,13 @@ KDSize ScrollView::minimalSizeForOptimalDisplay() const {
    * With a 0.0 tolerance, right and bottom margin is never cropped.
    * With a 0.8 tolerance, at most 80% of right or bottom margin can be cropped.
    * With a 1.0 tolerance, right or bottom margin can be entirely cropped. */
-  static constexpr float marginPortionTolerance = 0.8f;
-  KDCoordinate excessWidth = width - m_frame.width();
-  if (excessWidth > 0 && excessWidth <= marginPortionTolerance * m_rightMargin) {
+   KDCoordinate excessWidth = width - m_frame.width();
+  if (excessWidth > 0 && excessWidth <= marginPortionTolerance() * m_rightMargin) {
     width -= excessWidth;
     m_excessWidth = excessWidth;
   }
   KDCoordinate excessHeight = height - m_frame.height();
-  if (excessHeight > 0 && excessHeight <= marginPortionTolerance * m_bottomMargin) {
+  if (excessHeight > 0 && excessHeight <= marginPortionTolerance() * m_bottomMargin) {
     height -= excessHeight;
     m_excessHeight = excessHeight;
   }

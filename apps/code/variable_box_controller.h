@@ -41,7 +41,7 @@ public:
   void insertAutocompletionResultAtIndex(int index);
 
 private:
-  constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
+  constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / Escher::TableCell::k_minimalLargeFontCellHeight + 2; // +2 if the cells are cropped on top and at the bottom
   constexpr static size_t k_maxScriptNodesCount = 32; // Chosen without particular reasons
   constexpr static int k_totalBuiltinNodesCount = 107;
   constexpr static uint8_t k_scriptOriginsCount = 3;

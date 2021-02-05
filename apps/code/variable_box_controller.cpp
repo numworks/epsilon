@@ -985,11 +985,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     nodes[i] = nodes[i - 1];
   }
 
-  // Step 2.4: Check if the node source name fits, if not, do not use it
-  if (!ScriptNodeCell::CanDisplayNameAndSource(nodeNameLength, nodeSourceName)) {
-    nodeSourceName = nullptr;
-  }
-  // Step 2.5: Add the node
+  // Step 2.4: Add the node
   nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
   // Increase the node count
   *currentNodeCount = *currentNodeCount + 1;

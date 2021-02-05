@@ -46,6 +46,7 @@ public:
   void setYMin(float f) override;
   void setYMax(float f) override;
 
+  float offscreenYAxis() const override { return m_offscreenYAxis; }
   void setOffscreenYAxis(float f) { m_offscreenYAxis = f; }
 
   // Window
@@ -82,7 +83,6 @@ protected:
 
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
-  float offscreenYAxis() const override { return m_offscreenYAxis; }
   int normalizationSignificantBits() const;
 
   float m_offscreenYAxis;

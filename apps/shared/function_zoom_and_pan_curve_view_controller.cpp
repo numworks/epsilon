@@ -20,10 +20,11 @@ const char * FunctionZoomAndPanCurveViewController::title() {
 void FunctionZoomAndPanCurveViewController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_contentView.curveView()->setOkView(nullptr);
-  m_contentView.setDisplayLegend(true);
   /* We need to change the curve range to keep the same visual aspect of the
    * view. */
-  adaptCurveRange(true);
+  adaptRangeForHeaders(true);
+  setLegendVisible(true);
+  m_contentView.curveView()->reload();
 }
 
 void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
@@ -31,57 +32,78 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
 }
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
-  bool isQuitEvent = event == Ion::Events::Back || event == Ion::Events::Home;
+  bool isSystemQuitEvent = event == Ion::Events::Back || event == Ion::Events::Home;
+  bool willLeave = isSystemQuitEvent || event == Ion::Events::OK || event == Ion::Events::EXE;
   bool zoomAutoWasOn = m_interactiveRange->zoomAuto();
   /* Deactivate the automatic zoom to avoid recomputing the range if the user
    * immediately quits the menu. */
   m_interactiveRange->setZoomAuto(false);
-  bool eventHasEffect = ZoomAndPanCurveViewController::handleEvent(event) || isQuitEvent;
+  bool eventHasEffect = ZoomAndPanCurveViewController::handleEvent(event) || isSystemQuitEvent;
   /* Hide the legend if the event does something, as the user likely does not
    * need it, but display it if the event does nothing to remind the user of
    * the UI.
-   * This also hides the legend if the menu is going to be closed, therefore
-   * calling adaptCurveRange(false) to reset the range to its correct values. */
+   * This also hides the legend and restores the ranges if the menu is going
+   * to be closed. */
   bool legendVisibilityChanged = setLegendVisible(!eventHasEffect);
-  if (zoomAutoWasOn && (isQuitEvent || !eventHasEffect || event == Ion::Events::OK || event == Ion::Events::EXE)) {
+  if (zoomAutoWasOn && (!eventHasEffect || willLeave)) {
     /* Reset the automatic zoom if the menu is closing or if nothing happened.
      * This way, entering garbage input does not deactivate the zoom. */
     m_interactiveRange->setZoomAuto(true);
   }
-  return !isQuitEvent && (legendVisibilityChanged || eventHasEffect);
+  if (willLeave) {
+    adaptRangeForHeaders(false);
+  }
+  if (willLeave || legendVisibilityChanged) {
+    m_contentView.curveView()->reload();
+  }
+  return !isSystemQuitEvent && (legendVisibilityChanged || eventHasEffect);
 }
 
-void FunctionZoomAndPanCurveViewController::adaptCurveRange(bool legendWillAppear) {
-  float currentYMin = m_interactiveRange->yMin();
-  float currentRange = m_interactiveRange->yMax() - m_interactiveRange->yMin();
-  float newYMin = 0;
-  if (legendWillAppear) {
-    float rangeOffscreen = ((float)ContentView::k_legendHeight)/((float)k_standardViewHeight)*currentRange;
-    newYMin = currentYMin + rangeOffscreen;
-    m_interactiveRange->setOffscreenYAxis(rangeOffscreen);
+void FunctionZoomAndPanCurveViewController::adaptRangeForHeaders(bool viewWillAppear) {
+  assert(!m_contentView.displayLegend());
+  float yMin = m_interactiveRange->yMin(), yMax = m_interactiveRange->yMax();
+  float yOff = m_interactiveRange->offscreenYAxis();
+  float headersHeight = m_contentView.bounds().height() - k_standardViewHeight;
+  if (viewWillAppear) {
+    float dY = headersHeight / static_cast<float>(k_standardViewHeight) * (yMax - yMin);
+    m_interactiveRange->setOffscreenYAxis(-dY);
+    m_interactiveRange->setYMax(yMax + dY);
+    /* As we are adding space and the Y range that should not be taken into
+     * account for computing the grid, we count it as negative offscreen. */
+    assert(yOff == 0.f);
   } else {
-    newYMin = m_interactiveRange->yMax() - currentRange*((float)k_standardViewHeight)/(((float)k_standardViewHeight)-((float)ContentView::k_legendHeight));
     m_interactiveRange->setOffscreenYAxis(0.f);
+    m_interactiveRange->setYMax(yMax + yOff);
   }
-  m_interactiveRange->setYMin(newYMin);
-  m_contentView.curveView()->reload();
 }
 
-bool FunctionZoomAndPanCurveViewController::setLegendVisible(bool visible) {
-  if (visible != m_contentView.displayLegend()) {
-    m_contentView.setDisplayLegend(visible);
-    adaptCurveRange(visible);
-    m_contentView.layoutSubviews();
-    return true;
+bool FunctionZoomAndPanCurveViewController::setLegendVisible(bool legendWillAppear) {
+  if (legendWillAppear == m_contentView.displayLegend()) {
+    return false;
   }
-  return false;
+  float yMin = m_interactiveRange->yMin(), yMax = m_interactiveRange->yMax();
+  float yOff = m_interactiveRange->offscreenYAxis();
+  float totalHeight = m_contentView.bounds().height();
+  float legendHeight = static_cast<float>(ContentView::k_legendHeight);
+  if (legendWillAppear) {
+    float dY = legendHeight / totalHeight * (yMax - yMin);
+    m_interactiveRange->setOffscreenYAxis(yOff + dY);
+    m_interactiveRange->setYMin(yMin + dY);
+  } else {
+    float dY = legendHeight / (totalHeight - legendHeight) * (yMax - yMin);
+    m_interactiveRange->setOffscreenYAxis(yOff - dY);
+    m_interactiveRange->setYMin(yMin - dY);
+  }
+  m_contentView.setDisplayLegend(legendWillAppear);
+  m_contentView.layoutSubviews();
+  return true;
 }
 
 /* Content View */
 
 FunctionZoomAndPanCurveViewController::ContentView::ContentView(CurveView * curveView) :
   m_curveView(curveView),
-  m_displayLegend(true)
+  m_displayLegend(false)
 {
 }
 
@@ -101,7 +123,6 @@ View * FunctionZoomAndPanCurveViewController::ContentView::subviewAtIndex(int in
 }
 
 void FunctionZoomAndPanCurveViewController::ContentView::layoutSubviews(bool force) {
-  assert(bounds().height() == FunctionZoomAndPanCurveViewController::k_standardViewHeight);
   KDCoordinate curveHeight = m_displayLegend ? bounds().height() - k_legendHeight : bounds().height();
   m_curveView->setFrame(KDRect(0, 0, bounds().width(), curveHeight), force);
   m_legendView.setFrame(m_displayLegend ? KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight) : KDRectZero, force);

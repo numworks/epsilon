@@ -13,8 +13,9 @@ public:
   View * labelView() const override;
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message message);
-  void setBackgroundColor(KDColor color);
+  void setTextColor(KDColor color);
   void setMessageFont(const KDFont * font);
+  void setBackgroundColor(KDColor color);
 protected:
   KDColor backgroundColor() const override { return m_backgroundColor; }
 private:

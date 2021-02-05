@@ -25,13 +25,17 @@ void MessageTableCell::setMessage(I18n::Message text) {
   m_messageTextView.setMessage(text);
 }
 
-void MessageTableCell::setBackgroundColor(KDColor color) {
-  m_backgroundColor = color;
-  m_messageTextView.setBackgroundColor(color);
+void MessageTableCell::setTextColor(KDColor color) {
+  m_messageTextView.setTextColor(color);
 }
 
 void MessageTableCell::setMessageFont(const KDFont * font) {
   m_messageTextView.setFont(font);
+}
+
+void MessageTableCell::setBackgroundColor(KDColor color) {
+  m_backgroundColor = color;
+  m_messageTextView.setBackgroundColor(color);
 }
 
 }

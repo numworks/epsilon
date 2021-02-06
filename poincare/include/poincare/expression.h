@@ -206,6 +206,7 @@ public:
   static bool IsApproximate(const Expression e, Context * context);
   static bool IsRandom(const Expression e, Context * context);
   static bool IsMatrix(const Expression e, Context * context);
+  static bool IsInfinity(const Expression e, Context * context);
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */

@@ -1,6 +1,7 @@
 name: Continuous integration
 #on: [pull_request, push]
 on:
+  push:
   pull_request:
   workflow_dispatch:
     inputs:

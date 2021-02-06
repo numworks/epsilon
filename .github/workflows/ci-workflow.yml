@@ -35,9 +35,9 @@ jobs:
   android:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=android
       - uses: actions/upload-artifact@master
         with:
@@ -48,9 +48,9 @@ jobs:
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: numworks/setup-arm-toolchain@2020-q2
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: 'recursive'
       - run: mkdir final-output
       - run: make -j2 MODEL=n0100 EPSILON_I18N=en output/release/device/n0100/epsilon.onboarding.two_binaries
       - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.en.bin
@@ -89,9 +89,9 @@ jobs:
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: numworks/setup-arm-toolchain@2020-q2
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: 'recursive'
       - run: make -j2 epsilon.dfu
       - run: make -j2 epsilon.onboarding.dfu
       - run: make -j2 epsilon.onboarding.update.dfu
@@ -114,6 +114,8 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng
       - run: make -j2 PLATFORM=simulator
       - run: make -j2 PLATFORM=simulator epsilon.official.exe
@@ -129,9 +131,9 @@ jobs:
       - uses: numworks/setup-emscripten@v1
         with:
           sdk: latest-upstream
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=web
       - uses: actions/upload-artifact@master
         with:
@@ -141,9 +143,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator
       - uses: actions/upload-artifact@master
         with:
@@ -156,6 +158,8 @@ jobs:
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator
       - run: make -j2 PLATFORM=simulator epsilon.official.app
       - run: make -j2 PLATFORM=simulator ARCH=x86_64 test.headless.bin
@@ -170,6 +174,8 @@ jobs:
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.official.ipa
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 test.ipa

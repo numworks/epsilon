@@ -43,7 +43,7 @@ apps_src += $(addprefix apps/,\
 )
 
 tests_src += $(addprefix apps/,\
-  exam_mode_configuration_official.cpp \
+  exam_mode_configuration_non_official.cpp \
 )
 
 

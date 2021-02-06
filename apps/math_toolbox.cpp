@@ -84,12 +84,6 @@ const ToolboxMessageTree vectorsChildren[] = {
 };
 
 const ToolboxMessageTree logicExplicitChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalAndExplicitCommandWithArg, I18n::Message::LogicalAnd),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalNandExplicitCommandWithArg, I18n::Message::LogicalNand),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalOrExplicitCommandWithArg, I18n::Message::LogicalOr),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalNorExplicitCommandWithArg, I18n::Message::LogicalNor),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalXorExplicitCommandWithArg, I18n::Message::LogicalXor),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorExplicitCommandWithArg, I18n::Message::LogicalXnor),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalNotExplicitCommandWithArg, I18n::Message::LogicalNot),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftExplicitCommandWithArg, I18n::Message::LogicalShiftLeft),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightExplicitCommandWithArg, I18n::Message::LogicalShiftRight),
@@ -101,11 +95,8 @@ const ToolboxMessageTree logicExplicitChildren[] = {
 const ToolboxMessageTree logicChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::ExplicitNumberOfBits, logicExplicitChildren),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalAndCommandWithArg, I18n::Message::LogicalAnd),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalNandCommandWithArg, I18n::Message::LogicalNand),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalOrCommandWithArg, I18n::Message::LogicalOr),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalNorCommandWithArg, I18n::Message::LogicalNor),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalXorCommandWithArg, I18n::Message::LogicalXor),
-  ToolboxMessageTree::Leaf(I18n::Message::LogicalXnorCommandWithArg, I18n::Message::LogicalXnor),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalNotCommandWithArg, I18n::Message::LogicalNot),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftLeftCommandWithArg, I18n::Message::LogicalShiftLeft),
   ToolboxMessageTree::Leaf(I18n::Message::LogicalShiftRightCommandWithArg, I18n::Message::LogicalShiftRight),

@@ -98,7 +98,6 @@ private:
     &ArcCosine::s_functionHelper,
     &HyperbolicArcCosine::s_functionHelper,
     &And::s_functionHelper,
-    &AndExplicit::s_functionHelper,
     &ComplexArgument::s_functionHelper,
     &ArcSine::s_functionHelper,
     &HyperbolicArcSine::s_functionHelper,
@@ -137,10 +136,6 @@ private:
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
-    &Nand::s_functionHelper,
-    &NandExplicit::s_functionHelper,
-    &Nor::s_functionHelper,
-    &NorExplicit::s_functionHelper,
     &VectorNorm::s_functionHelper,
     &NormCDF::s_functionHelper,
     &NormCDF2::s_functionHelper,
@@ -148,7 +143,6 @@ private:
     &Not::s_functionHelper,
     &NotExplicit::s_functionHelper,
     &Or::s_functionHelper,
-    &OrExplicit::s_functionHelper,
     &PermuteCoefficient::s_functionHelper,
     &SimplePredictionInterval::s_functionHelper,
     &PredictionInterval::s_functionHelper,
@@ -181,10 +175,7 @@ private:
     &TwosComplement::s_functionHelper,
     &MatrixTrace::s_functionHelper,
     &MatrixTranspose::s_functionHelper,
-    &Xnor::s_functionHelper,
-    &XnorExplicit::s_functionHelper,
     &Xor::s_functionHelper,
-    &XorExplicit::s_functionHelper,
     &SquareRoot::s_functionHelper
   };
   static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));

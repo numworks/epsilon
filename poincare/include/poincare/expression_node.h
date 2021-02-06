@@ -52,7 +52,6 @@ public:
     Tangent,
     AbsoluteValue,
     And,
-    AndExplicit,
     ArcCosine,
     ArcSine,
     ArcTangent,
@@ -90,11 +89,7 @@ public:
     LeastCommonMultiple,
     Logarithm,
     MatrixTrace,
-    Nand,
-    NandExplicit,
     NaperianLogarithm,
-    Nor,
-    NorExplicit,
     NormCDF,
     NormCDF2,
     NormPDF,
@@ -103,7 +98,6 @@ public:
     NthRoot,
     Opposite,
     Or,
-    OrExplicit,
     Parenthesis,
     PermuteCoefficient,
     Product,
@@ -129,10 +123,7 @@ public:
     TwosComplement,
     VectorDot,
     VectorNorm,
-    Xnor,
-    XnorExplicit,
     Xor,
-    XorExplicit,
     /* When sorting the children of an expression, we assert that the following
      * nodes are at the end of the list : */
     // - Units

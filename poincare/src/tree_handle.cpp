@@ -281,7 +281,6 @@ template AbsoluteValue TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValu
 template AbsoluteValueLayout TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(const Tuple &);
 template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(const Tuple &);
 template And TreeHandle::FixedArityBuilder<And, BinaryOperationNode<1> >(const Tuple &);
-template AndExplicit TreeHandle::FixedArityBuilder<AndExplicit, BinaryOperationNode<2> >(const Tuple &);
 template ArcCosine TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(const Tuple &);
 template ArcSine TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(const Tuple &);
 template ArcTangent TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(const Tuple &);
@@ -347,11 +346,7 @@ template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTr
 template MatrixRowEchelonForm TreeHandle::FixedArityBuilder<MatrixRowEchelonForm, MatrixRowEchelonFormNode>(const Tuple &);
 template MatrixReducedRowEchelonForm TreeHandle::FixedArityBuilder<MatrixReducedRowEchelonForm, MatrixReducedRowEchelonFormNode>(const Tuple &);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
-template Nand TreeHandle::FixedArityBuilder<Nand, BinaryOperationNode<3> >(const Tuple &);
-template NandExplicit TreeHandle::FixedArityBuilder<NandExplicit, BinaryOperationNode<4> >(const Tuple &);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(const Tuple &);
-template Nor TreeHandle::FixedArityBuilder<Nor, BinaryOperationNode<7> >(const Tuple &);
-template NorExplicit TreeHandle::FixedArityBuilder<NorExplicit, BinaryOperationNode<8> >(const Tuple &);
 template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(const Tuple &);
 template NormCDF2 TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>(const Tuple &);
 template NormPDF TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(const Tuple &);
@@ -360,7 +355,6 @@ template NotExplicit TreeHandle::FixedArityBuilder<NotExplicit, BinaryOperationN
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(const Tuple &);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
 template Or TreeHandle::FixedArityBuilder<Or, BinaryOperationNode<5> >(const Tuple &);
-template OrExplicit TreeHandle::FixedArityBuilder<OrExplicit, BinaryOperationNode<6> >(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PermuteCoefficient TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(const Tuple &);
 template Power TreeHandle::FixedArityBuilder<Power, PowerNode>(const Tuple &);
@@ -401,8 +395,5 @@ template VectorNorm TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>(co
 template VectorNormLayout TreeHandle::FixedArityBuilder<VectorNormLayout, VectorNormLayoutNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 template TwosComplement TreeHandle::FixedArityBuilder<TwosComplement, BinaryOperationNode<31> >(const Tuple &);
-template Xnor TreeHandle::FixedArityBuilder<Xnor, BinaryOperationNode<11> >(const Tuple &);
-template XnorExplicit TreeHandle::FixedArityBuilder<XnorExplicit, BinaryOperationNode<12> >(const Tuple &);
 template Xor TreeHandle::FixedArityBuilder<Xor, BinaryOperationNode<9> >(const Tuple &);
-template XorExplicit TreeHandle::FixedArityBuilder<XorExplicit, BinaryOperationNode<10> >(const Tuple &);
 }

@@ -1,5 +1,9 @@
 name: Internal Continuous Integration
-on: [pull_request, push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 env:
   MAKEFLAGS: '-j32'
   ACCEPT_OFFICIAL_TOS: 1

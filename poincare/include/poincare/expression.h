@@ -20,6 +20,7 @@ class Symbol;
 class Expression : public TreeHandle {
   friend class AbsoluteValue;
   friend class Addition;
+  friend class And;
   friend class ArcCosine;
   friend class ArcSine;
   friend class ArcTangent;
@@ -27,6 +28,12 @@ class Expression : public TreeHandle {
   friend class BasedInteger;
   friend class BinomialCoefficient;
   friend class BinomialDistributionFunction;
+  friend class BitClear;
+  friend class BitFlip;
+  friend class BitGet;
+  friend class BitsClear;
+  friend class BitsClearExplicit;
+  friend class BitSet;
   friend class Ceiling;
   friend class CommonLogarithm;
   template<typename T>
@@ -74,9 +81,12 @@ class Expression : public TreeHandle {
   friend class NormCDF;
   friend class NormCDF2;
   friend class NormPDF;
+  friend class Not;
+  friend class NotExplicit;
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
+  friend class Or;
   friend class ParameteredExpression;
   friend class Parenthesis;
   friend class PermuteCoefficient;
@@ -86,9 +96,19 @@ class Expression : public TreeHandle {
   friend class Product;
   friend class Randint;
   friend class RealPart;
+  friend class RotateLeft;
+  friend class RotateLeftExplicit;
+  friend class RotateRight;
+  friend class RotateRightExplicit;
   friend class Round;
   friend class Sequence;
   friend class SequenceNode;
+  friend class ShiftArithmeticRight;
+  friend class ShiftArithmeticRightExplicit;
+  friend class ShiftLogicLeft;
+  friend class ShiftLogicLeftExplicit;
+  friend class ShiftLogicRight;
+  friend class ShiftLogicRightExplicit;
   friend class SignFunction;
   friend class Sine;
   friend class SquareRoot;
@@ -106,9 +126,11 @@ class Expression : public TreeHandle {
   friend class TrigonometryCheatTable;
   friend class Unit;
   friend class UnitConvert;
+  friend class TwosComplement;
   friend class VectorCross;
   friend class VectorDot;
   friend class VectorNorm;
+  friend class Xor;
 
   friend class AdditionNode;
   friend class DerivativeNode;
@@ -118,6 +140,8 @@ class Expression : public TreeHandle {
   friend class ExpressionNode;
   friend class FunctionNode;
   friend class IntegralNode;
+  template<int T>
+  friend class BinaryOperationNode;
   template<int T>
   friend class LogarithmNode;
   friend class MatrixNode;

@@ -7,6 +7,7 @@
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/based_integer.h>
+#include <poincare/binary_operation.h>
 #include <poincare/binom_cdf.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binom_pdf.h>

@@ -146,6 +146,23 @@ public:
   static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
   static Integer Power(const Integer & i, const Integer & j);
   static Integer Factorial(const Integer & i);
+  // logical operations
+  static Integer LogicalXor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer LogicalAnd(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer LogicalOr(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer LogicalNot(const Integer &a, const Integer &num_bits = Integer(32));
+  static Integer LogicalShiftLeft(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
+  static Integer LogicalShiftRight(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
+  static Integer LogicalShiftRightArithmetic(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
+  static Integer LogicalRotateRight(const Integer &a, const Integer &rotate, const Integer &num_bits = Integer(32));
+  static Integer LogicalRotateLeft(const Integer &a, const Integer &rotate, const Integer &num_bits = Integer(32));
+  static Integer LogicalBitsClear(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer LogicalBitGet(const Integer &a, const Integer &bit);
+  static Integer LogicalBitClear(const Integer &a, const Integer &bit);
+  static Integer LogicalBitSet(const Integer &a, const Integer &bit);
+  static Integer LogicalBitFlip(const Integer &a, const Integer &bit);
+  static Integer Truncate(const Integer &a, const Integer &num_bits);
+  static Integer TwosComplementToBits(const Integer &a, const Integer &num_bits);
 
   // Derived expression builder
   static Expression CreateMixedFraction(const Integer & num, const Integer & denom);

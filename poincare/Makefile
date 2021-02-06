@@ -48,6 +48,7 @@ poincare_src += $(addprefix poincare/src/,\
   arc_tangent.cpp \
   arithmetic.cpp \
   based_integer.cpp \
+  binary_operation.cpp \
   binom_cdf.cpp \
   binomial_coefficient.cpp \
   binomial_distribution_function.cpp \
@@ -185,6 +186,7 @@ tests_src += $(addprefix poincare/test/,\
   layout_cursor.cpp\
   layout_serialization.cpp\
   layout_to_expression.cpp\
+  logic.cpp\
   parsing.cpp\
   print_float.cpp\
   print_int.cpp\

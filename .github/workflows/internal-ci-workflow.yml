@@ -2,13 +2,37 @@ name: Internal Continuous Integration
 on: [pull_request]
 
 jobs:
-  tests:
+  n0100:
     runs-on: self-hosted
     steps:
       #- run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: numworks/setup-arm-toolchain@2020-q4
       - uses: actions/checkout@v2
-      - run: make -j32 MODEL=n0100 epsilon.dfu test.elf
-      - run: make -j32 epsilon.dfu test.elf
-      - run: make -j32 PLATFORM=simulator epsilon.bin test.bin
+      - run: make MODEL=n0100 epsilon.dfu test.elf
+  n0110:
+    runs-on: self-hosted
+    steps:
+      #- run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - uses: numworks/setup-arm-toolchain@2020-q4
+      - uses: actions/checkout@v2
+      - run: make epsilon.dfu test.elf
+  linux:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - run: make PLATFORM=simulator epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
+  web:
+    runs-on: self-hosted
+    steps:
+      - uses: numworks/setup-emscripten@v1
+        with:
+          sdk: 1.39.16-fastcomp
+      - uses: actions/checkout@v2
+      - run: make PLATFORM=simulator TARGET=web
+      - run: make PLATFORM=simulator TARGET=web epsilon.official.zip
+      - run: make PLATFORM=simulator TARGET=web test.js
+      - run: node output/release/simulator/web/test.js --headless --limit-stack-usage
+env:
+  ACCEPT_OFFICIAL_TOS: 1
+  MAKEFLAGS: '-j32'

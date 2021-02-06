@@ -123,9 +123,6 @@ jobs:
           submodules: 'recursive'
       - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng
       - run: make -j2 PLATFORM=simulator
-      - run: make -j2 PLATFORM=simulator epsilon.official.exe
-      - run: make -j2 PLATFORM=simulator test.headless.exe
-      - run: output/release/simulator/windows/test.headless.exe
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-windows.exe
@@ -156,7 +153,6 @@ jobs:
         with:
           name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
-      - run: make -j2 PLATFORM=simulator test.headless.bin
   macos:
     if: github.event.inputs.triggerMacos == 'yes'
     runs-on: macOS-latest
@@ -166,9 +162,6 @@ jobs:
         with:
           submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator
-      - run: make -j2 PLATFORM=simulator epsilon.official.app
-      - run: make -j2 PLATFORM=simulator ARCH=x86_64 test.headless.bin
-      - run: output/release/simulator/macos/x86_64/test.headless.bin
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-macos.zip
@@ -182,8 +175,6 @@ jobs:
         with:
           submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
-      - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.official.ipa
-      - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 test.ipa
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
       - uses: actions/upload-artifact@master
         with:

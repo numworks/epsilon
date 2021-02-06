@@ -1,5 +1,8 @@
-name: Self-hosted Continuous Integration
-on: [pull_request]
+name: Internal Continuous Integration
+on: [pull_request, push]
+env:
+  MAKEFLAGS: '-j32'
+  ACCEPT_OFFICIAL_TOS: 1
 
 jobs:
   n0100:
@@ -31,6 +34,3 @@ jobs:
       - run: make PLATFORM=simulator TARGET=web epsilon.official.zip
       - run: make PLATFORM=simulator TARGET=web test.js
       - run: node output/release/simulator/web/test.js --headless --limit-stack-usage
-env:
-  ACCEPT_OFFICIAL_TOS: 1
-  MAKEFLAGS: '-j32'

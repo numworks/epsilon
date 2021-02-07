@@ -2,7 +2,7 @@ BasicInfo:
   Title                   : Omega
   CompanyCode             : "00"
   ProductCode             : CTR-E-OMEGA
-  Logo                    : Nintendo # Nintendo / Licensed / Distributed / iQue / iQueForSystem
+  Logo                    : Homebrew # Nintendo / Licensed / Distributed / iQue / iQueForSystem
 
 RomFs:
   # Specifies the root path of the read only file system to include in the ROM.

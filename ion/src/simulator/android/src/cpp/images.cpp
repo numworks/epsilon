@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <jni.h>
 #include <android/bitmap.h>
+#include <assert.h>
 
 SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
@@ -13,6 +14,7 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
     "retrieveBitmapAsset",
     "(Ljava/lang/String;)Landroid/graphics/Bitmap;"
   );
+  assert(j_methodId != 0);
 
   jstring j_identifier = env->NewStringUTF(identifier);
 
@@ -45,6 +47,10 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
   AndroidBitmap_unlockPixels(env, j_bitmap);
-
+  // See comment in haptics_enabled.cpp
+  env->DeleteLocalRef(j_bitmap);
+  env->DeleteLocalRef(j_identifier);
+  env->DeleteLocalRef(j_class);
+  env->DeleteLocalRef(activity);
   return texture;
 }

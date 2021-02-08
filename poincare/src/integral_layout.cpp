@@ -1,6 +1,7 @@
 #include <poincare/integral_layout.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/integral.h>
 #include <poincare/serialization_helper.h>
 #include <string.h>
 #include <assert.h>
@@ -157,61 +158,7 @@ void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-
-  // Write the operator name
-  int numberOfChar = strlcpy(buffer, "int", bufferSize);
-  if (numberOfChar >= bufferSize-1) {
-    return bufferSize-1;
-  }
-
-  /* TODO
-   * For now, we serialize
-   *    2
-   *    ∫3dx as int{{3},{x},{1},{2}}
-   *    1
-   * To save space, we could serialize it as int{3}{x}{1}{2} and modify the
-   * parser accordingly.
-   * This could be done for other layouts too. */
-
-  /* Add system parentheses to avoid serializing:
-   *   2)+(1          2),1
-   *    ∫    (5)dx or  ∫    (5)dx
-   *    1             1+binomial(3
-   */
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
-  if (numberOfChar >= bufferSize-1) {
-    return bufferSize-1;
-  }
-
-  LayoutNode * argLayouts[] = {
-    const_cast<IntegralLayoutNode *>(this)->integrandLayout(),
-    const_cast<IntegralLayoutNode *>(this)->differentialLayout(),
-    const_cast<IntegralLayoutNode *>(this)->lowerBoundLayout(),
-    const_cast<IntegralLayoutNode *>(this)->upperBoundLayout()};
-
-  for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
-    if (i != 0) {
-      // Write the comma
-      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ',');
-      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    }
-
-    // Write the argument with system parentheses
-    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    numberOfChar += argLayouts[i]->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-
-  // Write the closing system parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-  return numberOfChar;
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name(), true);
 }
 
 CodePoint IntegralLayoutNode::XNTCodePoint(int childIndex) const {

@@ -47,7 +47,10 @@ void Button::setHighlighted(bool highlight) {
 
 KDSize Button::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
-  return KDSize(textSize.width() + (m_font == KDFont::SmallFont ? k_horizontalMarginSmall : k_horizontalMarginLarge), textSize.height() + k_verticalMargin);
+  if (m_font == KDFont::SmallFont) {
+    return KDSize(textSize.width() + k_horizontalMarginSmall, textSize.height() + k_verticalMarginSmall);
+  }
+  return KDSize(textSize.width() + k_horizontalMarginLarge, textSize.height() + k_verticalMarginLarge);
 }
 
 }

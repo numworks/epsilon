@@ -2,6 +2,7 @@
 #define SHARED_BUTTON_WITH_SEPARATOR_H
 
 #include <escher/button.h>
+#include <escher/metric.h>
 
 namespace Shared {
 
@@ -12,7 +13,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   constexpr static KDCoordinate k_margin = 5;
-  constexpr static KDCoordinate k_lineThickness = 1;
+  constexpr static KDCoordinate k_lineThickness = Escher::Metric::CellSeparatorThickness;
   void layoutSubviews(bool force = false) override;
 };
 

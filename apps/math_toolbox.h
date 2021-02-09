@@ -9,7 +9,8 @@
 class MathToolbox : public Escher::Toolbox {
 public:
   MathToolbox();
-
+  // View Controller
+  void viewDidDisappear() override;
   // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

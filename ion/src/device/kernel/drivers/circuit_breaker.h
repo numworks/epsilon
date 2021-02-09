@@ -5,7 +5,7 @@
 
 namespace Ion {
 namespace Device {
-namespace Checkpoint {
+namespace CircuitBreaker {
 
 bool hasCheckpoint();
 /* return true if error !*/

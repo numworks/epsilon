@@ -2,6 +2,7 @@
 #include "shared/global_context.h"
 #include "shared/continuous_function.h"
 #include <escher/metric.h>
+#include <escher/message_table_cell_with_message.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/expression.h>

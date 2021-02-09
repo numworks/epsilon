@@ -14,18 +14,14 @@ bool hasCheckpoint() {
   return res;
 }
 
-void loadCheckpoint() {
+void __attribute__((naked)) loadCheckpoint() {
   SVC(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT);
+  assert(false);
 }
 
-void SVC_ATTRIBUTES setCheckpointSVC(bool * res) {
+void __attribute__((naked)) setCheckpoint() {
   SVC(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT);
-}
-
-bool setCheckpoint() {
-  bool res;
-  setCheckpointSVC(&res);
-  return res;
+  asm("bx lr");
 }
 
 void unsetCheckpoint() {

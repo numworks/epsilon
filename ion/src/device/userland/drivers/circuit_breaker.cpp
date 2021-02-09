@@ -1,4 +1,5 @@
 #include <ion/circuit_breaker.h>
+#include <assert.h>
 #include <userland/drivers/svcall.h>
 
 namespace Ion {

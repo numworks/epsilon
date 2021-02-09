@@ -2,6 +2,7 @@
 #include <drivers/cache.h>
 #include <kernel/boot/isr.h>
 #include <regs/regs.h>
+#include <assert.h>
 #include <setjmp.h>
 #include <stddef.h>
 #include <stdint.h>

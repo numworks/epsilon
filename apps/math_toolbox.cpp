@@ -1,9 +1,12 @@
 #include "math_toolbox.h"
 #include "global_preferences.h"
+#include "shared/global_context.h"
 #include "./shared/toolbox_helpers.h"
+#include <apps/apps_container.h>
 #include <assert.h>
+#include <poincare/exception_checkpoint.h>
+#include <poincare/layout_helper.h>
 #include <string.h>
-#include <poincare_layouts.h>
 
 using namespace Poincare;
 using namespace Escher;
@@ -409,6 +412,19 @@ MathToolbox::MathToolbox() :
   }
 }
 
+void MathToolbox::viewDidDisappear() {
+  Toolbox::viewDidDisappear();
+
+  /* NestedMenuController::viewDidDisappear might need cell heights, which would
+   * use the MathToolbox cell heights memoization. We thus reset the MathToolbox
+   * layouts only after calling the parent's viewDidDisappear. */
+
+  // Tidy the layouts displayed in the MathToolbox to clean TreePool
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setLayout(Layout());
+  }
+}
+
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
   if (messageTree->numberOfChildren() == 0) {
@@ -423,8 +439,25 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
     ExpressionTableCellWithMessage * myCell = (ExpressionTableCellWithMessage *)cell;
-    myCell->setLayout(NthRootLayout::Builder(CodePointLayout::Builder('1')));
-    // myCell->setMessage(messageTree->label()); // TODO update this
+    const char * text = I18n::translate(messageTree->label());
+    Layout resultLayout;
+
+    Poincare::ExceptionCheckpoint ecp;
+    if (Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition2D && ExceptionRun(ecp)) {
+      Expression resultExpression = Expression::Parse(text, AppsContainer::sharedAppsContainer()->globalContext());
+      if (!resultExpression.isUninitialized()) {
+        // The text is parsable, we create its layout an insert it.
+        resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+      } else {
+        assert(false);
+      }
+    }
+    if (resultLayout.isUninitialized()) {
+      // With Edition1D, pool exception or invalid syntax, use a simpler layout.
+      resultLayout = LayoutHelper::String(text, strlen(text), KDFont::LargeFont);
+    }
+
+    myCell->setLayout(resultLayout);
     myCell->setSubLabelMessage(messageTree->text());
     return;
   }

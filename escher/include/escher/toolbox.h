@@ -1,7 +1,6 @@
 #ifndef ESCHER_TOOLBOX_H
 #define ESCHER_TOOLBOX_H
 
-#include <escher/message_table_cell_with_message.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/nested_menu_controller.h>
 #include <escher/toolbox_message_tree.h>
@@ -31,7 +30,7 @@ protected:
   /* indexAfterFork is called when a fork-node is encountered to choose which
    * of its children should be selected, based on external context. */
   virtual int indexAfterFork() const { assert(false); return 0; };
-  MessageTableCellWithMessage * leafCellAtIndex(int index) override = 0;
+  HighlightCell * leafCellAtIndex(int index) override = 0;
   MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
   mutable const ToolboxMessageTree * m_messageTreeModel;
   /* m_messageTreeModel points at the messageTree of the tree (describing the

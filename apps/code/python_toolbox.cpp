@@ -517,18 +517,30 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
 }
 
+KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
+  if (messageTree->numberOfChildren() == 0) {
+    MessageTableCellWithMessage tempCell;
+    return heightForCellAtIndex(&tempCell, index);
+  }
+  return Escher::Toolbox::nonMemoizedRowHeight(index);
+}
+
 void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxMessageTree * messageTree = const_cast<ToolboxMessageTree *>(static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index)));
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
-    // Upcasting MessageTableCellWithMessage as MessageTableCell to set font.
-    MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
+    MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
     if (messageTree->text() == I18n::Message::Default && UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
       // Leaf node with a multiple row label and no subLabel have a small font.
       myCell->setMessageFont(KDFont::SmallFont);
     } else {
+      // Reset cell's font (to prevent a small font from being memoized)
       myCell->setMessageFont(KDFont::LargeFont);
     }
+    myCell->setMessage(messageTree->label());
+    myCell->setSubLabelMessage(messageTree->text());
+    return;
   }
   Escher::Toolbox::willDisplayCellForIndex(cell, index);
 }

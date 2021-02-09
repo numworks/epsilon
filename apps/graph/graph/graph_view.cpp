@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <algorithm>
 #include <ion/circuit_breaker.h>
-#include <ion/src/device/userland/drivers/svcall.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -30,12 +29,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
 
-  SVC(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT);
+  Ion::CircuitBreaker::setCheckpoint();
 
   if (Ion::CircuitBreaker::hasCheckpoint()) {
     for (int i = 0; i < activeFunctionsCount ; i++) {
       if (i == 1) {
-        SVC(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT);
+        Ion::CircuitBreaker::loadCheckpoint();
       }
       Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
       ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);

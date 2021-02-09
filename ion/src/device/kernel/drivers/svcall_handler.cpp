@@ -197,17 +197,16 @@ void svcall_handler(unsigned svcNumber, void * args[], uint8_t * frameAddress, u
       return;
     // CIRCUIT BREAKER
     case SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT:
-      *static_cast<bool *>(args[0]) = Ion::Device::Checkpoint::hasCheckpoint();
+      *static_cast<bool *>(args[0]) = Ion::Device::CircuitBreaker::hasCheckpoint();
       return;
     case SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT:
-      Ion::Device::Checkpoint::loadCheckpoint(frameAddress);
+      Ion::Device::CircuitBreaker::loadCheckpoint(frameAddress);
       return;
     case SVC_CIRCUIT_BREAKER_SET_CHECKPOINT:
-      //*static_cast<bool *>(args[0]) = Ion::Device::Checkpoint::setCheckpoint(frameAddress, excReturn);
-      Ion::Device::Checkpoint::setCheckpoint(frameAddress, excReturn);
+      Ion::Device::CircuitBreaker::setCheckpoint(frameAddress, excReturn);
       return;
     case SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT:
-      Ion::Device::Checkpoint::unsetCheckpoint();
+      Ion::Device::CircuitBreaker::unsetCheckpoint();
       return;
     default:
       return;

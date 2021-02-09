@@ -11,7 +11,7 @@
 
 namespace Ion {
 namespace Device {
-namespace Checkpoint {
+namespace CircuitBreaker {
 
 /* Basic frame description:
  * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | */

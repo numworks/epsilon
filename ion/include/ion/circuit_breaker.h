@@ -6,7 +6,7 @@ namespace CircuitBreaker {
 
 bool hasCheckpoint();
 void loadCheckpoint();
-bool setCheckpoint();
+void setCheckpoint();
 void resetCheckpoint();
 
 }

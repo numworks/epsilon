@@ -12,19 +12,52 @@ namespace Ion {
 namespace Device {
 namespace Checkpoint {
 
-/* Basic frame keeps up to 0x24 bytes */
+/* Basic frame description:
+ * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | */
 static constexpr size_t k_basicFrameSize = 0x20;
+
+/* Extended frame description:
+ * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | s0 | s1 | ... | s 15 | FPSCR | */
+
 static constexpr size_t k_extendedFrameSize = 0x68;
-static constexpr size_t k_exceptionStackMaxSize = 100;
+
+/* Once in jumping to setCheckpoint, the stack holds the exception context
+ * frame but also miscellaneous values that were pushed in the svc_call_handler.
+ * The stack looks like this:
+ *
+ *        |     |
+ *        |     |
+ *        +-----+   <-- stack pointer
+ *        |     |
+ *        |     |
+ *        |     |
+ *        +-----+
+ *        |     |
+ *        |Frame|
+ *        |     |
+ *        +-----+   <-- frame origin
+ *        |     |
+ *        |     |
+ *        +-----+
+ *
+ * We need to store a stack snapshot from the frame origin to the current stack
+ * pointer. Empirically, the additional values pushed on the stack on the top
+ * of the frame need up to 144 bytes when we compile with optimizations. We
+ * keep a storing space of 256 bytes + the frame size just to be sure.  */
+
+static constexpr size_t k_exceptionStackMaxSize = 256;
 uint8_t sExceptionStack[k_extendedFrameSize + k_exceptionStackMaxSize];
 uint8_t * sExceptionStackAddress = nullptr;
 size_t sExceptionStackSize;
 jmp_buf sRegisters;
-//static constexpr size_t k_numberOfCalleeSaveRegisters = 26;
-//uint32_t sCalleeSaveRegisters[k_numberOfCalleeSaveRegisters];
-//uint32_t sExcReturn = 0;
 
 size_t frameSize(uint32_t excReturn) {
+  /* The exception return value indicating the return context:
+   * - the stack frame used (FPU extended?),
+   * - the stack pointer used (MSP/PSP)
+   * - the mode used (thread/handler)
+   *  We extract the type
+   */
   bool useBasicFrame = excReturn & 0x10;
   return useBasicFrame ? k_basicFrameSize : k_extendedFrameSize;
 }
@@ -36,55 +69,26 @@ bool hasCheckpoint() {
 void setCheckpoint(uint8_t * frameAddress, uint32_t excReturn) {
   if (hasCheckpoint()) {
     // Keep the oldest checkpoint
-    return; //false;
+    return;
   }
-  // Disable other exceptions or change priority!
-  /* Step 1: get exception return value indicating the return context:
-   * - the stack frame used (FPU extended?),
-   * - the stack pointer used (MSP/PSP)
-   * - the mode used (thread/handler) */
-  /*NOTE: On exception entry, the ARM hardware uses bit 9 of the stacked xPSR value to indicate whether 4 bytes of padding was added to align the stack on an 8 byte boundary.
-   * using the STKALIGN bit of the Configuration Control Register (CCR).
-   * In the Cortex-M7 processor CCR.STKALIGN is read-only and has a value of 1. This means that the exception stack frame starting address is always 8-byte aligned.
-   * assert CCR.STKALIGN == 1?*/
-  // TODO: alignement issue!!!
+  // TODO EMILIE: Disable other exceptions or change priority!
 
   // Extract current stack pointer
   uint8_t * stackPointerAddress = nullptr;
-  // Copy sp address
   asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (stackPointerAddress) :);
-  // Store the stackframe
+
+  // Store the stack frame
   sExceptionStackAddress = stackPointerAddress;
   sExceptionStackSize = frameAddress + frameSize(excReturn) - stackPointerAddress;
+  assert(sExceptionStackSize <= k_exceptionStackMaxSize);
   memcpy(sExceptionStack, sExceptionStackAddress, sExceptionStackSize);
-  // Store the callee-save registers (which aren't saved in the frame)
-  /*asm volatile (
-      // Store registers we want to use
-      "push {r0,ip}                  \t\n"
-      // Copy stack pointer in a scratch reg
-      "mov ip, sp                   \t\n"
-      // ip stores stack pointers before pushing r0/ip
-      "add ip, 0x8                   \t\n"
-      // Save all the callee-save registers in buffer
-      "mov r0,%[regsBufferAddress]   \t\n"
-      // storing r4-r9, r10=sl, r11=fp, ip=sp, lr
-      "stmia r0!,{r4-r11,ip,lr}      \t\n"
-      // storing floating point registers
-      "vstmia r0!, {s16-s31}         \t\n"
-      // Restore registers
-      "pop {r0-ip}         \t\n"
-      : :
-      [regsBufferAddress] "r" (sCalleeSaveRegisters)
-  );*/
 
   if (setjmp(sRegisters)) {
-    // Restore frame
+    // Restore stack frame
     memcpy(sExceptionStackAddress, sExceptionStack, sExceptionStackSize);
     // Reset checkpoint
     unsetCheckpoint();
-    //return true;
   }
-  //return false;
 }
 
 void unsetCheckpoint() {
@@ -92,33 +96,8 @@ void unsetCheckpoint() {
 }
 
 void loadCheckpoint(uint8_t * frameAddress) {
-  // TODO: priority + alignement issue!!!
-  // Disable other exceptions or change priority!
+  // TODO EMILIE: Disable other exceptions or change priority!
   assert(hasCheckpoint());
-
-  // Restore callee save registers (which aren't saved in the frame)
-  /*asm volatile (
-      // Store registers we want to use
-      "push {r0,ip}                  \t\n"
-      // Save all the callee-save registers in buffer
-      "mov r0,%[regsBufferAddress]   \t\n"
-      // loading r4-r9, r10=sl, r11=fp, ip=sp, lr
-      "ldmia r0!,{r4-r11,ip,lr}      \t\n"
-      // loading floating point registers
-      "vldmia r0!, {s16-s31}         \t\n"
-      // Restore registers
-      "pop {r0,ip}                  \t\n"
-      // Restore stack pointer
-      "ldr sp,[sp,-0x08]            \t\n"
-      // Update stack pointer address
-      "mov sp,%[stackPointerAddress]   \t\n"
-      :
-      [stackPointerAddress] "=r" (frameAddress)
-      :
-      [regsBufferAddress] "r" (sCalleeSaveRegisters)
-  );*/
-
-
 
   // Restore registers
   longjmp(sRegisters, 1);

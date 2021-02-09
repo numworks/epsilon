@@ -28,13 +28,7 @@ int Toolbox::reusableCellCount(int type) {
 
 void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
-  if (messageTree->numberOfChildren() == 0) {
-    MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
-    myCell->setMessage(messageTree->label());
-    myCell->setSubLabelMessage(messageTree->text());
-    myCell->reloadCell();
-    return;
-  }
+  assert(messageTree->numberOfChildren() != 0);
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(messageTree->label());
   myCell->reloadCell();
@@ -42,10 +36,7 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
 KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
-  if (messageTree->numberOfChildren() == 0) {
-    MessageTableCellWithMessage tempCell;
-    return heightForCellAtIndex(&tempCell, index);
-  }
+  assert(messageTree->numberOfChildren() != 0);
   MessageTableCell tempCell;
   return heightForCellAtIndex(&tempCell, index);
 }

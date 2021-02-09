@@ -3,6 +3,7 @@
 #include "./shared/toolbox_helpers.h"
 #include <assert.h>
 #include <string.h>
+#include <poincare_layouts.h>
 
 using namespace Poincare;
 using namespace Escher;
@@ -403,6 +404,31 @@ constexpr ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Messa
 MathToolbox::MathToolbox() :
   Toolbox(nullptr, rootModel()->label())
 {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setParentResponder(&m_selectableTableView);
+  }
+}
+
+KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
+  if (messageTree->numberOfChildren() == 0) {
+    ExpressionTableCellWithMessage tempCell;
+    return heightForCellAtIndex(&tempCell, index);
+  }
+  return Escher::Toolbox::nonMemoizedRowHeight(index);
+}
+
+void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
+  // Message is leaf
+  if (messageTree->numberOfChildren() == 0) {
+    ExpressionTableCellWithMessage * myCell = (ExpressionTableCellWithMessage *)cell;
+    myCell->setLayout(NthRootLayout::Builder(CodePointLayout::Builder('1')));
+    // myCell->setMessage(messageTree->label()); // TODO update this
+    myCell->setSubLabelMessage(messageTree->text());
+    return;
+  }
+  Escher::Toolbox::willDisplayCellForIndex(cell, index);
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {
@@ -428,7 +454,7 @@ const ToolboxMessageTree * MathToolbox::rootModel() const {
   return &toolboxModel;
 }
 
-MessageTableCellWithMessage * MathToolbox::leafCellAtIndex(int index) {
+ExpressionTableCellWithMessage * MathToolbox::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }

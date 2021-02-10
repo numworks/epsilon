@@ -24,7 +24,7 @@ public:
    * An error is returned if a second non-destructed instance of Arithmetic
    * calls PrimeFactorization. This situation must be prevented. */
   Arithmetic() {};
-  ~Arithmetic();
+  ~Arithmetic() { resetPrimeFactorization(); };
   /* When output is negative that indicates a special case:
    *  - -1 : too many factors.
    *  - -2 : a prime factor is too big.
@@ -32,15 +32,21 @@ public:
    * Before calling PrimeFactorization, we instantiate an Arithmetic object.
    * Outputs are retrieved using getFactorization_(index) methods. */
   int PrimeFactorization(const Integer & i);
-  Integer * factorizationFactorAtIndex(int index) {
+  static Integer * factorizationFactorAtIndex(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
     return factorizationFactors() + index;
   }
-  Integer * factorizationCoefficientAtIndex(int index) {
+  static Integer * factorizationCoefficientAtIndex(int index) {
     assert(index < k_maxNumberOfPrimeFactors);
     return factorizationCoefficients() + index;
   }
-
+  /* Factorization's lock can be compromised if an exception is raised while it
+   * is locked. To prevent that, any prime factorization must be enclosed within
+   * an intermediary ExceptionCheckpoint. resetPrimeFactorization() shall be
+   * called in the associated ErrorHandler, the intermediary ExceptionCheckpoint
+   * shall be deleted, and another exception shall be manually raised to fall
+   * back on the intended checkpoint. */
+  static void resetPrimeFactorization();
 private:
   /* When decomposing an integer into primes factors, we look for its prime
    * factors among integer from 2 to 10000. */

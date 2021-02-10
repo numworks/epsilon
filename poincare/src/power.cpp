@@ -6,6 +6,7 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/infinity.h>
@@ -1144,21 +1145,32 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   Integer r1(1);
   Integer r2(1);
   {
-    // Performing PrimeFactorization in this scope to free resources earlier.
-    Arithmetic arithmetic;
-    int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
-    if (numberOfPrimeFactors < 0) {
-      /* We could not break i in prime factors (it might take either too many
-       * factors or too much time). */
-      Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, reductionContext);
-      return Power::Builder(Rational::Builder(i), rClone);
-    }
+    // See comment in Arithmetic::resetPrimeFactorization()
+    ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      // Performing PrimeFactorization in this scope to free resources earlier.
+      Arithmetic arithmetic;
+      int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
+      if (numberOfPrimeFactors < 0) {
+        /* We could not break i in prime factors (it might take either too many
+         * factors or too much time). */
+        Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, reductionContext);
+        return Power::Builder(Rational::Builder(i), rClone);
+      }
 
-    for (int index = 0; index < numberOfPrimeFactors; index++) {
-      Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), r.signedIntegerNumerator());
-      IntegerDivision div = Integer::Division(n, r.integerDenominator());
-      r1 = Integer::Multiplication(r1, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.quotient));
-      r2 = Integer::Multiplication(r2, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.remainder));
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), r.signedIntegerNumerator());
+        IntegerDivision div = Integer::Division(n, r.integerDenominator());
+        r1 = Integer::Multiplication(r1, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.quotient));
+        r2 = Integer::Multiplication(r2, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.remainder));
+      }
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
+      // Destroy intermediary factorization checkpoint
+      tempEcp.~ExceptionCheckpoint();
+      // Fall back on the parent exception checkpoint
+      ExceptionCheckpoint::Raise();
     }
   }
   if (r2.isOverflow() || r1.isOverflow()) {

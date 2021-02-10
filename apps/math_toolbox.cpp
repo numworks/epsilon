@@ -25,19 +25,6 @@ using namespace Escher;
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */
 
-constexpr ToolboxMessageTree unitTimeChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondNanoSymbol, I18n::Message::UnitTimeSecondNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMicroSymbol, I18n::Message::UnitTimeSecondMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMilliSymbol, I18n::Message::UnitTimeSecondMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondSymbol, I18n::Message::UnitTimeSecond),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeMinuteSymbol, I18n::Message::UnitTimeMinute),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeHourSymbol, I18n::Message::UnitTimeHour),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeDaySymbol, I18n::Message::UnitTimeDay),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeWeekSymbol, I18n::Message::UnitTimeWeek),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeMonthSymbol, I18n::Message::UnitTimeMonth),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeYearSymbol, I18n::Message::UnitTimeYear)
-};
-
 constexpr ToolboxMessageTree unitDistanceMeterPico = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterPicoSymbol, I18n::Message::UnitDistanceMeterPico);
 constexpr ToolboxMessageTree unitDistanceMeterNano = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterNanoSymbol, I18n::Message::UnitDistanceMeterNano);
 constexpr ToolboxMessageTree unitDistanceMeterMicro = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterMicroSymbol, I18n::Message::UnitDistanceMeterMicro);
@@ -78,65 +65,24 @@ constexpr const ToolboxMessageTree * const unitDistanceChildrenForMetricToolbox[
   &unitDistanceParsec,
   &unitDistanceImperialNode
 };
+
 constexpr ToolboxMessageTree unitDistanceFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildrenForMetricToolbox),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildrenForImperialToolbox)
 };
 
-constexpr ToolboxMessageTree unitMassGramMicro = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMicroSymbol, I18n::Message::UnitMassGramMicro);
-constexpr ToolboxMessageTree unitMassGramMilli = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMilliSymbol, I18n::Message::UnitMassGramMilli);
-constexpr ToolboxMessageTree unitMassGram = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramSymbol, I18n::Message::UnitMassGram);
-constexpr ToolboxMessageTree unitMassGramKilo = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramKiloSymbol, I18n::Message::UnitMassGramKilo);
-constexpr ToolboxMessageTree unitMassTonne = ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne);
-constexpr ToolboxMessageTree unitMassOunce = ToolboxMessageTree::Leaf(I18n::Message::UnitMassOunceSymbol, I18n::Message::UnitMassOunce);
-constexpr ToolboxMessageTree unitMassPound = ToolboxMessageTree::Leaf(I18n::Message::UnitMassPoundSymbol, I18n::Message::UnitMassPound);
-constexpr ToolboxMessageTree unitMassShortTon = ToolboxMessageTree::Leaf(I18n::Message::UnitMassShortTonSymbol, I18n::Message::UnitMassShortTon);
-constexpr ToolboxMessageTree unitMassLongTon = ToolboxMessageTree::Leaf(I18n::Message::UnitMassLongTonSymbol, I18n::Message::UnitMassLongTon);
-
-constexpr const ToolboxMessageTree * const unitMassGramChildren[] = {&unitMassGramMicro, &unitMassGramMilli, &unitMassGram, &unitMassGramKilo, &unitMassTonne};
-constexpr ToolboxMessageTree unitMassGramNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitMassGramChildren);
-constexpr const ToolboxMessageTree * const unitMassChildrenForImperialToolbox[] = {
-  &unitMassOunce,
-  &unitMassPound,
-  &unitMassShortTon,
-  &unitMassLongTon,
-  &unitMassGramNode
+constexpr ToolboxMessageTree unitTimeChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondNanoSymbol, I18n::Message::UnitTimeSecondNano),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMicroSymbol, I18n::Message::UnitTimeSecondMicro),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMilliSymbol, I18n::Message::UnitTimeSecondMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondSymbol, I18n::Message::UnitTimeSecond),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeMinuteSymbol, I18n::Message::UnitTimeMinute),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeHourSymbol, I18n::Message::UnitTimeHour),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeDaySymbol, I18n::Message::UnitTimeDay),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeWeekSymbol, I18n::Message::UnitTimeWeek),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeMonthSymbol, I18n::Message::UnitTimeMonth),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeYearSymbol, I18n::Message::UnitTimeYear)
 };
-constexpr const ToolboxMessageTree * const unitMassImperialChildren[] = {&unitMassOunce, &unitMassPound, &unitMassShortTon, &unitMassLongTon};
-constexpr ToolboxMessageTree unitMassImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitMassImperialChildren);
-constexpr const ToolboxMessageTree * const unitMassChildrenForMetricToolbox[] = {
-  &unitMassGramMicro,
-  &unitMassGramMilli,
-  &unitMassGram,
-  &unitMassGramKilo,
-  &unitMassTonne,
-  &unitMassImperialNode
-};
-constexpr ToolboxMessageTree unitMassFork[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildrenForMetricToolbox),
-  ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildrenForImperialToolbox),
-};
-
-constexpr ToolboxMessageTree unitCurrentAmpereChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMicroSymbol, I18n::Message::UnitCurrentAmpereMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMilliSymbol, I18n::Message::UnitCurrentAmpereMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereSymbol, I18n::Message::UnitCurrentAmpere),
-};
-
-constexpr ToolboxMessageTree unitTemperatureChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureCelsiusSymbol, I18n::Message::UnitTemperatureCelsius),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureFahrenheitSymbol, I18n::Message::UnitTemperatureFahrenheit),
-};
-
-constexpr ToolboxMessageTree unitAmountMoleChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMicroSymbol, I18n::Message::UnitAmountMoleMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMilliSymbol, I18n::Message::UnitAmountMoleMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleSymbol, I18n::Message::UnitAmountMole),
-};
-
-constexpr ToolboxMessageTree unitLuminousIntensityChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousIntensityCandelaSymbol, I18n::Message::UnitLuminousIntensityCandela)};
 
 constexpr ToolboxMessageTree unitFrequencyHertzChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzSymbol, I18n::Message::UnitFrequencyHertz),
@@ -145,86 +91,9 @@ constexpr ToolboxMessageTree unitFrequencyHertzChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga)
 };
 
-constexpr ToolboxMessageTree unitForceNewtonChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonMilliSymbol, I18n::Message::UnitForceNewtonMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonSymbol, I18n::Message::UnitForceNewton),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonKiloSymbol, I18n::Message::UnitForceNewtonKilo),
-};
-
-constexpr ToolboxMessageTree unitPressureChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalSymbol, I18n::Message::UnitPressurePascal),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalHectoSymbol, I18n::Message::UnitPressurePascalHecto),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPressureBarSymbol, I18n::Message::UnitPressureBar),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPressureAtmSymbol, I18n::Message::UnitPressureAtm)};
-
-constexpr ToolboxMessageTree unitEnergyJouleChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleMilliSymbol, I18n::Message::UnitEnergyJouleMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleSymbol, I18n::Message::UnitEnergyJoule),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleKiloSymbol, I18n::Message::UnitEnergyJouleKilo),
-};
-constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol, I18n::Message::UnitEnergyElectronVoltMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol, I18n::Message::UnitEnergyElectronVolt),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol, I18n::Message::UnitEnergyElectronVoltKilo),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol, I18n::Message::UnitEnergyElectronVoltMega),
-};
-constexpr ToolboxMessageTree unitEnergyChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu, unitEnergyJouleChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu, unitEnergyElectronVoltChildren)};
-
-constexpr ToolboxMessageTree unitPowerWattChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMicroSymbol, I18n::Message::UnitPowerWattMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMilliSymbol, I18n::Message::UnitPowerWattMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattSymbol, I18n::Message::UnitPowerWatt),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattKiloSymbol, I18n::Message::UnitPowerWattKilo),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMegaSymbol, I18n::Message::UnitPowerWattMega),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattGigaSymbol, I18n::Message::UnitPowerWattGiga),
-};
-
-constexpr ToolboxMessageTree unitElectricChargeCoulombChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombSymbol, I18n::Message::UnitChargeCoulomb),
-};
-
-constexpr ToolboxMessageTree unitPotentialVoltChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMicroSymbol, I18n::Message::UnitPotentialVoltMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMilliSymbol, I18n::Message::UnitPotentialVoltMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltSymbol, I18n::Message::UnitPotentialVolt),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltKiloSymbol, I18n::Message::UnitPotentialVoltKilo),
-};
-
-constexpr ToolboxMessageTree unitCapacitanceFaradChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMicroSymbol, I18n::Message::UnitCapacitanceFaradMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMilliSymbol, I18n::Message::UnitCapacitanceFaradMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradSymbol, I18n::Message::UnitCapacitanceFarad),
-};
-
-constexpr ToolboxMessageTree unitResistanceOhmChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmSymbol, I18n::Message::UnitResistanceOhm),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmKiloSymbol, I18n::Message::UnitResistanceOhmKilo),
-};
-
-constexpr ToolboxMessageTree unitConductanceSiemensChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMilliSymbol, I18n::Message::UnitConductanceSiemensMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensSymbol, I18n::Message::UnitConductanceSiemens),
-};
-
-constexpr ToolboxMessageTree unitMagneticFieldChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMagneticFieldTeslaSymbol, I18n::Message::UnitMagneticFieldTesla)};
-
-constexpr ToolboxMessageTree unitInductanceChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitInductanceHenrySymbol, I18n::Message::UnitInductanceHenry)};
-
-constexpr ToolboxMessageTree unitSurfaceChildrenForMetricToolbox[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre)
-};
-constexpr ToolboxMessageTree unitSurfaceChildrenForImperialToolbox[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)
-};
-constexpr ToolboxMessageTree unitSurfaceFork[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForMetricToolbox),
-  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForImperialToolbox)
+constexpr ToolboxMessageTree timeAndFrequencyChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyHertzChildren),
 };
 
 constexpr ToolboxMessageTree unitVolumeLiterMilli = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterMilliSymbol, I18n::Message::UnitVolumeLiterMilli);
@@ -266,28 +135,175 @@ constexpr ToolboxMessageTree unitVolumeFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeChildrenForImperialToolbox),
 };
 
-constexpr ToolboxMessageTree unitChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
-  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceFork, true),
+constexpr ToolboxMessageTree unitSurfaceHectar = ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar);
+constexpr ToolboxMessageTree unitSurfaceAcre = ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre);
+
+constexpr const ToolboxMessageTree * const unitSurfaceMetricChildren[] = {&unitSurfaceHectar};
+constexpr ToolboxMessageTree unitSurfaceMetricNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitSurfaceMetricChildren);
+constexpr const ToolboxMessageTree * const unitSurfaceChildrenForImperialToolbox[] = {&unitSurfaceAcre, &unitSurfaceMetricNode};
+
+constexpr const ToolboxMessageTree * const unitSurfaceImperialChildren[] = {&unitSurfaceAcre};
+constexpr ToolboxMessageTree unitSurfaceImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitSurfaceImperialChildren);
+constexpr const ToolboxMessageTree * const unitSurfaceChildrenForMetricToolbox[] = {&unitSurfaceHectar, &unitSurfaceImperialNode};
+
+constexpr ToolboxMessageTree unitSurfaceFork[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForMetricToolbox),
+  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForImperialToolbox)
+};
+
+constexpr ToolboxMessageTree volumeAndSurfaceChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeFork, true),
-  ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassFork, true),
+  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceFork, true),
+};
+
+constexpr ToolboxMessageTree unitMassGramMicro = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMicroSymbol, I18n::Message::UnitMassGramMicro);
+constexpr ToolboxMessageTree unitMassGramMilli = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMilliSymbol, I18n::Message::UnitMassGramMilli);
+constexpr ToolboxMessageTree unitMassGram = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramSymbol, I18n::Message::UnitMassGram);
+constexpr ToolboxMessageTree unitMassGramKilo = ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramKiloSymbol, I18n::Message::UnitMassGramKilo);
+constexpr ToolboxMessageTree unitMassTonne = ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne);
+constexpr ToolboxMessageTree unitMassOunce = ToolboxMessageTree::Leaf(I18n::Message::UnitMassOunceSymbol, I18n::Message::UnitMassOunce);
+constexpr ToolboxMessageTree unitMassPound = ToolboxMessageTree::Leaf(I18n::Message::UnitMassPoundSymbol, I18n::Message::UnitMassPound);
+constexpr ToolboxMessageTree unitMassShortTon = ToolboxMessageTree::Leaf(I18n::Message::UnitMassShortTonSymbol, I18n::Message::UnitMassShortTon);
+constexpr ToolboxMessageTree unitMassLongTon = ToolboxMessageTree::Leaf(I18n::Message::UnitMassLongTonSymbol, I18n::Message::UnitMassLongTon);
+
+constexpr const ToolboxMessageTree * const unitMassGramChildren[] = {&unitMassGramMicro, &unitMassGramMilli, &unitMassGram, &unitMassGramKilo, &unitMassTonne};
+constexpr ToolboxMessageTree unitMassGramNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitMassGramChildren);
+constexpr const ToolboxMessageTree * const unitMassChildrenForImperialToolbox[] = {
+  &unitMassOunce,
+  &unitMassPound,
+  &unitMassShortTon,
+  &unitMassLongTon,
+  &unitMassGramNode
+};
+constexpr const ToolboxMessageTree * const unitMassImperialChildren[] = {&unitMassOunce, &unitMassPound, &unitMassShortTon, &unitMassLongTon};
+constexpr ToolboxMessageTree unitMassImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitMassImperialChildren);
+constexpr const ToolboxMessageTree * const unitMassChildrenForMetricToolbox[] = {
+  &unitMassGramMicro,
+  &unitMassGramMilli,
+  &unitMassGram,
+  &unitMassGramKilo,
+  &unitMassTonne,
+  &unitMassImperialNode
+};
+
+constexpr ToolboxMessageTree unitMassFork[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildrenForMetricToolbox),
+  ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildrenForImperialToolbox),
+};
+
+constexpr ToolboxMessageTree unitCurrentAmpereChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMicroSymbol, I18n::Message::UnitCurrentAmpereMicro),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMilliSymbol, I18n::Message::UnitCurrentAmpereMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereSymbol, I18n::Message::UnitCurrentAmpere),
+};
+
+constexpr ToolboxMessageTree unitPotentialVoltChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMicroSymbol, I18n::Message::UnitPotentialVoltMicro),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMilliSymbol, I18n::Message::UnitPotentialVoltMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltSymbol, I18n::Message::UnitPotentialVolt),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltKiloSymbol, I18n::Message::UnitPotentialVoltKilo),
+};
+
+constexpr ToolboxMessageTree unitResistanceOhmChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmSymbol, I18n::Message::UnitResistanceOhm),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmKiloSymbol, I18n::Message::UnitResistanceOhmKilo),
+};
+
+constexpr ToolboxMessageTree unitCapacitanceFaradChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMicroSymbol, I18n::Message::UnitCapacitanceFaradMicro),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMilliSymbol, I18n::Message::UnitCapacitanceFaradMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradSymbol, I18n::Message::UnitCapacitanceFarad),
+};
+
+constexpr ToolboxMessageTree electricitOtherChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitInductanceHenrySymbol, I18n::Message::UnitInductanceHenry),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombSymbol, I18n::Message::UnitChargeCoulomb),
+  // ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMilliSymbol, I18n::Message::UnitConductanceSiemensMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensSymbol, I18n::Message::UnitConductanceSiemens),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMagneticFieldTeslaSymbol, I18n::Message::UnitMagneticFieldTesla),
+};
+
+constexpr ToolboxMessageTree electricityChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, unitCurrentAmpereChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountMoleChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitLuminousIntensityMenu, unitLuminousIntensityChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyHertzChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialVoltChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitResistanceMenu, unitResistanceOhmChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, unitCapacitanceFaradChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, electricitOtherChildren), // TODO : Translate (FR) Autres
+};
+
+constexpr ToolboxMessageTree unitForceNewtonChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonMilliSymbol, I18n::Message::UnitForceNewtonMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonSymbol, I18n::Message::UnitForceNewton),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonKiloSymbol, I18n::Message::UnitForceNewtonKilo),
+};
+
+constexpr ToolboxMessageTree unitPressureChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalSymbol, I18n::Message::UnitPressurePascal),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalHectoSymbol, I18n::Message::UnitPressurePascalHecto),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPressureBarSymbol, I18n::Message::UnitPressureBar),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPressureAtmSymbol, I18n::Message::UnitPressureAtm)
+};
+
+constexpr ToolboxMessageTree forceAndPressureChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, unitForceNewtonChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPressureMenu, unitPressureChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, unitEnergyChildren),
+};
+
+constexpr ToolboxMessageTree unitEnergyJouleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleMilliSymbol, I18n::Message::UnitEnergyJouleMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleSymbol, I18n::Message::UnitEnergyJoule),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleKiloSymbol, I18n::Message::UnitEnergyJouleKilo),
+};
+
+constexpr ToolboxMessageTree unitPowerWattChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMicroSymbol, I18n::Message::UnitPowerWattMicro),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMilliSymbol, I18n::Message::UnitPowerWattMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattSymbol, I18n::Message::UnitPowerWatt),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattKiloSymbol, I18n::Message::UnitPowerWattKilo),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMegaSymbol, I18n::Message::UnitPowerWattMega),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattGigaSymbol, I18n::Message::UnitPowerWattGiga),
+};
+
+constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol, I18n::Message::UnitEnergyElectronVoltMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol, I18n::Message::UnitEnergyElectronVolt),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol, I18n::Message::UnitEnergyElectronVoltKilo),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol, I18n::Message::UnitEnergyElectronVoltMega),
+};
+
+constexpr ToolboxMessageTree energyAndPowerChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu, unitEnergyJouleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu, unitPowerWattChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitElectricChargeMenu, unitElectricChargeCoulombChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialVoltChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, unitCapacitanceFaradChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitResistanceMenu, unitResistanceOhmChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitConductanceMenu, unitConductanceSiemensChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitMagneticFieldMenu, unitMagneticFieldChildren),
-  ToolboxMessageTree::Node(I18n::Message::InductanceMenu, unitInductanceChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu, unitEnergyElectronVoltChildren),
+};
+
+constexpr ToolboxMessageTree unitTemperatureChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureCelsiusSymbol, I18n::Message::UnitTemperatureCelsius),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureFahrenheitSymbol, I18n::Message::UnitTemperatureFahrenheit),
+};
+
+constexpr ToolboxMessageTree unitAmountMoleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMicroSymbol, I18n::Message::UnitAmountMoleMicro),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMilliSymbol, I18n::Message::UnitAmountMoleMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleSymbol, I18n::Message::UnitAmountMole),
+};
+
+constexpr ToolboxMessageTree OtherChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousIntensityCandelaSymbol, I18n::Message::UnitLuminousIntensityCandela),
+  ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountMoleChildren),
+};
+
+constexpr ToolboxMessageTree unitChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
+  ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, timeAndFrequencyChildren), // TODO : Translate (FR) Temps et fréquence
+  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, volumeAndSurfaceChildren), // TODO : Translate (FR) Volume et superficie
+  ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassFork, true),
+  ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, electricityChildren), // TODO : Translate (FR) Electricité
+  ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, forceAndPressureChildren), // TODO : Translate (FR) Force et pression
+  ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, energyAndPowerChildren), // TODO : Translate (FR) Energie et puissance
+  ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, OtherChildren), // TODO : Translate (FR) Autres
 };
 
 constexpr ToolboxMessageTree trigonometryChildren[] = {

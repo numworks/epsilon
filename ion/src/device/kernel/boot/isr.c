@@ -26,7 +26,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   svcall_handler_as, // SVCall service routine,
   0, // DebugMonitor service routine,
   0, // Reserved
-  pendsv_handler, // PendSV service routine,
+  0, // PendSV service routine,
   isr_systick, // SysTick service routine
   0, // WWDG service routine
   0, // PVD service routine
@@ -58,7 +58,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // TIM1 Capture Compare interrupt
   tim2_handler, // TIM2 global interrupt
   0, // TIM3 global interrupt
-  0, // TIM4 global interrupt
+  tim4_handler, // TIM4 global interrupt
   0, // I2C1 global event interrupt
   0, // I2C1 global error interrupt
   0, // I2C2 global event interrupt

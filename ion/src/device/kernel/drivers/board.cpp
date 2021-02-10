@@ -4,6 +4,7 @@
 #include <drivers/backlight.h>
 #include <drivers/battery.h>
 #include <drivers/display.h>
+#include <drivers/events.h>
 #include <drivers/external_flash.h>
 #include <drivers/keyboard.h>
 #include <drivers/led.h>
@@ -45,9 +46,11 @@ void initPeripherals(bool numworksAuthentication, bool fromBootloader) {
   }
   SWD::init();
   Timing::init();
+  Events::init();
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {
+  Events::shutdown();
   Timing::shutdown();
   SWD::shutdown();
   USB::shutdown();
@@ -61,7 +64,7 @@ void shutdownPeripherals(bool keepLEDAwake) {
   shutdownCompensationCell();
 }
 
-static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28};
+static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28, 30};
 
 void initInterruptions() {
   // Init SVCall interrupt priorities

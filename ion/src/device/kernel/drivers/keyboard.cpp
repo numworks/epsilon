@@ -98,10 +98,10 @@ void initInterruptions() {
 /* We want to prescale the timer to be able to set the auto-reload in
  * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
  * not to overflow PSC. */
-int sPrescalerFactor = 4;
+static constexpr int k_prescalerFactor = 4;
 
 void initTimer() {
-  TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/sPrescalerFactor-1);
+  TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
 }
 
 void init(bool activateInterruptions) {
@@ -148,14 +148,14 @@ void shutdown() {
 }
 
 void launchTimer(uint16_t ms) {
-  TIM2.ARR()->set(ms*sPrescalerFactor);
-  TIM2.DIER()->setUIE(true);
-  TIM2.CR1()->setCEN(true);
+  TIM4.ARR()->set(ms*k_prescalerFactor);
+  TIM4.DIER()->setUIE(true);
+  TIM4.CR1()->setCEN(true);
 }
 
 void stopTimer() {
-  TIM2.DIER()->setUIE(false);
-  TIM2.CR1()->setCEN(false);
+  TIM4.DIER()->setUIE(false);
+  TIM4.CR1()->setCEN(false);
 }
 
 static bool sBouncing = false;

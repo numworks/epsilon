@@ -44,6 +44,9 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
   return (
     Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "inf")             == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "infinity")        == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "oo")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Unreal::Name())    == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
@@ -426,7 +429,14 @@ void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::
 void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
   if (m_currentToken.compareTo(Symbol::k_ans) == 0) {
     leftHandSide = Symbol::Ans();
-  } else if (m_currentToken.compareTo(Infinity::Name()) == 0) {
+  } else if (m_currentToken.compareTo(Infinity::Name()) == 0 ||
+             m_currentToken.compareTo("inf")            == 0 ||
+             m_currentToken.compareTo("infinity")       == 0 ||
+             m_currentToken.compareTo("oo")             == 0
+    ) {
+
+    leftHandSide = Infinity::Builder(false);
+  } else if (m_currentToken.compareTo("inf") == 0) {
     leftHandSide = Infinity::Builder(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined::Builder();

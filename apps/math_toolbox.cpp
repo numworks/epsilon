@@ -29,6 +29,7 @@ constexpr ToolboxMessageTree unitDistanceMeterPico = ToolboxMessageTree::Leaf(I1
 constexpr ToolboxMessageTree unitDistanceMeterNano = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterNanoSymbol, I18n::Message::UnitDistanceMeterNano);
 constexpr ToolboxMessageTree unitDistanceMeterMicro = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterMicroSymbol, I18n::Message::UnitDistanceMeterMicro);
 constexpr ToolboxMessageTree unitDistanceMeterMilli = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterMilliSymbol, I18n::Message::UnitDistanceMeterMilli);
+constexpr ToolboxMessageTree unitDistanceMeterCenti = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterCentiSymbol, I18n::Message::UnitDistanceMeterCenti);
 constexpr ToolboxMessageTree unitDistanceMeter = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterSymbol, I18n::Message::UnitDistanceMeter);
 constexpr ToolboxMessageTree unitDistanceMeterKilo = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterKiloSymbol, I18n::Message::UnitDistanceMeterKilo);
 constexpr ToolboxMessageTree unitDistanceAstronomicalUnit = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceAstronomicalUnitSymbol, I18n::Message::UnitDistanceAstronomicalUnit);
@@ -39,7 +40,7 @@ constexpr ToolboxMessageTree unitDistanceFoot = ToolboxMessageTree::Leaf(I18n::M
 constexpr ToolboxMessageTree unitDistanceYard = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceYardSymbol, I18n::Message::UnitDistanceYard);
 constexpr ToolboxMessageTree unitDistanceMile = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMileSymbol, I18n::Message::UnitDistanceMile);
 
-constexpr const ToolboxMessageTree * const unitDistanceMeterChildren[] = {&unitDistanceMeterPico, &unitDistanceMeterNano, &unitDistanceMeterMicro, &unitDistanceMeterMilli, &unitDistanceMeter, &unitDistanceMeterKilo};
+constexpr const ToolboxMessageTree * const unitDistanceMeterChildren[] = {&unitDistanceMeterPico, &unitDistanceMeterNano, &unitDistanceMeterMicro, &unitDistanceMeterMilli, &unitDistanceMeterCenti, &unitDistanceMeter, &unitDistanceMeterKilo};
 constexpr ToolboxMessageTree unitDistanceMeterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitDistanceMeterChildren);
 constexpr const ToolboxMessageTree * const unitDistanceChildrenForImperialToolbox[] = {
   &unitDistanceInch,
@@ -58,6 +59,7 @@ constexpr const ToolboxMessageTree * const unitDistanceChildrenForMetricToolbox[
   &unitDistanceMeterNano,
   &unitDistanceMeterMicro,
   &unitDistanceMeterMilli,
+  &unitDistanceMeterCenti,
   &unitDistanceMeter,
   &unitDistanceMeterKilo,
   &unitDistanceAstronomicalUnit,

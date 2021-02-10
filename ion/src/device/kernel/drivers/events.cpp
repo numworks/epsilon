@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <assert.h>
 #include <drivers/battery.h>
+#include <drivers/config/clocks.h>
+#include <drivers/display.h>
 #include <drivers/usb.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/config/keyboard.h>
@@ -23,6 +25,26 @@ const char * Event::text() const {
 namespace Ion {
 namespace Device {
 namespace Events {
+
+using namespace Regs;
+
+//TODO: factorize with keyboard
+/* We want to prescale the timer to be able to set the auto-reload in
+ * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
+ * not to overflow PSC. */
+static constexpr int k_prescalerFactor = 4;
+static constexpr int k_stallingDelay = 2*500*k_prescalerFactor; // TODO: calibrate
+
+void init() {
+  TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
+  TIM2.DIER()->setUIE(true);
+  TIM2.ARR()->set(k_stallingDelay);
+}
+
+void shutdown() {
+  TIM2.DIER()->setUIE(false);
+  TIM2.CR1()->setCEN(false);
+}
 
 bool sLastUSBPlugged = false;
 bool sLastUSBEnumerated = false;
@@ -65,7 +87,6 @@ Ion::Keyboard::State sLastKeyboardState(0);
 bool sLastEventShift;
 bool sLastEventAlpha;
 bool sEventIsRepeating = false;
-uint64_t sLastEventTime = 0;
 
 bool canRepeatEventWithState() {
   return canRepeatEvent(sLastEvent)
@@ -74,14 +95,13 @@ bool canRepeatEventWithState() {
     && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Alpha) || Ion::Events::isLockActive());
 }
 
-Ion::Events::Event getEvent(int * timeout) {
+Ion::Events::Event nextEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
   uint64_t keysSeenUp = -1;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   uint64_t startTime = Timing::millis();
   while (true) {
-    sLastEventTime = startTime;
     /* NB: Currently, platform events are polled. They could be instead linked
      * to EXTI interruptions and their event could be pushed on the
      * Keyboard::Queue. However, the pins associated with platform events are
@@ -180,8 +200,34 @@ Ion::Events::Event getEvent(int * timeout) {
   }
 }
 
-uint64_t lastEventTime() {
-  return sLastEventTime;
+void resetTimer() {
+  // Init timer on the first call to getEvent
+  TIM2.CR1()->setCEN(true);
+  // Reset the counter
+  TIM2.CNT()->set(0);
+}
+
+Ion::Events::Event getEvent(int * timeout) {
+  Ion::Events::Event e = nextEvent(timeout);
+  resetTimer();
+  return e;
+}
+
+void stall() {
+  /* TODO: set another quick timer that would restore the image below in a few ms...*/
+  //if (CircuitBreaker::hasCheckpoint()) {
+    // TODO: should we shutdown any interruption here to be sure to complete our drawing
+    // Clear update interrupt flag
+    TIM2.SR()->setUIF(false);
+
+    // TODO: draw a hourglass or spinning circle?
+    static KDColor c = KDColorGreen;
+    Ion::Device::Display::pushRectUniform(KDRect(155,115,10,10), c);
+    c = c == KDColorGreen ? KDColorRed : KDColorGreen;
+
+  /*} else {
+    // TODO: go back to the home!
+  }*/
 }
 
 }

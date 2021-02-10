@@ -7,9 +7,11 @@ namespace Ion {
 namespace Device {
 namespace Events {
 
+void init();
+void shutdown();
 Ion::Events::Event getEvent(int * timeout);
 Ion::Events::Event getPlatformEvent();
-uint64_t lastEventTime();
+void stall();
 
 }
 }

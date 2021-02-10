@@ -18,9 +18,19 @@ public:
 
   class DIER : Register16 {
   public:
+    REGS_BOOL_FIELD(TIE, 6);
     REGS_BOOL_FIELD(UIE, 0);
   };
 
+  class SR : Register16 {
+  public:
+    REGS_BOOL_FIELD(UIF, 0);
+  };
+
+  class EGR : Register16 {
+  public:
+    REGS_BOOL_FIELD(UG, 0);
+  };
 
   class CCMR : Register64 {
     /* We're declaring CCMR as a 64 bits register. CCMR doesn't exsist per se,
@@ -109,8 +119,9 @@ public:
     REGS_BOOL_FIELD(MOE, 15);
   };
 
+  class CNT : public RegisterWidth {};
   class PSC : public Register16 {};
-  class ARR : public Register16 {};
+  class ARR : public RegisterWidth {};
   class CCR1 : public RegisterWidth {};
   class CCR2 : public RegisterWidth {};
   class CCR3 : public RegisterWidth {};
@@ -119,8 +130,11 @@ public:
   constexpr TIM(int i) : m_index(i) {}
   REGS_REGISTER_AT(CR1, 0x0);
   REGS_REGISTER_AT(DIER, 0x0C);
+  REGS_REGISTER_AT(SR, 0x10);
+  REGS_REGISTER_AT(EGR, 0x14);
   REGS_REGISTER_AT(CCMR, 0x18);
   REGS_REGISTER_AT(CCER, 0x20);
+  REGS_REGISTER_AT(CNT, 0x24);
   REGS_REGISTER_AT(PSC, 0x28);
   REGS_REGISTER_AT(ARR, 0x2C);
   REGS_REGISTER_AT(CCR1, 0x34);
@@ -150,8 +164,9 @@ private:
   int m_index;
 };
 
-constexpr TIM<Register16> TIM2(2);
+constexpr TIM<Register32> TIM2(2);
 constexpr TIM<Register16> TIM3(3);
+constexpr TIM<Register16> TIM4(4);
 
 }
 }

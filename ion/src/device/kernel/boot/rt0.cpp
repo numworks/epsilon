@@ -80,26 +80,6 @@ void __attribute__((interrupt, noinline)) isr_systick() {
   auto t = Ion::Device::Timing::MillisElapsed;
   t++;
   Ion::Device::Timing::MillisElapsed = t;
-  auto lastEvent = Ion::Device::Events::lastEventTime();
-  if (lastEvent != 0 && t - lastEvent > 1000) { // TODO EMILIE: 1s ? TODO: reboot Millis???
-    // Use watchdog??
-    // Trigger a pendSV interruption
-    Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
-  }
-}
-
-// TODO: implement via a watchdog:
-// - everytime an event is handled, reset the spinner watchdog and the kill-the-app watchdog
-// - in systick, if the spinner is on, spin!
-// --> Use pendsv for circuitbreaker purposes
-
-#include <drivers/display.h>
-
-void __attribute__((interrupt, noinline)) pendsv_handler() {
-  // TODO: draw a hourglass or spinning circle?
-  static KDColor c = KDColorGreen;
-  Ion::Device::Display::pushRectUniform(KDRect(155,115,10,10), c);
-  c = c == KDColorGreen ? KDColorRed : KDColorGreen;
 }
 
 void __attribute__((interrupt, noinline)) keyboard_handler() {
@@ -107,6 +87,9 @@ void __attribute__((interrupt, noinline)) keyboard_handler() {
 }
 
 void __attribute__((interrupt, noinline)) tim2_handler() {
-  Ion::Device::Keyboard::debounce();
+  Ion::Device::Events::stall();
 }
 
+void __attribute__((interrupt, noinline)) tim4_handler() {
+  Ion::Device::Keyboard::debounce();
+}

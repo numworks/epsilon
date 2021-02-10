@@ -579,14 +579,14 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
       parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
     }
     nlr_pop();
-  } else if (textToAutocomplete != nullptr && nlr_push(&nlr) == 0) {
-    /* When VariableBoxController has been emptied and ImportedVariables are
-     * being reloaded, an unfinished Autocompletion might remain. Parsing
-     * this unfinished line may fail because of it, which might prevent it from
-     * being reloaded and lead to errors. In that case we try again parsing this
-     * line from the start to the end of the text to autocomplete only to make
-     * sure ongoing autocompletion will still be available. */
-    assert(textToAutocomplete >= scriptContent);
+  } else if (textToAutocomplete != nullptr && textToAutocomplete >= scriptContent && textToAutocomplete - scriptContent <= strlen(scriptContent) && nlr_push(&nlr) == 0) {
+    /* When VariableBoxController has been emptied, and the text to autocomplete
+     * is within scriptContent, an unfinished Autocompletion might remain as
+     * ImportedVariables are being reloaded. Parsing this unfinished line may
+     * fail, preventing the ongoing autocompletion from being reloaded.
+     * In that case we try again parsing this line from the start to the end of
+     * the text to autocomplete only, to make sure ongoing autocompletion will
+     * still be available. */
     const char * parseStart = textToAutocomplete;
     // Search for the beginning of the line
     while (parseStart != scriptContent && *(parseStart-1) != '\n') {

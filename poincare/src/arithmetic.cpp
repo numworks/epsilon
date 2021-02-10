@@ -208,7 +208,7 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
   return t+1;
 }
 
-Arithmetic::~Arithmetic() {
+void Arithmetic::resetPrimeFactorization() {
   // Clean Factors and coefficients arrays
   for (int i = 0; i < k_maxNumberOfPrimeFactors; ++i) {
     *factorizationFactorAtIndex(i) = Integer();

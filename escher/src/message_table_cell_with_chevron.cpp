@@ -8,8 +8,4 @@ MessageTableCellWithChevron::MessageTableCellWithChevron(I18n::Message message) 
 {
 }
 
-View * MessageTableCellWithChevron::accessoryView() const {
-  return (View *)&m_accessoryView;
-}
-
 }

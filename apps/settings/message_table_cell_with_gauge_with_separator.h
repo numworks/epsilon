@@ -13,7 +13,7 @@ public:
   MessageTableCellWithGaugeWithSeparator(I18n::Message message) :
     CellWithSeparator(),
     m_cell(message) {}
-  Escher::View * accessoryView() const { return m_cell.accessoryView(); }
+  const Escher::View * accessoryView() const { return m_cell.accessoryView(); }
   void setMessage(I18n::Message message) { return m_cell.setMessage(message); }
   /* Being const, we cannot set m_cell width to the expected width. It must then
    * be handled here. */

@@ -9,7 +9,7 @@ namespace Escher {
 class ExpressionTableCell : public Responder, public TableCell {
 public:
   ExpressionTableCell(Responder * responder = nullptr);
-  View * labelView() const override;
+  const View * labelView() const override { return &m_labelExpressionView; }
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
   Poincare::Layout layout() const override { return m_labelExpressionView.layout(); }

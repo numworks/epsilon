@@ -12,10 +12,6 @@ MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * p
   m_textBody[0] = '\0';
 }
 
-View * MessageTableCellWithEditableText::subLabelView() const {
-  return (View *)&m_textField;
-}
-
 const char * MessageTableCellWithEditableText::editedText() const {
   return m_textField.text();
 }

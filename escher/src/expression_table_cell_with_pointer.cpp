@@ -10,10 +10,6 @@ ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(Responder * paren
 {
 }
 
-View * ExpressionTableCellWithPointer::subLabelView() const {
-  return (View *)&m_subLabelView;
-}
-
 void ExpressionTableCellWithPointer::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;

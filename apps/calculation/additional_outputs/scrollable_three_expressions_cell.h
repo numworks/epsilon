@@ -56,7 +56,7 @@ public:
   void didBecomeFirstResponder() override;
 
   // Table cell
-  View * labelView() const override { return (View *)&m_view; }
+  const View * labelView() const override { return &m_view; }
 
   void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
   void resetMemoization() { m_view.resetMemoization(); }

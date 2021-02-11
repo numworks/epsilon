@@ -18,16 +18,16 @@ int TableCell::numberOfSubviews() const {
 
 View * TableCell::subviewAtIndex(int index) {
   if (index == 0) {
-    return labelView();
+    return const_cast<View *>(labelView());
   }
   if (index == 1 && subLabelView() != nullptr) {
-    return subLabelView();
+    return  const_cast<View *>(subLabelView());
   }
   assert(index == 2 || (index == 1 && subLabelView() == nullptr));
-  return accessoryView();
+  return  const_cast<View *>(accessoryView());
 }
 
-KDCoordinate TableCell::minimalHeightForOptimalDisplay(View * label, View * subLabel, View * accessory, KDCoordinate width) {
+KDCoordinate TableCell::minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width) {
   KDSize labelSize = label ? label->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize subLabelSize = subLabel ? subLabel->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize accessorySize = accessory ? accessory->minimalSizeForOptimalDisplay() : KDSizeZero;
@@ -75,9 +75,9 @@ void TableCell::layoutSubviews(bool force) {
     return;
   }
 
-  View * label = labelView();
-  View * subLabel = subLabelView();
-  View * accessory = accessoryView();
+  View * label = const_cast<View *>(labelView());
+  View * subLabel = const_cast<View *>(subLabelView());
+  View * accessory = const_cast<View *>(accessoryView());
 
   KDSize labelSize = label ? label->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize subLabelSize = subLabel ? subLabel->minimalSizeForOptimalDisplay() : KDSizeZero;

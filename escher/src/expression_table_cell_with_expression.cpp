@@ -10,10 +10,6 @@ ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder *
   m_subLabelExpressionView(this, 0, 0, 1.0f, 0.5f, Palette::GrayDark, KDColorWhite)
 {}
 
-View * ExpressionTableCellWithExpression::subLabelView() const {
-  return (View *)&m_subLabelExpressionView;
-}
-
 void ExpressionTableCellWithExpression::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;

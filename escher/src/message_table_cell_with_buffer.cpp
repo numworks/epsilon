@@ -18,10 +18,6 @@ const char * MessageTableCellWithBuffer::subLabelText() {
   return m_subLabelView.text();
 }
 
-View * MessageTableCellWithBuffer::subLabelView() const {
-  return (View *)&m_subLabelView;
-}
-
 void MessageTableCellWithBuffer::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;

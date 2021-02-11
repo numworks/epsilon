@@ -11,7 +11,7 @@ namespace Escher {
 class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
 public:
   MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
-  View * subLabelView() const override;
+  const View * subLabelView() const override { return &m_textField; }
   TextField * textField() { return &m_textField; }
   const char * editedText() const;
   void didBecomeFirstResponder() override;

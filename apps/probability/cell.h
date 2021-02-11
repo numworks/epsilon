@@ -12,9 +12,9 @@ namespace Probability {
 class Cell : public Escher::TableCell {
 public:
   Cell();
-  View * labelView() const override { return (View *)&m_labelView; }
-  View * accessoryView() const override { return (View *)&m_iconView; }
-  View * subLabelView() const override { return (View *)&m_chevronView; }
+  const View * labelView() const override { return &m_labelView; }
+  const View * accessoryView() const override { return &m_iconView; }
+  const View * subLabelView() const override { return &m_chevronView; }
 
   void reloadCell() override;
   void setLabel(I18n::Message message);

@@ -12,10 +12,6 @@ ExpressionTableCell::ExpressionTableCell(Responder * parentResponder) :
 {
 }
 
-View * ExpressionTableCell::labelView() const {
-  return (View *)&m_labelExpressionView;
-}
-
 void ExpressionTableCell::setHighlighted(bool highlight) {
   TableCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;

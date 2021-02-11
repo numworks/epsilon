@@ -52,9 +52,8 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
 }
 KDCoordinate RegressionController::nonMemoizedRowHeight(int j) {
   assert (j >= 0 && j < numberOfRows());
-  MessageTableCellWithExpression tempCell = MessageTableCellWithExpression();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  MessageTableCellWithExpression tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
 }
 
 HighlightCell * RegressionController::reusableCell(int index, int type) {

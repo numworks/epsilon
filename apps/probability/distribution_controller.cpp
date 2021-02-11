@@ -84,9 +84,8 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
 }
 
 KDCoordinate Probability::DistributionController::nonMemoizedRowHeight(int j) {
-  Cell tempCell = Cell();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  Cell tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
 }
 
 HighlightCell * Probability::DistributionController::reusableCell(int index, int type) {

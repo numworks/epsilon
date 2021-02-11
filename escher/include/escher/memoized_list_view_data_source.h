@@ -18,7 +18,7 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int index) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
 
-  void prepareCellForHeightCalculation(HighlightCell * cell, int index);
+  KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
   void resetMemoization(bool force = true);
 
   // Non memoized.

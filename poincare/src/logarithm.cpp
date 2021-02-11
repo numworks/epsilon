@@ -364,47 +364,47 @@ Expression Logarithm::unaryFunctionDifferential(ExpressionNode::ReductionContext
 Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext) {
   assert(!i.isZero());
   assert(!i.isNegative());
-  ExceptionCheckpoint tempEcp;
-  if (ExceptionRun(tempEcp)) {
-    Arithmetic arithmetic;
-    int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
-    if (numberOfPrimeFactors == 0) {
-      return Rational::Builder(0);
-    }
-    if (numberOfPrimeFactors < 0) {
-      /* We could not break i in prime factor (either it might take too many
-       * factors or too much time). */
-      Expression e = clone();
-      e.replaceChildAtIndexInPlace(0, Rational::Builder(i));
-      if (!isDenominator) {
-        return e;
+  {
+    ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      Arithmetic arithmetic;
+      int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
+      if (numberOfPrimeFactors == 0) {
+        return Rational::Builder(0);
       }
-      Multiplication m = Multiplication::Builder(Rational::Builder(-1), e);
-      return std::move(m);
-    }
-    Addition a = Addition::Builder();
-    for (int index = 0; index < numberOfPrimeFactors; index++) {
-      if (isDenominator) {
-        arithmetic.factorizationCoefficientAtIndex(index)->setNegative(true);
+      if (numberOfPrimeFactors < 0) {
+        /* We could not break i in prime factor (either it might take too many
+         * factors or too much time). */
+        Expression e = clone();
+        e.replaceChildAtIndexInPlace(0, Rational::Builder(i));
+        if (!isDenominator) {
+          return e;
+        }
+        Multiplication m = Multiplication::Builder(Rational::Builder(-1), e);
+        return std::move(m);
       }
-      Logarithm e = clone().convert<Logarithm>();
-      e.replaceChildAtIndexInPlace(0, Rational::Builder(*arithmetic.factorizationFactorAtIndex(index)));
-      Multiplication m = Multiplication::Builder(Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)), e);
-      e.simpleShallowReduce(reductionContext);
-      a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
-      m.shallowReduce(reductionContext);
+      Addition a = Addition::Builder();
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        if (isDenominator) {
+          arithmetic.factorizationCoefficientAtIndex(index)->setNegative(true);
+        }
+        Logarithm e = clone().convert<Logarithm>();
+        e.replaceChildAtIndexInPlace(0, Rational::Builder(*arithmetic.factorizationFactorAtIndex(index)));
+        Multiplication m = Multiplication::Builder(Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)), e);
+        e.simpleShallowReduce(reductionContext);
+        a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+        m.shallowReduce(reductionContext);
+      }
+      return std::move(a);
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
     }
-    return std::move(a);
-  } else {
-    // Reset factorization
-    Arithmetic::resetPrimeFactorization();
-    // Destroy intermediary factorization checkpoint
-    tempEcp.~ExceptionCheckpoint();
-    // Fall back on the parent exception checkpoint
-    ExceptionCheckpoint::Raise();
-    // Return to silence warnings
-    return Undefined::Builder();
   }
+  // As tempEcp has been destroyed, fall back on parent exception checkpoint
+  ExceptionCheckpoint::Raise();
+  // Return to silence warnings
+  return Undefined::Builder();
 }
 
 Expression Logarithm::shallowBeautify() {

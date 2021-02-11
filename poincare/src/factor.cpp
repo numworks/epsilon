@@ -51,37 +51,37 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
-  // See comment in Arithmetic::resetPrimeFactorization()
-  ExceptionCheckpoint tempEcp;
-  if (ExceptionRun(tempEcp)) {
-    Arithmetic arithmetic;
-    int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
-    if (numberOfPrimeFactors == 0) {
-      m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
-      return m;
-    }
-    if (numberOfPrimeFactors < 0) {
-      // Exception: the decomposition failed
-      return m;
-    }
-    for (int index = 0; index < numberOfPrimeFactors; index++) {
-      Expression factor = Rational::Builder(*arithmetic.factorizationFactorAtIndex(index));
-      if (!arithmetic.factorizationCoefficientAtIndex(index)->isOne()) {
-        factor = Power::Builder(factor, Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)));
+  {
+    // See comment in Arithmetic::resetPrimeFactorization()
+    ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      Arithmetic arithmetic;
+      int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
+      if (numberOfPrimeFactors == 0) {
+        m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
+        return m;
       }
-      m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
+      if (numberOfPrimeFactors < 0) {
+        // Exception: the decomposition failed
+        return m;
+      }
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        Expression factor = Rational::Builder(*arithmetic.factorizationFactorAtIndex(index));
+        if (!arithmetic.factorizationCoefficientAtIndex(index)->isOne()) {
+          factor = Power::Builder(factor, Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)));
+        }
+        m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
+      }
+      return m;
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
     }
-    return m;
-  } else {
-    // Reset factorization
-    Arithmetic::resetPrimeFactorization();
-    // Destroy intermediary factorization checkpoint
-    tempEcp.~ExceptionCheckpoint();
-    // Fall back on the parent exception checkpoint
-    ExceptionCheckpoint::Raise();
-    // Return to silence warnings
-    return Multiplication::Builder();
   }
+  // As tempEcp has been destroyed, fall back on parent exception checkpoint
+  ExceptionCheckpoint::Raise();
+  // Return to silence warnings
+  return Multiplication::Builder();
 }
 
 Expression Factor::shallowReduce(Context * context) {

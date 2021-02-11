@@ -1144,6 +1144,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   }
   Integer r1(1);
   Integer r2(1);
+  bool shouldRaiseParentException = false;
   {
     // See comment in Arithmetic::resetPrimeFactorization()
     ExceptionCheckpoint tempEcp;
@@ -1167,11 +1168,12 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     } else {
       // Reset factorization
       Arithmetic::resetPrimeFactorization();
-      // Destroy intermediary factorization checkpoint
-      tempEcp.~ExceptionCheckpoint();
-      // Fall back on the parent exception checkpoint
-      ExceptionCheckpoint::Raise();
+      shouldRaiseParentException = true;
     }
+  }
+  if (shouldRaiseParentException) {
+    // As tempEcp has been destroyed, fall back on parent exception checkpoint
+    ExceptionCheckpoint::Raise();
   }
   if (r2.isOverflow() || r1.isOverflow()) {
     // we overflow Integer at one point: we abort

@@ -13,7 +13,7 @@ using namespace Regs;
 
 void init() {
   initPeripheralsClocks();
-  initInterruptions();
+  initInterruptionPriorities();
   // Ensure right location of interrupt vectors
   // The bootloader leaves its own after flashing
   SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);

@@ -63,7 +63,6 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Board7initFPUEv)
     *(.text._ZN3Ion6Device5Board7initMPUEv)
     *(.text._ZN3Ion6Device5Board21initPeripheralsClocksEv)
-    *(.text._ZN3Ion6Device5Board17initInterruptionsEv)
     *(.text._ZN3Ion6Device4Regs*)
     *(.text._ZNK3Ion6Device4Regs*)
     *(.text._ZNV3Ion6Device4Regs*)
@@ -75,6 +74,7 @@ SECTIONS {
     *(.text._ZN3Ion6Device6Timing6usleepEj)
     *(.text._ZN3Ion6Device4Init12configureRAMEv)
     *(.text._ZN3Ion6Device5Board14setDefaultGPIOEv)
+    *(.text._ZN3Ion6Device5Board26initInterruptionPrioritiesEv)
 
     /* keyboard_handler does not need to be in internal flash, the interruption
      * is activated after initializing the external flash. */

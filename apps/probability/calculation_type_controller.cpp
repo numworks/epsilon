@@ -79,7 +79,7 @@ HighlightCell * CalculationTypeController::reusableCell(int index, int type) {
 }
 
 void CalculationTypeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  ImageCell * myCell = (ImageCell *)cell;
+  ImageCell * myCell = static_cast<ImageCell *>(cell);
   const Image *  images[k_numberOfImages] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon, ImageStore::Calcul4Icon};
   const Image * focusedImages[k_numberOfImages] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon, ImageStore::FocusedCalcul4Icon};
   myCell->setImage(images[index], focusedImages[index]);

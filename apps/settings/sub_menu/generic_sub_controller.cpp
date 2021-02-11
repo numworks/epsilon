@@ -59,11 +59,11 @@ int GenericSubController::numberOfRows() const {
 
 KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
   MessageTableCell tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index);
 }
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(m_messageTreeModel->childAtIndex(index)->label());
 }
 

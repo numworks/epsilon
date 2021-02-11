@@ -43,7 +43,7 @@ HighlightCell * AboutController::reusableCell(int index, int type) {
 
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+  MessageTableCellWithBuffer * myCell = static_cast<MessageTableCellWithBuffer *>(cell);
   const char * messages[] = {
     Ion::softwareVersion(),
     Ion::serialNumber(),

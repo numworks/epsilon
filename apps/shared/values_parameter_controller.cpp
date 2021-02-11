@@ -21,7 +21,7 @@ const char * ValuesParameterController::title() {
 }
 
 void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
 #if COPY_COLUMN
   I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
 #else

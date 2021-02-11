@@ -518,11 +518,11 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
 }
 
 void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
+  ToolboxMessageTree * messageTree = const_cast<ToolboxMessageTree *>(static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index)));
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
     // Upcasting MessageTableCellWithMessage as MessageTableCell to set font.
-    MessageTableCell * myCell = (MessageTableCell *)cell;
+    MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
     if (messageTree->text() == I18n::Message::Default && UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
       // Leaf node with a multiple row label and no subLabel have a small font.
       myCell->setMessageFont(KDFont::SmallFont);

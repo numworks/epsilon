@@ -47,7 +47,7 @@ int DisplayModeController::reusableCellCount(int type) {
 void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   /* Number of significants figure row */
   if (index == numberOfRows()-1) {
-    MessageTableCellWithEditableTextWithSeparator * myCell = (MessageTableCellWithEditableTextWithSeparator *)cell;
+    MessageTableCellWithEditableTextWithSeparator * myCell = static_cast<MessageTableCellWithEditableTextWithSeparator *>(cell);
     GenericSubController::willDisplayCellForIndex(myCell->messageTableCellWithEditableText(), index);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];

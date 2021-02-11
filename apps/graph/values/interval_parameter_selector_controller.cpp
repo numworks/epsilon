@@ -61,7 +61,7 @@ int IntervalParameterSelectorController::numberOfRows() const {
 
 KDCoordinate IntervalParameterSelectorController::nonMemoizedRowHeight(int j) {
   MessageTableCellWithChevron tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
+  return heightForCellAtIndex(&tempCell, j);
 }
 
 HighlightCell * IntervalParameterSelectorController::reusableCell(int index, int type) {

@@ -105,13 +105,13 @@ int MainController::numberOfRows() const {
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
   if (index == k_indexOfBrightnessCell) {
-    return heightForCellAtIndex((HighlightCell *)&m_brightnessCell, index);
+    return heightForCellAtIndex(&m_brightnessCell, index);
   }
   if (hasPrompt() && index == k_indexOfPopUpCell) {
-    return heightForCellAtIndex((HighlightCell *)&m_popUpCell, index);
+    return heightForCellAtIndex(&m_popUpCell, index);
   }
   MessageTableCellWithChevronAndMessage tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index);
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {
@@ -150,13 +150,13 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Preferences * preferences = Preferences::sharedPreferences();
   I18n::Message title = model()->childAtIndex(index)->label();
   if (index == k_indexOfBrightnessCell) {
-    MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
+    MessageTableCellWithGaugeWithSeparator * myGaugeCell = static_cast<MessageTableCellWithGaugeWithSeparator *>(cell);
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(title);
   if (index == k_indexOfLanguageCell) {
     int index = (int)(globalPreferences->language());
@@ -169,12 +169,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   if (hasPrompt() && index == k_indexOfPopUpCell) {
-    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    MessageTableCellWithSwitch * mySwitchCell = static_cast<MessageTableCellWithSwitch *>(cell);
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
-  MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
+  MessageTableCellWithChevronAndMessage * myTextCell = static_cast<MessageTableCellWithChevronAndMessage *>(cell);
   int childIndex = -1;
   switch (index) {
     case k_indexOfAngleUnitCell:

@@ -39,7 +39,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   if (index == numberOfRows()-1) {
     return;
   }
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
+  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
   I18n::Message labels[k_numberOfTextCell] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::YMin, I18n::Message::YMax};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);

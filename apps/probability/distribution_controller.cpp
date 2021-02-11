@@ -85,7 +85,7 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
 
 KDCoordinate Probability::DistributionController::nonMemoizedRowHeight(int j) {
   Cell tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
+  return heightForCellAtIndex(&tempCell, j);
 }
 
 HighlightCell * Probability::DistributionController::reusableCell(int index, int type) {
@@ -107,7 +107,7 @@ constexpr I18n::Message sMessages[] = {
 };
 
 void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  Cell * myCell = (Cell *)cell;
+  Cell * myCell = static_cast<Cell *>(cell);
   myCell->setLabel(sMessages[index]);
   const Image * images[k_totalNumberOfModels] = {
     ImageStore::BinomialIcon,

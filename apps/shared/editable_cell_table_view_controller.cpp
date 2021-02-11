@@ -79,7 +79,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
   static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
-    EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
+    EvenOddEditableTextCell * myEditableValueCell = static_cast<EvenOddEditableTextCell *>(cell);
     assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
     const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
     char buffer[bufferSize];

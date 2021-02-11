@@ -20,7 +20,7 @@ public:
   void setLabel(I18n::Message message);
   void setImage(const Escher::Image * image, const Escher::Image * focusedImage);
 private:
-  bool isAcessoryAlignedRight() const override { return false; }
+  bool isAccessoryAlignedRight() const override { return false; }
   constexpr static KDCoordinate k_iconWidth = 35;
   constexpr static KDCoordinate k_iconHeight = 19;
   constexpr static KDCoordinate k_iconMargin = 10;

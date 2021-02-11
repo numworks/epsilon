@@ -15,14 +15,14 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width);
-  static constexpr KDCoordinate k_minimalLargeFontCellHeight = 35; // = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::LargeFont->glyphSize().height() + Metric::CellTopMargin;
-  static constexpr KDCoordinate k_minimalSmallFontCellHeight = 31; // = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::SmallFont->glyphSize().height() + Metric::CellTopMargin;
+  static constexpr KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 18 + Metric::CellTopMargin; // KDFont::LargeFont->glyphSize().height() = 18
+  static constexpr KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 14 + Metric::CellTopMargin; // KDFont::SmallFont->glyphSize().height() = 14
 protected:
   virtual KDColor backgroundColor() const { return KDColorWhite; }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  virtual bool isAcessoryAlignedRight() const { return true; }
+  virtual bool isAccessoryAlignedRight() const { return true; }
 };
 
 }

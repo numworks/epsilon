@@ -104,7 +104,7 @@ void TableCell::layoutSubviews(bool force) {
     KDCoordinate accessoryHeight = cropIfOverflow(accessorySize.height(), height);
     // Depending on alignment, accessory is placed left or right.
     KDCoordinate accessoryX = x;
-    if (isAcessoryAlignedRight()) {
+    if (isAccessoryAlignedRight()) {
       accessoryX += width - accessoryWidth;
     }
     // Accessory must be vertically centered on the entire cell height.
@@ -113,7 +113,7 @@ void TableCell::layoutSubviews(bool force) {
     accessory->setFrame(KDRect(accessoryX, y + verticalCenterOffset, accessoryWidth, accessoryHeight), force);
     // Update remaining space, add margin before accessory
     width -= accessoryWidth + Metric::CellHorizontalElementMargin;
-    if (!isAcessoryAlignedRight()) {
+    if (!isAccessoryAlignedRight()) {
       x += accessoryWidth + Metric::CellHorizontalElementMargin;
     }
   }

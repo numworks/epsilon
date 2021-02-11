@@ -55,7 +55,7 @@ protected:
     View * view() override;
     void didBecomeFirstResponder() override;
     void setFirstSelectedRow(int firstSelectedRow);
-    SelectableTableView * selectableTableView() { return m_selectableTableView; };
+    SelectableTableView * selectableTableView() { return m_selectableTableView; }
   private:
     SelectableTableView * m_selectableTableView;
     int m_firstSelectedRow;

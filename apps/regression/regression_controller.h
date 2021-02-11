@@ -10,7 +10,6 @@ namespace Regression {
 
 class RegressionController : public Escher::SelectableListViewController {
 public:
-  constexpr static KDCoordinate k_logisticCellHeight = 47;
   RegressionController(Escher::Responder * parentResponder, Store * store);
   void setSeries(int series) { m_series = series; }
   // ViewController
@@ -29,7 +28,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
   constexpr static int k_numberOfRows = 10;
-  constexpr static int k_numberOfCells = 6; // (240 - 70) / 35
+  constexpr static int k_numberOfCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 2*Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   Escher::MessageTableCellWithExpression m_regressionCells[k_numberOfCells];
   Store * m_store;
   int m_series;

@@ -77,7 +77,7 @@ void ScriptParameterController::didBecomeFirstResponder() {
 HighlightCell * ScriptParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
+  HighlightCell * cells[k_totalNumberOfCell] = {&m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
   return cells[index];
 }
 

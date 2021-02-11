@@ -72,7 +72,6 @@ void setCheckpoint(uint8_t * frameAddress, uint32_t excReturn) {
     // Keep the oldest checkpoint
     return;
   }
-  // TODO EMILIE: Disable other exceptions or change priority!
 
   // Extract current stack pointer
   uint8_t * stackPointerAddress = nullptr;
@@ -97,7 +96,6 @@ void unsetCheckpoint() {
 }
 
 void loadCheckpoint(uint8_t * frameAddress) {
-  // TODO EMILIE: Disable other exceptions or change priority!
   assert(hasCheckpoint());
 
   // Restore registers

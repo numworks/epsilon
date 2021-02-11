@@ -130,9 +130,8 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 }
 
 KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
-  ExpressionTableCellWithPointer tempCell = ExpressionTableCellWithPointer();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  ExpressionTableCellWithPointer tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

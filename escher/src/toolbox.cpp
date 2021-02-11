@@ -42,13 +42,11 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
   if (messageTree->numberOfChildren() == 0) {
-    MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
-    prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-    return tempCell.minimalSizeForOptimalDisplay().height();
+    MessageTableCellWithMessage tempCell;
+    return heightForCellAtIndex((HighlightCell *)&tempCell, index);
   }
-  MessageTableCell tempCell = MessageTableCell();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  MessageTableCell tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
 }
 
 int Toolbox::typeAtIndex(int index) {

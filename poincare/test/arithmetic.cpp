@@ -52,25 +52,27 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
-  Poincare::ExceptionCheckpoint tempEcp;
-  if (ExceptionRun(tempEcp)) {
-    Arithmetic arithmetic;
-    int n = arithmetic.PrimeFactorization(a);
-    quiz_assert_print_if_failure(n == length, failInformationBuffer);
-    for (int index = 0; index < length; index++) {
-      /* Cheat: instead of comparing to integers, we compare their approximations
-       * (the relation between integers and their approximation is a surjection,
-       * however different integers are really likely to have different
-       * approximations... */
-      quiz_assert_print_if_failure(arithmetic.factorizationFactorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
-      quiz_assert_print_if_failure(arithmetic.factorizationCoefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
+  {
+    Poincare::ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      Arithmetic arithmetic;
+      int n = arithmetic.PrimeFactorization(a);
+      quiz_assert_print_if_failure(n == length, failInformationBuffer);
+      for (int index = 0; index < length; index++) {
+        /* Cheat: instead of comparing to integers, we compare their
+         * approximations (the relation between integers and their approximation
+         * is a surjection, however different integers are really likely to have
+         * different approximations... */
+        quiz_assert_print_if_failure(arithmetic.factorizationFactorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
+        quiz_assert_print_if_failure(arithmetic.factorizationCoefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
+      }
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
     }
-  } else {
-    // Reset factorization
-    Arithmetic::resetPrimeFactorization();
-    // Factorization failed, test failed
-    quiz_assert_print_if_failure(false, failInformationBuffer);
   }
+  // Factorization failed, test failed
+  quiz_assert_print_if_failure(false, failInformationBuffer);
 }
 
 QUIZ_CASE(poincare_arithmetic_gcd) {

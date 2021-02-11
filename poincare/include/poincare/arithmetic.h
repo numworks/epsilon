@@ -23,8 +23,8 @@ public:
    * factorization are static and shared.
    * An error is returned if a second non-destructed instance of Arithmetic
    * calls PrimeFactorization. This situation must be prevented. */
-  Arithmetic() {};
-  ~Arithmetic() { resetPrimeFactorization(); };
+  Arithmetic() {}
+  ~Arithmetic() { resetPrimeFactorization(); }
   /* When output is negative that indicates a special case:
    *  - -1 : too many factors.
    *  - -2 : a prime factor is too big.
@@ -43,9 +43,9 @@ public:
   /* Factorization's lock can be compromised if an exception is raised while it
    * is locked. To prevent that, any prime factorization must be enclosed within
    * an intermediary ExceptionCheckpoint. resetPrimeFactorization() shall be
-   * called in the associated ErrorHandler, the intermediary ExceptionCheckpoint
-   * shall be deleted, and another exception shall be manually raised to fall
-   * back on the intended checkpoint. */
+   * called in the associated ErrorHandler and, once the intermediary
+   * ExceptionCheckpoint has been destroyed, another exception shall be manually
+   * raised to fall back on the intended checkpoint. */
   static void resetPrimeFactorization();
 private:
   /* When decomposing an integer into primes factors, we look for its prime

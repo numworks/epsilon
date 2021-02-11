@@ -29,14 +29,11 @@ void suspend(bool checkIfOnOffKeyReleased) {
     waitUntilOnOffKeyReleased();
   }
 
-  /* Disable interruption before:
-   * - shutting down the external flash (interrupt handlers code might thereby
-   *   be in external flash)
-   * - shutting down the keyboard driver that would trigger an interruption
-   *   when changing the GPIO mode. */
-  Board::shutdownInterruptions();
   /* First, shutdown all peripherals except LED. Indeed, the charging pin state
-   * might change when we shutdown peripherals that draw current. */
+   * might change when we shutdown peripherals that draw current. This also
+   * shutdown all interruptions. This has to be done before shuting down the
+   * external flash because the interruptions implementation might be located
+   * in the external flash. */
   Board::shutdownPeripherals(true);
 
   while (1) {
@@ -87,9 +84,6 @@ void suspend(bool checkIfOnOffKeyReleased) {
   // Reset normal frequency
   Board::setStandardFrequency(Board::Frequency::High);
   Board::initPeripherals(numworksAuthentication, false);
-  /* Init interruptions after initializing the keyboard driver (to avoid
-   * triggering an extra interruption by configurating the GPIOs). */
-  Board::initInterruptions();
   // Update LED according to plug and charge state
   LED::updateColorWithPlugAndCharge();
   /* If the USB has been unplugged while sleeping, the USB should have been

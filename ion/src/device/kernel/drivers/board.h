@@ -15,6 +15,7 @@ void shutdownPeripheralsClocks(bool keepLEDAwake = false);
 void initPeripherals(bool authentication, bool fromBootloader);
 void shutdownPeripherals(bool keepLEDAwake = false);
 
+void initInterruptionPriorities();
 void initInterruptions();
 void shutdownInterruptions();
 void setDefaultGPIO();

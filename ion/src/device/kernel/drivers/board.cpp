@@ -64,33 +64,23 @@ void shutdownPeripherals(bool keepLEDAwake) {
   shutdownCompensationCell();
 }
 
-static constexpr int interruptionIndex[] = {6, 7, 8, 9, 10, 23, 28, 30};
-
-void initInterruptions() {
+void initInterruptionPriorities() {
   // Init SVCall interrupt priorities
-  // SVCall should be interruptible by EXTI
+  // SVCall should be interruptible by EXTI/systick/Timers interruptions
   CORTEX.SHPR2()->setSVCALL_PRI(20);
   CORTEX.SHPR3()->setPENDSV_PRI(10);
-  // Init EXTI interrupts (corresponding to keyboard column pins)
-  class NVIC::NVIC_ISER0 iser0(0); // Reset value
-  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
-  for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
-    iser0.setBit(interruptionIndex[i], true);
-    icpr0.setBit(interruptionIndex[i], true);
-  }
-  // Flush pending interruptions
-  NVIC.NVIC_ICPR0()->set(icpr0);
-  // Enable interruptions
-  NVIC.NVIC_ISER0()->set(iser0);
+}
+
+void initInterruptions() {
+  Keyboard::initInterruptions();
+  Events::initInterruptions();
+  Timing::initInterruptions();
 }
 
 void shutdownInterruptions() {
-  class NVIC::NVIC_ICER0 icer0(0); // Reset value
-  for (size_t i = 0; i < sizeof(interruptionIndex)/sizeof(int); i++) {
-    icer0.setBit(interruptionIndex[i], true);
-  }
-  // Disable interruptions
-  NVIC.NVIC_ICER0()->set(icer0);
+  Timing::shutdownInterruptions();
+  Events::shutdownInterruptions();
+  Keyboard::shutdownInterruptions();
 }
 
 static Frequency sStandardFrequency = Frequency::High;

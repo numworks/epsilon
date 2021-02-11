@@ -9,6 +9,8 @@ namespace Events {
 
 void init();
 void shutdown();
+void initInterruptions();
+void shutdownInterruptions();
 Ion::Events::Event getEvent(int * timeout);
 Ion::Events::Event getPlatformEvent();
 void stall();

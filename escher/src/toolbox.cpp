@@ -32,6 +32,7 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
     myCell->setMessage(messageTree->label());
     myCell->setSubLabelMessage(messageTree->text());
+    myCell->reloadCell();
     return;
   }
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);

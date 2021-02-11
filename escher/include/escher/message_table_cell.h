@@ -10,7 +10,7 @@ namespace Escher {
 class MessageTableCell : public TableCell {
 public:
   MessageTableCell(I18n::Message label = (I18n::Message)0);
-  View * labelView() const override;
+  const View * labelView() const override { return &m_messageTextView; }
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message message);
   void setTextColor(KDColor color);

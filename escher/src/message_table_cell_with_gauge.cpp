@@ -9,10 +9,6 @@ MessageTableCellWithGauge::MessageTableCellWithGauge(I18n::Message message) :
 {
 }
 
-View * MessageTableCellWithGauge::accessoryView() const {
-  return (View *)&m_accessoryView;
-}
-
 void MessageTableCellWithGauge::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;

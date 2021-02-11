@@ -9,7 +9,7 @@ namespace Escher {
 class MessageTableCellWithChevronAndExpression : public MessageTableCellWithChevron {
 public:
   MessageTableCellWithChevronAndExpression(I18n::Message message = (I18n::Message)0);
-  View * subLabelView() const override;
+  const View * subLabelView() const override { return &m_subtitleView; }
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layoutR);
 private:

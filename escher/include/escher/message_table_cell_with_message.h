@@ -8,7 +8,7 @@ namespace Escher {
 class MessageTableCellWithMessage : public MessageTableCell {
 public:
   MessageTableCellWithMessage(I18n::Message message = (I18n::Message)0);
-  View * subLabelView() const override;
+  const View * subLabelView() const override;
   void setHighlighted(bool highlight) override;
   void setSubLabelMessage(I18n::Message textBody);
 protected:

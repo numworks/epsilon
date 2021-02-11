@@ -8,7 +8,7 @@ namespace Escher {
 class ExpressionTableCellWithExpression : public ExpressionTableCell {
 public:
   ExpressionTableCellWithExpression(Responder * parentResponder = nullptr);
-  View * subLabelView() const override;
+  const View * subLabelView() const override { return &m_subLabelExpressionView; }
   void setHighlighted(bool highlight) override;
   void setSubLabelLayout(Poincare::Layout l);
   void didBecomeFirstResponder() override;

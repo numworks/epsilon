@@ -15,11 +15,11 @@ void MessageTableCellWithMessage::setSubLabelMessage(I18n::Message textBody) {
   reloadCell();
 }
 
-View * MessageTableCellWithMessage::subLabelView() const {
+const View * MessageTableCellWithMessage::subLabelView() const {
   if (strlen(m_subLabelView.text()) == 0) {
     return nullptr;
   }
-  return (View *)&m_subLabelView;
+  return &m_subLabelView;
 }
 
 void MessageTableCellWithMessage::setHighlighted(bool highlight) {

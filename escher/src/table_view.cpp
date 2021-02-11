@@ -174,7 +174,7 @@ void TableView::ContentView::layoutSubviews(bool force) {
     View * cell = subview(index);
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
-    m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
+    m_dataSource->willDisplayCellAtLocation(static_cast<HighlightCell *>(cell), i, j);
     /* Cell's content might change and fit in the same frame. LayoutSubviews
      * must be called on each cells even with an unchanged frame. */
     cell->setFrame(cellFrame(i,j), true);

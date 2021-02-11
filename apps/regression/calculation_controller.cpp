@@ -129,7 +129,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i == 0 && j == 0) {
     return;
   }
-  EvenOddCell * myCell = (EvenOddCell *)cell;
+  EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
 
@@ -137,11 +137,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Calculation title
   if (i == 0) {
     if (j == numberRows - 1) {
-      EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
+      EvenOddExpressionCell * myCell = static_cast<EvenOddExpressionCell *>(cell);
       myCell->setLayout(m_r2Layout);
       return;
     }
-    EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
+    EvenOddMessageTextCell * myCell = static_cast<EvenOddMessageTextCell *>(cell);
     myCell->setAlignment(1.0f, 0.5f);
     if (j <= k_regressionCellIndex) {
       I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};
@@ -162,7 +162,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
   // Coordinate and series title
   if (j == 0 && i > 0) {
-    ColumnTitleCell * myCell = (ColumnTitleCell *)cell;
+    ColumnTitleCell * myCell = static_cast<ColumnTitleCell *>(cell);
     char buffer[] = {'X', static_cast<char>('1' + seriesNumber), 0};
     myCell->setFirstText(buffer);
     buffer[0] = 'Y';
@@ -178,7 +178,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
     double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0, false);
     double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1, false);
-    EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)cell;
+    EvenOddDoubleBufferTextCellWithSeparator * myCell = static_cast<EvenOddDoubleBufferTextCellWithSeparator *>(cell);
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation1, buffer, bufferSize, numberSignificantDigits);
@@ -187,7 +187,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setSecondText(buffer);
     return;
   }
-  SeparatorEvenOddBufferTextCell * bufferCell = (SeparatorEvenOddBufferTextCell *)cell;
+  SeparatorEvenOddBufferTextCell * bufferCell = static_cast<SeparatorEvenOddBufferTextCell *>(cell);
   if (i > 0 && j == k_regressionCellIndex) {
     Model * model = m_store->modelForSeries(seriesNumber);
     const char * formula = I18n::translate(model->formulaMessage());

@@ -125,13 +125,13 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
         CodePointLayout::Builder(nextName[0], font),
         VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Position::Subscript)
       );
-  ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
+  ExpressionTableCellWithPointer * myCell = static_cast<ExpressionTableCellWithPointer *>(cell);
   myCell->setLayout(m_layouts[j]);
 }
 
 KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
   ExpressionTableCellWithPointer tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
+  return heightForCellAtIndex(&tempCell, j);
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

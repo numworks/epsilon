@@ -124,7 +124,7 @@ int Controller::reusableCellCount() const {
 }
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  AppCell * appCell = (AppCell *)cell;
+  AppCell * appCell = static_cast<AppCell *>(cell);
   AppsContainer * container = AppsContainer::sharedAppsContainer();
   int appIndex = (j * k_numberOfColumns + i) + 1;
   if (appIndex >= container->numberOfApps()) {

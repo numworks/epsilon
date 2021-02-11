@@ -4,10 +4,17 @@
 namespace Ion {
 namespace CircuitBreaker {
 
-bool hasCheckpoint();
-void loadCheckpoint();
-void setCheckpoint();
-void resetCheckpoint();
+enum class Checkpoint {
+  Home,
+  Custom
+};
+
+bool hasCheckpoint(Checkpoint c);
+void resetCheckpoint(Checkpoint c);
+void loadCustomCheckpoint();
+void loadHomeCheckpoint();
+void setCustomCheckpoint();
+void setHomeCheckpoint();
 
 }
 }

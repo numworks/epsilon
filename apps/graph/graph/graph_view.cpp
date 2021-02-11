@@ -29,12 +29,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
 
-  Ion::CircuitBreaker::setCheckpoint();
+  Ion::CircuitBreaker::setCustomCheckpoint();
 
-  if (Ion::CircuitBreaker::hasCheckpoint()) {
+  if (Ion::CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::Checkpoint::Custom)) {
     for (int i = 0; i < activeFunctionsCount ; i++) {
       if (i == 1) {
-        Ion::CircuitBreaker::loadCheckpoint();
+        Ion::CircuitBreaker::loadCustomCheckpoint();
       }
       Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
       ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);

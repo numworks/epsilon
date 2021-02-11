@@ -11,10 +11,6 @@ MessageTableCell::MessageTableCell(I18n::Message label) :
 {
 }
 
-View * MessageTableCell::labelView() const {
-  return (View *)&m_messageTextView;
-}
-
 void MessageTableCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : m_backgroundColor;

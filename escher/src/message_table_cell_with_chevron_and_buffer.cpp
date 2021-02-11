@@ -9,10 +9,6 @@ MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer() :
 {
 }
 
-View * MessageTableCellWithChevronAndBuffer::subLabelView() const {
-  return (View *)&m_subLabelView;
-}
-
 void MessageTableCellWithChevronAndBuffer::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;

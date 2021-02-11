@@ -9,7 +9,7 @@ namespace Escher {
 class MessageTableCellWithGauge : public MessageTableCell {
 public:
   MessageTableCellWithGauge(I18n::Message message = (I18n::Message)0);
-  View * accessoryView() const override;
+  const View * accessoryView() const override { return &m_accessoryView; }
   void setHighlighted(bool highlight) override;
 private:
   GaugeView m_accessoryView;

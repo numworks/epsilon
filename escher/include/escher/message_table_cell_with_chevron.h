@@ -9,7 +9,7 @@ namespace Escher {
 class MessageTableCellWithChevron : public MessageTableCell {
 public:
   MessageTableCellWithChevron(I18n::Message message = (I18n::Message)0);
-  View * accessoryView() const override;
+  const View * accessoryView() const override { return &m_accessoryView; }
 private:
   ChevronView m_accessoryView;
 };

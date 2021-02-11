@@ -28,13 +28,15 @@ public:
 
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0; }
+  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : k_defaultCellType; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
   bool shouldDisplayIntersection() const;
   Escher::MessageTableCellWithChevron m_preimageCell;
   constexpr static int k_totalNumberOfReusableCells = 6;
+  constexpr static int k_defaultCellType = 0;
+  constexpr static int k_preImageCellType = 1;
   Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
   Ion::Storage::Record m_record;
   PreimageParameterController m_preimageParameterController;

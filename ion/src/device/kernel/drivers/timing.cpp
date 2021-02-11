@@ -9,16 +9,24 @@ using namespace Regs;
 
 volatile uint64_t MillisElapsed = 0;
 
-void init() {
-  setSysTickFrequency(Clocks::Config::HCLKFrequency);
-  CORTEX.SYST_CSR()->setCLKSOURCE(CORTEX::SYST_CSR::CLKSOURCE::AHB_DIV8);
+void initInterruptions() {
   CORTEX.SYST_CSR()->setTICKINT(true);
   CORTEX.SYST_CSR()->setENABLE(true);
 }
 
-void shutdown() {
+void shutdownInterruptions() {
   CORTEX.SYST_CSR()->setENABLE(false);
   CORTEX.SYST_CSR()->setTICKINT(false);
+}
+
+void init() {
+  setSysTickFrequency(Clocks::Config::HCLKFrequency);
+  CORTEX.SYST_CSR()->setCLKSOURCE(CORTEX::SYST_CSR::CLKSOURCE::AHB_DIV8);
+  initInterruptions();
+}
+
+void shutdown() {
+  shutdownInterruptions();
 }
 
 uint64_t millis() {

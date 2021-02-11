@@ -10,6 +10,8 @@ namespace Timing {
 
 void init();
 void shutdown();
+void initInterruptions();
+void shutdownInterruptions();
 uint64_t millis();
 void setSysTickFrequency(int frequencyInMHz);
 

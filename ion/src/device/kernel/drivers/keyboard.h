@@ -13,6 +13,8 @@ using namespace Ion::Keyboard;
 
 void init(bool activateInterruption = true);
 void shutdown();
+void initInterruptions();
+void shutdownInterruptions();
 void debounce();
 void handleInterruption();
 

@@ -28,6 +28,20 @@ namespace Events {
 
 using namespace Regs;
 
+static constexpr int tim2interruptionISRIndex = 28;
+
+void initInterruptions() {
+  // Flush pending interruptions
+  NVIC.NVIC_ICPR0()->setBit(tim2interruptionISRIndex, true);
+  // Enable interruptions
+  NVIC.NVIC_ISER0()->setBit(tim2interruptionISRIndex, true);
+}
+
+void shutdownInterruptions() {
+  // Disable interruptions
+  NVIC.NVIC_ICER0()->setBit(tim2interruptionISRIndex, false);
+}
+
 //TODO: factorize with keyboard
 /* We want to prescale the timer to be able to set the auto-reload in
  * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
@@ -36,12 +50,18 @@ static constexpr int k_prescalerFactor = 4;
 static constexpr int k_stallingDelay = 2*500*k_prescalerFactor; // TODO: calibrate
 
 void init() {
+  // Init timer
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
   TIM2.DIER()->setUIE(true);
   TIM2.ARR()->set(k_stallingDelay);
+
+  initInterruptions();
 }
 
 void shutdown() {
+  shutdownInterruptions();
+
+  // Shutdown timer
   TIM2.DIER()->setUIE(false);
   TIM2.CR1()->setCEN(false);
 }

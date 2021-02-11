@@ -17,7 +17,7 @@ using namespace Regs;
 
 void init() {
   initPeripheralsClocks();
-  initInterruptions();
+  initInterruptionPriorities();
   // Ensure right location of interrupt vectors
   CORTEX.VTOR()->setVTOR((void*)&InitialisationVector);
   Cache::enable();

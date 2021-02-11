@@ -74,7 +74,24 @@ State scan() {
 
 using namespace Regs;
 
+static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30};
+
 void initInterruptions() {
+  /* Init EXTI interrupts (corresponding to keyboard column pins) and TIM4
+   * interrupt. */
+  class NVIC::NVIC_ISER0 iser0(0); // Reset value
+  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
+  for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
+    iser0.setBit(interruptionISRIndex[i], true);
+    icpr0.setBit(interruptionISRIndex[i], true);
+  }
+  // Flush pending interruptions
+  NVIC.NVIC_ICPR0()->set(icpr0);
+  // Enable interruptions
+  NVIC.NVIC_ISER0()->set(iser0);
+}
+
+void initExtendedInterruptions() {
   // Init interruption
   /*
    * GPIO Pin Number|EXTICR1|EXTICR2|EXTICR3| Interruption on
@@ -129,11 +146,25 @@ void init(bool activateInterruptions) {
     activateAllRows();
 
     initTimer();
+    initExtendedInterruptions();
     initInterruptions();
   }
 }
 
+void shutdownInterruptions() {
+  class NVIC::NVIC_ICER0 icer0(0); // Reset value
+  for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
+    icer0.setBit(interruptionISRIndex[i], true);
+  }
+  // Disable interruptions
+  NVIC.NVIC_ICER0()->set(icer0);
+}
+
 void shutdown() {
+  /* Disable interruption before shutting down the keyboard pins that would
+   * trigger an interruption when changing the GPIO mode. */
+  shutdownInterruptions();
+
   for (uint8_t i=0; i<Config::numberOfRows; i++) {
     uint8_t pin = Config::RowPins[i];
     Config::RowGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Analog);

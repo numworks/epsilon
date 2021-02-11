@@ -365,6 +365,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
   assert(!i.isZero());
   assert(!i.isNegative());
   {
+    // See comment in Arithmetic::resetPrimeFactorization()
     ExceptionCheckpoint tempEcp;
     if (ExceptionRun(tempEcp)) {
       Arithmetic arithmetic;

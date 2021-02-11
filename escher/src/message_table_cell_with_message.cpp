@@ -16,7 +16,7 @@ void MessageTableCellWithMessage::setSubLabelMessage(I18n::Message textBody) {
 }
 
 const View * MessageTableCellWithMessage::subLabelView() const {
-  if (strlen(m_subLabelView.text()) == 0) {
+  if (m_subLabelView.text()[0] == 0) {
     return nullptr;
   }
   return &m_subLabelView;

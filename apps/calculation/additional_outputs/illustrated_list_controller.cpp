@@ -57,7 +57,7 @@ int IllustratedListController::numberOfRows() const {
 
 int IllustratedListController::reusableCellCount(int type) {
   assert(type < 2);
-  if (type == 0) {
+  if (type == k_illustrationCellType) {
     return 1;
   }
   return k_maxNumberOfAdditionalCalculations;
@@ -66,14 +66,14 @@ int IllustratedListController::reusableCellCount(int type) {
 HighlightCell * IllustratedListController::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);
-  if (type == 0) {
+  if (type == k_illustrationCellType) {
     return illustrationCell();
   }
   return &m_additionalCalculationCells[index];
 }
 
 KDCoordinate IllustratedListController::nonMemoizedRowHeight(int j) {
-  if (j == 0) {
+  if (typeAtIndex(j) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
   int calculationIndex = j-1;
@@ -85,7 +85,7 @@ KDCoordinate IllustratedListController::nonMemoizedRowHeight(int j) {
 }
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == 0) {
+  if (typeAtIndex(index) == k_illustrationCellType) {
     return;
   }
   Poincare::Context * context = App::app()->localContext();

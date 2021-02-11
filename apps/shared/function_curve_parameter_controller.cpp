@@ -31,8 +31,7 @@ bool FunctionCurveParameterController::handleGotoSelection() {
 
 KDCoordinate FunctionCurveParameterController::nonMemoizedRowHeight(int j) {
   Escher::HighlightCell * cell = reusableCell(j, typeAtLocation(0, j));
-  prepareCellForHeightCalculation(cell, j);
-  return cell->minimalSizeForOptimalDisplay().height();
+  return heightForCellAtIndex(cell, j);
 }
 
 }

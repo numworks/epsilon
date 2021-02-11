@@ -194,9 +194,8 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
 }
 
 KDCoordinate LocalizationController::nonMemoizedRowHeight(int j) {
-  MessageTableCell tempCell = MessageTableCell();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  MessageTableCell tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
 }
 
 void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int index) {

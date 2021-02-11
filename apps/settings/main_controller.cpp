@@ -105,16 +105,13 @@ int MainController::numberOfRows() const {
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
   if (index == k_indexOfBrightnessCell) {
-    prepareCellForHeightCalculation((HighlightCell *)&m_brightnessCell, index);
-    return m_brightnessCell.minimalSizeForOptimalDisplay().height();
+    return heightForCellAtIndex((HighlightCell *)&m_brightnessCell, index);
   }
   if (hasPrompt() && index == k_indexOfPopUpCell) {
-    prepareCellForHeightCalculation((HighlightCell *)&m_popUpCell, index);
-    return m_popUpCell.minimalSizeForOptimalDisplay().height();
+    return heightForCellAtIndex((HighlightCell *)&m_popUpCell, index);
   }
-  MessageTableCellWithChevronAndMessage tempCell = MessageTableCellWithChevronAndMessage();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  MessageTableCellWithChevronAndMessage tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {

@@ -21,7 +21,7 @@ DisplayModeController::DisplayModeController(Responder * parentResponder, InputE
 
 KDCoordinate DisplayModeController::nonMemoizedRowHeight(int j) {
   if (j == numberOfRows()-1) {
-    // Do not call prepareCellForHeightCalculation as it will reset edited text.
+    // Do not call heightForCellAtIndex as it will reset edited text.
     m_editableCell.setSize(KDSize(cellWidth(), m_editableCell.bounds().height()));
     return m_editableCell.minimalSizeForOptimalDisplay().height();
   }

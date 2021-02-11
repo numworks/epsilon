@@ -33,6 +33,8 @@ static constexpr int tim2interruptionISRIndex = 28;
 void initInterruptions() {
   // Flush pending interruptions
   NVIC.NVIC_ICPR0()->setBit(tim2interruptionISRIndex, true);
+  // Configure the priority
+  NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, 30);
   // Enable interruptions
   NVIC.NVIC_ISER0()->setBit(tim2interruptionISRIndex, true);
 }

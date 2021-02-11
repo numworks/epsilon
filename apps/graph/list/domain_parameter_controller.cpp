@@ -35,7 +35,7 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   if (index == numberOfRows()-1) {
     return;
   }
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
+  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
   Shared::ContinuousFunction::PlotType plotType = function()->plotType();
   switch (plotType) {
     case Shared::ContinuousFunction::PlotType::Cartesian:

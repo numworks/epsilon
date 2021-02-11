@@ -81,7 +81,7 @@ KDCoordinate CalculationParameterController::nonMemoizedRowHeight(int index) {
     return heightForCellAtIndex(&m_preimageCell, index);
   }
   MessageTableCell tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index);
 }
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {

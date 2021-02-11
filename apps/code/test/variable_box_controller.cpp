@@ -5,7 +5,7 @@
 
 using namespace Code;
 
-void assert_variables_are(const char * script, const char * nameToComplete, const char * * expectedVariables, int expectedVariablesCount) {
+void assert_variables_are(const char * script, const size_t nameToCompleteOffsetInScript, const size_t nameToCompleteLength, const char * * expectedVariables, int expectedVariablesCount) {
   // Clean the store
   ScriptStore store;
   store.deleteAllScripts();
@@ -25,7 +25,7 @@ void assert_variables_are(const char * script, const char * nameToComplete, cons
   // Load the variable box
   VariableBoxController varBox(&store);
 
-  const size_t nameToCompleteLength = strlen(nameToComplete);
+  const char * nameToComplete = script + nameToCompleteOffsetInScript;
   varBox.loadFunctionsAndVariables(scriptIndex, nameToComplete, nameToCompleteLength);
 
   // Compare the variables
@@ -40,7 +40,7 @@ void assert_variables_are(const char * script, const char * nameToComplete, cons
         &addParentheses,
         i,
         &index);
-    quiz_assert(i == index); // If false, the autompletion has cycled: there are not as many results as expected
+    quiz_assert(i == index); // If false, the autocompletion has cycled: there are not as many results as expected
     quiz_assert(strncmp(*(expectedVariables + i), autocompletionI - nameToCompleteLength, textToInsertLength + nameToCompleteLength) == 0);
     index++;
   }
@@ -64,7 +64,8 @@ QUIZ_CASE(variable_box_controller) {
   // FIXME This test does not load imported variables for now
   assert_variables_are(
       "\x01 from math import *\nfroo=3",
-      "fr",
+      21,
+      2,
       expectedVariables,
       sizeof(expectedVariables) / sizeof(const char *));
 }

@@ -166,9 +166,9 @@ View * HistoryViewCell::subviewAtIndex(int index) {
   return views[index];
 }
 
-bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth, KDCoordinate ellipsisViewWidth) {
+bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth, bool ellipsis) {
   // k_margin is the separation between the input and output.
-  return (inputViewWidth + k_margin + outputViewWidth) < Ion::Display::Width - ellipsisViewWidth;
+  return (inputViewWidth + k_margin + outputViewWidth) < Ion::Display::Width - (ellipsis ? Metric::EllipsisCellWidth : 0);
 }
 
 void HistoryViewCell::layoutSubviews(bool force) {
@@ -202,7 +202,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate
 
   /* To compute if the calculation is on a single line, use the expanded width
    * if there is both an exact and an approximate layout. */
-  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(), ellipsisFrame->width());
+  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(), m_calculationAdditionInformation != Calculation::AdditionalInformationType::None);
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;

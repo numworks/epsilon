@@ -73,13 +73,11 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    ScriptNodeCell tempCell = ScriptNodeCell();
-    prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-    return tempCell.minimalSizeForOptimalDisplay().height();
+    ScriptNodeCell tempCell;
+    return heightForCellAtIndex((HighlightCell *)&tempCell, index);
   }
-  MessageTableCell tempCell = MessageTableCell();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  MessageTableCell tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
 }
 
 int VariableBoxController::numberOfRows() const {

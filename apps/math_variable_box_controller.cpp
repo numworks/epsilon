@@ -140,13 +140,11 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
-    MessageTableCellWithMessage tempCell = MessageTableCellWithMessage();
-    prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-    return tempCell.minimalSizeForOptimalDisplay().height();
+    MessageTableCellWithMessage tempCell;
+    return heightForCellAtIndex((HighlightCell *)&tempCell, index);
   }
-  ExpressionTableCellWithExpression tempCell = ExpressionTableCellWithExpression();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  ExpressionTableCellWithExpression tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
 }
 
 int MathVariableBoxController::typeAtIndex(int index) {

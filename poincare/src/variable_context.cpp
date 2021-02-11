@@ -32,14 +32,7 @@ const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstra
   } else {
     Symbol unknownSymbol = Symbol::Builder(UCodePointUnknown);
     if (m_name != nullptr && strcmp(m_name, unknownSymbol.name()) == 0) {
-      float previousUnknownSymbolValue = unknownSymbolValue;
       unknownSymbolValue = m_value.approximateToScalar<float>(this, Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit(), true);
-      /* If previousUnknownSymbolValue is not NaN, it means unknownSymbol was
-       * attributed a value from a previous context. It can happen when a
-       * derivative is formed on an expression with UCodePointUnknown as both
-       * symbol and symbol value (such as a graph derivative). It isn't an issue
-       * as long as both symbols had the same value. */
-      assert(std::isnan(previousUnknownSymbolValue) || previousUnknownSymbolValue == unknownSymbolValue);
     }
     return ContextWithParent::expressionForSymbolAbstract(symbol, clone, unknownSymbolValue);
   }

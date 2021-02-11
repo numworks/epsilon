@@ -61,7 +61,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::FunctionListController::willDisplayCellAtLocation(cell, i, j);
-  EvenOddCell * myCell = (EvenOddCell *)cell;
+  EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(modelIndexForRow(j)%2 == 0);
 }
 
@@ -175,7 +175,7 @@ HighlightCell * ListController::expressionCells(int index) {
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   assert(j>=0 && j < k_maxNumberOfRows);
-  SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
+  SequenceTitleCell * myCell = static_cast<SequenceTitleCell *>(cell);
   // Update the corresponding expression cell to get its baseline
   willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
   myCell->setBaseline(baseline(j));
@@ -197,7 +197,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 }
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
-  FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
+  FunctionExpressionCell * myCell = static_cast<FunctionExpressionCell *>(cell);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {

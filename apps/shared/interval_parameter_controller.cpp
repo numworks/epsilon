@@ -51,7 +51,7 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
     return;
   }
 
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
+  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
   assert(index >= 0 && index < 3);
   I18n::Message m = index == 0 ? m_startMessage : (index == 1 ? m_endMessage : I18n::Message::Step);
   myCell->setMessage(m);

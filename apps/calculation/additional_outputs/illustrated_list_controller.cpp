@@ -81,7 +81,7 @@ KDCoordinate IllustratedListController::nonMemoizedRowHeight(int j) {
     return 0;
   }
   ScrollableThreeExpressionsCell tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
+  return heightForCellAtIndex(&tempCell, j);
 }
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -89,7 +89,7 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
     return;
   }
   Poincare::Context * context = App::app()->localContext();
-  ScrollableThreeExpressionsCell * myCell = (ScrollableThreeExpressionsCell *)cell;
+  ScrollableThreeExpressionsCell * myCell = static_cast<ScrollableThreeExpressionsCell *>(cell);
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
   myCell->setCalculation(c);
   myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);

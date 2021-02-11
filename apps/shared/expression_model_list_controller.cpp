@@ -168,7 +168,7 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
 }
 
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
-  EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
+  EvenOddExpressionCell * myCell = static_cast<EvenOddExpressionCell *>(cell);
   ExpiringPointer<ExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   myCell->setLayout(m->layout());
 }

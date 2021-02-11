@@ -100,12 +100,12 @@ int MathVariableBoxController::reusableCellCount(int type) {
 void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     I18n::Message label = nodeLabelAtIndex(index);
-    MessageTableCell * myCell = (MessageTableCell *)cell;
+    MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
     myCell->setMessage(label);
     myCell->reloadCell();
     return;
   }
-  ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
+  ExpressionTableCellWithExpression * myCell = static_cast<ExpressionTableCellWithExpression *>(cell);
   Storage::Record record = recordAtIndex(index);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
@@ -141,10 +141,10 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
     MessageTableCellWithMessage tempCell;
-    return heightForCellAtIndex((HighlightCell *)&tempCell, index);
+    return heightForCellAtIndex(&tempCell, index);
   }
   ExpressionTableCellWithExpression tempCell;
-  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index);
 }
 
 int MathVariableBoxController::typeAtIndex(int index) {

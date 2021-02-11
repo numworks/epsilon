@@ -198,7 +198,7 @@ int HistoryController::reusableCellCount(int type) {
 }
 
 void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  HistoryViewCell * myCell = (HistoryViewCell *)cell;
+  HistoryViewCell * myCell = static_cast<HistoryViewCell *>(cell);
   myCell->setCalculation(calculationAtIndex(index).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
   myCell->reloadSubviewHighlight();

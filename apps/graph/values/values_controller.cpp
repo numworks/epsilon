@@ -72,7 +72,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // Handle hidden cells
   int typeAtLoc = typeAtLocation(i,j);
   if (typeAtLoc == k_editableValueCellType) {
-    StoreCell * storeCell = (StoreCell *)cell;
+    StoreCell * storeCell = static_cast<StoreCell *>(cell);
     storeCell->setSeparatorLeft(i > 0);
   }
 
@@ -100,13 +100,13 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
 
   if (typeAtLoc == k_abscissaTitleCellType) {
-    AbscissaTitleCell * myTitleCell = (AbscissaTitleCell *)cell;
+    AbscissaTitleCell * myTitleCell = static_cast<AbscissaTitleCell *>(cell);
     myTitleCell->setMessage(valuesParameterMessageAtColumn(i));
     myTitleCell->setSeparatorLeft(i > 0);
     return;
   }
   if (typeAtLoc == k_functionTitleCellType) {
-    Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
+    Shared::BufferFunctionTitleCell * myFunctionCell = static_cast<Shared::BufferFunctionTitleCell *>(cell);
     const size_t bufferNameSize = Shared::Function::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
     bool isDerivative = false;

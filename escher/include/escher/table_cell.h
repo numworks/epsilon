@@ -9,12 +9,12 @@ namespace Escher {
 class TableCell : public Bordered, public HighlightCell {
 public:
   TableCell();
-  virtual View * labelView() const { return nullptr; }
-  virtual View * subLabelView() const { return nullptr; }
-  virtual View * accessoryView() const { return nullptr; }
+  virtual const View * labelView() const { return nullptr; }
+  virtual const View * subLabelView() const { return nullptr; }
+  virtual const View * accessoryView() const { return nullptr; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  static KDCoordinate minimalHeightForOptimalDisplay(View * label, View * subLabel, View * accessory, KDCoordinate width);
+  static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width);
   static constexpr KDCoordinate k_minimalLargeFontCellHeight = 35; // = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::LargeFont->glyphSize().height() + Metric::CellTopMargin;
   static constexpr KDCoordinate k_minimalSmallFontCellHeight = 31; // = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::SmallFont->glyphSize().height() + Metric::CellTopMargin;
 protected:

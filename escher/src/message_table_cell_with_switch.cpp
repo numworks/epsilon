@@ -9,8 +9,4 @@ MessageTableCellWithSwitch::MessageTableCellWithSwitch(I18n::Message message) :
 {
 }
 
-View * MessageTableCellWithSwitch::accessoryView() const {
-  return (View *)&m_accessoryView;
-}
-
 }

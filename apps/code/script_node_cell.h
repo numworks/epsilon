@@ -21,10 +21,10 @@ public:
   void setScriptNode(ScriptNode * node);
 
   /* TableCell */
-  Escher::View * labelView() const override { return const_cast<Escher::View *>(static_cast<const Escher::View *>(&m_labelView)); }
-  Escher::View * subLabelView() const override { return const_cast<Escher::View *>(static_cast<const Escher::View *>(&m_subLabelView)); }
+  const Escher::View * labelView() const override { return &m_labelView; }
+  const Escher::View * subLabelView() const override { return &m_subLabelView; }
   // TODO : Remove source from cell, and handle it as a subtitle Cell in VarBox.
-  Escher::View * accessoryView() const override { return const_cast<Escher::View *>(static_cast<const Escher::View *>(&m_accessoryView)); }
+  const Escher::View * accessoryView() const override { return &m_accessoryView; }
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;

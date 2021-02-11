@@ -53,6 +53,7 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
   {
+    // See comment in Arithmetic::resetPrimeFactorization()
     Poincare::ExceptionCheckpoint tempEcp;
     if (ExceptionRun(tempEcp)) {
       Arithmetic arithmetic;

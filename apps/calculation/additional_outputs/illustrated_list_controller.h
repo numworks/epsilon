@@ -21,7 +21,7 @@ public:
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  int typeAtIndex(int index) override { return index == 0 ? 0 : 1; }
+  int typeAtIndex(int index) override { return index == 0 ? k_illustrationCellType : k_additionalCalculationCellType; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   // SelectableTableViewDelegate
@@ -32,6 +32,8 @@ public:
 
   constexpr static KDCoordinate k_illustrationHeight = 120;
 protected:
+  constexpr static uint8_t k_illustrationCellType = 0;
+  constexpr static uint8_t k_additionalCalculationCellType = 1;
   static KDCoordinate CalculationHeight(Calculation * c, bool expanded) { return ScrollableThreeExpressionsCell::Height(c); }
   Poincare::Expression m_savedExpression;
   CalculationStore m_calculationStore;

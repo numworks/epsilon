@@ -9,10 +9,6 @@ MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message mes
 {
 }
 
-View * MessageTableCellWithExpression::subLabelView() const {
-  return (View *)&m_subtitleView;
-}
-
 void MessageTableCellWithExpression::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;

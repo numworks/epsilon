@@ -9,7 +9,7 @@ namespace Escher {
 class MessageTableCellWithChevronAndBuffer : public MessageTableCellWithChevron {
 public:
   MessageTableCellWithChevronAndBuffer();
-  View * subLabelView() const override;
+  const View * subLabelView() const override { return &m_subLabelView; }
   void setHighlighted(bool highlight) override;
   void setSubLabelText(const char * textBody);
 private:

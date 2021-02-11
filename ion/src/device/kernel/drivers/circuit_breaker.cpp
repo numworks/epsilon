@@ -19,7 +19,6 @@ static constexpr size_t k_basicFrameSize = 0x20;
 
 /* Extended frame description:
  * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | s0 | s1 | ... | s 15 | FPSCR | */
-
 static constexpr size_t k_extendedFrameSize = 0x68;
 
 /* Once in jumping to setCheckpoint, the stack holds the exception context
@@ -46,11 +45,21 @@ static constexpr size_t k_extendedFrameSize = 0x68;
  * of the frame need up to 144 bytes when we compile with optimizations. We
  * keep a storing space of 256 bytes + the frame size just to be sure.  */
 
-static constexpr size_t k_exceptionStackMaxSize = 256;
-uint8_t sExceptionStack[k_extendedFrameSize + k_exceptionStackMaxSize];
-uint8_t * sExceptionStackAddress = nullptr;
-size_t sExceptionStackSize;
-jmp_buf sRegisters;
+static constexpr size_t k_additionalStackSnapshotMaxSize = 256;
+static constexpr size_t k_stackSnapshotMaxSize = k_additionalStackSnapshotMaxSize + k_extendedFrameSize;
+static_assert(k_basicFrameSize < k_extendedFrameSize, "The basic exception frame size is smaller than the extended exception frame.");
+
+// Home checkpoint snapshot
+uint8_t sHomeStackSnapshot[k_stackSnapshotMaxSize];
+uint8_t * sHomeStackSnapshotAddress = nullptr;
+size_t sHomeStackSnapshotSize;
+jmp_buf sHomeRegisters;
+
+// Custom checkpoint snapshot
+uint8_t sCustomStackSnapshot[k_stackSnapshotMaxSize];
+uint8_t * sCustomStackSnapshotAddress = nullptr;
+size_t sCustomStackSnapshotSize;
+jmp_buf sCustomRegisters;
 
 size_t frameSize(uint32_t excReturn) {
   /* The exception return value indicating the return context:
@@ -63,12 +72,13 @@ size_t frameSize(uint32_t excReturn) {
   return useBasicFrame ? k_basicFrameSize : k_extendedFrameSize;
 }
 
-bool hasCheckpoint() {
-  return sExceptionStackAddress != nullptr;
+bool hasCheckpoint(Ion::CircuitBreaker::Checkpoint checkpoint) {
+  uint8_t * stackSnapshotAddress = checkpoint == Ion::CircuitBreaker::Checkpoint::Home ? sHomeStackSnapshotAddress : sCustomStackSnapshotAddress;
+  return stackSnapshotAddress != nullptr;
 }
 
-void setCheckpoint(uint8_t * frameAddress, uint32_t excReturn) {
-  if (hasCheckpoint()) {
+void setCheckpoint(Ion::CircuitBreaker::Checkpoint checkpoint, uint8_t * frameAddress, uint32_t excReturn) {
+  if (Ion::Device::CircuitBreaker::hasCheckpoint(checkpoint)) {
     // Keep the oldest checkpoint
     return;
   }
@@ -77,29 +87,42 @@ void setCheckpoint(uint8_t * frameAddress, uint32_t excReturn) {
   uint8_t * stackPointerAddress = nullptr;
   asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (stackPointerAddress) :);
 
-  // Store the stack frame
-  sExceptionStackAddress = stackPointerAddress;
-  sExceptionStackSize = frameAddress + frameSize(excReturn) - stackPointerAddress;
-  assert(sExceptionStackSize <= k_exceptionStackMaxSize);
-  memcpy(sExceptionStack, sExceptionStackAddress, sExceptionStackSize);
+  // Choose the right checkpoint snapshot
+  uint8_t * stackSnapshot = sHomeStackSnapshot;
+  uint8_t ** stackSnapshotAddress = &sHomeStackSnapshotAddress;
+  size_t * stackSnapshotSize = &sHomeStackSnapshotSize;
+  jmp_buf * registers = &sHomeRegisters;
+  if (checkpoint == Ion::CircuitBreaker::Checkpoint::Custom) {
+    stackSnapshot = sCustomStackSnapshot;
+    stackSnapshotAddress = &sCustomStackSnapshotAddress;
+    stackSnapshotSize = &sCustomStackSnapshotSize;
+    registers = &sCustomRegisters;
+  }
 
-  if (setjmp(sRegisters)) {
+  // Store the stack frame
+  *stackSnapshotAddress = stackPointerAddress;
+  *stackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress;
+  assert(*stackSnapshotSize <= k_stackSnapshotMaxSize);
+  memcpy(stackSnapshot, *stackSnapshotAddress, *stackSnapshotSize);
+
+  if (setjmp(*registers)) {
     // Restore stack frame
-    memcpy(sExceptionStackAddress, sExceptionStack, sExceptionStackSize);
+    memcpy(*stackSnapshotAddress, stackSnapshot, *stackSnapshotSize);
     // Reset checkpoint
-    unsetCheckpoint();
+    unsetCheckpoint(checkpoint);
   }
 }
 
-void unsetCheckpoint() {
-  sExceptionStackAddress = nullptr;
+void unsetCheckpoint(Ion::CircuitBreaker::Checkpoint checkpoint) {
+  uint8_t ** stackSnapshotAddress = checkpoint == Ion::CircuitBreaker::Checkpoint::Home ? &sHomeStackSnapshotAddress : &sCustomStackSnapshotAddress;
+  *stackSnapshotAddress = nullptr;
 }
 
-void loadCheckpoint(uint8_t * frameAddress) {
-  assert(hasCheckpoint());
+void loadCheckpoint(Ion::CircuitBreaker::Checkpoint checkpoint, uint8_t * frameAddress) {
+  assert(Ion::Device::CircuitBreaker::hasCheckpoint(checkpoint));
 
   // Restore registers
-  longjmp(sRegisters, 1);
+  longjmp(checkpoint == Ion::CircuitBreaker::Checkpoint::Home ? sHomeRegisters : sCustomRegisters, 1);
 }
 
 }

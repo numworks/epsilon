@@ -108,13 +108,15 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return nonMemoizedIndexFromCumulatedHeight(offsetY);
 }
 
-void MemoizedListViewDataSource::prepareCellForHeightCalculation(HighlightCell * cell, int index) {
+KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
   // A non-null implementation of cellWidth is required to compute cell height.
   assert(cellWidth() != 0);
   // Set cell's frame width
   cell->setSize(KDSize(cellWidth(), cell->bounds().height()));
   // Setup cell as if it was to be displayed
   willDisplayCellForIndex(cell, index);
+  // Return cell's height
+  return cell->minimalSizeForOptimalDisplay().height();
 }
 
 void MemoizedListViewDataSource::resetMemoization(bool force) {
@@ -141,14 +143,10 @@ KDCoordinate MemoizedListViewDataSource::nonMemoizedRowHeight(int j) {
    * stored as reusable cells. */
   assert(j < numberOfRows() && reusableCellCount(typeAtIndex(j)) > 0);
   /* Most nonMemoizedRowHeight implementations boils down to instantiating a
-   * temporary cell on which calling prepareCellForHeightCalculation, and return
-   * minimalSizeForOptimalDisplay. However, temporary cell must be instantiated
-   * in the type expected in willDisplayCellAtIndex(), which is unknown here. */
-  Escher::HighlightCell * cell = reusableCell(j, typeAtIndex(j));
-  /* prepareCellForHeightCalculation will set up cell's width, which is required
-   * to compute minimal height for optimal display. */
-  prepareCellForHeightCalculation(cell, j);
-  return cell->minimalSizeForOptimalDisplay().height();
+   * temporary cell on which returning heightForCellAtIndex. However, temporary
+   * cell must be instantiated in the type expected in willDisplayCellAtIndex(),
+   * which is unknown here. */
+  return heightForCellAtIndex(reusableCell(j, typeAtIndex(j)), j);
 }
 
 int MemoizedListViewDataSource::getMemoizedIndex(int index) {

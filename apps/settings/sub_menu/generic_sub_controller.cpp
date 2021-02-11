@@ -58,9 +58,8 @@ int GenericSubController::numberOfRows() const {
 }
 
 KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
-  MessageTableCell tempCell = MessageTableCell();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, index);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  MessageTableCell tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, index);
 }
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int index) {

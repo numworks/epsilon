@@ -80,9 +80,8 @@ KDCoordinate IllustratedListController::nonMemoizedRowHeight(int j) {
   if (calculationIndex >= m_calculationStore.numberOfCalculations()) {
     return 0;
   }
-  ScrollableThreeExpressionsCell tempCell = ScrollableThreeExpressionsCell();
-  prepareCellForHeightCalculation((HighlightCell *)&tempCell, j);
-  return tempCell.minimalSizeForOptimalDisplay().height();
+  ScrollableThreeExpressionsCell tempCell;
+  return heightForCellAtIndex((HighlightCell *)&tempCell, j);
 }
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {

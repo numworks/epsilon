@@ -251,18 +251,18 @@ int ConsoleController::indexFromCumulatedHeight(KDCoordinate offsetY ){
 
 HighlightCell * ConsoleController::reusableCell(int index, int type) {
   assert(index >= 0);
-  if (type == LineCellType) {
+  if (type == k_lineCellType) {
     assert(index < k_numberOfLineCells);
     return m_cells+index;
   } else {
-    assert(type == EditCellType);
+    assert(type == k_editCellType);
     assert(index == 0);
     return &m_editCell;
   }
 }
 
 int ConsoleController::reusableCellCount(int type) {
-  if (type == LineCellType) {
+  if (type == k_lineCellType) {
     return k_numberOfLineCells;
   } else {
     return 1;
@@ -272,10 +272,10 @@ int ConsoleController::reusableCellCount(int type) {
 int ConsoleController::typeAtIndex(int index) {
   assert(index >= 0);
   if (index < m_consoleStore.numberOfLines()) {
-    return LineCellType;
+    return k_lineCellType;
   } else {
     assert(index == m_consoleStore.numberOfLines());
-    return EditCellType;
+    return k_editCellType;
   }
 }
 

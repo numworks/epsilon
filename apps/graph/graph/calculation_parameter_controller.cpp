@@ -77,7 +77,7 @@ int CalculationParameterController::numberOfRows() const {
 };
 
 KDCoordinate CalculationParameterController::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == 1) {
+  if (typeAtIndex(index) == k_preImageCellType) {
     return heightForCellAtIndex(&m_preimageCell, index);
   }
   MessageTableCell tempCell;
@@ -87,15 +87,15 @@ KDCoordinate CalculationParameterController::nonMemoizedRowHeight(int index) {
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < reusableCellCount(type));
-  if (type == 0) {
+  if (type == k_defaultCellType) {
     return &m_cells[index];
   }
-  assert(type == 1);
+  assert(type == k_preImageCellType);
   return &m_preimageCell;
 }
 
 int CalculationParameterController::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_defaultCellType) {
     return k_totalNumberOfReusableCells;
   }
   return 1;

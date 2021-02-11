@@ -2,17 +2,16 @@
 #define ION_DEVICE_KERNEL_CHECKPOINT_H
 
 #include <stdint.h>
+#include <ion/circuit_breaker.h>
 
 namespace Ion {
 namespace Device {
 namespace CircuitBreaker {
 
-bool hasCheckpoint();
-/* return true if error !*/
-void setCheckpoint(uint8_t * frameAddress, uint32_t excReturn);
-/* ATTENTION a cause de ASPEN, faire une instruction float pour être sure de loader les s0-s31 avant de les enregistrer*/
-void unsetCheckpoint();
-void loadCheckpoint(uint8_t * frameAddress);
+bool hasCheckpoint(Ion::CircuitBreaker::Checkpoint c);
+void setCheckpoint(Ion::CircuitBreaker::Checkpoint c, uint8_t * frameAddress, uint32_t excReturn);
+void unsetCheckpoint(Ion::CircuitBreaker::Checkpoint c);
+void loadCheckpoint(Ion::CircuitBreaker::Checkpoint c, uint8_t * frameAddress);
 
 }
 }

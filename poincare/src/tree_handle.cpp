@@ -299,6 +299,7 @@ template ConjugateLayout TreeHandle::FixedArityBuilder<ConjugateLayout, Conjugat
 template Cosine TreeHandle::FixedArityBuilder<Cosine, CosineNode>(const Tuple &);
 template Dependency TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(const Tuple &);
 template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(const Tuple &);
+template DerivativeLayout TreeHandle::FixedArityBuilder<DerivativeLayout, DerivativeLayoutNode>(const Tuple &);
 template Determinant TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>(const Tuple &);
 template Division TreeHandle::FixedArityBuilder<Division, DivisionNode>(const Tuple &);
 template DivisionQuotient TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>(const Tuple &);

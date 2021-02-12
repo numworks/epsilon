@@ -63,9 +63,9 @@ private:
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
 
-  static I18n::Message k_promptMessages[];
-  static KDColor k_promptColors[];
-  static int k_promptNumberOfMessages;
+  static const I18n::Message k_promptMessages[];
+  static const KDColor k_promptColors[];
+  static const int k_promptNumberOfMessages;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;

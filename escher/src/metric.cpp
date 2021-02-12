@@ -1,13 +1,14 @@
 #include <escher/metric.h>
 
 namespace Escher {
+constexpr KDCoordinate Metric::SmallCellMargin;
+constexpr KDCoordinate Metric::BigCellMargin;
 constexpr KDCoordinate Metric::CellTopMargin;
 constexpr KDCoordinate Metric::CellRightMargin;
 constexpr KDCoordinate Metric::CellLeftMargin;
 constexpr KDCoordinate Metric::CellBottomMargin;
 constexpr KDCoordinate Metric::CellHorizontalElementMargin;
 constexpr KDCoordinate Metric::CellVerticalElementMargin;
-constexpr KDCoordinate Metric::CellMargin;
 constexpr KDCoordinate Metric::CommonLeftMargin;
 constexpr KDCoordinate Metric::CommonRightMargin;
 constexpr KDCoordinate Metric::CommonTopMargin;
@@ -18,6 +19,7 @@ constexpr KDCoordinate Metric::TitleBarExternHorizontalMargin;
 constexpr KDCoordinate Metric::TitleBarHeight;
 constexpr KDCoordinate Metric::TabHeight;
 constexpr KDCoordinate Metric::ScrollStep;
+constexpr KDCoordinate Metric::PopUpMargin;
 constexpr KDCoordinate Metric::PopUpLeftMargin;
 constexpr KDCoordinate Metric::PopUpRightMargin;
 constexpr KDCoordinate Metric::PopUpTopMargin;

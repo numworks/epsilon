@@ -25,7 +25,7 @@ public:
   void setText(const char * textContent);
   void setTextColor(KDColor textColor);
 protected:
-  static constexpr KDCoordinate k_horizontalMargin = Metric::CellMargin;
+  static constexpr KDCoordinate k_horizontalMargin = Metric::SmallCellMargin;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

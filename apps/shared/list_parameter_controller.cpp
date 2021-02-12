@@ -54,19 +54,19 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int ListParameterController::localIndex(int j) {
+int ListParameterController::sharedCellIndex(int j) {
   // Shared::ListParameterController rows are always placed last
-  assert(j >= numberOfRows() - k_localNumberOfCell && j < numberOfRows());
-  return j - (numberOfRows() - k_localNumberOfCell);
+  assert(j >= numberOfRows() - k_numberOfSharedCells && j < numberOfRows());
+  return j - (numberOfRows() - k_numberOfSharedCells);
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
   HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};
-  return cells[localIndex(index)];
+  return cells[sharedCellIndex(index)];
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
-  switch (localIndex(rowIndex)) {
+  switch (sharedCellIndex(rowIndex)) {
     case 0:
       function()->setActive(!function()->isActive());
       resetMemoization();

@@ -1,5 +1,6 @@
 #include <poincare/derivative.h>
 #include <poincare/dependency.h>
+#include <poincare/derivative_layout.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
@@ -29,7 +30,10 @@ int DerivativeNode::polynomialDegree(Context * context, const char * symbolName)
 }
 
 Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
+  return DerivativeLayout::Builder(
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

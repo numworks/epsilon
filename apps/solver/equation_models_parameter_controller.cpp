@@ -58,27 +58,31 @@ bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int EquationModelsParameterController::numberOfRows() const {
-  return k_numberOfExpressionCells+1;
+  return 1 + k_numberOfExpressionCells;
 };
 
 KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int j) {
-  if (typeAtIndex(j) == 1) {
-    j-=1;
+  int type = typeAtIndex(j);
+  int reusableCellIndex = j;
+  if (type == k_modelCellType) {
+    reusableCellIndex -= reusableCellCount(k_emptyModelCellType);
   }
-  return MemoizedListViewDataSource::nonMemoizedRowHeight(j);
+  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), j);
 }
 
 HighlightCell * EquationModelsParameterController::reusableCell(int index, int type) {
-  if (type == 0) {
+  assert(index < reusableCellCount(type));
+  if (type == k_emptyModelCellType) {
     return &m_emptyModelCell;
   }
   return &m_modelCells[index];
 }
 
 int EquationModelsParameterController::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_emptyModelCellType) {
     return 1;
   }
+  assert(type == k_modelCellType);
   return k_numberOfExpressionCells;
 }
 

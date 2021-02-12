@@ -67,6 +67,7 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
         quiz_assert_print_if_failure(arithmetic.factorizationFactorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
         quiz_assert_print_if_failure(arithmetic.factorizationCoefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
       }
+      return;
     } else {
       // Reset factorization
       Arithmetic::resetPrimeFactorization();

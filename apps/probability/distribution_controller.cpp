@@ -49,18 +49,6 @@ void DistributionController::ContentView::layoutSubviews(bool force) {
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight), force);
 }
 
-static I18n::Message sMessages[] = {
-  I18n::Message::Binomial,
-  I18n::Message::Uniforme,
-  I18n::Message::Exponential,
-  I18n::Message::Normal,
-  I18n::Message::ChiSquared,
-  I18n::Message::Student,
-  I18n::Message::Geometric,
-  I18n::Message::Poisson,
-  I18n::Message::Fisher
-};
-
 DistributionController::DistributionController(Responder * parentResponder, Distribution * distribution, ParametersController * parametersController) :
   ViewController(parentResponder),
   m_selectableTableView(this),
@@ -69,7 +57,6 @@ DistributionController::DistributionController(Responder * parentResponder, Dist
   m_parametersController(parametersController)
 {
   assert(m_distribution != nullptr);
-  m_messages = sMessages;
   m_selectableTableView.setTopMargin(Metric::CommonTopMargin-ContentView::k_titleMargin);
 }
 
@@ -104,9 +91,21 @@ HighlightCell * Probability::DistributionController::reusableCell(int index) {
   return &m_cells[index];
 }
 
+constexpr I18n::Message sMessages[] = {
+  I18n::Message::Binomial,
+  I18n::Message::Uniforme,
+  I18n::Message::Exponential,
+  I18n::Message::Normal,
+  I18n::Message::ChiSquared,
+  I18n::Message::Student,
+  I18n::Message::Geometric,
+  I18n::Message::Poisson,
+  I18n::Message::Fisher
+};
+
 void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Cell * myCell = (Cell *)cell;
-  myCell->setLabel(m_messages[index]);
+  myCell->setLabel(sMessages[index]);
   const Image * images[k_totalNumberOfModels] = {
     ImageStore::BinomialIcon,
     ImageStore::UniformIcon,

@@ -90,7 +90,7 @@ KDCoordinate Probability::DistributionController::nonMemoizedRowHeight(int j) {
 
 HighlightCell * Probability::DistributionController::reusableCell(int index, int type) {
   assert(index >= 0);
-  assert(index < k_totalNumberOfModels);
+  assert(index < reusableCellCount(type));
   return &m_cells[index];
 }
 

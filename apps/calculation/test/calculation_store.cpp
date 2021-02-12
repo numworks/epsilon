@@ -83,18 +83,42 @@ QUIZ_CASE(calculation_ans) {
 void assertCalculationIs(const char * input, DisplayOutput display, EqualSign sign, const char * exactOutput, const char * displayedApproximateOutput, const char * storedApproximateOutput, Context * context, CalculationStore * store) {
   store->push(input, context, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
-  quiz_assert(lastCalculation->displayOutput(context) == display);
+
+  static_assert(static_cast<int>(DisplayOutput::Unknown) == 0 &&
+                static_cast<int>(DisplayOutput::ExactOnly) == 1 &&
+                static_cast<int>(DisplayOutput::ApproximateOnly) == 2 &&
+                static_cast<int>(DisplayOutput::ExactAndApproximate) == 3 &&
+                static_cast<int>(DisplayOutput::ExactAndApproximateToggle) == 4, 
+                "Display output has changed. Change symbols under this line.");
+  const char * symbolForDisplayOutput[5] = {
+    "Unknown",
+    "ExactOnly",
+    "ApproximateOnly",
+    "ExactAndApproximate",
+    "ExactAndApproximateToggle"
+  };
+  assert_and_dispplay_result_for_enum(input, (uint8_t)lastCalculation->displayOutput(context), (uint8_t)display, symbolForDisplayOutput, "DisplayOutput");
+
   if (sign != EqualSign::Unknown) {
-    quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
+    static_assert(static_cast<int>(EqualSign::Unknown) == 0 &&
+                static_cast<int>(EqualSign::Approximation) == 1 &&
+                static_cast<int>(EqualSign::Equal) == 2, 
+                "Equal Sign has changed. Change symbols under this line.");
+    const char * symbolForEqualSign[3] = {
+      "Unkown",
+      "Approximation",
+      "Equal"
+    };
+    assert_and_dispplay_result_for_enum(input, (uint8_t)lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context), (uint8_t)sign, symbolForEqualSign, "EqualSign");
   }
   if (exactOutput) {
-    quiz_assert_print_if_failure(strcmp(lastCalculation->exactOutputText(), exactOutput) == 0, input);
+    assert_compare_string(input, lastCalculation->exactOutputText(), exactOutput, "exact output");
   }
   if (displayedApproximateOutput) {
-    quiz_assert_print_if_failure(strcmp(lastCalculation->approximateOutputText(NumberOfSignificantDigits::UserDefined), displayedApproximateOutput) == 0, input);
+    assert_compare_string(input, lastCalculation->approximateOutputText(NumberOfSignificantDigits::UserDefined), displayedApproximateOutput, "displayed approximate output");
   }
   if (storedApproximateOutput) {
-    quiz_assert_print_if_failure(strcmp(lastCalculation->approximateOutputText(NumberOfSignificantDigits::Maximal), storedApproximateOutput) == 0, input);
+    assert_compare_string(input, lastCalculation->approximateOutputText(NumberOfSignificantDigits::Maximal), storedApproximateOutput, "storedf Approximate Output");
   }
   store->deleteAll();
 }

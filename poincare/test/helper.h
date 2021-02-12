@@ -33,6 +33,9 @@ void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
 typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ExpressionNode::ReductionContext reductionContext);
 
+void assert_and_dispplay_result_for_enum(const char * input, uint8_t result, uint8_t expectedResult, const char ** stringArrayForEnum, const char * type);
+void assert_compare_string(const char * input, const char * output, const char * expectedResult, const char * type);
+
 void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::Preferences::UnitFormat unitFormat, Poincare::ExpressionNode::SymbolicComputation symbolicComputation, Poincare::ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
 
 // Parsing

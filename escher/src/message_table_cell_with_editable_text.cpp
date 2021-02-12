@@ -40,7 +40,7 @@ void MessageTableCellWithEditableText::setSubLabelText(const char * text) {
 }
 
 /* Overriding this function with a nullptr subLabel because m_textField should
- * not force a two row table cell while the user write. */
+ * not force a two row table cell while the user writes. */
 KDSize MessageTableCellWithEditableText::minimalSizeForOptimalDisplay() const {
   // Available width is necessary to compute it minimal height.
   KDCoordinate expectedWidth = m_frame.width();

@@ -415,7 +415,7 @@ Decimal Decimal::Builder(T f) {
   /* If m > 99999999999999.5 or 9999999,5, the mantissa stored will be 1 (as we keep only
    * 14 significative numbers from double. In that case, the exponent must be
    * increment as well. */
-  constexpr double biggestMantissaFromDouble = std::pow((double)10.0, (double)(numberOfSignificantDigits))-0.5;
+  const double biggestMantissaFromDouble = std::pow((double)10.0, (double)(numberOfSignificantDigits))-0.5;
   if (std::fabs(mantissaf) >= biggestMantissaFromDouble) {
     exp++;
   }

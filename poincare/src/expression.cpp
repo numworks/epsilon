@@ -889,7 +889,7 @@ U Expression::approximateWithValueForSymbol(const char * symbol, U x, Context * 
 
 template<typename U>
 U Expression::Epsilon() {
-  static U epsilon = sizeof(U) == sizeof(double) ? 1E-15 : 1E-7f;
+  constexpr U epsilon = sizeof(U) == sizeof(double) ? 1E-15 : 1E-7f;
   return epsilon;
 }
 

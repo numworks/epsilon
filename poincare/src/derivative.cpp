@@ -52,7 +52,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
   T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   T result = 1.0;
   T h = k_minInitialRate;
-  static T tenEpsilon = sizeof(T) == sizeof(double) ? 10.0*DBL_EPSILON : 10.0f*FLT_EPSILON;
+  constexpr T tenEpsilon = sizeof(T) == sizeof(double) ? 10.0*DBL_EPSILON : 10.0f*FLT_EPSILON;
   do {
     T currentError;
     T currentResult = riddersApproximation(approximationContext, evaluationArgument, h, &currentError);
@@ -73,7 +73,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
   {
     return Complex<T>::RealUndefined();
   }
-  static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
+  constexpr T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   if (std::fabs(error) < min) {
     return Complex<T>::Builder(result);
   }

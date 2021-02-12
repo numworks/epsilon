@@ -14,15 +14,15 @@ class App : public Shared::ExpressionFieldDelegateApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
     public:
-      I18n::Message name() override;
-      I18n::Message upperName() override;
-      const Escher::Image * icon() override;
+      I18n::Message name() const override;
+      I18n::Message upperName() const override;
+      const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Escher::Container * container) override;
-    Descriptor * descriptor() override;
+    const Descriptor * descriptor() const override;
     void reset() override;
     EquationStore * equationStore() { return &m_equationStore; }
     void storageDidChangeForRecord(const Ion::Storage::Record record) override;

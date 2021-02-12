@@ -18,7 +18,7 @@ public:
 
   void setVisible(bool visible);
   void reloadCell() override;
-  void setAppDescriptor(Escher::App::Descriptor * appDescriptor);
+  void setAppDescriptor(const Escher::App::Descriptor * appDescriptor);
 private:
   static constexpr KDCoordinate k_iconMargin = 22;
   static constexpr KDCoordinate k_iconWidth = 55;

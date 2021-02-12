@@ -5,7 +5,7 @@ using namespace Escher;
 
 namespace Shared {
 
-MessageView::MessageView(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) {
+MessageView::MessageView(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages) {
   m_numberOfMessages = numberOfMessages < k_maxNumberOfMessages ? numberOfMessages : k_maxNumberOfMessages;
   for (uint8_t i = 0; i < m_numberOfMessages; i++) {
     m_messageTextViews[i].setFont(i == 0 ? KDFont::LargeFont : KDFont::SmallFont);

@@ -54,7 +54,7 @@ int AboutController::reusableCellCount(int type) {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-  static const char * messages[] = {
+  const char * messages[] = {
     Ion::softwareVersion(),
     Ion::serialNumber(),
     Ion::fccId()

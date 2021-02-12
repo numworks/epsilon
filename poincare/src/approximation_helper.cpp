@@ -40,7 +40,7 @@ static inline int absInt(int x) { return x < 0 ? -x : x; }
 
 template<typename T>
 T ApproximationHelper::Epsilon() {
-  static T precision = (sizeof(T) == sizeof(double)) ? 1E-15 : 1E-6f;
+  constexpr T precision = (sizeof(T) == sizeof(double)) ? 1E-15 : 1E-6f;
   return precision;
 }
 

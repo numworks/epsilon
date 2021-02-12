@@ -22,8 +22,10 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0 ? 0 : 1; }
+  int typeAtIndex(int index) override { return index == 0 ? k_emptyModelCellType : k_modelCellType; }
 private:
+  constexpr static int k_emptyModelCellType = 0;
+  constexpr static int k_modelCellType = 1;
   constexpr static int k_numberOfModels = 6;
   static constexpr const char * k_models[k_numberOfModels] = {
     "", "x+y=0", "x^2+x+1=0", "x+y+z=0", "x^3+x^2+x+1=0", "x+y+z+t=0"

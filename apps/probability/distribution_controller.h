@@ -43,7 +43,6 @@ private:
   Cell m_cells[k_numberOfCells];
   Escher::SelectableTableView m_selectableTableView;
   ContentView m_contentView;
-  I18n::Message * m_messages;
   Distribution * m_distribution;
   ParametersController * m_parametersController;
 

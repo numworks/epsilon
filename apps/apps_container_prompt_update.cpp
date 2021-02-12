@@ -1,6 +1,6 @@
 #include "apps_container.h"
 
-I18n::Message AppsContainer::k_promptMessages[] = {
+constexpr I18n::Message AppsContainer::k_promptMessages[] = {
   I18n::Message::UpdateAvailable,
   I18n::Message::UpdateMessage1,
   I18n::Message::UpdateMessage2,
@@ -8,7 +8,7 @@ I18n::Message AppsContainer::k_promptMessages[] = {
   I18n::Message::UpdateMessage3,
   I18n::Message::UpdateMessage4};
 
-KDColor AppsContainer::k_promptColors[] = {
+constexpr KDColor AppsContainer::k_promptColors[] = {
   KDColorBlack,
   KDColorBlack,
   KDColorBlack,
@@ -16,4 +16,4 @@ KDColor AppsContainer::k_promptColors[] = {
   KDColorBlack,
   Escher::Palette::YellowDark};
 
-int AppsContainer::k_promptNumberOfMessages = 6;
+constexpr int AppsContainer::k_promptNumberOfMessages = 6;

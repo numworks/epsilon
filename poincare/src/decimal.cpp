@@ -406,7 +406,7 @@ Decimal Decimal::Builder(T f) {
   /* We keep 7 significant digits for if the the Decimal was built from a float
    * and 14 significant digits if it was built from a double. This roughly
    * correspond to the respective precision of float and double. */
-  int numberOfSignificantDigits = sizeof(T) == sizeof(float) ? PrintFloat::k_numberOfPrintedSignificantDigits : PrintFloat::k_numberOfStoredSignificantDigits;
+  constexpr int numberOfSignificantDigits = sizeof(T) == sizeof(float) ? PrintFloat::k_numberOfPrintedSignificantDigits : PrintFloat::k_numberOfStoredSignificantDigits;
   /* mantissa = f*10^(-exponent+numberOfSignificantDigits-1). We compute
    * this operations in 2 steps as
    * 10^(-exponent+numberOfSignificantDigits+1) can be infinity.*/
@@ -415,7 +415,7 @@ Decimal Decimal::Builder(T f) {
   /* If m > 99999999999999.5 or 9999999,5, the mantissa stored will be 1 (as we keep only
    * 14 significative numbers from double. In that case, the exponent must be
    * increment as well. */
-  static double biggestMantissaFromDouble = std::pow((double)10.0, (double)(numberOfSignificantDigits))-0.5;
+  constexpr double biggestMantissaFromDouble = std::pow((double)10.0, (double)(numberOfSignificantDigits))-0.5;
   if (std::fabs(mantissaf) >= biggestMantissaFromDouble) {
     exp++;
   }

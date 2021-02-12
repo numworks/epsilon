@@ -19,16 +19,16 @@ class App : public Shared::FunctionApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
   public:
-    I18n::Message name() override;
-    I18n::Message upperName() override;
-    const Escher::Image * icon() override;
+    I18n::Message name() const override;
+    I18n::Message upperName() const override;
+    const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Escher::Container * container) override;
     void reset() override;
-    Descriptor * descriptor() override;
+    const Descriptor * descriptor() const override;
     Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
     CurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * interval() { return &m_interval; }

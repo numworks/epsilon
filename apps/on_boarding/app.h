@@ -12,7 +12,7 @@ public:
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     App * unpack(Escher::Container * container) override;
-    Descriptor * descriptor() override;
+    const Descriptor * descriptor() const override;
   };
 
   int numberOfTimers() override;

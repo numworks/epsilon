@@ -131,7 +131,7 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
+    const ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }

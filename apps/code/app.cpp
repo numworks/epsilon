@@ -9,15 +9,15 @@ using namespace Escher;
 
 namespace Code {
 
-I18n::Message App::Descriptor::name() {
+I18n::Message App::Descriptor::name() const {
   return I18n::Message::CodeApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
+I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::CodeAppCapital;
 }
 
-const Image * App::Descriptor::icon() {
+const Image * App::Descriptor::icon() const {
   return ImageStore::CodeIcon;
 }
 
@@ -33,9 +33,10 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
+static constexpr App::Descriptor sDescriptor;
+
+const App::Descriptor * App::Snapshot::descriptor() const {
+  return &sDescriptor;
 }
 
 ScriptStore * App::Snapshot::scriptStore() {

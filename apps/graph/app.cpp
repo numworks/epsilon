@@ -9,15 +9,15 @@ using namespace Escher;
 
 namespace Graph {
 
-I18n::Message App::Descriptor::name() {
+I18n::Message App::Descriptor::name() const {
   return I18n::Message::FunctionApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
+I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::FunctionAppCapital;
 }
 
-const Image * App::Descriptor::icon() {
+const Image * App::Descriptor::icon() const {
   return ImageStore::GraphIcon;
 }
 
@@ -39,9 +39,10 @@ void App::Snapshot::reset() {
   }
 }
 
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
+static constexpr App::Descriptor sDescriptor;
+
+const App::Descriptor * App::Snapshot::descriptor() const {
+  return &sDescriptor;
 }
 
 void App::Snapshot::tidy() {

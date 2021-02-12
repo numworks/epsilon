@@ -9,15 +9,15 @@ using namespace Escher;
 
 namespace Calculation {
 
-I18n::Message App::Descriptor::name() {
+I18n::Message App::Descriptor::name() const {
   return I18n::Message::CalculApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
+I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::CalculAppCapital;
 }
 
-const Image * App::Descriptor::icon() {
+const Image * App::Descriptor::icon() const {
   return ImageStore::CalculationIcon;
 }
 
@@ -31,9 +31,10 @@ void App::Snapshot::reset() {
   m_cacheBufferInformation = 0;
 }
 
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
+static constexpr App::Descriptor sDescriptor;
+
+const App::Descriptor * App::Snapshot::descriptor() const {
+  return &sDescriptor;
 }
 
 App::Snapshot::Snapshot() : m_calculationStore(m_calculationBuffer, k_calculationBufferSize)

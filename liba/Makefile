@@ -126,6 +126,12 @@ liba_src += $(addprefix liba/src/external/openbsd/, \
 $(call object_for,liba/src/external/sqlite/mem5.c): CFLAGS += -w
 $(call object_for,liba/src/external/openbsd/%.c): SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
 $(call object_for,liba/src/external/openbsd/%.c): CFLAGS += -w
+# A few OpenBSD libm files define constants using the "volatile" keyword. Like
+# "static const volatile float huge = 1.0e+30;". This obviously doesn't make any
+# sense, and has been removed from other libm such as openlibm.
+# Luckily the "volatile" keyword is not used anywhere else in those files, so we
+# can simply define it as an empty macro.
+$(call object_for,$(addprefix liba/src/external/openbsd/,e_expf.c s_expm1f.c e_coshf.c e_powf.c)): CFLAGS += -Dvolatile=
 
 tests_src += $(addprefix liba/test/, \
   aeabi.c \

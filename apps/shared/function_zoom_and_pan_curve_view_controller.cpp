@@ -32,31 +32,18 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
 }
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
-  bool isSystemQuitEvent = event == Ion::Events::Back || event == Ion::Events::Home;
-  bool willLeave = isSystemQuitEvent || event == Ion::Events::OK || event == Ion::Events::EXE;
-  bool zoomAutoWasOn = m_interactiveRange->zoomAuto();
-  /* Deactivate the automatic zoom to avoid recomputing the range if the user
-   * immediately quits the menu. */
-  m_interactiveRange->setZoomAuto(false);
-  bool eventHasEffect = ZoomAndPanCurveViewController::handleEvent(event) || isSystemQuitEvent;
-  /* Hide the legend if the event does something, as the user likely does not
-   * need it, but display it if the event does nothing to remind the user of
-   * the UI.
-   * This also hides the legend and restores the ranges if the menu is going
-   * to be closed. */
-  bool legendVisibilityChanged = setLegendVisible(!eventHasEffect);
-  if (zoomAutoWasOn && (!eventHasEffect || willLeave)) {
-    /* Reset the automatic zoom if the menu is closing or if nothing happened.
-     * This way, entering garbage input does not deactivate the zoom. */
-    m_interactiveRange->setZoomAuto(true);
-  }
-  if (willLeave) {
+  if (event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::OK || event == Ion::Events::EXE) {
+    setLegendVisible(false);
     adaptRangeForHeaders(false);
+    return ZoomAndPanCurveViewController::handleEvent(event);
   }
-  if (willLeave || legendVisibilityChanged) {
+
+  bool didHandleEvent = ZoomAndPanCurveViewController::handleEvent(event);
+  bool didChangeLegend = setLegendVisible(!didHandleEvent);
+  if (didChangeLegend) {
     m_contentView.curveView()->reload();
   }
-  return !isSystemQuitEvent && (legendVisibilityChanged || eventHasEffect);
+  return didHandleEvent || didChangeLegend;
 }
 
 void FunctionZoomAndPanCurveViewController::adaptRangeForHeaders(bool viewWillAppear) {

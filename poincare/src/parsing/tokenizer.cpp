@@ -206,6 +206,9 @@ Token Tokenizer::popToken() {
     }
     return Token(Token::Caret);
   }
+  if (c == '\'') {
+    return Token(Token::SingleQuote);
+  }
   if (c == '!') {
     return Token(Token::Bang);
   }

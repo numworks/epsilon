@@ -16,15 +16,15 @@ class App : public Shared::InputEventHandlerDelegateApp {
 public:
   class Descriptor : public Shared::InputEventHandlerDelegateApp::Descriptor {
   public:
-    I18n::Message name() override;
-    I18n::Message upperName() override;
-    const Escher::Image * icon() override;
+    I18n::Message name() const override;
+    I18n::Message upperName() const override;
+    const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Escher::Container * container) override;
-    Descriptor * descriptor() override;
+    const Descriptor * descriptor() const override;
     ScriptStore * scriptStore();
 #if EPSILON_GETOPT
     bool lockOnConsole() const;

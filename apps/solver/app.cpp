@@ -7,15 +7,15 @@ using namespace Escher;
 
 namespace Solver {
 
-I18n::Message App::Descriptor::name() {
+I18n::Message App::Descriptor::name() const {
   return I18n::Message::SolverApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
+I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::SolverAppCapital;
 }
 
-const Image * App::Descriptor::icon() {
+const Image * App::Descriptor::icon() const {
   return ImageStore::SolverIcon;
 }
 
@@ -28,9 +28,10 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
+static constexpr App::Descriptor sDescriptor;
+
+const App::Descriptor * App::Snapshot::descriptor() const {
+  return &sDescriptor;
 }
 
 void App::Snapshot::reset() {

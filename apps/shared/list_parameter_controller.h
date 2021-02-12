@@ -21,7 +21,7 @@ public:
   void viewWillAppear() override;
 
   // MemoizedListViewDataSource
-  int numberOfRows() const override { return k_localNumberOfCell; }
+  int numberOfRows() const override { return k_numberOfSharedCells; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
@@ -30,8 +30,9 @@ protected:
   ExpiringPointer<Function> function();
   Ion::Storage::Record m_record;
 private:
-  int localIndex(int j);
-  constexpr static int k_localNumberOfCell = 2;
+  // Return index of shared cell from row number
+  int sharedCellIndex(int j);
+  constexpr static int k_numberOfSharedCells = 2;
   Escher::MessageTableCellWithSwitch m_enableCell;
   Escher::MessageTableCell m_deleteCell;
 };

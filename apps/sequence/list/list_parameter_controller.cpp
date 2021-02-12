@@ -32,7 +32,8 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
       stack->push(&m_typeParameterController);
       return true;
     }
-    if (selectedRowIndex == localNumberOfCells() + 1) {
+    if (selectedRowIndex == numberOfNonInheritedCells() + 1) {
+      // Shared::ListParameterController::m_enableCell is selected
       App::app()->localContext()->resetCache();
     }
     return handleEnterOnRow(selectedRowIndex);

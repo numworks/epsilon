@@ -7,13 +7,14 @@ namespace Escher {
 
 class Metric {
 public:
-  constexpr static KDCoordinate CellTopMargin = 8;
-  constexpr static KDCoordinate CellRightMargin = 8;
-  constexpr static KDCoordinate CellLeftMargin = 8;
-  constexpr static KDCoordinate CellBottomMargin = 8;
-  constexpr static KDCoordinate CellHorizontalElementMargin = 8;
+  constexpr static KDCoordinate SmallCellMargin = 2;
+  constexpr static KDCoordinate BigCellMargin = 8;
+  constexpr static KDCoordinate CellTopMargin = BigCellMargin;
+  constexpr static KDCoordinate CellRightMargin = BigCellMargin;
+  constexpr static KDCoordinate CellLeftMargin = BigCellMargin;
+  constexpr static KDCoordinate CellBottomMargin = BigCellMargin;
+  constexpr static KDCoordinate CellHorizontalElementMargin = BigCellMargin;
   constexpr static KDCoordinate CellVerticalElementMargin = 4;
-  constexpr static KDCoordinate CellMargin = 2;
   constexpr static KDCoordinate CommonLeftMargin = 20;
   constexpr static KDCoordinate CommonRightMargin = 20;
   constexpr static KDCoordinate CommonTopMargin = 15;
@@ -24,9 +25,10 @@ public:
   constexpr static KDCoordinate TitleBarHeight = 18;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate ScrollStep = 10;
-  constexpr static KDCoordinate PopUpLeftMargin = 27;
-  constexpr static KDCoordinate PopUpRightMargin = 27;
-  constexpr static KDCoordinate PopUpTopMargin = 27;
+  constexpr static KDCoordinate PopUpMargin = 27;
+  constexpr static KDCoordinate PopUpLeftMargin = PopUpMargin;
+  constexpr static KDCoordinate PopUpRightMargin = PopUpMargin;
+  constexpr static KDCoordinate PopUpTopMargin = PopUpMargin;
   constexpr static KDCoordinate PopUpBottomMargin = 55;
   constexpr static KDCoordinate StoreRowHeight = 50;
   constexpr static KDCoordinate StackTitleHeight = 20;

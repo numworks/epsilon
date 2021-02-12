@@ -118,7 +118,7 @@ void assertCalculationIs(const char * input, DisplayOutput display, EqualSign si
     assert_compare_string(input, lastCalculation->approximateOutputText(NumberOfSignificantDigits::UserDefined), displayedApproximateOutput, "displayed approximate output");
   }
   if (storedApproximateOutput) {
-    assert_compare_string(input, lastCalculation->approximateOutputText(NumberOfSignificantDigits::Maximal), storedApproximateOutput, "storedf Approximate Output");
+    assert_compare_string(input, lastCalculation->approximateOutputText(NumberOfSignificantDigits::Maximal), storedApproximateOutput, "stored Approximate Output");
   }
   store->deleteAll();
 }

@@ -24,15 +24,18 @@ public:
   // Non memoized.
   virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) { return ListViewDataSource::cumulatedHeightFromIndex(index); }
   virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
-  // Following methods have a default implementation for specific simple lists.
+  /* nonMemoizedRowHeight and reusableCellCount have a default implementation
+   * for specific simple lists. Most implementations should override them.*/
   virtual KDCoordinate nonMemoizedRowHeight(int index);
   int reusableCellCount(int type) override { return numberOfRows(); }
 private:
+  /* In practice, no menus display more than 7 cells at the time. Reducing this
+   * value might reduce binary size at the cost of performances. */
   static constexpr int k_memoizedCellsCount = 7;
-  static constexpr int k_resetedMemoizedValue = -1;
+  static constexpr int k_resetMemoizedValue = -1;
   int getMemoizedIndex(int index);
   void setMemoizationIndex(int index);
-  void shiftMemoization(bool newCellIsUnder);
+  void shiftMemoization(bool lowerIndex);
   void updateMemoizationLock(bool state);
   KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
   KDCoordinate m_memoizedCumulatedHeightOffset;

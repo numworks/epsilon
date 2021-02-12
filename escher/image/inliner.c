@@ -201,7 +201,7 @@ void generateImplementationFromImage(FILE * file, const char * header, const cha
 
   fprintf(file, "const uint8_t compressedPixelData[%d] = {", sizeOfCompressedPixelBuffer);
   for (int i=0; i<sizeOfCompressedPixelBuffer; i++) {
-    fprintf(file, "0x%04x, ", compressedPixelBuffer[i]);
+    fprintf(file, "0x%02x, ", compressedPixelBuffer[i]);
   }
 
 

@@ -120,7 +120,7 @@ KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode * child) {
     y = baseline() - derivandLayout()->baseline();
   } else {
     assert(child == abscissaLayout());
-    x = positionOfChild(derivandLayout()).x() + derivandLayout()->layoutSize().width() + ParenthesisLayoutNode::ParenthesisWidth() + 2 * k_barHorizontalMargin + k_barWidth;
+    x = positionOfChild(derivandLayout()).x() + derivandLayout()->layoutSize().width() + ParenthesisLayoutNode::ParenthesisWidth() + 2 * k_barHorizontalMargin + k_barWidth + variableLayout()->layoutSize().width() + KDFont::LargeFont->stringSize("=").width();
     y = abscissaBaseline() - abscissaLayout()->baseline();
   }
   return KDPoint(x, y);
@@ -162,6 +162,12 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
   // ...|x=
   KDRect verticalBar(rightParenthesisPosition.x() + ParenthesisLayoutNode::ParenthesisWidth() + k_barHorizontalMargin, p.y(), k_barWidth, abscissaBaseline() - variableLayout()->baseline() + variableSize.height());
   ctx->fillRect(verticalBar, expressionColor);
+
+  KDPoint variableAssignmentPosition(verticalBar.right() + k_barHorizontalMargin, p.y() + abscissaBaseline() - variableLayout()->baseline());
+  Layout variableCopy(variableLayout());
+  variableCopy.clone().draw(ctx, variableAssignmentPosition, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+
+  ctx->drawString("=", variableAssignmentPosition.translatedBy(KDPoint(variableSize.width(), 0)), KDFont::LargeFont, expressionColor, backgroundColor);
 }
 
 }

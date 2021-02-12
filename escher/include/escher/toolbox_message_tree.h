@@ -27,7 +27,7 @@ public:
         true);
   }
   template <int N>
-  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree * (&children)[N], bool fork = false) {
+  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree * const (&children)[N], bool fork = false) {
     return ToolboxMessageTree(
         label,
         (I18n::Message)0,
@@ -44,7 +44,7 @@ public:
   bool stripInsertedText() const { return m_stripInsertedText; }
   bool isFork() const { return numberOfChildren() < 0; }
 private:
-  constexpr ToolboxMessageTree(I18n::Message label, I18n::Message text, I18n::Message insertedText, const ToolboxMessageTree * children, int numberOfChildren, bool stripInsertedText) :
+  constexpr ToolboxMessageTree(I18n::Message label, I18n::Message text, I18n::Message insertedText, const ToolboxMessageTree * const children, int numberOfChildren, bool stripInsertedText) :
     MessageTree(label, numberOfChildren),
     m_children(children),
     m_text(text),
@@ -52,7 +52,7 @@ private:
     m_stripInsertedText(stripInsertedText),
     m_childrenConsecutive(true)
   {}
-  constexpr ToolboxMessageTree(I18n::Message label, I18n::Message text, I18n::Message insertedText, const ToolboxMessageTree ** children, int numberOfChildren, bool stripInsertedText) :
+  constexpr ToolboxMessageTree(I18n::Message label, I18n::Message text, I18n::Message insertedText, const ToolboxMessageTree * const * children, int numberOfChildren, bool stripInsertedText) :
     MessageTree(label, numberOfChildren),
     m_children(children),
     m_text(text),
@@ -63,10 +63,10 @@ private:
 
   union Children {
   public:
-    constexpr Children(const ToolboxMessageTree * children) : m_direct(children) {}
-    constexpr Children(const ToolboxMessageTree ** children) : m_indirect(children) {}
-    const ToolboxMessageTree * m_direct;
-    const ToolboxMessageTree ** m_indirect;
+    constexpr Children(const ToolboxMessageTree * const children) : m_direct(children) {}
+    constexpr Children(const ToolboxMessageTree * const * children) : m_indirect(children) {}
+    const ToolboxMessageTree * const m_direct;
+    const ToolboxMessageTree * const * m_indirect;
   };
   const Children m_children;
   I18n::Message m_text;

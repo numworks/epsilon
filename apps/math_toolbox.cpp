@@ -21,14 +21,14 @@ using namespace Escher;
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */
 
-const ToolboxMessageTree calculChildren[] = {
+constexpr ToolboxMessageTree calculChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
   ToolboxMessageTree::Leaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum, false, I18n::Message::SumCommand),
   ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product, false, I18n::Message::ProductCommand)
 };
 
-const ToolboxMessageTree complexChildren[] = {
+constexpr ToolboxMessageTree complexChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg,I18n::Message::ComplexAbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::ArgCommandWithArg, I18n::Message::Agument),
   ToolboxMessageTree::Leaf(I18n::Message::ReCommandWithArg, I18n::Message::RealPart),
@@ -36,29 +36,29 @@ const ToolboxMessageTree complexChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate)
 };
 
-const ToolboxMessageTree combinatoricsChildren[] = {
+constexpr ToolboxMessageTree combinatoricsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination),
   ToolboxMessageTree::Leaf(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation)
 };
 
-const ToolboxMessageTree normalDistributionChildren[] = {
+constexpr ToolboxMessageTree normalDistributionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::NormCDFCommandWithArg, I18n::Message::NormCDF),
   ToolboxMessageTree::Leaf(I18n::Message::NormCDF2CommandWithArg, I18n::Message::NormCDF2),
   ToolboxMessageTree::Leaf(I18n::Message::InvNormCommandWithArg, I18n::Message::InvNorm),
   ToolboxMessageTree::Leaf(I18n::Message::NormPDFCommandWithArg, I18n::Message::NormPDF)
 };
 
-const ToolboxMessageTree binomialDistributionChildren[] = {
+constexpr ToolboxMessageTree binomialDistributionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::BinomialPDFCommandWithArg, I18n::Message::BinomialPDF),
   ToolboxMessageTree::Leaf(I18n::Message::BinomialCDFCommandWithArg, I18n::Message::BinomialCDF),
   ToolboxMessageTree::Leaf(I18n::Message::InvBinomialCommandWithArg, I18n::Message::InvBinomial),
 };
 
-const ToolboxMessageTree probabilityChildren[] = {
+constexpr ToolboxMessageTree probabilityChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NormalDistribution, normalDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::BinomialDistribution, binomialDistributionChildren)};
 
-const ToolboxMessageTree arithmeticChildren[] = {
+constexpr ToolboxMessageTree arithmeticChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor),
   ToolboxMessageTree::Leaf(I18n::Message::LcmCommandWithArg, I18n::Message::LeastCommonMultiple),
   ToolboxMessageTree::Leaf(I18n::Message::FactorCommandWithArg, I18n::Message::PrimeFactorDecomposition),
@@ -66,7 +66,7 @@ const ToolboxMessageTree arithmeticChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient)
 };
 
-const ToolboxMessageTree matricesChildren[] = {
+constexpr ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, false, I18n::Message::MatrixCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IndentityCommandWithArg, I18n::Message::Identity),
   ToolboxMessageTree::Leaf(I18n::Message::InverseCommandWithArg, I18n::Message::Inverse),
@@ -78,14 +78,14 @@ const ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ReducedRowEchelonFormCommandWithArg, I18n::Message::ReducedRowEchelonForm)
 };
 
-const ToolboxMessageTree vectorsChildren[] = {
+constexpr ToolboxMessageTree vectorsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DotCommandWithArg, I18n::Message::Dot),
   ToolboxMessageTree::Leaf(I18n::Message::CrossCommandWithArg, I18n::Message::Cross),
   ToolboxMessageTree::Leaf(I18n::Message::NormVectorCommandWithArg, I18n::Message::NormVector),
 };
 
 #if LIST_ARE_DEFINED
-const ToolboxMessageTree listsChildren[] = {
+constexpr ToolboxMessageTree listsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::SortCommandWithArg, I18n::Message::Sort),
   ToolboxMessageTree::Leaf(I18n::Message::InvSortCommandWithArg, I18n::Message::InvSort),
   ToolboxMessageTree::Leaf(I18n::Message::MaxCommandWithArg, I18n::Message::Maximum),
@@ -94,7 +94,7 @@ const ToolboxMessageTree listsChildren[] = {
 };
 #endif
 
-const ToolboxMessageTree unitTimeChildren[] = {
+constexpr ToolboxMessageTree unitTimeChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondNanoSymbol, I18n::Message::UnitTimeSecondNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMicroSymbol, I18n::Message::UnitTimeSecondMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMilliSymbol, I18n::Message::UnitTimeSecondMilli),
@@ -121,9 +121,9 @@ constexpr ToolboxMessageTree unitDistanceFoot = ToolboxMessageTree::Leaf(I18n::M
 constexpr ToolboxMessageTree unitDistanceYard = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceYardSymbol, I18n::Message::UnitDistanceYard);
 constexpr ToolboxMessageTree unitDistanceMile = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMileSymbol, I18n::Message::UnitDistanceMile);
 
-const ToolboxMessageTree * unitDistanceMeterChildren[] = {&unitDistanceMeterPico, &unitDistanceMeterNano, &unitDistanceMeterMicro, &unitDistanceMeterMilli, &unitDistanceMeter, &unitDistanceMeterKilo};
-const ToolboxMessageTree unitDistanceMeterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitDistanceMeterChildren);
-const ToolboxMessageTree * unitDistanceChildrenForImperialToolbox[] = {
+constexpr const ToolboxMessageTree * const unitDistanceMeterChildren[] = {&unitDistanceMeterPico, &unitDistanceMeterNano, &unitDistanceMeterMicro, &unitDistanceMeterMilli, &unitDistanceMeter, &unitDistanceMeterKilo};
+constexpr ToolboxMessageTree unitDistanceMeterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitDistanceMeterChildren);
+constexpr const ToolboxMessageTree * const unitDistanceChildrenForImperialToolbox[] = {
   &unitDistanceInch,
   &unitDistanceFoot,
   &unitDistanceYard,
@@ -133,9 +133,9 @@ const ToolboxMessageTree * unitDistanceChildrenForImperialToolbox[] = {
   &unitDistanceParsec,
   &unitDistanceMeterNode
 };
-const ToolboxMessageTree * unitDistanceImperialChildren[] = {&unitDistanceInch, &unitDistanceFoot, &unitDistanceYard, &unitDistanceMile};
-const ToolboxMessageTree unitDistanceImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitDistanceImperialChildren);
-const ToolboxMessageTree * unitDistanceChildrenForMetricToolbox[] = {
+constexpr const ToolboxMessageTree * const unitDistanceImperialChildren[] = {&unitDistanceInch, &unitDistanceFoot, &unitDistanceYard, &unitDistanceMile};
+constexpr ToolboxMessageTree unitDistanceImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitDistanceImperialChildren);
+constexpr const ToolboxMessageTree * const unitDistanceChildrenForMetricToolbox[] = {
   &unitDistanceMeterPico,
   &unitDistanceMeterNano,
   &unitDistanceMeterMicro,
@@ -147,7 +147,7 @@ const ToolboxMessageTree * unitDistanceChildrenForMetricToolbox[] = {
   &unitDistanceParsec,
   &unitDistanceImperialNode
 };
-const ToolboxMessageTree unitDistanceFork[] = {
+constexpr ToolboxMessageTree unitDistanceFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildrenForMetricToolbox),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildrenForImperialToolbox)
 };
@@ -162,18 +162,18 @@ constexpr ToolboxMessageTree unitMassPound = ToolboxMessageTree::Leaf(I18n::Mess
 constexpr ToolboxMessageTree unitMassShortTon = ToolboxMessageTree::Leaf(I18n::Message::UnitMassShortTonSymbol, I18n::Message::UnitMassShortTon);
 constexpr ToolboxMessageTree unitMassLongTon = ToolboxMessageTree::Leaf(I18n::Message::UnitMassLongTonSymbol, I18n::Message::UnitMassLongTon);
 
-const ToolboxMessageTree * unitMassGramChildren[] = {&unitMassGramMicro, &unitMassGramMilli, &unitMassGram, &unitMassGramKilo, &unitMassTonne};
-const ToolboxMessageTree unitMassGramNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitMassGramChildren);
-const ToolboxMessageTree * unitMassChildrenForImperialToolbox[] = {
+constexpr const ToolboxMessageTree * const unitMassGramChildren[] = {&unitMassGramMicro, &unitMassGramMilli, &unitMassGram, &unitMassGramKilo, &unitMassTonne};
+constexpr ToolboxMessageTree unitMassGramNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitMassGramChildren);
+constexpr const ToolboxMessageTree * const unitMassChildrenForImperialToolbox[] = {
   &unitMassOunce,
   &unitMassPound,
   &unitMassShortTon,
   &unitMassLongTon,
   &unitMassGramNode
 };
-const ToolboxMessageTree * unitMassImperialChildren[] = {&unitMassOunce, &unitMassPound, &unitMassShortTon, &unitMassLongTon};
-const ToolboxMessageTree unitMassImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitMassImperialChildren);
-const ToolboxMessageTree * unitMassChildrenForMetricToolbox[] = {
+constexpr const ToolboxMessageTree * const unitMassImperialChildren[] = {&unitMassOunce, &unitMassPound, &unitMassShortTon, &unitMassLongTon};
+constexpr ToolboxMessageTree unitMassImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitMassImperialChildren);
+constexpr const ToolboxMessageTree * const unitMassChildrenForMetricToolbox[] = {
   &unitMassGramMicro,
   &unitMassGramMilli,
   &unitMassGram,
@@ -181,67 +181,67 @@ const ToolboxMessageTree * unitMassChildrenForMetricToolbox[] = {
   &unitMassTonne,
   &unitMassImperialNode
 };
-const ToolboxMessageTree unitMassFork[] = {
+constexpr ToolboxMessageTree unitMassFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildrenForMetricToolbox),
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildrenForImperialToolbox),
 };
 
-const ToolboxMessageTree unitCurrentAmpereChildren[] = {
+constexpr ToolboxMessageTree unitCurrentAmpereChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMicroSymbol, I18n::Message::UnitCurrentAmpereMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMilliSymbol, I18n::Message::UnitCurrentAmpereMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereSymbol, I18n::Message::UnitCurrentAmpere),
 };
 
-const ToolboxMessageTree unitTemperatureChildren[] = {
+constexpr ToolboxMessageTree unitTemperatureChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureCelsiusSymbol, I18n::Message::UnitTemperatureCelsius),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureFahrenheitSymbol, I18n::Message::UnitTemperatureFahrenheit),
 };
 
-const ToolboxMessageTree unitAmountMoleChildren[] = {
+constexpr ToolboxMessageTree unitAmountMoleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMicroSymbol, I18n::Message::UnitAmountMoleMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMilliSymbol, I18n::Message::UnitAmountMoleMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleSymbol, I18n::Message::UnitAmountMole),
 };
 
-const ToolboxMessageTree unitLuminousIntensityChildren[] = {
+constexpr ToolboxMessageTree unitLuminousIntensityChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousIntensityCandelaSymbol, I18n::Message::UnitLuminousIntensityCandela)};
 
-const ToolboxMessageTree unitFrequencyHertzChildren[] = {
+constexpr ToolboxMessageTree unitFrequencyHertzChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzSymbol, I18n::Message::UnitFrequencyHertz),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzKiloSymbol, I18n::Message::UnitFrequencyHertzKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzMegaSymbol, I18n::Message::UnitFrequencyHertzMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga)
 };
 
-const ToolboxMessageTree unitForceNewtonChildren[] = {
+constexpr ToolboxMessageTree unitForceNewtonChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonMilliSymbol, I18n::Message::UnitForceNewtonMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonSymbol, I18n::Message::UnitForceNewton),
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonKiloSymbol, I18n::Message::UnitForceNewtonKilo),
 };
 
-const ToolboxMessageTree unitPressureChildren[] = {
+constexpr ToolboxMessageTree unitPressureChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalSymbol, I18n::Message::UnitPressurePascal),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalHectoSymbol, I18n::Message::UnitPressurePascalHecto),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPressureBarSymbol, I18n::Message::UnitPressureBar),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPressureAtmSymbol, I18n::Message::UnitPressureAtm)};
 
-const ToolboxMessageTree unitEnergyJouleChildren[] = {
+constexpr ToolboxMessageTree unitEnergyJouleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleMilliSymbol, I18n::Message::UnitEnergyJouleMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleSymbol, I18n::Message::UnitEnergyJoule),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleKiloSymbol, I18n::Message::UnitEnergyJouleKilo),
 };
-const ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
+constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol, I18n::Message::UnitEnergyElectronVoltMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol, I18n::Message::UnitEnergyElectronVolt),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol, I18n::Message::UnitEnergyElectronVoltKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol, I18n::Message::UnitEnergyElectronVoltMega),
 };
-const ToolboxMessageTree unitEnergyChildren[] = {
+constexpr ToolboxMessageTree unitEnergyChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu, unitEnergyJouleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu, unitEnergyElectronVoltChildren)};
 
-const ToolboxMessageTree unitPowerWattChildren[] = {
+constexpr ToolboxMessageTree unitPowerWattChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMicroSymbol, I18n::Message::UnitPowerWattMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMilliSymbol, I18n::Message::UnitPowerWattMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattSymbol, I18n::Message::UnitPowerWatt),
@@ -250,48 +250,48 @@ const ToolboxMessageTree unitPowerWattChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattGigaSymbol, I18n::Message::UnitPowerWattGiga),
 };
 
-const ToolboxMessageTree unitElectricChargeCoulombChildren[] = {
+constexpr ToolboxMessageTree unitElectricChargeCoulombChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombSymbol, I18n::Message::UnitChargeCoulomb),
 };
 
-const ToolboxMessageTree unitPotentialVoltChildren[] = {
+constexpr ToolboxMessageTree unitPotentialVoltChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMicroSymbol, I18n::Message::UnitPotentialVoltMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMilliSymbol, I18n::Message::UnitPotentialVoltMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltSymbol, I18n::Message::UnitPotentialVolt),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltKiloSymbol, I18n::Message::UnitPotentialVoltKilo),
 };
 
-const ToolboxMessageTree unitCapacitanceFaradChildren[] = {
+constexpr ToolboxMessageTree unitCapacitanceFaradChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMicroSymbol, I18n::Message::UnitCapacitanceFaradMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMilliSymbol, I18n::Message::UnitCapacitanceFaradMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradSymbol, I18n::Message::UnitCapacitanceFarad),
 };
 
-const ToolboxMessageTree unitResistanceOhmChildren[] = {
+constexpr ToolboxMessageTree unitResistanceOhmChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmSymbol, I18n::Message::UnitResistanceOhm),
   ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmKiloSymbol, I18n::Message::UnitResistanceOhmKilo),
 };
 
-const ToolboxMessageTree unitConductanceSiemensChildren[] = {
+constexpr ToolboxMessageTree unitConductanceSiemensChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMilliSymbol, I18n::Message::UnitConductanceSiemensMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensSymbol, I18n::Message::UnitConductanceSiemens),
 };
 
-const ToolboxMessageTree unitMagneticFieldChildren[] = {
+constexpr ToolboxMessageTree unitMagneticFieldChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitMagneticFieldTeslaSymbol, I18n::Message::UnitMagneticFieldTesla)};
 
-const ToolboxMessageTree unitInductanceChildren[] = {
+constexpr ToolboxMessageTree unitInductanceChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitInductanceHenrySymbol, I18n::Message::UnitInductanceHenry)};
 
-const ToolboxMessageTree unitSurfaceChildrenForMetricToolbox[] = {
+constexpr ToolboxMessageTree unitSurfaceChildrenForMetricToolbox[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar),
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre)
 };
-const ToolboxMessageTree unitSurfaceChildrenForImperialToolbox[] = {
+constexpr ToolboxMessageTree unitSurfaceChildrenForImperialToolbox[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre),
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)
 };
-const ToolboxMessageTree unitSurfaceFork[] = {
+constexpr ToolboxMessageTree unitSurfaceFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForMetricToolbox),
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildrenForImperialToolbox)
 };
@@ -308,9 +308,9 @@ constexpr ToolboxMessageTree unitVolumePint = ToolboxMessageTree::Leaf(I18n::Mes
 constexpr ToolboxMessageTree unitVolumeQuart = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeQuartSymbol, I18n::Message::UnitVolumeQuart);
 constexpr ToolboxMessageTree unitVolumeGallon = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeGallonSymbol, I18n::Message::UnitVolumeGallon);
 
-const ToolboxMessageTree * unitVolumeLiterChildren[] = {&unitVolumeLiterMilli, &unitVolumeLiterCenti, &unitVolumeLiterDeci, &unitVolumeLiter};
-const ToolboxMessageTree unitVolumeLiterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitVolumeLiterChildren);
-const ToolboxMessageTree * unitVolumeChildrenForImperialToolbox[] = {
+constexpr const ToolboxMessageTree * const unitVolumeLiterChildren[] = {&unitVolumeLiterMilli, &unitVolumeLiterCenti, &unitVolumeLiterDeci, &unitVolumeLiter};
+constexpr ToolboxMessageTree unitVolumeLiterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitVolumeLiterChildren);
+constexpr const ToolboxMessageTree * const unitVolumeChildrenForImperialToolbox[] = {
   &unitVolumeTeaspoon,
   &unitVolumeTablespoon,
   &unitVolumeFluidOunce,
@@ -320,21 +320,21 @@ const ToolboxMessageTree * unitVolumeChildrenForImperialToolbox[] = {
   &unitVolumeGallon,
   &unitVolumeLiterNode
 };
-const ToolboxMessageTree * unitVolumeImperialChildren[] = {&unitVolumeTeaspoon, &unitVolumeTablespoon, &unitVolumeFluidOunce, &unitVolumeCup, &unitVolumePint, &unitVolumeQuart, &unitVolumeGallon};
-const ToolboxMessageTree unitVolumeImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitVolumeImperialChildren);
-const ToolboxMessageTree * unitVolumeChildrenForMetricToolbox[] = {
+constexpr const ToolboxMessageTree * const unitVolumeImperialChildren[] = {&unitVolumeTeaspoon, &unitVolumeTablespoon, &unitVolumeFluidOunce, &unitVolumeCup, &unitVolumePint, &unitVolumeQuart, &unitVolumeGallon};
+constexpr ToolboxMessageTree unitVolumeImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitVolumeImperialChildren);
+constexpr const ToolboxMessageTree * const unitVolumeChildrenForMetricToolbox[] = {
   &unitVolumeLiterMilli,
   &unitVolumeLiterCenti,
   &unitVolumeLiterDeci,
   &unitVolumeLiter,
   &unitVolumeImperialNode
 };
-const ToolboxMessageTree unitVolumeFork[] = {
+constexpr ToolboxMessageTree unitVolumeFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeChildrenForMetricToolbox),
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeChildrenForImperialToolbox),
 };
 
-const ToolboxMessageTree unitChildren[] = {
+constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceFork, true),
@@ -358,7 +358,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::InductanceMenu, unitInductanceChildren),
 };
 
-const ToolboxMessageTree randomAndApproximationChildren[] = {
+constexpr ToolboxMessageTree randomAndApproximationChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::RandomCommandWithArg, I18n::Message::RandomFloat),
   ToolboxMessageTree::Leaf(I18n::Message::RandintCommandWithArg, I18n::Message::RandomInteger),
   ToolboxMessageTree::Leaf(I18n::Message::FloorCommandWithArg, I18n::Message::Floor),
@@ -366,7 +366,7 @@ const ToolboxMessageTree randomAndApproximationChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling),
   ToolboxMessageTree::Leaf(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding)};
 
-const ToolboxMessageTree trigonometryChildren[] = {
+constexpr ToolboxMessageTree trigonometryChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::CoshCommandWithArg, I18n::Message::HyperbolicCosine),
   ToolboxMessageTree::Leaf(I18n::Message::SinhCommandWithArg, I18n::Message::HyperbolicSine),
   ToolboxMessageTree::Leaf(I18n::Message::TanhCommandWithArg, I18n::Message::HyperbolicTangent),
@@ -374,12 +374,12 @@ const ToolboxMessageTree trigonometryChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AsinhCommandWithArg, I18n::Message::InverseHyperbolicSine),
   ToolboxMessageTree::Leaf(I18n::Message::AtanhCommandWithArg, I18n::Message::InverseHyperbolicTangent)};
 
-const ToolboxMessageTree predictionChildren[] = {
+constexpr ToolboxMessageTree predictionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::Prediction95CommandWithArg, I18n::Message::Prediction95),
   ToolboxMessageTree::Leaf(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction),
   ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence)};
 
-const ToolboxMessageTree menu[] = {
+constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
@@ -398,7 +398,7 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
   ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren)};
 
-const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
+constexpr ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
 MathToolbox::MathToolbox() :
   Toolbox(nullptr, rootModel()->label())

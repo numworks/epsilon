@@ -21,6 +21,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override { return k_numberOfCells; }
 private:
   class ContentView : public Escher::View {
   public:
@@ -38,7 +39,8 @@ private:
   };
   void setDistributionAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 9;
-  Cell m_cells[k_totalNumberOfModels];
+  constexpr static int k_numberOfCells = (Ion::Display::Height - Escher::Metric::TitleBarHeight - 14 - ContentView::k_titleMargin) / Escher::TableCell::k_minimalLargeFontCellHeight + 2; // Remaining cell can be above and below so we add +2, 14 for the small font height
+  Cell m_cells[k_numberOfCells];
   ContentView m_contentView;
   Distribution * m_distribution;
   ParametersController * m_parametersController;

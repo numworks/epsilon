@@ -4,7 +4,7 @@
 
 namespace USB {
 
-static I18n::Message sUSBConnectedMessages[] = {
+constexpr I18n::Message sUSBConnectedMessages[] = {
   I18n::Message::USBConnected,
   I18n::Message::ConnectedMessage1,
   I18n::Message::ConnectedMessage2,
@@ -14,7 +14,7 @@ static I18n::Message sUSBConnectedMessages[] = {
   I18n::Message::ConnectedMessage5,
   I18n::Message::ConnectedMessage6};
 
-static KDColor sUSBConnectedColors[] = {
+constexpr KDColor sUSBConnectedColors[] = {
   KDColorBlack,
   KDColorBlack,
   KDColorBlack,

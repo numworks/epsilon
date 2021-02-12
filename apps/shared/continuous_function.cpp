@@ -23,7 +23,7 @@ namespace Shared {
 
 void ContinuousFunction::DefaultName(char buffer[], size_t bufferSize) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
-  static constexpr const char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
+  constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'
   };
   /* First default names are f, g, h, p and then f0, f1... ie, "f[number]",

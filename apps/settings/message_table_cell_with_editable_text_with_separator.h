@@ -8,21 +8,11 @@ namespace Settings {
 
 class MessageTableCellWithEditableTextWithSeparator : public CellWithSeparator {
 public:
-  MessageTableCellWithEditableTextWithSeparator(Escher::Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0) :
-    CellWithSeparator(),
-    m_cell(parentResponder, inputEventHandlerDelegate, textFieldDelegate, message) {}
+  MessageTableCellWithEditableTextWithSeparator(Escher::Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
   const char * text() const override { return m_cell.text(); }
   Poincare::Layout layout() const override { return m_cell.layout(); }
   Escher::MessageTableCellWithEditableText * messageTableCellWithEditableText() { return &m_cell; }
-  /* Being const, we cannot set m_cell width to the expected width. It must then
-   * be handled here. Additionally, subLabelView is ignored. See comment in
-   * MessageTableCellWithEditableText::minimalSizeForOptimalDisplay */
-  KDSize minimalSizeForOptimalDisplay() const override {
-    // Available width is necessary to compute it minimal height.
-    KDCoordinate expectedWidth = m_frame.width();
-    assert(expectedWidth > 0);
-    return KDSize(expectedWidth, Escher::TableCell::minimalHeightForOptimalDisplay(m_cell.labelView(), nullptr, m_cell.accessoryView(), expectedWidth) + k_margin + Escher::Metric::CellSeparatorThickness);
-  }
+  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   Escher::HighlightCell * cell() override { return &m_cell; }
   Escher::MessageTableCellWithEditableText m_cell;

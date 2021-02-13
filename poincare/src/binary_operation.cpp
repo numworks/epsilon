@@ -312,477 +312,221 @@ namespace Poincare {
     if (!ar.integerDenominator().isOne()) {
       return Integer(-1);
     }
-    if (ar.signedIntegerNumerator().isNegative()) {
-      return Integer(-1);
-    }
     return ar.signedIntegerNumerator();
   }
 
-  Expression And::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  Expression BinaryOperation::shallowReduceDirect(Expression & e, const ExpressionNode::Type t, ExpressionNode::ReductionContext reductionContext) {
     {
-      Expression e = Expression::defaultShallowReduce();
       e = e.defaultHandleUnitsInChildren();
       if (e.isUndefined()) {
         return e;
       }
     }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
+    Integer aq = getValidInteger(e.childAtIndex(0));
+    Integer bq;
+    Integer cq;
+    Integer x;
 
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
+    if(aq.isNegative() && t != ExpressionNode::Type::TwosComplement) {
+      return Undefined::Builder();
+    } 
+
+    if(t != ExpressionNode::Type::Not) {
+      bq = getValidInteger(e.childAtIndex(1));
+      if(bq.isNegative()) {
+        return Undefined::Builder();
+      }
     }
 
-    Integer x = Integer::LogicalAnd(aq, bq);
+
+    switch(t) {
+      case ExpressionNode::Type::NotExplicit:
+      case ExpressionNode::Type::TwosComplement:
+        if(!bq.isLowerThan(Integer(__INT8_MAX__))) {
+          return Undefined::Builder();
+        }
+        break;
+      default:
+        break;
+    }
+
+    switch(t) {
+      case ExpressionNode::Type::BitsClearExplicit:
+      case ExpressionNode::Type::ShiftLogicLeftExplicit:
+      case ExpressionNode::Type::ShiftLogicRightExplicit:
+      case ExpressionNode::Type::ShiftArithmeticRightExplicit:
+      case ExpressionNode::Type::RotateLeftExplicit:
+      case ExpressionNode::Type::RotateRightExplicit:
+        cq = getValidInteger(e.childAtIndex(2));
+        if(cq.isMinusOne() || !cq.isLowerThan(Integer(__INT8_MAX__))) {
+          return Undefined::Builder();
+        }
+        break;
+      default:
+        break;
+    }
+
+    switch (t) {
+      case ExpressionNode::Type::And:
+        x = Integer::LogicalAnd(aq, bq);
+        break;
+      case ExpressionNode::Type::Or:
+        x = Integer::LogicalOr(aq, bq);
+        break;
+      case ExpressionNode::Type::Xor:
+        x = Integer::LogicalXor(aq, bq);
+        break;
+      case ExpressionNode::Type::Not:
+        x = Integer::LogicalNot(aq);
+        break;
+      case ExpressionNode::Type::NotExplicit:
+        x = Integer::LogicalNot(aq, bq);
+        break;
+      case ExpressionNode::Type::BitClear:
+        x = Integer::LogicalBitClear(aq, bq);
+        break;
+      case ExpressionNode::Type::BitFlip:
+        x = Integer::LogicalBitFlip(aq, bq);
+        break;
+      case ExpressionNode::Type::BitGet:
+        x = Integer::LogicalBitGet(aq, bq);
+        break;
+      case ExpressionNode::Type::BitSet:
+        x = Integer::LogicalBitSet(aq, bq);
+        break;
+      case ExpressionNode::Type::BitsClear:
+        x = Integer::LogicalBitsClear(aq, bq);
+        break;
+      case ExpressionNode::Type::BitsClearExplicit:
+        x = Integer::LogicalBitsClear(aq, bq, cq);
+        break;
+      case ExpressionNode::Type::ShiftLogicLeft:
+        x = Integer::LogicalShiftLeft(aq, bq);
+        break;
+      case ExpressionNode::Type::ShiftLogicLeftExplicit:
+        x = Integer::LogicalShiftLeft(aq, bq, cq);
+        break;
+      case ExpressionNode::Type::ShiftLogicRight:
+        x = Integer::LogicalShiftRight(aq, bq);
+        break;
+      case ExpressionNode::Type::ShiftLogicRightExplicit:
+        x = Integer::LogicalShiftRight(aq, bq, cq);
+        break;
+      case ExpressionNode::Type::ShiftArithmeticRight:
+        x = Integer::LogicalShiftRightArithmetic(aq, bq);
+        break;
+      case ExpressionNode::Type::ShiftArithmeticRightExplicit:
+        x = Integer::LogicalShiftRightArithmetic(aq, bq, cq);
+        break;
+      case ExpressionNode::Type::RotateLeft:
+        x = Integer::LogicalRotateLeft(aq, bq);
+        break;
+      case ExpressionNode::Type::RotateLeftExplicit:
+        x = Integer::LogicalRotateLeft(aq, bq, cq);
+        break;
+      case ExpressionNode::Type::RotateRight:
+        x = Integer::LogicalRotateRight(aq, bq);
+        break;
+      case ExpressionNode::Type::RotateRightExplicit:
+        x = Integer::LogicalRotateRight(aq, bq, cq);
+        break;
+      case ExpressionNode::Type::TwosComplement:
+        x = Integer::TwosComplementToBits(aq, bq);
+        break;
+      default:
+        break;
+    }
     Expression result = Rational::Builder(x);
-    replaceWithInPlace(result);
+    e.replaceWithInPlace(result);
     return result.shallowReduce(reductionContext);
+  }
+
+  Expression And::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::And, reductionContext);
   }
 
   Expression Or::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer x = Integer::LogicalOr(aq, bq);
-    Expression result = Rational::Builder(x);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    Expression e = Expression::defaultShallowReduce();
+    return BinaryOperation::shallowReduceDirect(e, ExpressionNode::Type::Or, reductionContext);
   }
 
   Expression Xor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer x = Integer::LogicalXor(aq, bq);
-    Expression result = Rational::Builder(x);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::Xor, reductionContext);
   }
 
   Expression Not::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-
-    if(aq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalNot(aq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::Not, reductionContext);
   }
 
   Expression NotExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || !bq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalNot(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::NotExplicit, reductionContext);
   }
 
   Expression BitClear::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalBitClear(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::BitClear, reductionContext);
   }
 
   Expression BitFlip::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalBitFlip(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::BitFlip, reductionContext);
   }
 
   Expression BitGet::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalBitGet(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::BitGet, reductionContext);
   }
 
   Expression BitSet::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalBitSet(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::BitSet, reductionContext);
   }
-
   Expression BitsClear::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalBitsClear(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::BitsClear, reductionContext);
   }
 
   Expression BitsClearExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-    Integer cq = getValidInteger(childAtIndex(2));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || cq.isMinusOne() || !cq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalBitsClear(aq, bq, cq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::BitsClearExplicit, reductionContext);
   }
 
   Expression ShiftLogicLeft::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalShiftLeft(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::ShiftLogicLeft, reductionContext);
   }
 
   Expression ShiftLogicLeftExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-    Integer cq = getValidInteger(childAtIndex(2));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || cq.isMinusOne() || !cq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalShiftLeft(aq, bq, cq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::ShiftLogicLeftExplicit, reductionContext);
   }
 
   Expression ShiftLogicRight::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalShiftRight(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::ShiftLogicRight, reductionContext);
   }
 
   Expression ShiftLogicRightExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-    Integer cq = getValidInteger(childAtIndex(2));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || cq.isMinusOne() || !cq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalShiftRight(aq, bq, cq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::ShiftLogicRightExplicit, reductionContext);
   }
 
   Expression ShiftArithmeticRight::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalShiftRightArithmetic(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::ShiftArithmeticRight, reductionContext);
   }
 
   Expression ShiftArithmeticRightExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-    Integer cq = getValidInteger(childAtIndex(2));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || cq.isMinusOne() || !cq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalShiftRightArithmetic(aq, bq, cq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::ShiftArithmeticRightExplicit, reductionContext);
   }
 
   Expression RotateLeft::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalRotateLeft(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::RotateLeft, reductionContext);
   }
 
   Expression RotateLeftExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-    Integer cq = getValidInteger(childAtIndex(2));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || cq.isMinusOne() || !cq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalRotateLeft(aq, bq, cq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::RotateLeftExplicit, reductionContext);
   }
 
   Expression RotateRight::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne()) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalRotateRight(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::RotateRight, reductionContext);
   }
 
   Expression RotateRightExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-    Integer cq = getValidInteger(childAtIndex(2));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || cq.isMinusOne() || !cq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::LogicalRotateRight(aq, bq, cq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::RotateRightExplicit, reductionContext);
   }
 
   Expression TwosComplement::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-    {
-      Expression e = Expression::defaultShallowReduce();
-      e = e.defaultHandleUnitsInChildren();
-      if (e.isUndefined()) {
-        return e;
-      }
-    }
-    Integer aq = getValidInteger(childAtIndex(0));
-    Integer bq = getValidInteger(childAtIndex(1));
-
-    if(aq.isMinusOne() || bq.isMinusOne() || !bq.isLowerThan(Integer(__INT8_MAX__))) {
-      return Undefined::Expression();
-    }
-
-    Integer n = Integer::TwosComplementToBits(aq, bq);
-    Expression result = Rational::Builder(n);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    return BinaryOperation::shallowReduceDirect(*this, ExpressionNode::Type::TwosComplement, reductionContext);
   }
 
 template int BinaryOperationNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;

@@ -34,13 +34,17 @@ namespace Poincare
     // Evaluation
     Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
     Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-    
+
     template <typename U>
     Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const {
       return Complex<U>::RealUndefined();
     }
   };
 
+  class BinaryOperation final {
+  public:
+    static Expression shallowReduceDirect(Expression & e, const ExpressionNode::Type t, ExpressionNode::ReductionContext reductionContext);
+  };
   class And final : public Expression {
   public:
     And(const BinaryOperationNode<1> *n) : Expression(n) {}

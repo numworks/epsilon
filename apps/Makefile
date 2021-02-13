@@ -11,6 +11,25 @@ apps =
 # (path to the apps header).
 $(foreach i,${apps_list},${eval include apps/$(i)/Makefile})
 
+app_equals = $(and $(findstring $(1),$(2)),$(findstring $(2),$(1)))
+# We list all the apps that are missing
+apps_missing = $(foreach i, ${apps_list}, $(if $(call app_equals, apps/$(i)/Makefile, $(wildcard apps/$(i)/Makefile)),, $(i) ) )
+
+# If the two doesn't match, we got an error.
+ifneq ($(strip $(apps_missing)),)
+    miss_modules = 0
+
+    # Check if the missing apps are one that are supposed to be submodules
+    $(foreach i, $(SUBMODULES_APPS), $(if $(call app_equals, $(filter $(i), $(apps_missing)), $(i)), $(eval miss_modules=1)))
+
+    ifeq ($(miss_modules), 1)
+        PLS_IGNORE := $(shell >&2 printf "\nSome submodules apps seem to be missing. To download them, assumming you git clone'd the repo, do\n")
+        PLS_IGNORE := $(shell >&2 printf "  git submodule init\n")
+        PLS_IGNORE := $(shell >&2 printf "  git submodule update\n\n")
+    endif
+    $(error Missing apps: $(strip $(apps_missing)))
+endif
+
 apps_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \
   apps_container.cpp \

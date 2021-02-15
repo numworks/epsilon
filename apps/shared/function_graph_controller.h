@@ -22,7 +22,7 @@ protected:
   float cursorTopMarginRatio() override { return 0.068f; }
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
-  bool openMenu() override;
+  bool openMenuForCurveAtIndex(int index) override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorT(Ion::Storage::Record record);

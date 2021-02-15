@@ -36,7 +36,6 @@ private:
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   Shared::CurveView * curveView() override;
-  bool openMenu() override;
 
   // InteractiveCurveViewController
   void initCursorParameters() override;
@@ -48,6 +47,7 @@ private:
   double yValue(int curveIndex, double x, Poincare::Context * context) const;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
+  bool openMenuForCurveAtIndex(int index) override;
 
   void setRoundCrossCursorView();
   Shared::CursorView m_crossCursorView;

@@ -242,8 +242,9 @@ void AppsContainer::run() {
    * pointer value, so the method where we call setjump must remain in the call
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
+  Ion::CircuitBreaker::setHomeCheckpoint();
 
-  if (ExceptionRun(ecp)) {
+  if (!Ion::CircuitBreaker::clearHomeCheckpointFlag() && ExceptionRun(ecp)) {
     /* Normal execution. The exception checkpoint must be created before
      * switching to the first app, because the first app might create nodes on
      * the pool. */

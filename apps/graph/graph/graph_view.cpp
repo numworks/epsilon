@@ -31,7 +31,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 
   Ion::CircuitBreaker::setCustomCheckpoint();
 
-  if (Ion::CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::Checkpoint::Custom)) {
+  if (!Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
     for (int i = 0; i < activeFunctionsCount ; i++) {
       if (i == 1) {
         Ion::CircuitBreaker::loadCustomCheckpoint();

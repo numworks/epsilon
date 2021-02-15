@@ -5,17 +5,20 @@
 .thumb
 .global pendsv_handler_as
 pendsv_handler_as:
-  // Store r0,r1 (TODO: r0/r1 are scratch registers, do we need to preserve them?)
+  // Store r0,r1
   push {r0,r1}
-  // Extract the address of the context frame
+  /* STEP 1: extract the stack frame address
+   * 1.1 Extract the address of the context frame. */
   mov r0,sp
-  // Don't forget we pushed some registers to the stack in the prologue
+  // 1.2 Don't forget we pushed some registers to the stack in the prologue
   add r0,0x8
-  // Extract the exception return value in
+  // STEP 2: Extract the exception return value
   mov r1,lr
   // Store lr
   push {lr}
-  // Call svcall_handler with r0 = frame address and r1 = exception return
+  /* STEP 3: jump to pendsv_handler with:
+   * - r0 = frame address
+   * - r1 = exception return */
   bl pendsv_handler
   // Restore registers
   pop {lr}

@@ -43,6 +43,7 @@
 
 #include <kernel/drivers/keyboard.h>
 #include <drivers/config/clocks.h>
+#include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/keyboard_queue.h>
 
 namespace Ion {
@@ -178,13 +179,13 @@ void shutdown() {
   }
 }
 
-void launchTimer(uint16_t ms) {
+void launchDebounceTimer(uint16_t ms) {
   TIM4.ARR()->set(ms*k_prescalerFactor);
   TIM4.DIER()->setUIE(true);
   TIM4.CR1()->setCEN(true);
 }
 
-void stopTimer() {
+void stopDebounceTimer() {
   TIM4.DIER()->setUIE(false);
   TIM4.CR1()->setCEN(false);
 }
@@ -193,7 +194,7 @@ static bool sBouncing = false;
 
 void debounce() {
   sBouncing = false;
-  stopTimer();
+  stopDebounceTimer();
 }
 
 void handleInterruption() {
@@ -205,8 +206,13 @@ void handleInterruption() {
   }
   if (!sBouncing) {
     sBouncing = true;
-    Queue::sharedQueue()->push(Keyboard::scan());
-    launchTimer(10);
+    State state = Keyboard::scan();
+    if (state.keyDown(Ion::Keyboard::Key::Home)) {
+      CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Home);
+    } else {
+      Queue::sharedQueue()->push(state);
+    }
+    launchDebounceTimer(10);
   }
 }
 

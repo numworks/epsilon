@@ -21,7 +21,7 @@
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
-void svcall_handler(unsigned svcNumber, void * args[], uint8_t * frameAddress, uint32_t excReturn) {
+void svcall_handler(unsigned svcNumber, void * args[]) {
   switch (svcNumber) {
     case SVC_DISPLAY_PUSH_RECT:
       // Load rect and pixels
@@ -196,23 +196,28 @@ void svcall_handler(unsigned svcNumber, void * args[], uint8_t * frameAddress, u
       Ion::Device::Reset::coreWhilePlugged();
       return;
     // CIRCUIT BREAKER
-    case SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT:
-      *static_cast<bool *>(args[1]) = Ion::Device::CircuitBreaker::hasCheckpoint(*static_cast<Ion::CircuitBreaker::Checkpoint *>(args[0]));
+    case SVC_CIRCUIT_BREAKER_HAS_CUSTOM_CHECKPOINT:
+    {
+      *static_cast<bool *>(args[0]) = Ion::Device::CircuitBreaker::hasCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Custom);
       return;
-    case SVC_CIRCUIT_BREAKER_LOAD_HOME_CHECKPOINT:
-      Ion::Device::CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::Checkpoint::Home, frameAddress);
+    }
+    case SVC_CIRCUIT_BREAKER_CLEAR_CHECKPOINT_FLAG:
+    {
+      Ion::Device::CircuitBreaker::Checkpoint checkpoint =*static_cast<bool *>(args[0]) ? Ion::Device::CircuitBreaker::Checkpoint::Custom : Ion::Device::CircuitBreaker::Checkpoint::Home;
+      *static_cast<bool *>(args[1]) = Ion::Device::CircuitBreaker::clearCheckpointFlag(checkpoint);
       return;
+    }
     case SVC_CIRCUIT_BREAKER_SET_HOME_CHECKPOINT:
-      Ion::Device::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::Checkpoint::Home, frameAddress, excReturn);
+      Ion::Device::CircuitBreaker::setCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Home);
       return;
     case SVC_CIRCUIT_BREAKER_LOAD_CUSTOM_CHECKPOINT:
-      Ion::Device::CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::Checkpoint::Custom, frameAddress);
+      Ion::Device::CircuitBreaker::loadCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Custom);
       return;
     case SVC_CIRCUIT_BREAKER_SET_CUSTOM_CHECKPOINT:
-      Ion::Device::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::Checkpoint::Custom, frameAddress, excReturn);
+      Ion::Device::CircuitBreaker::setCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Custom);
       return;
-    case SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT:
-      Ion::Device::CircuitBreaker::unsetCheckpoint(*static_cast<Ion::CircuitBreaker::Checkpoint *>(args[0]));
+    case SVC_CIRCUIT_BREAKER_UNSET_CUSTOM_CHECKPOINT:
+      Ion::Device::CircuitBreaker::unsetCustomCheckpoint();
       return;
     default:
       return;

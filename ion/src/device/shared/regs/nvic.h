@@ -37,6 +37,8 @@ public:
   class NVIC_ICPR1 : public MaskRegister { };
   class NVIC_ICPR2 : public MaskRegister { };
 
+  class NVIC_IABR0 : public MaskRegister { };
+
   class NVIC_IPR  {
   public:
     /* STM32 implements only 16 programable priority levels - when Cortex M(4/7)
@@ -64,6 +66,7 @@ public:
   REGS_REGISTER_AT(NVIC_ICPR0, 0x180);
   REGS_REGISTER_AT(NVIC_ICPR1, 0x184);
   REGS_REGISTER_AT(NVIC_ICPR2, 0x188);
+  REGS_REGISTER_AT(NVIC_IABR0, 0x200);
   REGS_REGISTER_AT(NVIC_IPR, 0x300);
 private:
   constexpr uint32_t Base() const {

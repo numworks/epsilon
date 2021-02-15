@@ -36,6 +36,8 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
 
+  virtual bool openMenuForCurveAtIndex(int index) = 0;
+
 protected:
   Responder * tabController() const;
   virtual Escher::StackViewController * stackController() const;
@@ -45,7 +47,7 @@ protected:
   bool isCursorVisible();
   // The cursor does not match if selected model has been edited or deleted
   virtual bool cursorMatchesModel() = 0;
-  virtual bool openMenu() = 0;
+  bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;

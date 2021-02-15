@@ -47,7 +47,8 @@ void FunctionGraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
 }
 
-bool FunctionGraphController::openMenu() {
+bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
+  *m_indexFunctionSelectedByCursor = index;
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   curveParameterController()->setRecord(record);
   StackViewController * stack = stackController();

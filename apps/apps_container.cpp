@@ -244,7 +244,8 @@ void AppsContainer::run() {
   Poincare::ExceptionCheckpoint ecp;
   Ion::CircuitBreaker::setHomeCheckpoint();
 
-  if (!Ion::CircuitBreaker::clearHomeCheckpointFlag() && ExceptionRun(ecp)) {
+  bool exceptionEncountered = !ExceptionRun(ecp);
+  if (!Ion::CircuitBreaker::clearHomeCheckpointFlag() && !exceptionEncountered) {
     /* Normal execution. The exception checkpoint must be created before
      * switching to the first app, because the first app might create nodes on
      * the pool. */
@@ -271,7 +272,9 @@ void AppsContainer::run() {
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
     Poincare::Tidy();
-    s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
+    if (exceptionEncountered) {
+      s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
+    }
   }
   Container::run();
   switchTo(nullptr);

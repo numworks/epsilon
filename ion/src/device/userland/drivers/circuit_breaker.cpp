@@ -5,42 +5,48 @@
 namespace Ion {
 namespace CircuitBreaker {
 
-void SVC_ATTRIBUTES hasCheckpointSVC(CircuitBreaker::Checkpoint * checkpoint, bool * res) {
-  SVC(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT);
+void SVC_ATTRIBUTES hasCustomCheckpointSVC(bool * res) {
+  SVC(SVC_CIRCUIT_BREAKER_HAS_CUSTOM_CHECKPOINT);
 }
 
-bool hasCheckpoint(Checkpoint c) {
+bool hasCustomCheckpoint() {
   bool res;
-  hasCheckpointSVC(&c, &res);
+  hasCustomCheckpointSVC(&res);
   return res;
 }
 
-void SVC_ATTRIBUTES unsetCheckpointSVC(CircuitBreaker::Checkpoint * checkpoint) {
-  SVC(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT);
+void SVC_ATTRIBUTES clearCheckpointFlagSVC(bool * isCustomCheckpoint, bool * res) {
+  SVC(SVC_CIRCUIT_BREAKER_CLEAR_CHECKPOINT_FLAG);
 }
 
-void unsetCheckpoint(Checkpoint c) {
-  unsetCheckpointSVC(&c);
+bool clearCustomCheckpointFlag() {
+  bool res;
+  bool isCustomCheckpoint = true;
+  clearCheckpointFlagSVC(&isCustomCheckpoint, &res);
+  return res;
 }
 
-void __attribute__((naked)) loadHomeCheckpoint() {
-  SVC(SVC_CIRCUIT_BREAKER_LOAD_HOME_CHECKPOINT);
-  assert(false);
+bool clearHomeCheckpointFlag() {
+  bool res;
+  bool isCustomCheckpoint = false;
+  clearCheckpointFlagSVC(&isCustomCheckpoint, &res);
+  return res;
 }
 
-void __attribute__((naked)) setHomeCheckpoint() {
+void unsetCustomCheckpoint() {
+  SVC(SVC_CIRCUIT_BREAKER_UNSET_CUSTOM_CHECKPOINT);
+}
+
+void setHomeCheckpoint() {
   SVC(SVC_CIRCUIT_BREAKER_SET_HOME_CHECKPOINT);
-  asm("bx lr");
 }
 
-void __attribute__((naked)) loadCustomCheckpoint() {
+void loadCustomCheckpoint() {
   SVC(SVC_CIRCUIT_BREAKER_LOAD_CUSTOM_CHECKPOINT);
-  assert(false);
 }
 
-void __attribute__((naked)) setCustomCheckpoint() {
+void setCustomCheckpoint() {
   SVC(SVC_CIRCUIT_BREAKER_SET_CUSTOM_CHECKPOINT);
-  asm("bx lr");
 }
 
 }

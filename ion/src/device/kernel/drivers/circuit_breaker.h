@@ -8,10 +8,16 @@ namespace Ion {
 namespace Device {
 namespace CircuitBreaker {
 
-bool hasCheckpoint(Ion::CircuitBreaker::Checkpoint c);
-void setCheckpoint(Ion::CircuitBreaker::Checkpoint c, uint8_t * frameAddress, uint32_t excReturn);
-void unsetCheckpoint(Ion::CircuitBreaker::Checkpoint c);
-void loadCheckpoint(Ion::CircuitBreaker::Checkpoint c, uint8_t * frameAddress);
+enum class Checkpoint {
+  Home,
+  Custom
+};
+
+void unsetCustomCheckpoint();
+bool hasCheckpoint(Checkpoint c);
+bool clearCheckpointFlag(Checkpoint c);
+void setCheckpoint(Checkpoint c);
+void loadCheckpoint(Checkpoint c);
 
 }
 }

@@ -21,7 +21,12 @@ HistogramController::HistogramController(Responder * parentResponder, InputEvent
   m_storeVersion(storeVersion),
   m_barVersion(barVersion),
   m_rangeVersion(rangeVersion),
-  m_histogramParameterController(nullptr, inputEventHandlerDelegate, store)
+  m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
+  m_parameterButton(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
+    HistogramController * histogramController = static_cast<HistogramController * >(context);
+    histogramController->stackController()->push(histogramController->histogramParameterController());
+    return true;
+  }, this), KDFont::SmallFont)
 {
 }
 
@@ -43,12 +48,37 @@ StackViewController * HistogramController::stackController() {
   return stack;
 }
 
+Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  assert(index == 0);
+  return const_cast<Button *>(&m_parameterButton);
+}
+
 const char * HistogramController::title() {
   return I18n::translate(I18n::Message::HistogramTab);
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
-  assert(selectedSeriesIndex() >= 0);
+  if (header()->selectedButton() == 0) {
+    if (event == Ion::Events::Down) {
+      header()->setSelectedButton(-1);
+      multipleDataView()->setDisplayBanner(true);
+      multipleDataView()->selectDataView(selectedSeriesIndex());
+      highlightSelection();
+      reloadBannerView();
+      return true;
+    }
+    if (event == Ion::Events::Up) {
+      Container::activeApp()->setFirstResponder(tabController());
+      return true;
+    }
+    return false;
+  }
+  if (selectedSeriesIndex() == 0 && event == Ion::Events::Up) {
+    multipleDataView()->deselectDataView(selectedSeriesIndex());
+    multipleDataView()->setDisplayBanner(false);
+    header()->setSelectedButton(0);
+    return true;
+  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     stackController()->push(histogramParameterController());
     return true;
@@ -57,7 +87,15 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::viewWillAppear() {
+  if (header()->selectedButton() >= 0) {
+    header()->setSelectedButton(-1);
+  }
   MultipleDataViewController::viewWillAppear();
+
+  multipleDataView()->setDisplayBanner(true);
+  multipleDataView()->selectDataView(selectedSeriesIndex());
+  highlightSelection();
+
   uint32_t storeChecksum = m_store->storeChecksum();
   bool initedRangeParameters = false;
   if (*m_storeVersion != storeChecksum) {
@@ -82,12 +120,22 @@ void HistogramController::viewWillAppear() {
   }
 }
 
+void HistogramController::didEnterResponderChain(Responder * firstResponder) {
+  assert(selectedSeriesIndex() >= 0);
+  if (!multipleDataView()->dataViewAtIndex(selectedSeriesIndex())->isMainViewSelected()) {
+    header()->setSelectedButton(0);
+  }
+}
+
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
-    if (selectedSeriesIndex() >= 0) {
-      m_view.dataViewAtIndex(selectedSeriesIndex())->setForceOkDisplay(false);
+    if (header()->selectedButton() == 0) {
+      header()->setSelectedButton(-1);
+      return;
     }
+    assert(selectedSeriesIndex() >= 0);
+    m_view.dataViewAtIndex(selectedSeriesIndex())->setForceOkDisplay(false);
   }
   MultipleDataViewController::willExitResponderChain(nextFirstResponder);
 }

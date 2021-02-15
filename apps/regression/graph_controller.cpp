@@ -244,7 +244,8 @@ CurveView * GraphController::curveView() {
   return &m_view;
 }
 
-bool GraphController::openMenu() {
+bool GraphController::openMenuForCurveAtIndex(int index) {
+  *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(index);
   stackController()->push(&m_graphOptionsController);
   return true;
 }

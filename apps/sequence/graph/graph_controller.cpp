@@ -62,10 +62,10 @@ bool GraphController::textFieldDidFinishEditing(TextField * textField, const cha
   return true;
 }
 
-bool GraphController::openMenu() {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+bool GraphController::openMenuForCurveAtIndex(int index) {
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
   m_termSumController.setRecord(record);
-  return FunctionGraphController::openMenu();
+  return FunctionGraphController::openMenuForCurveAtIndex(index);
 }
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {

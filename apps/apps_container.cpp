@@ -268,6 +268,10 @@ void AppsContainer::run() {
        * history here, we will be stuck outside the calculation app. */
       s_activeApp->snapshot()->reset();
     }
+    if (s_activeApp->snapshot() == homeAppSnapshot()) {
+      // Reset home selection if already selected
+      dispatchEvent(Ion::Events::Back);
+    }
     bool switched = switchTo(appSnapshotAtIndex(0));
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.

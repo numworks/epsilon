@@ -74,7 +74,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     return true;
   }
 
-  if (event == Ion::Events::Home || event == Ion::Events::Back) {
+  if (event == Ion::Events::Back) {
     return m_view.selectableTableView()->selectCellAtLocation(0, 0);
   }
 

@@ -17,6 +17,9 @@ public:
   void setCurrentDrawnSeries(int series);
   Escher::StackViewController * stackController();
 
+  int numberOfButtons(Escher::ButtonRowController::Position position) const override { return isEmpty() ? 0 : 1; }
+  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
+
   // ViewController
   const char * title() override;
   void viewWillAppear() override;
@@ -25,6 +28,7 @@ public:
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
+  void didEnterResponderChain(Responder * firstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
@@ -46,6 +50,7 @@ private:
   uint32_t * m_barVersion;
   uint32_t * m_rangeVersion;
   HistogramParameterController m_histogramParameterController;
+  Escher::Button m_parameterButton;
 };
 
 }

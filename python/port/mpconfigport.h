@@ -146,3 +146,10 @@ extern const struct _mp_obj_module_t modturtle_module;
     { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&modos_module) }, \
     { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module) }, \
 
+// Enable setjmp in debug mode. This is to avoid some optimizations done
+// specifically for x86_64 using inline assembly, which makes the debug binary
+// crash with an illegal instruction
+#ifndef NDEBUG
+  #define MICROPY_NLR_SETJMP 1
+#endif
+

@@ -189,9 +189,8 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
       if (img_index != -1) {
         External::Archive::File image_file;
         if (External::Archive::fileAtIndex(img_index, image_file)) {
-          const Image* img = new Image(55, 56, image_file.data, image_file.dataLength);
-          appCell->setExtAppDescriptor(app_file.name, img);
-
+          // const Image* img = new Image(55, 56, image_file.data, image_file.dataLength);
+          appCell->setExtAppDescriptor(app_file.name, image_file.data, image_file.dataLength);
         } else {
           appCell->setExtAppDescriptor(app_file.name, ImageStore::ExternalIcon);
         }

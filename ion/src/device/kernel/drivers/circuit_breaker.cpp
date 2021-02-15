@@ -123,7 +123,7 @@ bool clearCheckpointFlag(Checkpoint checkpoint) {
 }
 
 static inline void setPendingAction(PendingAction action) {
-  assert(sPendingAction == PendingAction::None);
+  assert(sPendingAction == PendingAction::None || sPendingAction == action);
   sPendingAction = action;
   Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
 }

@@ -8,6 +8,37 @@ namespace Escher {
 
 class TableCell : public Bordered, public HighlightCell {
 public:
+  /* TableCells are layout as follow :
+   * -Accessory is vertically centered on the right of the cell
+   * -Label is vertically centered, aligned on the left of the cell
+   * -If it fits, SubLabel is vertically centered between Label and Accessory,
+      aligned on the right of the available space.
+   * -Otherwise, SubLabel is placed below label, aligned on the left of the cell
+   * With :
+   *     * = As much space as available (or nothing)
+   *     TM / BM / LM / RM : Cell[Top / Bottom / Left / Right]Margin
+   *     HM / VM : Cell[Horizontal / Vertical]ElementMargin
+   * First configuration : SubLabel fits
+   * -------------------------------------------------
+   * |                     TM                        |
+   * | *     *    *   *     *      *       *      *  |
+   * | LM  Label  HM  *  SubLabel  HM  Accessory  RM |
+   * | *     *    *   *     *      *       *      *  |
+   * |                     BM                        |
+   * -------------------------------------------------
+   * Second configuration : SubLabel does not fit
+   * -------------------------------------------------
+   * |                     TM                        |
+   * | *      *      *             *      *       *  |
+   * | LM  Label     *             HM             RM |
+   * | LM    VM      *             HM  Accessory  RM |
+   * | LM  SubLabel  *             HM             RM |
+   * | *      *      *             *      *       *  |
+   * |                     BM                        |
+   * -------------------------------------------------
+   * In some cases, Accessory can be placed on the left of the Cell. Label and
+   * SubLabel also take the two configurations depending on the fit.
+   */
   TableCell();
   virtual const View * labelView() const { return nullptr; }
   virtual const View * subLabelView() const { return nullptr; }

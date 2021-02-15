@@ -63,8 +63,7 @@ KDSize TableCell::minimalSizeForOptimalDisplay() const {
 
 KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
   // TODO : identify and fix all layouts where cell's frame does not fit content
-  // assert(value <= max);
-  return value > max ? max : value;
+  return std::min<KDCoordinate>(max, value);
 }
 
 void TableCell::layoutSubviews(bool force) {
@@ -88,15 +87,14 @@ void TableCell::layoutSubviews(bool force) {
   /* Apply margins and separators on every side. At this point, we assume cell's
    * frame has been updated to add bottom and right overlapping borders. */
   // TODO : improve overlapping borders so that we don't need to assume that.
-  width -= Metric::CellLeftMargin + Metric::CellRightMargin + 2*k_separatorThickness;
-  x += k_separatorThickness + Metric::CellLeftMargin;
-  height -= Metric::CellTopMargin + Metric::CellBottomMargin + 2*k_separatorThickness ;
-  y += k_separatorThickness + Metric::CellTopMargin;
+  constexpr KDCoordinate leftOffset = k_separatorThickness + Metric::CellLeftMargin;
+  x += leftOffset;
+  width -= leftOffset + Metric::CellRightMargin + k_separatorThickness;
+  constexpr KDCoordinate topOffset = k_separatorThickness + Metric::CellTopMargin;
+  y += topOffset;
+  height -= topOffset + Metric::CellBottomMargin + k_separatorThickness;
 
-  if (width < 0 || height < 0) {
-    assert(false);
-    return;
-  }
+  assert(width > 0 && height > 0);
 
   // If cell contains an accessory, place it first and update remaining space.
   if (accessory) {
@@ -112,10 +110,11 @@ void TableCell::layoutSubviews(bool force) {
     // Set accessory frame
     accessory->setFrame(KDRect(accessoryX, y + verticalCenterOffset, accessoryWidth, accessoryHeight), force);
     // Update remaining space, add margin before accessory
-    width -= accessoryWidth + Metric::CellHorizontalElementMargin;
+    KDCoordinate horizontalOffset = accessoryWidth + Metric::CellHorizontalElementMargin;
     if (!isAccessoryAlignedRight()) {
-      x += accessoryWidth + Metric::CellHorizontalElementMargin;
+      x += horizontalOffset;
     }
+    width -= horizontalOffset;
   }
 
   KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);

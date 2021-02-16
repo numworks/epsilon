@@ -19,6 +19,17 @@ public:
   void interestingRanges(Shared::InteractiveCurveViewRange * range) override;
 
 protected:
+  class FunctionSelectionController : public CurveSelectionController {
+  public:
+    FunctionSelectionController(FunctionGraphController * graphController) : CurveSelectionController(graphController) {}
+    int numberOfRows() const override { return graphController()->functionStore()->numberOfActiveFunctions(); }
+    KDCoordinate rowHeight(int j) override;
+    void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  protected:
+    FunctionGraphController * graphController() const { return static_cast<FunctionGraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
+    virtual Poincare::Layout nameLayoutAtIndex(int j) const = 0;
+  };
+
   float cursorTopMarginRatio() override { return 0.068f; }
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;

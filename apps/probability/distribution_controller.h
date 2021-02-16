@@ -27,15 +27,17 @@ private:
   public:
     ContentView(Escher::SelectableTableView * selectableTableView) :
       m_titleView(KDFont::SmallFont, I18n::Message::ChooseDistribution, 0.5f, 0.5f, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
-      m_selectableTableView(selectableTableView)
+      m_selectableTableView(selectableTableView),
+      m_borderView(Escher::Palette::GrayBright)
     {}
     constexpr static KDCoordinate k_titleMargin = 8;
   private:
-    int numberOfSubviews() const override { return 2; }
+    int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     Escher::MessageTextView m_titleView;
     Escher::SelectableTableView * m_selectableTableView;
+    Escher::SolidColorView m_borderView;
   };
   void setDistributionAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 9;

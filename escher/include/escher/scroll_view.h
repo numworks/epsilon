@@ -47,11 +47,13 @@ public:
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
     virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
+    virtual void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {}
   };
 
   class BarDecorator : public Decorator {
   public:
     BarDecorator() : m_verticalBar(), m_horizontalBar() {}
+    void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) override { m_verticalBar.setMargins(top, bottom); }
     int numberOfIndicators() const override { return 2; }
     View * indicatorAtIndex(int index) override;
     KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) override;

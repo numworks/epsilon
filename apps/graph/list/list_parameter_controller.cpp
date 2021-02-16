@@ -56,7 +56,7 @@ char intervalBracket(double value, bool opening) {
 
 int writeInterval(char * buffer, int bufferSize, double min, double max, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   int numberOfChar = 0;
-  assert(bufferSize-1 > numberOfChar);
+  assert(bufferSize > numberOfChar);
   buffer[numberOfChar++] = intervalBracket(min, true);
   int glyphLengthRequiredForFloat = PrintFloat::glyphLengthForFloatWithPrecision(numberOfSignificantDigits);
   PrintFloat::TextLengths minLengths = PrintFloat::ConvertFloatToText<double>(min, buffer+numberOfChar, bufferSize - numberOfChar, glyphLengthRequiredForFloat, numberOfSignificantDigits, mode);
@@ -65,11 +65,11 @@ int writeInterval(char * buffer, int bufferSize, double min, double max, int num
   numberOfChar += strlcpy(buffer+numberOfChar, ",", bufferSize-numberOfChar);
   PrintFloat::TextLengths maxLengths = PrintFloat::ConvertFloatToText<double>(max, buffer+numberOfChar, bufferSize - numberOfChar, glyphLengthRequiredForFloat, numberOfSignificantDigits, mode);
   numberOfChar += maxLengths.CharLength;
-  assert(bufferSize-1 > numberOfChar);
+  assert(bufferSize > numberOfChar);
   buffer[numberOfChar++] = intervalBracket(max, false);
   assert(bufferSize > numberOfChar);
-  strlcpy(buffer+numberOfChar, " ", bufferSize-numberOfChar);
-  return minLengths.GlyphLength + maxLengths. GlyphLength + 3 + 1; // Count "[,] " glyphs
+  strlcpy(buffer+numberOfChar, "", bufferSize-numberOfChar);
+  return minLengths.GlyphLength + maxLengths. GlyphLength + 3; // Count "[,]" glyphs
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

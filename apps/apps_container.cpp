@@ -199,7 +199,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Home || event == Ion::Events::Back) {
+  if (event == Ion::Events::Back) {
     switchTo(appSnapshotAtIndex(0));
     return true;
   }

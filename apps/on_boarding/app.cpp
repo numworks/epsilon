@@ -32,9 +32,6 @@ Timer * App::timerAtIndex(int i) {
 }
 
 bool App::processEvent(Ion::Events::Event e) {
-  if (e == Ion::Events::Home) {
-    return true;
-  }
   if (e == Ion::Events::OnOff) {
     Ion::Power::standby(); // Force a core reset to exit
   }

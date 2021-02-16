@@ -58,7 +58,7 @@ const char * AlternateEmptyViewController::title() {
 
 bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
   if (m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
-    if (event != Ion::Events::Home && event != Ion::Events::OnOff) {
+    if (event != Ion::Events::OnOff) {
       m_contentView.alternateEmptyViewDelegate()->defaultController()->handleEvent(Ion::Events::Back);
       return true;
     }

@@ -223,7 +223,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     return true;
   }
 #if EPSILON_GETOPT
-  if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) {
+  if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) { // FIXME: Home event doesn't exist anymore
     if (m_inputRunLoopActive) {
       terminateInputLoop();
     }

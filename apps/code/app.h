@@ -53,7 +53,6 @@ public:
   MenuController * menuController() { return &m_menuController; }
 
   /* Responder */
-  bool handleEvent(Ion::Events::Event event) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
   /* InputEventHandlerDelegate */

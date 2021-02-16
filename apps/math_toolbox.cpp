@@ -337,7 +337,7 @@ constexpr ToolboxMessageTree calculChildren[] = {
 
 constexpr ToolboxMessageTree complexChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg,I18n::Message::ComplexAbsoluteValue),
-  ToolboxMessageTree::Leaf(I18n::Message::ArgCommandWithArg, I18n::Message::Agument),
+  ToolboxMessageTree::Leaf(I18n::Message::ArgCommandWithArg, I18n::Message::Argument),
   ToolboxMessageTree::Leaf(I18n::Message::ReCommandWithArg, I18n::Message::RealPart),
   ToolboxMessageTree::Leaf(I18n::Message::ImCommandWithArg, I18n::Message::ImaginaryPart),
   ToolboxMessageTree::Leaf(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate)

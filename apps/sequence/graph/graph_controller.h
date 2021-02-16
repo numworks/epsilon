@@ -22,6 +22,17 @@ public:
   float interestingXMin() const override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
+  class SequenceSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
+  public:
+    SequenceSelectionController(GraphController * graphController) : Shared::FunctionGraphController::FunctionSelectionController(graphController) {}
+    const char * title() override { return I18n::translate(I18n::Message::SequenceChoice); }
+    CurveSelectionCell * reusableCell(int index, int type) override { return m_cells + index; }
+    int reusableCellCount(int type) override { return Shared::MaxNumberOfSequences; }
+  private:
+    Poincare::Layout nameLayoutAtIndex(int j) const override;
+    CurveSelectionCell m_cells[Shared::MaxNumberOfSequences];
+  };
+
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }
   bool openMenuForCurveAtIndex(int index) override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
@@ -30,11 +41,13 @@ private:
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
+  SequenceSelectionController * curveSelectionController() const override { return const_cast<SequenceSelectionController *>(&m_sequenceSelectionController); }
   Shared::CursorView m_cursorView;
   Shared::XYBannerView m_bannerView;
   GraphView m_view;
   CurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
+  SequenceSelectionController m_sequenceSelectionController;
   TermSumController m_termSumController;
 };
 

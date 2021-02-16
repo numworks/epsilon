@@ -125,48 +125,12 @@ void AppsContainer::suspend(bool checkIfOnOffKeyReleased) {
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = updateAlphaLock();
-  bool didProcessEvent = false;
 
   if (event == Ion::Events::USBEnumeration || event == Ion::Events::USBPlug || event == Ion::Events::BatteryCharging) {
     Ion::LED::updateColorWithPlugAndCharge();
   }
-  if (event == Ion::Events::USBEnumeration) {
-    if (Ion::USB::isPlugged()) {
-      App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
-      /* Just after a software update, the battery timer does not have time to
-       * fire before the calculator enters DFU mode. As the DFU mode blocks the
-       * event loop, we update the battery state "manually" here.
-       * We do it before switching to USB application to redraw the battery
-       * pictogram. */
-      updateBatteryState();
-      if (switchTo(usbConnectedAppSnapshot())) {
-        Ion::USB::DFU();
-        // Update LED when exiting DFU mode
-        Ion::LED::updateColorWithPlugAndCharge();
-        bool switched = switchTo(activeSnapshot);
-        assert(switched);
-        (void) switched; // Silence compilation warning about unused variable.
-        didProcessEvent = true;
-      } else {
-        /* We could not switch apps, which means that the current app needs
-         * another event loop to prepare for being switched off.
-         * Discard the current enumeration interruption.
-         * The USB host tries a few times in a row to enumerate the device, so
-         * hopefully the device will get another enumeration event soon and this
-         * time the device will be ready to go in DFU mode. Otherwise, the user
-         * needs to re-plug the device to go into DFU mode. */
-        Ion::USB::clearEnumerationInterrupt();
-      }
-    } else {
-      /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
-       * from a non-USB communicating host (e.g. a USB charger). The interrupt
-       * must me cleared: if not the next enumeration attempts will not be
-       * detected. */
-      Ion::USB::clearEnumerationInterrupt();
-    }
-  } else {
-    didProcessEvent = Container::dispatchEvent(event);
-  }
+
+  bool didProcessEvent = Container::dispatchEvent(event);
 
   if (!didProcessEvent) {
     didProcessEvent = processEvent(event);
@@ -185,6 +149,30 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 
 bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
+  if (event == Ion::Events::USBEnumeration) {
+    if (Ion::USB::isPlugged()) {
+      App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
+      /* Just after a software update, the battery timer does not have time to
+       * fire before the calculator enters DFU mode. As the DFU mode blocks the
+       * event loop, we update the battery state "manually" here.
+       * We do it before switching to USB application to redraw the battery
+       * pictogram. */
+      updateBatteryState();
+      switchTo(usbConnectedAppSnapshot());
+      Ion::USB::DFU();
+      // Update LED when exiting DFU mode
+      Ion::LED::updateColorWithPlugAndCharge();
+      switchTo(activeSnapshot);
+      return true;
+    } else {
+      /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
+       * from a non-USB communicating host (e.g. a USB charger). The interrupt
+       * must me cleared: if not the next enumeration attempts will not be
+       * detected. */
+      Ion::USB::clearEnumerationInterrupt();
+    }
+    return false;
+  }
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
       if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {

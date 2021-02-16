@@ -36,8 +36,9 @@ public:
    * | *      *      *             *      *       *  |
    * |                     BM                        |
    * -------------------------------------------------
-   * In some cases, Accessory can be placed on the left of the Cell. Label and
-   * SubLabel also take the two configurations depending on the fit.
+   * When isAccessoryAlignedRight returns false, Accessory can be placed on the
+   * left of the Cell. Label and SubLabel also take the two configurations
+   * depending on the fit.
    */
   TableCell();
   virtual const View * labelView() const { return nullptr; }

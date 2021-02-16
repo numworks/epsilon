@@ -10,12 +10,12 @@ constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
 void ScriptNodeCell::setScriptNode(ScriptNode * node) {
   // Use a temporary buffer to crop label name.
   const int maxNumberOfCharsInBuffer = BufferTextView::maxNumberOfCharsInBuffer();
-  const int labelLenght = node->nameLength() > maxNumberOfCharsInBuffer - 1 ? maxNumberOfCharsInBuffer - 1 : node->nameLength();
+  const int labelLength = std::min(maxNumberOfCharsInBuffer - 1, node->nameLength());
 
   char temp_buffer[maxNumberOfCharsInBuffer];
-  assert(strlen(node->name()) >= labelLenght);
-  memcpy(temp_buffer, node->name(), labelLenght);
-  temp_buffer[labelLenght] = 0;
+  assert(strlen(node->name()) >= labelLength);
+  memcpy(temp_buffer, node->name(), labelLength);
+  temp_buffer[labelLength] = 0;
 
   m_labelView.setText(temp_buffer);
 

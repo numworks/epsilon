@@ -32,7 +32,7 @@ public:
   virtual void * currentAppBuffer() = 0;
   virtual void run();
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  virtual bool switchTo(App::Snapshot * snapshot);
+  virtual void switchTo(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;
   static App * s_activeApp;

@@ -41,13 +41,6 @@ public:
   }
   ~App();
   TELEMETRY_ID("Code");
-  bool prepareForExit() override {
-    if (m_consoleController.inputRunLoopActive()) {
-      m_consoleController.terminateInputLoop();
-      return false;
-    }
-    return true;
-  }
   Escher::StackViewController * stackViewController() { return &m_codeStackViewController; }
   ConsoleController * consoleController() { return &m_consoleController; }
   MenuController * menuController() { return &m_menuController; }

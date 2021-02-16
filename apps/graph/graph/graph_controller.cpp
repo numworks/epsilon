@@ -1,5 +1,6 @@
 #include "graph_controller.h"
 #include "../app.h"
+#include <poincare/layout_helper.h>
 #include <algorithm>
 
 using namespace Poincare;
@@ -14,6 +15,7 @@ GraphController::GraphController(Responder * parentResponder, ::InputEventHandle
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
   m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
+  m_functionSelectionController(this),
   m_displayDerivativeInBanner(false)
 {
   m_graphRange->setDelegate(this);
@@ -38,6 +40,16 @@ void GraphController::viewWillAppear() {
 
 bool GraphController::defaultRangeIsNormalized() const {
   return functionStore()->displaysNonCartesianFunctions();
+}
+
+Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {
+  GraphController * graphController = static_cast<GraphController *>(m_graphController);
+  ContinuousFunctionStore * store = graphController->functionStore();
+  ExpiringPointer<ContinuousFunction> function = store->modelForRecord(store->activeRecordAtIndex(j));
+  constexpr size_t bufferSize = Shared::Function::k_maxNameWithArgumentSize;
+  char buffer[bufferSize];
+  int size = function->nameWithArgument(buffer, bufferSize);
+  return LayoutHelper::String(buffer, size);
 }
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {

@@ -9,9 +9,7 @@ PopUpController::PopUpController() :
     Escher::Invocation(
       [](void * context, void * sender) {
         AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
-        bool switched = appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
-        assert(switched);
-        (void) switched; // Silence compilation warning about unused variable.
+        appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
         return true;
       }, this)
   )

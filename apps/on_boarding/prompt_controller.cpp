@@ -55,9 +55,7 @@ bool PromptController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->dismissModalViewController();
     AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
-      bool switched = appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
-      assert(switched);
-      (void) switched; // Silence compilation warning about unused variable.
+      appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
     }
     return true;
   }

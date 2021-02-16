@@ -198,7 +198,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool AppsContainer::switchTo(App::Snapshot * snapshot) {
+void AppsContainer::switchTo(App::Snapshot * snapshot) {
   if (s_activeApp && snapshot != s_activeApp->snapshot()) {
     resetShiftAlphaStatus();
   }
@@ -237,9 +237,7 @@ void AppsContainer::run() {
     /* Normal execution. The exception checkpoint must be created before
      * switching to the first app, because the first app might create nodes on
      * the pool. */
-    bool switched = switchTo(initialAppSnapshot());
-    assert(switched);
-    (void) switched; // Silence compilation warning about unused variable.
+    switchTo(initialAppSnapshot());
   } else {
     // Exception
     if (s_activeApp != nullptr) {
@@ -260,9 +258,7 @@ void AppsContainer::run() {
       // Reset home selection if already selected
       dispatchEvent(Ion::Events::Back);
     }
-    bool switched = switchTo(appSnapshotAtIndex(0));
-    assert(switched);
-    (void) switched; // Silence compilation warning about unused variable.
+    switchTo(appSnapshotAtIndex(0));
     Poincare::Tidy();
     if (exceptionEncountered) {
       s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);

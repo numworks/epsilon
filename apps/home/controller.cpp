@@ -67,9 +67,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
       App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
     } else {
-      bool switched = container->switchTo(selectedSnapshot);
-      assert(switched);
-      (void) switched; // Silence compilation warning about unused variable.
+      container->switchTo(selectedSnapshot);
     }
     return true;
   }

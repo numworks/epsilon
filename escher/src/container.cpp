@@ -17,14 +17,9 @@ Container::~Container() {
   }
 }
 
-bool Container::switchTo(App::Snapshot * snapshot) {
+void Container::switchTo(App::Snapshot * snapshot) {
   if (s_activeApp && snapshot == s_activeApp->snapshot()) {
-    return true;
-  }
-  if (s_activeApp && !s_activeApp->prepareForExit()) {
-    /* activeApp()->prepareForExit() returned false, which means that the app
-     * needs another event loop to prepare for being switched off. */
-    return false;
+    return;
   }
   if (s_activeApp) {
     s_activeApp->willBecomeInactive();
@@ -38,11 +33,10 @@ bool Container::switchTo(App::Snapshot * snapshot) {
     s_activeApp->didBecomeActive(window());
     window()->redraw();
   }
-  return true;
 }
 
 bool Container::dispatchEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::TimerFire ) {
+  if (event == Ion::Events::TimerFire) {
     window()->redraw();
     return true;
   }

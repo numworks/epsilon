@@ -54,9 +54,6 @@ public:
   void setFirstResponder(Responder * responder);
   Responder * firstResponder() { return m_firstResponder; }
   virtual bool processEvent(Ion::Events::Event event);
-  /* prepareForExit returns true if the app can be switched off in the current
-   * runloop step, else it prepares for a switch off and returns false. */
-  virtual bool prepareForExit() { return true; }
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController(bool willExitApp = false);

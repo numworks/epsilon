@@ -37,7 +37,7 @@ public:
   MathVariableBoxController * variableBoxController();
   void suspend(bool checkIfOnOffKeyReleased = false);
   bool dispatchEvent(Ion::Events::Event event) override;
-  bool switchTo(Escher::App::Snapshot * snapshot) override;
+  void switchTo(Escher::App::Snapshot * snapshot) override;
   void run() override;
   bool updateBatteryState();
   void refreshPreferences();

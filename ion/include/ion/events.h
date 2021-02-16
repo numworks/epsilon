@@ -80,7 +80,7 @@ constexpr Event Right = Event::PlainKey(Keyboard::Key::Right);
 constexpr Event OK    = Event::PlainKey(Keyboard::Key::OK);
 constexpr Event Back  = Event::PlainKey(Keyboard::Key::Back);
 
-constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
+//constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
 constexpr Event OnOff = Event::PlainKey(Keyboard::Key::OnOff);
 
 constexpr Event Shift = Event::PlainKey(Keyboard::Key::Shift);

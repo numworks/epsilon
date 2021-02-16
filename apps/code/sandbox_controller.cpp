@@ -33,8 +33,8 @@ void SandboxController::viewDidDisappear() {
 }
 
 bool SandboxController::handleEvent(Ion::Events::Event event) {
-  // The sandbox handles or "absorbs" all keyboard events except Home and OnOff
-  if (event == Ion::Events::Home || event == Ion::Events::OnOff) {
+  // The sandbox handles or "absorbs" all keyboard events except Home (preemtive interruption) and OnOff
+  if (event == Ion::Events::OnOff) {
     stackViewController()->pop();
     return false;
   }

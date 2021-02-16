@@ -4,6 +4,11 @@
 #include <drivers/cache.h>
 #include <kernel/drivers/timing.h>
 
+#define DEBUG_FOR_DEVICE 0
+#if DEBUG_FOR_DEVICE
+#include <kernel/drivers/keyboard.h>
+#endif
+
 extern const void * _stack_end;
 extern char _dfu_bootloader_flash_start;
 extern char _dfu_bootloader_flash_end;
@@ -15,6 +20,16 @@ namespace USB {
 typedef void (*PollFunctionPointer)(bool exitWithKeyboard);
 
 void DFU() {
+#if DEBUG_FOR_DEVICE
+  Ion::Keyboard::Key exitKey = Ion::Keyboard::Key::Back;
+  uint8_t exitKeyColumn = Ion::Device::Keyboard::columnForKey(exitKey);
+  while (!Ion::Device::Keyboard::columnIsActive(exitKeyColumn)) {
+  }
+  Ion::Device::Regs::OTG.GINTSTS()->setENUMDNE(true);
+  return;
+#endif
+
+  // TODO: disable interruptions! execpt on back event?
 
   /* DFU transfers can serve two purposes:
    *  - Transfering RAM data between the machine and a host, e.g. Python scripts

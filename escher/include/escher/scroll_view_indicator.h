@@ -8,15 +8,12 @@ namespace Escher {
 class ScrollViewIndicator : public View {
 public:
   ScrollViewIndicator();
-  void setMargin(KDCoordinate m) { m_margin = m; }
-  KDCoordinate margin() const { return m_margin; }
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
   void logAttributes(std::ostream &os) const override;
 #endif
   KDColor m_color;
-  KDCoordinate m_margin;
 };
 
 class ScrollViewBar : public ScrollViewIndicator {
@@ -33,16 +30,23 @@ protected:
 
 class ScrollViewHorizontalBar : public ScrollViewBar {
 public:
+  ScrollViewHorizontalBar();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  KDCoordinate totalLength() const { return m_frame.width() - 2*m_margin; }
+  KDCoordinate totalLength() const { return m_frame.width() - m_leftMargin - m_rightMargin; }
+  KDCoordinate m_leftMargin;
+  KDCoordinate m_rightMargin;
 };
 
 class ScrollViewVerticalBar : public ScrollViewBar {
 public:
+  ScrollViewVerticalBar();
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setMargins(KDCoordinate top, KDCoordinate bottom);
 private:
-  KDCoordinate totalLength() const { return m_frame.height() - 2*m_margin; }
+  KDCoordinate totalLength() const { return m_frame.height() - m_topMargin - m_bottomMargin; }
+  KDCoordinate m_topMargin;
+  KDCoordinate m_bottomMargin;
 };
 
 class ScrollViewArrow : public ScrollViewIndicator {

@@ -21,6 +21,18 @@ public:
   bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
   void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
 private:
+  class FunctionSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
+  public:
+    FunctionSelectionController(GraphController * graphController) : Shared::FunctionGraphController::FunctionSelectionController(graphController) {}
+    const char * title() override { return I18n::translate(I18n::Message::FunctionChoice); }
+    CurveSelectionCell * reusableCell(int index, int type) override { assert(index < k_maxNumberOfDisplayableFunctions); return m_cells + index; }
+    int reusableCellCount(int type) override { return k_maxNumberOfDisplayableFunctions; }
+  private:
+    static constexpr int k_maxNumberOfDisplayableFunctions = 7;
+    Poincare::Layout nameLayoutAtIndex(int j) const override;
+    CurveSelectionCell m_cells[k_maxNumberOfDisplayableFunctions];
+  };
+
   void selectFunctionWithCursor(int functionIndex) override;
   BannerView * bannerView() override { return &m_bannerView; }
   void reloadBannerView() override;
@@ -30,6 +42,7 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
+  FunctionSelectionController * curveSelectionController() const override { return const_cast<FunctionSelectionController *>(&m_functionSelectionController); }
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool defaultRangeIsNormalized() const override;
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
@@ -40,6 +53,7 @@ private:
   GraphView m_view;
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
+  FunctionSelectionController m_functionSelectionController;
   bool m_displayDerivativeInBanner;
 };
 

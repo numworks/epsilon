@@ -3,6 +3,7 @@
 #include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
+#include <poincare/layout_helper.h>
 #include <cmath>
 #include <algorithm>
 
@@ -20,6 +21,7 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
+  m_seriesSelectionController(this),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex)
 {
@@ -81,6 +83,20 @@ void GraphController::viewWillAppear() {
 }
 
 // Private
+
+KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {
+  if (j < 0 || j >= numberOfRows()) {
+    return 0;
+  }
+  return KDFont::LargeFont->stringSize("X").height() + Metric::CellTopMargin + Metric::CellBottomMargin;
+}
+
+void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  char name[] = "X?/Y?";
+  int j = graphController()->m_store->indexOfKthNonEmptySeries(index);
+  name[1] = name[4] = '1' + j;
+  static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name, sizeof(name) / sizeof(char)));
+}
 
 Poincare::Context * GraphController::globalContext() {
   return AppsContainer::sharedAppsContainer()->globalContext();

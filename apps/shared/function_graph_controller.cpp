@@ -3,6 +3,7 @@
 #include "poincare_helpers.h"
 #include "../apps_container.h"
 #include <poincare/coordinate_2D.h>
+#include <poincare/layout_helper.h>
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -58,6 +59,18 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
 
 void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
   *m_indexFunctionSelectedByCursor = functionIndex;
+}
+
+KDCoordinate FunctionGraphController::FunctionSelectionController::rowHeight(int j) {
+  assert(j < graphController()->functionStore()->numberOfActiveFunctions());
+  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
+  return std::max(function->layout().layoutSize().height(), nameLayoutAtIndex(j).layoutSize().height()) + Metric::CellTopMargin + Metric::CellBottomMargin;
+}
+
+void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index < graphController()->functionStore()->numberOfActiveFunctions());
+  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
+  static_cast<CurveSelectionCell *>(cell)->setLayout(HorizontalLayout::Builder({nameLayoutAtIndex(index), LayoutHelper::String("=", 2), function->layout().clone()}));
 }
 
 void FunctionGraphController::reloadBannerView() {

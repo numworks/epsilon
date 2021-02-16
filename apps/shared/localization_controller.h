@@ -77,6 +77,7 @@ protected:
   ContentView m_contentView;
 
 private:
+  void setVerticalMargins();
   static constexpr int k_numberOfCells = I18n::NumberOfLanguages > I18n::NumberOfCountries ? I18n::NumberOfLanguages : I18n::NumberOfCountries;
   Escher::MessageTableCell m_cells[k_numberOfCells];
   Mode m_mode;

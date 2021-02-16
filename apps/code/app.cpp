@@ -90,7 +90,6 @@ App::App(Snapshot * snapshot) :
 }
 
 App::~App() {
-  assert(!m_consoleController.inputRunLoopActive());
   deinitPython();
   Clipboard::sharedClipboard()->exitPython();
 }

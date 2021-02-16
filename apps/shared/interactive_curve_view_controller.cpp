@@ -38,6 +38,11 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
+  }, this), KDFont::SmallFont),
+  m_calculusButton(this, I18n::Message::PlotOptions, Invocation([](void * context, void * sender) {
+    InteractiveCurveViewController * graphController = static_cast<InteractiveCurveViewController *>(context);
+    graphController->stackController()->push(graphController->curveSelectionController());
+    return true;
   }, this), KDFont::SmallFont)
 {
 }
@@ -119,11 +124,11 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
   if (isEmpty()) {
     return 0;
   }
-  return 4;
+  return 5;
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[] = {&m_autoButton, &m_normalizeButton, &m_navigationButton, &m_rangeButton};
+  const Button * buttons[] = {&m_autoButton, &m_normalizeButton, &m_navigationButton, &m_rangeButton, &m_calculusButton};
   return (Button *)buttons[index];
 }
 

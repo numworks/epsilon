@@ -5,11 +5,12 @@
 #include <escher/button_row_controller.h>
 #include <escher/button_state.h>
 #include <poincare/coordinate_2D.h>
-#include "simple_interactive_curve_view_controller.h"
 #include "cursor_view.h"
+#include "curve_selection_controller.h"
+#include "function_zoom_and_pan_curve_view_controller.h"
 #include "ok_view.h"
 #include "range_parameter_controller.h"
-#include "function_zoom_and_pan_curve_view_controller.h"
+#include "simple_interactive_curve_view_controller.h"
 
 namespace Shared {
 
@@ -48,6 +49,7 @@ protected:
   // The cursor does not match if selected model has been edited or deleted
   virtual bool cursorMatchesModel() = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
+  virtual CurveSelectionController * curveSelectionController() const = 0;
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
@@ -91,6 +93,7 @@ private:
   Escher::ButtonState m_normalizeButton;
   Escher::Button m_navigationButton;
   Escher::Button m_rangeButton;
+  Escher::Button m_calculusButton;
 };
 
 }

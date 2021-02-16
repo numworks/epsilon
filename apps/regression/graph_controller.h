@@ -29,6 +29,20 @@ public:
 private:
   constexpr static int k_maxLegendLength = 16;
 
+  class SeriesSelectionController : public Shared::CurveSelectionController {
+  public:
+    SeriesSelectionController(GraphController * graphController) : Shared::CurveSelectionController(graphController) {}
+    const char * title() override { return I18n::translate(I18n::Message::SeriesChoice); }
+    int numberOfRows() const override { return graphController()->m_store->numberOfNonEmptySeries(); }
+    KDCoordinate rowHeight(int j) override;
+    CurveSelectionCell * reusableCell(int index, int type) override { return m_cells + index; }
+    int reusableCellCount(int type) override { return Store::k_numberOfSeries; }
+    void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  private:
+    GraphController * graphController() const { return static_cast<GraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
+    CurveSelectionCell m_cells[Store::k_numberOfSeries];
+  };
+
   Poincare::Context * globalContext();
 
   // SimpleInteractiveCurveViewController
@@ -48,6 +62,7 @@ private:
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
   bool openMenuForCurveAtIndex(int index) override;
+  SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
 
   void setRoundCrossCursorView();
   Shared::CursorView m_crossCursorView;
@@ -56,6 +71,7 @@ private:
   GraphView m_view;
   Store * m_store;
   GraphOptionsController m_graphOptionsController;
+  SeriesSelectionController m_seriesSelectionController;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;

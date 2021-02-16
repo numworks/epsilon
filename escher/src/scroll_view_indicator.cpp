@@ -10,8 +10,7 @@ namespace Escher {
 
 ScrollViewIndicator::ScrollViewIndicator() :
   View(),
-  m_color(Palette::GrayDark),
-  m_margin(Metric::CommonTopMargin)
+  m_color(Palette::GrayDark)
 {
 }
 
@@ -36,24 +35,41 @@ bool ScrollViewBar::update(KDCoordinate totalContentLength, KDCoordinate content
   return visible();
 }
 
+ScrollViewHorizontalBar::ScrollViewHorizontalBar() :
+  m_leftMargin(Metric::CommonLeftMargin),
+  m_rightMargin(Metric::CommonRightMargin)
+{
+}
+
 void ScrollViewHorizontalBar::drawRect(KDContext * ctx, KDRect rect) const {
   if (!visible()) {
     return;
   }
   ctx->fillRect(
     KDRect(
-      m_margin, (m_frame.height() - k_indicatorThickness)/2,
+      m_leftMargin, (m_frame.height() - k_indicatorThickness)/2,
       totalLength(), k_indicatorThickness
     ),
     m_trackColor
   );
   ctx->fillRect(
     KDRect(
-      m_margin+m_offset*totalLength(), (m_frame.height() - k_indicatorThickness)/2,
+      m_leftMargin+m_offset*totalLength(), (m_frame.height() - k_indicatorThickness)/2,
       std::ceil(m_visibleLength*totalLength()), k_indicatorThickness
     ),
     m_color
   );
+}
+
+ScrollViewVerticalBar::ScrollViewVerticalBar() :
+  m_topMargin(Metric::CommonTopMargin),
+  m_bottomMargin(Metric::CommonBottomMargin)
+{
+}
+
+void ScrollViewVerticalBar::setMargins(KDCoordinate top, KDCoordinate bottom) {
+  m_topMargin = top;
+  m_bottomMargin = bottom;
 }
 
 void ScrollViewVerticalBar::drawRect(KDContext * ctx, KDRect rect) const {
@@ -62,14 +78,14 @@ void ScrollViewVerticalBar::drawRect(KDContext * ctx, KDRect rect) const {
   }
   ctx->fillRect(
     KDRect(
-      (m_frame.width() - k_indicatorThickness)/2, m_margin,
+      (m_frame.width() - k_indicatorThickness)/2, m_topMargin,
       k_indicatorThickness, totalLength()
     ),
     m_trackColor
   );
   ctx->fillRect(
     KDRect(
-      (m_frame.width() - k_indicatorThickness)/2, m_margin+m_offset*totalLength(),
+      (m_frame.width() - k_indicatorThickness)/2, m_topMargin+m_offset*totalLength(),
       k_indicatorThickness, std::ceil(m_visibleLength*totalLength())
     ),
     m_color

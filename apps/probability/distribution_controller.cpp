@@ -55,7 +55,9 @@ DistributionController::DistributionController(Responder * parentResponder, Dist
   m_parametersController(parametersController)
 {
   assert(m_distribution != nullptr);
-  m_selectableTableView.setTopMargin(Metric::CommonTopMargin-ContentView::k_titleMargin);
+  m_selectableTableView.setTopMargin(0);
+  // Fit m_selectableTableView scroll to content size
+  m_selectableTableView.decorator()->setVerticalMargins(0, Metric::CommonBottomMargin);
 }
 
 void Probability::DistributionController::viewWillAppear() {

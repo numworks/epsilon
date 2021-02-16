@@ -142,8 +142,7 @@ LocalizationController::LocalizationController(Responder * parentResponder, Loca
   m_contentView(this, this),
   m_mode(mode)
 {
-  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
-  selectableTableView()->setBottomMargin(k_verticalMargin);
+  setVerticalMargins();
 }
 
 void LocalizationController::resetSelection() {
@@ -155,7 +154,7 @@ void LocalizationController::setMode(LocalizationController::Mode mode) {
   selectableTableView()->deselectTable();
   resetMemoization();
   m_mode = mode;
-  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
+  setVerticalMargins();
   m_contentView.modeHasChanged();
 }
 
@@ -206,4 +205,12 @@ void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int i
   assert(mode() == Mode::Country);
   static_cast<MessageTableCell *>(cell)->setMessage(I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(index))]);
 }
+
+void LocalizationController::setVerticalMargins() {
+  KDCoordinate topMargin = shouldDisplayWarning() ? 0 : Escher::Metric::CommonTopMargin;
+  selectableTableView()->setTopMargin(topMargin);
+  // Fit m_selectableTableView scroll to content size
+  selectableTableView()->decorator()->setVerticalMargins(topMargin, Escher::Metric::CommonBottomMargin);
+}
+
 }

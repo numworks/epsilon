@@ -36,6 +36,10 @@ extern "C" {
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
 
+MicroPython::ExecutionEnvironment::~ExecutionEnvironment() {
+  sCurrentExecutionEnvironment = nullptr;
+}
+
 MicroPython::ExecutionEnvironment * MicroPython::ExecutionEnvironment::currentExecutionEnvironment() {
   return sCurrentExecutionEnvironment;
 }

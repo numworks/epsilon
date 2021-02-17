@@ -3,7 +3,7 @@
 
 #include <escher/stack_view_controller.h>
 #include <escher/even_odd_expression_cell.h>
-#include <escher/expression_table_cell_with_pointer.h>
+#include <escher/expression_table_cell_with_message.h>
 #include <escher/selectable_list_view_controller.h>
 #include <poincare/layout.h>
 #include "../../shared/sequence_store.h"
@@ -36,9 +36,9 @@ private:
   }
   Shared::SequenceStore * sequenceStore();
   constexpr static int k_totalNumberOfCell = 3;
-  Escher::ExpressionTableCellWithPointer m_explicitCell;
-  Escher::ExpressionTableCellWithPointer m_singleRecurrenceCell;
-  Escher::ExpressionTableCellWithPointer m_doubleRecurenceCell;
+  Escher::ExpressionTableCellWithMessage m_explicitCell;
+  Escher::ExpressionTableCellWithMessage m_singleRecurrenceCell;
+  Escher::ExpressionTableCellWithMessage m_doubleRecurenceCell;
   Poincare::Layout m_layouts[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
   ListController * m_listController;

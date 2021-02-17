@@ -24,7 +24,6 @@ escher_src += $(addprefix escher/src/,\
   expression_table_cell.cpp \
   expression_table_cell_with_expression.cpp \
   expression_table_cell_with_message.cpp \
-  expression_table_cell_with_pointer.cpp \
   expression_view.cpp \
   highlight_cell.cpp \
   gauge_view.cpp \

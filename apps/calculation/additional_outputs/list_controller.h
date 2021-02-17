@@ -2,7 +2,7 @@
 #define CALCULATION_ADDITIONAL_OUTPUTS_LIST_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/expression_table_cell_with_pointer.h>
+#include <escher/expression_table_cell_with_message.h>
 #include <escher/memoized_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>

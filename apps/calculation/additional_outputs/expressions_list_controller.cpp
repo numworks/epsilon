@@ -43,7 +43,7 @@ HighlightCell * ExpressionsListController::reusableCell(int index, int type) {
 }
 
 KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int index) {
-  ExpressionTableCellWithPointer tempCell;
+  ExpressionTableCellWithMessage tempCell;
   return heightForCellAtIndex(&tempCell, index);
 }
 
@@ -51,7 +51,7 @@ void ExpressionsListController::willDisplayCellForIndex(HighlightCell * cell, in
   /* Note : To further optimize memoization space in the pool, layout
    * serialization could be memoized instead, and layout would be recomputed
    * here, when setting cell's layout. */
-  ExpressionTableCellWithPointer * myCell = static_cast<ExpressionTableCellWithPointer *>(cell);
+  ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
   myCell->setLayout(layoutAtIndex(index));
   myCell->setSubLabelMessage(messageAtIndex(index));
   myCell->reloadScroll();

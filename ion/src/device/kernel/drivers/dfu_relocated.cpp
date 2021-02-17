@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include <drivers/cache.h>
-#include <kernel/drivers/timing.h>
+#include <kernel/drivers/board.h>
 
 #define DEBUG_FOR_DEVICE 0
 #if DEBUG_FOR_DEVICE
@@ -21,11 +21,13 @@ typedef void (*PollFunctionPointer)(bool exitWithKeyboard);
 
 void DFU() {
 #if DEBUG_FOR_DEVICE
+  Device::Board::shutdownInterruptions();
   Ion::Keyboard::Key exitKey = Ion::Keyboard::Key::Back;
   uint8_t exitKeyColumn = Ion::Device::Keyboard::columnForKey(exitKey);
   while (!Ion::Device::Keyboard::columnIsActive(exitKeyColumn)) {
   }
   Ion::Device::Regs::OTG.GINTSTS()->setENUMDNE(true);
+  Device::Board::initInterruptions();
   return;
 #endif
 
@@ -74,7 +76,7 @@ void DFU() {
   /* 4- Disable all interrupts
    * The interrupt service routines live in the Flash and could be overwritten
    * by garbage during a firmware upgrade opration, so we disable them. */
-  Device::Timing::shutdown();
+  Device::Board::shutdownInterruptions();
 
   /* 5- Jump to DFU bootloader code. We made sure in the linker script that the
    * first function we want to call is at the beginning of the DFU code. */
@@ -93,7 +95,7 @@ void DFU() {
   dfu_bootloader_entry(true);
 
   /* 5- Restore interrupts */
-  Device::Timing::init();
+  Device::Board::initInterruptions();
 
   /* 6- That's all. The DFU bootloader on the stack is now dead code that will
    * be overwritten when the stack grows. */

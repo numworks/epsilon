@@ -41,7 +41,11 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   }, this), KDFont::SmallFont),
   m_calculusButton(this, I18n::Message::PlotOptions, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = static_cast<InteractiveCurveViewController *>(context);
-    graphController->stackController()->push(graphController->curveSelectionController());
+    if (graphController->curveSelectionController()->numberOfRows() > 1) {
+      graphController->stackController()->push(graphController->curveSelectionController());
+    } else {
+      graphController->openMenuForCurveAtIndex(0);
+    }
     return true;
   }, this), KDFont::SmallFont)
 {

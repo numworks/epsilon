@@ -58,6 +58,7 @@ public:
     Decimal = 10,
     Hexadecimal = 16,
   };
+  enum class LogicOperation { And, Or, Xor };
   /* Constructors & Destructors */
   static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(native_int_t i = 0);
@@ -147,9 +148,7 @@ public:
   static Integer Power(const Integer & i, const Integer & j);
   static Integer Factorial(const Integer & i);
   // logical operations
-  static Integer LogicalXor(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
-  static Integer LogicalAnd(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
-  static Integer LogicalOr(const Integer &a, const Integer &b, const Integer &num_bits = Integer(32));
+  static Integer LogicalAndOrXor(const Integer &a, const Integer &b, LogicOperation operation, const Integer &num_bits = Integer(32));
   static Integer LogicalNot(const Integer &a, const Integer &num_bits = Integer(32));
   static Integer LogicalShiftLeft(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
   static Integer LogicalShiftRight(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));

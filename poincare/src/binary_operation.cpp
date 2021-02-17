@@ -368,13 +368,13 @@ namespace Poincare {
 
     switch (t) {
       case ExpressionNode::Type::And:
-        x = Integer::LogicalAnd(aq, bq);
+        x = Integer::LogicalAndOrXor(aq, bq, Integer::LogicOperation::And);
         break;
       case ExpressionNode::Type::Or:
-        x = Integer::LogicalOr(aq, bq);
+        x = Integer::LogicalAndOrXor(aq, bq, Integer::LogicOperation::Or);
         break;
       case ExpressionNode::Type::Xor:
-        x = Integer::LogicalXor(aq, bq);
+        x = Integer::LogicalAndOrXor(aq, bq, Integer::LogicOperation::Xor);
         break;
       case ExpressionNode::Type::Not:
         x = Integer::LogicalNot(aq);

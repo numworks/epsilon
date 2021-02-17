@@ -454,7 +454,7 @@ Integer Integer::Factorial(const Integer & i) {
   return result;
 }
 
-Integer Integer::LogicalXor(const Integer &a, const Integer &b, const Integer &num_bits)
+Integer Integer::LogicalAndOrXor(const Integer &a, const Integer &b, LogicOperation operation, const Integer &num_bits)
 {
   assert(!a.isNegative());
   assert(!b.isNegative());
@@ -470,53 +470,11 @@ Integer Integer::LogicalXor(const Integer &a, const Integer &b, const Integer &n
 
     native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
     native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
-    s_workingBuffer[i] = abits ^ bbits;
-  }
-
-  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
-  return uint_final;
-}
-
-Integer Integer::LogicalAnd(const Integer &a, const Integer &b, const Integer &num_bits)
-{
-  assert(!a.isNegative());
-  assert(!b.isNegative());
-  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
-  if (a.isOverflow() || b.isOverflow())
-  {
-    return Overflow(false);
-  }
-
-  uint8_t digits = std::max(a.numberOfDigits(), b.numberOfDigits());
-  for (size_t i = 0; i < digits; i++)
-  {
-
-    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
-    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
-    s_workingBuffer[i] = abits & bbits;
-  }
-
-  Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
-  return uint_final;
-}
-
-Integer Integer::LogicalOr(const Integer &a, const Integer &b, const Integer &num_bits)
-{
-  assert(!a.isNegative());
-  assert(!b.isNegative());
-  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
-  if (a.isOverflow() || b.isOverflow())
-  {
-    return Overflow(false);
-  }
-
-  uint8_t digits = std::max(a.numberOfDigits(), b.numberOfDigits());
-  for (size_t i = 0; i < digits; i++)
-  {
-
-    native_uint_t abits = a.numberOfDigits() > i ? a.digit(i) : 0;
-    native_uint_t bbits = b.numberOfDigits() > i ? b.digit(i) : 0;
-    s_workingBuffer[i] = abits | bbits;
+    switch(operation) {
+      case LogicOperation::And: s_workingBuffer[i] = abits & bbits; break;
+      case LogicOperation::Or: s_workingBuffer[i] = abits | bbits; break;
+      case LogicOperation::Xor: s_workingBuffer[i] = abits ^ bbits; break;
+    }
   }
 
   Integer uint_final = Truncate(BuildInteger(s_workingBuffer, digits, false), num_bits);
@@ -673,7 +631,7 @@ Integer Integer::LogicalRotateRight(const Integer &a, const Integer &rotate, con
   Integer num_bits_plus_1 = Addition(num_bits, Integer(1));
   Integer rotate_mask = LogicalShiftLeft(Integer(1), rotate, num_bits_plus_1);
   rotate_mask = Subtraction(rotate_mask, Integer(1));
-  Integer rotate_word = LogicalAnd(uint_final, rotate_mask, num_bits);
+  Integer rotate_word = LogicalAndOrXor(uint_final, rotate_mask, Integer::LogicOperation::And, num_bits);
 
   uint_final = LogicalShiftRight(uint_final, rotate, num_bits);
 
@@ -710,7 +668,7 @@ Integer Integer::LogicalRotateLeft(const Integer &a, const Integer &rotate, cons
   rotate_mask = Subtraction(rotate_mask, Integer(1));
   Integer num_bits_minus_rotate = Subtraction(num_bits, rotate);
   rotate_mask = LogicalShiftLeft(rotate_mask, num_bits_minus_rotate, num_bits);
-  Integer rotate_word = LogicalAnd(uint_final, rotate_mask, num_bits);
+  Integer rotate_word = LogicalAndOrXor(uint_final, rotate_mask, Integer::LogicOperation::And, num_bits);
   rotate_word = LogicalShiftRight(rotate_word, num_bits_minus_rotate, num_bits);
 
   uint_final = LogicalShiftLeft(uint_final, rotate, num_bits);
@@ -732,7 +690,7 @@ Integer Integer::LogicalBitsClear(const Integer &a, const Integer &b, const Inte
   }
 
   Integer b_invert = LogicalNot(b, num_bits);
-  Integer bic = LogicalAnd(a, b_invert, num_bits);
+  Integer bic = LogicalAndOrXor(a, b_invert, Integer::LogicOperation::And, num_bits);
 
   return Truncate(bic, num_bits);
 }
@@ -748,7 +706,7 @@ Integer Integer::LogicalBitGet(const Integer &a, const Integer &bit)
   }
 
   Integer shifted = LogicalShiftRight(a, bit, Integer(__INT8_MAX_MINUS_1__));
-  return LogicalAnd(shifted, Integer(1), Integer(__INT8_MAX_MINUS_1__));
+  return LogicalAndOrXor(shifted, Integer(1), Integer::LogicOperation::And, Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::LogicalBitClear(const Integer &a, const Integer &bit)
@@ -763,7 +721,7 @@ Integer Integer::LogicalBitClear(const Integer &a, const Integer &bit)
 
   Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
   shifted = LogicalNot(shifted, Integer(__INT8_MAX_MINUS_1__));
-  return LogicalAnd(a, shifted, Integer(__INT8_MAX_MINUS_1__));
+  return LogicalAndOrXor(a, shifted, Integer::LogicOperation::And, Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::LogicalBitSet(const Integer &a, const Integer &bit)
@@ -777,7 +735,7 @@ Integer Integer::LogicalBitSet(const Integer &a, const Integer &bit)
   }
 
   Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
-  return LogicalOr(a, shifted, Integer(__INT8_MAX_MINUS_1__));
+  return LogicalAndOrXor(a, shifted, Integer::LogicOperation::Or, Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::LogicalBitFlip(const Integer &a, const Integer &bit)
@@ -791,7 +749,7 @@ Integer Integer::LogicalBitFlip(const Integer &a, const Integer &bit)
   }
 
   Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
-  return LogicalXor(a, shifted, Integer(__INT8_MAX_MINUS_1__));
+  return LogicalAndOrXor(a, shifted, Integer::LogicOperation::Xor, Integer(__INT8_MAX_MINUS_1__));
 }
 
 Integer Integer::Truncate(const Integer &a, const Integer &num_bits)

@@ -15,23 +15,23 @@ QUIZ_CASE(poincare_logic_xor_compare)
   Integer hFFFF_FFFF_FFFF_FFFF = Integer("18446744073709551615");
   Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
   Integer hFFFF_0000_0000_FFFF = Integer("18446462598732906495");
-  assert_equal(Integer::LogicalXor(Integer(15), Integer(1)), Integer(14));
-  assert_equal(Integer::LogicalXor(Integer(15), Integer(0)), Integer(15));
-  assert_equal(Integer::LogicalXor(Integer(0), Integer(15)), Integer(15));
-  assert_equal(Integer::LogicalXor(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
-  assert_equal(Integer::LogicalXor(Integer(0), hFFFF_FFFF), hFFFF_FFFF);
-  assert_equal(Integer::LogicalXor(Integer(0), h1_FFFF_FFFF), hFFFF_FFFF);
-  assert_equal(Integer::LogicalXor(Integer(0), Integer(0)), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(1), Integer::LogicOperation::Xor), Integer(14));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(0), Integer::LogicOperation::Xor), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), Integer(15), Integer::LogicOperation::Xor), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, Integer(0), Integer::LogicOperation::Xor), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), hFFFF_FFFF, Integer::LogicOperation::Xor), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Xor), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), Integer(0), Integer::LogicOperation::Xor), Integer(0));
   //explicit num_bits
-  assert_equal(Integer::LogicalXor(hFFFF_FFFF, h1_FFFF_FFFF, Integer(33)), h1_0000_0000);
-  assert_equal(Integer::LogicalXor(Integer(0), h1_FFFF_FFFF, Integer(33)), h1_FFFF_FFFF);
-  assert_equal(Integer::LogicalXor(Integer(0), h1_FFFF_FFFF, Integer(15)), Integer(32767));
-  assert_equal(Integer::LogicalXor(Integer(0), h1_FFFF_FFFF, Integer(8)), Integer(255));
-  assert_equal(Integer::LogicalXor(Integer(0), h1_FFFF_FFFF, Integer(4)), Integer(15));
-  assert_equal(Integer::LogicalXor(Integer(0), h1_FFFF_FFFF, Integer(1)), Integer(1));
-  assert_equal(Integer::LogicalXor(Integer(0), h1_FFFF_FFFF, Integer(0)), Integer(0));
-  assert_equal(Integer::LogicalXor(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer(64)), hFFFF_0000_0000_FFFF);
-  assert_equal(Integer::LogicalXor(h0000_FFFF_FFFF_0000, hFFFF_FFFF_FFFF_FFFF, Integer(65)), hFFFF_0000_0000_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(33)), h1_0000_0000);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(33)), h1_FFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(15)), Integer(32767));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(8)), Integer(255));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(4)), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(1)), Integer(1));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(0)), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer::LogicOperation::Xor, Integer(64)), hFFFF_0000_0000_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(h0000_FFFF_FFFF_0000, hFFFF_FFFF_FFFF_FFFF, Integer::LogicOperation::Xor, Integer(65)), hFFFF_0000_0000_FFFF);
 }
 
 QUIZ_CASE(poincare_logic_or_compare)
@@ -42,27 +42,27 @@ QUIZ_CASE(poincare_logic_or_compare)
   Integer hFFFF_FFFF_FFFF_FFFF = Integer("18446744073709551615");
   Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
   Integer hFFFF_0000_0000_FFFF = Integer("18446462598732906495");
-  assert_equal(Integer::LogicalOr(Integer(15), Integer(1)), Integer(15));
-  assert_equal(Integer::LogicalOr(Integer(15), Integer(0)), Integer(15));
-  assert_equal(Integer::LogicalOr(Integer(0), Integer(15)), Integer(15));
-  assert_equal(Integer::LogicalOr(Integer(15), Integer(15)), Integer(15));
-  assert_equal(Integer::LogicalOr(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
-  assert_equal(Integer::LogicalOr(Integer(0), hFFFF_FFFF), hFFFF_FFFF);
-  assert_equal(Integer::LogicalOr(hFFFF_FFFF, hFFFF_FFFF), hFFFF_FFFF);
-  assert_equal(Integer::LogicalOr(Integer(0), h1_FFFF_FFFF), hFFFF_FFFF);
-  assert_equal(Integer::LogicalOr(Integer(0), Integer(0)), Integer(0));
-  assert_equal(Integer::LogicalOr(Integer(0), h1_0000_0000), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(1), Integer::LogicOperation::Or), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(0), Integer::LogicOperation::Or), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), Integer(15), Integer::LogicOperation::Or), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(15), Integer::LogicOperation::Or), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, Integer(0), Integer::LogicOperation::Or), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), hFFFF_FFFF, Integer::LogicOperation::Or), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, hFFFF_FFFF, Integer::LogicOperation::Or), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Or), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), Integer(0), Integer::LogicOperation::Or), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_0000_0000, Integer::LogicOperation::Or), Integer(0));
   //explicit num_bits
-  assert_equal(Integer::LogicalOr(hFFFF_FFFF, h1_FFFF_FFFF, Integer(33)), h1_FFFF_FFFF);
-  assert_equal(Integer::LogicalOr(Integer(0), h1_0000_0000, Integer(33)), h1_0000_0000);
-  assert_equal(Integer::LogicalOr(Integer(0), h1_FFFF_FFFF, Integer(15)), Integer(32767));
-  assert_equal(Integer::LogicalOr(Integer(0), h1_FFFF_FFFF, Integer(8)), Integer(255));
-  assert_equal(Integer::LogicalOr(Integer(0), h1_FFFF_FFFF, Integer(4)), Integer(15));
-  assert_equal(Integer::LogicalOr(Integer(0), h1_FFFF_FFFF, Integer(1)), Integer(1));
-  assert_equal(Integer::LogicalOr(Integer(0), h1_FFFF_FFFF, Integer(0)), Integer(0));
-  assert_equal(Integer::LogicalOr(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer(64)), hFFFF_FFFF_FFFF_FFFF);
-  assert_equal(Integer::LogicalOr(h0000_FFFF_FFFF_0000, hFFFF_0000_0000_FFFF, Integer(65)), hFFFF_FFFF_FFFF_FFFF);
-  assert_equal(Integer::LogicalOr(h0000_FFFF_FFFF_0000, Integer(0), Integer(65)), h0000_FFFF_FFFF_0000);
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::Or, Integer(33)), h1_FFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_0000_0000, Integer::LogicOperation::Or, Integer(33)), h1_0000_0000);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Or, Integer(15)), Integer(32767));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Or, Integer(8)), Integer(255));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Or, Integer(4)), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Or, Integer(1)), Integer(1));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::Or, Integer(0)), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer::LogicOperation::Or, Integer(64)), hFFFF_FFFF_FFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(h0000_FFFF_FFFF_0000, hFFFF_0000_0000_FFFF, Integer::LogicOperation::Or, Integer(65)), hFFFF_FFFF_FFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(h0000_FFFF_FFFF_0000, Integer(0), Integer::LogicOperation::Or, Integer(65)), h0000_FFFF_FFFF_0000);
 }
 
 QUIZ_CASE(poincare_logic_and_compare)
@@ -73,32 +73,32 @@ QUIZ_CASE(poincare_logic_and_compare)
   Integer hFFFF_FFFF_FFFF_FFFF = Integer("18446744073709551615");
   Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
   Integer hFFFF_0000_0000_FFFF = Integer("18446462598732906495");
-  assert_equal(Integer::LogicalAnd(Integer(15), Integer(1)), Integer(1));
-  assert_equal(Integer::LogicalAnd(Integer(15), Integer(0)), Integer(0));
-  assert_equal(Integer::LogicalAnd(Integer(0), Integer(15)), Integer(0));
-  assert_equal(Integer::LogicalAnd(Integer(15), Integer(15)), Integer(15));
-  assert_equal(Integer::LogicalAnd(hFFFF_FFFF, Integer(0)), Integer(0));
-  assert_equal(Integer::LogicalAnd(Integer(0), hFFFF_FFFF), Integer(0));
-  assert_equal(Integer::LogicalAnd(hFFFF_FFFF, hFFFF_FFFF), hFFFF_FFFF);
-  assert_equal(Integer::LogicalAnd(Integer(0), h1_FFFF_FFFF), Integer(0));
-  assert_equal(Integer::LogicalAnd(h1_FFFF_FFFF, h1_FFFF_FFFF), hFFFF_FFFF);
-  assert_equal(Integer::LogicalAnd(Integer(0), Integer(0)), Integer(0));
-  assert_equal(Integer::LogicalAnd(Integer(0), h1_0000_0000), Integer(0));
-  assert_equal(Integer::LogicalAnd(h1_0000_0000, h1_0000_0000), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(1), Integer::LogicOperation::And), Integer(1));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(0), Integer::LogicOperation::And), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), Integer(15), Integer::LogicOperation::And), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(15), Integer(15), Integer::LogicOperation::And), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, Integer(0), Integer::LogicOperation::And), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), hFFFF_FFFF, Integer::LogicOperation::And), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, hFFFF_FFFF, Integer::LogicOperation::And), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_FFFF_FFFF, Integer::LogicOperation::And), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::And), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), Integer(0), Integer::LogicOperation::And), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_0000_0000, Integer::LogicOperation::And), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(h1_0000_0000, h1_0000_0000, Integer::LogicOperation::And), Integer(0));
   //explicit num_bits
-  assert_equal(Integer::LogicalAnd(hFFFF_FFFF, h1_FFFF_FFFF, Integer(33)), hFFFF_FFFF);
-  assert_equal(Integer::LogicalAnd(Integer(0), h1_0000_0000, Integer(33)), Integer(0));
-  assert_equal(Integer::LogicalAnd(h1_0000_0000, h1_0000_0000, Integer(33)), h1_0000_0000);
-  assert_equal(Integer::LogicalAnd(h1_0000_0000, h1_0000_0000, Integer(34)), h1_0000_0000);
-  assert_equal(Integer::LogicalAnd(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer(15)), Integer(32767));
-  assert_equal(Integer::LogicalAnd(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer(8)), Integer(255));
-  assert_equal(Integer::LogicalAnd(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer(4)), Integer(15));
-  assert_equal(Integer::LogicalAnd(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer(1)), Integer(1));
-  assert_equal(Integer::LogicalAnd(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer(0)), Integer(0));
-  assert_equal(Integer::LogicalAnd(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer(64)), h0000_FFFF_FFFF_0000);
-  assert_equal(Integer::LogicalAnd(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer(90)), h0000_FFFF_FFFF_0000);
-  assert_equal(Integer::LogicalAnd(h0000_FFFF_FFFF_0000, hFFFF_0000_0000_FFFF, Integer(65)), Integer(0));
-  assert_equal(Integer::LogicalAnd(h0000_FFFF_FFFF_0000, hFFFF_FFFF_FFFF_FFFF, Integer(65)), h0000_FFFF_FFFF_0000);
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::And, Integer(33)), hFFFF_FFFF);
+  assert_equal(Integer::LogicalAndOrXor(Integer(0), h1_0000_0000, Integer::LogicOperation::And, Integer(33)), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(h1_0000_0000, h1_0000_0000, Integer::LogicOperation::And, Integer(33)), h1_0000_0000);
+  assert_equal(Integer::LogicalAndOrXor(h1_0000_0000, h1_0000_0000, Integer::LogicOperation::And, Integer(34)), h1_0000_0000);
+  assert_equal(Integer::LogicalAndOrXor(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::And, Integer(15)), Integer(32767));
+  assert_equal(Integer::LogicalAndOrXor(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::And, Integer(8)), Integer(255));
+  assert_equal(Integer::LogicalAndOrXor(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::And, Integer(4)), Integer(15));
+  assert_equal(Integer::LogicalAndOrXor(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::And, Integer(1)), Integer(1));
+  assert_equal(Integer::LogicalAndOrXor(h1_FFFF_FFFF, h1_FFFF_FFFF, Integer::LogicOperation::And, Integer(0)), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer::LogicOperation::And, Integer(64)), h0000_FFFF_FFFF_0000);
+  assert_equal(Integer::LogicalAndOrXor(hFFFF_FFFF_FFFF_FFFF, h0000_FFFF_FFFF_0000, Integer::LogicOperation::And, Integer(90)), h0000_FFFF_FFFF_0000);
+  assert_equal(Integer::LogicalAndOrXor(h0000_FFFF_FFFF_0000, hFFFF_0000_0000_FFFF, Integer::LogicOperation::And, Integer(65)), Integer(0));
+  assert_equal(Integer::LogicalAndOrXor(h0000_FFFF_FFFF_0000, hFFFF_FFFF_FFFF_FFFF, Integer::LogicOperation::And, Integer(65)), h0000_FFFF_FFFF_0000);
 }
 
 QUIZ_CASE(poincare_logic_not_compare)

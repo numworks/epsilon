@@ -37,11 +37,11 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
 
+  virtual Escher::StackViewController * stackController() const;
   virtual bool openMenuForCurveAtIndex(int index) = 0;
 
 protected:
   Responder * tabController() const;
-  virtual Escher::StackViewController * stackController() const;
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t rangeVersion() = 0;

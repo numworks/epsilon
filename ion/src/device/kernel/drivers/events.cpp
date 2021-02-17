@@ -41,7 +41,7 @@ void initInterruptions() {
 
 void shutdownInterruptions() {
   // Disable interruptions
-  NVIC.NVIC_ICER0()->setBit(tim2interruptionISRIndex, false);
+  NVIC.NVIC_ICER0()->setBit(tim2interruptionISRIndex, true);
 }
 
 //TODO: factorize with keyboard

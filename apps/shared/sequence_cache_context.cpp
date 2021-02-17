@@ -33,8 +33,8 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
     /* Do not use recordAtIndex : if the sequences have been reordered, the
      * name index and the record index may not correspond. */
     Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
-    assert(record.fullName()[0] == symbol.name()[0]);
     if (!record.isNull()) {
+      assert(record.fullName()[0] == symbol.name()[0]);
       Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
       rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(unknownSymbolValue));
       T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);

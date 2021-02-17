@@ -475,7 +475,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
-    ExpressionTableCellWithMessage * myCell = (ExpressionTableCellWithMessage *)cell;
+    ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
     const char * text = I18n::translate(messageTree->label());
     Layout resultLayout;
 

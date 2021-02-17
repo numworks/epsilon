@@ -1,4 +1,5 @@
 #include "script_node_cell.h"
+#include <algorithm>
 
 using namespace Escher;
 

@@ -15,6 +15,14 @@ void shutdownPeripheralsClocks(bool keepLEDAwake = false);
 void initPeripherals(bool authentication, bool fromBootloader);
 void shutdownPeripherals(bool keepLEDAwake = false);
 
+enum class InterruptionPriority : uint8_t {
+  High = 0,
+  MediumHigh = 10,
+  Medium = 20,
+  MediumLow = 30,
+  Low = 40
+};
+
 void initInterruptionPriorities();
 void initInterruptions();
 void shutdownInterruptions();

@@ -33,8 +33,9 @@ static constexpr int tim2interruptionISRIndex = 28;
 void initInterruptions() {
   // Flush pending interruptions
   NVIC.NVIC_ICPR0()->setBit(tim2interruptionISRIndex, true);
-  // Configure the priority
-  NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, 30);
+  /* Configure the priority: the event stalling interruption should not
+   * interrupt SVCalls (send data to display...) */
+  NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, static_cast<uint8_t>(Board::InterruptionPriority::MediumLow));
   // Enable interruptions
   NVIC.NVIC_ISER0()->setBit(tim2interruptionISRIndex, true);
 }

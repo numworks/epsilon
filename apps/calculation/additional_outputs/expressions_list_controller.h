@@ -35,7 +35,7 @@ private:
   Poincare::Layout layoutAtIndex(int index);
   virtual I18n::Message messageAtIndex(int index) = 0;
   // Cells
-  Escher::ExpressionTableCellWithPointer m_cells[k_maxNumberOfRows];
+  Escher::ExpressionTableCellWithMessage m_cells[k_maxNumberOfRows];
 };
 
 }

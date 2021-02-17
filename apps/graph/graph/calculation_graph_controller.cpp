@@ -35,7 +35,6 @@ void CalculationGraphController::viewWillAppear() {
     reloadBannerView();
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }
-  m_graphView->setOkView(nullptr);
   m_graphView->reload();
 }
 

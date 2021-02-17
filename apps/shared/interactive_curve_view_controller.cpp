@@ -155,7 +155,6 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   *m_rangeVersion = rangeVersion();
 
-  curveView()->setOkView(&m_okView);
   if (!curveView()->isMainViewSelected()) {
     curveView()->selectMainView(true);
     header()->setSelectedButton(-1);

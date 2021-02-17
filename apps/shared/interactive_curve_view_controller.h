@@ -8,7 +8,6 @@
 #include "cursor_view.h"
 #include "curve_selection_controller.h"
 #include "function_zoom_and_pan_curve_view_controller.h"
-#include "ok_view.h"
 #include "range_parameter_controller.h"
 #include "simple_interactive_curve_view_controller.h"
 
@@ -64,7 +63,6 @@ protected:
 
   InteractiveCurveViewRange * interactiveRange() { return m_interactiveRange; }
 
-  OkView m_okView;
 private:
   /* The value 21 is the actual height of the ButtonRow, that is
    * ButtonRowController::ContentView::k_plainStyleHeight + 1.

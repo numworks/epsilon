@@ -135,7 +135,6 @@ void HistogramController::willExitResponderChain(Responder * nextFirstResponder)
       return;
     }
     assert(selectedSeriesIndex() >= 0);
-    m_view.dataViewAtIndex(selectedSeriesIndex())->setForceOkDisplay(false);
   }
   MultipleDataViewController::willExitResponderChain(nextFirstResponder);
 }

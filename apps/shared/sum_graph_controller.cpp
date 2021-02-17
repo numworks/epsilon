@@ -30,7 +30,6 @@ void SumGraphController::viewWillAppear() {
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
-  m_graphView->setOkView(nullptr);
   m_graphView->selectMainView(true);
   m_graphView->setAreaHighlightColor(false);
   m_graphView->setAreaHighlight(NAN, NAN);

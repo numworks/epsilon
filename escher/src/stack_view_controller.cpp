@@ -117,14 +117,16 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   }
 }
 
-void StackViewController::pop() {
+void StackViewController::pop(bool setupNextController) {
   assert(m_numberOfChildren > 0);
   ViewController * vc = topViewController();
   if (vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
     m_view.popStack();
   }
   m_numberOfChildren--;
-  setupActiveViewController();
+  if (setupNextController) {
+    setupActiveViewController();
+  }
   vc->setParentResponder(nullptr);
   vc->viewDidDisappear();
 }

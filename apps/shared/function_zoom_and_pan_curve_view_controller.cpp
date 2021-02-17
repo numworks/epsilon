@@ -19,7 +19,6 @@ const char * FunctionZoomAndPanCurveViewController::title() {
 
 void FunctionZoomAndPanCurveViewController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_contentView.curveView()->setOkView(nullptr);
   /* We need to change the curve range to keep the same visual aspect of the
    * view. */
   adaptRangeForHeaders(true);

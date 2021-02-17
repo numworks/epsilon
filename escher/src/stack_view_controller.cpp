@@ -100,6 +100,7 @@ ViewController * StackViewController::topViewController() {
 }
 
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
+  assert(m_numberOfChildren < kMaxNumberOfStacks);
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
   /* Add the frame to the model */
   pushModel(frame);

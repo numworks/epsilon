@@ -75,21 +75,18 @@ State scan() {
 
 using namespace Regs;
 
-static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30};
+/* We want to prescale the timer to be able to set the auto-reload in
+ * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
+ * not to overflow PSC. */
+static constexpr int k_prescalerFactor = 4;
 
-void initInterruptions() {
-  /* Init EXTI interrupts (corresponding to keyboard column pins) and TIM4
-   * interrupt. */
-  class NVIC::NVIC_ISER0 iser0(0); // Reset value
-  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
-  for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
-    iser0.setBit(interruptionISRIndex[i], true);
-    icpr0.setBit(interruptionISRIndex[i], true);
-  }
-  // Flush pending interruptions
-  NVIC.NVIC_ICPR0()->set(icpr0);
-  // Enable interruptions
-  NVIC.NVIC_ISER0()->set(iser0);
+void initTimer() {
+  TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
+}
+
+void shutdownTimer() {
+  TIM4.DIER()->setUIE(false);
+  TIM4.CR1()->setCEN(false);
 }
 
 void initExtendedInterruptions() {
@@ -113,13 +110,46 @@ void initExtendedInterruptions() {
     EXTI.RTSR()->set(pin, true);
   }
 }
-/* We want to prescale the timer to be able to set the auto-reload in
- * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
- * not to overflow PSC. */
-static constexpr int k_prescalerFactor = 4;
 
-void initTimer() {
-  TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
+void shutdownExtendedInterruptions() {
+  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
+    uint8_t pin = Config::ColumnPins[i];
+    EXTI.IMR()->set(pin, false);
+  }
+}
+
+static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30};
+
+void initInterruptions() {
+  /* Init EXTI interrupts (corresponding to keyboard column pins) and TIM4
+   * interrupt. */
+  class NVIC::NVIC_ISER0 iser0(0); // Reset value
+  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
+  for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
+    iser0.setBit(interruptionISRIndex[i], true);
+    icpr0.setBit(interruptionISRIndex[i], true);
+  }
+  // Flush pending interruptions
+  while (NVIC.NVIC_ICPR0()->get() & icpr0.get()) { // Read to force writing
+    NVIC.NVIC_ICPR0()->set(icpr0);
+  }
+  // Enable interruptions
+  NVIC.NVIC_ISER0()->set(iser0);
+
+  initExtendedInterruptions();
+  initTimer();
+}
+
+void shutdownInterruptions() {
+  shutdownTimer();
+  shutdownExtendedInterruptions();
+
+  class NVIC::NVIC_ICER0 icer0(0); // Reset value
+  for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
+    icer0.setBit(interruptionISRIndex[i], true);
+  }
+  // Disable interruptions
+  NVIC.NVIC_ICER0()->set(icer0);
 }
 
 void init(bool activateInterruptions) {
@@ -145,20 +175,8 @@ void init(bool activateInterruptions) {
   if (activateInterruptions) {
     // Detecting interruption requires all row to be pulled-down
     activateAllRows();
-
-    initTimer();
-    initExtendedInterruptions();
     initInterruptions();
   }
-}
-
-void shutdownInterruptions() {
-  class NVIC::NVIC_ICER0 icer0(0); // Reset value
-  for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
-    icer0.setBit(interruptionISRIndex[i], true);
-  }
-  // Disable interruptions
-  NVIC.NVIC_ICER0()->set(icer0);
 }
 
 void shutdown() {
@@ -186,15 +204,13 @@ void launchDebounceTimer(uint16_t ms) {
 }
 
 void stopDebounceTimer() {
-  TIM4.DIER()->setUIE(false);
-  TIM4.CR1()->setCEN(false);
 }
 
 static bool sBouncing = false;
 
 void debounce() {
   sBouncing = false;
-  stopDebounceTimer();
+  shutdownTimer();
 }
 
 void handleInterruption() {

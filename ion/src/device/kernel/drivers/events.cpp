@@ -28,45 +28,53 @@ namespace Events {
 
 using namespace Regs;
 
-static constexpr int tim2interruptionISRIndex = 28;
-
-void initInterruptions() {
-  // Flush pending interruptions
-  NVIC.NVIC_ICPR0()->setBit(tim2interruptionISRIndex, true);
-  /* Configure the priority: the event stalling interruption should not
-   * interrupt SVCalls (send data to display...) */
-  NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, static_cast<uint8_t>(Board::InterruptionPriority::MediumLow));
-  // Enable interruptions
-  NVIC.NVIC_ISER0()->setBit(tim2interruptionISRIndex, true);
-}
-
-void shutdownInterruptions() {
-  // Disable interruptions
-  NVIC.NVIC_ICER0()->setBit(tim2interruptionISRIndex, true);
-}
-
-//TODO: factorize with keyboard
 /* We want to prescale the timer to be able to set the auto-reload in
  * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
  * not to overflow PSC. */
 static constexpr int k_prescalerFactor = 4;
 static constexpr int k_stallingDelay = 2*500*k_prescalerFactor; // TODO: calibrate
 
-void init() {
-  // Init timer
+void initTimer() {
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
   TIM2.DIER()->setUIE(true);
   TIM2.ARR()->set(k_stallingDelay);
+}
 
+void shutdownTimer() {
+  TIM2.DIER()->setUIE(false);
+  TIM2.CR1()->setCEN(false);
+}
+
+static constexpr int tim2interruptionISRIndex = 28;
+
+void initInterruptions() {
+  // Flush pending interruptions
+  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
+  icpr0.setBit(tim2interruptionISRIndex, true);
+  while (NVIC.NVIC_ICPR0()->get() & icpr0.get()) { // Read to force writing
+    NVIC.NVIC_ICPR0()->set(icpr0);
+  }
+  /* Configure the priority: the event stalling interruption should not
+   * interrupt SVCalls (send data to display...) */
+  NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, static_cast<uint8_t>(Board::InterruptionPriority::MediumLow));
+  // Enable interruptions
+  NVIC.NVIC_ISER0()->setBit(tim2interruptionISRIndex, true);
+
+  initTimer();
+}
+
+void shutdownInterruptions() {
+  shutdownTimer();
+  // Disable interruptions
+  NVIC.NVIC_ICER0()->setBit(tim2interruptionISRIndex, true);
+}
+
+void init() {
   initInterruptions();
 }
 
 void shutdown() {
   shutdownInterruptions();
-
-  // Shutdown timer
-  TIM2.DIER()->setUIE(false);
-  TIM2.CR1()->setCEN(false);
 }
 
 bool sLastUSBPlugged = false;

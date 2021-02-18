@@ -154,6 +154,7 @@ void handlePreemption(bool stalling) {
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Back)) {
     if (stalling && CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Custom)) {
+      Keyboard::Queue::sharedQueue()->flush();
       CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Custom);
     } else {
       Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);

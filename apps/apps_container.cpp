@@ -107,14 +107,13 @@ MathVariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
-void AppsContainer::suspend(bool checkIfOnOffKeyReleased) {
+void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
   resetShiftAlphaStatus();
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   // Display the prompt if it has a message to display
   if (promptController() != nullptr && s_activeApp->snapshot()!= onBoardingAppSnapshot() && s_activeApp->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
     s_activeApp->displayModalViewController(promptController(), 0.f, 0.f);
   }
-  Ion::Power::suspend(checkIfOnOffKeyReleased);
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
@@ -192,7 +191,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OnOff) {
-    suspend(true);
+    didSuspend(true);
     return true;
   }
   return false;

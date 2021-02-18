@@ -43,7 +43,7 @@
 
 #include <kernel/drivers/keyboard.h>
 #include <drivers/config/clocks.h>
-#include <kernel/drivers/circuit_breaker.h>
+#include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard_queue.h>
 
 namespace Ion {
@@ -223,18 +223,11 @@ void handleInterruption() {
   if (!sBouncing) {
     sBouncing = true;
     State state = Keyboard::scan();
-    /* Home is the only keyboard event which is preemptive. The other events
-     * are pushed on a queue and depile one at a time.
-     *
-     * NB: OnOff key could have been preemptive too to force shutting down the
-     * device despite the previous event being process. However, when switching
-     * the device on again, it is hard to know where to restart. We might have
-     * interrupted the redrawing of the screen and restarting where we stop
-     * would send weird commands to the display...
+    /* OnOff, Home and Back are the only keyboard keys which are preemptive.
+     * The states which doesn't involve one of these keys down are pushed on a
+     * queue and depile one at a time.
      * */
-    if (state.keyDown(Ion::Keyboard::Key::Home)) {
-      CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Home);
-    } else {
+    if (!Events::setPendingKeyboardStateIfPreemtive(state)) {
       Queue::sharedQueue()->push(state);
     }
     launchDebounceTimer(10);

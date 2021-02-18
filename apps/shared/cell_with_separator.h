@@ -19,6 +19,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   virtual Escher::HighlightCell * cell() = 0;
+  virtual bool separatorAboveCell() const { return true; }
 };
 
 }

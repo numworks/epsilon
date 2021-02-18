@@ -50,10 +50,7 @@ void FloatParameterController<T>::viewWillAppear() {
 }
 
 template<typename T>
-void FloatParameterController<T>::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == nullptr) {
-    return;
-  }
+void FloatParameterController<T>::viewDidDisappear() {
   if (parentResponder() == nullptr) {
     m_selectableTableView.deselectTable();
     m_selectableTableView.scrollToCell(0,0);

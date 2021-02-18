@@ -1,6 +1,7 @@
 #include "message_table_cell_with_editable_text_with_separator.h"
 
 using namespace Escher;
+using namespace Shared;
 
 namespace Settings {
 

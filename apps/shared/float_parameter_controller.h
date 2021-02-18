@@ -17,7 +17,7 @@ public:
   FloatParameterController(Responder * parentResponder);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
+  void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   int typeAtIndex(int index) override;

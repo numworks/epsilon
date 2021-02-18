@@ -6,9 +6,12 @@
 #include <drivers/display.h>
 #include <drivers/usb.h>
 #include <kernel/drivers/board.h>
+#include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/config/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
+#include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
+#include <ion/keyboard.h>
 #include <ion/src/shared/events_modifier.h>
 #include <limits.h>
 
@@ -32,7 +35,7 @@ using namespace Regs;
  * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
  * not to overflow PSC. */
 static constexpr int k_prescalerFactor = 4;
-static constexpr int k_stallingDelay = 2*500*k_prescalerFactor; // TODO: calibrate
+static constexpr int k_stallingDelay = 2*1000*k_prescalerFactor; // TODO: calibrate
 
 void initTimer() {
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
@@ -118,6 +121,7 @@ Ion::Keyboard::State sLastKeyboardState(0);
 bool sLastEventShift;
 bool sLastEventAlpha;
 bool sEventIsRepeating = false;
+Ion::Keyboard::State sPreemtiveState(0);
 
 bool canRepeatEventWithState() {
   return canRepeatEvent(sLastEvent)
@@ -126,9 +130,46 @@ bool canRepeatEventWithState() {
     && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Alpha) || Ion::Events::isLockActive());
 }
 
+void handlePreemption(bool stalling) {
+  Ion::Keyboard::State currentPreemptiveState = sPreemtiveState;
+  sPreemtiveState = Ion::Keyboard::State(0);
+  if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Home)) {
+    if (CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Home)) {
+      CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Home);
+    }
+    return;
+  }
+  if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::OnOff)) {
+    Power::suspend(true);
+    /* Power::suspend will flush the Keyboard queue, the very next event is the
+     * the OnOffEvent (to notify the userland that a switchOnOff has happened). */
+    Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
+    if (stalling && CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Home)) {
+      /* If we were stalling (processing), we load the Home checkpoint to avoid
+       * resuming the execution in the middle of redrawing the display for
+       * instance. */
+      CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Home);
+    }
+    return;
+  }
+  if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Back)) {
+    if (stalling && CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Custom)) {
+      CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Custom);
+    } else {
+      Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
+    }
+    return;
+  }
+  assert(currentPreemptiveState == Ion::Keyboard::State(0));
+}
+
 Ion::Events::Event nextEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
+
+  // Handle preemptive event before time is out
+  handlePreemption(false);
+
   uint64_t keysSeenUp = -1;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   uint64_t startTime = Timing::millis();
@@ -245,12 +286,13 @@ Ion::Events::Event getEvent(int * timeout) {
 }
 
 void stall() {
+  // Clear update interrupt flag
+  TIM2.SR()->setUIF(false);
+  handlePreemption(true);
+
   /* TODO: set another quick timer that would restore the image below in a few ms...*/
   //if (CircuitBreaker::hasCheckpoint()) {
     // TODO: should we shutdown any interruption here to be sure to complete our drawing
-    // Clear update interrupt flag
-    TIM2.SR()->setUIF(false);
-
     // TODO: draw a hourglass or spinning circle?
     static KDColor c = KDColorGreen;
     Ion::Device::Display::pushRectUniform(KDRect(155,115,10,10), c);
@@ -259,6 +301,14 @@ void stall() {
   /*} else {
     // TODO: go back to the home!
   }*/
+}
+
+bool setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State state) {
+  if (state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::OnOff)) {
+    sPreemtiveState = state;
+    return true;
+  }
+  return false;
 }
 
 }

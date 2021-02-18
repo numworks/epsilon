@@ -4,7 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
 
-namespace Settings {
+namespace Shared {
 
 class CellWithSeparator : public Escher::HighlightCell {
 public:

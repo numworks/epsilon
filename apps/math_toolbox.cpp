@@ -481,7 +481,8 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
     Poincare::ExceptionCheckpoint ecp;
     if (Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition2D && ExceptionRun(ecp)) {
-      Expression resultExpression = Expression::Parse(text, AppsContainer::sharedAppsContainer()->globalContext());
+      // No context is given so that f(x) is never parsed as f×(x)
+      Expression resultExpression = Expression::Parse(text, nullptr);
       if (!resultExpression.isUninitialized()) {
         // The text is parsable, we create its layout an insert it.
         resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);

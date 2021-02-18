@@ -2,6 +2,7 @@
 #define ESCHER_SCROLL_VIEW_INDICATOR_H
 
 #include <escher/view.h>
+#include <escher/metric.h>
 
 namespace Escher {
 
@@ -22,7 +23,7 @@ public:
   bool update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength);
   bool visible() const { return 0.0f < m_offset || m_visibleLength < 1.0f; }
 protected:
-  constexpr static KDCoordinate k_indicatorThickness = 4;
+  constexpr static KDCoordinate k_indicatorThickness = Metric::ScrollViewBarThickness;
   float m_offset;
   float m_visibleLength;
   KDColor m_trackColor;

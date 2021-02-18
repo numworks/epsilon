@@ -140,14 +140,23 @@ void handlePreemption(bool stalling) {
     return;
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::OnOff)) {
+    if (stalling && CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Custom)) {
+      /* If we are still processing an event (stalling) and in a middle of a
+       * "hard-might-be-long computation" (custom checkpoint is set), we
+       * checkout the Custom checkpoint and try again to wait for the event to
+       * be processed in case we can avoid preemptively switching off. */
+      sPreemtiveState = currentPreemptiveState;
+      CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Custom);
+      return;
+    }
     Power::suspend(true);
     /* Power::suspend will flush the Keyboard queue, the very next event is the
      * the OnOffEvent (to notify the userland that a switchOnOff has happened). */
     Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
     if (stalling && CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Home)) {
-      /* If we were stalling (processing), we load the Home checkpoint to avoid
-       * resuming the execution in the middle of redrawing the display for
-       * instance. */
+      /* If we were stalling (in the middle of processing an event), we load
+       * the Home checkpoint to avoid resuming the execution in the middle of
+       * redrawing the display for instance. */
       CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Home);
     }
     return;

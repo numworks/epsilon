@@ -1004,6 +1004,10 @@ void CurveView::layoutSubviews(bool force) {
     m_cursorView->setCursorFrame(cursorFrame(), force);
   }
   if (m_bannerView != nullptr) {
+    /* Changing the banner frame may move the labels of the horizontal axis. We thus need to dirty the band that can contain them. */
+    const KDCoordinate dirtyHeight = 2 * (k_font->glyphSize().height() + k_labelMargin);
+    KDRect bannerRect = m_bannerView->bounds();
+    markRectAsDirty(KDRect(bannerRect.x(), bannerRect.y() - dirtyHeight, bannerRect.width(), dirtyHeight));
     m_bannerView->setFrame(bannerFrame(), force);
   }
 }

@@ -51,13 +51,21 @@ SECTIONS {
     *(.text.__assert)
     *(.text.memcpy)
     *(.text.memset)
-    /*
+
+    /* Space optimization - fills the internal flash with often used code */
     *(.text.strlen)
     *(.text.strncmp)
     *(.text.strlcpy)
     *(.text.strcmp)
     *(.text.memmove)
-    */
+    *(.text._ZN3Ion6Device8Keyboard8debounceEv)
+    *(.text._ZN3Ion6Device8Keyboard19launchDebounceTimerEt*)
+    *(.text._ZN3Ion6Device8Keyboard13shutdownTimerEv*)
+    *(.text._ZGVZN3Ion6Device8Keyboard5Queue*)
+    *(.text._ZN3Ion6Device8Keyboard5Queue*)
+    *(.text._ZNK3Ion6Device8Keyboard5Queue*)
+    *(.text.tim4_handler)
+
     /* 'start' dependencies */
     *(.text._ZN3Ion6Device5Board4initEv)
     *(.text._ZN3Ion6Device5Board7initFPUEv)
@@ -121,6 +129,9 @@ SECTIONS {
     *(.rodata._ZN3Ion6Device4Regs*)
     *(.rodata._ZN3Ion6Device8Keyboard6Config*)
     *(.rodata._ZN3Ion6Device5BoardL17interruptionIndexE)
+    /* Space optimization*/
+    *(.rodata._ZN3Ion6Events14s_dataForEventE)
+    *(.rodata.str1.1)
   } >INTERNAL_FLASH_KERNEL
 
   .init_array : {

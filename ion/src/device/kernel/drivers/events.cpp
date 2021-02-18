@@ -130,14 +130,15 @@ bool canRepeatEventWithState() {
     && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Alpha) || Ion::Events::isLockActive());
 }
 
-void handlePreemption(bool stalling) {
+bool handlePreemption(bool stalling) {
   Ion::Keyboard::State currentPreemptiveState = sPreemtiveState;
   sPreemtiveState = Ion::Keyboard::State(0);
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Home)) {
     if (CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Home)) {
       CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Home);
+      return true;
     }
-    return;
+    return false;
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::OnOff)) {
     if (stalling && CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Custom)) {
@@ -147,7 +148,7 @@ void handlePreemption(bool stalling) {
        * be processed in case we can avoid preemptively switching off. */
       sPreemtiveState = currentPreemptiveState;
       CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Custom);
-      return;
+      return true;
     }
     Power::suspend(true);
     /* Power::suspend will flush the Keyboard queue, the very next event is the
@@ -158,19 +159,22 @@ void handlePreemption(bool stalling) {
        * the Home checkpoint to avoid resuming the execution in the middle of
        * redrawing the display for instance. */
       CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Home);
+      return true;
     }
-    return;
+    return false;
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Back)) {
     if (stalling && CircuitBreaker::hasCheckpoint(CircuitBreaker::Checkpoint::Custom)) {
       Keyboard::Queue::sharedQueue()->flush();
       CircuitBreaker::loadCheckpoint(CircuitBreaker::Checkpoint::Custom);
+      return true;
     } else {
       Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
+      return false;
     }
-    return;
   }
   assert(currentPreemptiveState == Ion::Keyboard::State(0));
+  return false;
 }
 
 Ion::Events::Event nextEvent(int * timeout) {
@@ -178,7 +182,12 @@ Ion::Events::Event nextEvent(int * timeout) {
   assert(*timeout > delayBetweenRepeat);
 
   // Handle preemptive event before time is out
-  handlePreemption(false);
+  if (handlePreemption(false)) {
+    /* If handlePreemption returns true, it means a PendSV was generated. We
+     * return early to speed up the context switch (otherwise, PendSV will wait
+     * until the SVCall ends). */
+    return Ion::Events::None;
+  }
 
   uint64_t keysSeenUp = -1;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
@@ -298,7 +307,10 @@ Ion::Events::Event getEvent(int * timeout) {
 void stall() {
   // Clear update interrupt flag
   TIM2.SR()->setUIF(false);
-  handlePreemption(true);
+
+  if (handlePreemption(true)) {
+    return;
+  }
 
   /* TODO: set another quick timer that would restore the image below in a few ms...*/
   //if (CircuitBreaker::hasCheckpoint()) {

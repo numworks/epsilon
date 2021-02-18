@@ -92,15 +92,16 @@ inline size_t frameSize(uint32_t excReturn) {
   return useBasicFrame ? k_basicFrameSize : k_extendedFrameSize;
 }
 
-inline uint8_t * stackSnapshot(Checkpoint checkpoint) {
+// Cf comment in privateSetCheckpoint for the attribute explantion
+inline uint8_t * __attribute__((optimize("O0"))) stackSnapshot(Checkpoint checkpoint) {
   return checkpoint == Checkpoint::Custom ? sCustomStackSnapshot : sHomeStackSnapshot;
 }
 
-inline uint8_t ** stackSnapshotAddress(Checkpoint checkpoint) {
+inline uint8_t ** __attribute__((optimize("O0"))) stackSnapshotAddress(Checkpoint checkpoint) {
   return checkpoint == Checkpoint::Custom ? &sCustomStackSnapshotAddress : &sHomeStackSnapshotAddress;
 }
 
-inline size_t * stackSnapshotSize(Checkpoint checkpoint) {
+inline size_t * __attribute__((optimize("O0"))) stackSnapshotSize(Checkpoint checkpoint) {
   return checkpoint == Checkpoint::Custom ? &sCustomStackSnapshotSize : &sHomeStackSnapshotSize;
 }
 
@@ -154,7 +155,10 @@ void privateSetCheckpoint(Checkpoint checkpoint, uint8_t * frameAddress, uint32_
 
   // Store the interruption status cortex register
   if (setjmp(*registers(checkpoint))) {
-    /* WARNING: you can't use previous local variables: they might be stored on the stack which hasn't been restored yet! */
+    /* WARNING: at this point the stack is corrupted. You can't use variable
+     * stored on the stack. To prevent the compiler to do so, we decrease the
+     * optimization of stackSnapshotAddress, stackSnapshot and stackSnapshotSize
+     * funtctions. */
     // Restore stack frame
     memcpy(*stackSnapshotAddress(checkpoint), stackSnapshot(checkpoint), *stackSnapshotSize(checkpoint));
   }

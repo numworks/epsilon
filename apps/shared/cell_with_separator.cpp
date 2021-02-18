@@ -3,7 +3,7 @@
 
 using namespace Escher;
 
-namespace Settings {
+namespace Shared {
 
 void CellWithSeparator::setHighlighted(bool highlight) {
   cell()->setHighlighted(highlight);

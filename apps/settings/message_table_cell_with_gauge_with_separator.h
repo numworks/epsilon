@@ -2,11 +2,11 @@
 #define SETTINGS_MESSAGE_TABLE_WITH_GAUGE_WITH_SEPARATOR_H
 
 #include <escher/message_table_cell_with_gauge.h>
-#include "cell_with_separator.h"
+#include "../shared/cell_with_separator.h"
 
 namespace Settings {
 
-class MessageTableCellWithGaugeWithSeparator : public CellWithSeparator {
+class MessageTableCellWithGaugeWithSeparator : public Shared::CellWithSeparator {
 public:
   MessageTableCellWithGaugeWithSeparator(I18n::Message message);
   const Escher::View * accessoryView() const { return m_cell.accessoryView(); }

@@ -1,5 +1,4 @@
 #include <escher/scroll_view_indicator.h>
-#include <escher/metric.h>
 #include <escher/palette.h>
 extern "C" {
 #include <assert.h>

@@ -78,17 +78,15 @@ private:
   void setCurveViewAsMainView();
 
   void navigationButtonAction();
-  /* Those  two methods return the new status for the button, ie either
-   * m_interactiveRange->m_zoomAuto or m_zoomNormalize respectively. */
+  /* This method returns the new status for the button,
+   * ie m_interactiveRange->zoomAuto(). */
   bool autoButtonAction();
-  bool normalizeButtonAction();
 
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
   FunctionZoomAndPanCurveViewController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;
   Escher::ButtonState m_autoButton;
-  Escher::ButtonState m_normalizeButton;
   Escher::Button m_navigationButton;
   Escher::Button m_rangeButton;
   Escher::Button m_calculusButton;

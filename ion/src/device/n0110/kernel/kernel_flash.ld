@@ -89,7 +89,6 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Reset16coreWhilePluggedEv)
     *(.text._ZN3Ion6Device5Board25shutdownPeripheralsClocksEb)
     *(.text._ZN3Ion6Device5Power41shutdownExternalFlashAndEnterLowPowerModeEb)
-    *(.text._ZN3Ion6Device5Board21shutdownInterruptionsEv)
 
     /* 'suspend' dependencies '*/
     *(.text._ZN3Ion6Device5Board16initSystemClocksEv)

@@ -367,6 +367,10 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
    * dispatched on the LayoutField. For instance, when someone wants to insert
    * text in the field from the outside. In this scenario, let's make sure the
    * insertionCursor is invalidated. */
+
+  /* TODO : dirty code : Reloads are handled in different places (handleEvent(),
+   *        insertLayoutAtCursor() or here) and can be called several times
+   *        depending on text source (events, copy-paste, or toolbox). */
   m_contentView.invalidateInsertionCursor();
 
   // Delete the selected layouts if needed
@@ -415,7 +419,9 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
       return true;
     }
-    insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText);
+    // If first inserted character was empty, cursor must be left of layout
+    bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
+    insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText, forceCursorLeftOfText);
   }
   return true;
 }
@@ -681,7 +687,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout) {
+void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout, bool forceCursorLeftOfText) {
   if (layoutR.isUninitialized()) {
     return;
   }
@@ -701,6 +707,9 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   if (layoutWillBeMerged) {
     if (forceCursorRightOfLayout) {
       cursorMergedLayout = lastMergedLayoutChild;
+    } else if (forceCursorLeftOfText) {
+      // First Merged Layout Child
+      cursorMergedLayout = layoutR.numberOfChildren() > 0 ? layoutR.childAtIndex(0) : Layout();
     } else {
       cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
       if (cursorMergedLayout == layoutR) {
@@ -741,14 +750,15 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
    * */
 
   if (!forceCursorRightOfLayout) {
-    if (!layoutWillBeMerged) {
+    if (!layoutWillBeMerged && !forceCursorLeftOfText) {
       assert(cursorMergedLayout.isUninitialized());
       assert(!correspondingExpression.isUninitialized());
       cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
     }
     assert(!cursorMergedLayout.isUninitialized());
     m_contentView.cursor()->setLayout(cursorMergedLayout);
-    m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
+    // If forceCursorLeftOfText, position cursor left of first merged layout.
+    m_contentView.cursor()->setPosition(forceCursorLeftOfText ? LayoutCursor::Position::Left : LayoutCursor::Position::Right);
   } else if (!layoutWillBeMerged) {
     m_contentView.cursor()->setLayout(layoutR);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);

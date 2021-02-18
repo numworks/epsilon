@@ -22,11 +22,6 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     graphController->autoButtonAction();
     return true;
   }, this), KDFont::SmallFont),
-  m_normalizeButton(this, I18n::Message::Orthonormal, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
-    graphController->normalizeButtonAction();
-    return true;
-  }, this), KDFont::SmallFont),
   m_navigationButton(this, I18n::Message::Navigate, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->navigationButtonAction();
@@ -57,7 +52,6 @@ float InteractiveCurveViewController::addMargin(float y, float range, bool isVer
 
 void InteractiveCurveViewController::updateZoomButtons() {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
-  m_normalizeButton.setState(m_interactiveRange->zoomNormalize());
 }
 
 const char * InteractiveCurveViewController::title() {
@@ -128,11 +122,11 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
   if (isEmpty()) {
     return 0;
   }
-  return 5;
+  return 4;
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[] = {&m_autoButton, &m_normalizeButton, &m_navigationButton, &m_rangeButton, &m_calculusButton};
+  const Button * buttons[] = {&m_autoButton, &m_rangeButton, &m_navigationButton, &m_calculusButton};
   return (Button *)buttons[index];
 }
 
@@ -295,15 +289,6 @@ bool InteractiveCurveViewController::autoButtonAction() {
     setCurveViewAsMainView();
   }
   return m_interactiveRange->zoomAuto();
-}
-
-bool InteractiveCurveViewController::normalizeButtonAction() {
-  if (!m_interactiveRange->zoomNormalize()) {
-    m_interactiveRange->setZoomAuto(false);
-    m_interactiveRange->normalize();
-    setCurveViewAsMainView();
-  }
-  return m_interactiveRange->zoomNormalize();
 }
 
 void InteractiveCurveViewController::navigationButtonAction() {

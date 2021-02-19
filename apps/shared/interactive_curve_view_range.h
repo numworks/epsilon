@@ -13,15 +13,11 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
-    m_delegate(nullptr),
+    m_delegate(delegate),
     m_offscreenYAxis(0.f),
     m_zoomAuto(true),
     m_zoomNormalize(false)
-  {
-    if (delegate) {
-      setDelegate(delegate);
-    }
-  }
+  {}
 
   static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
   /* The method isOrthonormal takes the loss of significance when changing the

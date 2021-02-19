@@ -21,7 +21,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->autoButtonAction();
     return true;
-  }, this), KDFont::SmallFont),
+  }, this), &m_autoDotView, KDFont::SmallFont),
   m_navigationButton(this, I18n::Message::Navigate, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->navigationButtonAction();

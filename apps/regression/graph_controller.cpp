@@ -262,7 +262,12 @@ CurveView * GraphController::curveView() {
 }
 
 bool GraphController::openMenuForCurveAtIndex(int index) {
-  *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(index);
+  int activeIndex = m_store->indexOfKthNonEmptySeries(index);
+  if (*m_selectedSeriesIndex != activeIndex) {
+    *m_selectedSeriesIndex = activeIndex;
+    Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
+    m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
+  }
   stackController()->push(&m_graphOptionsController);
   return true;
 }

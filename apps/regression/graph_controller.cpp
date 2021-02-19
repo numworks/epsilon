@@ -22,6 +22,7 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
   m_seriesSelectionController(this),
+  m_calculusButton(this, I18n::Message::Regression, calculusButtonInvocation(), KDFont::SmallFont),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex)
 {

@@ -63,6 +63,7 @@ private:
   int numberOfCurves() const override;
   bool openMenuForCurveAtIndex(int index) override;
   SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
+  Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }
 
   void setRoundCrossCursorView();
   Shared::CursorView m_crossCursorView;
@@ -72,6 +73,7 @@ private:
   Store * m_store;
   GraphOptionsController m_graphOptionsController;
   SeriesSelectionController m_seriesSelectionController;
+  Escher::Button m_calculusButton;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;

@@ -55,11 +55,9 @@ private:
       return &m_distributionCurveView;
     }
   private:
-    constexpr static KDCoordinate k_titleHeightMargin = 5;
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    Escher::MessageTextView m_titleView;
     Escher::SelectableTableView * m_selectableTableView;
     DistributionCurveView m_distributionCurveView;
   };

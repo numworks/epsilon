@@ -50,7 +50,11 @@ void FunctionGraphController::viewWillAppear() {
 }
 
 bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
-  *m_indexFunctionSelectedByCursor = index;
+  if (index != *m_indexFunctionSelectedByCursor) {
+    *m_indexFunctionSelectedByCursor = index;
+    Coordinate2D<double> xy = xyValues(index, m_cursor->t(), textFieldDelegateApp()->localContext());
+    m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
+  }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   curveParameterController()->setRecord(record);
   StackViewController * stack = stackController();

@@ -51,6 +51,8 @@ protected:
   virtual bool cursorMatchesModel() = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
+  virtual Escher::Button * calculusButton() const = 0;
+  Escher::Invocation calculusButtonInvocation();
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
@@ -93,7 +95,6 @@ private:
   Escher::Button m_navigationButton;
   Escher::ButtonState m_rangeButton;
   Escher::UnequalView m_rangeUnequalView;
-  Escher::Button m_calculusButton;
 };
 
 }

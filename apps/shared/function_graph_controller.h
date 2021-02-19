@@ -35,6 +35,7 @@ protected:
   void reloadBannerView() override;
   bool openMenuForCurveAtIndex(int index) override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
+  Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorT(Ion::Storage::Record record);
   virtual FunctionStore * functionStore() const;
@@ -61,6 +62,7 @@ private:
   bool moveCursorVertically(int direction) override;
   uint32_t rangeVersion() override;
 
+  Escher::Button m_calculusButton;
   int * m_indexFunctionSelectedByCursor;
 };
 

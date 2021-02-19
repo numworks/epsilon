@@ -9,6 +9,10 @@ ButtonState::ButtonState(Responder * parentResponder, I18n::Message textBody, In
   m_stateView(stateView)
 {}
 
+void ButtonState::setState(bool state) {
+  m_stateView->setState(state);
+}
+
 View * ButtonState::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -39,7 +43,7 @@ KDSize ButtonState::minimalSizeForOptimalDisplay() const {
   KDSize textSize = Button::minimalSizeForOptimalDisplay();
   KDSize stateSize = m_stateView->minimalSizeForOptimalDisplay();
   return KDSize(
-    textSize.width() + stateSize.width() + k_stateMargin,
+    textSize.width() + (stateSize.width() > 0 ? stateSize.width() + k_stateMargin : 0),
     std::max(textSize.height(), stateSize.height()));
 }
 

@@ -14,9 +14,6 @@ namespace Shared {
 
 void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
   m_delegate = delegate;
-  if (delegate) {
-    m_delegate->updateZoomButtons();
-  }
 }
 
 void InteractiveCurveViewRange::setZoomAuto(bool v) {

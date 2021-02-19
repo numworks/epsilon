@@ -33,16 +33,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
-  }, this), &m_rangeUnequalView, KDFont::SmallFont),
-  m_calculusButton(this, I18n::Message::PlotOptions, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = static_cast<InteractiveCurveViewController *>(context);
-    if (graphController->curveSelectionController()->numberOfRows() > 1) {
-      graphController->stackController()->push(graphController->curveSelectionController());
-    } else {
-      graphController->openMenuForCurveAtIndex(0);
-    }
-    return true;
-  }, this), KDFont::SmallFont)
+  }, this), &m_rangeUnequalView, KDFont::SmallFont)
 {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
@@ -130,7 +121,7 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[] = {&m_autoButton, &m_rangeButton, &m_navigationButton, &m_calculusButton};
+  const Button * buttons[] = {&m_autoButton, &m_rangeButton, &m_navigationButton, calculusButton()};
   return (Button *)buttons[index];
 }
 
@@ -298,6 +289,18 @@ bool InteractiveCurveViewController::autoButtonAction() {
 void InteractiveCurveViewController::navigationButtonAction() {
   static_cast<TabViewController *>(tabController())->setDisplayTabs(false);
   stackController()->push(zoomParameterController());
+}
+
+Invocation InteractiveCurveViewController::calculusButtonInvocation() {
+  return Invocation([](void * context, void * sender) {
+    InteractiveCurveViewController * graphController = static_cast<InteractiveCurveViewController *>(context);
+    if (graphController->curveSelectionController()->numberOfRows() > 1) {
+      graphController->stackController()->push(graphController->curveSelectionController());
+    } else {
+      graphController->openMenuForCurveAtIndex(0);
+    }
+    return true;
+  }, this);
 }
 
 }

@@ -230,7 +230,7 @@ constexpr ToolboxMessageTree electricityChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialVoltChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitResistanceMenu, unitResistanceOhmChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, unitCapacitanceFaradChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, electricitOtherChildren), // TODO : Translate (FR) Autres
+  ToolboxMessageTree::Node(I18n::Message::OthersMenu, electricitOtherChildren),
 };
 
 constexpr ToolboxMessageTree unitForceNewtonChildren[] = {
@@ -298,14 +298,14 @@ constexpr ToolboxMessageTree OtherChildren[] = {
 
 constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
-  ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, timeAndFrequencyChildren), // TODO : Translate (FR) Temps et fréquence
-  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, volumeAndSurfaceChildren), // TODO : Translate (FR) Volume et superficie
+  ToolboxMessageTree::Node(I18n::Message::UnitTimeAndFrequencyMenu, timeAndFrequencyChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitVolumeAndAreaMenu, volumeAndSurfaceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassFork, true),
-  ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, electricityChildren), // TODO : Translate (FR) Electricité
-  ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, forceAndPressureChildren), // TODO : Translate (FR) Force et pression
-  ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, energyAndPowerChildren), // TODO : Translate (FR) Energie et puissance
+  ToolboxMessageTree::Node(I18n::Message::UnitElectricityMenu, electricityChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitForceAndPressureMenu, forceAndPressureChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitEnergyAndPowerMenu, energyAndPowerChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, OtherChildren), // TODO : Translate (FR) Autres
+  ToolboxMessageTree::Node(I18n::Message::OthersMenu, OtherChildren),
 };
 
 constexpr ToolboxMessageTree trigonometryChildren[] = {
@@ -325,7 +325,7 @@ constexpr ToolboxMessageTree commonFunctionsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::FracCommandWithArg, I18n::Message::FracPart),
   ToolboxMessageTree::Leaf(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling),
   ToolboxMessageTree::Leaf(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding),
-  ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren), // TODO : Translate (FR) Fonctions hyperboliques
+  ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
 };
 
 constexpr ToolboxMessageTree calculChildren[] = {
@@ -380,9 +380,9 @@ constexpr ToolboxMessageTree predictionChildren[] = {
 
 constexpr ToolboxMessageTree probabilityChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
-  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityLawsChildren), // TODO : Translate (FR) Lois de probabilité
-  ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomChildren), // TODO : Translate (FR) Aléatoire
-  ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren), // TODO : Translate (FR) Statistiques
+  ToolboxMessageTree::Node(I18n::Message::Distributions, probabilityLawsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Random, randomChildren),
+  ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren),
 };
 
 constexpr ToolboxMessageTree matricesChildren[] = {
@@ -427,12 +427,12 @@ constexpr ToolboxMessageTree listsChildren[] = {
 #endif
 
 constexpr ToolboxMessageTree menu[] = {
-  ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, commonFunctionsChildren), // TODO : Translate (FR) Fonctions usuelles
-  ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren), // TODO : Translate (FR) Analyse
+  ToolboxMessageTree::Node(I18n::Message::UsualFunctions, commonFunctionsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
   ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
   ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
-  ToolboxMessageTree::Node(I18n::Message::Matrices, matricesVectorsChildren), // TODO : Translate (FR) Matrices et vecteurs
+  ToolboxMessageTree::Node(I18n::Message::MatricesAndVectors, matricesVectorsChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
 #if LIST_ARE_DEFINED
   ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),

@@ -16,6 +16,9 @@ constexpr uint8_t unequalMask[UnequalView::k_size][UnequalView::k_size] = {
 };
 
 void UnequalView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (!m_state) {
+    return;
+  }
   /* Draw the symbol aligned on the right of the view and vertically centered. */
   KDRect frame(bounds().width() - k_size, bounds().height() / 2 - k_size / 2, k_size, k_size);
   KDColor buffer[k_size * k_size];

@@ -7,7 +7,7 @@
 
 namespace Escher {
 
-constexpr uint8_t kMaxNumberOfStacks = 4;
+constexpr uint8_t kMaxNumberOfStacks = 5;
 
 class StackViewController : public ViewController {
 public:
@@ -70,7 +70,7 @@ private:
   ControllerView m_view;
   void pushModel(Frame frame);
   void setupActiveViewController();
-  static constexpr uint8_t k_maxNumberOfChildren = 4;
+  static constexpr uint8_t k_maxNumberOfChildren = 5;
   Frame m_childrenFrame[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;

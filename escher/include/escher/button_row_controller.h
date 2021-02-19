@@ -34,6 +34,7 @@ public:
   int selectedButton();
   bool setSelectedButton(int selectedButton);
   void setMessageOfButtonAtIndex(I18n::Message message, int index);
+  void reloadButtons() { m_contentView.layoutSubviews(); }
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

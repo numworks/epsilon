@@ -5,6 +5,7 @@
 #include <escher/button_row_controller.h>
 #include <escher/button_state.h>
 #include <escher/toggleable_dot_view.h>
+#include <escher/unequal_view.h>
 #include <poincare/coordinate_2D.h>
 #include "cursor_view.h"
 #include "curve_selection_controller.h"
@@ -90,7 +91,8 @@ private:
   Escher::ButtonState m_autoButton;
   Escher::ToggleableDotView m_autoDotView;
   Escher::Button m_navigationButton;
-  Escher::Button m_rangeButton;
+  Escher::ButtonState m_rangeButton;
+  Escher::UnequalView m_rangeUnequalView;
   Escher::Button m_calculusButton;
 };
 

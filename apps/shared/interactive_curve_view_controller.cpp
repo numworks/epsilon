@@ -33,7 +33,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
-  }, this), KDFont::SmallFont),
+  }, this), &m_rangeUnequalView, KDFont::SmallFont),
   m_calculusButton(this, I18n::Message::PlotOptions, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = static_cast<InteractiveCurveViewController *>(context);
     if (graphController->curveSelectionController()->numberOfRows() > 1) {
@@ -52,6 +52,7 @@ float InteractiveCurveViewController::addMargin(float y, float range, bool isVer
 
 void InteractiveCurveViewController::updateZoomButtons() {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
 
 const char * InteractiveCurveViewController::title() {

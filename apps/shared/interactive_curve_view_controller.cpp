@@ -44,6 +44,8 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     return true;
   }, this), KDFont::SmallFont)
 {
+  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
 
 float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) {
@@ -53,6 +55,7 @@ float InteractiveCurveViewController::addMargin(float y, float range, bool isVer
 void InteractiveCurveViewController::updateZoomButtons() {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
+  header()->reloadButtons();
 }
 
 const char * InteractiveCurveViewController::title() {

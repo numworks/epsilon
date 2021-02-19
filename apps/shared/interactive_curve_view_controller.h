@@ -4,6 +4,7 @@
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/button_row_controller.h>
 #include <escher/button_state.h>
+#include <escher/toggleable_dot_view.h>
 #include <poincare/coordinate_2D.h>
 #include "cursor_view.h"
 #include "curve_selection_controller.h"
@@ -87,6 +88,7 @@ private:
   FunctionZoomAndPanCurveViewController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;
   Escher::ButtonState m_autoButton;
+  Escher::ToggleableDotView m_autoDotView;
   Escher::Button m_navigationButton;
   Escher::Button m_rangeButton;
   Escher::Button m_calculusButton;

@@ -33,7 +33,7 @@ private:
   };
   class NormalizeCell : public CellWithSeparator {
   public:
-    NormalizeCell() : m_cell(I18n::Message::Orthonormal) {}
+    NormalizeCell() : m_cell(I18n::Message::MakeOrthonormal) {}
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
     Escher::HighlightCell * cell() override { return &m_cell; }

@@ -27,33 +27,27 @@ namespace Probability {
 constexpr int CalculationController::k_titleBufferSize;
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView),
   m_distributionCurveView(distribution, calculation)
 {
 }
 
 int CalculationController::ContentView::numberOfSubviews() const {
-  return 3;
+  return 2;
 }
 
 View * CalculationController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 3);
+  assert(index >= 0 && index < 2);
   if (index == 0) {
-    return &m_titleView;
-  }
-  if (index == 1) {
     return m_selectableTableView;
   }
   return &m_distributionCurveView;
 }
 
 void CalculationController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleHeightMargin;
-  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight+2*k_tableMargin;
-  m_selectableTableView->setFrame(KDRect(0,  titleHeight, bounds().width(), calculationHeight), force);
-  m_distributionCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), calculationHeight), force);
+  m_distributionCurveView.setFrame(KDRect(0, calculationHeight, bounds().width(), bounds().height() - calculationHeight), force);
 }
 
 CalculationController::CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation) :

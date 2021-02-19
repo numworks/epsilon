@@ -22,6 +22,7 @@ LocalizationController::ContentView::ContentView(LocalizationController * contro
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
     m_countryWarningLines[i].setBackgroundColor(Palette::WallScreen);
     m_countryWarningLines[i].setFont(KDFont::SmallFont);
+    m_countryWarningLines[i].setTextColor(Escher::Palette::GrayDark);
     m_countryWarningLines[i].setAlignment(0.5f, 0.5f);
     m_countryWarningLines[i].setMessage(textMessages[i]);
   }

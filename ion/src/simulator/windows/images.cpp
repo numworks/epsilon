@@ -7,6 +7,8 @@
 #include <gdiplus.h>
 #include <assert.h>
 
+#define SIMUICON  101
+
 /* Loading images using GDI+
  * On Windows, we decompress JPEG images using GDI+ which is widely available.
  * Note that this adds an extra runtime dependency (as compared to just SDL),
@@ -14,6 +16,7 @@
 
 HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
   HINSTANCE hInstance = GetModuleHandle(0);
+  HICON Icon = LoadIcon(hInstance, MAKEINTRESOURCE(SIMUICON));
   *stream = nullptr;
   HRSRC hC = FindResource(hInstance, name, RT_RCDATA);
   if (!hC) {

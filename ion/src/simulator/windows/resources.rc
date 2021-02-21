@@ -1,5 +1,7 @@
 #include <ion/src/simulator/windows/resources_gen.rc>
 
+SIMUICON ICON "../assets/logoWin.ico"
+
 1 VERSIONINFO
 FILEVERSION     1,0,0,0
 PRODUCTVERSION  1,0,0,0

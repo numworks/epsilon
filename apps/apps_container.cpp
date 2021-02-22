@@ -36,19 +36,6 @@ AppsContainer::AppsContainer() :
   m_usbConnectedSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
-#if __EMSCRIPTEN__
-  /* AppsContainer::poincareCircuitBreaker uses Ion::Keyboard::scan(), which
-   * calls emscripten_sleep. If we set the poincare circuit breaker, we would
-   * need to whitelist all the methods that might be in the call stack when
-   * poincareCircuitBreaker is run. This means either whitelisting all Epsilon
-   * (which makes bigger files to download and slower execution), or
-   * whitelisting all the symbols (that's a big amount of symbols to find and
-   * quite painy to maintain).
-   * We just remove the circuit breaker for now.
-   * TODO: Put the Poincare circuit breaker back on epsilon's web emulator */
-#else
-  Poincare::Expression::SetCircuitBreaker(AppsContainer::poincareCircuitBreaker);
-#endif
   Ion::Storage::sharedStorage()->setDelegate(this);
 }
 

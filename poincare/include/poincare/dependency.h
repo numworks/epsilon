@@ -48,6 +48,10 @@ public:
 
   int numberOfDependencies() const { return childAtIndex(1).numberOfChildren(); }
   void addDependency(Expression newDependency);
+  /* Store the dependecies in m and replace the dependency node with the true expression. */
+  void extractDependencies(Matrix m);
+
+private:
   void dumpDependencies(Matrix m);
 };
 

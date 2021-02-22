@@ -885,15 +885,14 @@ Expression Expression::factorDependencies(ExpressionNode::ReductionContext reduc
     }
   }
   if (dependencies.numberOfChildren() > 0) {
-    Expression copy = clone();
-    Dependency d = Dependency::Builder(copy, dependencies);
-    copy = copy.shallowReduce(reductionContext);
-    if (copy.type() == ExpressionNode::Type::Dependency) {
-      static_cast<Dependency &>(copy).extractDependencies(dependencies);
-    }
-    dependencies.shallowReduce(reductionContext.context());
+    Expression e = shallowReduce(reductionContext);
+    Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
     replaceWithInPlace(d);
-    return std::move(d);
+    d.replaceChildAtIndexInPlace(0, e);
+    if (e.type() == ExpressionNode::Type::Dependency) {
+      static_cast<Dependency &>(e).extractDependencies(dependencies);
+    }
+    return d;
   }
   return *this;
 

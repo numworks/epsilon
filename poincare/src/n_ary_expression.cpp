@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {
+void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices) {
   Expression reference(this);
   const int childrenCount = reference.numberOfChildren();
   for (int i = 1; i < childrenCount; i++) {
@@ -20,7 +20,7 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * co
       ExpressionNode * cj1 = childAtIndex(j+1);
       bool cjIsMatrix = Expression(cj).deepIsMatrix(context);
       bool cj1IsMatrix = Expression(cj1).deepIsMatrix(context);
-      bool cj1GreaterThanCj = order(cj, cj1, canBeInterrupted) > 0;
+      bool cj1GreaterThanCj = order(cj, cj1) > 0;
       if ((cjIsMatrix && !cj1IsMatrix) || // we always put matrices at the end of expressions
           (cjIsMatrix && cj1IsMatrix && canSwapMatrices && cj1GreaterThanCj) ||
           (!cjIsMatrix && !cj1IsMatrix && cj1GreaterThanCj)) {

@@ -571,12 +571,12 @@ bool Expression::isReal(Context * context) const {
 bool Expression::isIdenticalTo(const Expression e) const {
   /* We use the simplification order only because it is a already-coded total
    * order on expresssions. */
-  return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
+  return ExpressionNode::SimplificationOrder(node(), e.node(), true) == 0;
 }
 
 bool Expression::isIdenticalToWithoutParentheses(const Expression e) const {
   // Same as isIdenticalTo, but ignoring the parentheses.
-  return ExpressionNode::SimplificationOrder(node(), e.node(), true, true, true) == 0;
+  return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
 }
 
 bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat) {

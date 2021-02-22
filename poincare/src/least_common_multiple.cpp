@@ -32,7 +32,7 @@ Expression LeastCommonMultiple::shallowBeautify(Context * context) {
   /* Sort children in decreasing order:
    * lcm(1,x,x^2) --> lcm(x^2,x,1)
    * lcm(1,R(2)) --> lcm(R(2),1) */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, context, true, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); }, context, true);
   return *this;
 }
 

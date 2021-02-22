@@ -19,10 +19,10 @@ public:
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 
   // Comparison
-  typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
+  typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2);
 
   // Commutative properties
-  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted);
+  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices);
   Expression squashUnaryHierarchyInPlace();
 
 protected:
@@ -51,8 +51,8 @@ public:
    * - -1 if some chidren are non-real and non ComplexCartesian */
   int allChildrenAreReal(Context * context) const;
 protected:
-  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {
-    node()->sortChildrenInPlace(order, context, canSwapMatrices, canBeInterrupted);
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canSwapMatrices) {
+    node()->sortChildrenInPlace(order, context, canSwapMatrices);
   }
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
   Expression checkChildrenAreRationalIntegersAndUpdate(ExpressionNode::ReductionContext reductionContext);

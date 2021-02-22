@@ -189,9 +189,6 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
 
 template<typename T>
 T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, ApproximationContext approximationContext) const {
-  if (Expression::ShouldStopProcessing()) {
-    return NAN;
-  }
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, approximationContext);
   T result = quadKG.integral;
   if (quadKG.absoluteError <= eps) {

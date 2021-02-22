@@ -60,6 +60,11 @@ void Dependency::addDependency(Expression newDependency) {
    * and will disappear in the next reduction. */
 }
 
+void Dependency::extractDependencies(Matrix m) {
+  dumpDependencies(m);
+  replaceWithInPlace(childAtIndex(0));
+}
+
 void Dependency::dumpDependencies(Matrix m) {
   assert(m.numberOfChildren() == 0 || m.numberOfRows() == 1);
 

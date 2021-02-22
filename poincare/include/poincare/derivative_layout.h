@@ -8,7 +8,7 @@ namespace Poincare {
 
 class DerivativeLayoutNode : public LayoutNode {
 public:
-  using LayoutNode::LayoutNode;
+  DerivativeLayoutNode() : LayoutNode(), m_variableChildInFractionSlot(true) {}
 
   // LayoutNode
   Type type() const override { return Type::DerivativeLayout; }
@@ -41,12 +41,20 @@ private:
   LayoutNode * variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode * abscissaLayout() { return childAtIndex(k_abscissaLayoutIndex); }
 
+  KDPoint positionOfVariableInFractionSlot();
+  KDPoint positionOfVariableInAssignmentSlot();
   KDCoordinate abscissaBaseline();
+  KDCoordinate fractionBarWidth();
+  KDCoordinate parenthesesWidth();
 
   static constexpr KDCoordinate k_dxHorizontalMargin = 2;
   static constexpr KDCoordinate k_barHorizontalMargin = 2;
   static constexpr KDCoordinate k_barWidth = 1;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+
+ /* There are two slots for the variable name: the Fraction and the Assignment slots.
+  * This member is used to make the two copies of the variable name interactive while storing the variable name only once. */
+  bool m_variableChildInFractionSlot;
 };
 
 class DerivativeLayout : public Layout {

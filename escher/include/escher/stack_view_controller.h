@@ -17,6 +17,7 @@ public:
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright);
   void pop();
+  void popUntilDepth(int depth);
 
   int depth() const { return m_numberOfChildren; }
   View * view() override { return &m_view; }

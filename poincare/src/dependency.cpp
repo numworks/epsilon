@@ -25,10 +25,11 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
 // Dependency
 
 Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  /* If one of the element in the matrix is undefined, the whole matrix will
-   * be reduced to Undefined. */
+  /* If one of the element in the matrix is undefined (unreal), the whole matrix will
+   * be reduced to Undefined (Unreal). */
   Expression dependencies = childAtIndex(1);
   if (dependencies.isUndefined()) {
+    /* dependencies is either Undefined or Unreal. */
     replaceWithInPlace(dependencies);
     return dependencies;
   }
@@ -54,6 +55,9 @@ void Dependency::addDependency(Expression newDependency) {
     Matrix matrixChild = static_cast<Matrix &>(dependencies);
     matrixChild.addChildAtIndexInPlace(newDependency.clone(), numberOfDependencies(), numberOfDependencies());
   }
+  /* If dependencies is not a Matrix, it is either Undef or Unreal. As such,
+   * the expression will be undefined: new dependencies will not change that,
+   * and will disappear in the next reduction. */
 }
 
 void Dependency::dumpDependencies(Matrix m) {

@@ -47,6 +47,8 @@ private:
   KDCoordinate fractionBarWidth();
   KDCoordinate parenthesesWidth();
 
+  void setVariableSlot(bool fractionSlot, bool * shouldRecomputeLayout);
+
   static constexpr KDCoordinate k_dxHorizontalMargin = 2;
   static constexpr KDCoordinate k_barHorizontalMargin = 2;
   static constexpr KDCoordinate k_barWidth = 1;

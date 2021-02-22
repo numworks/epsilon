@@ -872,8 +872,13 @@ Expression Expression::factorDependencies(ExpressionNode::ReductionContext reduc
     return *this;
   }
   Matrix dependencies = Matrix::Builder();
-  int firstIndex =  isParameteredExpression() ? ParameteredExpression::ParameterChildIndex() + 1 : 0;
-  for (int i = firstIndex; i < numberOfChildren(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
+      /* A parametered expression can have dependencies on its parameter, which
+       * we don't want to factor, as the parameter does not have meaning
+       * outside of the parametered expression. */
+      continue;
+    }
     Expression child = childAtIndex(i);
     if (child.type() == ExpressionNode::Type::Dependency) {
       static_cast<Dependency &>(child).dumpDependencies(dependencies);

@@ -881,9 +881,7 @@ Expression Expression::factorDependencies(ExpressionNode::ReductionContext reduc
     }
     Expression child = childAtIndex(i);
     if (child.type() == ExpressionNode::Type::Dependency) {
-      static_cast<Dependency &>(child).dumpDependencies(dependencies);
-      Expression trueExpression = child.childAtIndex(0);
-      child.replaceWithInPlace(trueExpression);
+      static_cast<Dependency &>(child).extractDependencies(dependencies);
     }
   }
   if (dependencies.numberOfChildren() > 0) {
@@ -891,8 +889,7 @@ Expression Expression::factorDependencies(ExpressionNode::ReductionContext reduc
     Dependency d = Dependency::Builder(copy, dependencies);
     copy = copy.shallowReduce(reductionContext);
     if (copy.type() == ExpressionNode::Type::Dependency) {
-      static_cast<Dependency &>(copy).dumpDependencies(dependencies);
-      copy.replaceWithInPlace(copy.childAtIndex(0));
+      static_cast<Dependency &>(copy).extractDependencies(dependencies);
     }
     dependencies.shallowReduce(reductionContext.context());
     replaceWithInPlace(d);

@@ -40,7 +40,7 @@ public:
   Sign sign(Context * context) const override { return m_value < 0 ? Sign::Negative : Sign::Positive; }
   NullStatus nullStatus(Context * context) const override { return m_value == 0.0 ? NullStatus::Null : NullStatus::NonNull; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

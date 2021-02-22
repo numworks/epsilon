@@ -14,8 +14,8 @@ public:
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 protected:
   // Order
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
-  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
+  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 };
 
 }

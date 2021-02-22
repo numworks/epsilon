@@ -56,8 +56,8 @@ private:
   Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::RightOfPower; }
-  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
+  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
   Expression denominator(ReductionContext reductionContext) const override;
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
   // Evaluation

@@ -18,7 +18,7 @@ void assert_greater(Expression e1, Expression e2) {
   Shared::GlobalContext globalContext;
   Addition a = Addition::Builder(e1, e2);
   a.sortChildrenInPlace(
-      [](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); },
+      [](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); },
       &globalContext,
       true);
   quiz_assert(a.childAtIndex(0) == e1);
@@ -79,13 +79,13 @@ void assert_multiplication_or_addition_is_ordered_as(Expression e1, Expression e
   Shared::GlobalContext globalContext;
   if (e1.type() == ExpressionNode::Type::Multiplication) {
     static_cast<Multiplication&>(e1).sortChildrenInPlace(
-        [](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); },
+        [](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); },
         &globalContext,
         true);
   } else {
     quiz_assert(e1.type() == ExpressionNode::Type::Addition);
     static_cast<Addition&>(e1).sortChildrenInPlace(
-        [](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); },
+        [](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); },
         &globalContext,
         true);
   }

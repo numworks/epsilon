@@ -85,9 +85,9 @@ Expression DecimalNode::setSign(Sign s, ReductionContext reductionContext) {
   return Decimal(this).setSign(s);
 }
 
-int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
+    return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
   assert(e->type() == Type::Decimal);
   const DecimalNode * other = static_cast<const DecimalNode *>(e);

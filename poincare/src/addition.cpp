@@ -98,7 +98,7 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
   /* Sort children in decreasing order:
    * 1+x+x^2 --> x^2+x+1
    * 1+R(2) --> R(2)+1 */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext->context(), true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); }, reductionContext->context());
 
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
@@ -186,7 +186,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
 
   // Step 3: Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
 
   /* Step 4: Handle matrices. We return undef for a scalar added to a matrix.
    * Thanks to the simplification order, all matrix children (if any) are the
@@ -422,7 +422,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   for (int i = 0; i < numberOfChildren(); i++) {
     Multiplication m = Multiplication::Builder(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
-    m.privateShallowReduce(reductionContext, true, false);
+    m.privateShallowReduce(reductionContext, true);
   }
 
   // Step 3: Add the denominator
@@ -456,10 +456,10 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   int aChildrenCount = a.numberOfChildren();
   if (aChildrenCount == 0) {
     replaceWithInPlace(result);
-    return result.privateShallowReduce(reductionContext, false, true);
+    return result.privateShallowReduce(reductionContext, false);
   }
   a.addChildAtIndexInPlace(result, aChildrenCount, aChildrenCount);
-  result.privateShallowReduce(reductionContext, false, true);
+  result.privateShallowReduce(reductionContext, false);
   replaceWithInPlace(a);
   return std::move(a);
 }

@@ -1,4 +1,5 @@
 #include "helper.h"
+#include <poincare/undefined.h>
 #include <apps/shared/global_context.h>
 #include <ion/storage.h>
 

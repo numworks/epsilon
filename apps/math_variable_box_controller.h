@@ -51,7 +51,7 @@ private:
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
   Escher::ViewController * emptyViewController() override;
-  void resetMemoization();
+  void resetVarBoxMemoization();
   void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
   Page m_lockPageDelete;

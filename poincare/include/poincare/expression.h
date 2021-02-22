@@ -140,7 +140,6 @@ public:
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();
   static void SetCircuitBreaker(CircuitBreaker cb);
-  static bool ShouldStopProcessing();
   static void SetInterruption(bool interrupt);
 
   /* Hierarchy */

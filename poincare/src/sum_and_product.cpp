@@ -36,9 +36,6 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
   VariableContext nContext = VariableContext(symbol->name(), approximationContext.context());
   Evaluation<T> result = Complex<T>::Builder((T)emptySumAndProductValue());
   for (int i = (int)start; i <= (int)end; i++) {
-    if (Expression::ShouldStopProcessing()) {
-      return Complex<T>::Undefined();
-    }
     nContext.setApproximationForVariable<T>((T)i);
     Expression child = Expression(childAtIndex(0)).clone();
     if (child.type() == ExpressionNode::Type::Sequence) {

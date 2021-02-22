@@ -55,17 +55,6 @@ void Expression::SetCircuitBreaker(CircuitBreaker cb) {
   sCircuitBreaker = cb;
 }
 
-bool Expression::ShouldStopProcessing() {
-  if (sCircuitBreaker == nullptr) {
-    return false;
-  }
-  if (sCircuitBreaker()) {
-    sSimplificationHasBeenInterrupted = true;
-    return true;
-  }
-  return false;
-}
-
 void Expression::SetInterruption(bool interrupt) {
   sSimplificationHasBeenInterrupted = interrupt;
 }

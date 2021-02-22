@@ -130,6 +130,30 @@ void StackViewController::pop() {
   vc->viewDidDisappear();
 }
 
+void StackViewController::popUntilDepth(int depth) {
+  assert(depth >= 0);
+  if (depth >= m_numberOfChildren) {
+    return;
+  }
+  int numberOfFramesReleased = m_numberOfChildren - depth;
+  ViewController * vc;
+  for (int i = 0; i < numberOfFramesReleased; i++) {
+    vc = topViewController();
+    if (vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+      m_view.popStack();
+    }
+    m_numberOfChildren--;
+    if (i == numberOfFramesReleased - 1) {
+      setupActiveViewController();
+    }
+    vc->setParentResponder(nullptr);
+    if (i == 0) {
+      vc->viewDidDisappear();
+    }
+  }
+
+}
+
 void StackViewController::pushModel(Frame frame) {
   m_childrenFrame[m_numberOfChildren++] = frame;
 }

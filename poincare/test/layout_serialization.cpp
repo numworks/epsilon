@@ -33,6 +33,11 @@ QUIZ_CASE(poincare_layout_serialization) {
       ConjugateLayout::Builder(CodePointLayout::Builder('1')),
       "conj\u00121\u0013");
 
+  // DerivativeLayout
+  assert_layout_serialize_to(
+      DerivativeLayout::Builder(CodePointLayout::Builder('f'), CodePointLayout::Builder('x'), CodePointLayout::Builder('a')),
+      "diff\u0012\u0012f\u0013,\u0012x\u0013,\u0012a\u0013\u0013");
+
   // EmptyLayout
   assert_layout_serialize_to(
       EmptyLayout::Builder(),

@@ -43,6 +43,7 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
   KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_LSHIFT),
   KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_RSHIFT),
   KeySDLKeyPair(Ion::Keyboard::Key::EXE,       SDL_SCANCODE_RETURN),
+  KeySDLKeyPair(Ion::Keyboard::Key::EXE,       SDL_SCANCODE_KP_ENTER),
   KeySDLKeyPair(Ion::Keyboard::Key::Back,      SDL_SCANCODE_ESCAPE),
   KeySDLKeyPair(Ion::Keyboard::Key::Toolbox,   SDL_SCANCODE_TAB),
   KeySDLKeyPair(Ion::Keyboard::Key::Backspace, SDL_SCANCODE_BACKSPACE)

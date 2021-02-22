@@ -48,12 +48,7 @@ Expression Expression::ExpressionFromAddress(const void * address, size_t size) 
 
 /* Circuit breaker */
 
-static Expression::CircuitBreaker sCircuitBreaker = nullptr;
 static bool sSimplificationHasBeenInterrupted = false;
-
-void Expression::SetCircuitBreaker(CircuitBreaker cb) {
-  sCircuitBreaker = cb;
-}
 
 void Expression::SetInterruption(bool interrupt) {
   sSimplificationHasBeenInterrupted = interrupt;

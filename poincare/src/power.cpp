@@ -34,9 +34,6 @@ namespace Poincare {
 
 // Properties
 ExpressionNode::Sign PowerNode::sign(Context * context) const {
-  if (Expression::ShouldStopProcessing()) {
-    return Sign::Unknown;
-  }
   if (childAtIndex(0)->sign(context) == Sign::Positive && childAtIndex(1)->sign(context) != Sign::Unknown) {
     return Sign::Positive;
   }
@@ -281,9 +278,6 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
   MatrixComplex<T> result = MatrixComplex<T>::CreateIdentity(m.numberOfRows());
   // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
-    if (Expression::ShouldStopProcessing()) {
-      return MatrixComplex<T>::Undefined();
-    }
     result = MultiplicationNode::computeOnMatrices<T>(result, m, complexFormat);
   }
   return result;

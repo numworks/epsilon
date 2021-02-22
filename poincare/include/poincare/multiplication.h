@@ -87,8 +87,8 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
-  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
-    NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
+    NAryExpression::sortChildrenInPlace(order, context, false);
   }
   // Derivation
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
@@ -97,7 +97,7 @@ private:
   Expression removeUnit(Expression * unit);
 
   // Simplification
-  Expression privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool expand, bool canBeInterrupted);
+  Expression privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool expand);
   void factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext);
   void mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext);
   void factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext);

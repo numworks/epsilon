@@ -14,9 +14,9 @@ Expression FloatNode<T>::setSign(Sign s, ReductionContext reductionContext) {
 }
 
 template<typename T>
-int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
+    return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
   assert((e->type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (e->type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
   const FloatNode<T> * other = static_cast<const FloatNode<T> *>(e);

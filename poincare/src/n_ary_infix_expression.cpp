@@ -18,7 +18,7 @@ bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(const Expression 
   return false;
 }
 
-int NAryInfixExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+int NAryInfixExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   int m = numberOfChildren();
   int n = e->numberOfChildren();
   for (int i = 1; i <= m; i++) {
@@ -26,7 +26,7 @@ int NAryInfixExpressionNode::simplificationOrderSameType(const ExpressionNode * 
     if (n < i) {
       return 1;
     }
-    int order = SimplificationOrder(childAtIndex(m-i), e->childAtIndex(n-i), ascending, canBeInterrupted, ignoreParentheses);
+    int order = SimplificationOrder(childAtIndex(m-i), e->childAtIndex(n-i), ascending, ignoreParentheses);
     if (order != 0) {
       return order;
     }
@@ -38,13 +38,13 @@ int NAryInfixExpressionNode::simplificationOrderSameType(const ExpressionNode * 
   return 0;
 }
 
-int NAryInfixExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+int NAryInfixExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   int m = numberOfChildren();
   if (m == 0) {
     return -1;
   }
   /* Compare e to last term of hierarchy. */
-  int order = SimplificationOrder(childAtIndex(m-1), e, ascending, canBeInterrupted, ignoreParentheses);
+  int order = SimplificationOrder(childAtIndex(m-1), e, ascending, ignoreParentheses);
   if (order != 0) {
     return order;
   }

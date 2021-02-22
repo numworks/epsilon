@@ -10,6 +10,7 @@
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
+#include "../shared/interactive_curve_view_controller.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -38,8 +39,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
     assert(m_series > -1);
     m_store->setSeriesRegressionType(m_series, (Model::Type)selectedRow());
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->pop();
-    stack->pop();
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
     return true;
   }
   if (event == Ion::Events::Left) {

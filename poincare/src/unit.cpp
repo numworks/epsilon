@@ -676,9 +676,9 @@ int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix);
 }
 
-int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
+    return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
   assert(type() == e->type());
   const UnitNode * eNode = static_cast<const UnitNode *>(e);

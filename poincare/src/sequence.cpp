@@ -20,7 +20,7 @@ Expression SequenceNode::replaceSymbolWithExpression(const SymbolAbstract & symb
   return Sequence(this).replaceSymbolWithExpression(symbol, expression);
 }
 
-int SequenceNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+int SequenceNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   /* This function ensures that terms like u(n) and u(n+1), u(n) and v(n),
    * u(a) and u(b) do not factorize.
    * We never want to factorize. The only cases where it could be useful are
@@ -32,7 +32,7 @@ int SequenceNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
   ExpressionNode * seq = const_cast<ExpressionNode*>(e);
   int delta = strcmp(name(), reinterpret_cast<SequenceNode *>(seq)->name());
   if (delta == 0) {
-    return SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending, canBeInterrupted, ignoreParentheses);
+    return SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending, ignoreParentheses);
   }
   return delta;
 }

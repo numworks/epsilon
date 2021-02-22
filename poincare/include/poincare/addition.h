@@ -86,8 +86,8 @@ public:
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
-  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
-    NAryExpression::sortChildrenInPlace(order, context, true, canBeInterrupted);
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
+    NAryExpression::sortChildrenInPlace(order, context, true);
   }
 private:
   static const Number NumeralFactor(const Expression & e);

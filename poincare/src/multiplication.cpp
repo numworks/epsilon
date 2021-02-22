@@ -318,7 +318,7 @@ Expression Multiplication::setSign(ExpressionNode::Sign s, ExpressionNode::Reduc
 }
 
 Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  return privateShallowReduce(reductionContext, true, true);
+  return privateShallowReduce(reductionContext, true);
 }
 
 static bool CanSimplifyUnitProduct(
@@ -600,7 +600,7 @@ bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext,
   return true;
 }
 
-Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
+Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -618,7 +618,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   Context * context = reductionContext.context();
 
   // Step 2: Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
 
   // Step 3: Handle matrices
   /* Thanks to the simplification order, all matrix children (if any) are the
@@ -776,7 +776,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     /* Replacing sin/cos by tan factors may have mixed factors and factors are
      * guaranteed to be sorted (according ot SimplificationOrder) at the end of
      * shallowReduce */
-    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
+    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
   }
 
   /* Step 6: We remove rational children that appeared in the middle of sorted
@@ -1032,7 +1032,7 @@ void Multiplication::addMissingFactors(Expression factor, ExpressionNode::Reduct
     }
   }
   addChildAtIndexInPlace(factor.clone(), 0, numberOfChildren());
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
 }
 
 void Multiplication::factorizeSineAndCosine(int i, int j, ExpressionNode::ReductionContext reductionContext) {

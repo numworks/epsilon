@@ -170,7 +170,7 @@ MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index
 
 void MathVariableBoxController::setPage(Page page) {
   m_currentPage = page;
-  resetMemoization();
+  resetVarBoxMemoization();
 }
 
 bool MathVariableBoxController::selectSubMenu(int selectedRow) {
@@ -286,7 +286,7 @@ ViewController * MathVariableBoxController::emptyViewController() {
   return &m_emptyViewController;
 }
 
-void MathVariableBoxController::resetMemoization() {
+void MathVariableBoxController::resetVarBoxMemoization() {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_layouts[i] = Layout();
   }

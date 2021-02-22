@@ -138,8 +138,6 @@ public:
   static Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Circuit breaker */
-  typedef bool (*CircuitBreaker)();
-  static void SetCircuitBreaker(CircuitBreaker cb);
   static void SetInterruption(bool interrupt);
 
   /* Hierarchy */

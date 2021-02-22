@@ -101,7 +101,9 @@ void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 KDSize DerivativeLayoutNode::computeSize() {
   KDPoint abscissaPosition = positionOfChild(abscissaLayout());
   KDSize abscissaSize = abscissaLayout()->layoutSize();
-  return KDSize(abscissaPosition.x() + abscissaSize.width(), abscissaPosition.y() + abscissaSize.height());
+  return KDSize(
+      abscissaPosition.x() + abscissaSize.width(),
+      std::max(abscissaPosition.y() + abscissaSize.height(), positionOfVariableInAssignmentSlot().y() + variableLayout()->layoutSize().height()));
 }
 
 KDCoordinate DerivativeLayoutNode::computeBaseline() {
@@ -182,7 +184,7 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
   KDRect verticalBar(rightParenthesisPosition.x() + ParenthesisLayoutNode::ParenthesisWidth() + k_barHorizontalMargin, p.y(), k_barWidth, abscissaBaseline() - variableLayout()->baseline() + variableSize.height());
   ctx->fillRect(verticalBar, expressionColor);
 
-  KDPoint variableAssignmentPosition(verticalBar.right() + k_barHorizontalMargin, p.y() + abscissaBaseline() - variableLayout()->baseline());
+  KDPoint variableAssignmentPosition(verticalBar.x() + k_barWidth + k_barHorizontalMargin, p.y() + abscissaBaseline() - variableLayout()->baseline());
   ctx->drawString("=", variableAssignmentPosition.translatedBy(KDPoint(variableSize.width(), 0)), KDFont::LargeFont, expressionColor, backgroundColor);
 
   Layout variableCopy(variableLayout());

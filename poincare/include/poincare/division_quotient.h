@@ -20,6 +20,7 @@ public:
 
   // ExpressionNode
   Sign sign(Context * context) const override;
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
   Type type() const override { return Type::DivisionQuotient; }
 
   // Simplification
@@ -48,6 +49,7 @@ public:
   static T TemplatedQuotient(T a, T b) { return b >= 0 ? std::floor(a/b) : -std::floor(a/(-b)); }
 
   // Expression
+  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(Context * context);
   static Expression Reduce(const Integer & a, const Integer & b);
 };

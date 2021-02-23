@@ -19,7 +19,6 @@ public:
 #endif
 
   // Properties
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::Parenthesis; }
   int polynomialDegree(Context * context, const char * symbolName) const override;

@@ -219,7 +219,6 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(AbsoluteValue::Builder(Rational::Builder(-14)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(FracPart::Builder(Rational::Builder(-7,3)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(PermuteCoefficient::Builder(Rational::Builder(7),Rational::Builder(8)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(RealPart::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(SignFunction::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix()).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(VectorNorm::Builder(BasedInteger::Builder(1)).sign(&context) == ExpressionNode::Sign::Positive);

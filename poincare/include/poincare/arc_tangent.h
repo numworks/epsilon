@@ -21,6 +21,7 @@ public:
 
   // Properties
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::ArcTangent; }
 
@@ -50,6 +51,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("atan", 1, &UntypedBuilderOneChild<ArcTangent>);
 
+  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

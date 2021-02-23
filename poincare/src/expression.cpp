@@ -300,6 +300,12 @@ bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::
   return true;
 }
 
+void Expression::derivateChildAtIndexInPlace(int index, ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  if (!childAtIndex(index).derivate(reductionContext, symbol, symbolValue)) {
+    replaceChildAtIndexInPlace(index, Derivative::Builder(childAtIndex(index), symbol.clone().convert<Symbol>(), symbolValue.clone()));
+  }
+}
+
 // Private
 
 void Expression::shallowAddMissingParenthesis() {

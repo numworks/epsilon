@@ -27,7 +27,6 @@ public:
 
   // Expression subclassing
   Type type() const override { return Type::BasedInteger; }
-  Sign sign(Context * context) const override { return Sign::Positive; }
   NullStatus nullStatus(Context * context) const override { return integer().isZero() ? NullStatus::Null : NullStatus::NonNull; }
 
   // Layout

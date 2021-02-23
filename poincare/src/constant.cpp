@@ -25,6 +25,11 @@ ExpressionNode::Sign ConstantNode::sign(Context * context) const {
   return Sign::Unknown;
 }
 
+Expression ConstantNode::setSign(Sign s, ReductionContext reductionContext) {
+  assert(s == sign(reductionContext.context()));
+  return Constant(this);
+}
+
 bool ConstantNode::isReal() const {
   return !isIComplex();
 }

@@ -11,6 +11,11 @@ constexpr Expression::FunctionHelper ArcCosine::s_functionHelper;
 
 int ArcCosineNode::numberOfChildren() const { return ArcCosine::s_functionHelper.numberOfChildren(); }
 
+Expression ArcCosineNode::setSign(Sign s, ReductionContext reductionContext) {
+  assert(s == Sign::Positive);
+  return ArcCosine(this);
+}
+
 Layout ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcCosine(this), floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.name());
 }

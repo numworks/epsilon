@@ -15,6 +15,11 @@ constexpr Expression::FunctionHelper PermuteCoefficient::s_functionHelper;
 
 int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::s_functionHelper.numberOfChildren(); }
 
+Expression PermuteCoefficientNode::setSign(Sign s, ReductionContext reductionContext) {
+  assert(s == Sign::Positive);
+  return PermuteCoefficient(this);
+}
+
 Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name());
 }

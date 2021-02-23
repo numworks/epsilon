@@ -1044,14 +1044,7 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expressi
   derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 0, 0);
   derivedFromExponent.addChildAtIndexInPlace(clone(), 1, 1);
   derivedFromExponent.addChildAtIndexInPlace(exponent.clone(), 2, 2);
-  if (!derivedFromExponent.childAtIndex(2).derivate(reductionContext, symbol, symbolValue)) {
-    derivedFromExponent.replaceChildAtIndexInPlace(2, Derivative::Builder(
-          derivedFromExponent.childAtIndex(2),
-          symbol.clone().convert<Symbol>(),
-          symbolValue.clone()
-          ));
-  }
-
+  derivedFromExponent.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
 
   derivedFromBase.addChildAtIndexInPlace(exponent.clone() , 0, 0);
   derivedFromBase.addChildAtIndexInPlace(Power::Builder(
@@ -1064,14 +1057,7 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expressi
     symbolValue.clone()
     ), 2, 2);*/
   derivedFromBase.addChildAtIndexInPlace(base.clone(), 2, 2);
-  if (!derivedFromBase.childAtIndex(2).derivate(reductionContext, symbol, symbolValue)) {
-    derivedFromBase.replaceChildAtIndexInPlace(2, Derivative::Builder(
-          derivedFromBase.childAtIndex(2),
-          symbol.clone().convert<Symbol>(),
-          symbolValue.clone()
-          ));
-  }
-
+  derivedFromBase.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
 
   Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
   replaceWithInPlace(result);

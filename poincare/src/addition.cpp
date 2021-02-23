@@ -329,9 +329,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 
 bool Addition::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   for (int i = 0; i < numberOfChildren(); i++) {
-    if (!childAtIndex(i).derivate(reductionContext, symbol, symbolValue)) {
-      replaceChildAtIndexInPlace(i, Derivative::Builder(childAtIndex(i), symbol.clone().convert<Symbol>(), symbolValue.clone()));
-    }
+    derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);
   }
   return true;
 }

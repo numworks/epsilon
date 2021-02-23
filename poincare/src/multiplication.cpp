@@ -588,13 +588,7 @@ bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext,
 
   for (int i = 0; i < numberOfTerms; ++i) {
     childI = clone();
-    if (!childI.childAtIndex(i).derivate(reductionContext, symbol, symbolValue)) {
-      childI.replaceChildAtIndexInPlace(i, Derivative::Builder(
-            childI.childAtIndex(i),
-            symbol.clone().convert<Symbol>(),
-            symbolValue.clone()
-            ));
-    }
+    childI.derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);
     resultingAddition.addChildAtIndexInPlace(childI, i, i);
   }
 

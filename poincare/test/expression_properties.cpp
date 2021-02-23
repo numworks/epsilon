@@ -198,12 +198,6 @@ QUIZ_CASE(poincare_properties_decimal_sign) {
   quiz_assert(Decimal::Builder(0, 1).sign() == ExpressionNode::Sign::Positive);
 }
 
-QUIZ_CASE(poincare_properties_based_integer_sign) {
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Binary).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Decimal).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Hexadecimal).sign() == ExpressionNode::Sign::Positive);
-}
-
 QUIZ_CASE(poincare_properties_rational_sign) {
   quiz_assert(Rational::Builder(-2).sign() == ExpressionNode::Sign::Negative);
   quiz_assert(Rational::Builder(-2, 3).sign() == ExpressionNode::Sign::Negative);
@@ -224,18 +218,12 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(DivisionRemainder::Builder(Decimal::Builder(2.0), Decimal::Builder(3.0)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(AbsoluteValue::Builder(Rational::Builder(-14)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(FracPart::Builder(Rational::Builder(-7,3)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(GreatCommonDivisor::Builder({Rational::Builder(-7),Rational::Builder(-7)}).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(LeastCommonMultiple::Builder({Rational::Builder(-7),Rational::Builder(-7)}).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Opposite::Builder(Rational::Builder(7)).sign(&context) == ExpressionNode::Sign::Negative);
-  quiz_assert(Parenthesis::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(PermuteCoefficient::Builder(Rational::Builder(7),Rational::Builder(8)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(RealPart::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(SignFunction::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix()).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(VectorNorm::Builder(BasedInteger::Builder(1)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Division::Builder(Rational::Builder(7,3), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(ArcSine::Builder(Floor::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder(UCodePointGreekSmallLetterPi))))))).sign(&context) == ExpressionNode::Sign::Negative);
 }
 
 QUIZ_CASE(poincare_properties_sign) {

@@ -434,6 +434,16 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool 
   return *this;
 }
 
+Expression Expression::defaultOddFunctionSetSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Positive);
+  assert(numberOfChildren() == 1);
+  ExpressionNode::Sign childSign = childAtIndex(0).sign(reductionContext.context());
+  if ((childSign == ExpressionNode::Sign::Positive || childSign == ExpressionNode::Sign::Negative) && childSign != s) {
+    replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(s, reductionContext));
+  }
+  return *this;
+}
+
 Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext) {
   // The expression is a negative number
   if (isNumber() && sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {

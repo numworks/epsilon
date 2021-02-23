@@ -11,6 +11,11 @@ constexpr Expression::FunctionHelper FracPart::s_functionHelper;
 
 int FracPartNode::numberOfChildren() const { return FracPart::s_functionHelper.numberOfChildren(); }
 
+Expression FracPartNode::setSign(Sign s, ReductionContext reductionContext) {
+  assert(s == Sign::Positive);
+  return FracPart(this);
+}
+
 Layout FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }

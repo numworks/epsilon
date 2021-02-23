@@ -457,6 +457,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Unit; }
   Sign sign(Context * context) const override { return Sign::Positive; }
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
   NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
   Expression removeUnit(Expression * unit) override;
 

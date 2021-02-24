@@ -162,7 +162,7 @@ Token Tokenizer::popToken() {
      * reserved or custom identifier, popIdentifier is called in both cases.
      */
     Token result(Token::Unit);
-    result.setString(start + 1, popIdentifier(UCodePointNull)); // + 1 for the underscore
+    result.setString(start + 1, popIdentifier(UCodePointDegreeSign)); // + 1 for the underscore
     return result;
   }
   if (c.isLatinLetter() ||
@@ -224,7 +224,7 @@ Token Tokenizer::popToken() {
   if (c == '}') {
     return Token(Token::RightBrace);
   }
-  if (c == UCodePointSquareRoot) {
+  if (c == UCodePointSquareRoot || c == UCodePointInfinity) {
     Token result(Token::Identifier);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;

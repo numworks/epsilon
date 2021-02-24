@@ -31,6 +31,7 @@ AppsContainer::AppsContainer() :
   m_batteryTimer(),
   m_suspendTimer(),
   m_backlightDimmingTimer(),
+  m_clockTimer(ClockTimer(this)),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
   m_hardwareTestSnapshot(),
@@ -58,8 +59,23 @@ AppsContainer::AppsContainer() :
 }
 
 bool AppsContainer::poincareCircuitBreaker() {
+  constexpr uint64_t minimalPressDuration = 20;
+  static uint64_t beginningOfInterruption = 0;
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  return state.keyDown(Ion::Keyboard::Key::Back);
+  bool interrupt = state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::OnOff);
+  if (!interrupt) {
+    beginningOfInterruption = 0;
+    return false;
+  }
+  if (beginningOfInterruption == 0) {
+    beginningOfInterruption = Ion::Timing::millis();
+    return false;
+  }
+  if (Ion::Timing::millis() - beginningOfInterruption > minimalPressDuration) {
+    beginningOfInterruption = 0;
+    return true;
+  }
+  return false;
 }
 
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
@@ -304,6 +320,10 @@ void AppsContainer::run() {
   switchTo(nullptr);
 }
 
+bool AppsContainer::updateClock() {
+  return m_window.updateClock();
+}
+
 bool AppsContainer::updateBatteryState() {
   bool batteryLevelUpdated = m_window.updateBatteryLevel();
   bool pluggedStateUpdated = m_window.updatePluggedState();
@@ -336,7 +356,7 @@ void AppsContainer::shutdownDueToLowBattery() {
    * case. */
     return;
   }
-  while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+  while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY && !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
     if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
@@ -360,7 +380,7 @@ bool AppsContainer::updateAlphaLock() {
   return m_window.updateAlphaLock();
 }
 
-OnBoarding::PopUpController * AppsContainer::promptController() {
+OnBoarding::PromptController * AppsContainer::promptController() {
   if (k_promptNumberOfMessages == 0) {
     return nullptr;
   }
@@ -409,11 +429,11 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfContainerTimers() {
-  return 3;
+  return 4;
 }
 
 Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[3] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer};
+  Timer * timers[4] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_clockTimer};
   return timers[i];
 }
 

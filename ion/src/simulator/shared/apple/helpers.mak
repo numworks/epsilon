@@ -14,11 +14,16 @@ $(simulator_app_binary): $(foreach arch,$(ARCHS),$(BUILD_DIR)/$(arch)/%.bin) | $
 	$(call rule_label,LIPO)
 	$(Q) $(LIPO) -create $^ -output $@
 
-# Background image
+# Background & Keys images
 
-$(call simulator_app_resource,background.jpg): ion/src/simulator/assets/background.jpg | $$(@D)/.
-	$(call rule_label,COPY)
-	$(Q) cp $^ $@
+define rule_for_asset
+simulator_app_deps += $(call simulator_app_resource,$(1))
+$(call simulator_app_resource,$(1)): ion/src/simulator/assets/$(1) | $$$$(@D)/.
+	$$(call rule_label,COPY)
+	$(Q) cp $$^ $$@
+endef
+
+$(foreach asset,$(ion_simulator_assets),$(eval $(call rule_for_asset,$(asset))))
 
 # Process icons
 
@@ -32,7 +37,7 @@ endif
 
 SIMULATOR_ICONS = $(addprefix $(SIMULATOR_ICONSET)/,$(addsuffix .png,$(addprefix icon_, $(SIMULATOR_ICON_SIZES))))
 
-$(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logo.svg | $$(@D)/.
+$(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logoMacOS.png | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background "#FFB734" -resize $* $< $@
 
@@ -40,4 +45,3 @@ $(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logo.svg
 
 simulator_app_deps += $(simulator_app_binary)
 simulator_app_deps += $(call simulator_app_plist,Info.plist)
-simulator_app_deps += $(call simulator_app_resource,background.jpg)

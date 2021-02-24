@@ -74,7 +74,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i == 0) {
     // Display a calculation title cell
     I18n::Message titles[k_totalNumberOfRows] = {
-      I18n::Message::TotalSize,
+      I18n::Message::TotalFrequency,
       I18n::Message::Minimum,
       I18n::Message::Maximum,
       I18n::Message::Range,
@@ -85,8 +85,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       I18n::Message::ThirdQuartile,
       I18n::Message::Median,
       I18n::Message::InterquartileRange,
-      I18n::Message::Sum,
-      I18n::Message::SquareSum,
+      I18n::Message::SumValues,
+      I18n::Message::SumSquareValues,
       I18n::Message::SampleStandardDeviationS};
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
     calcTitleCell->setMessage(titles[j-1]);

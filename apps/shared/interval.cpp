@@ -23,6 +23,10 @@ void Interval::deleteElementAtIndex(int index) {
   m_numberOfElements--;
 }
 
+bool Interval::hasSameParameters(IntervalParameters parameters) {
+  return (m_parameters.start() == parameters.start() && m_parameters.end() == parameters.end() && m_parameters.step() == parameters.step());
+}
+
 double Interval::element(int i) {
   assert(i >= 0 && i < numberOfElements());
   computeElements();

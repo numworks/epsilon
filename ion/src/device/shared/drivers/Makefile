@@ -3,6 +3,7 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   battery.cpp \
   base64.cpp \
   board.cpp \
+  clipboard.cpp \
   console_uart.cpp:+consoleuart \
   console_dummy.cpp:-consoleuart \
   crc32.cpp \
@@ -17,6 +18,7 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   power.cpp\
   random.cpp\
   reset.cpp \
+  rtc.cpp \
   serial_number.cpp \
   swd.cpp \
   timing.cpp \

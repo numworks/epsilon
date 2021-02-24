@@ -13,6 +13,7 @@ constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
 constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+constexpr SettingsMessageTree s_modelDateTimeChildren[3] = {SettingsMessageTree(I18n::Message::ActivateClock), SettingsMessageTree(I18n::Message::Date), SettingsMessageTree(I18n::Message::Time)};
 constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
 constexpr SettingsMessageTree s_symbolFunctionChildren[3] = {SettingsMessageTree(I18n::Message::SymbolDefaultFunction), SettingsMessageTree(I18n::Message::SymbolArgDefaultFunction), SettingsMessageTree(I18n::Message::SymbolArgFunction)};
 constexpr SettingsMessageTree s_modelMathOptionsChildren[6] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren), SettingsMessageTree(I18n::Message::SymbolFunction, s_symbolFunctionChildren), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren), SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren)};
@@ -31,8 +32,9 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
   m_mathOptionsController(this, inputEventHandlerDelegate),
-  m_languageController(this, Metric::CommonTopMargin),
+  m_localizationController(this, Metric::CommonTopMargin, LocalizationController::Mode::Language),
   m_accessibilityController(this),
+  m_dateTimeController(this),
   m_examModeController(this),
   m_aboutController(this),
   m_preferencesController(this)
@@ -81,9 +83,10 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Language) {
+    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Language || model()->childAtIndex(selectedRow())->label() == I18n::Message::Country) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-        stackController()->push(&m_languageController);
+        m_localizationController.setMode(model()->childAtIndex(selectedRow())->label() == I18n::Message::Language ? LocalizationController::Mode::Language : LocalizationController::Mode::Country);
+        stackController()->push(&m_localizationController);
         return true;
       }
       return false;
@@ -100,6 +103,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_aboutController;
     } else if (title == I18n::Message::Accessibility) {
       subController = &m_accessibilityController;
+    } else if (title == I18n::Message::DateTime) {
+      subController = &m_dateTimeController;
     } else if (title == I18n::Message::MathOptions) {
       subController = &m_mathOptionsController;
     } else {
@@ -185,6 +190,11 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (model()->childAtIndex(index)->label() == I18n::Message::Language) {
     int index = (int)(globalPreferences->language());
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
+    return;
+  }
+  if (model()->childAtIndex(index)->label() == I18n::Message::Country) {
+    int index = (int)(globalPreferences->country());
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::CountryNames[index]);
     return;
   }
   if (model()->childAtIndex(index)->label() == I18n::Message::UpdatePopUp || model()->childAtIndex(index)->label() == I18n::Message::BetaPopUp) {

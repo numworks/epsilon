@@ -125,6 +125,24 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   return true;
 }
 
+bool SelectableTableView::selectCellAtClippedLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
+  if (i < 0) {
+    i = 0;
+  } else if (i >= dataSource()->numberOfColumns()) {
+    i = dataSource()->numberOfColumns() - 1;
+  }
+  if (j < 0) {
+    j = 0;
+  } else if (j >= dataSource()->numberOfRows()) {
+    j = dataSource()->numberOfRows() - 1;
+  }
+  if (j == selectedRow() && i == selectedColumn()) {
+    // Cell was already selected.
+    return false;
+  }
+  return selectCellAtLocation(i, j, setFirstResponder, withinTemporarySelection);
+}
+
 HighlightCell * SelectableTableView::selectedCell() {
   if (selectedColumn() < 0 || selectedRow() < 0) {
     return nullptr;
@@ -133,26 +151,27 @@ HighlightCell * SelectableTableView::selectedCell() {
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
+  int step = Ion::Events::repetitionFactor();
   if (event == Ion::Events::Down) {
-    return selectCellAtLocation(selectedColumn(), selectedRow()+1);
+    return selectCellAtClippedLocation(selectedColumn(), selectedRow() + step);
   }
   if ((event == Ion::Events::ShiftDown || event == Ion::Events::AlphaDown) && selectedRow() < dataSource()->numberOfRows()-1) {
     return selectCellAtLocation(selectedColumn(), dataSource()->numberOfRows()-1);
   }
   if (event == Ion::Events::Up) {
-    return selectCellAtLocation(selectedColumn(), selectedRow()-1);
+    return selectCellAtClippedLocation(selectedColumn(), selectedRow() - step);
   }
   if ((event == Ion::Events::ShiftUp || event == Ion::Events::AlphaUp) && selectedRow() > 0) {
     return selectCellAtLocation(selectedColumn(), 0);
   }
   if (event == Ion::Events::Left) {
-    return selectCellAtLocation(selectedColumn()-1, selectedRow());
+    return selectCellAtClippedLocation(selectedColumn() - step, selectedRow());
   }
   if ((event == Ion::Events::ShiftLeft || event == Ion::Events::AlphaLeft) && selectedColumn() > 0) {
     return selectCellAtLocation(0, selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selectCellAtLocation(selectedColumn()+1, selectedRow());
+    return selectCellAtClippedLocation(selectedColumn() + step, selectedRow());
   }
   if ((event == Ion::Events::ShiftRight || event == Ion::Events::AlphaRight) && selectedColumn() < dataSource()->numberOfColumns()-1) {
     return selectCellAtLocation(dataSource()->numberOfColumns()-1, selectedRow());

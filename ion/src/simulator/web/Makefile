@@ -15,11 +15,14 @@ LDFLAGS += --pre-js ion/src/simulator/web/preamble_env.js
 
 ion_src += $(addprefix ion/src/simulator/web/, \
   callback.cpp \
+  clipboard_helper.cpp \
   helpers.cpp \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/language.cpp \
+  dummy/haptics_enabled.cpp \
+  haptics.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp

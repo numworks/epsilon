@@ -53,6 +53,7 @@ static constexpr CodePoint UCodePointEmpty                    = 0x11; // Used to
 static constexpr CodePoint UCodePointLeftSystemParenthesis    = 0x12; // Used for serialization
 static constexpr CodePoint UCodePointRightSystemParenthesis   = 0x13; // Used for serialization
 
+static constexpr CodePoint UCodePointDegreeSign               = 0xb0;    // °
 static constexpr CodePoint UCodePointMiddleDot                = 0xb7;    // ·
 static constexpr CodePoint UCodePointMultiplicationSign       = 0xd7;    // ×
 static constexpr CodePoint UCodePointStar                     = 0x2a;    // *
@@ -65,5 +66,6 @@ static constexpr CodePoint UCodePointNArySummation            = 0x2211;  // ∑
 static constexpr CodePoint UCodePointSquareRoot               = 0x221a;  // √
 static constexpr CodePoint UCodePointIntegral                 = 0x222b;  // ∫
 static constexpr CodePoint UCodePointMathematicalBoldSmallI   = 0x1d422; // 𝐢
+static constexpr CodePoint UCodePointInfinity                 = 0x221e;  // ∞
 
 #endif

@@ -32,7 +32,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   // -OverflowedIntegerString()
   buffer[0] = '-';
   strlcpy(buffer+1, BigOverflowedIntegerString(), 400-1);
-  assert_parsed_expression_simplify_to(buffer, "-inf");
+  assert_parsed_expression_simplify_to(buffer, "-∞");
 
   assert_parsed_expression_simplify_to("-1/3", "-1/3");
   assert_parsed_expression_simplify_to("22355/45325", "4471/9065");
@@ -67,27 +67,28 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("0/inf", "0");
   assert_parsed_expression_simplify_to("inf/0", Undefined::Name());
   assert_parsed_expression_simplify_to("0×inf", Undefined::Name());
+  assert_parsed_expression_simplify_to("0×inf×π", Undefined::Name());
   assert_parsed_expression_simplify_to("3×inf/inf", "undef");
-  assert_parsed_expression_simplify_to("1ᴇ1000", "inf");
-  assert_parsed_expression_simplify_to("-1ᴇ1000", "-inf");
+  assert_parsed_expression_simplify_to("1ᴇ1000", "∞");
+  assert_parsed_expression_simplify_to("-1ᴇ1000", "-∞");
   assert_parsed_expression_simplify_to("-1ᴇ-1000", "0");
   assert_parsed_expression_simplify_to("1ᴇ-1000", "0");
   //assert_parsed_expression_simplify_to("1×10^1000", "inf");
 
   assert_parsed_expression_simplify_to("inf^0", "undef");
-  assert_parsed_expression_simplify_to("1^inf", "1^inf");
-  assert_parsed_expression_simplify_to("1^(X^inf)", "1^\u0012X^inf\u0013");
+  assert_parsed_expression_simplify_to("1^inf", "1^∞");
+  assert_parsed_expression_simplify_to("1^(X^inf)", "1^\u0012X^∞\u0013");
   assert_parsed_expression_simplify_to("inf^(-1)", "0");
   assert_parsed_expression_simplify_to("(-inf)^(-1)", "0");
   assert_parsed_expression_simplify_to("inf^(-√(2))", "0");
   assert_parsed_expression_simplify_to("(-inf)^(-√(2))", "0");
-  assert_parsed_expression_simplify_to("inf^2", "inf");
-  assert_parsed_expression_simplify_to("(-inf)^2", "inf");
-  assert_parsed_expression_simplify_to("inf^√(2)", "inf");
-  assert_parsed_expression_simplify_to("(-inf)^√(2)", "inf×(-1)^√(2)");
-  assert_parsed_expression_simplify_to("inf^x", "inf^x");
+  assert_parsed_expression_simplify_to("inf^2", "∞");
+  assert_parsed_expression_simplify_to("(-inf)^2", "∞");
+  assert_parsed_expression_simplify_to("inf^√(2)", "∞");
+  assert_parsed_expression_simplify_to("(-inf)^√(2)", "∞×(-1)^√(2)");
+  assert_parsed_expression_simplify_to("inf^x", "∞^x");
   assert_parsed_expression_simplify_to("1/inf+24", "24");
-  assert_parsed_expression_simplify_to("ℯ^(inf)/inf", "0×ℯ^inf");
+  assert_parsed_expression_simplify_to("ℯ^(inf)/inf", "0×ℯ^∞");
 
   // Logarithm
   assert_parsed_expression_simplify_to("log(inf,0)", "undef");
@@ -96,16 +97,16 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("log(1,inf)", "0");
   assert_parsed_expression_simplify_to("log(inf,inf)", "undef");
 
-  assert_parsed_expression_simplify_to("ln(inf)", "inf");
-  assert_parsed_expression_simplify_to("log(inf,-3)", "log(inf,-3)");
-  assert_parsed_expression_simplify_to("log(inf,3)", "inf");
-  assert_parsed_expression_simplify_to("log(inf,0.3)", "-inf");
-  assert_parsed_expression_simplify_to("log(inf,x)", "log(inf,x)");
+  assert_parsed_expression_simplify_to("ln(inf)", "∞");
+  assert_parsed_expression_simplify_to("log(inf,-3)", "log(∞,-3)");
+  assert_parsed_expression_simplify_to("log(inf,3)", "∞");
+  assert_parsed_expression_simplify_to("log(inf,0.3)", "-∞");
+  assert_parsed_expression_simplify_to("log(inf,x)", "log(∞,x)");
   assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_addition) {
-  assert_parsed_expression_simplify_to("1/x^2+3", "\u00123×x^2+1\u0013/x^2", User, Radian, Real);
+  assert_parsed_expression_simplify_to("1/x^2+3", "\u00123×x^2+1\u0013/x^2", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("1+x", "x+1");
   assert_parsed_expression_simplify_to("1/2+1/3+1/4+1/5+1/6+1/7", "223/140");
   assert_parsed_expression_simplify_to("1+x+4-i-2x", "-i-x+5");
@@ -193,6 +194,44 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("[[1,2][3,4]]×[[1,3][5,6]]×[[2,3][4,6]]", "[[82,123][178,267]]");
   assert_parsed_expression_simplify_to("π×confidence(π/5,3)[[1,2]]", "π×confidence(π/5,3)×[[1,2]]");
   assert_parsed_expression_simplify_to("0*[[1,0][0,1]]^500", "0×[[1,0][0,1]]^500");
+  assert_parsed_expression_simplify_to("x^5/x^3", "x^2");
+  assert_parsed_expression_simplify_to("x^5*x^3", "x^8");
+  assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2");
+  assert_parsed_expression_simplify_to("x^0", "1");
+  assert_parsed_expression_simplify_to("π^5/π^3", "π^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^5*π^3", "π^8", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^3/π^5", "1/π^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^0", "1", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^π/π^(π-1)", "π", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^5/x^3", "x^5/x^3", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^5×x^3", "x^8", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^0", "x^0", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^π/x^(π-1)", "x^π×x^\u0012-π+1\u0013", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("2^x×2^(-x)", "1", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("y^x×y^(-x)", "y^0", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x/√(x)", "x/√(x)", SystemForAnalysis);
+}
+
+void assert_parsed_unit_simplify_to_with_prefixes(const Unit::Representative * representative) {
+  int numberOfPrefixes;
+  const Unit::Prefix * prefixes;
+  static constexpr size_t bufferSize = 12;
+  char buffer[bufferSize] = "1×";
+  if (representative->isOutputPrefixable()) {
+    numberOfPrefixes = Unit::Prefix::k_numberOfPrefixes;
+    prefixes = Unit::k_prefixes;
+  } else {
+    numberOfPrefixes = 1;
+    prefixes = Unit::Prefix::EmptyPrefix();
+  }
+  for (int i = 0; i < numberOfPrefixes; i++) {
+    if (representative->canPrefix(prefixes + i, true) && representative->canPrefix(prefixes + i, false)) {
+      Unit::Builder(representative, prefixes + i).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+      assert_parsed_expression_simplify_to(buffer, buffer);
+    }
+  }
 }
 
 QUIZ_CASE(poincare_simplification_units) {
@@ -215,6 +254,33 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_mol^-1", "1×_mol^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_cd^-1", "1×_cd^\u0012-1\u0013");
 
+  /* Power of SI units */
+  assert_parsed_expression_simplify_to("_s^3", "1×_s^3");
+  assert_parsed_expression_simplify_to("_m^2", "1×_m^2");
+  assert_parsed_expression_simplify_to("_m^3", "1×_m^3");
+  assert_parsed_expression_simplify_to("_m^(1/2)", "1×_m^\u00121/2\u0013");
+
+  /* Possible improvements */
+  /* Ignored derived metrics :
+   * -> Possible solution : Favor unities from user input. We do not want to
+   *    favor positive exponents to avoid a Velocity being displayed as _m*_Hz
+   * assert_parsed_expression_simplify_to("_Hz", "_Hz");
+   * assert_parsed_expression_simplify_to("_S", "_S");
+   */
+  /* Non unitary exponents on Derived metrics :
+   * -> See CanSimplifyUnitProduct in multiplication.cpp
+   * assert_parsed_expression_simplify_to("_C^3", "1×_C^3");
+   * assert_parsed_expression_simplify_to("_N^(1/2)", "1×_N^\u00121/2\u0013");
+   */
+  /* Taking exponents complexity into account :
+   * -> See note on metrics in CanSimplifyUnitProduct in multiplication.cpp
+   * assert_parsed_expression_simplify_to("_C×_s", "1×_C×_s");
+   * assert_parsed_expression_simplify_to("_C^10", "1×_C^10");
+   * assert_parsed_expression_simplify_to("_ha", "1×_ha");
+   * FIXME : int8_t norm metric overflow, only visible with a non constant norm
+   * assert_parsed_expression_simplify_to("_C^130", "1×_C^130"); */
+  assert_parsed_expression_simplify_to("_m_s^-2", "1×_m×_s^\u0012-2\u0013");
+
   /* SI derived units with special names and symbols */
   assert_parsed_expression_simplify_to("_kg×_m×_s^(-2)", "1×_N");
   assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-2)", "1×_Pa");
@@ -224,44 +290,102 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-1)", "1×_V");
   assert_parsed_expression_simplify_to("_m^(-2)×_kg^(-1)×_s^4×_A^2", "1×_F");
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-2)", "1×_Ω");
-  // FIXME _S should not be simplified to _Ω^(-1)
-  // A possible solution: a unit with exponent +1 is simpler than a unit with exponent -1.
-  // The same should probably go for Hz.
-  // assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-2)×_s^3×_A^2", "1×_S");
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-1)", "1×_Wb");
   assert_parsed_expression_simplify_to("_kg×_s^(-2)×_A^(-1)", "1×_T");
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-2)", "1×_H");
   assert_parsed_expression_simplify_to("_mol×_s^-1", "1×_kat");
 
+  /* Displayed order of magnitude */
+  assert_parsed_expression_simplify_to("100_kg", "100×_kg");
+  assert_parsed_expression_simplify_to("1_min", "1×_min");
+  assert_parsed_expression_simplify_to("0.1_m", "1×_dm");
+  assert_parsed_expression_simplify_to("180_MΩ", "180×_MΩ");
+  assert_parsed_expression_simplify_to("180_MH", "180×_MH");
+
   /* Test simplification of all possible (prefixed) unit symbols.
    * Some symbols are however excluded:
    *  - At present, some units will not appear as simplification output:
    *    t, Hz, S, ha, L. These exceptions are tested below. */
-  for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
-    for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
-      if (strcmp(rep->rootSymbol(), "t") == 0 || strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "ha") == 0 || strcmp(rep->rootSymbol(), "L") == 0) {
-        continue;
-      }
-      static constexpr size_t bufferSize = 12;
-      char buffer[bufferSize] = "1×";
-      Unit::Builder(dim, rep, &Unit::EmptyPrefix).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
-      assert_parsed_expression_simplify_to(buffer, buffer);
-      if (rep->isPrefixable()) {
-        for (size_t i = 0; i < rep->outputPrefixesLength(); i++) {
-          const Unit::Prefix * pre = rep->outputPrefixes()[i];
-          Unit::Builder(dim, rep, pre).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
-          assert_parsed_expression_simplify_to(buffer, buffer);
-        }
-      }
-    }
-  }
+  assert_parsed_expression_simplify_to("_s", "1×_s");
+  assert_parsed_expression_simplify_to("_min", "1×_min");
+  assert_parsed_expression_simplify_to("_h", "1×_h");
+  assert_parsed_expression_simplify_to("_day", "1×_day");
+  assert_parsed_expression_simplify_to("_week", "1×_week");
+  assert_parsed_expression_simplify_to("_month", "1×_month");
+  assert_parsed_expression_simplify_to("_year", "1×_year");
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_distanceRepresentatives);
+  assert_parsed_expression_simplify_to("_au", "1×_au");
+  assert_parsed_expression_simplify_to("_ly", "1×_ly");
+  assert_parsed_expression_simplify_to("_pc", "1×_pc");
+  assert_parsed_expression_simplify_to("_in", "1×_in", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_ft", "1×_ft", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_mi", "1×_mi", User, Radian, Imperial);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_massRepresentatives);
+  assert_parsed_expression_simplify_to("_oz", "1×_oz", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_lb", "1×_lb", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_shtn", "1×_shtn", User, Radian, Imperial);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_currentRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_temperatureRepresentatives);
+  assert_parsed_expression_simplify_to("_°C", "1×_°C");
+  assert_parsed_expression_simplify_to("_°F", "1×_°F");
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_amountOfSubstanceRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_luminousIntensityRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_forceRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_pressureRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_pressureRepresentatives + 1);
+  assert_parsed_expression_simplify_to("_atm", "1×_atm");
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_energyRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_energyRepresentatives + 1);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_powerRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_electricChargeRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_electricPotentialRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_electricCapacitanceRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_electricResistanceRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_magneticFieldRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_magneticFluxRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_inductanceRepresentatives);
+  assert_parsed_unit_simplify_to_with_prefixes(Unit::k_catalyticActivityRepresentatives);
 
-  /* Units that do not appear as output yet */
-  assert_parsed_expression_simplify_to("_t", "1×_Mg");
+  /* Units that do not appear as output */
+  assert_parsed_expression_simplify_to("_t", "1000×_kg");
   assert_parsed_expression_simplify_to("_Hz", "1×_s^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_S", "1×_Ω^\u0012-1\u0013");
-  assert_parsed_expression_simplify_to("_L", "0.001×_m^3");
-  assert_parsed_expression_simplify_to("_ha", "0.01×_km^2");
+  assert_parsed_expression_simplify_to("_L", "1×_dm^3");
+  assert_parsed_expression_simplify_to("_ha", "10000×_m^2");
+
+  /* Imperial units */
+  assert_parsed_expression_simplify_to("_lgtn", "1016.0469088×_kg");
+  assert_parsed_expression_simplify_to("_lgtn", "1.12×_shtn", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_in", "2.54×_cm");
+  assert_parsed_expression_simplify_to("_in", "1×_in", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_ft", "1×_ft", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("1_qt", "1×_qt", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("1_qt", "946.352946×_cm^3");
+
+  /* Tests for non-absolute units */
+  assert_parsed_expression_simplify_to("273.15×_K→_°C", "0×_°C");
+  assert_parsed_expression_simplify_to("0×_°C", "0×_°C");
+  assert_parsed_expression_simplify_to("-32×_°F", "-32×_°F");
+  assert_parsed_expression_simplify_to("273.16×_K", "273.16×_K");
+  assert_parsed_expression_simplify_to("_cKπ23", "0.72256631032565×_K");
+  assert_parsed_expression_simplify_to("100×_°C→_K", "373.15×_K");
+  assert_parsed_expression_simplify_to("-100×_°C→_K", "173.15×_K");
+  assert_parsed_expression_simplify_to("_°C+_°C", Undefined::Name());
+  assert_parsed_expression_simplify_to("_°C+_°F", Undefined::Name());
+  assert_parsed_expression_simplify_to("_K+_°F", Undefined::Name());
+  assert_parsed_expression_simplify_to("2*20_°F", Undefined::Name());
+  assert_parsed_expression_simplify_to("_°C^2", Undefined::Name());
+  assert_parsed_expression_simplify_to("1/(-3_°C)", Undefined::Name());
+  assert_parsed_expression_simplify_to("-1×100×_°C→_K", Undefined::Name());
+
+  /* Rational exponents */
+  assert_parsed_expression_simplify_to("√(_m)", "1×_m^\u00121/2\u0013");
+  assert_parsed_expression_simplify_to("√(_N)", "1×_kg^\u00121/2\u0013×_m^\u00121/2\u0013×_s^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("√(_N)", "1.5527410012845×_lb^\u00121/2\u0013×_yd^\u00121/2\u0013×_s^\u0012-1\u0013", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_C^0.3", "1×_A^\u00123/10\u0013×_s^\u00123/10\u0013");
+  assert_parsed_expression_simplify_to("_kat_kg^-2.8", "1×_mol×_kg^\u0012-14/5\u0013×_s^\u0012-1\u0013");
 
   /* Unit sum/subtract */
   assert_parsed_expression_simplify_to("_m+_m", "2×_m");
@@ -308,18 +432,20 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_A^2×_s^4×_kg^(-1)×_m^(-3)", "1×_F×_m^\u0012-1\u0013"); // Vacuum magnetic permeability 𝝴0
   assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-4)", "1×_K^\u0012-4\u0013×_kg×_s^\u0012-3\u0013"); // Stefan–Boltzmann constant _W×_m^-2×_K^-4
 
-  /* Keep units for 0, infinity float results, Remove unit for undefined
+  /* Keep SI units for 0, infinity float results, Remove unit for undefined
    * expression */
   assert_parsed_expression_simplify_to("0×_s", "0×_s");
-  assert_parsed_expression_simplify_to("inf×_s", "inf×_s");
-  assert_parsed_expression_simplify_to("-inf×_s", "-inf×_s");
+  assert_parsed_expression_simplify_to("0×_tsp", "0×_m^3");
+  assert_parsed_expression_simplify_to("inf×_s", "∞×_s");
+  assert_parsed_expression_simplify_to("-inf×_oz", "-∞×_kg");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
-  assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "0×_s");
-  assert_parsed_expression_simplify_to("log(0)×_s", "-inf×_s");
+  assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "13.083978345207×_ps");
+  assert_parsed_expression_simplify_to("log(0)×_s", "undef");
   assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
 
   /* Units with invalid exponent */
-  assert_parsed_expression_simplify_to("_s^(1/2)", "undef");
+  assert_parsed_expression_simplify_to("_s^(_s)", "undef");
+  assert_parsed_expression_simplify_to("_s^(π)", "undef");
 
   /* Inhomogeneous expressions */
   assert_parsed_expression_simplify_to("1+_s", "undef");
@@ -350,16 +476,19 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("conj(_s)", "undef");
   assert_parsed_expression_simplify_to("cos(_s)", "undef");
   assert_parsed_expression_simplify_to("cosh(_s)", "undef");
+  assert_parsed_expression_simplify_to("cross(_s,[[1][2][3]])", "undef");
   assert_parsed_expression_simplify_to("det(_s)", "undef");
   assert_parsed_expression_simplify_to("diff(_s,x,0)", "undef");
   assert_parsed_expression_simplify_to("diff(0,x,_s)", "undef");
   assert_parsed_expression_simplify_to("dim(_s)", "undef");
+  assert_parsed_expression_simplify_to("dot(_s,[[1][2][3]])", "undef");
   assert_parsed_expression_simplify_to("factor(_s)", "undef");
   assert_parsed_expression_simplify_to("(_s)!", "undef");
   assert_parsed_expression_simplify_to("floor(_s)", "undef");
   assert_parsed_expression_simplify_to("frac(_s)", "undef");
   assert_parsed_expression_simplify_to("gcd(1,_s)", "undef");
   assert_parsed_expression_simplify_to("gcd(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("gcd(1,2,3,_s)", "undef");
   assert_parsed_expression_simplify_to("identity(_s)", "undef");
   assert_parsed_expression_simplify_to("im(_s)", "undef");
   assert_parsed_expression_simplify_to("int(_s,x,0,1)", "undef");
@@ -374,10 +503,12 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("inverse(_s)", "undef");
   assert_parsed_expression_simplify_to("lcm(1,_s)", "undef");
   assert_parsed_expression_simplify_to("lcm(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("lcm(1,2,3,_s)", "undef");
   assert_parsed_expression_simplify_to("ln(_s)", "undef");
   assert_parsed_expression_simplify_to("log(_s)", "undef");
   assert_parsed_expression_simplify_to("log(_s,2)", "undef");
   assert_parsed_expression_simplify_to("log(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("norm(_s)", "undef");
   assert_parsed_expression_simplify_to("normcdf(_s,2,3)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,_s,3)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,3,_s)", "undef");
@@ -402,10 +533,12 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("randint(_s,1)", "undef");
   assert_parsed_expression_simplify_to("randint(1,_s)", "undef");
   assert_parsed_expression_simplify_to("re(_s)", "undef");
+  assert_parsed_expression_simplify_to("ref(_s)", "undef");
   assert_parsed_expression_simplify_to("rem(_s,1)", "undef");
   assert_parsed_expression_simplify_to("rem(1,_s)", "undef");
   assert_parsed_expression_simplify_to("round(_s,1)", "undef");
   assert_parsed_expression_simplify_to("round(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("rref(_s)", "undef");
   assert_parsed_expression_simplify_to("sign(_s)", "undef");
   assert_parsed_expression_simplify_to("sin(_s)", "undef");
   assert_parsed_expression_simplify_to("sinh(_s)", "undef");
@@ -416,12 +549,15 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("tanh(_s)", "undef");
   assert_parsed_expression_simplify_to("trace(_s)", "undef");
   assert_parsed_expression_simplify_to("transpose(_s)", "undef");
-  assert_parsed_expression_simplify_to("√(_s)", "undef");
 
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
   assert_parsed_expression_simplify_to("cos(1_s/1_s)", "cos(1)");
   assert_parsed_expression_simplify_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
+  assert_parsed_expression_simplify_to("√(16×_m^2)", "4×_m");
+  assert_parsed_expression_simplify_to("1×_A_kg", "2.2046226218488×_A×_lb", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("2×π×_cK", "0.062831853071796×_K", User, Radian, Imperial);
+
 }
 
 QUIZ_CASE(poincare_simplification_power) {
@@ -490,11 +626,11 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("ℯ^(𝐢×π/3)", "1/2+√(3)/2×𝐢");
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×𝐢");
   assert_parsed_expression_simplify_to("√(-x)", "√(-x)");
-  assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Real);
+  assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Metric, Real);
   // Principal angle of root of unity
-  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "1/\u00122×root(5,3)\u0013-√(3)/\u00122×root(5,3)\u0013×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "\u0012√(√(6)+8)+√(6)+9\u0013/√(√(6)+8)", User, Radian, Real);
+  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "1/\u00122×root(5,3)\u0013-√(3)/\u00122×root(5,3)\u0013×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "\u0012√(√(6)+8)+√(6)+9\u0013/√(√(6)+8)", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)", "[[-59/4,27/4][81/8,-37/8]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");
   assert_parsed_expression_simplify_to("(3_m^2)^3", "27×_m^6");
@@ -511,10 +647,10 @@ QUIZ_CASE(poincare_simplification_factorial) {
 QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(0,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(0,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(1,0)", "0");
-  assert_parsed_expression_simplify_to("log(2,0)", "0");
-  assert_parsed_expression_simplify_to("log(0,14)", "-inf");
-  assert_parsed_expression_simplify_to("log(0,0.14)", Infinity::Name());
+  assert_parsed_expression_simplify_to("log(1,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(2,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(0,14)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(0,0.14)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(0,0.14+𝐢)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(2,1)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(x,1)", Undefined::Name());
@@ -581,6 +717,11 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("arg(1+𝐢)", "π/4");
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
+  assert_parsed_expression_simplify_to("binomial(10,20)", "0");
+  assert_parsed_expression_simplify_to("binomial(-10,10)", "92378");
+  assert_parsed_expression_simplify_to("binomial(2.5,3)", "binomial(5/2,3)");
+  assert_parsed_expression_simplify_to("binomial(-200,120)", "binomial(-200,120)");
+  assert_parsed_expression_simplify_to("binomial(400,1)", "binomial(400,1)");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
   assert_parsed_expression_simplify_to("ceil(2π)", "7");
   assert_parsed_expression_simplify_to("ceil(123456789012345678901234567892/3)", "41152263004115226300411522631");
@@ -606,9 +747,13 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
+  assert_parsed_expression_simplify_to("gcd(56,112,28,91)", "7");
+  assert_parsed_expression_simplify_to("gcd(-32,-32)", "32");
   assert_parsed_expression_simplify_to("im(1+5×𝐢)", "5");
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
+  assert_parsed_expression_simplify_to("lcm(11,121, 3)", "363");
+  assert_parsed_expression_simplify_to("lcm(-32,-32)", "32");
   assert_parsed_expression_simplify_to("√(4)", "2");
   assert_parsed_expression_simplify_to("re(1+5×𝐢)", "1");
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
@@ -632,8 +777,8 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("sign(2+𝐢)", "sign(2+𝐢)");
   /* Test with no symbolic computation to check that n inside a sum expression
    * is not replaced by Undefined */
-  assert_parsed_expression_simplify_to("sum(n,n,1,5)", "sum(n,n,1,5)", User, Radian, Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_parsed_expression_simplify_to("sum(1/n,n,1,2)", "sum(1/n,n,1,2)", User, Radian, Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_parsed_expression_simplify_to("sum(n,n,1,5)", "sum(n,n,1,5)", User, Radian, Metric, Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_parsed_expression_simplify_to("sum(1/n,n,1,2)", "sum(1/n,n,1,2)", User, Radian, Metric, Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", Undefined::Name());
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");
@@ -769,7 +914,20 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("acos(cos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
-  assert_parsed_expression_simplify_to("acos(cos(12))", "acos(cos(12))");
+
+  assert_parsed_expression_simplify_to("acos(cos(12))", "4×π-12");
+  assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))", "20000000000");
+  assert_parsed_expression_simplify_to("acos(cos(inf))", "acos(cos(∞))");
+  assert_parsed_expression_simplify_to("acos(cos(9))", "-2×π+9");
+  assert_parsed_expression_simplify_to("acos(cos(10^125))", "acos(cos(10^125))");
+  assert_parsed_expression_simplify_to("acos(cos(1/0))", Undefined::Name());
+  assert_parsed_expression_simplify_to("acos(cos(-8.8))", "\u0012-10×π+44\u0013/5");
+  assert_parsed_expression_simplify_to("acos(cos(π+26))", "9×π-26");
+  assert_parsed_expression_simplify_to("acos(cos(0))", "0");
+  assert_parsed_expression_simplify_to("acos(cos(9π))", "π");
+  assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))", "160", User, Degree);
+  assert_parsed_expression_simplify_to("acos(cos(180+50))", "130", User, Degree);
+
   assert_parsed_expression_simplify_to("acos(cos(4π/7))", "\u00124×π\u0013/7");
   assert_parsed_expression_simplify_to("acos(-cos(2))", "π-2");
   assert_parsed_expression_simplify_to("acos(-1/2)", "120", User, Degree);
@@ -788,7 +946,16 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("sin(asin(2/3))", "2/3");
   assert_parsed_expression_simplify_to("sin(asin(3/2))", "3/2");
   assert_parsed_expression_simplify_to("asin(sin(3/2))", "3/2");
-  assert_parsed_expression_simplify_to("asin(sin(12))", "asin(sin(12))");
+  assert_parsed_expression_simplify_to("asin(sin(3.6))", "\u00125×π-18\u0013/5");
+  assert_parsed_expression_simplify_to("asin(sin(-2.23))", "\u0012-100×π+223\u0013/100");
+  assert_parsed_expression_simplify_to("asin(sin(-18.39))", "\u0012600×π-1839\u0013/100");
+
+
+  assert_parsed_expression_simplify_to("asin(sin(12))", "-4×π+12");
+  assert_parsed_expression_simplify_to("asin(sin(2+π))", "-π+2");
+  assert_parsed_expression_simplify_to("asin(sin(90+6800))", "50", User, Degree);
+  assert_parsed_expression_simplify_to("asin(sin(60-9×9×9))", "51", User, Degree);
+
   assert_parsed_expression_simplify_to("asin(sin(-π/7))", "-π/7");
   assert_parsed_expression_simplify_to("asin(sin(-√(2)))", "-√(2)");
   assert_parsed_expression_simplify_to("asin(-1/2)", "-30", User, Degree);
@@ -805,8 +972,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(tan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
-  assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
-  assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
+  assert_parsed_expression_simplify_to("atan(tan(5/2))", "\u0012-2×π+5\u0013/2");
   assert_parsed_expression_simplify_to("atan(tan(-π/7))", "-π/7");
   assert_parsed_expression_simplify_to("atan(√(3))", "π/3");
   assert_parsed_expression_simplify_to("atan(tan(-√(2)))", "-√(2)");
@@ -819,7 +985,9 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(tan(1808))", "8", User, Degree);
   assert_parsed_expression_simplify_to("atan(tan(-180/7))", "-180/7", User, Degree);
   assert_parsed_expression_simplify_to("atan(√(3))", "60", User, Degree);
-  assert_parsed_expression_simplify_to("atan(1/x)", "\u0012π×sign(x)-2×atan(x)\u0013/2", User, Degree);
+  assert_parsed_expression_simplify_to("atan(1/x)", "\u0012π×sign(x)-2×atan(x)\u0013/2");
+  assert_parsed_expression_simplify_to("atan(1/x)", "90×sign(x)-atan(x)", User, Degree);
+  assert_parsed_expression_simplify_to("atan(1/x)", "100×sign(x)-atan(x)", User, Gradian);
 
   // cos(asin)
   assert_parsed_expression_simplify_to("cos(asin(x))", "√(-x^2+1)", User, Degree);
@@ -897,6 +1065,49 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("transpose([[1/√(2),1/2,3][2,1,-3]])", "[[√(2)/2,2][1/2,1][3,-3]]");
   assert_parsed_expression_simplify_to("transpose(√(4))", "2");
 
+  // Ref and Rref
+  assert_parsed_expression_simplify_to("ref([[1,1/√(2),√(4)]])", "[[1,√(2)/2,2]]");
+  assert_parsed_expression_simplify_to("rref([[1,1/√(2),√(4)]])", "[[1,√(2)/2,2]]");
+  assert_parsed_expression_simplify_to("ref([[1,0,√(4)][0,1,1/√(2)][0,0,1]])", "[[1,0,2][0,1,√(2)/2][0,0,1]]");
+  assert_parsed_expression_simplify_to("rref([[1,0,√(4)][0,1,1/√(2)][0,0,0]])", "[[1,0,2][0,1,√(2)/2][0,0,0]]");
+  assert_parsed_expression_simplify_to("ref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,7/5,6/5,8/5][0,1,11/10,6/5][0,0,1,204/167]]");
+  assert_parsed_expression_simplify_to("rref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,0,0,56/167][0,1,0,-24/167][0,0,1,204/167]]");
+  assert_parsed_expression_simplify_to("ref([[1,0][5,6][0,10]])", "[[1,6/5][0,1][0,0]]");
+  assert_parsed_expression_simplify_to("rref([[1,0][5,6][0,10]])", "[[1,0][0,1][0,0]]");
+  assert_parsed_expression_simplify_to("ref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
+  assert_parsed_expression_simplify_to("rref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
+  assert_parsed_expression_simplify_to("rref([[0,1][1ᴇ-100,1]])", "[[1,0][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[0,2,-1][5,6,7][12,11,10]])", "[[1,11/12,5/6][0,1,-1/2][0,0,1]]");
+  assert_parsed_expression_simplify_to("rref([[0,2,-1][5,6,7][12,11,10]])", "[[1,0,0][0,1,0][0,0,1]]");
+  /* Results for ref depend on the implementation. In any case :
+   * - Rows with only zeros must be at the bottom.
+   * - Leading coefficient of other rows must be to the right (strictly) of the
+   * - one above.
+   * - (Optional, but sometimes recommended) Leading coefficients must be 1. */
+  assert_parsed_expression_simplify_to("ref([[3,9][2,5]])", "[[1,3][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[3,2][5,7]])", "[[1,7/5][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[3,11][5,7]])", "[[1,7/5][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[2,5][2,7]])", "[[1,5/2][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[3,12][-4,1]])", "[[1,-1/4][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[0,1][1ᴇ-100,1]])", "[[1,10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000][0,1]]");
+
+  // Cross product
+  assert_parsed_expression_simplify_to("cross([[0][1/√(2)][0]],[[0][0][1]])", "[[√(2)/2][0][0]]");
+  assert_parsed_expression_simplify_to("cross([[1,2,3]],[[4][7][8]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("cross([[1,2,3]],[[4,7,8]])", "[[-5,4,-1]]");
+  assert_parsed_expression_simplify_to("cross([[1,π,𝐢]],[[𝐢π,𝐢π^2,-π]])", "[[0,0,0]]");
+
+  // Dot product
+  assert_parsed_expression_simplify_to("dot([[1/√(2)][0][0]],[[1][0][0]])", "√(2)/2");
+  assert_parsed_expression_simplify_to("dot([[1,1,0]],[[0][0][1]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("dot([[1,1,0]],[[0,0,1]])", "0");
+  assert_parsed_expression_simplify_to("dot([[1,1,1]],[[0,π,𝐢]])", "π+𝐢");
+
+  // Vector norm
+  assert_parsed_expression_simplify_to("norm([[1/√(2)][0][0]])", "√(2)/2");
+  assert_parsed_expression_simplify_to("norm([[1][2][3]])", "√(14)");
+  assert_parsed_expression_simplify_to("norm([[1,𝐢+1,π,-5]])", "√(π^2+28)");
+
   // Expressions with unreduced matrix
   assert_reduce("confidence(cos(2)/25,3)→a");
   // Check that matrices are not permuted in multiplication
@@ -948,6 +1159,7 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("gcd([[0,180]],1)", Undefined::Name());
   assert_parsed_expression_simplify_to("gcd(1,[[0,180]])", Undefined::Name());
   assert_parsed_expression_simplify_to("gcd([[0,180]],[[1]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("gcd(1,2,[[1]])", Undefined::Name());
   assert_parsed_expression_simplify_to("acosh([[0,π]])", "[[acosh(0),acosh(π)]]");
   assert_parsed_expression_simplify_to("asinh([[0,π]])", "[[0,asinh(π)]]");
   assert_parsed_expression_simplify_to("atanh([[0,π]])", "[[0,atanh(π)]]");
@@ -1030,6 +1242,8 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("3×_m→6_km", "0.003×_km");
   assert_parsed_expression_simplify_to("4×_min→_s^3/_s^2", "240×_s");
   assert_parsed_expression_simplify_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
+  assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m");
+  assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m", User, Radian, Imperial);
 
   assert_parsed_expression_simplify_to("1→2", Undefined::Name());
   assert_parsed_expression_simplify_to("1→a+a", Undefined::Name());
@@ -1053,9 +1267,17 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
   assert_parsed_expression_simplify_to("4→_km/_m", Undefined::Name());
   assert_parsed_expression_simplify_to("3×_min→_s+1-1", Undefined::Name());
+  assert_parsed_expression_simplify_to("0→_K", Undefined::Name());
 
-  assert_reduce("_m→a", Radian, Real);
-  assert_reduce("_m→b", Radian, Real);
+  assert_parsed_expression_simplify_to("0_K→_°C", "-273.15×_°C");
+  assert_parsed_expression_simplify_to("0_°C→_K", "273.15×_K");
+  assert_parsed_expression_simplify_to("_°C→_K", "274.15×_K");
+  assert_parsed_expression_simplify_to("0_K→_°F", "-459.67×_°F");
+  assert_parsed_expression_simplify_to("0_°F→_K", "255.37222222222×_K");
+  assert_parsed_expression_simplify_to("_°F→_K", "255.92777777778×_K");
+
+  assert_reduce("_m→a", Radian, Metric, Real);
+  assert_reduce("_m→b", Radian, Metric, Real);
   assert_parsed_expression_simplify_to("1_km→a×b", Undefined::Name());
 
   assert_reduce("2→a");
@@ -1071,166 +1293,171 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
 
 QUIZ_CASE(poincare_simplification_complex_format) {
   // Real
-  assert_parsed_expression_simplify_to("𝐢", "unreal", User, Radian, Real);
-  assert_parsed_expression_simplify_to("√(-1)", "unreal", User, Radian, Real);
-  assert_parsed_expression_simplify_to("√(-1)×√(-1)", "unreal", User, Radian, Real);
-  assert_parsed_expression_simplify_to("ln(-2)", "unreal", User, Radian, Real);
-  assert_parsed_expression_simplify_to("(-8)^(2/3)", "4", User, Radian, Real);
-  assert_parsed_expression_simplify_to("(-8)^(2/5)", "2×root(2,5)", User, Radian, Real);
-  assert_parsed_expression_simplify_to("(-8)^(1/5)", "-root(8,5)", User, Radian, Real);
-  assert_parsed_expression_simplify_to("(-8)^(1/4)", "unreal", User, Radian, Real);
-  assert_parsed_expression_simplify_to("(-8)^(1/3)", "-2", User, Radian, Real);
-  assert_parsed_expression_simplify_to("[[1,2+√(-1)]]", "unreal", User, Radian, Real);
-  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Real);
-  assert_parsed_expression_simplify_to("atan(-2)", "-atan(2)", User, Radian, Real);
+  assert_parsed_expression_simplify_to("𝐢", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("√(-1)", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("√(-1)×√(-1)", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("ln(-2)", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("(-8)^(2/3)", "4", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("(-8)^(2/5)", "2×root(2,5)", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("(-8)^(1/5)", "-root(8,5)", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("(-8)^(1/4)", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("(-8)^(1/3)", "-2", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("[[1,2+√(-1)]]", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("atan(-2)", "-atan(2)", User, Radian, Metric, Real);
 
   // User defined variable
-  assert_parsed_expression_simplify_to("a", "a", User, Radian, Real);
+  assert_parsed_expression_simplify_to("a", "a", User, Radian, Metric, Real);
   // a = 2+i
-  assert_reduce("2+𝐢→a", Radian, Real);
-  assert_parsed_expression_simplify_to("a", "unreal", User, Radian, Real);
+  assert_reduce("2+𝐢→a", Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("a", "unreal", User, Radian, Metric, Real);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
   // f : x → x+1
-  assert_reduce("x+1+𝐢→f(x)", Radian, Real);
-  assert_parsed_expression_simplify_to("f(3)", "unreal", User, Radian, Real);
+  assert_reduce("x+1+𝐢→f(x)", Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("f(3)", "unreal", User, Radian, Metric, Real);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
 
   // Cartesian
-  assert_parsed_expression_simplify_to("-2.3ᴇ3", "-2300", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("3", "3", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("inf", "inf", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("1+2+𝐢", "3+𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("-(5+2×𝐢)", "-5-2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(5+2×𝐢)", "5+2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("𝐢+𝐢", "2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("-2+2×𝐢", "-2+2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(3+𝐢)-(2+4×𝐢)", "1-3×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(2+3×𝐢)×(4-2×𝐢)", "14+8×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(3+𝐢)/2", "3/2+1/2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(3+𝐢)/(2+𝐢)", "7/5-1/5×𝐢", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("-2.3ᴇ3", "-2300", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("3", "3", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("inf", "∞", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("1+2+𝐢", "3+𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("-(5+2×𝐢)", "-5-2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(5+2×𝐢)", "5+2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("𝐢+𝐢", "2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("-2+2×𝐢", "-2+2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(3+𝐢)-(2+4×𝐢)", "1-3×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(2+3×𝐢)×(4-2×𝐢)", "14+8×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(3+𝐢)/2", "3/2+1/2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(3+𝐢)/(2+𝐢)", "7/5-1/5×𝐢", User, Radian, Metric, Cartesian);
   // The simplification of (3+𝐢)^(2+𝐢) in a Cartesian complex form generates to many nodes
-  //assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "10×cos((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×ℯ^((2×atan(3)-π)/2)+10×sin((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×ℯ^((2×atan(3)-π)/2)𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "(𝐢+3)^\u0012𝐢+2\u0013", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("√(1+6𝐢)", "√(2×√(37)+2)/2+√(2×√(37)-2)/2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(1+𝐢)^2", "2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("2×𝐢", "2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("𝐢!", "𝐢!", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("3!", "6", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("x!", "x!", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("ℯ", "ℯ", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("π", "π", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("𝐢", "𝐢", User, Radian, Cartesian);
+  //assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "10×cos((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×ℯ^((2×atan(3)-π)/2)+10×sin((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×ℯ^((2×atan(3)-π)/2)𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "(𝐢+3)^\u0012𝐢+2\u0013", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("√(1+6𝐢)", "√(2×√(37)+2)/2+√(2×√(37)-2)/2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(1+𝐢)^2", "2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("2×𝐢", "2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("𝐢!", "𝐢!", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("3!", "6", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("x!", "x!", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("ℯ", "ℯ", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("π", "π", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("𝐢", "𝐢", User, Radian, Metric, Cartesian);
 
-  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("atan(-2)", "-atan(2)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("abs(-3)", "3", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("abs(-3+𝐢)", "√(10)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("atan(2+𝐢)", "atan(2+𝐢)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("binomial(10, 4)", "210", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("ceil(-1.3)", "-1", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("arg(-2)", "π", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("atan(-2)", "-atan(2)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("abs(-3)", "3", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("abs(-3+𝐢)", "√(10)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("atan(2+𝐢)", "atan(2+𝐢)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("binomial(10, 4)", "210", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("ceil(-1.3)", "-1", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("arg(-2)", "π", User, Radian, Metric, Cartesian);
   // TODO: confidence is not simplified yet
   //assert_parsed_expression_simplify_to("confidence(-2,-3)", "confidence(-2)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("conj(-2)", "-2", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("conj(-2+2×𝐢+𝐢)", "-2-3×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("cos(12)", "cos(12)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("cos(12+𝐢)", "cos(12+𝐢)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("diff(3×x, x, 3)", "diff(3×x,x,3)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("quo(34,x)", "quo(34,x)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("rem(5,3)", "2", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("floor(x)", "floor(x)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("frac(x)", "frac(x)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("gcd(x,y)", "gcd(x,y)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("im(1+𝐢)", "1", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("lcm(x,y)", "lcm(x,y)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("conj(-2)", "-2", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("conj(-2+2×𝐢+𝐢)", "-2-3×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("cos(12)", "cos(12)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("cos(12+𝐢)", "cos(12+𝐢)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("diff(3×x, x, 3)", "3", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("quo(34,x)", "quo(34,x)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("rem(5,3)", "2", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("floor(x)", "floor(x)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("frac(x)", "frac(x)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(x,y)", "gcd(x,y)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(3, 1, 2, x, x^2)", "gcd(x^2,x,3,2,1)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("im(1+𝐢)", "1", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(x,y)", "lcm(x,y)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(3, 1, 2, x, x^2)", "lcm(x^2,x,3,2,1)", User, Radian, Metric, Cartesian);
   // TODO: dim is not simplified yet
-  //assert_parsed_expression_simplify_to("dim(x)", "dim(x)", User, Radian, Cartesian);
+  //assert_parsed_expression_simplify_to("dim(x)", "dim(x)", User, Radian, Metric, Cartesian);
 
-  assert_parsed_expression_simplify_to("root(2,𝐢)", "cos(ln(2))-sin(ln(2))×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("root(2,𝐢+1)", "√(2)×cos(\u001290×ln(2)\u0013/π)-√(2)×sin(\u001290×ln(2)\u0013/π)×𝐢", User, Degree, Cartesian);
-  assert_parsed_expression_simplify_to("root(2,𝐢+1)", "√(2)×cos(ln(2)/2)-√(2)×sin(ln(2)/2)×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("permute(10, 4)", "5040", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("root(2,𝐢)", "cos(ln(2))-sin(ln(2))×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("root(2,𝐢+1)", "√(2)×cos(\u001290×ln(2)\u0013/π)-√(2)×sin(\u001290×ln(2)\u0013/π)×𝐢", User, Degree, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("root(2,𝐢+1)", "√(2)×cos(ln(2)/2)-√(2)×sin(ln(2)/2)×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("permute(10, 4)", "5040", User, Radian, Metric, Cartesian);
   // TODO: prediction is not simplified yet
-  //assert_parsed_expression_simplify_to("prediction(-2,-3)", "prediction(-2)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("randint(2,2)", "2", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("random()", "random()", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("re(x)", "re(x)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("sign(x)", "sign(x)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("sin(23)", "sin(23)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("sin(23+𝐢)", "sin(23+𝐢)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("√(1-𝐢)", "√(2×√(2)+2)/2-√(2×√(2)-2)/2×𝐢", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("tan(23)", "tan(23)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("tan(23+𝐢)", "tan(23+𝐢)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,𝐢]]", User, Radian, Cartesian);
+  //assert_parsed_expression_simplify_to("prediction(-2,-3)", "prediction(-2)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("randint(2,2)", "2", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("random()", "random()", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("re(x)", "re(x)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("sign(x)", "sign(x)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("sin(23)", "sin(23)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("sin(23+𝐢)", "sin(23+𝐢)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("√(1-𝐢)", "√(2×√(2)+2)/2-√(2×√(2)-2)/2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("tan(23)", "tan(23)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("tan(23+𝐢)", "tan(23+𝐢)", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,𝐢]]", User, Radian, Metric, Cartesian);
 
   // User defined variable
-  assert_parsed_expression_simplify_to("a", "a", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("a", "a", User, Radian, Metric, Cartesian);
   // a = 2+i
-  assert_reduce("2+𝐢→a", Radian, Cartesian);
-  assert_parsed_expression_simplify_to("a", "2+𝐢", User, Radian, Cartesian);
+  assert_reduce("2+𝐢→a", Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("a", "2+𝐢", User, Radian, Metric, Cartesian);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
   // f : x → x+1
-  assert_reduce("x+1+𝐢→f(x)", Radian, Cartesian);
-  assert_parsed_expression_simplify_to("f(3)", "4+𝐢", User, Radian, Cartesian);
+  assert_reduce("x+1+𝐢→f(x)", Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("f(3)", "4+𝐢", User, Radian, Metric, Cartesian);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
   // Polar
-  assert_parsed_expression_simplify_to("-2.3ᴇ3", "2300×ℯ^\u0012π×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("3", "3", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("inf", "inf", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("1+2+𝐢", "√(10)×ℯ^\u0012\u0012-2×atan(3)+π\u0013/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("1+2+𝐢", "√(10)×ℯ^\u0012\u0012-π×atan(3)+90×π\u0013/180×𝐢\u0013", User, Degree, Polar);
-  assert_parsed_expression_simplify_to("-(5+2×𝐢)", "√(29)×ℯ^\u0012\u0012-2×atan(5/2)-π\u0013/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("(5+2×𝐢)", "√(29)×ℯ^\u0012\u0012-2×atan(5/2)+π\u0013/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("𝐢+𝐢", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("𝐢+𝐢", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("-2+2×𝐢", "2×√(2)×ℯ^\u0012\u00123×π\u0013/4×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("(3+𝐢)-(2+4×𝐢)", "√(10)×ℯ^\u0012\u00122×atan(1/3)-π\u0013/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("(2+3×𝐢)×(4-2×𝐢)", "2×√(65)×ℯ^\u0012\u0012-2×atan(7/4)+π\u0013/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("(3+𝐢)/2", "√(10)/2×ℯ^\u0012\u0012-2×atan(3)+π\u0013/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("(3+𝐢)/(2+𝐢)", "√(2)×ℯ^\u0012\u00122×atan(7)-π\u0013/2×𝐢\u0013", User, Radian, Polar);
+  assert_parsed_expression_simplify_to("-2.3ᴇ3", "2300×ℯ^\u0012π×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("3", "3", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("inf", "∞", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("1+2+𝐢", "√(10)×ℯ^\u0012\u0012-2×atan(3)+π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("1+2+𝐢", "√(10)×ℯ^\u0012\u0012-π×atan(3)+90×π\u0013/180×𝐢\u0013", User, Degree, Metric, Polar);
+  assert_parsed_expression_simplify_to("-(5+2×𝐢)", "√(29)×ℯ^\u0012\u0012-2×atan(5/2)-π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("(5+2×𝐢)", "√(29)×ℯ^\u0012\u0012-2×atan(5/2)+π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("𝐢+𝐢", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("𝐢+𝐢", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("-2+2×𝐢", "2×√(2)×ℯ^\u0012\u00123×π\u0013/4×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("(3+𝐢)-(2+4×𝐢)", "√(10)×ℯ^\u0012\u00122×atan(1/3)-π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("(2+3×𝐢)×(4-2×𝐢)", "2×√(65)×ℯ^\u0012\u0012-2×atan(7/4)+π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("(3+𝐢)/2", "√(10)/2×ℯ^\u0012\u0012-2×atan(3)+π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("(3+𝐢)/(2+𝐢)", "√(2)×ℯ^\u0012\u00122×atan(7)-π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
   // TODO: simplify atan(tan(x)) = x±k×pi?
-  //assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "10ℯ^\u0012\u00122×atan(3)-π\u0013/2\u0013×ℯ^\u0012\u0012\u0012-4×atan(3)+ln(2)+ln(5)+2π\u0013/2\u0013𝐢\u0013", User, Radian, Polar);
+  //assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "10ℯ^\u0012\u00122×atan(3)-π\u0013/2\u0013×ℯ^\u0012\u0012\u0012-4×atan(3)+ln(2)+ln(5)+2π\u0013/2\u0013𝐢\u0013", User, Radian, Metric, Polar);
   // The simplification of (3+𝐢)^(2+𝐢) in a Polar complex form generates to many nodes
-  //assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "10ℯ^\u0012\u00122×atan(3)-π\u0013/2\u0013×ℯ^\u0012\u0012atan(tan((-4×atan(3)+ln(2)+ln(5)+2×π)/2))+π\u0013𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "(𝐢+3)^\u0012𝐢+2\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("(1+𝐢)^2", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("2×𝐢", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("3!", "6", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("x!", "x!", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("ℯ", "ℯ", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("π", "π", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("𝐢", "ℯ^\u0012π/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("abs(-3)", "3", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("abs(-3+𝐢)", "√(10)", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("conj(2×ℯ^(𝐢×π/2))", "2×ℯ^\u0012-π/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("-2×ℯ^(𝐢×π/2)", "2×ℯ^\u0012-π/2×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,ℯ^\u0012π/2×𝐢\u0013]]", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("atan(-2)", "atan(2)×ℯ^\u0012π×𝐢\u0013", User, Radian, Polar);
-  assert_parsed_expression_simplify_to("cos(42π)", "-cos(42×π)×ℯ^\x12π×𝐢\x13", User, Degree, Polar);
+  //assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "10ℯ^\u0012\u00122×atan(3)-π\u0013/2\u0013×ℯ^\u0012\u0012atan(tan((-4×atan(3)+ln(2)+ln(5)+2×π)/2))+π\u0013𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("(3+𝐢)^(2+𝐢)", "(𝐢+3)^\u0012𝐢+2\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("(1+𝐢)^2", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("2×𝐢", "2×ℯ^\u0012π/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("3!", "6", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("x!", "x!", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("ℯ", "ℯ", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("π", "π", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("𝐢", "ℯ^\u0012π/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("abs(-3)", "3", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("abs(-3+𝐢)", "√(10)", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("conj(2×ℯ^(𝐢×π/2))", "2×ℯ^\u0012-π/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("-2×ℯ^(𝐢×π/2)", "2×ℯ^\u0012-π/2×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,ℯ^\u0012π/2×𝐢\u0013]]", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("atan(-2)", "atan(2)×ℯ^\u0012π×𝐢\u0013", User, Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("cos(42π)", "-cos(42×π)×ℯ^\x12π×𝐢\x13", User, Degree, Metric, Polar);
 
   // User defined variable
-  assert_parsed_expression_simplify_to("a", "a", User, Radian, Polar);
+  assert_parsed_expression_simplify_to("a", "a", User, Radian, Metric, Polar);
   // a = 2 + 𝐢
-  assert_reduce("2+𝐢→a", Radian, Polar);
-  assert_parsed_expression_simplify_to("a", "√(5)×ℯ^\u0012\u0012-2×atan(2)+π\u0013/2×𝐢\u0013", User, Radian, Polar);
+  assert_reduce("2+𝐢→a", Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("a", "√(5)×ℯ^\u0012\u0012-2×atan(2)+π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
   // f: x → x+1
-  assert_reduce("x+1+𝐢→f(x)", Radian, Polar);
-  assert_parsed_expression_simplify_to("f(3)", "√(17)×ℯ^\u0012\u0012-2×atan(4)+π\u0013/2×𝐢\u0013", User, Radian, Polar);
+
+  assert_reduce("x+1+𝐢→f(x)", Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("f(3)", "√(17)×ℯ^\u0012\u0012-2×atan(4)+π\u0013/2×𝐢\u0013", User, Radian, Metric, Polar);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
@@ -1287,19 +1514,19 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
 }
 
 QUIZ_CASE(poincare_simplification_unit_conversion) {
-  assert_parsed_expression_simplify_to("1000000_cm", "10×_km", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, DefaultUnitConversion);
-  assert_parsed_expression_simplify_to("1000000_cm", "1000000×_cm", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, NoUnitConversion);
-  assert_parsed_expression_simplify_to("1000000_cm", "10000×_m", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, InternationalSystemUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "10×_km", User, Degree, Metric, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, DefaultUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "1000000×_cm", User, Degree, Metric, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, NoUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "10000×_m", User, Degree, Metric, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, InternationalSystemUnitConversion);
 }
 
 QUIZ_CASE(poincare_simplification_user_function) {
   // User defined function
   // f: x → x*1
-  assert_reduce("x*3→f(x)", Radian, Polar);
-  assert_parsed_expression_simplify_to("f(1+1)", "6", User, Radian, Polar);
+  assert_reduce("x*3→f(x)", Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("f(1+1)", "6", User, Radian, Metric, Polar);
   // f: x → 3
-  assert_reduce("3→f(x)", Radian, Polar);
-  assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name(), User, Radian, Polar);
+  assert_reduce("3→f(x)", Radian, Metric, Polar);
+  assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name(), User, Radian, Metric, Polar);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
@@ -1321,7 +1548,7 @@ QUIZ_CASE(poincare_simplification_user_function_with_convert) {
   e = Store::Builder(
       UnitConvert::Builder(
         Rational::Builder(0),
-        Unit::Second()),
+        Unit::Builder(&Unit::k_timeRepresentatives[Unit::k_secondRepresentativeIndex], Unit::Prefix::EmptyPrefix())),
       Function::Builder(
         "f", 1,
         Symbol::Builder('x')));
@@ -1367,7 +1594,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("√(-𝐢)", "√(2)/2-√(2)/2×𝐢");
   assert_parsed_expression_simplify_to("A×cos(9)𝐢𝐢ln(2)", "-A×cos(9)×ln(2)");
   assert_parsed_expression_simplify_to("(√(2)+√(2)×𝐢)/2(√(2)+√(2)×𝐢)/2(√(2)+√(2)×𝐢)/2", "√(2)/32-√(2)/32×𝐢");
-  assert_parsed_expression_simplify_to("root(5^((-𝐢)3^9),𝐢)", "1/ℯ^atan(tan(19683×ln(5)))");
+  assert_parsed_expression_simplify_to("root(5^((-𝐢)3^9),𝐢)", "ℯ^\x12-19683×ln(5)+10084×π\x13");
   assert_parsed_expression_simplify_to("𝐢^𝐢", "1/ℯ^\u0012π/2\u0013");
   assert_parsed_expression_simplify_to("𝐢/(1+𝐢×√(x))", "𝐢/\u0012√(x)×𝐢+1\u0013");
   assert_parsed_expression_simplify_to("x+𝐢/(1+𝐢×√(x))", "\u0012x^\u00123/2\u0013×𝐢+𝐢+x\u0013/\u0012√(x)×𝐢+1\u0013");
@@ -1379,7 +1606,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("(((√(6)-√(2))/4)/((√(6)+√(2))/4))+1", "-√(3)+3");
   assert_parsed_expression_simplify_to("1/√(𝐢) × (√(2)-𝐢×√(2))", "-2×𝐢"); // TODO: get rid of complex at denominator?
 
-  assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.702740901018ᴇ62", Degree, Cartesian, 13);
+  assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.702740901018ᴇ62", Degree, Metric, Cartesian, 13);
 }
 
 QUIZ_CASE(poincare_hyperbolic_trigonometry) {
@@ -1395,56 +1622,56 @@ QUIZ_CASE(poincare_hyperbolic_trigonometry) {
   assert_parsed_expression_simplify_to("acosh(cosh(3))", "3");
   assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2");
   assert_parsed_expression_simplify_to("acosh(cosh(-3))", "3");
-  assert_parsed_expression_simplify_to("acosh(cosh(3))", "3", User, Radian, Real);
-  assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2", User, Radian, Real);
-  assert_parsed_expression_simplify_to("acosh(cosh(-3))", "3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("acosh(cosh(3))", "3", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("acosh(cosh(-3))", "3", User, Radian, Metric, Real);
 
   // cosh(acosh)
   assert_parsed_expression_simplify_to("cosh(acosh(3))", "3");
   assert_parsed_expression_simplify_to("cosh(acosh(0.5))", "1/2");
   assert_parsed_expression_simplify_to("cosh(acosh(-3))", "-3");
-  assert_parsed_expression_simplify_to("cosh(acosh(3))", "3", User, Radian, Real);
-  assert_parsed_expression_simplify_to("cosh(acosh(0.5))", "cosh(acosh(1/2))", User, Radian, Real);
-  assert_parsed_expression_simplify_to("cosh(acosh(-3))", "cosh(acosh(-3))", User, Radian, Real);
+  assert_parsed_expression_simplify_to("cosh(acosh(3))", "3", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("cosh(acosh(0.5))", "cosh(acosh(1/2))", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("cosh(acosh(-3))", "cosh(acosh(-3))", User, Radian, Metric, Real);
 
   // sinh(asinh)
   assert_parsed_expression_simplify_to("sinh(asinh(3))", "3");
   assert_parsed_expression_simplify_to("sinh(asinh(0.5))", "1/2");
   assert_parsed_expression_simplify_to("sinh(asinh(-3))", "-3");
-  assert_parsed_expression_simplify_to("sinh(asinh(3))", "3", User, Radian, Real);
-  assert_parsed_expression_simplify_to("sinh(asinh(0.5))", "1/2", User, Radian, Real);
-  assert_parsed_expression_simplify_to("sinh(asinh(-3))", "-3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("sinh(asinh(3))", "3", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("sinh(asinh(0.5))", "1/2", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("sinh(asinh(-3))", "-3", User, Radian, Metric, Real);
 
   // asinh(sinh)
   assert_parsed_expression_simplify_to("asinh(sinh(3))", "3");
   assert_parsed_expression_simplify_to("asinh(sinh(0.5))", "1/2");
   assert_parsed_expression_simplify_to("asinh(sinh(-3))", "-3");
-  assert_parsed_expression_simplify_to("asinh(sinh(3))", "3", User, Radian, Real);
-  assert_parsed_expression_simplify_to("asinh(sinh(0.5))", "1/2", User, Radian, Real);
-  assert_parsed_expression_simplify_to("asinh(sinh(-3))", "-3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("asinh(sinh(3))", "3", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("asinh(sinh(0.5))", "1/2", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("asinh(sinh(-3))", "-3", User, Radian, Metric, Real);
 
   // tanh(atanh)
   assert_parsed_expression_simplify_to("tanh(atanh(3))", "3");
   assert_parsed_expression_simplify_to("tanh(atanh(0.5))", "1/2");
   assert_parsed_expression_simplify_to("tanh(atanh(-3))", "-3");
-  assert_parsed_expression_simplify_to("tanh(atanh(3))", "tanh(atanh(3))", User, Radian, Real);
-  assert_parsed_expression_simplify_to("tanh(atanh(0.5))", "1/2", User, Radian, Real);
-  assert_parsed_expression_simplify_to("tanh(atanh(-3))", "-tanh(atanh(3))", User, Radian, Real);
+  assert_parsed_expression_simplify_to("tanh(atanh(3))", "tanh(atanh(3))", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("tanh(atanh(0.5))", "1/2", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("tanh(atanh(-3))", "-tanh(atanh(3))", User, Radian, Metric, Real);
 
   // atanh(tanh)
   assert_parsed_expression_simplify_to("atanh(tanh(3))", "3");
   assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2");
   assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3");
-  assert_parsed_expression_simplify_to("atanh(tanh(3))", "3", User, Radian, Real);
-  assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2", User, Radian, Real);
-  assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("atanh(tanh(3))", "3", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3", User, Radian, Metric, Real);
 }
 
 QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(0,2,3)", "-inf");
+  assert_parsed_expression_simplify_to("invnorm(0,2,3)", "-∞");
   assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");
-  assert_parsed_expression_simplify_to("invnorm(1,2,3)", "inf");
+  assert_parsed_expression_simplify_to("invnorm(1,2,3)", "∞");
   assert_parsed_expression_simplify_to("invnorm(1.3,2,3)", "undef");
   assert_parsed_expression_simplify_to("invnorm(3/4,2,random())", "invnorm(3/4,2,random())"); // random can be 0
   assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", Undefined::Name());

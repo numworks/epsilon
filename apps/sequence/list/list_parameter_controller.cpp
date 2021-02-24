@@ -2,6 +2,7 @@
 #include "list_controller.h"
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
+#include <apps/i18n.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -67,7 +68,7 @@ bool ListParameterController::textFieldShouldFinishEditing(TextField * textField
 }
 
 bool ListParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  static float maxFirstIndex = std::pow(10.0f, Sequence::k_initialRankNumberOfDigits) - 1.0f;
+  static float maxFirstIndex = std::pow(10.0f, Shared::Sequence::k_initialRankNumberOfDigits) - 1.0f;
   /* -1 to take into account a double recursive sequence, which has
    * SecondIndex = FirstIndex + 1 */
   double floatBody;
@@ -141,8 +142,8 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     if (myCell->isEditing()) {
       return;
     }
-    char buffer[Sequence::k_initialRankNumberOfDigits+1];
-    Poincare::Integer(sequence()->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
+    char buffer[Shared::Sequence::k_initialRankNumberOfDigits+1];
+    Poincare::Integer(sequence()->initialRank()).serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits+1);
     myCell->setAccessoryText(buffer);
   }
 }
@@ -155,7 +156,7 @@ int ListParameterController::totalNumberOfCells() const {
 };
 
 bool ListParameterController::hasInitialRankRow() const {
-  return !m_record.isNull() && const_cast<ListParameterController *>(this)->sequence()->type() != Sequence::Type::Explicit;
+  return !m_record.isNull() && const_cast<ListParameterController *>(this)->sequence()->type() != Shared::Sequence::Type::Explicit;
 }
 
 }

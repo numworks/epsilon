@@ -16,7 +16,8 @@ public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
   static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
-  typedef Poincare::Coordinate2D<float> (*EvaluateXYForParameter)(float t, void * model, void * context);
+  typedef Poincare::Coordinate2D<float> (*EvaluateXYForFloatParameter)(float t, void * model, void * context);
+  typedef Poincare::Coordinate2D<double> (*EvaluateXYForDoubleParameter)(double t, void * model, void * context);
   typedef float (*EvaluateYForX)(float x, void * model, void * context);
   enum class Axis {
     Horizontal = 0,
@@ -40,6 +41,7 @@ public:
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float pixelWidth() const;
   float pixelHeight() const;
+  float pixelLength(Axis axis) const;
 protected:
   CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
@@ -73,11 +75,11 @@ protected:
     KDColor color, bool thick = true
   ) const;
   enum class Size : uint8_t {
+    Tiny,
     Small,
-    Medium,
     Large
   };
-  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
+  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Tiny) const;
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).
    * The parameters defining the shape of the arrow are the length of
@@ -106,8 +108,9 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
-  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
+  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
+  void drawPolarCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
@@ -137,7 +140,7 @@ private:
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion) const;
+  void joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
   /* Join two dots with a straight line. */
   void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the

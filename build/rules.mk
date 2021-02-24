@@ -3,7 +3,7 @@
 $(eval $(call rule_for, \
   AS, %.o, %.s, \
   $$(CC) $$(SFLAGS) -c $$< -o $$@, \
-  global \
+  global local \
 ))
 
 $(eval $(call rule_for, \
@@ -56,7 +56,7 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   WINDRES, %.o, %.rc, \
-  $$(WINDRES) $$< -O coff -o $$@, \
+  $$(WINDRES) $$(WRFLAGS) $$< -O coff -o $$@, \
   global \
 ))
 

@@ -27,8 +27,8 @@ int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> MatrixTraceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> MatrixTraceNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Complex<T> result = Complex<T>::Builder(input.trace());
   return std::move(result);
 }
@@ -48,11 +48,7 @@ Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reduction
     if (matrixChild0.numberOfRows() != matrixChild0.numberOfColumns()) {
       return replaceWithUndefinedInPlace();
     }
-    int n = matrixChild0.numberOfRows();
-    Addition a = Addition::Builder();
-    for (int i = 0; i < n; i++) {
-      a.addChildAtIndexInPlace(matrixChild0.matrixChild(i,i), i, i); // No need to clone
-    }
+    Expression a = matrixChild0.createTrace();
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }

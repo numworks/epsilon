@@ -30,7 +30,7 @@ void CalculationGraphController::viewWillAppear() {
     m_isActive = true;
     assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == Shared::ContinuousFunction::PlotType::Cartesian);
     m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(), pointOfInterest.x2());
-    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
   }
@@ -64,7 +64,7 @@ bool CalculationGraphController::handleEnter() {
   return true;
 }
 
-bool CalculationGraphController::moveCursorHorizontally(int direction, bool fast) {
+bool CalculationGraphController::moveCursorHorizontally(int direction, int scrollspeed) {
   if (!m_isActive) {
     return false;
   }

@@ -24,14 +24,14 @@ int NormCDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 template<typename T>
-Evaluation<T> NormCDFNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> varEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+Evaluation<T> NormCDFNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
+  Evaluation<T> sigmaEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
 
   const T a = aEvaluation.toScalar();
   const T mu = muEvaluation.toScalar();
-  const T sigma = std::sqrt(varEvaluation.toScalar());
+  const T sigma = sigmaEvaluation.toScalar();
 
   // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
   return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));

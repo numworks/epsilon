@@ -13,10 +13,12 @@ public:
     Sine = 1,
   };
   static double PiInAngleUnit(Preferences::AngleUnit angleUnit);
-  static float characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit);
   static bool isDirectTrigonometryFunction(const Expression & e);
   static bool isInverseTrigonometryFunction(const Expression & e);
   static bool AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction);
+  /* Returns a (unreduced) division between pi in each unit, or 1 if the units
+   * are the same. */
+  static Expression UnitConversionFactor(Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit);
   static bool ExpressionIsEquivalentToTangent(const Expression & e);
   static Expression shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext);
   static Expression shallowReduceInverseFunction(Expression & e,  ExpressionNode::ReductionContext reductionContext);

@@ -7,6 +7,7 @@
 #include "equation_store.h"
 #include "interval_controller.h"
 #include "solutions_controller.h"
+#include "../shared/shared_app.h"
 
 namespace Solver {
 
@@ -19,7 +20,7 @@ public:
       App::Descriptor::ExaminationLevel examinationLevel() override;
       const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;
@@ -46,6 +47,9 @@ public:
   void willBecomeInactive() override;
   TELEMETRY_ID("Solver");
 private:
+  // TextFieldDelegateApp
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
+
   App(Snapshot * snapshot);
   SolutionsController m_solutionsController;
   IntervalController m_intervalController;

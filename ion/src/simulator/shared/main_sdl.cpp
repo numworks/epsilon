@@ -1,7 +1,9 @@
 #include "main.h"
 #include "display.h"
-#include "platform.h"
+#include "haptics.h"
 #include "layout.h"
+#include "platform.h"
+#include "telemetry.h"
 #include "random.h"
 
 #include <assert.h>
@@ -86,6 +88,7 @@ int main(int argc, char * argv[]) {
 #endif
 
   Ion::Simulator::Main::init();
+  Ion::Simulator::Haptics::init();
 
   ion_main(arguments.size(), &arguments[0]);
 
@@ -94,7 +97,9 @@ int main(int argc, char * argv[]) {
     savePython();
   }
 #endif
-  
+
+  // Shutdown
+  Ion::Simulator::Haptics::shutdown();
   Ion::Simulator::Main::quit();
 
   if (file_buffer != nullptr)
@@ -205,7 +210,6 @@ namespace Main {
 
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;
-static SDL_Texture * sBackgroundTexture = nullptr;
 static bool sNeedsRefresh = false;
 static SDL_Rect sScreenRect;
 
@@ -257,12 +261,9 @@ void init() {
 
   Display::init(sRenderer);
 
-  // No need to load background in web simulator.
-  #ifndef __EMSCRIPTEN__
-  if (!argument_screen_only) {
-    sBackgroundTexture = IonSimulatorLoadImage(sRenderer, "background.jpg");
-  }
-  #endif
+#if !EPSILON_SDL_SCREEN_ONLY
+  Layout::init(sRenderer);
+#endif
 
   relayout();
 }
@@ -273,6 +274,7 @@ void relayout() {
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
   SDL_RenderSetLogicalSize(sRenderer, windowWidth, windowHeight);
 
+  #if !EPSILON_SDL_SCREEN_ONLY
   if (argument_screen_only) {
     // Keep original aspect ration in screen_only mode.
     float scale = (float)(Ion::Display::Width) / (float)(Ion::Display::Height);
@@ -289,6 +291,12 @@ void relayout() {
   } else {
     Layout::recompute(windowWidth, windowHeight);
   }
+  #else
+  sScreenRect.x = 0;
+  sScreenRect.y = 0;
+  sScreenRect.w = windowWidth;
+  sScreenRect.h = windowHeight;
+  #endif
 
   setNeedsRefresh();
 }
@@ -301,28 +309,35 @@ void refresh() {
   if (!sNeedsRefresh) {
     return;
   }
+  sNeedsRefresh = false;
 
+  #if EPSILON_SDL_SCREEN_ONLY
+  Display::draw(sRenderer, &sScreenRect);
+  #else
   if (argument_screen_only) {
     Display::draw(sRenderer, &sScreenRect);
   } else {
     SDL_Rect screenRect;
     Layout::getScreenRect(&screenRect);
-    SDL_Rect backgroundRect;
-    Layout::getBackgroundRect(&backgroundRect);
 
     SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
     SDL_RenderClear(sRenderer);
-    SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
+    // Can change sNeedsRefresh state if a key is highlighted and needs to be reset
+    Layout::draw(sRenderer);
     Display::draw(sRenderer, &screenRect);
   }
+  #endif
 
   SDL_RenderPresent(sRenderer);
-  sNeedsRefresh = false;
 
   IonSimulatorCallbackDidRefresh();
 }
 
 void quit() {
+#if !EPSILON_SDL_SCREEN_ONLY
+  Layout::quit();
+#endif
+  Display::quit();
   SDL_DestroyWindow(sWindow);
   SDL_Quit();
 }

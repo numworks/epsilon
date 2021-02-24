@@ -46,7 +46,7 @@ private:
   class ControllerView : public View {
   public:
     ControllerView();
-    void shouldDisplayStackHearders(bool shouldDisplay);
+    void shouldDisplayStackHeaders(bool shouldDisplay);
     int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
     void pushStack(Frame frame);

@@ -38,13 +38,14 @@ void EditExpressionController::ContentView::reload() {
   markRectAsDirty(bounds());
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, char * cacheBuffer, size_t * cacheBufferInformation, HistoryController * historyController, CalculationStore * calculationStore) :
   ViewController(parentResponder),
+  m_cacheBuffer(cacheBuffer),
+  m_cacheBufferInformation(cacheBufferInformation),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
   m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this, this)
 {
-  m_cacheBuffer[0] = 0;
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
@@ -56,6 +57,15 @@ void EditExpressionController::didBecomeFirstResponder() {
   m_contentView.mainView()->scrollToBottom();
   m_contentView.expressionField()->setEditing(true, false);
   Container::activeApp()->setFirstResponder(m_contentView.expressionField());
+}
+
+void EditExpressionController::restoreInput() {
+  m_contentView.expressionField()->restoreContent(m_cacheBuffer, *m_cacheBufferInformation);
+  clearCacheBuffer();
+}
+
+void EditExpressionController::memoizeInput() {
+  *m_cacheBufferInformation = m_contentView.expressionField()->moveCursorAndDumpContent(m_cacheBuffer, k_cacheBufferSize);
 }
 
 void EditExpressionController::viewWillAppear() {
@@ -128,7 +138,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   }
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
-      m_cacheBuffer[0] = 0;
+      clearCacheBuffer();
       m_contentView.expressionField()->setEditing(false, false);
       Container::activeApp()->setFirstResponder(m_historyController);
     }

@@ -2,7 +2,6 @@
 #define SHARED_FUNCTION_GRAPH_CONTROLLER_H
 
 #include <escher.h>
-#include "initialisation_parameter_controller.h"
 #include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
 #include "function_store.h"
@@ -13,12 +12,12 @@ namespace Shared {
 
 class FunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
 public:
-  static constexpr size_t sNumberOfMemoizedModelVersions = 5;
-  FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion);
+  FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion);
   bool isEmpty() const override;
-  ViewController * initialisationParameterController() override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
+
+  void interestingRanges(Shared::InteractiveCurveViewRange * range) override;
 
 protected:
   float cursorTopMarginRatio() override { return 0.068f; }
@@ -38,24 +37,19 @@ protected:
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;
   int numberOfCurves() const override;
   void initCursorParameters() override;
+  bool cursorMatchesModel() override;
   CurveView * curveView() override;
+
+  void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
 
-  // InteractiveCurveViewRangeDelegate
-  InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
-
   // InteractiveCurveViewController
   bool moveCursorVertically(int direction) override;
-  uint32_t modelVersion() override;
-  uint32_t modelVersionAtIndex(int i) override;
   uint32_t rangeVersion() override;
-  size_t numberOfMemoizedVersions() const override { return sNumberOfMemoizedModelVersions; }
 
-  InitialisationParameterController m_initialisationParameterController;
-  Poincare::Preferences::AngleUnit * m_angleUnitVersion;
   int * m_indexFunctionSelectedByCursor;
 };
 

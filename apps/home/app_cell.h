@@ -18,6 +18,7 @@ public:
   void reloadCell() override;
   void setAppDescriptor(::App::Descriptor * appDescriptor);
   void setExtAppDescriptor(const char* name, const Image* icon);
+  void setExtAppDescriptor(const char* name, const uint8_t *icon, size_t iconLength);
 private:
   static constexpr KDCoordinate k_iconMargin = 22;
   static constexpr KDCoordinate k_iconWidth = 55;

@@ -22,22 +22,22 @@ public:
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override { return 0; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  int numberOfRows() const override;
 
   // IllustratedListController
   void setExpression(Poincare::Expression e) override;
 
 protected:
-  constexpr static int k_maxNumberOfCells = 4;
+  constexpr static int k_maxNumberOfRows = 5;
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
   Poincare::Expression m_expression;
   // Memoization of layouts
-  mutable Poincare::Layout m_layouts[k_maxNumberOfCells];
+  mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
 private:
   Poincare::Layout layoutAtIndex(int index);
-  virtual void computeLayoutAtIndex(int index) = 0;
   virtual I18n::Message messageAtIndex(int index) = 0;
   // Cells
-  ExpressionTableCellWithPointer m_cells[k_maxNumberOfCells];
+  ExpressionTableCellWithPointer m_cells[k_maxNumberOfRows];
 };
 
 }

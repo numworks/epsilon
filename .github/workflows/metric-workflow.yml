@@ -1,5 +1,5 @@
 name: Metrics
-on: [pull_request]
+on: [pull_request_target]
 
 jobs:
   binary-size:
@@ -8,7 +8,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - name: Install ARM toolchain
-        uses: numworks/setup-arm-toolchain@v1
+        uses: numworks/setup-arm-toolchain@2020-q2
       - name: Checkout PR base
         uses: actions/checkout@v2
         with:
@@ -28,11 +28,14 @@ jobs:
       - name: Retrieve binary size analysis
         id: binary_size
         run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --custom 'Total (RAM)' .data .bss --custom 'Total (ROM)' .text .rodata .data --escape)"
-      - name: Prepare comment auth
-        run: echo "::set-env name=GITHUB_TOKEN::$(echo YjgxYTk1YTQ4YzYxNjU4ZTA3YWQzNDYwNTk3ZTI2MTlkODU5MThlOQo= | base64 --decode)"
       - name: Add comment
-        uses: actions/github@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+        uses: actions/github-script@v3.0.0
         with:
-          args: comment ${{ steps.binary_size.outputs.table }}
+          github-token: ${{ secrets.OMEGA_ROBOT_TOKEN }}
+          script: |
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `${{ steps.binary_size.outputs.table }}`,
+            });

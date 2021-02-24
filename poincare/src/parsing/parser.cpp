@@ -2,6 +2,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <utility>
 #include <algorithm>
+#include <stdlib.h>
 
 namespace Poincare {
 
@@ -43,6 +44,9 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
   return (
     Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "inf")             == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "infinity")        == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "oo")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Unreal::Name())    == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
@@ -346,13 +350,11 @@ void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) 
 
 void Parser::parseUnit(Expression & leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const Unit::Dimension * unitDimension = nullptr;
   const Unit::Representative * unitRepresentative = nullptr;
-  const Unit::Prefix * unitPrefix = nullptr;  leftHandSide = Constant::Builder(m_currentToken.codePoint());
-  if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
-        &unitDimension, &unitRepresentative, &unitPrefix))
-  {
-    leftHandSide = Unit::Builder(unitDimension, unitRepresentative, unitPrefix);
+  const Unit::Prefix * unitPrefix = nullptr;
+  leftHandSide = Constant::Builder(m_currentToken.codePoint());
+  if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(), &unitRepresentative, &unitPrefix)) {
+    leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
   } else {
     m_status = Status::Error; // Unit does not exist
     return;
@@ -386,14 +388,18 @@ void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::
     return;
   }
   int numberOfParameters = parameters.numberOfChildren();
-  while (numberOfParameters > (**functionHelper).numberOfChildren()) {
-    functionHelper++;
-    if (!(functionHelper < s_reservedFunctionsUpperBound && strcmp(name, (**functionHelper).name()) == 0)) {
-      m_status = Status::Error; // Too many parameters provided.
-      return;
+  /* FunctionHelpers with negative numberOfChildren value expect any number of
+   * children greater than this value (in absolute). */
+  if ((**functionHelper).numberOfChildren() >= 0) {
+    while (numberOfParameters > (**functionHelper).numberOfChildren()) {
+      functionHelper++;
+      if (!(functionHelper < s_reservedFunctionsUpperBound && strcmp(name, (**functionHelper).name()) == 0)) {
+        m_status = Status::Error; // Too many parameters provided.
+        return;
+      }
     }
   }
-  if (numberOfParameters < (**functionHelper).numberOfChildren()) {
+  if (numberOfParameters < abs((**functionHelper).numberOfChildren())) {
     m_status = Status::Error; // Too few parameters provided.
     return;
   }
@@ -404,7 +410,7 @@ void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::
   }
 }
 
-void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2) {
+void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2) {
   bool delimiterTypeIsOne = popTokenIfType(leftDelimiter1);
   if (!delimiterTypeIsOne && !popTokenIfType(leftDelimiter2)) {
     m_status = Status::Error; // Left delimiter missing.
@@ -413,17 +419,9 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     Expression rank = parseUntil(rightDelimiter);
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(rightDelimiter)) {
-      m_status = Status::Error; // Right delimiter missing.
-    } else if (rank.isIdenticalTo(Symbol::Builder('n'))) {
-      constexpr int symbolNameSize = 5;
-      char sym[symbolNameSize] = {name, '(', 'n', ')', 0};
-      leftHandSide = Symbol::Builder(sym, symbolNameSize);
-    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder('n'), BasedInteger::Builder("1")))) {
-      constexpr int symbolNameSize = 7;
-      char sym[symbolNameSize] = {name, '(', 'n', '+', '1', ')', 0};
-      leftHandSide = Symbol::Builder(sym, symbolNameSize);
+      m_status = Status::Error; // Right delimiter missing
     } else {
-      m_status = Status::Error; // Unexpected parameter.
+      leftHandSide = Sequence::Builder(name, 1, rank);
     }
   }
 }
@@ -431,7 +429,14 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
 void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
   if (m_currentToken.compareTo(Symbol::k_ans) == 0) {
     leftHandSide = Symbol::Ans();
-  } else if (m_currentToken.compareTo(Infinity::Name()) == 0) {
+  } else if (m_currentToken.compareTo(Infinity::Name()) == 0 ||
+             m_currentToken.compareTo("inf")            == 0 ||
+             m_currentToken.compareTo("infinity")       == 0 ||
+             m_currentToken.compareTo("oo")             == 0
+    ) {
+
+    leftHandSide = Infinity::Builder(false);
+  } else if (m_currentToken.compareTo("inf") == 0) {
     leftHandSide = Infinity::Builder(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined::Builder();
@@ -444,7 +449,7 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
     /* Special case for sequences (e.g. "u(n)", "u{n}", ...)
      * We know that m_currentToken.text()[0] is either 'u', 'v' or 'w', so we do
      * not need to pass a code point to parseSequence. */
-    parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftParenthesis, Token::RightParenthesis, Token::LeftBrace, Token::RightBrace);
+    parseSequence(leftHandSide, m_currentToken.text(), Token::LeftParenthesis, Token::RightParenthesis, Token::LeftBrace, Token::RightBrace);
   }
 }
 
@@ -484,7 +489,7 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
   }
   assert(!parameter.isUninitialized());
   if (parameter.numberOfChildren() != 1) {
-    m_status = Status::Error; // Unexpected number of paramters.
+    m_status = Status::Error; // Unexpected number of parameters.
     return;
   }
   parameter = parameter.childAtIndex(0);

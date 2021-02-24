@@ -25,6 +25,8 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   AndroidBitmap_lockPixels(env, j_bitmap, &bitmapPixels);
   // TODO: Handle the case where lockPixels fails
 
+  size_t bytesPerPixel = 4;
+
   SDL_Texture * texture = SDL_CreateTexture(
     renderer,
     SDL_PIXELFORMAT_ABGR8888,
@@ -37,8 +39,10 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
       texture,
       nullptr,
       bitmapPixels,
-      4 * bitmapInfo.width
+      bytesPerPixel * bitmapInfo.width
   );
+
+  SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
   AndroidBitmap_unlockPixels(env, j_bitmap);
 

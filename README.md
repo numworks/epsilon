@@ -1,4 +1,4 @@
-<p align="center"><img src="https://user-images.githubusercontent.com/12123721/87953533-75a22380-caab-11ea-8cde-c40291c4a9ae.png" /></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/12123721/109067616-08b0d500-76ef-11eb-9e23-78f40c335c18.png" /></p>
 
 <p align="center">
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-525252.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>
@@ -7,19 +7,20 @@
   <a href="https://discord.gg/X2TWhh9"><img alt="Discord" src="https://img.shields.io/discord/663420259851567114?color=blue&labelColor=292929&label=chat%20-%20discord&logo=discord&style=for-the-badge" /></a>
 </p>
 
+> Vous ne comprenez pas l'anglais ? vous êtes francophone ? Regardez le [*LISEZ-MOI* français](./README.fr.md) !
+
 ## About
 
-Omega is a fork of Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for the people who want to add features to the calculator, but cannot because they have been rejected by Numworks (for reasons that are 100% understandable!).
+Omega is a fork of Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for the people who want to add features to the calculator, but cannot because they have been rejected by Numworks (for reasons that are 100% understandable!). [Try it online](https://getomega.web.app/simulator).
 
-## Some new features
+### Some new features
 - Adding symbolic calculation back into the calculator
 - An app for RPN
+- Exernal apps
+- A theme engine
+- New python features (os module, open method...)
 - A periodic table app + all of the molar masses for the elements in the toolbox
-- More steps for brightness (16 instead of 5)
-- ~~32 KB Python heap instead of 16 KB~~ Now available on Epsilon `>=13.2.0`!
-- And more...
-
-The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Main-features), and the complete changelog can be found [here](https://github.com/Omega-Numworks/Omega/wiki/Changelog).
+- *And much more to discover...* [Complete changelog](https://github.com/Omega-Numworks/Omega/wiki/Changelog) | [Main new features + screenshots](https://github.com/Omega-Numworks/Omega/wiki/Main-features).
 
 ## Installation
 
@@ -36,12 +37,14 @@ First of all, follow **step 1** [here](https://www.numworks.com/resources/engine
 <details>
   <summary><b>Model n0100</b></summary>
 
-```
+(note: you can change the `EPSILON_I18N=en` flag to `fr`, `nl`, `pt`, `it`, `de`, `es` or `hu`).
+
+```bash
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
 make MODEL=n0100 clean
-make MODEL=n0100 OMEGA_USERNAME="{Your name, max 15 characters}" -j4
+make MODEL=n0100 EPSILON_I18N=en OMEGA_USERNAME="{Your name, max 15 characters}" -j4
 make MODEL=n0100 epsilon_flash
 ```
 
@@ -53,7 +56,7 @@ Also, you can change the number of processes that run in parallel during the bui
 <details>
   <summary><b>Model n0110</b></summary>
 
-```
+```bash
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
@@ -72,7 +75,7 @@ Also, you can change the number of processes that run in parallel during the bui
   
 These can be used to distribute Omega (so that it can be flashed by anyone with [Webdfu_Numworks](https://ti-planet.github.io/webdfu_numworks/)).
 
-```
+```bash
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
@@ -93,7 +96,7 @@ Also, you can change the number of processes that run in parallel during the bui
   
 First, install emsdk :
 
-```
+```bash
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
 ./emsdk install latest-fastcomp
@@ -103,7 +106,7 @@ source emsdk_env.sh
 
 Then, compile Omega :
 
-```
+```bash
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
@@ -122,14 +125,16 @@ Also, you can change the number of processes that run in parallel during the bui
   <summary><b>3DS Simulator</b></summary>
   
 You need devkitPro and devkitARM installed and in your path (instructions [here](https://devkitpro.org/wiki/Getting_Started))
-```
+
+```bash
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout --recursive omega-dev
 make PLATFORM=simulator TARGET=3ds -j
 ```
 You can then put epsilon.3dsx on a SD card to run it from the HBC or use 3dslink to launch it over the network:
-```
+
+```bash
 3dslink output/release/simulator/3ds/epsilon.3dsx -a <3DS' IP ADDRESS>
 ```
 
@@ -144,12 +149,6 @@ If you need help, you can join our Discord server here : https://discord.gg/X2TW
 
 To contribute, please refer to the [Wiki](https://github.com/Omega-Numworks/Omega/wiki/Contributing)
 
-## Branches
-
-* `omega-master` : stable releases
-* `omega-dev` : beta releases
-* `omega-hotfix` : developers only, branch to fix issues
-
 ## Related repositories
 
 * [Omega Themes](https://github.com/Omega-Numworks/Omega-Themes)
@@ -157,7 +156,9 @@ To contribute, please refer to the [Wiki](https://github.com/Omega-Numworks/Omeg
 * [Omega RPN `APP`](https://github.com/Omega-Numworks/Omega-RPN)
 * [Omega Atom `APP`](https://github.com/Omega-Numworks/Omega-Atom)
 * [Omega Design](https://github.com/Omega-Numworks/Omega-Design)
+* [Omega Discord Bot](https://github.com/Omega-Numworks/Omega-Discord-Bot)
 * [Omega App Template `BETA`](https://github.com/Omega-Numworks/Omega-App-Template)
+* [External Apps](https://github.com/Omega-Numworks/External-Apps)
 
 ## About Epsilon
 

@@ -10,13 +10,11 @@ public:
   IntegerListController(EditExpressionController * editExpressionController) :
     ExpressionsListController(editExpressionController) {}
 
-  //ListViewDataSource
-  int numberOfRows() const override;
+  void setExpression(Poincare::Expression e) override;
+
 private:
   static constexpr int k_indexOfFactorExpression = 3;
-  void computeLayoutAtIndex(int index) override;
   I18n::Message messageAtIndex(int index) override;
-  bool factorExpressionIsComputable() const;
 };
 
 }

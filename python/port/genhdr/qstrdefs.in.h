@@ -492,8 +492,13 @@ Q(isvisible)
 Q(colormode)
 
 // utime QSTRs
+Q(localtime)
+Q(mktime)
 Q(time)
+Q(setlocaltime)
+Q(setrtcmode)
 Q(sleep)
+Q(rtcmode)
 Q(monotonic)
 
 // file QSTRs

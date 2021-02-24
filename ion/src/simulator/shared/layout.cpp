@@ -1,8 +1,15 @@
 #include "layout.h"
+#include "main.h"
+#include "platform.h"
+#include <ion.h>
+#include <limits.h>
+#include <cmath>
 
 namespace Ion {
 namespace Simulator {
 namespace Layout {
+
+#if !EPSILON_SDL_SCREEN_ONLY
 
 static constexpr int backgroundWidth = 1160;
 static constexpr int backgroundHeight = 2220;
@@ -15,16 +22,16 @@ static constexpr SDL_FRect screenRect = {X(192), Y(191), X(776), Y(582)};
 
 static SDL_Rect sFrame;
 
-static void makeAbsolute(const SDL_FRect * f, SDL_Rect * r) {
-  r->x = f->x * sFrame.w + sFrame.x;
-  r->y = f->y * sFrame.h + sFrame.y;
-  r->w = f->w * sFrame.w;
-  r->h = f->h * sFrame.h;
+static void makeAbsolute(const SDL_FRect f, SDL_Rect * r) {
+  r->x = std::round(f.x * static_cast<float>(sFrame.w) + static_cast<float>(sFrame.x));
+  r->y = std::round(f.y * static_cast<float>(sFrame.h) + static_cast<float>(sFrame.y));
+  r->w = std::round(f.w * static_cast<float>(sFrame.w));
+  r->h = std::round(f.h * static_cast<float>(sFrame.h));
 }
 
-static void makeAbsolute(const SDL_FPoint * f, SDL_Point * p) {
-  p->x = f->x * sFrame.w + sFrame.x;
-  p->y = f->y * sFrame.h + sFrame.y;
+static void makeAbsolute(const SDL_FPoint f, SDL_Point * p) {
+  p->x = f.x * sFrame.w + sFrame.x;
+  p->y = f.y * sFrame.h + sFrame.y;
 }
 
 void recompute(int width, int height) {
@@ -74,7 +81,7 @@ void recompute(int width, int height) {
 }
 
 void getScreenRect(SDL_Rect * rect) {
-  makeAbsolute(&screenRect, rect);
+  makeAbsolute(screenRect, rect);
 }
 
 void getBackgroundRect(SDL_Rect * rect) {
@@ -84,85 +91,187 @@ void getBackgroundRect(SDL_Rect * rect) {
   rect->h = sFrame.h;
 }
 
-static constexpr SDL_FPoint sKeyCenters[Keyboard::NumberOfValidKeys] = {
-  {X(185), Y(1029)}, // A1, Left
-  {X(273), Y(941)}, // A2, Up
-  {X(273), Y(1117)}, // A3, Down
-  {X(361), Y(1029)}, // A4, Right
-  {X(810), Y(1029)}, // A5, OK
-  {X(963), Y(1029)}, // A6, Back
+class KeyLayout {
+public:
+  enum class Shape : uint8_t {
+    HorizontalArrow,
+    VerticalArrow,
+    Round,
+    SmallSquircle,
+    LargeSquircle,
+    NumberOfShapes
+  };
+  static constexpr size_t NumberOfShapes = (size_t)Shape::NumberOfShapes;
+  static constexpr const char * assetName[KeyLayout::NumberOfShapes] = {
+    "horizontal_arrow.png",
+    "vertical_arrow.png",
+    "round.png",
+    "small_squircle.png",
+    "large_squircle.png"
+  };
 
-  {X(580), Y(958)}, // B1, Home
-  {X(580), Y(1094)}, // B2, Power
+  constexpr KeyLayout(float x, float y, Shape shape) :
+    m_center{X(x), Y(y)},
+    m_shape(shape) {}
+  SDL_FPoint center() const { return m_center; }
+  Shape shape() const { return m_shape; }
 
-  {X(198), Y(1252)}, // C1, Shift
-  {X(352), Y(1252)}, // C2, Alpha
-  {X(506), Y(1252)}, // C3, xnt
-  {X(656), Y(1252)}, // C4, var
-  {X(810), Y(1252)}, // C5, toolbox
-  {X(963), Y(1252)}, // C6, Delete
+private:
+  SDL_FPoint m_center;
+  Shape m_shape;
+};
 
-  {X(198), Y(1375)}, // D1, exp
-  {X(352), Y(1375)}, // D2, ln
-  {X(506), Y(1375)}, // D3, log
-  {X(656), Y(1375)}, // D4, i
-  {X(810), Y(1375)}, // D5, comma
-  {X(963), Y(1375)}, // D6, power
+constexpr const char * const KeyLayout::assetName[KeyLayout::NumberOfShapes];
 
-  {X(198), Y(1498)}, // E1, sin
-  {X(352), Y(1498)}, // E2, cos
-  {X(506), Y(1498)}, // E3, tan
-  {X(656), Y(1498)}, // E4, pi
-  {X(810), Y(1498)}, // E5, sqrt
-  {X(963), Y(1498)}, // E6, square
+static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
+  KeyLayout(195, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
+  KeyLayout(273, 948, KeyLayout::Shape::VerticalArrow), // A2, Up
+  KeyLayout(273, 1108, KeyLayout::Shape::VerticalArrow), // A3, Down
+  KeyLayout(353, 1029, KeyLayout::Shape::HorizontalArrow), // A4, Right
+  KeyLayout(810, 1029, KeyLayout::Shape::Round), // A5, OK
+  KeyLayout(963, 1029, KeyLayout::Shape::Round), // A6, Back
 
-  {X(210), Y(1629)}, // F1, 7
-  {X(395), Y(1629)}, // F2, 8
-  {X(580), Y(1629)}, // F3, 9
-  {X(765), Y(1629)}, // F4, (
-  {X(950), Y(1629)}, // F5, )
+  KeyLayout(580, 958, KeyLayout::Shape::LargeSquircle), // B1, Home
+  KeyLayout(580, 1094, KeyLayout::Shape::LargeSquircle), // B2, Power
 
-  {X(210), Y(1766)}, // G1, 4
-  {X(395), Y(1766)}, // G2, 5
-  {X(580), Y(1766)}, // G3, 6
-  {X(765), Y(1766)}, // G4, *
-  {X(950), Y(1766)}, // G5, /
+  KeyLayout(198, 1253, KeyLayout::Shape::SmallSquircle), // C1, Shift
+  KeyLayout(352, 1253, KeyLayout::Shape::SmallSquircle), // C2, Alpha
+  KeyLayout(506, 1253, KeyLayout::Shape::SmallSquircle), // C3, xnt
+  KeyLayout(656, 1253, KeyLayout::Shape::SmallSquircle), // C4, var
+  KeyLayout(810, 1253, KeyLayout::Shape::SmallSquircle), // C5, toolbox
+  KeyLayout(963, 1253, KeyLayout::Shape::SmallSquircle), // C6, Delete
 
-  {X(210), Y(1902)}, // H1, 1
-  {X(395), Y(1902)}, // H2, 2
-  {X(580), Y(1902)}, // H3, 3
-  {X(765), Y(1902)}, // H4, +
-  {X(950), Y(1902)}, // H5, -
+  KeyLayout(198, 1375, KeyLayout::Shape::SmallSquircle), // D1, exp
+  KeyLayout(352, 1375, KeyLayout::Shape::SmallSquircle), // D2, ln
+  KeyLayout(506, 1375, KeyLayout::Shape::SmallSquircle), // D3, log
+  KeyLayout(656, 1375, KeyLayout::Shape::SmallSquircle), // D4, i
+  KeyLayout(810, 1375, KeyLayout::Shape::SmallSquircle), // D5, comma
+  KeyLayout(963, 1375, KeyLayout::Shape::SmallSquircle), // D6, power
 
-  {X(210), Y(2040)}, // I1, 0
-  {X(395), Y(2040)}, // I2, .
-  {X(580), Y(2040)}, // I3, x10
-  {X(765), Y(2040)}, // I4, Ans
-  {X(950), Y(2040)}, // I5, EXE
+  KeyLayout(198, 1498, KeyLayout::Shape::SmallSquircle), // E1, sin
+  KeyLayout(352, 1498, KeyLayout::Shape::SmallSquircle), // E2, cos
+  KeyLayout(506, 1498, KeyLayout::Shape::SmallSquircle), // E3, tan
+  KeyLayout(656, 1498, KeyLayout::Shape::SmallSquircle), // E4, pi
+  KeyLayout(810, 1498, KeyLayout::Shape::SmallSquircle), // E5, sqrt
+  KeyLayout(963, 1498, KeyLayout::Shape::SmallSquircle), // E6, square
+
+  KeyLayout(210, 1629, KeyLayout::Shape::LargeSquircle), // F1, 7
+  KeyLayout(395, 1629, KeyLayout::Shape::LargeSquircle), // F2, 8
+  KeyLayout(580, 1629, KeyLayout::Shape::LargeSquircle), // F3, 9
+  KeyLayout(765, 1629, KeyLayout::Shape::LargeSquircle), // F4, (
+  KeyLayout(950, 1629, KeyLayout::Shape::LargeSquircle), // F5, )
+
+  KeyLayout(210, 1766, KeyLayout::Shape::LargeSquircle), // G1, 4
+  KeyLayout(395, 1766, KeyLayout::Shape::LargeSquircle), // G2, 5
+  KeyLayout(580, 1766, KeyLayout::Shape::LargeSquircle), // G3, 6
+  KeyLayout(765, 1766, KeyLayout::Shape::LargeSquircle), // G4, *
+  KeyLayout(950, 1766, KeyLayout::Shape::LargeSquircle), // G5, /
+
+  KeyLayout(210, 1902, KeyLayout::Shape::LargeSquircle), // H1, 1
+  KeyLayout(395, 1902, KeyLayout::Shape::LargeSquircle), // H2, 2
+  KeyLayout(580, 1902, KeyLayout::Shape::LargeSquircle), // H3, 3
+  KeyLayout(765, 1902, KeyLayout::Shape::LargeSquircle), // H4, +
+  KeyLayout(950, 1902, KeyLayout::Shape::LargeSquircle), // H5, -
+
+  KeyLayout(210, 2040, KeyLayout::Shape::LargeSquircle), // I1, 0
+  KeyLayout(395, 2040, KeyLayout::Shape::LargeSquircle), // I2, .
+  KeyLayout(580, 2040, KeyLayout::Shape::LargeSquircle), // I3, x10
+  KeyLayout(765, 2040, KeyLayout::Shape::LargeSquircle), // I4, Ans
+  KeyLayout(950, 2040, KeyLayout::Shape::LargeSquircle), // I5, EXE
 };
 
 static void getKeyCenter(int validKeyIndex, SDL_Point * point) {
-  assert(validKeyIndex >= 0);
-  assert(validKeyIndex < Keyboard::NumberOfValidKeys);
-  makeAbsolute(&sKeyCenters[validKeyIndex], point);
+  assert(validKeyIndex >= 0 && validKeyIndex < Keyboard::NumberOfValidKeys);
+  makeAbsolute(sKeyLayouts[validKeyIndex].center(), point);
 }
 
-Keyboard::Key keyAt(SDL_Point * p) {
-  int minSquaredDistance = -1;
-  Keyboard::Key nearestKey = Keyboard::Key::None;
+static void getKeyRectangle(int validKeyIndex, SDL_Texture * texture, SDL_Rect * rect) {
+  assert(validKeyIndex >= 0 && validKeyIndex < Keyboard::NumberOfValidKeys);
+  SDL_FPoint point = sKeyLayouts[validKeyIndex].center();
+  int w, h;
+  SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+  SDL_FRect fRect;
+  fRect.w = X(w);
+  fRect.h = Y(h);
+  fRect.x = point.x - fRect.w/2.0f;
+  fRect.y = point.y - fRect.h/2.0f;
+  makeAbsolute(fRect, rect);
+}
+
+static SDL_Texture * sBackgroundTexture = nullptr;
+static SDL_Texture * sKeyLayoutTextures[KeyLayout::NumberOfShapes];
+
+void init(SDL_Renderer * renderer) {
+  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
+  for (size_t i = 0; i < KeyLayout::NumberOfShapes; i++) {
+    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::assetName[i]);
+  }
+}
+
+static int sHighlightedKeyIndex = -1;
+
+Keyboard::Key getHighlightedKey() {
+  Keyboard::Key k = Keyboard::Key::None;
+  if (sHighlightedKeyIndex >= 0) {
+    k = Keyboard::ValidKeys[sHighlightedKeyIndex];
+  }
+  return k;
+}
+
+void highlightKeyAt(SDL_Point * p) {
+  int newHighlightedKeyIndex = -1;
+  int minSquaredDistance = INT_MAX;
+  /* The closenessThreshold is apportioned to the size of the frame. As the
+   * width and the height have a constant ratio, we can compute the
+   * closenessThreshold from the frame width exclusively. */
+  int closenessThreshold = sFrame.w/6;
+  int squaredClosenessThreshold = closenessThreshold*closenessThreshold;
   for (int i=0; i<Keyboard::NumberOfValidKeys; i++) {
     SDL_Point keyCenter;
     getKeyCenter(i, &keyCenter);
     int dx = keyCenter.x - p->x;
     int dy = keyCenter.y - p->y;
     int squaredDistance = dx*dx + dy*dy;
-    if (squaredDistance < minSquaredDistance || minSquaredDistance < 0) {
+    if (squaredDistance < squaredClosenessThreshold && squaredDistance < minSquaredDistance) {
       minSquaredDistance = squaredDistance;
-      nearestKey = Keyboard::ValidKeys[i];
+      newHighlightedKeyIndex = i;
     }
   }
-  return nearestKey;
+  if (newHighlightedKeyIndex != sHighlightedKeyIndex) {
+    sHighlightedKeyIndex = newHighlightedKeyIndex;
+    Main::setNeedsRefresh();
+  }
 }
+
+void unhighlightKey() {
+  sHighlightedKeyIndex = -1;
+  Main::setNeedsRefresh();
+}
+
+void drawHighlightedKey(SDL_Renderer * renderer) {
+  if (sHighlightedKeyIndex < 0) {
+    return;
+  }
+  int shape = static_cast<int>(sKeyLayouts[sHighlightedKeyIndex].shape());
+  SDL_Texture * keyTexture = sKeyLayoutTextures[shape];
+  SDL_Rect rect;
+  getKeyRectangle(sHighlightedKeyIndex, keyTexture, &rect);
+  SDL_RenderCopy(renderer, keyTexture, nullptr, &rect);
+}
+
+void draw(SDL_Renderer * renderer) {
+  SDL_Rect backgroundRect;
+  getBackgroundRect(&backgroundRect);
+  SDL_RenderCopy(renderer, sBackgroundTexture, nullptr, &backgroundRect);
+  drawHighlightedKey(renderer);
+}
+
+void quit() {
+  SDL_DestroyTexture(sBackgroundTexture);
+  sBackgroundTexture = nullptr;
+}
+
+#endif
 
 }
 }

@@ -3,6 +3,7 @@ SFLAGS += -Iliba/include
 liba_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \
+  abs.c \
   assert.c \
   bzero.c \
   ctype.c \
@@ -69,6 +70,8 @@ liba_src += $(addprefix liba/src/external/openbsd/, \
   s_logbf.c \
   s_modf.c \
   s_modff.c \
+  s_nextafter.c \
+  s_nextafterf.c \
   s_rint.c \
   s_roundf.c \
   s_scalbnf.c \

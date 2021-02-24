@@ -66,7 +66,7 @@ public:
         0,      // bInterfaceNumber
         k_dfuInterfaceAlternateSetting,      // bAlternateSetting
         0,      // bNumEndpoints: Other than endpoint 0
-        0xFE,   // bInterfaceClass: DFU (http://www.usb.org/developers/defined_class)
+        0xFE,   // bInterfaceClass: DFU (https://www.usb.org/defined-class-codes)
         1,      // bInterfaceSubClass: DFU
         2,      // bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be 1)
         4,      // iInterface: Index of the Interface string, see m_descriptor
@@ -99,7 +99,7 @@ public:
     /* Switch to this descriptor to use dfu-util to write in the SRAM.
      * FIXME Should be an alternate Interface. */
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
-    m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),
+    m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "getomega.dev"),
     m_extendedCompatIdDescriptor("WINUSB"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0

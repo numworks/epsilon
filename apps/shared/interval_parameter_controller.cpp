@@ -13,7 +13,12 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
   m_intervalCells{},
   m_title(I18n::Message::IntervalSet),
   m_startMessage(I18n::Message::XStart),
-  m_endMessage(I18n::Message::XEnd)
+  m_endMessage(I18n::Message::XEnd),
+  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+    Container::activeApp()->dismissModalViewController();
+    ((IntervalParameterController *)context)->stackController()->pop();
+    return true;
+  }, this))
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableTableView);
@@ -85,6 +90,11 @@ HighlightCell * IntervalParameterController::reusableParameterCell(int index, in
 bool IntervalParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left && stackController()->depth() > 2) {
     stackController()->pop();
+    return true;
+  }
+  if (event == Ion::Events::Back && !m_interval->hasSameParameters(*SharedTempIntervalParameters())) {
+    // Open pop-up to confirm discarding values
+    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
   return false;

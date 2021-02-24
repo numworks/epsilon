@@ -16,7 +16,9 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   size_t bytesPerRow = bytesPerPixel * width;
   size_t bitsPerComponent = 8;
 
-  void * bitmapData = malloc(height * width * bytesPerPixel);
+  size_t size = height * width * bytesPerPixel;
+  void * bitmapData = malloc(size);
+  memset(bitmapData, 0, size);
 
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
   CGContextRef context = CGBitmapContextCreate(
@@ -42,8 +44,10 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
     texture,
     NULL,
     bitmapData,
-    4 * width
+    bytesPerPixel * width
   );
+
+  SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
   free(bitmapData);
 

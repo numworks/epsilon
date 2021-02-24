@@ -8,11 +8,9 @@ namespace Sequence {
 class CurveViewRange : public Shared::InteractiveCurveViewRange {
 public:
   CurveViewRange(Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
-  void roundAbscissa() override;
-  void normalize() override;
-  void setTrigonometric() override;
-  void setDefault() override;
+  void normalize(bool forceChangeY = false) override;
 private:
+  virtual bool hasDefaultRange() const override { return false; }
   constexpr static float k_displayLeftMarginRatio = 0.1f;
 };
 

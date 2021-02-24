@@ -5,6 +5,7 @@
 #include "interval.h"
 #include "float_parameter_controller.h"
 #include <assert.h>
+#include "discard_pop_up_controller.h"
 
 namespace Shared {
 
@@ -33,6 +34,7 @@ private:
   I18n::Message m_title;
   I18n::Message m_startMessage;
   I18n::Message m_endMessage;
+  DiscardPopUpController m_confirmPopUpController;
 };
 
 }

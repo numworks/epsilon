@@ -6,6 +6,7 @@
 #include <poincare/integer.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
+#include <poincare/derivative.h>
 extern "C" {
 #include <stdlib.h>
 #include <assert.h>
@@ -24,12 +25,9 @@ double NumberNode::doubleApproximation() const {
       assert(Number(this).sign() == Sign::Negative || Number(this).sign() == Sign::Positive);
       return Number(this).sign() == Sign::Negative ? -INFINITY : INFINITY;
     case Type::Float:
-      if (size() == sizeof(FloatNode<float>)) {
-        return static_cast<const FloatNode<float> *>(this)->value();
-      } else {
-        assert(size() == sizeof(FloatNode<double>));
-        return static_cast<const FloatNode<double> *>(this)->value();
-      }
+      return static_cast<const FloatNode<float> *>(this)->value();
+    case Type::Double:
+      return static_cast<const FloatNode<double> *>(this)->value();
     case Type::Rational:
       return static_cast<const RationalNode *>(this)->templatedApproximate<double>();
     case Type::BasedInteger:
@@ -40,9 +38,13 @@ double NumberNode::doubleApproximation() const {
   }
 }
 
-Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLenght, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
+bool NumberNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Number(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLength, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
   // Integer
-  if (exponentLength == 0 && decimalLenght == 0) {
+  if (exponentLength == 0 && decimalLength == 0) {
     Integer i(integralPart, integralLength, false);
     if (!i.isOverflow()) {
       return BasedInteger::Builder(i, Integer::Base::Decimal);
@@ -51,7 +53,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   int exp;
   // Avoid overflowing int
   if (exponentLength < Decimal::k_maxExponentLength) {
-    exp = Decimal::Exponent(integralPart, integralLength, decimalPart, decimalLenght, exponentPart, exponentLength, exponentIsNegative);
+    exp = Decimal::Exponent(integralPart, integralLength, decimalPart, decimalLength, exponentPart, exponentLength, exponentIsNegative);
   } else {
     exp = exponentIsNegative ? -1 : 1;
   }
@@ -63,7 +65,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
       return Infinity::Builder(false);
     }
   }
-  return Decimal::Builder(integralPart, integralLength, decimalPart, decimalLenght, exp);
+  return Decimal::Builder(integralPart, integralLength, decimalPart, decimalLength, exp);
 }
 
 template <typename T>
@@ -139,6 +141,11 @@ int Number::NaturalOrder(const Number & i, const Number & j) {
     assert(i.node()->doubleApproximation() > j.node()->doubleApproximation());
     return 1;
   }
+}
+
+bool Number::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  replaceWithInPlace(Rational::Builder(0));
+  return true;
 }
 
 template Number Number::DecimalNumber<float>(float);

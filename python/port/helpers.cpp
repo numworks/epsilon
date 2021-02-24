@@ -12,12 +12,15 @@ bool micropython_port_vm_hook_loop() {
 
   /* Doing too many things here slows down Python execution quite a lot. So we
    * only do things once in a while and return as soon as possible otherwise. */
-  static int c = 0;
 
-  c = (c + 1) % 20000;
-  if (c != 0) {
+  static uint64_t t = Ion::Timing::millis();
+  static constexpr uint64_t delay = 100;
+
+  uint64_t t2 = Ion::Timing::millis();
+  if (t2 - t < delay) {
     return false;
   }
+  t = t2;
 
   micropython_port_vm_hook_refresh_print();
   // Check if the user asked for an interruption from the keyboard

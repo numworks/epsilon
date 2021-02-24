@@ -27,13 +27,14 @@ public:
   enum class Page {
     RootMenu = 0,
     Expression = 1,
-    Function = 2
+    Function = 2,
+    Sequence = 3
   };
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
  constexpr static int k_maxNumberOfDisplayedRows = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin - Metric::StackTitleHeight) / Metric::ToolboxRowHeight + 2; // (240 - 18 - 50 - 20) / 40  = 3.8; the 0.8 cell can be above and below so we add +2 to get 5
-  constexpr static int k_numberOfMenuRows = 2;
+  constexpr static int k_numberOfMenuRows = 3;
   constexpr static KDCoordinate k_leafMargin = 20;
   ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   MessageTableCellWithChevron * nodeCellAtIndex(int index) override;

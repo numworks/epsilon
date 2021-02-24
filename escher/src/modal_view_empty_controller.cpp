@@ -30,7 +30,7 @@ void ModalViewEmptyController::ModalViewEmptyView::setMessages(I18n::Message * m
 
 void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
-  drawBorderOfRect(ctx, bounds(), Palette::GreyBright);
+  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
 int ModalViewEmptyController::ModalViewEmptyView::numberOfSubviews() const {

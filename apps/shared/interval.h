@@ -23,6 +23,7 @@ public:
     double m_end;
     double m_step;
   };
+  bool hasSameParameters(IntervalParameters parameters);
   double element(int i);
   IntervalParameters * parameters() { return &m_parameters; }
   void setParameters(IntervalParameters parameters) { m_parameters = parameters; }
@@ -30,8 +31,7 @@ public:
   void forceRecompute(){ m_needCompute = true;}
   void reset();
   void clear();
-  // TODO: decide the max number of elements after optimization
-  constexpr static int k_maxNumberOfElements = 50;
+  constexpr static int k_maxNumberOfElements = 101;
 private:
   void computeElements();
   int m_numberOfElements;

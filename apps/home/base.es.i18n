@@ -1,4 +1,4 @@
 Apps = "Aplicaciones"
-AppsCapital = "STAY HOME(GA)"
-ForbidenAppInExamMode1 = "This application is"
-ForbidenAppInExamMode2 = "forbidden in exam mode"
+AppsCapital = "OMEGA"
+ForbidenAppInExamMode1 = "Esta aplicación está prohibida"
+ForbidenAppInExamMode2 = "en el modo de examen"

@@ -11,7 +11,7 @@ breadcrumb: SDK
 We recommend using the [Msys2](https://www.msys2.org/) environment to install most of the required tools. We support Windows 7 and up. Once Msys2 has been installed, launch the Msys2 terminal application, and enter the following commands
 
 ```
-pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-fltk git make python
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb git make python
 echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
 ```
 
@@ -58,8 +58,7 @@ Once the SDK has been installed, just open your terminal (Msys2, Terminal.app, x
 
 ```
 make PLATFORM=simulator clean
-make PLATFORM=simulator
-./epsilon.elf
+make PLATFORM=simulator epsilon_run
 ```
 
 ## Run Epsilon on your calculator

@@ -3,8 +3,8 @@
 namespace Ion {
 namespace USB {
 
-void DFU() {
-  Ion::Device::USB::Calculator::PollAndReset(true);
+void DFU(bool exitWithKeyboard) {
+  Ion::Device::USB::Calculator::PollAndReset(exitWithKeyboard);
 }
 
 }

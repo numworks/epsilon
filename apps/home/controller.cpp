@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "app.h"
+#include <apps/home/apps_layout.h>
 #include "../apps_container.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
@@ -67,8 +68,8 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
+
     int index = selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1;
-    
 #ifdef HOME_DISPLAY_EXTERNALS
     if (index >= container->numberOfApps()) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) {
@@ -111,14 +112,14 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
 
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
-    return m_view.selectableTableView()->selectCellAtLocation(0,0);
+    return m_view.selectableTableView()->selectCellAtLocation(0, 0);
   }
 
-  if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows()) {
-    return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow()+1);
+  if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows() - 1) {
+    return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow() + 1);
   }
   if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
-    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns()-1, selectionDataSource()->selectedRow()-1);
+    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns() - 1, selectionDataSource()->selectedRow() - 1);
   }
 
   return false;
@@ -146,7 +147,7 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() const {
-  return ((numberOfIcons()-1)/k_numberOfColumns)+1;
+  return ((numberOfIcons() - 1) / k_numberOfColumns) + 1;
 }
 
 int Controller::numberOfColumns() const {
@@ -172,42 +173,41 @@ int Controller::reusableCellCount() const {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = (j*k_numberOfColumns+i)+1;
+  int appIndex = (j * k_numberOfColumns + i) + 1;
   if (appIndex >= container->numberOfApps()) {
 #ifdef HOME_DISPLAY_EXTERNALS
     External::Archive::File app_file;
 
-    
+
     if (External::Archive::executableAtIndex(appIndex - container->numberOfApps(), app_file)) {
       char temp_name_buffer[100];
       strlcpy(temp_name_buffer, app_file.name, 94);
       strlcat(temp_name_buffer, ".icon", 99);
-      
+
       int img_index = External::Archive::indexFromName(temp_name_buffer);
-      
+
       if (img_index != -1) {
         External::Archive::File image_file;
         if (External::Archive::fileAtIndex(img_index, image_file)) {
-          const Image* img = new Image(55, 56, image_file.data, image_file.dataLength);
-          appCell->setExtAppDescriptor(app_file.name, img);
-          
+          // const Image* img = new Image(55, 56, image_file.data, image_file.dataLength);
+          appCell->setExtAppDescriptor(app_file.name, image_file.data, image_file.dataLength);
         } else {
           appCell->setExtAppDescriptor(app_file.name, ImageStore::ExternalIcon);
         }
       } else {
         appCell->setExtAppDescriptor(app_file.name, ImageStore::ExternalIcon);
       }
-      
+
       appCell->setVisible(true);
     } else {
-      appCell->setVisible(false);      
+      appCell->setVisible(false);
     }
 #else
     appCell->setVisible(false);
 #endif
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(appIndex)->descriptor();
+    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }
@@ -233,7 +233,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * (so the previous one is always visible). */
   int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
   if (appIndex >= this->numberOfIcons()+1) {
-    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    t->selectCellAtLocation((this->numberOfIcons()%3)-1, (this->numberOfIcons() / k_numberOfColumns));
   }
 }
 

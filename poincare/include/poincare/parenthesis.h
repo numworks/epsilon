@@ -19,6 +19,8 @@ public:
 #endif
 
   // Properties
+  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::Parenthesis; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
@@ -31,10 +33,10 @@ public:
   LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 private:
- template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+ template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
 class Parenthesis final : public Expression {

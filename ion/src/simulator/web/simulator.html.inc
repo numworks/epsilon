@@ -109,17 +109,17 @@ a.action svg {
       KEYBOARD .nav span {
         position: absolute; }
       KEYBOARD .nav .left {
-        top: 36%;
+        top: 37%;
         left: 2%;
         width: 15%;
         height: 28%; }
       KEYBOARD .nav .right {
-        top: 36%;
+        top: 37%;
         left: 17%;
         width: 15%;
         height: 28%; }
       KEYBOARD .nav .top {
-        top: 7%;
+        top: 9%;
         left: 12%;
         width: 10%;
         height: 40%; }
@@ -131,23 +131,25 @@ a.action svg {
       KEYBOARD .nav .home {
         top: 15%;
         left: 41%;
-        width: 16%;
-        height: 33%; }
+        width: 16.5%;
+        height: 31%; }
       KEYBOARD .nav .power {
-        top: 54%;
-        left: 42%;
-        width: 16%;
-        height: 33%; }
+        top: 55.4%;
+        left: 41%;
+        width: 16.5%;
+        height: 31%; }
       KEYBOARD .nav .ok {
         top: 31%;
         left: 67%;
-        width: 13%;
-        height: 38%; }
+        width: 13.5%;
+        height: 38%;
+        border-radius: 48%; }
       KEYBOARD .nav .back {
         top: 31%;
-        left: 84%;
-        width: 13%;
-        height: 38%; }
+        left: 83.3%;
+        width: 13.5%;
+        height: 38%;
+        border-radius: 48%; }
     KEYBOARD .functions {
       position: absolute;
       top: 26.75%;

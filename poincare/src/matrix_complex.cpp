@@ -119,6 +119,66 @@ MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
   return result;
 }
 
+template<typename T>
+MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
+  // Compute Matrix Row Echelon Form
+  if (numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
+    return MatrixComplex<T>::Undefined();
+  }
+  std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
+  for (int i = 0; i < numberOfChildren(); i++) {
+    operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
+  }
+  /* Reduced row echelon form is also called row canonical form. To compute the
+   * row echelon form (non reduced one), fewer steps are required. */
+  Matrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns, static_cast<std::complex<T>*>(nullptr), reduced);
+  return MatrixComplex<T>::Builder(operandsCopy, m_numberOfRows, m_numberOfColumns);
+}
+
+template<typename T>
+std::complex<T> MatrixComplexNode<T>::norm() const {
+  if (vectorType() == Array::VectorType::None) {
+    return std::complex<T>(NAN, NAN);
+  }
+  std::complex<T> sum = 0;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    sum += std::norm(complexAtIndex(i));
+  }
+  return std::sqrt(sum);
+}
+
+template<typename T>
+std::complex<T> MatrixComplexNode<T>::dot(Evaluation<T> * e) const {
+  if (e->type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return std::complex<T>(NAN, NAN);
+  }
+  MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
+  if (vectorType() == Array::VectorType::None || vectorType() != b->vectorType() || numberOfChildren() != b->numberOfChildren()) {
+    return std::complex<T>(NAN, NAN);
+  }
+  std::complex<T> sum = 0;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    sum += complexAtIndex(i) * b->complexAtIndex(i);
+  }
+  return sum;
+}
+
+template<typename T>
+Evaluation<T> MatrixComplexNode<T>::cross(Evaluation<T> * e) const {
+  if (e->type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return MatrixComplex<T>::Undefined();
+  }
+  MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
+  if (vectorType() == Array::VectorType::None || vectorType() != b->vectorType() || numberOfChildren() != 3 || b->numberOfChildren() != 3) {
+    return MatrixComplex<T>::Undefined();
+  }
+  std::complex<T> operandsCopy[3];
+  operandsCopy[0] = complexAtIndex(1) * b->complexAtIndex(2) - complexAtIndex(2) * b->complexAtIndex(1);
+  operandsCopy[1] = complexAtIndex(2) * b->complexAtIndex(0) - complexAtIndex(0) * b->complexAtIndex(2);
+  operandsCopy[2] = complexAtIndex(0) * b->complexAtIndex(1) - complexAtIndex(1) * b->complexAtIndex(0);
+  return MatrixComplex<T>::Builder(operandsCopy, numberOfRows(), numberOfColumns());
+}
+
 // MATRIX COMPLEX REFERENCE
 
 template<typename T>

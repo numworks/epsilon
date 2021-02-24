@@ -7,6 +7,7 @@
 #include <drivers/external_flash.h>
 #include <drivers/keyboard.h>
 #include <drivers/led.h>
+#include <drivers/rtc.h>
 #include <drivers/swd.h>
 #include <drivers/timing.h>
 #include <drivers/usb.h>

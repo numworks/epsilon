@@ -1,0 +1,80 @@
+body {
+  background: #C2C2C2;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.col-fullscreen {
+  display: none;
+  width: 60%;
+  float: left;
+}
+
+.col-fullscreen canvas {
+  margin-top: 7%;
+  width: 100%;
+}
+
+body.fullscreen .col-fullscreen {
+  display: block;
+}
+
+body.fullscreen .col-calculator {
+  width: 35%;
+  float: left;
+}
+
+a.action {
+  display: block;
+  width: 4%;
+  padding: 1.5% 3%;
+  border: 1px solid black;
+  border-radius: 100px;
+  cursor: pointer;
+  opacity: 0.65;
+}
+
+a.action:hover {
+  opacity: 1.0;
+  background-color: rgba(0,0,0,0.125);
+}
+
+a.action svg {
+  display: block;
+}
+
+.calculator-container {
+  margin: 0 auto;
+  position: relative;
+  display: inline-block;
+  text-align: left;
+}
+.calculator-container > img {
+  /* Rely on the img content to set the dimensions */
+  max-height: 92.0vh;
+  max-width: 100%;
+  display: block;
+}
+
+.calculator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.calculator-container .actions {
+    position: absolute;
+    top: 94.0vh;
+    text-align: center;
+    left: 0;
+    right: 0;
+    margin-left: 20px; /* Center the buttons - compensate the 10px margin below */
+}
+
+.calculator-container .actions a {
+  display: inline-block;
+  margin-right: 10px;
+}

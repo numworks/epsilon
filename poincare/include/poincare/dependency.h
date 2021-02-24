@@ -51,9 +51,6 @@ public:
   /* Store the dependecies in m and replace the dependency node with the true expression. */
   void extractDependencies(Matrix m);
   bool dependencyRecursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols); }
-
-private:
-  void dumpDependencies(Matrix m);
 };
 
 }

@@ -123,6 +123,7 @@ _msleep
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END
 EMFLAGS = -s PRECISE_F32=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(EMTERPRETIFY_WHITELIST:,END=)]'
+EMFLAGS += -Wno-emterpreter # We know Emterpreter is deprecated...
 
 ifeq ($(DEBUG),1)
 EMFLAGS += --profiling-funcs

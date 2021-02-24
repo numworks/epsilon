@@ -60,6 +60,12 @@ $(eval $(call rule_for, \
   global \
 ))
 
+$(eval $(call rule_for, \
+  ZIP, %.zip, , \
+  rm -rf $$(basename $$@) && mkdir -p $$(basename $$@) && cp $$^ $$(basename $$@) && zip -r -9 -j $$@ $$(basename $$@) > /dev/null && rm -rf $$(basename $$@), \
+  global \
+))
+
 ifdef EXE
 ifeq ($(OS),Windows_NT)
 # Work around command-line length limit

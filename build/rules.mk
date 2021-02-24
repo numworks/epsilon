@@ -14,7 +14,7 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   CPP, %, %.inc, \
-  $$(CPP) -P $$< $$@, \
+  $$(CPP) $$(addprefix -I,$$(dir $$^)) -P $$< $$@, \
   global \
 ))
 

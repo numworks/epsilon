@@ -1051,11 +1051,6 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expressi
     base.clone(),
     Subtraction::Builder(exponent.clone(), Rational::Builder(1))
     ), 1, 1);
-  /*derivedFromBase.addChildAtIndexInPlace(Derivative::Builder(
-    base.clone(),
-    symbol.clone().convert<Symbol>(),
-    symbolValue.clone()
-    ), 2, 2);*/
   derivedFromBase.addChildAtIndexInPlace(base.clone(), 2, 2);
   derivedFromBase.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
 

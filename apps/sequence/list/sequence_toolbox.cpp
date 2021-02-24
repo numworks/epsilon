@@ -58,8 +58,7 @@ KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
     ExpressionTableCell tempCell;
     return heightForCellAtIndex(&tempCell, index);
   }
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index - stackRowOffset());
-  if (messageTree->numberOfChildren() == 0) {
+  if (m_messageTreeModel->childAtIndex(index - stackRowOffset())->numberOfChildren() == 0) {
     ExpressionTableCellWithMessage tempCell;
     return heightForCellAtIndex(&tempCell, index);
   }

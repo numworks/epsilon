@@ -11,13 +11,13 @@ Toolbox::Toolbox(Responder * parentResponder, I18n::Message title) :
 {}
 
 void Toolbox::viewWillAppear() {
-  m_messageTreeModel = (ToolboxMessageTree *)rootModel();
+  m_messageTreeModel = rootModel();
   NestedMenuController::viewWillAppear();
 }
 
 int Toolbox::numberOfRows() const {
   if (m_messageTreeModel == nullptr) {
-    m_messageTreeModel = (ToolboxMessageTree *)rootModel();
+    m_messageTreeModel = rootModel();
   }
   return m_messageTreeModel->numberOfChildren();
 }
@@ -27,7 +27,7 @@ int Toolbox::reusableCellCount(int type) {
 }
 
 void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
+  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
   assert(messageTree->numberOfChildren() != 0);
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(messageTree->label());
@@ -35,14 +35,13 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
-  assert(((ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index))->numberOfChildren() != 0);
+  assert((m_messageTreeModel->childAtIndex(index))->numberOfChildren() != 0);
   MessageTableCell tempCell;
   return heightForCellAtIndex(&tempCell, index);
 }
 
 int Toolbox::typeAtIndex(int index) {
-  const MessageTree * messageTree = m_messageTreeModel->childAtIndex(index);
-  if (messageTree->numberOfChildren() == 0) {
+  if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
     return LeafCellType;
   }
   return NodeCellType;
@@ -62,13 +61,13 @@ bool Toolbox::returnToPreviousMenu() {
   m_selectableTableView.deselectTable();
   int currentDepth = m_stack.depth();
   int index = 0;
-  ToolboxMessageTree * parentMessageTree = (ToolboxMessageTree *)rootModel();
+  ToolboxMessageTree * parentMessageTree = const_cast<ToolboxMessageTree *>(rootModel());
   Stack::State * previousState = m_stack.stateAtIndex(index++);
   while (currentDepth-- > 1) {
-    parentMessageTree = (ToolboxMessageTree *)parentMessageTree->childAtIndex(previousState->selectedRow());
+    parentMessageTree = static_cast<ToolboxMessageTree *>(const_cast<MessageTree *>(parentMessageTree->childAtIndex(previousState->selectedRow())));
     previousState = m_stack.stateAtIndex(index++);
     if (parentMessageTree->isFork()) {
-      parentMessageTree = (ToolboxMessageTree *)parentMessageTree->childAtIndex(indexAfterFork());
+      parentMessageTree = static_cast<ToolboxMessageTree *>(const_cast<MessageTree *>(parentMessageTree->childAtIndex(indexAfterFork())));
     }
   }
   m_messageTreeModel = parentMessageTree;

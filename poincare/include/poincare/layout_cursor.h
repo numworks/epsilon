@@ -110,7 +110,7 @@ public:
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();
   void addXNTCodePointLayout();
-  void insertText(const char * text, bool forceCursorRightOfText = false);
+  void insertText(const char * text, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }

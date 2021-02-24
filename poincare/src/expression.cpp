@@ -873,39 +873,35 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
   if (sSimplificationHasBeenInterrupted) {
     return *this;
   }
-  Expression e = factorDependencies(reductionContext);
-  return e.shallowReduce(reductionContext);
-}
 
-Expression Expression::factorDependencies(ExpressionNode::ReductionContext reductionContext) {
-  if (type() == ExpressionNode::Type::Equal || type() == ExpressionNode::Type::Store) {
-    return *this;
-  }
-  Matrix dependencies = Matrix::Builder();
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
-      /* A parametered expression can have dependencies on its parameter, which
-       * we don't want to factor, as the parameter does not have meaning
-       * outside of the parametered expression. */
-      continue;
+  if (type() != ExpressionNode::Type::Equal && type() != ExpressionNode::Type::Store) {
+    /* Bubble up dependencies */
+    Matrix dependencies = Matrix::Builder();
+    for (int i = 0; i < numberOfChildren(); i++) {
+      if (isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
+        /* A parametered expression can have dependencies on its parameter, which
+         * we don't want to factor, as the parameter does not have meaning
+         * outside of the parametered expression. */
+        continue;
+      }
+      Expression child = childAtIndex(i);
+      if (child.type() == ExpressionNode::Type::Dependency) {
+        static_cast<Dependency &>(child).extractDependencies(dependencies);
+      }
     }
-    Expression child = childAtIndex(i);
-    if (child.type() == ExpressionNode::Type::Dependency) {
-      static_cast<Dependency &>(child).extractDependencies(dependencies);
+    if (dependencies.numberOfChildren() > 0) {
+      Expression e = shallowReduce(reductionContext);
+      Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
+      e.replaceWithInPlace(d);
+      d.replaceChildAtIndexInPlace(0, e);
+      if (e.type() == ExpressionNode::Type::Dependency) {
+        static_cast<Dependency &>(e).extractDependencies(dependencies);
+      }
+      return d.shallowReduce(reductionContext);
     }
   }
-  if (dependencies.numberOfChildren() > 0) {
-    Expression e = shallowReduce(reductionContext);
-    Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
-    replaceWithInPlace(d);
-    d.replaceChildAtIndexInPlace(0, e);
-    if (e.type() == ExpressionNode::Type::Dependency) {
-      static_cast<Dependency &>(e).extractDependencies(dependencies);
-    }
-    return d;
-  }
-  return *this;
 
+  return shallowReduce(reductionContext);
 }
 
 Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionContext) {

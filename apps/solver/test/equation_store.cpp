@@ -205,7 +205,7 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   set("d", "5");
   set("c", "d");
   set("h(x)", "c+d+3");
-  assert_solves_to({"h(x)=0", "c=-3"}, {"c=-3", "d=0"});
+  assert_solves_to_infinite_solutions({"h(x)=0", "c=-3"});
   // c and d context values should not be used
 
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"});

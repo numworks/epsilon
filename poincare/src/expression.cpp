@@ -88,8 +88,12 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, Expr
     return true;
   }
 
-  // Handle symbols and functions
+  // Handle dependencies, symbols and functions
   ExpressionNode::Type t = type();
+  if (t == ExpressionNode::Type::Dependency) {
+    Expression e = *this;
+    return static_cast<Dependency &>(e).dependencyRecursivelyMatches(test, context, replaceSymbols);
+  }
   if (t == ExpressionNode::Type::Symbol || t == ExpressionNode::Type::Function) {
     assert(replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
         || replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions

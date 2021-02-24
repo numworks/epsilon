@@ -60,11 +60,6 @@ void Dependency::addDependency(Expression newDependency) {
 }
 
 void Dependency::extractDependencies(Matrix m) {
-  dumpDependencies(m);
-  replaceWithInPlace(childAtIndex(0));
-}
-
-void Dependency::dumpDependencies(Matrix m) {
   assert(m.numberOfChildren() == 0 || m.numberOfRows() == 1);
 
   int previousNumberOfChildren = m.numberOfChildren();
@@ -79,7 +74,8 @@ void Dependency::dumpDependencies(Matrix m) {
   Matrix matrixChild = static_cast<Matrix &>(dependencies);
   assert (matrixChild.numberOfRows() == 1);
   int newNumberOfChildren = previousNumberOfChildren;
-  for (int i = 0; i < matrixChild.numberOfChildren(); i++) {
+  int numberOfChildrenToDump = matrixChild.numberOfChildren();
+  for (int i = 0; i < numberOfChildrenToDump; i++) {
     Expression child = matrixChild.childAtIndex(i);
     bool unique = true;
     int j = 0;
@@ -87,10 +83,14 @@ void Dependency::dumpDependencies(Matrix m) {
       unique = !child.isIdenticalTo(m.childAtIndex(j++));
     }
     if (unique) {
+      /* As matrixChild will be destroyed afterwards, we steal the child,
+       * leaving a Ghost in its place. */
       m.addChildAtIndexInPlace(child, newNumberOfChildren, newNumberOfChildren);
       newNumberOfChildren++;
     }
   }
+
+  replaceWithInPlace(childAtIndex(0));
 }
 
 }

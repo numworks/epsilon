@@ -407,10 +407,12 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     cursor->addEmptyMatrixLayout();
   } else {
     Expression resultExpression = Expression::Parse(text, nullptr);
+    // If first inserted character was empty, cursor must be left of layout
+    bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
     if (resultExpression.isUninitialized()) {
       // The text is not parsable (for instance, ",") and is added char by char.
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-      cursor->insertText(text, forceCursorRightOfText);
+      cursor->insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
       reload(previousLayoutSize);
       return true;
     }
@@ -419,8 +421,6 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
       return true;
     }
-    // If first inserted character was empty, cursor must be left of layout
-    bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
     insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText, forceCursorLeftOfText);
   }
   return true;

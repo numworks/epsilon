@@ -167,7 +167,12 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
     return replaceWithUndefinedInPlace();
   }
 
+  Matrix m = Matrix::Builder();
   Expression derivand = childAtIndex(0);
+  if (derivand.type() == ExpressionNode::Type::Dependency) {
+    static_cast<Dependency &>(derivand).extractDependencies(m);
+    derivand = childAtIndex(0);
+  }
   Symbol symbol = childAtIndex(1).convert<Symbol>();
   Expression symbolValue = childAtIndex(2);
   Expression derivandAsDependency = derivand.clone();
@@ -175,6 +180,9 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   /* Since derivand is a child to the derivative node, it can be replaced in
    * place without derivate having to return the derivative. */
   if (!derivand.derivate(reductionContext, symbol, symbolValue)) {
+    if (m.numberOfChildren() > 0) {
+      replaceChildAtIndexInPlace(0, Dependency::Builder(derivand, m));
+    }
     return *this;
   }
   /* Updates the value of derivand, because derivate may call
@@ -183,15 +191,14 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
    * general formulas used during the derivation process can create some nodes
    * that are not defined for some values (e.g. log), but that would disappear
    * at reduction. */
-  Dependency d = Dependency::Builder(childAtIndex(0).deepReduce(reductionContext));
+  Dependency d = Dependency::Builder(childAtIndex(0).deepReduce(reductionContext), m);
   d.addDependency(derivandAsDependency);
 
   /* Deep reduces the child, because derivate may not preserve its reduced
    * status. */
   Expression result = d.replaceSymbolWithExpression(symbol, symbolValue);
-  result = result.deepReduce(reductionContext);
   replaceWithInPlace(result);
-  return result;
+  return result.deepReduce(reductionContext);
 }
 
 void Derivative::DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext) {

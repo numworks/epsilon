@@ -84,10 +84,46 @@ QUIZ_CASE(poincare_dependency_bubble_up) {
 
 QUIZ_CASE(poincare_dependency_derivative) {
   assert_reduce("x^2→f(x)");
-
   assert_expression_simplify_to_with_dependencies("diff(cos(x),x,0)", "0", {""});
   assert_expression_simplify_to_with_dependencies("diff(2x,x,y)", "2", {"2×y"});
   assert_expression_simplify_to_with_dependencies("diff(f(x),x,a)", "2×a", {"a", "a^2"});
-
+  assert_expression_simplify_to_with_dependencies("diff(f(x),x,a)", "2×a", {"a", "a^2"});
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  assert_reduce("3→f(x)");
+  /* FIXME: For now, we only remove none or all of the dependencies when
+   * trimming them. As such, a useless dependency is not trimmed when there
+   * also is a non-trivial one.  */
+  assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,0)", "0", {"y", "4"});
+  assert_reduce("1/0→y");
+  assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,0)", Undefined::Name(), {""});
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
+
+}
+
+QUIZ_CASE(poincare_dependency_parametered_expression) {
+  /* Dependencies are not bubbled up out of an integral, but they are still
+   * present inside the integral. */
+  assert_reduce("1→f(x)");
+  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", "int(2,x,0,1)", {""});
+  assert_reduce("1/0→a");
+  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", Undefined::Name(), {""});
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  /* If the derivation is not handled properly, the symbol x could be reduced
+   * to undef. */
+  assert_reduce("x→f(x)");
+  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(1,x,0,1)", {""});
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  /* When trimming dependencies, we must be able to recognize unreduced
+   * expression that are nevertheless undefined. */
+  assert_reduce("1→f(x)");
+  assert_expression_simplify_to_with_dependencies("f(a)", "1", {"a"});
+  assert_reduce("sum(1/n,n,0,5)→a"); // a = undef
+  assert_expression_simplify_to_with_dependencies("f(a)", Undefined::Name(), {""});
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }

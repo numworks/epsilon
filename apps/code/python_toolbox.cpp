@@ -484,7 +484,7 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
 
 bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
-  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
+  const ToolboxMessageTree * node = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(selectedRow));
   const char * editedText = I18n::translate(node->insertedText());
   // strippedEditedText array needs to be in the same scope as editedText
   char strippedEditedText[k_maxMessageSize];
@@ -518,8 +518,7 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
 }
 
 KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
-  if (messageTree->numberOfChildren() == 0) {
+  if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
     MessageTableCellWithMessage tempCell;
     return heightForCellAtIndex(&tempCell, index);
   }
@@ -527,7 +526,7 @@ KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
 }
 
 void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  ToolboxMessageTree * messageTree = const_cast<ToolboxMessageTree *>(static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index)));
+  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
     MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);

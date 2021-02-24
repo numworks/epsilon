@@ -297,6 +297,7 @@ constexpr ToolboxMessageTree OtherChildren[] = {
 };
 
 constexpr ToolboxMessageTree unitChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitConversionCommandWithArg, I18n::Message::UnitConversion, false, I18n::Message::UnitConversionCommand),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
   ToolboxMessageTree::Node(I18n::Message::UnitTimeAndFrequencyMenu, timeAndFrequencyChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeAndAreaMenu, volumeAndSurfaceChildren),
@@ -487,7 +488,8 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
         // The text is parsable, we create its layout an insert it.
         resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
       } else {
-        assert(false);
+        // UnitConversionCommandWithArg uses undefined units
+        assert(messageTree->label() == I18n::Message::UnitConversionCommandWithArg);
       }
     }
     if (resultLayout.isUninitialized()) {

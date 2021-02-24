@@ -196,7 +196,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       }
       if (changedZoom) {
         KDIonContext::sharedContext()->updatePostProcessingEffects();
-        redrawWindow();
+        redrawWindow(true);
         return true;
       }
     }

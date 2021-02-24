@@ -1,4 +1,5 @@
 #include <poincare/dependency.h>
+#include <poincare/symbol_abstract.h>
 
 namespace Poincare {
 
@@ -34,17 +35,32 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
     return dependencies;
   }
   assert(dependencies.type() == ExpressionNode::Type::Matrix);
-  if (!dependencies.hasExpression(
-        [](const Expression e, const void * context) {
-        return e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function;
-        }, reductionContext.context()))
-  {
-    /* The dependencies do not depend on any variables and are not undef, we
-     * can remove them */
+  char variables[k_maxNumberOfVariables * SymbolAbstract::k_maxNameSize];
+
+  int numberOfUselessDependencies = 0;
+  for (int i = 0; i < numberOfDependencies(); i++) {
+    Expression e = dependencies.childAtIndex(i);
+    variables[0] = '\0';
+    int n = e.getVariables(reductionContext.context(), [](const char * s, Context * c) { return true; }, variables, SymbolAbstract::k_maxNameSize);
+    if (n <= 0) {
+      /* This dependency contains no symbol or function. If it is undefined,
+       * the whole expression is undefined; otherwise we remove it. */
+      Expression approximation = e.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+      if (approximation.isUndefined()) {
+        replaceWithInPlace(approximation);
+        return approximation;
+      }
+      numberOfUselessDependencies++;
+    }
+  }
+
+  /* FIXME: Remove all useless dependencies one by one instead of batching. */
+  if (childAtIndex(0).isUndefined() || numberOfDependencies() == numberOfUselessDependencies) {
     Expression trueExpression = childAtIndex(0);
     replaceWithInPlace(trueExpression);
     return trueExpression;
   }
+
   return *this;
 }
 

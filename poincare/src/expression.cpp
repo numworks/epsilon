@@ -881,7 +881,9 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
       if (isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
         /* A parametered expression can have dependencies on its parameter, which
          * we don't want to factor, as the parameter does not have meaning
-         * outside of the parametered expression. */
+         * outside of the parametered expression.
+         * The parametered expression will have to handle dependencies manually
+         * in its shallowReduce. */
         continue;
       }
       Expression child = childAtIndex(i);

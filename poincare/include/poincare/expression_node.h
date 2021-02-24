@@ -231,6 +231,9 @@ public:
     bool m_withinReduce;
   };
 
+  /* Several functions assume that a node which can take a sign other than
+   * Unknown also has a working setSign method.
+   * Nodes that override sign must also override setSign. */
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }

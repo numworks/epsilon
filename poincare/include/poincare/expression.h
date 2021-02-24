@@ -38,6 +38,7 @@ class Expression : public TreeHandle {
   friend class Conjugate;
   friend class Cosine;
   friend class Decimal;
+  friend class Dependency;
   friend class Derivative;
   friend class Determinant;
   friend class Division;

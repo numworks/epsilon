@@ -1,5 +1,3 @@
-#define KEYBOARD #keyboard
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,178 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>NumWorks graphing calculator</title>
-<style>
-body {
-  background: #C2C2C2;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-
-.col-fullscreen {
-  display: none;
-  width: 60%;
-  float: left;
-}
-
-.col-fullscreen canvas {
-  margin-top: 7%;
-  width: 100%;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: pixelated;
-  -ms-interpolation-mode: nearest-neighbor;
-}
-
-body.fullscreen .col-fullscreen {
-  display: block;
-}
-
-body.fullscreen .col-calculator {
-  width: 35%;
-  float: left;
-}
-
-a.action {
-  display: block;
-  width: 4%;
-  padding: 1.5% 3%;
-  border: 1px solid black;
-  border-radius: 100px;
-  cursor: pointer;
-  opacity: 0.65;
-}
-
-a.action:hover {
-  opacity: 1.0;
-  background-color: rgba(0,0,0,0.125);
-}
-
-a.action svg {
-  display: block;
-}
-
-.calculator {
-  margin: 0 auto;
-  position: relative;
-  display: inline-block;
-  text-align: left; }
-  .calculator > img {
-    /* Rely on the img content to set the dimensions */
-    max-height: 92.0vh;
-    max-width: 100%;
-    display: block; }
-  .calculator #canvas {
-    position: absolute;
-    top: 8.5%;
-    left: 16.25%;
-    width: 67.5%;
-    height: 26.3%;
-    border: 0 none; }
-  .calculator .actions {
-    position: absolute;
-    top: 94.0vh;
-    text-align: center;
-    left: 0;
-    right: 0;
-    margin-left: 20px; /* Center the buttons - compensate the 10px margin below */
-  }
-  .calculator .actions a {
-    display: inline-block;
-    margin-right: 10px;
-  }
-  KEYBOARD {
-    position: absolute;
-    top: 38.5%;
-    left: 10%;
-    width: 81%;
-    bottom: 5%; }
-    KEYBOARD span {
-      cursor: pointer;
-      border-radius: 40%;
-      display: block;
-      float: left; }
-    KEYBOARD span:hover {
-      background-color: rgba(0, 0, 0, 0.1); }
-    KEYBOARD span:active {
-      background-color: rgba(0, 0, 0, 0.2); }
-    KEYBOARD .nav {
-      position: absolute;
-      top: 0;
-      height: 27%;
-      width: 100%; }
-      KEYBOARD .nav span {
-        position: absolute; }
-      KEYBOARD .nav .left {
-        top: 37%;
-        left: 2%;
-        width: 15%;
-        height: 28%; }
-      KEYBOARD .nav .right {
-        top: 37%;
-        left: 17%;
-        width: 15%;
-        height: 28%; }
-      KEYBOARD .nav .top {
-        top: 9%;
-        left: 12%;
-        width: 10%;
-        height: 40%; }
-      KEYBOARD .nav .bottom {
-        top: 53%;
-        left: 12%;
-        width: 10%;
-        height: 40%; }
-      KEYBOARD .nav .home {
-        top: 15%;
-        left: 41%;
-        width: 16.5%;
-        height: 31%; }
-      KEYBOARD .nav .power {
-        top: 55.4%;
-        left: 41%;
-        width: 16.5%;
-        height: 31%; }
-      KEYBOARD .nav .ok {
-        top: 31%;
-        left: 67%;
-        width: 13.5%;
-        height: 38%;
-        border-radius: 48%; }
-      KEYBOARD .nav .back {
-        top: 31%;
-        left: 83.3%;
-        width: 13.5%;
-        height: 38%;
-        border-radius: 48%; }
-    KEYBOARD .functions {
-      position: absolute;
-      top: 26.75%;
-      left: 0.5%;
-      width: 98%; }
-      KEYBOARD .functions span {
-        margin: 1.7% 1%;
-        width: 14.65%;
-        height: 0;
-        padding-top: 10%; }
-    KEYBOARD .digits {
-      position: absolute;
-      top: 56.5%;
-      left: 0.5%;
-      width: 98%; }
-      KEYBOARD .digits span {
-        margin: 1.8% 2%;
-        width: 16%;
-        height: 0;
-        padding-top: 11.3%; }
-</style>
+    <style>
+#include "calculator.css"
+#include "simulator.css"
+    </style>
   </head>
   <body>
     <div class="row">
       <div class="col-calculator">
-        <div class="calculator">
+        <div class="calculator-container">
           <img src="background.jpg" alt="NumWorks Calculator">
-          <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-#include "simulator-keyboard.html"
+#include "calculator.html"
           <div class="actions">
             <a id="action-fullscreen" class="action">
               <svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g fill="#434343"><path d="M5.075,6.95 L6.918,5.088 L3.938,2.062 L5.955,0.018 L0.052,0.018 L0.052,6.004 L2.098,3.928 L5.075,6.95 Z" class="si-glyph-fill"></path><path d="M16.0034788,9.916 L13.832,12.013 L10.799,8.96 L8.918,10.841 L11.957,13.897 L9.961,15.9813842 L16.0034788,15.9813842 L16.0034788,9.916 Z"></path></g></g></svg>
@@ -189,13 +26,15 @@ a.action svg {
           </div>
         </div>
       </div>
-      <div class="col-fullscreen">
-        <canvas id="secondary-canvas" width="320" height="240"></canvas>
+      <div class="col-fullscreen calculator-mirror">
+        <canvas width="320" height="240"></canvas>
       </div>
     </div>
     <script src="epsilon.js"></script>
     <script>
 #include "simulator-setup.js"
+var Module = {};
+EpsilonSetup(Module);
     </script>
     <script>
 document.getElementById("action-fullscreen").addEventListener("click", function(e){
@@ -207,7 +46,7 @@ document.getElementById("action-fullscreen").addEventListener("click", function(
 });
 
 document.getElementById("action-screenshot").addEventListener("click", function(e) {
-  screenshot();
+  Module.downloadScreenshot();
 });
     </script>
     <script async src="https://www.numworks.com/simulator/update.js"></script>

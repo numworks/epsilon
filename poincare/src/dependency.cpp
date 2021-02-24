@@ -34,8 +34,7 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
     return dependencies;
   }
   assert(dependencies.type() == ExpressionNode::Type::Matrix);
-  if (reductionContext.target() == ExpressionNode::ReductionTarget::SystemForAnalysis
-   || !dependencies.hasExpression(
+  if (!dependencies.hasExpression(
         [](const Expression e, const void * context) {
         return e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function;
         }, reductionContext.context()))

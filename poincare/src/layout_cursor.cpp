@@ -182,7 +182,7 @@ void LayoutCursor::addXNTCodePointLayout() {
   m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTCodePoint()), true);
 }
 
-void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText) {
+void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bool forceCursorLeftOfText) {
   Layout newChild;
   Layout pointedChild;
   UTF8Decoder decoder(text);
@@ -219,6 +219,10 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText) {
     else {
       newChild = CodePointLayout::Builder(codePoint);
     }
+    if (forceCursorLeftOfText && pointedChild.isUninitialized()) {
+      // Point to first non empty codePoint inserted
+      pointedChild = newChild;
+    }
     m_layout.addSibling(this, newChild, true);
 
     // Get the next code point
@@ -229,7 +233,7 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText) {
   }
   if (!forceCursorRightOfText && !pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
-    m_position = Position::Right;
+    m_position = forceCursorLeftOfText ? Position::Left : Position::Right;
   }
 }
 

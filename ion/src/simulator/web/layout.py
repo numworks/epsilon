@@ -109,7 +109,7 @@ def html(layout):
   screen = layout["screen"]
   background = layout["background"]
   html = ''
-  html += '<div class="calculator">\n'
+  html += '<div class="calculator loading">\n'
   html += '  <div class="loader"><span></span></div>\n'
   html += '  <canvas tabindex="1"></canvas>\n'
   for key in layout["keys"]:

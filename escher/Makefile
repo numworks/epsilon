@@ -9,6 +9,7 @@ escher_src += $(addprefix escher/src/,\
   button.cpp \
   button_state.cpp \
   button_row_controller.cpp \
+  buffer_table_cell.cpp \
   chevron_view.cpp \
   clipboard.cpp \
   container.cpp \

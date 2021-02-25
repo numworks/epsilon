@@ -37,7 +37,7 @@ def css(layout):
     css_percentage_declaration('padding-bottom', background[3]/background[2])
   )
   css += css_rule(
-    '.calculator canvas',
+    '.calculator canvas, .calculator .loader',
     css_declaration('position', 'absolute'),
     css_rect_declarations(layout['screen'], background)
   )
@@ -67,6 +67,42 @@ def css(layout):
     css_declaration('image-rendering', 'pixelated'),
     css_declaration('-ms-interpolation-mode', 'nearest-neighbor')
   )
+  css += css_rule(
+    '.calculator.loading canvas',
+    css_declaration('display', 'none')
+  )
+  css += css_rule(
+    '.calculator .loader',
+    css_declaration('display', 'none')
+  )
+  css += css_rule(
+    '.calculator.loading .loader',
+    css_declaration('display', 'block'),
+    css_declaration('background-color', '#000'),
+    css_declaration('position', 'absolute')
+  )
+  css += css_rule(
+    '.calculator .loader span',
+    css_declaration('display', 'inline-block'),
+    css_declaration('width', '80px'),
+    css_declaration('height', '80px'),
+    css_declaration('top', '50%'),
+    css_declaration('margin-top', '-40px'),
+    css_declaration('left', '50%'),
+    css_declaration('margin-left', '-40px')
+  )
+  css += '@keyframes calculator-loader-rotation { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }\n'
+  css += css_rule('.calculator .loader span:after',
+    css_declaration('content', '" "'),
+    css_declaration('display', 'block'),
+    css_declaration('width', '64px'),
+    css_declaration('height', '64px'),
+    css_declaration('margin', '8px'),
+    css_declaration('border-radius', '50%'),
+    css_declaration('border', '6px solid #fff'),
+    css_declaration('border-color', '#fff transparent #fff transparent'),
+    css_declaration('animation', 'calculator-loader-rotation 1.2s linear infinite')
+  )
   return css
 
 def html(layout):
@@ -74,6 +110,7 @@ def html(layout):
   background = layout["background"]
   html = ''
   html += '<div class="calculator">\n'
+  html += '  <div class="loader"><span></span></div>\n'
   html += '  <canvas tabindex="1"></canvas>\n'
   for key in layout["keys"]:
     html += '  <span data-key="%s"></span>\n' % key

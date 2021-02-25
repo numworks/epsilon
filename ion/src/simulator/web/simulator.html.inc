@@ -32,9 +32,9 @@
     </div>
     <script src="epsilon.js"></script>
     <script>
-#include "simulator-setup.js"
+#include "calculator.js"
 var Module = {};
-EpsilonSetup(Module);
+Calculator(Module);
     </script>
     <script>
 document.getElementById("action-fullscreen").addEventListener("click", function(e){

@@ -124,8 +124,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
         symbolName,
         Shared::Sequence::k_maxNameWithArgumentSize
     );
-    Expression symbolExpression = Expression::ParseAndSimplify(symbolName, AppsContainer::sharedAppsContainer()->globalContext(), Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), Poincare::ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-    symbolLayout = symbolExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
+    symbolLayout = u.definitionName();
   }
   if (symbolLayout.isUninitialized()) {
     symbolLayout = LayoutHelper::String(symbolName, symbolLength);

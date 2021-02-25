@@ -11,7 +11,9 @@ namespace Journal {
 class QueueJournal : public Ion::Events::Journal {
 public:
   void pushEvent(Ion::Events::Event e) override {
-    m_eventStorage.push(e);
+    if (e != Ion::Events::None) {
+      m_eventStorage.push(e);
+    }
   }
   virtual Ion::Events::Event popEvent() override {
     if (isEmpty()) {

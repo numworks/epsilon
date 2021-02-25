@@ -2,7 +2,7 @@
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
 #include <apps/alternate_empty_nested_menu_controller.h>
-#include <escher/message_table_cell.h>
+#include <escher/buffer_table_cell.h>
 #include <escher/toolbox_message_tree.h>
 #include "script_node.h"
 #include "script_node_cell.h"
@@ -45,9 +45,18 @@ private:
   constexpr static size_t k_maxScriptNodesCount = 32; // Chosen without particular reasons
   constexpr static int k_totalBuiltinNodesCount = 107;
   constexpr static uint8_t k_scriptOriginsCount = 3;
+  constexpr static uint8_t k_maxSources = 10;
+
+  uint8_t m_scriptOriginsSources;
+  uint8_t m_rowsPerSources[k_maxSources];
+  const char * m_sourceText[k_maxSources];
+
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
-  constexpr static KDCoordinate k_subtitleRowHeight = 23;
+
+  constexpr static uint8_t k_currentScriptOrigin = 0;
+  constexpr static uint8_t k_builtinsOrigin = 1;
+  constexpr static uint8_t k_importedOrigin = 2;
 
   enum class NodeOrigin : uint8_t {
     CurrentScript = 0,
@@ -103,7 +112,7 @@ private:
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
-  Escher::MessageTableCell m_subtitleCells[k_scriptOriginsCount];
+  Escher::BufferTableCell m_subtitleCells[k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2];
   ScriptStore * m_scriptStore;
   size_t m_currentScriptNodesCount;
   size_t m_builtinNodesCount;

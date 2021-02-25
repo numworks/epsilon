@@ -134,7 +134,7 @@ Event getEvent(int * timeout) {
     }
   }
   Event e = innerGetEvent(timeout);
-  if (sDestinationJournal != nullptr && e != None) {
+  if (sDestinationJournal != nullptr) {
     sDestinationJournal->pushEvent(e);
   }
   return e;

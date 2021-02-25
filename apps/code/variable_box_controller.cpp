@@ -40,12 +40,13 @@ constexpr static uint PN_import_as_names_paren = 96;
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
+  m_scriptOriginsSources(0),
   m_scriptStore(scriptStore),
   m_currentScriptNodesCount(0),
   m_builtinNodesCount(0),
   m_importedNodesCount(0)
 {
-  for (int i = 0; i < k_scriptOriginsCount; i++) {
+  for (int i = 0; i < k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2; i++) {
     m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
     m_subtitleCells[i].setTextColor(Palette::BlueishGray);
   }
@@ -69,14 +70,12 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
 
 KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
   assert(index >= 0 && index < numberOfRows());
-  NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
-  int cumulatedOriginsCount = 0;
-  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
+  int cellType = typeAndOriginAtLocation(index);
   if (cellType == k_itemCellType) {
     ScriptNodeCell tempCell;
     return heightForCellAtIndex(&tempCell, index);
   }
-  MessageTableCell tempCell;
+  BufferTableCell tempCell;
   return heightForCellAtIndex(&tempCell, index);
 }
 
@@ -87,6 +86,9 @@ int VariableBoxController::numberOfRows() const {
     int nodeCount = nodesCountForOrigin(origin);
     if (nodeCount > 0) {
       result += nodeCount + (m_displaySubtitles ? 1 : 0);
+      if (origin == NodeOrigin::Importation && m_displaySubtitles) {
+        result += m_scriptOriginsSources - 1;
+      }
     }
   }
   return result;
@@ -104,8 +106,9 @@ HighlightCell * VariableBoxController::reusableCell(int index, int type) {
 
 int VariableBoxController::reusableCellCount(int type) {
   if (type == k_subtitleCellType) {
+    // At most half of cells are subtitle cells.
     assert(m_displaySubtitles);
-    return k_scriptOriginsCount;
+    return k_maxNumberOfDisplayedItems - k_maxNumberOfDisplayedItems/2;
   }
   assert(type == k_itemCellType);
   return k_maxNumberOfDisplayedItems;
@@ -115,7 +118,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   assert(index >= 0 && index < numberOfRows());
   NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
   int cumulatedOriginsCount = 0;
-  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
+  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount); // Handle categories
   if (cellType == k_itemCellType) {
     static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index - (m_displaySubtitles ? cumulatedOriginsCount : 0)));
     return;
@@ -129,8 +132,16 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   };
   /* Unlike text and background color, message font impacts cell's size.
    * It is therefore set here to apply on temporary cells as well. */
-  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
-  myCell->setMessage(subtitleMessages[(int)cellOrigin]);
+  BufferTableCell * myCell = static_cast<BufferTableCell *>(cell);
+  const char * txt;
+  if ((int)cellOrigin < 2) {
+    txt = I18n::translate(subtitleMessages[(int)cellOrigin]);
+  } else { // -3 ? //
+    int cumulatedOffset = 1 + (nodesCountForOrigin(NodeOrigin::CurrentScript) > 0 ? 1 : 0) + (nodesCountForOrigin(NodeOrigin::Builtins) > 0 ? 1 : 0);
+    assert(cumulatedOriginsCount >= cumulatedOffset && cumulatedOriginsCount - cumulatedOffset < m_scriptOriginsSources);
+    txt = m_sourceText[cumulatedOriginsCount - cumulatedOffset];
+  }
+  myCell->setLabelText(txt); // Todo update cell and all m_sourceText[cumulatedOriginsCount-2]
   myCell->setMessageFont(KDFont::SmallFont);
 }
 
@@ -245,6 +256,12 @@ void VariableBoxController::empty() {
   m_shortenResultCharCount = 0;
   resetMemoization();
   m_scriptStore->clearVariableBoxFetchInformation();
+  for (int i = 0; i < m_scriptOriginsSources; ++i)
+  {
+    m_rowsPerSources[i] = 0;
+    m_sourceText[i] = nullptr;
+  }
+  m_scriptOriginsSources = 0;
 }
 
 void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
@@ -322,7 +339,7 @@ ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
   }
 }
 
-ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
+ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) { // Order nodes, detect sections
   assert(index >= 0 && index < numberOfRows());
   assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
   assert(m_builtinNodesCount <= k_totalBuiltinNodesCount);
@@ -343,31 +360,54 @@ ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
 int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin, int * cumulatedOriginsCount) const {
   int cellIndex = 0;
   int originsCount = 0;
-  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
-  for (NodeOrigin origin : origins) {
-    int nodeCount = nodesCountForOrigin(origin);
+  // CurrentScript and Builtins
+  NodeOrigin origin;
+  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins};
+  int result = -1;
+  for (NodeOrigin origin_temp : origins) {
+    origin = origin_temp;
+    int nodeCount = nodesCountForOrigin(origin_temp);
     if (nodeCount > 0) {
       originsCount++;
-      int result = -1;
       if (m_displaySubtitles && i == cellIndex) {
         result = k_subtitleCellType;
-      } else {
-        cellIndex += nodeCount + (m_displaySubtitles ? 1 : 0);
-        if (i < cellIndex) {
-          result = k_itemCellType;
-        }
+        break;
       }
-      if (result != -1) {
-        if (resultOrigin != nullptr) {
-          *resultOrigin = origin;
-        }
-        if (cumulatedOriginsCount != nullptr) {
-          *cumulatedOriginsCount = originsCount;
-        }
-        assert(result != k_subtitleCellType || m_displaySubtitles);
-        return result;
+      cellIndex += nodeCount + (m_displaySubtitles ? 1 : 0);
+      if (i < cellIndex) {
+        result = k_itemCellType;
+        break;
       }
     }
+  }
+  // Importation
+  if (result == -1 && nodesCountForOrigin(NodeOrigin::Importation) > 0) {
+    origin = NodeOrigin::Importation;
+    // For each imported module
+    for (int j = 0; j < m_scriptOriginsSources; ++j) {
+      assert(m_rowsPerSources[j] > 0);
+      originsCount++;
+      if (m_displaySubtitles && i == cellIndex) {
+        result = k_subtitleCellType;
+        break;
+      }
+      cellIndex += m_rowsPerSources[j] + (m_displaySubtitles ? 1 : 0);
+      if (i < cellIndex) {
+        result = k_itemCellType;
+        break;
+      }
+    }
+  }
+  // Handle results
+  if (result != -1) {
+    if (resultOrigin != nullptr) {
+      *resultOrigin = origin;
+    }
+    if (cumulatedOriginsCount != nullptr) {
+      *cumulatedOriginsCount = originsCount;
+    }
+    assert(result != k_subtitleCellType || m_displaySubtitles);
+    return result;
   }
   assert(false);
   return k_itemCellType;
@@ -964,9 +1004,22 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     // This could be faster with dichotomia, but there is no speed problem for now
     NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
     for (NodeOrigin origin : origins) {
-      const int nodesCount = nodesCountForOrigin(origin);
+      int nodesCount = nodesCountForOrigin(origin);
+      int nodeCountOffset = 0;
+      if (origin == NodeOrigin::Importation && nodeSourceName) {
+        int sourceIndex = m_scriptOriginsSources;
+        for (int i = 0; i < m_scriptOriginsSources; ++i) {
+          if (strcmp(nodeSourceName, m_sourceText[i]) == 0) {
+            assert(i == m_scriptOriginsSources - 1);
+            sourceIndex = i;
+            nodesCount = nodeCountOffset + m_rowsPerSources[i];
+          } else {
+            nodeCountOffset += m_rowsPerSources[i];
+          }
+        }
+      }
       ScriptNode * nodes = nodesForOrigin(origin);
-      for (int i = 0; i < nodesCount; i++) {
+      for (int i = nodeCountOffset; i < nodesCount; i++) {
         ScriptNode * matchingNode = nodes + i;
         int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
         if (comparisonResult == 0 || (comparisonResult == '(' && nodeType == ScriptNode::Type::WithParentheses)) {
@@ -983,6 +1036,25 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
       if (alreadyInVarBox) {
         return false;
       }
+    }
+  }
+
+  if (nodeOrigin == NodeOrigin::Importation) {
+    assert(nodeSourceName != nullptr);
+    // insertionIndex = *currentNodeCount; // TODO Fix ordering
+    bool included = false;
+    for (int i = 0; i < m_scriptOriginsSources; ++i) {
+      if (strcmp(nodeSourceName, m_sourceText[i]) == 0) {
+        assert(i == m_scriptOriginsSources - 1);
+        m_rowsPerSources[i] += 1;
+        included = true;
+      }
+    }
+    if (!included) {
+      assert(m_scriptOriginsSources < k_maxSources);
+      m_sourceText[m_scriptOriginsSources] = nodeSourceName;
+      m_rowsPerSources[m_scriptOriginsSources] = 1;
+      m_scriptOriginsSources += 1;
     }
   }
 

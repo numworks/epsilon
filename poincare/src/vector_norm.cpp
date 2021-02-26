@@ -13,7 +13,7 @@ constexpr Expression::FunctionHelper VectorNorm::s_functionHelper;
 int VectorNormNode::numberOfChildren() const { return VectorNorm::s_functionHelper.numberOfChildren(); }
 
 Expression VectorNormNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return VectorNorm(this);
 }
 

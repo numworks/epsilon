@@ -48,7 +48,7 @@ private:
   constexpr static uint8_t k_maxSources = 10;
 
   uint8_t m_scriptOriginsSources;
-  uint8_t m_rowsPerSources[k_maxSources];
+  size_t m_rowsPerSources[k_maxSources];
   const char * m_sourceText[k_maxSources];
 
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
@@ -58,11 +58,6 @@ private:
   constexpr static uint8_t k_builtinsOrigin = 1;
   constexpr static uint8_t k_importedOrigin = 2;
 
-  enum class NodeOrigin : uint8_t {
-    CurrentScript = 0,
-    Builtins = 1,
-    Importation = 2
-  };
 
   /* Returns:
    * - a negative int if the node name is before name in alphabetical
@@ -74,16 +69,16 @@ private:
   static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith = nullptr);
 
   // Nodes and nodes count
-  static size_t MaxNodesCountForOrigin(NodeOrigin origin) {
-    return origin == NodeOrigin::Builtins ? k_totalBuiltinNodesCount : k_maxScriptNodesCount;
+  static size_t MaxNodesCountForOrigin(uint8_t origin) {
+    return origin == k_builtinsOrigin ? k_totalBuiltinNodesCount : k_maxScriptNodesCount;
   }
-  int nodesCountForOrigin(NodeOrigin origin) const;
-  size_t * nodesCountPointerForOrigin(NodeOrigin origin);
-  ScriptNode * nodesForOrigin(NodeOrigin origin);
+  int nodesCountForOrigin(uint8_t origin) const;
+  size_t * nodesCountPointerForOrigin(uint8_t origin);
+  ScriptNode * nodesForOrigin(uint8_t origin);
   ScriptNode * scriptNodeAtIndex(int index);
 
   // Cell getters
-  int typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin = nullptr, int * cumulatedOriginsCount = nullptr) const;
+  int typeAndOriginAtLocation(int i, uint8_t * resultOrigin = nullptr, int * cumulatedOriginsCount = nullptr) const;
 
   // NestedMenuController
   Escher::HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }
@@ -106,7 +101,7 @@ private:
    * already contained in the variable box. The returned boolean means we
    * should escape the node scanning process (due to the lexicographical order
    * or full node table). */
-  bool addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr);
+  bool addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, uint8_t origin, const char * nodeName, int nodeNameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];

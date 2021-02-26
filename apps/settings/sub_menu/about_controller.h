@@ -20,12 +20,10 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;
+  int numberOfRows() const override;
 private:
-#ifdef OMEGA_USERNAME
   constexpr static int k_totalNumberOfCell = 8;
-#else
-  constexpr static int k_totalNumberOfCell = 7;
-#endif
+  bool hasUsernameCell() const;
   ContributorsController m_contributorsController;
   MessageTableCellWithChevronAndMessage m_contributorsCell;
   //SelectableViewWithMessages m_view;

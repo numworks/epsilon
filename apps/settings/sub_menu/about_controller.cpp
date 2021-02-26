@@ -96,11 +96,15 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   return GenericSubController::handleEvent(event);
 }
 
+int AboutController::numberOfRows() const {
+  return m_messageTreeModel->numberOfChildren() - (!hasUsernameCell());
+}
+
 HighlightCell * AboutController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == 0) {
-    assert(index < k_totalNumberOfCell-1);
-    return &m_cells[index];
+    assert(index < k_totalNumberOfCell-1-(!hasUsernameCell()));
+    return &m_cells[index+(!hasUsernameCell())];
   }
   assert(index == 0);
   return &m_contributorsCell;
@@ -113,7 +117,7 @@ int AboutController::typeAtLocation(int i, int j) {
 int AboutController::reusableCellCount(int type) {
   switch (type) {
     case 0:
-      return k_totalNumberOfCell-1;
+      return k_totalNumberOfCell-1-(!hasUsernameCell());
     case 1:
       return 1;
     default:
@@ -122,13 +126,18 @@ int AboutController::reusableCellCount(int type) {
   }
 }
 
+bool AboutController::hasUsernameCell() const {
+  return (*Ion::username()) != 0;
+}
+
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  GenericSubController::willDisplayCellForIndex(cell, index);
+  int i = index + (!hasUsernameCell());
+  GenericSubController::willDisplayCellForIndex(cell, i);
   assert(index >= 0 && index < k_totalNumberOfCell);
-  if (m_messageTreeModel->childAtIndex(index)->label() == I18n::Message::Contributors) {
+  if (m_messageTreeModel->childAtIndex(i)->label() == I18n::Message::Contributors) {
     MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
     myTextCell->setSubtitle(I18n::Message::Default);
-  } else if (m_messageTreeModel->childAtIndex(index)->label() == I18n::Message::MemUse) {
+  } else if (m_messageTreeModel->childAtIndex(i)->label() == I18n::Message::MemUse) {
     char memUseBuffer[15];
     int len = Poincare::Integer((int)((float) (Ion::Storage::k_storageSize - Ion::Storage::sharedStorage()->availableSize()) / 1024.f)).serialize(memUseBuffer, 4);
     memUseBuffer[len] = 'k';
@@ -146,17 +155,16 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
     static const char * mpVersion = MICROPY_VERSION_STRING;
     static const char * messages[] = {
-#ifdef OMEGA_USERNAME
       Ion::username(),
-#endif
       Ion::softwareVersion(),
       Ion::omegaVersion(),
       mpVersion,
       "",
       Ion::serialNumber(),
-      Ion::fccId()
+      Ion::fccId(),
+      ""
     };
-    myCell->setAccessoryText(messages[index]);
+    myCell->setAccessoryText(messages[i]);
   }
 }
 

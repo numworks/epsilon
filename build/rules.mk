@@ -25,7 +25,7 @@ $(eval $(call rule_for, \
 ))
 
 $(eval $(call rule_for, \
-  DFUSE, %.dfu, %.elf, \
+  DFUSE, %.dfu, %.elf signer, \
   $$(PYTHON) build/device/elf2dfu.py $$(DFUFLAGS) $$< $$@, \
   local \
 ))

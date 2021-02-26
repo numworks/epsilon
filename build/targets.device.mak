@@ -4,8 +4,8 @@ HANDY_TARGETS += flasher.light flasher.verbose flasher.verbose.flash bench.ram b
 # TODO EMILIE: move rescue to N110 only
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
-kernel.dfu: DFUFLAGS += --signed
-userland.dfu: DFUFLAGS += --signed --sized
+kernel.dfu: DFUFLAGS += --signed_with $(BUILD_DIR)/signer
+userland.dfu: DFUFLAGS += --signed_with $(BUILD_DIR)/signer --sized
 
 $(eval $(call rule_for, \
   RAMSIZE, %_ram_map.png, %.elf, \

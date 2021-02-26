@@ -40,16 +40,17 @@ constexpr static uint PN_import_as_names_paren = 96;
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
-  m_scriptOriginsSources(0),
-  m_scriptStore(scriptStore),
-  m_currentScriptNodesCount(0),
-  m_builtinNodesCount(0),
-  m_importedNodesCount(0)
+  m_totalNodesCount(0),
+  m_scriptOriginsSources(k_importedOrigin),
+  m_scriptStore(scriptStore)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2; i++) {
     m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
     m_subtitleCells[i].setTextColor(Palette::BlueishGray);
   }
+  // ScriptInProgress and BuiltinsAndKeywords subtitle cells
+  m_sourceText[0] = I18n::translate(I18n::Message::ScriptInProgress);
+  m_sourceText[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -116,26 +117,20 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount); // Handle categories
   if (cellType == k_itemCellType) {
-    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index - (m_displaySubtitles ? cumulatedOriginsCount : 0)));
+    int nodeIndex = index - (m_displaySubtitles ? cumulatedOriginsCount : 0);
+    ScriptNode * node = scriptNodeAtIndex(nodeIndex);
+    ScriptNodeCell * nodeCell = static_cast<ScriptNodeCell *>(cell);
+    nodeCell->setScriptNode(node); // TODO EXC_BAD_ACCESS issue if number of cells has been cropped
     return;
   }
   assert(m_displaySubtitles);
   assert(cellType == k_subtitleCellType);
-  I18n::Message subtitleMessages[k_scriptOriginsCount] = {
-    I18n::Message::ScriptInProgress,
-    I18n::Message::BuiltinsAndKeywords
-  };
+  assert(cellOrigin < m_scriptOriginsSources);
+  assert(m_rowsPerSources[cellOrigin] > 0);
   /* Unlike text and background color, message font impacts cell's size.
    * It is therefore set here to apply on temporary cells as well. */
   BufferTableCell * myCell = static_cast<BufferTableCell *>(cell);
-  const char * txt;
-  if ((int)cellOrigin < 2) {
-    txt = I18n::translate(subtitleMessages[(int)cellOrigin]);
-  } else {
-    assert(cellOrigin >= k_importedOrigin && cellOrigin - k_importedOrigin < m_scriptOriginsSources);
-    txt = m_sourceText[cellOrigin - k_importedOrigin];
-  }
-  myCell->setLabelText(txt);
+  myCell->setLabelText(m_sourceText[cellOrigin]);
   myCell->setMessageFont(KDFont::SmallFont);
 }
 
@@ -243,18 +238,20 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
 }
 
 void VariableBoxController::empty() {
-  m_builtinNodesCount = 0;
-  m_currentScriptNodesCount = 0;
-  m_importedNodesCount = 0;
   m_shortenResultCharCount = 0;
   resetMemoization();
   m_scriptStore->clearVariableBoxFetchInformation();
-  for (int i = 0; i < m_scriptOriginsSources; ++i)
-  {
+  for (int i = 0; i < k_maxSources; ++i) {
+    assert(i < m_scriptOriginsSources || m_rowsPerSources[i] == 0);
     m_rowsPerSources[i] = 0;
-    m_sourceText[i] = nullptr;
+    // ScriptInProgress and BuiltinsAndKeywords cells stay unchanged
+    if (i >= k_importedOrigin) {
+      assert(i < m_scriptOriginsSources || m_sourceText[i] == nullptr);
+      m_sourceText[i] = nullptr;
+    }
   }
-  m_scriptOriginsSources = 0;
+  m_scriptOriginsSources = k_importedOrigin;
+  m_totalNodesCount = 0;
 }
 
 void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
@@ -302,62 +299,35 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
 }
 
 int VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
-  if (origin == k_builtinsOrigin) {
-    return static_cast<int>(m_builtinNodesCount);
-  }
   return static_cast<int>(*(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin)));
 }
 
 size_t * VariableBoxController::nodesCountPointerForOrigin(uint8_t origin) {
-  switch(origin) {
-    case k_currentScriptOrigin:
-      return &m_currentScriptNodesCount;
-    case k_builtinsOrigin:
-      return &m_builtinNodesCount;
-    default:
-      assert(origin >= k_importedOrigin);
-      assert(m_rowsPerSources[origin - k_importedOrigin] != 0 || origin - k_importedOrigin >= m_scriptOriginsSources);
-      return m_rowsPerSources + origin - k_importedOrigin;
-  }
+  assert(origin < k_maxSources);
+  return m_rowsPerSources + origin;
 }
 
 ScriptNode * VariableBoxController::nodesForOrigin(uint8_t origin) {
-  switch(origin) {
-    case k_currentScriptOrigin:
-      return m_currentScriptNodes;
-    case k_builtinsOrigin:
-      return m_builtinNodes;
-    default:
-      assert(origin >= k_importedOrigin);
-      uint8_t cumulatedIndex = 0;
-      for (uint8_t i = k_importedOrigin; i < origin; ++i) {
-        cumulatedIndex += m_rowsPerSources[i-k_importedOrigin];
-      }
-      return m_importedNodes + cumulatedIndex;
+  assert(origin < k_maxSources);
+  size_t cumulatedIndex = 0;
+  for (uint8_t previousOrigin = 0; previousOrigin < origin; ++previousOrigin) {
+    cumulatedIndex += nodesCountForOrigin(previousOrigin);
   }
+  return m_scriptNodes + cumulatedIndex;
 }
 
 ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
-  assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
-  assert(m_builtinNodesCount <= k_totalBuiltinNodesCount);
-  assert(m_importedNodesCount <= k_maxScriptNodesCount);
-
-  for (uint8_t origin = 0; origin < k_maxSources; ++origin) {
-    const int nodesCount = nodesCountForOrigin(origin);
-    if (index < nodesCount) {
-      return nodesForOrigin(origin) + index;
-    }
-    index -= nodesCount;
-  }
-  assert(false);
-  return nullptr;
+  assert(index < m_totalNodesCount);
+  assert(m_totalNodesCount <= k_maxScriptNodesCount);
+  assert(m_scriptOriginsSources <= k_maxSources);
+  return m_scriptNodes + index;
 }
 
 int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin, int * cumulatedOriginsCount) const {
+  assert(i < m_totalNodesCount + (m_displaySubtitles ? m_scriptOriginsSources : 0));
   int cellIndex = 0;
   int originsCount = 0;
-  // CurrentScript and Builtins
   int result = -1;
   for (uint8_t origin = 0; origin < k_maxSources; ++origin) {
     int nodeCount = nodesCountForOrigin(origin);
@@ -770,8 +740,14 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
           return true;
         }
       }
-      if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, k_importedOrigin, id, -1, sourceId)) {
-        break; // TODO handle this
+      /* FIXME : When parsing something like "from math import sin", sin is here
+       * added without description, nor sources although it could have been
+       * fetched with a "from math import *". We try here to at least find a
+       * source name for a suited subtitle */
+      const char * source = (sourceId != nullptr) ?
+        sourceId : I18n::translate(I18n::Message::ImportedModulesAndScripts);
+      if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, k_importedOrigin, id, -1, source)) {
+        break;
       }
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       // Parsing something like "from math import sin"
@@ -912,6 +888,10 @@ bool VariableBoxController::addImportStructFromScript(mp_parse_node_struct_t * p
 
 // The returned boolean means we should escape the process
 bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type nodeType, uint8_t nodeOrigin, const char * nodeName, int nodeNameLength, const char * nodeSourceName, const char * nodeDescription) {
+  if (m_totalNodesCount >= k_maxScriptNodesCount) {
+    // There is no room to add another node
+    return false;
+  }
   assert(nodeName != nullptr);
   if (nodeNameLength < 0) {
     nodeNameLength = strlen(nodeName);
@@ -958,26 +938,28 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   }
 
   // Step 2: Add Node
-
-  if (nodeOrigin == k_importedOrigin && nodeSourceName!= nullptr) {
-    nodeOrigin = k_importedOrigin + m_scriptOriginsSources;
-    for (int i = 0; i < m_scriptOriginsSources; ++i) {
-      if (strcmp(nodeSourceName, m_sourceText[i]) == 0) {
-        assert(i == m_scriptOriginsSources - 1);
-        nodeOrigin = k_importedOrigin + i;
+  // Step 2.1: Find node Origin from import
+  if (nodeOrigin == k_importedOrigin) {
+    nodeOrigin = m_scriptOriginsSources;
+    if (nodeSourceName!= nullptr) {
+      // Nodes should arrive ordered by source
+      for (uint8_t source = m_scriptOriginsSources - 1; source >= k_importedOrigin; --source) {
+        if (strcmp(nodeSourceName, m_sourceText[source]) == 0) {
+          assert(source == m_scriptOriginsSources - 1);
+          nodeOrigin = source;
+          break;
+        }
       }
+    }
+    if (nodeOrigin == k_maxSources) {
+      // Stop adding nodes from this module
+      return true;
     }
   }
 
-  // Step 2.1: don't overflow the node list
+  // Step 2.2: find where to add the node (and check that it doesn't exist yet)
   size_t * currentNodeCount = nodesCountPointerForOrigin(nodeOrigin);
   ScriptNode * nodes = nodesForOrigin(nodeOrigin);
-  if (*currentNodeCount >= MaxNodesCountForOrigin(nodeOrigin)) {
-    // There is no room to add another node
-    return true;
-  }
-
-  // Step 2.2: find where to add the node (and check that it doesn't exist yet)
   size_t insertionIndex = *currentNodeCount;
   if (nodeOrigin == k_builtinsOrigin) {
     /* For builtin nodes, we don't need to check whether the node was already
@@ -986,62 +968,45 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     assert(nodeInLexicographicalOrder);
   } else {
     // Look where to add
-    bool alreadyInVarBox = false;
     // This could be faster with dichotomia, but there is no speed problem for now
     for (uint8_t origin = 0; origin < k_maxSources; ++origin) {
       ScriptNode * originNodes = nodesForOrigin(origin);
+      assert(origin < m_scriptOriginsSources || nodesCountForOrigin(origin) == 0); // If good, reduce for loop
       for (int i = 0; i < nodesCountForOrigin(origin); i++) {
         ScriptNode * matchingNode = originNodes + i;
         int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
         if (comparisonResult == 0 || (comparisonResult == '(' && nodeType == ScriptNode::Type::WithParentheses)) {
-          alreadyInVarBox = true;
-          break;
+          // Already in varBox
+          return false;
         }
         if (comparisonResult > 0) {
           if (nodeOrigin == origin) {
             insertionIndex = i;
           }
+          // We continue exploring other following nodes to spot duplicates
           break;
         }
       }
-      if (alreadyInVarBox) {
-        return false;
-      }
     }
   }
 
-  bool doStuff = false;
-
-  if (nodeOrigin >= k_importedOrigin) {
-    assert(nodeSourceName != nullptr); // TODO Check this assert
-    if (nodeOrigin == k_importedOrigin + m_scriptOriginsSources) {
-      assert(k_importedOrigin + m_scriptOriginsSources < k_maxSources);
-      m_sourceText[m_scriptOriginsSources] = nodeSourceName;
-      doStuff = true;
-    }
-    // m_rowsPerSources[nodeOrigin - k_importedOrigin] += 1;
-  }
-
-  size_t totalNodeCount = *currentNodeCount;
-
-  if (nodeOrigin >= k_importedOrigin) {
-    totalNodeCount = 0;
-    for (int origin = nodeOrigin; origin < k_importedOrigin + m_scriptOriginsSources; ++origin) {
-      totalNodeCount += nodesCountForOrigin(origin);
-    }
-    // currentNodeCount = nodesCountPointerForOrigin(k_importedOrigin + m_scriptOriginsSources - 1);
+  if (nodeOrigin == m_scriptOriginsSources) {
+    assert(nodeOrigin >= k_importedOrigin);
+    assert(nodeSourceName != nullptr);
+    m_sourceText[m_scriptOriginsSources] = nodeSourceName;
   }
 
   // Step 2.3: Shift all the following nodes
-  for (size_t i = totalNodeCount; i > insertionIndex; i--) {
+  for (size_t i = m_totalNodesCount; i > insertionIndex; i--) {
     nodes[i] = nodes[i - 1];
   }
 
   // Step 2.4: Add the node
   nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
-  // Increase the node count
+  // Increase the node count, and sources count
   *currentNodeCount = *currentNodeCount + 1;
-  if (doStuff) {
+  m_totalNodesCount += 1;
+  if (nodeOrigin == m_scriptOriginsSources) {
     m_scriptOriginsSources += 1;
   }
   return false;

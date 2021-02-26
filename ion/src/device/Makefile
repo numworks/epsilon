@@ -4,6 +4,7 @@ include ion/src/device/bench/Makefile
 include ion/src/device/bootloader/Makefile
 include ion/src/device/kernel/Makefile
 include ion/src/device/flasher/Makefile
+include ion/src/device/signature/Makefile
 include ion/src/device/userland/Makefile
 include ion/src/device/$(MODEL)/Makefile
 
@@ -29,5 +30,11 @@ ION_DEVICE_USERLAND_SFLAGS += -Iion/src/device/userland
 $(call object_for,$(ion_device_bootloader_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(ION_DEVICE_BOOTLOADER_SFLAGS)
 $(call object_for,$(ion_device_kernel_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(ION_DEVICE_KERNEL_SFLAGS)
 $(call object_for,$(ion_device_userland_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(ION_DEVICE_USERLAND_SFLAGS)
+
+# Add libsodium dependency
+$(call object_for,$(libsodium_src)): SFLAGS += -Iion/src/external/libsodium/include/sodium -Iion/src/external/libsodium/include/device -DCONFIGURED=1
+
+ion_device_bootloader_src += $(libsodium_src)
+ion_device_kernel_src += $(libsodium_src)
 
 ion_src += $(ion_device_src)

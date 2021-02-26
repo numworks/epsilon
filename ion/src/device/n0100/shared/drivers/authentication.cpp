@@ -4,7 +4,7 @@ namespace Ion {
 namespace Device {
 namespace Authentication {
 
-void decrypt(uint8_t * signature, uint8_t * decryptedSignature) {}
+bool verify(uint8_t * signature, uint8_t * hash, size_t hashSize) { return true; }
 
 }
 }

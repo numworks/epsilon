@@ -51,7 +51,8 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(ApproximationContext ap
 Expression DivisionQuotient::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   ExpressionNode::Sign selfSign = sign(reductionContext.context());
-  if (selfSign != ExpressionNode::Sign::Unknown && selfSign != s) {
+  assert(selfSign == ExpressionNode::Sign::Positive || selfSign == ExpressionNode::Sign::Negative);
+  if (selfSign != s) {
     ExpressionNode::Sign newDivisorChild = childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Positive ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
     replaceChildAtIndexInPlace(1, childAtIndex(1).setSign(newDivisorChild, reductionContext));
   }

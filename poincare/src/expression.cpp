@@ -435,10 +435,11 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool 
 }
 
 Expression Expression::defaultOddFunctionSetSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Positive);
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   assert(numberOfChildren() == 1);
   ExpressionNode::Sign childSign = childAtIndex(0).sign(reductionContext.context());
-  if ((childSign == ExpressionNode::Sign::Positive || childSign == ExpressionNode::Sign::Negative) && childSign != s) {
+  assert(childSign == ExpressionNode::Sign::Positive || childSign == ExpressionNode::Sign::Negative);
+  if (childSign != s) {
     replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(s, reductionContext));
   }
   return *this;

@@ -16,7 +16,7 @@ constexpr Expression::FunctionHelper PermuteCoefficient::s_functionHelper;
 int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::s_functionHelper.numberOfChildren(); }
 
 Expression PermuteCoefficientNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return PermuteCoefficient(this);
 }
 

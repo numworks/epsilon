@@ -44,6 +44,7 @@ ion_device_dfu_src += ion/src/device/shared/usb/boot.cpp
 ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/board.cpp
 ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/cache.cpp
 ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/reset.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/usb.cpp
 ion_device_dfu_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
   battery.cpp \

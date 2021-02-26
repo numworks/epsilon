@@ -7,6 +7,8 @@ namespace USB {
 
 void init();
 void shutdown();
+void initVbus();
+void shutdownVbus();
 void initGPIO();
 void shutdownGPIO();
 void initOTG();

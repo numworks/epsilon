@@ -65,25 +65,19 @@ void initGPIO() {
   GPIOC.MODER()->setMode(11, GPIO::MODER::Mode::Output);
   GPIOC.ODR()->set(11, false);
 
-  /* Configure the GPIO
-   * The VBUS pin is connected to the USB VBUS port. To read if the USB is
-   * plugged, the pin must be pulled down. */
-  // FIXME: Understand how the Vbus pin really works!
-#if 0
-  Config::VbusPin.group().MODER()->setMode(Config::VbusPin.pin(), GPIO::MODER::Mode::Input);
-  Config::VbusPin.group().PUPDR()->setPull(Config::VbusPin.pin(), GPIO::PUPDR::Pull::Down);
-#else
-  Config::VbusPin.init();
-#endif
+  /* Configure the GPIO */
+  /* The Vbus pin is connected to the USB Vbus port. Depending on the
+   * hardware, it should either be configured as an AlternateFunction, or as a
+   * floating Input. */
+  initVbus();
   Config::DmPin.init();
   Config::DpPin.init();
 }
 
 void shutdownGPIO() {
-  constexpr static AFGPIOPin Pins[] = {Config::DpPin, Config::DmPin, Config::VbusPin};
-  for (const AFGPIOPin & p : Pins) {
-    p.shutdown();
-  }
+  Config::DpPin.shutdown();
+  Config::DmPin.shutdown();
+  shutdownVbus();
 }
 
 void initOTG() {

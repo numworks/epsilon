@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper ArcCosine::s_functionHelper;
 int ArcCosineNode::numberOfChildren() const { return ArcCosine::s_functionHelper.numberOfChildren(); }
 
 Expression ArcCosineNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return ArcCosine(this);
 }
 

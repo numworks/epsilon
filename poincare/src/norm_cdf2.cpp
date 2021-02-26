@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper NormCDF2::s_functionHelper;
 int NormCDF2Node::numberOfChildren() const { return NormCDF2::s_functionHelper.numberOfChildren(); }
 
 Expression NormCDF2Node::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return NormCDF2(this);
 }
 

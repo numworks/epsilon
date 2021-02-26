@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper BinomPDF::s_functionHelper;
 int BinomPDFNode::numberOfChildren() const { return BinomPDF::s_functionHelper.numberOfChildren(); }
 
 Expression BinomPDFNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return BinomPDF(this);
 }
 

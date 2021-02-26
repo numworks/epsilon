@@ -100,11 +100,11 @@ Expression ComplexCartesian::shallowBeautify(ExpressionNode::ReductionContext * 
 
 Expression ComplexCartesian::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  if (childAtIndex(1).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
-    ExpressionNode::Sign realSign = childAtIndex(0).sign(reductionContext.context());
-    if (realSign != ExpressionNode::Sign::Unknown && realSign != s) {
-      replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(s, reductionContext));
-    }
+  /* We cannot set the sign if the cartesian is not real. */
+  assert(childAtIndex(1).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null);
+  ExpressionNode::Sign realSign = childAtIndex(0).sign(reductionContext.context());
+  if (realSign != ExpressionNode::Sign::Unknown && realSign != s) {
+    replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(s, reductionContext));
   }
   return *this;
 }

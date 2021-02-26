@@ -230,9 +230,12 @@ public:
     bool m_withinReduce;
   };
 
-  /* Several functions assume that a node which can take a sign other than
-   * Unknown also has a working setSign method.
-   * Nodes that override sign must also override setSign. */
+  /* During reduction, several functions assume that a node which can take a
+   * sign other than Unknown also has a working setSign method.
+   * Nodes that appear in reduced expressions and override sign must also
+   * override setSign.
+   * FIXME: sign and setSign depends too much on future programmers reading the
+   * above comment. This constraint shouldbe enforced in the design. */
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }

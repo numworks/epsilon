@@ -2,6 +2,7 @@
 #define LIBA_STDDEF_H
 
 #define NULL 0
+#define SIZE_MAX 0xFFFFFFFF
 
 typedef int ssize_t;
 typedef unsigned int size_t;

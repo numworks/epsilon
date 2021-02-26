@@ -36,11 +36,9 @@ bool isAuthenticated(void * pointer) {
     uint8_t * code = static_cast<uint8_t *>(pointer) + Board::Config::SizeSize;
     assert(code && size > 0);
     uint8_t digest[Ion::Device::Hash::Sha256DigestBytes];
-    uint8_t decryptedSignature[Hash::Sha256DigestBytes];
     Hash::sha256(code, size, digest);
     uint8_t * signature = static_cast<uint8_t *>(code) + size;
-    decrypt(signature, decryptedSignature);
-    if (memcmp(digest, decryptedSignature, Hash::Sha256DigestBytes) == 0) {
+    if (verify(signature, digest, Hash::Sha256DigestBytes)) {
       sStatus = Status::Official;
     } else {
       sStatus = Status::Unofficial;

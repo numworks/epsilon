@@ -319,9 +319,6 @@ constexpr ToolboxMessageTree trigonometryChildren[] = {
 };
 
 constexpr ToolboxMessageTree commonFunctionsChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
-  ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
-  ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
   ToolboxMessageTree::Leaf(I18n::Message::FloorCommandWithArg, I18n::Message::Floor),
   ToolboxMessageTree::Leaf(I18n::Message::FracCommandWithArg, I18n::Message::FracPart),
   ToolboxMessageTree::Leaf(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling),
@@ -402,11 +399,11 @@ constexpr ToolboxMessageTree vectorsChildren[] = {
 };
 
 constexpr ToolboxMessageTree matricesVectorsChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
-  ToolboxMessageTree::Node(I18n::Message::Vectors, vectorsChildren),
   ToolboxMessageTree::Leaf(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, false, I18n::Message::MatrixCommand),
   ToolboxMessageTree::Leaf(I18n::Message::TransposeCommandWithArg, I18n::Message::Transpose),
   ToolboxMessageTree::Leaf(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension),
+  ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
+  ToolboxMessageTree::Node(I18n::Message::Vectors, vectorsChildren),
 };
 
 constexpr ToolboxMessageTree arithmeticChildren[] = {
@@ -428,6 +425,9 @@ constexpr ToolboxMessageTree listsChildren[] = {
 #endif
 
 constexpr ToolboxMessageTree menu[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
+  ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
+  ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
   ToolboxMessageTree::Node(I18n::Message::UsualFunctions, commonFunctionsChildren),
   ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),

@@ -19,7 +19,6 @@ public:
 #endif
 
   // Properties
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
   Type type() const override { return Type::Ceiling; }
 private:
   // Layout

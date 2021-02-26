@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper FracPart::s_functionHelper;
 int FracPartNode::numberOfChildren() const { return FracPart::s_functionHelper.numberOfChildren(); }
 
 Expression FracPartNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return FracPart(this);
 }
 

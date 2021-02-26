@@ -14,7 +14,7 @@ constexpr Expression::FunctionHelper DivisionRemainder::s_functionHelper;
 int DivisionRemainderNode::numberOfChildren() const { return DivisionRemainder::s_functionHelper.numberOfChildren(); }
 
 Expression DivisionRemainderNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return DivisionRemainder(this);
 }
 

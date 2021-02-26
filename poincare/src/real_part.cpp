@@ -12,6 +12,10 @@ constexpr Expression::FunctionHelper RealPart::s_functionHelper;
 
 int RealPartNode::numberOfChildren() const { return RealPart::s_functionHelper.numberOfChildren(); }
 
+Expression RealPartNode::setSign(Sign s, ReductionContext reductionContext) {
+  return RealPart(this).setSign(s, reductionContext);
+}
+
 Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
@@ -22,6 +26,10 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 Expression RealPartNode::shallowReduce(ReductionContext reductionContext) {
   return RealPart(this).shallowReduce(reductionContext);
+}
+
+Expression RealPart::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
+  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

@@ -104,6 +104,13 @@ int main(int argc, char * argv[]) {
   FILE * implementation = fopen(implementationPath, "w");
   generateImplementationFromImage(implementation, lowerSnakeCaseName, camelCaseName, width, height, rowPointers);
   fclose(implementation);
+  
+  for (int i=0; i<height; i++) {
+    free(rowPointers[i]);
+  }
+  free(rowPointers);
+  free(png);
+  free(info);
 
   fclose(inputFile);
 }

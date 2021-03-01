@@ -205,6 +205,15 @@ QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to_scalar<float>("1/2", 0.5f);
   assert_expression_approximates_to_scalar<float>("(3+𝐢)/(4+𝐢)", NAN);
   assert_expression_approximates_to_scalar<float>("[[1,2][3,4][5,6]]/2", NAN);
+
+  assert_expression_approximates_to_scalar<float>("quo(23,12)", 1);
+  assert_expression_approximates_to_scalar<float>("rem(23,12)", 11);
+  assert_expression_approximates_to_scalar<float>("quo(-23,12)", -2);
+  assert_expression_approximates_to_scalar<float>("rem(-23,12)", 1);
+  assert_expression_approximates_to_scalar<float>("quo(23,-12)", -1);
+  assert_expression_approximates_to_scalar<float>("rem(23,-12)", 11);
+  assert_expression_approximates_to_scalar<float>("quo(-23,-12)", 2);
+  assert_expression_approximates_to_scalar<float>("rem(-23,-12)", 1);
 }
 
 QUIZ_CASE(poincare_approximation_logarithm) {

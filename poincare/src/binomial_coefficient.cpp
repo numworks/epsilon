@@ -90,9 +90,11 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
     return replaceWithUndefinedInPlace();
   }
 
-  if (r1.isNegative() && !r1.isZero()) {
-    // By convention, return 0 if k is strictly negative.
-    return Rational::Builder(0);
+  if (r1.isNegative() || r1.isZero()) {
+    // By convention, reduce to 0 if k is strictly negative, 1 if k is null.
+    Rational result = r1.isZero() ? Rational::Builder(1) : Rational::Builder(0);
+    replaceWithInPlace(result);
+    return std::move(result);
   }
 
   if (!r0.isInteger()) {

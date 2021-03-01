@@ -642,6 +642,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)", "[[-59/4,27/4][81/8,-37/8]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");
   assert_parsed_expression_simplify_to("(3_m^2)^3", "27×_m^6");
+  assert_parsed_expression_simplify_to("(𝐢×floor(-abs(x)))^(2/3)", "(𝐢×floor(-abs(x)))^\u00122/3\u0013");
 }
 
 QUIZ_CASE(poincare_simplification_factorial) {

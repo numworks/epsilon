@@ -25,7 +25,6 @@ private:
   class SequenceSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
   public:
     SequenceSelectionController(GraphController * graphController) : Shared::FunctionGraphController::FunctionSelectionController(graphController) {}
-    const char * title() override { return I18n::translate(I18n::Message::SequenceChoice); }
     CurveSelectionCell * reusableCell(int index, int type) override { return m_cells + index; }
     int reusableCellCount(int type) override { return Shared::MaxNumberOfSequences; }
   private:

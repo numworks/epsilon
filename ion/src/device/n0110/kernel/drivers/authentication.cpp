@@ -1,6 +1,5 @@
 #include <drivers/authentication.h>
 #include <drivers/flash.h>
-#include <drivers/hash.h>
 #include <kernel/drivers/config/board.h>
 #include <assert.h>
 #include <string.h>
@@ -35,10 +34,8 @@ bool isAuthenticated(void * pointer) {
     }
     uint8_t * code = static_cast<uint8_t *>(pointer) + Board::Config::SizeSize;
     assert(code && size > 0);
-    uint8_t digest[Ion::Device::Hash::Sha256DigestBytes];
-    Hash::sha256(code, size, digest);
     uint8_t * signature = static_cast<uint8_t *>(code) + size;
-    if (verify(signature, digest, Hash::Sha256DigestBytes)) {
+    if (verify(signature, code, size)) {
       sStatus = Status::Official;
     } else {
       sStatus = Status::Unofficial;

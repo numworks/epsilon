@@ -32,7 +32,7 @@ private:
   class SeriesSelectionController : public Shared::CurveSelectionController {
   public:
     SeriesSelectionController(GraphController * graphController) : Shared::CurveSelectionController(graphController) {}
-    const char * title() override { return I18n::translate(I18n::Message::SeriesChoice); }
+    const char * title() override { return I18n::translate(I18n::Message::Regression); }
     int numberOfRows() const override { return graphController()->m_store->numberOfNonEmptySeries(); }
     KDCoordinate rowHeight(int j) override;
     CurveSelectionCell * reusableCell(int index, int type) override { return m_cells + index; }

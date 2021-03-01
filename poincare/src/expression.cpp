@@ -436,7 +436,11 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool 
 
 Expression Expression::defaultOddFunctionSetSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  assert(numberOfChildren() == 1);
+  /* The node can have more than one child if the children after the first are
+   * not relevant when changing the sign (e.g.: the precision in Round, or the
+   * imaginary part in ComplexCartesian as it should be null when setting the
+   * sign.) */
+  assert(numberOfChildren() >= 1);
   ExpressionNode::Sign childSign = childAtIndex(0).sign(reductionContext.context());
   assert(childSign == ExpressionNode::Sign::Positive || childSign == ExpressionNode::Sign::Negative);
   if (childSign != s) {

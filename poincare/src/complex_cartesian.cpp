@@ -102,11 +102,7 @@ Expression ComplexCartesian::setSign(ExpressionNode::Sign s, ExpressionNode::Red
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   /* We cannot set the sign if the cartesian is not real. */
   assert(childAtIndex(1).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null);
-  ExpressionNode::Sign realSign = childAtIndex(0).sign(reductionContext.context());
-  if (realSign != ExpressionNode::Sign::Unknown && realSign != s) {
-    replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(s, reductionContext));
-  }
-  return *this;
+  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, ExpressionNode::ReductionContext reductionContext) {

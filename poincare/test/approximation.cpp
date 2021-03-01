@@ -273,6 +273,14 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("binomial(7, 9)", "0");
   assert_expression_approximates_to<float>("binomial(-7, 9)", "-5005");
   assert_expression_approximates_to<double>("binomial(-7, 9)", "-5005");
+  assert_expression_approximates_to<float>("binomial(13, 0)", "1");
+  assert_expression_approximates_to<double>("binomial(13, 0)", "1");
+  assert_expression_approximates_to<float>("binomial(10, -1)", "0");
+  assert_expression_approximates_to<double>("binomial(10, -1)", "0");
+  assert_expression_approximates_to<float>("binomial(-5, -10)", "0");
+  assert_expression_approximates_to<double>("binomial(-5, -10)", "0");
+  assert_expression_approximates_to<float>("binomial(10, 2.1)", "undef");
+  assert_expression_approximates_to<double>("binomial(10, 2.1)", "undef");
 
   assert_expression_approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", Degree, Metric, Cartesian, 6); // FIXME: precision problem
   assert_expression_approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");

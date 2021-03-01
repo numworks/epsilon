@@ -148,6 +148,8 @@ constexpr KDColor Palette::AtomHalogen;
 constexpr KDColor Palette::AtomReactiveNonmetal;
 constexpr KDColor Palette::AtomNobleGas;
 constexpr KDColor Palette::AtomTableLines;
+constexpr KDColor Palette::AtomBackground;
+constexpr KDColor Palette::AtomHighlight;
 constexpr KDColor Palette::AtomColor[];
 
 KDColor Palette::nextDataColor(int * colorIndex) {

@@ -142,7 +142,9 @@
             "Halogen": "00debd",
             "ReactiveNonmetal": "00ee00",
             "NobleGas": "8baaff",
-            "TableLines": "323532"
+            "TableLines": "323532",
+            "Highlight": "000000",
+            "Background": "d9d9d9"
         }
     }
 }

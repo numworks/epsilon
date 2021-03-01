@@ -71,7 +71,8 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseTimes,           // Token::Times
     &Parser::parseSlash,           // Token::Slash
     &Parser::parseImplicitTimes,   // Token::ImplicitTimes
-    &Parser::parseCaret,           // Token::Power
+    &Parser::parseCaret,           // Token::Power,
+    &Parser::parseSingleQuote,     // Token::SingleQuote
     &Parser::parseBang,            // Token::Bang
     &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
     &Parser::parseMatrix,          // Token::LeftBracket
@@ -331,6 +332,15 @@ void Parser::parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppin
 
 void Parser::parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type stoppingType) {
   defaultParseLeftParenthesis(true, leftHandSide, stoppingType);
+}
+
+void Parser::parseSingleQuote(Expression & leftHandSide, Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Left-hand side missing
+  } else {
+    leftHandSide = Derivative::Builder(leftHandSide, Symbol::Builder('x'), Symbol::Builder('x'));
+  }
+  isThereImplicitMultiplication();
 }
 
 void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {

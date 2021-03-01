@@ -44,6 +44,9 @@ public:
   static DivisionQuotient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilderTwoChildren<DivisionQuotient>);
 
+  template <typename T>
+  static T TemplatedQuotient(T a, T b) { return b > 0 ? std::floor(a/b) : -std::floor(a/(-b)); }
+
   // Expression
   Expression shallowReduce(Context * context);
   static Expression Reduce(const Integer & a, const Integer & b);

@@ -40,8 +40,11 @@ Complex<T> BinomialCoefficientNode::templatedApproximate(ApproximationContext ap
 
 template<typename T>
 T BinomialCoefficientNode::compute(T k, T n) {
-  if (std::isnan(n) || std::isnan(k) || k != std::round(k) || k < 0) {
+  if (std::isnan(n) || std::isnan(k) || k != std::round(k)) {
     return NAN;
+  }
+  if (k < 0) {
+    return 0;
   }
   // Generalized definition allows any n value
   bool generalized = (n != std::round(n) || n < k);
@@ -49,8 +52,8 @@ T BinomialCoefficientNode::compute(T k, T n) {
   k = (!generalized && k > (n - k)) ? n - k : k;
 
   T result = 1;
-  for (int i = 0; i < k; i++) {
-    result *= (n - (T)i) / (k - (T)i);
+  for (T i = 0; i < k; i++) {
+    result *= (n - i) / (k - i);
     if (std::isinf(result) || std::isnan(result)) {
       return result;
     }
@@ -82,8 +85,14 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
   Rational r0 = static_cast<Rational&>(c0);
   Rational r1 = static_cast<Rational&>(c1);
 
-  if (!r1.isInteger() || r1.isNegative()) {
+  if (!r1.isInteger()) {
+    // Our factorial is only defined on integers.
     return replaceWithUndefinedInPlace();
+  }
+
+  if (r1.isNegative() && !r1.isZero()) {
+    // By convention, return 0 if k is strictly negative.
+    return Rational::Builder(0);
   }
 
   if (!r0.isInteger()) {

@@ -45,7 +45,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilderTwoChildren<DivisionQuotient>);
 
   template <typename T>
-  static T TemplatedQuotient(T a, T b) { return b > 0 ? std::floor(a/b) : -std::floor(a/(-b)); }
+  static T TemplatedQuotient(T a, T b) { return b >= 0 ? std::floor(a/b) : -std::floor(a/(-b)); }
 
   // Expression
   Expression shallowReduce(Context * context);

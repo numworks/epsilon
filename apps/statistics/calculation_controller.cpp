@@ -30,9 +30,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_calculationTitleCells[i].setAlignment(1.0f, 0.5f);
     m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
   }
-  for (int i = 0; i < k_numberOfCalculationCells; i++) {
-    m_calculationCells[i].setTextColor(Palette::GrayDark);
-  }
   m_hideableCell.setHide(true);
 }
 

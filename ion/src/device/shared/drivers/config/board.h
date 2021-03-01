@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <drivers/hash.h>
 
 namespace Ion {
 namespace Device {
@@ -21,7 +20,7 @@ namespace Config {
 
 constexpr static uint32_t BootloaderTotalSize = 0x4000;
 constexpr static size_t SizeSize = sizeof(uint32_t);
-constexpr static size_t SignatureSize = Hash::Sha256DigestBytes;
+constexpr static size_t SignatureSize = 64;
 
 
 }

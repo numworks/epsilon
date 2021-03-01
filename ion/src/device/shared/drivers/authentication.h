@@ -8,7 +8,7 @@ namespace Ion {
 namespace Device {
 namespace Authentication {
 
-bool verify(uint8_t * signature, uint8_t * hash, size_t hashSize);
+bool verify(uint8_t * signature, uint8_t * code, uint32_t codeSize);
 
 }
 }

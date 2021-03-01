@@ -147,9 +147,11 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
 #if MICROPY_OBJ_IMMEDIATE_OBJS
 /* This couldn't be done at the time of writing because mp_obj_is_bool didn't
  * exist just yet. */
-#error Use mp_obj_is_bool instead of mp_obj_is_type
-#endif
+//#error Use mp_obj_is_bool instead of mp_obj_is_type
+    } else if (mp_obj_is_bool(arg)) {
+#else
     } else if (mp_obj_is_type(arg, &mp_type_bool)) {
+#endif
       sPlotStore->setAxesRequested(mp_obj_is_true(arg));
     } else if (mp_obj_is_type(arg, &mp_type_tuple) || mp_obj_is_type(arg, &mp_type_list)) {
       mp_obj_t * items;

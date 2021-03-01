@@ -54,6 +54,7 @@ py_src = $(addprefix python/src/py/,\
   runtime_utils.c \
   scheduler.c \
   nativeglue.c \
+  pairheap.c \
   ringbuf.c \
   stackctrl.c \
   argcheck.c \

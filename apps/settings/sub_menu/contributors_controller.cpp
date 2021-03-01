@@ -28,13 +28,13 @@ int ContributorsController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-constexpr static int s_numberOfDevelopers = 12;
+constexpr static int s_numberOfDevelopers = 13;
 constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PQuentinGuidee,
-  I18n::Message::PSandraSimmons,
   I18n::Message::PJoachimLeFournis,
-  I18n::Message::PJeanBaptisteBoric,
   I18n::Message::PMaximeFriess,
+  I18n::Message::PJeanBaptisteBoric,
+  I18n::Message::PSandraSimmons,
   I18n::Message::PDavid,
   I18n::Message::PDamienNicolet,
   I18n::Message::PEvannDreumont,
@@ -42,16 +42,19 @@ constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PVenceslasDuet,
   I18n::Message::PCharlotteThomas,
   I18n::Message::PAntoninLoubiere,
+  I18n::Message::PCyprienMejat,
 };
 
-constexpr static int s_numberOfBetaTesters = 6;
+constexpr static int s_numberOfBetaTesters = 8;
 constexpr static I18n::Message s_betaTestersUsernames[s_numberOfBetaTesters] = {
-  I18n::Message::PCyprienMejat,
   I18n::Message::PTimeoArnouts,
   I18n::Message::PJulieC,
   I18n::Message::PLelahelHideux,
   I18n::Message::PMadil,
   I18n::Message::PHilaireLeRoux,
+  I18n::Message::PHectorNussbaumer,
+  I18n::Message::PRaphaelDyda,
+  I18n::Message::PThibautC,
 };
 
 void ContributorsController::willDisplayCellForIndex(HighlightCell * cell, int index) {

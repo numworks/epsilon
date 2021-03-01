@@ -150,7 +150,7 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 CodePoint SequenceLayoutNode::XNTCodePoint(int childIndex) const {
-  return (childIndex == k_argumentLayoutIndex || childIndex == k_variableLayoutIndex) ? CodePoint('n') : UCodePointNull;
+  return (childIndex == k_argumentLayoutIndex || childIndex == k_variableLayoutIndex) ? CodePoint('i') : UCodePointNull;
 }
 
 // Protected

@@ -109,8 +109,7 @@ int main(int argc, char * argv[]) {
     free(rowPointers[i]);
   }
   free(rowPointers);
-  free(png);
-  free(info);
+  png_destroy_read_struct(&png, &info, NULL);
 
   fclose(inputFile);
 }

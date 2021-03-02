@@ -1039,7 +1039,7 @@ double Expression::nextRoot(const char * symbol, double start, double max, Conte
         return result;
       }
     }
-    return nextRoot(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
+    return nextRoot(symbol, result, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
   }
   const void * pack[] = { this, symbol, &complexFormat, &angleUnit };
   Solver::ValueAtAbscissa evaluation = [](double x, Context * ctx, const void * aux) {

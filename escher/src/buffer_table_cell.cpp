@@ -18,7 +18,14 @@ void BufferTableCell::setHighlighted(bool highlight) {
 }
 
 void BufferTableCell::setLabelText(const char * textBody) {
+  assert(textBody);
   m_labelView.setText(textBody);
+  layoutSubviews();
+}
+
+void BufferTableCell::appendText(const char * textBody) {
+  assert(textBody);
+  m_labelView.appendText(textBody);
   layoutSubviews();
 }
 

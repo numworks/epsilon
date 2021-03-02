@@ -23,8 +23,9 @@ public:
   void setMessageTreeModel(const MessageTree * messageTreeModel);
   void viewDidDisappear() override;
 protected:
+  int m_lastSelect = 0;
   StackViewController * stackController() const;
-  virtual int initialSelectedRow() const { return 0; }
+  virtual int initialSelectedRow() const { return m_lastSelect; }
   constexpr static KDCoordinate k_topBottomMargin = 13;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;

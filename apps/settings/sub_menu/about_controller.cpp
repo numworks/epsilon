@@ -41,6 +41,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       GenericSubController * subController = &m_contributorsController;
       subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(selectedRow()+(!hasUsernameCell())));
       StackViewController * stack = stackController();
+      m_lastSelect = selectedRow();
       stack->push(subController);
       return true;
     }

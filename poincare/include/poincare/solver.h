@@ -22,7 +22,7 @@ public:
 
   static bool RootExistsOnInterval(T fa, T fb, T fc);
   static bool MinimumExistsOnInterval(T fa, T fb, T fc) { return (std::isnan(fa) || fa > fb) && (std::isnan(fc) || fb < fc) && (!std::isnan(fa) || !std::isnan(fc)); }
-  static bool MaximumExistsOnInterval(T fa, T fb, T fc) { return (std::isnan(fa) || fa < fb) && (std::isnan(fc) || fb > fc) && (!std::isnan(fa) || !std::isnan(fc)); }
+  static bool MaximumExistsOnInterval(T fa, T fb, T fc) { return MinimumExistsOnInterval(-fa, -fb, -fc); }
 
 private:
   static Coordinate2D<T> NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep);

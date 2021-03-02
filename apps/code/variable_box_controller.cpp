@@ -897,8 +897,8 @@ bool VariableBoxController::addImportStructFromScript(mp_parse_node_struct_t * p
 // The returned boolean means we should escape the process
 bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type nodeType, uint8_t nodeOrigin, const char * nodeName, int nodeNameLength, const char * nodeSourceName, const char * nodeDescription) {
   if (m_totalNodesCount >= k_maxScriptNodesCount) {
-    // There is no room to add another node
-    return false;
+    // There is no room to add any another node
+    return true;
   }
   assert(nodeName != nullptr);
   if (nodeNameLength < 0) {
@@ -966,9 +966,9 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
 
   // Step 2.2: find where to add the node (and check that it doesn't exist yet)
   size_t * currentNodeCount = nodesCountPointerForOrigin(nodeOrigin);
-  ScriptNode * nodes = nodesForOrigin(nodeOrigin);
-  size_t insertionIndex = *currentNodeCount;
+  size_t insertionIndex = m_totalNodesCount;
   if (nodeOrigin == k_builtinsOrigin) {
+    insertionIndex = nodesCountForOrigin(k_currentScriptOrigin) + nodesCountForOrigin(k_builtinsOrigin);
     /* For builtin nodes, we don't need to check whether the node was already
      * added because they're added first in lexicographical order. Plus, we
      * want to add it at the end of list to respect the lexicographical order. */
@@ -976,10 +976,15 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   } else {
     // Look where to add
     // This could be faster with dichotomia, but there is no speed problem for now
+    size_t originIndexOffset = 0;
     for (uint8_t origin = 0; origin < k_maxSources; ++origin) {
       ScriptNode * originNodes = nodesForOrigin(origin);
-      assert(origin < m_scriptOriginsSources || nodesCountForOrigin(origin) == 0); // TODO Hugo : Debug assert
-      for (int i = 0; i < nodesCountForOrigin(origin); i++) {
+      size_t originNodesCount = nodesCountForOrigin(origin);
+      if (nodeOrigin == origin) {
+        insertionIndex = originIndexOffset + originNodesCount;
+      }
+      assert(origin < m_scriptOriginsSources || originNodesCount == 0); // TODO Hugo : Debug assert
+      for (int i = 0; i < originNodesCount; i++) {
         ScriptNode * matchingNode = originNodes + i;
         int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
         if (comparisonResult == 0 || (comparisonResult == '(' && nodeType == ScriptNode::Type::WithParentheses)) {
@@ -988,12 +993,13 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
         }
         if (comparisonResult > 0) {
           if (nodeOrigin == origin) {
-            insertionIndex = i;
+            insertionIndex = originIndexOffset + i;
           }
-          // We continue exploring other following nodes to spot duplicates
+          // We continue exploring other origins to spot duplicates
           break;
         }
       }
+      originIndexOffset += originNodesCount;
     }
   }
 
@@ -1005,12 +1011,13 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   }
 
   // Step 2.4: Shift all the following nodes
+  assert(insertionIndex >= 0);
   for (size_t i = m_totalNodesCount; i > insertionIndex; i--) {
-    nodes[i] = nodes[i - 1];
+    m_scriptNodes[i] = m_scriptNodes[i - 1];
   }
 
   // Step 2.5: Add the node
-  nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nullptr, m_displaySubtitles ? nodeDescription : nodeSourceName);
+  m_scriptNodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nullptr, m_displaySubtitles ? nodeDescription : nodeSourceName);
   // Increase the node count and sources count
   *currentNodeCount = *currentNodeCount + 1;
   m_totalNodesCount += 1;

@@ -99,20 +99,30 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double maximalStep = Poincare::Solver::DefaultMaximalStep(start, m_intervalApproximateSolutions[1]);
-  /* In order to be able to call NextRoot on the previously found root, the method cannot return its starting value. To allow the bound of the interval to be part of the solutions, we need to start the search a little sooner. */
+  /* In order to be able to call NextRoot on the previously found root, the
+   * method cannot return its starting value. To allow the bound of the
+   * interval to be part of the solutions, we need to start the search a
+   * little sooner. */
   start -= maximalStep;
+  /* The approximated value for a solution located on one of the bound could be
+   * outside the interval, so we need to take a small margin. */
+  double boundMargin = maximalStep * Poincare::Solver::k_zeroPrecision;
   double root;
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
     root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, m_intervalApproximateSolutions[1], context, Poincare::Solver::k_relativePrecision, Poincare::Solver::k_minimalStep, maximalStep);
-    if (std::isfinite(root)
-     && (root < m_intervalApproximateSolutions[0]) == (root < m_intervalApproximateSolutions[1])
-     && std::fabs(root - m_intervalApproximateSolutions[0]) > maximalStep * Poincare::Solver::k_zeroPrecision
-     && std::fabs(root - m_intervalApproximateSolutions[1]) > maximalStep * Poincare::Solver::k_zeroPrecision) {
-      /* The root is outside of the interval */
+
+    /* Handle solutions found outside the reasonnable interval */
+    if (root < m_intervalApproximateSolutions[0] - boundMargin) {
+      /* A solution is found too soon, we simply ignore it and move on. */
       start = root;
       i--;
       continue;
+    } else if (root > m_intervalApproximateSolutions[1] + boundMargin) {
+      /* A solution is found but too late: there is no solution in the
+       * interval, simply return NAN. */
+      root = NAN;
     }
+
     if (i == k_maxNumberOfApproximateSolutions) {
       m_hasMoreThanMaxNumberOfApproximateSolution = !std::isnan(root);
       break;

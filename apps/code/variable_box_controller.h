@@ -63,8 +63,6 @@ private:
 
   // Nodes and nodes count
   int nodesCountForOrigin(uint8_t origin) const;
-  size_t * nodesCountPointerForOrigin(uint8_t origin);
-  ScriptNode * nodesForOrigin(uint8_t origin);
   ScriptNode * scriptNodeAtIndex(int index);
 
   // Cell getters

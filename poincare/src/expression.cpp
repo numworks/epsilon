@@ -1021,7 +1021,7 @@ double Expression::nextRoot(const char * symbol, double start, double max, Conte
    * to change sign around the root or for the root to be an extremum. Neither
    * is true for the null function, which we handle here. */
   if (nullStatus(context) == ExpressionNode::NullStatus::Null) {
-    return start + (start < max ? maximalStep : - maximalStep);
+    return start + std::copysign(maximalStep, max - start);
   }
   if (type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot || type() == ExpressionNode::Type::SquareRoot) {
     /* A power such as sqrt(x) can have a vertical derivative around its root,

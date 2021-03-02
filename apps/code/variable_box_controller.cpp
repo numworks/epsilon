@@ -129,11 +129,19 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   /* Unlike text and background color, message font impacts cell's size.
    * It is therefore set here to apply on temporary cells as well. */
   BufferTableCell * myCell = static_cast<BufferTableCell *>(cell);
-  if (cellOrigin >= k_importedOrigin) {
-    myCell->setLabelText(I18n::translate(I18n::Message::PythonModule));
-    myCell->appendText(m_sourceText[cellOrigin]);
+  const char * moduleName = m_sourceText[cellOrigin];
+  if (cellOrigin >= k_importedOrigin && strcmp(moduleName, I18n::translate(I18n::Message::ImportedModulesAndScripts)) != 0) {
+    // Source is either a module or a script
+    size_t moduleNameLenght = strlen(moduleName);
+    if (strcmp(moduleName + moduleNameLenght - 3, ".py") == 0) {
+      // Source is a script
+      myCell->setLabelText(I18n::translate(I18n::Message::PythonScript));
+    } else {
+      myCell->setLabelText(I18n::translate(I18n::Message::PythonModule));
+    }
+    myCell->appendText(moduleName);
   } else {
-    myCell->setLabelText(m_sourceText[cellOrigin]);
+    myCell->setLabelText(moduleName);
   }
   myCell->setMessageFont(KDFont::SmallFont);
 }

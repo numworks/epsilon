@@ -29,7 +29,7 @@ AboutController::AboutController(Responder * parentResponder) :
 }
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
-  I18n::Message childLabel = m_messageTreeModel->childAtIndex(selectedRow())->label();
+  I18n::Message childLabel = m_messageTreeModel->childAtIndex(selectedRow()+(!hasUsernameCell()))->label();
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && childLabel == I18n::Message::FccId) {
@@ -39,7 +39,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (childLabel == I18n::Message::Contributors) {
       GenericSubController * subController = &m_contributorsController;
-      subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(selectedRow()));
+      subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(selectedRow()+(!hasUsernameCell())));
       StackViewController * stack = stackController();
       stack->push(subController);
       return true;

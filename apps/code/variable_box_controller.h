@@ -44,7 +44,7 @@ private:
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / Escher::TableCell::k_minimalSmallFontCellHeight + 2; // +2 if the cells are cropped on top and at the bottom
   constexpr static size_t k_maxNumberOfDisplayedSubtitles = k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2; // TODO Hugo : At most one subtitle cell for one item
   constexpr static size_t k_totalBuiltinNodesCount = 107;
-  constexpr static size_t k_maxScriptNodesCount = k_totalBuiltinNodesCount+32*2*10; // TODO Hugo : Remove *10. Chosen without particular reasons
+  constexpr static size_t k_maxScriptNodesCount = k_totalBuiltinNodesCount + 64; // 64 Chosen without particular reasons
   constexpr static uint8_t k_maxSources = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
 
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable

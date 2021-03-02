@@ -30,7 +30,10 @@ public:
    * the values that are outside of the function's order of magnitude. */
   static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
   /* Find the best window to display functions, with a specified ratio
-   * between X and Y. Usually used to find the most fitting orthonormal range. */
+   * between X and Y. Usually used to find the most fitting orthonormal range.
+   * If no suitable range can be made, xMin and xMax will be set to a median
+   * value, and yMin and yMax will be set to NaN.
+   * FIXME: Do something more sensible. Cleanup the zoom call stack in general. */
   static void RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
   static void FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary);
 

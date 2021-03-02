@@ -373,9 +373,9 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 
 VariableBoxController * ConsoleController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
+  varBox->setDisplaySubtitles(false);
   varBox->loadVariablesImportedFromScripts();
   varBox->setTitle(I18n::Message::FunctionsAndVariables);
-  varBox->setDisplaySubtitles(false);
   return varBox;
 }
 

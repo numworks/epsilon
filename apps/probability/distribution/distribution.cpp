@@ -66,7 +66,6 @@ double Distribution::cumulativeDistributiveInverseForProbability(double * probab
         const Distribution * distribution = static_cast<const Distribution *>(auxiliary);
         return distribution->evaluateAtDiscreteAbscissa(k);
       }, nullptr, this);
-    // Context, complex format and angle unit are dummy values
 }
 
 double Distribution::rightIntegralInverseForProbability(double * probability) {

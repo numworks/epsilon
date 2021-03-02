@@ -25,7 +25,6 @@ void ScriptNodeCell::setScriptNode(ScriptNode * node) {
   }
 
   m_subLabelView.setText(node->description() != nullptr ? node->description() : "");
-  m_accessoryView.setText(node->nodeSourceName() != nullptr ? node->nodeSourceName() : "");
   reloadCell();
 }
 
@@ -34,7 +33,6 @@ void ScriptNodeCell::setHighlighted(bool highlight) {
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
   m_labelView.setBackgroundColor(backgroundColor);
   m_subLabelView.setBackgroundColor(backgroundColor);
-  m_accessoryView.setBackgroundColor(backgroundColor);
 }
 
 void ScriptNodeCell::reloadCell() {

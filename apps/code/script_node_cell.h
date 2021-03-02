@@ -14,17 +14,14 @@ public:
   constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
   ScriptNodeCell() :
     TableCell(),
-    m_labelView(KDFont::LargeFont),
-    m_subLabelView(KDFont::SmallFont, 0.5f, 0.5f, Escher::Palette::GrayDark),
-    m_accessoryView(KDFont::SmallFont, 0.5f, 0.5f)
+    m_labelView(KDFont::LargeFont, 0.0f),
+    m_subLabelView(KDFont::SmallFont, 0.0f, 0.5f, Escher::Palette::GrayDark)
   {}
   void setScriptNode(ScriptNode * node);
 
   /* TableCell */
   const Escher::View * labelView() const override { return &m_labelView; }
-  const Escher::View * subLabelView() const override { return &m_subLabelView; }
-  // TODO : Remove source from cell, and handle it as a subtitle Cell in VarBox.
-  const Escher::View * accessoryView() const override { return &m_accessoryView; }
+  const Escher::View * subLabelView() const override { return m_subLabelView.text()[0] != 0 ? &m_subLabelView : nullptr; }
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
@@ -32,7 +29,6 @@ public:
 private:
   Escher::BufferTextView m_labelView;
   Escher::BufferTextView m_subLabelView;
-  Escher::BufferTextView m_accessoryView;
 };
 
 }

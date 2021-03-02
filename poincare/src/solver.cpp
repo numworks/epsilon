@@ -118,8 +118,9 @@ double Solver::NextRoot(ValueAtAbscissa evaluation, Context * context, const voi
     } else if (SolverHelper<double>::MaximumExistsOnInterval(fa, fb, fc) && fb <= 0) {
       const void * pack[2] = { &f, auxiliary };
       ValueAtAbscissa fOpposite = [](double x, Context * ctx, const void * aux) {
-        ValueAtAbscissa fOriginal = static_cast<const ValueAtAbscissa * const *>(aux)[0][0];
-        const void * auxOriginal = static_cast<const void * const *>(aux)[1];
+        const void * const * pack = static_cast<const void * const *>(aux);
+        ValueAtAbscissa fOriginal = *static_cast<const ValueAtAbscissa *>(pack[0]);
+        const void * auxOriginal = pack[1];
         return -fOriginal(x, ctx, auxOriginal);
       };
       result = BrentMinimum(a, c, fOpposite, context, pack);

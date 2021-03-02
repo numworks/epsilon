@@ -40,9 +40,7 @@ constexpr static uint PN_import_as_names_paren = 96;
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
-  m_scriptStore(scriptStore),
-  m_totalNodesCount(0),
-  m_scriptOriginsSources(k_importedOrigin)
+  m_scriptStore(scriptStore)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedSubtitles; i++) {
     m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
@@ -51,6 +49,8 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   // ScriptInProgress and BuiltinsAndKeywords subtitle cells
   m_sourceText[0] = I18n::translate(I18n::Message::ScriptInProgress);
   m_sourceText[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);
+  // Empty to initialize other class members
+  empty();
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -246,11 +246,9 @@ void VariableBoxController::empty() {
   resetMemoization();
   m_scriptStore->clearVariableBoxFetchInformation();
   for (int i = 0; i < k_maxSources; ++i) {
-    assert(i < m_scriptOriginsSources || m_rowsPerSources[i] == 0); // TODO Hugo : Debug assert
     m_rowsPerSources[i] = 0;
     // ScriptInProgress and BuiltinsAndKeywords cells stay unchanged
     if (i >= k_importedOrigin) {
-      assert(i < m_scriptOriginsSources || m_sourceText[i] == nullptr); // TODO Hugo : Debug assert
       m_sourceText[i] = nullptr;
     }
   }
@@ -944,10 +942,9 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   if (nodeOrigin == k_importedOrigin && m_displaySubtitles) {
     nodeOrigin = m_scriptOriginsSources;
     if (nodeSourceName!= nullptr) {
-      // Nodes should arrive ordered by source
+      // Nodes will often arrive ordered by source
       for (uint8_t source = m_scriptOriginsSources - 1; source >= k_importedOrigin; --source) {
         if (strcmp(nodeSourceName, m_sourceText[source]) == 0) {
-          assert(source == m_scriptOriginsSources - 1); // TODO Hugo : Debug assert
           nodeOrigin = source;
           break;
         }

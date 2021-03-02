@@ -9,7 +9,7 @@ namespace Poincare {
 
 template<typename T>
 Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep) {
-  assert(relativePrecision > static_cast<T>(0) && minimalStep >= static_cast<T>(0) && maximalStep >= minimalStep);
+  assert(relativePrecision > static_cast<T>(0.f) && minimalStep >= static_cast<T>(0.f) && maximalStep >= minimalStep);
 
   constexpr T overflow = sizeof(T) == sizeof(float) ? FLT_MAX : DBL_MAX;
   constexpr T underflow = sizeof(T) == sizeof(float) ? FLT_MIN : DBL_MIN;
@@ -28,27 +28,27 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation,
     minimalStep = underflow;
   }
 
-  if (start * end >= static_cast<T>(0)) {
+  if (start * end >= static_cast<T>(0.f)) {
     return NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, end, relativePrecision, minimalStep, maximalStep);
   }
 
-  assert(start * end < static_cast<T>(0));
-  Coordinate2D<T> result = NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, static_cast<T>(0), relativePrecision, minimalStep, maximalStep);
+  assert(start * end < static_cast<T>(0.f));
+  Coordinate2D<T> result = NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, static_cast<T>(0.f), relativePrecision, minimalStep, maximalStep);
   if (std::isfinite(result.x1())) {
     return result;
   }
   constexpr T marginAroundZero = static_cast<T>(1e-3);
-  result = search(-marginAroundZero, static_cast<T>(0), marginAroundZero, evaluation(-marginAroundZero, context, auxiliary), evaluation(static_cast<T>(0), context, auxiliary), evaluation(marginAroundZero, context, auxiliary), evaluation, context, auxiliary);
+  result = search(-marginAroundZero, static_cast<T>(0.f), marginAroundZero, evaluation(-marginAroundZero, context, auxiliary), evaluation(static_cast<T>(0.f), context, auxiliary), evaluation(marginAroundZero, context, auxiliary), evaluation, context, auxiliary);
   if (std::isfinite(result.x1())) {
     return result;
   }
-  return NextPointOfInterestHelper(evaluation, context, auxiliary, search, static_cast<T>(0), end, relativePrecision, minimalStep, maximalStep);
+  return NextPointOfInterestHelper(evaluation, context, auxiliary, search, static_cast<T>(0.f), end, relativePrecision, minimalStep, maximalStep);
 }
 
 template<typename T>
 Coordinate2D<T> SolverHelper<T>::NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep) {
-  assert(start * end >= static_cast<T>(0));
-  assert(relativePrecision > static_cast<T>(0));
+  assert(start * end >= static_cast<T>(0.f));
+  assert(relativePrecision > static_cast<T>(0.f));
 
   T h = std::fabs(start) < std::fabs(end) ? relativePrecision : -relativePrecision;
   T m, M;
@@ -83,8 +83,10 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterestHelper(ValueAtAbscissa evalu
 template<typename T>
 T SolverHelper<T>::Step(T x, T growthSpeed, T minimalStep, T maximalStep) {
   assert(std::fabs(minimalStep) <= std::fabs(maximalStep));
-  T acceleration = std::fmax(std::fabs(std::log10(std::fabs(x))-1)-2, 0);
-  T step = x * growthSpeed * (1 + acceleration);
+  T acceleration = std::fmax(
+      std::fabs(std::log10(std::fabs(x)) - static_cast<T>(1.f)) - static_cast<T>(2.f),
+      static_cast<T>(0.f));
+  T step = x * growthSpeed * (static_cast<T>(1.f) + acceleration);
   if (!std::isfinite(step) || std::fabs(minimalStep) > std::fabs(step)) {
     step = minimalStep;
   } else if (std::fabs(maximalStep) < std::fabs(step)) {
@@ -95,8 +97,8 @@ T SolverHelper<T>::Step(T x, T growthSpeed, T minimalStep, T maximalStep) {
 
 template<typename T>
 bool SolverHelper<T>::RootExistsOnInterval(T fa, T fb, T fc) {
-  return ((fb == static_cast<T>(0) && fa * fc < static_cast<T>(0))
-       || fb * fc < static_cast<T>(0));
+  return ((fb == static_cast<T>(0.f) && fa * fc < static_cast<T>(0.f))
+       || fb * fc < static_cast<T>(0.f));
 }
 
 double Solver::NextRoot(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double relativePrecision, double minimalStep, double maximalStep) {

@@ -125,6 +125,8 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
+  varBox->setDisplaySubtitles(true);
+  varBox->setTitle(I18n::Message::Autocomplete);
   /* If the editor should be autocompleting an identifier, the variable box has
    * already been loaded. We check shouldAutocomplete and not isAutocompleting,
    * because the autocompletion result might be empty. */
@@ -141,8 +143,6 @@ VariableBoxController * EditorController::variableBoxForInputEventHandler(InputE
     assert(cursor > beginningOfAutocompletion);
     varBox->loadFunctionsAndVariables(m_scriptIndex, beginningOfAutocompletion, cursor - beginningOfAutocompletion);
   }
-  varBox->setTitle(I18n::Message::Autocomplete);
-  varBox->setDisplaySubtitles(true);
   return varBox;
 }
 

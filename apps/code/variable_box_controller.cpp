@@ -130,7 +130,12 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   /* Unlike text and background color, message font impacts cell's size.
    * It is therefore set here to apply on temporary cells as well. */
   BufferTableCell * myCell = static_cast<BufferTableCell *>(cell);
-  myCell->setLabelText(m_sourceText[cellOrigin]);
+  if (cellOrigin >= k_importedOrigin) {
+    myCell->setLabelText(I18n::translate(I18n::Message::PythonModule));
+    myCell->appendText(m_sourceText[cellOrigin]);
+  } else {
+    myCell->setLabelText(m_sourceText[cellOrigin]);
+  }
   myCell->setMessageFont(KDFont::SmallFont);
 }
 
@@ -939,7 +944,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
 
   // Step 2: Add Node
   // Step 2.1: Find node Origin from import
-  if (nodeOrigin == k_importedOrigin) {
+  if (nodeOrigin == k_importedOrigin && m_displaySubtitles) {
     nodeOrigin = m_scriptOriginsSources;
     if (nodeSourceName!= nullptr) {
       // Nodes should arrive ordered by source
@@ -990,7 +995,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     }
   }
 
-  if (nodeOrigin == m_scriptOriginsSources) {
+  if (nodeOrigin == m_scriptOriginsSources && m_displaySubtitles) {
     assert(nodeOrigin >= k_importedOrigin);
     assert(nodeSourceName != nullptr);
     m_sourceText[m_scriptOriginsSources] = nodeSourceName;
@@ -1002,7 +1007,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   }
 
   // Step 2.4: Add the node
-  nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
+  nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nullptr, m_displaySubtitles ? nodeDescription : nodeSourceName);
   // Increase the node count, and sources count
   *currentNodeCount = *currentNodeCount + 1;
   m_totalNodesCount += 1;

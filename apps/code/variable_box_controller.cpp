@@ -40,11 +40,11 @@ constexpr static uint PN_import_as_names_paren = 96;
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
+  m_scriptStore(scriptStore),
   m_totalNodesCount(0),
-  m_scriptOriginsSources(k_importedOrigin),
-  m_scriptStore(scriptStore)
+  m_scriptOriginsSources(k_importedOrigin)
 {
-  for (int i = 0; i < k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2; i++) {
+  for (int i = 0; i < k_maxNumberOfDisplayedSubtitles; i++) {
     m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
     m_subtitleCells[i].setTextColor(Palette::BlueishGray);
   }
@@ -103,9 +103,8 @@ HighlightCell * VariableBoxController::reusableCell(int index, int type) {
 
 int VariableBoxController::reusableCellCount(int type) {
   if (type == k_subtitleCellType) {
-    // At most half of cells are subtitle cells.
     assert(m_displaySubtitles);
-    return k_maxNumberOfDisplayedItems - k_maxNumberOfDisplayedItems/2;
+    return k_maxNumberOfDisplayedSubtitles;
   }
   assert(type == k_itemCellType);
   return k_maxNumberOfDisplayedItems;
@@ -115,12 +114,12 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   assert(index >= 0 && index < numberOfRows());
   uint8_t cellOrigin = k_currentScriptOrigin;
   int cumulatedOriginsCount = 0;
-  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount); // Handle categories
+  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
     int nodeIndex = index - (m_displaySubtitles ? cumulatedOriginsCount : 0);
     ScriptNode * node = scriptNodeAtIndex(nodeIndex);
     ScriptNodeCell * nodeCell = static_cast<ScriptNodeCell *>(cell);
-    nodeCell->setScriptNode(node); // TODO EXC_BAD_ACCESS issue if number of cells has been cropped
+    nodeCell->setScriptNode(node); // TODO Hugo : EXC_BAD_ACCESS issue if number of cells has been cropped
     return;
   }
   assert(m_displaySubtitles);
@@ -247,11 +246,11 @@ void VariableBoxController::empty() {
   resetMemoization();
   m_scriptStore->clearVariableBoxFetchInformation();
   for (int i = 0; i < k_maxSources; ++i) {
-    assert(i < m_scriptOriginsSources || m_rowsPerSources[i] == 0);
+    assert(i < m_scriptOriginsSources || m_rowsPerSources[i] == 0); // TODO Hugo : Debug assert
     m_rowsPerSources[i] = 0;
     // ScriptInProgress and BuiltinsAndKeywords cells stay unchanged
     if (i >= k_importedOrigin) {
-      assert(i < m_scriptOriginsSources || m_sourceText[i] == nullptr);
+      assert(i < m_scriptOriginsSources || m_sourceText[i] == nullptr); // TODO Hugo : Debug assert
       m_sourceText[i] = nullptr;
     }
   }
@@ -333,11 +332,11 @@ int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin
   assert(i < m_totalNodesCount + (m_displaySubtitles ? m_scriptOriginsSources : 0));
   int cellIndex = 0;
   int originsCount = 0;
-  int result = -1;
   for (uint8_t origin = 0; origin < k_maxSources; ++origin) {
     int nodeCount = nodesCountForOrigin(origin);
     if (nodeCount > 0) {
       originsCount++;
+      int result = -1;
       if (m_displaySubtitles && i == cellIndex) {
         result = k_subtitleCellType;
       } else {
@@ -346,7 +345,6 @@ int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin
           result = k_itemCellType;
         }
       }
-      // Handle results
       if (result != -1) {
         if (resultOrigin != nullptr) {
           *resultOrigin = origin;
@@ -515,7 +513,7 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
   assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
   for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
     if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, builtinNames[i].type, k_builtinsOrigin, builtinNames[i].name)) {
-      /* We can leverage on the fact that buitin nodes are stored in
+      /* We can leverage on the fact that builtin nodes are stored in
        * alphabetical order. */
       return;
     }
@@ -594,7 +592,7 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
 }
 
 void VariableBoxController::loadCurrentVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
-  /* To find variable and funtion names: we lex the script and keep all
+  /* To find variable and function names: we lex the script and keep all
    * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
    * the builtins or imported scripts. */
 
@@ -735,7 +733,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       } else {
         /*  If a module and a script have the same name, the micropython
          *  importation algorithm first looks for a module then for a script. We
-         *  should thus check that the id is not a module name before retreiving
+         *  should thus check that the id is not a module name before retrieving
          *  a script name to put it as source. */
         if (!importationSourceIsScript(id, &sourceId) && !importFromModules) { // Warning : must be done in this order
           /* We call importationSourceIsScript to load the script name in
@@ -888,7 +886,6 @@ bool VariableBoxController::addImportStructFromScript(mp_parse_node_struct_t * p
     return false;
   }
   return addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses, k_importedOrigin, name, -1, scriptName);
-  // TODO handle this
 }
 
 // The returned boolean means we should escape the process
@@ -950,7 +947,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
       // Nodes should arrive ordered by source
       for (uint8_t source = m_scriptOriginsSources - 1; source >= k_importedOrigin; --source) {
         if (strcmp(nodeSourceName, m_sourceText[source]) == 0) {
-          assert(source == m_scriptOriginsSources - 1);
+          assert(source == m_scriptOriginsSources - 1); // TODO Hugo : Debug assert
           nodeOrigin = source;
           break;
         }
@@ -976,7 +973,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     // This could be faster with dichotomia, but there is no speed problem for now
     for (uint8_t origin = 0; origin < k_maxSources; ++origin) {
       ScriptNode * originNodes = nodesForOrigin(origin);
-      assert(origin < m_scriptOriginsSources || nodesCountForOrigin(origin) == 0); // If good, reduce for loop
+      assert(origin < m_scriptOriginsSources || nodesCountForOrigin(origin) == 0); // TODO Hugo : Debug assert
       for (int i = 0; i < nodesCountForOrigin(origin); i++) {
         ScriptNode * matchingNode = originNodes + i;
         int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
@@ -995,20 +992,21 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     }
   }
 
+  // Step 2.3: Add any new import source name
   if (nodeOrigin == m_scriptOriginsSources && m_displaySubtitles) {
     assert(nodeOrigin >= k_importedOrigin);
     assert(nodeSourceName != nullptr);
     m_sourceText[m_scriptOriginsSources] = nodeSourceName;
   }
 
-  // Step 2.3: Shift all the following nodes
+  // Step 2.4: Shift all the following nodes
   for (size_t i = m_totalNodesCount; i > insertionIndex; i--) {
     nodes[i] = nodes[i - 1];
   }
 
-  // Step 2.4: Add the node
+  // Step 2.5: Add the node
   nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nullptr, m_displaySubtitles ? nodeDescription : nodeSourceName);
-  // Increase the node count, and sources count
+  // Increase the node count and sources count
   *currentNodeCount = *currentNodeCount + 1;
   m_totalNodesCount += 1;
   if (nodeOrigin == m_scriptOriginsSources) {

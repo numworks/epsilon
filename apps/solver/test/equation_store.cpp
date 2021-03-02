@@ -89,6 +89,7 @@ QUIZ_CASE(equation_solve) {
   assert_solves_numerically_to("8x^4-22x^2+15=0", -10, 10, {-1.224745, -1.118034, 1.118034, 1.224745});
   assert_solves_numerically_to("(3x)^3/(0.1-3x)^3=10^(-8)", -10, 10, {0.000071660});
   assert_solves_numerically_to("4.4ᴇ-9/(0.12+x)^2=1.1ᴇ-9/x^2", -10, 10, {-0.04, 0.12});
+  assert_solves_numerically_to("-2/(x-4)=-x^2+2x-4", -10, 10, {4.154435});
 
   // The ends of the interval are solutions
   assert_solves_numerically_to("sin(x)=0", -180, 180, {-180, 0, 180});

@@ -67,9 +67,9 @@ void shutdownPeripherals(bool keepLEDAwake) {
 void initInterruptionPriorities() {
   // Init SVCall interrupt priorities
   // SVCall should be interruptible by EXTI/systick/Timers interruptions
-  CORTEX.SHPR2()->setSVCALL_PRI(static_cast<uint8_t>(InterruptionPriority::Medium));
+  CORTEX.SHPR2()->setSVCALL_PRI(static_cast<uint8_t>(NVIC::NVIC_IPR::InterruptionPriority::Medium));
   // pendSV has the lowest priority to be executed when no other interruptions are queued
-  CORTEX.SHPR3()->setPENDSV_PRI(static_cast<uint8_t>(InterruptionPriority::Low));
+  CORTEX.SHPR3()->setPENDSV_PRI(static_cast<uint8_t>(NVIC::NVIC_IPR::InterruptionPriority::Low));
 }
 
 // TODO: both initInterruptions/shutdownInterruptions are not required yet. Remove?

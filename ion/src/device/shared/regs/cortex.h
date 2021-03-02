@@ -70,22 +70,20 @@ public:
 
   class SHPR1 : public Register32 {
   public:
-    REGS_FIELD(USAGE_FAULT_PRI, uint8_t, 23, 20);
-    REGS_FIELD(BUS_FAULT_PRI, uint8_t, 15, 12);
-    REGS_FIELD(MEM_MANAGE_PRI, uint8_t, 7, 4);
+    REGS_FIELD(USAGE_FAULT_PRI, uint8_t, 23, 16);
+    REGS_FIELD(BUS_FAULT_PRI, uint8_t, 15, 8);
+    REGS_FIELD(MEM_MANAGE_PRI, uint8_t, 7, 0);
   };
 
   class SHPR2 : public Register32 {
   public:
-    /* STM32 implements only 16 programable priority levels - when Cortex M(4/7)
-     * would offer a maximal range of 256. */
-    REGS_FIELD(SVCALL_PRI, uint8_t, 31, 28);
+    REGS_FIELD(SVCALL_PRI, uint8_t, 31, 24);
   };
 
   class SHPR3 : public Register32 {
   public:
-    REGS_FIELD(SYSTICK_PRI, uint8_t, 31, 28);
-    REGS_FIELD(PENDSV_PRI, uint8_t, 23, 20);
+    REGS_FIELD(SYSTICK_PRI, uint8_t, 31, 24);
+    REGS_FIELD(PENDSV_PRI, uint8_t, 23, 16);
   };
 
   class SHCRS : public Register32 {

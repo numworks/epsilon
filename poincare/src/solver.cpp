@@ -32,9 +32,16 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation,
     return NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, end, relativePrecision, minimalStep, maximalStep);
   }
 
+  /* By design, NextPointOfInterestHelper only works on intervals that do not
+   * contain 0. If start and end are of different signs, we have to cut the
+   * interval in three: negative, around 0, and positive. */
+
   assert(start * end < static_cast<T>(0.f));
   Coordinate2D<T> result = NextPointOfInterestHelper(evaluation, context, auxiliary, search, start, static_cast<T>(0.f), relativePrecision, minimalStep, maximalStep);
   if (std::isfinite(result.x1())) {
+    /* Althoug this method can return NaN when there is no solution, here we
+     * only return if a solution was found, as there are two other intervals to
+     * check otherwise. */
     return result;
   }
   constexpr T marginAroundZero = static_cast<T>(1e-3);

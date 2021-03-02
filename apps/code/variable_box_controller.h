@@ -45,11 +45,9 @@ private:
   constexpr static size_t k_maxNumberOfDisplayedSubtitles = k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2; // TODO Hugo : At most one subtitle cell for one item
   constexpr static size_t k_totalBuiltinNodesCount = 107;
   constexpr static size_t k_maxScriptNodesCount = k_totalBuiltinNodesCount + 64; // 64 Chosen without particular reasons
-  constexpr static uint8_t k_maxSources = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
-
+  constexpr static uint8_t k_maxOrigins = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
-
   constexpr static uint8_t k_currentScriptOrigin = 0;
   constexpr static uint8_t k_builtinsOrigin = 1;
   constexpr static uint8_t k_importedOrigin = 2; // And above for other imported nodes
@@ -99,10 +97,10 @@ private:
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
   Escher::BufferTableCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
   ScriptStore * m_scriptStore;
-  size_t m_totalNodesCount; // Number of nodes
-  uint8_t m_scriptOriginsSources; // Number of sources
-  size_t m_rowsPerSources[k_maxSources]; // Nodes per sources
-  const char * m_sourceText[k_maxSources]; // Text of sources
+  size_t m_nodesCount; // Number of nodes
+  uint8_t m_originsCount; // Number of origins
+  size_t m_rowsPerOrigins[k_maxOrigins]; // Nodes per origins
+  const char * m_originsName[k_maxOrigins]; // Text of origins
   int m_shortenResultCharCount; // This is used to send only the completing text when we are autocompleting
   bool m_displaySubtitles;
 };

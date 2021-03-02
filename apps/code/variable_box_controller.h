@@ -42,14 +42,10 @@ public:
 
 private:
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / Escher::TableCell::k_minimalSmallFontCellHeight + 2; // +2 if the cells are cropped on top and at the bottom
+  constexpr static size_t k_maxNumberOfDisplayedSubtitles = k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2; // TODO Hugo : At most one subtitle cell for one item
   constexpr static size_t k_totalBuiltinNodesCount = 107;
-  constexpr static size_t k_maxScriptNodesCount = k_totalBuiltinNodesCount+32*2*10; // FIXME : Remove *10. Chosen without particular reasons
+  constexpr static size_t k_maxScriptNodesCount = k_totalBuiltinNodesCount+32*2*10; // TODO Hugo : Remove *10. Chosen without particular reasons
   constexpr static uint8_t k_maxSources = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
-
-  size_t m_totalNodesCount; // Number of nodes
-  uint8_t m_scriptOriginsSources; // Number of sources
-  size_t m_rowsPerSources[k_maxSources]; // Nodes per sources
-  const char * m_sourceText[k_maxSources]; // Text of sources
 
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
@@ -57,7 +53,6 @@ private:
   constexpr static uint8_t k_currentScriptOrigin = 0;
   constexpr static uint8_t k_builtinsOrigin = 1;
   constexpr static uint8_t k_importedOrigin = 2; // And above for other imported nodes
-
 
   /* Returns:
    * - a negative int if the node name is before name in alphabetical
@@ -102,8 +97,12 @@ private:
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
-  Escher::BufferTableCell m_subtitleCells[k_maxNumberOfDisplayedItems-k_maxNumberOfDisplayedItems/2];
+  Escher::BufferTableCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
   ScriptStore * m_scriptStore;
+  size_t m_totalNodesCount; // Number of nodes
+  uint8_t m_scriptOriginsSources; // Number of sources
+  size_t m_rowsPerSources[k_maxSources]; // Nodes per sources
+  const char * m_sourceText[k_maxSources]; // Text of sources
   int m_shortenResultCharCount; // This is used to send only the completing text when we are autocompleting
   bool m_displaySubtitles;
 };

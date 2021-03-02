@@ -118,8 +118,9 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
   Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
       ax, bx, DBL_EPSILON,
       [](double x, Poincare::Context * context, const void * auxiliary) {
-        const Distribution * distribution = static_cast<const Distribution * const *>(auxiliary)[0];
-        const double * proba = static_cast<const double * const *>(auxiliary)[1];
+        const void * const * pack = static_cast<const void * const *>(auxiliary);
+        const Distribution * distribution = static_cast<const Distribution *>(pack[0]);
+        const double * proba = static_cast<const double *>(pack[1]);
         return distribution->cumulativeDistributiveFunctionAtAbscissa(x) - *proba; // This needs to be an increasing function
       },
       nullptr, pack);

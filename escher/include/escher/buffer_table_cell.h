@@ -12,6 +12,7 @@ public:
   const View * labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override;
   void setLabelText(const char * textBody);
+  void appendText(const char * textBody);
   void setTextColor(KDColor color);
   void setMessageFont(const KDFont * font);
   void setBackgroundColor(KDColor color);

@@ -82,7 +82,7 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
 
 int VariableBoxController::numberOfRows() const {
   int result = 0;
-  for (uint8_t origin = 0; origin < k_maxOrigins; ++origin) {
+  for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
     int nodeCount = nodesCountForOrigin(origin);
     if (nodeCount > 0) {
       result += nodeCount + (m_displaySubtitles ? 1 : 0);
@@ -116,10 +116,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    int nodeIndex = index - (m_displaySubtitles ? cumulatedOriginsCount : 0);
-    ScriptNode * node = scriptNodeAtIndex(nodeIndex);
-    ScriptNodeCell * nodeCell = static_cast<ScriptNodeCell *>(cell);
-    nodeCell->setScriptNode(node); // TODO Hugo : EXC_BAD_ACCESS issue if number of cells has been cropped
+    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index - (m_displaySubtitles ? cumulatedOriginsCount : 0)));
     return;
   }
   assert(m_displaySubtitles);
@@ -211,7 +208,7 @@ const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToA
   }
 
   int nodesCount = 0;  // We cannot use numberOfRows as it contains the banners
-  for (uint8_t origin = 0; origin < k_maxOrigins; ++origin) {
+  for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
     nodesCount += nodesCountForOrigin(origin);
   }
   if (index < 0) {
@@ -309,21 +306,7 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
 }
 
 int VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
-  return static_cast<int>(*(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin)));
-}
-
-size_t * VariableBoxController::nodesCountPointerForOrigin(uint8_t origin) {
-  assert(origin < k_maxOrigins);
-  return m_rowsPerOrigins + origin;
-}
-
-ScriptNode * VariableBoxController::nodesForOrigin(uint8_t origin) {
-  assert(origin < k_maxOrigins);
-  size_t cumulatedIndex = 0;
-  for (uint8_t previousOrigin = 0; previousOrigin < origin; ++previousOrigin) {
-    cumulatedIndex += nodesCountForOrigin(previousOrigin);
-  }
-  return m_scriptNodes + cumulatedIndex;
+  return m_rowsPerOrigins[origin];
 }
 
 ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
@@ -338,7 +321,7 @@ int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin
   assert(i < m_nodesCount + (m_displaySubtitles ? m_originsCount : 0));
   int cellIndex = 0;
   int originsCount = 0;
-  for (uint8_t origin = 0; origin < k_maxOrigins; ++origin) {
+  for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
     int nodeCount = nodesCountForOrigin(origin);
     if (nodeCount > 0) {
       originsCount++;
@@ -965,41 +948,37 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   }
 
   // Step 2.2: find where to add the node (and check that it doesn't exist yet)
-  size_t * currentNodeCount = nodesCountPointerForOrigin(nodeOrigin);
   size_t insertionIndex = m_nodesCount;
   if (nodeOrigin == k_builtinsOrigin) {
-    insertionIndex = nodesCountForOrigin(k_currentScriptOrigin) + nodesCountForOrigin(k_builtinsOrigin);
     /* For builtin nodes, we don't need to check whether the node was already
      * added because they're added first in lexicographical order. Plus, we
      * want to add it at the end of list to respect the lexicographical order. */
     assert(nodeInLexicographicalOrder);
+    insertionIndex = nodesCountForOrigin(k_currentScriptOrigin) + nodesCountForOrigin(k_builtinsOrigin);
   } else {
     // Look where to add
     // This could be faster with dichotomia, but there is no speed problem for now
-    size_t originIndexOffset = 0;
-    for (uint8_t origin = 0; origin < k_maxOrigins; ++origin) {
-      ScriptNode * originNodes = nodesForOrigin(origin);
+    size_t cumulatedNodeCount = 0;
+    for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
       size_t originNodesCount = nodesCountForOrigin(origin);
       if (nodeOrigin == origin) {
-        insertionIndex = originIndexOffset + originNodesCount;
+        // By default, insert node at the end of its origin's nodes.
+        insertionIndex = cumulatedNodeCount + originNodesCount;
       }
-      assert(origin < m_originsCount || originNodesCount == 0); // TODO Hugo : Debug assert
       for (int i = 0; i < originNodesCount; i++) {
-        ScriptNode * matchingNode = originNodes + i;
+        ScriptNode * matchingNode = scriptNodeAtIndex(cumulatedNodeCount + i);
         int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
         if (comparisonResult == 0 || (comparisonResult == '(' && nodeType == ScriptNode::Type::WithParentheses)) {
-          // Already in varBox
-          return false;
+          return false; // Already in varBox
         }
         if (comparisonResult > 0) {
           if (nodeOrigin == origin) {
-            insertionIndex = originIndexOffset + i;
+            insertionIndex = cumulatedNodeCount + i;
           }
-          // We continue exploring other origins to spot duplicates
-          break;
+          break; // Continue exploring other origins to handle duplicates
         }
       }
-      originIndexOffset += originNodesCount;
+      cumulatedNodeCount += originNodesCount;
     }
   }
 
@@ -1018,12 +997,13 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
 
   // Step 2.5: Add the node
   m_scriptNodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nullptr, m_displaySubtitles ? nodeDescription : nodeSourceName);
-  // Increase the node count and sources count
-  *currentNodeCount = *currentNodeCount + 1;
-  m_nodesCount += 1;
   if (nodeOrigin == m_originsCount) {
+    // Add an origin
     m_originsCount += 1;
   }
+  // Update the node and origin counts
+  m_rowsPerOrigins[nodeOrigin] += 1;
+  m_nodesCount += 1;
   return false;
 }
 

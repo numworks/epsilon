@@ -59,7 +59,7 @@ void initInterruptions() {
   }
   /* Configure the priority: the event stalling interruption should not
    * interrupt SVCalls (send data to display...) */
-  NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, static_cast<uint8_t>(Board::InterruptionPriority::MediumLow));
+  NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, NVIC::NVIC_IPR::InterruptionPriority::MediumLow);
   // Enable interruptions
   NVIC.NVIC_ISER0()->setBit(tim2interruptionISRIndex, true);
 

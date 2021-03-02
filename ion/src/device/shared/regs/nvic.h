@@ -43,14 +43,21 @@ public:
   public:
     /* STM32 implements only 16 programable priority levels - when Cortex M(4/7)
      * would offer a maximal range of 256. */
+    enum class InterruptionPriority : uint8_t {
+      High = 0b00000000,
+      MediumHigh = 0b00010000,
+      Medium = 0b00110000,
+      MediumLow = 0b01110000,
+      Low = 0b11110000
+    };
     uint8_t getPriority(int interruptIndex) volatile {
       int indexMod4 = interruptIndex % 4;
-      return m_values[interruptIndex / 4].getBitRange( 4 * indexMod4 + 7, 4 * indexMod4 + 4);
+      return m_values[interruptIndex / 4].getBitRange( 4 * indexMod4 + 7, 4 * indexMod4);
     }
 
-    void setPriority(int interruptIndex, uint8_t priority) volatile {
+    void setPriority(int interruptIndex, InterruptionPriority priority) volatile {
       int indexMod4 = interruptIndex % 4;
-      m_values[interruptIndex / 4].setBitRange(4 * indexMod4 + 7, 4 * indexMod4 + 3, priority);
+      m_values[interruptIndex / 4].setBitRange(4 * indexMod4 + 7, 4 * indexMod4, static_cast<uint8_t>(priority));
     }
   private:
     Register32 m_values[60];

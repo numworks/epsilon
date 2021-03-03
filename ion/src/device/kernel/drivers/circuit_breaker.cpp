@@ -133,6 +133,7 @@ bool hasCheckpoint(Checkpoint checkpoint) {
 void storeCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer) {
   assert(hasCheckpoint(Checkpoint::Custom));
   uint8_t * bufferPointer = static_cast<uint8_t *>(buffer);
+  assert(buffer != nullptr);
   memcpy(bufferPointer, &sCustomRegisters, sizeof(jmp_buf));
   bufferPointer += sizeof(jmp_buf);
   memcpy(bufferPointer, &sCustomStackSnapshotSize, sizeof(size_t));
@@ -142,12 +143,12 @@ void storeCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer) {
   memcpy(bufferPointer, sCustomStackSnapshot, sCustomStackSnapshotSize);
 }
 
-void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer) {
+void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer * buffer) {
   if (buffer == nullptr) {
     // Unset Custom checkpoint
     sCustomStackSnapshotAddress = nullptr;
   } else {
-    uint8_t * bufferPointer = static_cast<uint8_t *>(buffer);
+    uint8_t * bufferPointer = static_cast<uint8_t *>(*buffer);
     memcpy(&sCustomRegisters, bufferPointer, sizeof(jmp_buf));
     bufferPointer += sizeof(jmp_buf);
     memcpy(&sCustomStackSnapshotSize, bufferPointer, sizeof(size_t));

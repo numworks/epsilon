@@ -127,19 +127,23 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
    * It is therefore set here to apply on temporary cells as well. */
   BufferTableCell * myCell = static_cast<BufferTableCell *>(cell);
   const char * moduleName = m_originsName[cellOrigin];
+  I18n::Message prefix = I18n::Message::Default;
+  I18n::Message suffix = I18n::Message::Default;
   if (cellOrigin >= k_importedOrigin && strcmp(moduleName, I18n::translate(I18n::Message::ImportedModulesAndScripts)) != 0) {
     // Source is either a module or a script
     size_t moduleNameLenght = strlen(moduleName);
     if (strcmp(moduleName + moduleNameLenght - 3, ".py") == 0) {
       // Source is a script
-      myCell->setLabelText(I18n::translate(I18n::Message::PythonScript));
+      prefix = I18n::Message::PythonScriptPrefix;
+      suffix = I18n::Message::PythonScriptSuffix;
     } else {
-      myCell->setLabelText(I18n::translate(I18n::Message::PythonModule));
+      prefix = I18n::Message::PythonModulePrefix;
+      suffix = I18n::Message::PythonModuleSuffix;
     }
-    myCell->appendText(moduleName);
-  } else {
-    myCell->setLabelText(moduleName);
   }
+  myCell->setLabelText(I18n::translate(prefix));
+  myCell->appendText(moduleName);
+  myCell->appendText(I18n::translate(suffix));
   myCell->setMessageFont(KDFont::SmallFont);
 }
 

@@ -44,7 +44,8 @@ private:
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / Escher::TableCell::k_minimalSmallFontCellHeight + 2; // +2 if the cells are cropped on top and at the bottom
   constexpr static size_t k_maxNumberOfDisplayedSubtitles = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / (Escher::BufferTableCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight) + 2; // Subtitles are at least followed by one item row
   constexpr static size_t k_totalBuiltinNodesCount = 107;
-  constexpr static size_t k_maxScriptNodesCount = k_totalBuiltinNodesCount + 64; // 64 Chosen without particular reasons
+  constexpr static size_t k_maxOtherScriptNodesCount = 32; // Chosen without particular reasons
+  constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount; // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin
   constexpr static uint8_t k_maxOrigins = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
@@ -62,6 +63,7 @@ private:
   static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith = nullptr);
 
   // Nodes and nodes count
+  bool maxNodesReachedForOrigin(uint8_t origin) const;
   int nodesCountForOrigin(uint8_t origin) const;
   ScriptNode * scriptNodeAtIndex(int index);
 

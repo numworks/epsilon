@@ -15,7 +15,7 @@ enum class Checkpoint {
 
 bool busy();
 void storeCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer);
-void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer);
+void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer * buffer);
 bool hasCheckpoint(Checkpoint c);
 bool clearCheckpointFlag(Checkpoint c);
 void setCheckpoint(Checkpoint c, bool overridePreviousCheckpoint);

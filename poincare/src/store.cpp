@@ -1,10 +1,11 @@
 #include <poincare/store.h>
+#include <assert.h>
+#include <ion/circuit_breaker.h>
+#include <math.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
-#include <assert.h>
-#include <math.h>
 #include <stdlib.h>
 
 namespace Poincare {
@@ -33,13 +34,17 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * replace with the left side of the store without simplifying it.
      * The simplification fails for [1+2]->a for instance, because we do not
      * have exact simplification of matrices yet. */
-    bool interruptedSimplification = SimplificationHasBeenInterrupted();
-    Expression reducedE = storedExpression.clone().deepReduce(reductionContext);
-    if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
-      storedExpression = reducedE;
+    Ion::CircuitBreaker::CheckpointBuffer checkpointBuffer;
+    Ion::CircuitBreaker::storeCustomCheckpoint(checkpointBuffer);
+    Ion::CircuitBreaker::setCustomCheckpoint(true);
+    if (!Ion::CircuitBreaker::clearCustomCheckpointFlag()) { // Standard execution
+      Expression reducedE = storedExpression.clone().deepReduce(reductionContext);
+      if (!reducedE.isUninitialized() ) {
+        storedExpression = reducedE;
+      }
     }
     // Restore the previous interruption flag
-    SetInterruption(interruptedSimplification);
+    Ion::CircuitBreaker::resetCustomCheckpoint(&checkpointBuffer);
   }
 
   replaceWithInPlace(storedExpression);

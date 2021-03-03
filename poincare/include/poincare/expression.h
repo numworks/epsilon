@@ -138,7 +138,7 @@ public:
   static Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Circuit breaker */
-  static void SetInterruption(bool interrupt);
+  static void ReductionFailed();
 
   /* Hierarchy */
   Expression childAtIndex(int i) const;
@@ -292,7 +292,6 @@ public:
   typedef std::initializer_list<Expression> Tuple;
 
 protected:
-  static bool SimplificationHasBeenInterrupted();
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
   Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
   template<typename U>

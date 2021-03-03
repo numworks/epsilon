@@ -309,23 +309,6 @@ constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::OthersMenu, OtherChildren),
 };
 
-constexpr ToolboxMessageTree trigonometryChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::CoshCommandWithArg, I18n::Message::HyperbolicCosine),
-  ToolboxMessageTree::Leaf(I18n::Message::SinhCommandWithArg, I18n::Message::HyperbolicSine),
-  ToolboxMessageTree::Leaf(I18n::Message::TanhCommandWithArg, I18n::Message::HyperbolicTangent),
-  ToolboxMessageTree::Leaf(I18n::Message::AcoshCommandWithArg, I18n::Message::InverseHyperbolicCosine),
-  ToolboxMessageTree::Leaf(I18n::Message::AsinhCommandWithArg, I18n::Message::InverseHyperbolicSine),
-  ToolboxMessageTree::Leaf(I18n::Message::AtanhCommandWithArg, I18n::Message::InverseHyperbolicTangent)
-};
-
-constexpr ToolboxMessageTree commonFunctionsChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::FloorCommandWithArg, I18n::Message::Floor),
-  ToolboxMessageTree::Leaf(I18n::Message::FracCommandWithArg, I18n::Message::FracPart),
-  ToolboxMessageTree::Leaf(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling),
-  ToolboxMessageTree::Leaf(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding),
-  ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
-};
-
 constexpr ToolboxMessageTree calculChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
@@ -414,6 +397,27 @@ constexpr ToolboxMessageTree arithmeticChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient)
 };
 
+constexpr ToolboxMessageTree hyperbolicTrigonometryChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::CoshCommandWithArg, I18n::Message::HyperbolicCosine),
+  ToolboxMessageTree::Leaf(I18n::Message::SinhCommandWithArg, I18n::Message::HyperbolicSine),
+  ToolboxMessageTree::Leaf(I18n::Message::TanhCommandWithArg, I18n::Message::HyperbolicTangent),
+  ToolboxMessageTree::Leaf(I18n::Message::AcoshCommandWithArg, I18n::Message::InverseHyperbolicCosine),
+  ToolboxMessageTree::Leaf(I18n::Message::AsinhCommandWithArg, I18n::Message::InverseHyperbolicSine),
+  ToolboxMessageTree::Leaf(I18n::Message::AtanhCommandWithArg, I18n::Message::InverseHyperbolicTangent)
+};
+
+constexpr ToolboxMessageTree trigonometryChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, hyperbolicTrigonometryChildren),
+  // TODO : add advanced trigonometric functions
+};
+
+constexpr ToolboxMessageTree decimalNumbersChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::FloorCommandWithArg, I18n::Message::Floor),
+  ToolboxMessageTree::Leaf(I18n::Message::FracCommandWithArg, I18n::Message::FracPart),
+  ToolboxMessageTree::Leaf(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling),
+  ToolboxMessageTree::Leaf(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding),
+};
+
 #if LIST_ARE_DEFINED
 constexpr ToolboxMessageTree listsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::SortCommandWithArg, I18n::Message::Sort),
@@ -428,13 +432,14 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
-  ToolboxMessageTree::Node(I18n::Message::UsualFunctions, commonFunctionsChildren),
   ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
   ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
   ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
   ToolboxMessageTree::Node(I18n::Message::MatricesAndVectors, matricesVectorsChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
+  ToolboxMessageTree::Node(I18n::Message::Trigonometry, trigonometryChildren),
+  ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren),
 #if LIST_ARE_DEFINED
   ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
 #endif

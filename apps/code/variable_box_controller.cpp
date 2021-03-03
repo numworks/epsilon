@@ -42,10 +42,6 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
   m_scriptStore(scriptStore)
 {
-  for (int i = 0; i < k_maxNumberOfDisplayedSubtitles; i++) {
-    m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
-    m_subtitleCells[i].setTextColor(Palette::BlueishGray);
-  }
   // ScriptInProgress and BuiltinsAndKeywords subtitle cells
   m_originsName[0] = I18n::translate(I18n::Message::ScriptInProgress);
   m_originsName[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);
@@ -123,8 +119,6 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   assert(cellType == k_subtitleCellType);
   assert(cellOrigin < m_originsCount);
   assert(m_rowsPerOrigins[cellOrigin] > 0);
-  /* Unlike text and background color, message font impacts cell's size.
-   * It is therefore set here to apply on temporary cells as well. */
   BufferTableCell * myCell = static_cast<BufferTableCell *>(cell);
   const char * moduleName = m_originsName[cellOrigin];
   I18n::Message prefix = I18n::Message::Default;
@@ -144,7 +138,6 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   myCell->setLabelText(I18n::translate(prefix));
   myCell->appendText(moduleName);
   myCell->appendText(I18n::translate(suffix));
-  myCell->setMessageFont(KDFont::SmallFont);
 }
 
 void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

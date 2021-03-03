@@ -15,9 +15,6 @@ public:
   void setHighlighted(bool highlight) override { assert(!highlight); }
   void setLabelText(const char * textBody);
   void appendText(const char * textBody);
-  void setTextColor(KDColor color);
-  void setMessageFont(const KDFont * font);
-  void setBackgroundColor(KDColor color);
   // Overriding TableCell row Height
   void layoutSubviews(bool force = false) override;
   KDSize minimalSizeForOptimalDisplay() const override {
@@ -25,10 +22,11 @@ public:
   }
   constexpr static KDCoordinate k_subtitleRowHeight = 23;
 protected:
-  KDColor backgroundColor() const override { return m_backgroundColor; }
+  KDColor backgroundColor() const override { return k_backgroundColor; }
 private:
+  constexpr static KDColor k_backgroundColor = Palette::WallScreen;
+  constexpr static KDColor k_textColor = Palette::BlueishGray;
   BufferTextView m_labelView;
-  KDColor m_backgroundColor;
 };
 
 }

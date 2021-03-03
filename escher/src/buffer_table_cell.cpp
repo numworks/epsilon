@@ -4,11 +4,13 @@
 
 namespace Escher {
 
+constexpr KDColor BufferTableCell::k_backgroundColor;
+constexpr KDColor BufferTableCell::k_textColor;
+
 BufferTableCell::BufferTableCell() :
   TableCell(),
-  // Text is aligned to the left, and vertically centered
-  m_labelView(KDFont::LargeFont, 0.0f, 0.5f, Palette::GrayDark),
-  m_backgroundColor(KDColorWhite)
+  // Text is aligned to the left, vertically centered and has a small font.
+  m_labelView(KDFont::SmallFont, 0.0f, 0.5f, k_textColor, k_backgroundColor)
 {
 }
 
@@ -22,19 +24,6 @@ void BufferTableCell::appendText(const char * textBody) {
   assert(textBody);
   m_labelView.appendText(textBody);
   layoutSubviews();
-}
-
-void BufferTableCell::setTextColor(KDColor color) {
-  m_labelView.setTextColor(color);
-}
-
-void BufferTableCell::setMessageFont(const KDFont * font) {
-  m_labelView.setFont(font);
-}
-
-void BufferTableCell::setBackgroundColor(KDColor color) {
-  m_backgroundColor = color;
-  m_labelView.setBackgroundColor(color);
 }
 
 void BufferTableCell::layoutSubviews(bool force)  {

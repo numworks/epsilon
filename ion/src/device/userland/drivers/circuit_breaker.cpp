@@ -55,8 +55,8 @@ void SVC_ATTRIBUTES resetCustomCheckpointSVC(void * buffer) {
   SVC(SVC_CIRCUIT_BREAKER_RESET_CUSTOM_CHECKPOINT);
 }
 
-void resetCustomCheckpoint(CheckpointBuffer buffer) {
-  resetCustomCheckpointSVC(&buffer);
+void resetCustomCheckpoint(CheckpointBuffer * buffer) {
+  resetCustomCheckpointSVC(buffer);
 }
 
 void setHomeCheckpoint() {

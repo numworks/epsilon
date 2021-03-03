@@ -1,4 +1,7 @@
 #include <poincare/complex_cartesian.h>
+#include <assert.h>
+#include <cmath>
+#include <ion/circuit_breaker.h>
 #include <poincare/addition.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
@@ -13,8 +16,6 @@
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
 #include <poincare/undefined.h>
-#include <assert.h>
-#include <cmath>
 #include <utility>
 
 namespace Poincare {
@@ -389,7 +390,8 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, ExpressionNod
 
 ComplexCartesian ComplexCartesian::interruptComputationIfManyNodes() {
   if (numberOfDescendants(true) > k_maxNumberOfNodesBeforeInterrupting) {
-    Expression::SetInterruption(true);
+    Expression::ReductionFailed();
+    Ion::CircuitBreaker::loadCustomCheckpoint();
     return ComplexCartesian::Builder(Undefined::Builder(), Undefined::Builder());
   }
   return *this;

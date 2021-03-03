@@ -803,7 +803,8 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
             && !IsInfinity(o, context) && !o.isUndefined())
         {
           // Stop the reduction due to a multiplication overflow
-          SetInterruption(true);
+          Expression::ReductionFailed();
+          Ion::CircuitBreaker::loadCustomCheckpoint();
           return *this;
         }
         if (m.isUndefined()) {

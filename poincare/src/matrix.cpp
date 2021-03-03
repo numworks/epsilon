@@ -1,4 +1,9 @@
 #include <poincare/matrix.h>
+#include <algorithm>
+#include <assert.h>
+#include <ion/circuit_breaker.h>
+#include <cmath>
+#include <float.h>
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/division.h>
@@ -12,13 +17,9 @@
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
-#include <assert.h>
-#include <cmath>
-#include <float.h>
 #include <stdlib.h>
 #include <string.h>
 #include <utility>
-#include <algorithm>
 
 namespace Poincare {
 
@@ -201,7 +202,17 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 }
 
 Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant, bool reduced) {
-  Expression::SetInterruption(false);
+  /*Ion::CircuitBreaker::setCustomCheckpoint();
+  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
+    // Handle interruption
+    if (determinant) {
+      *determinant = Undefined::Builder();
+    }
+    for (int i = 0; i < numberOfRows() * numberOfColumns(); i++) {
+      replaceChildAtIndexInPlace(i, Undefined::Builder());
+    }
+    return *this;
+  }*/
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
 

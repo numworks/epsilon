@@ -18,6 +18,7 @@ namespace Poincare {
 
 bool Expression::sSymbolReplacementsCountLock = false;
 static bool sApproximationEncounteredComplex = false;
+static bool sReductionFailed = false;
 
 /* Constructor & Destructor */
 
@@ -46,12 +47,10 @@ Expression Expression::ExpressionFromAddress(const void * address, size_t size) 
   return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
 }
 
-/* Circuit breaker */
+/* CircuitBreaker */
 
-static bool sSimplificationHasBeenInterrupted = false;
-
-void Expression::SetInterruption(bool interrupt) {
-  sSimplificationHasBeenInterrupted = interrupt;
+void Expression::ReductionFailed() {
+  sReductionFailed = true;
 }
 
 /* Hierarchy */
@@ -320,22 +319,18 @@ void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext redu
 
 Expression Expression::defaultShallowReduce() {
   Expression result;
-  if (sSimplificationHasBeenInterrupted) {
-    result = Undefined::Builder();
-  } else {
-    const int childrenCount = numberOfChildren();
-    for (int i = 0; i < childrenCount; i++) {
-      /* The reduction is shortcut if one child is unreal or undefined:
-       * - the result is unreal if at least one child is unreal
-       * - the result is undefined if at least one child is undefined but no child
-       *   is unreal */
-      ExpressionNode::Type childIType = childAtIndex(i).type();
-      if (childIType == ExpressionNode::Type::Unreal) {
-        result = Unreal::Builder();
-        break;
-      } else if (childIType == ExpressionNode::Type::Undefined) {
-        result = Undefined::Builder();
-      }
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    /* The reduction is shortcut if one child is unreal or undefined:
+     * - the result is unreal if at least one child is unreal
+     * - the result is undefined if at least one child is undefined but no child
+     *   is unreal */
+    ExpressionNode::Type childIType = childAtIndex(i).type();
+    if (childIType == ExpressionNode::Type::Unreal) {
+      result = Unreal::Builder();
+      break;
+    } else if (childIType == ExpressionNode::Type::Undefined) {
+       result = Undefined::Builder();
     }
   }
   if (!result.isUninitialized()) {
@@ -382,10 +377,6 @@ void Expression::defaultDeepBeautifyChildren(ExpressionNode::ReductionContext re
       replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
     }
   }
-}
-
-bool Expression::SimplificationHasBeenInterrupted() {
-  return sSimplificationHasBeenInterrupted;
 }
 
 Expression Expression::parent() const {
@@ -444,7 +435,7 @@ template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
   sApproximationEncounteredComplex = false;
   // Reset interrupting flag because some evaluation methods use it
-  sSimplificationHasBeenInterrupted = false;
+  //Ion::CircuitBreaker::setCustomCheckpoint();
   Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
   if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
     e = Complex<U>::Undefined();
@@ -616,12 +607,11 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 }
 
 Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
-  sSimplificationHasBeenInterrupted = false;
-  Expression e = reduce(reductionContext);
-  if (!sSimplificationHasBeenInterrupted) {
-    e = e.deepBeautify(reductionContext);
-  }
-  return sSimplificationHasBeenInterrupted ? Expression() : e;
+  /*Ion::CircuitBreaker::setCustomCheckpoint();
+  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
+    return Expression();
+  }*/
+  return reduce(reductionContext).deepBeautify(reductionContext);
 }
 
 void makePositive(Expression * e, bool * isNegative) {
@@ -688,19 +678,34 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
 
 void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
   assert(simplifiedExpression);
-  sSimplificationHasBeenInterrupted = false;
+
   // Step 1: we reduce the expression
+  /* We tried first with the ReductionTarget::User. If the reduction failed
+   * without any user interruption (too many nodes were generated), we try
+   * again with ReductionTarget::SystemForApproximation. */
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
-  Expression e = clone().reduce(userReductionContext);
-  if (sSimplificationHasBeenInterrupted) {
-    sSimplificationHasBeenInterrupted = false;
-    ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
-    e = reduce(systemReductionContext);
+  ExpressionNode::ReductionContext reductionContext = userReductionContext;
+  TreeNode * initialEndOfPool = TreePool::sharedPool()->last();
+  Ion::CircuitBreaker::setCustomCheckpoint();
+  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
+    Ion::CircuitBreaker::resetCustomCheckpoint();
+    Poincare::TreePool::sharedPool()->freePoolFromNode(initialEndOfPool);
+    if (sReductionFailed) {
+      reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
+      Ion::CircuitBreaker::setCustomCheckpoint();
+      if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
+        Ion::CircuitBreaker::resetCustomCheckpoint();
+        Poincare::TreePool::sharedPool()->freePoolFromNode(initialEndOfPool);
+        return;
+      }
+    } else {
+      return;
+    }
   }
+
   *simplifiedExpression = Expression();
-  if (sSimplificationHasBeenInterrupted) {
-    return;
-  }
+  Expression e = clone().deepReduce(reductionContext);
+
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to
    * beautify them with the right complex format. */
@@ -727,8 +732,9 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   } else {
     /* Case 3: the reduced expression is scalar or too complex to respect the
      * complex format. */
-    return e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
+    e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
   }
+  Ion::CircuitBreaker::resetCustomCheckpoint();
 }
 
 Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context, bool replaceFunctionsOnly) {
@@ -818,19 +824,16 @@ Expression Expression::reduceAndRemoveUnit(ExpressionNode::ReductionContext redu
 }
 
 Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
-  sSimplificationHasBeenInterrupted = false;
-  Expression result = deepReduce(reductionContext);
-  if (sSimplificationHasBeenInterrupted) {
+  /*Ion::CircuitBreaker::setCustomCheckpoint();
+  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
     return replaceWithUndefinedInPlace();
-  }
-  return result;
+  }*/
+  return deepReduce(reductionContext);
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
+  sReductionFailed = false;
   deepReduceChildren(reductionContext);
-  if (sSimplificationHasBeenInterrupted) {
-    return *this;
-  }
   return shallowReduce(reductionContext);
 }
 

@@ -19,7 +19,7 @@ public:
           Module.onIonEvent($0);
         }
       }, static_cast<uint8_t>(e));
-      lastEventWasNone = true;
+      lastEventWasNone = false;
     } else {
       if (!lastEventWasNone) {
         EM_ASM({
@@ -27,8 +27,8 @@ public:
             Module.onEpsilonIdle();
           }
         });
+        lastEventWasNone = true;
       }
-      lastEventWasNone = true;
     }
   }
   Event popEvent() override {

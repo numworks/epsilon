@@ -305,6 +305,16 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
   return nodeNameLengthStartsWithName ? *(nodeName + nameLength)  : - *(name + nodeNameLength) ;
 }
 
+bool VariableBoxController::maxNodesReachedForOrigin(uint8_t origin) const {
+  if (origin == k_currentScriptOrigin) {
+    return nodesCountForOrigin(k_currentScriptOrigin) >= k_maxOtherScriptNodesCount;
+  } else if (origin == k_builtinsOrigin) {
+    return nodesCountForOrigin(k_builtinsOrigin) >= k_totalBuiltinNodesCount;
+  }
+  assert(origin >= k_importedOrigin);
+  return m_nodesCount >= nodesCountForOrigin(k_builtinsOrigin) + nodesCountForOrigin(k_currentScriptOrigin) + k_maxOtherScriptNodesCount;
+}
+
 int VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
   return m_rowsPerOrigins[origin];
 }
@@ -928,8 +938,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     }
   }
 
-  // Step 2: Add Node
-  // Step 2.1: Find node Origin from import
+  // Step 1.3: Find node Origin from import
   if (nodeOrigin == k_importedOrigin && m_displaySubtitles) {
     nodeOrigin = m_originsCount;
     if (nodeSourceName!= nullptr) {
@@ -947,7 +956,13 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     }
   }
 
-  // Step 2.2: find where to add the node (and check that it doesn't exist yet)
+  if (maxNodesReachedForOrigin(nodeOrigin)) {
+    // There are already too many nodes for that origin
+    return true;
+  }
+
+  // Step 2: Add Node
+  // Step 2.1: find where to add the node (and check that it doesn't exist yet)
   size_t insertionIndex = m_nodesCount;
   if (nodeOrigin == k_builtinsOrigin) {
     /* For builtin nodes, we don't need to check whether the node was already
@@ -982,20 +997,20 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     }
   }
 
-  // Step 2.3: Add any new import source name
+  // Step 2.2: Add any new import source name
   if (nodeOrigin == m_originsCount && m_displaySubtitles) {
     assert(nodeOrigin >= k_importedOrigin);
     assert(nodeSourceName != nullptr);
     m_originsName[m_originsCount] = nodeSourceName;
   }
 
-  // Step 2.4: Shift all the following nodes
+  // Step 2.3: Shift all the following nodes
   assert(insertionIndex >= 0);
   for (size_t i = m_nodesCount; i > insertionIndex; i--) {
     m_scriptNodes[i] = m_scriptNodes[i - 1];
   }
 
-  // Step 2.5: Add the node
+  // Step 2.4: Add the node
   m_scriptNodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nullptr, m_displaySubtitles ? nodeDescription : nodeSourceName);
   if (nodeOrigin == m_originsCount) {
     // Add an origin

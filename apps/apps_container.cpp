@@ -216,29 +216,31 @@ void AppsContainer::run() {
    * pointer value, so the method where we call setjump must remain in the call
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
-  Ion::CircuitBreaker::setHomeCheckpoint();
-
-  bool exceptionEncountered = !ExceptionRun(ecp);
-  if (!Ion::CircuitBreaker::clearHomeCheckpointFlag() && !exceptionEncountered) {
+  Ion::CircuitBreaker::Status homeKeyInterruptStatus = Ion::CircuitBreaker::setHomeCheckpoint();
+  bool memoryExceptionEncountered = !ExceptionRun(ecp);
+  if (homeKeyInterruptStatus == Ion::CircuitBreaker::Status::Set && !memoryExceptionEncountered) {
     /* Normal execution. The exception checkpoint must be created before
      * switching to the first app, because the first app might create nodes on
      * the pool. */
     switchTo(initialAppSnapshot());
   } else {
+    assert(memoryExceptionEncountered || homeKeyInterruptStatus == Ion::CircuitBreaker::Status::Interrupted);
     // Exception
     if (s_activeApp != nullptr) {
       /* The app models can reference layouts or expressions that have been
        * destroyed from the pool. To avoid using them before packing the app
        * (in App::willBecomeInactive for instance), we tidy them early on. */
       s_activeApp->snapshot()->tidy();
-      /* When an app encoutered an exception due to a full pool, the next time
-       * the user enters the app, the same exception could happen again which
-       * would prevent from reopening the app. To avoid being stuck outside the
-       * app causing the issue, we reset its snapshot when leaving it due to
-       * exception. For instance, the calculation app can encounter an
-       * exception when displaying too many huge layouts, if we don't clean the
-       * history here, we will be stuck outside the calculation app. */
-      s_activeApp->snapshot()->reset();
+      if (memoryExceptionEncountered) {
+        /* When an app encoutered an exception due to a full pool, the next time
+         * the user enters the app, the same exception could happen again which
+         * would prevent from reopening the app. To avoid being stuck outside the
+         * app causing the issue, we reset its snapshot when leaving it due to
+         * exception. For instance, the calculation app can encounter an
+         * exception when displaying too many huge layouts, if we don't clean the
+         * history here, we will be stuck outside the calculation app. */
+        s_activeApp->snapshot()->reset();
+      }
     }
     if (s_activeApp->snapshot() == homeAppSnapshot()) {
       // Reset home selection if already selected
@@ -246,7 +248,7 @@ void AppsContainer::run() {
     }
     switchTo(appSnapshotAtIndex(0));
     Poincare::Tidy();
-    if (exceptionEncountered) {
+    if (memoryExceptionEncountered) {
       s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
     }
   }

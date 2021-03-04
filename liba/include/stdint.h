@@ -34,7 +34,7 @@ typedef uint8_t uint_least8_t;
 #define UINT32_MAX 0xffffffff
 #define UINT64_MAX 0xffffffffffffffff
 
-#define INT16_MAX 0x7fff2
+#define INT16_MAX 0x7fff
 #define INT16_MIN (-INT16_MAX-1)
 
 #define UINT64_C(c) c ## ULL

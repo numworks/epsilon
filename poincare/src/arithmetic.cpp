@@ -2,6 +2,7 @@
 #include <utility>
 #include <poincare/expression.h>
 #include <poincare/rational.h>
+#include <limits.h>
 
 namespace Poincare {
 

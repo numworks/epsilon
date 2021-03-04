@@ -13,12 +13,11 @@ enum class Checkpoint {
   Custom
 };
 
-bool busy();
+Ion::CircuitBreaker::Status status();
 void storeCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer);
 void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer * buffer);
 bool hasCheckpoint(Checkpoint c);
-bool clearCheckpointFlag(Checkpoint c);
-void setCheckpoint(Checkpoint c, bool overridePreviousCheckpoint);
+bool setCheckpoint(Checkpoint c, bool overridePreviousCheckpoint);
 void loadCheckpoint(Checkpoint c);
 
 }

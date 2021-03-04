@@ -82,16 +82,16 @@ static constexpr size_t k_CDStackMaxSize = 64;
 static constexpr size_t k_stackSnapshotMaxSize = k_ABStackMaxSize + k_extendedFrameSize + k_CDStackMaxSize;
 static_assert(k_basicFrameSize < k_extendedFrameSize, "The basic exception frame size is smaller than the extended exception frame.");
 
-enum class PendingAction {
-  None,
-  SettingCustomCheckpoint,
-  LoadingCustomCheckpoint,
-  SettingHomeCheckpoint,
-  LoadingHomeCheckpoint
+enum class InternalStatus {
+  Set,
+  Loaded,
+  PendingSetCustomCheckpoint,
+  PendingSetHomeCheckpoint,
+  PendingLoadCustomCheckpoint,
+  PendingLoadHomeCheckpoint
 };
 
-PendingAction sPendingAction = PendingAction::None;
-bool sLoading = false;
+InternalStatus sInternalStatus = InternalStatus::Loaded;
 
 // Home checkpoint snapshot
 uint8_t sHomeStackSnapshot[k_stackSnapshotMaxSize];
@@ -118,8 +118,14 @@ inline size_t frameSize(uint32_t excReturn) {
   return useBasicFrame ? k_basicFrameSize : k_extendedFrameSize;
 }
 
-bool busy() {
-  return sPendingAction != PendingAction::None;
+Ion::CircuitBreaker::Status status() {
+  if (sInternalStatus == InternalStatus::Set) {
+   return Ion::CircuitBreaker::Status::Set;
+  } else if (sInternalStatus == InternalStatus::Loaded) {
+    return Ion::CircuitBreaker::Status::Interrupted;
+  } else {
+    return Ion::CircuitBreaker::Status::Busy;
+  }
 }
 
 bool hasCheckpoint(Checkpoint checkpoint) {
@@ -159,29 +165,24 @@ void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer * buffer) {
   }
 }
 
-bool clearCheckpointFlag(Checkpoint checkpoint) {
-  bool currentLoadingStatus = sLoading;
-  sLoading = false;
-  return currentLoadingStatus;
-}
-
-static inline void setPendingAction(PendingAction action) {
-  assert(sPendingAction == PendingAction::None || sPendingAction == action);
-  sPendingAction = action;
+static inline void setPendingAction(InternalStatus action) {
+  assert(sInternalStatus == InternalStatus::Loaded || sInternalStatus == InternalStatus::Set);
+  sInternalStatus = action;
   Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
 }
 
-void setCheckpoint(Checkpoint checkpoint, bool overridePreviousCheckpoint) {
+bool setCheckpoint(Checkpoint checkpoint, bool overridePreviousCheckpoint) {
   if (!overridePreviousCheckpoint && hasCheckpoint(checkpoint)) {
     // Keep the oldest checkpoint
-    return;
+    return false;
   }
-  setPendingAction(checkpoint == Checkpoint::Custom ? PendingAction::SettingCustomCheckpoint : PendingAction::SettingHomeCheckpoint);
+  setPendingAction(checkpoint == Checkpoint::Custom ? InternalStatus::PendingSetCustomCheckpoint : InternalStatus::PendingSetHomeCheckpoint);
+  return true;
 }
 
 void loadCheckpoint(Checkpoint checkpoint) {
   assert(hasCheckpoint(checkpoint));
-  setPendingAction(checkpoint == Checkpoint::Custom ? PendingAction::LoadingCustomCheckpoint : PendingAction::LoadingHomeCheckpoint);
+  setPendingAction(checkpoint == Checkpoint::Custom ? InternalStatus::PendingLoadCustomCheckpoint : InternalStatus::PendingLoadHomeCheckpoint);
 }
 
 }
@@ -191,25 +192,29 @@ void loadCheckpoint(Checkpoint checkpoint) {
 using namespace Ion::Device::CircuitBreaker;
 
 void pendsv_handler(uint8_t * frameAddress, uint32_t excReturn) {
-  if (sPendingAction == PendingAction::LoadingCustomCheckpoint) {
+  // status is supposed to be one of the pending status
+  assert(sInternalStatus != InternalStatus::Set && sInternalStatus != InternalStatus::Loaded);
+
+  if (sInternalStatus == InternalStatus::PendingLoadCustomCheckpoint) {
       // Restore registers
       longjmp(sCustomRegisters, 1);
-  } else if (sPendingAction == PendingAction::LoadingHomeCheckpoint) {
+  } else if (sInternalStatus == InternalStatus::PendingLoadHomeCheckpoint) {
       // Restore registers
       longjmp(sHomeRegisters, 1);
   } else {
+    assert(sInternalStatus == InternalStatus::PendingSetCustomCheckpoint || sInternalStatus == InternalStatus::PendingSetHomeCheckpoint);
     // Extract current stack pointer
     uint8_t * stackPointerAddress = nullptr;
     asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (stackPointerAddress) :);
 
     // Store the stack frame
-    if (sPendingAction == PendingAction::SettingCustomCheckpoint) {
+    if (sInternalStatus ==  InternalStatus::PendingSetCustomCheckpoint) {
       sCustomStackSnapshotAddress = stackPointerAddress;
       sCustomStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
       assert(sCustomStackSnapshotSize <= k_stackSnapshotMaxSize);
       memcpy(sCustomStackSnapshot, sCustomStackSnapshotAddress, sCustomStackSnapshotSize);
     } else {
-      assert(sPendingAction == PendingAction::SettingHomeCheckpoint);
+      assert(sInternalStatus ==  InternalStatus::PendingSetHomeCheckpoint);
       sHomeStackSnapshotAddress = stackPointerAddress;
       sHomeStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
       assert(sHomeStackSnapshotSize <= k_stackSnapshotMaxSize);
@@ -217,22 +222,24 @@ void pendsv_handler(uint8_t * frameAddress, uint32_t excReturn) {
     }
 
     // Store the interruption status cortex register
-    jmp_buf * regsBufferAddress = sPendingAction == PendingAction::SettingCustomCheckpoint ? &sCustomRegisters : &sHomeRegisters;
+    jmp_buf * regsBufferAddress = sInternalStatus ==  InternalStatus::PendingSetCustomCheckpoint ? &sCustomRegisters : &sHomeRegisters;
     if (setjmp(*regsBufferAddress)) {
       /* WARNING: at this point the stack is corrupted. You can't use variable
        * stored on the stack. To prevent the compiler to do so, we ensure to
        * user global variables only which aren't stored on the stack. */
       // Restore stack frame
-      if (sPendingAction == PendingAction::LoadingCustomCheckpoint) {
+      if (sInternalStatus == InternalStatus::PendingLoadCustomCheckpoint) {
         memcpy(sCustomStackSnapshotAddress, sCustomStackSnapshot, sCustomStackSnapshotSize);
       } else {
-        assert(sPendingAction == PendingAction::LoadingHomeCheckpoint);
+        assert(sInternalStatus == InternalStatus::PendingLoadHomeCheckpoint);
         memcpy(sHomeStackSnapshotAddress, sHomeStackSnapshot, sHomeStackSnapshotSize);
       }
     }
   }
-
-  // Update context switch state
-  sLoading = sPendingAction == PendingAction::LoadingCustomCheckpoint || sPendingAction == PendingAction::LoadingHomeCheckpoint;
-  sPendingAction = PendingAction::None;
+  if (sInternalStatus == InternalStatus::PendingLoadCustomCheckpoint || sInternalStatus == InternalStatus::PendingLoadHomeCheckpoint) {
+    sInternalStatus = InternalStatus::Loaded;
+  } else {
+    assert(sInternalStatus == InternalStatus::PendingSetCustomCheckpoint || sInternalStatus == InternalStatus::PendingSetHomeCheckpoint);
+    sInternalStatus = InternalStatus::Set;
+  }
 }

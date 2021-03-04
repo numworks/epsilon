@@ -201,12 +201,6 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       *static_cast<bool *>(args[0]) = Ion::Device::CircuitBreaker::hasCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Custom);
       return;
     }
-    case SVC_CIRCUIT_BREAKER_CLEAR_CHECKPOINT_FLAG:
-    {
-      Ion::Device::CircuitBreaker::Checkpoint checkpoint =*static_cast<bool *>(args[0]) ? Ion::Device::CircuitBreaker::Checkpoint::Custom : Ion::Device::CircuitBreaker::Checkpoint::Home;
-      *static_cast<bool *>(args[1]) = Ion::Device::CircuitBreaker::clearCheckpointFlag(checkpoint);
-      return;
-    }
     case SVC_CIRCUIT_BREAKER_SET_HOME_CHECKPOINT:
       Ion::Device::CircuitBreaker::setCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Home, false);
       return;
@@ -214,7 +208,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       Ion::Device::CircuitBreaker::loadCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Custom);
       return;
     case SVC_CIRCUIT_BREAKER_SET_CUSTOM_CHECKPOINT:
-      Ion::Device::CircuitBreaker::setCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Custom, *static_cast<bool *>(args[0]));
+      *static_cast<bool *>(args[1]) = Ion::Device::CircuitBreaker::setCheckpoint(Ion::Device::CircuitBreaker::Checkpoint::Custom, *static_cast<bool *>(args[0]));
       return;
     case SVC_CIRCUIT_BREAKER_RESET_CUSTOM_CHECKPOINT:
       Ion::Device::CircuitBreaker::resetCustomCheckpoint(static_cast<Ion::CircuitBreaker::CheckpointBuffer *>(args[0]));
@@ -222,8 +216,8 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_CIRCUIT_BREAKER_STORE_CUSTOM_CHECKPOINT:
       Ion::Device::CircuitBreaker::storeCustomCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointBuffer *>(args[0]));
       return;
-    case SVC_CIRCUIT_BREAKER_BUSY:
-      *static_cast<bool *>(args[0]) = Ion::Device::CircuitBreaker::busy();
+    case SVC_CIRCUIT_BREAKER_STATUS:
+      *static_cast<Ion::CircuitBreaker::Status *>(args[0]) = Ion::Device::CircuitBreaker::status();
       return;
     default:
       return;

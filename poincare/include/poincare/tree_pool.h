@@ -17,8 +17,7 @@ class TreeHandle;
 class TreePool final {
   friend class TreeNode;
   friend class TreeHandle;
-  friend class ExceptionCheckpoint;
-  friend class CircuitBreakerCheckpoint;
+  friend class Checkpoint;
 public:
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
   static void RegisterPool(TreePool * pool) {  assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }

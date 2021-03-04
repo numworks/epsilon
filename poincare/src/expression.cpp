@@ -1,4 +1,5 @@
 #include <poincare/expression.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/expression_node.h>
 #include <poincare/ghost.h>
 #include <poincare/opposite.h>
@@ -685,17 +686,12 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
    * again with ReductionTarget::SystemForApproximation. */
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
-  TreeNode * initialEndOfPool = TreePool::sharedPool()->last();
-  Ion::CircuitBreaker::setCustomCheckpoint();
-  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
-    Ion::CircuitBreaker::resetCustomCheckpoint();
-    Poincare::TreePool::sharedPool()->freePoolFromNode(initialEndOfPool);
+  CircuitBreakerCheckpoint checkpoint;
+  if (!CircuitBreakerRun(checkpoint, false)) {
     if (sReductionFailed) {
       reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
-      Ion::CircuitBreaker::setCustomCheckpoint();
-      if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
-        Ion::CircuitBreaker::resetCustomCheckpoint();
-        Poincare::TreePool::sharedPool()->freePoolFromNode(initialEndOfPool);
+      checkpoint.reset();
+      if (!CircuitBreakerRun(checkpoint, false)) {
         return;
       }
     } else {
@@ -734,7 +730,6 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
      * complex format. */
     e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
   }
-  Ion::CircuitBreaker::resetCustomCheckpoint();
 }
 
 Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context, bool replaceFunctionsOnly) {

@@ -215,7 +215,7 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
    * to be interrupted. We thus rather approximate it instead of simplifying it.
    * TODO: use parse_and_simplify when matrix are simplified. */
 
-  assert_expression_approximates_to<double>("[[x]]→f(x)", "[[undef]]");
+  assert_expression_approximates_to<double>("[[x]]→f(x)", "undef");
   quiz_assert(Function::Builder("f", 1, Symbol::Builder('x')).recursivelyMatches(Poincare::Expression::IsMatrix, &context));
   assert_expression_approximates_to<double>("0.2*x→g(x)", "undef");
   quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, &context));

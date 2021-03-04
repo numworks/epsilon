@@ -11,11 +11,6 @@ void CircuitBreakerCheckpoint::InterruptDueToReductionFailure() {
   Ion::CircuitBreaker::loadCustomCheckpoint();
 }
 
-CircuitBreakerCheckpoint::CircuitBreakerCheckpoint() :
-  m_endOfPoolBeforeCheckpoint(TreePool::sharedPool()->last())
-{
-}
-
 CircuitBreakerCheckpoint::~CircuitBreakerCheckpoint() {
   reset();
 }
@@ -28,7 +23,7 @@ bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
       s_currentCircuitBreakerCheckpoint = this;
       return true;
     case Ion::CircuitBreaker::Status::Interrupted:
-      Poincare::TreePool::sharedPool()->freePoolFromNode(m_endOfPoolBeforeCheckpoint);
+      rollback();
       return false;
     default:
       assert(false);
@@ -44,8 +39,3 @@ void CircuitBreakerCheckpoint::reset() {
 }
 
 }
-
-/*TODO:
-1. Kernel setCustomCheckpoin returns true/false to know if it's the currentCheckpoint
-2. Inherit: Checkpoint, ExceptionCheckpoint, CircuitBreakerCheckpoint
-3.*/

@@ -2,48 +2,29 @@
 #define POINCARE_CIRCUIT_BREAKER_CHECKPOINT_H
 
 #include <ion/circuit_breaker.h>
-#include "tree_node.h"
-#include "tree_pool.h"
+#include <poincare/checkpoint.h>
 
-/* Usage:
+/* Usage: See comment in checkpoint.h
  *
- * CAUTION : A scope MUST be created directly around the
- * CircuitBreakerCheckpoint, to ensure make the code afterwards
- * non-interruptable. Indeed, the scope calls the checkpoint destructor,
- * which unset the checkpoint.
+ * To manually interrupt : CircuitBreakerCheckpoint::InterruptDueToReductionFailure();
  *
- void interruptableCode() {
- {
-   Poincare::CircuitBreakerCheckpoint checkpoint;
-   if (!checkpoint.didInterrupt()) {
-     CodeInvolvingLongComputations();
-   } else {
-     InterruptionHandler();
-    }
-  }
+ */
 
-To manually interrupt : CircuitBreakerCheckpoint::InterruptDueToReductionFailure();
-
-*/
-
-#define CircuitBreakerRun(checkpoint, overridePreviousCheckpoint) (checkpoint.setActive(Ion::CircuitBreaker::setCustomCheckpoint(overridePreviousCheckpoint)))
+#define CircuitBreakerRun(checkpoint, overridePreviousCheckpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCustomCheckpoint(overridePreviousCheckpoint)))
 
 namespace Poincare {
 
-class CircuitBreakerCheckpoint final {
+class CircuitBreakerCheckpoint final : public Checkpoint {
 public:
   static void InterruptDueToReductionFailure();
 
-  CircuitBreakerCheckpoint();
+  using Checkpoint::Checkpoint;
   ~CircuitBreakerCheckpoint();
 
   bool setActive(Ion::CircuitBreaker::Status status);
   void reset();
-
 private:
   static CircuitBreakerCheckpoint * s_currentCircuitBreakerCheckpoint;
-
-  TreeNode * m_endOfPoolBeforeCheckpoint;
 };
 
 }

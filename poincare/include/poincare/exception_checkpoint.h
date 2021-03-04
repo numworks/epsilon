@@ -1,35 +1,20 @@
 #ifndef POINCARE_EXCEPTION_CHECKPOINT_H
 #define POINCARE_EXCEPTION_CHECKPOINT_H
 
-#include "tree_pool.h"
-#include "tree_node.h"
+#include <poincare/checkpoint.h>
 #include <setjmp.h>
 
-
-/* Usage:
+/* Usage: See comment in checkpoint.h
  *
- * CAUTION : A scope MUST be created directly around the ExceptionCheckpoint, to
- * be able to nest exceptions. Indeed, the scope calls the exception destructor,
- * which sets s_topmostExceptionCheckpoint to "parent".
+ * To raise an error : ExceptionCheckpoint::Raise();
+ *
+ */
 
-void errorCatcher() {
-  Poincare::ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp)) {
-    CodeUsingPoincare();
-  } else {
-    ErrorHandler();
-  }
-}
-
-To raise an error : ExceptionCheckpoint::Raise();
-
-*/
-
-#define ExceptionRun(ecp) (setjmp(*(ecp.jumpBuffer())) == 0)
+#define ExceptionRun(checkpoint) (CheckpointRun(checkpoint, setjmp(*(checkpoint.jumpBuffer())) != 0))
 
 namespace Poincare {
 
-class ExceptionCheckpoint final {
+class ExceptionCheckpoint final : public Checkpoint {
 public:
   static void Raise() {
     assert(s_topmostExceptionCheckpoint != nullptr);
@@ -37,20 +22,16 @@ public:
   }
 
   ExceptionCheckpoint();
+  ~ExceptionCheckpoint();
 
-  ~ExceptionCheckpoint() {
-    s_topmostExceptionCheckpoint = m_parent;
-  }
-
+  bool setActive(bool interruption);
   jmp_buf * jumpBuffer() { return &m_jumpBuffer; }
-
 private:
-  void rollback();
+  void rollback() override;
 
   static ExceptionCheckpoint * s_topmostExceptionCheckpoint;
 
   jmp_buf m_jumpBuffer;
-  TreeNode * m_endOfPoolBeforeCheckpoint;
   ExceptionCheckpoint * m_parent;
 };
 

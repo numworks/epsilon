@@ -25,10 +25,11 @@ void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
   quiz_assert_print_if_failure(gcd.isEqualTo(c), failInformationBuffer);
   if (a.isExtractable() && b.isExtractable()) {
     // Test Arithmetic::GCD(int, int) if possible
+    bool isUndefined = false;
     a.setNegative(false);
     b.setNegative(false);
-    int extractedGcd = Arithmetic::GCD(a.extractedInt(), b.extractedInt());
-    quiz_assert_print_if_failure(extractedGcd == c.extractedInt(), failInformationBuffer);
+    int extractedGcd = Arithmetic::GCD(a.extractedInt(), b.extractedInt(), &isUndefined);
+    quiz_assert_print_if_failure(c.isExtractable() ? extractedGcd == c.extractedInt() : isUndefined, failInformationBuffer);
   }
 }
 
@@ -41,10 +42,11 @@ void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
   quiz_assert_print_if_failure(lcm.isEqualTo(c), failInformationBuffer);
   if (a.isExtractable() && b.isExtractable()) {
     // Test Arithmetic::LCM(int, int) if possible
+    bool isUndefined = false;
     a.setNegative(false);
     b.setNegative(false);
-    int extractedLcm = Arithmetic::LCM(a.extractedInt(), b.extractedInt());
-    quiz_assert_print_if_failure(extractedLcm == c.extractedInt(), failInformationBuffer);
+    int extractedLcm = Arithmetic::LCM(a.extractedInt(), b.extractedInt(), &isUndefined);
+    quiz_assert_print_if_failure(c.isExtractable() ? extractedLcm == c.extractedInt() : isUndefined, failInformationBuffer);
   }
 }
 
@@ -90,6 +92,8 @@ QUIZ_CASE(poincare_arithmetic_lcm) {
   assert_lcm_equals_to(Integer(-31), Integer(52), Integer(1612));
   assert_lcm_equals_to(Integer(-8), Integer(-40), Integer(40));
   assert_lcm_equals_to(Integer("1234567899876543456"), Integer("234567890098765445678"), Integer("144794993728852353909143567804987191584"));
+  // Inputs are extractable, but not the output.
+  assert_lcm_equals_to(Integer(24278576), Integer(23334), Integer("283258146192"));
 }
 
 QUIZ_CASE(poincare_arithmetic_factorization) {

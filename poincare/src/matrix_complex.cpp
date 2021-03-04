@@ -42,11 +42,14 @@ Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat 
   Matrix matrix = Matrix::Builder();
   int i = 0;
   for (EvaluationNode<T> * c : this->children()) {
+    Expression childExpression = Undefined::Builder();
     if (c->type() == EvaluationNode<T>::Type::Complex) {
-      matrix.addChildAtIndexInPlace(c->complexToExpression(complexFormat), i, i);
-    } else {
-      matrix.addChildAtIndexInPlace(Undefined::Builder(), i, i);
+      childExpression = c->complexToExpression(complexFormat);
     }
+    if (childExpression.isUndefined()) {
+        return Undefined::Builder();
+    }
+    matrix.addChildAtIndexInPlace(childExpression, i, i);
     i++;
   }
   matrix.setDimensions(numberOfRows(), numberOfColumns());

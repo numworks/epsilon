@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <ion/circuit_breaker.h>
 #include <math.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
 #include <poincare/symbol.h>
@@ -34,17 +35,19 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * replace with the left side of the store without simplifying it.
      * The simplification fails for [1+2]->a for instance, because we do not
      * have exact simplification of matrices yet. */
-    Ion::CircuitBreaker::CheckpointBuffer checkpointBuffer;
-    Ion::CircuitBreaker::storeCustomCheckpoint(checkpointBuffer);
-    Ion::CircuitBreaker::setCustomCheckpoint(true);
-    if (!Ion::CircuitBreaker::clearCustomCheckpointFlag()) { // Standard execution
-      Expression reducedE = storedExpression.clone().deepReduce(reductionContext);
-      if (!reducedE.isUninitialized() ) {
-        storedExpression = reducedE;
+    {
+      Ion::CircuitBreaker::CheckpointBuffer checkpointBuffer;
+      Ion::CircuitBreaker::storeCustomCheckpoint(checkpointBuffer);
+      CircuitBreakerCheckpoint checkpoint;
+      if (CircuitBreakerRun(checkpoint, true)) { // Standard execution
+        Expression reducedE = storedExpression.clone().deepReduce(reductionContext);
+        if (!reducedE.isUninitialized() ) {
+          storedExpression = reducedE;
+        }
       }
+      // Restore the previous interruption flag
+      Ion::CircuitBreaker::resetCustomCheckpoint(&checkpointBuffer);
     }
-    // Restore the previous interruption flag
-    Ion::CircuitBreaker::resetCustomCheckpoint(&checkpointBuffer);
   }
 
   replaceWithInPlace(storedExpression);

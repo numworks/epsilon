@@ -337,6 +337,9 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("lcm(6,15,10)", "30");
   assert_expression_approximates_to<float>("lcm(30,105,70,42)", "210");
   assert_expression_approximates_to<double>("lcm(30,105,70,42)", "210");
+  // Undef expected when there is an int overflow on output
+  assert_expression_approximates_to<float>("lcm(29,24278576,23334,13)", "undef"); // 106788321114384
+  assert_expression_approximates_to<double>("lcm(29,24278576,23334,13)", "undef"); // 106788321114384
 
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");

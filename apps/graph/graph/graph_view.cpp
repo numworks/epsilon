@@ -28,18 +28,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
-
-  Ion::CircuitBreaker::setCustomCheckpoint();
-
-  if (!Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
-    for (int i = 0; i < activeFunctionsCount ; i++) {
-      if (i == 1) {
-        Ion::CircuitBreaker::loadCustomCheckpoint();
-      }
-      Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-      ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
-      ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
-      Shared::ContinuousFunction::PlotType type = f->plotType();
+  for (int i = 0; i < activeFunctionsCount ; i++) {
+    Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
+    ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
+    Shared::ContinuousFunction::PlotType type = f->plotType();
     Poincare::Expression e = f->expressionReduced(context());
     if (e.isUndefined() || (
         type == Shared::ContinuousFunction::PlotType::Parametric &&
@@ -101,7 +94,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           Poincare::Context * c = (Poincare::Context *)context;
           return f->evaluateXYAtParameter(t, c);
         }, f.operator->(), context(), false, f->color());
-    }
     }
   }
 }

@@ -12,8 +12,8 @@ public:
   static Integer LCM(const Integer & i, const Integer & j);
   static Expression GCD(const Expression & expression);
   static Expression LCM(const Expression & expression);
-  static int GCD(int i, int j);
-  static int LCM(int i, int j);
+  static int GCD(int i, int j, bool * isUndefined);
+  static int LCM(int i, int j, bool * isUndefined);
   template<typename T> static Evaluation<T> GCD(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
   template<typename T> static Evaluation<T> LCM(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
   constexpr static int k_numberOfPrimeFactors = 1000;

@@ -5,13 +5,13 @@
 namespace Ion {
 namespace CircuitBreaker {
 
-void SVC_ATTRIBUTES busySVC(bool * res) {
-  SVC(SVC_CIRCUIT_BREAKER_BUSY);
+void SVC_ATTRIBUTES statusSVC(Ion::CircuitBreaker::Status * res) {
+  SVC(SVC_CIRCUIT_BREAKER_STATUS);
 }
 
-bool busy() {
-  bool res;
-  busySVC(&res);
+Ion::CircuitBreaker::Status status() {
+  Ion::CircuitBreaker::Status res;
+  statusSVC(&res);
   return res;
 }
 
@@ -22,24 +22,6 @@ void SVC_ATTRIBUTES hasCustomCheckpointSVC(bool * res) {
 bool hasCustomCheckpoint() {
   bool res;
   hasCustomCheckpointSVC(&res);
-  return res;
-}
-
-void SVC_ATTRIBUTES clearCheckpointFlagSVC(bool * isCustomCheckpoint, bool * res) {
-  SVC(SVC_CIRCUIT_BREAKER_CLEAR_CHECKPOINT_FLAG);
-}
-
-bool clearCustomCheckpointFlag() {
-  bool res;
-  bool isCustomCheckpoint = true;
-  clearCheckpointFlagSVC(&isCustomCheckpoint, &res);
-  return res;
-}
-
-bool clearHomeCheckpointFlag() {
-  bool res;
-  bool isCustomCheckpoint = false;
-  clearCheckpointFlagSVC(&isCustomCheckpoint, &res);
   return res;
 }
 
@@ -59,22 +41,35 @@ void resetCustomCheckpoint(CheckpointBuffer * buffer) {
   resetCustomCheckpointSVC(buffer);
 }
 
-void setHomeCheckpoint() {
-  SVC(SVC_CIRCUIT_BREAKER_SET_HOME_CHECKPOINT);
-  while (Ion::CircuitBreaker::busy()) {}
-}
-
 void loadCustomCheckpoint() {
   SVC(SVC_CIRCUIT_BREAKER_LOAD_CUSTOM_CHECKPOINT);
 }
 
-void SVC_ATTRIBUTES setCustomCheckpointSVC(bool * overridePreviousCheckpoint) {
+void SVC_ATTRIBUTES setCustomCheckpointSVC(bool * overridePreviousCheckpoint, bool * checkpointSet) {
   SVC(SVC_CIRCUIT_BREAKER_SET_CUSTOM_CHECKPOINT);
-  while (Ion::CircuitBreaker::busy()) {}
 }
 
-void setCustomCheckpoint(bool overridePreviousCheckpoint) {
-  setCustomCheckpointSVC(&overridePreviousCheckpoint);
+Status stallUntilReady() {
+  Status s = status();
+  while (s == Ion::CircuitBreaker::Status::Busy) {
+    s = status();
+  }
+  assert(s == Status::Set || s == Status::Interrupted);
+  return s;
+}
+
+Status setCustomCheckpoint(bool overridePreviousCheckpoint) {
+  bool checkpointSet;
+  setCustomCheckpointSVC(&overridePreviousCheckpoint, &checkpointSet);
+  if (!checkpointSet) {
+    return Status::Ignored;
+  }
+  return stallUntilReady();
+}
+
+Status setHomeCheckpoint() {
+  SVC(SVC_CIRCUIT_BREAKER_SET_HOME_CHECKPOINT);
+  return stallUntilReady();
 }
 
 }

@@ -50,7 +50,7 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
   return Integer::Multiplication(i, Integer::Division(j, GCD(i, j)).quotient);
 }
 
-int Arithmetic::GCD(int a, int b) {
+int Arithmetic::GCD(int a, int b, bool * isUndefined) {
   assert(a >= 0 && b >= 0);
   if (b > a) {
     int temp = b;
@@ -66,13 +66,19 @@ int Arithmetic::GCD(int a, int b) {
   return a;
 }
 
-int Arithmetic::LCM(int a, int b) {
+int Arithmetic::LCM(int a, int b, bool * isUndefined) {
   assert(a >= 0 && b >= 0);
-  if (a * b == 0) {
+  if (a == 0 || b == 0) {
     return 0;
   }
+  int c = GCD(a, b, isUndefined);
+  if (*isUndefined || b / c >= INT_MAX / a) {
+    // LCM will overflow int
+    *isUndefined = true;
+    return INT_MAX;
+  }
   // Using LCM(a,b) = a * b / GCD(a,b)
-  return a * (b / GCD(a,b));
+  return a * (b / c);
 }
 
 Integer getIntegerFromRationalExpression(Expression expression) {
@@ -111,7 +117,7 @@ Expression Arithmetic::LCM(const Expression & expression) {
 }
 
 template<typename T>
-Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressionNode, int (*f)(int, int), ExpressionNode::ApproximationContext approximationContext) {
+Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressionNode, int (*f)(int, int, bool *), ExpressionNode::ApproximationContext approximationContext) {
   /* Use function associativity to compute a function of expression's children.
    * The function can be GCD or LCM. */
   bool isUndefined = false;
@@ -123,7 +129,11 @@ Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressi
     if (isUndefined) {
       return Complex<T>::RealUndefined();
     }
-    a = f(a,b);
+    a = f(a, b, &isUndefined);
+    if (isUndefined) {
+      // GCD or LCM has overflown
+      return Complex<T>::RealUndefined();
+    }
   }
   return Complex<T>::Builder((T)a);
 }

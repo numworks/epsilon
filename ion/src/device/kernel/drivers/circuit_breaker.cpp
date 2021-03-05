@@ -13,6 +13,7 @@ namespace Device {
 namespace CircuitBreaker {
 
 using namespace Regs;
+using namespace Ion::CircuitBreaker;
 
 /* Basic frame description:
  * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | Reserved | Reserved | */
@@ -85,13 +86,12 @@ static_assert(k_basicFrameSize < k_extendedFrameSize, "The basic exception frame
 enum class InternalStatus {
   Set,
   Loaded,
-  PendingSetCustomCheckpoint,
-  PendingSetHomeCheckpoint,
-  PendingLoadCustomCheckpoint,
-  PendingLoadHomeCheckpoint
+  PendingSetCheckpoint,
+  PendingLoadCheckpoint,
 };
 
 InternalStatus sInternalStatus = InternalStatus::Loaded;
+CheckpointType sCheckpointType = CheckpointType::Home;
 
 // Home checkpoint snapshot
 uint8_t sHomeStackSnapshot[k_stackSnapshotMaxSize];
@@ -99,13 +99,17 @@ uint8_t * sHomeStackSnapshotAddress = nullptr;
 size_t sHomeStackSnapshotSize;
 jmp_buf sHomeRegisters;
 
-// Custom checkpoint snapshot
-uint8_t sCustomStackSnapshot[k_stackSnapshotMaxSize];
-uint8_t * sCustomStackSnapshotAddress = nullptr;
-size_t sCustomStackSnapshotSize;
-jmp_buf sCustomRegisters;
+// User checkpoint snapshot
+uint8_t sUserStackSnapshot[k_stackSnapshotMaxSize];
+uint8_t * sUserStackSnapshotAddress = nullptr;
+size_t sUserStackSnapshotSize;
+jmp_buf sUserRegisters;
 
-static_assert(Ion::CircuitBreaker::k_checkpointBufferSize == sizeof(sCustomStackSnapshot) + sizeof(sCustomStackSnapshotAddress) + sizeof(sCustomStackSnapshotSize) + sizeof(sCustomRegisters) && Ion::CircuitBreaker::k_checkpointBufferSize == sizeof(sHomeStackSnapshot) + sizeof(sHomeStackSnapshotAddress) + sizeof(sHomeStackSnapshotSize) + sizeof(sHomeRegisters), "the CheckpointBuffer is either too small to hold the Checkpoint state or too big and is not optimal regarding RAM memory considerations");
+// System checkpoint snapshot
+uint8_t sSystemStackSnapshot[k_stackSnapshotMaxSize];
+uint8_t * sSystemStackSnapshotAddress = nullptr;
+size_t sSystemStackSnapshotSize;
+jmp_buf sSystemRegisters;
 
 inline size_t frameSize(uint32_t excReturn) {
   /* The exception return value indicating the return context:
@@ -120,67 +124,60 @@ inline size_t frameSize(uint32_t excReturn) {
 
 Ion::CircuitBreaker::Status status() {
   if (sInternalStatus == InternalStatus::Set) {
-   return Ion::CircuitBreaker::Status::Set;
+   return Status::Set;
   } else if (sInternalStatus == InternalStatus::Loaded) {
-    return Ion::CircuitBreaker::Status::Interrupted;
+    return Status::Interrupted;
   } else {
-    return Ion::CircuitBreaker::Status::Busy;
+    return Status::Busy;
   }
 }
 
-bool hasCheckpoint(Checkpoint checkpoint) {
-  if (checkpoint == Checkpoint::Home) {
-    return sHomeStackSnapshotAddress != nullptr;
+bool hasCheckpoint(CheckpointType type) {
+  switch (type) {
+    case CheckpointType::Home:
+      return sHomeStackSnapshotAddress != nullptr;
+    case CheckpointType::User:
+      return sUserStackSnapshotAddress != nullptr;
+    default:
+      assert(type == CheckpointType::System);
+      return sSystemStackSnapshotAddress != nullptr;
   }
-  assert(checkpoint == Checkpoint::Custom);
-  return sCustomStackSnapshotAddress != nullptr;
 }
 
-void storeCustomCheckpoint(uint8_t * buffer) {
-  assert(hasCheckpoint(Checkpoint::Custom));
-  assert(buffer != nullptr);
-  memcpy(buffer, &sCustomRegisters, sizeof(jmp_buf));
-  buffer += sizeof(jmp_buf);
-  memcpy(buffer, &sCustomStackSnapshotSize, sizeof(size_t));
-  buffer += sizeof(size_t);
-  memcpy(buffer, &sCustomStackSnapshotAddress, sizeof(uint8_t *));
-  buffer += sizeof(uint8_t *);
-  memcpy(buffer, sCustomStackSnapshot, sCustomStackSnapshotSize);
+void unsetCheckpoint(CheckpointType type) {
+  switch (type) {
+    case CheckpointType::Home:
+      sHomeStackSnapshotAddress = nullptr;
+      return;
+    case CheckpointType::User:
+      sUserStackSnapshotAddress = nullptr;
+      return;
+    default:
+      assert(type == CheckpointType::System);
+      sSystemStackSnapshotAddress = nullptr;
+      return;
+  }
 }
 
-void resetCustomCheckpoint(uint8_t * buffer) {
-  assert(buffer != nullptr);
-  memcpy(&sCustomRegisters, buffer, sizeof(jmp_buf));
-  buffer += sizeof(jmp_buf);
-  memcpy(&sCustomStackSnapshotSize, buffer, sizeof(size_t));
-  buffer += sizeof(size_t);
-  memcpy(&sCustomStackSnapshotAddress, buffer, sizeof(uint8_t *));
-  buffer += sizeof(uint8_t *);
-  memcpy(sCustomStackSnapshot, buffer, sCustomStackSnapshotSize);
-}
-
-void unsetCustomCheckpoint() {
-  sCustomStackSnapshotAddress = nullptr;
-}
-
-static inline void setPendingAction(InternalStatus action) {
+static inline void setPendingAction(CheckpointType type, InternalStatus action) {
   assert(sInternalStatus == InternalStatus::Loaded || sInternalStatus == InternalStatus::Set);
+  sCheckpointType = type;
   sInternalStatus = action;
   Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
 }
 
-bool setCheckpoint(Checkpoint checkpoint, bool overridePreviousCheckpoint) {
-  if (!overridePreviousCheckpoint && hasCheckpoint(checkpoint)) {
+bool setCheckpoint(CheckpointType type) {
+  if (Device::CircuitBreaker::hasCheckpoint(type)) {
     // Keep the oldest checkpoint
     return false;
   }
-  setPendingAction(checkpoint == Checkpoint::Custom ? InternalStatus::PendingSetCustomCheckpoint : InternalStatus::PendingSetHomeCheckpoint);
+  setPendingAction(type, InternalStatus::PendingSetCheckpoint);
   return true;
 }
 
-void loadCheckpoint(Checkpoint checkpoint) {
-  assert(hasCheckpoint(checkpoint));
-  setPendingAction(checkpoint == Checkpoint::Custom ? InternalStatus::PendingLoadCustomCheckpoint : InternalStatus::PendingLoadHomeCheckpoint);
+void loadCheckpoint(CheckpointType type) {
+  assert(Device::CircuitBreaker::hasCheckpoint(type));
+  setPendingAction(type, InternalStatus::PendingLoadCheckpoint);
 }
 
 }
@@ -191,53 +188,67 @@ using namespace Ion::Device::CircuitBreaker;
 
 void pendsv_handler(uint8_t * frameAddress, uint32_t excReturn) {
   // status is supposed to be one of the pending status
-  assert(sInternalStatus != InternalStatus::Set && sInternalStatus != InternalStatus::Loaded);
+  assert(sInternalStatus == InternalStatus::PendingSetCheckpoint || sInternalStatus == InternalStatus::PendingLoadCheckpoint);
 
-  if (sInternalStatus == InternalStatus::PendingLoadCustomCheckpoint) {
-      // Restore registers
-      longjmp(sCustomRegisters, 1);
-  } else if (sInternalStatus == InternalStatus::PendingLoadHomeCheckpoint) {
-      // Restore registers
-      longjmp(sHomeRegisters, 1);
+  if (sInternalStatus == InternalStatus::PendingLoadCheckpoint) {
+    switch (sCheckpointType) {
+      case CheckpointType::Home:
+        longjmp(sHomeRegisters, 1);
+      case CheckpointType::User:
+        longjmp(sUserRegisters, 1);
+      default:
+        assert(sCheckpointType == CheckpointType::System);
+        longjmp(sSystemRegisters, 1);
+    }
   } else {
-    assert(sInternalStatus == InternalStatus::PendingSetCustomCheckpoint || sInternalStatus == InternalStatus::PendingSetHomeCheckpoint);
+    assert(sInternalStatus == InternalStatus::PendingSetCheckpoint);
     // Extract current stack pointer
     uint8_t * stackPointerAddress = nullptr;
     asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (stackPointerAddress) :);
 
     // Store the stack frame
-    if (sInternalStatus ==  InternalStatus::PendingSetCustomCheckpoint) {
-      sCustomStackSnapshotAddress = stackPointerAddress;
-      sCustomStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
-      assert(sCustomStackSnapshotSize <= k_stackSnapshotMaxSize);
-      memcpy(sCustomStackSnapshot, sCustomStackSnapshotAddress, sCustomStackSnapshotSize);
-    } else {
-      assert(sInternalStatus ==  InternalStatus::PendingSetHomeCheckpoint);
+    jmp_buf * regsBufferAddress;
+    if (sCheckpointType == CheckpointType::Home) {
+      regsBufferAddress = &sHomeRegisters;
       sHomeStackSnapshotAddress = stackPointerAddress;
       sHomeStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
       assert(sHomeStackSnapshotSize <= k_stackSnapshotMaxSize);
       memcpy(sHomeStackSnapshot, sHomeStackSnapshotAddress, sHomeStackSnapshotSize);
+    } else if (sCheckpointType == CheckpointType::User) {
+      regsBufferAddress = &sUserRegisters;
+      sUserStackSnapshotAddress = stackPointerAddress;
+      sUserStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
+      assert(sUserStackSnapshotSize <= k_stackSnapshotMaxSize);
+      memcpy(sUserStackSnapshot, sUserStackSnapshotAddress, sUserStackSnapshotSize);
+    } else {
+      assert(sCheckpointType == CheckpointType::System);
+      regsBufferAddress = &sSystemRegisters;
+      sSystemStackSnapshotAddress = stackPointerAddress;
+      sSystemStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
+      assert(sSystemStackSnapshotSize <= k_stackSnapshotMaxSize);
+      memcpy(sSystemStackSnapshot, sSystemStackSnapshotAddress, sSystemStackSnapshotSize);
     }
 
     // Store the interruption status cortex register
-    jmp_buf * regsBufferAddress = sInternalStatus ==  InternalStatus::PendingSetCustomCheckpoint ? &sCustomRegisters : &sHomeRegisters;
     if (setjmp(*regsBufferAddress)) {
       /* WARNING: at this point the stack is corrupted. You can't use variable
        * stored on the stack. To prevent the compiler to do so, we ensure to
        * user global variables only which aren't stored on the stack. */
       // Restore stack frame
-      if (sInternalStatus == InternalStatus::PendingLoadCustomCheckpoint) {
-        memcpy(sCustomStackSnapshotAddress, sCustomStackSnapshot, sCustomStackSnapshotSize);
-      } else {
-        assert(sInternalStatus == InternalStatus::PendingLoadHomeCheckpoint);
+      if (sCheckpointType == CheckpointType::Home) {
         memcpy(sHomeStackSnapshotAddress, sHomeStackSnapshot, sHomeStackSnapshotSize);
+      } else if (sCheckpointType == CheckpointType::User) {
+        memcpy(sUserStackSnapshotAddress, sUserStackSnapshot, sUserStackSnapshotSize);
+      } else {
+        assert(sCheckpointType == CheckpointType::System);
+        memcpy(sSystemStackSnapshotAddress, sSystemStackSnapshot, sSystemStackSnapshotSize);
       }
     }
   }
-  if (sInternalStatus == InternalStatus::PendingLoadCustomCheckpoint || sInternalStatus == InternalStatus::PendingLoadHomeCheckpoint) {
+  if (sInternalStatus == InternalStatus::PendingLoadCheckpoint) {
     sInternalStatus = InternalStatus::Loaded;
   } else {
-    assert(sInternalStatus == InternalStatus::PendingSetCustomCheckpoint || sInternalStatus == InternalStatus::PendingSetHomeCheckpoint);
+    assert(sInternalStatus == InternalStatus::PendingSetCheckpoint);
     sInternalStatus = InternalStatus::Set;
   }
 }

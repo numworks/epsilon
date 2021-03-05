@@ -4,23 +4,15 @@
 
 namespace Poincare {
 
-CircuitBreakerCheckpoint * CircuitBreakerCheckpoint::s_currentCircuitBreakerCheckpoint;
-
-void CircuitBreakerCheckpoint::InterruptDueToReductionFailure() {
-  Expression::ReductionFailed();
-  Ion::CircuitBreaker::loadCustomCheckpoint();
-}
-
-CircuitBreakerCheckpoint::~CircuitBreakerCheckpoint() {
-  reset();
-}
+CircuitBreakerCheckpoint * UserCircuitBreakerCheckpoint::s_currentUserCircuitBreakerCheckpoint;
+CircuitBreakerCheckpoint * SystemCircuitBreakerCheckpoint::s_currentSystemCircuitBreakerCheckpoint;
 
 bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
   switch (status) {
     case Ion::CircuitBreaker::Status::Ignored:
       return true;
     case Ion::CircuitBreaker::Status::Set:
-      s_currentCircuitBreakerCheckpoint = this;
+      setCurrentCircuitBreakerCheckpoint(this);
       return true;
     case Ion::CircuitBreaker::Status::Interrupted:
       rollback();
@@ -32,9 +24,23 @@ bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
 }
 
 void CircuitBreakerCheckpoint::reset() {
-  if (s_currentCircuitBreakerCheckpoint == this) {
-    Ion::CircuitBreaker::unsetCustomCheckpoint();
-    s_currentCircuitBreakerCheckpoint = nullptr;
+  if (isCurrentCircuitBreakerCheckpoint()) {
+    Ion::CircuitBreaker::unsetCheckpoint(type());
+    setCurrentCircuitBreakerCheckpoint(nullptr);
+  }
+}
+
+UserCircuitBreakerCheckpoint::~UserCircuitBreakerCheckpoint() {
+  reset();
+}
+
+SystemCircuitBreakerCheckpoint::~SystemCircuitBreakerCheckpoint() {
+  reset();
+}
+
+void SystemCircuitBreakerCheckpoint::InterruptDueToReductionFailure() {
+  if (Ion::CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::System)) {
+    Ion::CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::System);
   }
 }
 

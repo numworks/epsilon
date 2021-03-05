@@ -137,9 +137,6 @@ public:
   static Expression Parse(char const * string, Context * context, bool addMissingParenthesis = true);
   static Expression ExpressionFromAddress(const void * address, size_t size);
 
-  /* Circuit breaker */
-  static void ReductionFailed();
-
   /* Hierarchy */
   Expression childAtIndex(int i) const;
   void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }

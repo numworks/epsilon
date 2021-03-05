@@ -42,7 +42,10 @@ void SolutionsController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
 
 void SolutionsController::ContentView::setWarning(bool warning) {
   m_displayWarningMoreSolutions = warning;
-  m_selectableTableView.setTopMargin(m_displayWarningMoreSolutions ? 0 : Metric::CommonTopMargin);
+  KDCoordinate topMargin = m_displayWarningMoreSolutions ? 0 : Escher::Metric::CommonTopMargin;
+  m_selectableTableView.setTopMargin(topMargin);
+  // Fit m_selectableTableView scroll to content size
+  m_selectableTableView.decorator()->setVerticalMargins(topMargin, Metric::CommonBottomMargin);
   /* m_displayWarningMoreSolutions might stay the same, but number of rows and
    * messages have changed. */
   layoutSubviews();
@@ -75,21 +78,24 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
   if (m_displayWarningMoreSolutions) {
     KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
     KDCoordinate topMargin;
-    // Empty warning messages are considered
+    // Empty warning messages are handled to center both single or double lines
     KDCoordinate warningMessage0Height = m_warningMessageView0.text()[0] == 0 ? 0 : textHeight;
     KDCoordinate warningMessage1Height = m_warningMessageView1.text()[0] == 0 ? 0 : textHeight;
-    // Warning messages are vertically centered within their bounds.
+    // Warning messages are vertically centered.
     if (m_selectableTableView.numberOfDisplayableRows() == 0) {
+      // Warning messages must fit into the entire bound height
       topMargin = (bounds().height() - warningMessage0Height - warningMessage1Height) / 2;
     } else {
       // Warning messages must fit into a k_topMargin height bound
       topMargin = (k_topMargin - warningMessage0Height - warningMessage1Height) / 2;
-      m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(), bounds().height()-k_topMargin), force);
+      // Set table frame
+      m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(), bounds().height() - k_topMargin), force);
     }
     assert(topMargin >= 0);
     m_warningMessageView0.setFrame(KDRect(0, topMargin, bounds().width(), warningMessage0Height), force);
     m_warningMessageView1.setFrame(KDRect(0, topMargin + warningMessage0Height, bounds().width(), warningMessage1Height), force);
   } else {
+    // Table frame occupy the entire view
     m_selectableTableView.setFrame(bounds(), force);
   }
 }
@@ -131,25 +137,23 @@ const char * SolutionsController::title() {
 
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
-  bool requireWarning = false;
+  bool requireWarning = true;
   if (numberOfDisplayedSolutions() == 0) {
+    // There are no solutions
     m_contentView.setWarningMessages(noSolutionMessage(), I18n::Message::Default);
-    requireWarning = true;
-  } else if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+  } else if (m_equationStore->type() == EquationStore::Type::Monovariable && m_equationStore->haveMoreApproximationSolutions()) {
+    // There are more approximate solutions
     m_contentView.setWarningMessages(I18n::Message::OnlyFirstSolutionsDisplayed0, I18n::Message::OnlyFirstSolutionsDisplayed1);
-    requireWarning = m_equationStore->haveMoreApproximationSolutions();
   } else if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && numberOfDisplayedSolutions() == 1) {
+    // There are no real solutions
     assert(Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real);
     m_contentView.setWarningMessages(I18n::Message::PolynomeHasNoRealSolution0, I18n::Message::PolynomeHasNoRealSolution1);
-    requireWarning = true;
+  } else {
+    requireWarning = false;
   }
   m_contentView.setWarning(requireWarning);
   m_contentView.selectableTableView()->reloadData();
   selectCellAtLocation(0, 0);
-}
-
-void SolutionsController::viewDidDisappear() {
-  selectCellAtLocation(-1, -1);
 }
 
 void SolutionsController::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -159,24 +163,26 @@ void SolutionsController::didEnterResponderChain(Responder * previousFirstRespon
   }
 }
 
-/* AlternateEmptyRowDelegate */
-
-Responder * SolutionsController::defaultController() {
-  return parentResponder()->parentResponder();
-}
-
 /* TableViewDataSource */
 
 int SolutionsController::numberOfRows() const {
-  return numberOfDisplayedSolutions() + (m_equationStore->numberOfUserVariables() > 0 ? 1 + m_equationStore->numberOfUserVariables() : 0);
+  int numberOfRows = numberOfDisplayedSolutions();
+  if (m_equationStore->numberOfUserVariables() > 0) {
+    // Add the empty row if there are rows above predefined variables message
+    numberOfRows += (numberOfRows > 0 ? 2 : 1) + m_equationStore->numberOfUserVariables();
+  }
+  return numberOfRows;
 }
 
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
-  if (j == rowOfUserVariablesMessage) {
+  if (j == rowOfUserVariablesMessage - 1) {
+    return; // Empty row
+  } else if (j == rowOfUserVariablesMessage) {
     // Predefined variable used/ignored message
     assert(i >= 0);
     MessageCell * messageCell = static_cast<MessageCell *>(cell);
+    // Message is split across two cells : |**** used | predefined  vars ****|
     messageCell->setHorizontalAlignment(i == 0 ? 1.0f : 0.0f);
     if (usedUserVariables()) {
       messageCell->setMessage(i == 0 ? I18n::Message::PredefinedVariablesUsedLeft : I18n::Message::PredefinedVariablesUsedRight);
@@ -193,8 +199,8 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
       char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+2]; // Holds at maximum the variable name + 2 digits (for 10)
-      if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage) {
-        // Solution symbol name
+      if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
+        // It's a solution row, get symbol name
         if (m_equationStore->type() == EquationStore::Type::LinearSystem) {
           /* The system has more than one variable: the cell text is the
            * variable name */
@@ -213,17 +219,18 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
           bufferSymbol[length] = 0;
         }
       } else {
-        // User variable name
+        // It's a user variable row, get variable name
         assert(rowOfUserVariablesMessage >= 0);
         strlcpy(bufferSymbol, m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1), Poincare::SymbolAbstract::k_maxNameSize);
       }
       symbolCell->setText(bufferSymbol);
     }
   } else {
-    if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage) {
+    if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
+      // It's a solution row
       assert(numberOfDisplayedSolutions() > 0);
       if (m_equationStore->type() == EquationStore::Type::Monovariable) {
-        // Values of the solutions
+        // Get values of the solutions
         EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
         constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
         constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
@@ -231,7 +238,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
         PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, bufferSize, precision);
         valueCell->setText(bufferValue);
       } else {
-        // Values of the solutions or discriminant
+        // Get values of the solutions or discriminant
         ScrollableTwoExpressionsCell * valueCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
         Poincare::Layout exactLayout = m_equationStore->exactSolutionLayoutsAtIndexAreIdentical(j) ? Poincare::Layout() : m_equationStore->exactSolutionLayoutAtIndex(j, true);
         valueCell->setLayouts(exactLayout, m_equationStore->exactSolutionLayoutAtIndex(j, false));
@@ -240,7 +247,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
         }
       }
     } else {
-      // Values of the solutions or discriminant
+      // It's a user variable row, get values of the solutions or discriminant
       ScrollableTwoExpressionsCell * valueCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
       const char * symbol = m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1);
       Poincare::Layout layout = PoincareHelpers::CreateLayout(App::app()->localContext()->expressionForSymbolAbstract(Poincare::Symbol::Builder(symbol, strlen(symbol)), false));
@@ -251,13 +258,10 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   evenOddCell->setEven(j%2 == 0);
 }
 
-KDCoordinate SolutionsController::columnWidth(int i) {
-  return i == 0 ? k_symbolCellWidth : k_valueCellWidth;
-}
-
 KDCoordinate SolutionsController::rowHeight(int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
-  if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage) {
+  if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
+    // It's a solution row
     assert(numberOfDisplayedSolutions() > 0);
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       return k_defaultCellHeight;
@@ -269,12 +273,9 @@ KDCoordinate SolutionsController::rowHeight(int j) {
     KDCoordinate layoutHeight = std::max(exactLayout.baseline(), approximateLayout.baseline()) + std::max(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
-  if (j == rowOfUserVariablesMessage) {
-    // Add extra margin only if it is not the first row.
-    if (j == 0) {
-      return k_defaultCellHeight;
-    }
-    return Metric::CommonTopMargin + k_defaultCellHeight + Metric::CommonBottomMargin;
+  if (j == rowOfUserVariablesMessage || j == rowOfUserVariablesMessage - 1 ) {
+    // It's an empty or user variable message row
+    return k_defaultCellHeight;
   }
   // TODO: memoize user symbols if too slow
   const char * symbol = m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1);
@@ -316,6 +317,8 @@ HighlightCell * SolutionsController::reusableCell(int index, int type) {
       return &m_exactValueCells[index];
     case k_messageCellType:
       return &m_messageCells[index];
+    case k_emptyCellType:
+      return &m_emptyCell[index];
     default:
       assert(type == k_approximateValueCellType);
       return &m_approximateValueCells[index];
@@ -332,6 +335,8 @@ int SolutionsController::reusableCellCount(int type) {
       return k_numberOfExactValueCells;
     case k_messageCellType:
       return k_numberOfMessageCells;
+    case k_emptyCellType:
+      return k_numberOfEmptyCells;
     default:
       assert(type == k_approximateValueCellType);
       return k_numberOfApproximateValueCells;
@@ -340,6 +345,9 @@ int SolutionsController::reusableCellCount(int type) {
 
 int SolutionsController::typeAtLocation(int i, int j) {
   const int rowOfUserVariableMessage = userVariablesMessageRow();
+  if (j == rowOfUserVariableMessage - 1) {
+    return k_emptyCellType;
+  }
   if (j == rowOfUserVariableMessage) {
     return k_messageCellType;
   }
@@ -349,7 +357,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
     }
     return k_symbolCellType;
   }
-  if ((rowOfUserVariableMessage < 0 || j < rowOfUserVariableMessage) && m_equationStore->type() == EquationStore::Type::Monovariable) {
+  if ((rowOfUserVariableMessage < 0 || j < rowOfUserVariableMessage - 1) && m_equationStore->type() == EquationStore::Type::Monovariable) {
     return k_approximateValueCellType;
   }
   return k_exactValueCellType;
@@ -364,16 +372,23 @@ void SolutionsController::tableViewDidChangeSelection(SelectableTableView * t, i
   if (rowOfUserVariablesMessage < 0) {
     return;
   }
-  assert(rowOfUserVariablesMessage >= 0);
-  // Forbid the selection of the messages row
-  if (t->selectedRow() == rowOfUserVariablesMessage) {
-    t->selectCellAtLocation(t->selectedColumn(), rowOfUserVariablesMessage + (rowOfUserVariablesMessage < previousSelectedCellY ? -1 : 1));
+  // Forbid the selection of the messages row and its empty row
+  if (t->selectedRow() == rowOfUserVariablesMessage || t->selectedRow() == rowOfUserVariablesMessage - 1) {
+    t->selectCellAtLocation(t->selectedColumn(), rowOfUserVariablesMessage + (rowOfUserVariablesMessage < previousSelectedCellY ? -2 : 1));
   }
 }
 
 int SolutionsController::userVariablesMessageRow() const {
   assert(m_equationStore->numberOfUserVariables() >= 0);
-  return m_equationStore->numberOfUserVariables() == 0 ? -1 : numberOfDisplayedSolutions();
+  if (m_equationStore->numberOfUserVariables() == 0) {
+    // No user variables
+    return -1;
+  } else if (numberOfDisplayedSolutions() == 0) {
+    // Message row is first row, no need for an empty row
+    return 0;
+  }
+  // Add an additional empty cell as a margin
+  return numberOfDisplayedSolutions() + 1;
 }
 
 int SolutionsController::numberOfDisplayedSolutions() const {

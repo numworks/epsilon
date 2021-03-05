@@ -46,7 +46,7 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
         }
       }
       // Restore the previous interruption flag
-      Ion::CircuitBreaker::resetCustomCheckpoint(&checkpointBuffer);
+      Ion::CircuitBreaker::resetCustomCheckpoint(checkpointBuffer);
     }
   }
 

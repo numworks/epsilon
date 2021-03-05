@@ -21,7 +21,8 @@ constexpr int k_checkpointBufferSize = 340;
 typedef uint8_t CheckpointBuffer[k_checkpointBufferSize];
 
 void storeCustomCheckpoint(CheckpointBuffer buffer);
-void resetCustomCheckpoint(CheckpointBuffer * buffer = nullptr);
+void resetCustomCheckpoint(CheckpointBuffer buffer);
+void unsetCustomCheckpoint();
 void loadCustomCheckpoint();
 Status setCustomCheckpoint(bool overridePreviousCheckpoint = false);
 

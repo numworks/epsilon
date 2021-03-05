@@ -30,15 +30,19 @@ void SVC_ATTRIBUTES storeCustomCheckpointSVC(void * buffer) {
 }
 
 void storeCustomCheckpoint(CheckpointBuffer buffer) {
-  storeCustomCheckpointSVC(&buffer);
+  storeCustomCheckpointSVC(buffer);
 }
 
 void SVC_ATTRIBUTES resetCustomCheckpointSVC(void * buffer) {
   SVC(SVC_CIRCUIT_BREAKER_RESET_CUSTOM_CHECKPOINT);
 }
 
-void resetCustomCheckpoint(CheckpointBuffer * buffer) {
+void resetCustomCheckpoint(CheckpointBuffer buffer) {
   resetCustomCheckpointSVC(buffer);
+}
+
+void unsetCustomCheckpoint() {
+  SVC(SVC_CIRCUIT_BREAKER_UNSET_CUSTOM_CHECKPOINT);
 }
 
 void loadCustomCheckpoint() {

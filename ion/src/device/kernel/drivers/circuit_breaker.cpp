@@ -136,33 +136,31 @@ bool hasCheckpoint(Checkpoint checkpoint) {
   return sCustomStackSnapshotAddress != nullptr;
 }
 
-void storeCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer) {
+void storeCustomCheckpoint(uint8_t * buffer) {
   assert(hasCheckpoint(Checkpoint::Custom));
-  uint8_t * bufferPointer = static_cast<uint8_t *>(buffer);
   assert(buffer != nullptr);
-  memcpy(bufferPointer, &sCustomRegisters, sizeof(jmp_buf));
-  bufferPointer += sizeof(jmp_buf);
-  memcpy(bufferPointer, &sCustomStackSnapshotSize, sizeof(size_t));
-  bufferPointer += sizeof(size_t);
-  memcpy(bufferPointer, &sCustomStackSnapshotAddress, sizeof(uint8_t *));
-  bufferPointer += sizeof(uint8_t *);
-  memcpy(bufferPointer, sCustomStackSnapshot, sCustomStackSnapshotSize);
+  memcpy(buffer, &sCustomRegisters, sizeof(jmp_buf));
+  buffer += sizeof(jmp_buf);
+  memcpy(buffer, &sCustomStackSnapshotSize, sizeof(size_t));
+  buffer += sizeof(size_t);
+  memcpy(buffer, &sCustomStackSnapshotAddress, sizeof(uint8_t *));
+  buffer += sizeof(uint8_t *);
+  memcpy(buffer, sCustomStackSnapshot, sCustomStackSnapshotSize);
 }
 
-void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer * buffer) {
-  if (buffer == nullptr) {
-    // Unset Custom checkpoint
-    sCustomStackSnapshotAddress = nullptr;
-  } else {
-    uint8_t * bufferPointer = static_cast<uint8_t *>(*buffer);
-    memcpy(&sCustomRegisters, bufferPointer, sizeof(jmp_buf));
-    bufferPointer += sizeof(jmp_buf);
-    memcpy(&sCustomStackSnapshotSize, bufferPointer, sizeof(size_t));
-    bufferPointer += sizeof(size_t);
-    memcpy(&sCustomStackSnapshotAddress, bufferPointer, sizeof(uint8_t *));
-    bufferPointer += sizeof(uint8_t *);
-    memcpy(sCustomStackSnapshot, bufferPointer, sCustomStackSnapshotSize);
-  }
+void resetCustomCheckpoint(uint8_t * buffer) {
+  assert(buffer != nullptr);
+  memcpy(&sCustomRegisters, buffer, sizeof(jmp_buf));
+  buffer += sizeof(jmp_buf);
+  memcpy(&sCustomStackSnapshotSize, buffer, sizeof(size_t));
+  buffer += sizeof(size_t);
+  memcpy(&sCustomStackSnapshotAddress, buffer, sizeof(uint8_t *));
+  buffer += sizeof(uint8_t *);
+  memcpy(sCustomStackSnapshot, buffer, sCustomStackSnapshotSize);
+}
+
+void unsetCustomCheckpoint() {
+  sCustomStackSnapshotAddress = nullptr;
 }
 
 static inline void setPendingAction(InternalStatus action) {

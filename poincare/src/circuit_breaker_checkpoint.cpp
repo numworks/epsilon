@@ -33,7 +33,7 @@ bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
 
 void CircuitBreakerCheckpoint::reset() {
   if (s_currentCircuitBreakerCheckpoint == this) {
-    Ion::CircuitBreaker::resetCustomCheckpoint();
+    Ion::CircuitBreaker::unsetCustomCheckpoint();
     s_currentCircuitBreakerCheckpoint = nullptr;
   }
 }

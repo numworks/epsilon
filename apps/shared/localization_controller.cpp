@@ -61,7 +61,7 @@ void LocalizationController::ContentView::layoutSubviews(bool force) {
     origin = layoutTitleSubview(force, Metric::CommonTopMargin + origin);
   }
   if (m_controller->shouldDisplayWarning()) {
-    origin = layoutWarningSubview(force, Metric::CommonTopMargin + origin) + Metric::CommonTopMargin;
+    origin = layoutWarningSubview(force, Metric::CommonTopMargin/2 + origin) + Metric::CommonTopMargin/2 - 1;
   }
   origin = layoutTableSubview(force, origin);
   assert(origin <= bounds().height());

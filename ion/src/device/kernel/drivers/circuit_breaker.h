@@ -14,8 +14,9 @@ enum class Checkpoint {
 };
 
 Ion::CircuitBreaker::Status status();
-void storeCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer buffer);
-void resetCustomCheckpoint(Ion::CircuitBreaker::CheckpointBuffer * buffer);
+void storeCustomCheckpoint(uint8_t * buffer);
+void resetCustomCheckpoint(uint8_t * buffer);
+void unsetCustomCheckpoint();
 bool hasCheckpoint(Checkpoint c);
 bool setCheckpoint(Checkpoint c, bool overridePreviousCheckpoint);
 void loadCheckpoint(Checkpoint c);

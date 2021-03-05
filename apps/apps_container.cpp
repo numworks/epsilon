@@ -216,7 +216,7 @@ void AppsContainer::run() {
    * pointer value, so the method where we call setjump must remain in the call
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
-  Ion::CircuitBreaker::Status homeKeyInterruptStatus = Ion::CircuitBreaker::setHomeCheckpoint();
+  Ion::CircuitBreaker::Status homeKeyInterruptStatus = Ion::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::CheckpointType::Home);
   bool memoryExceptionEncountered = !ExceptionRun(ecp);
   if (homeKeyInterruptStatus == Ion::CircuitBreaker::Status::Set && !memoryExceptionEncountered) {
     /* Normal execution. The exception checkpoint must be created before

@@ -36,17 +36,13 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * The simplification fails for [1+2]->a for instance, because we do not
      * have exact simplification of matrices yet. */
     {
-      Ion::CircuitBreaker::CheckpointBuffer checkpointBuffer;
-      Ion::CircuitBreaker::storeCustomCheckpoint(checkpointBuffer);
-      CircuitBreakerCheckpoint checkpoint;
-      if (CircuitBreakerRun(checkpoint, true)) { // Standard execution
+      SystemCircuitBreakerCheckpoint checkpoint;
+      if (CircuitBreakerRun(checkpoint)) {
         Expression reducedE = storedExpression.clone().deepReduce(reductionContext);
         if (!reducedE.isUninitialized() ) {
           storedExpression = reducedE;
         }
       }
-      // Restore the previous interruption flag
-      Ion::CircuitBreaker::resetCustomCheckpoint(checkpointBuffer);
     }
   }
 

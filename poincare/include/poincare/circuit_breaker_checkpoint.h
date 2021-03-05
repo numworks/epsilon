@@ -10,21 +10,42 @@
  *
  */
 
-#define CircuitBreakerRun(checkpoint, overridePreviousCheckpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCustomCheckpoint(overridePreviousCheckpoint)))
+#define CircuitBreakerRun(checkpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCheckpoint(checkpoint.type())))
 
 namespace Poincare {
 
-class CircuitBreakerCheckpoint final : public Checkpoint {
+class CircuitBreakerCheckpoint : public Checkpoint {
 public:
-  static void InterruptDueToReductionFailure();
-
   using Checkpoint::Checkpoint;
-  ~CircuitBreakerCheckpoint();
-
   bool setActive(Ion::CircuitBreaker::Status status);
   void reset();
+  virtual Ion::CircuitBreaker::CheckpointType type() const = 0;
 private:
-  static CircuitBreakerCheckpoint * s_currentCircuitBreakerCheckpoint;
+  virtual void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint *) = 0;
+  virtual bool isCurrentCircuitBreakerCheckpoint() const = 0;
+};
+
+class UserCircuitBreakerCheckpoint final : public CircuitBreakerCheckpoint {
+public:
+  using CircuitBreakerCheckpoint::CircuitBreakerCheckpoint;
+  ~UserCircuitBreakerCheckpoint();
+  Ion::CircuitBreaker::CheckpointType type() const override { return Ion::CircuitBreaker::CheckpointType::User; }
+private:
+  void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint * checkpoint) override { s_currentUserCircuitBreakerCheckpoint = checkpoint; }
+  virtual bool isCurrentCircuitBreakerCheckpoint() const override { return s_currentUserCircuitBreakerCheckpoint == this; }
+  static CircuitBreakerCheckpoint * s_currentUserCircuitBreakerCheckpoint;
+};
+
+class SystemCircuitBreakerCheckpoint final : public CircuitBreakerCheckpoint {
+public:
+  static void InterruptDueToReductionFailure();
+  using CircuitBreakerCheckpoint::CircuitBreakerCheckpoint;
+  ~SystemCircuitBreakerCheckpoint();
+  Ion::CircuitBreaker::CheckpointType type() const { return Ion::CircuitBreaker::CheckpointType::System; }
+private:
+  void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint * checkpoint) override { s_currentSystemCircuitBreakerCheckpoint = checkpoint; }
+  virtual bool isCurrentCircuitBreakerCheckpoint() const override { return s_currentSystemCircuitBreakerCheckpoint == this; }
+  static CircuitBreakerCheckpoint * s_currentSystemCircuitBreakerCheckpoint;
 };
 
 }

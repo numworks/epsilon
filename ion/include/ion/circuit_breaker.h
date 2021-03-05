@@ -6,6 +6,12 @@
 namespace Ion {
 namespace CircuitBreaker {
 
+enum class CheckpointType {
+  Home, // Checkpoint where the code jumps on Home Event
+  User, // Checkpoint where the code jumps on Back Event if the device is stalling
+  System // Checkpoint used by system to try different paths at run-time
+};
+
 enum class Status {
   Busy, // Waiting after a pendSV
   Interrupted, // An interruption was encountered and the execution jumped to the checkpoint
@@ -14,20 +20,10 @@ enum class Status {
 };
 
 Status status();
-
-// Custom checkpoint
-
-constexpr int k_checkpointBufferSize = 340;
-typedef uint8_t CheckpointBuffer[k_checkpointBufferSize];
-
-void storeCustomCheckpoint(CheckpointBuffer buffer);
-void resetCustomCheckpoint(CheckpointBuffer buffer);
-void unsetCustomCheckpoint();
-void loadCustomCheckpoint();
-Status setCustomCheckpoint(bool overridePreviousCheckpoint = false);
-
-// Home checkpoint
-Status setHomeCheckpoint();
+bool hasCheckpoint(CheckpointType type);
+void unsetCheckpoint(CheckpointType type);
+void loadCheckpoint(CheckpointType type);
+Status setCheckpoint(CheckpointType type);
 
 }
 }

@@ -19,7 +19,6 @@ namespace Poincare {
 
 bool Expression::sSymbolReplacementsCountLock = false;
 static bool sApproximationEncounteredComplex = false;
-static bool sReductionFailed = false;
 
 /* Constructor & Destructor */
 
@@ -46,12 +45,6 @@ Expression Expression::ExpressionFromAddress(const void * address, size_t size) 
   }
   // Build the Expression in the Tree Pool
   return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
-}
-
-/* CircuitBreaker */
-
-void Expression::ReductionFailed() {
-  sReductionFailed = true;
 }
 
 /* Hierarchy */
@@ -435,8 +428,8 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::Redu
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
   sApproximationEncounteredComplex = false;
-  CircuitBreakerCheckpoint checkpoint;
-  if (CircuitBreakerRun(checkpoint, false)) {
+  UserCircuitBreakerCheckpoint checkpoint;
+  if (CircuitBreakerRun(checkpoint)) {
     Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
     if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
       e = Complex<U>::Undefined();
@@ -614,8 +607,8 @@ Expression Expression::simplify(ExpressionNode::ReductionContext reductionContex
    * to clone the expression before reducing it. */
   Expression e = clone();
   {
-    CircuitBreakerCheckpoint checkpoint;
-    if (CircuitBreakerRun(checkpoint, false)) {
+    UserCircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint)) {
       e = e.reduce(reductionContext).deepBeautify(reductionContext);
     } else {
       return Expression();
@@ -699,19 +692,17 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
    * again with ReductionTarget::SystemForApproximation. */
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
-  CircuitBreakerCheckpoint checkpoint;
-  if (!CircuitBreakerRun(checkpoint, false)) {
-    if (sReductionFailed) {
-      reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
-      checkpoint.reset();
-      if (!CircuitBreakerRun(checkpoint, false)) {
-        *simplifiedExpression = Expression();
-        return;
-      }
-    } else {
-      *simplifiedExpression = Expression();
-      return;
-    }
+  UserCircuitBreakerCheckpoint userCheckpoint;
+  SystemCircuitBreakerCheckpoint systemCheckpoint;
+  if (!CircuitBreakerRun(userCheckpoint)) {
+    // User interruption
+    *simplifiedExpression = Expression();
+    return;
+  }
+  if (!CircuitBreakerRun(systemCheckpoint)) {
+    // System interruption, try again with another ReductionTarget
+    reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
+    systemCheckpoint.reset();
   }
   Expression e = clone().deepReduce(reductionContext);
 
@@ -836,8 +827,8 @@ Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext)
    * to clone the expression before reducing it. */
   Expression e = clone();
   {
-    CircuitBreakerCheckpoint checkpoint;
-    if (CircuitBreakerRun(checkpoint, false)) {
+    UserCircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint)) {
       e = e.deepReduce(reductionContext);
     } else {
       e = Undefined::Builder();
@@ -848,7 +839,6 @@ Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext)
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
-  sReductionFailed = false;
   deepReduceChildren(reductionContext);
   return shallowReduce(reductionContext);
 }

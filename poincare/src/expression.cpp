@@ -435,13 +435,16 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::Redu
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
   sApproximationEncounteredComplex = false;
-  // Reset interrupting flag because some evaluation methods use it
-  //Ion::CircuitBreaker::setCustomCheckpoint();
-  Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
-  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
-    e = Complex<U>::Undefined();
+  CircuitBreakerCheckpoint checkpoint;
+  if (CircuitBreakerRun(checkpoint, false)) {
+    Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
+    if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
+      e = Complex<U>::Undefined();
+    }
+    return e;
+  } else {
+    return Complex<U>::Undefined();
   }
-  return e;
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression) {
@@ -465,7 +468,6 @@ int Expression::defaultGetPolynomialCoefficients(Context * context, const char *
 }
 
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const {
-  // Reset interrupting flag because we use deepReduce
   int degree = getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
@@ -608,11 +610,19 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 }
 
 Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
-  /*Ion::CircuitBreaker::setCustomCheckpoint();
-  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
-    return Expression();
-  }*/
-  return reduce(reductionContext).deepBeautify(reductionContext);
+  /* The CircuitBreaker scope can't temper with the previous pool which forces
+   * to clone the expression before reducing it. */
+  Expression e = clone();
+  {
+    CircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint, false)) {
+      e = e.reduce(reductionContext).deepBeautify(reductionContext);
+    } else {
+      return Expression();
+    }
+  }
+  replaceWithInPlace(e);
+  return e;
 }
 
 void makePositive(Expression * e, bool * isNegative) {
@@ -680,6 +690,9 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
 void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
   assert(simplifiedExpression);
 
+  // TODO: Store and reset the previous Checkpoint if there is on but override this one to ensure changing reductionContext !
+
+
   // Step 1: we reduce the expression
   /* We tried first with the ReductionTarget::User. If the reduction failed
    * without any user interruption (too many nodes were generated), we try
@@ -692,14 +705,14 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
       checkpoint.reset();
       if (!CircuitBreakerRun(checkpoint, false)) {
+        *simplifiedExpression = Expression();
         return;
       }
     } else {
+      *simplifiedExpression = Expression();
       return;
     }
   }
-
-  *simplifiedExpression = Expression();
   Expression e = clone().deepReduce(reductionContext);
 
   // Step 2: we approximate and beautify the reduced expression
@@ -819,11 +832,19 @@ Expression Expression::reduceAndRemoveUnit(ExpressionNode::ReductionContext redu
 }
 
 Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
-  /*Ion::CircuitBreaker::setCustomCheckpoint();
-  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
-    return replaceWithUndefinedInPlace();
-  }*/
-  return deepReduce(reductionContext);
+  /* The CircuitBreaker scope can't temper with the previous pool which forces
+   * to clone the expression before reducing it. */
+  Expression e = clone();
+  {
+    CircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint, false)) {
+      e = e.deepReduce(reductionContext);
+    } else {
+      e = Undefined::Builder();
+    }
+  }
+  replaceWithInPlace(e);
+  return e;
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {

@@ -203,7 +203,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       Ion::Device::CircuitBreaker::loadCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]));
       return;
     case SVC_CIRCUIT_BREAKER_SET_CHECKPOINT:
-      *static_cast<bool *>(args[1]) = Ion::Device::CircuitBreaker::setCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]));
+      *static_cast<bool *>(args[2]) = Ion::Device::CircuitBreaker::setCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]), static_cast<uint8_t *>(args[1]));
       return;
     case SVC_CIRCUIT_BREAKER_STATUS:
       *static_cast<Ion::CircuitBreaker::Status *>(args[0]) = Ion::Device::CircuitBreaker::status();

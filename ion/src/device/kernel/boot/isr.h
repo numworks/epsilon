@@ -14,8 +14,7 @@ void tim2_handler(); // Event spinner/breaker
 void tim4_handler(); // Keyboard debouncer
 void svcall_handler_as();
 void svcall_handler(unsigned svcNumber, void * args[]);
-void pendsv_handler_as();
-void pendsv_handler(uint8_t * frameAddress, uint32_t excReturn);
+void pendsv_handler();
 
 #ifdef __cplusplus
 }

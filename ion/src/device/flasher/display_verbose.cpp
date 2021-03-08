@@ -32,12 +32,12 @@ void init() {
     currentHeight += margin;
     const char * title = sMessages[i][0];
     KDSize titleSize = KDFont::LargeFont->stringSize(title);
-    ctx->drawString(title, KDPoint((Ion::Display::Width-titleSize.width())/2, currentHeight), KDFont::LargeFont);
+    ctx->alignAndDrawString(title, KDPoint(0, currentHeight), KDSize(Ion::Display::Width, titleSize.height()), 0.5f, 0.0f, KDFont::LargeFont);
     currentHeight += 2*titleSize.height();
     for (int j = 1; j < sNumberOfMessages; j++) {
       const char * message = sMessages[i][j];
       KDSize messageSize = KDFont::SmallFont->stringSize(message);
-      ctx->drawString(message, KDPoint((Ion::Display::Width-messageSize.width())/2, currentHeight), KDFont::SmallFont);
+      ctx->alignAndDrawString(message, KDPoint(0, currentHeight), KDSize(Ion::Display::Width, messageSize.height()), 0.5f, 0.0f, KDFont::SmallFont);
       currentHeight += messageSize.height();
     }
   }

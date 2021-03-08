@@ -17,6 +17,7 @@ public:
 
   // Text
   KDPoint drawString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
+  KDPoint alignAndDrawString(const char * text, KDPoint p, KDSize frame, float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
   // Check that a string is drawn.
   int checkDrawnString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
 

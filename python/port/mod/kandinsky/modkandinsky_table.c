@@ -13,6 +13,8 @@ STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_set_pixel), (mp_obj_t)&modkandinsky_set_pixel_obj },
   { MP_ROM_QSTR(MP_QSTR_draw_string), (mp_obj_t)&modkandinsky_draw_string_obj },
   { MP_ROM_QSTR(MP_QSTR_fill_rect), (mp_obj_t)&modkandinsky_fill_rect_obj },
+  { MP_ROM_QSTR(MP_QSTR_large_font), mp_const_true },
+  { MP_ROM_QSTR(MP_QSTR_small_font), mp_const_false },
 };
 
 STATIC MP_DEFINE_CONST_DICT(modkandinsky_module_globals, modkandinsky_module_globals_table);

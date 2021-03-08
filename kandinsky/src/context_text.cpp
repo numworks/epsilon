@@ -3,11 +3,26 @@
 #include <kandinsky/font.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/display.h>
+#include <cmath>
 
 constexpr static int k_tabCharacterWidth = 4;
 
 KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength) {
   return pushOrPullString(text, p, font, textColor, backgroundColor, maxByteLength, true);
+}
+
+KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame, float horizontalAlignment, float verticalAlignment, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
+  assert(horizontalAlignment >= 0.0f && horizontalAlignment <= 1.0f && verticalAlignment >= 0.0f && verticalAlignment <= 1.0f);
+  /* We ceil vertical alignment so that, when total vertical margin is odd, text
+   * is shifted 1px downward instead of upward, so that the text look better
+   * centered. */
+  KDSize textSize = font->stringSize(text);
+  // TODO : Identify and fix any texts that doesn't fit in its frame.
+  // assert(textSize.width() <= frame.width() && textSize.height() <= frame.height());
+  KDPoint origin(
+      p.x() + std::round(horizontalAlignment * (frame.width() - textSize.width())),
+      p.y() + std::ceil(verticalAlignment * (frame.height() - textSize.height())));
+  return drawString(text, origin, font, textColor, backgroundColor, maxLength);
 }
 
 int KDContext::checkDrawnString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {

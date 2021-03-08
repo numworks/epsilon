@@ -15,13 +15,12 @@ namespace CircuitBreaker {
 using namespace Regs;
 using namespace Ion::CircuitBreaker;
 
-/* Basic frame description:
- * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | Reserved | Reserved | */
-static constexpr size_t k_basicFrameSize = 0x28;
-
-/* Extended frame description:
- * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | s0 | s1 | ... | s 15 | FPSCR | Reserved | Reserved | Reserved | */
-static constexpr size_t k_extendedFrameSize = 0x70;
+/* Context switching has to be done within a pendSV interrupt. Indeed, if the
+ * interruption handling the context switching is nested within another
+ * interruption, there is no easy way to inform the cortex of the interruption
+ * nesting when loading a previous context (since the "active interruption"
+ * registers of the cortex are read-only). We use pendSV to delay the context
+ * switching until no other interruption remains to be executed. */
 
 /* Once in jumping to pendsv_handler, the stack holds the exception context
  * frame but also miscellaneous values that were pushed in the setCheckpoint
@@ -48,6 +47,12 @@ static constexpr size_t k_extendedFrameSize = 0x70;
  *        |     |
  *        |     |
  *
+ * - Details of BC section -
+ * Basic context frame description:
+ * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | Reserved | Reserved |
+ * Extended context frame description:
+ * | r0 | r1 | r2 | r3 | r12 | lr | return address | xPSR | s0 | s1 | ... | s 15 | FPSCR | Reserved | Reserved | Reserved |
+ *
  * We need to store/restore a stack snapshot from the point A to B to ensure
  * that right after the longjmp:
  * - the pendsv_handler ends correctly (C-D section)
@@ -56,32 +61,14 @@ static constexpr size_t k_extendedFrameSize = 0x70;
  * - the Ion::CircuitBreaker userland API returns correclty to the application
  *   code that used the Ion::CircuitBreaker API initially (A-B section)
  *
- * Empirically, the section A-B and C-D are:
- *                       +------------+--------------+------------+--------------+
- *                       |DEBUG=0/Home|DEBUG=0/Custom|DEBUG=1/Home|DEBUG=1/Custom|
- * +---------------------+------------+--------------+------------+--------------+
- * | Size in Bytes of CD |     20     |      20      |     36     |      36      |
- * | Size in bytes of AB |      0     |       8      |      0     |      24      |
- * +---------------------+------------+--------------+------------+--------------+
- *
- * We keep a storing space of 32 bytes (AB) + the frame size (BC) + 64 bytes (CD)
- * just to be sure.
- *
- * TODO: get the sp in Ion::CircuitBreaker::setCheckpoint to ensure the size of AB?
- *
+ * The userland setCheckpoint is reponsible for extracting the stack pointer
+ * value when entering the fonction to assess the value of A address.
+ * The pendsv_handler extracts the stack pointer right before executing setjmp
+ * to get the value of D address.
  */
 
-/* Context switching has to be done within a pendSV interrupt. Indeed, if the
- * interruption handling the context switching is nested within another
- * interruption, there is no easy way to inform the cortex of the interruption
- * nesting when loading a previous context (since the "active interruption"
- * registers of the cortex are read-only). We use pendSV to delay the context
- * switching until no other interruption remains to be executed. */
-
-static constexpr size_t k_ABStackMaxSize = 32;
-static constexpr size_t k_CDStackMaxSize = 64;
-static constexpr size_t k_stackSnapshotMaxSize = k_ABStackMaxSize + k_extendedFrameSize + k_CDStackMaxSize;
-static_assert(k_basicFrameSize < k_extendedFrameSize, "The basic exception frame size is smaller than the extended exception frame.");
+// Empirically, the snapshot section AD is up to 168 bytes long
+static constexpr size_t k_stackSnapshotMaxSize = 256;
 
 enum class InternalStatus {
   Set,
@@ -110,17 +97,6 @@ uint8_t sSystemStackSnapshot[k_stackSnapshotMaxSize];
 uint8_t * sSystemStackSnapshotAddress = nullptr;
 size_t sSystemStackSnapshotSize;
 jmp_buf sSystemRegisters;
-
-inline size_t frameSize(uint32_t excReturn) {
-  /* The exception return value indicating the return context:
-   * - the stack frame used (FPU extended?),
-   * - the stack pointer used (MSP/PSP)
-   * - the mode used (thread/handler)
-   *  We extract the type
-   */
-  bool useBasicFrame = excReturn & 0x10;
-  return useBasicFrame ? k_basicFrameSize : k_extendedFrameSize;
-}
 
 Ion::CircuitBreaker::Status status() {
   if (sInternalStatus == InternalStatus::Set) {
@@ -166,11 +142,14 @@ static inline void setPendingAction(CheckpointType type, InternalStatus action) 
   Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
 }
 
-bool setCheckpoint(CheckpointType type) {
+uint8_t * sASectionStart = nullptr;
+
+bool setCheckpoint(CheckpointType type, uint8_t * spAddress) {
   if (Device::CircuitBreaker::hasCheckpoint(type)) {
     // Keep the oldest checkpoint
     return false;
   }
+  sASectionStart = spAddress;
   setPendingAction(type, InternalStatus::PendingSetCheckpoint);
   return true;
 }
@@ -186,7 +165,7 @@ void loadCheckpoint(CheckpointType type) {
 
 using namespace Ion::Device::CircuitBreaker;
 
-void pendsv_handler(uint8_t * frameAddress, uint32_t excReturn) {
+void pendsv_handler() {
   // status is supposed to be one of the pending status
   assert(sInternalStatus == InternalStatus::PendingSetCheckpoint || sInternalStatus == InternalStatus::PendingLoadCheckpoint);
 
@@ -211,20 +190,20 @@ void pendsv_handler(uint8_t * frameAddress, uint32_t excReturn) {
     if (sCheckpointType == CheckpointType::Home) {
       regsBufferAddress = &sHomeRegisters;
       sHomeStackSnapshotAddress = stackPointerAddress;
-      sHomeStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
+      sHomeStackSnapshotSize = sASectionStart - stackPointerAddress;
       assert(sHomeStackSnapshotSize <= k_stackSnapshotMaxSize);
       memcpy(sHomeStackSnapshot, sHomeStackSnapshotAddress, sHomeStackSnapshotSize);
     } else if (sCheckpointType == CheckpointType::User) {
       regsBufferAddress = &sUserRegisters;
       sUserStackSnapshotAddress = stackPointerAddress;
-      sUserStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
+      sUserStackSnapshotSize = sASectionStart - stackPointerAddress;
       assert(sUserStackSnapshotSize <= k_stackSnapshotMaxSize);
       memcpy(sUserStackSnapshot, sUserStackSnapshotAddress, sUserStackSnapshotSize);
     } else {
       assert(sCheckpointType == CheckpointType::System);
       regsBufferAddress = &sSystemRegisters;
       sSystemStackSnapshotAddress = stackPointerAddress;
-      sSystemStackSnapshotSize = frameAddress + frameSize(excReturn) - stackPointerAddress + k_ABStackMaxSize;
+      sSystemStackSnapshotSize = sASectionStart - stackPointerAddress;
       assert(sSystemStackSnapshotSize <= k_stackSnapshotMaxSize);
       memcpy(sSystemStackSnapshot, sSystemStackSnapshotAddress, sSystemStackSnapshotSize);
     }

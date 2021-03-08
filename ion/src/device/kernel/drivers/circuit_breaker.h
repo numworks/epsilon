@@ -10,7 +10,7 @@ namespace CircuitBreaker {
 
 bool hasCheckpoint(Ion::CircuitBreaker::CheckpointType type);
 void loadCheckpoint(Ion::CircuitBreaker::CheckpointType type);
-bool setCheckpoint(Ion::CircuitBreaker::CheckpointType type);
+bool setCheckpoint(Ion::CircuitBreaker::CheckpointType type, uint8_t * spAddress);
 Ion::CircuitBreaker::Status status();
 void unsetCheckpoint(Ion::CircuitBreaker::CheckpointType type);
 

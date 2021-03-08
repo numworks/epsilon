@@ -62,6 +62,7 @@ private:
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
+  void handleRunException(bool resetSnapshot);
 
   static I18n::Message k_promptMessages[];
   static KDColor k_promptColors[];

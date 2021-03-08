@@ -106,9 +106,9 @@ void TableCell::layoutSubviews(bool force) {
       accessoryX += width - accessoryWidth;
     }
     // Accessory must be vertically centered on the entire cell height.
-    KDCoordinate verticalCenterOffset = (height - accessorySize.height()) / 2;
+    KDCoordinate availableSpace = height - accessorySize.height();
     // Set accessory frame
-    accessory->setFrame(KDRect(accessoryX, y + verticalCenterOffset, accessoryWidth, accessoryHeight), force);
+    accessory->setFrame(KDRect(accessoryX, y + availableSpace/2, accessoryWidth, accessoryHeight + availableSpace%2), force);
     // Update remaining space, add margin before accessory
     KDCoordinate horizontalOffset = accessoryWidth + Metric::CellHorizontalElementMargin;
     if (!isAccessoryAlignedRight()) {
@@ -142,10 +142,9 @@ void TableCell::layoutSubviews(bool force) {
 
   if (label) {
     /* Label is vertically centered. If available space is odd, the extra pixel
-     * is placed above label as it is often text, which often appears to be
-     * elevated due to descenders such as j. */
-    KDCoordinate verticalCenterOffset = (maxHeight - labelHeight + 1) / 2;
-    label->setFrame(KDRect(x, y + verticalCenterOffset, labelWidth, labelHeight), force);
+     * is given as extra height. */
+    KDCoordinate availableSpace = maxHeight - labelHeight;
+    label->setFrame(KDRect(x, y + availableSpace/2, labelWidth, labelHeight + availableSpace%2), force);
   }
 
   if (subLabel) {
@@ -162,8 +161,8 @@ void TableCell::layoutSubviews(bool force) {
       }
     }
     // SubLabel is vertically centered, see label's vertical centering comment.
-    KDCoordinate verticalCenterOffset = (maxHeight - subLabelHeight + 1) / 2;
-    subLabel->setFrame(KDRect(x, y + verticalCenterOffset, subLabelWidth, subLabelHeight), force);
+    KDCoordinate availableSpace = maxHeight - subLabelHeight;
+    subLabel->setFrame(KDRect(x, y + availableSpace/2, subLabelWidth, subLabelHeight + availableSpace%2), force);
   }
 }
 

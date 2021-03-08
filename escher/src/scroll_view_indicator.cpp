@@ -107,13 +107,11 @@ bool ScrollViewArrow::update(bool visible) {
 
 void ScrollViewArrow::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), m_backgroundColor);
-  KDSize arrowSize = KDFont::LargeFont->glyphSize();
-  const KDPoint arrowAlign = KDPoint(
-    (m_arrow == Top || m_arrow == Bottom) * (m_frame.width() - arrowSize.width()) / 2,
-    (m_arrow == Left || m_arrow == Right) * (m_frame.height() - arrowSize.height()) / 2
-  );
   char arrowString[2] = {m_arrow, 0}; // TODO Change when code points
-  ctx->drawString(arrowString, arrowAlign, KDFont::LargeFont, m_color, m_backgroundColor, m_visible);
+  ctx->alignAndDrawString(arrowString, KDPointZero, m_frame.size(),
+    (m_arrow == Top || m_arrow == Bottom) * 0.5f,
+    (m_arrow == Left || m_arrow == Right) * 0.5f,
+    KDFont::LargeFont, m_color, m_backgroundColor, m_visible);
 }
 
 #if ESCHER_VIEW_LOGGING

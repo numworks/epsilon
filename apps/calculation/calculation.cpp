@@ -202,6 +202,7 @@ bool Calculation::shouldOnlyDisplayExactOutput() {
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {
+  // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
   }
@@ -229,6 +230,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 }
 
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
+  // TODO: implement a UserCircuitBreaker
   if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
     return AdditionalInformationType::None;
   }

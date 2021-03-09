@@ -675,13 +675,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
    * again with ReductionTarget::SystemForApproximation. */
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
-  UserCircuitBreakerCheckpoint userCheckpoint;
   SystemCircuitBreakerCheckpoint systemCheckpoint;
-  if (!CircuitBreakerRun(userCheckpoint)) {
-    // User interruption
-    *simplifiedExpression = Expression();
-    return;
-  }
   if (!CircuitBreakerRun(systemCheckpoint)) {
     // System interruption, try again with another ReductionTarget
     reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);

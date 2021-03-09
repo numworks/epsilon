@@ -1,6 +1,6 @@
 include build/targets.device.$(MODEL).mak
 
-HANDY_TARGETS += flasher.light flasher.verbose flasher.verbose.flash bench.ram bench.flash bootloader.standard bootloader.rescue kernel userland
+HANDY_TARGETS += flasher.light flasher.verbose flasher.verbose.flash bench.ram bench.flash bootloader kernel userland
 # TODO EMILIE: move rescue to N110 only
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
@@ -57,10 +57,9 @@ $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),console
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 
 bootloader_src = $(ion_device_bootloader_src) $(liba_bootloader_src)
-$(BUILD_DIR)/bootloader.standard.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
-$(BUILD_DIR)/bootloader.rescue.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
-$(BUILD_DIR)/bootloader.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/bootloader
-$(BUILD_DIR)/bootloader.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/$(subst .,_,$*)_flash.ld
+$(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
+$(BUILD_DIR)/bootloader.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/bootloader
+$(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/bootloader_flash.ld
 
 kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_kernel_src)
 $(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),)

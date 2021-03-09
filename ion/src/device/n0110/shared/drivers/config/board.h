@@ -13,14 +13,14 @@ namespace Board {
 namespace Config {
 
 /* The bootloader, kernel and userland starts should be aligned to the begining of a sector (to flash them easily).
+ * The bootloader should occupty the whole internal flash
  * The memory layouts are the following:
  * - internal flash: 4*16k
  * - external flash: 8*4k + 32K + 127 * 64K
  */
 
-constexpr static uint32_t KernelInternalTotalSize = InternalFlash::Config::TotalSize - 2*BootloaderTotalSize;
-constexpr static uint32_t KernelExternalTotalSize = 8*0x1000 + 0x8000 - PersistingBytes::Config::BufferSize;
-
+constexpr static uint32_t BootloaderTotalSize = InternalFlash::Config::TotalSize; // 64kB
+constexpr static uint32_t KernelTotalSize = 0x40000; // 256kB
 
 }
 }

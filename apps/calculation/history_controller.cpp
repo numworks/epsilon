@@ -1,5 +1,6 @@
 #include "history_controller.h"
 #include "app.h"
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <assert.h>
 
@@ -96,28 +97,31 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       }
     } else {
       assert(subviewType == SubviewType::Ellipsis);
-      Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
-      ListController * vc = nullptr;
-      Expression e = calculationAtIndex(focusRow)->exactOutput();
-      if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
-        vc = &m_complexController;
-      } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
-        vc = &m_trigonometryController;
-        // Find which of the input or output is the cosine/sine
-        ExpressionNode::Type t = e.type();
-        e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
-      } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
-        vc = &m_integerController;
-      } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
-        vc = &m_rationalController;
-      } else if (additionalInfoType == Calculation::AdditionalInformationType::Unit) {
-        vc = &m_unitController;
-      } else if (additionalInfoType == Calculation::AdditionalInformationType::Matrix) {
-        vc = &m_matrixController;
-      }
-      if (vc) {
-        vc->setExpression(e);
-        Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+      UserCircuitBreakerCheckpoint checkpoint;
+      if (CircuitBreakerRun(checkpoint)) {
+        Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
+        ListController * vc = nullptr;
+        Expression e = calculationAtIndex(focusRow)->exactOutput();
+        if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
+          vc = &m_complexController;
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
+          vc = &m_trigonometryController;
+          // Find which of the input or output is the cosine/sine
+          ExpressionNode::Type t = e.type();
+          e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
+          vc = &m_integerController;
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
+          vc = &m_rationalController;
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Unit) {
+          vc = &m_unitController;
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Matrix) {
+          vc = &m_matrixController;
+        }
+        if (vc) {
+          vc->setExpression(e);
+          Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+        }
       }
     }
     return true;

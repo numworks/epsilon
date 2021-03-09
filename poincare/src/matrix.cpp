@@ -202,17 +202,6 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 }
 
 Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant, bool reduced) {
-  /*Ion::CircuitBreaker::setCustomCheckpoint();
-  if (Ion::CircuitBreaker::clearCustomCheckpointFlag()) {
-    // Handle interruption
-    if (determinant) {
-      *determinant = Undefined::Builder();
-    }
-    for (int i = 0; i < numberOfRows() * numberOfColumns(); i++) {
-      replaceChildAtIndexInPlace(i, Undefined::Builder());
-    }
-    return *this;
-  }*/
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
 

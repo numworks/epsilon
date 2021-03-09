@@ -428,16 +428,11 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::Redu
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
   sApproximationEncounteredComplex = false;
-  UserCircuitBreakerCheckpoint checkpoint;
-  if (CircuitBreakerRun(checkpoint)) {
-    Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
-    if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
-      e = Complex<U>::Undefined();
-    }
-    return e;
-  } else {
-    return Complex<U>::Undefined();
+  Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
+  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
+    e = Complex<U>::Undefined();
   }
+  return e;
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression) {
@@ -603,19 +598,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 }
 
 Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
-  /* The CircuitBreaker scope can't temper with the previous pool which forces
-   * to clone the expression before reducing it. */
-  Expression e = clone();
-  {
-    UserCircuitBreakerCheckpoint checkpoint;
-    if (CircuitBreakerRun(checkpoint)) {
-      e = e.reduce(reductionContext).deepBeautify(reductionContext);
-    } else {
-      return Expression();
-    }
-  }
-  replaceWithInPlace(e);
-  return e;
+  return deepReduce(reductionContext).deepBeautify(reductionContext);
 }
 
 void makePositive(Expression * e, bool * isNegative) {
@@ -819,23 +802,11 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
 Expression Expression::reduceAndRemoveUnit(ExpressionNode::ReductionContext reductionContext, Expression * Unit) {
   /* RemoveUnit has to be called on reduced expression. reduce method is called
    * instead of deepReduce to catch interrupted simplification. */
-  return reduce(reductionContext).removeUnit(Unit);
+  return deepReduce(reductionContext).removeUnit(Unit);
 }
 
 Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
-  /* The CircuitBreaker scope can't temper with the previous pool which forces
-   * to clone the expression before reducing it. */
-  Expression e = clone();
-  {
-    UserCircuitBreakerCheckpoint checkpoint;
-    if (CircuitBreakerRun(checkpoint)) {
-      e = e.deepReduce(reductionContext);
-    } else {
-      e = Undefined::Builder();
-    }
-  }
-  replaceWithInPlace(e);
-  return e;
+  return deepReduce(reductionContext);
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {

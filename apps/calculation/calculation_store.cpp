@@ -1,5 +1,6 @@
 #include "calculation_store.h"
 #include "../shared/poincare_helpers.h"
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -35,98 +36,126 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
 
 // Pushes an expression in the store
 ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context * context, HeightComputer heightComputer) {
-  /* Compute ans now, before the buffer is updated and before the calculation
-   * might be deleted */
-  Expression ans = ansExpression(context);
+  /* TODO: we could refine this UserCircuitBreaker. When interrupted during
+   * simplification, we could still try to display the approximate result? When
+   * interrupted during approximation, we could at least display the exact
+   * result. If we do so, don't forget to force the Calculation sign to be
+   * approximative to avoid long computation to determine it.
+   */
 
-  /* Prepare the buffer for the new calculation
-   *The minimal size to store the new calculation is the minimal size of a calculation plus the pointer to its end */
-  int minSize = Calculation::MinimalSize() + sizeof(Calculation *);
-  assert(m_bufferSize > minSize);
-  while (remainingBufferSize() < minSize) {
-    // If there is no more space to store a calculation, we delete the oldest one
-    deleteOldestCalculation();
-  }
+  /* Store information about the buffer state to be able to reset it in case of
+   * interruption */
+  const char * calculationAreaEnd = m_calculationAreaEnd;
+  int numberOfCalculations = m_numberOfCalculations;
 
-  // Getting the adresses of the limits of the free space
-  char * beginingOfFreeSpace = (char *)m_calculationAreaEnd;
-  char * endOfFreeSpace = beginingOfMemoizationArea();
-  char * previousCalc = beginingOfFreeSpace;
+  UserCircuitBreakerCheckpoint checkpoint;
+  if (CircuitBreakerRun(checkpoint)) {
+    /* Compute ans now, before the buffer is updated and before the calculation
+     * might be deleted */
+    Expression ans = ansExpression(context);
 
-  // Add the beginning of the calculation
-  {
-    /* Copy the begining of the calculation. The calculation minimal size is
-     * available, so this memmove will not overide anything. */
-    Calculation newCalc = Calculation();
-    size_t calcSize = sizeof(newCalc);
-    memcpy(beginingOfFreeSpace, &newCalc, calcSize);
-    beginingOfFreeSpace += calcSize;
-  }
-
-  /* Add the input expression.
-   * We do not store directly the text entered by the user because we do not
-   * want to keep Ans symbol in the calculation store. */
-  const char * inputSerialization = beginingOfFreeSpace;
-  {
-    Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
-    if (!pushSerializeExpression(input, beginingOfFreeSpace, &endOfFreeSpace)) {
-      /* If the input does not fit in the store (event if the current
-       * calculation is the only calculation), just replace the calculation with
-       * undef. */
-      return emptyStoreAndPushUndef(context, heightComputer);
+    /* Prepare the buffer for the new calculation
+     *The minimal size to store the new calculation is the minimal size of a calculation plus the pointer to its end */
+    int minSize = Calculation::MinimalSize() + sizeof(Calculation *);
+    assert(m_bufferSize > minSize);
+    while (remainingBufferSize() < minSize) {
+      // If there is no more space to store a calculation, we delete the oldest one
+      deleteOldestCalculation();
+      // Update the calculation buffer state
+      calculationAreaEnd = m_calculationAreaEnd;
+      numberOfCalculations = m_numberOfCalculations;
     }
-    beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
-  }
 
-  // Compute and serialize the outputs
-  /* The serialized outputs are:
-   * - the exact ouput
-   * - the approximate output with the maximal number of significant digits
-   * - the approximate output with the displayed number of significant digits */
-  {
-    // Outputs hold exact output, approximate output and its duplicate
-    constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
-    Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-    if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode()) && outputs[1].hasUnit()) {
-      // Hide results with units on units if required by the exam mode configuration
-      outputs[1] = Undefined::Builder();
+    // Getting the adresses of the limits of the free space
+    char * beginingOfFreeSpace = (char *)m_calculationAreaEnd;
+    char * endOfFreeSpace = beginingOfMemoizationArea();
+    char * previousCalc = beginingOfFreeSpace;
+
+    // Add the beginning of the calculation
+    {
+      /* Copy the begining of the calculation. The calculation minimal size is
+       * available, so this memmove will not overide anything. */
+      Calculation newCalc = Calculation();
+      size_t calcSize = sizeof(newCalc);
+      memcpy(beginingOfFreeSpace, &newCalc, calcSize);
+      beginingOfFreeSpace += calcSize;
     }
-    outputs[2] = outputs[1];
-    int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
-    for (int i = 0; i < numberOfOutputs; i++) {
-      if (i == numberOfOutputs - 1) {
-        numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
-      }
-      if (!pushSerializeExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
-        /* If the exat/approximate output does not fit in the store (event if the
-         * current calculation is the only calculation), replace the output with
-         * undef if it fits, else replace the whole calcualtion with undef. */
-        Expression undef = Undefined::Builder();
-        if (!pushSerializeExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
-          return emptyStoreAndPushUndef(context, heightComputer);
-        }
+
+    /* Add the input expression.
+     * We do not store directly the text entered by the user because we do not
+     * want to keep Ans symbol in the calculation store. */
+    const char * inputSerialization = beginingOfFreeSpace;
+    {
+      Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
+      if (!pushSerializeExpression(input, beginingOfFreeSpace, &endOfFreeSpace)) {
+        // Update the calculation buffer state
+        calculationAreaEnd = m_buffer;
+        numberOfCalculations = 0;
+        /* If the input does not fit in the store (event if the current
+         * calculation is the only calculation), just replace the calculation with
+         * undef. */
+        return emptyStoreAndPushUndef(context, heightComputer);
       }
       beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
     }
+
+    // Compute and serialize the outputs
+    /* The serialized outputs are:
+     * - the exact ouput
+     * - the approximate output with the maximal number of significant digits
+     * - the approximate output with the displayed number of significant digits */
+    {
+      // Outputs hold exact output, approximate output and its duplicate
+      constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
+      Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
+      PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode()) && outputs[1].hasUnit()) {
+        // Hide results with units on units if required by the exam mode configuration
+        outputs[1] = Undefined::Builder();
+      }
+      outputs[2] = outputs[1];
+      int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
+      for (int i = 0; i < numberOfOutputs; i++) {
+        if (i == numberOfOutputs - 1) {
+          numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
+        }
+        if (!pushSerializeExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
+          /* If the exat/approximate output does not fit in the store (event if the
+           * current calculation is the only calculation), replace the output with
+           * undef if it fits, else replace the whole calculation with undef. */
+          Expression undef = Undefined::Builder();
+          if (!pushSerializeExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
+            // Update the calculation buffer state
+            calculationAreaEnd = m_buffer;
+            numberOfCalculations = 0;
+            return emptyStoreAndPushUndef(context, heightComputer);
+          }
+        }
+        beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
+      }
+    }
+    // Storing the pointer of the end of the new calculation
+    memcpy(endOfFreeSpace-sizeof(Calculation*),&beginingOfFreeSpace,sizeof(beginingOfFreeSpace));
+
+    // The new calculation is now stored
+    m_numberOfCalculations++;
+
+    // The end of the calculation storage area is updated
+    m_calculationAreaEnd += beginingOfFreeSpace - previousCalc;
+    ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(previousCalc));
+    /* Heights are computed now to make sure that the display output is decided
+     * accordingly to the remaining size in the Poincare pool. Once it is, it
+     * can't change anymore: the calculation heights are fixed which ensures that
+     * scrolling computation is right. */
+    calculation->setHeights(
+        heightComputer(calculation.pointer(), false),
+        heightComputer(calculation.pointer(), true));
+    return calculation;
+  } else {
+    m_calculationAreaEnd = calculationAreaEnd;
+    m_numberOfCalculations = numberOfCalculations;
+    return nullptr;
   }
-  // Storing the pointer of the end of the new calculation
-  memcpy(endOfFreeSpace-sizeof(Calculation*),&beginingOfFreeSpace,sizeof(beginingOfFreeSpace));
-
-  // The new calculation is now stored
-  m_numberOfCalculations++;
-
-  // The end of the calculation storage area is updated
-  m_calculationAreaEnd += beginingOfFreeSpace - previousCalc;
-  ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(previousCalc));
-  /* Heights are computed now to make sure that the display output is decided
-   * accordingly to the remaining size in the Poincare pool. Once it is, it
-   * can't change anymore: the calculation heights are fixed which ensures that
-   * scrolling computation is right. */
-  calculation->setHeights(
-      heightComputer(calculation.pointer(), false),
-      heightComputer(calculation.pointer(), true));
-  return calculation;
 }
 
 // Delete the calculation of index i

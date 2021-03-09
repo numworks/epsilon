@@ -133,9 +133,10 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     if (!myApp->isAcceptableText(m_cacheBuffer)) {
       return true;
     }
-    m_calculationStore->push(m_cacheBuffer, myApp->localContext(), HistoryViewCell::Height);
-    m_historyController->reload();
-    return true;
+    if (m_calculationStore->push(m_cacheBuffer, myApp->localContext(), HistoryViewCell::Height).pointer()) {
+      m_historyController->reload();
+      return true;
+    }
   }
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
@@ -156,11 +157,13 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   } else {
     layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize, context);
   }
-  m_calculationStore->push(m_cacheBuffer, context, HistoryViewCell::Height);
-  m_historyController->reload();
-  m_contentView.expressionField()->setEditing(true, true);
-  telemetryReportEvent("Input", m_cacheBuffer);
-  return true;
+  if (m_calculationStore->push(m_cacheBuffer, context, HistoryViewCell::Height).pointer()) {
+    m_historyController->reload();
+    m_contentView.expressionField()->setEditing(true, true);
+    telemetryReportEvent("Input", m_cacheBuffer);
+    return true;
+  }
+  return false;
 }
 
 bool EditExpressionController::inputViewDidAbortEditing(const char * text) {

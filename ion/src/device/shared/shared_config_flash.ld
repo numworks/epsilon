@@ -1,7 +1,6 @@
 SIZE_LENGTH = 4;
 SIGNATURE_LENGTH = 64;
 
-INTERNAL_FLASH_BOOTLOADER_LENGTH = 32K;
 
 /*
  * |                                      SRAM                                       |

@@ -17,9 +17,7 @@ constexpr static AFGPIOPin VbusPin = AFGPIOPin(GPIOA, 9, GPIO::AFR::AlternateFun
 constexpr static AFGPIOPin DmPin = AFGPIOPin(GPIOA, 11, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast);
 constexpr static AFGPIOPin DpPin = AFGPIOPin(GPIOA, 12, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast);
 
-static_assert(InternalFlash::Config::StartAddress + 2*Board::Config::BootloaderTotalSize == 0x08008000, "Bootloader's memory area should not be accessible via DFU");
-
-constexpr static const char * InterfaceFlashStringDescriptor = "@Flash/0x08008000/02*016Kg/0x90000000/08*004Kg,01*032Kg,63*064Kg,64*064Kg";
+constexpr static const char * InterfaceFlashStringDescriptor = "@Flash/0x90000000/08*004Kg,01*032Kg,63*064Kg,64*064Kg";
 constexpr static int BCDDevice = 0x0110;
 
 }

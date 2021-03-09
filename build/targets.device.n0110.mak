@@ -5,20 +5,6 @@ test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(kandinsky_src) 
 $(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_read_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_read_src))
 $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
 
-
-bootloader_permanent_src = $(ion_src) $(ion_device_n0110_bootloader_permanent_src) $(liba_src) $(kandinsky_src)
-$(BUILD_DIR)/bootloader.permanent.$(EXE): $(call flavored_object_for,$(bootloader_permanent_src), usbxip privileged)
-$(BUILD_DIR)/bootloader.permanent.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash_permanent.ld
-
-bootloader_updatable_src = $(ion_src) $(ion_device_n0110_bootloader_updatable_src) $(liba_src) $(kandinsky_src)
-$(BUILD_DIR)/bootloader.updatable.$(EXE): $(call flavored_object_for,$(bootloader_updatable_src), usbxip svcallhandler privileged)
-$(BUILD_DIR)/bootloader.updatable.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash_updatable.ld
-$(BUILD_DIR)/bootloader.updatable.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)
-
-.PHONY: secure_bootloader_external
-secure_bootloader_external: $(BUILD_DIR)/bootloader.updatable.elf $(BUILD_DIR)/epsilon.official.onboarding.beta.elf
-	$(Q) python3 build/device/elf2dfuTwoElf.py $< $(word 2,$^) $(BUILD_DIR)/epsilon.dfu #TODO LEA warning,t he files ned to be called in this order for now, see TODO in elf2dfuTwoElf.py
-
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu flasher.dfu
 	@echo "DFU     $@"

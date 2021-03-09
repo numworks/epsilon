@@ -102,10 +102,13 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   }
   if (!std::isnan(yMi) && !std::isnan(yMa)) {
     setZoomAuto(false);
+    float yMaxOld = yMax(), yMinOld = yMin();
     m_yRange.setMax(yMa, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(yMi, k_lowerMaxFloat, k_upperMaxFloat);
+    /* The factor will typically be equal to ratio, unless yMax and yMin are
+     * close to the maximal values. */
+    m_offscreenYAxis *= (yMax() - yMin()) / (yMaxOld - yMinOld);
   }
-  m_offscreenYAxis *= ratio;
   setZoomNormalize(isOrthonormal());
 }
 

@@ -5,7 +5,6 @@
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
-#include <kernel/drivers/config/board.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
@@ -23,7 +22,7 @@ using namespace Regs;
 void suspend(bool checkIfOnOffKeyReleased) {
   bool isLEDActive = LED::getColor() != KDColorBlack;
   bool plugged = USB::isPlugged();
-  bool numworksAuthentication = Authentication::isAuthenticated(reinterpret_cast<void *>(Board::Config::UserlandAddress - Board::Config::SizeSize));
+  bool numworksAuthentication = Authentication::trustedUserland();
 
   if (checkIfOnOffKeyReleased) {
     waitUntilOnOffKeyReleased();

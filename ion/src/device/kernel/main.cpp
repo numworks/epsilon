@@ -1,4 +1,5 @@
 #include <kernel/drivers/config/board.h>
+#include <kernel/drivers/authentication.h>
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/cortex_control.h>
 #include <kernel/drivers/display.h>
@@ -6,6 +7,10 @@
 #include <ion/display.h>
 #include <kandinsky/font.h>
 #include <string.h>
+
+extern "C" {
+  extern char _kernel_start;
+}
 
 constexpr static int sNumberOfMessages = 7;
 constexpr static const char * sMessages[sNumberOfMessages] = {
@@ -52,26 +57,17 @@ void displayWarningMessage() {
 
 typedef void (*EntryPoint)();
 
-/* 'unprivileged_main' has to be in a special memory sector whose access is
- * enabled for unprivileged code since it downgrades the execution mode to
- * unprivileged and the MPU forbids access to most of the kernel code by
- * unprivileged code. To ensure this, we need to forbid inlining. */
-
-void __attribute__((noinline)) unprivileged_main() {
-  // Unprivileged mode
-  switch_to_unpriviledged();
-
-  // Jump to userland
-  EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(Ion::Device::Board::Config::UserlandAddress);
-  (*userlandFirstAddress)();
-}
-
-void kernel_main(bool numworksAuthentication) {
+void kernel_main() {
   // Display warning for unauthenticated software
-  if (!numworksAuthentication) {
+  if (!Ion::Device::Authentication::trustedUserland()) {
     Ion::Device::Backlight::init();
     displayWarningMessage();
     Ion::Device::Backlight::shutdown();
   }
-  unprivileged_main();
+  // Unprivileged mode
+  switch_to_unpriviledged();
+
+  // Jump to userland
+  EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(_kernel_start + Ion::Device::Board::Config::UserlandOffsetFromKernel);
+  (*userlandFirstAddress)();
 }

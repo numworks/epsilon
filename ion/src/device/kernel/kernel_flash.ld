@@ -12,48 +12,49 @@
 INCLUDE config_flash.ld
 
 MEMORY {
-  FLASH_KERNEL (rx) : ORIGIN = FLASH_KERNEL_ORIGIN, LENGTH = FLASH_KERNEL_LENGTH
-  FLASH_PERSISTING_BYTES (rx) : ORIGIN = PERSISTING_BYTES_ORIGIN, LENGTH = PERSISTING_BYTES_LENGTH
+  PERSITING_BYTES (rx) : ORIGIN = PERSITING_BYTES_OFFSET, LENGTH = PERSITING_BYTES_LENGTH
+  KERNEL (rx) : ORIGIN = KERNEL_OFFSET, LENGTH = KERNEL_SIZE
   SRAM_DATA_BSS (rw) : ORIGIN = KERNEL_SRAM_ORIGIN, LENGTH = KERNEL_SRAM_DATA_BSS_LENGTH
   SRAM_HEAP_STACK (rw) : ORIGIN = KERNEL_SRAM_ORIGIN + KERNEL_SRAM_DATA_BSS_LENGTH, LENGTH = SRAM_LENGTH - KERNEL_SRAM_DATA_BSS_LENGTH
 }
 
+
 SECTIONS {
-  .persisting_bytes_buffer ORIGIN(FLASH_PERSISTING_BYTES) : {
+  .persisting_bytes_buffer ORIGIN(PERSITING_BYTES) : {
     _persisting_bytes_buffer_start = .;
     KEEP(*(.persisting_bytes_buffer))
     /* Note: We don't increment "." here, we set it. */
-    . = ORIGIN(FLASH_PERSISTING_BYTES) + LENGTH(FLASH_PERSISTING_BYTES);
+    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
     _persisting_bytes_buffer_end = .;
-  } >FLASH_PERSISTING_BYTES
+  } >PERSITING_BYTES
 
-  .isr_vector_table ORIGIN(FLASH_KERNEL) : {
+  .isr_vector_table ORIGIN(KERNEL) : {
+    _kernel_start = .;
     _isr_start = .;
     KEEP(*(.isr_vector_table))
-  } >FLASH_KERNEL
+  } >KERNEL
 
   .header : {
     KEEP(*(.header))
-  } >FLASH_KERNEL
+  } >KERNEL
 
   .text : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >FLASH_KERNEL
+  } >KERNEL
 
   .init_array : {
     . = ALIGN(4);
     _init_array_start = .;
     KEEP (*(.init_array*))
     _init_array_end = .;
-  } >FLASH_KERNEL
+  } >KERNEL
 
   .rodata : {
-    . = ALIGN(4);
     *(.rodata)
     *(.rodata.*)
-  } >FLASH_KERNEL
+  } >KERNEL
 
   .data : {
     /* The data section is written to Flash but linked as if it were in RAM.
@@ -74,14 +75,14 @@ SECTIONS {
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
-  } >SRAM_DATA_BSS AT> FLASH_KERNEL
+  } >SRAM_DATA_BSS AT> KERNEL
 
   .fill :
   {
     FILL(0xFF);
-    . = ORIGIN(FLASH_KERNEL) + LENGTH(FLASH_KERNEL) - 1;
+    . = ORIGIN(KERNEL) + LENGTH(KERNEL) - 1;
     BYTE(0xFF)
-  } > FLASH_KERNEL
+  } > KERNEL
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

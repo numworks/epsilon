@@ -61,10 +61,11 @@ $(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),usb
 $(BUILD_DIR)/bootloader.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/bootloader
 $(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/bootloader_flash.ld
 
+USBXIP := $(if $(filter-out n0100,$(MODEL)),usbxip,)
 kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_kernel_src)
-$(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),)
+$(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP))
 $(BUILD_DIR)/kernel.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/$(MODEL)/kernel
-$(BUILD_DIR)/kernel.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/kernel/kernel_flash.ld
+$(BUILD_DIR)/kernel.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/kernel_flash.ld
 
 userland_src = $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(apps_src)
 $(BUILD_DIR)/userland.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)

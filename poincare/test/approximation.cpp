@@ -337,9 +337,33 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("lcm(6,15,10)", "30");
   assert_expression_approximates_to<float>("lcm(30,105,70,42)", "210");
   assert_expression_approximates_to<double>("lcm(30,105,70,42)", "210");
-  // Undef expected when there is an int overflow on output
-  assert_expression_approximates_to<float>("lcm(29,24278576,23334,13)", "undef"); // 106788321114384
-  assert_expression_approximates_to<double>("lcm(29,24278576,23334,13)", "undef"); // 106788321114384
+  /* Testing LCM and GCD integer limits :
+   * undef result is expected when manipulating overflowing/inaccurate integers
+   * For context :
+   * - INT_MAX =            2,147,483,647
+   * - UINT32_MAX =         4,294,967,295
+   * - Maximal representable integer without loss of precision in :
+   *     - float :             16,777,216
+   *     - double : 9,007,199,254,740,992
+   */
+  // Integers that can't be accurately represented as float
+  assert_expression_approximates_to<float>("gcd(16777219,13)", "undef"); // 1
+  assert_expression_approximates_to<double>("gcd(16777219,13)", "1");
+  assert_expression_approximates_to<float>("lcm(1549, 10831)", "undef"); // 16777219
+  assert_expression_approximates_to<double>("lcm(1549, 10831)", "16777219");
+  // Integers overflowing int, but not uint32_t
+  assert_expression_approximates_to<float>("gcd(2147483650,13)", "undef"); // 13
+  assert_expression_approximates_to<double>("gcd(2147483650,13)", "13");
+  assert_expression_approximates_to<float>("lcm(2,25,13,41,61,1321)", "undef"); // 2147483650
+  assert_expression_approximates_to<double>("lcm(2,25,13,41,61,1321)", "2147483650");
+  // Integers overflowing uint32_t
+  assert_expression_approximates_to<float>("gcd(4294967300,13)", "undef"); // 13
+  assert_expression_approximates_to<double>("gcd(4294967300,13)", "undef"); // 13
+  assert_expression_approximates_to<float>("lcm(4,25,13,41,61,1321)", "undef"); // 4294967300
+  assert_expression_approximates_to<double>("lcm(4,25,13,41,61,1321)", "undef"); // 4294967300
+  // Integers that can't be accurately represented as double
+  assert_expression_approximates_to<float>("gcd(1ᴇ16,10)", "undef");
+  assert_expression_approximates_to<double>("gcd(1ᴇ16,10)", "undef");
 
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");

@@ -12,7 +12,7 @@
 INCLUDE config_flash.ld
 
 MEMORY {
-  FLASH_USERLAND (rx) : ORIGIN = FLASH_USERLAND_ORIGIN, LENGTH = FLASH_USERLAND_LENGTH
+  FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = USERLAND_LENGTH
   SRAM (rw) : ORIGIN = USERLAND_SRAM_ORIGIN, LENGTH = USERLAND_SRAM_LENGTH
 }
 
@@ -82,14 +82,14 @@ SECTIONS {
   .heap : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(SRAM) + LENGTH(SRAM) - STACK_SIZE);
+    . = (ORIGIN(SRAM) + LENGTH(SRAM) - STACK_LENGTH);
     _heap_end = .;
   } >SRAM
 
   .stack : {
     . = ALIGN(8);
     _stack_end = .;
-    . += (STACK_SIZE - 8);
+    . += (STACK_LENGTH - 8);
     . = ALIGN(8);
     _stack_start = .;
   } >SRAM

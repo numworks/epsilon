@@ -20,6 +20,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override {
     return KDSize(bounds().width(), k_subtitleRowHeight);
   }
+  // Actual height is 24 with the overlapping pixel from SelectableTableView.
   constexpr static KDCoordinate k_subtitleRowHeight = 23;
 protected:
   KDColor backgroundColor() const override { return k_backgroundColor; }

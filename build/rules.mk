@@ -25,8 +25,8 @@ $(eval $(call rule_for, \
 ))
 
 $(eval $(call rule_for, \
-  DFUSE, %.dfu, %.elf signer, \
-  $$(PYTHON) build/device/elf2dfu.py $$(DFUFLAGS) $$< $$@, \
+  DFUSE, %.dfu, , \
+  $$(PYTHON) build/device/elf2dfu.py $$(DFUFLAGS) -i $$(filter-out $$(BUILD_DIR)/signer,$$^) -o $$@, \
   local \
 ))
 
@@ -75,7 +75,7 @@ $(eval $(call rule_for, \
 else
 $(eval $(call rule_for, \
   LD, %.$$(EXE), $$$$(LDSCRIPT), \
-  $$(LD) $$(filter-out $$(LDSCRIPT),$$^) $$(LDFLAGS) -o $$@, \
+  echo $$^ && $$(LD) $$(filter-out $$(LDSCRIPT),$$^) $$(LDFLAGS) -o $$@, \
   global \
 ))
 endif

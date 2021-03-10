@@ -55,14 +55,14 @@ bool ApproximationHelper::IsIntegerRepresentationAccurate(T x) {
 
 template <typename T> uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, ExpressionNode::ApproximationContext approximationContext) {
   Evaluation<T> evaluation = expression->approximate(T(), approximationContext);
-  T scalar = evaluation.toScalar();
+  T scalar = std::abs(evaluation.toScalar());
   if (std::isnan(scalar) || scalar != static_cast<uint32_t>(scalar) || scalar > UINT32_MAX || !IsIntegerRepresentationAccurate(scalar)) {
     /* PositiveIntegerApproximationIfPossible returns undefined result if scalar
      * cannot be accurately represented as an unsigned integer. */
     *isUndefined = true;
     return 0;
   }
-  return static_cast<uint32_t>(std::abs(scalar));
+  return static_cast<uint32_t>(scalar);
 }
 
 template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::complex<T> result, std::complex<T> input1, std::complex<T> input2, bool enableNullResult) {

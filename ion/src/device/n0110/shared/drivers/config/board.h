@@ -19,8 +19,8 @@ namespace Config {
  * - external flash: 8*4k + 32K + 127 * 64K
  */
 
-constexpr static uint32_t BootloaderTotalSize = InternalFlash::Config::TotalSize; // 64kB
-constexpr static uint32_t KernelTotalSize = 0x40000; // 256kB
+constexpr static uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 64kB
+constexpr static uint32_t KernelSize = 0x40000; // 256kB
 
 }
 }

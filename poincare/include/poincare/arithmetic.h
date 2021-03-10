@@ -12,8 +12,10 @@ public:
   static Integer LCM(const Integer & i, const Integer & j);
   static Expression GCD(const Expression & expression);
   static Expression LCM(const Expression & expression);
-  static int GCD(int i, int j, bool * isUndefined);
-  static int LCM(int i, int j, bool * isUndefined);
+  /* GCD cannot overflow as GCD(a,b) <=  max(|a|,|b|)
+   * we add hasOverflown's parameters anyway to match LCM's signature. */
+  static uint32_t GCD(uint32_t i, uint32_t j, bool * hasOverflown = nullptr);
+  static uint32_t LCM(uint32_t i, uint32_t j, bool * hasOverflown);
   template<typename T> static Evaluation<T> GCD(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
   template<typename T> static Evaluation<T> LCM(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
   constexpr static int k_numberOfPrimeFactors = 1000;

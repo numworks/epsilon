@@ -52,6 +52,7 @@ private:
   constexpr static uint8_t k_currentScriptOrigin = 0;
   constexpr static uint8_t k_builtinsOrigin = 1;
   constexpr static uint8_t k_importedOrigin = 2; // And above for other imported nodes
+  static_assert(k_currentScriptOrigin == 0 && k_builtinsOrigin == 1 && k_importedOrigin == 2, "These origin index must start at 0 and leave no gaps. k_importedOrigin must be the last one. Otherwise, for loops on origin must be updated.");
 
   /* Returns:
    * - a negative int if the node name is before name in alphabetical

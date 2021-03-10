@@ -3,6 +3,7 @@
 #include <poincare/expression.h>
 #include <poincare/rational.h>
 #include <limits.h>
+#include <stdint.h>
 
 namespace Poincare {
 
@@ -51,14 +52,14 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
   return Integer::Multiplication(i, Integer::Division(j, GCD(i, j)).quotient);
 }
 
-int Arithmetic::GCD(int a, int b, bool * isUndefined) {
+uint32_t Arithmetic::GCD(uint32_t a, uint32_t b, bool *) {
   assert(a >= 0 && b >= 0);
   if (b > a) {
-    int temp = b;
+    uint32_t temp = b;
     b = a;
     a = temp;
   }
-  int r = 0;
+  uint32_t r = 0;
   while(b!=0){
     r = a - (a/b)*b;
     a = b;
@@ -67,19 +68,20 @@ int Arithmetic::GCD(int a, int b, bool * isUndefined) {
   return a;
 }
 
-int Arithmetic::LCM(int a, int b, bool * isUndefined) {
+uint32_t Arithmetic::LCM(uint32_t a, uint32_t b, bool * hasOverflown) {
   assert(a >= 0 && b >= 0);
+  assert(hasOverflown && !*hasOverflown);
   if (a == 0 || b == 0) {
     return 0;
   }
-  int c = GCD(a, b, isUndefined);
-  if (*isUndefined || b / c >= INT_MAX / a) {
-    // LCM will overflow int
-    *isUndefined = true;
+  uint32_t gcd = GCD(a, b);
+  if (b / gcd >= UINT32_MAX / a) {
+    // LCM will overflow uint32_t
+    *hasOverflown = true;
     return INT_MAX;
   }
   // Using LCM(a,b) = a * b / GCD(a,b)
-  return a * (b / c);
+  return a * (b / gcd);
 }
 
 Integer getIntegerFromRationalExpression(Expression expression) {
@@ -118,25 +120,25 @@ Expression Arithmetic::LCM(const Expression & expression) {
 }
 
 template<typename T>
-Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressionNode, int (*f)(int, int, bool *), ExpressionNode::ApproximationContext approximationContext) {
+Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressionNode, uint32_t (*f)(uint32_t, uint32_t, bool *), ExpressionNode::ApproximationContext approximationContext) {
   /* Use function associativity to compute a function of expression's children.
    * The function can be GCD or LCM. */
   bool isUndefined = false;
   // We define f(a) = f(a,a) = a
-  int a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(expressionNode.childAtIndex(0), &isUndefined, approximationContext);
+  uint32_t a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(expressionNode.childAtIndex(0), &isUndefined, approximationContext);
   // f is associative, f(a,b,c,d) = f(f(f(a,b),c),d)
   for (int i = 1; i < expressionNode.numberOfChildren(); ++i) {
-    int b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(expressionNode.childAtIndex(i), &isUndefined, approximationContext);
+    uint32_t b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(expressionNode.childAtIndex(i), &isUndefined, approximationContext);
     if (isUndefined) {
       return Complex<T>::RealUndefined();
     }
     a = f(a, b, &isUndefined);
-    if (isUndefined) {
-      // GCD or LCM has overflown
+    if (isUndefined || !ApproximationHelper::IsIntegerRepresentationAccurate(static_cast<T>(a))) {
+      // GCD or LCM result has overflown or can't be accurately casted as <T>
       return Complex<T>::RealUndefined();
     }
   }
-  return Complex<T>::Builder((T)a);
+  return Complex<T>::Builder(static_cast<T>(a));
 }
 
 template<typename T>

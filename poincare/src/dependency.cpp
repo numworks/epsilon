@@ -38,7 +38,8 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
   char variables[k_maxNumberOfVariables * SymbolAbstract::k_maxNameSize];
 
   int numberOfUselessDependencies = 0;
-  for (int i = 0; i < numberOfDependencies(); i++) {
+  int totalNumberOfDependencies = numberOfDependencies();
+  for (int i = 0; i < totalNumberOfDependencies; i++) {
     Expression e = dependencies.childAtIndex(i);
     variables[0] = '\0';
     int n = e.getVariables(reductionContext.context(), [](const char * s, Context * c) { return true; }, variables, SymbolAbstract::k_maxNameSize);

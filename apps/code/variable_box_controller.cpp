@@ -126,7 +126,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   if (cellOrigin >= k_importedOrigin && strcmp(moduleName, I18n::translate(I18n::Message::ImportedModulesAndScripts)) != 0) {
     // Source is either a module or a script
     size_t moduleNameLenght = strlen(moduleName);
-    if (strcmp(moduleName + moduleNameLenght - 3, ".py") == 0) {
+    if (moduleNameLenght > 3 && strcmp(moduleName + moduleNameLenght - 3, ".py") == 0) {
       // Source is a script
       prefix = I18n::Message::PythonScriptPrefix;
       suffix = I18n::Message::PythonScriptSuffix;

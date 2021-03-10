@@ -3,6 +3,8 @@
 #include <poincare/evaluation.h>
 #include <poincare/matrix_complex.h>
 #include <cmath>
+#include <float.h>
+#include <stdint.h>
 #include <utility>
 extern "C" {
 #include <assert.h>
@@ -25,8 +27,6 @@ template < typename T> T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
   return absRealInput;
 }
 
-static inline int absInt(int x) { return x < 0 ? -x : x; }
-
 /* To prevent incorrect approximations, such as cos(1.5707963267949) = 0
  * we made the neglect threshold stricter. This way, the approximation is more
  * selective.
@@ -44,14 +44,25 @@ T ApproximationHelper::Epsilon() {
   return precision;
 }
 
-template <typename T> int ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, ExpressionNode::ApproximationContext approximationContext) {
+template<typename T>
+bool ApproximationHelper::IsIntegerRepresentationAccurate(T x) {
+  // Compute number of digits (base 2) required to represent x
+  int digits = 0;
+  std::frexp(x, &digits);
+  // Compare it to the maximal number of digits that can be represented with <T>
+  return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
+}
+
+template <typename T> uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, ExpressionNode::ApproximationContext approximationContext) {
   Evaluation<T> evaluation = expression->approximate(T(), approximationContext);
   T scalar = evaluation.toScalar();
-  if (std::isnan(scalar) || scalar != (int)scalar) {
+  if (std::isnan(scalar) || scalar != static_cast<uint32_t>(scalar) || scalar > UINT32_MAX || !IsIntegerRepresentationAccurate(scalar)) {
+    /* PositiveIntegerApproximationIfPossible returns undefined result if scalar
+     * cannot be accurately represented as an unsigned integer. */
     *isUndefined = true;
     return 0;
   }
-  return absInt((int)scalar);
+  return static_cast<uint32_t>(std::abs(scalar));
 }
 
 template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::complex<T> result, std::complex<T> input1, std::complex<T> input2, bool enableNullResult) {
@@ -145,8 +156,10 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
 }
 template float Poincare::ApproximationHelper::Epsilon<float>();
 template double Poincare::ApproximationHelper::Epsilon<double>();
-template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
-template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
+template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<float>(float x);
+template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<double>(double x);
+template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
+template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute);

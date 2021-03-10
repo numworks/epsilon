@@ -32,14 +32,14 @@ void BufferTableCell::layoutSubviews(bool force)  {
   if (width == 0 || height == 0) {
     return;
   }
-  width -= k_separatorThickness + Metric::CellRightMargin;
   KDCoordinate x = k_separatorThickness + Metric::CellLeftMargin;
-  /* With an enforced 23px height, no vertical margins are enforced. Vertical
+  width -= x + Metric::CellRightMargin + k_separatorThickness;
+  /* With an enforced 24px height, no vertical margins are enforced. Vertical
    * centering is handled in BufferTextView. Additionally, an offset is added at
-   * the top to lower the baseline of the buffet view to look more centered. */
-  KDCoordinate topOffset = 1;
-  height -= k_separatorThickness + topOffset;
+   * the top to lower the baseline of the buffer view to look more centered. */
+  KDCoordinate topOffset = 2;
   KDCoordinate y = k_separatorThickness + topOffset;
+  height -= y + k_separatorThickness;
 
   assert(width > 0 && height > 0);
 

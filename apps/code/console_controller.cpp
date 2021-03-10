@@ -373,6 +373,7 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 
 VariableBoxController * ConsoleController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
+  // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(false);
   varBox->loadVariablesImportedFromScripts();
   varBox->setTitle(I18n::Message::FunctionsAndVariables);

@@ -370,6 +370,10 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
   assert_expression_approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
+  assert_expression_approximates_to<float>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<double>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<float>("invbinom(0.01,150,0.9)", "126");
+  assert_expression_approximates_to<double>("invbinom(0.01,150,0.9)", "126");
 
   assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
   //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error

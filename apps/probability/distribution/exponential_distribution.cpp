@@ -40,8 +40,8 @@ float ExponentialDistribution::evaluateAtAbscissa(float x) const {
   return parameter * std::exp(-parameter * x);
 }
 
-bool ExponentialDistribution::authorizedValueAtIndex(float x, int index) const {
-  if (x <= 0.0f || x > 7500.0f) {
+bool ExponentialDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (x <= 0.0 || x > 7500.0) {
     return false;
   }
   return true;

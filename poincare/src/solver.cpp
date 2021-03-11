@@ -376,30 +376,38 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
 
 template<typename T>
 T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
-  T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
-  assert(*probability <= (((T)1.0) - precision) && *probability >= precision);
+  constexpr T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
+  assert(*probability <= (static_cast<T>(1.f) - precision) && *probability >= precision);
   (void) precision;
-  T p = 0.0;
-  int k = 0;
-  T delta = 0.0;
-  do {
-    delta = std::fabs(*probability-p);
-    p += evaluation(k++, context, auxiliary);
-    if (p >= k_maxProbability && std::fabs(*probability-(T)1.0) <= delta) {
-      *probability = (T)1.0;
-      return (T)(k-1);
+
+  /* FIXME: equalityThreshold could be constexpr, but sqrt is not constexpr on
+   * the simulator. */
+  T equalityThreshold = std::sqrt(precision);
+  T cumulative = static_cast<T>(0.f);
+  int result = 0;
+  while (cumulative < *probability && cumulative < k_maxProbability && result < k_maxNumberOfOperations) {
+    cumulative += evaluation(result++, context, auxiliary);
+    if (std::fabs(cumulative - *probability) <= equalityThreshold) {
+      /* Consider we found the exact match. Otherwise, approximation errors
+       * could round down and miss the exact result by one. */
+      return result - 1;
     }
-  } while (std::fabs(*probability-p) <= delta && k < k_maxNumberOfOperations && p < (T)1.0);
-  p -= evaluation(--k, context, auxiliary);
-  if (k == k_maxNumberOfOperations) {
-    *probability = (T)1.0;
+  }
+  /* At this point cumulative is the sum for i between 0 and result-1 */
+  result--;
+  if (cumulative >= k_maxProbability) {
+    *probability = static_cast<T>(1.f);
+    return result;
+  }
+  if (result == k_maxNumberOfOperations) {
+    *probability = static_cast<T>(1.f);
     return INFINITY;
   }
-  *probability = p;
-  if (std::isnan(p)) {
+  *probability = cumulative;
+  if (std::isnan(cumulative)) {
     return NAN;
   }
-  return k-1;
+  return result;
 }
 
 template<typename T>

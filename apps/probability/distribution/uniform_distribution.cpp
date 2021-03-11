@@ -62,7 +62,7 @@ float UniformDistribution::evaluateAtAbscissa(float t) const {
   return 0.0f;
 }
 
-bool UniformDistribution::authorizedValueAtIndex(float x, int index) const {
+bool UniformDistribution::authorizedValueAtIndex(double x, int index) const {
   if (index == 0) {
     return true;
   }
@@ -72,7 +72,7 @@ bool UniformDistribution::authorizedValueAtIndex(float x, int index) const {
   return true;
 }
 
-void UniformDistribution::setParameterAtIndex(float f, int index) {
+void UniformDistribution::setParameterAtIndex(double f, int index) {
   TwoParameterDistribution::setParameterAtIndex(f, index);
   if (index == 0 && m_parameter2 < m_parameter1) {
     m_parameter2 = m_parameter1 + 1.0;

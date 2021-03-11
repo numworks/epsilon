@@ -50,12 +50,12 @@ float FisherDistribution::evaluateAtAbscissa(float x) const {
   return numerator / denominator;
 }
 
-bool FisherDistribution::authorizedValueAtIndex(float x, int index) const {
+bool FisherDistribution::authorizedValueAtIndex(double x, int index) const {
   assert(index == 0 || index == 1);
-  return x > FLT_MIN && x <= k_maxParameter;
+  return x > DBL_MIN && x <= k_maxParameter;
 }
 
-void FisherDistribution::setParameterAtIndex(float f, int index) {
+void FisherDistribution::setParameterAtIndex(double f, int index) {
   TwoParameterDistribution::setParameterAtIndex(f, index);
 }
 

@@ -17,7 +17,7 @@ public:
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;
-  bool authorizedValueAtIndex(float x, int index) const override;
+  bool authorizedValueAtIndex(double x, int index) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
   double rightIntegralInverseForProbability(double * probability) override;
 protected:

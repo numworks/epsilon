@@ -9,7 +9,7 @@
  * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
  * be stored in Flash. */
 
-INCLUDE config_flash.ld
+USERLAND_ORIGIN = USERLAND_VIRTUAL_ORIGIN + EPSILON_OFFSET;
 
 MEMORY {
   FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = USERLAND_LENGTH

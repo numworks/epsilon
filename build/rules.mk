@@ -75,7 +75,7 @@ $(eval $(call rule_for, \
 else
 $(eval $(call rule_for, \
   LD, %.$$(EXE), $$$$(LDSCRIPT), \
-  echo $$^ && $$(LD) $$(filter-out $$(LDSCRIPT),$$^) $$(LDFLAGS) -o $$@, \
+  $$(LD) $$(filter-out $$(LDSCRIPT),$$^) $$(LDFLAGS) -o $$@, \
   global \
 ))
 endif

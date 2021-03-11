@@ -1,7 +1,6 @@
 include build/targets.device.$(MODEL).mak
 
-HANDY_TARGETS += flasher.light flasher.verbose flasher.verbose.flash bench.ram bench.flash bootloader kernel userland
-# TODO EMILIE: move rescue to N110 only
+HANDY_TARGETS += flasher.light flasher.verbose flasher.verbose.flash bench.ram bench.flash bootloader kernel.A kernel.B userland.A userland.B
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 $(eval $(call rule_for, \
@@ -61,15 +60,16 @@ $(BUILD_DIR)/bootloader.dfu: $(BUILD_DIR)/bootloader.elf
 
 USBXIP := $(if $(filter-out n0100,$(MODEL)),usbxip,)
 kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_kernel_src)
-$(call object_for,$(kernel_src)): SFLAGS += -fpie
-$(BUILD_DIR)/kernel.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP))
-$(BUILD_DIR)/kernel.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/$(MODEL)/kernel -fpie
-$(BUILD_DIR)/kernel.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/kernel_flash.ld
+$(BUILD_DIR)/kernel.A.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP))
+$(BUILD_DIR)/kernel.B.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP))
+$(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/kernel
+$(BUILD_DIR)/kernel.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/$(subst .,_,$*)_flash.ld
 
 userland_src = $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(apps_src)
-$(BUILD_DIR)/userland.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)
-$(BUILD_DIR)/userland.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/$(MODEL)/userland
-$(BUILD_DIR)/userland.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/userland/userland_flash.ld
+$(BUILD_DIR)/userland.A.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)
+$(BUILD_DIR)/userland.B.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)
+$(BUILD_DIR)/userland.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/userland
+$(BUILD_DIR)/userland.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/userland/$(subst .,_,$*)_flash.ld
 
 epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
-$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.elf $(BUILD_DIR)/kernel.elf $(BUILD_DIR)/signer
+$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.A.elf $(BUILD_DIR)/kernel.A.elf $(BUILD_DIR)/userland.B.elf $(BUILD_DIR)/kernel.B.elf $(BUILD_DIR)/signer

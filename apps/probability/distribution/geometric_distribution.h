@@ -11,7 +11,7 @@ namespace Probability {
 
 class GeometricDistribution final : public OneParameterDistribution {
 public:
-  GeometricDistribution() : OneParameterDistribution(0.5f) {}
+  GeometricDistribution() : OneParameterDistribution(0.5) {}
   I18n::Message title() override { return I18n::Message::GeometricDistribution; }
   Type type() const override { return Type::Geometric; }
   bool isContinuous() const override { return false; }
@@ -29,7 +29,7 @@ public:
   float evaluateAtAbscissa(float x) const override {
     return templatedApproximateAtAbscissa<float>(x);
   }
-  bool authorizedValueAtIndex(float x, int index) const override;
+  bool authorizedValueAtIndex(double x, int index) const override;
   double defaultComputedValue() const override { return 1.0; }
 private:
   double evaluateAtDiscreteAbscissa(int k) const override {

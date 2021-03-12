@@ -21,7 +21,7 @@ public:
 
   /* TableCell */
   const Escher::View * labelView() const override { return &m_labelView; }
-  const Escher::View * subLabelView() const override { return m_subLabelView.text()[0] != 0 ? &m_subLabelView : nullptr; }
+  const Escher::View * subLabelView() const override;
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;

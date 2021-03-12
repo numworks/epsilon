@@ -28,6 +28,10 @@ void ScriptNodeCell::setScriptNode(ScriptNode * node) {
   reloadCell();
 }
 
+const View * ScriptNodeCell::subLabelView() const {
+  return m_subLabelView.text()[0] != 0 ? &m_subLabelView : nullptr;
+}
+
 void ScriptNodeCell::setHighlighted(bool highlight) {
   TableCell::setHighlighted(highlight);
   KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;

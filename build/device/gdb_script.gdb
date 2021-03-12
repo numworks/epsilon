@@ -23,25 +23,20 @@ define load_isr
   set $pc = *(InitialisationVector+1)
 end
 
-define bootloader_symbols
-# Discard previous symbol file
-  symbol-file
-# Load new symbol file
-  add-symbol-file output/release/device/n0110/bootloader.standard.elf
-end
+# Usage:
+# switch_symbol_file debug bootloader
+# switch_symbol_file release kernel A
 
-define kernel_symbols
+define switch_symbol_file
 # Discard previous symbol file
   symbol-file
 # Load new symbol file
-  add-symbol-file output/debug/device/n0110/kernel.elf
-end
-
-define userland_symbols
-# Discard previous symbol file
-  symbol-file
-# Load new symbol file
-  add-symbol-file output/debug/device/n0110/userland.elf
+  if $argc == 2
+    add-symbol-file output/$arg0/device/n0110/$arg1.elf
+  end
+  if $argc == 3
+    add-symbol-file output/$arg0/device/n0110/$arg1.$arg2.elf
+  end
 end
 
 define use_dfu_symbol_file

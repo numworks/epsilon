@@ -1,10 +1,12 @@
 #ifndef SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
 #define SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
 
+#include <escher/metric.h>
 #include <apps/i18n.h>
 #include <escher/key_view.h>
 #include <escher/message_text_view.h>
 #include "zoom_and_pan_curve_view_controller.h"
+#include "banner_view.h"
 
 namespace Shared {
 
@@ -23,7 +25,8 @@ private:
 
   class ContentView : public Escher::View {
   public:
-    constexpr static KDCoordinate k_legendHeight = 30;
+    constexpr static const KDFont * k_legendFont = KDFont::SmallFont;
+    constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + 14; // k_legendFont->glyphSize().height() = 14
     ContentView(CurveView * curveView);
     void layoutSubviews(bool force = false) override;
     CurveView * curveView();
@@ -38,6 +41,7 @@ private:
       constexpr static int k_numberOfLegends = 3;
       constexpr static int k_numberOfTokens = 6;
       constexpr static KDCoordinate k_tokenWidth = 10;
+      static constexpr KDColor BackgroundColor() { return BannerView::BackgroundColor(); }
       void layoutSubviews(bool force = false) override;
       int numberOfSubviews() const override;
       Escher::View * subviewAtIndex(int index) override;

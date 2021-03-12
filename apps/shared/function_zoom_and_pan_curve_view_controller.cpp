@@ -126,9 +126,9 @@ FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView()
   I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
   float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
   for (int i = 0; i < k_numberOfLegends; i++) {
-    m_legends[i].setFont(KDFont::SmallFont);
+    m_legends[i].setFont(ContentView::k_legendFont);
     m_legends[i].setMessage(messages[i]);
-    m_legends[i].setBackgroundColor(Palette::GrayBright);
+    m_legends[i].setBackgroundColor(BackgroundColor());
     m_legends[i].setAlignment(horizontalAlignments[i], 0.5f);
   }
   KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Up, KeyView::Type::Down, KeyView::Type::Left, KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
@@ -138,7 +138,7 @@ FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView()
 }
 
 void FunctionZoomAndPanCurveViewController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GrayBright);
+  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), BackgroundColor());
 }
 
 int FunctionZoomAndPanCurveViewController::ContentView::LegendView::numberOfSubviews() const {

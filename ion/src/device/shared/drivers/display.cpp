@@ -1,4 +1,4 @@
-#include <kernel/drivers/display.h>
+#include <shared/drivers/display.h>
 #include <drivers/config/display.h>
 #include <kernel/drivers/timing.h>
 #include <ion/display.h>

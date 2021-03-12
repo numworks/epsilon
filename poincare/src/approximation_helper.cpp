@@ -46,8 +46,12 @@ T ApproximationHelper::Epsilon() {
 
 template<typename T>
 bool ApproximationHelper::IsIntegerRepresentationAccurate(T x) {
-  // Compute number of digits (base 2) required to represent x
+  /* Float and double's precision to represent integers is limited by the size
+   * of their mantissa. If an integer requires more digits than there is in the
+   * mantissa, there will be a loss on precision that can be fatal on operations
+   * such as GCD and LCM. */
   int digits = 0;
+  // Compute number of digits (base 2) required to represent x
   std::frexp(x, &digits);
   // Compare it to the maximal number of digits that can be represented with <T>
   return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
@@ -56,7 +60,7 @@ bool ApproximationHelper::IsIntegerRepresentationAccurate(T x) {
 template <typename T> uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, ExpressionNode::ApproximationContext approximationContext) {
   Evaluation<T> evaluation = expression->approximate(T(), approximationContext);
   T scalar = std::abs(evaluation.toScalar());
-  if (std::isnan(scalar) || scalar != static_cast<uint32_t>(scalar) || scalar > UINT32_MAX || !IsIntegerRepresentationAccurate(scalar)) {
+  if (std::isnan(scalar) || scalar != std::round(scalar) || scalar > UINT32_MAX || !IsIntegerRepresentationAccurate(scalar)) {
     /* PositiveIntegerApproximationIfPossible returns undefined result if scalar
      * cannot be accurately represented as an unsigned integer. */
     *isUndefined = true;

@@ -756,7 +756,6 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       Expression simplifiedChild;
       Expression approximateChild = approximateExpression ? Expression() : nullptr;
       e.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, &approximateChild, userReductionContext, context, complexFormat, angleUnit);
-      assert(!simplifiedChild.deepIsMatrix(context));
       static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
       if (approximateExpression) {
         static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild, i, i);

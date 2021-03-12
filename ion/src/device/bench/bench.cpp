@@ -23,6 +23,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("LCD_TIMING", Command::LCDTiming),
   CommandHandler("LED", Command::LED),
   CommandHandler("MCU_SERIAL", Command::MCUSerial),
+  CommandHandler("PCB_VERSION", Command::PCBVersion),
   CommandHandler("PING", Command::Ping),
   CommandHandler("PRINT", Command::Print),
   CommandHandler("SCREEN_ID", Command::ScreenID),

@@ -230,6 +230,12 @@ void shutdownClocks(bool keepLEDAwake) {
   RCC.AHB1ENR()->set(ahb1enr);
 }
 
+PCBVersion readPCBVersion() {
+  return PCB_LATEST;
+}
+
+void writePCBVersion(PCBVersion) {}
+
 }
 }
 }

@@ -30,6 +30,10 @@ namespace Config {
 #define byte4K byte2K, byte2K
 #define byte8KFirst byte4KFirst, byte4K
 #define byte8K byte4K, byte4K
+#define byte16KFirst byte8KFirst, byte8K
+#define byte16K byte8K, byte8K
+#define byte32KFirst byte16KFirst, byte16K
+#define byte32K byte16K, byte16K
 
 }
 }

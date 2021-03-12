@@ -9,9 +9,9 @@ namespace PersistingBytes {
 namespace Config {
 
 // PersistingBytes buffer is filled with: 0x00, 0xFF, 0xFF,..., 0xFF
-#define PERSISTING_BYTES_BUFFER_CONTENT byte2KFirst, byte2K
+#define PERSISTING_BYTES_BUFFER_CONTENT byte32KFirst, byte32K
 
-constexpr static int BufferSize = 4*1024;
+constexpr static int BufferSize = 64*1024;
 
 }
 }

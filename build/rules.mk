@@ -68,14 +68,14 @@ ifeq ($(OS),Windows_NT)
 # around this issue, we write the object list in a "target.objs" file, and tell
 # the linker to read its arguments from this file.
 $(eval $(call rule_for, \
-  LD, %.$$(EXE), $$$$(LDSCRIPT), \
-  echo $$(filter-out $$(LDSCRIPT),$$^) > $$@.objs && $$(LD) @$$@.objs $$(LDFLAGS) -o $$@ && rm $$@.objs, \
+  LD, %.$$(EXE), $$$$(LDDEPS), \
+  echo $$(filter-out $$(LDDEPS),$$^) > $$@.objs && $$(LD) @$$@.objs $$(LDFLAGS) -o $$@ && rm $$@.objs, \
   global \
 ))
 else
 $(eval $(call rule_for, \
-  LD, %.$$(EXE), $$$$(LDSCRIPT), \
-  $$(LD) $$(filter-out $$(LDSCRIPT),$$^) $$(LDFLAGS) -o $$@, \
+  LD, %.$$(EXE), $$$$(LDDEPS), \
+  $$(LD) $$(filter-out $$(LDDEPS),$$^) $$(LDFLAGS) -o $$@, \
   global \
 ))
 endif

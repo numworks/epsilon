@@ -1,6 +1,8 @@
 #include <drivers/board.h>
 #include <drivers/cache.h>
+#include <drivers/internal_flash.h>
 #include <drivers/config/clocks.h>
+#include <drivers/config/internal_flash.h>
 #include <drivers/external_flash.h>
 #include <regs/regs.h>
 #include <ion.h>
@@ -368,6 +370,25 @@ void shutdownClocks(bool keepLEDAwake) {
   }
   RCC.APB1ENR()->set(apb1enr);
   RCC.AHB1ENR()->set(ahb1enr);
+}
+
+constexpr int pcbVersionOTPIndex = 0;
+
+/* As we want the PCB versions to be in ascending order chronologically, and
+ * because the OTP are initialized with 1s, we store the bitwise-not of the
+ * version number. This way, devices with blank OTP are considered version 0. */
+
+PCBVersion readPCBVersion() {
+  /* FIXME: When flashing for the first time after assembling the device, this
+   * should return PCB_LATEST. */
+  return ~*reinterpret_cast<const PCBVersion *>(InternalFlash::Config::OTPAddresses[pcbVersionOTPIndex]);
+}
+
+void writePCBVersion(PCBVersion version) {
+  /* TODO: We also need to lock the OTP in which the version has been written. */
+  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPAddresses[pcbVersionOTPIndex]);
+  PCBVersion formattedVersion = ~version;
+  InternalFlash::WriteMemory(destination, reinterpret_cast<uint8_t *>(&formattedVersion), sizeof(formattedVersion));
 }
 
 }

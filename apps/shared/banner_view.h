@@ -1,6 +1,7 @@
 #ifndef SHARED_BANNER_VIEW_H
 #define SHARED_BANNER_VIEW_H
 
+#include <escher/metric.h>
 #include <escher/view.h>
 #include <escher/palette.h>
 
@@ -17,7 +18,7 @@ public:
   static constexpr KDColor TextColor() { return KDColorBlack; }
   static constexpr KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
 private:
-  static constexpr KDCoordinate LineSpacing = 2;
+  static constexpr KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
   int numberOfSubviews() const override = 0;
   View * subviewAtIndex(int index) override = 0;
   void layoutSubviews(bool force = false) override;

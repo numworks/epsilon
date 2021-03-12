@@ -2,7 +2,9 @@ include ion/src/device/shared/usb/Makefile
 
 ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/shared/, \
   boot/rt0.cpp \
+  drivers/backlight.cpp \
   drivers/base64.cpp \
+  drivers/display.cpp \
   drivers/external_flash.cpp \
   drivers/flash.cpp \
   drivers/internal_flash.cpp \

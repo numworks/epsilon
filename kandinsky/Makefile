@@ -1,6 +1,6 @@
 SFLAGS += -Ikandinsky/include
 
-kandinsky_kernel_src += $(addprefix kandinsky/src/,\
+kandinsky_minimal_src += $(addprefix kandinsky/src/,\
   color.cpp \
   font.cpp\
   point.cpp \
@@ -27,7 +27,7 @@ kandinsky_fonts_src += $(addprefix kandinsky/fonts/, \
 )
 
 kandinsky_src += $(kandinsky_fonts_src)
-kandinsky_kernel_src += $(kandinsky_fonts_src)
+kandinsky_minimal_src += $(kandinsky_fonts_src)
 
 tests_src += $(addprefix kandinsky/test/,\
   color.cpp\

@@ -1,6 +1,8 @@
 #ifndef ION_DEVICE_SHARED_DRIVERS_BOARD_H
 #define ION_DEVICE_SHARED_DRIVERS_BOARD_H
 
+#include <stdint.h>
+
 namespace Ion {
 namespace Device {
 namespace Board {
@@ -22,6 +24,11 @@ enum class Frequency {
 Frequency standardFrequency();
 void setStandardFrequency(Frequency f);
 void setClockFrequency(Frequency f);
+
+typedef uint32_t PCBVersion;
+
+PCBVersion readPCBVersion();
+void writePCBVersion(PCBVersion version);
 
 }
 }

@@ -40,9 +40,6 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event
 
   bool didHandleEvent = ZoomAndPanCurveViewController::handleEvent(event);
   bool didChangeLegend = setLegendVisible(!didHandleEvent);
-  if (didChangeLegend) {
-    m_contentView.curveView()->reload();
-  }
   return didHandleEvent || didChangeLegend;
 }
 
@@ -68,19 +65,6 @@ bool FunctionZoomAndPanCurveViewController::setLegendVisible(bool legendWillAppe
   if (legendWillAppear == m_contentView.displayLegend()) {
     return false;
   }
-  float yMin = m_interactiveRange->yMin(), yMax = m_interactiveRange->yMax();
-  float yOff = m_interactiveRange->offscreenYAxis();
-  float totalHeight = m_contentView.bounds().height();
-  float legendHeight = static_cast<float>(ContentView::k_legendHeight);
-  if (legendWillAppear) {
-    float dY = legendHeight / totalHeight * (yMax - yMin);
-    m_interactiveRange->setOffscreenYAxis(yOff + dY);
-    m_interactiveRange->setYMin(yMin + dY);
-  } else {
-    float dY = legendHeight / (totalHeight - legendHeight) * (yMax - yMin);
-    m_interactiveRange->setOffscreenYAxis(yOff - dY);
-    m_interactiveRange->setYMin(yMin - dY);
-  }
   m_contentView.setDisplayLegend(legendWillAppear);
   m_contentView.layoutSubviews();
   return true;
@@ -100,18 +84,14 @@ int FunctionZoomAndPanCurveViewController::ContentView::numberOfSubviews() const
 
 View * FunctionZoomAndPanCurveViewController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
-  /* The order of subviews matters here: redrawing curve view can be long and
-   * if it was redraw before the legend view, you could see noise when
-   * switching the device on and off. */
   if (index == 0) {
-    return &m_legendView;
+    return m_curveView;
   }
-  return m_curveView;
+  return &m_legendView;
 }
 
 void FunctionZoomAndPanCurveViewController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate curveHeight = m_displayLegend ? bounds().height() - k_legendHeight : bounds().height();
-  m_curveView->setFrame(KDRect(0, 0, bounds().width(), curveHeight), force);
+  m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height()), force);
   m_legendView.setFrame(m_displayLegend ? KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight) : KDRectZero, force);
 }
 

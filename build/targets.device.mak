@@ -64,12 +64,17 @@ $(BUILD_DIR)/kernel.A.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP)
 $(BUILD_DIR)/kernel.B.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP))
 $(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/kernel
 $(BUILD_DIR)/kernel.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/$(subst .,_,$*)_flash.ld
+$(BUILD_DIR)/kernel.%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/kernel/kernel_flash.ld ion/src/$(PLATFORM)/$(MODEL)/shared/config_flash.ld ion/src/$(PLATFORM)/shared/shared_config_flash.ld
 
 userland_src = $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(apps_src)
 $(BUILD_DIR)/userland.A.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)
 $(BUILD_DIR)/userland.B.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)
 $(BUILD_DIR)/userland.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/userland
 $(BUILD_DIR)/userland.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/userland/$(subst .,_,$*)_flash.ld
+$(BUILD_DIR)/userland.%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/userland/userland_flash.ld ion/src/$(PLATFORM)/$(MODEL)/shared/config_flash.ld ion/src/$(PLATFORM)/shared/shared_config_flash.ld
+
+$(BUILD_DIR)/%.A.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_slot_a.ld
+$(BUILD_DIR)/%.B.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_slot_b.ld
 
 epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
 $(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.A.elf $(BUILD_DIR)/kernel.A.elf $(BUILD_DIR)/userland.B.elf $(BUILD_DIR)/kernel.B.elf $(BUILD_DIR)/signer

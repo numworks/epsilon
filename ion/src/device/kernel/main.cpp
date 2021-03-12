@@ -68,6 +68,6 @@ void kernel_main() {
   switch_to_unpriviledged();
 
   // Jump to userland
-  EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(_kernel_start + Ion::Device::Board::Config::UserlandOffsetFromKernel);
+  EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(&_kernel_start + Ion::Device::Board::Config::UserlandOffsetFromKernel);
   (*userlandFirstAddress)();
 }

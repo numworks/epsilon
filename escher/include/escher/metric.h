@@ -17,6 +17,7 @@ public:
   constexpr static KDCoordinate CellVerticalElementMargin = 4;
   constexpr static KDCoordinate ScrollStep = 10;
   constexpr static KDCoordinate ScrollViewBarThickness = 2;
+  constexpr static KDCoordinate BannerTextMargin = 2;
   constexpr static KDCoordinate CommonMargin = 14;
   constexpr static KDCoordinate CommonLeftMargin = CommonMargin;
   constexpr static KDCoordinate CommonRightMargin = CommonMargin;

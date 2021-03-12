@@ -11,6 +11,7 @@ constexpr KDCoordinate Metric::CellHorizontalElementMargin;
 constexpr KDCoordinate Metric::CellVerticalElementMargin;
 constexpr KDCoordinate Metric::ScrollStep;
 constexpr KDCoordinate Metric::ScrollViewBarThickness;
+constexpr KDCoordinate Metric::BannerTextMargin;
 constexpr KDCoordinate Metric::CommonMargin;
 constexpr KDCoordinate Metric::CommonLeftMargin;
 constexpr KDCoordinate Metric::CommonRightMargin;

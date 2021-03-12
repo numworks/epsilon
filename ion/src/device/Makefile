@@ -12,7 +12,7 @@ endif
 
 ion_src += ion/src/shared/collect_registers.cpp
 
-ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
+ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared -DPCB_LATEST=$(PCB_LATEST)
 
 $(call object_for,$(ion_device_src) $(ion_device_flasher_src) $(ion_device_bench_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
 

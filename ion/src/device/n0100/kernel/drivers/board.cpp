@@ -2,8 +2,9 @@
 #include <drivers/config/clocks.h>
 #include <regs/regs.h>
 
-typedef void(*ISR)(void);
-extern ISR InitialisationVector[];
+extern "C" {
+  extern char _isr_vector_table_start_ram;
+}
 
 namespace Ion {
 namespace Device {
@@ -17,7 +18,7 @@ void init() {
   // Ensure right location of interrupt vectors
   // The bootloader leaves its own after flashing
   SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
-  CORTEX.VTOR()->setVTOR((void*)&InitialisationVector);
+  CORTEX.VTOR()->setVTOR((void*)&_isr_vector_table_start_ram);
 }
 
 void initPeripheralsClocks() {

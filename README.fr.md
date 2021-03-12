@@ -155,7 +155,7 @@ Pour contribuer, merci de lire le [Wiki](https://github.com/Omega-Numworks/Omega
 * [Omega Themes](https://github.com/Omega-Numworks/Omega-Themes)
 * [Omega Website](https://github.com/Omega-Numworks/Omega-Website)
 * [Omega RPN `APP`](https://github.com/Omega-Numworks/Omega-RPN)
-* [Omega Atom `APP`](https://github.com/Omega-Numworks/Omega-Atom)
+* [Omega Atomic `APP`](https://github.com/Omega-Numworks/Omega-Atomic)
 * [Omega Design](https://github.com/Omega-Numworks/Omega-Design)
 * [Omega Discord Bot](https://github.com/Omega-Numworks/Omega-Discord-Bot)
 * [Omega App Template `BETA`](https://github.com/Omega-Numworks/Omega-App-Template)

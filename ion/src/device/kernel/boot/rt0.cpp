@@ -12,6 +12,12 @@
 #include <main.h>
 #include <regs/regs.h>
 
+extern "C" {
+  extern char _isr_vector_table_start_flash;
+  extern char _isr_vector_table_start_ram;
+  extern char _isr_vector_table_end_ram;
+}
+
 void __attribute__((noinline)) abort() {
 #ifdef NDEBUG
   Ion::Device::Reset::core();
@@ -52,6 +58,11 @@ void __attribute__((noinline)) start() {
    * Many things are not initialized yet so the code here has to pay attention. */
 
   Ion::Device::Init::configureRAM();
+
+  // Copy isr_vector_table section to RAM
+  size_t isrSectionLength = (&_isr_vector_table_end_ram - &_isr_vector_table_start_ram);
+  memcpy(&_isr_vector_table_start_ram, &_isr_vector_table_start_flash, isrSectionLength);
+
   Ion::Device::Board::init();
 
   /* At this point, we initialized clocks and the external flash but no other

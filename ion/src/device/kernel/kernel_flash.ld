@@ -28,17 +28,19 @@ SECTIONS {
     _persisting_bytes_buffer_end = .;
   } >PERSITING_BYTES
 
-  .isr_vector_table ORIGIN(KERNEL) : {
-    _kernel_start = .;
-    _isr_start = .;
+  .isr_vector_table : AT(ORIGIN(KERNEL)) {
+    _kernel_start = LOADADDR(.isr_vector_table);
+    _isr_vector_table_start_flash = LOADADDR(.isr_vector_table);
+    _isr_vector_table_start_ram = .;
     KEEP(*(.isr_vector_table))
-  } >KERNEL
+    _isr_vector_table_end_ram = .;
+  } >SRAM_DATA_BSS
 
   .header : {
     KEEP(*(.header))
   } >KERNEL
 
-  .text : {
+  .text ORIGIN(KERNEL) + SIZEOF (.isr_vector_table) : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)

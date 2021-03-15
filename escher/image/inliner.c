@@ -104,6 +104,12 @@ int main(int argc, char * argv[]) {
   FILE * implementation = fopen(implementationPath, "w");
   generateImplementationFromImage(implementation, lowerSnakeCaseName, camelCaseName, width, height, colorType, rowPointers);
   fclose(implementation);
+  
+  for (int i=0; i<height; i++) {
+    free(rowPointers[i]);
+  }
+  free(rowPointers);
+  png_destroy_read_struct(&png, &info, NULL);
 
   fclose(inputFile);
 }

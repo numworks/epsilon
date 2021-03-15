@@ -377,6 +377,8 @@ Q(draw_string)
 Q(fill_rect)
 Q(get_pixel)
 Q(set_pixel)
+Q(large_font)
+Q(small_font)
 Q(wait_vblank)
 Q(get_keys)
 

@@ -39,7 +39,7 @@ void HistogramView::reloadSelectedBar() {
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   m_controller->setCurrentDrawnSeries(m_series);
-  ctx->fillRect(rect, KDColorWhite);
+  ctx->fillRect(rect, Palette::BackgroundHard);
   drawAxis(ctx, rect, Axis::Horizontal);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, !m_displayLabels);
   /* We memoize the total size to avoid recomputing it in double precision at

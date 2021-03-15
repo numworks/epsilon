@@ -4,7 +4,7 @@
 
 MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message, const KDFont * font) :
   MessageTableCellWithChevron(message, font),
-  m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
+  m_subtitleView(1.0f, 0.5f, Palette::SecondaryText)
 {
   m_subtitleView.setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
@@ -15,7 +15,7 @@ View * MessageTableCellWithChevronAndExpression::subAccessoryView() const {
 
 void MessageTableCellWithChevronAndExpression::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 

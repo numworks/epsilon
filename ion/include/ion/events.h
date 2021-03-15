@@ -123,6 +123,8 @@ constexpr Event EXE = Event::PlainKey(Keyboard::Key::EXE);
 
 // Shift
 
+constexpr Event ShiftHome  = Event::ShiftKey(Keyboard::Key::Home);
+
 constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::Left);
 constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
 constexpr Event ShiftUp    = Event::ShiftKey(Keyboard::Key::Up);
@@ -147,8 +149,49 @@ constexpr Event Arctangent = Event::ShiftKey(Keyboard::Key::Tangent);
 constexpr Event Equal = Event::ShiftKey(Keyboard::Key::Pi);
 constexpr Event Lower = Event::ShiftKey(Keyboard::Key::Sqrt);
 constexpr Event Greater = Event::ShiftKey(Keyboard::Key::Square);
+constexpr Event shiftans = Event::ShiftKey(Keyboard::Key::Ans);
+constexpr Event shiftplus = Event::ShiftKey(Keyboard::Key::Plus);
+constexpr Event shiftfois = Event::ShiftKey(Keyboard::Key::Multiplication);
+constexpr Event shiftdiv = Event::ShiftKey(Keyboard::Key::Division);
+constexpr Event shiftminus = Event::ShiftKey(Keyboard::Key::Minus);
+constexpr Event shift1 = Event::ShiftKey(Keyboard::Key::One);
+constexpr Event shift2 = Event::ShiftKey(Keyboard::Key::Two);
+constexpr Event shift3 = Event::ShiftKey(Keyboard::Key::Three);
+constexpr Event shift4 = Event::ShiftKey(Keyboard::Key::Four);
+constexpr Event shift5 = Event::ShiftKey(Keyboard::Key::Five);
+constexpr Event shift6 = Event::ShiftKey(Keyboard::Key::Six);
+constexpr Event shift7 = Event::ShiftKey(Keyboard::Key::Seven);
+constexpr Event shift8 = Event::ShiftKey(Keyboard::Key::Eight);
+constexpr Event shift9 = Event::ShiftKey(Keyboard::Key::Nine);
+constexpr Event shift0 = Event::ShiftKey(Keyboard::Key::Zero);
+constexpr Event shiftdot = Event::ShiftKey(Keyboard::Key::Dot);
+constexpr Event shiftee = Event::ShiftKey(Keyboard::Key::EE);
+constexpr Event shiftlp = Event::ShiftKey(Keyboard::Key::LeftParenthesis);
+constexpr Event shiftrp = Event::ShiftKey(Keyboard::Key::RightParenthesis);
+
+constexpr Event BrightnessPlus = Event::ShiftKey(Keyboard::Key::Plus);
+constexpr Event BrightnessMinus = Event::ShiftKey(Keyboard::Key::Minus);
+
+constexpr Event DoubleParenthesis = Event::ShiftKey(Keyboard::Key::LeftParenthesis);
+
+constexpr Event ShiftSeven = Event::ShiftKey(Keyboard::Key::Seven);
+constexpr Event ShiftEight = Event::ShiftKey(Keyboard::Key::Eight);
+constexpr Event ShiftNine = Event::ShiftKey(Keyboard::Key::Nine);
+
+constexpr Event ShiftFour = Event::ShiftKey(Keyboard::Key::Four);
+constexpr Event ShiftFive = Event::ShiftKey(Keyboard::Key::Five);
+constexpr Event ShiftSix = Event::ShiftKey(Keyboard::Key::Six);
+
+constexpr Event ShiftOne = Event::ShiftKey(Keyboard::Key::One);
+constexpr Event ShiftTwo = Event::ShiftKey(Keyboard::Key::Two);
+constexpr Event ShiftThree = Event::ShiftKey(Keyboard::Key::Three);
 
 // Alpha
+
+constexpr Event AlphaLeft  = Event::AlphaKey(Keyboard::Key::Left);
+constexpr Event AlphaRight = Event::AlphaKey(Keyboard::Key::Right);
+constexpr Event AlphaUp    = Event::AlphaKey(Keyboard::Key::Up);
+constexpr Event AlphaDown  = Event::AlphaKey(Keyboard::Key::Down);
 
 constexpr Event Colon = Event::AlphaKey(Keyboard::Key::XNT);
 constexpr Event SemiColon = Event::AlphaKey(Keyboard::Key::Var);
@@ -189,8 +232,10 @@ constexpr Event Space = Event::AlphaKey(Keyboard::Key::Minus);
 
 constexpr Event Question = Event::AlphaKey(Keyboard::Key::Zero);
 constexpr Event Exclamation = Event::AlphaKey(Keyboard::Key::Dot);
+constexpr Event alphaans = Event::AlphaKey(Keyboard::Key::Ans);
 
 // Shift + Alpha
+constexpr Event SimpleQuote = Event::ShiftAlphaKey(Keyboard::Key::Toolbox);
 
 constexpr Event UpperA = Event::ShiftAlphaKey(Keyboard::Key::Exp);
 constexpr Event UpperB = Event::ShiftAlphaKey(Keyboard::Key::Ln);
@@ -223,6 +268,7 @@ constexpr Event UpperX = Event::ShiftAlphaKey(Keyboard::Key::Two);
 constexpr Event UpperY = Event::ShiftAlphaKey(Keyboard::Key::Three);
 constexpr Event UpperZ = Event::ShiftAlphaKey(Keyboard::Key::Plus);
 
+constexpr Event shiftalphaans = Event::ShiftAlphaKey(Keyboard::Key::Ans);
 // Special
 
 constexpr Event None = Event::Special(0);

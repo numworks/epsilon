@@ -16,6 +16,7 @@
 #include "global_preferences.h"
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
+#include "clock_timer.h"
 #include "on_boarding/prompt_controller.h"
 
 #include <ion/events.h>
@@ -39,6 +40,7 @@ public:
   bool dispatchEvent(Ion::Events::Event event) override;
   bool switchTo(App::Snapshot * snapshot) override;
   void run() override;
+  bool updateClock();
   bool updateBatteryState();
   void refreshPreferences();
   void reloadTitleBarView();
@@ -46,7 +48,7 @@ public:
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController * promptController();
-  void redrawWindow();
+  void redrawWindow(bool force = false);
   void activateExamMode(GlobalPreferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
@@ -76,6 +78,7 @@ private:
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
+  ClockTimer m_clockTimer;
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;

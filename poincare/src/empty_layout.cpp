@@ -88,7 +88,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
 
 void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   if (m_isVisible) {
-    KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GrayBright;
+    KDColor fillColor = m_color == Color::Yellow ? Palette::CalculationEmptyBoxNeeded : Palette::CalculationEmptyBox;
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
   }

@@ -10,15 +10,15 @@ ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerD
   Responder(parentResponder),
   View(),
   m_inputViewMemoizedHeight(0),
-  m_textField(parentResponder, nullptr, k_textFieldBufferSize, k_textFieldBufferSize, inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_textField(parentResponder, nullptr, k_textFieldBufferSize, k_textFieldBufferSize, inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, Palette::PrimaryText, Palette::ExpressionInputBackground),
   m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
 {
   // Initialize text field
   m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
-  m_textField.setBackgroundColor(KDColorWhite);
+  m_textField.setBackgroundColor(Palette::ExpressionInputBackground);
   // Initialize layout field
   m_layoutField.setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
-  m_layoutField.setBackgroundColor(KDColorWhite);
+  m_layoutField.setBackgroundColor(Palette::ExpressionInputBackground);
 }
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
@@ -77,7 +77,7 @@ void ExpressionField::layoutSubviews(bool force) {
 
 void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the separator
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GrayMiddle);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::ExpressionInputBorder);
 }
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {

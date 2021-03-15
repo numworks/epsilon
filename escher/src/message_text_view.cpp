@@ -1,19 +1,22 @@
 #include <escher/message_text_view.h>
 #include <assert.h>
+#include <apps/i18n.h>
 
 MessageTextView::MessageTextView(const KDFont * font, I18n::Message message, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
-  m_message(message)
+  m_message(message), m_text(nullptr)
 {
 }
 
 const char * MessageTextView::text() const {
+  if (m_text != nullptr)
+    return m_text;
   return I18n::translate(m_message);
 }
 
 void MessageTextView::setText(const char * text) {
-  assert(false);
+  m_text = text;
 }
 
 void MessageTextView::setMessage(I18n::Message message) {

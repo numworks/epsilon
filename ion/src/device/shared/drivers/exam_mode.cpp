@@ -18,12 +18,14 @@ char ones[Config::ExamModeBufferSize]
 
 /* The exam mode is written in flash so that it is resilient to resets.
  * We erase the dedicated flash sector (all bits written to 1) and, upon
- * deactivating or activating standard or Dutch exam mode we write one or two
+ * deactivating or activating standard, nosym or Dutch exam mode we write one, two or tree
  * bits to 0. To determine in which exam mode we are, we count the number of
  * leading 0 bits. If it is equal to:
  * - 0[3]: the exam mode is off;
  * - 1[3]: the standard exam mode is activated;
- * - 2[3]: the Dutch exam mode is activated. */
+ * - 2[3]: the NoSym exam mode is activated;
+ * - 3[3]: the Dutch exam mode is activated;
+ * - 4[3]: the NoSymNoText exam mode is activated. */
 
 /* significantExamModeAddress returns the first uint32_t * in the exam mode
  * flash sector that does not point to 0. If this flash sector has only 0s or
@@ -76,14 +78,14 @@ uint8_t * SignificantExamModeAddress() {
 uint8_t FetchExamMode() {
   uint8_t * readingAddress = SignificantExamModeAddress();
   // Count the number of 0[3] before reading address
-  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * numberOfBitsInByte) % 3;
+  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * numberOfBitsInByte) % 4;
   // Count the number of 0[3] at reading address
-  size_t numberOfLeading0 = (numberOfBitsInByte - numberOfBitsAfterLeadingZeroes(*readingAddress)) % 3;
-  return (nbOfZerosBefore + numberOfLeading0) % 3;
+  size_t numberOfLeading0 = (numberOfBitsInByte - numberOfBitsAfterLeadingZeroes(*readingAddress)) % 4;
+  return (nbOfZerosBefore + numberOfLeading0) % 4;
 }
 
 void IncrementExamMode(uint8_t delta) {
-  assert(delta == 1 || delta == 2);
+  assert(delta == 1 || delta == 2 || delta == 3);
   uint8_t * writingAddress = SignificantExamModeAddress();
   assert(*writingAddress != 0);
   size_t nbOfTargetedOnes = numberOfBitsAfterLeadingZeroes(*writingAddress);

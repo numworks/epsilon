@@ -37,7 +37,7 @@ def row_for_elf(elf, requested_section_prefixes):
 # String formatting
 
 def iso_separate(string):
-  space = ' ' # We may want to use a thin non-breaking space as thousands separator
+  space = '' # We may want to use a thin non-breaking space as thousands separator
   return string.replace('_',space).replace('+','+'+space).replace('-','-'+space)
 
 def format_bytes(value, force_sign=False):
@@ -118,6 +118,7 @@ parser.add_argument('files', type=str, nargs='+', help='an ELF file')
 parser.add_argument('--labels', type=str, nargs='+', help='label for ELF file')
 parser.add_argument('--sections', type=str, nargs='+', help='Section (prefix) to list')
 parser.add_argument('--escape', action='store_true', help='Escape the output')
+parser.add_argument('--custom', type=str, action='append', nargs='+', help='Custom sections, made from the addition of other sections.')
 args = parser.parse_args()
 
 
@@ -128,10 +129,17 @@ for i,filename in enumerate(args.files):
   label = os.path.basename(filename)
   if args.labels and i < len(args.labels):
     label = args.labels[i]
-  table.append({'label': label, 'values': row_for_elf(filename, args.sections)})
+  values = row_for_elf(filename, args.sections)
+  for custom_section in args.custom:
+    if (len(custom_section) >= 2):
+      custom_section_size = 0
+      for i in range(len(custom_section) - 1):
+         custom_section_size += values[custom_section[i + 1]]
+      values[custom_section[0]] = custom_section_size
+  table.append({'label': label, 'values': values})
 formatted_table = format_table(table)
 
 if args.escape:
-  print(urllib.parse.quote(formatted_table, safe='| :*+'))
+  print(urllib.parse.quote(formatted_table, safe='| :*+()'))
 else:
   print(formatted_table)

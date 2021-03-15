@@ -53,7 +53,7 @@ private:
     ConsoleLineView m_consoleLineView;
   };
   static KDColor textColor(ConsoleLine * line) {
-    return line->isFromCurrentSession() ? KDColorBlack : Palette::GrayDark;
+    return line->isFromCurrentSession() ? Palette::CodeText : Palette::SecondaryText;
   }
   MessageTextView m_promptView;
   ScrollableConsoleLineView m_scrollableView;

@@ -4,12 +4,31 @@ include apps/home/Makefile
 include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
 include apps/usb/Makefile
-apps =
 
+apps =
 # All selected apps are included. Each Makefile below is responsible for setting
 # the $apps variable (name of the app class) and the $app_headers
 # (path to the apps header).
-$(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
+$(foreach i,${apps_list},${eval include apps/$(i)/Makefile})
+
+app_equals = $(and $(findstring $(1),$(2)),$(findstring $(2),$(1)))
+# We list all the apps that are missing
+apps_missing = $(foreach i, ${apps_list}, $(if $(call app_equals, apps/$(i)/Makefile, $(wildcard apps/$(i)/Makefile)),, $(i) ) )
+
+# If the two doesn't match, we got an error.
+ifneq ($(strip $(apps_missing)),)
+    miss_modules = 0
+
+    # Check if the missing apps are one that are supposed to be submodules
+    $(foreach i, $(SUBMODULES_APPS), $(if $(call app_equals, $(filter $(i), $(apps_missing)), $(i)), $(eval miss_modules=1)))
+
+    ifeq ($(miss_modules), 1)
+        PLS_IGNORE := $(shell >&2 printf "\nSome submodules apps seem to be missing. To download them, assumming you git clone'd the repo, do\n")
+        PLS_IGNORE := $(shell >&2 printf "  git submodule init\n")
+        PLS_IGNORE := $(shell >&2 printf "  git submodule update\n\n")
+    endif
+    $(error Missing apps: $(strip $(apps_missing)))
+endif
 
 apps_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \
@@ -25,6 +44,7 @@ apps_src += $(addprefix apps/,\
   backlight_dimming_timer.cpp \
   battery_timer.cpp \
   battery_view.cpp \
+  clock_timer.cpp \
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
   exam_mode_configuration_official.cpp:+official \
@@ -42,7 +62,7 @@ apps_src += $(addprefix apps/,\
 )
 
 tests_src += $(addprefix apps/,\
-  exam_mode_configuration_official.cpp \
+  exam_mode_configuration_non_official.cpp \
 )
 
 
@@ -52,9 +72,9 @@ snapshots_construction = $(foreach i,$(apps),,m_snapshot$(subst :,,$(i))Snapshot
 snapshots_list = $(foreach i,$(apps),,&m_snapshot$(subst :,,$(i))Snapshot)
 snapshots_count = $(words $(apps))
 snapshot_includes = $(foreach i,$(app_headers),-include $(i) )
-epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
+epsilon_app_names = '$(foreach i,${apps_list},"$(i)", )'
 
-$(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
+$(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names) -DOMEGA_USERNAME="$(OMEGA_USERNAME)"
 
 # I18n file generation
 
@@ -81,6 +101,8 @@ $(eval $(call rule_for, \
   global \
 ))
 
+
+
 $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
 # Handle PNG files
@@ -88,6 +110,7 @@ $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/apps/i18n.h
+$(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/apps/home/apps_layout.h
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
 apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
@@ -96,3 +119,21 @@ apps_tests_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \
   global_preferences.cpp \
 )
+
+ifeq ($(THEME_REPO),local)
+$(foreach img,$(image_list), $(eval $(call rule_for, \
+  ICON, \
+  $(img), \
+  $(addprefix themes/themes/local/, $(addsuffix .json, $(THEME_NAME))), \
+  $$(PYTHON) themes/themes_manager.py -i $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+)))
+else
+$(foreach img,$(image_list), $(eval $(call rule_for, \
+  ICON, \
+  $(img), \
+  $(addsuffix /escher/palette.h, $(BUILD_DIR)), \
+  $$(PYTHON) themes/themes_manager.py -i $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+)))
+endif

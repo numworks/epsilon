@@ -15,7 +15,7 @@ ListController::ListController(Responder * parentResponder, ::InputEventHandlerD
   m_expressionCells{},
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this, TableCell::Layout::Vertical),
-  m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
+  m_typeStackController(nullptr, &m_typeParameterController, Palette::ToolboxHeaderText, Palette::ToolboxHeaderBackground, Palette::ToolboxHeaderBorder),
   m_sequenceToolbox()
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
@@ -191,7 +191,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
     myCell->setLayout(sequence->secondInitialConditionName());
   }
   // Set the color
-  KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GrayDark;
+  KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::SecondaryText;
   myCell->setColor(nameColor);
 }
 
@@ -209,7 +209,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
     myCell->setLayout(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
-  KDColor textColor = active ? KDColorBlack : Palette::GrayDark;
+  KDColor textColor = active ? Palette::PrimaryText : Palette::SecondaryText;
   myCell->setTextColor(textColor);
 }
 

@@ -36,7 +36,7 @@ def mandelbrot(N_iteration):
         z = z*z+c
 # Choose the color of the dot from the Mandelbrot sequence
       rgb = int(255*i/N_iteration)
-      col = kandinsky.color(int(rgb),int(rgb*0.75),int(rgb*0.25))
+      col = kandinsky.color(int(rgb*0.82),int(rgb*0.13),int(rgb*0.18))
 # Draw a pixel colored in 'col' at position (x,y)
       kandinsky.set_pixel(x,y,col))");
 

@@ -30,7 +30,7 @@ void OkView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height =  bounds().height();
   KDRect frame((width-k_okSize)/2, (height-k_okSize)/2, k_okSize, k_okSize);
   KDColor okWorkingBuffer[OkView::k_okSize*OkView::k_okSize];
-  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)okMask, okWorkingBuffer);
+  ctx->blendRectWithMask(frame, Palette::PrimaryText, (const uint8_t *)okMask, okWorkingBuffer);
 }
 
 KDSize OkView::minimalSizeForOptimalDisplay() const {

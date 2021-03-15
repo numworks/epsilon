@@ -8,13 +8,14 @@ namespace Home {
 
 class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
 public:
-  Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource);
+  Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource, App * app);
 
   View * view() override;
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  TELEMETRY_ID("");
+  void viewWillAppear() override;
+  void viewDidDisappear() override;
 
   int numberOfRows() const override;
   int numberOfColumns() const override;
@@ -49,6 +50,7 @@ private:
   static constexpr int k_cellWidth = 104;
   ContentView m_view;
   AppCell m_cells[k_maxNumberOfCells];
+  App * m_app;
 };
 
 }

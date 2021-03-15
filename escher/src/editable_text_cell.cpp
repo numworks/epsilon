@@ -30,7 +30,7 @@ TextField * EditableTextCell::textField() {
 
 void EditableTextCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_textField.setBackgroundColor(backgroundColor);
 }
 

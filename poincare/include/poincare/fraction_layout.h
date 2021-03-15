@@ -7,10 +7,8 @@
 namespace Poincare {
 
 class FractionLayoutNode /*final*/ : public LayoutNode {
+  friend class DerivativeLayoutNode;
 public:
-  constexpr static KDCoordinate k_fractionLineMargin = 2;
-  constexpr static KDCoordinate k_fractionLineHeight = 1;
-
   using LayoutNode::LayoutNode;
 
   // Layout
@@ -56,6 +54,9 @@ protected:
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
+  constexpr static KDCoordinate k_fractionLineMargin = 2;
+  constexpr static KDCoordinate k_fractionLineHeight = 1;
+
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   LayoutNode * numeratorLayout() { return childAtIndex(0); }
   LayoutNode * denominatorLayout() { return childAtIndex(1); }

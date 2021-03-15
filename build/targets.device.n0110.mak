@@ -31,15 +31,21 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 
 .PHONY: binpack
 binpack:
+ifndef USE_IN_FACTORY
+	@echo "CAUTION: You are building a binpack."
+	@echo "You must specify where this binpack will be used"
+	@echo "Please set the USE_IN_FACTORY environment variable to either 0 or 1 to proceed."
+	@exit -1
+endif
 	rm -rf output/binpack
 	mkdir -p output/binpack
 	$(MAKE) clean
-	$(MAKE) $(BUILD_DIR)/flasher.light.bin
+	$(MAKE) $(BUILD_DIR)/flasher.light.bin IN_FACTORY=$(USE_IN_FACTORY)
 	cp $(BUILD_DIR)/flasher.light.bin output/binpack
-	$(MAKE) $(BUILD_DIR)/bench.flash.bin
-	$(MAKE) $(BUILD_DIR)/bench.ram.bin
+	$(MAKE) $(BUILD_DIR)/bench.flash.bin IN_FACTORY=$(USE_IN_FACTORY)
+	$(MAKE) $(BUILD_DIR)/bench.ram.bin IN_FACTORY=$(USE_IN_FACTORY)
 	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin output/binpack
-	$(MAKE) epsilon.official.onboarding.update.two_binaries
+	$(MAKE) epsilon.official.onboarding.update.two_binaries IN_FACTORY=$(USE_IN_FACTORY)
 	cp $(BUILD_DIR)/epsilon.official.onboarding.update.internal.bin $(BUILD_DIR)/epsilon.official.onboarding.update.external.bin output/binpack
 	$(MAKE) clean
 	cd output && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.official.onboarding.update.internal.bin epsilon.official.onboarding.update.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done

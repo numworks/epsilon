@@ -67,6 +67,19 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   return mp_const_none;
 }
 
+mp_obj_t modkandinsky_draw_line(size_t n_args, const mp_obj_t * args) {
+  mp_int_t x1 = mp_obj_get_int(args[0]);
+  mp_int_t y1 = mp_obj_get_int(args[1]);
+  mp_int_t x2 = mp_obj_get_int(args[2]);
+  mp_int_t y2 = mp_obj_get_int(args[3]);
+  KDPoint p1 = KDPoint(x1, y1);
+  KDPoint p2 = KDPoint(x2, y2);
+  KDColor color = MicroPython::Color::Parse(args[4]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->drawLine(p1, p2, color);
+  return mp_const_none;
+}
+
 mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   mp_int_t x = mp_obj_get_int(args[0]);
   mp_int_t y = mp_obj_get_int(args[1]);

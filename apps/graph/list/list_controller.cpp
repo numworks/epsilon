@@ -102,6 +102,8 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
       Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
     } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithNumber) {
       Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithNumber);
+    } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithUnderscore) {
+      Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithUnderscore);
     } else {
       assert(nameError == Function::NameNotCompliantError::ReservedName);
       Container::activeApp()->displayWarning(I18n::Message::ReservedName);

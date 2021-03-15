@@ -179,6 +179,9 @@ Expression CalculationStore::ansExpression(Context * context) {
   bool exactOuptutInvolvesStoreEqual = e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
   if (mostRecentCalculation->input().recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
     return mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
+  } else if (mostRecentCalculation->displayOutput(context) == Calculation::DisplayOutput::ApproximateOnly) {
+    // Exact output was hidden and should not be accessible using ans
+    return mostRecentCalculation->input();
   }
   return mostRecentCalculation->exactOutput();
 }

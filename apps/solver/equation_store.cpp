@@ -95,7 +95,7 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   m_userVariablesUsed = !shouldReplaceFunctionsButNotSymbols;
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
-  assert(m_intervalApproximateSolutions[0] < m_intervalApproximateSolutions[1]);
+  assert(m_intervalApproximateSolutions[0] <= m_intervalApproximateSolutions[1]);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double maximalStep = Poincare::Solver::DefaultMaximalStep(start, m_intervalApproximateSolutions[1]);

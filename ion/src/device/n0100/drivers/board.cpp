@@ -234,6 +234,10 @@ PCBVersion readPCBVersion() {
   return PCB_LATEST;
 }
 
+PCBVersion readPCBVersionInMemory() {
+  return PCB_LATEST;
+}
+
 void writePCBVersion(PCBVersion) {}
 
 }

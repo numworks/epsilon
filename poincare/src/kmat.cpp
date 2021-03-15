@@ -30,11 +30,6 @@ Expression KMatNode::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return KMat(this).shallowReduce(reductionContext);
 }
 
-template<typename T>
-Evaluation<T> KMatNode::templatedApproximate(ApproximationContext approximationContext) const {
-  return Complex<T>::Undefined();
-}
-
 Expression KMat::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);

@@ -34,7 +34,10 @@ private:
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
+  template<typename T>
+  Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const {
+    return Complex<T>::Undefined();
+  }
 };
 
 class KMat final : public Expression {

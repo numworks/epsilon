@@ -22,6 +22,11 @@ void init() {
 }
 
 void initPeripheralsClocks() {
+  /* Some clocks might have already be init by the bootloader. But, as we use
+   * this code when coming back from a suspend, we spare ourself from writing
+   * two similar initPeripheralsClocks. Initializing twice a clock isn't such
+   * an issue... */
+
   // AHB1 bus
   // Our peripherals are using GPIO A, B, C, D and E.
   // We're not using the CRC nor DMA engines.

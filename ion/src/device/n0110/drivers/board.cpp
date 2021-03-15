@@ -379,8 +379,17 @@ constexpr int pcbVersionOTPIndex = 0;
  * version number. This way, devices with blank OTP are considered version 0. */
 
 PCBVersion readPCBVersion() {
-  /* FIXME: When flashing for the first time after assembling the device, this
-   * should return PCB_LATEST. */
+#if IN_FACTORY
+  /* When flashing for the first time, we want all systems that depend on the
+   * PCB version to function correctly before flashing the PCB version. This
+   * way, flashing the PCB version can be done last. */
+  return PCB_LATEST;
+#else
+  return readPCBVersionInMemory();
+#endif
+}
+
+PCBVersion readPCBVersionInMemory() {
   return ~*reinterpret_cast<const PCBVersion *>(InternalFlash::Config::OTPAddresses[pcbVersionOTPIndex]);
 }
 

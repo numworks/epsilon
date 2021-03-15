@@ -380,21 +380,18 @@ T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, Valu
   assert(*probability <= (static_cast<T>(1.f) - precision) && *probability >= precision);
   (void) precision;
 
-  /* FIXME: equalityThreshold could be constexpr, but sqrt is not constexpr on
-   * the simulator. */
-  T equalityThreshold = std::sqrt(precision);
   T cumulative = static_cast<T>(0.f);
-  int result = 0;
+  int result = -1;
+  T delta;
   while (cumulative < *probability && cumulative < k_maxProbability && result < k_maxNumberOfOperations) {
-    cumulative += evaluation(result++, context, auxiliary);
-    if (std::fabs(cumulative - *probability) <= equalityThreshold) {
+    cumulative += evaluation(++result, context, auxiliary);
+    delta = cumulative - *probability;
+    if (delta * delta <= precision) {
       /* Consider we found the exact match. Otherwise, approximation errors
        * could round down and miss the exact result by one. */
-      return result - 1;
+      return result;
     }
   }
-  /* At this point cumulative is the sum for i between 0 and result-1 */
-  result--;
   if (cumulative >= k_maxProbability) {
     *probability = static_cast<T>(1.f);
     return result;

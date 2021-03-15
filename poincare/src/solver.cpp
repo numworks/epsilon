@@ -388,7 +388,8 @@ T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, Valu
     delta = cumulative - *probability;
     if (delta * delta <= precision) {
       /* Consider we found the exact match. Otherwise, approximation errors
-       * could round down and miss the exact result by one. */
+       * could round down and miss the exact result by one.
+       * The tolerance used has been chosen empirically. */
       return result;
     }
   }

@@ -1,6 +1,7 @@
 #include <ion/battery.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
+#include <ion/rtc.h>
 #include <ion/usb.h>
 #include <drivers/board.h>
 #include <drivers/battery.h>
@@ -39,7 +40,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
     isLEDActive = LED::updateColorWithPlugAndCharge() != KDColorBlack;
 
     // Configure low-power mode
-    if (isLEDActive) {
+    if (isLEDActive || Ion::RTC::mode() == Ion::RTC::Mode::HSE) {
       Device::Power::sleepConfiguration();
     } else {
       Device::Power::stopConfiguration();

@@ -10,11 +10,11 @@
 
 class Button : public HighlightCell, public Responder {
 public:
-  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font = KDFont::SmallFont, KDColor textColor = KDColorBlack);
+  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font = KDFont::SmallFont, KDColor textColor = Palette::ButtonText);
   void setMessage(I18n::Message message);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
-  virtual KDColor highlightedBackgroundColor() const { return Palette::Select; }
+  virtual KDColor highlightedBackgroundColor() const { return Palette::ButtonBackgroundSelected; }
   Responder * responder() override {
     return this;
   }

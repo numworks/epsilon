@@ -43,7 +43,7 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect frame(width - k_switchWidth, heightCenter - halfHeight, k_switchWidth, k_switchHeight);
   ctx->blendRectWithMask(
     frame,
-    m_state ? Palette::YellowDark : Palette::GrayDark,
+    m_state ? Palette::Control : Palette::ControlDisabled,
     reinterpret_cast<const uint8_t *>(switchMask),
     workingBuffer);
 
@@ -52,7 +52,7 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect onOffFrame(onOffX, heightCenter - halfHeight, k_onOffSize, k_onOffSize);
   ctx->blendRectWithMask(
     onOffFrame,
-    KDColorWhite,
+    Palette::ListCellBackground,
     reinterpret_cast<const uint8_t *>(onOffMask),
     workingBuffer);
 }

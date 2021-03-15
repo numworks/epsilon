@@ -23,8 +23,8 @@ void FunctionTitleCell::setBaseline(KDCoordinate baseline) {
 
 void FunctionTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_orientation == Orientation::VerticalIndicator){
-    KDColor separatorColor = m_even ? Palette::WallScreen : KDColorWhite;
-    KDColor backgroundColor = m_even ? KDColorWhite : Palette::WallScreen;
+    KDColor separatorColor = m_even ? Palette::BackgroundApps : Palette::BackgroundHard;
+    KDColor backgroundColor = m_even ? Palette::BackgroundHard : Palette::BackgroundApps;
     // Draw the color indicator
     ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()), m_functionColor);
     // Draw the horizontal separator

@@ -42,7 +42,7 @@ private:
   class ContentView : public View {
   public:
     constexpr static KDCoordinate k_topMargin = 50;
-    constexpr static KDColor k_backgroundColor = Palette::WallScreenDark;
+    constexpr static KDColor k_backgroundColor = Palette::BackgroundAppsSecondary;
     ContentView(SolutionsController * controller);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setWarning(bool warning);

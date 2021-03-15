@@ -14,12 +14,12 @@ SelectableViewWithMessages::SelectableViewWithMessages(SelectableTableView * sel
   for (int i = 0; i < k_maxNumberOfLines; i++) {
     m_messageLines[i].setFont(KDFont::SmallFont);
     m_messageLines[i].setAlignment(0.5f, 0.5f);
-    m_messageLines[i].setBackgroundColor(Palette::WallScreen);
+    m_messageLines[i].setBackgroundColor(Palette::BackgroundApps);
   }
 }
 
 void SelectableViewWithMessages::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::WallScreen);
+  ctx->fillRect(bounds(), Palette::BackgroundApps);
 }
 
 void SelectableViewWithMessages::setMessages(I18n::Message * m, int numberOfMessages) {

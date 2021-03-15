@@ -30,7 +30,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
 void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
   selectableTableView()->setVerticalCellOverlap(0);
   selectableTableView()->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  selectableTableView()->setBackgroundColor(Palette::WallScreenDark);
+  selectableTableView()->setBackgroundColor(Palette::BackgroundAppsSecondary);
 
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {

@@ -1,6 +1,7 @@
 name: Continuous integration
 #on: [pull_request, push]
 on:
+  push:
   pull_request:
   workflow_dispatch:
     inputs:
@@ -12,15 +13,43 @@ on:
         description: 'Run macOS tests'
         required: true
         default: 'no'
+      trigger3DS:
+        description: 'Run 3DS tests'
+        required: true
+        default: 'no'
 
 jobs:
+  nintendo_3ds:
+    if: github.event.inputs.trigger3DS == 'yes'
+    runs-on: ubuntu-latest
+    steps:
+      - run: wget https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman.amd64.deb -O /tmp/devkitpro-pacman.deb
+      - run: yes | sudo dpkg -i /tmp/devkitpro-pacman.deb
+      - run: yes | sudo dkp-pacman -Syu --needed devkitARM 3dstools libctru
+      - run: echo ::set-env name=DEVKITPRO::/opt/devkitpro
+      - run: echo ::set-env name=DEVKITARM::/opt/devkitpro/devkitARM
+      - run: echo ::set-env name=PATH::$DEVKITPRO/tools/bin:$DEVKITARM/bin:$PATH
+
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+      - run: make -j2 PLATFORM=simulator TARGET=3ds
+      - run: make -j2 PLATFORM=simulator TARGET=3ds epsilon.cia
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-3ds.3dsx
+          path: output/release/simulator/3ds/epsilon.3dsx
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-3ds.cia
+          path: output/release/simulator/3ds/epsilon.cia
   android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=android
-      - run: make -j2 PLATFORM=simulator TARGET=android epsilon.official.apk
-      - run: make -j2 PLATFORM=simulator TARGET=android test.apk
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
@@ -31,38 +60,63 @@ jobs:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: numworks/setup-arm-toolchain@2020-q2
       - uses: actions/checkout@v2
-      - run: make -j2 MODEL=n0100 epsilon.dfu
-      - run: make -j2 MODEL=n0100 epsilon.onboarding.dfu
-      - run: make -j2 MODEL=n0100 epsilon.official.onboarding.dfu
-      - run: make -j2 MODEL=n0100 epsilon.onboarding.update.dfu
-      - run: make -j2 MODEL=n0100 epsilon.onboarding.beta.dfu
-      - run: make -j2 MODEL=n0100 flasher.light.dfu
-      - run: make -j2 MODEL=n0100 flasher.verbose.dfu
-      - run: make -j2 MODEL=n0100 test.elf
+        with:
+          submodules: 'recursive'
+      - run: mkdir final-output
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=en output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.en.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=fr output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.fr.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=nl output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.nl.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=pt output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.pt.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=it output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.it.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=de output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.de.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=es output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.es.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=hu output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.hu.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 output/release/device/n0100/flasher.light.bin
+      - run: mv output/release/device/n0100/flasher.light.bin final-output/flasher.light.bin
+      - run: find final-output/ -type f -exec bash -c "shasum -a 256 -b {} > {}.sha256" \;
+      - run: tar cvfz binpack-n0100.tgz final-output/*
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-n0100.dfu
-          path: output/release/device/n0100/epsilon.dfu
+          name: epsilon-binpack-n0100.tgz
+          path: binpack-n0100.tgz
   n0110:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: numworks/setup-arm-toolchain@2020-q2
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 epsilon.dfu
       - run: make -j2 epsilon.onboarding.dfu
-      - run: make -j2 epsilon.official.onboarding.dfu
       - run: make -j2 epsilon.onboarding.update.dfu
       - run: make -j2 epsilon.onboarding.beta.dfu
       - run: make -j2 flasher.light.dfu
       - run: make -j2 flasher.verbose.dfu
       - run: make -j2 bench.ram.dfu
       - run: make -j2 bench.flash.dfu
-      - run: make -j2 test.elf
+      - run: make -j2 binpack
+      - run: cp output/release/device/n0110/binpack-n0110-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0110/binpack-n0110.tgz
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-n0110.dfu
-          path: output/release/device/n0110/epsilon.dfu
+          name: epsilon-binpack-n0110.tgz
+          path: output/release/device/n0110/binpack-n0110.tgz
   windows:
     runs-on: windows-latest
     defaults:
@@ -71,11 +125,10 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng
       - run: make -j2 PLATFORM=simulator
-      - run: make -j2 PLATFORM=simulator epsilon.official.exe
-      - run: make -j2 PLATFORM=simulator test.headless.exe
-      - run: output/release/simulator/windows/test.headless.exe
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-windows.exe
@@ -85,12 +138,11 @@ jobs:
     steps:
       - uses: numworks/setup-emscripten@v1
         with:
-          sdk: 1.39.16-fastcomp
+          sdk: latest-upstream
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=web
-      - run: make -j2 PLATFORM=simulator TARGET=web epsilon.official.zip
-      - run: make -j2 PLATFORM=simulator TARGET=web test.headless.js
-      - run: node output/release/simulator/web/test.headless.js
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-web.zip
@@ -100,10 +152,9 @@ jobs:
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator
-      - run: make -j2 PLATFORM=simulator epsilon.official.bin
-      - run: make -j2 PLATFORM=simulator test.headless.bin
-      - run: output/release/simulator/linux/test.headless.bin
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-linux.bin
@@ -114,10 +165,9 @@ jobs:
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator
-      - run: make -j2 PLATFORM=simulator epsilon.official.app
-      - run: make -j2 PLATFORM=simulator ARCH=x86_64 test.headless.bin
-      - run: output/release/simulator/macos/x86_64/test.headless.bin
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-macos.zip
@@ -128,9 +178,9 @@ jobs:
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
-      - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.official.ipa
-      - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 test.ipa
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
       - uses: actions/upload-artifact@master
         with:

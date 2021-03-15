@@ -6,7 +6,7 @@
 class Window : public View {
 public:
   Window() : m_contentView(nullptr) {}
-  void redraw(bool force = false);
+  virtual void redraw(bool force = false);
   void setContentView(View * contentView);
 protected:
 #if ESCHER_VIEW_LOGGING

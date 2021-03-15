@@ -13,7 +13,7 @@ using namespace Poincare;
 LayoutField::ContentView::ContentView() :
   m_cursor(),
   m_insertionCursor(),
-  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite, &m_selectionStart, &m_selectionEnd),
+  m_expressionView(0.0f, 0.5f, Palette::PrimaryText, Palette::BackgroundHard, &m_selectionStart, &m_selectionEnd),
   m_cursorView(),
   m_selectionStart(),
   m_selectionEnd(),
@@ -392,13 +392,17 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else if (strcmp(text, Ion::Events::Power.text()) == 0) {
     cursor->addEmptyPowerLayout();
   } else if (strcmp(text, Ion::Events::Sqrt.text()) == 0) {
-    cursor->addEmptySquareRootLayout();
+    m_contentView.cursor()->addRoot();
+  } else if (strcmp(text, Ion::Events::Log.text()) == 0) {
+    m_contentView.cursor()->addLog();
   } else if (strcmp(text, Ion::Events::Square.text()) == 0) {
     cursor->addEmptySquarePowerLayout();
   } else if (strcmp(text, Ion::Events::EE.text()) == 0) {
     cursor->addEmptyTenPowerLayout();
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
     cursor->addEmptyMatrixLayout();
+  } else if((strcmp(text, Ion::Events::Multiplication.text())) == 0){
+    cursor->addMultiplicationPointLayout();
   } else {
     Expression resultExpression = Expression::Parse(text, nullptr);
     if (resultExpression.isUninitialized()) {

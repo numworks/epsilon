@@ -79,6 +79,7 @@ public:
     Integral,
     InvBinom,
     InvNorm,
+    KMat,
     LeastCommonMultiple,
     Logarithm,
     MatrixTrace,

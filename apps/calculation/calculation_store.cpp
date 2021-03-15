@@ -1,5 +1,6 @@
 #include "calculation_store.h"
 #include "../shared/poincare_helpers.h"
+#include "../global_preferences.h"
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -87,7 +88,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     // Outputs hold exact output, approximate output and its duplicate
     constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
     Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic() ? Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition : Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode()) && outputs[1].hasUnit()) {
       // Hide results with units on units if required by the exam mode configuration
       outputs[1] = Undefined::Builder();

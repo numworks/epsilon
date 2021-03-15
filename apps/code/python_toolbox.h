@@ -16,10 +16,10 @@ public:
 
   // Toolbox
   bool handleEvent(Ion::Events::Event event) override;
+  const ToolboxMessageTree * rootModel() const override;
 protected:
   KDCoordinate rowHeight(int j) override;
   bool selectLeaf(int selectedRow) override;
-  const ToolboxMessageTree * rootModel() const override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;

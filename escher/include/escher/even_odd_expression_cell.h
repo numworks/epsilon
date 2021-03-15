@@ -7,7 +7,7 @@
 class EvenOddExpressionCell : public EvenOddCell {
 public:
   EvenOddExpressionCell(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
-    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+    KDColor textColor = Palette::PrimaryText, KDColor backgroundColor = Palette::BackgroundHard);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);

@@ -197,8 +197,8 @@ bool Calculation::shouldOnlyDisplayExactOutput() {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
   Expression i = input();
-  return i.type() == ExpressionNode::Type::Store
-    && i.childAtIndex(1).type() == ExpressionNode::Type::Function;
+  return (i.type() == ExpressionNode::Type::Store && i.childAtIndex(1).type() == ExpressionNode::Type::Function)
+    || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

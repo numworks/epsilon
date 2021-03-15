@@ -4,7 +4,7 @@
 
 MessageTableCell::MessageTableCell(I18n::Message label, const KDFont * font, Layout layout) :
   TableCell(layout),
-  m_messageTextView(font, label, 0, 0.5, KDColorBlack, KDColorWhite),
+  m_messageTextView(font, label, 0, 0.5, Palette::PrimaryText, Palette::ListCellBackground),
   m_backgroundColor(KDColorWhite)
 {
 }
@@ -15,7 +15,7 @@ View * MessageTableCell::labelView() const {
 
 void MessageTableCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : m_backgroundColor;
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_messageTextView.setBackgroundColor(backgroundColor);
 }
 

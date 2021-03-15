@@ -5,6 +5,8 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <cmath>
+#include <poincare/preferences.h>
+#include <apps/i18n.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -14,7 +16,10 @@ namespace Settings {
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_contentView(&m_selectableTableView),
-  m_cell{}
+  m_cell{},
+  m_ledController(this),
+  m_examModeModeController(this),
+  m_examModeCell(KDFont::LargeFont, KDFont::SmallFont)
 {
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_cell[i].setMessage(ExamModeConfiguration::examModeActivationMessage(i));
@@ -23,9 +28,17 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
 }
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
-    return true;
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    if (m_messageTreeModel->childAtIndex(selectedRow())->label() == I18n::Message::ExamModeMode) {
+      (&m_examModeModeController)->setMessageTreeModel(m_messageTreeModel->childAtIndex(selectedRow()));
+      StackViewController * stack = stackController();
+      stack->push(&m_examModeModeController);
+      return true;
+    } 
+    else {
+      AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
+      return true;
+    }
   }
   return GenericSubController::handleEvent(event);
 }
@@ -54,19 +67,34 @@ int ExamModeController::numberOfRows() const {
 
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
   assert(type == 0);
-  assert(index >= 0 && index < k_maxNumberOfCells);
+  assert(index >= 0  && index < 3);
+  if (m_messageTreeModel->childAtIndex(index)->label() == I18n::Message::ExamModeMode) {
+    return &m_examModeCell;
+  }
   return &m_cell[index];
 }
 
 int ExamModeController::reusableCellCount(int type) {
-  return k_maxNumberOfCells;
+  assert(type == 0);
+  return 3;
 }
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if(index == 0){
+    m_cell[2].setHighlighted(false);
+  }
+  Preferences * preferences = Preferences::sharedPreferences();
   GenericSubController::willDisplayCellForIndex(cell, index);
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  I18n::Message thisLabel = m_messageTreeModel->childAtIndex(index)->label();
+
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && (thisLabel == I18n::Message::ActivateExamMode || thisLabel == I18n::Message::ExamModeActive)) {
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(I18n::Message::ExamModeActive);
+  }
+  if (thisLabel == I18n::Message::ExamModeMode) {
+    MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
+    I18n::Message message = (I18n::Message) m_messageTreeModel->childAtIndex(index)->childAtIndex((uint8_t)GlobalPreferences::sharedGlobalPreferences()->tempExamMode() - 1)->label();
+    myTextCell->setSubtitle(message);
   }
 }
 
@@ -81,7 +109,7 @@ int ExamModeController::initialSelectedRow() const {
 }
 
 GlobalPreferences::ExamMode ExamModeController::examMode() {
-  GlobalPreferences::ExamMode mode = ExamModeConfiguration::examModeAtIndex(selectedRow());
+  GlobalPreferences::ExamMode mode = GlobalPreferences::sharedGlobalPreferences()->tempExamMode();
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     // If the exam mode is already on, this re-activate the same exam mode
     mode = GlobalPreferences::sharedGlobalPreferences()->examMode();

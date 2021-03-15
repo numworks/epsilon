@@ -2,7 +2,7 @@
 #include <apps/global_preferences.h>
 #include <poincare/integer.h>
 #include <escher/app.h>
-#include <escher/palette.h>
+#include <poincare/preferences.h>
 
 namespace Code {
 
@@ -57,8 +57,8 @@ void EditorView::layoutSubviews(bool force) {
 /* EditorView::GutterView */
 
 void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor textColor = Palette::BlueishGray;
-  KDColor backgroundColor = KDColor::RGB24(0xE4E6E7);
+  KDColor textColor = Palette::PrimaryText;
+  KDColor backgroundColor = Palette::CodeGutterViewBackground;
 
   ctx->fillRect(rect, backgroundColor);
 
@@ -102,7 +102,7 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
 
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
   int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * m_font->glyphSize().width(), 0);
+  return KDSize(2 * k_margin + numberOfChars * Poincare::Preferences::sharedPreferences()->KDPythonFont()->glyphSize().width(), 0);
 }
 
 }

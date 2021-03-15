@@ -107,7 +107,7 @@ def parse_files(files):
                 else:
                     messages.add(name)
                 data[locale][name] = definition
-    check_redundancy(messages, data, args.locales)
+    #check_redundancy(messages, data, args.locales) # FIXME
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
 
 def parse_codepoints(file):

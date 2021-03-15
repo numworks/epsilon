@@ -17,7 +17,7 @@ StoreController::ContentView::ContentView(DoublePairStore * store, Responder * p
   m_formulaInputView(this, inputEventHandlerDelegate, textFieldDelegate),
   m_displayFormulaInputView(false)
 {
-  m_dataView.setBackgroundColor(Palette::WallScreenDark);
+  m_dataView.setBackgroundColor(Palette::BackgroundAppsSecondary);
   m_dataView.setVerticalCellOverlap(0);
   m_dataView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
 }

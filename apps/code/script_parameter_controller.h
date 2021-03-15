@@ -31,16 +31,20 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
 private:
-  constexpr static int k_totalNumberOfCell = 4;
+  constexpr static int k_totalNumberOfCell = 6;
   StackViewController * stackViewController();
   I18n::Message m_pageTitle;
   MessageTableCell m_executeScript;
   MessageTableCell m_renameScript;
   MessageTableCellWithSwitch m_autoImportScript;
   MessageTableCell m_deleteScript;
+  MessageTableCell m_duplicateScript;
+  MessageTableCellWithBuffer m_size;
+  void GetScriptSize(MessageTableCellWithBuffer* myCell);
   SelectableTableView m_selectableTableView;
   Script m_script;
   MenuController * m_menuController;
+  bool m_sizedisplaypercent = false;
 };
 
 }

@@ -44,6 +44,9 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
   return (
     Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "inf")             == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "infinity")        == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "oo")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Unreal::Name())    == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
@@ -68,7 +71,8 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseTimes,           // Token::Times
     &Parser::parseSlash,           // Token::Slash
     &Parser::parseImplicitTimes,   // Token::ImplicitTimes
-    &Parser::parseCaret,           // Token::Power
+    &Parser::parseCaret,           // Token::Power,
+    &Parser::parseSingleQuote,     // Token::SingleQuote
     &Parser::parseBang,            // Token::Bang
     &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
     &Parser::parseMatrix,          // Token::LeftBracket
@@ -330,6 +334,15 @@ void Parser::parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type s
   defaultParseLeftParenthesis(true, leftHandSide, stoppingType);
 }
 
+void Parser::parseSingleQuote(Expression & leftHandSide, Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Left-hand side missing
+  } else {
+    leftHandSide = Derivative::Builder(leftHandSide, Symbol::Builder('x'), Symbol::Builder('x'));
+  }
+  isThereImplicitMultiplication();
+}
+
 void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing
@@ -426,7 +439,14 @@ void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::
 void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
   if (m_currentToken.compareTo(Symbol::k_ans) == 0) {
     leftHandSide = Symbol::Ans();
-  } else if (m_currentToken.compareTo(Infinity::Name()) == 0) {
+  } else if (m_currentToken.compareTo(Infinity::Name()) == 0 ||
+             m_currentToken.compareTo("inf")            == 0 ||
+             m_currentToken.compareTo("infinity")       == 0 ||
+             m_currentToken.compareTo("oo")             == 0
+    ) {
+
+    leftHandSide = Infinity::Builder(false);
+  } else if (m_currentToken.compareTo("inf") == 0) {
     leftHandSide = Infinity::Builder(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined::Builder();

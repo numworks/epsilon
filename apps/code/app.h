@@ -10,6 +10,7 @@
 #include "python_toolbox.h"
 #include "variable_box_controller.h"
 #include "../shared/shared_app.h"
+#include "toolbox_ion_keys.h"
 
 namespace Code {
 
@@ -75,6 +76,8 @@ public:
 
   static constexpr int k_pythonHeapSize = 32768;
 
+  Code::toolboxIonKeys * toolboxIonKeys();
+
 private:
   /* Python delegate:
    * MicroPython requires a heap. To avoid dynamic allocation, we keep a working
@@ -91,6 +94,7 @@ private:
   StackViewController m_codeStackViewController;
   PythonToolbox m_toolbox;
   VariableBoxController m_variableBoxController;
+  Code::toolboxIonKeys m_toolboxIonKeys;
 };
 
 }

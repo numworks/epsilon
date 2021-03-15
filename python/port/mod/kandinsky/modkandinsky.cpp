@@ -61,8 +61,22 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   KDPoint point(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]));
   KDColor textColor = (n_args >= 4) ? MicroPython::Color::Parse(args[3]) : KDColorBlack;
   KDColor backgroundColor = (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : KDColorWhite;
+  const KDFont * font = (n_args >= 6) ? ((mp_obj_is_true(args[5])) ? KDFont::SmallFont : KDFont::LargeFont) : KDFont::LargeFont;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::sharedContext()->drawString(text, point, KDFont::LargeFont, textColor, backgroundColor);
+  KDIonContext::sharedContext()->drawString(text, point, font, textColor, backgroundColor);
+  return mp_const_none;
+}
+
+mp_obj_t modkandinsky_draw_line(size_t n_args, const mp_obj_t * args) {
+  mp_int_t x1 = mp_obj_get_int(args[0]);
+  mp_int_t y1 = mp_obj_get_int(args[1]);
+  mp_int_t x2 = mp_obj_get_int(args[2]);
+  mp_int_t y2 = mp_obj_get_int(args[3]);
+  KDPoint p1 = KDPoint(x1, y1);
+  KDPoint p2 = KDPoint(x2, y2);
+  KDColor color = MicroPython::Color::Parse(args[4]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->drawLine(p1, p2, color);
   return mp_const_none;
 }
 

@@ -24,12 +24,8 @@ extern const Shared::SettingsMessageTree s_modelMathOptionsChildren[6];
 extern const Shared::SettingsMessageTree s_modelFontChildren[2];
 extern const Shared::SettingsMessageTree s_modelDateTimeChildren[3];
 extern const Shared::SettingsMessageTree s_accessibilityChildren[6];
-extern const Shared::SettingsMessageTree s_contributorsChildren[20];
-#ifdef OMEGA_USERNAME
+extern const Shared::SettingsMessageTree s_contributorsChildren[23];
 extern const Shared::SettingsMessageTree s_modelAboutChildren[8];
-#else
-extern const Shared::SettingsMessageTree s_modelAboutChildren[7];
-#endif
 extern const Shared::SettingsMessageTree s_model;
 
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {

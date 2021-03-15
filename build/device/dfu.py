@@ -4,6 +4,8 @@
 # This work is licensed under the MIT license, see the file LICENSE for
 # details.
 
+# This script has been modified by NumWorks contributors
+
 """This module implements enough functionality to program the STM32F4xx over
 DFU, without requiring dfu-util.
 See app note AN3156 for a description of the DFU protocol.

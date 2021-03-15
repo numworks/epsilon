@@ -56,6 +56,7 @@ private:
   void parseMatrix(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseSingleQuote(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseBang(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parsePlus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMinus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -125,6 +126,7 @@ private:
     &InvBinom::s_functionHelper,
     &MatrixInverse::s_functionHelper,
     &InvNorm::s_functionHelper,
+    &KMat::s_functionHelper,
     &LeastCommonMultiple::s_functionHelper,
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,

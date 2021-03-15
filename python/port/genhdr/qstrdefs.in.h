@@ -373,10 +373,13 @@ Q(KEY_EXE)
 // Kandinsky QSTRs
 Q(kandinsky)
 Q(color)
+Q(draw_line)
 Q(draw_string)
 Q(fill_rect)
 Q(get_pixel)
 Q(set_pixel)
+Q(large_font)
+Q(small_font)
 Q(wait_vblank)
 Q(get_keys)
 

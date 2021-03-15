@@ -1,4 +1,4 @@
-<p align="center"><img src="https://user-images.githubusercontent.com/12123721/109067616-08b0d500-76ef-11eb-9e23-78f40c335c18.png" /></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/12123721/111199951-80bd3d00-85c1-11eb-936c-28cf590208b8.png" /></p>
 
 <p align="center">
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-525252.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>
@@ -155,7 +155,7 @@ Pour contribuer, merci de lire le [Wiki](https://github.com/Omega-Numworks/Omega
 * [Omega Themes](https://github.com/Omega-Numworks/Omega-Themes)
 * [Omega Website](https://github.com/Omega-Numworks/Omega-Website)
 * [Omega RPN `APP`](https://github.com/Omega-Numworks/Omega-RPN)
-* [Omega Atom `APP`](https://github.com/Omega-Numworks/Omega-Atom)
+* [Omega Atomic `APP`](https://github.com/Omega-Numworks/Omega-Atomic)
 * [Omega Design](https://github.com/Omega-Numworks/Omega-Design)
 * [Omega Discord Bot](https://github.com/Omega-Numworks/Omega-Discord-Bot)
 * [Omega App Template `BETA`](https://github.com/Omega-Numworks/Omega-App-Template)

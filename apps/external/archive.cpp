@@ -55,29 +55,43 @@ bool fileAtIndex(size_t index, File &entry) {
    * TAR files are comprised of a set of records aligned to 512 bytes boundary
    * followed by data.
    */
-  while (index-- > 0) {
+  
+  for(;;) {
+    // Calculate the size
     size = 0;
     for (int i = 0; i < 11; i++)
       size = size * 8 + (tar->size[i] - '0');
+    
+    // Check if we found our file.
+    if (index == 0) {
+      // If yes, check for sanity and for exam mode stuff
+      if (!isSane(tar) || isExamModeAndFileNotExecutable(tar)) {
+        return false;
+      }
 
-    // Move to the next TAR header.
-    unsigned stride = (sizeof(TarHeader) + size + 511);
-    stride = (stride >> 9) << 9;
-    tar = reinterpret_cast<const TarHeader*>(reinterpret_cast<const char*>(tar) + stride);
+      // File entry found, copy data out.
+      entry.name = tar->name;
+      entry.data = reinterpret_cast<const uint8_t*>(tar) + sizeof(TarHeader);
+      entry.dataLength = size;
+      entry.isExecutable = (tar->mode[4] & 0x01) == 1;
 
-    // Sanity check.
-    if (!isSane(tar) || isExamModeAndFileNotExecutable(tar)) {
-      return false;
+      return true;
+    } else {
+      // move to the next TAR header.
+      unsigned stride = (sizeof(TarHeader) + size + 511);
+      stride = (stride >> 9) << 9;
+      tar = reinterpret_cast<const TarHeader*>(reinterpret_cast<const char*>(tar) + stride);
+
+      // Sanity check.
+      if (!isSane(tar)) {
+        return false;
+      }
     }
+    index--;
   }
-
-  // File entry found, copy data out.
-  entry.name = tar->name;
-  entry.data = reinterpret_cast<const uint8_t*>(tar) + sizeof(TarHeader);
-  entry.dataLength = size;
-  entry.isExecutable = (tar->mode[4] & 0x01) == 1;
-
-  return true;
+  
+  // Achievement unlock: How did we get there ?
+  return false;
 }
 
 extern "C" void (* const apiPointers[])(void);

@@ -132,17 +132,19 @@
         "Atom": {
             "Unknown": "eeeeee",
             "Text": "000000",
-            "AlkaliMetal": "ffaa00",
-            "AlkaliEarthMetal": "f6f200",
-            "Lanthanide": "ffaa8b",
-            "Actinide": "deaacd",
-            "TransitionMetal": "de999c",
-            "PostTransitionMetal": "9cbaac",
-            "Metalloid": "52ce8b",
-            "Halogen": "00debd",
-            "ReactiveNonmetal": "00ee00",
-            "NobleGas": "8baaff",
-            "TableLines": "323532"
+            "AlkaliMetal": "CC9E7E",
+            "AlkaliEarthMetal": "D69477",
+            "Lanthanide": "A5DDAD",
+            "Actinide": "96D481",
+            "TransitionMetal": "99C6E7",
+            "PostTransitionMetal": "D69877",
+            "Metalloid": "D6B071",
+            "Halogen": "84ABE3",
+            "ReactiveNonmetal": "DBC377",
+            "NobleGas": "8FC2E6",
+            "TableLines": "323532",
+            "Highlight": "000000",
+            "Background": "d9d9d9"
         }
     }
 }

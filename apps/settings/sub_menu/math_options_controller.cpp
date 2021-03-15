@@ -25,6 +25,7 @@ bool MathOptionsController::handleEvent(Ion::Events::Event event) {
       subController = &m_preferencesController;
     subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(selectedRow()));
     StackViewController * stack = stackController();
+    m_lastSelect = selectedRow();
     stack->push(subController);
     return true;
   }

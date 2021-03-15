@@ -8,6 +8,8 @@
 #include <ion/backlight.h>
 #include <poincare/preferences.h>
 
+#include <algorithm>
+
 extern "C" {
 #include <assert.h>
 }
@@ -218,6 +220,13 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   return didProcessEvent || alphaLockWantsRedraw;
 }
 
+static constexpr Ion::Events::Event switch_events[] = {
+    Ion::Events::ShiftSeven, Ion::Events::ShiftEight, Ion::Events::ShiftNine,
+    Ion::Events::ShiftFour, Ion::Events::ShiftFive, Ion::Events::ShiftSix,
+    Ion::Events::ShiftOne, Ion::Events::ShiftTwo, Ion::Events::ShiftThree,
+    Ion::Events::ShiftZero, Ion::Events::ShiftDot, Ion::Events::ShiftEE
+};
+
 bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
@@ -242,6 +251,15 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     switchTo(appSnapshotAtIndex(1));
     return true;
   }
+
+  for(int i = 0; i < std::min((int) (sizeof(switch_events) / sizeof(Ion::Events::Event)), APPS_CONTAINER_SNAPSHOT_COUNT); i++) {
+    if (event == switch_events[i]) {
+      m_window.redraw(true);
+      switchTo(appSnapshotAtIndex(i+1));
+      return true;
+    }
+  }
+
   if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;

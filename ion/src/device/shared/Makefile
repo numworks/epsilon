@@ -12,6 +12,7 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/shared/, \
   drivers/serial_number.cpp \
   drivers/timing.cpp \
   drivers/usb.cpp \
+  warning_display.cpp \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/shared/, \

@@ -4,6 +4,7 @@ liba_bootloader_src += $(addprefix liba/src/, \
   assert.c \
   memcmp.c \
   memcpy.c \
+  memmove.c \
   memset.c \
   strlen.c \
 )

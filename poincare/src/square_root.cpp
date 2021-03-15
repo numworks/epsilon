@@ -72,7 +72,7 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
     return e;
   }
   Expression term1 = addition.childAtIndex(0), term2 = addition.childAtIndex(1);
-  /* We are interest in expressions of the form : √(a√b + c√d)*/
+  /* We are interested in expressions of the form : √(a√b + c√d)*/
   Expression a, b, c, d;
   if (!splitNestedRadical(term1.clone(), &a, &b) || !splitNestedRadical(term2.clone(), &c, &d)) {
     return e;
@@ -103,22 +103,24 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
   y = Rational::Multiplication(y, Rational::IntegerPower(x, Integer(-1)));
   /* √(y+√z) can be turned into √u+√v if √(y^2-z) is rational. Because of our
    * choice of w, x, y and z, we know that y^2 > z. */
-  Expression delta = Power::Builder(Rational::Addition(Rational::IntegerPower(y, Integer(2)), Rational::Multiplication(z, Rational::Builder(-1))), Rational::Builder(1, 2)).reduce(reductionContext);
+  Expression delta = Power::Builder(Rational::Addition(Rational::IntegerPower(y, Integer(2)), Rational::Multiplication(z, Rational::Builder(-1))), Rational::Builder(1, 2)).shallowReduce(reductionContext);
   if (delta.type() != ExpressionNode::Type::Rational) {
     return e;
   }
   Rational rDelta = static_cast<Rational &>(delta);
   Expression left = Power::Builder(Rational::Multiplication(Rational::Addition(y, rDelta), Rational::Builder(1, 2)), Rational::Builder(1, 2));
   Expression right = Power::Builder(Rational::Multiplication(Rational::Addition(y, Rational::Multiplication(rDelta, Rational::Builder(-1))), Rational::Builder(1, 2)), Rational::Builder(1, 2));
-  Expression result = Multiplication::Builder({
+  Expression resultWithoutQuarticRoot = Multiplication::Builder({
       Power::Builder(x, Rational::Builder(1, 2)),
-      Addition::Builder(left, subtract ? Opposite::Builder(right) : right)}).reduce(reductionContext);
+      Addition::Builder(left, subtract ? Opposite::Builder(right) : right)});
   /* Reducing the product before introducing the quartic root leads to simpler
    * results. */
-  Expression quartic = Power::Builder(w, Rational::Builder(1, 4)).reduce(reductionContext);
-  result = Multiplication::Builder({quartic, result}).shallowReduce(reductionContext);
+  resultWithoutQuarticRoot = resultWithoutQuarticRoot.deepReduce(reductionContext);
+  Expression quartic = Power::Builder(w, Rational::Builder(1, 4));
+  Expression result = Multiplication::Builder({quartic, resultWithoutQuarticRoot});
+  quartic.shallowReduce(reductionContext);
   e.replaceWithInPlace(result);
-  return result;
+  return result.shallowReduce(reductionContext);
 }
 
 Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

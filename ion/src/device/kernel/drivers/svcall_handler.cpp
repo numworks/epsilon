@@ -181,7 +181,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     // SERIAL NUMBER
     case SVC_SERIAL_NUMBER:
-      Ion::Device::SerialNumber::copy(static_cast<char *>(args[0]));
+      *static_cast<const char **>(args[0]) = Ion::Device::SerialNumber::get();
       return;
     // FCC_ID
     case SVC_FCC_ID:

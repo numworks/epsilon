@@ -12,11 +12,12 @@ constexpr KDColor Code128BView::k_borderColor;
 Code128BView::Code128BView() :
   View(),
   m_moduleWidth(0),
-  m_data{0}
+  m_data{nullptr}
 {
 }
 
-void Code128BView::reloadData() {
+void Code128BView::setData(const char * data) {
+  m_data = data;
   markRectAsDirty(bounds());
 }
 
@@ -25,7 +26,7 @@ void Code128BView::layoutSubviews(bool force) {
 }
 
 void Code128BView::updateModuleWidth() {
-  if (m_data[0] == 0) {
+  if (m_data == nullptr) {
     m_moduleWidth = 0;
     return;
   }

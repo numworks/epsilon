@@ -394,10 +394,15 @@ PCBVersion readPCBVersionInMemory() {
 }
 
 void writePCBVersion(PCBVersion version) {
-  /* TODO: We also need to lock the OTP in which the version has been written. */
   uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPAddresses[pcbVersionOTPIndex]);
   PCBVersion formattedVersion = ~version;
   InternalFlash::WriteMemory(destination, reinterpret_cast<uint8_t *>(&formattedVersion), sizeof(formattedVersion));
+}
+
+void lockVersionOTP() {
+  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPLocksAddress + pcbVersionOTPIndex);
+  uint8_t zero = 0x00;
+  InternalFlash::WriteMemory(destination, &zero, sizeof(zero));
 }
 
 }

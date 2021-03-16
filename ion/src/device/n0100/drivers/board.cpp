@@ -240,6 +240,8 @@ PCBVersion readPCBVersionInMemory() {
 
 void writePCBVersion(PCBVersion) {}
 
+void lockVersionOTP() {}
+
 }
 }
 }

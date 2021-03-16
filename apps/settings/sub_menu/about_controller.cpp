@@ -54,19 +54,14 @@ int AboutController::reusableCellCount(int type) {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-  static const char * version = Ion::epsilonVersion();
   static char serialNumberBuffer[Ion::SerialNumberLength+1] = {0};
   if (serialNumberBuffer[0] == 0) {
     Ion::serialNumber(serialNumberBuffer);
   }
-  static char fccIDBuffer[Ion::FccIDLength+1] = {0};
-  if (fccIDBuffer[0] == 0) {
-    Ion::fccId(fccIDBuffer);
-  }
   const char * messages[] = {
-    version,
+    Ion::epsilonVersion(),
     serialNumberBuffer,
-    fccIDBuffer
+    Ion::fccId()
   };
   assert(index >= 0 && index < 3);
   myCell->setAccessoryText(messages[index]);

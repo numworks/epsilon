@@ -33,8 +33,8 @@ namespace Ion {
 const char * epsilonVersion();
 const char * kernelVersion();
 const char * patchLevel();
-constexpr static int FccIDLength = 11;
-void fccId(char * buffer);
+// TODO: change fccId signature and serialNumber
+const char * fccId();
 constexpr static int SerialNumberLength = 16;
 void serialNumber(char * buffer);
 

@@ -22,6 +22,10 @@ SECTIONS {
     KEEP(*(.entry_point))
   } >FLASH_USERLAND
 
+  .header : {
+    KEEP(*(.header))
+  } >FLASH_USERLAND
+
   .text : {
     . = ALIGN(4);
     *(.text)

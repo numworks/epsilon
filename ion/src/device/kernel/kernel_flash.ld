@@ -36,10 +36,6 @@ SECTIONS {
     _isr_vector_table_end_ram = .;
   } >SRAM_DATA_BSS
 
-  .header : {
-    KEEP(*(.header))
-  } >KERNEL
-
   .text ORIGIN(KERNEL) + SIZEOF (.isr_vector_table) : {
     . = ALIGN(4);
     *(.text)

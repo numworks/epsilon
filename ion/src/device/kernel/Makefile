@@ -7,8 +7,6 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/circuit_breaker.cpp \
   drivers/cortex_control.s \
   drivers/crc32.cpp \
-  drivers/dfu.cpp \
-  drivers/dfu_relocated.cpp \
   drivers/events.cpp \
   drivers/keyboard.cpp \
   drivers/keyboard_queue.cpp \
@@ -20,6 +18,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/svcall_handler_as.s \
   drivers/swd.cpp \
   drivers/timing.cpp \
+  drivers/usb.cpp \
   drivers/wakeup.cpp \
   main.cpp \
   warning_display.cpp \

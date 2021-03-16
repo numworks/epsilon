@@ -93,6 +93,7 @@ output/release/$(PLATFORM)/$(MODEL)/ion/src/device/shared/usb/dfu.bin:
 	$(MAKE) DEBUG=0 MODEL=$(MODEL) $@
 endif
 
+# Always build dfu.o in DEBUG=0 to avoid overflowing the SRAM
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: output/release/$(PLATFORM)/$(MODEL)/ion/src/device/shared/usb/dfu.bin
 	$(call rule_label,OBJCOPY)
 	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata.dfu_bootloader --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)
@@ -101,6 +102,6 @@ ifeq ($(DEBUG),1)
 endif
 
 ion_device_dfu_src += ion/src/device/shared/usb/dfu.cpp:-usbxip
-ion_device_dfu_src += ion/src/device/kernel/drivers/dfu_relocated.cpp:-usbxip
+ion_device_dfu_src += ion/src/device/shared/dfu/dfu_relocated.cpp:-usbxip
 
 ion_device_shared_bootloader_kernel_src += $(ion_device_dfu_src)

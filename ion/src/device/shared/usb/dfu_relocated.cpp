@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include <drivers/cache.h>
-#include <kernel/drivers/board.h>
+#include <shared/drivers/board.h>
 
 #define DEBUG_FOR_DEVICE 0
 #if DEBUG_FOR_DEVICE
@@ -17,7 +17,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-typedef void (*PollFunctionPointer)(bool exitWithKeyboard);
+typedef void (*PollFunctionPointer)();
 
 void DFU() {
 #if DEBUG_FOR_DEVICE
@@ -92,7 +92,7 @@ void DFU() {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  dfu_bootloader_entry(true);
+  dfu_bootloader_entry();
 
   /* 5- Restore interrupts */
   Device::Board::initInterruptions();

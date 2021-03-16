@@ -10,6 +10,9 @@ namespace Board {
 void init();
 void shutdown();
 
+void initInterruptions();
+void shutdownInterruptions();
+
 void setClockLowFrequency();
 void setClockStandardFrequency();
 

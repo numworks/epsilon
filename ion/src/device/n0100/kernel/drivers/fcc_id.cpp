@@ -2,6 +2,6 @@
 #include <ion.h>
 #include <string.h>
 
-void Ion::Device::fccId(char * buffer) {
-  strlcpy(buffer, "2ALWP-N0100", FccIDLength + 1);
+const char * Ion::Device::fccId() {
+  return "2ALWP-N0100";
 }

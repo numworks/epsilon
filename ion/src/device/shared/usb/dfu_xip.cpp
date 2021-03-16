@@ -8,9 +8,7 @@ namespace Device {
 namespace USB {
 
 void DFU() {
-  char serialNumber[Ion::SerialNumberLength+1];
-  Ion::Device::SerialNumber::copy(serialNumber);
-  USB::Calculator c(serialNumber);
+  USB::Calculator c(Ion::Device::SerialNumber::get());
 
   while (USB::isPlugged() && !c.isSoftDisconnected()) {
     c.poll();

@@ -9,7 +9,7 @@ namespace Device {
 namespace USB {
 
 void Calculator::PollAndReset(bool exitWithKeyboard) {
-  char serialNumber[Ion::SerialNumberLength+1];
+  char serialNumber[Ion::Device::SerialNumber::Length+1];
   Ion::Device::SerialNumber::copy(serialNumber);
   Calculator c(serialNumber);
 

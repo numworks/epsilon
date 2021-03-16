@@ -4,7 +4,7 @@
 namespace Ion {
 namespace Device {
 
-void fccId(char * buffer);
+const char * fccId();
 
 }
 }

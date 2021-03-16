@@ -30,7 +30,8 @@ void ion_main(int argc, const char * const argv[]);
 
 namespace Ion {
 
-const char * softwareVersion();
+const char * epsilonVersion();
+const char * kernelVersion();
 const char * patchLevel();
 constexpr static int FccIDLength = 11;
 void fccId(char * buffer);

@@ -29,7 +29,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == 0) {
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
       if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
-        myCell->setAccessoryText(Ion::softwareVersion());
+        myCell->setAccessoryText(Ion::epsilonVersion());
         return true;
       }
       myCell->setAccessoryText(Ion::patchLevel());
@@ -54,7 +54,7 @@ int AboutController::reusableCellCount(int type) {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-  static const char * version = Ion::softwareVersion();
+  static const char * version = Ion::epsilonVersion();
   static char serialNumberBuffer[Ion::SerialNumberLength+1] = {0};
   if (serialNumberBuffer[0] == 0) {
     Ion::serialNumber(serialNumberBuffer);

@@ -22,4 +22,5 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/timing.cpp \
   drivers/wakeup.cpp \
   main.cpp \
+  warning_display.cpp \
 )

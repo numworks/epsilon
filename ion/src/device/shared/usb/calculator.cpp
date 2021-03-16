@@ -1,8 +1,29 @@
 #include "calculator.h"
+#include <shared/drivers/serial_number.h>
+#include <shared/drivers/usb.h>
+#include <ion/usb.h>
 
 namespace Ion {
 namespace Device {
 namespace USB {
+
+void Calculator::PollAndReset() {
+  char serialNumber[Ion::Device::SerialNumber::Length+1];
+  Ion::Device::SerialNumber::copy(serialNumber);
+  Calculator c(serialNumber);
+
+  USB::initInterrupter();
+  while (USB::isPlugged() && !c.isSoftDisconnected() && !(USB::shouldInterrupt() && !c.isErasingAndWriting())) {
+    c.poll();
+  }
+
+  if (!c.isSoftDisconnected()) {
+    c.detach();
+  }
+  if (c.resetOnDisconnect()) {
+    c.leave(c.addressPointer());
+  }
+}
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {
   /* Special case: Microsoft OS String Descriptor should be returned when

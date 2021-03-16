@@ -23,6 +23,7 @@ void PCBVersion(const char * input) {
     reply(sKO);
     return;
   }
+  Board::lockVersionOTP();
 #endif
   reply(sOK);
 }

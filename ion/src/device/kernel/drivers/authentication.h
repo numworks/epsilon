@@ -8,7 +8,7 @@ namespace Device {
 namespace Authentication {
 
 bool trustedUserland();
-void checkUserland(bool validKernelVersion);
+void updateTrustAndSwitchSlot(int currentKernelVersion, int newKernelVersion, int currentUserlandVersion, int newUserlandVersion);
 
 }
 }

@@ -4,8 +4,8 @@ namespace Ion {
 namespace Device {
 namespace WarningDisplay {
 
-constexpr static int sNumberOfUnauthenticatedUserlandMessages = 7;
-constexpr static const char * sUnauthenticatedUserlandMessages[sNumberOfUnauthenticatedUserlandMessages] = {
+constexpr static int sUnauthenticatedUserlandNumberOfMessages = 7;
+constexpr static const char * sUnauthenticatedUserlandMessages[sUnauthenticatedUserlandNumberOfMessages] = {
   "NON-AUTHENTICATED SOFTWARE",
   "Caution: you're using an",
   "unofficial software version.",
@@ -16,7 +16,37 @@ constexpr static const char * sUnauthenticatedUserlandMessages[sNumberOfUnauthen
 };
 
 void unauthenticatedUserland() {
-  showMessage(sUnauthenticatedUserlandMessages, sNumberOfUnauthenticatedUserlandMessages);
+  showMessage(sUnauthenticatedUserlandMessages, sUnauthenticatedUserlandNumberOfMessages);
+}
+
+constexpr static int sObsoleteSoftwareNumberOfMessages = 6;
+constexpr static const char * sObsoleteSoftwareMessages[sObsoleteSoftwareNumberOfMessages] = {
+  "OBSOLETE SOFTWARE",
+  "The software you were about",
+  "to execute is older than the",
+  "current one.",
+  "Only more recent software can",
+  "be executed."
+};
+
+void obsoleteSoftware() {
+  showMessage(sObsoleteSoftwareMessages, sObsoleteSoftwareNumberOfMessages);
+}
+
+constexpr static int sKernelUpgradeRequiredNumberOfMessages = 8;
+constexpr static const char * sKernelUpgradeRequiredMessages[sKernelUpgradeRequiredNumberOfMessages] = {
+  "OFFICIAL UPGRADE REQUIRED",
+  "The software you were about",
+  "to execute requires a more",
+  "recent authentified kernel",
+  "to be executed. Please upgrade",
+  "your calculator with the last",
+  "official software before trying",
+  "again."
+};
+
+void kernelUpgradeRequired() {
+  showMessage(sKernelUpgradeRequiredMessages, sKernelUpgradeRequiredNumberOfMessages);
 }
 
 }

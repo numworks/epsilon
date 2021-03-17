@@ -1,5 +1,7 @@
 #include <kernel/drivers/config/board.h>
+#include <drivers/reset.h>
 #include <kernel/drivers/authentication.h>
+#include <kernel/drivers/board.h>
 #include <kernel/drivers/cortex_control.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
@@ -8,12 +10,6 @@
 #include <ion/display.h>
 #include <kandinsky/font.h>
 #include <string.h>
-
-extern "C" {
-  extern char _kernel_start;
-}
-
-typedef void (*EntryPoint)();
 
 void kernel_main() {
   // TODO: move this code after a DFU leave. There is no reason to execute a untrusted userland after a reset
@@ -28,6 +24,5 @@ void kernel_main() {
   switch_to_unpriviledged();
 
   // Jump to userland
-  EntryPoint * userlandFirstAddress = reinterpret_cast<EntryPoint *>(&_kernel_start + Ion::Device::Board::Config::UserlandOffsetFromKernel);
-  (*userlandFirstAddress)();
+  Ion::Device::Reset::jump(Ion::Device::Board::userlandStart(), false);
 }

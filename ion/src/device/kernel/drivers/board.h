@@ -24,6 +24,8 @@ enum class Frequency {
 };
 void setStandardFrequency(Frequency f);
 
+uint32_t userlandStart();
+
 }
 }
 }

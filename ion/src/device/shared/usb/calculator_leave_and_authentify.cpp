@@ -6,8 +6,11 @@ namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
-  bool validKernelVersion = true; //PlatformInfos.kernelVersion() != getPlatformInfo(userlandAddressOtherSlot()).kernelVersion --> implement on userland to know the header
-  Authentication::checkUserland(validKernelVersion);
+  int currentKernelVersion = 12; //PlatformInfos.kernelVersion();
+  int newKernelVersion = 14; //getPlatformInfo(userlandAddressOtherSlot()).kernelVersion --> implement on userland to know the header
+  int currentUserlandVersion = 22;
+  int newUserlandVersion = 24;
+  Authentication::updateTrustAndSwitchSlot(currentKernelVersion, newKernelVersion, currentUserlandVersion, newUserlandVersion);
 }
 
 }

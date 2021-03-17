@@ -53,15 +53,15 @@ $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),console
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 
 bootloader_src = $(ion_device_bootloader_src) $(liba_bootloader_src) $(kandinsky_minimal_src)
-$(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
+$(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip leavereset)
 $(BUILD_DIR)/bootloader.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/bootloader
 $(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/bootloader_flash.ld
 $(BUILD_DIR)/bootloader.dfu: $(BUILD_DIR)/bootloader.elf
 
 USBXIP := $(if $(filter-out n0100,$(MODEL)),usbxip,)
 kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_minimal_src)
-$(BUILD_DIR)/kernel.A.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP))
-$(BUILD_DIR)/kernel.B.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP))
+$(BUILD_DIR)/kernel.A.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP) leaveauthentify)
+$(BUILD_DIR)/kernel.B.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP) leaveauthentify)
 $(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/kernel
 $(BUILD_DIR)/kernel.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/$(subst .,_,$*)_flash.ld
 $(BUILD_DIR)/kernel.%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/kernel/kernel_flash.ld ion/src/$(PLATFORM)/$(MODEL)/shared/config_flash.ld ion/src/$(PLATFORM)/shared/shared_config_flash.ld

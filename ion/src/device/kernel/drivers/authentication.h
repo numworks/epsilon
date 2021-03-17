@@ -8,7 +8,7 @@ namespace Device {
 namespace Authentication {
 
 bool trustedUserland();
-void untrustUserland();
+void checkUserland(bool validKernelVersion);
 
 }
 }

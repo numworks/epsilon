@@ -178,7 +178,8 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (j == rowOfUserVariablesMessage - 1) {
     return; // Empty row
-  } else if (j == rowOfUserVariablesMessage) {
+  }
+  if (j == rowOfUserVariablesMessage) {
     // Predefined variable used/ignored message
     assert(i >= 0);
     MessageCell * messageCell = static_cast<MessageCell *>(cell);
@@ -383,7 +384,8 @@ int SolutionsController::userVariablesMessageRow() const {
   if (m_equationStore->numberOfUserVariables() == 0) {
     // No user variables
     return -1;
-  } else if (numberOfDisplayedSolutions() == 0) {
+  }
+  if (numberOfDisplayedSolutions() == 0) {
     // Message row is first row, no need for an empty row
     return 0;
   }

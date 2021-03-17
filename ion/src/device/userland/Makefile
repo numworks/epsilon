@@ -1,5 +1,5 @@
 ion_device_userland_src += $(addprefix ion/src/device/userland/, \
-  boot/entry_point.c \
+  boot/isr.c \
   boot/rt0.cpp \
   drivers/backlight.cpp \
   drivers/battery.cpp \

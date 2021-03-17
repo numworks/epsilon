@@ -1,4 +1,4 @@
-#include "entry_point.h"
+#include "isr.h"
 #include <shared/boot/rt0.h>
 #include <ion.h>
 #include <ion/backlight.h> // TODO: remove

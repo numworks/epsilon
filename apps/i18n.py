@@ -4,7 +4,7 @@
 # file.
 # In practice, it enforces a NFKD normalization. Because Epsilon does not
 # properly draw upper case letters with accents, we remove them here.
-# It works with Python 2 and Python 3
+# It works with Python 3 only
 
 import argparse
 import csv

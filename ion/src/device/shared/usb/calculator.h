@@ -122,6 +122,7 @@ public:
     m_dfuInterface(this, &m_ep0, k_dfuFlashInterfaceAlternateSetting)
   {
   }
+  void leave(uint32_t leaveAddress) override;
   uint32_t addressPointer() const { return m_dfuInterface.addressPointer(); }
   bool isErasingAndWriting() const { return m_dfuInterface.isErasingAndWriting(); }
 protected:

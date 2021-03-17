@@ -91,14 +91,6 @@ void Device::detach() {
   OTG.DCTL()->setSDIS(true);
 }
 
-void Device::leave(uint32_t leaveAddress) {
-  if (leaveAddress == Ion::Device::InternalFlash::Config::StartAddress) {
-    Ion::Device::Reset::coreWhilePlugged();
-  } else {
-    Ion::Device::Reset::jump(leaveAddress);
-  }
-}
-
 bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   // Device only handles standard requests.
   if (request->requestType() != SetupPacket::RequestType::Standard) {

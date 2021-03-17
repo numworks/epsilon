@@ -26,6 +26,11 @@ parser.add_argument('--files', nargs='+', help='an i18n file')
 
 args = parser.parse_args()
 
+theme_definition_length_limits = {
+    "toolbox" : 35, # Toolbox maximal available space with small font
+    "default" : 45  # Ion::Display::Width / KDFont::SmallFont->glyphSize().width()
+}
+
 def has_glyph(glyph):
     return glyph in codepoints
 
@@ -67,6 +72,20 @@ def split_line(line):
 def locale_from_filename(filename):
     return re.match(r".*\.([a-z]+)\.i18n", filename).group(1)
 
+def theme_from_filename(filename):
+    return re.match(r".*\/([a-z_]+)\.[a-z]+\.i18n", filename).group(1)
+
+def definition_exceeds_theme_limit(definition, theme):
+    if not(theme in theme_definition_length_limits):
+        theme = "default"
+    length_limit = theme_definition_length_limits[theme]
+    # Handle multi-line messages
+    for definition_line in re.split(r"\\n", definition.decode('utf-8')[1:-1]):
+        # Ignore combining characters
+        if (len([c for c in definition_line if not unicodedata.combining(c)]) > length_limit):
+            return True
+    return False
+
 def check_redundancy(messages, data, locales):
     redundant_names = set()
     for name in messages:
@@ -85,6 +104,7 @@ def parse_files(files):
     universal_messages = set()
     for path in files:
         locale = locale_from_filename(path)
+        theme = theme_from_filename(path)
         if locale not in data:
             data[locale] = {}
         with io.open(path, "r", encoding='utf-8') as file:
@@ -102,6 +122,9 @@ def parse_files(files):
                     universal_messages.add(name)
                 else:
                     messages.add(name)
+                if definition_exceeds_theme_limit(definition, theme):
+                    sys.stderr.write("Error: Message exceeds length limits for " + theme + " : " + definition.decode('utf-8') + " (" + name + ")\n")
+                    sys.exit(-1)
                 data[locale][name] = definition
     check_redundancy(messages, data, args.locales)
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}

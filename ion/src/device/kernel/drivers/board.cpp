@@ -10,11 +10,16 @@
 #include <drivers/led.h>
 #include <drivers/swd.h>
 #include <drivers/usb.h>
+#include <kernel/drivers/config/board.h>
 #include <kernel/drivers/timing.h>
 #include <regs/regs.h>
 
 typedef void(*ISR)(void);
 extern ISR InitialisationVector[];
+
+extern "C" {
+  extern char _kernel_start;
+}
 
 namespace Ion {
 namespace Device {
@@ -108,6 +113,10 @@ void setClockStandardFrequency() {
   // Change the systick frequency to compensate the KCLK frequency change
   RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
   Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKFrequency);
+}
+
+uint32_t userlandStart() {
+  return reinterpret_cast<uint32_t>(&_kernel_start) + Ion::Device::Board::Config::UserlandOffsetFromKernel;
 }
 
 }

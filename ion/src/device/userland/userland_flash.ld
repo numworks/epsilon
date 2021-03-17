@@ -18,8 +18,8 @@ MEMORY {
 
 
 SECTIONS {
-  .entry_point ORIGIN(FLASH_USERLAND) : {
-    KEEP(*(.entry_point))
+  .isr_vector_table ORIGIN(FLASH_USERLAND) : {
+    KEEP(*(.isr_vector_table))
   } >FLASH_USERLAND
 
   .header : {

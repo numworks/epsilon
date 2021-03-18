@@ -99,7 +99,7 @@ void GraphController::reloadBannerView() {
   constexpr size_t bufferSize = Shared::FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   int numberOfChar = 0;
-  const char * legend = " P(";
+  const char * legend = "P(";
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     legend = I18n::translate(I18n::Message::MeanDot);
@@ -112,7 +112,7 @@ void GraphController::reloadBannerView() {
   } else {
     numberOfChar += PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, significance, Preferences::PrintFloatMode::Decimal);
   }
-  legend = ")  ";
+  legend = ")";
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   m_bannerView.dotNameView()->setText(buffer);
@@ -129,8 +129,7 @@ void GraphController::reloadBannerView() {
   m_bannerView.abscissaSymbol()->setText(legend);
 
   numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, significance);
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_bannerView.abscissaValue()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
@@ -144,8 +143,7 @@ void GraphController::reloadBannerView() {
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, significance);
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
@@ -180,7 +178,7 @@ void GraphController::reloadBannerView() {
   char coefficientName = 'a';
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
     numberOfChar = 0;
-    char leg[] = {' ', coefficientName, '=', 0};
+    char leg[] = {coefficientName, '=', 0};
     legend = leg;
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, significance);
@@ -192,7 +190,7 @@ void GraphController::reloadBannerView() {
     int index = model->numberOfCoefficients();
     // Set "r=..."
     numberOfChar = 0;
-    legend = " r=";
+    legend = "r=";
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, significance);
@@ -200,7 +198,7 @@ void GraphController::reloadBannerView() {
 
     // Set "r2=..."
     numberOfChar = 0;
-    legend = " r2=";
+    legend = "r2=";
     double r2 = m_store->determinationCoefficientForSeries(*m_selectedSeriesIndex, globalContext());
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, significance);

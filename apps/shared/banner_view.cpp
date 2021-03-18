@@ -81,4 +81,30 @@ int BannerView::numberOfLinesGivenWidth(KDCoordinate width) const {
   return lineNumber;
 }
 
+// BannerView::LabelledView
+
+KDSize BannerView::LabelledView::minimalSizeForOptimalDisplay() const {
+  KDSize labelSize = m_labelView->minimalSizeForOptimalDisplay();
+  KDSize infoSize = m_infoView->minimalSizeForOptimalDisplay();
+  assert(labelSize.height() == infoSize.height());
+  return KDSize(labelSize.width() + infoSize.width(), labelSize.height());
+}
+
+Escher::View * BannerView::LabelledView::subviewAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
+  if (index == 0) {
+    return m_labelView;
+  }
+  return m_infoView;
+}
+
+void BannerView::LabelledView::layoutSubviews(bool force) {
+  KDSize labelSize = m_labelView->minimalSizeForOptimalDisplay();
+  KDSize infoSize = m_infoView->minimalSizeForOptimalDisplay();
+  KDCoordinate spacing = (bounds().width() - labelSize.width() - infoSize.width()) / 2;
+  KDCoordinate labelTotalWidth = spacing + labelSize.width();
+  m_labelView->setFrame(KDRect(0, 0, labelTotalWidth, bounds().height()), force);
+  m_infoView->setFrame(KDRect(labelTotalWidth, 0, bounds().width() - labelTotalWidth, bounds().height()), force);
+}
+
 }

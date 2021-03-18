@@ -170,20 +170,26 @@ Expression CalculationStore::ansExpression(Context * context) {
     return Rational::Builder(0);
   }
   ExpiringPointer<Calculation> mostRecentCalculation = calculationAtIndex(0);
+  Expression exactOutput = mostRecentCalculation->exactOutput();
+  Expression input = mostRecentCalculation->input();
   /* Special case: the exact output is a Store/Equal expression.
    * Store/Equal expression can only be at the root of an expression.
    * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
    * parsed), ans is replaced by the approximation output when any Store or
    * Equal expression appears. */
-  Expression e = mostRecentCalculation->exactOutput();
-  bool exactOuptutInvolvesStoreEqual = e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
-  if (mostRecentCalculation->input().recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
+  bool exactOuptutInvolvesStoreEqual = exactOutput.type() == ExpressionNode::Type::Store || exactOutput.type() == ExpressionNode::Type::Equal;
+  if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
     return mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
-  } else if (mostRecentCalculation->displayOutput(context) == Calculation::DisplayOutput::ApproximateOnly) {
-    // Exact output was hidden and should not be accessible using ans
-    return mostRecentCalculation->input();
   }
-  return mostRecentCalculation->exactOutput();
+  /* Special case: If exact output was hidden, it should not be accessible using
+   * ans, unless it is equal to a non-undef and non-unreal approximation. */
+  const char * exactOutputText = mostRecentCalculation->exactOutputText();
+  const char * approximateOutputText = mostRecentCalculation->approximateOutputText(Calculation::NumberOfSignificantDigits::UserDefined);
+  if (mostRecentCalculation->displayOutput(context) == Calculation::DisplayOutput::ApproximateOnly && (strcmp(approximateOutputText, exactOutputText) != 0 ||
+      exactOutput.type() == ExpressionNode::Type::Unreal || exactOutput.type() == ExpressionNode::Type::Undefined)) {
+    return input;
+  }
+  return exactOutput;
 }
 
 // Push converted expression in the buffer

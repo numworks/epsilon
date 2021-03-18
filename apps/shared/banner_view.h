@@ -17,6 +17,22 @@ public:
   static constexpr const KDFont * Font() { return KDFont::SmallFont; }
   static constexpr KDColor TextColor() { return KDColorBlack; }
   static constexpr KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
+
+protected:
+  class LabelledView : public Escher::View {
+  public:
+    LabelledView(Escher::View * labelView, Escher::View * infoView) : m_labelView(labelView), m_infoView(infoView) {}
+    KDSize minimalSizeForOptimalDisplay() const override;
+
+  private:
+    int numberOfSubviews() const override { return 2; }
+    Escher::View * subviewAtIndex(int index) override;
+    void layoutSubviews(bool force = false) override;
+
+    Escher::View * m_labelView;
+    Escher::View * m_infoView;
+  };
+
 private:
   static constexpr KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
   int numberOfSubviews() const override = 0;

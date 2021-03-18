@@ -19,7 +19,7 @@ public:
   Escher::BufferTextView * abscissaSymbol() { return &m_abscissaSymbol; }
   Escher::TextField * abscissaValue() { return &m_abscissaValue; }
   Escher::BufferTextView * ordinateView() { return &m_ordinateView; }
-  static constexpr int k_numberOfSubviews = 3;
+  static constexpr int k_numberOfSubviews = 2;
 protected:
   Escher::View * subviewAtIndex(int index) override;
 private:
@@ -27,6 +27,7 @@ private:
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::BufferTextView m_abscissaSymbol;
   Escher::TextField m_abscissaValue;
+  BannerView::LabelledView m_abscissaView;
   char m_textBody[k_abscissaBufferSize];
   Escher::BufferTextView m_ordinateView;
 };

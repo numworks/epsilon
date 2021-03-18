@@ -115,7 +115,7 @@ void HistogramController::reloadBannerView() {
   int numberOfChar = 0;
 
   // Add Interval Data
-  const char * legend = " [";
+  const char * legend = "[";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, bufferSize);
   numberOfChar += legendLength;
@@ -135,8 +135,7 @@ void HistogramController::reloadBannerView() {
   }
   numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxIntervalLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
@@ -146,8 +145,7 @@ void HistogramController::reloadBannerView() {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
@@ -156,8 +154,7 @@ void HistogramController::reloadBannerView() {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);
   }
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();

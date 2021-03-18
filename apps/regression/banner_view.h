@@ -8,6 +8,8 @@ namespace Regression {
 
 class BannerView : public Shared::XYBannerView {
 public:
+  static constexpr int k_numberOfSharedSubviews = 2;
+
   BannerView(
     Escher::Responder * parentResponder,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
@@ -16,10 +18,12 @@ public:
   Escher::BufferTextView * dotNameView() { return &m_dotNameView; }
   Escher::MessageTextView * regressionTypeView() { return &m_regressionTypeView; }
   Escher::BufferTextView * subTextAtIndex(int index);
-  static constexpr int numberOfsubTexts() { return 5; }
+  static constexpr int numberOfsubTexts() { return k_numberOfSubtexts; }
+  void setNumberOfSubviews(int subviewsNumber) { m_numberOfSubviews = subviewsNumber; }
 private:
-  static constexpr int k_numberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 7;
-  int numberOfSubviews() const override { return k_numberOfSubviews; }
+  static constexpr int k_numberOfSubtexts = 5;
+  static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + k_numberOfSharedSubviews + k_numberOfSubtexts;
+  int numberOfSubviews() const override { return m_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
   Escher::BufferTextView m_dotNameView;
   Escher::MessageTextView m_regressionTypeView;
@@ -28,6 +32,7 @@ private:
   Escher::BufferTextView m_subText2;
   Escher::BufferTextView m_subText3;
   Escher::BufferTextView m_subText4;
+  int m_numberOfSubviews;
 };
 
 }

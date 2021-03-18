@@ -90,6 +90,10 @@ Poincare::Context * GraphController::globalContext() {
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
+  Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
+  Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + (modelType == Model::Type::Linear ? 2 : 0) + model->numberOfCoefficients() + BannerView::k_numberOfSharedSubviews);
+
   // Set point equals: "P(...) ="
   int significance = Preferences::sharedPreferences()->numberOfSignificantDigits();
   constexpr size_t bufferSize = Shared::FunctionBannerDelegate::k_textBufferSize;
@@ -145,7 +149,6 @@ void GraphController::reloadBannerView() {
   m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
-  Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
   I18n::Message formula = model->formulaMessage();
   m_bannerView.regressionTypeView()->setMessage(formula);
 
@@ -185,7 +188,7 @@ void GraphController::reloadBannerView() {
     coefficientName++;
   }
 
-  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
+  if (modelType == Model::Type::Linear) {
     int index = model->numberOfCoefficients();
     // Set "r=..."
     numberOfChar = 0;

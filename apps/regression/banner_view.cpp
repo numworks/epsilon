@@ -17,7 +17,8 @@ BannerView::BannerView(
   m_subText1(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText2(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText3(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
-  m_subText4(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
+  m_subText4(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_numberOfSubviews(k_maxNumberOfSubviews)
 {
 }
 
@@ -28,7 +29,7 @@ BufferTextView * BannerView::subTextAtIndex(int index) {
 }
 
 View * BannerView::subviewAtIndex(int index) {
-  assert(0 <= index && index < numberOfSubviews());
+  assert(0 <= index && index < numberOfSubviews() && numberOfSubviews() <= k_maxNumberOfSubviews);
   if (index == 0) {
     return &m_dotNameView;
   }

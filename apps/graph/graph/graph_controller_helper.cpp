@@ -42,15 +42,14 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  const char * space = " ";
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);
   const char * legend = "=";
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   double y = function->approximateDerivative(cursor->x(), App::app()->localContext());
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Preferences::sharedPreferences()->numberOfSignificantDigits());
-  assert(numberOfChar <= bufferSize);
-  strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
+  assert(numberOfChar < bufferSize);
+  buffer[numberOfChar++] = '\0';
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();
 }

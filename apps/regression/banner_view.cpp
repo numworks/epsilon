@@ -11,8 +11,8 @@ BannerView::BannerView(
   TextFieldDelegate * textFieldDelegate
 ) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_dotNameView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor()),
-  m_regressionTypeView(Font(), (I18n::Message)0, 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_dotNameView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_regressionTypeView(Font(), (I18n::Message)0, 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText0(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText1(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText2(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),

@@ -1,9 +1,11 @@
 #include <quiz.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <poincare/test/helper.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"
+#include "../../exam_mode_configuration.h"
 
 typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;
 typedef ::Calculation::Calculation::EqualSign EqualSign ;
@@ -62,9 +64,21 @@ QUIZ_CASE(calculation_store) {
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }
 
+void assertAnsIs(const char * input, const char * expectedAnsInputText, Context * context, CalculationStore * store) {
+  store->push(input, context, dummyHeight);
+  store->push("ans", context, dummyHeight);
+  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
+  quiz_assert(strcmp(lastCalculation->inputText(), expectedAnsInputText) == 0);
+}
+
 QUIZ_CASE(calculation_ans) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
+  // Setup complex format and exam mode
+  Poincare::Preferences::ComplexFormat previousComplexFormat = Poincare::Preferences::sharedPreferences()->complexFormat();
+  GlobalPreferences::ExamMode previousExamMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Off);
 
   store.push("1+3/4", &globalContext, dummyHeight);
   store.push("ans+2/3", &globalContext, dummyHeight);
@@ -77,6 +91,24 @@ QUIZ_CASE(calculation_ans) {
   quiz_assert(lastCalculation->displayOutput(&globalContext) == DisplayOutput::ExactAndApproximateToggle);
   quiz_assert(strcmp(lastCalculation->approximateOutputText(NumberOfSignificantDigits::Maximal),"2.6366666666667") == 0);
 
+  assertAnsIs("1+1→a", "2", &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  assertAnsIs("1+1", "2", &globalContext, &store);
+  assertAnsIs("13.3", "13.3", &globalContext, &store);
+  assertAnsIs("√(-1-1)", "√(-1-1)", &globalContext, &store);
+  assertAnsIs("int(diff(x^2,x,x),x,0,1)", "int(diff(x^2,x,x),x,0,1)", &globalContext, &store);
+
+  assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
+
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
+  assert(ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode::Dutch));
+
+  assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
+
+  // Restore complex format and exam mode
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(previousComplexFormat);
   store.deleteAll();
 }
 

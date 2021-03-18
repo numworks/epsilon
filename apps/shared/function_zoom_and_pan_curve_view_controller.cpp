@@ -91,7 +91,7 @@ View * FunctionZoomAndPanCurveViewController::ContentView::subviewAtIndex(int in
 }
 
 void FunctionZoomAndPanCurveViewController::ContentView::layoutSubviews(bool force) {
-  m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height()), force);
+  m_curveView->setFrame(bounds(), force);
   m_legendView.setFrame(m_displayLegend ? KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight) : KDRectZero, force);
 }
 

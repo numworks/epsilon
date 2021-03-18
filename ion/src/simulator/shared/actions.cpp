@@ -23,6 +23,7 @@ void loadState() {
   const char * path = Platform::filePathForReading(kStateFileExtension);
   if (path != nullptr) {
     StateFile::load(path);
+    // State file's language is ignored
   }
 }
 #endif

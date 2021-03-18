@@ -11,9 +11,11 @@ namespace StateFile {
 static constexpr const char * sHeader = "NWSF";
 static constexpr int sHeaderLength = 4;
 static constexpr int sVersionLength = 8;
+static constexpr int sLanguageLength = 2;
 static constexpr const char * sWildcardVersion = "**.**.**";
+static constexpr const char * sWildcardLanguage = "**";
 
-/* File format: * "NWSF" + "XXXXXXXX" (version) + EVENTS... */
+/* File format: * "NWSF" + "XXXXXXXX" (version) + "XX" (language) + EVENTS... */
 
 static inline bool load(FILE * f) {
   char buffer[sVersionLength+1];
@@ -36,8 +38,19 @@ static inline bool load(FILE * f) {
     return false;
   }
 
-  // Events
+  // Journal
   Ion::Events::Journal * journal = Journal::replayJournal();
+
+  // Language
+  buffer[sLanguageLength] = 0;
+  if (fread(buffer, sLanguageLength, 1, f) != 1) {
+    return false;
+  }
+  if (strcmp(buffer, sWildcardLanguage) != 0) {
+    journal->setStartingLanguage(buffer);
+  }
+
+  // Events
   int c = 0;
   while ((c = getc(f)) != EOF) {
     Ion::Events::Event e = Ion::Events::Event(c);
@@ -75,7 +88,10 @@ static inline bool save(FILE * f) {
     return false;
   }
   Ion::Events::Journal * journal = Journal::logJournal();
-  Ion::Events::Event e;
+  const char * logJournalLanguage = journal->startingLanguage()[0] != 0 ? journal->startingLanguage() : sWildcardLanguage;
+  if (fwrite(logJournalLanguage, sLanguageLength, 1, f) != 1) {
+    return false;
+  }
   while (!journal->isEmpty()) {
     Ion::Events::Event e = journal->popEvent();
     uint8_t code = static_cast<uint8_t>(e);

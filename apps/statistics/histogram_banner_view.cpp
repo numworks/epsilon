@@ -7,12 +7,12 @@ using namespace Escher;
 namespace Statistics {
 
 HistogramBannerView::HistogramBannerView() :
-  m_intervalLegendView(Font(), I18n::Message::Interval, 0.0f, 0.5f, TextColor(), BackgroundColor()),
-  m_intervalView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor()),
-  m_sizeLegendView(Font(), I18n::Message::Frequency, 0.0f, 0.5f, TextColor(), BackgroundColor()),
-  m_sizeView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor()),
-  m_frequencyLegendView(Font(), I18n::Message::RelativeFrequency, 0.0f, 0.5f, TextColor(), BackgroundColor()),
-  m_frequencyView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor())
+  m_intervalLegendView(Font(), I18n::Message::Interval, 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_intervalView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_sizeLegendView(Font(), I18n::Message::Frequency, 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_sizeView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_frequencyLegendView(Font(), I18n::Message::RelativeFrequency, 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_frequencyView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
 {
 }
 

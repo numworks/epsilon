@@ -21,7 +21,6 @@ void IntersectionGraphController::reloadBannerView() {
   CalculationGraphController::reloadBannerView();
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  const char * space = " ";
   const char * legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(m_record);
@@ -34,8 +33,8 @@ void IntersectionGraphController::reloadBannerView() {
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
-  assert(numberOfChar <= bufferSize);
-  strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
+  assert(numberOfChar < bufferSize);
+  buffer[numberOfChar++] = '\0';
   bannerView()->ordinateView()->setText(buffer);
   bannerView()->reload();
 }

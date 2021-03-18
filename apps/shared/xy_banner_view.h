@@ -23,7 +23,7 @@ public:
 protected:
   Escher::View * subviewAtIndex(int index) override;
 private:
-  constexpr static KDCoordinate k_abscissaBufferSize = Poincare::PrintFloat::k_maxFloatCharSize + 1; // +1 for the space added at the end
+  constexpr static KDCoordinate k_abscissaBufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::BufferTextView m_abscissaSymbol;
   Escher::TextField m_abscissaValue;

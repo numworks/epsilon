@@ -15,7 +15,6 @@ int convertDoubleToText(double t, char * buffer, int bufferSize) {
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
-  const char * space = " ";
   int numberOfChar = 0;
   numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, k_textBufferSize-numberOfChar);
   assert(numberOfChar <= k_textBufferSize);
@@ -23,16 +22,16 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   bannerView()->abscissaSymbol()->setText(buffer);
 
   numberOfChar = convertDoubleToText(cursor->t(), buffer, k_textBufferSize);
-  assert(numberOfChar <= k_textBufferSize);
-  strlcpy(buffer+numberOfChar, space, k_textBufferSize - numberOfChar);
+  assert(numberOfChar < k_textBufferSize);
+  buffer[numberOfChar++] = '\0';
   bannerView()->abscissaValue()->setText(buffer);
 
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, "=", k_textBufferSize-numberOfChar);
   numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, Preferences::sharedPreferences()->numberOfSignificantDigits(), context);
-  assert(numberOfChar <= k_textBufferSize);
-  strlcpy(buffer+numberOfChar, space, k_textBufferSize-numberOfChar);
+  assert(numberOfChar < k_textBufferSize);
+  buffer[numberOfChar++] = '\0';
   bannerView()->ordinateView()->setText(buffer);
 
   bannerView()->reload();

@@ -39,12 +39,13 @@ void BannerView::layoutSubviews(bool force) {
    * line and iterate the process. */
   const KDCoordinate lineWidth = m_frame.width();
   KDCoordinate remainingWidth = lineWidth;
+  KDCoordinate mandatorySpacing = k_minimalSpaceBetweenSubviews;
   int indexOfFirstViewOfCurrentLine = 0;
   KDCoordinate y = LineSpacing;
   /* We do a last iteration of the loop to layout the last line. */
   for (int i = 0; i <= numberOfSubviews(); i++) {
-    KDCoordinate subviewWidth = (i < numberOfSubviews()) ? subviewAtIndex(i)->minimalSizeForOptimalDisplay().width() : lineWidth;
-    if (subviewWidth > remainingWidth) {
+    KDCoordinate subviewWidth = i < numberOfSubviews() ? subviewAtIndex(i)->minimalSizeForOptimalDisplay().width() : lineWidth;
+    if (subviewWidth + mandatorySpacing > remainingWidth) {
       KDCoordinate x = 0;
       int nbOfSubviewsOnLine = i > indexOfFirstViewOfCurrentLine ? i-indexOfFirstViewOfCurrentLine : 1;
       KDCoordinate roundingError = remainingWidth % nbOfSubviewsOnLine;
@@ -60,8 +61,10 @@ void BannerView::layoutSubviews(bool force) {
       assert(subviewPreviousLine);
       y += subviewPreviousLine->minimalSizeForOptimalDisplay().height() + LineSpacing;
       remainingWidth = lineWidth;
+      mandatorySpacing = 0;
       indexOfFirstViewOfCurrentLine = i;
     }
+    mandatorySpacing += k_minimalSpaceBetweenSubviews;
     remainingWidth -= subviewWidth;
   }
 }
@@ -76,7 +79,7 @@ int BannerView::numberOfLinesGivenWidth(KDCoordinate width) const {
       remainingWidth = lineWidth;
       lineNumber++;
     }
-    remainingWidth -= subviewWidth;
+    remainingWidth -= subviewWidth + k_minimalSpaceBetweenSubviews;
   }
   return lineNumber;
 }

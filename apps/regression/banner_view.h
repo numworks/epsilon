@@ -20,6 +20,7 @@ public:
   Escher::BufferTextView * subTextAtIndex(int index);
   static constexpr int numberOfsubTexts() { return k_numberOfSubtexts; }
   void setNumberOfSubviews(int subviewsNumber) { m_numberOfSubviews = subviewsNumber; }
+  void setCoefficientsDefined(bool defined) { m_coefficientsAreDefined = defined; }
 private:
   static constexpr int k_numberOfSubtexts = 5;
   static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + k_numberOfSharedSubviews + k_numberOfSubtexts;
@@ -34,6 +35,7 @@ private:
   Escher::BufferTextView m_subText3;
   Escher::BufferTextView m_subText4;
   int m_numberOfSubviews;
+  bool m_coefficientsAreDefined;
 };
 
 }

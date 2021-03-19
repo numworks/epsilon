@@ -78,6 +78,7 @@ void HistogramController::viewWillAppear() {
     *m_rangeVersion = rangeChecksum;
     initBarSelection();
     reloadBannerView();
+    multipleDataView()->reload();
   }
 }
 
@@ -173,10 +174,10 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   {
     *m_selectedBarIndex = newSelectedBarIndex;
     m_view.dataViewAtIndex(selectedSeriesIndex())->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex));
-    if (m_store->scrollToSelectedBarIndex(selectedSeriesIndex(), *m_selectedBarIndex)) {
-      multipleDataView()->reload();
-    }
+    /* Reload the view even if it did not scroll because the banner height
+     * might have changed. */
     reloadBannerView();
+    multipleDataView()->reload();
     return true;
   }
   return false;

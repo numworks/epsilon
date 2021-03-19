@@ -1,8 +1,8 @@
 #include <kernel/drivers/board.h>
 #include <drivers/cache.h>
 #include <drivers/config/clocks.h>
-#include <drivers/external_flash_privileged.h>
 #include <regs/regs.h>
+#include <shared/drivers/config/external_flash.h>
 
 typedef void(*ISR)(void);
 extern ISR InitialisationVector[];
@@ -175,7 +175,17 @@ void shutdownPeripheralsClocks(bool keepLEDAwake) {
   RCC.AHB1ENR()->set(ahb1enr);
 }
 
-}
-}
+uint32_t otherSlotUserlandStart() {
+  uint32_t userlandStartAddress = userlandStart();
+  // Pick the other userland slot
+  if (userlandStartAddress < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2) {
+    userlandStartAddress += ExternalFlash::Config::TotalSize/2;
+  } else {
+    userlandStartAddress -= ExternalFlash::Config::TotalSize/2;
+  }
+  return userlandStartAddress;
 }
 
+}
+}
+}

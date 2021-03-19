@@ -1,5 +1,4 @@
 #include <kernel/drivers/power.h>
-#include <drivers/external_flash_privileged.h>
 #include <drivers/reset.h>
 #include <ion/usb.h>
 #include <kernel/drivers/authentication.h>

@@ -164,6 +164,10 @@ void shutdownPeripheralsClocks(bool keepLEDAwake) {
   RCC.AHB1ENR()->set(ahb1enr);
 }
 
+uint32_t otherSlotUserlandStart() {
+  return userlandStart();
+}
+
 }
 }
 }

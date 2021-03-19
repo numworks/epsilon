@@ -29,6 +29,10 @@ constexpr static int NumberOf32KSectors = 1;
 constexpr static int NumberOf64KSectors = 128 - 1;
 constexpr static int NumberOfSectors = NumberOf4KSectors + NumberOf32KSectors + NumberOf64KSectors;
 
+static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
+static constexpr uint8_t NumberOfAddressBitsIn32KbyteBlock = 15;
+static constexpr uint8_t NumberOfAddressBitsIn4KbyteBlock = 12;
+
 constexpr static AFGPIOPin Pins[] = {
   AFGPIOPin(GPIOB, 2,  GPIO::AFR::AlternateFunction::AF9, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast),
   AFGPIOPin(GPIOB, 6,  GPIO::AFR::AlternateFunction::AF10,  GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast),

@@ -195,7 +195,7 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
     + (transferBuffer[4] << 24);
 
   m_erasePage = Flash::SectorAtAddress(eraseAddress);
-  if (m_erasePage < 0 || !Flash::SectorIsWritableViaDFU(m_erasePage)) {
+  if (m_erasePage < 0) {
     // Unrecognized or unwritable sector
     m_state = State::dfuERROR;
     m_status = Status::errTARGET;
@@ -209,12 +209,16 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
-  willErase();
+  bool erased = true;
   if (m_erasePage == Flash::TotalNumberOfSectors()) {
     Flash::MassErase();
   } else {
-    assert(Flash::SectorIsWritableViaDFU(m_erasePage));
-    Flash::EraseSector(m_erasePage);
+    erased = Flash::EraseSector(m_erasePage);
+  }
+  if (!erased) {
+    // Unrecognized or unwritable sector
+    m_state = State::dfuERROR;
+    m_status = Status::errTARGET;
   }
 
   /* Put an out of range value in m_erasePage to indicate that no erase is
@@ -232,9 +236,11 @@ void DFUInterface::writeOnMemory() {
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
   } else {
     int writeSector = Flash::SectorAtAddress(m_writeAddress);
-    if (writeSector >= 0 && Flash::SectorIsWritableViaDFU(writeSector)) {
-      Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
-    } else {
+    bool written = false;
+    if (writeSector >= 0) {
+      written = Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
+    }
+    if (!written) {
       // Invalid write address
       m_largeBufferLength = 0;
       m_state = State::dfuERROR;

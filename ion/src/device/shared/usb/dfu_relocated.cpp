@@ -14,7 +14,6 @@ extern char _dfu_bootloader_flash_start;
 extern char _dfu_bootloader_flash_end;
 
 namespace Ion {
-namespace Device {
 namespace USB {
 
 typedef void (*PollFunctionPointer)();
@@ -26,7 +25,7 @@ void DFU() {
   uint8_t exitKeyColumn = Ion::Device::Keyboard::columnForKey(exitKey);
   while (!Ion::Device::Keyboard::columnIsActive(exitKeyColumn)) {
   }
-  Ion::Device::Regs::OTG.GINTSTS()->setENUMDNE(true);
+  Device::Regs::OTG.GINTSTS()->setENUMDNE(true);
   Device::Board::initInterruptions();
   return;
 #endif
@@ -73,12 +72,7 @@ void DFU() {
   // Flush data cache
   Device::Cache::cleanDCache();
 
-  /* 4- Disable all interrupts
-   * The interrupt service routines live in the Flash and could be overwritten
-   * by garbage during a firmware upgrade opration, so we disable them. */
-  Device::Board::shutdownInterruptions();
-
-  /* 5- Jump to DFU bootloader code. We made sure in the linker script that the
+  /* 4- Jump to DFU bootloader code. We made sure in the linker script that the
    * first function we want to call is at the beginning of the DFU code. */
 
   PollFunctionPointer dfu_bootloader_entry = reinterpret_cast<PollFunctionPointer>(dfu_bootloader_ram_start);
@@ -94,13 +88,9 @@ void DFU() {
 
   dfu_bootloader_entry();
 
-  /* 5- Restore interrupts */
-  Device::Board::initInterruptions();
-
-  /* 6- That's all. The DFU bootloader on the stack is now dead code that will
+  /* 5- That's all. The DFU bootloader on the stack is now dead code that will
    * be overwritten when the stack grows. */
 }
 
-}
 }
 }

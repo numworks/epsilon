@@ -14,3 +14,19 @@ const char * serialNumber() {
 }
 
 }
+
+namespace Ion {
+namespace Device {
+namespace SerialNumber {
+
+void SVC_ATTRIBUTES copySVC(char * buffer) {
+  SVC(SVC_SERIAL_NUMBER_COPY);
+}
+
+void copy(char * buffer) {
+  copySVC(buffer);
+}
+
+}
+}
+}

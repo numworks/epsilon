@@ -8,14 +8,16 @@ namespace Device {
 namespace USB {
 
 void Calculator::PollAndReset() {
-  char serialNumber[Ion::Device::SerialNumber::Length+1];
-  Ion::Device::SerialNumber::copy(serialNumber);
+  char serialNumber[SerialNumber::Length+1];
+  SerialNumber::copy(serialNumber);
   Calculator c(serialNumber);
 
-  USB::initInterrupter();
-  while (USB::isPlugged() && !c.isSoftDisconnected() && !(USB::shouldInterrupt() && !c.isErasingAndWriting())) {
+  // Configure the kernel to avoid interrupting DFU protocole except on Back key
+  USB::willExecuteDFU();
+  while (Ion::USB::isPlugged() && !c.isSoftDisconnected() && !(USB::shouldInterruptDFU() && !c.isErasingAndWriting())) {
     c.poll();
   }
+  USB::didExecuteDFU();
 
   if (!c.isSoftDisconnected()) {
     c.detach();

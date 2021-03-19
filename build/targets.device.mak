@@ -58,17 +58,17 @@ $(BUILD_DIR)/bootloader.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/sr
 $(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bootloader/bootloader_flash.ld
 $(BUILD_DIR)/bootloader.dfu: $(BUILD_DIR)/bootloader.elf
 
-USBXIP := $(if $(filter-out n0100,$(MODEL)),usbxip,)
 kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(kandinsky_minimal_src)
-$(BUILD_DIR)/kernel.A.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP) leaveauthentify)
-$(BUILD_DIR)/kernel.B.$(EXE): $(call flavored_object_for,$(kernel_src),$(USBXIP) leaveauthentify)
+$(BUILD_DIR)/kernel.A.$(EXE): $(call flavored_object_for,$(kernel_src),)
+$(BUILD_DIR)/kernel.B.$(EXE): $(call flavored_object_for,$(kernel_src),)
 $(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/kernel
 $(BUILD_DIR)/kernel.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/$(subst .,_,$*)_flash.ld
 $(BUILD_DIR)/kernel.%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/kernel/kernel_flash.ld ion/src/$(PLATFORM)/$(MODEL)/shared/config_flash.ld ion/src/$(PLATFORM)/shared/shared_config_flash.ld
 
+USBXIP := $(if $(filter-out n0100,$(MODEL)),usbxip,)
 userland_src = $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(apps_src)
-$(BUILD_DIR)/userland.A.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)
-$(BUILD_DIR)/userland.B.$(EXE): $(call flavored_object_for,$(userland_src),consoledisplay onboarding)
+$(BUILD_DIR)/userland.A.$(EXE): $(call flavored_object_for,$(userland_src),$(USBXIP) leaveauthentify consoledisplay onboarding)
+$(BUILD_DIR)/userland.B.$(EXE): $(call flavored_object_for,$(userland_src),$(USBXIP) leaveauthentify consoledisplay onboarding)
 $(BUILD_DIR)/userland.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared -Lion/src/$(PLATFORM)/userland
 $(BUILD_DIR)/userland.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/userland/$(subst .,_,$*)_flash.ld
 $(BUILD_DIR)/userland.%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/userland/userland_flash.ld ion/src/$(PLATFORM)/$(MODEL)/shared/config_flash.ld ion/src/$(PLATFORM)/shared/shared_config_flash.ld

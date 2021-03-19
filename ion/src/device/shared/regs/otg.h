@@ -188,7 +188,6 @@ public:
   constexpr volatile DIEPINT * DIEPINT(int i) const {
     return (class DIEPINT *)(Base() + 0x908 + i*0x20);
   }
-private:
   constexpr uint32_t Base() const {
     return 0x50000000;
   }

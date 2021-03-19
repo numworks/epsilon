@@ -1,17 +1,14 @@
-#include "flash.h"
-#include "external_flash.h"
-#include "internal_flash.h"
-#include <drivers/config/internal_flash.h>
+#include "flash_unprivileged.h"
+#include "external_flash_unprivileged.h"
+#include "internal_flash_unprivileged.h"
 #include <drivers/config/external_flash.h>
+#include <drivers/config/internal_flash.h>
 #include <assert.h>
+#include <stdint.h>
 
 namespace Ion {
 namespace Device {
 namespace Flash {
-
-int TotalNumberOfSectors() {
-  return InternalFlash::Config::NumberOfSectors + ExternalFlash::Config::NumberOfSectors;
-}
 
 bool AddressIsInInternalFlash(uint32_t address) {
   return address >= InternalFlash::Config::StartAddress
@@ -21,6 +18,10 @@ bool AddressIsInInternalFlash(uint32_t address) {
 bool AddressIsInExternalFlash(uint32_t address) {
   return address >= ExternalFlash::Config::StartAddress
       && address <= ExternalFlash::Config::EndAddress;
+}
+
+int TotalNumberOfSectors() {
+  return InternalFlash::Config::NumberOfSectors + ExternalFlash::Config::NumberOfSectors;
 }
 
 int SectorAtAddress(uint32_t address) {
@@ -46,33 +47,6 @@ bool SectorIsWritableViaDFU(int i) {
   return SectorIsInExternalFlash(i) || (SectorIsInInternalFlash(i) && i >= InternalFlash::Config::NumberOfForbiddenFirstSectors);
 }
 
-void MassErase() {
-  for (int i = InternalFlash::Config::NumberOfForbiddenFirstSectors; i < InternalFlash::Config::NumberOfSectors; i++) {
-    // InternalFlash::MassErase is forbidden
-    InternalFlash::EraseSector(i);
-  }
-  ExternalFlash::MassErase();
-}
-
-void EraseSector(int i) {
-  assert(i >= 0 && i < TotalNumberOfSectors());
-  if (SectorIsInInternalFlash(i)) {
-    InternalFlash::EraseSector(i);
-  } else {
-    ExternalFlash::EraseSector(i - InternalFlash::Config::NumberOfSectors);
-  }
-}
-
-void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
-  assert(SectorAtAddress((uint32_t)destination) >= 0);
-  if (AddressIsInInternalFlash((uint32_t)destination)) {
-    InternalFlash::WriteMemory(destination, source, length);
-  } else {
-    ExternalFlash::WriteMemory(destination - ExternalFlash::Config::StartAddress, source, length);
-  }
-}
-
 }
 }
 }
-

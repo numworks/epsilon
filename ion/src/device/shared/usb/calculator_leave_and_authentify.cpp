@@ -1,5 +1,5 @@
 #include "calculator.h"
-#include <kernel/drivers/authentication.h>
+#include <userland/drivers/board.h>
 
 namespace Ion {
 namespace Device {
@@ -10,7 +10,7 @@ void Calculator::leave(uint32_t leaveAddress) {
   int newKernelVersion = 12; //getPlatformInfo(userlandAddressOtherSlot()).kernelVersion --> implement on userland to know the header
   int currentUserlandVersion = 22;
   int newUserlandVersion = 24;
-  Authentication::updateTrustAndSwitchSlot(currentKernelVersion, newKernelVersion, currentUserlandVersion, newUserlandVersion);
+  Board::switchExecutableSlot(newKernelVersion - currentKernelVersion, newUserlandVersion - currentUserlandVersion); // FONCTION KERNEL QUI ADAPTE
 }
 
 }

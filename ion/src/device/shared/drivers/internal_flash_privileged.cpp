@@ -1,4 +1,4 @@
-#include "internal_flash.h"
+#include "internal_flash_privileged.h"
 #include <drivers/cache.h>
 #include <drivers/config/internal_flash.h>
 #include <assert.h>
@@ -9,6 +9,11 @@ namespace Device {
 namespace InternalFlash {
 
 using namespace Regs;
+
+/* The Device is powered by a 2.8V LDO. This allows us to perform writes to the
+ * Flash 32 bits at once. */
+constexpr FLASH::CR::PSIZE MemoryAccessWidth = Regs::FLASH::CR::PSIZE::X32;
+typedef uint32_t MemoryAccessType;
 
 static inline void wait() {
   /* Issue a DSB instruction to guarantee the completion of a previous access
@@ -206,15 +211,6 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
     *alignedDestination = footer;
     wait();
   }
-}
-
-int SectorAtAddress(uint32_t address) {
-  for (int i = 0; i < Config::NumberOfSectors; i++) {
-    if (address >= Config::SectorAddresses[i] && address < Config::SectorAddresses[i+1]) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 void EraseSector(int i) {

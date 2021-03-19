@@ -29,10 +29,6 @@ void shutdown() {
   shutdownInterruptions();
 }
 
-uint64_t millis() {
-  return MillisElapsed;
-}
-
 void setSysTickFrequency(int frequencyInMHz) {
   /* Systick clock source is the CPU clock HCLK divided by 8. To get 1 ms
    * systick overflow, we need to set it to :
@@ -43,5 +39,15 @@ void setSysTickFrequency(int frequencyInMHz) {
 }
 
 }
+}
+}
+
+namespace Ion {
+namespace Timing {
+
+uint64_t millis() {
+  return Device::Timing::MillisElapsed;
+}
+
 }
 }

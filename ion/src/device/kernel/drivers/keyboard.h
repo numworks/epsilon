@@ -32,7 +32,7 @@ inline void setRowState(uint16_t rowState) {
   Config::RowGPIO.ODR()->setBitRange(8, 0, rowState);
 
   // TODO: 100 us seems to work, but wasn't really calculated
-  Timing::usleep(100);
+  Ion::Timing::usleep(100);
 }
 
 inline void activateRow(uint8_t row) {

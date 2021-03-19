@@ -2,7 +2,15 @@
 #define ION_DEVICE_KERNEL_DRIVERS_TIMING_H
 
 #include <stdint.h>
-#include <shared/drivers/timing.h>
+#include <ion/timing.h>
+
+namespace Ion {
+namespace Timing {
+
+uint64_t millis();
+
+}
+}
 
 namespace Ion {
 namespace Device {
@@ -12,7 +20,6 @@ void init();
 void shutdown();
 void initInterruptions();
 void shutdownInterruptions();
-uint64_t millis();
 void setSysTickFrequency(int frequencyInMHz);
 
 extern volatile uint64_t MillisElapsed;

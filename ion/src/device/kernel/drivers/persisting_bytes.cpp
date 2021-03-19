@@ -1,7 +1,7 @@
 #include "persisting_bytes.h"
 #include <drivers/cache.h>
 #include <drivers/config/persisting_bytes.h>
-#include <drivers/flash.h>
+#include <drivers/flash_privileged.h>
 #include <assert.h>
 
 extern "C" {

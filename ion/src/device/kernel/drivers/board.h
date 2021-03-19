@@ -12,6 +12,9 @@ void initSystemClocks();
 void initPeripheralsClocks();
 void shutdownPeripheralsClocks(bool keepLEDAwake = false);
 
+void initInterruptions();
+void shutdownInterruptions();
+
 void initPeripherals(bool authentication, bool fromBootloader);
 void shutdownPeripherals(bool keepLEDAwake = false);
 
@@ -25,6 +28,8 @@ enum class Frequency {
 void setStandardFrequency(Frequency f);
 
 uint32_t userlandStart();
+// Delta = newVersion - oldVersion
+void switchExecutableSlot(int deltaKernelVersion, int deltaUserlandVersion);
 
 }
 }

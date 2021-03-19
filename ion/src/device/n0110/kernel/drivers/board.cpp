@@ -1,7 +1,7 @@
 #include <kernel/drivers/board.h>
 #include <drivers/cache.h>
 #include <drivers/config/clocks.h>
-#include <drivers/external_flash.h>
+#include <drivers/external_flash_privileged.h>
 #include <regs/regs.h>
 
 typedef void(*ISR)(void);

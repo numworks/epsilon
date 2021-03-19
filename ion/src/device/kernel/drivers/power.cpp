@@ -1,7 +1,7 @@
 #include <kernel/drivers/power.h>
-#include <drivers/external_flash.h>
+#include <drivers/external_flash_privileged.h>
 #include <drivers/reset.h>
-#include <drivers/usb.h>
+#include <ion/usb.h>
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
@@ -12,6 +12,7 @@
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
+#include <shared/drivers/usb_privileged.h>
 
 namespace Ion {
 namespace Device {
@@ -21,7 +22,7 @@ using namespace Regs;
 
 void suspend(bool checkIfOnOffKeyReleased) {
   bool isLEDActive = LED::getColor() != KDColorBlack;
-  bool plugged = USB::isPlugged();
+  bool plugged = Ion::USB::isPlugged();
   bool numworksAuthentication = Authentication::trustedUserland();
 
   if (checkIfOnOffKeyReleased) {
@@ -67,7 +68,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
 
     // Check plugging state
     USB::initGPIO();
-    if (scan == OnlyOnOffKeyDown || (!plugged && USB::isPlugged())) {
+    if (scan == OnlyOnOffKeyDown || (!plugged && Ion::USB::isPlugged())) {
       // Wake up
       waitUntilOnOffKeyReleased();
       break;
@@ -77,7 +78,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
        * sLastUSBPlugged or sLastBatteryCharging. */
       Events::getPlatformEvent();
     }
-    plugged = USB::isPlugged();
+    plugged = Ion::USB::isPlugged();
   }
 
   // Reset normal frequency
@@ -88,8 +89,8 @@ void suspend(bool checkIfOnOffKeyReleased) {
   /* If the USB has been unplugged while sleeping, the USB should have been
    * soft disabled but as part of the USB peripheral was asleep, this could
    * not be done before. */
-  if (USB::isPlugged()) {
-    USB::disable();
+  if (Ion::USB::isPlugged()) {
+    Ion::USB::disable();
   }
 }
 
@@ -100,7 +101,7 @@ void waitUntilOnOffKeyReleased() {
     Keyboard::State scan = Keyboard::scan();
     isPowerDown = scan.keyDown(Keyboard::Key::OnOff);
   }
-  Timing::msleep(100);
+  Ion::Timing::msleep(100);
   // Flush the keyboard queue to avoid handling artifacts state at wake-up
   Keyboard::Queue::sharedQueue()->flush();
 }

@@ -3,6 +3,7 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   boot/rt0.cpp \
   drivers/backlight.cpp \
   drivers/battery.cpp \
+  drivers/board.cpp \
   drivers/crc32.cpp \
   drivers/display.cpp \
   drivers/circuit_breaker.cpp \
@@ -11,6 +12,7 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/console_dummy.cpp:-consoledisplay \
   drivers/events.cpp \
   drivers/fcc_id.cpp \
+  drivers/flash.cpp \
   drivers/keyboard.cpp \
   drivers/led.cpp \
   drivers/persisting_bytes.cpp \

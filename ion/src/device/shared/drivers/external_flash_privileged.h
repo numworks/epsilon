@@ -1,8 +1,8 @@
-#ifndef ION_DEVICE_SHARED_EXTERNAL_FLASH_H
-#define ION_DEVICE_SHARED_EXTERNAL_FLASH_H
+#ifndef ION_DEVICE_SHARED_EXTERNAL_FLASH_PRIVILEGED_H
+#define ION_DEVICE_SHARED_EXTERNAL_FLASH_PRIVILEGED_H
 
+#include "external_flash_unprivileged.h"
 #include <stddef.h>
-#include <stdint.h>
 
 // Quad-SPI on STM32 microcontroller
 // https://www.st.com/resource/en/application_note/dm00227538.pdf
@@ -30,7 +30,6 @@ void init();
 void shutdown();
 
 void MassErase();
-int SectorAtAddress(uint32_t address);
 void EraseSector(int i);
 void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length);
 void JDECid(uint8_t * manufacturerID, uint8_t * memoryType, uint8_t * capacityType);

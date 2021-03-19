@@ -5,23 +5,9 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-bool isPlugged();
-bool isEnumerated(); // Speed-enumerated, to be accurate
-void clearEnumerationInterrupt();
-
-void initInterrupter();
-bool shouldInterrupt();
-
-void DFU();
-void enable();
-void disable();
-
-void init();
-void shutdown();
-void initGPIO();
-void shutdownGPIO();
-void initOTG();
-void shutdownOTG();
+void willExecuteDFU();
+void didExecuteDFU();
+bool shouldInterruptDFU();
 
 }
 }

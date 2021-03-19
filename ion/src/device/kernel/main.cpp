@@ -17,7 +17,7 @@ void kernel_main() {
   if (!Ion::Device::Authentication::trustedUserland()) {
     Ion::Device::Backlight::init();
     Ion::Device::WarningDisplay::unauthenticatedUserland();
-    Ion::Device::Timing::msleep(5000);
+    Ion::Timing::msleep(5000);
     Ion::Device::Backlight::shutdown();
   }
   // Unprivileged mode

@@ -25,6 +25,7 @@ private:
   static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + k_numberOfSharedSubviews + k_numberOfSubtexts;
   int numberOfSubviews() const override { return m_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
+  bool lineBreakBeforeSubview(Escher::View * subview) const override;
   Escher::BufferTextView m_dotNameView;
   Escher::MessageTextView m_regressionTypeView;
   Escher::BufferTextView m_subText0;

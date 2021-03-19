@@ -195,7 +195,7 @@ void InteractiveCurveViewRange::setDefault() {
 
   /* We notify the delegate to refresh the cursor's position and update the
    * bottom margin (which depends on the banner height). */
-  m_delegate->xRangeIsReady();
+  m_delegate->updateBottomMargin();
 
   float yRange = yMax() - yMin();
   m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);

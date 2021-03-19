@@ -9,7 +9,9 @@ namespace Shared {
 
 class FunctionBannerDelegate  {
 public:
-  constexpr static size_t k_textBufferSize = 50 + Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+  /* Longest text that needs to be buffered is the ordinate of a parametric
+   * function, f(t)=(...;...) */
+  constexpr static size_t k_textBufferSize = 8 + 2 * Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   /* getValueDisplayedOnBanner returns the value of t as displayed in the
    * banner, unless the difference from t exceeds deltaThreshold. If so,
    * return t. For instance, when a function is plotted between 1.000001 and

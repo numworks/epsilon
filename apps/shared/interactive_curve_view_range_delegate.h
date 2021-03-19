@@ -20,7 +20,7 @@ public:
   virtual bool defaultRangeIsNormalized() const { return false; }
   virtual void interestingRanges(InteractiveCurveViewRange * range) { assert(false); }
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;
-  virtual void xRangeIsReady() = 0;
+  virtual void updateBottomMargin() = 0;
   virtual void updateZoomButtons() = 0;
 };
 

@@ -1,6 +1,7 @@
 ion_device_bootloader_src += $(addprefix ion/src/device/n0100/bootloader/drivers/, \
   authentication.cpp \
   board.cpp \
+  external_flash.cpp \
   option_bytes.cpp \
 )
 
@@ -15,4 +16,10 @@ ion_device_kernel_src += $(addprefix ion/src/device/n0100/kernel/drivers/, \
 ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0100/shared/drivers/, \
   board.cpp \
   reset.cpp \
+  flash_privileged.cpp \
+  flash_unprivileged.cpp \
+)
+
+ion_device_userland_src += $(addprefix ion/src/device/n0100/shared/drivers/, \
+  flash_unprivileged.cpp \
 )

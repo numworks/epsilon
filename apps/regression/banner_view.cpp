@@ -46,6 +46,8 @@ View * BannerView::subviewAtIndex(int index) {
 
 bool BannerView::lineBreakBeforeSubview(Escher::View * subview) const {
   return subview == &m_regressionTypeView
+    // Force the "Data not suitable" message to be on the next line
+      || (subview == &m_subText0 && !m_coefficientsAreDefined)
       || Shared::XYBannerView::lineBreakBeforeSubview(subview);
 }
 

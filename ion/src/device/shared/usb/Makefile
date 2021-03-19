@@ -34,8 +34,6 @@ ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
   webusb_platform_descriptor.cpp \
 )
 
-ion_device_usb_src += ion/src/device/kernel/drivers/dfu.cpp:-usbxip
-
 # DFU code
 
 #TODO: move in kernel/Makefile?
@@ -104,7 +102,7 @@ ifeq ($(DEBUG),1)
 	$(Q) mkdir -p $(dir $@) && cp output/release/$(PLATFORM)/$(MODEL)/ion/src/device/shared/usb/dfu.o $@
 endif
 
-ion_device_dfu_src += ion/src/device/shared/usb/dfu.cpp:-usbxip
-ion_device_dfu_src += ion/src/device/shared/dfu/dfu_relocated.cpp:-usbxip
+ion_device_dfu_src += ion/src/device/shared/usb/dfu_relocated.cpp:-usbxip
 
-ion_device_shared_bootloader_kernel_src += $(ion_device_dfu_src)
+ion_device_bootloader_src += $(ion_device_dfu_src)
+ion_device_userland_src += $(ion_device_dfu_src)

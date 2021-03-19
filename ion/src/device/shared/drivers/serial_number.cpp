@@ -7,7 +7,6 @@ namespace Ion {
 namespace Device {
 namespace SerialNumber {
 
-
 const char * get() {
   static char serialNumberBuffer[Length + 1] = {0};
   if (serialNumberBuffer[0] == 0) {
@@ -25,4 +24,3 @@ void copy(char * buffer) {
 }
 }
 }
-

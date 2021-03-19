@@ -33,6 +33,8 @@ protected:
     Escher::View * m_infoView;
   };
 
+  virtual bool lineBreakBeforeSubview(Escher::View * subview) const { return false; }
+
 private:
   static constexpr KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
   static constexpr KDCoordinate k_minimalSpaceBetweenSubviews = 14; // Width of '  ' in SmallFont

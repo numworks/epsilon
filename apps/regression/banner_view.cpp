@@ -44,4 +44,9 @@ View * BannerView::subviewAtIndex(int index) {
   return subTextAtIndex(index - 1);
 }
 
+bool BannerView::lineBreakBeforeSubview(Escher::View * subview) const {
+  return subview == &m_regressionTypeView
+      || Shared::XYBannerView::lineBreakBeforeSubview(subview);
+}
+
 }

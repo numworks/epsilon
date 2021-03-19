@@ -18,6 +18,7 @@ private:
   static constexpr int k_numberOfSubviews = 3;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
+  bool lineBreakBeforeSubview(Escher::View * subview) const override;
 
   Escher::MessageTextView m_intervalLegendView;
   Escher::BufferTextView m_intervalView;

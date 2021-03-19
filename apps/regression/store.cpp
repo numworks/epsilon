@@ -169,7 +169,7 @@ void Store::setDefault() {
   setXMin(xMin - k_displayHorizontalMarginRatio * range);
   setXMax(xMax + k_displayHorizontalMarginRatio * range);
 
-  m_delegate->xRangeIsReady();
+  m_delegate->updateBottomMargin();
 
   range = yMax - yMin;
   setYMin(roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true));

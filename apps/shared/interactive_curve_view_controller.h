@@ -71,7 +71,7 @@ private:
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) override;
   void updateZoomButtons() override;
-  void xRangeIsReady() override { refreshCursor(); }
+  void updateBottomMargin() override { refreshCursor(); }
 
   void setCurveViewAsMainView();
 

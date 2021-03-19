@@ -139,7 +139,7 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   if (m_interactiveRange->zoomAuto()) {
     m_interactiveRange->setDefault();
-    /* Here refreshCursor will have been called via xRangeIsReady. */
+    /* Here refreshCursor will have been called via updateBottomMargin. */
   } else {
     refreshCursor();
   }

@@ -1,4 +1,4 @@
-#include "internal_flash_privileged.h"
+#include <shared/drivers/flash_privileged.h>
 #include <drivers/cache.h>
 #include <drivers/config/internal_flash.h>
 #include <assert.h>
@@ -6,9 +6,17 @@
 
 namespace Ion {
 namespace Device {
-namespace InternalFlash {
+namespace Flash {
 
 using namespace Regs;
+
+bool ForbiddenSector(int i) {
+  return i < NumberOfForbiddenFirstSectors; // TODO: how big is the bootloader?
+}
+
+bool MassEraseEnable() {
+  return false;
+}
 
 /* The Device is powered by a 2.8V LDO. This allows us to perform writes to the
  * Flash 32 bits at once. */
@@ -214,7 +222,7 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
 }
 
 void EraseSector(int i) {
-  assert(i >= 0 && i < Config::NumberOfSectors);
+  assert(i >= 0 && i < InternalFlash::Config::NumberOfSectors);
   open();
   FLASH.CR()->setSNB(i);
   FLASH.CR()->setSER(true);

@@ -5,7 +5,6 @@
 #include <drivers/battery.h>
 #include <drivers/display.h>
 #include <drivers/events.h>
-#include <drivers/external_flash_privileged.h>
 #include <drivers/keyboard.h>
 #include <drivers/led.h>
 #include <drivers/reset.h>
@@ -17,7 +16,6 @@
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
 #include <regs/regs.h>
-#include <shared/drivers/config/external_flash.h>
 
 typedef void(*ISR)(void);
 extern ISR InitialisationVector[];
@@ -146,14 +144,7 @@ void switchExecutableSlot(int deltaKernelVersion, int deltaUserlandVersion) {
     WarningDisplay::unauthenticatedUserland();
     Ion::Timing::msleep(3000);
 
-    uint32_t userlandStartAddress = userlandStart();
-    // Pick the other userland slot
-    if (userlandStartAddress < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2) {
-      userlandStartAddress += ExternalFlash::Config::TotalSize/2;
-    } else {
-      userlandStartAddress -= ExternalFlash::Config::TotalSize/2;
-    }
-    Reset::jump(userlandStartAddress, false);
+    Reset::jump(otherSlotUserlandStart(), false);
   }
 }
 

@@ -26,7 +26,7 @@
 
 void svcall_handler(unsigned svcNumber, void * args[]) {
   constexpr unsigned authentificationRequired[] = {SVC_USB_WILL_EXECUTE_DFU, SVC_USB_DID_EXECUTE_DFU, SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_FLASH_MASS_ERASE, SVC_FLASH_ERASE_SECTOR, SVC_FLASH_WRITE_MEMORY};
-  for (int i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
+  for (size_t i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
     if (svcNumber == authentificationRequired[i] && !Ion::Device::Authentication::trustedUserland()) {
       return;
     }
@@ -226,10 +226,10 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       Ion::Device::Flash::MassErase();
       return;
     case SVC_FLASH_ERASE_SECTOR:
-      Ion::Device::Flash::EraseSector(*static_cast<int *>(args[0]));
+      *static_cast<bool *>(args[1]) = Ion::Device::Flash::EraseSector(*static_cast<int *>(args[0]));
       return;
     case SVC_FLASH_WRITE_MEMORY:
-      Ion::Device::Flash::WriteMemory(static_cast<uint8_t *>(args[0]), static_cast<uint8_t *>(args[1]), *static_cast<size_t *>(args[2]));
+      *static_cast<bool *>(args[3]) = Ion::Device::Flash::WriteMemory(static_cast<uint8_t *>(args[0]), static_cast<uint8_t *>(args[1]), *static_cast<size_t *>(args[2]));
     default:
       return;
   }

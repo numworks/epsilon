@@ -29,4 +29,9 @@ View * BannerView::subviewAtIndex(int index) {
   return subviews[index - Shared::XYBannerView::k_numberOfSubviews];
 }
 
+bool BannerView::lineBreakBeforeSubview(View * subview) const {
+  return subview == &m_tangentEquationView
+      || Shared::XYBannerView::lineBreakBeforeSubview(subview);
+}
+
 }

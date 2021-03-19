@@ -45,7 +45,7 @@ void BannerView::layoutSubviews(bool force) {
   /* We do a last iteration of the loop to layout the last line. */
   for (int i = 0; i <= numberOfSubviews(); i++) {
     KDCoordinate subviewWidth = i < numberOfSubviews() ? subviewAtIndex(i)->minimalSizeForOptimalDisplay().width() : lineWidth;
-    if (subviewWidth + mandatorySpacing > remainingWidth) {
+    if (subviewWidth + mandatorySpacing > remainingWidth || lineBreakBeforeSubview(subviewAtIndex(i))) {
       KDCoordinate x = 0;
       int nbOfSubviewsOnLine = i > indexOfFirstViewOfCurrentLine ? i-indexOfFirstViewOfCurrentLine : 1;
       KDCoordinate roundingError = remainingWidth % nbOfSubviewsOnLine;
@@ -74,8 +74,9 @@ int BannerView::numberOfLinesGivenWidth(KDCoordinate width) const {
   const KDCoordinate lineWidth = width;
   KDCoordinate remainingWidth = lineWidth;
   for (int i = 0; i < numberOfSubviews(); i++) {
-    KDCoordinate subviewWidth = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i)->minimalSizeForOptimalDisplay().width();
-    if (subviewWidth > remainingWidth) {
+    View * subview = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i);
+    KDCoordinate subviewWidth = subview->minimalSizeForOptimalDisplay().width();
+    if (subviewWidth > remainingWidth || lineBreakBeforeSubview(subview)) {
       remainingWidth = lineWidth;
       lineNumber++;
     }

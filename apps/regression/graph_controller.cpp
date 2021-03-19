@@ -2,7 +2,6 @@
 #include "../apps_container.h"
 #include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
-#include "../shared/text_helpers.h"
 #include <poincare/preferences.h>
 #include <cmath>
 #include <algorithm>

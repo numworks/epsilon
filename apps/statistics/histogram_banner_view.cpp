@@ -25,4 +25,9 @@ View * HistogramBannerView::subviewAtIndex(int index) {
   return subviews[index];
 }
 
+bool HistogramBannerView::lineBreakBeforeSubview(View * subview) const {
+  return subview == &m_labelledSizeView
+      || Shared::BannerView::lineBreakBeforeSubview(subview);
+}
+
 }

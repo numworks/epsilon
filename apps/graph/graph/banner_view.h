@@ -20,6 +20,7 @@ public:
   static constexpr int k_numberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 4;
 private:
   int numberOfSubviews() const override { return m_numberOfSubviews; }
+  bool lineBreakBeforeSubview(Escher::View * subview) const override;
   Escher::View * subviewAtIndex(int index) override;
   Escher::BufferTextView m_derivativeView;
   Escher::MessageTextView m_tangentEquationView;

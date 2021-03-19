@@ -104,12 +104,11 @@ CurveView * FunctionZoomAndPanCurveViewController::ContentView::curveView() {
 FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView()
 {
   I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
-  float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
   for (int i = 0; i < k_numberOfLegends; i++) {
     m_legends[i].setFont(ContentView::k_legendFont);
     m_legends[i].setMessage(messages[i]);
     m_legends[i].setBackgroundColor(BackgroundColor());
-    m_legends[i].setAlignment(horizontalAlignments[i], 0.5f);
+    m_legends[i].setAlignment(0.5f, 0.5f);
   }
   KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Up, KeyView::Type::Down, KeyView::Type::Left, KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
   for (int i = 0; i < k_numberOfTokens ; i++) {
@@ -134,22 +133,30 @@ View * FunctionZoomAndPanCurveViewController::ContentView::LegendView::subviewAt
 }
 
 void FunctionZoomAndPanCurveViewController::ContentView::LegendView::layoutSubviews(bool force) {
-  KDCoordinate height = bounds().height();
-  KDCoordinate xOrigin = 0;
-  KDCoordinate legendWidth = m_legends[0].minimalSizeForOptimalDisplay().width();
-  m_legends[0].setFrame(KDRect(xOrigin, 0, legendWidth, height), force);
-  xOrigin += legendWidth;
-  for (int i = 0; i < k_numberOfTokens - 2; i++) {
-    m_legendPictograms[i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height), force);
-    xOrigin += k_tokenWidth;
+  /* We want to imitate a banner with two elements, the first one being
+   * "Pan: ^v<>" and the other being "Zoom: + or -". */
+  KDCoordinate legendWidth[k_numberOfLegends];
+  KDCoordinate totalLegendWidth = 0;
+  for (int i = 0; i < k_numberOfLegends; i++) {
+    legendWidth[i] = m_legends[i].minimalSizeForOptimalDisplay().width();
+    totalLegendWidth += legendWidth[i];
   }
-  xOrigin = bounds().width()/2;
+  KDCoordinate halfSpacing = (bounds().width() - totalLegendWidth - k_tokenWidth * k_numberOfTokens) / 4;
+  KDCoordinate height = bounds().height();
+
+  KDCoordinate x = halfSpacing;
+  m_legends[0].setFrame(KDRect(x, 0, legendWidth[0], height), force);
+  x += legendWidth[0];
+  for (int i = 0; i < k_numberOfTokens - 2; i++) {
+    m_legendPictograms[i].setFrame(KDRect(x, 0, k_tokenWidth, height), force);
+    x += k_tokenWidth;
+  }
+  x += 2 * halfSpacing;
   for (int i = 1; i < k_numberOfLegends; i++) {
-    KDCoordinate legendWidth = m_legends[i].minimalSizeForOptimalDisplay().width();
-    m_legends[i].setFrame(KDRect(xOrigin, 0, legendWidth, height), force);
-    xOrigin += legendWidth;
-    m_legendPictograms[k_numberOfTokens - 3 + i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height), force);
-    xOrigin += k_tokenWidth;
+    m_legends[i].setFrame(KDRect(x, 0, legendWidth[i], height), force);
+    x += legendWidth[i];
+    m_legendPictograms[k_numberOfTokens - 3 + i].setFrame(KDRect(x, 0, k_tokenWidth, height), force);
+    x += k_tokenWidth;
   }
 }
 

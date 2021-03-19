@@ -125,9 +125,7 @@ uint32_t userlandStart() {
 }
 
 void switchExecutableSlot(int deltaKernelVersion, int deltaUserlandVersion) {
-  if (!Authentication::trustedUserland()) {
-    return;
-  }
+  assert(Authentication::trustedUserland());
   bool trustedUserland = Authentication::updateTrust();
   if (deltaKernelVersion < 0 || (trustedUserland && deltaUserlandVersion < 0)) {
     WarningDisplay::obsoleteSoftware();

@@ -26,7 +26,7 @@ public:
   void interestingRanges(InteractiveCurveViewRange * range) override { DefaultInterestingRanges(range, context(), functionStore(), Ratio()); }
   float addMargin(float x, float range, bool isVertical, bool isMin) override { return DefaultAddMargin(x, range, isVertical, isMin, k_topMargin, k_bottomMargin, k_leftMargin, k_rightMargin); }
   void updateZoomButtons() override {}
-  void xRangeIsReady() override {}
+  void updateBottomMargin() override {}
 
 private:
   mutable GlobalContext m_context;

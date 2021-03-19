@@ -1,5 +1,6 @@
 #include <kernel/boot/isr.h>
 #include <ion.h>
+#include <kernel/drivers/authentication.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>
@@ -24,6 +25,12 @@
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
 void svcall_handler(unsigned svcNumber, void * args[]) {
+  constexpr unsigned authentificationRequired[] = {SVC_USB_WILL_EXECUTE_DFU, SVC_USB_DID_EXECUTE_DFU, SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_FLASH_MASS_ERASE, SVC_FLASH_ERASE_SECTOR, SVC_FLASH_WRITE_MEMORY};
+  for (int i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
+    if (svcNumber == authentificationRequired[i] && !Ion::Device::Authentication::trustedUserland()) {
+      return;
+    }
+  }
   switch (svcNumber) {
     case SVC_DISPLAY_PUSH_RECT:
       // Load rect and pixels

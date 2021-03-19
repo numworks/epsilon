@@ -1,6 +1,6 @@
 #include "backlight.h"
-#include <drivers/timing.h>
 #include <drivers/config/backlight.h>
+#include <ion/timing.h>
 
 /* This driver controls the RT9365 LED driver.
  * This chip allows the brightness to be set to 16 different values. It starts

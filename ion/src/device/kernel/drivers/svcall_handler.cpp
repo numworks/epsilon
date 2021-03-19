@@ -1,6 +1,7 @@
 #include <kernel/boot/isr.h>
 #include <ion.h>
 #include <kernel/drivers/battery.h>
+#include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/crc32.h>
 #include <kernel/drivers/events.h>
@@ -11,12 +12,13 @@
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/drivers/random.h>
+#include <shared/drivers/usb.h>
 #include <shared/drivers/backlight.h>
 #include <shared/drivers/display.h>
+#include <shared/drivers/flash_privileged.h>
 #include <shared/drivers/reset.h>
 #include <shared/drivers/serial_number.h>
 #include <shared/drivers/svcall.h>
-#include <shared/drivers/usb.h>
 #include <string.h>
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
@@ -64,32 +66,26 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     // USB
     case SVC_USB_IS_PLUGGED:
-      *static_cast<bool *>(args[0]) = Ion::Device::USB::isPlugged();
+      *static_cast<bool *>(args[0]) = Ion::USB::isPlugged();
       return;
-    case SVC_USB_IS_ENUMERATED:
-      *static_cast<bool *>(args[0]) = Ion::Device::USB::isEnumerated();
+    case SVC_USB_WILL_EXECUTE_DFU:
+      Ion::Device::USB::willExecuteDFU();
       return;
-    case SVC_USB_CLEAR_ENUMERATION_INTERRUPT:
-      Ion::Device::USB::clearEnumerationInterrupt();
+    case SVC_USB_DID_EXECUTE_DFU:
+      Ion::Device::USB::didExecuteDFU();
       return;
-    case SVC_USB_ENABLE:
-      Ion::Device::USB::enable();
-      return;
-    case SVC_USB_DISABLE:
-      Ion::Device::USB::disable();
-      return;
-    case SVC_USB_DFU:
-      Ion::Device::USB::DFU();
+    case SVC_USB_SHOULD_INTERRUPT:
+      *static_cast<bool *>(args[0]) = Ion::Device::USB::shouldInterruptDFU();
       return;
     // TIMING
     case SVC_TIMING_USLEEP:
-      Ion::Device::Timing::usleep(*static_cast<uint32_t *>(args[0]));
+      Ion::Timing::usleep(*static_cast<uint32_t *>(args[0]));
       return;
     case SVC_TIMING_MSLEEP:
-      Ion::Device::Timing::msleep(*static_cast<uint32_t *>(args[0]));
+      Ion::Timing::msleep(*static_cast<uint32_t *>(args[0]));
       return;
     case SVC_TIMING_MILLIS:
-      *static_cast<uint64_t *>(args[0]) = Ion::Device::Timing::millis();
+      *static_cast<uint64_t *>(args[0]) = Ion::Timing::millis();
       return;
     // KEYBOARD
     case SVC_KEYBOARD_SCAN:
@@ -183,6 +179,9 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_SERIAL_NUMBER:
       *static_cast<const char **>(args[0]) = Ion::Device::SerialNumber::get();
       return;
+    case SVC_SERIAL_NUMBER_COPY:
+      Ion::Device::SerialNumber::copy(static_cast<char *>(args[0]) );
+      return;
     // FCC_ID
     case SVC_FCC_ID:
       *static_cast<const char **>(args[0]) = Ion::Device::fccId();
@@ -211,6 +210,19 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT:
       Ion::Device::CircuitBreaker::unsetCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]));
       return;
+    // BOARD
+    case SVC_BOARD_SWITCH_EXECUTABLE_SLOT:
+      Ion::Device::Board::switchExecutableSlot(*static_cast<int *>(args[0]), *static_cast<int *>(args[1]));
+      return;
+    // FLASH
+    case SVC_FLASH_MASS_ERASE:
+      Ion::Device::Flash::MassErase();
+      return;
+    case SVC_FLASH_ERASE_SECTOR:
+      Ion::Device::Flash::EraseSector(*static_cast<int *>(args[0]));
+      return;
+    case SVC_FLASH_WRITE_MEMORY:
+      Ion::Device::Flash::WriteMemory(static_cast<uint8_t *>(args[0]), static_cast<uint8_t *>(args[1]), *static_cast<size_t *>(args[2]));
     default:
       return;
   }

@@ -1,5 +1,6 @@
 #include <ion/usb.h>
 #include <userland/drivers/svcall.h>
+#include <shared/drivers/usb.h>
 
 namespace Ion {
 namespace USB {
@@ -14,31 +15,31 @@ bool isPlugged() {
   return res;
 }
 
-void SVC_ATTRIBUTES isEnumeratedSVC(bool * res) {
-  SVC(SVC_USB_IS_ENUMERATED);
+}
 }
 
-bool isEnumerated() {
+namespace Ion {
+namespace Device {
+namespace USB {
+
+void willExecuteDFU() {
+  SVC(SVC_USB_WILL_EXECUTE_DFU);
+}
+
+void didExecuteDFU() {
+  SVC(SVC_USB_DID_EXECUTE_DFU);
+}
+
+void SVC_ATTRIBUTES shouldInterruptDFUSVC(bool * res) {
+  SVC(SVC_USB_SHOULD_INTERRUPT);
+}
+
+bool shouldInterruptDFU() {
   bool res;
-  isEnumeratedSVC(&res);
+  shouldInterruptDFUSVC(&res);
   return res;
 }
 
-void clearEnumerationInterrupt() {
-  SVC(SVC_USB_CLEAR_ENUMERATION_INTERRUPT);
 }
-
-void enable() {
-  SVC(SVC_USB_ENABLE);
-}
-
-void disable() {
-  SVC(SVC_USB_DISABLE);
-}
-
-void DFU() {
-  SVC(SVC_USB_DFU);
-}
-
 }
 }

@@ -1,7 +1,7 @@
 #include "wakeup.h"
 #include <drivers/battery.h>
 #include <drivers/keyboard.h>
-#include <drivers/usb.h>
+#include <drivers/usb_privileged.h>
 #include <drivers/config/battery.h>
 #include <drivers/config/keyboard.h>
 #include <drivers/config/usb.h>

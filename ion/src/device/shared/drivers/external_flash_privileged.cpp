@@ -1,7 +1,7 @@
-#include "external_flash.h"
-#include <drivers/config/external_flash.h>
+#include "external_flash_privileged.h"
 #include <drivers/config/clocks.h>
-#include <drivers/timing.h>
+#include <drivers/config/external_flash.h>
+#include <ion/timing.h>
 
 namespace Ion {
 namespace Device {
@@ -79,10 +79,6 @@ enum class Command : uint8_t {
   ReleaseDeepPowerDown = 0xAB,
   ReadJEDECID = 0x9F
 };
-
-static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
-static constexpr uint8_t NumberOfAddressBitsIn32KbyteBlock = 15;
-static constexpr uint8_t NumberOfAddressBitsIn4KbyteBlock = 12;
 
 class ExternalFlashStatusRegister {
 public:
@@ -368,27 +364,6 @@ void shutdown() {
   shutdownChip();
   shutdownQSPI();
   shutdownGPIO();
-}
-
-int SectorAtAddress(uint32_t address) {
-  /* WARNING: this code assumes that the flash sectors are of increasing size:
-   * first all 4K sectors, then all 32K sectors, and finally all 64K sectors. */
-  int i = address >> NumberOfAddressBitsIn64KbyteBlock;
-  if (i > Config::NumberOf64KSectors) {
-    return -1;
-  }
-  if (i >= 1) {
-    return Config::NumberOf4KSectors + Config::NumberOf32KSectors + i - 1;
-  }
-  i = address >> NumberOfAddressBitsIn32KbyteBlock;
-  if (i >= 1) {
-    assert(i >= 0 && i <= Config::NumberOf32KSectors);
-    i = Config::NumberOf4KSectors + i - 1;
-    return i;
-  }
-  i = address >> NumberOfAddressBitsIn4KbyteBlock;
-  assert(i <= Config::NumberOf4KSectors);
-  return i;
 }
 
 void unlockFlash() {

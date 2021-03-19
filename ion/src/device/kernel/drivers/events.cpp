@@ -4,7 +4,7 @@
 #include <drivers/battery.h>
 #include <drivers/config/clocks.h>
 #include <drivers/display.h>
-#include <drivers/usb.h>
+#include <drivers/usb_privileged.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/config/keyboard.h>
@@ -12,6 +12,7 @@
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
 #include <ion/keyboard.h>
+#include <ion/usb.h>
 #include <ion/src/shared/events_modifier.h>
 #include <limits.h>
 
@@ -86,9 +87,9 @@ bool sLastBatteryCharging = false;
 
 Ion::Events::Event getPlatformEvent() {
   // First, check if the USB device has been connected to an USB host
-  bool usbEnumerated = USB::isEnumerated();
+  bool usbEnumerated = Ion::USB::isEnumerated();
   if (usbEnumerated != sLastUSBEnumerated) {
-    sLastUSBPlugged = USB::isPlugged();
+    sLastUSBPlugged = Ion::USB::isPlugged();
     sLastBatteryCharging = Battery::isCharging();
     sLastUSBEnumerated = usbEnumerated;
     if (usbEnumerated) {
@@ -97,7 +98,7 @@ Ion::Events::Event getPlatformEvent() {
   }
 
   // Second, check if the USB plugged status has changed
-  bool usbPlugged = USB::isPlugged();
+  bool usbPlugged = Ion::USB::isPlugged();
   if (usbPlugged != sLastUSBPlugged) {
     sLastUSBPlugged = usbPlugged;
     sLastBatteryCharging = Battery::isCharging();
@@ -191,7 +192,7 @@ Ion::Events::Event nextEvent(int * timeout) {
 
   uint64_t keysSeenUp = -1;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
-  uint64_t startTime = Timing::millis();
+  uint64_t startTime = Ion::Timing::millis();
   while (true) {
     /* NB: Currently, platform events are polled. They could be instead linked
      * to EXTI interruptions and their event could be pushed on the
@@ -263,11 +264,11 @@ Ion::Events::Event nextEvent(int * timeout) {
         keyboardInterruptionOccured = true;
         break;
       }
-      elapsedTime = static_cast<int>(Timing::millis() - startTime);
+      elapsedTime = static_cast<int>(Ion::Timing::millis() - startTime);
     }
     Board::setClockStandardFrequency();
     *timeout = std::max(0, *timeout - elapsedTime);
-    startTime = Timing::millis();
+    startTime = Ion::Timing::millis();
 
     // If the wake up was due to a keyboard/platformEvent
     if (keyboardInterruptionOccured) {

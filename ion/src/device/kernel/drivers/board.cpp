@@ -5,14 +5,19 @@
 #include <drivers/battery.h>
 #include <drivers/display.h>
 #include <drivers/events.h>
-#include <drivers/external_flash.h>
+#include <drivers/external_flash_privileged.h>
 #include <drivers/keyboard.h>
 #include <drivers/led.h>
+#include <drivers/reset.h>
 #include <drivers/swd.h>
-#include <drivers/usb.h>
+#include <drivers/timing.h>
+#include <drivers/usb_privileged.h>
+#include <kernel/drivers/authentication.h>
 #include <kernel/drivers/config/board.h>
 #include <kernel/drivers/timing.h>
+#include <kernel/warning_display.h>
 #include <regs/regs.h>
+#include <shared/drivers/config/external_flash.h>
 
 typedef void(*ISR)(void);
 extern ISR InitialisationVector[];
@@ -117,6 +122,41 @@ void setClockStandardFrequency() {
 
 uint32_t userlandStart() {
   return reinterpret_cast<uint32_t>(&_kernel_start) + Ion::Device::Board::Config::UserlandOffsetFromKernel;
+}
+
+void switchExecutableSlot(int deltaKernelVersion, int deltaUserlandVersion) {
+  if (!Authentication::trustedUserland()) {
+    return;
+  }
+  bool trustedUserland = Authentication::updateTrust();
+  if (deltaKernelVersion < 0 || (trustedUserland && deltaUserlandVersion < 0)) {
+    WarningDisplay::obsoleteSoftware();
+    Ion::Timing::msleep(5000);
+    return;
+  }
+  if (!trustedUserland && deltaKernelVersion > 0) {
+    WarningDisplay::kernelUpgradeRequired();
+    Ion::Timing::msleep(5000);
+    return;
+  }
+  if (trustedUserland) {
+    assert(deltaKernelVersion >= 0 && deltaUserlandVersion >= 0);
+    Reset::coreWhilePlugged();
+  } else {
+    assert(deltaKernelVersion == 0);
+    // - shutdown the LED? Other decrease of privilege?
+    WarningDisplay::unauthenticatedUserland();
+    Ion::Timing::msleep(3000);
+
+    uint32_t userlandStartAddress = userlandStart();
+    // Pick the other userland slot
+    if (userlandStartAddress < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2) {
+      userlandStartAddress += ExternalFlash::Config::TotalSize/2;
+    } else {
+      userlandStartAddress -= ExternalFlash::Config::TotalSize/2;
+    }
+    Reset::jump(userlandStartAddress, false);
+  }
 }
 
 }

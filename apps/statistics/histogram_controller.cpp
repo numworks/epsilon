@@ -1,6 +1,5 @@
 #include "histogram_controller.h"
 #include "../shared/poincare_helpers.h"
-#include "../shared/text_helpers.h"
 #include "app.h"
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>

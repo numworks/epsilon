@@ -159,19 +159,14 @@ void GraphController::reloadBannerView() {
       break;
     }
   }
+  m_bannerView.setCoefficientsDefined(coefficientsAreDefined);
   if (!coefficientsAreDefined) {
-    // Force the "Data not suitable" message to be on the next line
-    int numberOfCharToCompleteLine = std::max<int>(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
-    numberOfChar = 0;
-    // Padding
-    Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, numberOfCharToCompleteLine - 1);
-    m_bannerView.subTextAtIndex(0)->setText(buffer);
-
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
-    m_bannerView.subTextAtIndex(1)->setText(const_cast<char *>(dataNotSuitableMessage));
-    for (int i = 2; i < m_bannerView.numberOfsubTexts(); i++) {
+    m_bannerView.subTextAtIndex(0)->setText(const_cast<char *>(dataNotSuitableMessage));
+    for (int i = 1; i < m_bannerView.numberOfsubTexts(); i++) {
       m_bannerView.subTextAtIndex(i)->setText("");
     }
+    m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + BannerView::k_numberOfSharedSubviews + 1);
     m_bannerView.reload();
     return;
   }

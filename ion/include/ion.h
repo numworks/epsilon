@@ -32,7 +32,7 @@ void ion_main(int argc, const char * const argv[]);
 namespace Ion {
 
 const char * serialNumber();
-const char * username();
+const volatile char * username();
 const char * softwareVersion();
 const char * omegaVersion();
 const char * patchLevel();

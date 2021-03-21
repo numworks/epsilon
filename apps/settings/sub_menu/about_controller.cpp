@@ -156,7 +156,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
     static const char * mpVersion = MICROPY_VERSION_STRING;
     static const char * messages[] = {
-      Ion::username(),
+      (const char*) Ion::username(),
       Ion::softwareVersion(),
       Ion::omegaVersion(),
       mpVersion,

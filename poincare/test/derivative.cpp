@@ -60,7 +60,7 @@ void assert_reduces_for_approximation(const char * expression, const char * resu
   assert_parsed_expression_simplify_to(expression, result, SystemForApproximation, angleUnit, Metric, Real, ReplaceAllSymbolsWithDefinitionsOrUndefined);
 }
 
-QUIZ_CASE(poincare_derivative_approximation) {
+QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1");
   assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11");
   assert_reduces_for_approximation("diff(ln(x),x,0)", Undefined::Name());
@@ -75,43 +75,28 @@ QUIZ_CASE(poincare_derivative_approximation) {
   assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0");
 }
 
-QUIZ_CASE(poincare_derivative_approximation_only) {
-  assert_expression_approximates_to<float>("diff(2×x, x, 2)", "2");
-  assert_expression_approximates_to<double>("diff(2×x, x, 2)", "2");
+void assert_approximate_to(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian) {
+  /* Reduce significant numbers to 3 to handle platforms discrepancies when
+   * computing floats. This allows to expect the same results from both double
+   * and float approximations. */
+  assert_expression_approximates_to<float>(expression, result, angleUnit, Metric, Real, 3);
+  assert_expression_approximates_to<double>(expression, result, angleUnit, Metric, Real, 3);
+}
 
-  assert_expression_approximates_to<float>("diff(2×TO^2, TO, 7)", "28");
-  assert_expression_approximates_to<double>("diff(2×TO^2, TO, 7)", "28");
-
-  //assert_expression_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0"); // FIXME error too big
+QUIZ_CASE(poincare_derivative_approximation) {
+  assert_approximate_to("diff(2×x, x, 2)", "2");
+  assert_approximate_to("diff(2×TO^2, TO, 7)", "28");
+  assert_approximate_to("diff(ln(x),x,1)", "1");
+  assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
+  assert_approximate_to("diff(ln(x),x,0)", Undefined::Name());
+  assert_approximate_to("diff(ln(x),x,-3.1)", Unreal::Name());
+  assert_approximate_to("diff(log(x),x,-10)", Unreal::Name());
+  assert_approximate_to("diff(abs(x),x,123)", "1");
+  assert_approximate_to("diff(abs(x),x,-2.34)", "-1");
+  assert_approximate_to("diff(1/x,x,-2)", "-0.25");
+  assert_approximate_to("diff(x^3+5*x^2,x,0)", "0");
+  assert_approximate_to("diff(abs(x),x,0)", "0"); // Undefined::Name());
+  // FIXME error too big on floats
+  // assert_expression_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
   assert_expression_approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
-
-  assert_expression_approximates_to<float>("diff(ln(x),x,1)", "1");
-  assert_expression_approximates_to<double>("diff(ln(x),x,1)", "1");
-
-  assert_expression_approximates_to<float>("diff(ln(x),x,2.2)", "0.4546");
-  assert_expression_approximates_to<double>("diff(ln(x),x,2.2)", "0.4545454545455");
-
-  assert_expression_approximates_to<float>("diff(ln(x),x,0)", Undefined::Name(), Radian, Metric, Real);
-  assert_expression_approximates_to<double>("diff(ln(x),x,0)", Undefined::Name(), Radian, Metric, Real);
-
-  assert_expression_approximates_to<float>("diff(ln(x),x,-3.1)", Unreal::Name(), Radian, Metric, Real);
-  assert_expression_approximates_to<double>("diff(ln(x),x,-3.1)", Unreal::Name(), Radian, Metric, Real);
-
-  assert_expression_approximates_to<float>("diff(log(x),x,-10)", Unreal::Name(), Radian, Metric, Real);
-  assert_expression_approximates_to<double>("diff(log(x),x,-10)", Unreal::Name(), Radian, Metric, Real);
-
-  assert_expression_approximates_to<float>("diff(abs(x),x,123)", "1");
-  assert_expression_approximates_to<double>("diff(abs(x),x,123)", "1");
-
-  assert_expression_approximates_to<float>("diff(abs(x),x,-2.34)", "-1");
-  assert_expression_approximates_to<double>("diff(abs(x),x,-2.34)", "-1");
-
-  assert_expression_approximates_to<float>("diff(abs(x),x,0)", "0"); // Undefined::Name());
-  assert_expression_approximates_to<double>("diff(abs(x),x,0)", "0"); // Undefined::Name());
-
-  assert_expression_approximates_to<float>("diff(1/x,x,-2)", "-0.25001");
-  assert_expression_approximates_to<double>("diff(1/x,x,-2)", "-0.25");
-
-  assert_expression_approximates_to<float>("diff(x^3+5*x^2,x,0)", "0");
-  assert_expression_approximates_to<double>("diff(x^3+5*x^2,x,0)", "0");
 }

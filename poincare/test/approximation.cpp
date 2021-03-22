@@ -296,15 +296,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231×𝐢", Degree, Metric, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
   assert_expression_approximates_to<double>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231×𝐢");
 
-  assert_expression_approximates_to<float>("diff(2×x, x, 2)", "2");
-  assert_expression_approximates_to<double>("diff(2×x, x, 2)", "2");
-
-  assert_expression_approximates_to<float>("diff(2×TO^2, TO, 7)", "28");
-  assert_expression_approximates_to<double>("diff(2×TO^2, TO, 7)", "28");
-
-  //assert_expression_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0"); // FIXME error too big
-  assert_expression_approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
-
   assert_expression_approximates_to<float>("floor(2.3)", "2");
   assert_expression_approximates_to<double>("floor(2.3)", "2");
 

@@ -69,21 +69,24 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
     result = currentResult;
   } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= tenEpsilon);
 
-  /* If the error is too big regarding the value, do not return the answer.
+  /* If the error is too big regarding the result, do not return the answer.
    * If the result is close to 0, we relax this constraint because the error
-   * will tend to be bigger compared to the result. */
+   * will tend to be bigger compared to the result, especially when the expected
+   * result is 0. */
   if (std::isnan(error)
-      || (std::fabs(result) < k_maxErrorRateOnApproximation && std::fabs(error) > std::fabs(result))
-      || (std::fabs(result) >= k_maxErrorRateOnApproximation && std::fabs(error/result) > k_maxErrorRateOnApproximation))
-  {
+      || (std::fabs(result) < k_maxErrorRateOnApproximation && std::fabs(error) - std::fabs(result) > h)
+      || (std::fabs(result) >= k_maxErrorRateOnApproximation && std::fabs(error/result) > k_maxErrorRateOnApproximation)) {
     return Complex<T>::RealUndefined();
   }
-  constexpr T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
-  if (std::fabs(error) < min) {
+  if (error == 0.0) {
     return Complex<T>::Builder(result);
   }
-  // Round the result according to the error
-  error = std::pow((T)10, IEEE754<T>::exponentBase10(error)+2);
+  // Round and amplify error to a power of 10
+  error = 100 * std::pow((T)10, IEEE754<T>::exponentBase10(error));
+  /* Round the result according to the error
+   * - if result  >> error, return result
+   * - if result  ~= error, return rounded result
+   * - if result*2 < error, return 0 */
   return Complex<T>::Builder(std::round(result/error)*error);
 }
 
@@ -116,7 +119,7 @@ T DerivativeNode::riddersApproximation(ApproximationContext approximationContext
   // Initialize hh, make hh an exactly representable number
   volatile T temp = x+h;
   T hh = temp - x;
-  /* A is matrix storing the function extrapolations for different stepsizes at
+  /* A is matrix storing the function extrapolations for different step sizes at
    * different order */
   T a[10][10];
   for (int i = 0; i < 10; i++) {

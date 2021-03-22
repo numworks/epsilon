@@ -1,2 +1,4 @@
 TOOLCHAIN = host-gcc
 EXE = bin
+
+EPSILON_TELEMETRY ?= 0

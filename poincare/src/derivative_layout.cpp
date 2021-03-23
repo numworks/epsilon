@@ -187,10 +187,11 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
 
   // d/dx...
   KDSize dSize = KDFont::LargeFont->stringSize("d");
+  KDCoordinate charBaseline = dSize.height() / 2;
   KDPoint dPosition((variableSize.width() + k_dxHorizontalMargin) / 2 + xOffset + Escher::Metric::FractionAndConjugateHorizontalOverflow, variableFractionPosition.y() - dSize.height() - 2 * FractionLayoutNode::k_fractionLineMargin - FractionLayoutNode::k_fractionLineHeight);
   ctx->drawString("d", dPosition, KDFont::LargeFont, expressionColor, backgroundColor);
 
-  KDPoint dxPosition(variableFractionPosition.x() - dSize.width() - k_dxHorizontalMargin, variableFractionPosition.y());
+  KDPoint dxPosition(variableFractionPosition.x() - dSize.width() - k_dxHorizontalMargin, variableFractionPosition.y() + variableLayout()->baseline() - charBaseline);
   ctx->drawString("d", dxPosition, KDFont::LargeFont, expressionColor, backgroundColor);
 
   KDCoordinate barWidth = fractionBarWidth();
@@ -208,7 +209,7 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
   ctx->fillRect(verticalBar, expressionColor);
 
   KDPoint variableAssignmentPosition(verticalBar.x() + k_barWidth + k_barHorizontalMargin, p.y() + abscissaBaseline() - variableLayout()->baseline());
-  ctx->drawString("=", variableAssignmentPosition.translatedBy(KDPoint(variableSize.width(), 0)), KDFont::LargeFont, expressionColor, backgroundColor);
+  ctx->drawString("=", variableAssignmentPosition.translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline() - charBaseline)), KDFont::LargeFont, expressionColor, backgroundColor);
 
   Layout variableCopy = HorizontalLayout::Builder(Layout(variableLayout()).clone());
   KDPoint copyPosition = m_variableChildInFractionSlot ? variableAssignmentPosition : variableFractionPosition;

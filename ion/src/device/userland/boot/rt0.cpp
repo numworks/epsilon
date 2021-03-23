@@ -7,6 +7,7 @@
 #include <ion/persisting_bytes.h> // TODO: remove
 #include <ion/usb.h> // TODO: remove
 #include <ion/events.h> // TODO: remove
+#include <shared/drivers/config/board.h>
 #include <userland/drivers/svcall.h>
 
 extern "C" {

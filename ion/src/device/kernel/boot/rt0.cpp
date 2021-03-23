@@ -5,7 +5,6 @@
 #include <drivers/reset.h>
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/board.h>
-#include <kernel/drivers/config/board.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>

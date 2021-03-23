@@ -12,10 +12,10 @@
 #include <drivers/timing.h>
 #include <drivers/usb_privileged.h>
 #include <kernel/drivers/authentication.h>
-#include <kernel/drivers/config/board.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
 #include <regs/regs.h>
+#include <shared/drivers/config/board.h>
 
 typedef void(*ISR)(void);
 extern ISR InitialisationVector[];

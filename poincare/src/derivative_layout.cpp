@@ -210,9 +210,9 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
   KDPoint variableAssignmentPosition(verticalBar.x() + k_barWidth + k_barHorizontalMargin, p.y() + abscissaBaseline() - variableLayout()->baseline());
   ctx->drawString("=", variableAssignmentPosition.translatedBy(KDPoint(variableSize.width(), 0)), KDFont::LargeFont, expressionColor, backgroundColor);
 
-  Layout variableCopy(variableLayout());
+  Layout variableCopy = HorizontalLayout::Builder(Layout(variableLayout()).clone());
   KDPoint copyPosition = m_variableChildInFractionSlot ? variableAssignmentPosition : variableFractionPosition;
-  variableCopy.clone().draw(ctx, copyPosition, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+  variableCopy.draw(ctx, copyPosition, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
 
 }
 

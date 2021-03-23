@@ -23,6 +23,9 @@ const char * languageCode() {
     memcpy(buffer, language, 4);
     buffer[3] = 0;
     env->ReleaseStringUTFChars(j_language, language);
+    env->DeleteLocalRef(j_language);
+    env->DeleteLocalRef(j_class);
+    env->DeleteLocalRef(activity);
   }
   return buffer;
 }

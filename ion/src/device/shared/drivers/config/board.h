@@ -19,7 +19,10 @@ namespace Config {
 
 constexpr static size_t SizeSize = sizeof(uint32_t);
 constexpr static size_t SignatureSize = 64;
-
+/* This information could be extracted from the linking of the userland but we
+ * want to be able to compile the kernel beforehand. We thus static assertion
+ * to check that our hardcoded value is correct when compiling the userland */
+constexpr static uint32_t UserlandHeaderOffset = 8;
 
 }
 }

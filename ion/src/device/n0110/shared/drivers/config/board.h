@@ -21,6 +21,7 @@ namespace Config {
 
 constexpr static uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 64kB
 constexpr static uint32_t KernelSize = 0x40000; // 256kB
+constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;
 
 }
 }

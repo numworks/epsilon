@@ -28,6 +28,7 @@ namespace Config {
 
 constexpr static uint32_t BootloaderSize = 0x4000; // 64kB
 constexpr static uint32_t KernelSize = 2*0x4000 + 0x10000; // 2*16k + 64
+constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;
 
 }
 }

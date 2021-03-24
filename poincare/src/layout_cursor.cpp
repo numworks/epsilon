@@ -178,10 +178,6 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
   Layout(newChild.node()).collapseSiblings(this);
 }
 
-void LayoutCursor::addXNTCodePointLayout() {
-  m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTCodePoint()), true);
-}
-
 void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bool forceCursorLeftOfText) {
   Layout newChild;
   Layout pointedChild;

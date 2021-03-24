@@ -396,7 +396,7 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
           const char * name = sFunctions[i].name;
           size_t length = strlen(name);
           if ((location >= text + length) && memcmp(&text[(location - text) - length], name, length) == 0) {
-            return sFunctions[i].xnt;
+            return CodePoint(sFunctions[i].xnt);
           }
         }
         break;
@@ -415,6 +415,18 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 
   // Fallback to the default
   return defaultXNTCodePoint;
+}
+
+bool TextField::addXNTCodePoint(CodePoint xnt, bool forceDefault) {
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength+1;
+  char buffer[bufferSize];
+  if (!forceDefault) {
+    xnt = XNTCodePoint(xnt);
+  }
+  size_t length = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
+  assert(length < bufferSize - 1);
+  buffer[length] = 0;
+  return handleEventWithText(buffer);
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {

@@ -57,6 +57,18 @@ Layout Layout::recursivelyMatches(LayoutTest test) const {
   return Layout();
 }
 
+Layout Layout::XNTLayout() const {
+  Layout xntLayout = const_cast<Layout *>(this)->node()->XNTLayout();
+  if (!xntLayout.isUninitialized() && xntLayout.recursivelyMatches(
+      [](const Layout l) {
+        return l.type() != LayoutNode::Type::CodePointLayout && l.type() != LayoutNode::Type::HorizontalLayout;
+      }).isUninitialized()) {
+    // Return xnt only if it is a simple horizontal layout with code points.
+    return xntLayout;
+  }
+  return Layout();
+}
+
 // Cursor
 LayoutCursor Layout::cursor() const {
   assert(!isUninitialized());

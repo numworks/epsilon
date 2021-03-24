@@ -149,8 +149,14 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-CodePoint SequenceLayoutNode::XNTCodePoint(int childIndex) const {
-  return (childIndex == k_argumentLayoutIndex || childIndex == k_variableLayoutIndex) ? CodePoint('i') : UCodePointNull;
+Layout SequenceLayoutNode::XNTLayout(int childIndex) const {
+  if (childIndex == k_argumentLayoutIndex) {
+    return Layout(childAtIndex(k_variableLayoutIndex)).clone();
+  }
+  if (childIndex == k_variableLayoutIndex) {
+    return CodePointLayout::Builder(CodePoint('i'));
+  }
+  return LayoutNode::XNTLayout();
 }
 
 // Protected

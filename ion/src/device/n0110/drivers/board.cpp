@@ -390,11 +390,11 @@ PCBVersion readPCBVersion() {
 }
 
 PCBVersion readPCBVersionInMemory() {
-  return ~*reinterpret_cast<const PCBVersion *>(InternalFlash::Config::OTPAddresses[pcbVersionOTPIndex]);
+  return ~*reinterpret_cast<const PCBVersion *>(InternalFlash::Config::OTPAddress(pcbVersionOTPIndex));
 }
 
 void writePCBVersion(PCBVersion version) {
-  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPAddresses[pcbVersionOTPIndex]);
+  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPAddress(pcbVersionOTPIndex));
   PCBVersion formattedVersion = ~version;
   InternalFlash::WriteMemory(destination, reinterpret_cast<uint8_t *>(&formattedVersion), sizeof(formattedVersion));
 }

@@ -56,7 +56,7 @@ public:
   int leftCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }
   int rightCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->rightCollapsingAbsorbingChildIndex(); }
   bool hasText() { return node()->hasText(); }
-  CodePoint XNTCodePoint() const { return const_cast<Layout *>(this)->node()->XNTCodePoint(); }
+  Layout XNTLayout() const;
 
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
@@ -85,7 +85,7 @@ public:
   }
 
   // Tree modification
-  //Add
+  // Add
   void addSibling(LayoutCursor * cursor, Layout sibling, bool moveCursor);
   // Replace
   void replaceChild(Layout oldChild, Layout newChild, LayoutCursor * cursor = nullptr, bool force = false);

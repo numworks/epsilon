@@ -161,8 +161,14 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name(), true);
 }
 
-CodePoint IntegralLayoutNode::XNTCodePoint(int childIndex) const {
-  return (childIndex == k_integrandLayoutIndex || childIndex == k_differentialLayoutIndex) ? CodePoint('x') : UCodePointNull;
+Layout IntegralLayoutNode::XNTLayout(int childIndex) const {
+  if (childIndex == k_integrandLayoutIndex) {
+    return Layout(childAtIndex(k_differentialLayoutIndex)).clone();
+  }
+  if (childIndex == k_differentialLayoutIndex) {
+    return CodePointLayout::Builder(CodePoint('x'));
+  }
+  return LayoutNode::XNTLayout();
 }
 
 // Return pointer to the first or the last integral from left to right (considering multiple integrals in a row)

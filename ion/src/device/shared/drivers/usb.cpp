@@ -75,9 +75,10 @@ void initGPIO() {
 }
 
 void shutdownGPIO() {
-  Config::DpPin.shutdown();
-  Config::DmPin.shutdown();
-  shutdownVbus();
+  constexpr static AFGPIOPin Pins[] = { Config::DpPin, Config::DmPin, Config::VbusPin };
+  for (const AFGPIOPin & p : Pins) {
+    p.shutdown();
+  }
 }
 
 void initOTG() {

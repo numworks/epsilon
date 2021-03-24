@@ -9,10 +9,6 @@ void initVbus() {
   Config::VbusPin.init();
 }
 
-void shutdownVbus() {
-  Config::VbusPin.shutdown();
-}
-
 }
 }
 }

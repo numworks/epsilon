@@ -1,3 +1,4 @@
+#include <poincare/code_point_layout.h>
 #include <poincare/derivative_layout.h>
 #include <poincare/derivative.h>
 #include <poincare/fraction_layout.h>
@@ -112,6 +113,16 @@ void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     return;
   }
   LayoutNode::deleteBeforeCursor(cursor);
+}
+
+Layout DerivativeLayoutNode::XNTLayout(int childIndex) const {
+  if (childIndex == k_derivandLayoutIndex) {
+    return Layout(childAtIndex(k_variableLayoutIndex)).clone();
+  }
+  if (childIndex == k_variableLayoutIndex) {
+    return CodePointLayout::Builder(CodePoint('x'));
+  }
+  return LayoutNode::XNTLayout();
 }
 
 KDSize DerivativeLayoutNode::computeSize() {

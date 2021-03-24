@@ -4,6 +4,7 @@
 #include <poincare/expression.h>
 #include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/code_point_layout.h>
 #include <assert.h>
 #include <string.h>
 #include <algorithm>
@@ -332,12 +333,25 @@ Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
 
-CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
-  CodePoint xnt = m_contentView.cursor()->layout().XNTCodePoint();
-  if (xnt != UCodePointNull) {
-    return xnt;
+bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint, bool forceDefault) {
+  Layout xnt;
+  if (forceDefault) {
+    xnt = CodePointLayout::Builder(defaultXNTCodePoint);
+  } else {
+    xnt = m_contentView.cursor()->layout().XNTLayout();
+    if (xnt.isUninitialized()) {
+      xnt = CodePointLayout::Builder(defaultXNTCodePoint);
+    }
   }
-  return defaultXNTCodePoint;
+  // Delete the selected layouts if needed
+  deleteSelection();
+  // Do not insert layout if it has too many descendants
+  if (m_contentView.expressionView()->numberOfLayouts() + xnt.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+    return true;
+  }
+  // No need to provide an expression because cursor is forced right of text.
+  insertLayoutAtCursor(xnt, Poincare::Expression(), true);
+  return true;
 }
 
 void LayoutField::putCursorRightOfLayout() {
@@ -702,7 +716,6 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   Layout lastMergedLayoutChild = (layoutWillBeMerged && layoutR.numberOfChildren() > 0) ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
 
   // If the layout will be merged, find now where the cursor will point
-  assert(!correspondingExpression.isUninitialized());
   Layout cursorMergedLayout = Layout();
   if (layoutWillBeMerged) {
     if (forceCursorRightOfLayout) {
@@ -711,6 +724,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
       // First Merged Layout Child
       cursorMergedLayout = layoutR.numberOfChildren() > 0 ? layoutR.childAtIndex(0) : Layout();
     } else {
+      assert(!correspondingExpression.isUninitialized());
       cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
       if (cursorMergedLayout == layoutR) {
         /* LayoutR will not be inserted in the layout, so point to its last

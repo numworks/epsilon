@@ -8,7 +8,6 @@
 #include <escher/text_cursor_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
 // See TODO in EditableField
@@ -35,7 +34,7 @@ public:
   bool hasText() const { return layout().hasText(); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   bool layoutHasNode() const { return m_contentView.expressionView()->layoutHasNode(); }
-  CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
+  bool addXNTCodePoint(CodePoint defaultXNTCodePoint, bool forceDefault) override;
   void putCursorRightOfLayout();
   void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
   void setLayout(Poincare::Layout newLayout);

@@ -17,6 +17,7 @@ public:
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
+  Layout XNTLayout(int childIndex = -1) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(DerivativeLayoutNode); }

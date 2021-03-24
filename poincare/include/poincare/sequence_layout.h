@@ -20,7 +20,7 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override { return lowerBoundLayout(); }
-  CodePoint XNTCodePoint(int childIndex = -1) const override;
+  Layout XNTLayout(int childIndex = -1) const override;
 
   // TreeNode
   int numberOfChildren() const override { return 4; }

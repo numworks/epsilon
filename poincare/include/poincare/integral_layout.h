@@ -27,7 +27,7 @@ public:
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override { return lowerBoundLayout(); }
-  CodePoint XNTCodePoint(int childIndex = -1) const override;
+  Layout XNTLayout(int childIndex = -1) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralLayoutNode); }

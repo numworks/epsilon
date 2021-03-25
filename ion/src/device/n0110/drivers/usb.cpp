@@ -10,7 +10,7 @@ using namespace Regs;
 namespace USB {
 
 bool useAlternateFunctionVbus() {
-  return Board::readPCBVersion() == 0;
+  return Board::pcbVersion() == 0;
 }
 
 void initVbus() {

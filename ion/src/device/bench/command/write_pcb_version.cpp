@@ -6,7 +6,7 @@ namespace Device {
 namespace Bench {
 namespace Command {
 
-void PCBVersion(const char * input) {
+void WritePCBVersion(const char * input) {
   if (input != nullptr) {
     reply(sSyntaxError);
     return;
@@ -18,12 +18,12 @@ void PCBVersion(const char * input) {
 #if IN_FACTORY
   Board::writePCBVersion(PCB_LATEST);
   /* Read directly from memory, as when IN_FACTORY is true, the method
-   * readPCBVersion always returns PCB_LATEST. */
+   * pcbVersion always returns PCB_LATEST. */
   if (Board::readPCBVersionInMemory() != PCB_LATEST) {
     reply(sKO);
     return;
   }
-  Board::lockVersionOTP();
+  Board::lockPCBVersion();
 #endif
   reply(sOK);
 }

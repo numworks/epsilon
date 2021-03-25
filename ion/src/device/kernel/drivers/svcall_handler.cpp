@@ -219,7 +219,7 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
     // BOARD
     case SVC_BOARD_SWITCH_EXECUTABLE_SLOT:
-      Ion::Device::Board::switchExecutableSlot(*static_cast<int *>(args[0]), *static_cast<int *>(args[1]));
+      *static_cast<uint32_t *>(args[0]) = Ion::Device::Board::switchExecutableSlot();
       return;
     // FLASH
     case SVC_FLASH_MASS_ERASE:

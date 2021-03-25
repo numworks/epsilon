@@ -14,6 +14,7 @@
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
+#include <ion/src/shared/platform_info.h>
 #include <regs/regs.h>
 #include <shared/drivers/config/board.h>
 
@@ -122,30 +123,36 @@ uint32_t userlandStart() {
   return reinterpret_cast<uint32_t>(&_kernel_start) + Ion::Device::Board::Config::UserlandOffsetFromKernel;
 }
 
-void switchExecutableSlot(int deltaKernelVersion, int deltaUserlandVersion) {
+uint32_t switchExecutableSlot() {
   assert(Authentication::trustedUserland());
+  PlatformInfo * currentPlatformInfo = reinterpret_cast<PlatformInfo *>(userlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
+  PlatformInfo * otherPlatformInfo = reinterpret_cast<PlatformInfo *>(otherSlotUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
+  // Delta = newVersion - oldVersion
+  int deltaKernelVersion = otherPlatformInfo->kernelVersionValue() - currentPlatformInfo->kernelVersionValue();
+  int deltaUserlandVersion = otherPlatformInfo->epsilonVersionValue() - currentPlatformInfo->epsilonVersionValue();
   bool trustedUserland = Authentication::updateTrust();
   if (deltaKernelVersion < 0 || (trustedUserland && deltaUserlandVersion < 0)) {
     WarningDisplay::obsoleteSoftware();
     Ion::Timing::msleep(5000);
-    return;
+    return 0;
   }
   if (!trustedUserland && deltaKernelVersion > 0) {
     WarningDisplay::kernelUpgradeRequired();
     Ion::Timing::msleep(5000);
-    return;
+    return 0;
   }
   if (trustedUserland) {
     assert(deltaKernelVersion >= 0 && deltaUserlandVersion >= 0);
     Reset::coreWhilePlugged();
+    return userlandStart(); // unused
   } else {
     assert(deltaKernelVersion == 0);
     // - shutdown the LED? Other decrease of privilege?
     WarningDisplay::unauthenticatedUserland();
     Ion::Timing::msleep(3000);
-
-    Reset::jump(otherSlotUserlandStart(), false);
+    return otherSlotUserlandStart();
   }
+  return true;
 }
 
 }

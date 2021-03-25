@@ -29,8 +29,7 @@ void setStandardFrequency(Frequency f);
 
 uint32_t userlandStart();
 uint32_t otherSlotUserlandStart();
-// Delta = newVersion - oldVersion
-void switchExecutableSlot(int deltaKernelVersion, int deltaUserlandVersion);
+uint32_t switchExecutableSlot();
 
 }
 }

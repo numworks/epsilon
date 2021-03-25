@@ -5,11 +5,15 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-void SVC_ATTRIBUTES switchExecutableSlotSVC(int * deltaKernelVersion, int * deltaUserlandVersion) {
+void switchExecutableSlotSVC(uint32_t * res) {
   SVC(SVC_BOARD_SWITCH_EXECUTABLE_SLOT);
 }
-void switchExecutableSlot(int deltaKernelVersion, int deltaUserlandVersion) {
-  switchExecutableSlotSVC(&deltaKernelVersion, &deltaUserlandVersion);
+
+
+uint32_t switchExecutableSlot() {
+  uint32_t res;
+  switchExecutableSlotSVC(&res);
+  return res;
 }
 
 }

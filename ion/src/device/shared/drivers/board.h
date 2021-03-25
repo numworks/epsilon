@@ -27,10 +27,10 @@ void setClockFrequency(Frequency f);
 
 typedef uint32_t PCBVersion;
 
-PCBVersion readPCBVersion();
+PCBVersion pcbVersion();
 PCBVersion readPCBVersionInMemory();
 void writePCBVersion(PCBVersion version);
-void lockVersionOTP();
+void lockPCBVersion();
 
 }
 }

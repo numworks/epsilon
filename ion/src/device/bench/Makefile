@@ -21,7 +21,6 @@ ion_device_bench_src += $(addprefix ion/src/device/bench/command/, \
   lcd_timing.o \
   led.cpp \
   mcu_serial.cpp \
-  pcb_version.cpp \
   ping.cpp \
   print.cpp \
   screen_id.cpp \
@@ -30,4 +29,5 @@ ion_device_bench_src += $(addprefix ion/src/device/bench/command/, \
   standby.cpp \
   usb_plugged.cpp \
   vblank.cpp \
+  write_pcb_version.cpp \
 )

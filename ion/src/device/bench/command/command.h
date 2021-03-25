@@ -24,7 +24,7 @@ void LCDPins(const char * input);
 void LCDTiming(const char * input);
 void LED(const char * input);
 void MCUSerial(const char * input);
-void PCBVersion(const char * input);
+void WritePCBVersion(const char * input);
 void Ping(const char * input);
 void Print(const char * input);
 void ScreenID(const char * input);

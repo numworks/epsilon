@@ -18,6 +18,7 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/persisting_bytes.cpp \
   drivers/power.cpp \
   drivers/random.cpp \
+  drivers/reset.cpp \
   drivers/serial_number.cpp \
   drivers/stack.cpp \
   drivers/timing.cpp \

@@ -21,7 +21,7 @@ void MassErase() {
   }
 }
 
-bool __attribute__((noinline)) EraseSector(int i) {
+bool EraseSector(int i) {
   assert(i >= 0 && i < ExternalFlash::Config::NumberOfSectors);
   if (ForbiddenSector(i)) {
     return false;
@@ -30,12 +30,12 @@ bool __attribute__((noinline)) EraseSector(int i) {
   return true;
 }
 
-bool __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
+bool WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
   if (ExternalFlash::Config::NumberOfSectors == 0) {
     return false;
   }
-  int firstSector = SectorAtAddress(reinterpret_cast<uint32_t >(source));
-  int lastSector = SectorAtAddress(reinterpret_cast<uint32_t >(source + length - 1));
+  int firstSector = SectorAtAddress(reinterpret_cast<uint32_t >(destination));
+  int lastSector = SectorAtAddress(reinterpret_cast<uint32_t >(destination + length - 1));
   for (int i = firstSector; i <= lastSector; i++) {
     if (ForbiddenSector(i)) {
       return false;

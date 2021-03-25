@@ -44,6 +44,7 @@ private:
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;
   constexpr static double k_rateStepSize = 1.4;
+  constexpr static double k_minSignificantError = 3e-11;
 };
 
 class Derivative final : public ParameteredExpression {

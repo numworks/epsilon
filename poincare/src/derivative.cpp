@@ -69,25 +69,26 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
     result = currentResult;
   } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= tenEpsilon);
 
-  /* If the error is too big regarding the result, do not return the answer.
-   * If the result is close to 0, we relax this constraint because the error
-   * will tend to be bigger compared to the result, especially when the expected
-   * result is 0. */
-  if (std::isnan(error)
-      || (std::fabs(result) < k_maxErrorRateOnApproximation && std::fabs(error) - std::fabs(result) > h)
-      || (std::fabs(result) >= k_maxErrorRateOnApproximation && std::fabs(error/result) > k_maxErrorRateOnApproximation)) {
+  /* Result is discarded if error is both higher than k_minSignificantError and
+   * k_maxErrorRateOnApproximation * result. For example, (error, result) can
+   * reach (2e-11, 3e-11) or (1e-12, 2e-14) for expected 0 results, with floats
+   * as well as with doubles. */
+  if (std::isnan(error) || (std::fabs(error) > k_minSignificantError && std::fabs(error) > std::fabs(result) * k_maxErrorRateOnApproximation)) {
     return Complex<T>::RealUndefined();
   }
-  if (error == 0.0) {
+  // Round and amplify error to a power of 10
+  T roundedError = (T)100.0 * std::pow((T)10, IEEE754<T>::exponentBase10(error));
+  if (error == (T)0.0 || std::round(result/roundedError) == result/roundedError) {
+    // Return result if error is negligible
     return Complex<T>::Builder(result);
   }
-  // Round and amplify error to a power of 10
-  error = 100 * std::pow((T)10, IEEE754<T>::exponentBase10(error));
-  /* Round the result according to the error
-   * - if result  >> error, return result
-   * - if result  ~= error, return rounded result
-   * - if result*2 < error, return 0 */
-  return Complex<T>::Builder(std::round(result/error)*error);
+  /* Round down the result, to remove precision depending on roundedError. The
+   * higher the error is to the result, the lesser the output will have
+   * significant numbers.
+   * - if result  >> roundedError , almost no loss of precision
+   * - if result  ~= error, precision reduced to 1 significant number
+   * - if result*2 < error, 0 is returned  */
+  return Complex<T>::Builder(std::round(result/roundedError)*roundedError);
 }
 
 template<typename T>

@@ -230,7 +230,7 @@ void shutdownClocks(bool keepLEDAwake) {
   RCC.AHB1ENR()->set(ahb1enr);
 }
 
-PCBVersion readPCBVersion() {
+PCBVersion pcbVersion() {
   return PCB_LATEST;
 }
 
@@ -240,7 +240,7 @@ PCBVersion readPCBVersionInMemory() {
 
 void writePCBVersion(PCBVersion) {}
 
-void lockVersionOTP() {}
+void lockPCBVersion() {}
 
 }
 }

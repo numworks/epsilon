@@ -378,7 +378,7 @@ constexpr int pcbVersionOTPIndex = 0;
  * because the OTP are initialized with 1s, we store the bitwise-not of the
  * version number. This way, devices with blank OTP are considered version 0. */
 
-PCBVersion readPCBVersion() {
+PCBVersion pcbVersion() {
 #if IN_FACTORY
   /* When flashing for the first time, we want all systems that depend on the
    * PCB version to function correctly before flashing the PCB version. This
@@ -399,9 +399,9 @@ void writePCBVersion(PCBVersion version) {
   InternalFlash::WriteMemory(destination, reinterpret_cast<uint8_t *>(&formattedVersion), sizeof(formattedVersion));
 }
 
-void lockVersionOTP() {
+void lockPCBVersion() {
   uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPLocksAddress + pcbVersionOTPIndex);
-  uint8_t zero = 0x00;
+  uint8_t zero = 0;
   InternalFlash::WriteMemory(destination, &zero, sizeof(zero));
 }
 

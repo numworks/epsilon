@@ -1,4 +1,5 @@
 #include "external_flash.h"
+#include <drivers/cache.h>
 #include <drivers/config/external_flash.h>
 #include <drivers/config/clocks.h>
 #include <ion/timing.h>
@@ -179,6 +180,7 @@ static inline void send_read_command(Command c, uint8_t * address, uint8_t * dat
 }
 
 static inline void wait() {
+  Cache::dsb();
   ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
   do {
     send_read_command(Command::ReadStatusRegister1, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1));

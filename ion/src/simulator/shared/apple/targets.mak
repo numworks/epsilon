@@ -7,6 +7,8 @@
 $(BUILD_DIR)/%.app: $(simulator_app_deps)
 	
 
+# Standard usage: make -j8 PLATFORM=simulator TARGET=ios ACCEPT_OFFICIAL_TOS=1 IOS_PROVISIONNING_PROFILE=build/artifacts/NumWorks_Graphing_Calculator_Development.mobileprovision IOS_SIGNER_IDENTITY="Apple Development: [DEVELOPER NAME]" epsilon.official.ipa
+
 IOS_SIGNER_IDENTITY ?= Apple Distribution: NumWorks
 $(BUILD_DIR)/%.ipa: $(BUILD_DIR)/%.app
 ifdef IOS_PROVISIONNING_PROFILE

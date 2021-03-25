@@ -23,6 +23,14 @@ constexpr static uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 
 constexpr static uint32_t KernelSize = 0x40000; // 256kB
 constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;
 
+constexpr static uint32_t STBootloaderAddress = 0x00100000;
+constexpr static uint32_t ITCMInterface = 0x00200000;
+constexpr static uint32_t AXIMInterface = 0x08000000;
+
+constexpr static uint32_t BootloaderStartAddress = ITCMInterface;
+constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
+constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + (InternalFlash::Config::NumberOfSectors - 1) * BootloaderSectionSize;
+
 }
 }
 }

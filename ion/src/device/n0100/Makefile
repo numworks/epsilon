@@ -1,4 +1,5 @@
 ion_device_bootloader_src += $(addprefix ion/src/device/n0100/bootloader/drivers/, \
+  trampoline.cpp \
   authentication.cpp \
   board.cpp \
   external_flash.cpp \

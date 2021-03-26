@@ -8,7 +8,8 @@ namespace Device {
 namespace Authentication {
 
 bool trustedUserland();
-bool updateTrust();
+bool userlandTrust(bool slotA);
+void updateTrust(bool trust);
 
 }
 }

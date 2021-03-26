@@ -164,8 +164,16 @@ void shutdownPeripheralsClocks(bool keepLEDAwake) {
   RCC.AHB1ENR()->set(ahb1enr);
 }
 
-uint32_t otherSlotUserlandStart() {
-  return userlandStart();
+bool isRunningSlotA() {
+  return true;
+}
+
+uint32_t slotAUserlandStart() {
+  return InternalFlash::Config::KernelAStartAddress + Ion::Device::Board::Config::UserlandOffsetFromKernel;
+}
+
+uint32_t slotBUserlandStart() {
+  return slotAUserlandStart();
 }
 
 }

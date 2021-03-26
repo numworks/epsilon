@@ -18,13 +18,6 @@
 #include <regs/regs.h>
 #include <shared/drivers/config/board.h>
 
-typedef void(*ISR)(void);
-extern ISR InitialisationVector[];
-
-extern "C" {
-  extern char _kernel_start;
-}
-
 namespace Ion {
 namespace Device {
 namespace Board {
@@ -120,39 +113,43 @@ void setClockStandardFrequency() {
 }
 
 uint32_t userlandStart() {
-  return reinterpret_cast<uint32_t>(&_kernel_start) + Ion::Device::Board::Config::UserlandOffsetFromKernel;
+  return isRunningSlotA() ? slotAUserlandStart() : slotBUserlandStart();
 }
 
 uint32_t switchExecutableSlot() {
   assert(Authentication::trustedUserland());
-  PlatformInfo * currentPlatformInfo = reinterpret_cast<PlatformInfo *>(userlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
-  PlatformInfo * otherPlatformInfo = reinterpret_cast<PlatformInfo *>(otherSlotUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
+  PlatformInfo * platformInfoA = reinterpret_cast<PlatformInfo *>(slotAUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
+  PlatformInfo * platformInfoB = reinterpret_cast<PlatformInfo *>(slotBUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
+  int deltaKernelVersion = platformInfoA->kernelVersionValue() - platformInfoB->kernelVersionValue();
+  int deltaUserlandVersion = platformInfoA->epsilonVersionValue() - platformInfoB->epsilonVersionValue();
   // Delta = newVersion - oldVersion
-  int deltaKernelVersion = otherPlatformInfo->kernelVersionValue() - currentPlatformInfo->kernelVersionValue();
-  int deltaUserlandVersion = otherPlatformInfo->epsilonVersionValue() - currentPlatformInfo->epsilonVersionValue();
-  bool trustedUserland = Authentication::updateTrust();
-  if (deltaKernelVersion < 0 || (trustedUserland && deltaUserlandVersion < 0)) {
+  bool slotARunning = isRunningSlotA();
+  if (slotARunning) {
+    deltaKernelVersion = -deltaKernelVersion;
+    deltaUserlandVersion = -deltaUserlandVersion;
+  }
+  bool otherSlotUserlandAuthentication = Authentication::userlandTrust(!slotARunning);
+  if (deltaKernelVersion < 0 || (otherSlotUserlandAuthentication && deltaUserlandVersion < 0)) {
     WarningDisplay::obsoleteSoftware();
     Ion::Timing::msleep(5000);
     return 0;
   }
-  if (!trustedUserland && deltaKernelVersion > 0) {
+  if (!otherSlotUserlandAuthentication && deltaKernelVersion > 0) {
     WarningDisplay::kernelUpgradeRequired();
     Ion::Timing::msleep(5000);
     return 0;
   }
-  if (trustedUserland) {
+  if (otherSlotUserlandAuthentication) {
     assert(deltaKernelVersion >= 0 && deltaUserlandVersion >= 0);
     Reset::coreWhilePlugged();
-    return userlandStart(); // unused
   } else {
     assert(deltaKernelVersion == 0);
-    // - shutdown the LED? Other decrease of privilege?
+    Authentication::updateTrust(false);
+    // TODO - shutdown the LED? Other decrease of privilege?
     WarningDisplay::unauthenticatedUserland();
     Ion::Timing::msleep(3000);
-    return otherSlotUserlandStart();
   }
-  return true;
+  return slotARunning ? slotBUserlandStart() : slotAUserlandStart();
 }
 
 }

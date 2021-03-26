@@ -27,9 +27,16 @@ namespace Config {
  */
 
 constexpr static uint32_t BootloaderSize = 0x4000; // 64kB
+constexpr static uint32_t STBootloaderAddress = 0x1FFF0000;
+constexpr static uint32_t BootloaderStartAddress = InternalFlash::Config::StartAddress;
+
 constexpr static uint32_t KernelSize = 2*0x4000 + 0x10000; // 2*16k + 64
 constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;
 constexpr static uint32_t BootloaderTrampolineAddress = //TODO;
+constexpr static uint32_t KernelAStartAddress = InternalFlash::Config::StartAddress + BootloaderTotalSize + PersistingBytes::Config::BufferSize;
+// N0100 kernel has no duplicate
+constexpr static uint32_t KernelBStartAddress = KernelAStartAddress;
+constexpr static uint32_t KernelLength = KernelSize - Board::Config::SignatureSize;
 
 }
 }

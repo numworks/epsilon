@@ -2,10 +2,15 @@
 #include <drivers/cache.h>
 #include <drivers/config/clocks.h>
 #include <regs/regs.h>
+#include <shared/drivers/config/board.h>
 #include <shared/drivers/config/external_flash.h>
 
 typedef void(*ISR)(void);
 extern ISR InitialisationVector[];
+
+extern "C" {
+  extern char _kernel_start;
+}
 
 // Private Ion::Device methods
 
@@ -175,15 +180,16 @@ void shutdownPeripheralsClocks(bool keepLEDAwake) {
   RCC.AHB1ENR()->set(ahb1enr);
 }
 
-uint32_t otherSlotUserlandStart() {
-  uint32_t userlandStartAddress = userlandStart();
-  // Pick the other userland slot
-  if (userlandStartAddress < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2) {
-    userlandStartAddress += ExternalFlash::Config::TotalSize/2;
-  } else {
-    userlandStartAddress -= ExternalFlash::Config::TotalSize/2;
-  }
-  return userlandStartAddress;
+bool isRunningSlotA() {
+  return reinterpret_cast<uint32_t>(&_kernel_start) < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+}
+
+uint32_t slotAUserlandStart() {
+  return Config::KernelAStartAddress + Config::UserlandOffsetFromKernel;
+
+}
+uint32_t slotBUserlandStart() {
+  return Config::KernelBStartAddress + Config::UserlandOffsetFromKernel;
 }
 
 }

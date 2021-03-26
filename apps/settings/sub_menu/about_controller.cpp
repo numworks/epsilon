@@ -23,11 +23,15 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == 0) {
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-      if (strcmp(myCell->subLabelText(), Ion::patchLevel()) == 0) {
+      const char * currentText = myCell->subLabelText();
+      if (strcmp(currentText, Ion::patchLevel()) == 0) {
+        myCell->setSubLabelText(Ion::pcbVersion());
+      } else if (strcmp(currentText, Ion::pcbVersion()) == 0) {
         myCell->setSubLabelText(Ion::softwareVersion());
-        return true;
+      } else {
+        assert(strcmp(currentText, Ion::softwareVersion()) == 0);
+        myCell->setSubLabelText(Ion::patchLevel());
       }
-      myCell->setSubLabelText(Ion::patchLevel());
       return true;
     }
     return false;

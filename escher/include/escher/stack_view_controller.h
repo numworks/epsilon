@@ -28,6 +28,7 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  static constexpr uint8_t k_maxNumberOfChildren = kMaxNumberOfStacks;
 private:
   class Frame {
   public:
@@ -71,7 +72,6 @@ private:
   ControllerView m_view;
   void pushModel(Frame frame);
   void setupActiveViewController();
-  static constexpr uint8_t k_maxNumberOfChildren = 5;
   Frame m_childrenFrame[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;

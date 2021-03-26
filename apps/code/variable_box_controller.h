@@ -74,6 +74,7 @@ private:
   // NestedMenuController
   Escher::HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }
   Escher::HighlightCell * nodeCellAtIndex(int index) override { assert(false); return nullptr; }
+  I18n::Message subTitle() override { assert(false); return (I18n::Message)0; }
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
 

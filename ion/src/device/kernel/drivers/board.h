@@ -32,6 +32,7 @@ uint32_t slotAUserlandStart();
 uint32_t slotBUserlandStart();
 uint32_t userlandStart();
 uint32_t switchExecutableSlot();
+void downgradeTrustLevel();
 
 }
 }

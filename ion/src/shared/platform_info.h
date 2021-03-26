@@ -33,8 +33,19 @@ public:
   }
 private:
   constexpr static uint32_t Magic = 0xDEC00DF0;
-  inline int valueOfStringVersion(const char * stringVersion) const { return value(stringVersion[0]) + value(stringVersion[2]) + value(stringVersion[4]); }
-  inline int value(char c) const { return c - '0'; }
+  inline int valueOfStringVersion(const char * stringVersion) const {
+    const char * c = stringVersion;
+    int versionValue = 0;
+    while (*c != 0) {
+      if (*c == '.') {
+        versionValue *= 10;
+      } else {
+        versionValue += value(*c);
+      }
+    }
+    return versionValue;
+  }
+  inline int value(const char c) const { return c - '0'; }
   uint32_t m_header;
   const char m_epsilonVersion[8];
   const char m_kernelVersion[8];

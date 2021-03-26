@@ -43,7 +43,8 @@ protected:
     int depth() const;
     void resetStack();
   private:
-    constexpr static int k_maxModelTreeDepth = 4;
+    // A state is needed for all StackView children but the first
+    constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
     State m_statesStack[k_maxModelTreeDepth];
   };
 

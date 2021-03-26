@@ -6,14 +6,17 @@
 class AlternateEmptyNestedMenuController : public Escher::NestedMenuController {
 public:
   AlternateEmptyNestedMenuController(I18n::Message title) :
-    Escher::NestedMenuController(nullptr, title)
+    Escher::NestedMenuController(nullptr, title),
+    m_isEmpty(false)
   {}
   // View Controller
   void viewDidDisappear() override;
 protected:
   virtual Escher::ViewController * emptyViewController() = 0;
-  bool isDisplayingEmptyController() { return Escher::StackViewController::depth() == 2; }
+  bool isDisplayingEmptyController() { return m_isEmpty; }
   bool displayEmptyControllerIfNeeded();
+  bool returnToPreviousMenu() override;
+  bool m_isEmpty;
 };
 
 #endif

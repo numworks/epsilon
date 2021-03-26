@@ -164,6 +164,20 @@ MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int ind
   return &m_nodeCells[index];
 }
 
+I18n::Message MathVariableBoxController::subTitle() {
+  switch (m_currentPage) {
+    case Page::Expression:
+      return I18n::Message::Expressions;
+    case Page::Function:
+      return I18n::Message::Functions;
+    case Page::Sequence:
+      return I18n::Message::Sequences;
+    default:
+      assert(false);
+      return (I18n::Message)0;
+  }
+}
+
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
   Page pages[k_numberOfMenuRows] = {Page::Expression, Page::Function, Page::Sequence};
   return pages[index];

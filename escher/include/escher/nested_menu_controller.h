@@ -74,6 +74,7 @@ protected:
   InputEventHandler * sender() { return m_sender; }
   virtual HighlightCell * leafCellAtIndex(int index) = 0;
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;
+  virtual I18n::Message subTitle() = 0;
   SelectableTableView m_selectableTableView;
   Stack m_stack;
   ListController m_listController;

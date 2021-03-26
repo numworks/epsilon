@@ -145,14 +145,17 @@ uint32_t switchExecutableSlot() {
   } else {
     assert(deltaKernelVersion == 0);
     Authentication::updateTrust(false);
-    // TODO - shutdown the LED? Other decrease of privilege?
     WarningDisplay::unauthenticatedUserland();
     Ion::Timing::msleep(3000);
   }
   return slotARunning ? slotBUserlandStart() : slotAUserlandStart();
 }
 
-}
-}
+void downgradeTrustLevel() {
+  LED::shutdown();
+  LED::init(false); // init LED peripheral with fewer access
 }
 
+}
+}
+}

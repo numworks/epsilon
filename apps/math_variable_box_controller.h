@@ -41,6 +41,7 @@ private:
   constexpr static KDCoordinate k_leafMargin = 20;
   Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
+  I18n::Message subTitle() override;
   Page pageAtIndex(int index);
   void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;

@@ -207,10 +207,15 @@ void StackViewController::viewDidDisappear() {
   if (m_numberOfChildren > 0 && vc) {
     vc->viewDidDisappear();
   }
-  for (int i = 0; i < m_view.numberOfStacks(); i++) {
+  while (m_numberOfChildren > 1) {
+    pop();
+  }
+  if (m_view.numberOfStacks() > 0) {
+    // Remove last stack if there is one.
     m_view.popStack();
   }
   m_isVisible = false;
+  assert(m_numberOfChildren == 1 && m_view.numberOfStacks() == 0);
 }
 
 }

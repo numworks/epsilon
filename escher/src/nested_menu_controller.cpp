@@ -112,8 +112,8 @@ void NestedMenuController::didBecomeFirstResponder() {
 }
 
 void NestedMenuController::viewWillAppear() {
-  // Reset stack and memoization first, so that the right cells are manipulated
-  m_stack.resetStack();
+  assert(depth() == 1 && stackDepth() == 0);
+  // Reset memoization first, so that the right cells are manipulated
   resetMemoization();
   StackViewController::viewWillAppear();
   m_selectableTableView.reloadData();
@@ -122,6 +122,7 @@ void NestedMenuController::viewWillAppear() {
 
 void NestedMenuController::viewDidDisappear() {
   StackViewController::viewDidDisappear();
+  m_stack.resetStack();
   m_selectableTableView.deselectTable();
 }
 

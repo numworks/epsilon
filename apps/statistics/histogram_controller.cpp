@@ -109,8 +109,8 @@ void HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
     return;
   }
-  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(precision);
+  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   char buffer[bufferSize] = "";
   int numberOfChar = 0;
 

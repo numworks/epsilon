@@ -1,10 +1,75 @@
 #include <escher/nested_menu_controller.h>
 #include <escher/container.h>
-#include <escher/metric.h>
 #include <assert.h>
 #include <string.h>
 
 namespace Escher {
+
+/* Breadcrumb Controller */
+
+NestedMenuController::BreadcrumbController::BreadcrumbController(Responder * parentResponder, SelectableTableView * tableView) :
+  ViewController(parentResponder),
+  m_selectableTableView(tableView),
+  m_titleCount(0)
+{
+  updateTitle();
+}
+
+void NestedMenuController::BreadcrumbController::popTitle() {
+  assert(m_titleCount > 0);
+  m_titleCount--;
+  m_titles[m_titleCount] = (I18n::Message)0;
+  updateTitle();
+}
+
+void NestedMenuController::BreadcrumbController::pushTitle(I18n::Message title) {
+  assert(m_titleCount < k_maxModelTreeDepth);
+  m_titles[m_titleCount] = title;
+  m_titleCount++;
+  updateTitle();
+}
+
+void NestedMenuController::BreadcrumbController::resetTitle() {
+  m_titleCount = 0;
+  updateTitle();
+}
+
+void NestedMenuController::BreadcrumbController::updateTitle() {
+  // m_titleCount == 0 is handled and only sets m_titleBuffer[0] to 0
+  const char * separator = " > ";
+  const int separatorLength = 3;
+  // Define, from right to left, which subtitles will fit in the breadcrumb
+  int titleLength = -separatorLength;
+  int firstFittingSubtitleIndex = 0;
+  for (int i = m_titleCount - 1; i >= 0; --i) {
+    const int subtitleLength = strlen(I18n::translate(m_titles[i]));
+    titleLength += separatorLength + subtitleLength;
+    if (titleLength > k_maxTitleLength) {
+      // This subtitle does not fit
+      firstFittingSubtitleIndex = i + 1;
+      break;
+    }
+  }
+  // At least one subtitle should fit
+  assert(m_titleCount == 0 || firstFittingSubtitleIndex < m_titleCount);
+  // Build, from left to right, breadcrumb title from subtitles and separators
+  int charIndex = 0;
+  for (int i = firstFittingSubtitleIndex; i < m_titleCount; ++i) {
+    // Separator ( only after first subtitle )
+    if (i > firstFittingSubtitleIndex) {
+      memcpy(m_titleBuffer + charIndex, separator, separatorLength);
+      charIndex += separatorLength;
+    }
+    // Subtitle
+    const char * subtitle = I18n::translate(m_titles[i]);
+    const int subtitleLength = strlen(subtitle);
+    memcpy(m_titleBuffer + charIndex, subtitle, subtitleLength);
+    charIndex += subtitleLength;
+  }
+  assert(charIndex <= k_maxTitleLength);
+  m_titleBuffer[charIndex] = 0;
+}
+
 /* State */
 
 NestedMenuController::Stack::State::State(int selectedRow, KDCoordinate verticalScroll) :
@@ -21,18 +86,45 @@ bool NestedMenuController::Stack::State::isNull() const {
 }
 
 /* Stack */
+// Stack needs parent NestedMenuController to handle banners as it handles stack
+NestedMenuController::Stack::Stack(NestedMenuController * parentMenu, SelectableTableView * tableView) :
+  m_breadcrumbController(parentMenu, tableView),
+  m_parentMenu(parentMenu)
+{
+}
 
-void NestedMenuController::Stack::push(int selectedRow, KDCoordinate verticalScroll) {
-  int i = 0;
-  while (!m_statesStack[i].isNull() && i < k_maxModelTreeDepth) {
-    i++;
+void NestedMenuController::Stack::push(int selectedRow, KDCoordinate verticalScroll, I18n::Message title) {
+  int stackDepth = depth();
+  assert(m_statesStack[stackDepth].isNull());
+  m_statesStack[stackDepth] = State(selectedRow, verticalScroll);
+  /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
+   * it again, in order to force title refresh. */
+  if (stackDepth != 0) {
+    m_parentMenu->pop();
   }
-  assert(m_statesStack[i].isNull());
-  m_statesStack[i] = State(selectedRow, verticalScroll);
+  m_breadcrumbController.pushTitle(title);
+  m_parentMenu->push(&m_breadcrumbController);
 }
 
 NestedMenuController::Stack::State * NestedMenuController::Stack::stateAtIndex(int index) {
   return &m_statesStack[index];
+}
+
+NestedMenuController::Stack::State NestedMenuController::Stack::pop() {
+  int stackDepth = depth();
+  if (stackDepth == 0) {
+    return State();
+  }
+  /* Unless breadcrumb is no longer visible (depth 1), we need to pop it first,
+   * to push it again in order to force title refresh. */
+  m_parentMenu->pop();
+  m_breadcrumbController.popTitle();
+  if (stackDepth != 1) {
+    m_parentMenu->push(&m_breadcrumbController);
+  }
+  NestedMenuController::Stack::State state = m_statesStack[stackDepth-1];
+  m_statesStack[stackDepth-1] = State();
+  return state;
 }
 
 int NestedMenuController::Stack::depth() const {
@@ -43,20 +135,11 @@ int NestedMenuController::Stack::depth() const {
   return depth;
 }
 
-NestedMenuController::Stack::State NestedMenuController::Stack::pop() {
-  int stackDepth = depth();
-  if (stackDepth == 0) {
-    return State();
-  }
-  NestedMenuController::Stack::State state = m_statesStack[stackDepth-1];
-  m_statesStack[stackDepth-1] = State();
-  return state;
-}
-
 void NestedMenuController::Stack::resetStack() {
   for (int i = 0; i < k_maxModelTreeDepth; i++) {
     m_statesStack[i] = State();
   }
+  m_breadcrumbController.resetTitle();
 }
 
 /* List Controller */
@@ -83,15 +166,12 @@ void NestedMenuController::ListController::didBecomeFirstResponder() {
   m_selectableTableView->selectCellAtLocation(0, m_firstSelectedRow);
 }
 
-void NestedMenuController::ListController::setFirstSelectedRow(int firstSelectedRow) {
-  m_firstSelectedRow = firstSelectedRow;
-}
-
 /* NestedMenuController */
 
 NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Message title) :
   StackViewController(parentResponder, &m_listController),
   m_selectableTableView(&m_listController, this, this, this),
+  m_stack(this, &m_selectableTableView),
   m_listController(this, &m_selectableTableView, title),
   m_sender(nullptr)
 {
@@ -158,7 +238,7 @@ bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIn
 
 bool NestedMenuController::selectSubMenu(int selectedRow) {
   resetMemoization();
-  m_stack.push(selectedRow, m_selectableTableView.contentOffset().y());
+  m_stack.push(selectedRow, m_selectableTableView.contentOffset().y(), subTitle());
   m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;

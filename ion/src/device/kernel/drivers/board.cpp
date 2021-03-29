@@ -26,7 +26,6 @@ using namespace Regs;
 
 void shutdown() {
   shutdownPeripherals();
-  ExternalFlash::shutdown();
   shutdownPeripheralsClocks();
 }
 

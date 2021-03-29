@@ -8,6 +8,7 @@
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/led.h>
+#include <kernel/drivers/trampoline.h>
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
@@ -30,9 +31,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
 
   /* First, shutdown all peripherals except LED. Indeed, the charging pin state
    * might change when we shutdown peripherals that draw current. This also
-   * shutdown all interruptions. This has to be done before shuting down the
-   * external flash because the interruptions implementation might be located
-   * in the external flash. */
+   * shutdown all interruptions. */
   Board::shutdownPeripherals(true);
 
   while (1) {
@@ -58,7 +57,22 @@ void suspend(bool checkIfOnOffKeyReleased) {
      * - Stop charging */
     Power::configWakeUp();
 
-    Power::internalFlashSuspend(isLEDActive);
+    // Shutdown clocks (except LED and external flash)
+    Board::shutdownPeripheralsClocks(isLEDActive);
+    // Trampoline to bootloader suspend
+    bootloaderSuspend();
+
+    /* A hardware event triggered a wake up, we determine if the device should
+     * wake up. We wake up when:
+     * - only the power key was down
+     * - the unplugged device was plugged
+     * - the battery stopped charging */
+    CORTEX.SCR()->setSLEEPDEEP(false);
+    if (!isLEDActive) {
+      // When LED are off, the system STOPs which switchs off the PLL
+      Board::initSystemClocks();
+    }
+    Board::initPeripheralsClocks();
 
     // Check power key
     Keyboard::init(false); // Don't activate interruptions which would override wake-up configurations
@@ -105,36 +119,6 @@ void waitUntilOnOffKeyReleased() {
   Keyboard::Queue::sharedQueue()->flush();
 }
 
-void inline shutdownExternalFlashAndEnterLowPowerMode(bool keepLEDActive) {
-  // Shutdown the external flash
-  ExternalFlash::shutdown();
-  // Shutdown all clocks (except the ones used by LED if active)
-  Board::shutdownPeripheralsClocks(keepLEDActive);
-  enterLowPowerMode();
-}
-
-void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
-  shutdownExternalFlashAndEnterLowPowerMode(isLEDActive);
-  /* A hardware event triggered a wake up, we determine if the device should
-   * wake up. We wake up when:
-   * - only the power key was down
-   * - the unplugged device was plugged
-   * - the battery stopped charging */
-  CORTEX.SCR()->setSLEEPDEEP(false);
-  if (!isLEDActive) {
-    // When LED are off, the system STOPs which switchs off the PLL
-    Board::initSystemClocks();
-  }
-  Board::initPeripheralsClocks();
-  // Init external flash
-  ExternalFlash::init();
-}
-
-void __attribute__((noinline)) internalFlashStandby() {
-  shutdownExternalFlashAndEnterLowPowerMode(false);
-  Reset::coreWhilePlugged();
-}
-
 void sleepConfiguration() {
   // Decrease HCLK frequency
   Board::setStandardFrequency(Device::Board::Frequency::Low);
@@ -159,16 +143,11 @@ void stopConfiguration() {
   CORTEX.SCR()->setSLEEPDEEP(true);
 }
 
-void enterLowPowerMode() {
-  /* To enter sleep, we need to issue a WFE instruction, which waits for the
-   * event flag to be set and then clears it. However, the event flag might
-   * already be on. So the safest way to make sure we actually wait for a new
-   * event is to force the event flag to on (SEV instruction), use a first WFE
-   * to clear it, and then a second WFE to wait for a _new_ event. */
-  asm("sev");
-  asm("wfe");
-  asm("nop");
-  asm("wfe");
+typedef void (*SuspendFunction)(void);
+
+void bootloaderSuspend() {
+  SuspendFunction * trampolineFunction = reinterpret_cast<SuspendFunction *>(Trampoline::addressOfFunction(TRAMPOLINE_SUSPEND));
+  (*trampolineFunction)();
 }
 
 }

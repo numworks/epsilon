@@ -17,7 +17,8 @@ void standby() {
   Power::waitUntilOnOffKeyReleased();
   Power::standbyConfiguration();
   Board::shutdownPeripherals();
-  Power::internalFlashStandby();
+  Board::shutdownPeripheralsClocks(false);
+  bootloaderSuspend();
 }
 
 void configWakeUp() {

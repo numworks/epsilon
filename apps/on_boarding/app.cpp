@@ -31,16 +31,16 @@ Timer * App::timerAtIndex(int i) {
   return &m_logoController;
 }
 
-bool App::processEvent(Ion::Events::Event e) {
-  if (e == Ion::Events::OnOff) {
-    Ion::Power::standby(); // Force a core reset to exit
-  }
-  return ::App::processEvent(e);
+void App::willBecomeInactive() {
+  Ion::Power::selectStandbyMode(false);
+  ::App::willBecomeInactive();
 }
 
 void App::didBecomeActive(Window * window) {
   ::App::didBecomeActive(window);
   reinitOnBoarding();
+  // Force a core reset to exit
+  Ion::Power::selectStandbyMode(true);
 }
 
 void App::reinitOnBoarding() {

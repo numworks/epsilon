@@ -303,7 +303,7 @@ void AppsContainer::shutdownDueToLowBattery() {
     Ion::Timing::msleep(3000);
     Ion::Power::suspend();
   }
-  window()->redraw(true);
+  didSuspend();
 }
 
 void AppsContainer::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus) {

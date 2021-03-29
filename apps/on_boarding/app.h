@@ -17,8 +17,8 @@ public:
 
   int numberOfTimers() override;
   Escher::Timer * timerAtIndex(int i) override;
-  bool processEvent(Ion::Events::Event) override;
   void didBecomeActive(Escher::Window * window) override;
+  void willBecomeInactive() override;
 private:
   App(Snapshot * snapshot);
   void reinitOnBoarding();

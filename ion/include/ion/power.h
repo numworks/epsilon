@@ -6,6 +6,7 @@ namespace Power {
 
 void suspend(bool checkIfOnOffKeyReleased = false);
 void standby();
+void selectStandbyMode(bool standbyMode);
 
 }
 }

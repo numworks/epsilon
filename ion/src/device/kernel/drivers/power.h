@@ -5,6 +5,7 @@ namespace Ion {
 namespace Device {
 namespace Power {
 
+void selectStandbyMode(bool standbyMode);
 void suspend(bool checkIfOnOffKeyReleased);
 void standby();
 

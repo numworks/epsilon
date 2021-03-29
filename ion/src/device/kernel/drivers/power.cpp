@@ -20,7 +20,16 @@ namespace Power {
 
 using namespace Regs;
 
+bool sStandbyModeActivated = true;
+
+void selectStandbyMode(bool standbyMode) {
+  sStandbyModeActivated = standbyMode;
+}
+
 void suspend(bool checkIfOnOffKeyReleased) {
+  if (sStandbyModeActivated) {
+    return standby();
+  }
   bool isLEDActive = LED::getColor() != KDColorBlack;
   bool plugged = Ion::USB::isPlugged();
   bool numworksAuthentication = Authentication::trustedUserland();

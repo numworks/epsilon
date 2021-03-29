@@ -42,6 +42,7 @@ private:
       } else {
         versionValue += value(*c);
       }
+      c++;
     }
     return versionValue;
   }

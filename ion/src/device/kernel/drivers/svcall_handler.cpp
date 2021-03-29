@@ -163,6 +163,10 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
     case SVC_POWER_SUSPEND:
       Ion::Device::Power::suspend(*static_cast<bool *>(args[0]));
       return;
+    case SVC_POWER_SELECT_STANDBY_MODE:
+      Ion::Device::Power::selectStandbyMode(*static_cast<bool *>(args[0]));
+      return;
+    // LED
     case SVC_LED_GET_COLOR:
       *static_cast<KDColor *>(args[0]) = Ion::Device::LED::getColor();
       return;

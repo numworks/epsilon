@@ -4,6 +4,14 @@
 namespace Ion {
 namespace Power {
 
+void SVC_ATTRIBUTES selectStandbyModeSVC(bool * standbyMode) {
+  SVC(SVC_POWER_SELECT_STANDBY_MODE);
+}
+
+void selectStandbyMode(bool standbyMode) {
+  selectStandbyModeSVC(&standbyMode);
+}
+
 void SVC_ATTRIBUTES suspendSVC(bool * checkIfOnOffKeyReleased) {
   SVC(SVC_POWER_SUSPEND);
 }

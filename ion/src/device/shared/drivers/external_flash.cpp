@@ -313,7 +313,6 @@ static void initQSPI() {
   class QUADSPI::DCR dcr(0);
   dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
   constexpr int ChipSelectHighTimeCycles = (ChipSelectHighTimeInNanoSeconds * static_cast<float>(Clocks::Config::AHBFrequency)) / (static_cast<float>(ClockFrequencyDivisor) * 1000.0f) + 1.0f;
-  static_assert(ChipSelectHighTimeCycles == 5, "Bad ChipSelectHighTimeCycles computation");
   dcr.setCSHT(ChipSelectHighTimeCycles - 1);
   dcr.setCKMODE(true);
   QUADSPI.DCR()->set(dcr);

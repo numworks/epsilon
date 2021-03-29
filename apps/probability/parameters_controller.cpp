@@ -15,6 +15,10 @@ ParametersController::ContentView::ContentView(SelectableTableView * selectableT
   m_secondParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
+  // Remove selectable table top margin to control margin between text and table
+  m_selectableTableView->setTopMargin(0);
+  // Fit m_selectableTableView scroll to content size
+  m_selectableTableView->decorator()->setVerticalMargins(0, Metric::CommonBottomMargin);
 }
 
 void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {

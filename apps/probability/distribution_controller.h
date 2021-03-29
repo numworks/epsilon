@@ -30,7 +30,8 @@ private:
       m_selectableTableView(selectableTableView),
       m_borderView(Escher::Palette::GrayBright)
     {}
-    constexpr static KDCoordinate k_titleMargin = 8;
+    // Removing a pixel to skew title's baseline downward.
+    constexpr static KDCoordinate k_titleMargin = Escher::Metric::CommonTopMargin - 1;
   private:
     int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int index) override;

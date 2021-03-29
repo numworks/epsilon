@@ -47,7 +47,7 @@ View * DistributionController::ContentView::subviewAtIndex(int index) {
 }
 
 void DistributionController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height() + Metric::CommonTopMargin - 1;
+  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height() + k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height() - titleHeight), force);
   m_borderView.setFrame(KDRect(m_selectableTableView->leftMargin(), titleHeight + m_selectableTableView->topMargin(), bounds().width() - m_selectableTableView->leftMargin() - m_selectableTableView->rightMargin(), Metric::CellSeparatorThickness), force);

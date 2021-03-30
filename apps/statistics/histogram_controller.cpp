@@ -115,7 +115,9 @@ void HistogramController::reloadBannerView() {
   int numberOfChar = 0;
 
   // Add Interval Data
-  const char * legend = "[";
+  const char * legend = " [";
+  /* The word Interval is just a bit too long to display two numbers with a sign and maximal precision after it. */
+  int intervalPrecision = std::min(precision, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 2);
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, bufferSize);
   numberOfChar += legendLength;
@@ -123,7 +125,7 @@ void HistogramController::reloadBannerView() {
   // Add lower bound
   if (selectedSeriesIndex() >= 0) {
     double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, intervalPrecision);
   }
 
   numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
@@ -131,7 +133,7 @@ void HistogramController::reloadBannerView() {
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, intervalPrecision);
   }
   numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 

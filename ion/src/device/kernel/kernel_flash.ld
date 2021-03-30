@@ -16,7 +16,7 @@ MEMORY {
   PERSITING_BYTES (rx) : ORIGIN = PERSITING_BYTES_ORIGIN, LENGTH = PERSITING_BYTES_LENGTH
   KERNEL (rx) : ORIGIN = KERNEL_ORIGIN, LENGTH = KERNEL_LENGTH
   SRAM_DATA_BSS (rw) : ORIGIN = KERNEL_SRAM_ORIGIN, LENGTH = KERNEL_SRAM_DATA_BSS_LENGTH
-  SRAM_HEAP_STACK (rw) : ORIGIN = KERNEL_SRAM_ORIGIN + KERNEL_SRAM_DATA_BSS_LENGTH, LENGTH = SRAM_LENGTH - KERNEL_SRAM_DATA_BSS_LENGTH
+  SRAM_HEAP_STACK (rw) : ORIGIN = KERNEL_SRAM_ORIGIN + KERNEL_SRAM_DATA_BSS_LENGTH + BOOTLOADER_SRAM_DATA_BSS_LENGTH, LENGTH = SRAM_LENGTH - KERNEL_SRAM_DATA_BSS_LENGTH - BOOTLOADER_SRAM_DATA_BSS_LENGTH
 }
 
 SECTIONS {
@@ -105,16 +105,24 @@ SECTIONS {
   .heap : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(SRAM_HEAP_STACK) + LENGTH(SRAM_HEAP_STACK) - STACK_LENGTH);
+    . = (ORIGIN(SRAM_HEAP_STACK) + LENGTH(SRAM_HEAP_STACK) - KERNEL_STACK_LENGTH - USERLAND_STACK_LENGTH);
     _heap_end = .;
   } >SRAM_HEAP_STACK
 
-  .stack : {
+  .process_stack : {
     . = ALIGN(8);
-    _stack_end = .;
-    . += (STACK_LENGTH - 8);
+    _process_stack_end = .;
+    . += (USERLAND_STACK_LENGTH - 8);
     . = ALIGN(8);
-    _stack_start = .;
+    _process_stack_start = .;
+  } >SRAM_HEAP_STACK
+
+  .main_stack : {
+    . = ALIGN(8);
+    _main_stack_end = .;
+    . += (KERNEL_STACK_LENGTH - 8);
+    . = ALIGN(8);
+    _main_stack_start = .;
   } >SRAM_HEAP_STACK
 
   /DISCARD/ : {

@@ -2,19 +2,31 @@ SIZE_LENGTH = 4;
 SIGNATURE_LENGTH = 64;
 
 /*
- * |                                      SRAM                                       |
- * | KERNEL DATA AND BSS | EXTERNAL FLASH DATA AND BSS | HEAP | SHARED STACK |
+ * |                                           SRAM                                                   |
+ * | KERNEL DATA/BSS | BOOTLOADER DATA/BSS | USERLAND DATA/BSS | HEAP | USERLAND STACK | KERNEL STACK |
+ *
+ * Bootloader SRAM is mapped like:
+ * | xxxxxxxxxxxxxxx | BOOTLOADER DATA/BSS |           HEAP           |             STACK             |
+ * Kernel SRAM is mapped like:
+ * | KERNEL DATA/BSS | xxxxxxxxxxxxxxxxxxx |           HEAP           | USERLAND STACK | KERNEL STACK |
+ * Userland SRAM is mapped like:
+ * | xxxxxxxxxxxxxxx | xxxxxxxxxxxxxxxxxxx | USERLAND DATA/BSS | HEAP | USERLAND STACK | xxxxxxxxxxxx |
  *
  */
 
 SRAM_ORIGIN = 0x20000000;
 SRAM_LENGTH = 256K;
-STACK_LENGTH = 32K;
+USERLAND_STACK_LENGTH = 32K;
+KERNEL_STACK_LENGTH = 8K;
 
+/* Kernel data/bss is located at the begining of the SRAM to be able to easily align the VTOR */
 KERNEL_SRAM_ORIGIN = SRAM_ORIGIN;
 KERNEL_SRAM_DATA_BSS_LENGTH = 4096; /* TODO EMILIE */
-USERLAND_SRAM_ORIGIN = KERNEL_SRAM_ORIGIN + KERNEL_SRAM_DATA_BSS_LENGTH;
-USERLAND_SRAM_LENGTH = SRAM_LENGTH - KERNEL_SRAM_DATA_BSS_LENGTH;
+BOOTLOADER_SRAM_ORIGIN = SRAM_ORIGIN + KERNEL_SRAM_DATA_BSS_LENGTH;
+BOOTLOADER_SRAM_LENGTH = SRAM_LENGTH -  KERNEL_SRAM_DATA_BSS_LENGTH;
+BOOTLOADER_SRAM_DATA_BSS_LENGTH = 64; /* TODO EMILIE */
+USERLAND_SRAM_ORIGIN = BOOTLOADER_SRAM_ORIGIN + BOOTLOADER_SRAM_DATA_BSS_LENGTH;
+USERLAND_SRAM_LENGTH = SRAM_LENGTH - KERNEL_SRAM_DATA_BSS_LENGTH - BOOTLOADER_SRAM_DATA_BSS_LENGTH - KERNEL_STACK_LENGTH;
 
 /* For N0110?
  ITCM (rwx) : ORIGIN = 0x00000000, LENGTH = 16K

@@ -24,7 +24,7 @@ private:
   class FunctionSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
   public:
     FunctionSelectionController(GraphController * graphController) : Shared::FunctionGraphController::FunctionSelectionController(graphController) {}
-    CurveSelectionCell * reusableCell(int index, int type) override { assert(index < k_maxNumberOfDisplayableFunctions); return m_cells + index; }
+    CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < k_maxNumberOfDisplayableFunctions); return m_cells + index; }
     int reusableCellCount(int type) override { return k_maxNumberOfDisplayableFunctions; }
   private:
     static constexpr int k_maxNumberOfDisplayableFunctions = 7;

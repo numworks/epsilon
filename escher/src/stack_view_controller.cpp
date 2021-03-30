@@ -151,7 +151,6 @@ void StackViewController::popUntilDepth(int depth) {
       vc->viewDidDisappear();
     }
   }
-
 }
 
 void StackViewController::pushModel(Frame frame) {

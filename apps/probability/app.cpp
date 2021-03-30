@@ -81,6 +81,7 @@ App::App(Snapshot * snapshot) :
   m_distributionController(&m_stackViewController, snapshot->distribution(), &m_parametersController),
   m_stackViewController(&m_modalViewController, &m_distributionController)
 {
+    m_stackViewController.setupHeadersBorderOverlaping(false, false);
     switch (snapshot->activePage()) {
     case Snapshot::Page::Parameters:
       m_stackViewController.push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);

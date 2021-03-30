@@ -177,6 +177,9 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  /* Title and breadcrumb headers should not overlap. Breadcrumb should.
+   * Using default tableCell's border color. */
+  setupHeadersBorderOverlaping(false, true, Palette::GrayBright);
 }
 
 void NestedMenuController::setTitle(I18n::Message title) {

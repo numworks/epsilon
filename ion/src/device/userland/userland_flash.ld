@@ -86,16 +86,16 @@ SECTIONS {
   .heap : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(SRAM) + LENGTH(SRAM) - STACK_LENGTH);
+    . = (ORIGIN(SRAM) + LENGTH(SRAM) - USERLAND_STACK_LENGTH);
     _heap_end = .;
   } >SRAM
 
-  .stack : {
+  .process_stack : {
     . = ALIGN(8);
-    _stack_end = .;
-    . += (STACK_LENGTH - 8);
+    _process_stack_end = .;
+    . += (USERLAND_STACK_LENGTH - 8);
     . = ALIGN(8);
-    _stack_start = .;
+    _process_stack_start = .;
   } >SRAM
 
   /DISCARD/ : {

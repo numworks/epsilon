@@ -35,17 +35,24 @@ void GraphOptionsController::viewWillAppear() {
 }
 
 bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (selectedRow() == numberOfRows() -1) {
       RegressionController * regressionController = App::app()->regressionController();
       regressionController->setSeries(m_graphController->selectedSeriesIndex());
-      StackViewController * stack = static_cast<StackViewController *>(parentResponder());
       stack->push(regressionController);
     } else {
       m_goToParameterController.setXPrediction(selectedRow() == 0);
-      StackViewController * stack = (StackViewController *)parentResponder();
       stack->push(&m_goToParameterController);
     }
+    return true;
+  }
+  if (event == Ion::Events::Left
+   && stack->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth + 1)
+  {
+    /* We only allow popping with Left if there is another menu beneath this
+     * one. */
+    stack->pop();
     return true;
   }
   return false;

@@ -19,7 +19,7 @@ void CurveSelectionController::didBecomeFirstResponder() {
 }
 
 bool CurveSelectionController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     m_graphController->openMenuForCurveAtIndex(selectedRow());
     return true;
   }

@@ -36,7 +36,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
         return false;
     }
   }
-  return false;
+  return FunctionCurveParameterController::handleEvent(event);
 }
 
 int CurveParameterController::numberOfRows() const {

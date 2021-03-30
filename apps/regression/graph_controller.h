@@ -35,7 +35,7 @@ private:
     const char * title() override { return I18n::translate(I18n::Message::Regression); }
     int numberOfRows() const override { return graphController()->m_store->numberOfNonEmptySeries(); }
     KDCoordinate rowHeight(int j) override;
-    CurveSelectionCell * reusableCell(int index, int type) override { return m_cells + index; }
+    CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < Store::k_numberOfSeries); return m_cells + index; }
     int reusableCellCount(int type) override { return Store::k_numberOfSeries; }
     void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   private:

@@ -25,7 +25,7 @@ private:
   class SequenceSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
   public:
     SequenceSelectionController(GraphController * graphController) : Shared::FunctionGraphController::FunctionSelectionController(graphController) {}
-    CurveSelectionCell * reusableCell(int index, int type) override { return m_cells + index; }
+    CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < Shared::MaxNumberOfSequences); return m_cells + index; }
     int reusableCellCount(int type) override { return Shared::MaxNumberOfSequences; }
   private:
     Poincare::Layout nameLayoutAtIndex(int j) const override;

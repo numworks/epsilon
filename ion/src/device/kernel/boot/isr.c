@@ -1,6 +1,6 @@
 #include "isr.h"
 
-extern const void * _stack_start;
+extern const void * _main_stack_start;
 
 /* Interrupt Service Routines are void->void functions */
 typedef void (*ISR)(void);
@@ -15,7 +15,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   __attribute__((used))
   = {
-  (ISR)&_stack_start, // Stack start
+  (ISR)&_main_stack_start, // Stack start
   start, // Reset service routine,
   0, // NMI service routine,
   abort, // HardFault service routine,

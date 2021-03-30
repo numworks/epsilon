@@ -9,7 +9,7 @@
 #include <kernel/drivers/keyboard.h>
 #endif
 
-extern const void * _stack_end;
+extern const void * _process_stack_end;
 extern char _dfu_bootloader_flash_start;
 extern char _dfu_bootloader_flash_end;
 
@@ -50,8 +50,8 @@ void DFU() {
    * beginning of the DFU bootloader copied in RAM. */
 
   size_t dfu_bootloader_size = &_dfu_bootloader_flash_end - &_dfu_bootloader_flash_start;
-  char * dfu_bootloader_ram_start = reinterpret_cast<char *>(&_stack_end);
-  assert(&_stack_end == (void *)(0x20000000 + 256*1024 - 32*1024));
+  char * dfu_bootloader_ram_start = reinterpret_cast<char *>(&_process_stack_end);
+  assert(&_process_stack_end == (void *)(0x20000000 + 256*1024 - 32*1024));
 
   /* 2- Verify there is enough free space on the stack to copy the DFU code. */
 

@@ -4,6 +4,7 @@
 #include <escher/view_controller.h>
 #include <escher/stack_view.h>
 #include <escher/palette.h>
+#include <escher/solid_color_view.h>
 
 namespace Escher {
 
@@ -28,6 +29,9 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true, bool headersOverlapContent = false, KDColor headersContentBorderColor = Palette::GrayBright) {
+    m_view.setupHeadersBorderOverlaping(headersOverlapHeaders, headersOverlapContent, headersContentBorderColor);
+  }
   static constexpr uint8_t k_maxNumberOfChildren = kMaxNumberOfStacks;
 private:
   class Frame {
@@ -53,6 +57,7 @@ private:
     void shouldDisplayStackHeaders(bool shouldDisplay);
     int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
+    void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(Frame frame);
     void popStack();
   protected:
@@ -63,11 +68,15 @@ private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
+    bool borderShouldOverlapContent() const;
 
     StackView m_stackViews[kMaxNumberOfStacks];
+    SolidColorView m_borderView;
     View * m_contentView;
     int8_t m_numberOfStacks;
     bool m_displayStackHeaders;
+    bool m_headersOverlapHeaders;
+    bool m_headersOverlapContent;
   };
   ControllerView m_view;
   void pushModel(Frame frame);

@@ -54,7 +54,10 @@ void BannerView::layoutSubviews(bool force) {
         subviewPreviousLine = subviewAtIndex(j);
         KDCoordinate width = subviewPreviousLine->minimalSizeForOptimalDisplay().width() + remainingWidth/nbOfSubviewsOnLine + (j == i-1) * roundingError;
         KDCoordinate height = subviewPreviousLine->minimalSizeForOptimalDisplay().height();
-        subviewPreviousLine->setFrame(KDRect(x, y, width, height), force);
+        /* If a subview is alone on its line, its structure can change without
+         * it being reflected on the frame. As such, we force a relayout when
+         * the subview takes up the whole line. */
+        subviewPreviousLine->setFrame(KDRect(x, y, width, height), force || (width == lineWidth));
         x += width;
       }
       // Next line

@@ -69,14 +69,14 @@ bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {
 template<typename T>
 int FloatParameterController<T>::typeAtIndex(int index) {
   if (index == numberOfRows()-1) {
-    return 0;
+    return k_buttonCellType;
   }
-  return 1;
+  return k_parameterCellType;
 }
 
 template<typename T>
 int FloatParameterController<T>::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_buttonCellType) {
     return 1;
   }
   return reusableParameterCellCount(type);
@@ -84,7 +84,7 @@ int FloatParameterController<T>::reusableCellCount(int type) {
 
 template<typename T>
 HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
-  if (type == 0) {
+  if (type == k_buttonCellType) {
     return &m_okButton;
   }
   return reusableParameterCell(index, type);

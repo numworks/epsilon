@@ -29,6 +29,7 @@ class SumAndProduct : public Expression {
 public:
   SumAndProduct(const SumAndProductNode * n) : Expression(n) {}
   Expression shallowReduce(Context * context);
+  static constexpr char s_defaultXNTChar = 'i';
 };
 
 }

@@ -242,6 +242,8 @@ void writePCBVersion(PCBVersion) {}
 
 void lockPCBVersion() {}
 
+bool pcbVersionIsLocked() { return true; }
+
 }
 }
 }

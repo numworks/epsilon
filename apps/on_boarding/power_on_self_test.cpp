@@ -1,5 +1,6 @@
 #include "power_on_self_test.h"
 #include <apps/shared/post_and_hardware_tests.h>
+#include <ion/board.h>
 #include <ion/led.h>
 
 namespace OnBoarding {
@@ -7,6 +8,10 @@ namespace OnBoarding {
 KDColor PowerOnSelfTest::Perform() {
   KDColor previousLEDColor = Ion::LED::getColor();
   KDColor resultColor = KDColorWhite;
+
+  /* Lock OTP on older devices to prevent garbage being written where the PCB
+   * version is read. */
+  Ion::Board::lockUnlockedPCBVersion();
 
   // Screen tests
   bool screenTestsOK = Shared::POSTAndHardwareTests::VBlankOK() && (Shared::POSTAndHardwareTests::TextLCDGlyphFailures() <= k_textErrorsLimit);

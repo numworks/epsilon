@@ -40,20 +40,20 @@ int RangeParameterController::numberOfRows() const {
 
 int RangeParameterController::typeAtIndex(int index) {
   if (displayNormalizeCell() && index == 0) {
-    return 2;
+    return k_normalizeCellType;
   }
   return FloatParameterController::typeAtIndex(index);
 }
 
 int RangeParameterController::reusableCellCount(int type) {
-  if (type == 2) {
+  if (type == k_normalizeCellType) {
     return displayNormalizeCell();
   }
   return FloatParameterController::reusableCellCount(type);
 }
 
 HighlightCell * RangeParameterController::reusableCell(int index, int type) {
-  if (type == 2) {
+  if (type == k_normalizeCellType) {
     assert(index == 0);
     return &m_normalizeCell;
   }
@@ -124,13 +124,13 @@ bool RangeParameterController::setParameterAtIndex(int parameterIndex, float f) 
 }
 
 HighlightCell * RangeParameterController::reusableParameterCell(int index, int type) {
-  assert(type == 1);
+  assert(type == k_parameterCellType);
   assert(index >= 0 && index < k_numberOfTextCell);
   return m_rangeCells + index;
 }
 
 int RangeParameterController::reusableParameterCellCount(int type) {
-  assert(type == 1);
+  assert(type == k_parameterCellType);
   return k_numberOfTextCell;
 }
 

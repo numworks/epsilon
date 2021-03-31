@@ -385,7 +385,8 @@ PCBVersion pcbVersion() {
    * way, flashing the PCB version can be done last. */
   return PCB_LATEST;
 #else
-  return readPCBVersionInMemory();
+  PCBVersion version = readPCBVersionInMemory();
+  return (version == alternateBlankVersion ? 0 : version);
 #endif
 }
 
@@ -403,6 +404,10 @@ void lockPCBVersion() {
   uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPLocksAddress + pcbVersionOTPIndex);
   uint8_t zero = 0;
   InternalFlash::WriteMemory(destination, &zero, sizeof(zero));
+}
+
+bool pcbVersionIsLocked() {
+  return *reinterpret_cast<const uint8_t *>(InternalFlash::Config::OTPLocksAddress + pcbVersionOTPIndex) == 0;
 }
 
 }

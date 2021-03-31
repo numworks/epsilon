@@ -35,9 +35,6 @@ protected:
     void pushTitle(I18n::Message title);
     void resetTitle();
     View * view() override { return m_selectableTableView; }
-    /* Nothing to be done when becoming first responder, everything being
-     * handled in selectSubMenu and returnToPreviousMenu methods. */
-    void didBecomeFirstResponder() override {}
   private:
     constexpr static int k_maxTitleLength = (Ion::Display::Width - Metric::PopUpLeftMargin - 2 * Metric::CellSeparatorThickness - Metric::CellLeftMargin - Metric::CellRightMargin - Metric::PopUpRightMargin) / 7; // With 7 = KDFont::SmallFont->glyphSize().width()
     constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;

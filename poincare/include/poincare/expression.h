@@ -283,7 +283,7 @@ public:
       m_name(name),
       m_numberOfChildren(numberOfChildren),
       m_untypedBuilder(builder) {}
-    const char * name() const { return m_name; }
+    constexpr const char * name() const { return m_name; }
     int numberOfChildren() const { return m_numberOfChildren; }
     Expression build(Expression children) const { return (*m_untypedBuilder)(children); }
   private:

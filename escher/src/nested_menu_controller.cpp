@@ -18,7 +18,6 @@ NestedMenuController::BreadcrumbController::BreadcrumbController(Responder * par
 void NestedMenuController::BreadcrumbController::popTitle() {
   assert(m_titleCount > 0);
   m_titleCount--;
-  m_titles[m_titleCount] = (I18n::Message)0;
   updateTitle();
 }
 
@@ -36,8 +35,8 @@ void NestedMenuController::BreadcrumbController::resetTitle() {
 
 void NestedMenuController::BreadcrumbController::updateTitle() {
   // m_titleCount == 0 is handled and only sets m_titleBuffer[0] to 0
-  const char * separator = " > ";
-  const int separatorLength = 3;
+  constexpr int separatorLength = 3;
+  constexpr char separator[] = " > ";
   // Define, from right to left, which subtitles will fit in the breadcrumb
   int titleLength = -separatorLength;
   int firstFittingSubtitleIndex = 0;
@@ -95,7 +94,7 @@ NestedMenuController::Stack::Stack(NestedMenuController * parentMenu, Selectable
 
 void NestedMenuController::Stack::push(int selectedRow, KDCoordinate verticalScroll, I18n::Message title) {
   int stackDepth = depth();
-  assert(m_statesStack[stackDepth].isNull());
+  assert(stackDepth < k_maxModelTreeDepth && m_statesStack[stackDepth].isNull());
   m_statesStack[stackDepth] = State(selectedRow, verticalScroll);
   /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
    * it again, in order to force title refresh. */

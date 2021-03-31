@@ -4,6 +4,10 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/derivative.h>
+#include <poincare/integral.h>
+#include <poincare/sum.h>
+#include <poincare/product.h>
 #include <assert.h>
 #include <algorithm>
 
@@ -364,8 +368,10 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
 
 CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
   static constexpr struct { const char *name; char xnt; } sFunctions[] = {
-    { "diff", 'x' }, { "int", 'x' },
-    { "product", 'i' }, { "sum", 'i' }
+    { Poincare::Derivative::s_functionHelper.name(), Poincare::Derivative::s_defaultXNTChar },
+    { Poincare::Integral::s_functionHelper.name(), Poincare::Integral::s_defaultXNTChar },
+    { Poincare::Product::s_functionHelper.name(), Poincare::Product::s_defaultXNTChar },
+    { Poincare::Sum::s_functionHelper.name(), Poincare::Sum::s_defaultXNTChar }
   };
   /* Let's assume everything before the cursor is nested correctly, which is
    * reasonable if the expression is being entered left-to-right. */

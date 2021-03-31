@@ -24,6 +24,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Range");
 private:
+  static constexpr int k_normalizeCellType = 2;
+
   class CellWithUnequal : public Escher::MessageTableCell {
   public:
     using Escher::MessageTableCell::MessageTableCell;

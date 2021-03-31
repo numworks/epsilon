@@ -141,7 +141,8 @@ void HistogramController::reloadBannerView() {
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
-  numberOfChar = 0;
+  buffer[0] = ' ';
+  numberOfChar = 1;
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
@@ -151,7 +152,8 @@ void HistogramController::reloadBannerView() {
   m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
-  numberOfChar = 0;
+  buffer[0] = ' ';
+  numberOfChar = 1;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);

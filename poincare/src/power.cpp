@@ -1138,6 +1138,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   }
   Integer r1(1);
   Integer r2(1);
+  Integer g(r.integerDenominator());
   bool shouldRaiseParentException = false;
   {
     // See comment in Arithmetic::resetPrimeFactorization()
@@ -1157,7 +1158,14 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
         Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), r.signedIntegerNumerator());
         IntegerDivision div = Integer::Division(n, r.integerDenominator());
         r1 = Integer::Multiplication(r1, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.quotient));
-        r2 = Integer::Multiplication(r2, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.remainder));
+        g = Arithmetic::GCD(g, div.remainder);
+      }
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), r.signedIntegerNumerator());
+        IntegerDivision div = Integer::Division(n, r.integerDenominator());
+        IntegerDivision div2 = Integer::Division(div.remainder, g);
+        assert(div2.remainder.isZero());
+        r2 = Integer::Multiplication(r2, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div2.quotient));
       }
     } else {
       // Reset factorization
@@ -1175,7 +1183,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   }
   Rational p1 = Rational::Builder(r2);
   Integer oneExponent = isDenominator ? Integer(-1) : Integer(1);
-  Integer rDenominator = r.integerDenominator();
+  Integer rDenominator = Integer::Division(r.integerDenominator(), g).quotient;
   Rational p2 = Rational::Builder(oneExponent, rDenominator);
   Power p = Power::Builder(p1, p2);
   if (r1.isEqualTo(Integer(1)) && !i.isNegative()) {

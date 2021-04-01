@@ -67,6 +67,13 @@ Evaluation<T> ConstantNode::templatedApproximate() const {
   if (isIComplex()) {
     return Complex<T>::Builder(0.0, 1.0);
   }
+  if(isEngineering()) {
+    if (isPi()) {
+      return Complex<T>::Builder(4);
+    }
+    assert(isExponential());
+    return Complex<T>::Builder(3);
+  }
   if (isPi()) {
     return Complex<T>::Builder(M_PI);
   }
@@ -103,6 +110,10 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
     result = Unreal::Builder();
   } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {
     result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
+  } else if (isPi() && isEngineering()) {
+    result = Rational::Builder(4);
+  } else if (isExponential() && isEngineering()) {
+    result = Rational::Builder(3);
   } else {
     return *this;
   }

@@ -59,6 +59,7 @@ private:
   size_t nodeSize() const override { return sizeof(ConstantNode); }
   template<typename T> Evaluation<T> templatedApproximate() const;
   bool isConstantCodePoint(CodePoint c) const;
+  const static bool isEngineering() { return Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Engineering; }
 };
 
 class Constant final : public SymbolAbstract {
@@ -77,6 +78,7 @@ public:
 
 private:
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }
+  const static bool isEngineering() { return Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Engineering; }
 };
 
 }

@@ -5,6 +5,7 @@
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/symbol_abstract.h>
 
 namespace Poincare {
 
@@ -59,11 +60,18 @@ Layout Layout::recursivelyMatches(LayoutTest test) const {
 
 Layout Layout::XNTLayout() const {
   Layout xntLayout = const_cast<Layout *>(this)->node()->XNTLayout();
-  if (!xntLayout.isUninitialized() && xntLayout.recursivelyMatches(
+  if (!xntLayout.isUninitialized() && xntLayout.numberOfDescendants(true) <= SymbolAbstract::k_maxNameSize && xntLayout.recursivelyMatches(
       [](const Layout l) {
-        return l.type() != LayoutNode::Type::CodePointLayout && l.type() != LayoutNode::Type::HorizontalLayout;
-      }).isUninitialized()) {
-    // Return xnt only if it is a simple horizontal layout with code points.
+        if (l.type() != LayoutNode::Type::CodePointLayout) {
+          return l.type() != LayoutNode::Type::HorizontalLayout;
+        }
+        CodePoint c = static_cast<const CodePointLayout&>(l).codePoint();
+        return !(c.isDecimalDigit() || c.isLatinLetter() || c == '_');
+      } ).isUninitialized()) {
+    /* Return xnt if :
+     * - it is initialized and only contains horizontal layouts and code points
+     * - all code points are letters, numbers or _
+     * - There are less than k_maxNameSize descendants */
     return xntLayout;
   }
   return Layout();

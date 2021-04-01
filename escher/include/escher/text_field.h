@@ -34,7 +34,7 @@ public:
   size_t draftTextLength() const;
   void setText(const char * text);
   void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
-  CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint);
+  size_t insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, int bufferLength);
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint, bool forceDefault) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;

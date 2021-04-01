@@ -616,7 +616,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   /* Step 6: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */
   if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-    Expression r = removeSquareRootsFromDenominator(reductionContext);
+    Expression r = removeRootsFromDenominator(reductionContext);
     if (!r.isUninitialized()) {
       return r;
     }
@@ -1220,35 +1220,46 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   return m.shallowReduce(reductionContext);
 }
 
-Expression Power::removeSquareRootsFromDenominator(ExpressionNode::ReductionContext reductionContext) {
+Expression Power::removeRootsFromDenominator(ExpressionNode::ReductionContext reductionContext) {
   assert(reductionContext.target() == ExpressionNode::ReductionTarget::User);
   Expression result;
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational
-      && childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && (childAtIndex(1).convert<Rational>().isHalf()
-        || childAtIndex(1).convert<Rational>().isMinusHalf()))
+      && childAtIndex(1).type() == ExpressionNode::Type::Rational)
   {
-    /* We are considering a term of the form sqrt(p/q) (or 1/sqrt(p/q)), with p
-     * and q integers. We'll turn those into sqrt(p*q)/q (or sqrt(p*q)/p). */
-    Rational castedChild0 = childAtIndex(0).convert<Rational>();
-    Rational castedChild1 = childAtIndex(1).convert<Rational>();
-    Integer p = castedChild0.signedIntegerNumerator();
-    assert(!p.isZero()); // We eliminated case of form 0^(-1/2) at first step of shallowReduce
-    Integer q = castedChild0.integerDenominator();
-    // We do nothing for terms of the form sqrt(p)
-    if (!q.isOne() || castedChild1.isMinusHalf()) {
-      Integer pq = Integer::Multiplication(p, q);
-      if (pq.isOverflow()) {
-        return result;
-      }
-      Power sqrt = Power::Builder(Rational::Builder(pq), Rational::Builder(1, 2));
-      Integer one(1);
-      if (castedChild1.isHalf()) {
-        result = Multiplication::Builder(Rational::Builder(one, q), sqrt);
+    Rational child0 = childAtIndex(0).convert<Rational>();
+    Integer p = child0.signedIntegerNumerator();
+    Integer q = child0.integerDenominator();
+    Rational child1 = childAtIndex(1).convert<Rational>();
+    Integer a = child1.unsignedIntegerNumerator();
+    Integer b = child1.integerDenominator();
+    if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+      Integer temp = p;
+      p = q;
+      p.setNegative(temp.isNegative());
+      q = temp;
+      q.setNegative(false);
+    }
+    if (!q.isOne() && !b.isOne()) {
+      /* We are handling an expression of the form (p/q)^(a/b), with a and b
+       * positive. To avoid irrational number in the denominator, we turn it
+       * into : q^-(a+c)/b * (p^a * q^c)^(1/b), where c is the smallest postive
+       * integer such that (a+c)/b is an integer. */
+      IntegerDivision divAB = Integer::Division(a, b);
+      Integer c, d;
+      if (divAB.remainder.isZero()) {
+        c = Integer(0);
+        d = divAB.quotient;
       } else {
-        result = Multiplication::Builder(Rational::Builder(one, p), sqrt); // We use here the assertion that p != 0
+        c = Integer::Subtraction(b, divAB.remainder);
+        d = Integer::Addition(Integer(1), divAB.quotient);
       }
-      sqrt.shallowReduce(reductionContext);
+      d.setNegative(true);
+      Expression f1 = Power::Builder(Rational::Builder(q), Rational::Builder(d));
+      Integer one = Integer(1);
+      Expression f2 = Power::Builder(Rational::Builder(Integer::Multiplication(Integer::Power(p, a), Integer::Power(q, c))), Rational::Builder(one, b));
+      result = Multiplication::Builder({f1, f2});
+      f1.shallowReduce(reductionContext);
+      f2.shallowReduce(reductionContext);
     }
   } else if (childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().isMinusOne()

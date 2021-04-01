@@ -573,7 +573,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("3^(-4)", "1/81");
   assert_parsed_expression_simplify_to("(-3)^3", "-27");
   assert_parsed_expression_simplify_to("1256^(1/3)×x", "2×root(157,3)×x");
-  assert_parsed_expression_simplify_to("1256^(-1/3)", "1/\u00122×root(157,3)\u0013");
+  assert_parsed_expression_simplify_to("1256^(-1/3)", "root(24649,3)/314");
   assert_parsed_expression_simplify_to("32^(-1/5)", "1/2");
   assert_parsed_expression_simplify_to("(2+3-4)^(x)", "1");
   assert_parsed_expression_simplify_to("1^x", "1");
@@ -637,7 +637,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Metric, Real);
   // Principal angle of root of unity
-  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "1/\u00122×root(5,3)\u0013-√(3)/\u00122×root(5,3)\u0013×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "root(25,3)/10+\u0012√(3)×root(25,3)\u0013/10×𝐢", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "\u0012√(√(6)+8)+√(6)+9\u0013/√(√(6)+8)", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)", "[[-59/4,27/4][81/8,-37/8]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");

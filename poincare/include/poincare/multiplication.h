@@ -101,6 +101,7 @@ private:
   void factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext);
   void mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext);
   void factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext);
+  void gatherRationalPowers(int i, int j, ExpressionNode::ReductionContext reductionContext);
   Expression distributeOnOperandAtIndex(int index, ExpressionNode::ReductionContext reductionContext);
   void addMissingFactors(Expression factor, ExpressionNode::ReductionContext reductionContext);
   void factorizeSineAndCosine(int i, int j, ExpressionNode::ReductionContext reductionContext);
@@ -110,6 +111,7 @@ private:
   static bool TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, ExpressionNode::ReductionContext reductionContext);
   static bool TermHasNumeralBase(const Expression & e);
   static bool TermHasNumeralExponent(const Expression & e);
+  static bool TermIsPowerOfRationals(const Expression & e);
   static const Expression CreateExponent(Expression e);
   static inline const Expression Base(const Expression e);
   void splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const;

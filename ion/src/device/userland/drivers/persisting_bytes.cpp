@@ -16,10 +16,8 @@ void SVC_ATTRIBUTES readSVC(uint8_t * byte) {
   SVC(SVC_PERSISTING_BYTES_READ);
 }
 
-uint8_t read() {
-  uint8_t res;
-  readSVC(&res);
-  return res;
+uint8_t __attribute__((externally_visible)) read() {
+  SVC(SVC_PERSISTING_BYTES_READ);
 }
 
 }

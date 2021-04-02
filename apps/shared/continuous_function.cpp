@@ -88,12 +88,14 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
 
 Poincare::Expression ContinuousFunction::expressionReduced(Poincare::Context * context) const {
   Poincare::Expression result = ExpressionModelHandle::expressionReduced(context);
-  if (plotType() == PlotType::Parametric && (
-      result.type() != Poincare::ExpressionNode::Type::Matrix ||
-      static_cast<Poincare::Matrix&>(result).numberOfRows() != 2 ||
-      static_cast<Poincare::Matrix&>(result).numberOfColumns() != 1)
-     ) {
-    return Poincare::Expression::Parse("[[undef][undef]]", nullptr);
+  if (plotType() == PlotType::Parametric) {
+    Expression trueExpression = result.type() == ExpressionNode::Type::Dependency ? result.childAtIndex(0) : result;
+    if (trueExpression.type() != Poincare::ExpressionNode::Type::Matrix
+     || static_cast<Poincare::Matrix&>(trueExpression).numberOfRows() != 2
+     || static_cast<Poincare::Matrix&>(trueExpression).numberOfColumns() != 1)
+    {
+      return Poincare::Expression::Parse("[[undef][undef]]", nullptr);
+    }
   }
   return result;
 }
@@ -373,6 +375,9 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincar
   if (type != PlotType::Parametric) {
     assert(type == PlotType::Cartesian || type == PlotType::Polar);
     return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
+  }
+  if (e.type() == ExpressionNode::Type::Dependency) {
+    e = e.childAtIndex(0);
   }
   assert(e.type() == ExpressionNode::Type::Matrix);
   assert(static_cast<Poincare::Matrix&>(e).numberOfRows() == 2);

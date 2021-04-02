@@ -1,19 +1,10 @@
 #include <escher/nested_menu_controller.h>
-#include <escher/container.h>
 #include <assert.h>
 #include <string.h>
 
 namespace Escher {
 
 /* Breadcrumb Controller */
-
-NestedMenuController::BreadcrumbController::BreadcrumbController(Responder * parentResponder, SelectableTableView * tableView) :
-  ViewController(parentResponder),
-  m_selectableTableView(tableView),
-  m_titleCount(0)
-{
-  updateTitle();
-}
 
 void NestedMenuController::BreadcrumbController::popTitle() {
   assert(m_titleCount > 0);
@@ -69,28 +60,7 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
   m_titleBuffer[charIndex] = 0;
 }
 
-/* State */
-
-NestedMenuController::Stack::State::State(int selectedRow, KDCoordinate verticalScroll) :
-  m_selectedRow(selectedRow),
-  m_verticalScroll(verticalScroll)
-{
-}
-
-bool NestedMenuController::Stack::State::isNull() const {
-  if (m_selectedRow == -1) {
-    return true;
-  }
-  return false;
-}
-
 /* Stack */
-// Stack needs parent NestedMenuController to handle banners as it handles stack
-NestedMenuController::Stack::Stack(NestedMenuController * parentMenu, SelectableTableView * tableView) :
-  m_breadcrumbController(parentMenu, tableView),
-  m_parentMenu(parentMenu)
-{
-}
 
 void NestedMenuController::Stack::push(int selectedRow, KDCoordinate verticalScroll, I18n::Message title) {
   int stackDepth = depth();
@@ -103,10 +73,6 @@ void NestedMenuController::Stack::push(int selectedRow, KDCoordinate verticalScr
   }
   m_breadcrumbController.pushTitle(title);
   m_parentMenu->push(&m_breadcrumbController);
-}
-
-NestedMenuController::Stack::State * NestedMenuController::Stack::stateAtIndex(int index) {
-  return &m_statesStack[index];
 }
 
 NestedMenuController::Stack::State NestedMenuController::Stack::pop() {
@@ -147,22 +113,6 @@ void NestedMenuController::Stack::resetStack() {
 
 /* List Controller */
 
-NestedMenuController::ListController::ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title) :
-  ViewController(parentResponder),
-  m_selectableTableView(tableView),
-  m_firstSelectedRow(0),
-  m_title(title)
-{
-}
-
-const char * NestedMenuController::ListController::title() {
-  return I18n::translate(m_title);
-}
-
-View * NestedMenuController::ListController::view() {
-  return m_selectableTableView;
-}
-
 void NestedMenuController::ListController::didBecomeFirstResponder() {
   m_selectableTableView->reloadData();
   Container::activeApp()->setFirstResponder(m_selectableTableView);
@@ -183,18 +133,6 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   /* Title and breadcrumb headers should not overlap. Breadcrumb should.
    * Using default tableCell's border color. */
   setupHeadersBorderOverlaping(false, true, Palette::GrayBright);
-}
-
-void NestedMenuController::setTitle(I18n::Message title) {
-  m_listController.setTitle(title);
-}
-
-bool NestedMenuController::handleEvent(Ion::Events::Event event) {
-  return handleEventForRow(event, selectedRow());
-}
-
-void NestedMenuController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_listController);
 }
 
 void NestedMenuController::viewWillAppear() {
@@ -225,10 +163,6 @@ HighlightCell * NestedMenuController::reusableCell(int index, int type) {
     return leafCellAtIndex(index);
   }
   return nodeCellAtIndex(index);
-}
-
-int NestedMenuController::stackDepth() const {
-  return m_stack.depth();
 }
 
 bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIndex) {

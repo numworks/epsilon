@@ -745,6 +745,11 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
       factorizeExponent(i, i+1, reductionContext);
       continue;
+    } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
+            && !(oi.childAtIndex(1).convert<Rational>().isInteger() || oi1.childAtIndex(1).convert<Rational>().isInteger()))
+    {
+      gatherRationalPowers(i, i+1, reductionContext);
+      continue;
     }
     i++;
   }
@@ -964,6 +969,34 @@ void Multiplication::factorizeExponent(int i, int j, ExpressionNode::ReductionCo
   }
 }
 
+void Multiplication::gatherRationalPowers(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+  /* Turn x^(a/b)*y^(p/q) into (x^(ak/b)*y^(pk/q))^(1/k) where k = lcm(b,q)
+   * This effectively gathers all roots into a single root. */
+  assert(TermIsPowerOfRationals(childAtIndex(i)) && TermIsPowerOfRationals(childAtIndex(j)));
+
+  Rational x = childAtIndex(i).childAtIndex(0).convert<Rational>();
+  Rational y = childAtIndex(j).childAtIndex(0).convert<Rational>();
+  Rational ab = childAtIndex(i).childAtIndex(1).convert<Rational>();
+  Rational pq = childAtIndex(j).childAtIndex(1).convert<Rational>();
+  Integer a = ab.signedIntegerNumerator(), b = ab.integerDenominator(), p = pq.signedIntegerNumerator(), q = pq.integerDenominator();
+  Integer k = Arithmetic::LCM(b, q);
+  IntegerDivision divB = Integer::Division(k, b), divQ = Integer::Division(k, q);
+  assert(divB.remainder.isZero() && divQ.remainder.isZero());
+  Rational m = Rational::Multiplication(
+      Rational::IntegerPower(x, Integer::Multiplication(a, divB.quotient)),
+      Rational::IntegerPower(y, Integer::Multiplication(p, divQ.quotient))
+      );
+  Integer one(1);
+  Expression result = Power::Builder(m, Rational::Builder(one, k));
+
+  removeChildAtIndexInPlace(j);
+  replaceChildAtIndexInPlace(i, result);
+  Expression child = childAtIndex(i).shallowReduce(reductionContext);
+  if (child.type() == ExpressionNode::Type::Multiplication) {
+    mergeChildrenAtIndexInPlace(child, i);
+  }
+}
+
 Expression Multiplication::distributeOnOperandAtIndex(int i, ExpressionNode::ReductionContext reductionContext) {
   /* This method creates a*...*b*y... + a*...*c*y... + ... from
    * a*...*(b+c+...)*y... */
@@ -1158,6 +1191,14 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
     return true;
   }
   return false;
+}
+
+bool Multiplication::TermIsPowerOfRationals(const Expression & e) {
+  if (e.type() != ExpressionNode::Type::Power) {
+    return false;
+  }
+  assert(e.numberOfChildren() == 2);
+  return e.childAtIndex(0).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).type() == ExpressionNode::Type::Rational;
 }
 
 void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {

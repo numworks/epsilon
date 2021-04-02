@@ -1,39 +1,37 @@
 .syntax unified
 
+/* Commentaires Romain :
+- faire du C dès que possible
+- juste copier les args du PS vers le MP, jumper à la fonction, copier les paramètres du MP vers le PS...
+- Quelle quantité ? static_assert sur le somme des args des fonctions SVC
+- builtin return address ? Avoir l'info dynamiquement
+https://stackoverflow.com/questions/21501222/finding-stack-frame-size
+*/
 .section .text.svcall_handler_as
 .align 2
 .thumb
 .global svcall_handler_as
 svcall_handler_as:
-  // Store r0,r1
-  push {r0,r1}
-  // STEP 1: extract the SVC_NUMBER
-  /* 1.1 Load the return value in r0 (to access the instruction "svc SVC_NUMBER")
-   * NB: the return value is not $lr because we're within an interruption: $lr
-   * was push in the context frame stored on the stack. $lr offset is 0x18 but
-   * since we pushed 2 registers before, we need to read with an offset of 0x20
-   * (=0x18+Ox8)
-   */
-  ldr r0,[sp,#0x20]
-  // 1.2 Load the instruction "svc SVC_NUMBER" in r0
-  ldrh r0,[r0,#-2]
-  // 1.3 Extract SVC_NUMBER in r0
-  bic r0,r0,#0xFF00
-  /* STEP 2: extract the arguments to be passed to svcall_handler
-   * 2.1 Get the arguments pointers in r1 (which is on the stack since we disable
-   * any optimization on SVC wrapping function). */
-  mov r1,sp
-  // 2.2 Don't forget we pushed 2 registers on the stack in the prologue
-  add r1,#0x8
+  // Step 1: store the exception value to be able to exit exception
   push {lr}
-  /* STEP 3: jump to svcall_handler with:
-   * - r0 = SVC_NUMBER
-   * - r1 = args pointer
+  // Step 2: extract the svc number in $r2
+  /* Load the return value in r2 (to access the instruction "svc SVC_NUMBER")
+   * NB: the return value is the $pc that was stored in the stack frame. The
+   * stack frame is located on the process stack and the register $pc has an
+   * offset of 0x18.
    */
+  mrs r2, psp                // r2 = psp
+  ldr r2,[r2,#0x18]          // r2 = pc value when the userland executed the SVC
+  ldrh r2,[r2,#-2]           // Retrieve the instruction "svc SVC_NUMBER" in r2
+  bic r2,r2,#0xFF00          // Extract SVC_NUMBER in r2
+  // Step 3: Set r0 as the top of process stack
+  mrs r0, psp
+  // Step 4: set r1 as the exception return value
+  mov r1, lr
+  // Step 5: Call svcall_handler(r0 = processStackPointer, r1 = exceptReturn, r2 = svcNumber)
   bl svcall_handler
-  // Restore register
+  // Step 6: Restore lr = exception return
   pop {lr}
-  pop {r0,r1}
-  // Return from exception
+  // Step 7: jump back to the SVC caller
   bx lr
 .type svcall_handler_as, function

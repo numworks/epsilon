@@ -615,6 +615,12 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("ℯ^log(πℯ)", "ℯ^\u0012log(ℯ)+log(π)\u0013");
   assert_parsed_expression_simplify_to("√(ℯ^2)", "ℯ");
   assert_parsed_expression_simplify_to("999^(10000/3)", "999^\u001210000/3\u0013");
+  // TODO Gabriel
+  assert_parsed_expression_simplify_to("root(4,4)", "√(2)");
+  assert_parsed_expression_simplify_to("root(2^6*3^24*5^9*7^3,12)", "9×root(3500,4)");
+  assert_parsed_expression_simplify_to("1/√(2)", "√(2)/2");
+  assert_parsed_expression_simplify_to("root(8/9,3)", "\u00122×root(3,3)\u0013/3");
+  assert_parsed_expression_simplify_to("√(2)×root(8,4)", "2×root(2,4)");
   /* This does not reduce but should not as the integer is above
    * k_maxNumberOfPrimeFactors and thus it prime decomposition might overflow
    * 32 factors. */
@@ -637,7 +643,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Metric, Real);
   // Principal angle of root of unity
-  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "root(25,3)/10+\u0012√(3)×root(25,3)\u0013/10×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "root(25,3)/10+root(16875,6)/10×𝐢", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "\u0012√(√(6)+8)+√(6)+9\u0013/√(√(6)+8)", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)", "[[-59/4,27/4][81/8,-37/8]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");

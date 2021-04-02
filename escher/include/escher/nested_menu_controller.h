@@ -7,6 +7,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/metric.h>
+#include <escher/container.h>
 #include <ion.h>
 
 namespace Escher {
@@ -15,11 +16,11 @@ class NestedMenuController : public StackViewController, public MemoizedListView
 public:
   NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
   void setSender(InputEventHandler * sender) { m_sender = sender; }
-  void setTitle(I18n::Message title);
+  void setTitle(I18n::Message title) { m_listController.setTitle(title); }
 
   // StackViewController
-  bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override { return handleEventForRow(event, selectedRow()); }
+  void didBecomeFirstResponder() override { Container::activeApp()->setFirstResponder(&m_listController); }
   void viewWillAppear() override;
   void viewDidDisappear() override;
 
@@ -29,7 +30,7 @@ public:
 protected:
   class BreadcrumbController : public ViewController {
   public:
-    BreadcrumbController(Responder * parentResponder, SelectableTableView * tableView);
+    BreadcrumbController(Responder * parentResponder, SelectableTableView * tableView) : ViewController(parentResponder), m_selectableTableView(tableView), m_titleCount(0), m_titleBuffer("") {}
     const char * title() override { return m_titleBuffer; }
     void popTitle();
     void pushTitle(I18n::Message title);
@@ -47,11 +48,11 @@ protected:
 
   class Stack {
   public:
-    Stack(NestedMenuController * parentMenu, SelectableTableView * tableView);
+    Stack(NestedMenuController * parentMenu, SelectableTableView * tableView) : m_breadcrumbController(parentMenu, tableView), m_parentMenu(parentMenu) {}
     class State {
     public:
-      State(int selectedRow = -1, KDCoordinate verticalScroll = 0);
-      bool isNull() const;
+      State(int selectedRow = -1, KDCoordinate verticalScroll = 0) : m_selectedRow(selectedRow), m_verticalScroll(verticalScroll) {}
+      bool isNull() const { return m_selectedRow == -1; }
       int selectedRow() { return m_selectedRow; }
       KDCoordinate verticalScroll() { return m_verticalScroll; }
     private:
@@ -59,7 +60,7 @@ protected:
       KDCoordinate m_verticalScroll;
     };
     void push(int selectedRow, KDCoordinate verticalScroll, I18n::Message title = (I18n::Message)0);
-    State * stateAtIndex(int index);
+    State * stateAtIndex(int index) { return &m_statesStack[index]; }
     State pop();
     int depth() const;
     void resetStack();
@@ -73,10 +74,10 @@ protected:
 
   class ListController : public ViewController {
   public:
-    ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title);
-    const char * title() override;
+    ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title) : ViewController(parentResponder), m_selectableTableView(tableView), m_firstSelectedRow(0), m_title(title) {}
+    const char * title() override { return I18n::translate(m_title); }
     void setTitle(I18n::Message title) { m_title = title; }
-    View * view() override;
+    View * view() override { return m_selectableTableView; }
     void didBecomeFirstResponder() override;
     void setFirstSelectedRow(int firstSelectedRow) { m_firstSelectedRow = firstSelectedRow; }
     SelectableTableView * selectableTableView() { return m_selectableTableView; }
@@ -88,7 +89,7 @@ protected:
 
   static constexpr int LeafCellType = 0;
   static constexpr int NodeCellType = 1;
-  int stackDepth() const;
+  int stackDepth() const { return m_stack.depth(); }
   bool handleEventForRow(Ion::Events::Event event, int selectedRow);
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();

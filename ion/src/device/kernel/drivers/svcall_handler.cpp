@@ -24,6 +24,138 @@
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
+constexpr static int k_numberOfSVCall = 256; // TODO
+
+void * SVCallTable[256] = { // Decrease number
+  (void *)Ion::Device::PersistingBytes::read
+};
+
+void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPointer, uint32_t exceptReturn, uint32_t svcNumber) {
+  svcNumber = 0;
+  /* The stack process is layout as follows:
+   *
+   * |                       |
+   * |                       |
+   * |                       |
+   * +-----------------------+ <-- processStackPointer
+   * | Stack Frame: r0       |
+   * |              r1       |
+   * |              r2       |
+   * |              r3       |
+   * |              r4       |
+   * |              r12      |
+   * |              lr       |
+   * |              pc       |
+   * |              ...      |
+   * +-----------------------+   A
+   * | Potential arguments   |   |
+   * | to pass to the kernel |   |
+   * | function              |   |
+   * +-----------------------+   |
+   * | Potential allocated   |   |
+   * | space for the return  |   |
+   * | value of the kernel   |   |
+   * | function              |   |
+   * +-----------------------+   B
+   * |                       |
+   * |                       |
+   *
+   */
+  // Step 1: avoid overflowing svc table
+  if (svcNumber > k_numberOfSVCall) {
+    return;
+  }
+  // Step 2: some svc calls require authentication
+  constexpr unsigned authentificationRequired[] = {SVC_USB_WILL_EXECUTE_DFU, SVC_USB_DID_EXECUTE_DFU, SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_FLASH_MASS_ERASE, SVC_FLASH_ERASE_SECTOR, SVC_FLASH_WRITE_MEMORY};
+  for (size_t i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
+    if (svcNumber == authentificationRequired[i] && !Ion::Device::Authentication::trustedUserland()) {
+      return;
+    }
+  }
+
+  /* Step 3. Assert that the SVC was called from the userland
+   *
+   * The EXC_RETURN value hold in lr follows the spec:
+   * - EXC_RETURN have bits[31:5] set to 1
+   * - bit[4] indicates if the extended FPU frame context is used (1) or not (0)
+   * - bit[3] indicates the mode: thread (1) or handler (0)
+   * - bit[2] indicates the stack pointer used when calling: either PSP (1) or
+   *   MSP (0)
+   * bit[2] and bit[3] should be 1 since svc is always called from the userland
+   * (kernel should not execute any SVC instruction) so we always
+   * enter svcall_handler_as from the thread mode using PSP.*/
+  assert((exceptReturn & 0b1100) == 0b1100);
+
+  // Step 4: store r4-r5, callee-saved registers to use them as scratch regs
+  asm volatile ("push {r4-r5}");
+
+  /* Step 5: Get frame size: do we use the extended stack frame or standard
+   * stack frame? */
+  bool extendedStackFrame = !(exceptReturn & 0b10000);
+  uint32_t frameSize = extendedStackFrame ? 108 : 32; // TODO: MAGIC NUMBERS +alignment issue???
+  /* Step 6: Copy the section AB from the process stack to the main stack. This
+   * section might stores arguments to be given to the kernel function or the
+   * allocated space for the return value. */
+  constexpr int k_ABMaxSize = 128; // TODO: infer dynamically
+  // Step 6.1: find the top of AB section on the process stack
+  uint8_t * topOfArgsProcessStack = reinterpret_cast<uint8_t *>(processStackPointer + frameSize);
+  // Step 6.2: allocate enough space on the main stack
+  asm volatile ("sub sp,%[allocatedStackSize]" : : [allocatedStackSize] "rn" (k_ABMaxSize));
+  uint8_t * mainStackPointerAddress = nullptr;
+  // TODO: add cache barriers?
+  asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (mainStackPointerAddress) :);
+  memcpy(mainStackPointerAddress, topOfArgsProcessStack, k_ABMaxSize);
+
+  /* Step 7: find kernel function address */
+  void * kernelFunction = SVCallTable[svcNumber];
+  asm volatile ("mov r4, %[kernelFunction]" : : [kernelFunction] "rn" (kernelFunction));
+
+  /* Step 8: restore r0-r4, d0-d7 registers from stack frame since they might
+   * hold the arguments/return value of the kernel function. */
+  asm volatile ("mov r5, %[value]" : : [value] "r" (processStackPointer));
+  if (extendedStackFrame) {
+    asm volatile ("vldr d0, [r5, #32]");
+    asm volatile ("vldr d1, [r5, #40]");
+    asm volatile ("vldr d2, [r5, #48]");
+    asm volatile ("vldr d3, [r5, #56]");
+    asm volatile ("vldr d4, [r5, #64]");
+    asm volatile ("vldr d5, [r5, #72]");
+    asm volatile ("vldr d6, [r5, #80]");
+    asm volatile ("vldr d7, [r5, #88]");
+  }
+  asm volatile ("ldr r0, [r5]");
+  asm volatile ("ldr r1, [r5, #4]");
+  asm volatile ("ldr r2, [r5, #8]");
+  asm volatile ("ldr r3, [r5, #12]");
+
+  // Step 9: jump to the kernel function
+  asm volatile ("blx r4");
+
+  /* Step 10: save the new values of the argument/return values registers in
+   * the stack frame. */
+  asm volatile ("str r0, [r5]");
+  asm volatile ("str r1, [r5, #4]");
+  asm volatile ("str r2, [r5, #8]");
+  asm volatile ("str r3, [r5, #12]");
+  if (extendedStackFrame) {
+    asm volatile ("vstr d0, [r5, #32]");
+    asm volatile ("vstr d1, [r5, #40]");
+    asm volatile ("vstr d2, [r5, #48]");
+    asm volatile ("vstr d3, [r5, #56]");
+    asm volatile ("vstr d4, [r5, #64]");
+    asm volatile ("vstr d5, [r5, #72]");
+    asm volatile ("vstr d6, [r5, #80]");
+    asm volatile ("vstr d7, [r5, #88]");
+  }
+
+  // Step 10: restore the AB section of the process stack
+  memcpy(topOfArgsProcessStack, mainStackPointerAddress, k_ABMaxSize);
+
+  // Step 11: restore callee-saved registers
+  asm volatile ("pop {r4-r5}");
+}
+#if 0
+//static_assert(SVCallTable[SVC_USB_WILL_EXECUTE_DFU] == ??);
 void svcall_handler(unsigned svcNumber, void * args[]) {
   constexpr unsigned authentificationRequired[] = {SVC_USB_WILL_EXECUTE_DFU, SVC_USB_DID_EXECUTE_DFU, SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_FLASH_MASS_ERASE, SVC_FLASH_ERASE_SECTOR, SVC_FLASH_WRITE_MEMORY};
   for (size_t i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
@@ -238,3 +370,5 @@ void svcall_handler(unsigned svcNumber, void * args[]) {
       return;
   }
 }
+
+#endif

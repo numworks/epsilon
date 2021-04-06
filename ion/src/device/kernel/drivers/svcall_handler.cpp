@@ -24,14 +24,121 @@
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
-constexpr static int k_numberOfSVCall = 256; // TODO
+// TODO: static assertion on types and position of svcall
+// static_assert(SVCallTable[SVC_BACKLIGHT_BRIGHTNESS] == (void *)Ion::Device::Backlight::brightness);
 
-void * SVCallTable[256] = { // Decrease number
-  (void *)Ion::Device::PersistingBytes::read
+void * SVCallTable[SVC_NUMBER_OF_CALLS] = {
+  // SVC_BACKLIGHT_BRIGHTNESS
+  (void *)Ion::Device::Backlight::brightness,
+  // SVC_BACKLIGHT_INIT
+  (void *)Ion::Device::Backlight::init,
+  // SVC_BACKLIGHT_IS_INITIALIZED
+  (void *)Ion::Device::Backlight::isInitialized,
+  // SVC_BACKLIGHT_SET_BRIGHTNESS
+  (void *)Ion::Device::Backlight::setBrightness,
+  // SVC_BACKLIGHT_SHUTDOWN
+  (void *)Ion::Device::Backlight::shutdown,
+  // SVC_BATTERY_IS_CHARGING
+  (void *)Ion::Device::Battery::isCharging,
+  // SVC_BATTERY_LEVEL
+  (void *)Ion::Device::Battery::level,
+  // SVC_BATTERY_VOLTAGE
+  (void *)Ion::Device::Battery::voltage,
+  // SVC_BOARD_SWITCH_EXECUTABLE_SLOT
+  (void *)Ion::Device::Board::switchExecutableSlot,
+  // SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT
+  (void *)Ion::Device::CircuitBreaker::hasCheckpoint,
+  // SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT
+  (void *)Ion::Device::CircuitBreaker::loadCheckpoint,
+  // SVC_CIRCUIT_BREAKER_SET_CHECKPOINT
+  (void *)Ion::Device::CircuitBreaker::setCheckpoint,
+  // SVC_CIRCUIT_BREAKER_STATUS
+  (void *)Ion::Device::CircuitBreaker::status,
+  // SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT
+  (void *)Ion::Device::CircuitBreaker::unsetCheckpoint,
+  // SVC_CRC32_BYTE
+  (void *)Ion::Device::crc32Byte,
+  // SVC_CRC32_WORD
+  (void *)Ion::Device::crc32Word,
+  // SVC_DISPLAY_COLORED_TILING_SIZE_10
+  (void *)Ion::Device::Display::displayColoredTilingSize10,
+  // SVC_DISPLAY_POST_PUSH_MULTICOLOR
+  (void *)Ion::Device::Display::POSTPushMulticolor,
+  // SVC_DISPLAY_PULL_RECT
+  (void *)Ion::Device::Display::pullRect,
+  // SVC_DISPLAY_PUSH_RECT
+  (void *)Ion::Device::Display::pushRect,
+  // SVC_DISPLAY_PUSH_RECT_UNIFORM
+  (void *)Ion::Device::Display::pushRectUniform,
+  // SVC_DISPLAY_UNIFORM_TILING_SIZE_10
+  (void *)Ion::Device::Display::displayUniformTilingSize10,
+  // SVC_DISPLAY_WAIT_FOR_V_BLANK
+  (void *)Ion::Device::Display::waitForVBlank,
+  // SVC_EVENTS_COPY_TEXT
+  (void *)&Ion::Events::Event::copyText,
+  // SVC_EVENTS_GET_EVENT
+  (void *)Ion::Device::Events::getEvent,
+  // SVC_EVENTS_IS_DEFINED
+  (void *)&Ion::Events::Event::isDefined,
+  // SVC_EVENTS_REPETITION_FACTOR
+  (void *)Ion::Events::repetitionFactor,
+  // SVC_EVENTS_SET_SHIFT_ALPHA_STATUS
+  (void *)Ion::Events::setShiftAlphaStatus,
+  // SVC_EVENTS_SHIFT_ALPHA_STATUS
+  (void *)Ion::Events::shiftAlphaStatus,
+  // SVC_FCC_ID
+  (void *)Ion::Device::fccId,
+  // SVC_FLASH_ERASE_SECTOR
+  (void *)Ion::Device::Flash::EraseSector,
+  // SVC_FLASH_MASS_ERASE
+  (void *)Ion::Device::Flash::MassErase,
+  // SVC_FLASH_WRITE_MEMORY
+  (void *)Ion::Device::Flash::WriteMemory,
+  // SVC_KEYBOARD_SCAN
+  (void *)Ion::Device::Keyboard::scan,
+  // SVC_LED_GET_COLOR
+  (void *)Ion::Device::LED::getColor,
+  // SVC_LED_SET_BLINKING
+  (void *)Ion::Device::LED::setBlinking,
+  // SVC_LED_SET_COLOR
+  (void *)Ion::Device::LED::setColor,
+  // SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE
+  (void *)Ion::Device::LED::updateColorWithPlugAndCharge,
+  // SVC_PERSISTING_BYTES_READ
+  (void *)Ion::Device::PersistingBytes::read,
+  // SVC_PERSISTING_BYTES_WRITE
+  (void *)Ion::Device::PersistingBytes::write,
+  // SVC_POWER_SELECT_STANDBY_MODE
+  (void *)Ion::Device::Power::selectStandbyMode,
+  // SVC_POWER_STANDBY
+  (void *)Ion::Device::Power::standby,
+  // SVC_POWER_SUSPEND
+  (void *)Ion::Device::Power::suspend,
+  // SVC_RANDOM
+  (void *)Ion::Device::random,
+  // SVC_RESET_CORE
+  (void *)Ion::Device::Reset::coreWhilePlugged,
+  // SVC_SERIAL_NUMBER
+  (void *)Ion::Device::SerialNumber::get,
+  // SVC_SERIAL_NUMBER_COPY
+  (void *)Ion::Device::SerialNumber::copy,
+  // SVC_TIMING_MILLIS
+  (void *)Ion::Timing::millis,
+  // SVC_TIMING_MSLEEP
+  (void *)Ion::Timing::msleep,
+  // SVC_TIMING_USLEEP
+  (void *)Ion::Timing::usleep,
+  // SVC_USB_DID_EXECUTE_DFU
+  (void *)Ion::Device::USB::didExecuteDFU,
+  // SVC_USB_IS_PLUGGED
+  (void *)Ion::USB::isPlugged,
+  // SVC_USB_SHOULD_INTERRUPT
+  (void *)Ion::Device::USB::shouldInterruptDFU,
+  // SVC_USB_WILL_EXECUTE_DFU
+  (void *)Ion::Device::USB::willExecuteDFU
 };
 
 void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPointer, uint32_t exceptReturn, uint32_t svcNumber) {
-  svcNumber = 0;
   /* The stack process is layout as follows:
    *
    * |                       |
@@ -62,7 +169,7 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
    *
    */
   // Step 1: avoid overflowing svc table
-  if (svcNumber > k_numberOfSVCall) {
+  if (svcNumber >= SVC_NUMBER_OF_CALLS) {
     return;
   }
   // Step 2: some svc calls require authentication
@@ -154,221 +261,3 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
   // Step 11: restore callee-saved registers
   asm volatile ("pop {r4-r5}");
 }
-#if 0
-//static_assert(SVCallTable[SVC_USB_WILL_EXECUTE_DFU] == ??);
-void svcall_handler(unsigned svcNumber, void * args[]) {
-  constexpr unsigned authentificationRequired[] = {SVC_USB_WILL_EXECUTE_DFU, SVC_USB_DID_EXECUTE_DFU, SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_FLASH_MASS_ERASE, SVC_FLASH_ERASE_SECTOR, SVC_FLASH_WRITE_MEMORY};
-  for (size_t i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
-    if (svcNumber == authentificationRequired[i] && !Ion::Device::Authentication::trustedUserland()) {
-      return;
-    }
-  }
-  switch (svcNumber) {
-    case SVC_DISPLAY_PUSH_RECT:
-      // Load rect and pixels
-      Ion::Device::Display::pushRect(
-          *static_cast<KDRect *>(args[0]),
-          static_cast<const KDColor *>(args[1])
-        );
-      return;
-    case SVC_DISPLAY_PUSH_RECT_UNIFORM:
-    {
-      // Load rect and color
-      Ion::Device::Display::pushRectUniform(
-          *static_cast<KDRect *>(args[0]),
-          *static_cast<KDColor *>(args[1])
-        );
-      return;
-    }
-    case SVC_DISPLAY_PULL_RECT:
-      // Load rect and pixels
-      Ion::Device::Display::pullRect(
-          *static_cast<KDRect *>(args[0]),
-          static_cast<KDColor *>(args[1])
-        );
-      return;
-    case SVC_DISPLAY_WAIT_FOR_V_BLANK:
-      *static_cast<bool *>(args[0]) = Ion::Device::Display::waitForVBlank();
-      return;
-    case SVC_DISPLAY_UNIFORM_TILING_SIZE_10:
-      *static_cast<int *>(args[1]) = Ion::Device::Display::displayUniformTilingSize10(*static_cast<KDColor *>(args[0]));
-      return;
-    case SVC_DISPLAY_COLORED_TILING_SIZE_10:
-      *static_cast<int *>(args[0]) = Ion::Device::Display::displayColoredTilingSize10();
-      return;
-    case SVC_DISPLAY_POST_PUSH_MULTICOLOR:
-      // Load rootNumberTiles and tileSize
-      Ion::Device::Display::POSTPushMulticolor(
-          *static_cast<int *>(args[0]),
-          *static_cast<int *>(args[1])
-        );
-      return;
-    // USB
-    case SVC_USB_IS_PLUGGED:
-      *static_cast<bool *>(args[0]) = Ion::USB::isPlugged();
-      return;
-    case SVC_USB_WILL_EXECUTE_DFU:
-      Ion::Device::USB::willExecuteDFU();
-      return;
-    case SVC_USB_DID_EXECUTE_DFU:
-      Ion::Device::USB::didExecuteDFU();
-      return;
-    case SVC_USB_SHOULD_INTERRUPT:
-      *static_cast<bool *>(args[0]) = Ion::Device::USB::shouldInterruptDFU();
-      return;
-    // TIMING
-    case SVC_TIMING_USLEEP:
-      Ion::Timing::usleep(*static_cast<uint32_t *>(args[0]));
-      return;
-    case SVC_TIMING_MSLEEP:
-      Ion::Timing::msleep(*static_cast<uint32_t *>(args[0]));
-      return;
-    case SVC_TIMING_MILLIS:
-      *static_cast<uint64_t *>(args[0]) = Ion::Timing::millis();
-      return;
-    // KEYBOARD
-    case SVC_KEYBOARD_SCAN:
-      *static_cast<Ion::Keyboard::State *>(args[0]) = Ion::Device::Keyboard::scan();
-      return;
-    // BATTERY
-    case SVC_BATTERY_IS_CHARGING:
-      *static_cast<bool *>(args[0]) = Ion::Device::Battery::isCharging();
-      return;
-    case SVC_BATTERY_LEVEL:
-      *static_cast<Ion::Battery::Charge *>(args[0]) = Ion::Device::Battery::level();
-      return;
-    case SVC_BATTERY_VOLTAGE:
-      *static_cast<float *>(args[0]) = Ion::Device::Battery::voltage();
-      return;
-    // BACKLIGHT
-    case SVC_BACKLIGHT_INIT:
-      Ion::Device::Backlight::init();
-      return;
-    case SVC_BACKLIGHT_SHUTDOWN:
-      Ion::Device::Backlight::shutdown();
-    case SVC_BACKLIGHT_IS_INITIALIZED:
-      *static_cast<bool *>(args[0]) = Ion::Device::Backlight::isInitialized();
-      return;
-    case SVC_BACKLIGHT_SET_BRIGHTNESS:
-      Ion::Device::Backlight::setBrightness(*static_cast<uint8_t *>(args[0]));
-      return;
-    case SVC_BACKLIGHT_BRIGHTNESS:
-      *static_cast<uint8_t *>(args[0]) = Ion::Device::Backlight::brightness();
-      return;
-    // PERSISTING BYTES
-    case SVC_PERSISTING_BYTES_WRITE:
-      Ion::Device::PersistingBytes::write(*static_cast<uint8_t *>(args[0]));
-      return;
-    case SVC_PERSISTING_BYTES_READ:
-      *static_cast<uint8_t *>(args[0]) = Ion::Device::PersistingBytes::read();
-      return;
-    // EVENTS
-    case SVC_EVENTS_COPY_TEXT:
-    {
-      const char * text = static_cast<const Ion::Events::Event *>(args[0])->text();
-      if (text) {
-        *static_cast<size_t *>(args[2]) = strlcpy(static_cast<char *>(args[1]), text, *static_cast<size_t *>(args[2]));
-      } else {
-        *static_cast<size_t *>(args[2]) = 0;
-      }
-      return;
-    }
-    case SVC_EVENTS_GET_EVENT:
-      *static_cast<Ion::Events::Event *>(args[1]) = Ion::Device::Events::getEvent(static_cast<int *>(args[0]));
-      return;
-    case SVC_EVENTS_IS_DEFINED:
-      *static_cast<bool *>(args[1]) = static_cast<const Ion::Events::Event *>(args[0])->isDefined();
-      return;
-    case SVC_EVENTS_REPETITION_FACTOR:
-      *static_cast<int *>(args[0]) = Ion::Events::repetitionFactor();
-      return;
-    case SVC_EVENTS_SET_SHIFT_ALPHA_STATUS:
-      Ion::Events::setShiftAlphaStatus(*static_cast<Ion::Events::ShiftAlphaStatus *>(args[0]));
-      return;
-    case SVC_EVENTS_SHIFT_ALPHA_STATUS:
-      *static_cast<Ion::Events::ShiftAlphaStatus *>(args[0]) = Ion::Events::shiftAlphaStatus();
-      return;
-    // POWER
-    case SVC_POWER_STANDBY:
-      Ion::Device::Power::standby();
-      return;
-    case SVC_POWER_SUSPEND:
-      Ion::Device::Power::suspend(*static_cast<bool *>(args[0]));
-      return;
-    case SVC_POWER_SELECT_STANDBY_MODE:
-      Ion::Device::Power::selectStandbyMode(*static_cast<bool *>(args[0]));
-      return;
-    // LED
-    case SVC_LED_GET_COLOR:
-      *static_cast<KDColor *>(args[0]) = Ion::Device::LED::getColor();
-      return;
-    case SVC_LED_SET_COLOR:
-      Ion::Device::LED::setColor(*static_cast<KDColor *>(args[0]));
-      return;
-    case SVC_LED_SET_BLINKING:
-      Ion::Device::LED::setBlinking(*static_cast<uint16_t *>(args[0]), *static_cast<float *>(args[1]));
-      return;
-    case SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE:
-      *static_cast<KDColor *>(args[0]) = Ion::Device::LED::updateColorWithPlugAndCharge();
-      return;
-    // CRC32
-    case SVC_CRC32_WORD:
-      *static_cast<uint32_t *>(args[2]) = Ion::Device::crc32Word(static_cast<const uint32_t *>(args[0]), *static_cast<size_t *>(args[1]));
-      return;
-    case SVC_CRC32_BYTE:
-      *static_cast<uint32_t *>(args[2]) = Ion::Device::crc32Byte(static_cast<const uint8_t *>(args[0]), *static_cast<size_t *>(args[1]));
-      return;
-    // SERIAL NUMBER
-    case SVC_SERIAL_NUMBER:
-      *static_cast<const char **>(args[0]) = Ion::Device::SerialNumber::get();
-      return;
-    case SVC_SERIAL_NUMBER_COPY:
-      Ion::Device::SerialNumber::copy(static_cast<char *>(args[0]) );
-      return;
-    // FCC_ID
-    case SVC_FCC_ID:
-      *static_cast<const char **>(args[0]) = Ion::Device::fccId();
-      return;
-    // RANDOM
-    case SVC_RANDOM:
-      *static_cast<uint32_t *>(args[0]) = Ion::Device::random();
-      return;
-    // RESET
-    case SVC_RESET_CORE:
-      Ion::Device::Reset::coreWhilePlugged();
-      return;
-    // CIRCUIT BREAKER
-    case SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT:
-      *static_cast<bool *>(args[1]) = Ion::Device::CircuitBreaker::hasCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]));
-      return;
-    case SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT:
-      Ion::Device::CircuitBreaker::loadCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]));
-      return;
-    case SVC_CIRCUIT_BREAKER_SET_CHECKPOINT:
-      *static_cast<bool *>(args[2]) = Ion::Device::CircuitBreaker::setCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]), static_cast<uint8_t *>(args[1]));
-      return;
-    case SVC_CIRCUIT_BREAKER_STATUS:
-      *static_cast<Ion::CircuitBreaker::Status *>(args[0]) = Ion::Device::CircuitBreaker::status();
-      return;
-    case SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT:
-      Ion::Device::CircuitBreaker::unsetCheckpoint(*static_cast<Ion::CircuitBreaker::CheckpointType *>(args[0]));
-      return;
-    // BOARD
-    case SVC_BOARD_SWITCH_EXECUTABLE_SLOT:
-      *static_cast<uint32_t *>(args[0]) = Ion::Device::Board::switchExecutableSlot();
-      return;
-    // FLASH
-    case SVC_FLASH_MASS_ERASE:
-      Ion::Device::Flash::MassErase();
-      return;
-    case SVC_FLASH_ERASE_SECTOR:
-      *static_cast<bool *>(args[1]) = Ion::Device::Flash::EraseSector(*static_cast<int *>(args[0]));
-      return;
-    case SVC_FLASH_WRITE_MEMORY:
-      *static_cast<bool *>(args[3]) = Ion::Device::Flash::WriteMemory(static_cast<uint8_t *>(args[0]), static_cast<uint8_t *>(args[1]), *static_cast<size_t *>(args[2]));
-    default:
-      return;
-  }
-}
-
-#endif

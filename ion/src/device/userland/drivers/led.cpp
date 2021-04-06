@@ -4,40 +4,20 @@
 namespace Ion {
 namespace LED {
 
-void SVC_ATTRIBUTES getColorSVC(KDColor * res) {
+KDColor SVC_ATTRIBUTES getColor() {
   SVC(SVC_LED_GET_COLOR);
 }
 
-KDColor getColor() {
-  KDColor res;
-  getColorSVC(&res);
-  return res;
-}
-
-void SVC_ATTRIBUTES setColorSVC(KDColor * s) {
+void SVC_ATTRIBUTES setColor(KDColor c) {
   SVC(SVC_LED_SET_COLOR);
 }
 
-void setColor(KDColor c) {
-  setColorSVC(&c);
-}
-
-void SVC_ATTRIBUTES setBlinkingSVC(uint16_t * periodInMilliseconds, float * dutyCycle) {
+void SVC_ATTRIBUTES setBlinking(uint16_t periodInMilliseconds, float dutyCycle) {
   SVC(SVC_LED_SET_BLINKING);
 }
 
-void setBlinking(uint16_t periodInMilliseconds, float dutyCycle) {
-  setBlinkingSVC(&periodInMilliseconds, &dutyCycle);
-}
-
-void SVC_ATTRIBUTES updateColorWithPlugAndChargeSVC(KDColor * res) {
+KDColor SVC_ATTRIBUTES updateColorWithPlugAndCharge() {
   SVC(SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE);
-}
-
-KDColor updateColorWithPlugAndCharge() {
-  KDColor res;
-  updateColorWithPlugAndChargeSVC(&res);
-  return res;
 }
 
 }

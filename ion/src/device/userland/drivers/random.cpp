@@ -3,14 +3,8 @@
 
 namespace Ion {
 
-void randomSVC(uint32_t * res) {
+uint32_t SVC_ATTRIBUTES random() {
   SVC(SVC_RANDOM);
-}
-
-uint32_t random() {
-  uint32_t res;
-  randomSVC(&res);
-  return res;
 }
 
 }

@@ -15,12 +15,21 @@
 #include <ion/usb.h>
 #include <ion/src/shared/events_modifier.h>
 #include <limits.h>
+#include <string.h>
 
 namespace Ion {
 namespace Events {
 
 const char * Event::text() const {
   return defaultText();
+}
+
+size_t Event::copyText(char * buffer, size_t bufferSize) const {
+  if (text()) {
+    return strlcpy(buffer, text(), bufferSize);
+  } else {
+    return 0;
+  }
 }
 
 }

@@ -1,99 +1,87 @@
 #include "range_parameter_controller.h"
-#include <assert.h>
 
 using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {
 
-KDSize RangeParameterController::NormalizeCell::minimalSizeForOptimalDisplay() const {
-  m_cell.setSize(bounds().size());
-  KDSize cellSize = m_cell.minimalSizeForOptimalDisplay();
-  // An additional border is required after separator (and will be overlapped)
-  return KDSize(cellSize.width(), cellSize.height() + k_margin + k_lineThickness);
-}
+// RangeParameterController
 
 RangeParameterController::RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
-  FloatParameterController<float>(parentResponder),
+  SelectableListViewController(parentResponder),
   m_interactiveRange(interactiveRange),
   m_tempInteractiveRange(*interactiveRange),
   m_rangeCells{},
+  m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation([](void * context, void * sender) {
+    RangeParameterController * parameterController = static_cast<RangeParameterController *>(context);
+    parameterController->buttonAction();
+    return true;
+  }, this)),
   m_confirmPopUpController(Invocation([](void * context, void * sender) {
     Container::activeApp()->dismissModalViewController();
     ((RangeParameterController *)context)->stackController()->pop();
     return true;
   }, this)),
-  m_forceHideNormalizeCell(false)
-{
-  for (int i = 0; i < k_numberOfTextCell; i++) {
-    m_rangeCells[i].setParentResponder(&m_selectableTableView);
-    m_rangeCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-  }
-}
-
-const char * RangeParameterController::title() {
-  return I18n::translate(I18n::Message::Axis);
-}
-
-int RangeParameterController::numberOfRows() const {
-  return k_numberOfTextCell + 1 + displayNormalizeCell();
-}
+  m_singleRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange)
+{}
 
 int RangeParameterController::typeAtIndex(int index) {
-  if (displayNormalizeCell() && index == 0) {
-    return k_normalizeCellType;
-  }
-  return FloatParameterController::typeAtIndex(index);
+  /* FIXME: Give names to the types. */
+  int types[] = {0, 1, 1, 2};
+  return types[index + !displayNormalizeCell()];
 }
 
 int RangeParameterController::reusableCellCount(int type) {
-  if (type == k_normalizeCellType) {
-    return displayNormalizeCell();
+  if (type == 1) {
+    return k_numberOfRangeCells;
+  } else {
+    return 1;
   }
-  return FloatParameterController::reusableCellCount(type);
 }
 
 HighlightCell * RangeParameterController::reusableCell(int index, int type) {
-  if (type == k_normalizeCellType) {
+  if (type == 0) {
     assert(index == 0);
     return &m_normalizeCell;
+  } else if (type == 1) {
+    assert(index < k_numberOfRangeCells);
+    return m_rangeCells + index;
+  } else {
+    assert(type == 2);
+    assert(index == 0);
+    return &m_okButton;
   }
-  return FloatParameterController::reusableCell(index, type);
 }
 
 KDCoordinate RangeParameterController::nonMemoizedRowHeight(int j) {
-  if (displayNormalizeCell()) {
-    if (j == 0) {
-      m_normalizeCell.setSize(KDSize(cellWidth(), 0));
-      return m_normalizeCell.minimalSizeForOptimalDisplay().height();
-    }
-    j--;
-  }
-  m_forceHideNormalizeCell = true;
-  KDCoordinate res = FloatParameterController::nonMemoizedRowHeight(j);
-  m_forceHideNormalizeCell = false;
-  return res;
+  HighlightCell * cells[] = {&m_normalizeCell, m_rangeCells, m_rangeCells + 1, &m_okButton};
+  assert(j < numberOfRows());
+  return heightForCellAtIndex(cells[j + !displayNormalizeCell()], j, false);
 }
 
 void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows()-1) {
-    return;
+  /* TODO: Will need to update various buffers. */
+  int i = index - displayNormalizeCell();
+  if (i  >= 0 && i < k_numberOfRangeCells) {
+    MessageTableCellWithChevron * castedCell = static_cast<MessageTableCellWithChevron *>(cell);
+    castedCell->setMessage(i == 0 ? I18n::Message::ValuesOfX : I18n::Message::ValuesOfY);
   }
-  if (displayNormalizeCell()) {
-    if (index == 0) {
-      return;
-    }
-    index--;
-  }
-  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
-  I18n::Message labels[k_numberOfTextCell] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::YMin, I18n::Message::YMax};
-  myCell->setMessage(labels[index]);
-  FloatParameterController::willDisplayCellForIndex(cell, index);
+  SelectableListViewController::willDisplayCellForIndex(cell, index);
 }
 
-void RangeParameterController::setRange(InteractiveCurveViewRange * range){
-  m_interactiveRange = range;
-  m_tempInteractiveRange = *range;
+void RangeParameterController::didBecomeFirstResponder() {
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+}
+
+void RangeParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
+  if (selectedRow() == -1) {
+    selectCellAtLocation(0, 0);
+  } else {
+    selectCellAtLocation(selectedColumn(), selectedRow());
+  }
+  resetMemoization();
+  m_selectableTableView.reloadData();
 }
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
@@ -102,37 +90,25 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && displayNormalizeCell() && selectedRow() == 0) {
-    m_interactiveRange->normalize();
-    FloatParameterController::buttonAction();
-    return true;
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    if (displayNormalizeCell() && selectedRow() == 0) {
+      m_interactiveRange->normalize();
+      stackController()->pop();
+      return true;
+    }
+    int index = selectedRow() - displayNormalizeCell();
+    if (index < k_numberOfRangeCells) {
+      m_singleRangeController.setEditXRange(index == 0);
+      stackController()->push(&m_singleRangeController);
+      return true;
+    }
   }
-  return FloatParameterController::handleEvent(event);
+  return false;
 }
 
-float RangeParameterController::parameterAtIndex(int parameterIndex) {
-  ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
-    &InteractiveCurveViewRange::xMax, &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax};
-  return (m_tempInteractiveRange.*getters[parameterIndex])();
-}
-
-bool RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
-  parameterIndex -= displayNormalizeCell();
-  ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
-    &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
-  (m_tempInteractiveRange.*setters[parameterIndex])(f);
-  return true;
-}
-
-HighlightCell * RangeParameterController::reusableParameterCell(int index, int type) {
-  assert(type == k_parameterCellType);
-  assert(index >= 0 && index < k_numberOfTextCell);
-  return m_rangeCells + index;
-}
-
-int RangeParameterController::reusableParameterCellCount(int type) {
-  assert(type == k_parameterCellType);
-  return k_numberOfTextCell;
+void RangeParameterController::setRange(InteractiveCurveViewRange * range) {
+  m_interactiveRange = range;
+  m_tempInteractiveRange = *range;
 }
 
 void RangeParameterController::buttonAction() {
@@ -144,7 +120,49 @@ void RangeParameterController::buttonAction() {
   m_interactiveRange->setZoomAuto(false);
   m_interactiveRange->setZoomNormalize(m_interactiveRange->isOrthonormal());
 
-  FloatParameterController::buttonAction();
+  stackController()->pop();
+}
+
+// RangeParameterController::NormalizeCell
+
+KDSize RangeParameterController::NormalizeCell::minimalSizeForOptimalDisplay() const {
+  m_cell.setSize(bounds().size());
+  KDSize cellSize = m_cell.minimalSizeForOptimalDisplay();
+  // An additional border is required after separator (and will be overlapped)
+  return KDSize(cellSize.width(), cellSize.height() + k_margin + k_lineThickness);
+}
+
+// RangeParameterController::SingleRangeController
+
+RangeParameterController::SingleRangeController::SingleRangeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
+  FloatParameterController<float>(parentResponder),
+  m_boundsCells{},
+  m_range(interactiveRange)
+{
+  for (int i = 0; i < k_numberOfTextCells; i++) {
+    m_boundsCells[i].setParentResponder(&m_selectableTableView);
+    m_boundsCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
+  }
+}
+
+void RangeParameterController::SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+  if (index < k_numberOfTextCells) {
+    MessageTableCellWithEditableText * castedCell = static_cast<MessageTableCellWithEditableText *>(cell);
+    castedCell->setMessage(index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum);
+  }
+  FloatParameterController<float>::willDisplayCellForIndex(cell, index);
+}
+
+float RangeParameterController::SingleRangeController::parameterAtIndex(int index) {
+  ParameterGetterPointer getters[] = { &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax, &InteractiveCurveViewRange::xMin, &InteractiveCurveViewRange::xMax };
+  return (m_range->*getters[index + 2 * m_editXRange])();
+}
+
+bool RangeParameterController::SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
+  assert(parameterIndex < k_numberOfTextCells);
+  ParameterSetterPointer setters[] = { &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax, &InteractiveCurveViewRange::setXMin, &InteractiveCurveViewRange::setXMax };
+  (m_range->*setters[parameterIndex + 2 * m_editXRange])(f);
+  return true;
 }
 
 }

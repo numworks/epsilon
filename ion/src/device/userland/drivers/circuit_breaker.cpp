@@ -5,26 +5,12 @@
 namespace Ion {
 namespace CircuitBreaker {
 
-void SVC_ATTRIBUTES hasCheckpointSVC(CheckpointType * type, bool * res) {
+bool SVC_ATTRIBUTES hasCheckpoint(CheckpointType type) {
   SVC(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT);
 }
 
-bool hasCheckpoint(CheckpointType type) {
-  bool res;
-  hasCheckpointSVC(&type, &res);
-  return res;
-}
-
-void SVC_ATTRIBUTES loadCheckpointSVC(CheckpointType * type) {
+void SVC_ATTRIBUTES loadCheckpoint(CheckpointType type) {
   SVC(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT);
-}
-
-void loadCheckpoint(CheckpointType type) {
-  loadCheckpointSVC(&type);
-}
-
-void SVC_ATTRIBUTES setCheckpointSVC(CheckpointType * type, uint8_t * spAddress, bool * checkpointHasBeenSet) {
-  SVC(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT);
 }
 
 Status stallUntilReady() {
@@ -36,6 +22,11 @@ Status stallUntilReady() {
   return s;
 }
 
+// TODO
+bool SVC_ATTRIBUTES kernelSetCheckpoint(CheckpointType type, uint8_t * spAddress) {
+  SVC(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT);
+}
+
 Status setCheckpoint(CheckpointType type) {
   uint8_t * stackPointerAddress = nullptr;
   asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (stackPointerAddress) :);
@@ -45,30 +36,19 @@ Status setCheckpoint(CheckpointType type) {
    * function prologue which might store up to 6 registers on the stack. We
    * slide the stack pointer value to take into account the function prologue. */
   stackPointerAddress += 6*4;
-  bool checkpointHasBeenSet;
-  setCheckpointSVC(&type, stackPointerAddress, &checkpointHasBeenSet);
+  bool checkpointHasBeenSet = kernelSetCheckpoint(type, stackPointerAddress);
   if (!checkpointHasBeenSet) {
     return Status::Ignored;
   }
   return stallUntilReady();
 }
 
-void SVC_ATTRIBUTES statusSVC(Ion::CircuitBreaker::Status * res) {
+Ion::CircuitBreaker::Status SVC_ATTRIBUTES status() {
   SVC(SVC_CIRCUIT_BREAKER_STATUS);
 }
 
-Ion::CircuitBreaker::Status status() {
-  Ion::CircuitBreaker::Status res;
-  statusSVC(&res);
-  return res;
-}
-
-void SVC_ATTRIBUTES unsetCheckpointSVC(CheckpointType * type) {
+void SVC_ATTRIBUTES unsetCheckpoint(CheckpointType type) {
   SVC(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT);
-}
-
-void unsetCheckpoint(CheckpointType type) {
-  unsetCheckpointSVC(&type);
 }
 
 }

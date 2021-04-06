@@ -5,14 +5,8 @@
 namespace Ion {
 namespace USB {
 
-void SVC_ATTRIBUTES isPluggedSVC(bool * res) {
+bool SVC_ATTRIBUTES isPlugged() {
   SVC(SVC_USB_IS_PLUGGED);
-}
-
-bool isPlugged() {
-  bool res;
-  isPluggedSVC(&res);
-  return res;
 }
 
 }
@@ -22,22 +16,16 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void willExecuteDFU() {
+void SVC_ATTRIBUTES willExecuteDFU() {
   SVC(SVC_USB_WILL_EXECUTE_DFU);
 }
 
-void didExecuteDFU() {
+void SVC_ATTRIBUTES didExecuteDFU() {
   SVC(SVC_USB_DID_EXECUTE_DFU);
 }
 
-void SVC_ATTRIBUTES shouldInterruptDFUSVC(bool * res) {
+bool SVC_ATTRIBUTES shouldInterruptDFU() {
   SVC(SVC_USB_SHOULD_INTERRUPT);
-}
-
-bool shouldInterruptDFU() {
-  bool res;
-  shouldInterruptDFUSVC(&res);
-  return res;
 }
 
 }

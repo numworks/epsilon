@@ -4,40 +4,24 @@
 namespace Ion {
 namespace Backlight {
 
-void init() {
+void SVC_ATTRIBUTES init() {
   SVC(SVC_BACKLIGHT_INIT);
 }
 
-void shutdown() {
+void SVC_ATTRIBUTES shutdown() {
   SVC(SVC_BACKLIGHT_SHUTDOWN);
 }
 
-void SVC_ATTRIBUTES isInitializedSVC(bool * res) {
+bool SVC_ATTRIBUTES isInitialized() {
   SVC(SVC_BACKLIGHT_IS_INITIALIZED);
 }
 
-bool isInitialized() {
-  bool res;
-  isInitializedSVC(&res);
-  return res;
-}
-
-void SVC_ATTRIBUTES setBrightnessSVC(uint8_t * us) {
+void SVC_ATTRIBUTES setBrightness(uint8_t b) {
   SVC(SVC_BACKLIGHT_SET_BRIGHTNESS);
 }
 
-void setBrightness(uint8_t b) {
-  setBrightnessSVC(&b);
-}
-
-void SVC_ATTRIBUTES brightnessSVC(uint8_t * b) {
+uint8_t SVC_ATTRIBUTES brightness() {
   SVC(SVC_BACKLIGHT_BRIGHTNESS);
-}
-
-uint8_t brightness() {
-  uint8_t b;
-  brightnessSVC(&b);
-  return b;
 }
 
 }

@@ -1,5 +1,4 @@
 #include "reset.h"
-#include <drivers/board.h>
 #include <drivers/cache.h>
 #include <regs/regs.h>
 
@@ -23,15 +22,7 @@ void core() {
 /* jump is executed from the internal flash only as it might shutdown the
  * external flash. */
 
-void jump(uint32_t jumpIsrVectorAddress, bool mimicReset) {
-  if (mimicReset) {
-    // Disable cache before reset
-    Cache::disable();
-
-    /* Shutdown all clocks and periherals to mimic a hardware reset. */
-    Board::shutdown();
-  }
-
+void jump(uint32_t jumpIsrVectorAddress, bool useMainStack) {
   /* Jump to the reset service routine after having reset the stack pointer.
    * Both addresses are fetched from the base of the Flash memory, just like a
    * real reset would. These operations should be made at once, otherwise the C
@@ -40,13 +31,21 @@ void jump(uint32_t jumpIsrVectorAddress, bool mimicReset) {
   uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(jumpIsrVectorAddress);
   uint32_t * resetHandlerAddress = stackPointerAddress + 1;
 
-  asm volatile (
-      "msr MSP, %[stackPointer] ; bx %[resetHandler]"
-      : :
-      [stackPointer] "r" (*stackPointerAddress),
-      [resetHandler] "r" (*resetHandlerAddress)
-  );
-
+  if (useMainStack) {
+    asm volatile (
+        "msr MSP, %[stackPointer] ; bx %[resetHandler]"
+        : :
+        [stackPointer] "r" (*stackPointerAddress),
+        [resetHandler] "r" (*resetHandlerAddress)
+        );
+  } else {
+    asm volatile (
+        "msr PSP, %[stackPointer] ; bx %[resetHandler]"
+        : :
+        [stackPointer] "r" (*stackPointerAddress),
+        [resetHandler] "r" (*resetHandlerAddress)
+        );
+  }
 }
 
 }

@@ -1136,9 +1136,13 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   if (i.isOne()) {
     return Rational::Builder(1);
   }
-  Integer r1(1);
-  Integer r2(1);
-  Integer g(r.integerDenominator());
+  /* This methods reduces i^r to the form i1*i2^(r*g), where i1 and i2 are
+   * rational, and g is an integer that divides the denominator of r. */
+  Integer exponentNumerator = r.signedIntegerNumerator();
+  Integer exponentDenominator = r.integerDenominator();
+  Integer i1(1);
+  Integer i2(1);
+  Integer g(exponentDenominator);
   bool shouldRaiseParentException = false;
   {
     // See comment in Arithmetic::resetPrimeFactorization()
@@ -1154,18 +1158,21 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
         return Power::Builder(Rational::Builder(i), rClone);
       }
 
+      /* As g is defined as the gcd of r denominator and the coeeficients in i
+       * prime factor decomposition, we need to loop over said coefficients
+       * twice. */
       for (int index = 0; index < numberOfPrimeFactors; index++) {
-        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), r.signedIntegerNumerator());
-        IntegerDivision div = Integer::Division(n, r.integerDenominator());
-        r1 = Integer::Multiplication(r1, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.quotient));
+        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), exponentNumerator);
+        IntegerDivision div = Integer::Division(n, exponentDenominator);
         g = Arithmetic::GCD(g, div.remainder);
       }
       for (int index = 0; index < numberOfPrimeFactors; index++) {
-        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), r.signedIntegerNumerator());
-        IntegerDivision div = Integer::Division(n, r.integerDenominator());
+        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), exponentNumerator);
+        IntegerDivision div = Integer::Division(n, exponentDenominator);
         IntegerDivision div2 = Integer::Division(div.remainder, g);
         assert(div2.remainder.isZero());
-        r2 = Integer::Multiplication(r2, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div2.quotient));
+        i1 = Integer::Multiplication(i1, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.quotient));
+        i2 = Integer::Multiplication(i2, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div2.quotient));
       }
     } else {
       // Reset factorization
@@ -1177,33 +1184,33 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     // As tempEcp has been destroyed, fall back on parent exception checkpoint
     ExceptionCheckpoint::Raise();
   }
-  if (r2.isOverflow() || r1.isOverflow()) {
+  if (i2.isOverflow() || i1.isOverflow()) {
     // we overflow Integer at one point: we abort
     return Power::Builder(Rational::Builder(i), r.clone());
   }
-  Rational p1 = Rational::Builder(r2);
+  Rational p1 = Rational::Builder(i2);
   Integer oneExponent = isDenominator ? Integer(-1) : Integer(1);
-  Integer rDenominator = Integer::Division(r.integerDenominator(), g).quotient;
+  Integer rDenominator = Integer::Division(exponentDenominator, g).quotient;
   Rational p2 = Rational::Builder(oneExponent, rDenominator);
   Power p = Power::Builder(p1, p2);
-  if (r1.isEqualTo(Integer(1)) && !i.isNegative()) {
+  if (i1.isEqualTo(Integer(1)) && !i.isNegative()) {
     return std::move(p);
   }
   Integer one(1);
-  Rational r3 = isDenominator ? Rational::Builder(one, r1) : Rational::Builder(r1);
+  Rational i3 = isDenominator ? Rational::Builder(one, i1) : Rational::Builder(i1);
   Multiplication m = Multiplication::Builder();
-  m.addChildAtIndexInPlace(r3, 0, 0);
-  if (!r2.isOne()) {
+  m.addChildAtIndexInPlace(i3, 0, 0);
+  if (!i2.isOne()) {
     m.addChildAtIndexInPlace(p, 1, 1);
   }
   if (i.isNegative()) {
-    if (reductionContext.complexFormat()  == Preferences::ComplexFormat::Real) {
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       /* On real numbers (-1)^(p/q) =
        * - 1 if p is even
        * - -1 if p and q are odd
        * - has no real solution otherwise */
-      if (!r.unsignedIntegerNumerator().isEven()) {
-        if (r.integerDenominator().isEven()) {
+      if (!exponentNumerator.isEven()) {
+        if (exponentDenominator.isEven()) {
           return Unreal::Builder();
         } else {
           m.addChildAtIndexInPlace(Rational::Builder(-1), 0, m.numberOfChildren());

@@ -615,7 +615,6 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("ℯ^log(πℯ)", "ℯ^\u0012log(ℯ)+log(π)\u0013");
   assert_parsed_expression_simplify_to("√(ℯ^2)", "ℯ");
   assert_parsed_expression_simplify_to("999^(10000/3)", "999^\u001210000/3\u0013");
-  // TODO Gabriel
   assert_parsed_expression_simplify_to("root(4,4)", "√(2)");
   assert_parsed_expression_simplify_to("root(2^6*3^24*5^9*7^3,12)", "9×root(3500,4)");
   assert_parsed_expression_simplify_to("1/√(2)", "√(2)/2");

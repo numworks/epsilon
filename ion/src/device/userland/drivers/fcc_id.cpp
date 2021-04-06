@@ -3,14 +3,8 @@
 
 namespace Ion {
 
-void SVC_ATTRIBUTES fccIdSVC(const char ** buffer) {
+const char * SVC_ATTRIBUTES fccId() {
   SVC(SVC_FCC_ID);
-}
-
-const char * fccId() {
-  const char * res;
-  fccIdSVC(&res);
-  return res;
 }
 
 }

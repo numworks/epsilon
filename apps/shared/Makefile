@@ -77,6 +77,7 @@ app_shared_src = $(addprefix apps/shared/,\
   separator_even_odd_buffer_text_cell.cpp \
   shared_app.cpp \
   simple_interactive_curve_view_controller.cpp \
+  single_range_controller.cpp \
   store_cell.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \

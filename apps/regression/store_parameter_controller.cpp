@@ -41,7 +41,6 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   if (type == k_regressionCellType) {
     return &m_changeRegressionCell;
   }
-  assert(index < reusableCellCount(type));
   return Shared::StoreParameterController::reusableCell(index, type);
 }
 

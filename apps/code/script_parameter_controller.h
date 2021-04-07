@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/message_table_cell.h>
-#include <escher/message_table_cell_with_switch.h>
+#include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/stack_view_controller.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_list_view_controller.h>
@@ -37,7 +37,7 @@ private:
   I18n::Message m_pageTitle;
   Escher::MessageTableCell m_executeScript;
   Escher::MessageTableCell m_renameScript;
-  Escher::MessageTableCellWithSwitch m_autoImportScript;
+  Escher::MessageTableCellWithMessageWithSwitch m_autoImportScript;
   Escher::MessageTableCell m_deleteScript;
   Script m_script;
   MenuController * m_menuController;

@@ -14,6 +14,7 @@ SingleRangeController::SingleRangeController(Responder * parentResponder, InputE
   m_range(interactiveRange)
 {
   for (int i = 0; i < k_numberOfTextCells; i++) {
+    m_boundsCells[i].setController(this);
     m_boundsCells[i].setParentResponder(&m_selectableTableView);
     m_boundsCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
   }
@@ -27,8 +28,11 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
     return;
   }
   if (index < k_numberOfTextCells + 1) {
-    MessageTableCellWithEditableText * castedCell = static_cast<MessageTableCellWithEditableText *>(cell);
+    LockableEditableCell * castedCell = static_cast<LockableEditableCell *>(cell);
     castedCell->setMessage(index == 1 ? I18n::Message::Minimum : I18n::Message::Maximum);
+    KDColor color = m_range->zoomAuto() ? Palette::GrayDark : KDColorBlack;
+    castedCell->setTextColor(color);
+    castedCell->textField()->setTextColor(color);
   }
   FloatParameterController<float>::willDisplayCellForIndex(cell, index);
 }
@@ -63,6 +67,12 @@ bool SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
   ParameterSetterPointer setters[] = { &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax, &InteractiveCurveViewRange::setXMin, &InteractiveCurveViewRange::setXMax };
   (m_range->*setters[parameterIndex + 2 * m_editXRange])(f);
   return true;
+}
+
+// SingleRangeController::LockableEditableCell
+
+Responder * SingleRangeController::LockableEditableCell::responder() {
+  return m_controller->m_range->zoomAuto() ? nullptr : this;
 }
 
 }

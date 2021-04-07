@@ -21,13 +21,21 @@ public:
 private:
   constexpr static int k_numberOfTextCells = 2;
 
+  class LockableEditableCell : public Escher::MessageTableCellWithEditableText {
+  public:
+    Escher::Responder * responder() override;
+    void setController(SingleRangeController * controller) { m_controller = controller; }
+  private:
+    SingleRangeController * m_controller;
+  };
+
   float parameterAtIndex(int index) override;
   int reusableParameterCellCount(int type) override { return k_numberOfTextCells + 1; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
 
   Escher::MessageTableCellWithSwitch m_autoCell;
-  Escher::MessageTableCellWithEditableText m_boundsCells[k_numberOfTextCells];
+  LockableEditableCell m_boundsCells[k_numberOfTextCells];
   InteractiveCurveViewRange * m_range;
   bool m_editXRange;
 };

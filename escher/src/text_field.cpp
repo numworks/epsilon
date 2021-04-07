@@ -376,10 +376,10 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, i
    * defined, the variable will be inserted into the given buffer. Otherwise,
    * the (improved or not) defaultXNTCodePoint is inserted. */
   static constexpr struct { const char *name; char xnt; } sFunctions[] = {
-    { Poincare::Derivative::s_functionHelper.name(), Poincare::Derivative::s_defaultXNTChar },
-    { Poincare::Integral::s_functionHelper.name(), Poincare::Integral::s_defaultXNTChar },
-    { Poincare::Product::s_functionHelper.name(), Poincare::Product::s_defaultXNTChar },
-    { Poincare::Sum::s_functionHelper.name(), Poincare::Sum::s_defaultXNTChar }
+    { Poincare::Derivative::s_functionHelper.name(), Poincare::Derivative::k_defaultXNTChar },
+    { Poincare::Integral::s_functionHelper.name(), Poincare::Integral::k_defaultXNTChar },
+    { Poincare::Product::s_functionHelper.name(), Poincare::Product::k_defaultXNTChar },
+    { Poincare::Sum::s_functionHelper.name(), Poincare::Sum::k_defaultXNTChar }
   };
   const char * text = this->text();
   assert(text == m_contentView.editedText());

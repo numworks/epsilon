@@ -38,7 +38,7 @@ public:
   static Expression UntypedBuilder(Expression children);
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sum", 4, &UntypedBuilder);
-  static constexpr char defaultXNTChar = SumAndProduct::s_defaultXNTChar;
+  static constexpr char defaultXNTChar = SumAndProduct::k_defaultXNTChar;
 };
 
 }

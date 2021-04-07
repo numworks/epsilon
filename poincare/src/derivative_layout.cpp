@@ -120,7 +120,7 @@ Layout DerivativeLayoutNode::XNTLayout(int childIndex) const {
     return Layout(childAtIndex(k_variableLayoutIndex)).clone();
   }
   if (childIndex == k_variableLayoutIndex) {
-    return CodePointLayout::Builder(CodePoint(Derivative::s_defaultXNTChar));
+    return CodePointLayout::Builder(CodePoint(Derivative::k_defaultXNTChar));
   }
   return LayoutNode::XNTLayout();
 }

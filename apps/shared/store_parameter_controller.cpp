@@ -13,7 +13,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   SelectableListViewController(parentResponder),
   m_store(store),
   m_series(0),
-  m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula, I18n::Message::Sort},
+  m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula},
+  m_sortCell(I18n::Message::Sort),
   m_storeController(storeController),
   m_xColumnSelected(true)
 {
@@ -23,7 +24,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < k_totalNumberOfCell);
   if (index == 2) {
-    // Only sort cell uses a sublabel
     MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
     myCell->setSubLabelMessage(sortMessage());
   }
@@ -103,9 +103,11 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
-  assert(type == 0);
   assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
+  if (type == k_sortCellType) {
+    return &m_sortCell;
+  }
+  assert(type == k_defaultCellType);
   return &m_cells[index];
 }
 

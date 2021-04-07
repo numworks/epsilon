@@ -23,7 +23,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
   I18n::Message sortMessage() override { return I18n::Message::SortValues; }
-  static constexpr int k_regressionCellType = 1;
+  static constexpr int k_regressionCellType = 2;
   Escher::MessageTableCellWithChevronAndExpression m_changeRegressionCell;
   bool m_lastSelectionIsRegression;
 };

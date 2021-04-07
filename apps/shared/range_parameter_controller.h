@@ -6,7 +6,7 @@
 #include "discard_pop_up_controller.h"
 #include "float_parameter_controller.h"
 #include "interactive_curve_view_range.h"
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/unequal_view.h>
 
@@ -77,7 +77,7 @@ private:
   InteractiveCurveViewRange * m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
   NormalizeCell m_normalizeCell;
-  Escher::MessageTableCellWithChevron m_rangeCells[k_numberOfRangeCells];
+  Escher::MessageTableCellWithChevronAndBuffer m_rangeCells[k_numberOfRangeCells];
   ButtonWithSeparator m_okButton;
   DiscardPopUpController m_confirmPopUpController;
   SingleRangeController m_singleRangeController;

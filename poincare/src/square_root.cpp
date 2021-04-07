@@ -110,17 +110,14 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
   Rational rDelta = static_cast<Rational &>(delta);
   Expression left = Power::Builder(Rational::Multiplication(Rational::Addition(y, rDelta), Rational::Builder(1, 2)), Rational::Builder(1, 2));
   Expression right = Power::Builder(Rational::Multiplication(Rational::Addition(y, Rational::Multiplication(rDelta, Rational::Builder(-1))), Rational::Builder(1, 2)), Rational::Builder(1, 2));
-  Expression resultWithoutQuarticRoot = Multiplication::Builder({
+  Expression result = Multiplication::Builder({
+      Power::Builder(w, Rational::Builder(1, 4)),
       Power::Builder(x, Rational::Builder(1, 2)),
       Addition::Builder(left, subtract ? Opposite::Builder(right) : right)});
   /* Reducing the product before introducing the quartic root leads to simpler
    * results. */
-  resultWithoutQuarticRoot = resultWithoutQuarticRoot.deepReduce(reductionContext);
-  Expression quartic = Power::Builder(w, Rational::Builder(1, 4));
-  Expression result = Multiplication::Builder({quartic, resultWithoutQuarticRoot});
-  quartic.shallowReduce(reductionContext);
   e.replaceWithInPlace(result);
-  return result.shallowReduce(reductionContext);
+  return result.deepReduce(reductionContext);
 }
 
 Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

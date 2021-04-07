@@ -136,8 +136,9 @@ void RangeParameterController::buttonAction() {
    * adding a new row. */
   m_selectableTableView.deselectTable();
 
+  /* Use setZoomAuto to refresh the Auto button on the graph. */
+  m_interactiveRange->setZoomAuto(m_tempInteractiveRange.zoomAuto());
   *m_interactiveRange = m_tempInteractiveRange;
-  m_interactiveRange->setZoomAuto(false);
   m_interactiveRange->setZoomNormalize(m_interactiveRange->isOrthonormal());
 
   stackController()->pop();
@@ -156,6 +157,7 @@ KDSize RangeParameterController::NormalizeCell::minimalSizeForOptimalDisplay() c
 
 RangeParameterController::SingleRangeController::SingleRangeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
   FloatParameterController<float>(parentResponder),
+  m_autoCell(I18n::Message::DefaultSetting),
   m_boundsCells{},
   m_range(interactiveRange)
 {
@@ -166,20 +168,46 @@ RangeParameterController::SingleRangeController::SingleRangeController(Responder
 }
 
 void RangeParameterController::SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  if (index < k_numberOfTextCells) {
+  if (index == 0) {
+    SwitchView * switchView = static_cast<SwitchView *>(const_cast<View *>(m_autoCell.accessoryView()));
+    /*TODO: Use two different statuses. */
+    switchView->setState(m_editXRange ? m_range->zoomAuto() : m_range->zoomAuto());
+    return;
+  }
+  if (index < k_numberOfTextCells + 1) {
     MessageTableCellWithEditableText * castedCell = static_cast<MessageTableCellWithEditableText *>(cell);
-    castedCell->setMessage(index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum);
+    castedCell->setMessage(index == 1 ? I18n::Message::Minimum : I18n::Message::Maximum);
   }
   FloatParameterController<float>::willDisplayCellForIndex(cell, index);
 }
 
+bool RangeParameterController::SingleRangeController::handleEvent(Ion::Events::Event event) {
+  if (selectedRow() == 0 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    m_range->setZoomAuto(!m_range->zoomAuto());
+    resetMemoization();
+    m_selectableTableView.reloadData();
+    return true;
+  }
+  return FloatParameterController<float>::handleEvent(event);
+}
+
 float RangeParameterController::SingleRangeController::parameterAtIndex(int index) {
+  assert(index >= 1 && index < k_numberOfTextCells + 1);
+  index--;
   ParameterGetterPointer getters[] = { &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax, &InteractiveCurveViewRange::xMin, &InteractiveCurveViewRange::xMax };
   return (m_range->*getters[index + 2 * m_editXRange])();
 }
 
+HighlightCell * RangeParameterController::SingleRangeController::reusableParameterCell(int index, int type) {
+  if (index == 0) {
+    return &m_autoCell;
+  }
+  return &m_boundsCells[index - 1];
+}
+
 bool RangeParameterController::SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
-  assert(parameterIndex < k_numberOfTextCells);
+  assert(parameterIndex >= 1 && parameterIndex < k_numberOfTextCells + 1);
+  parameterIndex--;
   ParameterSetterPointer setters[] = { &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax, &InteractiveCurveViewRange::setXMin, &InteractiveCurveViewRange::setXMax };
   (m_range->*setters[parameterIndex + 2 * m_editXRange])(f);
   return true;

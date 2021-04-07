@@ -13,7 +13,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   SelectableListViewController(parentResponder),
   m_store(store),
   m_series(0),
-  m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula},
+  m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula, I18n::Message::Sort},
   m_storeController(storeController),
   m_xColumnSelected(true)
 {
@@ -21,10 +21,11 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 }
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
   assert(index >= 0 && index < k_totalNumberOfCell);
   if (index == 2) {
-    myCell->setMessage(sortMessage());
+    // Only sort cell uses a sublabel
+    MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
+    myCell->setSubLabelMessage(sortMessage());
   }
   ListViewDataSource::willDisplayCellForIndex(cell, index);
 }

@@ -166,7 +166,7 @@ Layout IntegralLayoutNode::XNTLayout(int childIndex) const {
     return Layout(childAtIndex(k_differentialLayoutIndex)).clone();
   }
   if (childIndex == k_differentialLayoutIndex) {
-    return CodePointLayout::Builder(CodePoint(Integral::s_defaultXNTChar));
+    return CodePointLayout::Builder(CodePoint(Integral::k_defaultXNTChar));
   }
   return LayoutNode::XNTLayout();
 }

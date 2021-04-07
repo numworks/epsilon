@@ -148,19 +148,26 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
-      App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
-      /* Just after a software update, the battery timer does not have time to
-       * fire before the calculator enters DFU mode. As the DFU mode blocks the
-       * event loop, we update the battery state "manually" here.
-       * We do it before switching to USB application to redraw the battery
-       * pictogram. */
-      updateBatteryState();
-      switchTo(usbConnectedAppSnapshot());
-      Ion::USB::DFU();
-      // Update LED when exiting DFU mode
-      Ion::LED::updateColorWithPlugAndCharge();
-      switchTo(activeSnapshot);
-      return true;
+      if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+        displayExamModePopUp(GlobalPreferences::ExamMode::Off);
+        // Warning: if the window is dirtied, you need to call window()->redraw()
+        window()->redraw();
+        return true;
+      } else {
+        App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
+        /* Just after a software update, the battery timer does not have time to
+         * fire before the calculator enters DFU mode. As the DFU mode blocks the
+         * event loop, we update the battery state "manually" here.
+         * We do it before switching to USB application to redraw the battery
+         * pictogram. */
+        updateBatteryState();
+        switchTo(usbConnectedAppSnapshot());
+        Ion::USB::DFU();
+        // Update LED when exiting DFU mode
+        Ion::LED::updateColorWithPlugAndCharge();
+        switchTo(activeSnapshot);
+        return true;
+      }
     } else {
       /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
        * from a non-USB communicating host (e.g. a USB charger). The interrupt
@@ -172,12 +179,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
-      if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-        displayExamModePopUp(GlobalPreferences::ExamMode::Off);
-        window()->redraw();
-      } else {
-        Ion::USB::enable();
-      }
+      Ion::USB::enable();
       Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
     } else {
       Ion::USB::disable();

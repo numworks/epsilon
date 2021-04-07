@@ -1,4 +1,5 @@
 #include "range_parameter_controller.h"
+#include "poincare_helpers.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -60,11 +61,30 @@ KDCoordinate RangeParameterController::nonMemoizedRowHeight(int j) {
 }
 
 void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  /* TODO: Will need to update various buffers. */
   int i = index - displayNormalizeCell();
   if (i  >= 0 && i < k_numberOfRangeCells) {
-    MessageTableCellWithChevron * castedCell = static_cast<MessageTableCellWithChevron *>(cell);
-    castedCell->setMessage(i == 0 ? I18n::Message::ValuesOfX : I18n::Message::ValuesOfY);
+    MessageTableCellWithChevronAndBuffer * castedCell = static_cast<MessageTableCellWithChevronAndBuffer *>(cell);
+    float min, max;
+    if (i == 0) {
+      castedCell->setMessage(I18n::Message::ValuesOfX);
+      min = m_tempInteractiveRange.xMin();
+      max = m_tempInteractiveRange.xMax();
+    } else {
+      assert(i == 1);
+      castedCell->setMessage(I18n::Message::ValuesOfY);
+      min = m_tempInteractiveRange.yMin();
+      max = m_tempInteractiveRange.yMax();
+    }
+    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int bufferSize = 2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
+    char buffer[bufferSize];
+    int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(min, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+    buffer[numberOfChars++] = ' ';
+    buffer[numberOfChars++] = ';';
+    buffer[numberOfChars++] = ' ';
+    numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(max, buffer + numberOfChars, bufferSize - numberOfChars, precision, Preferences::PrintFloatMode::Decimal);
+    buffer[numberOfChars++] = '\0';
+    castedCell->setSubLabelText(buffer);
   }
   SelectableListViewController::willDisplayCellForIndex(cell, index);
 }

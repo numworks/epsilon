@@ -23,9 +23,9 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < k_totalNumberOfCell);
-  if (index == 2) {
-    MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
-    myCell->setSubLabelMessage(sortMessage());
+  if (index == k_totalNumberOfCell - 1) {
+    assert(cell == &m_sortCell);
+    m_sortCell.setSubLabelMessage(sortMessage());
   }
   ListViewDataSource::willDisplayCellForIndex(cell, index);
 }

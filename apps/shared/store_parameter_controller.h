@@ -25,8 +25,8 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override { return type == k_sortCellType ? 1 : k_totalNumberOfCell - 1; }
-  int typeAtIndex(int index) override { return index == 2 ? k_sortCellType : k_defaultCellType; }
+  int reusableCellCount(int type) override { return type == k_defaultCellType ? k_totalNumberOfCell - 1 : 1; }
+  int typeAtIndex(int index) override { return index < k_totalNumberOfCell - 1 ? k_defaultCellType : k_sortCellType; }
 protected:
   DoublePairStore * m_store;
   int m_series;

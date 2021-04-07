@@ -2,7 +2,7 @@
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
 #include <escher/selectable_list_view_controller.h>
-#include <escher/message_table_cell.h>
+#include <escher/message_table_cell_with_message.h>
 #include "double_pair_store.h"
 #include <apps/i18n.h>
 
@@ -31,7 +31,7 @@ protected:
 private:
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   constexpr static int k_totalNumberOfCell = 3;
-  Escher::MessageTableCell m_cells[k_totalNumberOfCell];
+  Escher::MessageTableCellWithMessage m_cells[k_totalNumberOfCell];
   StoreController * m_storeController;
   bool m_xColumnSelected;
 };

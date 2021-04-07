@@ -57,7 +57,7 @@ public:
   static Expression UntypedBuilder(Expression children);
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
-  static constexpr char s_defaultXNTChar = 'x';
+  static constexpr char k_defaultXNTChar = 'x';
 
   // Expression
   Expression shallowReduce(Context * context);

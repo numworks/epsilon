@@ -25,13 +25,18 @@ public:
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override { return type == k_sortCellType ? 1 : k_totalNumberOfCell - 1; }
+  int typeAtIndex(int index) override { return index == 2 ? k_sortCellType : k_defaultCellType; }
 protected:
   DoublePairStore * m_store;
   int m_series;
 private:
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   constexpr static int k_totalNumberOfCell = 3;
-  Escher::MessageTableCellWithMessage m_cells[k_totalNumberOfCell];
+  constexpr static int k_defaultCellType = 0;
+  constexpr static int k_sortCellType = 1;
+  Escher::MessageTableCell m_cells[k_totalNumberOfCell-1];
+  Escher::MessageTableCellWithMessage m_sortCell;
   StoreController * m_storeController;
   bool m_xColumnSelected;
 };

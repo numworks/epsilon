@@ -1158,7 +1158,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
         return Power::Builder(Rational::Builder(i), rClone);
       }
 
-      /* As g is defined as the gcd of r denominator and the coeeficients in i
+      /* As g is defined as the gcd of r denominator and the coefficients in i
        * prime factor decomposition, we need to loop over said coefficients
        * twice. */
       for (int index = 0; index < numberOfPrimeFactors; index++) {

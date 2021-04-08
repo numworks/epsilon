@@ -46,7 +46,7 @@ protected:
     return closestCurveIndexVertically(goingUp, currentSelectedCurve, context);
   }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
-  int selectedCurveIndex() const override { return *m_indexFunctionSelectedByCursor; }
+  int selectedCurveRelativePosition() const override { return *m_indexFunctionSelectedByCursor; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;
   int numberOfCurves() const override;
   void initCursorParameters() override;

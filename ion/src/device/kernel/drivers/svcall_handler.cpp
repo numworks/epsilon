@@ -193,29 +193,29 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
    * enter svcall_handler_as from the thread mode using PSP.*/
   assert((exceptReturn & 0b1100) == 0b1100);
 
-  // Step 4: store r4-r5, callee-saved registers to use them as scratch regs
-  asm volatile ("push {r4-r5}");
 
-  /* Step 5: Get frame size: do we use the extended stack frame or standard
+  /* Step 4: Get frame size: do we use the extended stack frame or standard
    * stack frame? */
   bool extendedStackFrame = !(exceptReturn & 0b10000);
   uint32_t frameSize = extendedStackFrame ? 108 : 32; // TODO: MAGIC NUMBERS +alignment issue???
-  /* Step 6: Copy the section AB from the process stack to the main stack. This
+  /* Step 5: Copy the section AB from the process stack to the main stack. This
    * section might stores arguments to be given to the kernel function or the
    * allocated space for the return value. */
   constexpr int k_ABMaxSize = 128; // TODO: infer dynamically
-  // Step 6.1: find the top of AB section on the process stack
+  // Step 5.1: find the top of AB section on the process stack
   uint8_t * topOfArgsProcessStack = reinterpret_cast<uint8_t *>(processStackPointer + frameSize);
-  // Step 6.2: allocate enough space on the main stack
-  asm volatile ("sub sp,%[allocatedStackSize]" : : [allocatedStackSize] "rn" (k_ABMaxSize));
+  // Step 5.2: allocate enough space on the main stack
   uint8_t * mainStackPointerAddress = nullptr;
+  asm volatile ("sub sp,%[allocatedStackSize]" : : [allocatedStackSize] "rn" (k_ABMaxSize));
   // TODO: add cache barriers?
   asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (mainStackPointerAddress) :);
   memcpy(mainStackPointerAddress, topOfArgsProcessStack, k_ABMaxSize);
 
+  // Step 6: store r4-r5, callee-saved registers to use them as scratch regs
+  asm volatile ("push {r4-r5}");
+
   /* Step 7: find kernel function address */
-  void * kernelFunction = SVCallTable[svcNumber];
-  asm volatile ("mov r4, %[kernelFunction]" : : [kernelFunction] "rn" (kernelFunction));
+  asm volatile ("mov r4, %[kernelFunction]" : : [kernelFunction] "rn" (SVCallTable[svcNumber]));
 
   /* Step 8: restore r0-r4, d0-d7 registers from stack frame since they might
    * hold the arguments/return value of the kernel function. */
@@ -255,9 +255,10 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
     asm volatile ("vstr d7, [r5, #88]");
   }
 
-  // Step 10: restore the AB section of the process stack
-  memcpy(topOfArgsProcessStack, mainStackPointerAddress, k_ABMaxSize);
-
-  // Step 11: restore callee-saved registers
+  // Step 10: restore callee-saved registers
   asm volatile ("pop {r4-r5}");
+
+  // Step 11: restore the AB section of the process stack
+  memcpy(topOfArgsProcessStack, mainStackPointerAddress, k_ABMaxSize);
+  asm volatile ("add sp,%[allocatedStackSize]" : : [allocatedStackSize] "rn" (k_ABMaxSize));
 }

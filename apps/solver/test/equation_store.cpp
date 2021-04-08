@@ -105,6 +105,7 @@ QUIZ_CASE(equation_solve) {
   assert_solves_numerically_to("sin(x)=0", -180, 180, {-180, 0, 180});
   assert_solves_numerically_to("(x-1)^2×(x+1)^2=0", -1, 1, {-1, 1});
   assert_solves_numerically_to("(x-1.00001)^2×(x+1.00001)^2=0", -1, 1, {});
+  assert_solves_numerically_to("sin(x)=0", 0, 10000, {0, 180, 360, 540, 720, 900, 1080, 1260, 1440, 1620});
 
   // Long variable names
   assert_solves_to("2abcde+3=4", "abcde=1/2");

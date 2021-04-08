@@ -484,16 +484,18 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     const char * text = I18n::translate(messageTree->label());
     Layout resultLayout;
 
-    Poincare::ExceptionCheckpoint ecp;
-    if (Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition2D && ExceptionRun(ecp)) {
-      // No context is given so that f(x) is never parsed as f×(x)
-      Expression resultExpression = Expression::Parse(text, nullptr);
-      if (!resultExpression.isUninitialized()) {
-        // The text is parsable, we create its layout an insert it.
-        resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-      } else {
-        // UnitConversionCommandWithArg uses undefined units
-        assert(messageTree->label() == I18n::Message::UnitConversionCommandWithArg);
+    if (Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition2D) {
+      Poincare::ExceptionCheckpoint ecp;
+      if (ExceptionRun(ecp)) {
+        // No context is given so that f(x) is never parsed as f×(x)
+        Expression resultExpression = Expression::Parse(text, nullptr);
+        if (!resultExpression.isUninitialized()) {
+          // The text is parsable, we create its layout an insert it.
+          resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+        } else {
+          // UnitConversionCommandWithArg uses undefined units
+          assert(messageTree->label() == I18n::Message::UnitConversionCommandWithArg);
+        }
       }
     }
     if (resultLayout.isUninitialized()) {

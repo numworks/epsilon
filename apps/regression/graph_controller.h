@@ -55,7 +55,7 @@ private:
   void initCursorParameters() override;
   bool cursorMatchesModel() override;
   uint32_t rangeVersion() override;
-  int selectedCurveIndex() const override { return *m_selectedSeriesIndex; }
+  int selectedCurveIndex() const override;
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double x, Poincare::Context * context) const override;
   double yValue(int curveIndex, double x, Poincare::Context * context) const;

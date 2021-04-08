@@ -114,8 +114,6 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
       Power::Builder(w, Rational::Builder(1, 4)),
       Power::Builder(x, Rational::Builder(1, 2)),
       Addition::Builder(left, subtract ? Opposite::Builder(right) : right)});
-  /* Reducing the product before introducing the quartic root leads to simpler
-   * results. */
   e.replaceWithInPlace(result);
   return result.deepReduce(reductionContext);
 }

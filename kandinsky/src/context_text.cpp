@@ -17,8 +17,7 @@ KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame
    * is shifted 1px downward instead of upward, so that the text look better
    * centered. */
   KDSize textSize = font->stringSize(text);
-  // TODO : Identify and fix any texts that doesn't fit in its frame.
-  // assert(textSize.width() <= frame.width() && textSize.height() <= frame.height());
+  assert(textSize.width() <= frame.width() && textSize.height() <= frame.height());
   KDPoint origin(
       p.x() + std::round(horizontalAlignment * (frame.width() - textSize.width())),
       p.y() + std::ceil(verticalAlignment * (frame.height() - textSize.height())));

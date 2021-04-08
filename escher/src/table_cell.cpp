@@ -62,7 +62,6 @@ KDSize TableCell::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
-  // TODO : identify and fix all layouts where cell's frame does not fit content
   return std::min<KDCoordinate>(max, value);
 }
 

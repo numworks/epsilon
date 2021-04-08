@@ -380,6 +380,19 @@ uint32_t GraphController::rangeVersion() {
   return m_store->rangeChecksum();
 }
 
+int GraphController::selectedCurveIndex() const {
+  int res = *m_selectedSeriesIndex;
+  if (res < 0) {
+    return -1;
+  }
+  for (int i = 0; i < *m_selectedSeriesIndex; i++) {
+    if (m_store->seriesIsEmpty(i)) {
+      res--;
+    }
+  }
+  return res;
+}
+
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
   return newIndex != currentIndex && !m_store->seriesIsEmpty(newIndex);
 }

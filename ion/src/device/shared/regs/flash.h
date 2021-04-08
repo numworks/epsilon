@@ -72,6 +72,7 @@ public:
     REGS_TYPE_FIELD(RDP, 15, 8);
   };
 
+#if REGS_FLASH_CONFIG_OPTCR1
   class OPTCR1 : public Register32 {
   public:
     using Register32::Register32;
@@ -92,6 +93,7 @@ public:
     REGS_FIELD(BOOT_ADD1, uint16_t, 31, 16);
     REGS_FIELD(BOOT_ADD0, uint16_t, 15, 0);
   };
+#endif
 
   constexpr FLASH() {};
   REGS_REGISTER_AT(ACR, 0x00);
@@ -100,7 +102,9 @@ public:
   REGS_REGISTER_AT(SR, 0x0C);
   REGS_REGISTER_AT(CR, 0x10);
   REGS_REGISTER_AT(OPTCR, 0x14);
+#if REGS_FLASH_CONFIG_OPTCR1
   REGS_REGISTER_AT(OPTCR1, 0x18);
+#endif
 private:
   constexpr uint32_t Base() const {
     return 0x40023C00;

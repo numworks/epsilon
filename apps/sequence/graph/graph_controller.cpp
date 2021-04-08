@@ -55,7 +55,7 @@ bool GraphController::textFieldDidFinishEditing(TextField * textField, const cha
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = xyValues(selectedCurveIndex(), floatBody, myApp->localContext()).x2();
+  double y = xyValues(selectedCurveRelativePosition(), floatBody, myApp->localContext()).x2();
   m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   reloadBannerView();

@@ -380,7 +380,7 @@ uint32_t GraphController::rangeVersion() {
   return m_store->rangeChecksum();
 }
 
-int GraphController::selectedCurveIndex() const {
+int GraphController::selectedCurveRelativePosition() const {
   int res = *m_selectedSeriesIndex;
   if (res < 0) {
     return -1;

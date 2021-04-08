@@ -99,7 +99,9 @@ T SolverHelper<T>::Step(T x, T growthSpeed, T minimalStep, T maximalStep) {
   } else if (std::fabs(maximalStep) < std::fabs(step)) {
     step = maximalStep;
   }
-  return x + step;
+  T res = x + step;
+  assert(minimalStep > 0 ? res > x : res < x);
+  return res;
 }
 
 template<typename T>
@@ -155,7 +157,11 @@ Coordinate2D<double> Solver::NextMinimum(ValueAtAbscissa evaluation, Context * c
 
 double Solver::DefaultMaximalStep(double start, double stop) {
   double width = std::fabs(stop - start);
-  return std::fmax(k_minimalStep, k_relativePrecision * width);
+  double step = std::fmax(k_minimalStep, k_relativePrecision * width);
+  /* The maximal step must be large enough not to be cancelled out in a sum. */
+  double bound = std::fmax(std::fabs(start), std::fabs(stop));
+  double epsilon = std::nextafter(bound, INFINITY) - bound;
+  return std::fmax(step, epsilon);
 }
 
 double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {

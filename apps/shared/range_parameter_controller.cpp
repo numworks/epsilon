@@ -9,7 +9,8 @@ namespace Shared {
 KDSize RangeParameterController::NormalizeCell::minimalSizeForOptimalDisplay() const {
   m_cell.setSize(bounds().size());
   KDSize cellSize = m_cell.minimalSizeForOptimalDisplay();
-  return KDSize(cellSize.width(), cellSize.height() + k_margin);
+  // An additional border is required after separator (and will be overlapped)
+  return KDSize(cellSize.width(), cellSize.height() + k_margin + k_lineThickness);
 }
 
 RangeParameterController::RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :

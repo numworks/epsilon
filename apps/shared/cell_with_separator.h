@@ -14,6 +14,7 @@ public:
   void reloadCell() override { cell()->reloadCell(); }
   Escher::Responder * responder() override { return cell()->responder(); }
   constexpr static KDCoordinate k_margin = Escher::Metric::CommonMenuMargin;
+  constexpr static KDCoordinate k_lineThickness = Escher::Metric::CellSeparatorThickness;
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

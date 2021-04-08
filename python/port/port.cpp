@@ -117,8 +117,7 @@ void MicroPython::ExecutionEnvironment::interrupt() {
 }
 
 extern "C" {
-  extern const void * _stack_start;
-  extern const void * _stack_end;
+  extern const void * _process_stack_end;
 }
 
 void MicroPython::init(void * heapStart, void * heapEnd) {
@@ -138,7 +137,7 @@ void MicroPython::init(void * heapStart, void * heapEnd) {
 
 #if MP_PORT_USE_STACK_SYMBOLS
   mp_stack_set_top(stackTopAddress);
-  size_t stackLimitInBytes = (char *)stackTopAddress - (char *)&_stack_end;
+  size_t stackLimitInBytes = (char *)stackTopAddress - (char *)&_process_stack_end;
   mp_stack_set_limit(stackLimitInBytes);
 #else
   mp_stack_set_top(stackTopAddress);

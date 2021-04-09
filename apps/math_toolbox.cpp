@@ -477,6 +477,9 @@ KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
 }
 
 void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  /* Unhighlight reusableCell to prevent display of multiple selected rows.
+   * See SelectableTableView::reloadData comment. */
+  cell->setHighlighted(false);
   const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {

@@ -65,6 +65,10 @@ QUIZ_CASE(equation_solve) {
       "c=5"
     }
   );
+  assert_solves_to_infinite_solutions({
+    "4y+(1-√(5))x=0",
+    "x=(1+√(5))y"
+  });
 
   /* This test case needs the user defined variable. Indeed, in the equation
    * store, m_variables is just before m_userVariables, so bad fetching in

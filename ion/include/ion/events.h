@@ -31,10 +31,8 @@ public:
   }
   const char * text() const;
   // Return the length of the copied text (and not the size)
-  size_t copyText(char * buffer, size_t bufferSize) const;
   bool isKeyboardEvent() const { return m_id < 4*PageSize; }
   bool isSpecialEvent() const { return m_id >= 4*PageSize; }
-  bool isDefined() const;
   static constexpr int PageSize = Keyboard::NumberOfKeys;
 private:
   const char * defaultText() const;
@@ -51,6 +49,8 @@ enum class ShiftAlphaStatus {
 };
 
 Event getEvent(int * timeout);
+size_t copyText(uint8_t eventId, char * buffer, size_t bufferSize);
+bool isDefined(uint8_t eventId);
 
 #if ION_EVENTS_JOURNAL
 class Journal {

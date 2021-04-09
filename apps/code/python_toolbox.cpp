@@ -472,7 +472,7 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
     return true;
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t length = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
   if (length == 1) {
     char c = buffer[0];
     if (CodePoint(c).isLatinLetter()) {

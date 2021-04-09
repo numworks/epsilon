@@ -48,14 +48,6 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   assert(m_id != Events::None.m_id);
 }
 
-bool Event::isDefined() const  {
-  if (isKeyboardEvent()) {
-    return s_dataForEvent[m_id].isDefined();
-  } else {
-    return (*this == None || *this == Termination || *this == USBEnumeration || *this == USBPlug || *this == BatteryCharging || *this == ExternalText);
-  }
-}
-
 const char * Event::defaultText() const {
   /* As the ExternalText event is only available on the simulator, we save a
    * comparison by not handling it on the device. */

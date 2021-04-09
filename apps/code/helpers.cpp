@@ -11,7 +11,7 @@ const char * PythonTextForEvent(Ion::Events::Event event) {
   for (size_t i=0; i<NumberOfPythonTextPairs; i++) {
     UTF8Helper::TextPair pair = PythonTextPairs[i];
     char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-    event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+    Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
     if (strcmp(buffer, pair.firstString()) == 0) {
       return pair.secondString();
     }

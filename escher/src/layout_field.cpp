@@ -396,7 +396,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   assert(numberOfSpecialEvents == sizeof(handleSpecialEvents)/sizeof(AddLayoutPointer));
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
   for (int i = 0; i < numberOfSpecialEvents; i++) {
-    specialEvents[i].copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+    Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer, Ion::Events::EventData::k_maxDataSize);
     if (strcmp(text, buffer) == 0) {
       (cursor->*handleSpecialEvents[i])();
       return true;
@@ -551,7 +551,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t eventTextLength = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  size_t eventTextLength = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
   if (eventTextLength > 0 || event == Ion::Events::Paste || event == Ion::Events::Backspace) {
     if (!isEditing()) {
       setEditing(true);

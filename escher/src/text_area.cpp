@@ -187,7 +187,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       TextInput::moveCursorRight(step);
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t eventTextLength = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  size_t eventTextLength = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
   if (eventTextLength > 0) {
     return handleEventWithText(buffer);
   }

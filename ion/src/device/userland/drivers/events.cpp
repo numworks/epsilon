@@ -5,11 +5,11 @@
 namespace Ion {
 namespace Events {
 
-size_t SVC_ATTRIBUTES Event::copyText(char * buffer, size_t bufferSize) const {
+size_t SVC_ATTRIBUTES copyText(uint8_t eventId, char * buffer, size_t bufferSize) {
   SVC(SVC_EVENTS_COPY_TEXT);
 }
 
-bool SVC_ATTRIBUTES Event::isDefined() const {
+bool SVC_ATTRIBUTES isDefined(uint8_t eventId) {
   SVC(SVC_EVENTS_IS_DEFINED);
 }
 

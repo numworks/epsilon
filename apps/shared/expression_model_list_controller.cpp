@@ -204,7 +204,7 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
     return true;
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t eventTextLength = event.copyText(buffer, Ion::Events::EventData::k_maxDataSize);
+  size_t eventTextLength = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
   if ((eventTextLength > 0 || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var)
       && !isAddEmptyRow(selectedRow())) {
     editExpression(event);

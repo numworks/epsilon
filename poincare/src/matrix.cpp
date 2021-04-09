@@ -130,14 +130,17 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 
 int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, bool inPlace) {
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
-  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation);
+  /* Using User ReductionTarget to maximize chances of identifying null
+   * expressions. For example, 1 + sqrt(5) + 4 / (1 - sqrt(5)) require such a
+   * reduction target to extract denominator's root and identify null status. */
+  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User);
   m = m.rowCanonize(systemReductionContext, nullptr);
   int rank = m.numberOfRows();
   int i = rank-1;
   while (i >= 0) {
     int j = m.numberOfColumns()-1;
+    // TODO: Handle ExpressionNode::NullStatus::Unknown. See rowCanonize comment
     while (j >= i && matrixChild(i,j).nullStatus(context) == ExpressionNode::NullStatus::Null) {
-      // TODO: Handle ExpressionNode::NullStatus::Unknown
       j--;
     }
     if (j == i-1) {
@@ -242,8 +245,11 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
       }
       iPivot_temp++;
     }
+    /* TODO: Handle ExpressionNode::NullStatus::Unknown : rowCanonize will
+     * output a mathematically wrong result (and divide expressions by a null
+     * expression) if expression is actually null. For examples,
+     * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     if (matrixChild(iPivot, k).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
-      // TODO: Handle ExpressionNode::NullStatus::Unknown
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

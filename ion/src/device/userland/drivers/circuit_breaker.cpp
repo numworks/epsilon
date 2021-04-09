@@ -22,21 +22,12 @@ Status stallUntilReady() {
   return s;
 }
 
-// TODO
-bool SVC_ATTRIBUTES kernelSetCheckpoint(CheckpointType type, uint8_t * spAddress) {
+bool SVC_ATTRIBUTES kernelSetCheckpoint(CheckpointType type) {
   SVC(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT);
 }
 
 Status setCheckpoint(CheckpointType type) {
-  uint8_t * stackPointerAddress = nullptr;
-  asm volatile ("mov %[stackPointer], sp" : [stackPointer] "=r" (stackPointerAddress) :);
-  /* We extrat the stack pointer value when calling setCheckpoint in order to
-   * know which portion of the stack needs to be reload to jump back at
-   * checkpoint. However, the above asm instruction is executed after the
-   * function prologue which might store up to 6 registers on the stack. We
-   * slide the stack pointer value to take into account the function prologue. */
-  stackPointerAddress += 6*4;
-  bool checkpointHasBeenSet = kernelSetCheckpoint(type, stackPointerAddress);
+  bool checkpointHasBeenSet = kernelSetCheckpoint(type);
   if (!checkpointHasBeenSet) {
     return Status::Ignored;
   }

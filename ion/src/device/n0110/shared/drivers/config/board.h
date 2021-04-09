@@ -40,6 +40,7 @@ constexpr static uint32_t UserlandSRAMAddress = SRAMAddress + KernelSRAMDataBSSL
 constexpr static uint32_t SRAMLength = 0x40000; // 256kB
 constexpr static uint32_t KernelStackLength = 0x2000; // 8K
 constexpr static uint32_t KernelStackAddress = SRAMAddress + SRAMLength - KernelStackLength; // 8K
+constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - BootloaderSRAMDataBSSLength - KernelStackLength;
 
 // Userland
 constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;

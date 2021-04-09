@@ -9,8 +9,14 @@ namespace Device {
 
 using namespace Device::Regs;
 
+constexpr static size_t k_maxDataLength = 8 * 1024 * 1024;
+
 uint32_t crc32Byte(const uint8_t * data, size_t length) {
   uint32_t result = 0;
+  if (length > k_maxDataLength) {
+    // Avoid stalling the kernel with too long CRC
+    return result;
+  }
   bool initialCRCEngineState = RCC.AHB1ENR()->getCRCEN();
   RCC.AHB1ENR()->setCRCEN(true);
   CRC.CR()->setRESET(true);

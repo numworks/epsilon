@@ -32,7 +32,7 @@ bool RunLoop::step() {
   int timeout = eventDuration;
 
   Ion::Events::Event event = Ion::Events::getEvent(&timeout);
-  assert(event.isDefined());
+  assert(Ion::Events::isDefined(static_cast<uint8_t>(event)));
 
   eventDuration -= timeout;
   assert(eventDuration >= 0);

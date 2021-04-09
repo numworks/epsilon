@@ -75,11 +75,11 @@ void * SVCallTable[SVC_NUMBER_OF_CALLS] = {
   // SVC_DISPLAY_WAIT_FOR_V_BLANK
   (void *)Ion::Device::Display::waitForVBlank,
   // SVC_EVENTS_COPY_TEXT
-  (void *)&Ion::Events::Event::copyText,
+  (void *)Ion::Device::Events::copyTextSecure,
   // SVC_EVENTS_GET_EVENT
   (void *)Ion::Device::Events::getEvent,
   // SVC_EVENTS_IS_DEFINED
-  (void *)&Ion::Events::Event::isDefined,
+  (void *)Ion::Device::Events::isDefinedSecure,
   // SVC_EVENTS_REPETITION_FACTOR
   (void *)Ion::Events::repetitionFactor,
   // SVC_EVENTS_SET_SHIFT_ALPHA_STATUS

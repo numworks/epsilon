@@ -14,6 +14,7 @@
 #include <ion/keyboard.h>
 #include <ion/usb.h>
 #include <ion/src/shared/events_modifier.h>
+#include <layout_events.h>
 #include <limits.h>
 #include <string.h>
 
@@ -24,14 +25,6 @@ const char * Event::text() const {
   return defaultText();
 }
 
-size_t Event::copyText(char * buffer, size_t bufferSize) const {
-  if (text()) {
-    return strlcpy(buffer, text(), bufferSize);
-  } else {
-    return 0;
-  }
-}
-
 }
 }
 
@@ -40,6 +33,24 @@ namespace Device {
 namespace Events {
 
 using namespace Regs;
+
+size_t copyTextSecure(uint8_t eventId, char * buffer, size_t bufferSize) {
+  Ion::Events::Event e(eventId);
+  if (e.text()) {
+    return strlcpy(buffer, e.text(), bufferSize);
+  } else {
+    return 0;
+  }
+}
+
+bool isDefinedSecure(uint8_t eventId) {
+  Ion::Events::Event e(eventId);
+  if (e.isKeyboardEvent()) {
+    return Ion::Events::s_dataForEvent[static_cast<uint8_t>(e)].isDefined();
+  } else {
+    return (e == Ion::Events::None || e == Ion::Events::Termination || e == Ion::Events::USBEnumeration || e == Ion::Events::USBPlug || e == Ion::Events::BatteryCharging || e == Ion::Events::ExternalText);
+  }
+}
 
 /* We want to prescale the timer to be able to set the auto-reload in
  * milliseconds. However, since the prescaler range is 2^16-1, we use a factor

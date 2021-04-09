@@ -155,6 +155,11 @@ void downgradeTrustLevel() {
   LED::init(false); // init LED peripheral with fewer access
 }
 
+bool addressInUserlandRAM(void * address) {
+  uint32_t a = reinterpret_cast<uint32_t>(address);
+  return a >= Config::UserlandSRAMAddress && a < Config::UserlandSRAMAddress + Config::UserlandSRAMLength;
+}
+
 }
 }
 }

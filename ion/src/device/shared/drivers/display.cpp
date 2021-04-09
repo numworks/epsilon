@@ -1,5 +1,6 @@
 #include <shared/drivers/display.h>
 #include <drivers/config/display.h>
+#include <kernel/drivers/board.h>
 #include <ion/display.h>
 #include <ion/timing.h>
 #include <assert.h>
@@ -27,6 +28,12 @@ void pushRectUniform(KDRect r, KDColor c) {
 #endif
   setDrawingArea(r, Orientation::Portrait);
   pushColor(c, r.width() * r.height());
+}
+
+void pullRectSecure(KDRect r, KDColor * pixels) {
+  if (Board::addressInUserlandRAM(pixels)) {
+    pullRect(r, pixels);
+  }
 }
 
 void pullRect(KDRect r, KDColor * pixels) {

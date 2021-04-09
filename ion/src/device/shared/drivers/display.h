@@ -14,6 +14,7 @@ namespace Display {
 void pushRect(KDRect r, const KDColor * pixels);
 void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor * pixels);
+void pullRectSecure(KDRect r, KDColor * pixels);
 bool waitForVBlank();
 
 /* TODO Hugo : Implement SVC for all the methods that are exposed to the

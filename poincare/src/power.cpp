@@ -1245,6 +1245,7 @@ Expression Power::removeRootsFromDenominator(ExpressionNode::ReductionContext re
     Rational child1 = childAtIndex(1).convert<Rational>();
     Integer a = child1.unsignedIntegerNumerator();
     Integer b = child1.integerDenominator();
+    assert(!child0.numeratorOrDenominatorIsInfinity() && !child1.numeratorOrDenominatorIsInfinity());
     if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
       Integer temp = p;
       p = q;
@@ -1255,7 +1256,7 @@ Expression Power::removeRootsFromDenominator(ExpressionNode::ReductionContext re
     if (!q.isOne() && !b.isOne()) {
       /* We are handling an expression of the form (p/q)^(a/b), with a and b
        * positive. To avoid irrational number in the denominator, we turn it
-       * into : q^-(a+c)/b * (p^a * q^c)^(1/b), where c is the smallest postive
+       * into : q^-(a+c)/b * (p^a * q^c)^(1/b), where c is the smallest positive
        * integer such that (a+c)/b is an integer. */
       IntegerDivision divAB = Integer::Division(a, b);
       Integer c, d;

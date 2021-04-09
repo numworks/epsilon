@@ -34,6 +34,8 @@ uint32_t userlandStart();
 uint32_t switchExecutableSlot();
 void downgradeTrustLevel();
 
+bool addressInUserlandRAM(void * address);
+
 }
 }
 }

@@ -65,7 +65,7 @@ void * SVCallTable[SVC_NUMBER_OF_CALLS] = {
   // SVC_DISPLAY_POST_PUSH_MULTICOLOR
   (void *)Ion::Device::Display::POSTPushMulticolor,
   // SVC_DISPLAY_PULL_RECT
-  (void *)Ion::Device::Display::pullRect,
+  (void *)Ion::Device::Display::pullRectSecure,
   // SVC_DISPLAY_PUSH_RECT
   (void *)Ion::Device::Display::pushRect,
   // SVC_DISPLAY_PUSH_RECT_UNIFORM

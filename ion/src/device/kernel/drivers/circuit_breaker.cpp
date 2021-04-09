@@ -56,7 +56,7 @@ using namespace Ion::CircuitBreaker;
  *        |     |   <-- Miscellaneous values stored by
  *        |     |       pendsv_handler before executing setjmp
  *        |     |
- *       C+-----+C  <-- frame address
+ *       C+-----+C  <-- Main stack start
  *        |     |
  *        |     |
  *
@@ -74,14 +74,17 @@ using namespace Ion::CircuitBreaker;
  * - the Ion::CircuitBreaker userland API returns correclty to the application
  *   code that used the Ion::CircuitBreaker API initially (A-B section)
  *
- * The userland setCheckpoint is reponsible for extracting the function frame
- * address when entering the fonction to assess the value of A address.
- * The pendsv_handler extracts the stack pointer right before executing setjmp
- * to get the value of D address.
+ * The AB section size is assessed from the extended context frame size (108) +
+ * few registers stored on the stack when calling Userland setCheckpoint.
+ * The CD section size can be determined dynamically by the pendsv_handler
+ * which extracts the stack pointer right before executing setjmp to get the
+ * value of D address.
  */
 
-// Empirically, the snapshot section AD is up to 168 bytes long
+/* Empirically, the snapshot section AC to 144 bytes long in DEBUG=1. Keeping
+ * a greater snapshot than necessary is not an issue. */
 static constexpr size_t k_processStackSnapshotMaxSize = 144;
+// Empirically, the snapshot section CD is up to 48 bytes long
 static constexpr size_t k_mainStackSnapshotMaxSize = 48;
 
 enum class InternalStatus {
@@ -99,7 +102,6 @@ constexpr static int k_numberOfCheckpointTypes = 3;
 // Process snapshots
 uint8_t sProcessStackSnapshot[k_numberOfCheckpointTypes][k_processStackSnapshotMaxSize];
 uint8_t * sProcessStackSnapshotAddress[k_numberOfCheckpointTypes] = {nullptr, nullptr, nullptr};
-size_t sProcessStackSnapshotSize[k_numberOfCheckpointTypes];
 // Main snapshots
 uint8_t sMainStackSnapshot[k_numberOfCheckpointTypes][k_mainStackSnapshotMaxSize];
 uint8_t * sMainStackSnapshotAddress[k_numberOfCheckpointTypes] = {nullptr, nullptr, nullptr};
@@ -131,14 +133,11 @@ static inline void setPendingAction(CheckpointType type, InternalStatus action) 
   Ion::Device::Regs::CORTEX.ICSR()->setPENDSVSET(true);
 }
 
-uint8_t * sASectionStart = nullptr;
-
-bool setCheckpoint(CheckpointType type, uint8_t * spAddress) {
+bool setCheckpoint(CheckpointType type) {
   if (Device::CircuitBreaker::hasCheckpoint(type)) {
     // Keep the oldest checkpoint
     return false;
   }
-  sASectionStart = spAddress;
   setPendingAction(type, InternalStatus::PendingSetCheckpoint);
   return true;
 }
@@ -185,10 +184,7 @@ void pendsv_handler() {
     // Store process stack snapshot
     uint8_t * processStackPointer = nullptr;
     asm volatile ("mrs %[stackPointer], psp" : [stackPointer] "=r" (processStackPointer) :);
-    size_t processSnapshotSize = sASectionStart - processStackPointer;
-    assert(processSnapshotSize <= k_processStackSnapshotMaxSize);
-    memcpy(sProcessStackSnapshot[checkpointTypeIndex], processStackPointer, processSnapshotSize);
-    sProcessStackSnapshotSize[checkpointTypeIndex] = processSnapshotSize;
+    memcpy(sProcessStackSnapshot[checkpointTypeIndex], processStackPointer, k_processStackSnapshotMaxSize);
     sProcessStackSnapshotAddress[checkpointTypeIndex] = processStackPointer;
   }
 
@@ -201,9 +197,9 @@ void pendsv_handler() {
      * user global variables only which aren't stored on the stack. */
     int checkpointTypeIndex = static_cast<int>(sCheckpointType);
     // Restore process stack
-    memcpy(sProcessStackSnapshotAddress[checkpointTypeIndex], sProcessStackSnapshot[checkpointTypeIndex], sProcessStackSnapshotSize[checkpointTypeIndex]);
-    size_t mainSnapshotSize = reinterpret_cast<uint8_t *>(&_main_stack_start) - sMainStackSnapshotAddress[checkpointTypeIndex];
+    memcpy(sProcessStackSnapshotAddress[checkpointTypeIndex], sProcessStackSnapshot[checkpointTypeIndex], k_processStackSnapshotMaxSize);
     // Restore main stack
+    size_t mainSnapshotSize = reinterpret_cast<uint8_t *>(&_main_stack_start) - sMainStackSnapshotAddress[checkpointTypeIndex];
     memcpy(sMainStackSnapshotAddress[checkpointTypeIndex], sMainStackSnapshot[checkpointTypeIndex], mainSnapshotSize);
     uint8_t * processStackAddress = sProcessStackSnapshotAddress[static_cast<int>(sCheckpointType)];
 

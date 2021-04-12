@@ -43,6 +43,7 @@ ion_device_dfu_src += libaxx/src/cxxabi/pure_virtual.cpp
 ion_device_dfu_src += ion/src/device/shared/usb/boot.cpp
 ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/board.cpp
 ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/cache.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/external_flash.cpp
 ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/reset.cpp
 ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/usb.cpp
 ion_device_dfu_src += $(addprefix ion/src/device/shared/drivers/, \
@@ -54,7 +55,6 @@ ion_device_dfu_src += $(addprefix ion/src/device/shared/drivers/, \
   crc32.cpp \
   display.cpp \
   events_keyboard_platform.cpp \
-  external_flash.cpp \
   flash.cpp \
   internal_flash.cpp \
   keyboard.cpp \

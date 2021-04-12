@@ -424,18 +424,26 @@ IntegerDivision Integer::Division(const Integer & numerator, const Integer & den
 }
 
 Integer Integer::Power(const Integer & i, const Integer & j) {
-  // TODO: optimize with dichotomia
   assert(!j.isNegative());
-  if (j.isOverflow()) {
+  if (j.isZero()) {
+    return Integer(1);
+  }
+  if (j.isOverflow() || i.isOverflow()) {
     return Overflow(false);
   }
-  Integer index(j);
-  Integer result(1);
-  while (!index.isZero()) {
-    result = Multiplication(result, i);
-    index = usum(index, Integer(1), true);
+  // Exponentiate by squaring : i^j = (i*i)^(j/2) * i^(j%2)
+  Integer i1(1);
+  Integer i2(i);
+  Integer exp(j);
+  while (!exp.isOne()) {
+    IntegerDivision ud = udiv(exp, Integer(2));
+    exp = ud.quotient;
+    if (ud.remainder.isOne()) {
+      i1 = Multiplication(i1, i2);
+    }
+    i2 = Multiplication(i2, i2);
   }
-  return result;
+  return Multiplication(i1, i2);
 }
 
 Integer Integer::Factorial(const Integer & i) {

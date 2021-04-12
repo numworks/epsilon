@@ -39,7 +39,8 @@ private:
   public:
     DeleteColumnPopupController(Escher::Invocation okInvocation);
   };
-  
+
+  void popFromStackView();
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   void deleteColumn();
 

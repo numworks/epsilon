@@ -5,8 +5,6 @@ namespace Ion {
 namespace Device {
 namespace SerialNumber {
 
-constexpr static int Length = 16;
-const char * get();
 void copy(char * buffer);
 
 }

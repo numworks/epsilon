@@ -1,4 +1,4 @@
-#include "external_flash.h"
+#include <drivers/external_flash.h>
 #include <drivers/cache.h>
 #include <drivers/config/external_flash.h>
 #include <drivers/config/clocks.h>

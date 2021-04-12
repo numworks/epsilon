@@ -43,8 +43,7 @@ static void __attribute__((noinline)) jump_to_main() {
    * happening during the on boarding app. The backlight will be initialized
    * after the Power-On Self-Test if there is one or before switching to the
    * home app otherwise. */
-  bool userlandAuthentication = Ion::Device::Authentication::trustedUserland();
-  Ion::Device::Board::initPeripherals(userlandAuthentication, true);
+  Ion::Device::Board::initPeripherals(true);
   return kernel_main();
 }
 

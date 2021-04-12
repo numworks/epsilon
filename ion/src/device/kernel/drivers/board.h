@@ -15,7 +15,7 @@ void shutdownPeripheralsClocks(bool keepLEDAwake = false);
 void initInterruptions();
 void shutdownInterruptions();
 
-void initPeripherals(bool authentication, bool fromBootloader);
+void initPeripherals(bool fromBootloader);
 void shutdownPeripherals(bool keepLEDAwake = false);
 
 void initInterruptionPriorities();

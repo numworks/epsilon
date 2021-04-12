@@ -33,13 +33,13 @@ void shutdownCompensationCell() {
   SYSCFG.CMPCR()->setCMP_PD(false);
 }
 
-void initPeripherals(bool numworksAuthentication, bool fromBootloader) {
+void initPeripherals(bool fromBootloader) {
   Display::init();
   if (!fromBootloader) {
     Backlight::init();
   }
   Keyboard::init();
-  LED::init(numworksAuthentication);
+  LED::init();
   Battery::init();
   if (!fromBootloader) {
     // USB has already be initialized by the bootloader
@@ -151,8 +151,7 @@ uint32_t switchExecutableSlot() {
 }
 
 void downgradeTrustLevel() {
-  LED::shutdown();
-  LED::init(false); // init LED peripheral with fewer access
+  LED::setColor(KDColorBlack);
 }
 
 bool addressInUserlandRAM(void * address) {

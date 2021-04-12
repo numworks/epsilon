@@ -32,7 +32,6 @@ void suspend(bool checkIfOnOffKeyReleased) {
   }
   bool isLEDActive = LED::getColor() != KDColorBlack;
   bool plugged = Ion::USB::isPlugged();
-  bool numworksAuthentication = Authentication::trustedUserland();
 
   if (checkIfOnOffKeyReleased) {
     waitUntilOnOffKeyReleased();
@@ -47,7 +46,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
     // Update LED color according to plug and charge state
     Battery::initGPIO();
     USB::initGPIO();
-    LED::init(numworksAuthentication);
+    LED::init();
     isLEDActive = LED::updateColorWithPlugAndCharge() != KDColorBlack;
 
     // Configure low-power mode
@@ -105,7 +104,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
 
   // Reset normal frequency
   Board::setStandardFrequency(Board::Frequency::High);
-  Board::initPeripherals(numworksAuthentication, false);
+  Board::initPeripherals(false);
   // Update LED according to plug and charge state
   LED::updateColorWithPlugAndCharge();
   /* If the USB has been unplugged while sleeping, the USB should have been

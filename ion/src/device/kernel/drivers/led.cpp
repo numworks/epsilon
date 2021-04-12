@@ -42,8 +42,8 @@ void setBlinking(uint16_t period, float dutyCycle) {
 
 using namespace Regs;
 
-void init(bool authenticationStatus) {
-  initGPIO(authenticationStatus);
+void init() {
+  initGPIO();
   initTimer();
 }
 
@@ -52,17 +52,12 @@ void shutdown() {
   shutdownGPIO();
 }
 
-void initGPIO(bool authenticationStatus) {
+void initGPIO() {
   /* RED_LED, GREEN_LED, and BLUE_LED are driven using a timer, which is an
    * alternate function. More precisely, we will use AF2, which maps each GPIO
    * to a TIM3_CH. */
-  if (authenticationStatus) {
-    for(const AFGPIOPin & p : Config::RGBPins) {
-      p.init();
-    }
-  } else {
-    // Enable only one LED
-    Config::RGBPins[0].init(); // TODO EMILIE choose the LED wisely
+  for(const AFGPIOPin & p : Config::RGBPins) {
+    p.init();
   }
 }
 

@@ -486,6 +486,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
     if (Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition2D) {
       Poincare::ExceptionCheckpoint ecp;
+      // Try a 2D layout. If it fails, fall back on a lighter 1D edition layout
       if (ExceptionRun(ecp)) {
         // No context is given so that f(x) is never parsed as f×(x)
         Expression resultExpression = Expression::Parse(text, nullptr);

@@ -1268,9 +1268,13 @@ Expression Power::removeRootsFromDenominator(ExpressionNode::ReductionContext re
         d = Integer::Addition(Integer(1), divAB.quotient);
       }
       d.setNegative(true);
-      Expression f1 = Power::Builder(Rational::Builder(q), Rational::Builder(d));
       Integer one = Integer(1);
-      Expression f2 = Power::Builder(Rational::Builder(Integer::Multiplication(Integer::Power(p, a), Integer::Power(q, c))), Rational::Builder(one, b));
+      Integer e = Integer::Multiplication(Integer::Power(p, a), Integer::Power(q, c));
+      if (q.isOverflow() || d.isOverflow() || e.isOverflow() || b.isOverflow()) {
+        return result; // Escape
+      }
+      Expression f1 = Power::Builder(Rational::Builder(q), Rational::Builder(d));
+      Expression f2 = Power::Builder(Rational::Builder(e), Rational::Builder(one, b));
       result = Multiplication::Builder({f1, f2});
       f1.shallowReduce(reductionContext);
       f2.shallowReduce(reductionContext);

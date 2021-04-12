@@ -4,13 +4,13 @@
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/tab_view_data_source.h>
 #include <escher/tab_view_controller.h>
+#include <apps/shared/text_field_delegate_app.h>
+#include <apps/shared/shared_app.h>
 #include "box_controller.h"
 #include "calculation_controller.h"
 #include "histogram_controller.h"
 #include "store.h"
 #include "store_controller.h"
-#include "../shared/text_field_delegate_app.h"
-#include "../shared/shared_app.h"
 
 namespace Statistics {
 

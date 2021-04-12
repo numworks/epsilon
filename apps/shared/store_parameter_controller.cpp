@@ -1,10 +1,10 @@
+#include "store_parameter_controller.h"
+#include <assert.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/stack_view_controller.h>
-#include "store_parameter_controller.h"
-#include "store_controller.h"
-#include <poincare/helpers.h>
-#include <assert.h>
 #include <escher/container.h>
+#include <poincare/helpers.h>
+#include "store_controller.h"
 
 using namespace Escher;
 
@@ -27,7 +27,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < k_totalNumberOfCell);
-  if (index == k_totalNumberOfCell - 1) {
+  if (index == k_indexOfSortValues) {
     assert(cell == &m_sortCell);
     m_sortCell.setSubLabelMessage(sortMessage());
   }

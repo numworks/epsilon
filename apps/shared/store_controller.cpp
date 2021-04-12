@@ -1,7 +1,7 @@
 #include "store_controller.h"
-#include "../apps_container.h"
-#include "../shared/poincare_helpers.h"
-#include "../constant.h"
+#include <apps/apps_container.h>
+#include <apps/shared/poincare_helpers.h>
+#include <apps/constant.h>
 #include <escher/metric.h>
 #include <assert.h>
 #include <algorithm>

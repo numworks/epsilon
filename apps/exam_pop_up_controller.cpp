@@ -29,6 +29,15 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
 {
 }
 
+bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
+  // USBPlug is also sent with unplug
+  if (event == Ion::Events::USBPlug) {
+    Container::activeApp()->dismissModalViewController();
+    return true;
+  }
+  return PopUpController::handleEvent(event);
+}
+
 void ExamPopUpController::setTargetExamMode(GlobalPreferences::ExamMode mode) {
   m_targetExamMode = mode;
   for (int i = 0; i < k_numberOfLines; i++) {

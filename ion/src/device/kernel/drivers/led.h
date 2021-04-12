@@ -25,11 +25,11 @@ enum class Color {
   Blue
 };
 
-void init(bool authenticationStatus);
+void init();
 void shutdown();
 void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen, float dutyCycleBlue, uint16_t period = 0);
 
-void initGPIO(bool authenticationStatus);
+void initGPIO();
 void shutdownGPIO();
 void initTimer();
 void shutdownTimer();

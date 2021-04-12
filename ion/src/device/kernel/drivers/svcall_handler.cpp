@@ -118,8 +118,6 @@ void * SVCallTable[SVC_NUMBER_OF_CALLS] = {
   (void *)Ion::Device::random,
   // SVC_RESET_CORE
   (void *)Ion::Device::Reset::coreWhilePlugged,
-  // SVC_SERIAL_NUMBER
-  (void *)Ion::Device::SerialNumber::get,
   // SVC_SERIAL_NUMBER_COPY
   (void *)Ion::Device::SerialNumber::copy,
   // SVC_TIMING_MILLIS

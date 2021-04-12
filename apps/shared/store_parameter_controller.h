@@ -3,9 +3,10 @@
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_message.h>
-#include "double_pair_store.h"
+#include <escher/message_table_cell.h>
 #include <apps/i18n.h>
-#include <apps/shared/discard_pop_up_controller.h>
+#include "discard_pop_up_controller.h"
+#include "double_pair_store.h"
 
 namespace Shared {
 
@@ -27,7 +28,7 @@ public:
   int numberOfRows() const override { return k_totalNumberOfCell; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return type == k_defaultCellType ? k_totalNumberOfCell - 1 : 1; }
-  int typeAtIndex(int index) override { return index < k_totalNumberOfCell - 1 ? k_defaultCellType : k_sortCellType; }
+  int typeAtIndex(int index) override { return index == k_indexOfSortValues ? k_sortCellType : k_defaultCellType; }
 protected:
   DoublePairStore * m_store;
   int m_series;
@@ -35,11 +36,11 @@ private:
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   void deleteColumn();
 
+  constexpr static int k_totalNumberOfCell = 3;
   constexpr static int k_indexOfRemoveColumn = 0;
   constexpr static int k_indexOfFillFormula = k_indexOfRemoveColumn + 1;
   constexpr static int k_indexOfSortValues = k_indexOfFillFormula + 1;
 
-  constexpr static int k_totalNumberOfCell = 3;
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_sortCellType = 1;
   Escher::MessageTableCell m_cells[k_totalNumberOfCell-1];
@@ -51,4 +52,4 @@ private:
 
 }
 
-#endif
+#endif /* SHARED_STORE_PARAM_CONTROLLER_H */

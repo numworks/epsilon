@@ -10,6 +10,13 @@ using namespace Escher;
 
 namespace Shared {
 
+StoreParameterController::DeleteColumnPopupController::DeleteColumnPopupController(Escher::Invocation okInvocation) : 
+    PopUpController(2, okInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel) {
+  m_contentView.setMessage(0, I18n::Message::ConfirmDeleteColumn1);
+  m_contentView.setMessage(1, I18n::Message::ConfirmDeleteColumn2);
+}
+
+
 StoreParameterController::StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController) :
   SelectableListViewController(parentResponder),
   m_store(store),

@@ -34,6 +34,7 @@ const char * epsilonVersion();
 const char * kernelVersion();
 const char * patchLevel();
 const char * fccId();
+constexpr static int k_serialNumberLength = 16;
 const char * serialNumber();
 
 // CRC32 : non xor-ed, non reversed, direct, polynomial 4C11DB7

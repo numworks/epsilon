@@ -1,6 +1,7 @@
 #include "calculator.h"
 #include <shared/drivers/serial_number.h>
 #include <shared/drivers/usb.h>
+#include <ion.h>
 #include <ion/usb.h>
 
 namespace Ion {
@@ -8,7 +9,9 @@ namespace Device {
 namespace USB {
 
 void Calculator::PollAndReset() {
-  char serialNumber[SerialNumber::Length+1];
+  /* Don't use Ion::serialNumber to avoid any data section in the relocatable
+   * dfu. */
+  char serialNumber[Ion::k_serialNumberLength+1];
   SerialNumber::copy(serialNumber);
   Calculator c(serialNumber);
 

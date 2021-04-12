@@ -10,7 +10,7 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreParameterController::DeleteColumnPopupController::DeleteColumnPopupController(Escher::Invocation okInvocation) : 
+StoreParameterController::DeleteColumnPopupController::DeleteColumnPopupController(Escher::Invocation okInvocation) :
     PopUpController(2, okInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel) {
   m_contentView.setMessage(0, I18n::Message::ConfirmDeleteColumn1);
   m_contentView.setMessage(1, I18n::Message::ConfirmDeleteColumn2);
@@ -106,8 +106,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
   }
   assert(selectedRow() >= 0 && selectedRow() <= 2);
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  stack->pop();
+  popFromStackView();
   return true;
 }
 
@@ -127,6 +126,10 @@ void StoreParameterController::deleteColumn() {
     m_store->resetColumn(m_series, 1);
   }
   Container::activeApp()->dismissModalViewController(false);
+  popFromStackView();
+}
+
+void StoreParameterController::popFromStackView() {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   stack->pop();
 }

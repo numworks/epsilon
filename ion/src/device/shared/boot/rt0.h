@@ -6,6 +6,7 @@ namespace Device {
 namespace Init {
 
 void configureRAM();
+void configureGlobalVariables();
 
 }
 }

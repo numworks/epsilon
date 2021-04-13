@@ -131,7 +131,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, bool inPlace) {
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
   /* Using User ReductionTarget to maximize chances of identifying null
-   * expressions. For example, 1 + sqrt(5) + 4 / (1 - sqrt(5)) require such a
+   * expressions. For example, 1 + sqrt(5) + 4 / (1 - sqrt(5)) requires such a
    * reduction target to extract denominator's root and identify null status. */
   ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User);
   m = m.rowCanonize(systemReductionContext, nullptr);

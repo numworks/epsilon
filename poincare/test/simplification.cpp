@@ -1518,8 +1518,8 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("x^2", "x^2", SystemForApproximation);
   assert_parsed_expression_simplify_to("x^2", "x^2", User);
 
-  // Remove square root at denominator for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "1/\u0012√(3)+√(2)\u0013", SystemForApproximation);
+  // Remove square root at denominator for any ReductionTarget
+  assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)", SystemForApproximation);
   assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)", User);
 
   // Always reduce sign for ReductionTarget = User

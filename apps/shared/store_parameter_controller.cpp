@@ -4,6 +4,7 @@
 #include "store_controller.h"
 #include <poincare/helpers.h>
 #include <assert.h>
+#include <escher/container.h>
 
 using namespace Escher;
 
@@ -16,10 +17,13 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula},
   m_sortCell(I18n::Message::SortCellLabel),
   m_storeController(storeController),
-  m_xColumnSelected(true)
-{
-
-}
+  m_xColumnSelected(true),
+  m_confirmPopUpController(Invocation([](void * context, void * parent){
+    StoreParameterController * param = static_cast<StoreParameterController *>(context);
+    param->deleteColumn();
+    return true;
+  }, this))
+{ }
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < k_totalNumberOfCell);
@@ -51,12 +55,10 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   switch (selectedRow()) {
     case 0:
     {
-      if (m_xColumnSelected) {
-        m_store->deleteAllPairsOfSeries(m_series);
-      } else {
-        m_store->resetColumn(m_series, !m_xColumnSelected);
-      }
-      break;
+      // Display confirmation popup before removing column
+      Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f,
+          Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+      return true;
     }
     case 1:
     {
@@ -109,6 +111,17 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   }
   assert(type == k_defaultCellType);
   return &m_cells[index];
+}
+
+void StoreParameterController::deleteColumn() {
+  if (m_xColumnSelected) {
+    m_store->deleteAllPairsOfSeries(m_series);
+  } else {
+    m_store->resetColumn(m_series, 1);
+  }
+  Container::activeApp()->dismissModalViewController(false);
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  stack->pop();
 }
 
 }

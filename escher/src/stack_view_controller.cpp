@@ -84,18 +84,24 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
 }
 
 bool StackViewController::ControllerView::borderShouldOverlapContent() const {
-  /* A border should be added to separate headers from content if headers are
-   * supposed to overlap content, and both are present.
-   *
-   * However, if headers did not overlap themselves, the top header is not
-   * meant to overlap with content as well. For example, this condition prevent
-   * toolbox's title bottom border from being overridden in another color.
-   *
-   * When content is bordered, we overlaps headers and content to avoid a double
-   * border between them. An overriding border is also inserted to preserve a
-   * separation when the content scrolls. */
-  return m_headersOverlapContent && m_contentView && m_displayStackHeaders
-      && m_numberOfStacks > (m_headersOverlapHeaders ? 0 : 1);
+  /* When content is bordered, an additional border may be drawn between content
+   * and headers, on top of everything, to preserve a clean separation when the
+   * content scrolls.
+   * This border should only be added if all these conditions are satisfied :
+   *  - Headers should overlap content :        m_headersOverlapContent
+   *  - There are headers and content to display :
+   *      m_displayStackHeaders && m_numberOfStacks > 0 && m_contentView
+   *  - Either :
+   *    - There is more than one header :       m_numberOfStacks > 1
+   * The last condition prevents border color mismatch. m_headersOverlapHeaders
+   * being false means that the headers' stacks should not share their border.
+   * Currently, it only happens in the toolboxes, where the first header stack
+   * has a different border color, and should not overlap with anything (second
+   * header as well as content). In that case, we ensure that this additional
+   * border will not override the first header stack's bottom border. */
+  return m_headersOverlapContent
+    && m_displayStackHeaders && m_numberOfStacks > 0 && m_contentView
+    && (m_headersOverlapHeaders || m_numberOfStacks > 1);
 }
 
 int StackViewController::ControllerView::numberOfSubviews() const {
@@ -113,7 +119,7 @@ View * StackViewController::ControllerView::subviewAtIndex(int index) {
   } if (index == m_numberOfStacks) {
     return m_contentView;
   } else {
-    // Border view must be last so that content does not override it
+    // Border view must be last so that it is layouted on top of content subview
     assert(index == m_numberOfStacks + 1);
     return &m_borderView;
   }

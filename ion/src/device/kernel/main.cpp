@@ -4,7 +4,7 @@
 #include <kernel/drivers/cortex_control.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
-#include <shared/drivers/backlight.h>
+#include <kernel/drivers/backlight.h>
 #include <shared/drivers/display.h>
 #include <ion/display.h>
 #include <kandinsky/font.h>

@@ -1,4 +1,5 @@
 #include <escher/memoized_list_view_data_source.h>
+#include <poincare/exception_checkpoint.h>
 #include <assert.h>
 
 namespace Escher {
@@ -110,13 +111,35 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return 0;
 }
 
-KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
+KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index, bool unsafe) {
   // A non-null implementation of cellWidth is required to compute cell height.
   assert(cellWidth() != 0);
   // Set cell's frame width
   cell->setSize(KDSize(cellWidth(), cell->bounds().height()));
-  // Setup cell as if it was to be displayed
-  willDisplayCellForIndex(cell, index);
+  if (!unsafe || m_memoizationLockedLevel == 0) {
+    // Setup cell as if it was to be displayed
+    willDisplayCellForIndex(cell, index);
+  } else {
+    /* If memoization is under lock, and willDisplayCellForIndex is unsafe
+     * (allocating something in the shared pool), a Poincare exceptions may be
+     * raised, and must be caught here to clean lock before falling back on
+     * parent exception checkpoint.*/
+    {
+      // Encapsulate exception so it is destroyed before fallback is raised
+      Poincare::ExceptionCheckpoint ecp;
+      if (ExceptionRun(ecp)) {
+        willDisplayCellForIndex(cell, index);
+        // WillDisplayCellForIndex was successful
+        unsafe = false;
+      }
+    }
+    if (unsafe) {
+      /* An exception occurred. Remove Lock and fall back on parent's exception
+       * checkpoint as intended. */
+      m_memoizationLockedLevel = 0;
+      Poincare::ExceptionCheckpoint::Raise();
+    }
+  }
   // Return cell's height
   return cell->minimalSizeForOptimalDisplay().height();
 }

@@ -181,7 +181,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     storeParameterController()->selectXColumn(selectedColumn()%DoublePairStore::k_numberOfColumnsPerSeries == 0);
     storeParameterController()->selectSeries(series);
-    StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
+    StackViewController * stack = reinterpret_cast<StackViewController *>(parentResponder()->parentResponder());
     stack->push(storeParameterController());
     return true;
   }

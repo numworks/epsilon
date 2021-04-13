@@ -159,6 +159,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
 double DoublePairStore::defaultValue(int series, int i, int j) const {
   assert(series >= 0 && series < k_numberOfSeries);
   if(i == 0 && j > 1) {
+    // constant step increment
     return 2*m_data[series][i][j-1]-m_data[series][i][j-2];
   } else {
     return 0.0;

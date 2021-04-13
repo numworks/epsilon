@@ -60,7 +60,7 @@ private:
   Escher::ButtonRowController m_histogramHeader;
   Escher::StackViewController m_histogramStackViewController;
   StoreController m_storeController;
-  Escher::ButtonRowController m_storeHeader;
+  Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
   Escher::StackViewController m_storeStackViewController;
   Escher::TabViewController m_tabViewController;
 };

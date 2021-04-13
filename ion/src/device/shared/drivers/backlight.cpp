@@ -13,63 +13,17 @@ namespace Ion {
 namespace Device {
 namespace Backlight {
 
-// Public Ion::Backlight methods
-
-void setBrightness(uint8_t b) {
-  Ion::Device::Backlight::setLevel(b >> 4);
-}
-
-uint8_t brightness() {
-  return Ion::Device::Backlight::level() << 4;
-}
-
-// Private Ion::Backlight::Device methods
-
 using namespace Regs;
 
-static uint8_t sLevel;
-
-void init() {
+void initGPIO() {
   Config::BacklightPin.group().MODER()->setMode(Config::BacklightPin.pin(), GPIO::MODER::Mode::Output);
-  sLevel = 0xF;
-  resume();
-}
-
-bool isInitialized() {
-  return Config::BacklightPin.group().MODER()->getMode(Config::BacklightPin.pin()) == GPIO::MODER::Mode::Output;
+  Config::BacklightPin.group().ODR()->set(Config::BacklightPin.pin(), true);
+  Timing::usleep(50);
 }
 
 void shutdown() {
   Config::BacklightPin.group().MODER()->setMode(Config::BacklightPin.pin(), GPIO::MODER::Mode::Analog);
   Config::BacklightPin.group().PUPDR()->setPull(Config::BacklightPin.pin(), GPIO::PUPDR::Pull::None);
-}
-
-void suspend() {
-  Config::BacklightPin.group().ODR()->set(Config::BacklightPin.pin(), false);
-  Timing::msleep(3); // Might not need to be blocking
-}
-
-void resume() {
-  Config::BacklightPin.group().ODR()->set(Config::BacklightPin.pin(), true);
-  Timing::usleep(50);
-  uint8_t level = sLevel;
-  sLevel = 0xF;
-  setLevel(level);
-}
-
-void setLevel(uint8_t level) {
-  // From sLevel = 12 to level 7 : 5 pulses
-  // From sLevel = 5 to level 9 : 12 pulses (5 to go to level 16, and 7 to 9)
-  if (sLevel < level) {
-    sendPulses(16 + sLevel - level);
-  } else {
-    sendPulses(sLevel - level);
-  }
-  sLevel = level;
-}
-
-uint8_t level() {
-  return sLevel;
 }
 
 void sendPulses(int n) {

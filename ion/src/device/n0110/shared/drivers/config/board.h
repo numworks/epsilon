@@ -34,13 +34,12 @@ constexpr static uint32_t KernelAStartAddress = ExternalFlash::Config::StartAddr
 constexpr static uint32_t KernelBStartAddress = KernelAStartAddress + ExternalFlash::Config::TotalSize/2;
 constexpr static uint32_t KernelSize = 0x40000; // 256kB
 constexpr static uint32_t SRAMAddress = 0x20000000;
-constexpr static uint32_t KernelSRAMDataBSSLength = 0x1000;
-constexpr static uint32_t BootloaderSRAMDataBSSLength = 0x40;
-constexpr static uint32_t UserlandSRAMAddress = SRAMAddress + KernelSRAMDataBSSLength + BootloaderSRAMDataBSSLength;
 constexpr static uint32_t SRAMLength = 0x40000; // 256kB
+constexpr static uint32_t KernelSRAMDataBSSLength = 0x2000; // 8k
 constexpr static uint32_t KernelStackLength = 0x2000; // 8K
-constexpr static uint32_t KernelStackAddress = SRAMAddress + SRAMLength - KernelStackLength; // 8K
-constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - BootloaderSRAMDataBSSLength - KernelStackLength;
+constexpr static uint32_t KernelRAMAddress = SRAMAddress + SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
+constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
+constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
 
 // Userland
 constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;

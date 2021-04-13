@@ -53,19 +53,19 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   switch (selectedRow()) {
-    case 0:
+    case k_indexOfRemoveColumn:
     {
       // Display confirmation popup before removing column
       Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f,
           Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
       return true;
     }
-    case 1:
+    case k_indexOfFillFormula:
     {
       m_storeController->displayFormulaInput();
       break;
     }
-    case 2:
+    case k_indexOfSortValues:
     {
       Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
         double * contextI = (static_cast<double*>(context) + i);

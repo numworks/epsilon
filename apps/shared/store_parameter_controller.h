@@ -35,6 +35,10 @@ private:
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   void deleteColumn();
 
+  constexpr static int k_indexOfRemoveColumn = 0;
+  constexpr static int k_indexOfFillFormula = k_indexOfRemoveColumn + 1;
+  constexpr static int k_indexOfSortValues = k_indexOfFillFormula + 1;
+
   constexpr static int k_totalNumberOfCell = 3;
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_sortCellType = 1;

@@ -615,11 +615,9 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   /* Step 6: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */
-  if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-    Expression r = removeRootsFromDenominator(reductionContext);
-    if (!r.isUninitialized()) {
-      return r;
-    }
+  Expression r = removeRootsFromDenominator(reductionContext);
+  if (!r.isUninitialized()) {
+    return r;
   }
 
 #if 0
@@ -1234,10 +1232,10 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
 }
 
 Expression Power::removeRootsFromDenominator(ExpressionNode::ReductionContext reductionContext) {
-  assert(reductionContext.target() == ExpressionNode::ReductionTarget::User);
   Expression result;
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational
-      && childAtIndex(1).type() == ExpressionNode::Type::Rational)
+      && childAtIndex(1).type() == ExpressionNode::Type::Rational
+       && reductionContext.target() == ExpressionNode::ReductionTarget::User)
   {
     Rational child0 = childAtIndex(0).convert<Rational>();
     Integer p = child0.signedIntegerNumerator();

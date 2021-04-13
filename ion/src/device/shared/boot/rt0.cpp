@@ -1,3 +1,4 @@
+#include "rt0.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -32,6 +33,10 @@ void configureRAM() {
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
+  configureGlobalVariables();
+}
+
+void configureGlobalVariables() {
   /* Call static C++ object constructors
    * The C++ compiler creates an initialization function for each static object.
    * The linker then stores the address of each of those functions consecutively
@@ -40,7 +45,7 @@ void configureRAM() {
    * call the pointed function. */
 #define SUPPORT_CPP_GLOBAL_CONSTRUCTORS 0
 #if SUPPORT_CPP_GLOBAL_CONSTRUCTORS
-  for (cxx_constructor * c = &_init_array_start; c<&_init_array_end; c++) {
+  for (cxx_constructor * c = &_init_array_start; c < &_init_array_end; c++) {
     (*c)();
   }
 #else

@@ -48,14 +48,14 @@ private:
   constexpr static int k_indexOfRemoveColumn = 0;
   constexpr static int k_indexOfFillFormula = k_indexOfRemoveColumn + 1;
   constexpr static int k_indexOfSortValues = k_indexOfFillFormula + 1;
-
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_sortCellType = 1;
+  
+  DeleteColumnPopupController m_confirmPopUpController;
   Escher::MessageTableCell m_cells[k_totalNumberOfCell-1];
   Escher::MessageTableCellWithMessage m_sortCell;
   StoreController * m_storeController;
   bool m_xColumnSelected;
-  DeleteColumnPopupController m_confirmPopUpController;
 };
 
 }

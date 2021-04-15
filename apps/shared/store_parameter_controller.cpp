@@ -74,35 +74,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
     case k_indexOfSortValues:
     {
-      // TODO export
-      Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
-        double * contextI = (static_cast<double*>(context) + i);
-        double * contextJ = (static_cast<double*>(context) + j);
-        double * contextIOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + i);
-        double * contextJOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + j);
-        double temp1 = *contextI;
-        double temp2 = *contextIOtherColumn;
-        *contextI = *contextJ;
-        *contextIOtherColumn = *contextJOtherColumn;
-        *contextJ = temp1;
-        *contextJOtherColumn = temp2;
-      };
-      Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
-        double * contextA = (static_cast<double*>(context) + a);
-        double * contextB = (static_cast<double*>(context) + b);
-        return *contextA > *contextB;
-      };
-      Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
-        double * contextAOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + a);
-        double * contextBOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + b);
-        return *contextAOtherColumn > *contextBOtherColumn;
-      };
-      double * seriesContext = m_store->data() + m_series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
-      if (m_xColumnSelected) {
-        Poincare::Helpers::Sort(swapRows, compareX, seriesContext, m_store->numberOfPairsOfSeries(m_series));
-      } else {
-        Poincare::Helpers::Sort(swapRows, compareY, seriesContext, m_store->numberOfPairsOfSeries(m_series));
-      }
+      sortColumn();
       break;
     }
   }
@@ -146,6 +118,38 @@ void StoreParameterController::deleteColumn() {
 void StoreParameterController::popFromStackView() {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   stack->pop();
+}
+
+void StoreParameterController::sortColumn() {
+  static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
+    double * contextI = (static_cast<double*>(context) + i);
+    double * contextJ = (static_cast<double*>(context) + j);
+    double * contextIOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + i);
+    double * contextJOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + j);
+    double temp1 = *contextI;
+    double temp2 = *contextIOtherColumn;
+    *contextI = *contextJ;
+    *contextIOtherColumn = *contextJOtherColumn;
+    *contextJ = temp1;
+    *contextJOtherColumn = temp2;
+  };
+  static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
+    double * contextA = (static_cast<double*>(context) + a);
+    double * contextB = (static_cast<double*>(context) + b);
+    return *contextA > *contextB;
+  };
+  static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
+    double * contextAOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + a);
+    double * contextBOtherColumn = (static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs + b);
+    return *contextAOtherColumn > *contextBOtherColumn;
+  };
+
+  double * seriesContext = m_store->data() + m_series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
+  if (m_xColumnSelected) {
+    Poincare::Helpers::Sort(swapRows, compareX, seriesContext, m_store->numberOfPairsOfSeries(m_series));
+  } else {
+    Poincare::Helpers::Sort(swapRows, compareY, seriesContext, m_store->numberOfPairsOfSeries(m_series));
+  }
 }
 
 }

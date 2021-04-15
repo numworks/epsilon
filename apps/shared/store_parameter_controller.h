@@ -45,6 +45,7 @@ private:
   void popFromStackView();
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   void deleteColumn();
+  void sortColumn();
 
   constexpr static int k_indexOfSortValues = 0;
   constexpr static int k_indexOfFillFormula = k_indexOfSortValues + 1;

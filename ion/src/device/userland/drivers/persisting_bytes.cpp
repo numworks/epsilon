@@ -5,11 +5,11 @@ namespace Ion {
 namespace PersistingBytes {
 
 void SVC_ATTRIBUTES write(uint8_t byte) {
-  SVC(SVC_PERSISTING_BYTES_WRITE);
+  SVC_RETURNING_VOID(SVC_PERSISTING_BYTES_WRITE)
 }
 
 uint8_t SVC_ATTRIBUTES read() {
-  SVC(SVC_PERSISTING_BYTES_READ);
+  SVC_RETURNING_R0(SVC_PERSISTING_BYTES_READ, uint8_t)
 }
 
 }

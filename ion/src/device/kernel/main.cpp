@@ -19,7 +19,7 @@ void kernel_main() {
     Ion::Timing::msleep(5000);
     Ion::Device::Backlight::shutdown();
   }
-  // Unprivileged mode
+
   switch_to_unpriviledged();
 
   // Jump to userland

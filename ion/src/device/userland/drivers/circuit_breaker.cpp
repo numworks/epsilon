@@ -6,11 +6,11 @@ namespace Ion {
 namespace CircuitBreaker {
 
 bool SVC_ATTRIBUTES hasCheckpoint(CheckpointType type) {
-  SVC(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT);
+  SVC_RETURNING_R0(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT, bool)
 }
 
 void SVC_ATTRIBUTES loadCheckpoint(CheckpointType type) {
-  SVC(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT);
+  SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT)
 }
 
 Status stallUntilReady() {
@@ -23,7 +23,7 @@ Status stallUntilReady() {
 }
 
 bool SVC_ATTRIBUTES kernelSetCheckpoint(CheckpointType type) {
-  SVC(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT);
+  SVC_RETURNING_R0(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT, bool)
 }
 
 Status setCheckpoint(CheckpointType type) {
@@ -35,11 +35,11 @@ Status setCheckpoint(CheckpointType type) {
 }
 
 Ion::CircuitBreaker::Status SVC_ATTRIBUTES status() {
-  SVC(SVC_CIRCUIT_BREAKER_STATUS);
+  SVC_RETURNING_R0(SVC_CIRCUIT_BREAKER_STATUS, Ion::CircuitBreaker::Status)
 }
 
 void SVC_ATTRIBUTES unsetCheckpoint(CheckpointType type) {
-  SVC(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT);
+  SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT)
 }
 
 }

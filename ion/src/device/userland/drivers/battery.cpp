@@ -5,15 +5,15 @@ namespace Ion {
 namespace Battery {
 
 bool SVC_ATTRIBUTES isCharging() {
-  SVC(SVC_BATTERY_IS_CHARGING);
+  SVC_RETURNING_R0(SVC_BATTERY_IS_CHARGING, bool)
 }
 
 Charge SVC_ATTRIBUTES level() {
-  SVC(SVC_BATTERY_LEVEL);
+  SVC_RETURNING_R0(SVC_BATTERY_LEVEL, Charge)
 }
 
 float SVC_ATTRIBUTES voltage() {
-  SVC(SVC_BATTERY_VOLTAGE);
+  SVC_RETURNING_S0(SVC_BATTERY_VOLTAGE, float)
 }
 
 }

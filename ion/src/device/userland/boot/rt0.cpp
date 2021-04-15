@@ -16,7 +16,7 @@ extern "C" {
 
 void abort() {
 #ifdef NDEBUG
-  SVC(SVC_RESET_CORE);
+  SVC_RETURNING_VOID(SVC_RESET_CORE);
 #else
   while (1) {
   }

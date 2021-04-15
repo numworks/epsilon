@@ -180,6 +180,8 @@ static inline void send_read_command(Command c, uint8_t * address, uint8_t * dat
 }
 
 static inline void wait() {
+  /* The DSB instruction guarantees the completion of a write operation before
+   * polling the status register. */
   Cache::dsb();
   ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
   do {

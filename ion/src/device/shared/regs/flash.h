@@ -70,6 +70,7 @@ public:
       Level2 = 0xCC
     };
     REGS_TYPE_FIELD(RDP, 15, 8);
+    REGS_FIELD(WRP, uint8_t, 23, 16);
   };
 
 #if REGS_FLASH_CONFIG_OPTCR1

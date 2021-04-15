@@ -26,7 +26,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
     param->deleteColumn();
     return true;
   }, this)),
-  m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula},
+  m_cells{I18n::Message::FillWithFormula, I18n::Message::ClearColumn},
   m_sortCell(I18n::Message::SortCellLabel),
   m_storeController(storeController),
   m_xColumnSelected(true)
@@ -74,6 +74,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
     case k_indexOfSortValues:
     {
+      // TODO export
       Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
         double * contextI = (static_cast<double*>(context) + i);
         double * contextJ = (static_cast<double*>(context) + j);
@@ -105,7 +106,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       break;
     }
   }
-  assert(selectedRow() >= 0 && selectedRow() <= 2);
+  assert(selectedRow() >= 0 && selectedRow() < k_totalNumberOfCell);
   popFromStackView();
   return true;
 }

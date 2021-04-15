@@ -149,7 +149,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
       if (p.isParameteredExpression()) {
         int index = p.indexOfChild(current);
         if (index == ParameteredExpression::ParameterChildIndex()) {
-          // The symbol is a paremetered expression's parameter
+          // The symbol is a parametered expression's parameter
           return *this;
         }
         if (index == ParameteredExpression::ParameteredChildIndex()
@@ -163,7 +163,10 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
     }
   }
 
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
+  /* Recursively replace all defined symbols and catch circular references
+   * involving symbols as well as functions. The only remaining symbols in
+   * result will be undefined ones. */
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, reductionContext.symbolicComputation());
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
@@ -171,8 +174,20 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
     result = Undefined::Builder();
   }
   replaceWithInPlace(result);
+
+  ExpressionNode::ReductionContext deepReductionContext = reductionContext;
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    /* At this point, any remaining symbol is undefined and should be replaced,
+     * even if the symbol is a parametered expression's parameter.
+     * ReductionContext's SymbolicComputation is altered to enforce it.
+     * For example, with x undefined and x->a, within diff(a,x,1), a should be
+     * reduced to undefined instead of x. */
+    deepReductionContext = ExpressionNode::ReductionContext(
+      reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.target(),
+      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined, reductionContext.unitConversion());
+  }
   // The stored expression is as entered by the user, so we need to call reduce
-  return result.deepReduce(reductionContext);
+  return result.deepReduce(deepReductionContext);
 }
 
 bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {

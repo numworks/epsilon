@@ -1,15 +1,10 @@
-ion_device_userland_src += $(addprefix ion/src/device/userland/, \
-  boot/isr.c \
-  boot/rt0.cpp \
+ion_device_userland_svc_src += $(addprefix ion/src/device/userland/, \
   drivers/backlight.cpp \
   drivers/battery.cpp \
   drivers/board.cpp \
   drivers/crc32.cpp \
-  drivers/display.cpp \
   drivers/circuit_breaker.cpp \
-  drivers/clipboard.cpp \
-  drivers/console_display.cpp:+consoledisplay \
-  drivers/console_dummy.cpp:-consoledisplay \
+  drivers/display.cpp \
   drivers/events.cpp \
   drivers/fcc_id.cpp \
   drivers/flash.cpp \
@@ -18,10 +13,22 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/persisting_bytes.cpp \
   drivers/power.cpp \
   drivers/random.cpp \
-  drivers/reset.cpp \
   drivers/serial_number.cpp \
-  drivers/stack.cpp \
   drivers/timing.cpp \
   drivers/usb.cpp \
+)
+
+$(call object_for,$(ion_device_userland_svc_src)): SFLAGS += -fno-lto
+
+ion_device_userland_src += $(ion_device_userland_svc_src)
+
+ion_device_userland_src += $(addprefix ion/src/device/userland/, \
+  boot/isr.c \
+  boot/rt0.cpp \
+  drivers/clipboard.cpp \
+  drivers/console_display.cpp:+consoledisplay \
+  drivers/console_dummy.cpp:-consoledisplay \
+  drivers/reset.cpp \
+  drivers/stack.cpp \
 )
 

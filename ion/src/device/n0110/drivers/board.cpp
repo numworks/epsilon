@@ -401,13 +401,13 @@ void writePCBVersion(PCBVersion version) {
 }
 
 void lockPCBVersion() {
-  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPLocksAddress + k_pcbVersionOTPIndex);
+  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPLockAddress(k_pcbVersionOTPIndex));
   uint8_t zero = 0;
   InternalFlash::WriteMemory(destination, &zero, sizeof(zero));
 }
 
 bool pcbVersionIsLocked() {
-  return *reinterpret_cast<const uint8_t *>(InternalFlash::Config::OTPLocksAddress + k_pcbVersionOTPIndex) == 0;
+  return *reinterpret_cast<const uint8_t *>(InternalFlash::Config::OTPLockAddress(k_pcbVersionOTPIndex)) == 0;
 }
 
 }

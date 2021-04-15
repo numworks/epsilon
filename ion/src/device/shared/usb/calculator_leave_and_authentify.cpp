@@ -9,7 +9,7 @@ namespace USB {
 void Calculator::leave(uint32_t leaveAddress) {
   uint32_t addressToJumpTo = Board::switchExecutableSlot();
   if (addressToJumpTo) {
-    Reset::jump(Board::switchExecutableSlot());
+    Reset::jump(addressToJumpTo);
   }
 }
 

@@ -109,7 +109,14 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) {
     return *this;
   }
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, reductionContext.symbolicComputation());
+  /* Symbols that have a definition while also being the parameter of a
+   * parametered expression should not be replaced in SymbolAbstract::Expand.
+   * With ReplaceDefinedFunctionsWithDefinitions, only nested functions will be
+   * replaced by their definitions.
+   * Symbols will be handled in deepReduce, which is aware of parametered
+   * expressions context. For example, with 1->x and 1+x->f(x), f(x) within
+   * diff(f(x),x,1) should be reduced to 1+x instead of 2. */
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
@@ -117,14 +124,15 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
-  // The stored expression is as entered by the user, so we need to call reduce
+  /* The stored expression is as entered by the user, so we need to call reduce
+   * Remaining Nested symbols will be properly expanded as they are reduced. */
   return result.deepReduce(reductionContext);
 }
 
 Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
   {
     // Replace replaceable symbols in child
-    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly ,parameteredAncestorsCount);
+    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
     if (self.isUninitialized()) { // if the child is circularly defined, escape
       return self;
     }

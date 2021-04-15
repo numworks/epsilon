@@ -6,6 +6,7 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
   exam_mode.cpp \
   fcc_id.cpp \
   led.cpp \
+  pcb_version.cpp \
   power.cpp \
   serial_number.cpp \
   stack.cpp \

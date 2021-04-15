@@ -253,25 +253,25 @@ QUIZ_CASE(calculation_symbolic_computation) {
   simpleAssertCalculationIs("y",                   "2",     &globalContext, &store);
 
   simpleAssertCalculationIs("int(x+1,x,1,3)",      "6",     &globalContext, &store);
-  simpleAssertCalculationIs("int(f(x),x,1,3)",     "4",     &globalContext, &store);
+  simpleAssertCalculationIs("int(f(x),x,1,3)",     "6",     &globalContext, &store);
   simpleAssertCalculationIs("int(y,x,1,3)",        "4",     &globalContext, &store);
 
   simpleAssertCalculationIs("sum(x+1,x,0,1)",      "3",     &globalContext, &store);
-  simpleAssertCalculationIs("sum(f(x),x,0,1)",     "4",     &globalContext, &store);
+  simpleAssertCalculationIs("sum(f(x),x,0,1)",     "3",     &globalContext, &store);
   simpleAssertCalculationIs("sum(y,x,0,1)",        "4",     &globalContext, &store);
 
   simpleAssertCalculationIs("product(x+1,x,0,1)",  "2",     &globalContext, &store);
-  simpleAssertCalculationIs("product(f(x),x,0,1)", "4",     &globalContext, &store);
+  simpleAssertCalculationIs("product(f(x),x,0,1)", "2",     &globalContext, &store);
   simpleAssertCalculationIs("product(y,x,0,1)",    "4",     &globalContext, &store);
 
   simpleAssertCalculationIs("diff(x+1,x,1)",       "1",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x),x,1)",      "0",     &globalContext, &store);
+  simpleAssertCalculationIs("diff(f(x),x,1)",      "1",     &globalContext, &store);
   simpleAssertCalculationIs("diff(y,x,1)",         "0",     &globalContext, &store);
 
   simpleAssertCalculationIs("f(y)",                "3",     &globalContext, &store);
   simpleAssertCalculationIs("diff(f(y),x,1)",      "0",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x)×y,x,1)",    "0",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x×y),x,1)",    "0",     &globalContext, &store);
+  simpleAssertCalculationIs("diff(f(x)×y,x,1)",    "2",     &globalContext, &store);
+  simpleAssertCalculationIs("diff(f(x×y),x,1)",    "2",     &globalContext, &store);
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();

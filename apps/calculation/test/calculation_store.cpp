@@ -244,15 +244,15 @@ QUIZ_CASE(calculation_symbolic_computation) {
   // With x undefined
   simpleAssertCalculationIs("y",                   "undef", &globalContext, &store);
 
-  simpleAssertCalculationIs("int(y,x,1,3)",        "6",     &globalContext, &store);
-  simpleAssertCalculationIs("sum(y,x,0,1)",        "3",     &globalContext, &store);
-  simpleAssertCalculationIs("product(y,x,0,1)",    "2",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(y,x,1)",         "1",     &globalContext, &store);
+  simpleAssertCalculationIs("int(y,x,1,3)",        "undef", &globalContext, &store);
+  simpleAssertCalculationIs("sum(y,x,0,1)",        "undef", &globalContext, &store);
+  simpleAssertCalculationIs("product(y,x,0,1)",    "undef", &globalContext, &store);
+  simpleAssertCalculationIs("diff(y,x,1)",         "undef", &globalContext, &store);
 
   simpleAssertCalculationIs("f(y)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(y),x,1)",      "1",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x)×y,x,1)",    "4",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x×y),x,1)",    "3",     &globalContext, &store);
+  simpleAssertCalculationIs("diff(f(y),x,1)",      "undef", &globalContext, &store);
+  simpleAssertCalculationIs("diff(f(x)×y,x,1)",    "undef", &globalContext, &store);
+  simpleAssertCalculationIs("diff(f(x×y),x,1)",    "undef", &globalContext, &store);
 
   // With x defined
   simpleAssertCalculationIs("1→x",                 "1",     &globalContext, &store);

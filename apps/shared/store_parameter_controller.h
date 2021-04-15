@@ -30,6 +30,7 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return type == k_defaultCellType ? k_totalNumberOfCell - 1 : 1; }
   int typeAtIndex(int index) override { return index == k_indexOfSortValues ? k_sortCellType : k_defaultCellType; }
+  KDCoordinate nonMemoizedRowHeight(int index) override;
 protected:
   DoublePairStore * m_store;
   int m_series;

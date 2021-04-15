@@ -42,17 +42,17 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduce("2→a");
   assert_reduce("-1→b");
   assert_reduce("3→c");
-  assert_reduce("x/2→f");
+  assert_reduce("x/2→f(x)");
 
   assert_reduces_to_formal_expression("diff(a×x^2+b×x+c,x,x)", "4×x-1");
-  assert_reduces_to_formal_expression("diff(f,x,x)", "1/2");
+  assert_reduces_to_formal_expression("diff(f(x),x,x)", "1/2");
   assert_reduces_to_formal_expression("diff(a^2,a,x)", "2×x");
   assert_reduces_to_formal_expression("diff(a^2,a,a)", "4");
 
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("c.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
 }
 

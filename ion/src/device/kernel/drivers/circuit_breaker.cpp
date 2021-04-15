@@ -81,10 +81,12 @@ using namespace Ion::CircuitBreaker;
  * value of D address.
  */
 
-/* Empirically, the snapshot section AC to 144 bytes long in DEBUG=1. Keeping
- * a greater snapshot than necessary is not an issue. */
+/* Empirically, the snapshot section AC to 144 bytes long in DEBUG=1 (120 bytes
+ * long in DEBUG = 0). Keeping a greater snapshot than necessary is not an
+ * issue. */
 static constexpr size_t k_processStackSnapshotMaxSize = 144;
-// Empirically, the snapshot section CD is up to 48 bytes long
+/* Empirically, the snapshot section CD is up to 48 bytes long in DEBUG = 1, 16
+ * bytes long in DEBUG = 0. */
 static constexpr size_t k_mainStackSnapshotMaxSize = 48;
 
 enum class InternalStatus {

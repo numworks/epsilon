@@ -230,6 +230,9 @@ void shutdownClocks(bool keepLEDAwake) {
   RCC.AHB1ENR()->set(ahb1enr);
 }
 
+/* The following methods regarding PCB version are dummy implementations.
+ * Handling the PCB version is only necessary on the N0110. */
+
 PCBVersion pcbVersion() {
   return PCB_LATEST;
 }

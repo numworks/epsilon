@@ -198,12 +198,13 @@ void pendsv_handler() {
     int checkpointTypeIndex = static_cast<int>(sCheckpointType);
     // Restore process stack
     memcpy(sProcessStackSnapshotAddress[checkpointTypeIndex], sProcessStackSnapshot[checkpointTypeIndex], k_processStackSnapshotMaxSize);
+    uint8_t * processStackAddress = sProcessStackSnapshotAddress[checkpointTypeIndex];
+    asm volatile ("msr psp, %[stackPointer]" : : [stackPointer] "r" (processStackAddress));
+
     // Restore main stack
     size_t mainSnapshotSize = reinterpret_cast<uint8_t *>(&_main_stack_start) - sMainStackSnapshotAddress[checkpointTypeIndex];
     memcpy(sMainStackSnapshotAddress[checkpointTypeIndex], sMainStackSnapshot[checkpointTypeIndex], mainSnapshotSize);
-    uint8_t * processStackAddress = sProcessStackSnapshotAddress[static_cast<int>(sCheckpointType)];
 
-    asm volatile ("msr psp, %[stackPointer]" : [stackPointer] "=r" (processStackAddress) :);
   }
 
   if (sInternalStatus == InternalStatus::PendingLoadCheckpoint) {

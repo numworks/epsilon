@@ -119,6 +119,19 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
+KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
+  Escher::HighlightCell * cell;
+  if (index == k_indexOfSortValues) {
+    cell = reusableCell(0, k_sortCellType);
+  } else {
+    assert(index == k_defaultCellType);
+    // offset index if cell located after sortCell
+    int indexForDefaultType = (index < k_indexOfSortValues) ? index : index - 1;
+    cell = reusableCell(indexForDefaultType, k_defaultCellType);
+  }
+  return heightForCellAtIndex(cell, index, false);
+}
+
 void StoreParameterController::deleteColumn() {
   if (m_xColumnSelected) {
     m_store->deleteAllPairsOfSeries(m_series);

@@ -33,8 +33,10 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 binpack:
 ifndef USE_IN_FACTORY
 	@echo "CAUTION: You are building a binpack."
-	@echo "You must specify where this binpack will be used"
-	@echo "Please set the USE_IN_FACTORY environment variable to either 0 or 1 to proceed."
+	@echo "You must specify where this binpack will be used."
+	@echo "Please set the USE_IN_FACTORY environment variable to either:"
+	@echo "  - 0 for use in diagnostic"
+	@echo "  - 1 for use in production"
 	@exit -1
 endif
 	rm -rf output/binpack

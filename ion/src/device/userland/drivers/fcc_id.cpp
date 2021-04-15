@@ -4,7 +4,7 @@
 namespace Ion {
 
 const char * SVC_ATTRIBUTES fccId() {
-  SVC(SVC_FCC_ID);
+  SVC_RETURNING_R0(SVC_FCC_ID, const char *)
 }
 
 }

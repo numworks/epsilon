@@ -5,7 +5,7 @@ namespace Ion {
 namespace Keyboard {
 
 State SVC_ATTRIBUTES scan() {
-  SVC(SVC_KEYBOARD_SCAN);
+  SVC_RETURNING_STASH_ADDRESS_IN_R0(SVC_KEYBOARD_SCAN, State)
 }
 
 

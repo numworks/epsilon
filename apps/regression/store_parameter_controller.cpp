@@ -59,14 +59,14 @@ int StoreParameterController::reusableCellCount(int type) {
 }
 
 int StoreParameterController::typeAtIndex(int index) {
-  if (index == numberOfRows() - 1) {
+  if (index == k_indexOfRegressionCell) {
     return k_regressionCellType;
   }
   return Shared::StoreParameterController::typeAtIndex(index);
 }
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows() - 1) {
+  if (index == k_indexOfRegressionCell) {
     assert(cell == &m_changeRegressionCell);
     m_changeRegressionCell.setLayout(static_cast<Store *>(m_store)->modelForSeries(m_series)->layout());
     return;

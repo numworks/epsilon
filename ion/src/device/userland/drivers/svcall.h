@@ -7,7 +7,6 @@ namespace Ion {
 namespace Device {
 namespace SVCall {
 
-//#define SVC_ATTRIBUTES __attribute__((optimize("-O0"),noinline,externally_visible))
 #define SVC_ATTRIBUTES __attribute__((noinline,externally_visible))
 
 }

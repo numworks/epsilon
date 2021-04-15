@@ -5,42 +5,35 @@ namespace Ion {
 namespace Device {
 namespace SVCall {
 
-#define ASM(code, returnType, instruction) \
-  returnType returnValue; \
-  asm volatile (instruction \
-    : [returnValue] "=r" (returnValue) \
-    : [immediate] "I" (code) \
-    : "r0", "r1", "r2", "r3"); \
-  return returnValue;
-
 #define SVC_RETURNING_VOID(code) \
   asm volatile ("svc %[immediate]" \
     : : [immediate] "I" (code));
 
-#define SVC_RETURNING_R0(code, returnType) ASM(code, returnType, "svc %[immediate] ; mov %[returnValue], r0")
+#define SVC_RETURNING_SINGLE_REGISTER(code, returnType, instruction) \
+  returnType returnValue; \
+  asm volatile ( \
+      instruction \
+      : [returnValue] "=r" (returnValue) \
+      : [immediate] "I" (code) \
+      : "r0", "r1", "r2", "r3"); \
+  return returnValue;
 
-#define SVC_RETURNING_S0(code, returnType) ASM(code, returnType, "svc %[immediate] ; vmov %[returnValue], s0")
+#define SVC_RETURNING_R0(code, returnType) SVC_RETURNING_SINGLE_REGISTER(code, returnType, "svc %[immediate] ; mov %[returnValue], r0")
 
-#define SVC_RETURNING_R0R1(code, returnType) \
+#define SVC_RETURNING_S0(code, returnType) SVC_RETURNING_SINGLE_REGISTER(code, returnType, "svc %[immediate] ; vmov %[returnValue], s0")
+
+#define SVC_RETURNING_MULTIPLE_REGISTERS(code, returnType, instruction) \
   returnType returnValue; \
   returnType * address = &returnValue; \
   asm volatile ( \
-      "svc %[immediate] \n" \
-      "str r0, [%[returnValueAddress]] \n" \
-      "str r1, [%[returnValueAddress],#4] \n" \
-    : : [immediate] "I" (code), [returnValueAddress] "r" (address) \
-    : "r0", "r1", "r2", "r3"); \
+      instruction \
+      : : [immediate] "I" (code), [returnValueAddress] "r" (address) \
+      : "r0", "r1", "r2", "r3"); \
   return returnValue;
 
-#define SVC_RETURNING_STASH_ADDRESS_IN_R0(code, returnType) \
-  returnType returnValue; \
-  returnType * address = &returnValue; \
-  asm volatile ( \
-      "mov r0, %[returnValueAddress] \n" \
-      "svc %[immediate] \n" \
-    : : [immediate] "I" (code), [returnValueAddress] "r" (address) \
-    : "r0", "r1", "r2", "r3"); \
-  return returnValue;
+#define SVC_RETURNING_R0R1(code, returnType) SVC_RETURNING_MULTIPLE_REGISTERS(code, returnType,  "svc %[immediate] ; str r0, [%[returnValueAddress]] ; str r1, [%[returnValueAddress],#4]")
+
+#define SVC_RETURNING_STASH_ADDRESS_IN_R0(code, returnType) SVC_RETURNING_MULTIPLE_REGISTERS(code, returnType, "mov r0, %[returnValueAddress] ; svc %[immediate]")
 
 #define SVC_BACKLIGHT_BRIGHTNESS 0
 #define SVC_BACKLIGHT_INIT 1

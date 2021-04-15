@@ -22,6 +22,9 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == 0) {
+      /* When pressing OK on the version cell, the display cycles between
+       * Epsilon version number, the commit hash for this build of Epsilon, and
+       * the PCB revision number. */
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
       const char * currentText = myCell->subLabelText();
       if (strcmp(currentText, Ion::patchLevel()) == 0) {

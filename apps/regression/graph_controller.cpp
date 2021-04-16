@@ -245,7 +245,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
     }
     *m_selectedDotIndex = dotSelected;
   } else {
-    double step = direction * scrollSpeed * m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+    double step = direction * scrollSpeed * static_cast<double>(m_store->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
     y = yValue(*m_selectedSeriesIndex, x, globalContext());
   }

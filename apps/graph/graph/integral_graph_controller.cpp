@@ -34,7 +34,7 @@ I18n::Message IntegralGraphController::legendMessageAtStep(Step step) {
 }
 
 double IntegralGraphController::cursorNextStep(double x, int direction) {
-  return (direction > 0 ? x + m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit : x - m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit);
+  return x + (direction > 0 ? 1.0 : -1.0)*static_cast<double>(m_graphRange->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
 }
 
 Layout IntegralGraphController::createFunctionLayout(ExpiringPointer<Shared::Function> function) {

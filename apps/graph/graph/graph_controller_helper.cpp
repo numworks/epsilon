@@ -26,7 +26,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   }
   function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
   double dir = (direction > 0 ? 1.0 : -1.0);
-  double step = function->plotType() == ContinuousFunction::PlotType::Cartesian ? range->xGridUnit()/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
+  double step = function->plotType() == ContinuousFunction::PlotType::Cartesian ? static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
   t += dir * step * scrollSpeed;
 
   // If possible, round t so that f(x) matches f evaluated at displayed x

@@ -196,7 +196,6 @@ static inline void assert_pow_to(const Integer i, const Integer j, const Integer
 }
 
 QUIZ_CASE(poincare_integer_pow) {
-  assert_pow_to(Integer(0), Integer(0), Integer());
   assert_pow_to(Integer(0), Integer(14), Integer(0));
   assert_pow_to(Integer(14), Integer(0), Integer(1));
   assert_pow_to(Integer(2), Integer(2), Integer(4));

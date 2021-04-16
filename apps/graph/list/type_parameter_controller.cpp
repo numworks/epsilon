@@ -26,6 +26,11 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     assert(!m_record.isNull());
     Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit(), myApp->localContext());
+    if (function->plotType() != plotType) {
+      /* Updating plot type failed due to full storage. Do not quit menu as
+       * there is a "full storage" warning pop-up as first responder. */
+      return true;
+    }
     StackViewController * stack = stackController();
     stack->pop();
     stack->pop();

@@ -17,6 +17,7 @@ public:
   void didBecomeFirstResponder() override;
   // MemoizedListViewDataSource
   int numberOfRows() const override { return Shared::StoreParameterController::numberOfRows() + 1; }
+  KDCoordinate nonMemoizedRowHeight(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) override;

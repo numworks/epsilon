@@ -127,7 +127,7 @@ void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int in
 
 KDCoordinate PreferencesController::nonMemoizedRowHeight(int index) {
   MessageTableCellWithExpression tempCell;
-  return heightForCellAtIndex(&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index, true);
 }
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {

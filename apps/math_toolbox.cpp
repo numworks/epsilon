@@ -471,7 +471,7 @@ void MathToolbox::viewDidDisappear() {
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
   if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
     ExpressionTableCellWithMessage tempCell;
-    return heightForCellAtIndex(&tempCell, index);
+    return heightForCellAtIndex(&tempCell, index, true);
   }
   return Escher::Toolbox::nonMemoizedRowHeight(index);
 }

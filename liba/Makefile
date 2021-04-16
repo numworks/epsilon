@@ -6,6 +6,7 @@ liba_bootloader_src += $(addprefix liba/src/, \
   memcpy.c \
   memmove.c \
   memset.c \
+  strchr.c \
   strlen.c \
 )
 
@@ -17,6 +18,7 @@ liba_kernel_src += $(addprefix liba/src/, \
   memcpy.c \
   memmove.c \
   memset.c \
+  strchr.c \
   strlcpy.c \
   strlen.c \
 )

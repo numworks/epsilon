@@ -426,10 +426,8 @@ IntegerDivision Integer::Division(const Integer & numerator, const Integer & den
 Integer Integer::Power(const Integer & i, const Integer & j) {
   assert(!j.isNegative());
   if (j.isZero()) {
-    if (i.isZero()) {
-      // 0^0 returns an uninitialized integer.
-      return Integer();
-    }
+    // TODO : handle 0^0.
+    assert(!i.isZero());
     return Integer(1);
   }
   if (j.isOverflow() || i.isOverflow()) {

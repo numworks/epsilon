@@ -120,13 +120,16 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
 }
 
 KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
-  int type = typeAtIndex(index);
-  if (type == k_sortCellType) {
-    return heightForCellAtIndex(&m_sortCell, index, false);
+  /* We just need to find a cell of the right type
+   * heightForCellAtIndex will do the rest */
+  Escher::HighlightCell * cell;
+  if (index == k_indexOfSortValues) {
+    cell = &m_sortCell;
+  } else {
+    assert(index == k_defaultCellType);
+    cell = reusableCell(0, k_defaultCellType);
   }
-  assert(type == k_defaultCellType);
-  Escher::MessageTableCell tempCell;
-  return heightForCellAtIndex(&tempCell, index, false);
+  return heightForCellAtIndex(cell, index, false);
 }
 
 void StoreParameterController::deleteColumn() {

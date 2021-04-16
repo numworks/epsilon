@@ -120,7 +120,7 @@ uint32_t switchExecutableSlot() {
   PlatformInfo * platformInfoA = reinterpret_cast<PlatformInfo *>(slotAUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
   PlatformInfo * platformInfoB = reinterpret_cast<PlatformInfo *>(slotBUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
   int deltaKernelVersion = platformInfoA->kernelVersionValue() - platformInfoB->kernelVersionValue();
-  int deltaUserlandVersion = platformInfoA->epsilonVersionValue() - platformInfoB->epsilonVersionValue();
+  int deltaUserlandVersion = platformInfoA->epsilonVersionComparedTo(platformInfoB->epsilonVersion());
   // Delta = newVersion - oldVersion
   bool slotARunning = isRunningSlotA();
   if (slotARunning) {

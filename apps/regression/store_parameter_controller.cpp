@@ -36,6 +36,13 @@ void StoreParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
+KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
+  if (typeAtIndex(index) == k_regressionCellType) {
+    return heightForCellAtIndex(&m_changeRegressionCell, index, true);
+  }
+  return Shared::StoreParameterController::nonMemoizedRowHeight(index);
+}
+
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == k_regressionCellType) {

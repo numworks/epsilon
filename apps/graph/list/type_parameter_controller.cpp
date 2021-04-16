@@ -55,7 +55,7 @@ void TypeParameterController::viewWillAppear() {
 
 KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
   MessageTableCellWithExpression tempCell;
-  return heightForCellAtIndex(&tempCell, j);
+  return heightForCellAtIndex(&tempCell, j, true);
 }
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

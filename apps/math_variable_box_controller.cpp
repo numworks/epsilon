@@ -145,7 +145,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
     return heightForCellAtIndex(&tempCell, index);
   }
   ExpressionTableCellWithExpression tempCell;
-  return heightForCellAtIndex(&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index, true);
 }
 
 int MathVariableBoxController::typeAtIndex(int index) {

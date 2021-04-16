@@ -21,15 +21,15 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   SelectableListViewController(parentResponder),
   m_store(store),
   m_series(0),
-  m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula},
-  m_sortCell(I18n::Message::SortCellLabel),
-  m_storeController(storeController),
-  m_xColumnSelected(true),
   m_confirmPopUpController(Invocation([](void * context, void * parent){
     StoreParameterController * param = static_cast<StoreParameterController *>(context);
     param->deleteColumn();
     return true;
-  }, this))
+  }, this)),
+  m_cells{I18n::Message::ClearColumn, I18n::Message::FillWithFormula},
+  m_sortCell(I18n::Message::SortCellLabel),
+  m_storeController(storeController),
+  m_xColumnSelected(true)
 { }
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

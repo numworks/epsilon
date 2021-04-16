@@ -15,7 +15,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && selectedRow() == numberOfRows() - 1) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right)
+        && selectedRow() == k_indexOfRegressionCell) {
     RegressionController * regressionController = App::app()->regressionController();
     regressionController->setSeries(m_series);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
@@ -28,7 +29,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 
 void StoreParameterController::didBecomeFirstResponder() {
   if (m_lastSelectionIsRegression) {
-    selectCellAtLocation(0, 2);
+    selectCellAtLocation(0, k_indexOfRegressionCell);
   } else {
     selectCellAtLocation(0, 0);
   }

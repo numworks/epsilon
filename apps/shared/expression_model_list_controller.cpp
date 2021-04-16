@@ -202,8 +202,10 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
     return true;
   }
   if (event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var) {
-    if (isAddEmptyRow(selectedRow())) {
-      addEmptyModel();
+    // If empty row is selected, try adding an empty model
+    if (isAddEmptyRow(selectedRow()) && !addEmptyModel()) {
+      // Adding an empty model failed
+      return true;
     }
     assert(!isAddEmptyRow(selectedRow()));
     editExpression(event);
@@ -213,18 +215,21 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
 }
 
 void ExpressionModelListController::addModel() {
-  addEmptyModel();
-  editExpression(Ion::Events::OK);
+  if (addEmptyModel()) {
+    editExpression(Ion::Events::OK);
+  }
 }
 
-void ExpressionModelListController::addEmptyModel() {
+bool ExpressionModelListController::addEmptyModel() {
+  // Return false if empty model couldn't be added.
   Ion::Storage::Record::ErrorStatus error = modelStore()->addEmptyModel();
   if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-    return;
+    return false;
   }
   assert(error == Ion::Storage::Record::ErrorStatus::None);
   didChangeModelsList();
   selectableTableView()->reloadData();
+  return true;
 }
 
 void ExpressionModelListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {

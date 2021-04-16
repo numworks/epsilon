@@ -64,7 +64,7 @@ private:
   static constexpr int k_resetedMemoizedValue = -1;
   void resetMemoization();
 
-  void addEmptyModel();
+  bool addEmptyModel();
 
   // TableViewDataSource
   virtual KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) = 0;

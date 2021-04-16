@@ -145,25 +145,24 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
   constexpr int previousTextContentMaxSize = Constant::MaxSerializedExpressionSize;
   char previousTextContent[previousTextContentMaxSize];
   m_model.text(this, previousTextContent, previousTextContentMaxSize, symbol());
-  setContent(previousTextContent, context);
 
+  Ion::Storage::Record::ErrorStatus error = setContent(previousTextContent, context);
   // Handle parametric function switch
-  if (currentPlotType == PlotType::Parametric) {
+  if (currentPlotType == PlotType::Parametric && error == Ion::Storage::Record::ErrorStatus::None) {
     Expression e = expressionClone();
-    // Change [x(t) y(t)] to y(t)
-    if (!e.isUninitialized()
-        && e.type() == ExpressionNode::Type::Matrix
-        && static_cast<Poincare::Matrix&>(e).numberOfRows() == 2
-        && static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1)
-    {
-      Expression nextContent = e.childAtIndex(1);
-      /* We need to detach it, otherwise nextContent will think it has a parent
-       * when we retrieve it from the storage. */
-      nextContent.detachFromParent();
-      setExpressionContent(nextContent);
+    if (e.isUninitialized()
+        || e.type() != ExpressionNode::Type::Matrix
+        || static_cast<Poincare::Matrix&>(e).numberOfRows() != 2
+        || static_cast<Poincare::Matrix&>(e).numberOfColumns() != 1) {
+      return;
     }
-    return;
-  } else if (newPlotType == PlotType::Parametric) {
+    // Change [x(t) y(t)] to y(t)
+    Expression nextContent = e.childAtIndex(1);
+    /* We need to detach it, otherwise nextContent will think it has a parent
+     * when we retrieve it from the storage. */
+    nextContent.detachFromParent();
+    error = setExpressionContent(nextContent);
+  } else if (newPlotType == PlotType::Parametric && error == Ion::Storage::Record::ErrorStatus::None) {
     Expression e = expressionClone();
     // Change y(t) to [t y(t)]
     Matrix newExpr = Matrix::Builder();
@@ -172,7 +171,11 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
     e = e.isUninitialized() ? Multiplication::Builder(Rational::Builder(2), Symbol::Builder(UCodePointUnknown)) : e;
     newExpr.addChildAtIndexInPlace(e, newExpr.numberOfChildren(), newExpr.numberOfChildren());
     newExpr.setDimensions(2, 1);
-    setExpressionContent(newExpr);
+    error = setExpressionContent(newExpr);
+  }
+  if (error != Ion::Storage::Record::ErrorStatus::None) {
+    // An error occurred, reset plot type to the initial one.
+    recordData()->setPlotType(currentPlotType);
   }
 }
 

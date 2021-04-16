@@ -23,7 +23,7 @@ public:
   int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_indexOfRegressionCell = 3;
+  constexpr static int k_indexOfRegressionCell = Shared::StoreParameterController::k_totalNumberOfCell;
   I18n::Message sortMessage() override { return I18n::Message::SortValues; }
   static constexpr int k_regressionCellType = 2;
   Escher::MessageTableCellWithChevronAndExpression m_changeRegressionCell;

@@ -32,6 +32,7 @@ public:
   int typeAtIndex(int index) override { return index == k_indexOfSortValues ? k_sortCellType : k_defaultCellType; }
   KDCoordinate nonMemoizedRowHeight(int index) override;
 protected:
+  constexpr static int k_totalNumberOfCell = 3;
   DoublePairStore * m_store;
   int m_series;
 private:
@@ -45,13 +46,12 @@ private:
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   void deleteColumn();
 
-  constexpr static int k_totalNumberOfCell = 3;
   constexpr static int k_indexOfRemoveColumn = 0;
   constexpr static int k_indexOfFillFormula = k_indexOfRemoveColumn + 1;
   constexpr static int k_indexOfSortValues = k_indexOfFillFormula + 1;
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_sortCellType = 1;
-  
+
   DeleteColumnPopupController m_confirmPopUpController;
   Escher::MessageTableCell m_cells[k_totalNumberOfCell-1];
   Escher::MessageTableCellWithMessage m_sortCell;

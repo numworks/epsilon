@@ -203,9 +203,6 @@ void launchDebounceTimer(uint16_t ms) {
   TIM4.CR1()->setCEN(true);
 }
 
-void stopDebounceTimer() {
-}
-
 static bool sBouncing = false;
 
 void debounce() {

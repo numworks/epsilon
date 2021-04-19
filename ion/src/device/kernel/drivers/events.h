@@ -26,6 +26,7 @@ bool isDefinedSecure(uint8_t eventId);
 
 void stall();
 
+void resetPendingKeyboardState();
 bool setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State keyboardState);
 
 }

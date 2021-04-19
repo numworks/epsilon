@@ -343,6 +343,10 @@ void stall() {
   }*/
 }
 
+void resetPendingKeyboardState() {
+  sPreemtiveState = Ion::Keyboard::State(0);
+}
+
 bool setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State state) {
   if (state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::OnOff)) {
     sPreemtiveState = state;

@@ -385,6 +385,30 @@ Expression Expression::defaultHandleUnitsInChildren() {
   return *this;
 }
 
+Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext reductionContext, bool * handledUnits) {
+  Expression e = Expression::defaultShallowReduce();
+  if (e.isUndefined()) {
+    replaceWithInPlace(e);
+    *handledUnits = true;
+    return *this;
+  }
+  assert(numberOfChildren() == 1);
+  Expression child = childAtIndex(0);
+  if (child.type() == ExpressionNode::Type::Multiplication) {
+    Expression unit;
+    child.removeUnit(&unit);
+    if (!unit.isUndefined()) {
+      *handledUnits = true;
+      Expression value = shallowReduce(reductionContext);
+      Multiplication mul = Multiplication::Builder(value, unit);
+      mul.mergeSameTypeChildrenInPlace();
+      return mul;
+    }
+  }
+  *handledUnits = false;
+  return *this;
+}
+
 Expression Expression::shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext) {
   double approx = node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
   /* If approx is capped by the largest integer such as all smaller integers can

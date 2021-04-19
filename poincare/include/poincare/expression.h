@@ -434,6 +434,11 @@ private:
   void defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowReduce();
   Expression defaultHandleUnitsInChildren(); // Children must be reduced
+  /* In place shallowReduce while keeping the units.
+  * `handledUnits` is set to true if units were handled, in which case
+  * the returned expression is the result with the units.
+  * Otherwise simply returns *this. */
+  Expression shallowReduceKeepUnits(ExpressionNode::ReductionContext reductionContext, bool * handledUnits);
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
   void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {

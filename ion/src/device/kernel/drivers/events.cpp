@@ -172,9 +172,6 @@ bool handlePreemption(bool stalling) {
       return true;
     }
     Power::suspend(true);
-    /* Power::suspend will flush the Keyboard queue, the very next event is the
-     * the OnOffEvent (to notify the userland that a switchOnOff has happened). */
-    Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
     if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
       /* If we were stalling (in the middle of processing an event), we load
        * the Home checkpoint to avoid resuming the execution in the middle of

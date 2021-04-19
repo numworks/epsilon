@@ -113,6 +113,10 @@ void suspend(bool checkIfOnOffKeyReleased) {
   if (Ion::USB::isPlugged()) {
     Ion::USB::disable();
   }
+
+  /* Power::suspend has flushed the Keyboard queue, the very next event is the
+   * the OnOffEvent (to notify the userland that a switchOnOff has happened). */
+  Keyboard::Queue::sharedQueue()->push(Ion::Keyboard::State(Ion::Keyboard::Key::OnOff));
 }
 
 void waitUntilOnOffKeyReleased() {

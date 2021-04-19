@@ -56,14 +56,14 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == 2) {
     ExpressionTableCell tempCell;
-    return heightForCellAtIndex(&tempCell, index);
+    return heightForCellAtIndex(&tempCell, index, false);
   }
   if (m_messageTreeModel->childAtIndex(index - stackRowOffset())->numberOfChildren() == 0) {
     ExpressionTableCellWithMessage tempCell;
     return heightForCellAtIndex(&tempCell, index, true);
   }
   MessageTableCell tempCell;
-  return heightForCellAtIndex(&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index, false);
 }
 
 int SequenceToolbox::typeAtIndex(int index) {

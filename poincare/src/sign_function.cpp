@@ -53,9 +53,13 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
+    }
+    // Discard units if any
+    if (childAtIndex(0).type() == ExpressionNode::Type::Multiplication) {
+      Expression unit;
+      childAtIndex(0).removeUnit(&unit);
     }
   }
   Expression child = childAtIndex(0);

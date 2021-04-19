@@ -1,4 +1,5 @@
 #include <drivers/keyboard_queue.h>
+#include <drivers/events.h>
 
 namespace Ion {
 namespace Device {
@@ -29,6 +30,7 @@ Ion::Keyboard::State Queue::pop() {
 void Queue::flush() {
   m_begin = 0;
   m_end = 0;
+  Events::resetPendingKeyboardState();
 }
 
 }

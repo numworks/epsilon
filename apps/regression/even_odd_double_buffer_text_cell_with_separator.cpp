@@ -74,7 +74,7 @@ void EvenOddDoubleBufferTextCellWithSeparator::setTextColor(KDColor textColor) {
 void EvenOddDoubleBufferTextCellWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
   EvenOddCell::drawRect(ctx, rect);
   // Draw the separator
-  KDRect separatorRect(0, 0, Metric::TableSeparatorThickness, bounds().height());
+  KDRect separatorRect(0, 0, k_separatorWidth, bounds().height());
   ctx->fillRect(separatorRect, Shared::HideableEvenOddEditableTextCell::hideColor());
 }
 
@@ -91,10 +91,10 @@ View * EvenOddDoubleBufferTextCellWithSeparator::subviewAtIndex(int index) {
 }
 
 void EvenOddDoubleBufferTextCellWithSeparator::layoutSubviews(bool force) {
-  KDCoordinate width = bounds().width() - Metric::TableSeparatorThickness;
+  KDCoordinate width = bounds().width() - k_separatorWidth;
   KDCoordinate height = bounds().height();
-  m_firstBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness, 0, width/2, height), force);
-  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, 0, width - width/2, height), force);
+  m_firstBufferTextView.setFrame(KDRect(k_separatorWidth, 0, width/2, height), force);
+  m_secondBufferTextView.setFrame(KDRect(k_separatorWidth + width/2, 0, width - width/2, height), force);
 }
 
 bool EvenOddDoubleBufferTextCellWithSeparator::handleEvent(Ion::Events::Event event) {

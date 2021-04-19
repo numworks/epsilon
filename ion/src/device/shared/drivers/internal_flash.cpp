@@ -24,6 +24,14 @@ static inline void wait() {
   }
 }
 
+void lock() {
+  if (!FLASH.CR()->getLOCK()) {
+    FLASH.KEYR()->set(0);
+    FLASH.KEYR()->set(0);
+  }
+  assert(FLASH.CR()->getLOCK());
+}
+
 static void open() {
   // Unlock the Flash configuration register if needed
   if (FLASH.CR()->getLOCK()) {

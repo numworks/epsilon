@@ -3,7 +3,6 @@
 
 #include <escher/even_odd_cell.h>
 #include <escher/buffer_text_view.h>
-#include <escher/metric.h>
 
 namespace Escher {
 
@@ -25,7 +24,6 @@ public:
   void setText(const char * textContent);
   void setTextColor(KDColor textColor);
 protected:
-  static constexpr KDCoordinate k_horizontalMargin = Metric::SmallCellMargin;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

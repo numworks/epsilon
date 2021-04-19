@@ -66,10 +66,16 @@ private:
 
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Escher::Metric::CommonRightMargin/2 - Escher::Metric::CommonLeftMargin/2;
-  // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
-  static constexpr KDCoordinate k_minCalculationCellWidth = 7*2*(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)); //Calculation width should at least be able to hold to numbers with LargeNumberOfSignificantDigits.
-  static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(150, k_minCalculationCellWidth); // Should hold aX^3+bX^2+cX+d
-  static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(195, k_minCalculationCellWidth ); // Should hold ? aX^4+bX^3+c*X^2+dX+e
+  /* Separator and margins from EvenOddCell::layoutSubviews (and derived classes
+   * implementations) must be accounted for here.
+   * TODO: change 7 for KDFont::SmallFont->glyphSize().width()
+   * Calculation width should at least be able to hold to numbers with
+   * LargeNumberOfSignificantDigits and contains two even odd cells. */
+  static constexpr KDCoordinate k_minCalculationCellWidth = 2*(7*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+2*Escher::EvenOddCell::k_horizontalMargin)+Escher::EvenOddCell::k_separatorWidth;
+  // To hold _y=a·x^3+b·x^2+c·x+d_
+  static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(7*21+2*Escher::EvenOddCell::k_horizontalMargin+Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
+  // To hold _y=a·x^4+b·x^3+c·x^2+d·x+e_
+  static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(7*27+2*Escher::EvenOddCell::k_horizontalMargin+Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
   Escher::Responder * tabController() const override;

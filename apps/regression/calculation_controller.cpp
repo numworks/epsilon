@@ -201,7 +201,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     } else {
       assert(calculationIndex == 2);
       calculation = m_store->columnProductSum(seriesNumber);
-   }
+    }
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);

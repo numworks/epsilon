@@ -19,7 +19,7 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
 
   // Use unsafe flag if willDisplayCellForIndex could raise a Poincare exception
-  KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index, bool unsafe = false);
+  KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index, bool unsafe);
   void resetMemoization(bool force = true);
 
   // Non memoized.

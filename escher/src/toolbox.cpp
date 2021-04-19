@@ -37,7 +37,7 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
   assert((m_messageTreeModel->childAtIndex(index))->numberOfChildren() != 0);
   MessageTableCell tempCell;
-  return heightForCellAtIndex(&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index, false);
 }
 
 int Toolbox::typeAtIndex(int index) {

@@ -73,7 +73,6 @@ void initInterruptionPriorities() {
   CORTEX.SHPR3()->setPENDSV_PRI(static_cast<uint8_t>(NVIC::NVIC_IPR::InterruptionPriority::Low));
 }
 
-// TODO: both initInterruptions/shutdownInterruptions are not required yet. Remove?
 void initInterruptions() {
   Keyboard::initInterruptions();
   Events::initInterruptions();

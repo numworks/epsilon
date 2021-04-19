@@ -394,7 +394,7 @@ Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext r
     return *this;
   }
   Expression child = childAtIndex(0);
-  if (child.type() == ExpressionNode::Type::Multiplication) {
+  if (child.type() == ExpressionNode::Type::Multiplication || child.type() == ExpressionNode::Type::Unit) {
     Expression unit;
     child.removeUnit(&unit);
     if (!unit.isUndefined()) {
@@ -403,12 +403,12 @@ Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext r
       // because we would lose all ref to value.parent()
       // Step 1: create the mul node half empty, and register it to value's parent
       Multiplication mul = Multiplication::Builder(unit);
-      mul.mergeSameTypeChildrenInPlace();
       replaceWithInPlace(mul);
       Expression value = shallowReduce(reductionContext);
       // value.replaceWithInPlace(mul);
       // Step 2: Then add addition as mul's child
       mul.addChildAtIndexInPlace(value, 0, 1);
+      mul.mergeSameTypeChildrenInPlace();
       return std::move(mul);
     }
   }

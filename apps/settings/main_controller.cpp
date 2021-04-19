@@ -105,13 +105,13 @@ int MainController::numberOfRows() const {
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
   if (index == k_indexOfBrightnessCell) {
-    return heightForCellAtIndex(&m_brightnessCell, index);
+    return heightForCellAtIndex(&m_brightnessCell, index, false);
   }
   if (hasPrompt() && index == k_indexOfPopUpCell) {
-    return heightForCellAtIndex(&m_popUpCell, index);
+    return heightForCellAtIndex(&m_popUpCell, index, false);
   }
   MessageTableCellWithChevronAndMessage tempCell;
-  return heightForCellAtIndex(&tempCell, index);
+  return heightForCellAtIndex(&tempCell, index, false);
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {

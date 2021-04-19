@@ -49,6 +49,10 @@ Expression Round::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionConte
 
 Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
+    if (childAtIndex(1).hasUnit()) {
+      // Number of digits cannot have units
+      replaceWithInPlace(Undefined::Builder());
+    }
     bool handledUnits;
     Expression e = Expression::shallowReduceKeepUnits(reductionContext, &handledUnits);
     if (handledUnits) {

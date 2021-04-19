@@ -393,7 +393,6 @@ Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext r
     *handledUnits = true;
     return *this;
   }
-  assert(numberOfChildren() == 1);
   Expression child = childAtIndex(0);
   if (child.type() == ExpressionNode::Type::Multiplication) {
     Expression unit;

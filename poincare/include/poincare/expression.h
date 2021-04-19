@@ -437,7 +437,8 @@ private:
   /* *In place* shallowReduce while keeping the units.
   * `handledUnits` is set to true if units were handled, in which case
   * the returned expression is the result with the units.
-  * Otherwise simply returns *this. */
+  * Otherwise simply returns *this.
+  * Warning: this function will handle units only for the first child.*/
   Expression shallowReduceKeepUnits(ExpressionNode::ReductionContext reductionContext, bool * handledUnits);
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }

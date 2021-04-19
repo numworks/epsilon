@@ -49,9 +49,9 @@ Expression Round::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionConte
 
 Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    bool handledUnits;
+    Expression e = Expression::shallowReduceKeepUnits(reductionContext, &handledUnits);
+    if (handledUnits) {
       return e;
     }
   }

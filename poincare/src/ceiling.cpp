@@ -38,12 +38,13 @@ Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    bool handledUnits;
+    Expression e = Expression::shallowReduceKeepUnits(reductionContext, &handledUnits);
+    if (handledUnits) {
       return e;
     }
   }
+
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);

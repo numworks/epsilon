@@ -38,11 +38,14 @@ bool AbsoluteValueNode::derivate(ReductionContext reductionContext, Expression s
 }
 
 Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = Expression::defaultShallowReduce();
-  e = e.defaultHandleUnitsInChildren();
-  if (e.isUndefined()) {
-    return e;
+  {
+    bool handledUnits;
+    Expression e = Expression::shallowReduceKeepUnits(reductionContext, &handledUnits);
+    if (handledUnits) {
+      return e;
+    }
   }
+
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);

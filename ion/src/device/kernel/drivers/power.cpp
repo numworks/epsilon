@@ -126,7 +126,7 @@ void waitUntilOnOffKeyReleased() {
     Keyboard::State scan = Keyboard::scan();
     isPowerDown = scan.keyDown(Keyboard::Key::OnOff);
   }
-  Ion::Timing::msleep(100);
+  Ion::Timing::msleep(100); // Debouncing
   // Flush the keyboard queue to avoid handling artifacts state at wake-up
   Keyboard::Queue::sharedQueue()->flush();
 }

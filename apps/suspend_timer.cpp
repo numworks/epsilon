@@ -11,6 +11,6 @@ bool SuspendTimer::fire() {
    * responders in the responder chain that the calculator will be switched off,
    * so we use an event to switch off the calculator. */
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  container->dispatchEvent(Ion::Events::OnOff);
+  Ion::Power::suspend();
   return false;
 }

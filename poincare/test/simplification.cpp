@@ -462,7 +462,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_A+𝐢", "undef");
   assert_parsed_expression_simplify_to("_m+_s", "undef");
   assert_parsed_expression_simplify_to("_m^2+_m", "undef");
-  assert_parsed_expression_simplify_to("abs(_s)", "undef");
   assert_parsed_expression_simplify_to("acos(_s)", "undef");
   assert_parsed_expression_simplify_to("acosh(_s)", "undef");
   assert_parsed_expression_simplify_to("arg(_s)", "undef");
@@ -492,7 +491,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("dot(_s,[[1][2][3]])", "undef");
   assert_parsed_expression_simplify_to("factor(_s)", "undef");
   assert_parsed_expression_simplify_to("(_s)!", "undef");
-  assert_parsed_expression_simplify_to("floor(_s)", "undef");
   assert_parsed_expression_simplify_to("frac(_s)", "undef");
   assert_parsed_expression_simplify_to("gcd(1,_s)", "undef");
   assert_parsed_expression_simplify_to("gcd(_s,1)", "undef");
@@ -544,10 +542,9 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("ref(_s)", "undef");
   assert_parsed_expression_simplify_to("rem(_s,1)", "undef");
   assert_parsed_expression_simplify_to("rem(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("round(_s,1)", "undef");
   assert_parsed_expression_simplify_to("round(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("round(1_s,_s)", "undef");
   assert_parsed_expression_simplify_to("rref(_s)", "undef");
-  assert_parsed_expression_simplify_to("sign(_s)", "undef");
   assert_parsed_expression_simplify_to("sin(_s)", "undef");
   assert_parsed_expression_simplify_to("sinh(_s)", "undef");
   assert_parsed_expression_simplify_to("sum(_s,x,0,1)", "undef");
@@ -565,6 +562,19 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("√(16×_m^2)", "4×_m");
   assert_parsed_expression_simplify_to("1×_A_kg", "2.2046226218488×_A×_lb", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("2×π×_cK", "0.062831853071796×_K", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("abs(_s)", "1×_s");
+  assert_parsed_expression_simplify_to("abs(3_m)", "3×_m");
+  assert_parsed_expression_simplify_to("ceil(3.3_m)", "4×_m");
+  assert_parsed_expression_simplify_to("floor(_s)", "1×_s");
+  assert_parsed_expression_simplify_to("floor(3.3_m)", "3×_m");
+  assert_parsed_expression_simplify_to("round(3.3_m, 0)", "3×_m");
+  assert_parsed_expression_simplify_to("round(_s,1)", "1×_s");
+  assert_parsed_expression_simplify_to("sign(-2_m)", "-1");
+  assert_parsed_expression_simplify_to("sign(4_m)", "1");
+  assert_parsed_expression_simplify_to("sign(_s)", "1");
+  assert_parsed_expression_simplify_to("abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "14×_m");
+  assert_parsed_expression_simplify_to("sign(3_m) + 2", "3");
+
 
 }
 

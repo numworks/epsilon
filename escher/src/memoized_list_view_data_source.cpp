@@ -186,7 +186,7 @@ KDCoordinate MemoizedListViewDataSource::nonMemoizedRowHeight(int j) {
     // Row number does not matter in this reusableCell() implementation.
     reusableCell(j, type) == reusableCell(0, type)
   );
-  return heightForCellAtIndex(reusableCell(j, type), j);
+  return heightForCellAtIndex(reusableCell(j, type), j, false);
 }
 
 int MemoizedListViewDataSource::getMemoizedIndex(int index) {

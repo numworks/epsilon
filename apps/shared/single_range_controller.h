@@ -29,6 +29,7 @@ private:
     SingleRangeController * m_controller;
   };
 
+  bool autoStatus() const { return m_editXRange ? m_range->xAuto() : m_range->yAuto(); }
   float parameterAtIndex(int index) override;
   int reusableParameterCellCount(int type) override { return k_numberOfTextCells + 1; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;

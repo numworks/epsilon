@@ -46,15 +46,12 @@ bool ListParameterController::textFieldShouldFinishEditing(TextField * textField
 }
 
 bool ListParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  static float maxFirstIndex = std::pow(10.0f, Shared::Sequence::k_initialRankNumberOfDigits) - 1.0f;
-  /* -1 to take into account a double recursive sequence, which has
-   * SecondIndex = FirstIndex + 1 */
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   int index = std::round(floatBody);
-  if (index < 0  || floatBody >= maxFirstIndex) {
+  if (index < 0  || floatBody > Shared::Sequence::maxFirstIndex) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

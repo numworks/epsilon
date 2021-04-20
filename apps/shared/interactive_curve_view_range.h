@@ -15,7 +15,8 @@ public:
     MemoizedCurveViewRange(),
     m_delegate(delegate),
     m_offscreenYAxis(0.f),
-    m_zoomAuto(true),
+    m_xAuto(true),
+    m_yAuto(true),
     m_zoomNormalize(false)
   {}
 
@@ -26,8 +27,12 @@ public:
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
 
-  bool zoomAuto() const { return m_zoomAuto; }
-  void setZoomAuto(bool v);
+  bool zoomAuto() const { return m_xAuto && m_yAuto; }
+  void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
+  bool xAuto() const { return m_xAuto; }
+  void setXAuto(bool v) { privateSetZoomAuto(v, m_yAuto); }
+  bool yAuto() const { return m_yAuto; }
+  void setYAuto(bool v) { privateSetZoomAuto(m_xAuto, v); }
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v);
   float roundLimit(float y, float range, bool isMin);
@@ -80,9 +85,11 @@ protected:
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
   int normalizationSignificantBits() const;
+  void privateSetZoomAuto(bool xAuto, bool yAuto);
 
   float m_offscreenYAxis;
-  bool m_zoomAuto;
+  bool m_xAuto;
+  bool m_yAuto;
   bool m_zoomNormalize;
 };
 

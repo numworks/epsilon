@@ -7,6 +7,9 @@
 
 namespace Poincare {
 
+/*
+ * This class holds static functions to represent float (as strings).
+ */
 class PrintFloat {
 public:
   constexpr static int k_floatNumberOfSignificantDigits = 7;

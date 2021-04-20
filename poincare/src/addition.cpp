@@ -187,7 +187,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       Expression addition = shallowReduce(reductionContext);
       Multiplication result = Multiplication::Builder(unit);
       result.mergeSameTypeChildrenInPlace();  // In case `unit` was a multiplication of units, flatten
-      addition.replaceWithInPlace(result);    // TODO why ?
+      addition.replaceWithInPlace(result);
       result.addChildAtIndexInPlace(addition, 0, 1);
       return std::move(result);
     }

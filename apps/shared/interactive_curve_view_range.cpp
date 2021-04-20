@@ -16,16 +16,6 @@ void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * 
   m_delegate = delegate;
 }
 
-void InteractiveCurveViewRange::setZoomAuto(bool v) {
-  if (m_zoomAuto == v) {
-    return;
-  }
-  m_zoomAuto = v;
-  if (m_delegate) {
-    m_delegate->updateZoomButtons();
-  }
-}
-
 void InteractiveCurveViewRange::setZoomNormalize(bool v) {
   if (m_zoomNormalize == v) {
     return;
@@ -314,6 +304,15 @@ int InteractiveCurveViewRange::normalizationSignificantBits() const {
       loss = 0.f;
     }
     return  std::floor(loss + 23.f - 2.f);
+}
+
+void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
+  bool oldAuto = zoomAuto();
+  m_xAuto = xAuto;
+  m_yAuto = yAuto;
+  if (m_delegate && (oldAuto != zoomAuto())) {
+    m_delegate->updateZoomButtons();
+  }
 }
 
 }

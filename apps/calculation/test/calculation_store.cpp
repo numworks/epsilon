@@ -135,8 +135,8 @@ QUIZ_CASE(calculation_significant_digits) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
-  assertCalculationIs("123456789", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "123456789", "1.234568ᴇ8", "123456789", &globalContext, &store);
-  assertCalculationIs("1234567", DisplayOutput::ApproximateOnly, EqualSign::Equal, "1234567", "1234567", "1234567", &globalContext, &store);
+  assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "11123456789", "1.112345679ᴇ10", "11123456789", &globalContext, &store);
+  assertCalculationIs("1123456789", DisplayOutput::ApproximateOnly, EqualSign::Equal, "1123456789", "1123456789", "1123456789", &globalContext, &store);
 
 }
 
@@ -201,9 +201,9 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 
   // 1 - Predefined variable in fraction in integral
-  assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147", &globalContext, &store);
+  assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147181", &globalContext, &store);
   assertMainCalculationOutputIs("1→x",                 "1"    , &globalContext, &store);
-  assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147", &globalContext, &store);
+  assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147181", &globalContext, &store);
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 
@@ -330,7 +330,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("1+𝐢", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "√(2)×ℯ^\u0012π/4×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ℯ^\u0012π/2×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ln(-2)", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, "ℯ^\u00123.141593×𝐢\u0013", "ℯ^\u00123.1415926535898×𝐢\u0013", &globalContext, &store);
+  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, "ℯ^\u00123.141592654×𝐢\u0013", "ℯ^\u00123.1415926535898×𝐢\u0013", &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "2×ℯ^\u0012π/3×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "4×ℯ^\u0012\u00122×π\u0013/3×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(2,4)×ℯ^\u0012π/4×𝐢\u0013", nullptr, nullptr, &globalContext, &store);

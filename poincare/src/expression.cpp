@@ -386,7 +386,6 @@ Expression Expression::defaultHandleUnitsInChildren() {
 }
 
 Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext reductionContext, bool * handledUnits) {
-  // TODO called twice
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     *handledUnits = true;

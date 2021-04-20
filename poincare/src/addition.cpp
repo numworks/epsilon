@@ -98,7 +98,12 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
   /* Sort children in decreasing order:
    * 1+x+x^2 --> x^2+x+1
    * 1+R(2) --> R(2)+1 */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext->context(), true);
+  sortChildrenInPlace(
+      [](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) {
+        return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted);
+      },
+      reductionContext->context(),
+      true);
 
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
@@ -176,10 +181,13 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       }
     }
     if (hasUnit) {
+      // The Tree is now free of units
+      // Recurse to run the reduction, then create the result
+      // result = MUL( addition, unit1, unit2...)
       Expression addition = shallowReduce(reductionContext);
       Multiplication result = Multiplication::Builder(unit);
-      result.mergeSameTypeChildrenInPlace();
-      addition.replaceWithInPlace(result);
+      result.mergeSameTypeChildrenInPlace();  // In case `unit` was a multiplication of units, flatten
+      addition.replaceWithInPlace(result);    // TODO why ?
       result.addChildAtIndexInPlace(addition, 0, 1);
       return std::move(result);
     }

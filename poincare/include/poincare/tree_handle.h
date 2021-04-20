@@ -17,17 +17,21 @@ namespace Poincare {
  *  - We cannot compose with a TreeNode iterator as the node pointers might
  *  change during the loop. */
 
-/* TreeHandle constructors that take only one argument and this argument is
- * a TreeHandle should be marked explicit. This prevents the code from
- * compiling with, for instance: Logarithm l = clone() (which would be
- * equivalent to Logarithm l = Logarithm(clone())). */
-
+/* A TreeHandle wraps a TreeNode stored somewhere is the Expression Pool,
+ * and identified by its idenfier.
+ * Any method that can possibly move the object ("break the this")
+ * therefore needs to be implemented in the Handle rather than the Node.
+ */
 class TreeHandle {
   friend class ::Shared::ContinuousFunction;
   friend class TreeNode;
   friend class TreePool;
 public:
-  /* Constructors */
+  /* Constructors  */
+  /* TreeHandle constructors that take only one argument and this argument is
+  * a TreeHandle should be marked explicit. This prevents the code from
+  * compiling with, for instance: Logarithm l = clone() (which would be
+  * equivalent to Logarithm l = Logarithm(clone())). */
   TreeHandle(const TreeHandle & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }

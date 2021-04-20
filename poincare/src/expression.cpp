@@ -389,7 +389,6 @@ Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext r
   // TODO called twice
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
-    replaceWithInPlace(e);
     *handledUnits = true;
     return *this;
   }
@@ -397,7 +396,7 @@ Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext r
   if (child.type() == ExpressionNode::Type::Multiplication || child.type() == ExpressionNode::Type::Unit) {
     Expression unit;
     child.removeUnit(&unit);
-    if (!unit.isUndefined()) {
+    if (!unit.isUninitialized()) {
       *handledUnits = true;
       // We cannot create the multiplication directly from the value + unit,
       // because we would lose all ref to value.parent()
@@ -405,7 +404,6 @@ Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext r
       Multiplication mul = Multiplication::Builder(unit);
       replaceWithInPlace(mul);
       Expression value = shallowReduce(reductionContext);
-      // value.replaceWithInPlace(mul);
       // Step 2: Then add addition as mul's child
       mul.addChildAtIndexInPlace(value, 0, 1);
       mul.mergeSameTypeChildrenInPlace();

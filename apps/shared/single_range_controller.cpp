@@ -24,13 +24,13 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
   if (index == 0) {
     SwitchView * switchView = static_cast<SwitchView *>(const_cast<View *>(m_autoCell.accessoryView()));
     /*TODO: Use two different statuses. */
-    switchView->setState(m_editXRange ? m_range->zoomAuto() : m_range->zoomAuto());
+    switchView->setState(autoStatus());
     return;
   }
   if (index < k_numberOfTextCells + 1) {
     LockableEditableCell * castedCell = static_cast<LockableEditableCell *>(cell);
     castedCell->setMessage(index == 1 ? I18n::Message::Minimum : I18n::Message::Maximum);
-    KDColor color = m_range->zoomAuto() ? Palette::GrayDark : KDColorBlack;
+    KDColor color = autoStatus() ? Palette::GrayDark : KDColorBlack;
     castedCell->setTextColor(color);
     castedCell->textField()->setTextColor(color);
   }
@@ -39,7 +39,11 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() == 0 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    m_range->setZoomAuto(!m_range->zoomAuto());
+    if (m_editXRange) {
+      m_range->setXAuto(!m_range->xAuto());
+    } else {
+      m_range->setYAuto(!m_range->yAuto());
+    }
     resetMemoization();
     m_selectableTableView.reloadData();
     return true;
@@ -72,7 +76,7 @@ bool SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
 // SingleRangeController::LockableEditableCell
 
 Responder * SingleRangeController::LockableEditableCell::responder() {
-  return m_controller->m_range->zoomAuto() ? nullptr : this;
+  return m_controller->autoStatus() ? nullptr : this;
 }
 
 }

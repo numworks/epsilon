@@ -278,7 +278,7 @@ Expression Multiplication::removeUnit(Expression * unit) {
       unitMult.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
       resultChildrenCount++;
       assert(childAtIndex(i).isRationalOne());
-      removeChildAtIndexInPlace(i--);
+      removeChildAtIndexInPlace(i--);  // Remove unit node
     }
   }
   if (resultChildrenCount == 0) {
@@ -917,11 +917,10 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   return result;
 }
 
+/* This function factorizes two children which have a common base. For example
+  * if this is Multiplication::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
+  * and this turned into Multiplication::Builder(pi^5). */
 void Multiplication::factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext) {
-  /* This function factorizes two children which have a common base. For example
-   * if this is Multiplication::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
-   * and this turned into Multiplication::Builder(pi^5). */
-
   Expression e = childAtIndex(j);
   // Step 1: Get rid of the child j
   removeChildAtIndexInPlace(j);

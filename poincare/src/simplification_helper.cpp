@@ -86,13 +86,10 @@ Expression SimplificationHelper::shallowReducePotentialUnit(Expression e, Expres
   child.removeUnit(&unit);
   if (!unit.isUninitialized()) {
     *handledUnits = true;
-    // We cannot create the multiplication directly from the value + unit,
-    // because we would lose all ref to value.parent()
-    // Step 1: create the mul node half empty, and register it to value's parent
+
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
     Expression value = e.shallowReduce(reductionContext);
-    // Step 2: Then add addition as mul's child
     mul.addChildAtIndexInPlace(value, 0, 1);
     mul.mergeSameTypeChildrenInPlace();
     return std::move(mul);

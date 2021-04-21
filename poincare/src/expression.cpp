@@ -385,29 +385,28 @@ Expression Expression::defaultHandleUnitsInChildren() {
   return *this;
 }
 
-Expression Expression::shallowReduceKeepUnits(ExpressionNode::ReductionContext reductionContext, bool * handledUnits) {
+Expression Expression::shallowReducePotentialUnit(ExpressionNode::ReductionContext reductionContext, bool * handledUnits) {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     *handledUnits = true;
     return *this;
   }
+
   Expression child = childAtIndex(0);
-  if (child.type() == ExpressionNode::Type::Multiplication || child.type() == ExpressionNode::Type::Unit) {
-    Expression unit;
-    child.removeUnit(&unit);
-    if (!unit.isUninitialized()) {
-      *handledUnits = true;
-      // We cannot create the multiplication directly from the value + unit,
-      // because we would lose all ref to value.parent()
-      // Step 1: create the mul node half empty, and register it to value's parent
-      Multiplication mul = Multiplication::Builder(unit);
-      replaceWithInPlace(mul);
-      Expression value = shallowReduce(reductionContext);
-      // Step 2: Then add addition as mul's child
-      mul.addChildAtIndexInPlace(value, 0, 1);
-      mul.mergeSameTypeChildrenInPlace();
-      return std::move(mul);
-    }
+  Expression unit;
+  child.removeUnit(&unit);
+  if (!unit.isUninitialized()) {
+    *handledUnits = true;
+    // We cannot create the multiplication directly from the value + unit,
+    // because we would lose all ref to value.parent()
+    // Step 1: create the mul node half empty, and register it to value's parent
+    Multiplication mul = Multiplication::Builder(unit);
+    replaceWithInPlace(mul);
+    Expression value = shallowReduce(reductionContext);
+    // Step 2: Then add addition as mul's child
+    mul.addChildAtIndexInPlace(value, 0, 1);
+    mul.mergeSameTypeChildrenInPlace();
+    return std::move(mul);
   }
   *handledUnits = false;
   return *this;

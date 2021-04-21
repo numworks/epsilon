@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-/* Namespace holding helper functions (mostly defaults)
+/* Class holding helper functions (mostly defaults)
 * for expression simplication (reduce / beautify). */
 class SimplificationHelper {
 public:

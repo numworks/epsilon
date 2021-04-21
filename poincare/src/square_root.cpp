@@ -6,6 +6,7 @@
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
@@ -120,7 +121,7 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
 
 Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (e.isUndefined()) {
       return e;
     }

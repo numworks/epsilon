@@ -18,6 +18,7 @@
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
@@ -403,7 +404,7 @@ Expression Power::removeUnit(Expression * unit) {
 Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
 
   {
-    Expression e = Expression::defaultShallowReduce();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (e.isUndefined()) {
       return e;
     }

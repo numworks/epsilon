@@ -4,6 +4,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
 
@@ -45,8 +46,8 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(ApproximationContext a
 
 Expression DivisionRemainder::shallowReduce(Context * context) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

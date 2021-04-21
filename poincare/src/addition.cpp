@@ -9,6 +9,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <utility>
 
@@ -140,7 +141,7 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
 
 Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (e.isUndefined()) {
       return e;
     }

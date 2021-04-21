@@ -51,7 +51,7 @@ Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat
 
 Expression Equal::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (e.isUndefined()) {
       return e;
     }

@@ -1,6 +1,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
@@ -51,7 +52,7 @@ Expression SubtractionNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = Expression::defaultShallowReduce();
+  Expression e = SimplificationHelper::defaultShallowReduce(*this);
   if (e.isUndefined()) {
     return e;
   }

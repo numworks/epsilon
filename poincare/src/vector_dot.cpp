@@ -3,6 +3,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 
 namespace Poincare {
@@ -33,8 +34,8 @@ Evaluation<T> VectorDotNode::templatedApproximate(ApproximationContext approxima
 
 Expression VectorDot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

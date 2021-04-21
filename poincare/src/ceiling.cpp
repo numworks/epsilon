@@ -2,7 +2,7 @@
 #include <poincare/constant.h>
 #include <poincare/ceiling_layout.h>
 #include <poincare/serialization_helper.h>
-
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -39,7 +39,7 @@ Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
 Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     bool handledUnits;
-    Expression e = Expression::shallowReducePotentialUnit(reductionContext, &handledUnits);
+    Expression e = SimplificationHelper::shallowReducePotentialUnit(*this, reductionContext, &handledUnits);
     if (handledUnits) {
       return e;
     }

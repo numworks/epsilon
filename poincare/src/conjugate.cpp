@@ -5,6 +5,7 @@
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <cmath>
 #include <utility>
@@ -42,8 +43,8 @@ Expression Conjugate::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionC
 
 Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

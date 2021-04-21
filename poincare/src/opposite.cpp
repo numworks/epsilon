@@ -7,6 +7,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <cmath>
 #include <stdlib.h>
@@ -74,7 +75,7 @@ Expression OppositeNode::shallowReduce(ReductionContext reductionContext) {
 /* Simplification */
 
 Expression Opposite::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression result = Expression::defaultShallowReduce();
+  Expression result = SimplificationHelper::defaultShallowReduce(*this);
   if (result.isUndefined()) {
     return result;
   }

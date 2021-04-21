@@ -5,6 +5,7 @@
 #include <poincare/power.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
 #include <cmath>
@@ -55,8 +56,8 @@ int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Prefe
 
 Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

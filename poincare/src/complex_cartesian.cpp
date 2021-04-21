@@ -13,6 +13,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
 #include <poincare/undefined.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <cmath>
 #include <utility>
@@ -67,8 +68,8 @@ Complex<T> ComplexCartesianNode::templatedApproximate(ApproximationContext appro
 
 Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

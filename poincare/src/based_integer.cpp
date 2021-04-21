@@ -2,6 +2,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+
 #include <assert.h>
 #include <math.h>
 #include <utility>

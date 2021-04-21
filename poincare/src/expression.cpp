@@ -337,81 +337,6 @@ Expression Expression::addMissingParentheses() {
   return *this;
 }
 
-void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    assert(childrenCount == numberOfChildren());
-    childAtIndex(i).deepReduce(reductionContext);
-  }
-}
-
-Expression Expression::defaultShallowReduce() {
-  Expression result;
-  if (sSimplificationHasBeenInterrupted) {
-    result = Undefined::Builder();
-  } else {
-    const int childrenCount = numberOfChildren();
-    for (int i = 0; i < childrenCount; i++) {
-      /* The reduction is shortcut if one child is unreal or undefined:
-       * - the result is unreal if at least one child is unreal
-       * - the result is undefined if at least one child is undefined but no child
-       *   is unreal */
-      ExpressionNode::Type childIType = childAtIndex(i).type();
-      if (childIType == ExpressionNode::Type::Unreal) {
-        result = Unreal::Builder();
-        break;
-      } else if (childIType == ExpressionNode::Type::Undefined) {
-        result = Undefined::Builder();
-      }
-    }
-  }
-  if (!result.isUninitialized()) {
-    replaceWithInPlace(result);
-    return result;
-  }
-  return *this;
-}
-
-Expression Expression::defaultHandleUnitsInChildren() {
-  // Generically, an Expression does not accept any Unit in its children.
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    Expression unit;
-    Expression childI = childAtIndex(i).removeUnit(&unit);
-    if (childI.isUndefined() || !unit.isUninitialized()) {
-      return replaceWithUndefinedInPlace();
-    }
-  }
-  return *this;
-}
-
-Expression Expression::shallowReducePotentialUnit(ExpressionNode::ReductionContext reductionContext, bool * handledUnits) {
-  Expression e = Expression::defaultShallowReduce();
-  if (e.isUndefined()) {
-    *handledUnits = true;
-    return *this;
-  }
-
-  Expression child = childAtIndex(0);
-  Expression unit;
-  child.removeUnit(&unit);
-  if (!unit.isUninitialized()) {
-    *handledUnits = true;
-    // We cannot create the multiplication directly from the value + unit,
-    // because we would lose all ref to value.parent()
-    // Step 1: create the mul node half empty, and register it to value's parent
-    Multiplication mul = Multiplication::Builder(unit);
-    replaceWithInPlace(mul);
-    Expression value = shallowReduce(reductionContext);
-    // Step 2: Then add addition as mul's child
-    mul.addChildAtIndexInPlace(value, 0, 1);
-    mul.mergeSameTypeChildrenInPlace();
-    return std::move(mul);
-  }
-  *handledUnits = false;
-  return *this;
-}
-
 Expression Expression::shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext) {
   double approx = node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
   /* If approx is capped by the largest integer such as all smaller integers can
@@ -426,17 +351,6 @@ Expression Expression::shallowReduceUsingApproximation(ExpressionNode::Reduction
   return *this;
 }
 
-void Expression::defaultDeepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
-  const int nbChildren = numberOfChildren();
-  for (int i = 0; i < nbChildren; i++) {
-    Expression child = childAtIndex(i);
-    child = child.deepBeautify(reductionContext);
-    // We add missing Parentheses after beautifying the parent and child
-    if (node()->childAtIndexNeedsUserParentheses(child, i)) {
-      replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
-    }
-  }
-}
 
 bool Expression::SimplificationHasBeenInterrupted() {
   return sSimplificationHasBeenInterrupted;

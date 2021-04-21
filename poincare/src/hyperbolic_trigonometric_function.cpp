@@ -1,6 +1,7 @@
 #include <poincare/hyperbolic_trigonometric_function.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -10,8 +11,8 @@ Expression HyperbolicTrigonometricFunctionNode::shallowReduce(ReductionContext r
 
 Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

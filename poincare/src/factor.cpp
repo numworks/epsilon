@@ -6,6 +6,7 @@
 #include <poincare/opposite.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/exception_checkpoint.h>
 extern "C" {
 #include <stdlib.h>
@@ -94,8 +95,8 @@ Expression Factor::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionCont
 
 Expression Factor::shallowReduce(Context * context) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

@@ -101,7 +101,7 @@ private:
   void factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext);
   void mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext);
   void factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext);
-  void gatherRationalPowers(int i, int j, ExpressionNode::ReductionContext reductionContext);
+  bool gatherRationalPowers(int i, int j, ExpressionNode::ReductionContext reductionContext);
   Expression distributeOnOperandAtIndex(int index, ExpressionNode::ReductionContext reductionContext);
   void addMissingFactors(Expression factor, ExpressionNode::ReductionContext reductionContext);
   void factorizeSineAndCosine(int i, int j, ExpressionNode::ReductionContext reductionContext);

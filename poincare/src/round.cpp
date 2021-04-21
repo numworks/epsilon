@@ -3,6 +3,7 @@
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
 #include <cmath>
@@ -56,7 +57,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return undefined;
     }
     bool handledUnits;
-    Expression e = Expression::shallowReducePotentialUnit(reductionContext, &handledUnits);
+    Expression e = SimplificationHelper::shallowReducePotentialUnit(*this, reductionContext, &handledUnits);
     if (handledUnits) {
       return e;
     }

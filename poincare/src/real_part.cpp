@@ -2,6 +2,7 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 
 #include <assert.h>
 #include <cmath>
@@ -34,8 +35,8 @@ Expression RealPart::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionCo
 
 Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

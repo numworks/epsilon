@@ -1,7 +1,7 @@
 #include <poincare/frac_part.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-
+#include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
 #include <cmath>
 
@@ -39,8 +39,8 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 
 Expression FracPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

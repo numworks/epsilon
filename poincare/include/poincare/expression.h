@@ -8,6 +8,7 @@
 #include <poincare/expression_node.h>
 #include <poincare/complex.h>
 #include <poincare/solver.h>
+#include <poincare/simplification_helper.h>
 #include <ion/storage.h>
 #include <utility>
 
@@ -128,6 +129,8 @@ class Expression : public TreeHandle {
   friend class StoreNode;
   friend class SymbolNode;
   friend class UnitNode;
+
+  friend class SimplificationHelper;
 
 public:
   static bool IsExpression() { return true; }
@@ -431,21 +434,13 @@ private:
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
     return node()->deepReduceChildren(reductionContext);
   }
-  void defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext);
-  Expression defaultShallowReduce();
-  Expression defaultHandleUnitsInChildren(); // Children must be reduced
-  /* *In place* shallowReduce while keeping the units.
-  * `handledUnits` is set to true if units were handled, in which case
-  * the returned expression is the result with the units.
-  * Otherwise simply returns *this.
-  * Warning: this function will handle units only for the first child.*/
-  Expression shallowReducePotentialUnit(ExpressionNode::ReductionContext reductionContext, bool * handledUnits);
+
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
   void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
     node()->deepBeautifyChildren(reductionContext);
   }
-  void defaultDeepBeautifyChildren(ExpressionNode::ReductionContext reductionContext);
+  
   bool defaultDidDerivate() { return false; }
   Expression defaultUnaryFunctionDifferential() { return *this; }
 

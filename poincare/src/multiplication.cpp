@@ -13,6 +13,7 @@
 #include <poincare/rational.h>
 #include <poincare/subtraction.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
@@ -598,7 +599,7 @@ bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext,
 
 Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
   {
-    Expression e = Expression::defaultShallowReduce();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (e.isUndefined()) {
       return e;
     }

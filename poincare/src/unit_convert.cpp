@@ -63,7 +63,7 @@ void UnitConvert::deepBeautifyChildren(ExpressionNode::ReductionContext reductio
       reductionContext.target(),
       reductionContext.symbolicComputation(),
       ExpressionNode::UnitConversion::None);
-  defaultDeepBeautifyChildren(reductionContextKeepUnitAsIs);
+  SimplificationHelper::defaultDeepBeautifyChildren(*this, reductionContextKeepUnitAsIs);
 }
 
 Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {

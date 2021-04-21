@@ -3,7 +3,7 @@
 #include <poincare/floor_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <ion.h>
 #include <assert.h>
@@ -38,7 +38,7 @@ Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
 Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     bool handledUnits;
-    Expression e = Expression::shallowReducePotentialUnit(reductionContext, &handledUnits);
+    Expression e = SimplificationHelper::shallowReducePotentialUnit(*this, reductionContext, &handledUnits);
     if (handledUnits) {
       return e;
     }

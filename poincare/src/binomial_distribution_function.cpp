@@ -1,5 +1,6 @@
 #include <poincare/binomial_distribution_function.h>
 #include <poincare/binomial_distribution.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -13,8 +14,8 @@ Expression BinomialDistributionFunction::shallowReduce(Context * context, bool *
     *stopReduction = true;
   }
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

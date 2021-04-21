@@ -38,8 +38,8 @@ Expression LeastCommonMultiple::shallowBeautify(Context * context) {
 
 Expression LeastCommonMultiple::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

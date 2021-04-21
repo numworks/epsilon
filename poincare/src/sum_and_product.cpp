@@ -2,6 +2,7 @@
 #include <poincare/decimal.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
+#include <poincare/simplification_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -58,8 +59,8 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
 
 Expression SumAndProduct::shallowReduce(Context * context) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
     if (e.isUndefined()) {
       return e;
     }

@@ -7,6 +7,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/derivative.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <cmath>
 
@@ -40,7 +41,7 @@ bool AbsoluteValueNode::derivate(ReductionContext reductionContext, Expression s
 Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     bool handledUnits;
-    Expression e = Expression::shallowReducePotentialUnit(reductionContext, &handledUnits);
+    Expression e = SimplificationHelper::shallowReducePotentialUnit(*this, reductionContext, &handledUnits);
     if (handledUnits) {
       return e;
     }

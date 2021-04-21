@@ -22,6 +22,9 @@ RationalNode::RationalNode(const native_uint_t * numeratorDigits, uint8_t numera
 {
   if (numeratorDigits) {
     memcpy(m_digits, numeratorDigits, numeratorSize*sizeof(native_uint_t));
+  } else {
+    assert(numeratorSize > Integer::k_maxNumberOfDigits || numeratorSize == 0);
+    numeratorSize = 0;
   }
   if (denominatorDigits) {
     memcpy(m_digits + numeratorSize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
@@ -29,15 +32,16 @@ RationalNode::RationalNode(const native_uint_t * numeratorDigits, uint8_t numera
 }
 
 Integer RationalNode::signedNumerator() const {
-  return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, m_negative);
+  return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, m_negative, false);
 }
 
 Integer RationalNode::unsignedNumerator() const {
-  return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, false);
+  return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, false, false);
 }
 
 Integer RationalNode::denominator() const {
-  return Integer::BuildInteger(((native_uint_t *)m_digits+m_numberOfDigitsNumerator), m_numberOfDigitsDenominator, false);
+  uint8_t numeratorSize = m_numberOfDigitsNumerator > Integer::k_maxNumberOfDigits ? 0 : m_numberOfDigitsNumerator;
+  return Integer::BuildInteger(((native_uint_t *)m_digits + numeratorSize), m_numberOfDigitsDenominator, false, false);
 }
 
 // Tree Node
@@ -210,6 +214,7 @@ Rational Rational::Multiplication(const Rational & i, const Rational & j) {
 }
 
 Rational Rational::IntegerPower(const Rational & i, const Integer & j) {
+  assert(!(i.isZero() && j.isNegative()));
   Integer absJ = j;
   absJ.setNegative(false);
   Integer newNumerator = Integer::Power(i.signedIntegerNumerator(), absJ);

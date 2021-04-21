@@ -748,8 +748,9 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
             && !(oi.childAtIndex(1).convert<Rational>().isInteger() || oi1.childAtIndex(1).convert<Rational>().isInteger()))
     {
-      gatherRationalPowers(i, i+1, reductionContext);
-      continue;
+      if (gatherRationalPowers(i, i+1, reductionContext)) {
+        continue;
+      }
     }
     i++;
   }
@@ -969,9 +970,10 @@ void Multiplication::factorizeExponent(int i, int j, ExpressionNode::ReductionCo
   }
 }
 
-void Multiplication::gatherRationalPowers(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+bool Multiplication::gatherRationalPowers(int i, int j, ExpressionNode::ReductionContext reductionContext) {
   /* Turn x^(a/b)*y^(p/q) into (x^(ak/b)*y^(pk/q))^(1/k) where k = lcm(b,q)
-   * This effectively gathers all roots into a single root. */
+   * This effectively gathers all roots into a single root.
+   * Returns true if operation was successful. */
   assert(TermIsPowerOfRationals(childAtIndex(i)) && TermIsPowerOfRationals(childAtIndex(j)));
 
   Rational x = childAtIndex(i).childAtIndex(0).convert<Rational>();
@@ -986,6 +988,10 @@ void Multiplication::gatherRationalPowers(int i, int j, ExpressionNode::Reductio
       Rational::IntegerPower(x, Integer::Multiplication(a, divB.quotient)),
       Rational::IntegerPower(y, Integer::Multiplication(p, divQ.quotient))
       );
+  if (m.numeratorOrDenominatorIsInfinity() || k.isOverflow()) {
+    // Escape to prevent the introduction of overflown rationals
+    return false;
+  }
   Integer one(1);
   Expression result = Power::Builder(m, Rational::Builder(one, k));
 
@@ -995,6 +1001,7 @@ void Multiplication::gatherRationalPowers(int i, int j, ExpressionNode::Reductio
   if (child.type() == ExpressionNode::Type::Multiplication) {
     mergeChildrenAtIndexInPlace(child, i);
   }
+  return true;
 }
 
 Expression Multiplication::distributeOnOperandAtIndex(int i, ExpressionNode::ReductionContext reductionContext) {

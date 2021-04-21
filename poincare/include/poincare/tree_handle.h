@@ -17,7 +17,7 @@ namespace Poincare {
  *  - We cannot compose with a TreeNode iterator as the node pointers might
  *  change during the loop. */
 
-/* A TreeHandle wraps a TreeNode stored somewhere is the Expression Pool,
+/* A TreeHandle references a TreeNode stored somewhere is the Expression Pool,
  * and identified by its idenfier.
  * Any method that can possibly move the object ("break the this")
  * therefore needs to be implemented in the Handle rather than the Node.

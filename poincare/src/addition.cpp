@@ -182,9 +182,9 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       }
     }
     if (hasUnit) {
-      // The Tree is now free of units
-      // Recurse to run the reduction, then create the result
-      // result = MUL( addition, unit1, unit2...)
+      /* The Tree is now free of units
+       * Recurse to run the reduction, then create the result
+       * result = MUL( addition, unit1, unit2...) */
       Expression addition = shallowReduce(reductionContext);
       Multiplication result = Multiplication::Builder(unit);
       result.mergeSameTypeChildrenInPlace();  // In case `unit` was a multiplication of units, flatten

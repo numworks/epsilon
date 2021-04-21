@@ -528,6 +528,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       replaceWithInPlace(result);
       return result;
     }
+    // x^(p/overflow) or x^(overflow/q)
+    if (rationalIndex.numeratorOrDenominatorIsInfinity()) {
+      // Rationals containing overflows should have been handled at creation.
+      assert(false);
+      return *this;
+    }
   }
   if (baseType == ExpressionNode::Type::Rational) {
     Rational rationalBase = static_cast<Rational &>(base);
@@ -549,6 +555,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       Expression result = Rational::Builder(1);
       replaceWithInPlace(result);
       return result;
+    }
+    // (p/overflow)^x or (overflow/q)^x
+    if (rationalBase.numeratorOrDenominatorIsInfinity()) {
+      // Rationals containing overflows should have been handled at creation.
+      assert(false);
+      return *this;
     }
   }
 
@@ -1244,7 +1256,7 @@ Expression Power::removeRootsFromDenominator(ExpressionNode::ReductionContext re
     Integer a = child1.unsignedIntegerNumerator();
     Integer b = child1.integerDenominator();
     assert(!child0.numeratorOrDenominatorIsInfinity() && !child1.numeratorOrDenominatorIsInfinity());
-    if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+    if (child1.isNegative()) {
       Integer temp = p;
       p = q;
       p.setNegative(temp.isNegative());

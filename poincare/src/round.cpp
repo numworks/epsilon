@@ -56,7 +56,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return undefined;
     }
     bool handledUnits;
-    Expression e = Expression::shallowReduceKeepUnits(reductionContext, &handledUnits);
+    Expression e = Expression::shallowReducePotentialUnit(reductionContext, &handledUnits);
     if (handledUnits) {
       return e;
     }

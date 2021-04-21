@@ -39,7 +39,7 @@ Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
 Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     bool handledUnits;
-    Expression e = Expression::shallowReduceKeepUnits(reductionContext, &handledUnits);
+    Expression e = Expression::shallowReducePotentialUnit(reductionContext, &handledUnits);
     if (handledUnits) {
       return e;
     }

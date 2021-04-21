@@ -439,7 +439,7 @@ private:
   * the returned expression is the result with the units.
   * Otherwise simply returns *this.
   * Warning: this function will handle units only for the first child.*/
-  Expression shallowReduceKeepUnits(ExpressionNode::ReductionContext reductionContext, bool * handledUnits);
+  Expression shallowReducePotentialUnit(ExpressionNode::ReductionContext reductionContext, bool * handledUnits);
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
   void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {

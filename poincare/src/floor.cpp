@@ -38,7 +38,7 @@ Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
 Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     bool handledUnits;
-    Expression e = Expression::shallowReduceKeepUnits(reductionContext, &handledUnits);
+    Expression e = Expression::shallowReducePotentialUnit(reductionContext, &handledUnits);
     if (handledUnits) {
       return e;
     }

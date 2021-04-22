@@ -24,7 +24,7 @@ constexpr float
   Zoom::k_largeUnitMantissa,
   Zoom::k_minimalRangeLength;
 
-bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
+void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
 
   float center, maxDistance;
@@ -158,27 +158,23 @@ bool Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     resultYMin = fallbackYMin;
     resultYMax = fallbackYMax;
   }
-  /* Filter invalid ranges */
-  if (resultXMin >= resultXMax) {
-    if (resultXMin > resultXMax) {
-      resultXMin = resultXMax = NAN;
-    }
-    *xMin = resultXMin;
-    *xMax = resultXMax;
-    *yMin = NAN;
-    *yMax = NAN;
-    return false;
-  }
   /* Add breathing room */
-  float xBreadth = k_breathingRoom * (resultXMax - resultXMin);
-  *xMin = resultXMin - xBreadth;
-  *xMax = resultXMax + xBreadth;
+  if (resultXMin > resultXMax) {
+    resultXMin = FLT_MAX;
+    resultXMax = -FLT_MAX;
+    assert(resultYMin == FLT_MAX && resultYMax == -FLT_MAX);
+  } else {
+    float xBreadth = resultXMin == resultXMax ? k_defaultHalfRange : k_breathingRoom * (resultXMax - resultXMin);
+    resultXMin -= xBreadth;
+    resultXMax += xBreadth;
+  }
+  *xMin = resultXMin;
+  *xMax = resultXMax;
   *yMin = resultYMin;
   *yMax = resultYMax;
-  return true;
 }
 
-void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
+void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
   /* This methods computes the Y range that will be displayed for cartesian
    * functions and sequences, given an X range (xMin, xMax) and bounds yMin and
    * yMax that must be inside the Y range.*/
@@ -186,15 +182,15 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, flo
 
   float sample[k_sampleSize];
   float sampleYMin = FLT_MAX, sampleYMax = -FLT_MAX;
-  const float step = (*xMax - *xMin) / (k_sampleSize - 1);
+  const float step = (xMax - xMin) / (k_sampleSize - 1);
   float x, y;
   float sum = 0.f;
   int pop = 0;
 
-  sample[0] = evaluation(*xMin, context, auxiliary);
-  sample[k_sampleSize - 1] = evaluation(*xMax, context, auxiliary);
+  sample[0] = evaluation(xMin, context, auxiliary);
+  sample[k_sampleSize - 1] = evaluation(xMax, context, auxiliary);
   for (int i = 1; i < k_sampleSize - 1; i++) {
-    x = *xMin + i * step;
+    x = xMin + i * step;
     y = evaluation(x, context, auxiliary);
     sample[i] = y;
     if (!std::isfinite(y)) {
@@ -213,17 +209,14 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, flo
    * order of magnitude and is used to cut the Y range. */
 
   if (pop == 0) {
-    *yMin = NAN;
-    *yMax = NAN;
+    *yMin = FLT_MAX;
+    *yMax = -FLT_MAX;
     return;
-  } else {
-    float bound = std::exp(sum / pop + 1.f);
-    sampleYMin = std::max(sampleYMin, - bound);
-    sampleYMax = std::min(sampleYMax, bound);
-    *yMin = std::isfinite(*yMin) ? std::min(*yMin, sampleYMin) : sampleYMin;
-    *yMax = std::isfinite(*yMax) ? std::max(*yMax, sampleYMax) : sampleYMax;
   }
-  /* Round out the smallest bound to 0 if it is negligible compare to the
+  float bound = std::exp(sum / pop + 1.f);
+  *yMin = std::max(sampleYMin, - bound);
+  *yMax = std::min(sampleYMax, bound);
+  /* Round out the smallest bound to 0 if it is negligible compared to the
    * other one. This way, we can display the X axis for positive functions such
    * as sqrt(x) even if we do not sample close to 0. */
   if (*yMin > 0.f && *yMin / *yMax < k_forceXAxisThreshold) {
@@ -231,92 +224,6 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, flo
   } else if (*yMax < 0.f && *yMax / *yMin < k_forceXAxisThreshold) {
     *yMax = 0.f;
   }
-
-  ExpandSparseWindow(sample, k_sampleSize, xMin, xMax, yMin, yMax);
-}
-
-void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
-  /* The goal of this algorithm is to find the window with given ratio, that
-   * best suits the function.
-   * - The X range is centered around a point of interest of the function, or
-   *   0 if none exist, and uses a default width of 20.
-   * - The Y range's height is fixed at 20*yxRatio. Its center is chosen to
-   *   maximize the number of visible points of the function. */
-  constexpr float minimalXCoverage = 0.15f;
-  constexpr float minimalYCoverage = 0.3f;
-  constexpr int sampleSize = k_sampleSize * 2;
-
-  float xCenter = *xMin == *xMax ? *xMin : 0.f;
-  *xMin = xCenter - k_defaultHalfRange;
-  *xMax = xCenter + k_defaultHalfRange;
-  float xRange = 2 * k_defaultHalfRange;
-  float step = xRange / (sampleSize - 1);
-  float sample[sampleSize];
-  for (int i = 0; i < sampleSize; i++) {
-    sample[i] = evaluation(*xMin + i * step, context, auxiliary);
-  }
-  Helpers::Sort(
-      [](int i, int j, void * ctx, int size) {
-        float * array = static_cast<float *>(ctx);
-        float temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-      },
-      [](int i, int j, void * ctx, int size) {
-        float * array = static_cast<float *>(ctx);
-        return array[i] >= array[j];
-      },
-      sample,
-      sampleSize);
-
-  /* For each value taken by the sample of the function on [xMin, xMax], given
-   * a fixed value for yRange, we measure the number (referred to as breadth)
-   * of other points that could be displayed if this value was chosen as yMin.
-   * In other terms, given a sorted set Y={y1,...,yn} and a length dy, we look
-   * for the pair 1<=i,j<=n such that :
-   *   - yj - yi <= dy
-   *   - i - j is maximal
-   * The fact that the sample is sorted makes it possible to find i and j in
-   * linear time.
-   * In case of pairs having the same breadth, we chose the pair that minimizes
-   * the criteria distanceFromCenter, which makes the window symmetrical when
-   * dealing with linear functions. */
-  float yRange = yxRatio * xRange;
-  int j = 1;
-  int bestIndex = 0, bestBreadth = 0, bestDistanceToCenter;
-  for (int i = 0; i < sampleSize; i++) {
-    if (sampleSize - i < bestBreadth) {
-      break;
-    }
-    while (j < sampleSize && sample[j] < sample[i] + yRange) {
-      j++;
-    }
-    int breadth = j - i;
-    int distanceToCenter = std::fabs(static_cast<float>(i + j - sampleSize));
-    if (breadth > bestBreadth
-     || (breadth == bestBreadth
-      && distanceToCenter <= bestDistanceToCenter)) {
-      bestIndex = i;
-      bestBreadth = breadth;
-      bestDistanceToCenter = distanceToCenter;
-    }
-  }
-
-  /* Functions with a very steep slope might only take a small portion of the
-   * X axis. Conversely, very flat functions may only take a small portion of
-   * the Y range. In those cases, the ratio is not suitable. */
-  if (bestBreadth < minimalXCoverage * sampleSize
-   || sample[bestIndex + bestBreadth - 1] - sample[bestIndex] < minimalYCoverage * yRange) {
-    *xMin = xCenter;
-    *xMax = xCenter;
-    *yMin = NAN;
-    *yMax = NAN;
-    return;
-  }
-
-  float yCenter = (sample[bestIndex] + sample[bestIndex + bestBreadth - 1]) / 2.f;
-  *yMin = yCenter - yRange / 2.f;
-  *yMax = yCenter + yRange / 2.f;
 }
 
 void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {
@@ -337,20 +244,12 @@ void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float t
   }
 }
 
-void Zoom::CombineRanges(int length, const float * mins, const float * maxs, float * minRes, float * maxRes) {
-  ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-    int index = std::round(x);
-    return static_cast<const float *>(auxiliary)[index];
-  };
-  FullRange(evaluation, 0, length - 1, 1, minRes, maxRes, nullptr, mins);
-  float min, max;
-  FullRange(evaluation, 0, length - 1, 1, &min, &max, nullptr, maxs);
-  if (std::isfinite(min)) {
-    *minRes = std::min(min, *minRes);
-  }
-  if (std::isfinite(max)) {
-    *maxRes = std::max(max, *maxRes);
-  }
+void Zoom::CombineRanges(float min1, float max1, float min2, float max2, float * minRes, float * maxRes) {
+  assert(std::isfinite(min1) && std::isfinite(max1) && std::isfinite(min2) && std::isfinite(max2));
+  assert(minRes != nullptr && maxRes != nullptr);
+  *minRes = std::min(min1, min2);
+  *maxRes = std::max(max1, max2);
+  assert(*minRes <= *maxRes || (*minRes == FLT_MAX && *maxRes == -FLT_MAX));
 }
 
 void Zoom::SanitizeRange(float * xMin, float * xMax, float * yMin, float * yMax, float normalRatio) {
@@ -443,38 +342,6 @@ bool Zoom::DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3) 
   float yMax = std::max(y1, std::max(y2, y3));
   constexpr float maxPrecision = 2.f * FLT_EPSILON;
   return (yMax - yMin) / std::fabs(dx) > maxPrecision;
-}
-
-void Zoom::ExpandSparseWindow(float * sample, int length, float * xMin, float * xMax, float * yMin, float * yMax) {
-  /* We compute the "empty center" of the window, i.e. the largest rectangle
-   * (with same center and shape as the window) that does not contain any
-   * point. If that rectangle is deemed too large, we consider that not enough
-   * of the curve shows up on screen and we zoom out. */
-  constexpr float emptyCenterMaxSize = 0.5f;
-  constexpr float ratioCorrection = 4.f/3.f;
-
-  float xCenter = (*xMax + *xMin) / 2.f;
-  float yCenter = (*yMax + *yMin) / 2.f;
-  float xRange = *xMax - *xMin;
-  float yRange = *yMax - *yMin;
-
-  float emptyCenter = FLT_MAX;
-  float step = xRange / (length - 1);
-  for (int i = 0; i < length; i++) {
-    float x = *xMin + i * step;
-    float y = sample[i];
-    if (std::isfinite(y)) {
-      /* r is the ratio between the window and the largest rectangle (with same
-       * center and shape as the window) that does not contain (x,y).
-       * i.e. the smallest zoom-in for which (x,y) is not visible. */
-      float r = 2 * std::max(std::fabs(x - xCenter) / xRange, std::fabs(y - yCenter) / yRange);
-      emptyCenter = std::min(emptyCenter, r);
-    }
-  }
-
-  if (emptyCenter > emptyCenterMaxSize) {
-    SetZoom(ratioCorrection + emptyCenter, xCenter, yCenter, xMin, xMax, yMin ,yMax);
-  }
 }
 
 }

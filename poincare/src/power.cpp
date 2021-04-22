@@ -502,6 +502,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * - we save computational time by early escaping for these cases. */
   if (indexType == ExpressionNode::Type::Rational) {
     const Rational rationalIndex = static_cast<Rational &>(index);
+    // Rationals containing overflows should have been handled earlier.
+    assert(!rationalIndex.numeratorOrDenominatorIsInfinity());
     // x^0
     if (rationalIndex.isZero()) {
       // 0^0 = undef or (±inf)^0 = undef
@@ -528,15 +530,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       replaceWithInPlace(result);
       return result;
     }
-    // x^(p/overflow) or x^(overflow/q)
-    if (rationalIndex.numeratorOrDenominatorIsInfinity()) {
-      // Rationals containing overflows should have been handled at creation.
-      assert(false);
-      return *this;
-    }
   }
   if (baseType == ExpressionNode::Type::Rational) {
     Rational rationalBase = static_cast<Rational &>(base);
+    // Rationals containing overflows should have been handled earlier.
+    assert(!rationalBase.numeratorOrDenominatorIsInfinity());
     // 0^x
     if (rationalBase.isZero()) {
       // 0^x with x > 0 = 0
@@ -555,12 +553,6 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       Expression result = Rational::Builder(1);
       replaceWithInPlace(result);
       return result;
-    }
-    // (p/overflow)^x or (overflow/q)^x
-    if (rationalBase.numeratorOrDenominatorIsInfinity()) {
-      // Rationals containing overflows should have been handled at creation.
-      assert(false);
-      return *this;
     }
   }
 

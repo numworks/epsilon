@@ -54,7 +54,7 @@ QUIZ_CASE(poincare_approximation_rational) {
 template<typename T>
 void assert_float_approximates_to(Float<T> f, const char * result) {
   Shared::GlobalContext globalContext;
-  int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
+  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.template approximate<T>(&globalContext, Cartesian, Radian).serialize(buffer, sizeof(buffer), DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);

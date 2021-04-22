@@ -406,7 +406,7 @@ Decimal Decimal::Builder(T f) {
   /* We keep 7 significant digits for if the the Decimal was built from a float
    * and 14 significant digits if it was built from a double. This roughly
    * correspond to the respective precision of float and double. */
-  constexpr int numberOfSignificantDigits = sizeof(T) == sizeof(float) ? PrintFloat::k_numberOfPrintedSignificantDigits : PrintFloat::k_numberOfStoredSignificantDigits;
+  constexpr int numberOfSignificantDigits = PrintFloat::SignificantDecimalDigits<T>();
   /* mantissa = f*10^(-exponent+numberOfSignificantDigits-1). We compute
    * this operations in 2 steps as
    * 10^(-exponent+numberOfSignificantDigits+1) can be infinity.*/

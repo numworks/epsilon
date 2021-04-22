@@ -1,10 +1,11 @@
 #ifndef SHARED_FUNCTION_H
 #define SHARED_FUNCTION_H
 
+#include "expression_model_handle.h"
 #include <poincare/function.h>
 #include <poincare/symbol.h>
 #include <escher/i18n.h>
-#include "expression_model_handle.h"
+#include <float.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>
@@ -58,6 +59,7 @@ public:
   // Range
   virtual void xRangeForDisplay(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const = 0;
   virtual void yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const = 0;
+  virtual void orthonormalYRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const { *yMin = FLT_MAX; *yMax = -FLT_MAX; }
 
 protected:
   /* RecordDataBuffer is the layout of the data buffer of Record

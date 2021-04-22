@@ -321,6 +321,19 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float * yMin, 
   Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
 }
 
+void ContinuousFunction::orthonormalYRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const {
+  if (plotType() != PlotType::Cartesian || basedOnCostlyAlgorithms(context)) {
+    *yMin = FLT_MAX;
+    *yMax = -FLT_MAX;
+    return;
+  }
+
+  Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+  };
+  Zoom::RangeWithRatioForDisplay(evaluation, ratio, xMin, xMax, yMinForced, yMaxForced, yMin, yMax, context, this);
+}
+
 void ContinuousFunction::Model::tidy() const {
   m_expressionDerivate = Expression();
   ExpressionModel::tidy();

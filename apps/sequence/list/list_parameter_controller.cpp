@@ -50,8 +50,8 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  int index = std::round(floatBody);
-  if (index < 0  || floatBody > Shared::Sequence::maxFirstIndex) {
+  int index = std::floor(floatBody);
+  if (index < 0 || index > Shared::Sequence::maxFirstIndex) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

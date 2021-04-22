@@ -318,7 +318,7 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float * yMin, 
   Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
     return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
   };
-  Zoom::RefinedYRangeForDisplay(evaluation, &xMin, &xMax, yMin, yMax, context, this);
+  Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
 }
 
 void ContinuousFunction::Model::tidy() const {

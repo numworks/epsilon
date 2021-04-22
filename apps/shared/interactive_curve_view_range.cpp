@@ -12,6 +12,21 @@ using namespace Poincare;
 
 namespace Shared {
 
+bool InteractiveCurveViewRange::isOrthonormal() const {
+  int significantBits = normalizationSignificantBits();
+  if (significantBits <= 0) {
+    return false;
+  }
+  float ratio = (yMax() - yMin() + offscreenYAxis()) / (xMax() - xMin());
+  /* The last N (= 23 - significantBits) bits of "ratio" mantissa have become
+   * insignificant. "tolerance" is the difference between ratio with those N
+   * bits set to 1, and ratio with those N bits set to 0 ; i.e. a measure of
+   * the interval in which numbers are indistinguishable from ratio with this
+   * level of precision. */
+  float tolerance = std::pow(2.f, IEEE754<float>::exponent(ratio) - significantBits);
+  return  ratio - tolerance <= NormalYXRatio() && ratio + tolerance >= NormalYXRatio();
+}
+
 void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
   m_delegate = delegate;
 }
@@ -151,51 +166,8 @@ void InteractiveCurveViewRange::normalize(bool forceChangeY) {
 }
 
 void InteractiveCurveViewRange::setDefault() {
-  if (m_delegate == nullptr) {
-    return;
-  }
-
-  assert(offscreenYAxis() == 0.f);
-
-  /* If m_zoomNormalize was left active, xGridUnit() would return the value of
-   * yGridUnit, even if the range were not truly normalized. We use
-   * setZoomNormalize to refresh the button in case the graph does not end up
-   * normalized. */
-  setZoomNormalize(false);
-
-  // Compute the interesting range
-  m_delegate->interestingRanges(this);
-  /* If the horizontal bounds are integers, they are preset values and should
-   * not be changed. */
-  bool isDefaultRange = hasDefaultRange();
-
-  // Add margins, then round limits.
-  float newXMin = xMin(), newXMax = xMax();
-  if (!isDefaultRange) {
-    float xRange = xMax() - xMin();
-    newXMin = roundLimit(m_delegate->addMargin(xMin(), xRange, false, true), xRange, true);
-    newXMax = roundLimit(m_delegate->addMargin(xMax(), xRange, false, false), xRange, false);
-  }
-  m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
-  // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
-  MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-
-  /* We notify the delegate to refresh the cursor's position and update the
-   * bottom margin (which depends on the banner height). */
-  m_delegate->updateBottomMargin();
-
-  float yRange = yMax() - yMin();
-  m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);
-
-  if (m_delegate->defaultRangeIsNormalized() || shouldBeNormalized()) {
-    /* Normalize the axes, so that a polar circle is displayed as a circle.
-     * If we are displaying cartesian functions with a default range, we want
-     * the X bounds untouched. */
-    normalize(isDefaultRange && !m_delegate->defaultRangeIsNormalized());
-  }
-
   setZoomAuto(true);
+  privateComputeRanges(true, true);
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
@@ -276,21 +248,6 @@ bool InteractiveCurveViewRange::shouldBeNormalized() const {
   return ratio >= NormalYXRatio() / k_orthonormalTolerance && ratio <= NormalYXRatio() * k_orthonormalTolerance;
 }
 
-bool InteractiveCurveViewRange::isOrthonormal() const {
-  int significantBits = normalizationSignificantBits();
-  if (significantBits <= 0) {
-    return false;
-  }
-  float ratio = (yMax() - yMin() + offscreenYAxis()) / (xMax() - xMin());
-  /* The last N (= 23 - significantBits) bits of "ratio" mantissa have become
-   * insignificant. "tolerance" is the difference between ratio with those N
-   * bits set to 1, and ratio with those N bits set to 0 ; i.e. a measure of
-   * the interval in which numbers are indistinguishable from ratio with this
-   * level of precision. */
-  float tolerance = std::pow(2.f, IEEE754<float>::exponent(ratio) - significantBits);
-  return  ratio - tolerance <= NormalYXRatio() && ratio + tolerance >= NormalYXRatio();
-}
-
 int InteractiveCurveViewRange::normalizationSignificantBits() const {
     float xr = std::fabs(xMin()) > std::fabs(xMax()) ? xMax() / xMin() : xMin() / xMax();
     float yr = std::fabs(yMin()) > std::fabs(yMax()) ? yMax() / yMin() : yMin() / yMax();
@@ -312,6 +269,55 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
   m_yAuto = yAuto;
   if (m_delegate && (oldAuto != zoomAuto())) {
     m_delegate->updateZoomButtons();
+  }
+}
+
+void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool computeY) {
+  if (m_delegate == nullptr) {
+    return;
+  }
+
+  assert(computeX || computeY);
+  assert(offscreenYAxis() == 0.f);
+
+  /* If m_zoomNormalize was left active, xGridUnit() would return the value of
+   * yGridUnit, even if the range were not truly normalized. We use
+   * setZoomNormalize to refresh the button in case the graph does not end up
+   * normalized. */
+  setZoomNormalize(false);
+
+  float newXMin, newXMax, newYMin, newYMax;
+
+  if (computeX || intrinsicYRangeIsUnset()) {
+    m_delegate->computeXRange(&newXMin, &newXMax, &m_yMinIntrinsic, &m_yMaxIntrinsic);
+  }
+  if (computeX) {
+    m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+    /* Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit */
+    MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+    /* We notify the delegate to refresh the cursor's position and update the
+     * bottom margin (which depends on the banner height). */
+    m_delegate->updateBottomMargin();
+  }
+  if (computeY || (computeX && m_yAuto)) {
+    assert(!intrinsicYRangeIsUnset());
+    m_delegate->computeYRange(xMin(), xMax(), m_yMinIntrinsic, m_yMaxIntrinsic, &newYMin, &newYMax);
+    /* Add vertical margins */
+    float dy = newYMax - newYMin;
+    m_yRange.setMin(roundLimit(m_delegate->addMargin(newYMin, dy, true , true), dy, true), k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(newYMax, dy, true , false), dy, false), k_lowerMaxFloat, k_upperMaxFloat);
+  }
+
+  if (m_delegate->defaultRangeIsNormalized() || shouldBeNormalized()) {
+    /* Normalize the axes, so that a polar circle is displayed as a circle.
+     * If we are displaying cartesian functions, we want the X bounds
+     * untouched. */
+    /* FIXME : normalize calls setZoomAuto(false), so we need to restore the
+     * auto status. Maybe rethink where and how the auto status is updated. */
+    bool oldXAuto = m_xAuto;
+    bool oldYAuto = m_yAuto;
+    normalize(!m_delegate->defaultRangeIsNormalized());
+    privateSetZoomAuto(oldXAuto, oldYAuto);
   }
 }
 

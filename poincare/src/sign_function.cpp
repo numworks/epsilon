@@ -58,10 +58,8 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
       return e;
     }
     // Discard units if any
-    if (childAtIndex(0).type() == ExpressionNode::Type::Multiplication) {
-      Expression unit;
-      childAtIndex(0).removeUnit(&unit);
-    }
+    Expression unit;
+    childAtIndex(0).removeUnit(&unit);
   }
   Expression child = childAtIndex(0);
   if (child.deepIsMatrix(reductionContext.context())) {

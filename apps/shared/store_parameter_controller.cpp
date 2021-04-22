@@ -126,7 +126,7 @@ KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
   if (index == k_indexOfSortValues) {
     cell = &m_sortCell;
   } else {
-    assert(index == k_defaultCellType);
+    assert(typeAtIndex(index) == k_defaultCellType);
     cell = reusableCell(0, k_defaultCellType);
   }
   return heightForCellAtIndex(cell, index, false);

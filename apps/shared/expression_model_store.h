@@ -13,6 +13,8 @@ namespace Shared {
 class ExpressionModelStore {
   // TODO find better name (once we remove ExpressionModelStore?)
 public:
+  constexpr static int k_maxNumberOfMemoizedModels = 10;
+
   ExpressionModelStore();
 
   // Getters
@@ -37,7 +39,6 @@ public:
   virtual void tidy();
   void storageDidChangeForRecord(const Ion::Storage::Record record) const { resetMemoizedModelsExceptRecord(record); }
 protected:
-  constexpr static int k_maxNumberOfMemoizedModels = 10;
   int maxNumberOfMemoizedModels() const { return maxNumberOfModels() < 0 ? k_maxNumberOfMemoizedModels : maxNumberOfModels(); }
   typedef bool (*ModelTest)(ExpressionModelHandle * model, void * context);
   int numberOfModelsSatisfyingTest(ModelTest test, void * context) const;

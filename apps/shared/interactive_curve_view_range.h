@@ -15,6 +15,8 @@ public:
     MemoizedCurveViewRange(),
     m_delegate(delegate),
     m_offscreenYAxis(0.f),
+    m_yMinIntrinsic(NAN),
+    m_yMaxIntrinsic(NAN),
     m_xAuto(true),
     m_yAuto(true),
     m_zoomNormalize(false)
@@ -86,8 +88,12 @@ protected:
 private:
   int normalizationSignificantBits() const;
   void privateSetZoomAuto(bool xAuto, bool yAuto);
+  void privateComputeRanges(bool computeX, bool computeY);
+  bool intrinsicYRangeIsUnset() const { return std::isnan(m_yMinIntrinsic) && std::isnan(m_yMaxIntrinsic); }
 
   float m_offscreenYAxis;
+  float m_yMinIntrinsic;
+  float m_yMaxIntrinsic;
   bool m_xAuto;
   bool m_yAuto;
   bool m_zoomNormalize;

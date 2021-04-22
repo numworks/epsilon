@@ -174,12 +174,17 @@ int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
 }
 
-void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) {
-  /* Since the banner has not yet been computed, cursorBottomMarginRatio cannot be called. We compute it manually with an estimation of the banner size. */
+void FunctionGraphController::computeXRange(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) {
+  DefaultComputeXRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, textFieldDelegateApp()->localContext(), functionStore());
+}
+
+void FunctionGraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) {
+  /* Since the banner has not yet been computed, cursorBottomMarginRatio cannot
+   * be called. We compute it manually with an estimation of the banner size. */
   constexpr int estimateNumberOfBannerLines = 1;
   float bottomRatio = cursorBottomMarginRatioForBannerHeight(BannerView::HeightGivenNumberOfLines(estimateNumberOfBannerLines));
   float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - bottomRatio);
-  DefaultInterestingRanges(range, textFieldDelegateApp()->localContext(), functionStore(), ratio);
+  DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore());
 }
 
 }

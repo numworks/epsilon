@@ -9,7 +9,7 @@ namespace Poincare {
 
 class PrintFloat {
 public:
-  constexpr static int k_numberOfPrintedSignificantDigits = 7;
+  constexpr static int k_floatNumberOfSignificantDigits = 7;
   constexpr static int k_numberOfStoredSignificantDigits = 14;
   // ᴇ and ℯ are 3 bytes long
   constexpr static int k_specialECodePointByteLength = 3;
@@ -60,6 +60,8 @@ public:
    * in buffer (excluding the last \0 character). */
   template <class T>
   static TextLengths ConvertFloatToText(T d, char * buffer, int bufferSize, int availableGlyphLength, int numberOfSignificantDigits, Preferences::PrintFloatMode mode);
+  template <class T>
+  constexpr static int SignificantDecimalDigits() { return sizeof(T) == sizeof(double) ? k_numberOfStoredSignificantDigits : k_floatNumberOfSignificantDigits; }
 
   // Engineering notation
   static int EngineeringExponentFromBase10Exponent(int exponent);

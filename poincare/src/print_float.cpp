@@ -401,5 +401,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
 
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<float>(float, char*, int, int, int, Preferences::Preferences::PrintFloatMode);
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<double>(double, char*, int, int, int, Preferences::Preferences::PrintFloatMode);
+template int PrintFloat::SignificantDecimalDigits<float>();
+template int PrintFloat::SignificantDecimalDigits<double>();
 
 }

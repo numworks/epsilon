@@ -39,7 +39,7 @@ private:
   uint8_t m_id;
 };
 
-enum class ShiftAlphaStatus {
+enum class ShiftAlphaStatus : uint8_t {
   Default,
   Shift,
   Alpha,

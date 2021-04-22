@@ -61,6 +61,7 @@ SECTIONS {
     . = ALIGN(4);
     _data_section_start_flash = LOADADDR(.data);
     _data_section_start_ram = .;
+    KEEP(*(.app_buffer))
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;

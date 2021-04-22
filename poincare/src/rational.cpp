@@ -20,12 +20,13 @@ RationalNode::RationalNode(const native_uint_t * numeratorDigits, uint8_t numera
   m_numberOfDigitsNumerator(numeratorSize),
   m_numberOfDigitsDenominator(denominatorSize)
 {
+  assert(numeratorSize == 0 || (numeratorDigits == nullptr) == (numeratorSize > Integer::k_maxNumberOfDigits));
   if (numeratorDigits) {
     memcpy(m_digits, numeratorDigits, numeratorSize*sizeof(native_uint_t));
   } else {
-    assert(numeratorSize > Integer::k_maxNumberOfDigits || numeratorSize == 0);
     numeratorSize = 0;
   }
+  assert(denominatorSize == 0 || (denominatorDigits == nullptr) == (denominatorSize > Integer::k_maxNumberOfDigits));
   if (denominatorDigits) {
     memcpy(m_digits + numeratorSize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
   }

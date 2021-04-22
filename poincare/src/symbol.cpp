@@ -134,12 +134,13 @@ bool Symbol::isRegressionSymbol(const char * c, Poincare::Context * context) {
 }
 
 Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-    || reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol)
+  ExpressionNode::SymbolicComputation symbolicComputation = reductionContext.symbolicComputation();
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
+    || symbolicComputation == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol)
   {
     return *this;
   }
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
   {
@@ -166,28 +167,28 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   /* Recursively replace all defined symbols and catch circular references
    * involving symbols as well as functions. The only remaining symbols in
    * result will be undefined ones. */
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, reductionContext.symbolicComputation());
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
   if (result.isUninitialized()) {
-    if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
     result = Undefined::Builder();
   }
   replaceWithInPlace(result);
 
-  ExpressionNode::ReductionContext deepReductionContext = reductionContext;
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
     /* At this point, any remaining symbol is undefined and should be replaced,
      * even if the symbol is a parametered expression's parameter.
      * ReductionContext's SymbolicComputation is altered to enforce it.
      * For example, with x undefined and x->a, within diff(a,x,1), a should be
      * reduced to undefined instead of x. */
-    deepReductionContext = ExpressionNode::ReductionContext(
-      reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.target(),
-      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined, reductionContext.unitConversion());
+    reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   }
   // The stored expression is as entered by the user, so we need to call reduce
-  return result.deepReduce(deepReductionContext);
+  result = result.deepReduce(reductionContext);
+  // Restore symbolic computation
+  reductionContext.setSymbolicComputation(symbolicComputation);
+  return result;
 }
 
 bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {

@@ -22,23 +22,22 @@ public:
 
   typedef SolverHelper<float>::ValueAtAbscissa ValueAtAbscissa;
 
+  /* The following convention is taken for returned ranges :
+   * - min < max : the range is valid.
+   * - min = max : the range is a single point.
+   * - min > max : the range is empty, min = FLT_MAX and max = -FLT_MAX are the
+   *   only values allowed.  */
+
   /* Find the most suitable window to display the function's points of
-   * interest. Return false if the X range was given a default value because
-   * there were no points of interest. */
-  static bool InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary);
+   * interest.. */
+  static void InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary);
   /* Find the best Y range to display the function on [xMin, xMax], but crop
    * the values that are outside of the function's order of magnitude. */
-  static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
-  /* Find the best window to display functions, with a specified ratio
-   * between X and Y. Usually used to find the most fitting orthonormal range.
-   * If no suitable range can be made, xMin and xMax will be set to a median
-   * value, and yMin and yMax will be set to NaN.
-   * FIXME: Do something more sensible. Cleanup the zoom call stack in general. */
-  static void RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
+  static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
   static void FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary);
 
-  /* Find the bounding box of the given ranges. */
-  static void CombineRanges(int length, const float * mins, const float * maxs, float * minRes, float * maxRes);
+  /* Find the bounding box of two given ranges. */
+  static void CombineRanges(float min1, float max1, float min2, float max2, float * minRes, float * maxRes);
   /* Ensures that the window is fit for display, with all bounds being proper
    * numbers, with min < max. */
   static void SanitizeRange(float * xMin, float * xMax, float * yMin, float * yMax, float normalRatio);
@@ -73,10 +72,6 @@ private:
    * the slope should taper off toward the center. */
   static bool IsConvexAroundExtremum(ValueAtAbscissa evaluation, float x1, float x2, float x3, float y1, float y2, float y3, Context * context, const void * auxiliary, int iterations = 7);
   static bool DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3);
-  /* If the function is discontinuous between its points of interest, there
-   * might be a lot of empty space in the middle of the screen. In that case,
-   * we want to zoom out to see more of the graph. */
-  static void ExpandSparseWindow(float * sample, int length, float * xMin, float * xMax, float * yMin, float * yMax);
 };
 
 }

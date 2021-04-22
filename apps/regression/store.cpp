@@ -141,21 +141,21 @@ int Store::nextDot(int series, int direction, int dot) {
 void Store::setDefault() {
   setZoomNormalize(false);
 
-  float xMin, xMax, yMin, yMax;
-  float mins[k_numberOfSeries], maxs[k_numberOfSeries];
+  float xMin = FLT_MAX;
+  float xMax = -FLT_MAX;
+  float yMin = FLT_MAX;
+  float yMax = -FLT_MAX;
   for (int series = 0; series < k_numberOfSeries; series++) {
-    bool empty = seriesIsEmpty(series);
-    mins[series] = empty ? NAN : minValueOfColumn(series, 0);
-    maxs[series] = empty ? NAN : maxValueOfColumn(series, 0);
+    if (!seriesIsEmpty(series)) {
+      Poincare::Zoom::CombineRanges(minValueOfColumn(series, 0), maxValueOfColumn(series, 0), xMin, xMax, &xMin, &xMax);
+    }
   }
-  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &xMin, &xMax);
 
   for (int series = 0; series < k_numberOfSeries; series++) {
-    bool empty = seriesIsEmpty(series);
-    mins[series] = empty ? NAN : minValueOfColumn(series, 1);
-    maxs[series] = empty ? NAN : maxValueOfColumn(series, 1);
+    if (!seriesIsEmpty(series)) {
+      Poincare::Zoom::CombineRanges(minValueOfColumn(series, 1), maxValueOfColumn(series, 1), xMin, xMax, &xMin, &xMax);
+    }
   }
-  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &yMin, &yMax);
 
   Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalYXRatio());
 

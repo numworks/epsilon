@@ -226,6 +226,86 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
   }
 }
 
+void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float xMin, float xMax, float yMinForced, float yMaxForced, float * yMin, float * yMax, Context * context, const void * auxiliary) {
+  /* The goal of this algorithm is to find the window with given ratio, that
+   * best suits the function.
+   * - The X range is centered around a point of interest of the function, or
+   *   0 if none exist, and uses a default width of 20.
+   * - The Y range's height is fixed at 20*yxRatio. Its center is chosen to
+   *   maximize the number of visible points of the function. */
+  constexpr float minimalXCoverage = 0.15f;
+  constexpr float minimalYCoverage = 0.3f;
+  constexpr int sampleSize = k_sampleSize * 2;
+
+  float xRange = xMax - xMin;
+  float step = xRange / (sampleSize - 1);
+  float sample[sampleSize];
+  for (int i = 0; i < sampleSize; i++) {
+    sample[i] = evaluation(xMin + i * step, context, auxiliary);
+  }
+  Helpers::Sort(
+      [](int i, int j, void * ctx, int size) {
+        float * array = static_cast<float *>(ctx);
+        float temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      },
+      [](int i, int j, void * ctx, int size) {
+        float * array = static_cast<float *>(ctx);
+        return array[i] >= array[j];
+      },
+      sample,
+      sampleSize);
+
+  /* For each value taken by the sample of the function on [xMin, xMax], given
+   * a fixed value for yRange, we measure the number (referred to as breadth)
+   * of other points that could be displayed if this value was chosen as yMin.
+   * In other terms, given a sorted set Y={y1,...,yn} and a length dy, we look
+   * for the pair 1<=i,j<=n such that :
+   *   - yj - yi <= dy
+   *   - i - j is maximal
+   * The fact that the sample is sorted makes it possible to find i and j in
+   * linear time.
+   * In case of pairs having the same breadth, we chose the pair that minimizes
+   * the criteria distanceFromCenter, which makes the window symmetrical when
+   * dealing with linear functions. */
+  float yRange = yxRatio * xRange;
+  int j = 1;
+  int bestIndex = 0, bestBreadth = 0, bestDistanceToCenter;
+  for (int i = 0; i < sampleSize; i++) {
+    if (sampleSize - i < bestBreadth) {
+      break;
+    }
+    while (j < sampleSize && sample[j] < sample[i] + yRange) {
+      j++;
+    }
+    int breadth = j - i;
+    int distanceToCenter = std::fabs(static_cast<float>(i + j - sampleSize));
+    if (sample[i] <= yMinForced
+     && sample[i] + yRange >= yMaxForced
+     && (breadth > bestBreadth || (breadth == bestBreadth && distanceToCenter <= bestDistanceToCenter)))
+    {
+      bestIndex = i;
+      bestBreadth = breadth;
+      bestDistanceToCenter = distanceToCenter;
+    }
+  }
+
+  /* Functions with a very steep slope might only take a small portion of the
+   * X axis. Conversely, very flat functions may only take a small portion of
+   * the Y range. In those cases, the ratio is not suitable. */
+  if (bestBreadth < minimalXCoverage * sampleSize
+   || sample[bestIndex + bestBreadth - 1] - sample[bestIndex] < minimalYCoverage * yRange) {
+    *yMin = FLT_MAX;
+    *yMax = -FLT_MAX;
+    return;
+  }
+
+  float yCenter = (sample[bestIndex] + sample[bestIndex + bestBreadth - 1]) / 2.f;
+  *yMin = yCenter - yRange / 2.f;
+  *yMax = yCenter + yRange / 2.f;
+}
+
 void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {
   float t = tMin;
   *fMin = FLT_MAX;

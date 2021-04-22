@@ -30,6 +30,16 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
   int length = functionStore->numberOfActiveFunctions();
 
   float yMinTemp, yMaxTemp;
+
+  if (length == 1
+   && yMaxIntrinsic - yMinIntrinsic <= ratio * (xMax - xMin)) {
+    ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(0));
+    f->orthonormalYRangeForDisplay(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, context);
+    if (*yMin < *yMax) {
+      return;
+    }
+  }
+
   *yMin = yMinIntrinsic;
   *yMax = yMaxIntrinsic;
   for (int i = 0; i < length; i++) {

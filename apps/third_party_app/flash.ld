@@ -13,7 +13,7 @@ INFO_API_LEVEL = 0;
 
 MEMORY {
   FLASH (rx) : ORIGIN = 0, LENGTH = 11*64K
-  SRAM_DATA_BSS (rw) : ORIGIN = 0x20000000, LENGTH = 0x100 /* TODO: fix the size of the usable RAM */
+  SRAM_DATA_BSS (rw) : ORIGIN = 0x20000000, LENGTH = 64K
 }
 
 SECTIONS {

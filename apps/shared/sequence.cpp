@@ -14,6 +14,7 @@
 #include <string.h>
 #include <apps/i18n.h>
 #include <cmath>
+#include <float.h>
 
 using namespace Poincare;
 
@@ -303,6 +304,18 @@ Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Contex
   return Float<double>::Builder(result);
 }
 
+void Sequence::xRangeForDisplay(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context *) const {
+  *xMin = static_cast<float>(initialRank());
+  *xMax = *xMin + Zoom::k_defaultHalfRange;
+  *yMinIntrinsic = FLT_MAX;
+  *yMaxIntrinsic = -FLT_MAX;
+}
+
+void Sequence::yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const {
+  protectedFullRangeForDisplay(xMin, xMax, 1.f, yMin, yMax, context, false);
+}
+
+#if 0
 void Sequence::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const {
   Poincare::Zoom::ValueAtAbscissa evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
     return static_cast<float>(static_cast<const Shared::Sequence *>(auxiliary)->initialRank());
@@ -311,6 +324,7 @@ void Sequence::rangeForDisplay(float * xMin, float * xMax, float * yMin, float *
   *xMax += Poincare::Zoom::k_defaultHalfRange;
   protectedFullRangeForDisplay(*xMin, *xMax, 1.f, yMin, yMax, context, false);
 }
+#endif
 
 Sequence::RecordDataBuffer * Sequence::recordData() const {
   assert(!isNull());

@@ -111,12 +111,12 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
   /* Symbols that have a definition while also being the parameter of a
    * parametered expression should not be replaced in SymbolAbstract::Expand.
-   * With ReplaceDefinedFunctionsWithDefinitions, only nested functions will be
-   * replaced by their definitions.
+   * With replaceFunctionsOnly's flag, only nested functions will be replaced by
+   * their definitions.
    * Symbols will be handled in deepReduce, which is aware of parametered
    * expressions context. For example, with 1->x and 1+x->f(x), f(x) within
    * diff(f(x),x,1) should be reduced to 1+x instead of 2. */
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, true);
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;

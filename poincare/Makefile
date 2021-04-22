@@ -134,7 +134,7 @@ poincare_src += $(addprefix poincare/src/,\
   round.cpp \
   sequence.cpp \
   serialization_helper.cpp \
-	simplification_helper.cpp \
+  simplification_helper.cpp \
   sign_function.cpp \
   sine.cpp \
   solver.cpp \

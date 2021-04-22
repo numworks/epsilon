@@ -168,7 +168,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
 }
 
-void simpleAssertCalculationIs(const char * input, const char * output, Context * context, CalculationStore * store) {
+void assertMainCalculationOutputIs(const char * input, const char * output, Context * context, CalculationStore * store) {
   // For the next test, we only need to checkout input and output text.
   store->push(input, context, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
@@ -188,43 +188,43 @@ QUIZ_CASE(calculation_symbolic_computation) {
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
   // 1 - General cases
-  simpleAssertCalculationIs("x+x+1+3+√(π)",        "undef", &globalContext, &store);
-  simpleAssertCalculationIs("f(x)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("1+x→f(x)",            "x+1",   &globalContext, &store);
-  simpleAssertCalculationIs("f(x)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("f(2)",                "3",     &globalContext, &store);
-  simpleAssertCalculationIs("2→x",                 "2",     &globalContext, &store);
-  simpleAssertCalculationIs("f(x)",                "3",     &globalContext, &store);
-  simpleAssertCalculationIs("x+x+1+3+√(π)",        "√(π)+8",&globalContext, &store);
+  assertMainCalculationOutputIs("x+x+1+3+√(π)",        "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("1+x→f(x)",            "x+1",   &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(2)",                "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("x+x+1+3+√(π)",        "√(π)+8",&globalContext, &store);
 
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 
   // 2 - Circularly defined functions
   //   A - f(x) = g(x) = f(x)
-  simpleAssertCalculationIs("1→f(x)",              "1",     &globalContext, &store);
-  simpleAssertCalculationIs("f(x)→g(x)",           "f(x)",  &globalContext, &store);
-  simpleAssertCalculationIs("g(x)→f(x)",           "g(x)",  &globalContext, &store);
+  assertMainCalculationOutputIs("1→f(x)",              "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)→g(x)",           "f(x)",  &globalContext, &store);
+  assertMainCalculationOutputIs("g(x)→f(x)",           "g(x)",  &globalContext, &store);
   // With x undefined
-  simpleAssertCalculationIs("f(x)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
   // With x  defined
-  simpleAssertCalculationIs("1→x",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
 
-  simpleAssertCalculationIs("f(x)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
   //   B - f(x) = g(x) = a = f(x)
-  simpleAssertCalculationIs("f(x)→a",              "undef", &globalContext, &store);
-  simpleAssertCalculationIs("a→g(x)",              "a",     &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)→a",              "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("a→g(x)",              "a",     &globalContext, &store);
   // With x undefined
-  simpleAssertCalculationIs("f(x)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
   // With x defined
-  simpleAssertCalculationIs("1→x",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
 
-  simpleAssertCalculationIs("f(x)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
@@ -232,46 +232,46 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
 
   // 3 - Differences between functions and variables
-  simpleAssertCalculationIs("x+1→f(x)",            "x+1",   &globalContext, &store);
-  simpleAssertCalculationIs("x+1→y",               "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("x+1→f(x)",            "x+1",   &globalContext, &store);
+  assertMainCalculationOutputIs("x+1→y",               "undef", &globalContext, &store);
   // With x undefined
-  simpleAssertCalculationIs("y",                   "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("y",                   "undef", &globalContext, &store);
 
-  simpleAssertCalculationIs("int(y,x,1,3)",        "undef", &globalContext, &store);
-  simpleAssertCalculationIs("sum(y,x,0,1)",        "undef", &globalContext, &store);
-  simpleAssertCalculationIs("product(y,x,0,1)",    "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(y,x,1)",         "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("int(y,x,1,3)",        "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("sum(y,x,0,1)",        "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("product(y,x,0,1)",    "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y,x,1)",         "undef", &globalContext, &store);
 
-  simpleAssertCalculationIs("f(y)",                "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(y),x,1)",      "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x)×y,x,1)",    "undef", &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x×y),x,1)",    "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(y)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(y),x,1)",      "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x)×y,x,1)",    "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x×y),x,1)",    "undef", &globalContext, &store);
 
   // With x defined
-  simpleAssertCalculationIs("1→x",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
 
-  simpleAssertCalculationIs("y",                   "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("y",                   "2",     &globalContext, &store);
 
-  simpleAssertCalculationIs("int(x+1,x,1,3)",      "6",     &globalContext, &store);
-  simpleAssertCalculationIs("int(f(x),x,1,3)",     "6",     &globalContext, &store);
-  simpleAssertCalculationIs("int(y,x,1,3)",        "4",     &globalContext, &store);
+  assertMainCalculationOutputIs("int(x+1,x,1,3)",      "6",     &globalContext, &store);
+  assertMainCalculationOutputIs("int(f(x),x,1,3)",     "6",     &globalContext, &store);
+  assertMainCalculationOutputIs("int(y,x,1,3)",        "4",     &globalContext, &store);
 
-  simpleAssertCalculationIs("sum(x+1,x,0,1)",      "3",     &globalContext, &store);
-  simpleAssertCalculationIs("sum(f(x),x,0,1)",     "3",     &globalContext, &store);
-  simpleAssertCalculationIs("sum(y,x,0,1)",        "4",     &globalContext, &store);
+  assertMainCalculationOutputIs("sum(x+1,x,0,1)",      "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("sum(f(x),x,0,1)",     "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("sum(y,x,0,1)",        "4",     &globalContext, &store);
 
-  simpleAssertCalculationIs("product(x+1,x,0,1)",  "2",     &globalContext, &store);
-  simpleAssertCalculationIs("product(f(x),x,0,1)", "2",     &globalContext, &store);
-  simpleAssertCalculationIs("product(y,x,0,1)",    "4",     &globalContext, &store);
+  assertMainCalculationOutputIs("product(x+1,x,0,1)",  "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("product(f(x),x,0,1)", "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("product(y,x,0,1)",    "4",     &globalContext, &store);
 
-  simpleAssertCalculationIs("diff(x+1,x,1)",       "1",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x),x,1)",      "1",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(y,x,1)",         "0",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(x+1,x,1)",       "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y,x,1)",         "0",     &globalContext, &store);
 
-  simpleAssertCalculationIs("f(y)",                "3",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(y),x,1)",      "0",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x)×y,x,1)",    "2",     &globalContext, &store);
-  simpleAssertCalculationIs("diff(f(x×y),x,1)",    "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("f(y)",                "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(y),x,1)",      "0",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x)×y,x,1)",    "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x×y),x,1)",    "2",     &globalContext, &store);
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();

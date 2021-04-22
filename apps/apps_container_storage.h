@@ -12,8 +12,7 @@ public:
   AppsContainerStorage();
   int numberOfApps() override;
   Escher::App::Snapshot * appSnapshotAtIndex(int index) override;
-  void * currentAppBuffer() override { return &m_apps; };
-private:
+  void * currentAppBuffer() override;
   union Apps {
   public:
     /* Enforce a trivial constructor and destructor that just leave the memory
@@ -27,7 +26,7 @@ private:
     HardwareTest::App m_hardwareTestApp;
     USB::App m_usbApp;
   };
-  Apps m_apps;
+private:
   APPS_CONTAINER_SNAPSHOT_DECLARATIONS
 };
 

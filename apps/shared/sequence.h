@@ -77,7 +77,8 @@ public:
   constexpr static int k_initialRankNumberOfDigits = 3;
 
   //Range
-  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const override;
+  void xRangeForDisplay(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
+  void yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const override;
 
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;

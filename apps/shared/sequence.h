@@ -77,7 +77,7 @@ public:
   constexpr static int k_initialRankNumberOfDigits = 3;
 
   //Range
-  void xRangeForDisplay(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
+  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
   void yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const override;
 
 private:

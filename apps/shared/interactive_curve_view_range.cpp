@@ -293,7 +293,15 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
   float newXMin, newXMax, newYMin, newYMax;
 
   if (computeX || intrinsicYRangeIsUnset()) {
-    m_delegate->computeXRange(&newXMin, &newXMax, &m_yMinIntrinsic, &m_yMaxIntrinsic);
+    float xMinLimit, xMaxLimit;
+    if (computeX) {
+      xMinLimit = NAN;
+      xMaxLimit = NAN;
+    } else {
+      xMinLimit = xMin();
+      xMaxLimit = xMax();
+    }
+    m_delegate->computeXRange(xMinLimit, xMaxLimit, &newXMin, &newXMax, &m_yMinIntrinsic, &m_yMaxIntrinsic);
   }
   if (computeX) {
     m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);

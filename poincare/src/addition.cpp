@@ -429,11 +429,11 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   Power inverseDenominator = Power::Builder(commonDenominator, Rational::Builder(-1));
   Multiplication result = Multiplication::Builder(numerator, inverseDenominator);
 
-  /* To simplify the numerator and the denominator, we allow symbolic
-   * computation: all unwanted symbols should have already disappeared by now,
-   * and if we checked again for symbols we might find "parameter" symbols
-   * disconnected from the parametered expression, which would be replaced with
-   * undef.
+  /* To simplify the numerator and the denominator, we temporarily disable
+   * symbolic computation: all unwanted symbols should have already disappeared
+   * by now, and if we checked again for symbols we might find "parameter"
+   * symbols disconnected from the parametered expression (which is no longer a
+   * parent here), which would be replaced with undef.
    * Example: int((ℯ^(-x))-x^(0.5), x, 0, 3), when creating the common
    * denominator for the integrand. */
   ExpressionNode::ReductionContext contextWithSymbolicComputation = ExpressionNode::ReductionContext(
@@ -442,7 +442,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
       reductionContext.angleUnit(),
       reductionContext.unitFormat(),
       reductionContext.target(),
-      ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+      ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 
   // Step 4: Simplify the numerator
   numerator.shallowReduce(contextWithSymbolicComputation);

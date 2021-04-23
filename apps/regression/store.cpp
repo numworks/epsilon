@@ -136,51 +136,6 @@ int Store::nextDot(int series, int direction, int dot) {
   return selectedDot;
 }
 
-/* Window */
-
-void Store::setDefault() {
-  setZoomNormalize(false);
-
-  float xMin = FLT_MAX;
-  float xMax = -FLT_MAX;
-  float yMin = FLT_MAX;
-  float yMax = -FLT_MAX;
-  for (int series = 0; series < k_numberOfSeries; series++) {
-    if (!seriesIsEmpty(series)) {
-      Poincare::Zoom::CombineRanges(minValueOfColumn(series, 0), maxValueOfColumn(series, 0), xMin, xMax, &xMin, &xMax);
-    }
-  }
-
-  for (int series = 0; series < k_numberOfSeries; series++) {
-    if (!seriesIsEmpty(series)) {
-      Poincare::Zoom::CombineRanges(minValueOfColumn(series, 1), maxValueOfColumn(series, 1), xMin, xMax, &xMin, &xMax);
-    }
-  }
-
-  Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalYXRatio());
-
-  m_xRange.setMin(xMin);
-  m_xRange.setMax(xMax);
-  m_yRange.setMin(yMin);
-  m_yRange.setMax(yMax);
-  bool revertToOrthonormal = shouldBeNormalized();
-
-  float range = xMax - xMin;
-  setXMin(xMin - k_displayHorizontalMarginRatio * range);
-  setXMax(xMax + k_displayHorizontalMarginRatio * range);
-
-  m_delegate->updateBottomMargin();
-
-  range = yMax - yMin;
-  setYMin(roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true));
-  setYMax(roundLimit(m_delegate->addMargin(yMax, range, true, false), range, false));
-
-  if (revertToOrthonormal) {
-    normalize();
-  }
-  setZoomAuto(true);
-}
-
 /* Series */
 
 bool Store::seriesIsEmpty(int series) const {
@@ -335,6 +290,69 @@ double Store::correlationCoefficient(int series) const {
   double v0 = varianceOfColumn(series, 0);
   double v1 = varianceOfColumn(series, 1);
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
+}
+
+void Store::privateComputeRanges(bool computeX, bool computeY) {
+  /* TODO : Bears a lot of simialrity with InteractiveCurveViewRange::privateComputeRanges. Factor code by adding Regression::GraphController as a delegate of Store ? */
+  assert(m_delegate == nullptr);
+
+  setZoomNormalize(false);
+
+  float xMin = FLT_MAX;
+  float xMax = -FLT_MAX;
+  float yMin = FLT_MAX;
+  float yMax = -FLT_MAX;
+
+  if (computeX) {
+    for (int series = 0; series < k_numberOfSeries; series++) {
+      if (!seriesIsEmpty(series)) {
+        Poincare::Zoom::CombineRanges(minValueOfColumn(series, 0), maxValueOfColumn(series, 0), xMin, xMax, &xMin, &xMax);
+      }
+    }
+    computeY |= yAuto();
+    /* TODO : Deprecate Zoom::SanitizeRange and replace it with something to factor the following code. */
+    assert(xMin <= xMax);
+    if (xMin == xMax) {
+      xMin -= Poincare::Zoom::k_defaultHalfRange;
+      xMax += Poincare::Zoom::k_defaultHalfRange;
+    }
+    float range = xMax - xMin;
+    xMin -= k_displayHorizontalMarginRatio * range;
+    xMax += k_displayHorizontalMarginRatio * range;
+    m_xRange.setMin(xMin);
+    /* Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit */
+    MemoizedCurveViewRange::protectedSetXMax(xMax, k_lowerMaxFloat, k_upperMaxFloat);
+  }
+
+  m_delegate->updateBottomMargin();
+
+  if (computeY || (computeX && yAuto())) {
+    for (int series = 0; series < k_numberOfSeries; series++) {
+      for (int pair = 0; pair < numberOfPairsOfSeries(series); pair++) {
+        float x = get(series, pair, 0);
+        if (x < xMin || x > xMax) {
+          continue;
+        }
+        float y = get(series, pair, 1);
+        Poincare::Zoom::CombineRanges(yMin, yMax, y, y, &yMin, &yMax);
+      }
+    }
+    Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalYXRatio());
+    float range = yMax - yMin;
+    yMin = roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true);
+    yMax = roundLimit(m_delegate->addMargin(yMax, range, true, false), range, false);
+    m_yRange.setMin(yMin);
+    MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
+  }
+
+  /* FIXME : Specify which axis can be changed if any. */
+  if (shouldBeNormalized()) {
+    bool oldXAuto = xAuto();
+    bool oldYAuto = yAuto();
+    normalize();
+    setXAuto(oldXAuto);
+    setYAuto(oldYAuto);
+  }
 }
 
 double Store::computeDeterminationCoefficient(int series, Poincare::Context * globalContext) {

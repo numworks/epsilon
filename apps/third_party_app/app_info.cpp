@@ -1,4 +1,5 @@
 #include "app_info.h"
+#include "icon.h"
 
 #ifndef INFO_API_LEVEL
 #error This file expects INFO_API_LEVEL to be defined
@@ -17,6 +18,7 @@ constexpr AppInfo::AppInfo() :
   m_apiLevel(INFO_API_LEVEL),
   m_title(&_title_symbol),
   m_upperTitle(&_upper_title_symbol),
+  m_compressedPixelIconSize(k_compressedPixelSize),
   m_compressedPixelIcon(&_icon_symbol),
   m_entryPoint(&_main_symbol),
   /* The app code is relocatable so the start of the flash is by default 0 which makes the size equals to the end address. */

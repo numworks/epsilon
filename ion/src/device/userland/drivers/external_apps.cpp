@@ -13,6 +13,7 @@ namespace ExternalApps {
  * - 4 bytes: the API level of the AppInfo layout
  * - 4 bytes: the address of the app name
  * - 4 bytes: the address of the upper app name
+ * - 4 bytes: the size of the compressed icon
  * - 4 bytes: the address of the compressed icon data
  * - 4 bytes: the address of the entry point
  * - 4 bytes: the size of the external app including the AppInfo header
@@ -23,20 +24,28 @@ App::App(uint8_t * a) : m_startAddress(a) {
   assert(*reinterpret_cast<uint32_t *>(m_startAddress) == k_magic);
 }
 
+uint8_t * App::addressAtIndexInAppInfo(int index) const {
+ return m_startAddress + *reinterpret_cast<uint32_t *>(m_startAddress + index*sizeof(uint32_t));
+}
+
 const char * App::name() const {
-  return *reinterpret_cast<const char **>(m_startAddress + 2*sizeof(uint32_t));
+ return reinterpret_cast<const char *>(addressAtIndexInAppInfo(2));
 }
 
 const char * App::upperName() const {
-  return *reinterpret_cast<const char **>(m_startAddress + 3*sizeof(uint32_t));
+ return reinterpret_cast<const char *>(addressAtIndexInAppInfo(3));
+}
+
+uint32_t App::iconSize() const {
+  return *reinterpret_cast<uint32_t *>(m_startAddress + 4*sizeof(uint32_t));
 }
 
 const uint8_t * App::iconData() const {
-  return *reinterpret_cast<const uint8_t **>(m_startAddress + 5*sizeof(uint32_t));
+  return reinterpret_cast<const uint8_t *>(addressAtIndexInAppInfo(5));
 }
 
 void * App::entryPoint() const {
-  return *reinterpret_cast<void **>(m_startAddress + 5*sizeof(uint32_t));
+  return reinterpret_cast<void *>(addressAtIndexInAppInfo(6));
 }
 
 bool App::appAtAddress(uint8_t * address) {

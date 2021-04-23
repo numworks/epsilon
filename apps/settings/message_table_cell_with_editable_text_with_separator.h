@@ -8,13 +8,15 @@ namespace Settings {
 
 class MessageTableCellWithEditableTextWithSeparator : public Shared::CellWithSeparator {
 public:
-  MessageTableCellWithEditableTextWithSeparator(Escher::Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
+  MessageTableCellWithEditableTextWithSeparator(Escher::Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0) :
+    CellWithSeparator(),
+    m_cell(parentResponder, inputEventHandlerDelegate, textFieldDelegate, message) {}
   const char * text() const override { return m_cell.text(); }
   Poincare::Layout layout() const override { return m_cell.layout(); }
   Escher::MessageTableCellWithEditableText * messageTableCellWithEditableText() { return &m_cell; }
-  KDSize minimalSizeForOptimalDisplay() const override;
 private:
-  Escher::HighlightCell * cell() override { return &m_cell; }
+  Escher::TableCell * cell() override { return &m_cell; }
+  const Escher::TableCell * constCell() const override { return &m_cell; }
   Escher::MessageTableCellWithEditableText m_cell;
 };
 

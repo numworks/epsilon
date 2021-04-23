@@ -25,7 +25,8 @@ public:
   static AppsContainer * sharedAppsContainer();
   AppsContainer();
   static bool poincareCircuitBreaker();
-  virtual int numberOfApps() = 0;
+  virtual int numberOfBuiltinApps() = 0;
+  int numberOfApps() { return numberOfExternalApps() + numberOfBuiltinApps(); }
   virtual Escher::App::Snapshot * appSnapshotAtIndex(int index) = 0;
   Escher::App::Snapshot * initialAppSnapshot();
   Escher::App::Snapshot * hardwareTestAppSnapshot();

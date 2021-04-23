@@ -51,7 +51,7 @@ void ion_main(int argc, const char * const argv[]) {
      * $ ./epsilon.elf --code-script hello_world.py:print("hello") --code-lock-on-console
      */
     const char * appNames[] = {"home", EPSILON_APPS_NAMES};
-    for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfApps(); j++) {
+    for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfBuiltinApps(); j++) {
       Escher::App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
       int cmp = strcmp(argv[i]+2, appNames[j]);
       if (cmp == '-') {

@@ -56,9 +56,8 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
       replaceWithInPlace(undefined);
       return undefined;
     }
-    bool handledUnits;
-    Expression e = SimplificationHelper::shallowReducePotentialUnit(*this, reductionContext, &handledUnits);
-    if (handledUnits) {
+    Expression e = SimplificationHelper::shallowReduceUndefinedAndUnits(*this, reductionContext);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

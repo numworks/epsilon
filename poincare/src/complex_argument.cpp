@@ -37,8 +37,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
 Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
-    if (e.isUndefined()) {
+    if (!e.isUninitialized()) {
       return e;
     }
   }

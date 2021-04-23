@@ -33,7 +33,7 @@ void SimplificationHelper::defaultDeepReduceChildren(Expression e, ExpressionNod
 }
 
 
-Expression SimplificationHelper::defaultShallowReduce(Expression e) {
+Expression SimplificationHelper::shallowReduceUndefined(Expression e) {
   Expression result;
   if (Expression::SimplificationHasBeenInterrupted()) {
     result = Undefined::Builder();
@@ -57,11 +57,11 @@ Expression SimplificationHelper::defaultShallowReduce(Expression e) {
     e.replaceWithInPlace(result);
     return result;
   }
-  return e;
+  return Expression();
 }
 
 
-Expression SimplificationHelper::defaultHandleUnitsInChildren(Expression e) {
+Expression SimplificationHelper::shallowReduceBanningUnits(Expression e) {
   // Generically, an Expression does not accept any Unit in its children.
   const int childrenCount = e.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
@@ -71,21 +71,22 @@ Expression SimplificationHelper::defaultHandleUnitsInChildren(Expression e) {
       return e.replaceWithUndefinedInPlace();
     }
   }
-  return e;
+  return Expression();
 }
 
-
-Expression SimplificationHelper::shallowReducePotentialUnit(Expression e, ExpressionNode::ReductionContext reductionContext, bool * handledUnits) {
-  Expression exp = defaultShallowReduce(e);
-  if (exp.isUndefined()) {
-    *handledUnits = true;
-    return exp;
+Expression SimplificationHelper::defaultShallowReduce(Expression e) {
+  Expression res = shallowReduceUndefined(e);
+  if (res.isUninitialized()) {  // did nothing
+    res = shallowReduceBanningUnits(e);
   }
+  return res;
+}
+
+Expression SimplificationHelper::shallowReduceKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
   Expression child = e.childAtIndex(0);
   Expression unit;
   child.removeUnit(&unit);
   if (!unit.isUninitialized()) {
-    *handledUnits = true;
 
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
@@ -94,8 +95,15 @@ Expression SimplificationHelper::shallowReducePotentialUnit(Expression e, Expres
     mul.mergeSameTypeChildrenInPlace();
     return std::move(mul);
   }
-  *handledUnits = false;
-  return e;
+  return Expression();
+}
+
+Expression SimplificationHelper::shallowReduceUndefinedAndUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  Expression res = shallowReduceUndefined(e);
+  if (res.isUninitialized()) {
+    res = shallowReduceKeepingUnits(e, reductionContext);
+  }
+  return res;
 }
 
 }

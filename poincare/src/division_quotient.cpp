@@ -63,8 +63,7 @@ Expression DivisionQuotient::setSign(ExpressionNode::Sign s, ExpressionNode::Red
 Expression DivisionQuotient::shallowReduce(Context * context) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
-    if (e.isUndefined()) {
+    if (!e.isUninitialized()) {
       return e;
     }
   }

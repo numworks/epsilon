@@ -30,7 +30,7 @@ AppsContainerStorage::AppsContainerStorage() :
 }
 
 int AppsContainerStorage::numberOfApps() {
-  return k_numberOfCommonApps;
+  return k_numberOfCommonApps + numberOfExternalApps();
 }
 
 Escher::App::Snapshot * AppsContainerStorage::appSnapshotAtIndex(int index) {

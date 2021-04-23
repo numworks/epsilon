@@ -53,8 +53,8 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 
 Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
     // Discard units if any

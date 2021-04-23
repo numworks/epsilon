@@ -121,8 +121,8 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
 
 Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

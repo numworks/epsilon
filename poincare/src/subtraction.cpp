@@ -52,8 +52,8 @@ Expression SubtractionNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = SimplificationHelper::defaultShallowReduce(*this);
-  if (e.isUndefined()) {
+  Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+  if (!e.isUninitialized()) {
     return e;
   }
   Expression m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));

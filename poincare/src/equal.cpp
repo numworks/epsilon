@@ -51,8 +51,8 @@ Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat
 
 Expression Equal::shallowReduce() {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

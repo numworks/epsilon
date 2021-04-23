@@ -547,8 +547,7 @@ Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionConte
 Expression Matrix::shallowReduce(Context * context) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
-    if (e.isUndefined()) {
+    if (!e.isUninitialized()) {
       return e;
     }
   }

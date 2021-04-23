@@ -432,7 +432,7 @@ private:
   static constexpr double k_largestExactIEEE754Integer = 9007199254740992.0;
   Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-    return node()->deepReduceChildren(reductionContext);
+    node()->deepReduceChildren(reductionContext);
   }
 
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
@@ -440,7 +440,7 @@ private:
   void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
     node()->deepBeautifyChildren(reductionContext);
   }
-  
+
   bool defaultDidDerivate() { return false; }
   Expression defaultUnaryFunctionDifferential() { return *this; }
 

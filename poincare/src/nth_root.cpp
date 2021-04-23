@@ -62,8 +62,8 @@ Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximati
 
 Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

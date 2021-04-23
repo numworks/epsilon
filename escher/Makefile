@@ -42,6 +42,7 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_chevron_and_message.cpp \
   message_table_cell_with_chevron_and_expression.cpp \
   message_table_cell_with_editable_text.cpp \
+  message_table_cell_with_editable_text_with_message.cpp \
   message_table_cell_with_expression.cpp \
   message_table_cell_with_gauge.cpp \
   message_table_cell_with_message.cpp \

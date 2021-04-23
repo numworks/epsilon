@@ -44,6 +44,7 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
     } else {
       m_range->setYAuto(!m_range->yAuto());
     }
+    m_range->computeRanges();
     resetMemoization();
     m_selectableTableView.reloadData();
     return true;

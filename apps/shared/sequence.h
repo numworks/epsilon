@@ -78,7 +78,7 @@ public:
 
   //Range
   void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
-  void yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const override;
+  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const override;
 
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;

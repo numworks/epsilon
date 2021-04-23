@@ -311,7 +311,7 @@ void Sequence::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, 
   *yMaxIntrinsic = -FLT_MAX;
 }
 
-void Sequence::yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const {
+void Sequence::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const {
   protectedFullRangeForDisplay(xMin, xMax, 1.f, yMin, yMax, context, false);
 }
 

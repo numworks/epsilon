@@ -325,44 +325,35 @@ void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float t
 }
 
 void Zoom::CombineRanges(float min1, float max1, float min2, float max2, float * minRes, float * maxRes) {
-  assert(std::isfinite(min1) && std::isfinite(max1) && std::isfinite(min2) && std::isfinite(max2));
   assert(minRes != nullptr && maxRes != nullptr);
-  *minRes = std::min(min1, min2);
-  *maxRes = std::max(max1, max2);
+  if (!std::isfinite(min1)) {
+    *minRes = min2;
+  } else if (!std::isfinite(min2)) {
+    *minRes = min1;
+  } else {
+    *minRes = std::min(min1, min2);
+  }
+
+  if (!std::isfinite(max1)) {
+    *maxRes = max2;
+  } else if (!std::isfinite(max2)) {
+    *maxRes = max1;
+  } else {
+    *maxRes = std::max(max1, max2);
+  }
   assert(*minRes <= *maxRes || (*minRes == FLT_MAX && *maxRes == -FLT_MAX));
 }
 
-void Zoom::SanitizeRange(float * xMin, float * xMax, float * yMin, float * yMax, float normalRatio) {
-  /* Axes of the window can be :
-   *   - well-formed
-   *   - empty (min = max)
-   *   - ill-formed (min > max, or either bound is not finite)
-   *
-   * The general strategy to sanitize a window is as follow :
-   *   - for all ill-formed axes, set both bounds to 0
-   *   - if both axes are empty, set the X axis to default bounds
-   *   - if one axis is empty, normalize the window
-   *   - do nothing if both axes are well-formed. */
-
-  if (!std::isfinite(*xMin) || !std::isfinite(*xMax) || *xMax < *xMin) {
-    *xMin = 0;
-    *xMax = 0;
-  }
-  if (!std::isfinite(*yMin) || !std::isfinite(*yMax) || *yMax < *yMin) {
-    *yMin = 0;
-    *yMax = 0;
+void Zoom::SanitizeRangeForDisplay(float * min, float * max, float defaultHalfWidth) {
+  if (!std::isfinite(*min) || !std::isfinite(*max) || *max < *min) {
+    *min = 0;
+    *max = 0;
   }
 
-  float xRange = *xMax - *xMin;
-  float yRange = *yMax - *yMin;
-  if (xRange < k_minimalRangeLength && yRange < k_minimalRangeLength) {
-    *xMax = *xMin + k_defaultHalfRange;
-    *xMin -= k_defaultHalfRange;
-    xRange = 2 * k_defaultHalfRange;
-  }
-
-  if (xRange < k_minimalRangeLength || yRange < k_minimalRangeLength) {
-    SetToRatio(normalRatio, xMin, xMax, yMin, yMax, false);
+  float d = *max - *min;
+  if (d < k_minimalRangeLength) {
+    *max = *min + defaultHalfWidth;
+    *min -= defaultHalfWidth;
   }
 }
 

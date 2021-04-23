@@ -54,7 +54,7 @@ private:
 
 
   void buttonAction();
-  bool displayNormalizeCell() const { return !m_interactiveRange->zoomNormalize(); }
+  bool displayNormalizeCell() const { return !m_tempInteractiveRange.zoomNormalize(); }
 
   InteractiveCurveViewRange * m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;

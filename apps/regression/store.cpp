@@ -310,12 +310,7 @@ void Store::privateComputeRanges(bool computeX, bool computeY) {
       }
     }
     computeY |= yAuto();
-    /* TODO : Deprecate Zoom::SanitizeRange and replace it with something to factor the following code. */
-    assert(xMin <= xMax);
-    if (xMin == xMax) {
-      xMin -= Poincare::Zoom::k_defaultHalfRange;
-      xMax += Poincare::Zoom::k_defaultHalfRange;
-    }
+    Poincare::Zoom::SanitizeRangeForDisplay(&xMin, &xMax);
     float range = xMax - xMin;
     xMin -= k_displayHorizontalMarginRatio * range;
     xMax += k_displayHorizontalMarginRatio * range;
@@ -337,7 +332,7 @@ void Store::privateComputeRanges(bool computeX, bool computeY) {
         Poincare::Zoom::CombineRanges(yMin, yMax, y, y, &yMin, &yMax);
       }
     }
-    Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalYXRatio());
+    Poincare::Zoom::SanitizeRangeForDisplay(&yMin, &yMax, NormalYXRatio() * (Store::xMax() - Store::xMin()) / 2.f);
     float range = yMax - yMin;
     yMin = roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true);
     yMax = roundLimit(m_delegate->addMargin(yMax, range, true, false), range, false);

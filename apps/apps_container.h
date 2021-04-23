@@ -55,6 +55,7 @@ public:
   void storageIsFull() override;
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
+  int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
 private:
   Escher::Window * window() override;
   int numberOfContainerTimers() override;

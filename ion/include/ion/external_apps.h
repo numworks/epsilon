@@ -11,10 +11,12 @@ public:
   App(uint8_t * a);
   const char * name() const;
   const char * upperName() const;
+  uint32_t iconSize() const;
   const uint8_t * iconData() const;
   void * entryPoint() const;
   static bool appAtAddress(uint8_t * address);
 private:
+  uint8_t * addressAtIndexInAppInfo(int index) const;
   static constexpr uint32_t k_magic = 0xDEC0BEBA;
   uint8_t * m_startAddress;
 };
@@ -35,8 +37,6 @@ public:
   AppIterator end() const { return AppIterator(nullptr); };
 private:
 };
-
-/* for (App l : Apps()) {*/
 
 int numberOfApps();
 

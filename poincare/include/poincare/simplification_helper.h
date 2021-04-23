@@ -12,15 +12,18 @@ class SimplificationHelper {
 public:
   static void defaultDeepReduceChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
   static void defaultDeepBeautifyChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
+  /* Handle circuit breaker and early break if should be undefined
+  * Returns uninitialized handle if nothing was done, the resulting expression otherwise */
+  static Expression shallowReduceUndefined(Expression e);
+  /* If `e` contains units, replaces with undefined to parent and returns the undefined handle.
+  * Returns uninitialized handle otherwise. */
+  static Expression shallowReduceBanningUnits(Expression e);
   static Expression defaultShallowReduce(Expression e);
-  static Expression defaultHandleUnitsInChildren(Expression e); // Children must be reduced
   /* *In place* shallowReduce while keeping the units.
-  * `handledUnits` is set to true if units were handled, in which case
-  * the returned expression is the result with the units.
-  * Otherwise simply returns *this.
-  * Warning: this function will handle units only for the first child.*/
-  static Expression shallowReducePotentialUnit(Expression e, ExpressionNode::ReductionContext reductionContext, bool * handledUnits);
-
+  * The returned expression is the result with the units if units were handled.
+  * Otherwise returns unitialized handle. */
+  static Expression shallowReduceKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceUndefinedAndUnits(Expression e, ExpressionNode::ReductionContext reductionContext);
 };
 }
 

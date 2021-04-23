@@ -9,6 +9,7 @@
  * - the API level of the AppInfo layout
  * - the address of the app name
  * - the address of the upper app name
+ * - the size of the compressed icon
  * - the address of the compressed icon data
  * - the address of the entry point
  * - the size of the external app including the AppInfo header
@@ -25,6 +26,7 @@ private:
   const char * m_title;
   const char * m_upperTitle;
   // TODO: add explanation on how to generate m_compressedPixelIcon
+  uint32_t m_compressedPixelIconSize;
   char * m_compressedPixelIcon;
   char * m_entryPoint;
   char * m_size;

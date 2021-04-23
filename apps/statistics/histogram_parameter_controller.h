@@ -1,7 +1,7 @@
 #ifndef STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
 #define STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
 
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/message_table_cell_with_editable_text_with_message.h>
 #include "../shared/float_parameter_controller.h"
 #include "../shared/discard_pop_up_controller.h"
 #include "store.h"
@@ -25,7 +25,7 @@ private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override { return k_numberOfCells; }
   void buttonAction() override;
-  Escher::MessageTableCellWithEditableText m_cells[k_numberOfCells];
+  Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfCells];
   Store * m_store;
   Shared::DiscardPopUpController m_confirmPopUpController;
   // Temporary parameters

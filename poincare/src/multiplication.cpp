@@ -599,8 +599,8 @@ bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext,
 
 Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

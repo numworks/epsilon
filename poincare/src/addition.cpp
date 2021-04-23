@@ -141,8 +141,8 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
 
 Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

@@ -75,11 +75,11 @@ Expression OppositeNode::shallowReduce(ReductionContext reductionContext) {
 /* Simplification */
 
 Expression Opposite::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression result = SimplificationHelper::defaultShallowReduce(*this);
-  if (result.isUndefined()) {
+  Expression result = SimplificationHelper::shallowReduceUndefined(*this);
+  if (!result.isUninitialized()) {
     return result;
   }
-  Expression child = result.childAtIndex(0);
+  Expression child = childAtIndex(0);
   result = Multiplication::Builder(Rational::Builder(-1), child);
   replaceWithInPlace(result);
   return result.shallowReduce(reductionContext);

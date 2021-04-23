@@ -47,8 +47,7 @@ Expression TangentNode::unaryFunctionDifferential(ReductionContext reductionCont
 Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
-    if (e.isUndefined()) {
+    if (!e.isUninitialized()) {
       return e;
     }
   }

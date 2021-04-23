@@ -27,8 +27,7 @@ Expression NaperianLogarithmNode::shallowReduce(ReductionContext reductionContex
 Expression NaperianLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    e = SimplificationHelper::defaultHandleUnitsInChildren(e);
-    if (e.isUndefined()) {
+    if (!e.isUninitialized()) {
       return e;
     }
   }

@@ -63,8 +63,7 @@ Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = SimplificationHelper::defaultShallowReduce(*this);
-  e = SimplificationHelper::defaultHandleUnitsInChildren(e);
-  if (e.isUndefined()) {
+  if (!e.isUninitialized()) {
     return e;
   }
   bool inputIsUndefined = false;

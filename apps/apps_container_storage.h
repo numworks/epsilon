@@ -10,7 +10,7 @@
 class AppsContainerStorage : public AppsContainer {
 public:
   AppsContainerStorage();
-  int numberOfApps() override;
+  int numberOfBuiltinApps() override;
   Escher::App::Snapshot * appSnapshotAtIndex(int index) override;
   void * currentAppBuffer() override;
   union Apps {

@@ -28,21 +28,11 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
 
   float yMinTemp, yMaxTemp;
 
-  if (length == 1
-   && yMaxIntrinsic - yMinIntrinsic <= ratio * (xMax - xMin))
-  {
-    ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(0));
-    f->orthonormalYRangeForDisplay(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, context);
-    if (*yMin < *yMax) {
-      return;
-    }
-  }
-
   *yMin = yMinIntrinsic;
   *yMax = yMaxIntrinsic;
   for (int i = 0; i < length; i++) {
     ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
-    f->yRangeForDisplay(xMin, xMax, &yMinTemp, &yMaxTemp, context);
+    f->yRangeForDisplay(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, &yMinTemp, &yMaxTemp, context);
     Poincare::Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMin, *yMax, yMin, yMax);
   }
 

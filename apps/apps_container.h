@@ -28,6 +28,7 @@ public:
   virtual int numberOfBuiltinApps() = 0;
   int numberOfApps() { return numberOfExternalApps() + numberOfBuiltinApps(); }
   virtual Escher::App::Snapshot * appSnapshotAtIndex(int index) = 0;
+  Ion::ExternalApps::App externalAppAtIndex(int index);
   Escher::App::Snapshot * initialAppSnapshot();
   Escher::App::Snapshot * hardwareTestAppSnapshot();
   Escher::App::Snapshot * onBoardingAppSnapshot();

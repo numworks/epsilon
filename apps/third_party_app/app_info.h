@@ -3,13 +3,25 @@
 
 #include "stdint.h"
 
-class AppInfo {
+/* The application information is mapped at the very begining of the
+ * application firmware. It should be 'packed' information representing:
+ * - a magic code 0XBABECODE
+ * - the API level of the AppInfo layout
+ * - the address of the app name
+ * - the address of the upper app name
+ * - the address of the compressed icon data
+ * - the address of the entry point
+ * - the size of the external app including the AppInfo header
+ * - the same magic code 0xBABECODE
+ */
+
+class __attribute__((packed)) AppInfo {
 public:
   constexpr AppInfo();
 private:
   constexpr static uint32_t Magic = 0xDEC0BEBA;
   uint32_t m_header;
-  uint8_t m_apiLevel;
+  uint32_t m_apiLevel;
   const char * m_title;
   const char * m_upperTitle;
   // TODO: add explanation on how to generate m_compressedPixelIcon

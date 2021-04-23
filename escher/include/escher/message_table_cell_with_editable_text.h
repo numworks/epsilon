@@ -5,32 +5,25 @@
 #include <escher/message_table_cell.h>
 #include <escher/responder.h>
 #include <poincare/print_float.h>
+#include <escher/container.h>
 
 namespace Escher {
 
 class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
 public:
   MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
-  const View * subLabelView() const override { return &m_textField; }
+  const View * accessoryView() const override { return &m_textField; }
   TextField * textField() { return &m_textField; }
-  const char * editedText() const;
-  void didBecomeFirstResponder() override;
-  bool isEditing();
-  void setEditing(bool isEditing);
+  const char * editedText() const { return m_textField.text(); }
+  void didBecomeFirstResponder() override { Container::activeApp()->setFirstResponder(&m_textField); }
+  bool isEditing() { return m_textField.isEditing(); }
+  void setEditing(bool isEditing) { m_textField.setEditing(isEditing); }
   void setHighlighted(bool highlight) override;
-  Responder * responder() override {
-    return this;
-  }
-  const char * text() const override {
-    if (!m_textField.isEditing()) {
-      return m_textField.text();
-    }
-    return nullptr;
-  }
-  void setSubLabelText(const char * text);
-  KDSize minimalSizeForOptimalDisplay() const override;
+  Responder * responder() override { return this; }
+  const char * text() const override { return !m_textField.isEditing() ? m_textField.text() : nullptr; }
+  bool giveAccessoryAllWidth() const override { return true; }
+  void setAccessoryText(const char * text);
 private:
-  void layoutSubviews(bool force = false) override;
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };

@@ -142,6 +142,7 @@ void InteractiveCurveViewRange::normalize(bool forceChangeY) {
    * 1cm = 2 current units. */
 
   if (isOrthonormal()) {
+    setZoomNormalize(true);
     return;
   }
 

@@ -299,7 +299,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
   Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
 }
 
-void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const {
+void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const {
   if (plotType() != PlotType::Cartesian) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
@@ -318,20 +318,18 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float * yMin, 
   Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
     return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
   };
-  Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
-}
 
-void ContinuousFunction::orthonormalYRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const {
-  if (plotType() != PlotType::Cartesian || basedOnCostlyAlgorithms(context)) {
-    *yMin = FLT_MAX;
-    *yMax = -FLT_MAX;
-    return;
+  if (yMaxForced - yMinForced <= ratio * (xMax - xMin)) {
+    Zoom::RangeWithRatioForDisplay(evaluation, ratio, xMin, xMax, yMinForced, yMaxForced, yMin, yMax, context, this);
+    if (*yMin < *yMax) {
+      return;
+    }
   }
 
-  Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
-  };
-  Zoom::RangeWithRatioForDisplay(evaluation, ratio, xMin, xMax, yMinForced, yMaxForced, yMin, yMax, context, this);
+  *yMin = NAN;
+  *yMax = NAN;
+
+  Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
 }
 
 void ContinuousFunction::Model::tidy() const {

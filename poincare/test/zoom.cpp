@@ -60,20 +60,19 @@ void assert_interesting_range_is(const char * definition, float targetXMin, floa
 }
 
 QUIZ_CASE(poincare_zoom_interesting_ranges) {
-  assert_interesting_range_is("0", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("1", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("-100", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("x", 0, 0, NAN, NAN);
-  assert_interesting_range_is("x^2", 0, 0, NAN, NAN);
-  assert_interesting_range_is("-(x^3)", 0, 0, NAN, NAN);
-  assert_interesting_range_is("10×x^4", 0, 0, NAN, NAN);
-  assert_interesting_range_is("ℯ^(-x)", NAN, NAN, NAN, NAN);
-  assert_interesting_range_is("√(x^2+1)-x", NAN, NAN, NAN, NAN);
-
-  assert_interesting_range_is("x-21", 19.3796234, 19.3796234, NAN, NAN);
-  assert_interesting_range_is("-11x+100", 8.92291355, 8.92291355, NAN, NAN);
+  assert_interesting_range_is("0", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("1", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("-100", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("x", -10, 10, 0, 0);
+  assert_interesting_range_is("x^2", -10, 10, 0, 0);
+  assert_interesting_range_is("-(x^3)", -10, 10, 0, 0);
+  assert_interesting_range_is("10×x^4", -10, 10, 0, 0);
+  assert_interesting_range_is("ℯ^(-x)", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("√(x^2+1)-x", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("x-21", 9.37962341, 29.3796234, 0, 0);
+  assert_interesting_range_is("-11x+100", -1.07708645, 18.9229126, 0, 0);
   assert_interesting_range_is("x^2-1", -7.80982208, 7.80982208, -1, 0);
-  assert_interesting_range_is("3x^2+x+10", -0.169389784, -0.169389784, NAN, NAN);
+  assert_interesting_range_is("3x^2+x+10", -10.1693897, 9.83061028, 9.91668892, 9.91668892);
   assert_interesting_range_is("(x+10)(x-10)", -15.5615616, 15.5615616, -100, 0);
   assert_interesting_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", -1.46434164, 6.34548044, -16.9008026, 5.02076149);
   assert_interesting_range_is("1/x", -3.5958581, 3.5958581, FLT_MAX, -FLT_MAX);
@@ -86,7 +85,7 @@ QUIZ_CASE(poincare_zoom_interesting_ranges) {
   assert_interesting_range_is("tan(x)", -13.0978546, 13.0978546, 0, 0);
   assert_interesting_range_is("1/tan(x)", -893.509644, 893.509644, 0, 0, Degree);
   assert_interesting_range_is("asin(x)", -1.65563226, 1.65563226, 0, 0);
-  assert_interesting_range_is("acos(x)", -1.65563226, 1.65563226, FLT_MAX, -FLT_MAX, Degree);
+  assert_interesting_range_is("acos(x)", -1.65563226, 1.65563226, FLT_MAX, -FLT_MAX);
   assert_interesting_range_is("atan(x)", -3.2989521, 3.2989521, 0, 0);
   assert_interesting_range_is("x×sin(x)", -13.0978546, 13.0978546, -4.81180477, 7.73865843);
   assert_interesting_range_is("x×ln(x)", -0.284799129, 1.23412955, -0.36787945, 0);
@@ -100,7 +99,7 @@ void assert_refined_range_is(const char * definition, float xMin, float xMax, fl
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
   ParametersPack aux(e, symbol, angleUnit);
-  Zoom::RefinedYRangeForDisplay(evaluate_expression, &xMin, &xMax, &yMin, &yMax, &globalContext, &aux);
+  Zoom::RefinedYRangeForDisplay(evaluate_expression, xMin, xMax, &yMin, &yMax, &globalContext, &aux);
   quiz_assert_print_if_failure(range1D_matches(yMin, yMax, targetYMin, targetYMax), definition);
 }
 
@@ -112,10 +111,10 @@ QUIZ_CASE(poincare_zoom_refined_range) {
   assert_refined_range_is("-(x^3)", -10, 10, -133.769241, 133.769241);
   assert_refined_range_is("10×x^4", -10, 10, 0, 4902.04102);
   assert_refined_range_is("ℯ^(-x)", -10, 10, 0, 2.71828127);
-  assert_refined_range_is("x-21", 19.126959, 21.957670, -1.48373008, 0.92183876);
-  assert_refined_range_is("-11x+100", 8.806580, 10.109919, -8.44783878, 2.94615173);
-  assert_refined_range_is("x^2-1", -8.634861, 8.634861, -0.988053143, 26.5802021);
-  assert_refined_range_is("(x+10)(x-10)", -17.205507, 17.205507, -99.9525681, 156.399399);
+  assert_refined_range_is("x-21", 19.1269588, 21.9576702, -1.48373008, 0.92183876);
+  assert_refined_range_is("-11x+100", 8.80657959, 10.1099186, -8.44783878, 2.94615173);
+  assert_refined_range_is("x^2-1", -8.63486099, 8.63486099, -0.988053143, 26.5802021);
+  assert_refined_range_is("(x+10)(x-10)", -17.2055073, 17.2055073, -99.9525681, 156.399399);
   assert_refined_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", -1.61903656, 7.01582479, -16.8871994, 67.6706848);
   assert_refined_range_is("1/x", -3.97572827, 3.97572827, -1.86576664, 1.86576664);
   assert_refined_range_is("1/(x-10)", 5.72560453, 15.8184233, -1.45247293, 1.45247293);
@@ -129,24 +128,24 @@ QUIZ_CASE(poincare_zoom_refined_range) {
   assert_refined_range_is("atan(x)", -3.34629107, 3.34629107, -1.27329516, 1.27329516);
   assert_refined_range_is("x×sin(x)", -14.4815292, 14.4815292, -7.37234354, 7.37234354);
   assert_refined_range_is("x×ln(x)", -0.314885706, 1.36450469, -0.367870897, 0.396377981);
-  assert_refined_range_is("x!", -10, 10, NAN, NAN);
-  assert_refined_range_is("xℯ^(1/x)", -1.3, 2.4, -0.564221799, 5.58451653);
+  assert_refined_range_is("x!", -10, 10, FLT_MAX, -FLT_MAX);
+  assert_refined_range_is("xℯ^(1/x)", -1.29999995, 2.4000001, -0.564221799, 5.58451653);
 }
 
-void assert_orthonormal_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
-  assert((std::isnan(targetXMin) || std::isnan(targetXMax) || std::isnan(targetYMin) || std::isnan(targetYMax))
-      || float_equal((targetYMax - targetYMin) / (targetXMax - targetXMin), NormalRatio));
-  float xMin, xMax, yMin, yMax;
+void assert_orthonormal_range_is(const char * definition, float xMin, float xMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
+  assert(std::isfinite(xMin) && std::isfinite(xMax) && xMin <= xMax);
+  assert((targetYMin == FLT_MAX && targetYMax == -FLT_MAX) || float_equal((targetYMax - targetYMin) / (xMax - xMin), NormalRatio));
+  float yMin, yMax;
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
   ParametersPack aux(e, symbol, angleUnit);
-  Zoom::RangeWithRatioForDisplay(evaluate_expression, NormalRatio, &xMin, &xMax, &yMin, &yMax, &globalContext, &aux);
-  quiz_assert_print_if_failure(ranges_match(xMin, xMax, yMin, yMax, targetXMin, targetXMax, targetYMin, targetYMax), definition);
+  Zoom::RangeWithRatioForDisplay(evaluate_expression, NormalRatio, xMin, xMax, FLT_MAX, -FLT_MAX, &yMin, &yMax, &globalContext, &aux);
+  quiz_assert_print_if_failure(range1D_matches(yMin, yMax, targetYMin, targetYMax), definition);
 }
 
 QUIZ_CASE(poincare_zoom_range_with_ratio) {
-  assert_orthonormal_range_is("1", 0, 0, NAN, NAN);
-  assert_orthonormal_range_is("x", -10, 10, -4.360695, 4.486482);
+  assert_orthonormal_range_is("1", 0, 0, FLT_MAX, -FLT_MAX);
+  assert_orthonormal_range_is("x", -10, 10, -4.36069489, 4.48648167);
   assert_orthonormal_range_is("x^2", -10, 10, -0.0527148247, 8.7944622);
   assert_orthonormal_range_is("x^3", -10, 10, -3.91881895, 4.9283576);
   assert_orthonormal_range_is("ℯ^x", -10, 10, -0.439413071, 8.40776348);
@@ -176,14 +175,16 @@ QUIZ_CASE(poincare_zoom_full_range) {
 }
 
 void assert_ranges_combine_to(int length, float * mins, float * maxs, float targetMin, float targetMax) {
-  float resMin, resMax;
-  Zoom::CombineRanges(length, mins, maxs, &resMin, &resMax);
+  float resMin = NAN, resMax = NAN;
+  for (int i = 0; i < length; i++) {
+    Zoom::CombineRanges(mins[i], maxs[i], resMin, resMax, &resMin, &resMax);
+  }
   quiz_assert(resMin == targetMin && resMax == targetMax);
 }
 
-void assert_sanitized_range_is(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax) {
-  Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalRatio);
-  quiz_assert(xMin == targetXMin && xMax == targetXMax && yMin == targetYMin && yMax == targetYMax);
+void assert_sanitized_range_is(float min, float max, float targetMin, float targetMax) {
+  Zoom::SanitizeRangeForDisplay(&min, &max);
+  quiz_assert(min == targetMin && max == targetMax);
 }
 
 void assert_ratio_is_set_to(float yxRatio, float xMin, float xMax, float yMin, float yMax, bool shrink, float targetXMin, float targetXMax, float targetYMin, float targetYMax) {
@@ -236,20 +237,17 @@ QUIZ_CASE(poincare_zoom_utility) {
 
   // Range sanitation
   assert_sanitized_range_is(
-      -10, 10, -10, 10,
-      -10, 10, -10, 10);
+      -10, 10,
+      -10, 10);
   assert_sanitized_range_is(
-      -10, 10, 100, 100,
-      -10, 10, 95.5764083, 104.423592);
+      100, 100,
+      90, 110);
   assert_sanitized_range_is(
-      3, -3, -10, 10,
-      -22.6060829, 22.6060829, -10, 10);
+      3, -3,
+      -10, 10);
   assert_sanitized_range_is(
-      3, -3, 2, 2,
-      -10, 10, -2.42358828, 6.42358828);
-  assert_sanitized_range_is(
-      NAN, NAN, NAN, NAN,
-      -10, 10, -4.42358828, 4.42358828);
+      NAN, NAN,
+      -10, 10);
 
   // Ratio
   assert_shrinks_to(1.f,

@@ -55,8 +55,8 @@ public:
   // Window
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
-  virtual void normalize(bool forceChangeY = false);
   void computeRanges() { privateComputeRanges(m_xAuto, m_yAuto); }
+  void normalize();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
 
@@ -83,6 +83,8 @@ protected:
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
   bool shouldBeNormalized() const;
   virtual bool hasDefaultRange() const { return (xMin() == std::round(xMin())) && (xMax() == std::round(xMax())); }
+  /* This method only updates the zoomNormalize status, and does not change either the auto statuses or the intrinsic Y range. */
+  virtual void protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink);
 
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:

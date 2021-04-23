@@ -55,18 +55,28 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
 }
 
 void InteractiveCurveViewRange::setXMin(float xMin) {
+  assert(!xAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetXMin(xMin, k_lowerMaxFloat, k_upperMaxFloat);
+  m_yMinIntrinsic = NAN;
+  m_yMaxIntrinsic = NAN;
+  computeRanges();
 }
 
 void InteractiveCurveViewRange::setXMax(float xMax) {
+  assert(!xAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetXMax(xMax, k_lowerMaxFloat, k_upperMaxFloat);
+  m_yMinIntrinsic = NAN;
+  m_yMaxIntrinsic = NAN;
+  computeRanges();
 }
 
 void InteractiveCurveViewRange::setYMin(float yMin) {
+  assert(!yAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYMin(yMin, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
 void InteractiveCurveViewRange::setYMax(float yMax) {
+  assert(!yAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
 }
 

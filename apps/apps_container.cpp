@@ -60,6 +60,17 @@ bool AppsContainer::poincareCircuitBreaker() {
   return false;
 }
 
+Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {
+  for (Ion::ExternalApps::App a : Ion::ExternalApps::Apps()) {
+    if (index == 0) {
+      return a;
+    }
+    index--;
+  }
+  assert(false);
+  return Ion::ExternalApps::App(nullptr);
+}
+
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
   return &m_hardwareTestSnapshot;
 }

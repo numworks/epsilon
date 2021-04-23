@@ -1,0 +1,47 @@
+#ifndef ION_EXTERNAL_APPS_H
+#define ION_EXTERNAL_APPS_H
+
+#include <stdint.h>
+
+namespace Ion {
+namespace ExternalApps {
+
+class App {
+public:
+  App(uint8_t * a);
+  const char * name() const;
+  const char * upperName() const;
+  const uint8_t * iconData() const;
+  void * entryPoint() const;
+  static bool appAtAddress(uint8_t * address);
+private:
+  static constexpr uint32_t k_magic = 0xDEC0BEBA;
+  uint8_t * m_startAddress;
+};
+
+class AppIterator {
+public:
+  AppIterator(uint8_t * address) : m_currentAddress(address) {}
+  App operator*() { return App(m_currentAddress); }
+  AppIterator& operator++();
+  bool operator!=(const AppIterator& it) const { return m_currentAddress != it.m_currentAddress; }
+private:
+  uint8_t * m_currentAddress;
+};
+
+class Apps {
+public:
+  AppIterator begin() const;
+  AppIterator end() const { return AppIterator(nullptr); };
+private:
+};
+
+/* for (App l : Apps()) {*/
+
+int numberOfApps();
+
+}
+}
+
+#endif
+

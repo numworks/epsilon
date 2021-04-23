@@ -38,11 +38,14 @@ constexpr static uint32_t SRAMLength = 0x40000; // 256kB
 constexpr static uint32_t KernelSRAMDataBSSLength = 0x2000; // 8k
 constexpr static uint32_t KernelStackLength = 0x2000; // 8K
 constexpr static uint32_t KernelRAMAddress = SRAMAddress + SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
-constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
-constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
 
 // Userland
 constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;
+constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
+constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
+
+// External Apps
+constexpr static int ExternalAppsNumberOfSector = 11;
 
 }
 }

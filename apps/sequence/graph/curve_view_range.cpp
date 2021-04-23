@@ -15,8 +15,8 @@ CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
   MemoizedCurveViewRange::protectedSetXMin(-k_displayLeftMarginRatio * xMax(), k_lowerMaxFloat, k_upperMaxFloat);
 }
 
-void CurveViewRange::normalize(bool forceChangeY) {
-  Shared::InteractiveCurveViewRange::normalize(forceChangeY);
+void CurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink) {
+  Shared::InteractiveCurveViewRange::protectedNormalize(canChangeX, canChangeY, canShrink);
 
   /* The X axis is not supposed to go into the negatives, save for a small
    * margin. However, after normalizing, it could be the case. We thus shift
@@ -24,7 +24,7 @@ void CurveViewRange::normalize(bool forceChangeY) {
   float interestingXMin = m_delegate->interestingXMin();
   float xRange = xMax() - xMin();
   m_xRange.setMin(interestingXMin - k_displayLeftMarginRatio * xRange);
-  setXMax(xMin() + xRange);
+  MemoizedCurveViewRange::protectedSetXMax(xMin() + xRange, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
 }

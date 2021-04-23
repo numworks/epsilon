@@ -10,9 +10,11 @@
  * be stored in Flash. */
 
 USERLAND_ORIGIN = USERLAND_VIRTUAL_ORIGIN + EPSILON_OFFSET;
+EXTERNAL_APPS_ORIGIN = EXTERNAL_APPS_VIRTUAL_ORIGIN + EPSILON_OFFSET;
 
 MEMORY {
   FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = USERLAND_LENGTH
+  FLASH_EXTERNAL_APPS (rx) : ORIGIN = EXTERNAL_APPS_ORIGIN, LENGTH = EXTERNAL_APPS_LENGTH
   SRAM (rw) : ORIGIN = USERLAND_SRAM_ORIGIN, LENGTH = USERLAND_SRAM_LENGTH
 }
 
@@ -44,6 +46,11 @@ SECTIONS {
     KEEP (*(.init_array*))
     _init_array_end = .;
   } >FLASH_USERLAND
+
+  .external_apps : {
+    . = ALIGN(4);
+    _external_apps_start = .;
+  } >FLASH_EXTERNAL_APPS
 
   .data : {
     /* The data section is written to Flash but linked as if it were in RAM.

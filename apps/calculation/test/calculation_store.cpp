@@ -151,6 +151,12 @@ QUIZ_CASE(calculation_symbolic_computation) {
 
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+
+  assertCalculationIs("int(x+1/x,x,1,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "2.193147", nullptr, &globalContext, &store);
+  assertCalculationIs("1→x", DisplayOutput::ApproximateOnly, EqualSign::Equal, "1", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("int(x+1/x,x,1,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "2.193147", nullptr, &globalContext, &store);
+
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

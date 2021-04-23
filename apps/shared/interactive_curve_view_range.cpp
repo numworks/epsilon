@@ -165,11 +165,6 @@ void InteractiveCurveViewRange::normalize(bool forceChangeY) {
   setZoomNormalize(isOrthonormal());
 }
 
-void InteractiveCurveViewRange::setDefault() {
-  setZoomAuto(true);
-  privateComputeRanges(true, true);
-}
-
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   if (std::isnan(position)) {
     return;
@@ -277,7 +272,6 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     return;
   }
 
-  assert(computeX || computeY);
   assert(offscreenYAxis() == 0.f);
 
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of
@@ -295,10 +289,12 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
     /* Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit */
     MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-    /* We notify the delegate to refresh the cursor's position and update the
-     * bottom margin (which depends on the banner height). */
-    m_delegate->updateBottomMargin();
   }
+
+  /* We notify the delegate to refresh the cursor's position and update the
+   * bottom margin (which depends on the banner height). */
+  m_delegate->updateBottomMargin();
+
   if (computeY || (computeX && m_yAuto)) {
     assert(!intrinsicYRangeIsUnset());
     m_delegate->computeYRange(xMin(), xMax(), m_yMinIntrinsic, m_yMaxIntrinsic, &newYMin, &newYMax);
@@ -308,6 +304,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(newYMax, dy, true , false), dy, false), k_lowerMaxFloat, k_upperMaxFloat);
   }
 
+  /* FIXME : Specify which axis can be changed if any. */
   if (m_delegate->defaultRangeIsNormalized() || shouldBeNormalized()) {
     /* Normalize the axes, so that a polar circle is displayed as a circle.
      * If we are displaying cartesian functions, we want the X bounds

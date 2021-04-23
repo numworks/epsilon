@@ -56,7 +56,7 @@ public:
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
   virtual void normalize(bool forceChangeY = false);
-  virtual void setDefault();
+  void computeRanges() { privateComputeRanges(m_xAuto, m_yAuto); }
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
 
@@ -88,7 +88,7 @@ protected:
 private:
   int normalizationSignificantBits() const;
   void privateSetZoomAuto(bool xAuto, bool yAuto);
-  void privateComputeRanges(bool computeX, bool computeY);
+  virtual void privateComputeRanges(bool computeX, bool computeY);
   bool intrinsicYRangeIsUnset() const { return std::isnan(m_yMinIntrinsic) && std::isnan(m_yMaxIntrinsic); }
 
   float m_offscreenYAxis;

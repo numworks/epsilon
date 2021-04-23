@@ -315,6 +315,11 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
     /* Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit */
     MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+    if (!hasDefaultRange()) {
+      float dx = xMax() - xMin();
+      m_xRange.setMin(roundLimit(m_delegate->addMargin(newXMin, dx, false , true), dx, true),  k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(newXMax, dx, false , false), dx, false), k_lowerMaxFloat, k_upperMaxFloat);
+    }
   }
 
   /* We notify the delegate to refresh the cursor's position and update the

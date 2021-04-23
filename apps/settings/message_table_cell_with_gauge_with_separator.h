@@ -8,12 +8,14 @@ namespace Settings {
 
 class MessageTableCellWithGaugeWithSeparator : public Shared::CellWithSeparator {
 public:
-  MessageTableCellWithGaugeWithSeparator(I18n::Message message);
+  MessageTableCellWithGaugeWithSeparator(I18n::Message message) :
+    CellWithSeparator(),
+    m_cell(message) {}
   const Escher::View * accessoryView() const { return m_cell.accessoryView(); }
   void setMessage(I18n::Message message) { return m_cell.setMessage(message); }
-  KDSize minimalSizeForOptimalDisplay() const override;
 private:
-  Escher::HighlightCell * cell() override { return &m_cell; }
+  Escher::TableCell * cell() override { return &m_cell; }
+  const Escher::TableCell * constCell() const override { return &m_cell; }
   Escher::MessageTableCellWithGauge m_cell;
 };
 

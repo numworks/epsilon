@@ -135,12 +135,7 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   SimpleInteractiveCurveViewController::viewWillAppear();
 
-  if (m_interactiveRange->zoomAuto()) {
-    m_interactiveRange->setDefault();
-    /* Here refreshCursor will have been called via updateBottomMargin. */
-  } else {
-    refreshCursor();
-  }
+  m_interactiveRange->computeRanges();
 
   *m_rangeVersion = rangeVersion();
 
@@ -276,10 +271,9 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
 }
 
 bool InteractiveCurveViewController::autoButtonAction() {
+  m_interactiveRange->setZoomAuto(!m_interactiveRange->zoomAuto());
+  m_interactiveRange->computeRanges();
   if (m_interactiveRange->zoomAuto()) {
-    m_interactiveRange->setZoomAuto(false);
-  } else {
-    m_interactiveRange->setDefault();
     *m_rangeVersion = rangeVersion();
     setCurveViewAsMainView();
   }

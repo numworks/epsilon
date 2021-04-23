@@ -304,7 +304,7 @@ Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Contex
   return Float<double>::Builder(result);
 }
 
-void Sequence::xRangeForDisplay(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context *) const {
+void Sequence::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context *) const {
   *xMin = static_cast<float>(initialRank());
   *xMax = *xMin + Zoom::k_defaultHalfRange;
   *yMinIntrinsic = FLT_MAX;

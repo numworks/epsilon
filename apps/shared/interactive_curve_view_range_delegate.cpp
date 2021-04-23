@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context, FunctionStore * functionStore) {
+void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context, FunctionStore * functionStore) {
   float xMinTemp, xMaxTemp, yMinTemp ,yMaxTemp;
   *xMin = FLT_MAX;
   *xMax = -FLT_MAX;
@@ -15,7 +15,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float * xMin, float
 
   for (int i = 0; i < length; i++) {
     ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
-    f->xRangeForDisplay(&xMinTemp, &xMaxTemp, &yMinTemp, &yMaxTemp, context);
+    f->xRangeForDisplay(xMinLimit, xMaxLimit, &xMinTemp, &xMaxTemp, &yMinTemp, &yMaxTemp, context);
     Poincare::Zoom::CombineRanges(xMinTemp, xMaxTemp, *xMin, *xMax, xMin, xMax);
     Poincare::Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMinIntrinsic, *yMaxIntrinsic, yMinIntrinsic, yMaxIntrinsic);
   }

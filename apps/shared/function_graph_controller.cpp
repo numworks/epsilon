@@ -174,8 +174,8 @@ int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
 }
 
-void FunctionGraphController::computeXRange(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) {
-  DefaultComputeXRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, textFieldDelegateApp()->localContext(), functionStore());
+void FunctionGraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) {
+  DefaultComputeXRange(xMinLimit, xMaxLimit, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, textFieldDelegateApp()->localContext(), functionStore());
 }
 
 void FunctionGraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) {

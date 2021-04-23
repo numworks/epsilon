@@ -267,7 +267,7 @@ void ContinuousFunction::setTMax(float tMax) {
   setCache(nullptr);
 }
 
-void ContinuousFunction::xRangeForDisplay(float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const {
+void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const {
   if (plotType() != PlotType::Cartesian) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
@@ -296,7 +296,7 @@ void ContinuousFunction::xRangeForDisplay(float * xMin, float * xMax, float * yM
     constexpr float precision = 1e-5;
     return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
   };
-  Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, tMin(), tMax(), context, this);
+  Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
 }
 
 void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const {

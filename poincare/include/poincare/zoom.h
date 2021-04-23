@@ -39,9 +39,8 @@ public:
 
   /* Find the bounding box of two given ranges. */
   static void CombineRanges(float min1, float max1, float min2, float max2, float * minRes, float * maxRes);
-  /* Ensures that the window is fit for display, with all bounds being proper
-   * numbers, with min < max. */
-  static void SanitizeRange(float * xMin, float * xMax, float * yMin, float * yMax, float normalRatio);
+  /* Ensures that the range given as argument is not empty. */
+  static void SanitizeRangeForDisplay(float * min, float * max, float defaultHalfWidth = k_defaultHalfRange);
 
   /* If shrink is false, the range will be set to ratio by increasing the size
    * of the smallest axis. If it is true, the longest axis will be reduced.*/

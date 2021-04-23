@@ -52,7 +52,7 @@ void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int in
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
     Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, bufferSize);
-    myCell->messageTableCellWithEditableText()->setSubLabelText(buffer);
+    myCell->messageTableCellWithEditableText()->setAccessoryText(buffer);
     return;
   }
   PreferencesController::willDisplayCellForIndex(cell, index);

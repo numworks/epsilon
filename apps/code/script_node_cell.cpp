@@ -9,11 +9,10 @@ constexpr char ScriptNodeCell::k_parentheses[];
 constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
 
 void ScriptNodeCell::setScriptNode(ScriptNode * node) {
-  // Use a temporary buffer to crop label name.
-  const int maxNumberOfCharsInBuffer = BufferTextView::maxNumberOfCharsInBuffer();
-  const int labelLength = std::min(maxNumberOfCharsInBuffer - 1, node->nameLength());
-
-  char temp_buffer[maxNumberOfCharsInBuffer];
+  /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
+   * greater than node->nameLength() */
+  const int labelLength = node->nameLength() <= k_maxNumberOfCharsInLabel ? node->nameLength() : k_maxNumberOfCharsInLabel;
+  char temp_buffer[k_maxNumberOfCharsInLabel + 1];
   assert(strlen(node->name()) >= labelLength);
   memcpy(temp_buffer, node->name(), labelLength);
   temp_buffer[labelLength] = 0;

@@ -8,15 +8,19 @@ namespace UTF8Helper {
 
 class TextPair {
 public:
-  constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtention = false) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtention(removeParenthesesExtention){}
+  typedef bool (*ReplacementRule)(const char *, int, int);
+
+  constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtention = false, ReplacementRule rule = nullptr) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtention(removeParenthesesExtention), m_rule(rule) {}
   const char * firstString() { return m_firstString; }
   const char * secondString() { return m_secondString; }
   bool removeParenthesesExtention() { return m_removeParenthesesExtention; }
+  bool shouldReplace(const char * s, int length, int position) { return m_rule ? m_rule(s, length, position) : true; }
   static constexpr int k_maxLength = 20;
 private:
   const char * m_firstString;
   const char * m_secondString;
   bool m_removeParenthesesExtention;
+  ReplacementRule m_rule;
 };
 
 // Returns the number of occurences of a code point in a string

@@ -28,7 +28,9 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   assert(xMin && xMax && yMin && yMax);
 
   float center, maxDistance;
-  if (std::isfinite(tMin) && std::isfinite(tMax)) {
+  if (std::isfinite(tMin) && std::isfinite(tMax)
+   && !(tMin == -FLT_MAX && tMax == FLT_MAX)) {
+    /* Searching on [-FLT_MAX, FLT_MAX] is equivalent as searching on R. */
     center = (tMax + tMin) / 2.f;
     maxDistance = (tMax - tMin) / 2.f;
   } else {

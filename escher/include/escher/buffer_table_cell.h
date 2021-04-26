@@ -4,7 +4,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/table_cell.h>
 #include <escher/metric.h>
-#include <ion.h>
+#include <ion/display.h>
 
 namespace Escher {
 /* BufferTableCell is here optimized for its use in code VariableBoxController.

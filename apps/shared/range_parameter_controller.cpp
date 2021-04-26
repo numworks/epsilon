@@ -65,25 +65,38 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   if (i  >= 0 && i < k_numberOfRangeCells) {
     MessageTableCellWithChevronAndBuffer * castedCell = static_cast<MessageTableCellWithChevronAndBuffer *>(cell);
     float min, max;
+    bool isAuto = false;
     if (i == 0) {
       castedCell->setMessage(I18n::Message::ValuesOfX);
-      min = m_tempInteractiveRange.xMin();
-      max = m_tempInteractiveRange.xMax();
+      if (m_tempInteractiveRange.xAuto()) {
+        isAuto = true;
+      } else {
+        min = m_tempInteractiveRange.xMin();
+        max = m_tempInteractiveRange.xMax();
+      }
     } else {
       assert(i == 1);
       castedCell->setMessage(I18n::Message::ValuesOfY);
-      min = m_tempInteractiveRange.yMin();
-      max = m_tempInteractiveRange.yMax();
+      if (m_tempInteractiveRange.yAuto()) {
+        isAuto = true;
+      } else {
+        min = m_tempInteractiveRange.yMin();
+        max = m_tempInteractiveRange.yMax();
+      }
     }
     constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
     constexpr int bufferSize = 2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
     char buffer[bufferSize];
-    int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(min, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-    buffer[numberOfChars++] = ' ';
-    buffer[numberOfChars++] = ';';
-    buffer[numberOfChars++] = ' ';
-    numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(max, buffer + numberOfChars, bufferSize - numberOfChars, precision, Preferences::PrintFloatMode::Decimal);
-    buffer[numberOfChars++] = '\0';
+    if (isAuto) {
+      strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting), bufferSize);
+    } else {
+      int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(min, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+      buffer[numberOfChars++] = ' ';
+      buffer[numberOfChars++] = ';';
+      buffer[numberOfChars++] = ' ';
+      numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(max, buffer + numberOfChars, bufferSize - numberOfChars, precision, Preferences::PrintFloatMode::Decimal);
+      buffer[numberOfChars++] = '\0';
+    }
     castedCell->setSubLabelText(buffer);
   }
   SelectableListViewController::willDisplayCellForIndex(cell, index);

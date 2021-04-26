@@ -292,64 +292,6 @@ double Store::correlationCoefficient(int series) const {
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
 }
 
-void Store::privateComputeRanges(bool computeX, bool computeY) {
-  /* TODO : Bears a lot of simialrity with InteractiveCurveViewRange::privateComputeRanges. Factor code by adding Regression::GraphController as a delegate of Store ? */
-  assert(m_delegate == nullptr);
-
-  setZoomNormalize(false);
-
-  float xMin = FLT_MAX;
-  float xMax = -FLT_MAX;
-  float yMin = FLT_MAX;
-  float yMax = -FLT_MAX;
-
-  if (computeX) {
-    for (int series = 0; series < k_numberOfSeries; series++) {
-      if (!seriesIsEmpty(series)) {
-        Poincare::Zoom::CombineRanges(minValueOfColumn(series, 0), maxValueOfColumn(series, 0), xMin, xMax, &xMin, &xMax);
-      }
-    }
-    computeY |= yAuto();
-    Poincare::Zoom::SanitizeRangeForDisplay(&xMin, &xMax);
-    float range = xMax - xMin;
-    xMin -= k_displayHorizontalMarginRatio * range;
-    xMax += k_displayHorizontalMarginRatio * range;
-    m_xRange.setMin(xMin);
-    /* Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit */
-    MemoizedCurveViewRange::protectedSetXMax(xMax, k_lowerMaxFloat, k_upperMaxFloat);
-  }
-
-  m_delegate->updateBottomMargin();
-
-  if (computeY || (computeX && yAuto())) {
-    for (int series = 0; series < k_numberOfSeries; series++) {
-      for (int pair = 0; pair < numberOfPairsOfSeries(series); pair++) {
-        float x = get(series, pair, 0);
-        if (x < xMin || x > xMax) {
-          continue;
-        }
-        float y = get(series, pair, 1);
-        Poincare::Zoom::CombineRanges(yMin, yMax, y, y, &yMin, &yMax);
-      }
-    }
-    Poincare::Zoom::SanitizeRangeForDisplay(&yMin, &yMax, NormalYXRatio() * (Store::xMax() - Store::xMin()) / 2.f);
-    float range = yMax - yMin;
-    yMin = roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true);
-    yMax = roundLimit(m_delegate->addMargin(yMax, range, true, false), range, false);
-    m_yRange.setMin(yMin);
-    MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
-  }
-
-  /* FIXME : Specify which axis can be changed if any. */
-  if (shouldBeNormalized()) {
-    bool oldXAuto = xAuto();
-    bool oldYAuto = yAuto();
-    normalize();
-    setXAuto(oldXAuto);
-    setYAuto(oldYAuto);
-  }
-}
-
 double Store::computeDeterminationCoefficient(int series, Poincare::Context * globalContext) {
   /* Computes and returns the determination coefficient (R2) of the regression.
    * For linear regressions, it is equal to the square of the correlation

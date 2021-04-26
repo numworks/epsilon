@@ -10,7 +10,7 @@ constexpr KDColor BufferTableCell::k_textColor;
 BufferTableCell::BufferTableCell() :
   TableCell(),
   // Text is aligned to the left, vertically centered and has a small font.
-  m_labelView(KDFont::SmallFont, 0.0f, 0.5f, k_textColor, k_backgroundColor)
+  m_labelView(KDFont::SmallFont, 0.0f, 0.5f, k_textColor, k_backgroundColor, k_maxNumberOfCharsInBuffer)
 {
 }
 

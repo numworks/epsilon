@@ -39,6 +39,18 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
   Poincare::Zoom::SanitizeRangeForDisplay(yMin, yMax, ratio * (xMax - xMin) / 2.f);
 }
 
+void InteractiveCurveViewRangeDelegate::DefaultImproveFullRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore) {
+  if (functionStore->numberOfActiveFunctions() == 1) {
+    ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(0));
+    if (!f->basedOnCostlyAlgorithms(context)) {
+      Poincare::Zoom::ValueAtAbscissa evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
+        return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+      };
+      Poincare::Zoom::ExpandSparseWindow(evaluation, xMin, xMax, yMin, yMax, context, f.operator->());
+    }
+  }
+}
+
 float InteractiveCurveViewRangeDelegate::DefaultAddMargin(float x, float range, bool isVertical, bool isMin, float top, float bottom, float left, float right) {
   /* The provided min or max range limit y is altered by adding a margin.
    * In pixels, the view's height occupied by the vertical range is equal to

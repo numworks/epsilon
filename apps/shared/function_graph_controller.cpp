@@ -187,4 +187,8 @@ void FunctionGraphController::computeYRange(float xMin, float xMax, float yMinIn
   DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore());
 }
 
+void FunctionGraphController::improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) {
+  DefaultImproveFullRange(xMin, xMax, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore());
+}
+
 }

@@ -57,6 +57,7 @@ public:
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 
   // Range
+  virtual bool basedOnCostlyAlgorithms(Poincare::Context * context) const = 0;
   virtual void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const = 0;
   virtual void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const = 0;
 

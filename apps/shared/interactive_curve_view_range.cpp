@@ -329,6 +329,13 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
   if (computeY || (computeX && m_yAuto)) {
     assert(!intrinsicYRangeIsUnset());
     m_delegate->computeYRange(xMin(), xMax(), m_yMinIntrinsic, m_yMaxIntrinsic, &newYMin, &newYMax);
+    if (computeX) {
+      newXMin = xMin();
+      newXMax = xMax();
+      m_delegate->improveFullRange(&newXMin, &newXMax, &newYMin, &newYMax);
+      m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+    }
     /* Add vertical margins */
     float dy = newYMax - newYMin;
     m_yRange.setMin(roundLimit(m_delegate->addMargin(newYMin, dy, true , true), dy, true), k_lowerMaxFloat, k_upperMaxFloat);

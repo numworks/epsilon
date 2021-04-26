@@ -5,10 +5,12 @@
 namespace Escher {
 
 BufferTextView::BufferTextView(const KDFont * font, float horizontalAlignment, float verticalAlignment,
-    KDColor textColor, KDColor backgroundColor) :
+    KDColor textColor, KDColor backgroundColor, int maxDisplayedTextLength) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
-  m_buffer()
+  m_buffer(),
+  m_maxDisplayedTextLength(maxDisplayedTextLength)
 {
+  assert(m_maxDisplayedTextLength < k_maxNumberOfChar && m_maxDisplayedTextLength >= 0);
 }
 
 const char * BufferTextView::text() const {
@@ -16,16 +18,15 @@ const char * BufferTextView::text() const {
 }
 
 void BufferTextView::setText(const char * text) {
-  assert(strlen(text) < sizeof(m_buffer));
-  strlcpy(m_buffer, text, sizeof(m_buffer));
+  assert(m_maxDisplayedTextLength < sizeof(m_buffer));
+  strlcpy(m_buffer, text, m_maxDisplayedTextLength + 1);
   markRectAsDirty(bounds());
 }
 
 void BufferTextView::appendText(const char * text) {
   size_t previousTextLength = strlen(m_buffer);
-  size_t argTextLength = strlen(text);
-  if (previousTextLength + argTextLength + 1 < k_maxNumberOfChar) {
-    strlcpy(&m_buffer[previousTextLength], text, k_maxNumberOfChar - previousTextLength);
+  if (previousTextLength < m_maxDisplayedTextLength) {
+    strlcpy(&m_buffer[previousTextLength], text, m_maxDisplayedTextLength + 1 - previousTextLength);
   }
 }
 

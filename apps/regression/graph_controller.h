@@ -26,8 +26,14 @@ public:
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   bool moveCursorVertically(int direction) override;
 
+  // InteractiveCurveViewRangeDelegate
+  void computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) override;
+  void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) override;
+  void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) override {}
+
 private:
   constexpr static int k_maxLegendLength = 16;
+  constexpr static float k_displayHorizontalMarginRatio = 0.05f;
 
   class SeriesSelectionController : public Shared::CurveSelectionController {
   public:

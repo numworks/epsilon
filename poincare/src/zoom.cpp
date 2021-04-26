@@ -306,6 +306,40 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
   *yMax = yCenter + yRange / 2.f;
 }
 
+void Zoom::ExpandSparseWindow(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary) {
+  /* We compute the "empty center" of the window, i.e. the largest rectangle
+   * (with same center and shape as the window) that does not contain any
+   * point. If that rectangle is deemed too large, we consider that not enough
+   * of the curve shows up on screen and we zoom out. */
+  constexpr float emptyCenterMaxSize = 0.5f;
+  constexpr float ratioCorrection = 4.f/3.f;
+
+  float xCenter = (*xMax + *xMin) / 2.f;
+  float yCenter = (*yMax + *yMin) / 2.f;
+  float xRange = *xMax - *xMin;
+  float yRange = *yMax - *yMin;
+
+  float emptyCenter = FLT_MAX;
+  float step = xRange / (k_sampleSize - 1);
+  int n = 0;
+  for (int i = 0; i < k_sampleSize; i++) {
+    float x = *xMin + i * step;
+    float y = evaluation(x, context, auxiliary);
+    if (std::isfinite(y)) {
+      n++;
+      /* r is the ratio between the window and the largest rectangle (with same
+       * center and shape as the window) that does not contain (x,y).
+       * i.e. the smallest zoom-in for which (x,y) is not visible. */
+      float r = 2 * std::max(std::fabs(x - xCenter) / xRange, std::fabs(y - yCenter) / yRange);
+      emptyCenter = std::min(emptyCenter, r);
+    }
+  }
+
+  if (emptyCenter > emptyCenterMaxSize && n > k_sampleSize / 10) {
+    SetZoom(ratioCorrection + emptyCenter, xCenter, yCenter, xMin, xMax, yMin ,yMax);
+  }
+}
+
 void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary) {
   float t = tMin;
   *fMin = FLT_MAX;

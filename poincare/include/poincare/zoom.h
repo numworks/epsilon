@@ -36,6 +36,7 @@ public:
   static void RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
   static void FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float tStep, float * fMin, float * fMax, Context * context, const void * auxiliary);
   static void RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, float xMin, float xMax, float yMinForced, float yMaxForced, float * yMin, float * yMax, Context * context, const void * auxiliary);
+  static void ExpandSparseWindow(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, Context * context, const void * auxiliary);
 
   /* Find the bounding box of two given ranges. */
   static void CombineRanges(float min1, float max1, float min2, float max2, float * minRes, float * maxRes);

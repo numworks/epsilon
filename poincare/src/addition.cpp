@@ -436,19 +436,17 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
    * parent here), which would be replaced with undef.
    * Example: int((ℯ^(-x))-x^(0.5), x, 0, 3), when creating the common
    * denominator for the integrand. */
-  ExpressionNode::ReductionContext contextWithSymbolicComputation = ExpressionNode::ReductionContext(
-      reductionContext.context(),
-      reductionContext.complexFormat(),
-      reductionContext.angleUnit(),
-      reductionContext.unitFormat(),
-      reductionContext.target(),
-      ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
+  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 
   // Step 4: Simplify the numerator
-  numerator.shallowReduce(contextWithSymbolicComputation);
+  numerator.shallowReduce(reductionContext);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
-  inverseDenominator.deepReduce(contextWithSymbolicComputation);
+  inverseDenominator.deepReduce(reductionContext);
+
+  // Restore symbolicComputation status
+  reductionContext.setSymbolicComputation(previousSymbolicComputation);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop).

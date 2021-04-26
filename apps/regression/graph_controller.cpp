@@ -83,6 +83,40 @@ void GraphController::viewWillAppear() {
   setRoundCrossCursorView();
 }
 
+void GraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) {
+  *xMin = FLT_MAX;
+  *xMax = -FLT_MAX;
+  for (int series = 0; series < Store::k_numberOfSeries; series++) {
+    if (!m_store->seriesIsEmpty(series)) {
+      Poincare::Zoom::CombineRanges(m_store->minValueOfColumn(series, 0), m_store->maxValueOfColumn(series, 0), *xMin, *xMax, xMin, xMax);
+    }
+  }
+  Poincare::Zoom::SanitizeRangeForDisplay(xMin, xMax);
+  *xMin = std::max(xMinLimit, *xMin);
+  *xMax = std::min(xMaxLimit, *xMax);
+  float dx = (*xMax - *xMin) * k_displayHorizontalMarginRatio;
+  *xMin -= dx;
+  *xMax += dx;
+  *yMinIntrinsic = FLT_MAX;
+  *yMaxIntrinsic = -FLT_MAX;
+}
+
+void GraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) {
+  *yMin = yMinIntrinsic;
+  *yMax = yMaxIntrinsic;
+  for (int series = 0; series < Store::k_numberOfSeries; series++) {
+    for (int pair = 0; pair < m_store->numberOfPairsOfSeries(series); pair++) {
+      float x = m_store->get(series, 0, pair);
+      if (x < xMin || x > xMax) {
+        continue;
+      }
+      float y = m_store->get(series, 1, pair);
+      Poincare::Zoom::CombineRanges(*yMin, *yMax, y, y, yMin, yMax);
+    }
+  }
+  Poincare::Zoom::SanitizeRangeForDisplay(yMin, yMax, Store::NormalYXRatio() * (xMax - xMin) / 2.f);
+}
+
 // Private
 
 KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {

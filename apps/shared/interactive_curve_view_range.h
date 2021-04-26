@@ -90,7 +90,7 @@ protected:
 private:
   int normalizationSignificantBits() const;
   void privateSetZoomAuto(bool xAuto, bool yAuto);
-  virtual void privateComputeRanges(bool computeX, bool computeY);
+  void privateComputeRanges(bool computeX, bool computeY);
   bool intrinsicYRangeIsUnset() const { return std::isnan(m_yMinIntrinsic) && std::isnan(m_yMaxIntrinsic); }
 
   float m_offscreenYAxis;

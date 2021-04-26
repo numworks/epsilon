@@ -997,10 +997,12 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   /* If node doesn't come from current script or an imported script, nodeName is
    * not a user input. We assert here its label doesn't overflow on display as
    * it will be cropped later (and take parentheses into account). */
-  assert(nodeOrigin == k_currentScriptOrigin ||
-    (nodeSourceName != nullptr && strlen(nodeSourceName) > 3 &&
-      (strcmp(nodeSourceName + strlen(nodeSourceName) - 3, ".py") == 0 || strcmp(nodeSourceName, I18n::translate(I18n::Message::ImportedModulesAndScripts)) == 0)) ||
-    strlen(nodeName) + (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <= ScriptNodeCell::k_maxNumberOfCharsInLabel);
+  assert(nodeOrigin == k_currentScriptOrigin
+    || (nodeSourceName != nullptr
+      && strlen(nodeSourceName) > 3
+      && (strcmp(nodeSourceName + strlen(nodeSourceName) - 3, ".py") == 0
+        || strcmp(nodeSourceName, I18n::translate(I18n::Message::ImportedModulesAndScripts)) == 0))
+    || strlen(nodeName) + (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <= ScriptNodeCell::k_maxNumberOfCharsInLabel);
 
   // Step 2.2: Add any new import source name
   if (nodeOrigin == m_originsCount && m_displaySubtitles) {

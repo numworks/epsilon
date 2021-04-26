@@ -23,7 +23,10 @@ public:
 
   // InteractiveCurveViewRangeDelegate
   bool defaultRangeIsNormalized() const override { return functionStore()->displaysNonCartesianFunctions(); }
-  void interestingRanges(InteractiveCurveViewRange * range) override { DefaultInterestingRanges(range, context(), functionStore(), Ratio()); }
+  void computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) override { DefaultComputeXRange(xMinLimit, xMaxLimit, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, context(), functionStore()); }
+  void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) override { DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, Ratio(), yMin, yMax, context(), functionStore()); }
+  void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) override { DefaultImproveFullRange(xMin, xMax, yMin, yMax, context(), functionStore()); }
+
   float addMargin(float x, float range, bool isVertical, bool isMin) override { return DefaultAddMargin(x, range, isVertical, isMin, k_topMargin, k_bottomMargin, k_leftMargin, k_rightMargin); }
   void updateZoomButtons() override {}
   void updateBottomMargin() override {}
@@ -50,11 +53,13 @@ void assert_best_range_is(const char * const (&definitions)[N], ContinuousFuncti
   for (size_t i = 0; i < N; i++) {
     addFunction(definitions[i], plotTypes[i], graphController.functionStore(), graphController.context());
   }
-  graphRange.setDefault();
+  graphRange.setZoomAuto(true);
+  graphRange.computeRanges();
   float xMin = graphRange.xMin();
   float xMax = graphRange.xMax();
   float yMin = graphRange.yMin();
   float yMax = graphRange.yMax();
+  //printf("assert_best_range_is(\"%s\", %.9g, %.9g, %.9g, %.9g)\n", definitions[0], xMin, xMax, yMin, yMax);
   quiz_assert(float_equal(xMin, targetXMin) && float_equal(xMax, targetXMax) && float_equal(yMin, targetYMin) && float_equal(yMax, targetYMax));
 
   graphController.functionStore()->removeAll();
@@ -67,43 +72,40 @@ void assert_best_cartesian_range_is(const char * definition, float targetXMin, f
 }
 
 QUIZ_CASE(graph_ranges_single_function) {
-  assert_best_cartesian_range_is("undef", -10, 10, -5.81249952, 4.81249952);
-  assert_best_cartesian_range_is("x!", -10, 10, -5.81249952, 4.81249952);
+  assert_best_cartesian_range_is("undef", -10, 10, -5.66249943, 4.96249962);
+  assert_best_cartesian_range_is("x!", -10, 10, -5.66249943, 4.96249962);
 
-  assert_best_cartesian_range_is("0", -10, 10, -5.81249952, 4.81249952);
-  assert_best_cartesian_range_is("1", -10, 10, -4.81249952, 5.81249952);
-  assert_best_cartesian_range_is("-100", -10, 10, -105.8125, -95.1875);
-  assert_best_cartesian_range_is("0.01", -10, 10, -5.81249952, 4.81249952);
-
+  assert_best_cartesian_range_is("0", -10, 10, -5.66249943, 4.96249962);
+  assert_best_cartesian_range_is("1", -10, 10, -4.66249943, 5.96249962);
+  assert_best_cartesian_range_is("-100", -10, 10, -105.662506, -95.0375061);
+  assert_best_cartesian_range_is("0.01", -10, 10, -5.66249943, 4.96249962);
   assert_best_cartesian_range_is("x", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("x+1", -12, 10, -6.09374952, 5.59374952);
-  assert_best_cartesian_range_is("-x+5", -7, 16, -6.30937481, 5.90937424);
-  assert_best_cartesian_range_is("x/2+2", -15, 8, -6.35937452, 5.85937452);
-
-
-  assert_best_cartesian_range_is("x^2", -10, 10, -1.31249952, 9.3125);
+  assert_best_cartesian_range_is("x+1", -12, 10, -6.14374924, 5.54374981);
+  assert_best_cartesian_range_is("-x+5", -7, 16, -6.10937452, 6.10937452);
+  assert_best_cartesian_range_is("x/2+2", -15, 8, -6.10937452, 6.10937452);
+  assert_best_cartesian_range_is("x^2", -10, 10, -7, 40);
   assert_best_cartesian_range_is("x^3", -10, 10, -5.16249943, 5.46249962);
   assert_best_cartesian_range_is("-2x^6", -10, 10, -16000, 2000);
-  assert_best_cartesian_range_is("3x^2+x+10", -12, 11, 7.74062586, 19.9593754);
+  assert_best_cartesian_range_is("3x^2+x+10", -12, 11, -50, 260);
 
-  assert_best_cartesian_range_is("1/x", -4.98823595, 4.98823595, -2.79999995, 2.5);
-  assert_best_cartesian_range_is("1/(1-x)", -4.17647123, 6.17647123, -2.9000001, 2.60000014);
-  assert_best_cartesian_range_is("1/(x^2+1)", -3.10000014, 3.10000014, -0.200000003, 1.10000002);
+  assert_best_cartesian_range_is("1/x", -4, 4, -2.27499962, 1.97499979);
+  assert_best_cartesian_range_is("1/(1-x)", -2.9000001, 4.9000001, -2.12187481, 2.0218749);
+  assert_best_cartesian_range_is("1/(x^2+1)", -3.10000014, 3.10000014, -1.24687481, 2.046875);
 
   assert_best_cartesian_range_is("sin(x)", -15, 15, -1.39999998, 1.20000005, Radian);
   assert_best_cartesian_range_is("cos(x)", -1000, 1000, -1.39999998, 1.20000005, Degree);
-  assert_best_cartesian_range_is("tan(x)", -900, 900, -3.60000014, 3.10000014, Gradian);
-  assert_best_cartesian_range_is("tan(x-100)", -1100, 1100, -3.20000005, 2.79999995, Gradian);
+  assert_best_cartesian_range_is("tan(x)", -900, 900, -3.5, 3.10000014, Gradian);
+  assert_best_cartesian_range_is("tan(x-100)", -1100, 1100, -3.9000001, 3.4000001, Gradian);
 
   assert_best_cartesian_range_is("ℯ^x", -10, 10, -1.71249962, 8.91249943);
   assert_best_cartesian_range_is("ℯ^x+4", -10, 10, 2.28750038, 12.9124994);
   assert_best_cartesian_range_is("ℯ^(-x)", -10, 10, -1.71249962, 8.91249943);
-  assert_best_cartesian_range_is("(1-x)ℯ^(1/(1-x))", -1.60000002, 2.70000005, -3, 5.0999999);
+  assert_best_cartesian_range_is("(1-x)ℯ^(1/(1-x))", -1.62682521, 2.726825, -3, 5.0999999);
 
-  assert_best_cartesian_range_is("ln(x)", -2.82058883, 7.72058868, -3.29999995, 2.29999995);
+  assert_best_cartesian_range_is("ln(x)", -1.89999998, 6.80000019, -2.81093717, 1.81093717);
   assert_best_cartesian_range_is("log(x)", -0.900000036, 3.10000014, -1.21249986, 0.912499905);
 
-  assert_best_cartesian_range_is("√(x)", -3, 9, -1.88749945, 4.48749971);
+  assert_best_cartesian_range_is("√(x)", -3, 9, -1.83749962, 4.53749943);
   assert_best_cartesian_range_is("√(x^2+1)-x", -10, 10, -1.26249981, 9.36249924);
   assert_best_cartesian_range_is("root(x^3+1,3)-x", -2, 2.29999995, -0.392187476, 1.89218748);
 }
@@ -112,12 +114,12 @@ QUIZ_CASE(graph_ranges_several_functions) {
   {
     const char * definitions[] = {"ℯ^x", "ln(x)"};
     ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
-    assert_best_range_is(definitions, types, -10, 10, -2.81249952, 7.81249952);
+    assert_best_range_is(definitions, types, -1.9, 6.8, -9, 35);
   }
   {
     const char * definitions[] = {"x/2+2", "-x+5"};
     ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
-    assert_best_range_is(definitions, types, -16, 17, -9.01562405, 8.51562405);
+    assert_best_range_is(definitions, types, -16, 17, -5.76562405, 11.765624);
   }
   {
     const char * definitions[] = {"sin(θ)", "cos(θ)"};
@@ -212,8 +214,8 @@ QUIZ_CASE(graph_ranges_orthonormal) {
   assert_is_not_orthonormal(0, 20, 0, 11);
   assert_is_orthonormal(1e6, 1e6 + 20, 1e6, 1e6 + 11);
 
-  /* The ration is the desired 0.53125, but if the bounds are near equal
-   * numbers of large magnitude, the loss odf precision leaves us without any
+  /* The ratio is the desired 0.53125, but if the bounds are near equal
+   * numbers of large magnitude, the loss of precision leaves us without any
    * significant bits. */
   assert_is_orthonormal(0, 3.2, 0, 1.7);
   assert_is_not_orthonormal(1e7, 1e7 + 3.2, 0, 1.7);

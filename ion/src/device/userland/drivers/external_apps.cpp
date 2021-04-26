@@ -71,7 +71,13 @@ const uint8_t * App::iconData() const {
 }
 
 void * App::entryPoint() const {
-  return reinterpret_cast<void *>(addressAtIndexInAppInfo(5));
+  /* As stated in ARM Cortex guide generic user guide: Bit[0] of any address
+   * you write to the PC with a BX, BLX, LDM, LDR, or POP instruction must be
+   * 1 for correct execution, because this bit indicates the required
+   * instruction set, and the Cortex-M7 processor only supports Thumb
+   * instructions.
+   */
+  return reinterpret_cast<void *>(addressAtIndexInAppInfo(5) + 1);
 }
 
 bool App::appAtAddress(uint8_t * address) {

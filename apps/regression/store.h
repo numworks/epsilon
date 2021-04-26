@@ -75,11 +75,7 @@ public:
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
 private:
-  // InteractiveCurveViewRange
-  void privateComputeRanges(bool computeX, bool computeY) override;
-
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
-  constexpr static float k_displayHorizontalMarginRatio = 0.05f;
   void resetMemoization();
   Model * regressionModel(int index);
   uint32_t m_seriesChecksum[k_numberOfSeries];

@@ -7,7 +7,6 @@
 
 extern "C" {
   extern char _title_symbol;
-  extern char _upper_title_symbol;
   extern char _icon_symbol;
   extern char _main_symbol;
   extern char _app_flash_end;
@@ -17,7 +16,6 @@ constexpr AppInfo::AppInfo() :
   m_header(Magic),
   m_apiLevel(INFO_API_LEVEL),
   m_title(&_title_symbol),
-  m_upperTitle(&_upper_title_symbol),
   m_compressedPixelIconSize(k_compressedPixelSize),
   m_compressedPixelIcon(&_icon_symbol),
   m_entryPoint(&_main_symbol),

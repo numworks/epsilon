@@ -12,7 +12,6 @@ namespace ExternalApps {
  * - 4 bytes: a magic code 0XBABECODE
  * - 4 bytes: the API level of the AppInfo layout
  * - 4 bytes: the address of the app name
- * - 4 bytes: the address of the upper app name
  * - 4 bytes: the size of the compressed icon
  * - 4 bytes: the address of the compressed icon data
  * - 4 bytes: the address of the entry point
@@ -32,20 +31,16 @@ const char * App::name() const {
  return reinterpret_cast<const char *>(addressAtIndexInAppInfo(2));
 }
 
-const char * App::upperName() const {
- return reinterpret_cast<const char *>(addressAtIndexInAppInfo(3));
-}
-
 uint32_t App::iconSize() const {
-  return *reinterpret_cast<uint32_t *>(m_startAddress + 4*sizeof(uint32_t));
+  return *reinterpret_cast<uint32_t *>(m_startAddress + 3*sizeof(uint32_t));
 }
 
 const uint8_t * App::iconData() const {
-  return reinterpret_cast<const uint8_t *>(addressAtIndexInAppInfo(5));
+  return reinterpret_cast<const uint8_t *>(addressAtIndexInAppInfo(4));
 }
 
 void * App::entryPoint() const {
-  return reinterpret_cast<void *>(addressAtIndexInAppInfo(6));
+  return reinterpret_cast<void *>(addressAtIndexInAppInfo(5));
 }
 
 bool App::appAtAddress(uint8_t * address) {

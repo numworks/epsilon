@@ -8,7 +8,6 @@
  * - a magic code 0XBABECODE
  * - the API level of the AppInfo layout
  * - the address of the app name
- * - the address of the upper app name
  * - the size of the compressed icon
  * - the address of the compressed icon data
  * - the address of the entry point
@@ -24,7 +23,6 @@ private:
   uint32_t m_header;
   uint32_t m_apiLevel;
   const char * m_title;
-  const char * m_upperTitle;
   // TODO: add explanation on how to generate m_compressedPixelIcon
   uint32_t m_compressedPixelIconSize;
   char * m_compressedPixelIcon;

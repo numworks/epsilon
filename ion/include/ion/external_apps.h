@@ -10,7 +10,6 @@ class App {
 public:
   App(uint8_t * a);
   const char * name() const;
-  const char * upperName() const;
   uint32_t iconSize() const;
   const uint8_t * iconData() const;
   void * entryPoint() const;

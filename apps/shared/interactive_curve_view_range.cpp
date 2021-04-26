@@ -303,8 +303,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
   if (computeX || intrinsicYRangeIsUnset()) {
     float xMinLimit, xMaxLimit;
     if (computeX) {
-      xMinLimit = NAN;
-      xMaxLimit = NAN;
+      xMinLimit = -FLT_MAX;
+      xMaxLimit = FLT_MAX;
     } else {
       xMinLimit = xMin();
       xMaxLimit = xMax();

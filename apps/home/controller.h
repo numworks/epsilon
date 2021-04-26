@@ -37,6 +37,7 @@ private:
     ContentView(Controller * controller, Escher::SelectableTableViewDataSource * selectionDataSource);
     Escher::SelectableTableView * selectableTableView();
     void drawRect(KDContext * ctx, KDRect rect) const override;
+    void reload();
     void reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons, int numberOfColumns);
   private:
     int numberOfSubviews() const override;

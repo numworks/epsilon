@@ -30,6 +30,10 @@ void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
 }
 
+void Controller::ContentView::reload() {
+  markRectAsDirty(bounds());
+}
+
 void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons, int numberOfColumns) {
   if (numberOfIcons % numberOfColumns) {
     /* We mark the missing icons on the last row as dirty. */
@@ -76,6 +80,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() != GlobalPreferences::ExamMode::Off) {
         App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
       } else {
+        m_view.reload();
         Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
         container->switchToExternalApp(a);
       }

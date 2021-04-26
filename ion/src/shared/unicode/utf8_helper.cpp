@@ -174,7 +174,7 @@ void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, Tex
   size_t i = 0;
   size_t iPrev = 0;
   size_t textLength = strlen(text);
-  size_t lengthOfParenthesisExtention = strlen("(\x11)");
+  size_t lengthOfParenthesisExtension = strlen("(\x11)");
   while(i < textLength) {
     iPrev = i;
     bool didReplace = false;
@@ -187,9 +187,9 @@ void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, Tex
        * first and register it as "function". Therefore we can decide to remove
        * the (\x11) part or not depending on the application. This process is
        * repeated for all 4 function keys usable in python (√, ℯ, ln, log)*/
-      if (p.removeParenthesesExtention()) {
-        firstStringLength -= lengthOfParenthesisExtention;
-        secondStringLength -= lengthOfParenthesisExtention;
+      if (p.removeParenthesesExtension()) {
+        firstStringLength -= lengthOfParenthesisExtension;
+        secondStringLength -= lengthOfParenthesisExtension;
       }
       char firstString[TextPair::k_maxLength];
       char secondString[TextPair::k_maxLength];

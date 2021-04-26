@@ -5,7 +5,7 @@
 #include <escher/metric.h>
 #include <escher/table_cell.h>
 #include <escher/buffer_text_view.h>
-#include <ion.h>
+#include <ion/display.h>
 
 namespace Code {
 

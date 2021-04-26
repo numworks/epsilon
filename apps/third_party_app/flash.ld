@@ -39,8 +39,6 @@ SECTIONS {
   .rodata : {
     _title_symbol = .;
     KEEP(*(*._ZL5title))
-    _upper_title_symbol = .;
-    KEEP(*(*._ZL10upperTitle))
     _icon_symbol = .;
     KEEP(*(*.compressedPixelData))
     *(.rodata)

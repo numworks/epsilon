@@ -1,7 +1,6 @@
 #include "svc.h"
 
 constexpr const char title[] = "Third-party app";
-constexpr const char upperTitle[] = "THIRD-PARTY APP";
 
 void app_main() {
   // Configure data/bss in RAM?

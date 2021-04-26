@@ -40,6 +40,7 @@ public:
   void didSuspend(bool checkIfOnOffKeyReleased = false);
   bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(Escher::App::Snapshot * snapshot) override;
+  void switchToExternalApp(Ion::ExternalApps::App app);
   void run() override;
   bool updateBatteryState();
   void refreshPreferences();

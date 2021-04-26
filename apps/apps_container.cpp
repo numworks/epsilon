@@ -210,6 +210,13 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
   return Container::switchTo(snapshot);
 }
 
+typedef void (*ExternalAppMain)();
+
+void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
+  ExternalAppMain appStart = reinterpret_cast<ExternalAppMain>(app.entryPoint());
+  appStart();
+}
+
 void AppsContainer::handleRunException(bool resetSnapshot) {
   if (s_activeApp != nullptr) {
     /* The app models can reference layouts or expressions that have been

@@ -87,7 +87,7 @@ bool App::appAtAddress(uint8_t * address) {
 AppIterator & AppIterator::operator++() {
   uint32_t sizeOfCurrentApp = *reinterpret_cast<uint32_t *>(m_currentAddress + 6*sizeof(uint32_t));
   m_currentAddress += sizeOfCurrentApp;
-  if (m_currentAddress < &_external_apps_start || m_currentAddress > &_external_apps_end  - k_minAppSize || !App::appAtAddress(m_currentAddress)) {
+  if (m_currentAddress < &_external_apps_start || m_currentAddress + k_minAppSize > &_external_apps_end || !App::appAtAddress(m_currentAddress)) {
     m_currentAddress = nullptr;
   }
   return *this;

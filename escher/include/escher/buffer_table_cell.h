@@ -3,6 +3,8 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/table_cell.h>
+#include <escher/metric.h>
+#include <ion.h>
 
 namespace Escher {
 /* BufferTableCell is here optimized for its use in code VariableBoxController.
@@ -25,6 +27,10 @@ public:
 protected:
   KDColor backgroundColor() const override { return k_backgroundColor; }
 private:
+  /* Text from BufferTableCell can be formed from user input (script names).
+   * A char limit on display is enforced */
+  constexpr static int k_maxNumberOfCharsInBuffer = (Ion::Display::Width - Metric::PopUpLeftMargin - 2 * Metric::CellSeparatorThickness - Metric::CellLeftMargin - Metric::CellRightMargin - Metric::PopUpRightMargin) / 7; // With 7 = KDFont::SmallFont->glyphSize().width()
+  static_assert(k_maxNumberOfCharsInBuffer < Escher::BufferTextView::k_maxNumberOfChar, "k_maxNumberOfCharsInBuffer is too high");
   constexpr static KDColor k_backgroundColor = Palette::WallScreen;
   constexpr static KDColor k_textColor = Palette::BlueishGray;
   BufferTextView m_labelView;

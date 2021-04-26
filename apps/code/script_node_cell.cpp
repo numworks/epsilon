@@ -7,11 +7,12 @@ namespace Code {
 
 constexpr char ScriptNodeCell::k_parentheses[];
 constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
+constexpr int ScriptNodeCell::k_maxNumberOfCharsInLabel;
 
 void ScriptNodeCell::setScriptNode(ScriptNode * node) {
   /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
    * greater than node->nameLength() */
-  const int labelLength = node->nameLength() <= k_maxNumberOfCharsInLabel ? node->nameLength() : k_maxNumberOfCharsInLabel;
+  const int labelLength = std::min(node->nameLength(), k_maxNumberOfCharsInLabel);
   char temp_buffer[k_maxNumberOfCharsInLabel + 1];
   assert(strlen(node->name()) >= labelLength);
   memcpy(temp_buffer, node->name(), labelLength);

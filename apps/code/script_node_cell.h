@@ -2,8 +2,10 @@
 #define CODE_SCRIPT_NODE_CELL_H
 
 #include "script_node.h"
+#include <escher/metric.h>
 #include <escher/table_cell.h>
 #include <escher/buffer_text_view.h>
+#include <ion.h>
 
 namespace Code {
 
@@ -12,9 +14,12 @@ public:
   static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
   constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
+  // Labels can be formed from user variables, a char limit is enforced.
+  constexpr static int k_maxNumberOfCharsInLabel = (Ion::Display::Width - Escher::Metric::PopUpLeftMargin - 2 * Escher::Metric::CellSeparatorThickness - Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin - Escher::Metric::PopUpRightMargin) / 10; // With 10 = KDFont::LargeFont->glyphSize().width()
+  static_assert(k_maxNumberOfCharsInLabel < Escher::BufferTextView::k_maxNumberOfChar, "k_maxNumberOfCharsInLabel is too high");
   ScriptNodeCell() :
     TableCell(),
-    m_labelView(KDFont::LargeFont, 0.0f),
+    m_labelView(KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
     m_subLabelView(KDFont::SmallFont, 0.0f, 0.5f, Escher::Palette::GrayDark)
   {}
   void setScriptNode(ScriptNode * node);

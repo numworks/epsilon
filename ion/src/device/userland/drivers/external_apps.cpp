@@ -2,8 +2,8 @@
 #include <assert.h>
 
 extern "C" {
-  uint8_t _external_apps_start;
-  uint8_t _external_apps_end;
+  extern uint8_t _external_apps_start;
+  extern uint8_t _external_apps_end;
 }
 
 namespace Ion {

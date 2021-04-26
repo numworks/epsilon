@@ -97,6 +97,7 @@ AppIterator Apps::begin() const {
 int numberOfApps() {
   int counter = 0;
   for (App a : Apps()) {
+    (void)a;
     counter++;
   }
   return counter;

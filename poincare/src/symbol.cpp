@@ -143,6 +143,8 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
+  assert(symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined
+    || symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   {
     Expression current = *this;
     Expression p = parent();
@@ -172,16 +174,22 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
     if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
-    result = Undefined::Builder();
+    return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
 
   if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
-    /* At this point, any remaining symbol is undefined and should be replaced,
-     * even if the symbol is a parametered expression's parameter.
-     * ReductionContext's SymbolicComputation is altered to enforce it.
-     * For example, with x undefined and x->a, within diff(a,x,1), a should be
-     * reduced to undefined instead of x. */
+    /* At this point, any remaining symbol was nested and is globally undefined.
+     * It may also be a locally defined parametered expression's parameter.
+     * Regardless of that, we should replace all nested symbols with their
+     * global value, which is undef.
+     * ReductionContext's SymbolicComputation is altered to enforce this.
+     * For example, with x undefined, 1->y and x+y->a, within diff(a,x,1) :
+     *  - a is replaced with result(=x+1), computed in SymbolAbstract::Expand.
+     *  - x is defined locally (parameter of diff) but undefined globally.
+     *  - Therefore, result(=x+1) is deep-reduced to undef+1, then undef.
+     * In the end, a has been reduced to undef and diff(a,x,1) will be as well.
+     */
     reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   }
   // The stored expression is as entered by the user, so we need to call reduce

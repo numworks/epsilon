@@ -48,8 +48,9 @@ SECTIONS {
   } >FLASH_USERLAND
 
   .external_apps : {
-    . = ALIGN(4);
     _external_apps_start = .;
+    . += EXTERNAL_APPS_LENGTH;
+    _external_apps_end = .;
   } >FLASH_EXTERNAL_APPS
 
   .data : {

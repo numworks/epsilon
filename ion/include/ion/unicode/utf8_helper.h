@@ -10,16 +10,16 @@ class TextPair {
 public:
   typedef bool (*ReplacementRule)(const char *, int, int);
 
-  constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtention = false, ReplacementRule rule = nullptr) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtention(removeParenthesesExtention), m_rule(rule) {}
+  constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtension = false, ReplacementRule rule = nullptr) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtension(removeParenthesesExtension), m_rule(rule) {}
   const char * firstString() { return m_firstString; }
   const char * secondString() { return m_secondString; }
-  bool removeParenthesesExtention() { return m_removeParenthesesExtention; }
+  bool removeParenthesesExtension() { return m_removeParenthesesExtension; }
   bool shouldReplace(const char * s, int length, int position) { return m_rule ? m_rule(s, length, position) : true; }
   static constexpr int k_maxLength = 20;
 private:
   const char * m_firstString;
   const char * m_secondString;
-  bool m_removeParenthesesExtention;
+  bool m_removeParenthesesExtension;
   ReplacementRule m_rule;
 };
 

@@ -28,12 +28,12 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
 
 int RangeParameterController::typeAtIndex(int index) {
   /* FIXME: Give names to the types. */
-  int types[] = {0, 1, 1, 2};
+  int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType, k_okCellType};
   return types[index + !displayNormalizeCell()];
 }
 
 int RangeParameterController::reusableCellCount(int type) {
-  if (type == 1) {
+  if (type == k_rangeCellType) {
     return k_numberOfRangeCells;
   } else {
     return 1;
@@ -41,14 +41,14 @@ int RangeParameterController::reusableCellCount(int type) {
 }
 
 HighlightCell * RangeParameterController::reusableCell(int index, int type) {
-  if (type == 0) {
+  if (type == k_normalizeCellType) {
     assert(index == 0);
     return &m_normalizeCell;
-  } else if (type == 1) {
+  } else if (type == k_rangeCellType) {
     assert(index < k_numberOfRangeCells);
     return m_rangeCells + index;
   } else {
-    assert(type == 2);
+    assert(type == k_okCellType);
     assert(index == 0);
     return &m_okButton;
   }

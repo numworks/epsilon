@@ -1,4 +1,5 @@
 #include <kernel/drivers/authentication.h>
+#include <drivers/led.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/trampoline.h>
 #include <shared/drivers/config/board.h>
@@ -24,7 +25,8 @@ bool userlandTrust(bool slotA) {
 void updateTrust(bool trust) {
   s_trustedUserland = trust;
   if (!s_trustedUserland) {
-    Board::downgradeTrustLevel();
+    LED::setColor(KDColorBlack);
+    // Bloquer les options bytes? Mettre tout le running SLOT en RDP WRP sauf exam mode?
   }
 }
 

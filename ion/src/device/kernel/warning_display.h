@@ -10,6 +10,7 @@ namespace WarningDisplay {
 void unauthenticatedUserland();
 void obsoleteSoftware();
 void kernelUpgradeRequired();
+void externalAppsAvailable();
 
 }
 }

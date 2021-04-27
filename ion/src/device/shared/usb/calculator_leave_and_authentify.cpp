@@ -1,12 +1,26 @@
 #include "calculator.h"
+#include <ion/external_apps.h>
 #include <userland/drivers/board.h>
 #include <userland/drivers/reset.h>
+
+extern "C" {
+extern char _external_apps_start;
+}
 
 namespace Ion {
 namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
+   if (leaveAddress == reinterpret_cast<uint32_t>(&_external_apps_start)) {
+     Ion::ExternalApps::setVisible(true);
+     if (Ion::ExternalApps::numberOfApps() > 0) {
+       Board::downgradeTrustLevel(true); // Display pop-up
+     } else {
+       Ion::ExternalApps::setVisible(false);
+     }
+     return;
+   }
   uint32_t addressToJumpTo = Board::switchExecutableSlot();
   if (addressToJumpTo) {
     Reset::jump(addressToJumpTo);

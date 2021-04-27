@@ -32,7 +32,7 @@ uint32_t slotAUserlandStart();
 uint32_t slotBUserlandStart();
 uint32_t userlandStart();
 uint32_t switchExecutableSlot();
-void downgradeTrustLevel();
+void downgradeTrustLevel(bool displayPopup);
 
 bool addressInUserlandRAM(void * address);
 

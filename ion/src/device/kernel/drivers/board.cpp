@@ -144,13 +144,17 @@ uint32_t switchExecutableSlot() {
     assert(deltaKernelVersion == 0);
     Authentication::updateTrust(false);
     WarningDisplay::unauthenticatedUserland();
-    Ion::Timing::msleep(3000);
+    Ion::Timing::msleep(5000);
   }
   return slotARunning ? slotBUserlandStart() : slotAUserlandStart();
 }
 
-void downgradeTrustLevel() {
-  LED::setColor(KDColorBlack);
+void downgradeTrustLevel(bool displayPopup) {
+  if (displayPopup) {
+    WarningDisplay::externalAppsAvailable();
+    Ion::Timing::msleep(5000);
+  }
+  Authentication::updateTrust(false);
 }
 
 bool addressInUserlandRAM(void * address) {

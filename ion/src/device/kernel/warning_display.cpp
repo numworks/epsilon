@@ -49,6 +49,21 @@ void kernelUpgradeRequired() {
   showMessage(sKernelUpgradeRequiredMessages, sKernelUpgradeRequiredNumberOfMessages);
 }
 
+constexpr static int sExternalAppsAvailableNumberOfMessages = 7;
+constexpr static const char * sExternalAppsAvailableMessages[sExternalAppsAvailableNumberOfMessages] = {
+  "EXTERNAL APPS",
+  "You installed external applications",
+  "to the official sofware.",
+  "Some features may be therefore",
+  "unavailable.",
+  "Every permission will be restored",
+  "when resetting the calculator.",
+};
+
+void externalAppsAvailable() {
+  showMessage(sExternalAppsAvailableMessages, sExternalAppsAvailableNumberOfMessages);
+}
+
 }
 }
 }

@@ -50,13 +50,11 @@ void FunctionZoomAndPanCurveViewController::adaptRangeForHeaders(bool viewWillAp
   if (viewWillAppear) {
     float dY = headersHeight / static_cast<float>(k_standardViewHeight) * (yMax - yMin);
     m_interactiveRange->setOffscreenYAxis(-dY);
-    m_interactiveRange->setYMax(yMax + dY);
     /* As we are adding space and the Y range that should not be taken into
      * account for computing the grid, we count it as negative offscreen. */
     assert(yOff == 0.f);
   } else {
     m_interactiveRange->setOffscreenYAxis(0.f);
-    m_interactiveRange->setYMax(yMax + yOff);
   }
 }
 

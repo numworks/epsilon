@@ -50,7 +50,7 @@ public:
   void setYMax(float f) override;
 
   float offscreenYAxis() const override { return m_offscreenYAxis; }
-  void setOffscreenYAxis(float f) { m_offscreenYAxis = f; }
+  void setOffscreenYAxis(float f);
 
   // Window
   void zoom(float ratio, float x, float y);

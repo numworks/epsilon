@@ -290,7 +290,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
   Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
     /* When evaluating sin(x)/x close to zero using the standard sine function,
      * one can detect small variations, while the cardinal sine is supposed to
-     * be locally monotonous. To smooth our such variations, we round the
+     * be locally monotonous. To smooth out such variations, we round the
      * result of the evaluations. As we are not interested in precise results
      * but only in ordering, this approximation is sufficient. */
     constexpr float precision = 1e-5;
@@ -454,8 +454,8 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
   return expressionReduced(context).hasExpression([](const Expression e, const void * context) {
       return e.type() == ExpressionNode::Type::Sequence
-      || e.type() == ExpressionNode::Type::Integral
-      || e.type() == ExpressionNode::Type::Derivative;
+          || e.type() == ExpressionNode::Type::Integral
+          || e.type() == ExpressionNode::Type::Derivative;
       }, nullptr);
 }
 

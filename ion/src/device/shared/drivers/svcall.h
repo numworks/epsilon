@@ -23,7 +23,7 @@ namespace SVCall {
 #define SVC_RETURNING_S0(code, returnType) SVC_RETURNING_SINGLE_REGISTER(code, returnType, "svc %[immediate] ; vmov %[returnValue], s0")
 
 #define SVC_RETURNING_MULTIPLE_REGISTERS(code, returnType, instruction) \
-  returnType returnValue; \
+  returnType returnValue = 0; \
   returnType * address = &returnValue; \
   asm volatile ( \
       instruction \

@@ -32,7 +32,7 @@ $(call object_for,$(ion_device_kernel_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(IO
 $(call object_for,$(ion_device_userland_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(ION_DEVICE_USERLAND_SFLAGS)
 
 # Add libsodium dependency
-$(call object_for,$(libsodium_src)): SFLAGS += -Iion/src/external/libsodium/include/sodium -Iion/src/external/libsodium/include/device -DCONFIGURED=1
+$(call object_for,$(libsodium_src)): SFLAGS += -Iion/src/external/libsodium/include/sodium -Iion/src/external/libsodium/include/device -DCONFIGURED=1 -w
 
 ion_device_bootloader_src += $(libsodium_src)
 

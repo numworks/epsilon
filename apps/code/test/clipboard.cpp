@@ -33,6 +33,14 @@ QUIZ_CASE(code_clipboard_enters_and_exits_python) {
   char buffer[32];
   e.serialize(buffer, sizeof(buffer));
   assert_clipboard_enters_and_exits_python(buffer, "1+exp\u0012x\u0013");
+
+  /* The character 'e' should only be changed to 'ᴇ' if it is part of a
+   * floating-point number. */
+  assert_clipboard_enters_and_exits_python("123ᴇ4", "123e4");
+  assert_clipboard_enters_and_exits_python("someVariableName", "someVariableName");
+  assert_clipboard_enters_and_exits_python("leg+1.23ᴇ-4.56", "leg+1.23e-4.56");
+  assert_clipboard_enters_and_exits_python("ceil(x)", "ceil(x)");
+  assert_clipboard_enters_and_exits_python("for i in range(1ᴇ2):\n  res[i] = 1ᴇ-1 × i", "for i in range(1e2):\n  res[i] = 1e-1 * i");
 }
 
 }

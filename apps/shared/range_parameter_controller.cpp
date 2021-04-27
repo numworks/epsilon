@@ -123,18 +123,20 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (displayNormalizeCell() && selectedRow() == 0) {
-      m_tempInteractiveRange.normalize();
-      buttonAction();
-      return true;
-    }
-    int index = selectedRow() - displayNormalizeCell();
-    if (index < k_numberOfRangeCells) {
-      m_singleRangeController.setEditXRange(index == 0);
-      stackController()->push(&m_singleRangeController);
-      return true;
-    }
+  if (displayNormalizeCell() && selectedRow() == 0
+   && (event == Ion::Events::OK || event == Ion::Events::EXE))
+  {
+    m_tempInteractiveRange.normalize();
+    buttonAction();
+    return true;
+  }
+  int index = selectedRow() - displayNormalizeCell();
+  if (index < k_numberOfRangeCells
+   && (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right))
+  {
+    m_singleRangeController.setEditXRange(index == 0);
+    stackController()->push(&m_singleRangeController);
+    return true;
   }
   return false;
 }

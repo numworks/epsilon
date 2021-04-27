@@ -34,6 +34,9 @@ public:
 
 private:
   constexpr static int k_numberOfRangeCells = 2;
+  constexpr static int k_normalizeCellType = 0;
+  constexpr static int k_rangeCellType = 1;
+  constexpr static int k_okCellType = 2;
 
   class CellWithUnequal : public Escher::MessageTableCell {
   public:

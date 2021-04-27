@@ -182,19 +182,15 @@ void Zoom::RefinedYRangeForDisplay(ValueAtAbscissa evaluation, float xMin, float
    * yMax that must be inside the Y range.*/
   assert(yMin && yMax);
 
-  float sample[k_sampleSize];
   float sampleYMin = FLT_MAX, sampleYMax = -FLT_MAX;
   const float step = (xMax - xMin) / (k_sampleSize - 1);
   float x, y;
   float sum = 0.f;
   int pop = 0;
 
-  sample[0] = evaluation(xMin, context, auxiliary);
-  sample[k_sampleSize - 1] = evaluation(xMax, context, auxiliary);
   for (int i = 1; i < k_sampleSize - 1; i++) {
     x = xMin + i * step;
     y = evaluation(x, context, auxiliary);
-    sample[i] = y;
     if (!std::isfinite(y)) {
       continue;
     }

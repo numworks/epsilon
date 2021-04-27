@@ -38,6 +38,10 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
 }
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    stackController()->pop();
+    return true;
+  }
   if (selectedRow() == 0 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     if (m_editXRange) {
       m_range->setXAuto(!m_range->xAuto());

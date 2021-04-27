@@ -82,6 +82,12 @@ void InteractiveCurveViewRange::setYMax(float yMax) {
   setZoomNormalize(isOrthonormal());
 }
 
+void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
+  float d = m_offscreenYAxis - f;
+  m_offscreenYAxis = f;
+  MemoizedCurveViewRange::protectedSetYMax(yMax() + d, k_lowerMaxFloat, k_upperMaxFloat);
+}
+
 float InteractiveCurveViewRange::yGridUnit() const {
   float res = MemoizedCurveViewRange::yGridUnit();
   if (m_zoomNormalize) {

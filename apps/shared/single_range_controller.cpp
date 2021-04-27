@@ -8,7 +8,7 @@ namespace Shared {
 // SingleRangeController
 
 SingleRangeController::SingleRangeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
-  FloatParameterController<float>(parentResponder),
+  SimpleFloatParameterController<float>(parentResponder),
   m_autoCell(I18n::Message::DefaultSetting),
   m_boundsCells{},
   m_range(interactiveRange)
@@ -34,7 +34,7 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
     castedCell->setTextColor(color);
     castedCell->textField()->setTextColor(color);
   }
-  FloatParameterController<float>::willDisplayCellForIndex(cell, index);
+  SimpleFloatParameterController<float>::willDisplayCellForIndex(cell, index);
 }
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
@@ -53,7 +53,7 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.reloadData();
     return true;
   }
-  return FloatParameterController<float>::handleEvent(event);
+  return SimpleFloatParameterController<float>::handleEvent(event);
 }
 
 float SingleRangeController::parameterAtIndex(int index) {

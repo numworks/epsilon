@@ -212,14 +212,6 @@ bool SVC_ATTRIBUTES isPlugged() {
 namespace Device {
 namespace USB {
 
-void SVC_ATTRIBUTES willExecuteDFU() {
-  SVC_RETURNING_VOID(SVC_USB_WILL_EXECUTE_DFU)
-}
-
-void SVC_ATTRIBUTES didExecuteDFU() {
-  SVC_RETURNING_VOID(SVC_USB_DID_EXECUTE_DFU)
-}
-
 bool SVC_ATTRIBUTES shouldInterruptDFU() {
   SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, bool)
 }

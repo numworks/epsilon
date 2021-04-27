@@ -125,8 +125,8 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (displayNormalizeCell() && selectedRow() == 0) {
-      m_interactiveRange->normalize();
-      stackController()->pop();
+      m_tempInteractiveRange.normalize();
+      buttonAction();
       return true;
     }
     int index = selectedRow() - displayNormalizeCell();

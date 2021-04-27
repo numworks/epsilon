@@ -93,11 +93,17 @@ AppIterator & AppIterator::operator++() {
   return *this;
 }
 
+bool s_externalAppsVisible = false;
+
 AppIterator Apps::begin() const {
-  if (!App::appAtAddress(&_external_apps_start)) {
+  if (!s_externalAppsVisible || !App::appAtAddress(&_external_apps_start)) {
     return end();
   }
   return AppIterator(&_external_apps_start);
+}
+
+void setVisible(bool visible) {
+  s_externalAppsVisible = visible;
 }
 
 int numberOfApps() {

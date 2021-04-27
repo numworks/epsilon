@@ -8,6 +8,7 @@ namespace Device {
 namespace Board {
 
 uint32_t switchExecutableSlot();
+void downgradeTrustLevel(bool displayPopup);
 
 }
 }

@@ -34,9 +34,9 @@ class Apps {
 public:
   AppIterator begin() const;
   AppIterator end() const { return AppIterator(nullptr); };
-private:
 };
 
+void setVisible(bool visible);
 int numberOfApps();
 
 }

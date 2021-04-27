@@ -73,11 +73,13 @@ void InteractiveCurveViewRange::setXMax(float xMax) {
 void InteractiveCurveViewRange::setYMin(float yMin) {
   assert(!yAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYMin(yMin, k_lowerMaxFloat, k_upperMaxFloat);
+  setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::setYMax(float yMax) {
   assert(!yAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
+  setZoomNormalize(isOrthonormal());
 }
 
 float InteractiveCurveViewRange::yGridUnit() const {
@@ -226,8 +228,8 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX, bool canChan
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
 
-  if (isOrthonormal()) {
-    setZoomNormalize(true);
+  if (isOrthonormal() || !(canChangeX || canChangeY)) {
+    setZoomNormalize(isOrthonormal());
     return;
   }
 

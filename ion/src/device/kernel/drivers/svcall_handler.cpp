@@ -78,6 +78,7 @@ void * svcallHandler(int svcNumber) {
     MAKE_SVCALL_HANDLER(SVC_BATTERY_IS_CHARGING, Ion::Device::Battery::isCharging)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_LEVEL, Ion::Device::Battery::level)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_VOLTAGE, Ion::Device::Battery::voltage)
+    MAKE_SVCALL_HANDLER(SVC_BOARD_DOWNGRADE_TRUST_LEVEL, Ion::Device::Board::downgradeTrustLevel)
     MAKE_SVCALL_HANDLER(SVC_BOARD_SWITCH_EXECUTABLE_SLOT, Ion::Device::Board::switchExecutableSlot)
     MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT, Ion::Device::CircuitBreaker::hasCheckpoint)
     MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT, Ion::Device::CircuitBreaker::loadCheckpoint)

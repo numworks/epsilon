@@ -59,7 +59,6 @@ void assert_best_range_is(const char * const (&definitions)[N], ContinuousFuncti
   float xMax = graphRange.xMax();
   float yMin = graphRange.yMin();
   float yMax = graphRange.yMax();
-  //printf("assert_best_range_is(\"%s\", %.9g, %.9g, %.9g, %.9g)\n", definitions[0], xMin, xMax, yMin, yMax);
   quiz_assert(float_equal(xMin, targetXMin) && float_equal(xMax, targetXMax) && float_equal(yMin, targetYMin) && float_equal(yMax, targetYMax));
 
   graphController.functionStore()->removeAll();

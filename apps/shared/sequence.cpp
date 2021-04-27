@@ -315,17 +315,6 @@ void Sequence::yRangeForDisplay(float xMin, float xMax, float yMinForced, float 
   protectedFullRangeForDisplay(xMin, xMax, 1.f, yMin, yMax, context, false);
 }
 
-#if 0
-void Sequence::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const {
-  Poincare::Zoom::ValueAtAbscissa evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
-    return static_cast<float>(static_cast<const Shared::Sequence *>(auxiliary)->initialRank());
-  };
-  Poincare::Zoom::FullRange(evaluation, 0, 1, 1, xMin, xMax, context, this);
-  *xMax += Poincare::Zoom::k_defaultHalfRange;
-  protectedFullRangeForDisplay(*xMin, *xMax, 1.f, yMin, yMax, context, false);
-}
-#endif
-
 Sequence::RecordDataBuffer * Sequence::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();

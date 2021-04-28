@@ -159,24 +159,24 @@ void NestedMenuController::viewDidDisappear() {
 HighlightCell * NestedMenuController::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);
-  if (type == LeafCellType) {
+  if (type == k_leafCellType) {
     return leafCellAtIndex(index);
   }
   return nodeCellAtIndex(index);
 }
 
-bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIndex) {
-  int depth = m_stack.depth();
-  if ((event == Ion::Events::Back || event == Ion::Events::Left) && depth > 0) {
+bool NestedMenuController::handleEvent(Ion::Events::Event event) {
+  const int rowIndex = selectedRow();
+  if ((event == Ion::Events::Back || event == Ion::Events::Left) && m_stack.depth() > 0) {
     return returnToPreviousMenu();
   }
   if (selectedRow() < 0) {
     return false;
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && typeAtLocation(0, selectedRow()) == NodeCellType) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && typeAtIndex(rowIndex) == k_nodeCellType) {
     return selectSubMenu(rowIndex);
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtLocation(0, selectedRow()) == LeafCellType) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(rowIndex) == k_leafCellType) {
     return selectLeaf(rowIndex);
   }
   return false;
@@ -194,7 +194,7 @@ bool NestedMenuController::returnToPreviousMenu() {
   assert(m_stack.depth() > 0);
   resetMemoization();
   NestedMenuController::Stack::State state = m_stack.pop();
-  m_listController.setFirstSelectedRow(state.selectedRow() + stackRowOffset());
+  m_listController.setFirstSelectedRow(state.selectedRow());
   KDPoint scroll = m_selectableTableView.contentOffset();
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));
   Container::activeApp()->setFirstResponder(&m_listController);

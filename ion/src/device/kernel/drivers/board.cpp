@@ -118,15 +118,20 @@ uint32_t switchExecutableSlot() {
   assert(Authentication::trustedUserland());
   PlatformInfo * platformInfoA = reinterpret_cast<PlatformInfo *>(slotAUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
   PlatformInfo * platformInfoB = reinterpret_cast<PlatformInfo *>(slotBUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
-  int deltaKernelVersion = platformInfoA->kernelVersionValue() - platformInfoB->kernelVersionValue();
-  int deltaUserlandVersion = platformInfoA->epsilonVersionComparedTo(platformInfoB->epsilonVersion());
-  // Delta = newVersion - oldVersion
   bool slotARunning = isRunningSlotA();
-  if (slotARunning) {
-    deltaKernelVersion = -deltaKernelVersion;
-    deltaUserlandVersion = -deltaUserlandVersion;
+  int deltaKernelVersion = -1;
+  int deltaUserlandVersion = -1;
+  if (platformInfoA->isValid() && platformInfoB->isValid()) {
+    deltaKernelVersion = platformInfoA->kernelVersionValue() - platformInfoB->kernelVersionValue();
+    deltaUserlandVersion = platformInfoA->epsilonVersionComparedTo(platformInfoB->epsilonVersion());
+    // Delta = newVersion - oldVersion
+    if (slotARunning) {
+      deltaKernelVersion = -deltaKernelVersion;
+      deltaUserlandVersion = -deltaUserlandVersion;
+    }
   }
   bool otherSlotUserlandAuthentication = Authentication::userlandTrust(!slotARunning);
+
   if (deltaKernelVersion < 0 || (otherSlotUserlandAuthentication && deltaUserlandVersion < 0)) {
     WarningDisplay::obsoleteSoftware();
     Ion::Timing::msleep(5000);

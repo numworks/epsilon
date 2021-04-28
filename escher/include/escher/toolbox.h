@@ -33,6 +33,7 @@ protected:
   HighlightCell * leafCellAtIndex(int index) override = 0;
   MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
   I18n::Message subTitle() override { return m_messageTreeModel->label(); }
+  virtual const ToolboxMessageTree * messageTreeModelAtIndex(int index) const;
   mutable const ToolboxMessageTree * m_messageTreeModel;
   /* m_messageTreeModel points at the messageTree of the tree (describing the
    * whole model) where we are located. It enables to know which rows are leaves

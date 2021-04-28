@@ -19,7 +19,7 @@ public:
   void setTitle(I18n::Message title) { m_listController.setTitle(title); }
 
   // StackViewController
-  bool handleEvent(Ion::Events::Event event) override { return handleEventForRow(event, selectedRow()); }
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override { Container::activeApp()->setFirstResponder(&m_listController); }
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -87,14 +87,12 @@ protected:
     I18n::Message m_title;
   };
 
-  static constexpr int LeafCellType = 0;
-  static constexpr int NodeCellType = 1;
+  static constexpr int k_leafCellType = 0;
+  static constexpr int k_nodeCellType = 1;
   int stackDepth() const { return m_stack.depth(); }
-  bool handleEventForRow(Ion::Events::Event event, int selectedRow);
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();
   virtual bool selectLeaf(int selectedRow) = 0;
-  virtual int stackRowOffset() const { return 0; }
   InputEventHandler * sender() { return m_sender; }
   virtual HighlightCell * leafCellAtIndex(int index) = 0;
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;

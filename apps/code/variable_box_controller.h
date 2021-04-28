@@ -47,8 +47,8 @@ private:
   constexpr static size_t k_maxOtherScriptNodesCount = 32; // Chosen without particular reasons
   constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount; // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin
   constexpr static uint8_t k_maxOrigins = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
-  constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
-  constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
+  constexpr static uint8_t k_subtitleCellType = k_nodeCellType; // We don't care as it is not selectable
+  constexpr static uint8_t k_itemCellType = k_leafCellType; // So that upper class NestedMenuController knows it's a leaf
   constexpr static uint8_t k_currentScriptOrigin = 0;
   constexpr static uint8_t k_builtinsOrigin = 1;
   constexpr static uint8_t k_importedOrigin = 2; // And above for other imported nodes

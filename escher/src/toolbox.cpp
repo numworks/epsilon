@@ -27,7 +27,8 @@ int Toolbox::reusableCellCount(int type) {
 }
 
 void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
+  assert(typeAtIndex(index) == k_nodeCellType);
+  const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(index);
   assert(messageTree->numberOfChildren() != 0);
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(messageTree->label());
@@ -35,43 +36,46 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
-  assert((m_messageTreeModel->childAtIndex(index))->numberOfChildren() != 0);
+  assert(typeAtIndex(index) == k_nodeCellType);
   MessageTableCell tempCell;
   return heightForCellAtIndex(&tempCell, index, false);
 }
 
 int Toolbox::typeAtIndex(int index) {
-  if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
-    return LeafCellType;
+  if (messageTreeModelAtIndex(index)->numberOfChildren() == 0) {
+    return k_leafCellType;
   }
-  return NodeCellType;
+  return k_nodeCellType;
 }
 
 bool Toolbox::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
-  m_messageTreeModel = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(selectedRow));
-  if (m_messageTreeModel->isFork()) {
-    assert(m_messageTreeModel->numberOfChildren() < 0);
-    m_messageTreeModel = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(indexAfterFork()));
-  }
+  assert(typeAtIndex(selectedRow) == k_nodeCellType);
+  m_messageTreeModel = messageTreeModelAtIndex(selectedRow);
   return NestedMenuController::selectSubMenu(selectedRow);
 }
 
 bool Toolbox::returnToPreviousMenu() {
   m_selectableTableView.deselectTable();
+  // Start from root to find parent messageTreeModel
   int currentDepth = m_stack.depth();
-  int index = 0;
-  ToolboxMessageTree * parentMessageTree = const_cast<ToolboxMessageTree *>(rootModel());
-  Stack::State * previousState = m_stack.stateAtIndex(index++);
-  while (currentDepth-- > 1) {
-    parentMessageTree = static_cast<ToolboxMessageTree *>(const_cast<MessageTree *>(parentMessageTree->childAtIndex(previousState->selectedRow())));
-    previousState = m_stack.stateAtIndex(index++);
-    if (parentMessageTree->isFork()) {
-      parentMessageTree = static_cast<ToolboxMessageTree *>(const_cast<MessageTree *>(parentMessageTree->childAtIndex(indexAfterFork())));
-    }
+  int stateDepth = 0;
+  m_messageTreeModel = rootModel();
+  Stack::State * previousState = m_stack.stateAtIndex(stateDepth++);
+  while (stateDepth < currentDepth) {
+    m_messageTreeModel = messageTreeModelAtIndex(previousState->selectedRow());
+    previousState = m_stack.stateAtIndex(stateDepth++);
   }
-  m_messageTreeModel = parentMessageTree;
   return NestedMenuController::returnToPreviousMenu();
+}
+
+const ToolboxMessageTree * Toolbox::messageTreeModelAtIndex(int index) const {
+  assert(index >= 0);
+  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
+  if (messageTree->isFork()) {
+    messageTree = static_cast<const ToolboxMessageTree *>(messageTree->childAtIndex(indexAfterFork()));
+  }
+  return messageTree;
 }
 
 }

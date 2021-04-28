@@ -1,5 +1,5 @@
 #include "helpers.h"
-#include <escher/clipboard.h>
+#include "clipboard.h"
 #include <string.h>
 
 using namespace Escher;
@@ -14,8 +14,8 @@ const char * PythonTextForEvent(Ion::Events::Event event) {
   if (event.text() == nullptr) {
     return nullptr;
   }
-  for (size_t i=0; i<NumberOfPythonTextPairs; i++) {
-    UTF8Helper::TextPair pair = PythonTextPairs[i];
+  for (size_t i=0; i<Clipboard::k_numberOfPythonTextPairs; i++) {
+    UTF8Helper::TextPair pair = Clipboard::PythonTextPairs()[i];
     if (strcmp(event.text(), pair.firstString()) == 0) {
       return pair.secondString();
     }

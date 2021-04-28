@@ -42,7 +42,7 @@ const char * Clipboard::storedText() {
     UTF8Helper::TextPair("\x12\x13", "\x12\x11\x13"),
   };
 
-  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize(), (UTF8Helper::TextPair *) &textPairs, numberOfPairs, true);
+  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize(), textPairs, numberOfPairs, true);
   return m_textBuffer;
 }
 
@@ -50,10 +50,6 @@ void Clipboard::reset() {
   strlcpy(m_textBuffer, "", 1);
   /* As we do not want to empty the user's computer's clipboard when entering
    * exam mode, we do not reset Ion::Clipboard. */
-}
-
-void Clipboard::replaceCharForPython(bool entersPythonApp) {
-  UTF8Helper::TryAndReplacePatternsInStringByPatterns((char *)m_textBuffer, TextField::maxBufferSize(), (UTF8Helper::TextPair *)&PythonTextPairs, NumberOfPythonTextPairs, entersPythonApp);
 }
 
 }

@@ -1,7 +1,7 @@
 #include "app.h"
+#include "clipboard.h"
 #include "code_icon.h"
 #include <apps/i18n.h>
-#include <escher/clipboard.h>
 #include "helpers.h"
 #include <ion/unicode/utf8_helper.h>
 

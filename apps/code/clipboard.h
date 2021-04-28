@@ -12,9 +12,11 @@ public:
 
   static Clipboard * sharedClipboard();
   static const UTF8Helper::TextPair * PythonTextPairs();
+  static bool ShouldReplaceLetterE(const char * text, int length, int position);
   void enterPython() { replaceCharForPython(true); }
   void exitPython() { replaceCharForPython(false); }
 private:
+  static int s_replacementRuleStartingPoint;
   void replaceCharForPython(bool entersPythonApp);
 };
 

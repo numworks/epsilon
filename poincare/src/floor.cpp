@@ -37,7 +37,7 @@ Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefinedAndUnits(*this, reductionContext);
+    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnits(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

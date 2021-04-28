@@ -40,7 +40,7 @@ bool AbsoluteValueNode::derivate(ReductionContext reductionContext, Expression s
 
 Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefinedAndUnits(*this, reductionContext);
+    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnits(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

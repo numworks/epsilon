@@ -109,11 +109,12 @@ void ExpressionNode::deepBeautifyChildren(ExpressionNode::ReductionContext reduc
 }
 
 Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
-  Expression res = SimplificationHelper::shallowReduceUndefined(Expression(this));
+  Expression e(this);
+  Expression res = SimplificationHelper::shallowReduceUndefined(e);
   if (!res.isUninitialized()) {
     return res;
   }
-  return Expression(this);
+  return e;
 }
 
 Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) {

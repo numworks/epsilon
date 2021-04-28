@@ -15,6 +15,8 @@
 #endif
 #if ION_SIMULATOR_FILES
 #include "screenshot.h"
+#include <signal.h>
+#include "actions.h"
 #endif
 
 /* The Args class allows parsing and editing command-line arguments
@@ -112,7 +114,7 @@ int main(int argc, char * argv[]) {
   if (screenshotPath) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(screenshotPath);
   }
-
+  signal(SIGUSR1, Ion::Simulator::Actions::handleUSR1Sig);
 #endif
 
   // Default language

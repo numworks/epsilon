@@ -65,7 +65,7 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     if (!field->isEditing()) {
       field->setEditing(true);
     }
-    return field->addXNTCodePoint(XNT(), !XNTCanBeOverriden());
+    return field->addXNTCodePoint(XNT());
   }
   return false;
 }

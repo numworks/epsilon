@@ -13,7 +13,6 @@ class TextFieldDelegateApp : public InputEventHandlerDelegateApp, public Escher:
 public:
   virtual ~TextFieldDelegateApp() = default;
   Poincare::Context * localContext() override;
-  virtual bool XNTCanBeOverriden() const { return true; }
   virtual CodePoint XNT() { return 'x'; }
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;

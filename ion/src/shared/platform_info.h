@@ -9,6 +9,28 @@
 class PlatformInfo {
 public:
   constexpr PlatformInfo();
+  bool isValid() const {
+    if (m_storageAddress == nullptr
+      || m_storageSize == 0
+      || m_header != Magic
+      || m_footer != Magic) {
+      return false;
+    }
+    for (size_t i = 0; i < sizeof(m_epsilonVersion); i++) {
+      if (!(m_epsilonVersion[i] == '.'
+           || (m_epsilonVersion[i] >= '0' && m_epsilonVersion[i] <= '9'))) {
+        return false;
+      }
+      assert(sizeof(m_kernelVersion) == sizeof(m_epsilonVersion));
+      if (!(m_kernelVersion[i] >= '0' && m_kernelVersion[i] <= '9')) {
+        return false;
+      }
+    }
+    if (kernelVersionValue() >= k_kernelMaxVersion) {
+      return false;
+    }
+    return true;
+  }
   const char * epsilonVersion() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
@@ -62,7 +84,6 @@ public:
     while (*current != 0) {
       result = 10 * result + (*current++) - '0';
     }
-    assert(result < k_kernelMaxVersion);
     return result;
   }
   const char * patchLevel() const {

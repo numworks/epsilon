@@ -469,7 +469,7 @@ void MathToolbox::viewDidDisappear() {
 }
 
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
-  if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
+  if (typeAtIndex(index) == k_leafCellType) {
     ExpressionTableCellWithMessage tempCell;
     return heightForCellAtIndex(&tempCell, index, true);
   }
@@ -480,7 +480,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   /* Unhighlight reusableCell to prevent display of multiple selected rows.
    * See SelectableTableView::reloadData comment. */
   cell->setHighlighted(false);
-  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
+  const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(index);
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
     ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
@@ -515,7 +515,8 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {
-  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(selectedRow));
+  assert(typeAtIndex(selectedRow) == k_leafCellType);
+  const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(selectedRow);
   m_selectableTableView.deselectTable();
 
   // Translate the message

@@ -21,56 +21,52 @@ SequenceToolbox::SequenceToolbox() :
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
-  if (stackDepth() == 0 && selectedRow() < m_numberOfAddedCells) {
+  const int rowIndex = selectedRow();
+  if (typeAtIndex(rowIndex) == k_addedCellType) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      return selectAddedCell(selectedRow());
+      return selectAddedCell(rowIndex);
     }
     return false;
   }
-  return MathToolbox::handleEventForRow(event, selectedRow() - stackRowOffset());
+  return MathToolbox::handleEvent(event);
 }
 
 int SequenceToolbox::numberOfRows() const {
-  return MathToolbox::numberOfRows() + stackRowOffset();
+  return MathToolbox::numberOfRows() + addedCellsAtRoot();
 }
 
 HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
-  assert(type < 3);
+  assert(type <= k_addedCellType);
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
-  if (type == 2) {
+  if (type == k_addedCellType) {
     return &m_addedCells[index];
   }
   return MathToolbox::reusableCell(index, type);
 }
 
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (typeAtIndex(index) == 2) {
+  if (typeAtIndex(index) == k_addedCellType) {
     static_cast<ExpressionTableCell *>(cell)->setLayout(m_addedCellLayout[index]);
     cell->reloadCell();
     return;
   }
-  MathToolbox::willDisplayCellForIndex(cell, index - stackRowOffset());
+  MathToolbox::willDisplayCellForIndex(cell, index);
 }
 
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == 2) {
+  if (typeAtIndex(index) == k_addedCellType) {
     ExpressionTableCell tempCell;
     return heightForCellAtIndex(&tempCell, index, false);
   }
-  if (m_messageTreeModel->childAtIndex(index - stackRowOffset())->numberOfChildren() == 0) {
-    ExpressionTableCellWithMessage tempCell;
-    return heightForCellAtIndex(&tempCell, index, true);
-  }
-  MessageTableCell tempCell;
-  return heightForCellAtIndex(&tempCell, index, false);
+  return MathToolbox::nonMemoizedRowHeight(index);
 }
 
 int SequenceToolbox::typeAtIndex(int index) {
-  if (stackDepth() == 0 && index < m_numberOfAddedCells) {
-    return 2;
+  if (index < addedCellsAtRoot()) {
+    return k_addedCellType;
   }
-  return MathToolbox::typeAtIndex(index - stackRowOffset());
+  return MathToolbox::typeAtIndex(index);
 }
 
 void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth) {

@@ -12,7 +12,7 @@ class SimplificationHelper {
 public:
   static void defaultDeepReduceChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
   static void defaultDeepBeautifyChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
-  /* Handle circuit breaker and early break if should be undefined
+  /* Handle circuit breaker and early reduce if should be undefined
   * Returns uninitialized handle if nothing was done, the resulting expression otherwise */
   static Expression shallowReduceUndefined(Expression e);
   /* If `e` contains units, replaces with undefined to parent and returns the undefined handle.
@@ -23,7 +23,7 @@ public:
   * The returned expression is the result with the units if units were handled.
   * Otherwise returns unitialized handle. */
   static Expression shallowReduceKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression shallowReduceUndefinedAndUnits(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceUndefinedKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext);
 };
 }
 

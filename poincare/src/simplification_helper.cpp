@@ -98,7 +98,7 @@ Expression SimplificationHelper::shallowReduceKeepingUnits(Expression e, Express
   return Expression();
 }
 
-Expression SimplificationHelper::shallowReduceUndefinedAndUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
+Expression SimplificationHelper::shallowReduceUndefinedKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
   Expression res = shallowReduceUndefined(e);
   if (res.isUninitialized()) {
     res = shallowReduceKeepingUnits(e, reductionContext);

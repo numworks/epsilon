@@ -17,11 +17,15 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtIndex(int index) override;
   void buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth);
+protected:
+  const Escher::ToolboxMessageTree * messageTreeModelAtIndex(int index) const override {
+    assert(index >= addedCellsAtRoot());
+    return MathToolbox::messageTreeModelAtIndex(index - addedCellsAtRoot());
+  }
 private:
-  /* At 0 depth, there are additional rows to display. With the exception of
-   * NestedMenuController::returnToPreviousMenu(), it must be ignored in
-   * parent's classes. */
-  int stackRowOffset() const override { return stackDepth() == 0 ? m_numberOfAddedCells : 0; }
+  static constexpr int k_addedCellType = 2;
+  // At root depth, there are additional rows to display.
+  int addedCellsAtRoot() const { return m_messageTreeModel == rootModel() ? m_numberOfAddedCells : 0; }
   bool selectAddedCell(int selectedRow);
   Escher::ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];
   Poincare::Layout m_addedCellLayout[k_maxNumberOfDisplayedRows];

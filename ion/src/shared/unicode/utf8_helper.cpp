@@ -170,7 +170,7 @@ static bool replaceFirstCharsByPattern(char * text, size_t lengthOfPatternToRemo
   return false;
 }
 
-void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * pointerToUpdate, const char * stoppingPosition) {
+void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, const TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * pointerToUpdate, const char * stoppingPosition) {
   size_t i = 0;
   size_t iPrev = 0;
   size_t textLength = strlen(text);

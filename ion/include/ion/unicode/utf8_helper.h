@@ -62,7 +62,7 @@ bool SlideStringByNumberOfChar(char * text, int slidingSize, size_t textMaxLengt
  * - stoppingPosition allows partial replacement in the string.
  *
  * Ensure null termination of the string or set the value of stoppingPosition*/
-void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxSize, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
+void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxSize, const TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
 
 /* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);

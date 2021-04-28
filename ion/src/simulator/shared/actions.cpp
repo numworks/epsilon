@@ -4,6 +4,7 @@
 #include "platform.h"
 #include "state_file.h"
 #include "screenshot.h"
+#include <signal.h>
 
 namespace Ion {
 namespace Simulator {
@@ -32,6 +33,20 @@ void loadState() {
 void takeScreenshot() {
   Screenshot s(Platform::filePathForWriting("png"));
   s.capture();
+}
+
+void saveStateForReload() {
+  char state_filename[100];
+  strcpy(state_filename, getenv("HOME"));
+  strcat(state_filename, "/reload.nws");
+  StateFile::save(state_filename);
+}
+
+void handleUSR1Sig(int s) {
+  if (s == SIGUSR1) {
+    saveStateForReload();
+    exit(0);  // Pretty hard exit
+  }
 }
 
 }

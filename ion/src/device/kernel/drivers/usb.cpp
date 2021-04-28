@@ -31,7 +31,6 @@ private:
 };
 
 void willExecuteDFU() {
-  assert(Authentication::trustedUserland());
   /* 1- Configure the keyboard to detect back event to leave DFU mode if the
    * Back key is pressed, the calculator unplugged or the USB core
    * soft-disconnected. */
@@ -52,7 +51,6 @@ void willExecuteDFU() {
 }
 
 void didExecuteDFU() {
-  assert(Authentication::trustedUserland());
   Board::initInterruptions();
 }
 

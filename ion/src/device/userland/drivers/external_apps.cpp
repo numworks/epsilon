@@ -1,4 +1,5 @@
 #include <ion/external_apps.h>
+#include <shared/drivers/config/board.h>
 #include <assert.h>
 
 extern "C" {
@@ -86,7 +87,10 @@ bool App::appAtAddress(uint8_t * address) {
 
 AppIterator & AppIterator::operator++() {
   uint32_t sizeOfCurrentApp = *reinterpret_cast<uint32_t *>(m_currentAddress + 6*sizeof(uint32_t));
-  m_currentAddress += sizeOfCurrentApp;
+  m_currentAddress += sizeOfCurrentApp - 1;
+  // Find the next address aligned on external apps sector size
+  m_currentAddress = reinterpret_cast<uint8_t *>(reinterpret_cast<uint32_t>(m_currentAddress) & ~(Ion::Device::Board::Config::ExternalAppsSectorLength - 1));
+  m_currentAddress += Ion::Device::Board::Config::ExternalAppsSectorLength;
   if (m_currentAddress < &_external_apps_start || m_currentAddress + k_minAppSize > &_external_apps_end || !App::appAtAddress(m_currentAddress)) {
     m_currentAddress = nullptr;
   }

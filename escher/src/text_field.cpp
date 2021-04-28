@@ -504,15 +504,11 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, i
   return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
 }
 
-bool TextField::addXNTCodePoint(CodePoint xnt, bool forceDefault) {
+bool TextField::addXNTCodePoint(CodePoint xnt) {
   constexpr int bufferSize = Poincare::SymbolAbstract::k_maxNameSize;
   char buffer[bufferSize];
-  size_t length;
-  if (forceDefault) {
-    length = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize - 1);
-  } else {
-    length = insertXNTChars(xnt, buffer, bufferSize - 1);
-  }
+  size_t length = insertXNTChars(xnt, buffer, bufferSize - 1);
+
   assert(length < bufferSize);
   buffer[length] = 0;
   return handleEventWithText(buffer, false, true);

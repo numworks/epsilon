@@ -34,7 +34,7 @@ public:
   bool hasText() const { return layout().hasText(); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   bool layoutHasNode() const { return m_contentView.expressionView()->layoutHasNode(); }
-  bool addXNTCodePoint(CodePoint defaultXNTCodePoint, bool forceDefault) override;
+  bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void putCursorRightOfLayout();
   void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
   void setLayout(Poincare::Layout newLayout);

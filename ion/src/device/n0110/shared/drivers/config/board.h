@@ -46,6 +46,8 @@ constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLen
 
 // External Apps
 constexpr static int ExternalAppsNumberOfSector = 11;
+constexpr static int ExternalAppsSectorLength = 0x10000; // 64K
+constexpr static int ExternalAppsSectionLength = ExternalAppsNumberOfSector * ExternalAppsSectorLength;
 
 }
 }

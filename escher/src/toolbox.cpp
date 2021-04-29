@@ -61,10 +61,9 @@ bool Toolbox::returnToPreviousMenu() {
   int currentDepth = m_stack.depth();
   int stateDepth = 0;
   m_messageTreeModel = rootModel();
-  Stack::State * previousState = m_stack.stateAtIndex(stateDepth++);
-  while (stateDepth < currentDepth) {
+  while (stateDepth < currentDepth - 1) {
+    Stack::State * previousState = m_stack.stateAtIndex(stateDepth++);
     m_messageTreeModel = messageTreeModelAtIndex(previousState->selectedRow());
-    previousState = m_stack.stateAtIndex(stateDepth++);
   }
   return NestedMenuController::returnToPreviousMenu();
 }

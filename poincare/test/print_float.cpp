@@ -30,7 +30,7 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(123.456f, "1.23456ᴇ2", ScientificMode, 7);
   assert_float_prints_to(123.456f, "123.456", DecimalMode, 7);
   assert_float_prints_to(123.456f, "123.456", EngineeringMode, 7);
-  assert_float_prints_to(0.0006f, "0.0006", DecimalMode, 7);
+  assert_float_prints_to(0.0006f, "6ᴇ-4", DecimalMode, 7);
   assert_float_prints_to(123.456, "1.23456ᴇ2", ScientificMode, 14);
   assert_float_prints_to(123.456, "123.456", DecimalMode, 14);
   assert_float_prints_to(123.456, "123.456", EngineeringMode, 14);
@@ -57,10 +57,10 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(123456789.0, "123.456789ᴇ6", EngineeringMode, 14);
 
   assert_float_prints_to(0.00000123456789f, "1.234568ᴇ-6", ScientificMode, 7);
-  assert_float_prints_to(0.00000123456789f, "0.000001234568", DecimalMode, 7);
+  assert_float_prints_to(0.00000123456789f, "1.234568ᴇ-6", DecimalMode, 7);
   assert_float_prints_to(0.00000123456789f, "1.234568ᴇ-6", EngineeringMode, 7);
   assert_float_prints_to(0.00000123456789, "1.23456789ᴇ-6", ScientificMode, 14);
-  assert_float_prints_to(0.00000123456789, "0.00000123456789", DecimalMode, 14);
+  assert_float_prints_to(0.00000123456789, "1.23456789ᴇ-6", DecimalMode, 14);
   assert_float_prints_to(0.00000123456789, "1.23456789ᴇ-6", EngineeringMode, 14);
 
 
@@ -79,10 +79,10 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(-123.456789, "-123.456789", EngineeringMode, 14);
 
   assert_float_prints_to(-0.000123456789f, "-1.234568ᴇ-4", ScientificMode, 7);
-  assert_float_prints_to(-0.000123456789f, "-0.0001234568", DecimalMode, 7);
+  assert_float_prints_to(-0.000123456789f, "-1.234568ᴇ-4", DecimalMode, 7);
   assert_float_prints_to(-0.000123456789f, "-123.4568ᴇ-6", EngineeringMode, 7);
   assert_float_prints_to(-0.000123456789, "-1.23456789ᴇ-4", ScientificMode, 14);
-  assert_float_prints_to(-0.000123456789, "-0.000123456789", DecimalMode, 14);
+  assert_float_prints_to(-0.000123456789, "-1.23456789ᴇ-4", DecimalMode, 14);
   assert_float_prints_to(-0.000123456789, "-123.456789ᴇ-6", EngineeringMode, 14);
 
   assert_float_prints_to(0.0f, "0", ScientificMode, 7);
@@ -122,10 +122,10 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(0.0000001, "1ᴇ-7", ScientificMode, 7);
   /* Converting 0.00000001f into a decimal display would also overflow the
    * number of significant digits set to 7. */
-  assert_float_prints_to(0.0000001f, "0.0000001", DecimalMode, 7);
+  assert_float_prints_to(0.0000001f, "1ᴇ-7", DecimalMode, 7);
   assert_float_prints_to(0.0000001, "100ᴇ-9", EngineeringMode, 7);
   assert_float_prints_to(0.0000001, "1ᴇ-7", ScientificMode, 14);
-  assert_float_prints_to(0.0000001, "0.0000001", DecimalMode, 14);
+  assert_float_prints_to(0.0000001, "1ᴇ-7", DecimalMode, 14);
   assert_float_prints_to(0.0000001, "100ᴇ-9", EngineeringMode, 14);
 
   assert_float_prints_to(-0.000000000000000000000000000000009090018f, "-9.090018ᴇ-33", ScientificMode, 7);
@@ -188,10 +188,10 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(9.999999999999999999999E12, "10ᴇ12", EngineeringMode, 14);
 
   assert_float_prints_to(-0.000000099999999f, "-1ᴇ-7", ScientificMode, 7);
-  assert_float_prints_to(-0.000000099999999f, "-0.0000001", DecimalMode, 7);
+  assert_float_prints_to(-0.000000099999999f, "-1ᴇ-7", DecimalMode, 7);
   assert_float_prints_to(-0.000000099999999f, "-100ᴇ-9", EngineeringMode, 7);
   assert_float_prints_to(-0.000000099999999, "-9.9999999ᴇ-8", ScientificMode, 9);
-  assert_float_prints_to(-0.000000099999999, "-0.000000099999999", DecimalMode, 9);
+  assert_float_prints_to(-0.000000099999999, "-9.9999999ᴇ-8", DecimalMode, 9);
   assert_float_prints_to(-0.000000099999999, "-99.999999ᴇ-9", EngineeringMode, 9);
 
   assert_float_prints_to(999.99999999999977f, "1ᴇ3", ScientificMode, 5);
@@ -202,7 +202,7 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(999.99999999999977, "1ᴇ3", EngineeringMode, 14);
 
   assert_float_prints_to(0.000000999999997, "1ᴇ-6", ScientificMode, 7);
-  assert_float_prints_to(0.000000999999997, "0.000001", DecimalMode, 7);
+  assert_float_prints_to(0.000000999999997, "1ᴇ-6", DecimalMode, 7);
   assert_float_prints_to(0.000000999999997, "1ᴇ-6", EngineeringMode, 7);
   assert_float_prints_to(9999999.97, "1ᴇ7", DecimalMode, 7);
   assert_float_prints_to(9999999.97, "10000000", DecimalMode, 8);

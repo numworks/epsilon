@@ -5,7 +5,6 @@
 #include <poincare/function.h>
 #include <poincare/symbol.h>
 #include <escher/i18n.h>
-#include <float.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>

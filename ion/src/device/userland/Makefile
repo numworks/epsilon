@@ -11,6 +11,7 @@ ion_device_userland_svc_src += $(addprefix ion/src/device/userland/, \
   drivers/flash.cpp \
   drivers/keyboard.cpp \
   drivers/led.cpp \
+  drivers/pcb_version.cpp \
   drivers/persisting_bytes.cpp \
   drivers/power.cpp \
   drivers/random.cpp \

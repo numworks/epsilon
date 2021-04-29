@@ -6,6 +6,11 @@
 #include <ion/unicode/utf8_helper.h>
 #include <layout_events.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/derivative.h>
+#include <poincare/integral.h>
+#include <poincare/sum.h>
+#include <poincare/product.h>
+#include <poincare/symbol_abstract.h>
 #include <assert.h>
 #include <algorithm>
 
@@ -364,57 +369,155 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
+size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, int bufferLength) {
+  /* If cursor is in one of the following functions, and everything before the
+   * cursor is correctly nested, the default XNTCodePoint will be improved.
+   * These functions all have the following structure :
+   * functionName(argument, variable, additonalOutOfContextFields ...)
+   * If the cursor is in an argument field, and the variable is well nested and
+   * defined, the variable will be inserted into the given buffer. Otherwise,
+   * the (improved or not) defaultXNTCodePoint is inserted. */
   static constexpr struct { const char *name; char xnt; } sFunctions[] = {
-    { "diff", 'x' }, { "int", 'x' },
-    { "product", 'n' }, { "sum", 'n' }
+    { Poincare::Derivative::s_functionHelper.name(), Poincare::Derivative::k_defaultXNTChar },
+    { Poincare::Integral::s_functionHelper.name(), Poincare::Integral::k_defaultXNTChar },
+    { Poincare::Product::s_functionHelper.name(), Poincare::Product::k_defaultXNTChar },
+    { Poincare::Sum::s_functionHelper.name(), Poincare::Sum::k_defaultXNTChar }
   };
-  /* Let's assume everything before the cursor is nested correctly, which is
-   * reasonable if the expression is being entered left-to-right. */
   const char * text = this->text();
   assert(text == m_contentView.editedText());
-  const char * location = cursorLocation();
-  UTF8Decoder decoder(text, location);
-  unsigned level = 0;
-  while (location > text) {
-    CodePoint c = decoder.previousCodePoint();
-    location = decoder.stringPosition();
+  const char * locationOfCursor = cursorLocation();
+  // Step 1 : Identify the function the cursor is in
+  UTF8Decoder functionDecoder(text, locationOfCursor);
+  const char * location = functionDecoder.stringPosition();
+  int functionLevel = 0;
+  int cursorLevel = 0;
+  bool cursorInVariableField = false;
+  bool functionFound = false;
+  while (location > text && !functionFound) {
+    CodePoint c = functionDecoder.previousCodePoint();
+    location = functionDecoder.stringPosition();
     switch (c) {
       case '(':
         // Check if we are skipping to the next matching '('.
-        if (level > 0) {
-          level--;
+        if (functionLevel > 0) {
+          functionLevel--;
           break;
         }
         // Skip over whitespace.
-        while (location > text && decoder.previousCodePoint() == ' ') {
-          location = decoder.stringPosition();
+        while (location > text && functionDecoder.previousCodePoint() == ' ') {
+          location = functionDecoder.stringPosition();
         }
-        location = decoder.stringPosition();
-        // We found the next innermost function we are currently in.
+        // Move back right before the last non whitespace code-point
+        functionDecoder.nextCodePoint();
+        location = functionDecoder.stringPosition();
+        // Identify one of the functions
         for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
           const char * name = sFunctions[i].name;
           size_t length = strlen(name);
           if ((location >= text + length) && memcmp(&text[(location - text) - length], name, length) == 0) {
-            return sFunctions[i].xnt;
+            functionFound = true;
+            // Update default code point
+            defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);
           }
+        }
+        if (!functionFound) {
+          // No function found, reset search parameters
+          cursorInVariableField = false;
+          cursorLevel += 1;
         }
         break;
       case ',':
-        // Commas encountered while skipping to the next matching '(' should be ignored.
-        if (level) {
-          break;
+        if (functionLevel == 0) {
+          if (cursorInVariableField) {
+            // Cursor is out of context, skip to the next matching '('
+            functionLevel ++;
+            cursorLevel ++;
+          }
+          // Update cursor's position status
+          cursorInVariableField = !cursorInVariableField;
         }
-        // FALLTHROUGH
+        break;
       case ')':
         // Skip to the next matching '('.
-        level++;
+        functionLevel ++;
         break;
     }
   }
+  // Step 2 : Handle intermediary cases
+  if (!functionFound || cursorInVariableField) {
+    // General or local default code point.
+    return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
+  }
+  // Step 3 : Search variable field
+  bool variableFound = false;
+  // Parsing text from cursor's location
+  UTF8Decoder varDecoder(text, locationOfCursor);
+  // Initialize c to any non null code point
+  CodePoint c = UCodePointUnknown;
+  // Parse text rightward until next ',' at cursorLevel 0
+  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
+    c = varDecoder.nextCodePoint();
+    switch (c) {
+      case '(':
+        cursorLevel ++;
+        break;
+      case ')':
+        cursorLevel --;
+        break;
+      case ',':
+        if (cursorLevel == 0) {
+          variableFound = true;
+          c = varDecoder.nextCodePoint();
+        }
+        break;
+    }
+  }
+  if (!variableFound || c == UCodePointNull) {
+    return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
+  }
+  // Step 4 : Identify where variable text starts and ends.
+  // Skip whitespaces
+  while (c != UCodePointNull && c == ' ') {
+    c = varDecoder.nextCodePoint();
+  }
+  // Fetch position left of cursor
+  const char * variableTextStart = varDecoder.previousGlyphPosition();
+  c = varDecoder.nextCodePoint();
+  while (c != UCodePointNull && (c.isDecimalDigit() || c.isLatinLetter() || c == '_')) {
+    c = varDecoder.nextCodePoint();
+  }
+  // Fetch position left of cursor
+  const char * variableTextEnd = varDecoder.previousGlyphPosition();
+  c = varDecoder.nextCodePoint();
+  // Skip whitespaces
+  while (c != UCodePointNull && c == ' ') {
+    c = varDecoder.nextCodePoint();
+  }
+  // Step 5 : If valid, return variable's text
+  if (c == UCodePointNull || c == ',' || c == ')') {
+    // Next character must be a ',', ')' or end of string
+    size_t length = variableTextEnd - variableTextStart;
+    if (length > 0 && length <= bufferLength) {
+      memcpy(buffer, variableTextStart, length);
+      return length;
+    }
+  }
+  // Fall back on default code point
+  return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
+}
 
-  // Fallback to the default
-  return defaultXNTCodePoint;
+bool TextField::addXNTCodePoint(CodePoint xnt, bool forceDefault) {
+  constexpr int bufferSize = Poincare::SymbolAbstract::k_maxNameSize;
+  char buffer[bufferSize];
+  size_t length;
+  if (forceDefault) {
+    length = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize - 1);
+  } else {
+    length = insertXNTChars(xnt, buffer, bufferSize - 1);
+  }
+  assert(length < bufferSize);
+  buffer[length] = 0;
+  return handleEventWithText(buffer, false, true);
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {

@@ -52,13 +52,13 @@ float BinomialDistribution::yMax() const {
 }
 
 
-bool BinomialDistribution::authorizedValueAtIndex(float x, int index) const {
+bool BinomialDistribution::authorizedValueAtIndex(double x, int index) const {
   if (index == 0) {
     // n must be a positive integer
-    return (x == (int)x) && x >= 0.0f;
+    return (x == (int)x) && x >= 0.0;
   }
   // p must be between 0 and 1
-  return (x >= 0.0f) && (x <= 1.0f);
+  return (x >= 0.0) && (x <= 1.0);
 }
 
 double BinomialDistribution::cumulativeDistributiveInverseForProbability(double * probability) {

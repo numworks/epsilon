@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class ParametersController : public Shared::FloatParameterController<float> {
+class ParametersController : public Shared::FloatParameterController<double> {
 public:
   ParametersController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;
@@ -24,8 +24,8 @@ private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   void buttonAction() override;
-  float parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
   class ContentView : public Escher::View {
   public:
@@ -35,8 +35,9 @@ private:
     void layoutSubviews(bool force = false) override;
     void setNumberOfParameters(int numberOfParameters);
   private:
-    constexpr static KDCoordinate k_textMargin = 5;
-    constexpr static KDCoordinate k_titleMargin = 5;
+    constexpr static KDCoordinate k_textMargin = Escher::Metric::CommonSmallMargin;
+    // Removing a pixel to skew title's baseline downward.
+    constexpr static KDCoordinate k_titleMargin = Escher::Metric::CommonTopMargin - 1;
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;
     int m_numberOfParameters;

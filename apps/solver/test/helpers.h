@@ -18,7 +18,7 @@ bring_in(Solver::EquationStore::Error, TooManyVariables);
 
 void assert_solves_to(std::initializer_list<const char *> equations, std::initializer_list<const char *> solutions);
 void assert_solves_numerically_to(const char * equation, double min, double max, std::initializer_list<double> solutions, const char * variable = "x");
-void assert_solves_to_error(const char * equation, Solver::EquationStore::Error error);
+void assert_solves_to_error(std::initializer_list<const char *> equations, Solver::EquationStore::Error error);
 void assert_solves_to_infinite_solutions(std::initializer_list<const char *> equations);
 
 // Shorthands
@@ -26,6 +26,12 @@ inline void assert_solves_to_no_solution(const char * equation) {
   /* Note: Doesn't really work with quadratic equations that will always report
    * at least a delta value. */
   assert_solves_to({equation}, {});
+}
+inline void assert_solves_to_no_solution(std::initializer_list<const char *> equations) {
+  assert_solves_to(equations, {});
+}
+inline void assert_solves_to_error(const char * equation, Solver::EquationStore::Error error) {
+  assert_solves_to_error({equation}, error);
 }
 inline void assert_solves_to_infinite_solutions(const char * equation) {
   assert_solves_to_infinite_solutions({equation});

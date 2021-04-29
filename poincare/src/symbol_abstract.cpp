@@ -1,6 +1,7 @@
 #include <poincare/symbol_abstract.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/constant.h>
+#include <poincare/dependency.h>
 #include <poincare/function.h>
 #include <poincare/rational.h>
 #include <poincare/sequence.h>
@@ -66,18 +67,17 @@ bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test,
   return !e.isUninitialized() && e.recursivelyMatches(test, context, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 }
 
-Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
-  bool shouldNotReplaceSymbols = symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
-  if (symbolicComputation == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol
-    || (symbol.type() == ExpressionNode::Type::Symbol && shouldNotReplaceSymbols))
-  {
-    return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);
-  }
+Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, bool replaceFunctionsOnly) {
   assert(context);
   Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
-  e = Expression::ExpressionWithoutSymbols(e, context, shouldNotReplaceSymbols);
+  e = Expression::ExpressionWithoutSymbols(e, context, replaceFunctionsOnly);
+  if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
+    Dependency d = Dependency::Builder(e);
+    d.addDependency(symbol.childAtIndex(0));
+    return std::move(d);
+  }
   return e;
 }
 

@@ -13,10 +13,9 @@ namespace Solver {
 constexpr const char * EquationModelsParameterController::k_models[k_numberOfModels];
 
 EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController) :
-  ViewController(parentResponder),
-  m_emptyModelCell(I18n::Message::Empty, KDFont::LargeFont),
+  SelectableListViewController(parentResponder),
+  m_emptyModelCell(I18n::Message::Empty),
   m_layouts{},
-  m_selectableTableView(this),
   m_equationStore(equationStore),
   m_listController(listController)
 {
@@ -32,10 +31,6 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
 
 const char * EquationModelsParameterController::title() {
   return I18n::translate(I18n::Message::UseEquationModel);
-}
-
-View * EquationModelsParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void EquationModelsParameterController::viewWillAppear() {
@@ -63,44 +58,32 @@ bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int EquationModelsParameterController::numberOfRows() const {
-  return k_numberOfExpressionCells+1;
+  return 1 + k_numberOfExpressionCells;
 };
 
-KDCoordinate EquationModelsParameterController::rowHeight(int j) {
-  return Metric::ToolboxRowHeight;
-}
-
-KDCoordinate EquationModelsParameterController::cumulatedHeightFromIndex(int j) {
-  return rowHeight(0) * j;
-}
-
-int EquationModelsParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  KDCoordinate height = rowHeight(0);
-  if (height == 0) {
-    return 0;
+KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int j) {
+  int type = typeAtIndex(j);
+  int reusableCellIndex = j;
+  if (type == k_modelCellType) {
+    reusableCellIndex -= reusableCellCount(k_emptyModelCellType);
   }
-  return (offsetY - 1) / height;
+  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), j, false);
 }
 
 HighlightCell * EquationModelsParameterController::reusableCell(int index, int type) {
-  if (type == 0) {
+  assert(index < reusableCellCount(type));
+  if (type == k_emptyModelCellType) {
     return &m_emptyModelCell;
   }
   return &m_modelCells[index];
 }
 
 int EquationModelsParameterController::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_emptyModelCellType) {
     return 1;
   }
+  assert(type == k_modelCellType);
   return k_numberOfExpressionCells;
-}
-
-int EquationModelsParameterController::typeAtLocation(int i, int j) {
-  if (i == 0 && j == 0) {
-    return 0;
-  }
-  return 1;
 }
 
 }

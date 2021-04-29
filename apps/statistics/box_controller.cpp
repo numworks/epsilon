@@ -51,8 +51,8 @@ void BoxController::reloadBannerView() {
 
   // Set calculation result
   assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision) + 1;
+  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits) + 1;
   char buffer[bufferSize];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};

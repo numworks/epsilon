@@ -3,38 +3,31 @@
 
 #include <apps/i18n.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/simple_list_view_data_source.h>
-#include <escher/view_controller.h>
+#include <escher/selectable_list_view_controller.h>
 #include "function.h"
 
 namespace Shared {
 
-class ValuesFunctionParameterController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ValuesFunctionParameterController : public Escher::SelectableListViewController {
 public:
   ValuesFunctionParameterController() :
-    Escher::ViewController(nullptr),
+    Escher::SelectableListViewController(nullptr),
     m_copyColumn(I18n::Message::CopyColumnInList),
-    m_selectableTableView(this, this, this),
     m_record()
   {}
 
-  Escher::View * view() override { return &m_selectableTableView; }
   const char * title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return 1; }
-  KDCoordinate cellHeight() override { return Escher::Metric::ParameterCellHeight; }
-  Escher::HighlightCell * reusableCell(int index) override {
+  Escher::HighlightCell * reusableCell(int index, int type) override {
     assert(index == 0);
     return &m_copyColumn;
   }
-  int reusableCellCount() const override { return 1; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   Escher::MessageTableCellWithChevron m_copyColumn;
-  Escher::SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
   char m_pageTitle[Function::k_maxNameWithArgumentSize];

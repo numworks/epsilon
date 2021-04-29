@@ -34,10 +34,9 @@ public:
   Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);
   virtual I18n::Message formulaMessage() const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
-  virtual double levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context);
+  virtual double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context);
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   virtual int numberOfCoefficients() const = 0;
-  virtual int bannerLinesCount() const { return 2; }
 protected:
   // Fit
   virtual bool dataSuitableForFit(Store * store, int series) const;
@@ -45,7 +44,7 @@ protected:
   Poincare::Layout m_layout;
 private:
   // Model attributes
-  virtual Poincare::Expression expression(double * modelCoefficients) { return Poincare::Expression(); } // expression is overrided only by Models that do not override levelSet
+  virtual Poincare::Expression expression(double * modelCoefficients) { return Poincare::Expression(); } // expression is overridden only by Models that do not override levelSet
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
   // Levenberg-Marquardt

@@ -1,4 +1,6 @@
 #include <poincare/derivative.h>
+#include <poincare/dependency.h>
+#include <poincare/derivative_layout.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
@@ -28,7 +30,10 @@ int DerivativeNode::polynomialDegree(Context * context, const char * symbolName)
 }
 
 Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
+  return DerivativeLayout::Builder(
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -52,7 +57,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
   T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   T result = 1.0;
   T h = k_minInitialRate;
-  static T tenEpsilon = sizeof(T) == sizeof(double) ? 10.0*DBL_EPSILON : 10.0f*FLT_EPSILON;
+  constexpr T tenEpsilon = sizeof(T) == sizeof(double) ? 10.0*DBL_EPSILON : 10.0f*FLT_EPSILON;
   do {
     T currentError;
     T currentResult = riddersApproximation(approximationContext, evaluationArgument, h, &currentError);
@@ -64,22 +69,26 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
     result = currentResult;
   } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= tenEpsilon);
 
-  /* If the error is too big regarding the value, do not return the answer.
-   * If the result is close to 0, we relax this constraint because the error
-   * will tend to be bigger compared to the result. */
-  if (std::isnan(error)
-      || (std::fabs(result) < k_maxErrorRateOnApproximation && std::fabs(error) > std::fabs(result))
-      || (std::fabs(result) >= k_maxErrorRateOnApproximation && std::fabs(error/result) > k_maxErrorRateOnApproximation))
-  {
+  /* Result is discarded if error is both higher than k_minSignificantError and
+   * k_maxErrorRateOnApproximation * result. For example, (error, result) can
+   * reach (2e-11, 3e-11) or (1e-12, 2e-14) for expected 0 results, with floats
+   * as well as with doubles. */
+  if (std::isnan(error) || (std::fabs(error) > k_minSignificantError && std::fabs(error) > std::fabs(result) * k_maxErrorRateOnApproximation)) {
     return Complex<T>::RealUndefined();
   }
-  static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
-  if (std::fabs(error) < min) {
+  // Round and amplify error to a power of 10
+  T roundedError = (T)100.0 * std::pow((T)10, IEEE754<T>::exponentBase10(error));
+  if (error == (T)0.0 || std::round(result/roundedError) == result/roundedError) {
+    // Return result if error is negligible
     return Complex<T>::Builder(result);
   }
-  // Round the result according to the error
-  error = std::pow((T)10, IEEE754<T>::exponentBase10(error)+2);
-  return Complex<T>::Builder(std::round(result/error)*error);
+  /* Round down the result, to remove precision depending on roundedError. The
+   * higher the error is to the result, the lesser the output will have
+   * significant numbers.
+   * - if result  >> roundedError , almost no loss of precision
+   * - if result  ~= error, precision reduced to 1 significant number
+   * - if result*2 < error, 0 is returned  */
+  return Complex<T>::Builder(std::round(result/roundedError)*roundedError);
 }
 
 template<typename T>
@@ -111,7 +120,7 @@ T DerivativeNode::riddersApproximation(ApproximationContext approximationContext
   // Initialize hh, make hh an exactly representable number
   volatile T temp = x+h;
   T hh = temp - x;
-  /* A is matrix storing the function extrapolations for different stepsizes at
+  /* A is matrix storing the function extrapolations for different step sizes at
    * different order */
   T a[10][10];
   for (int i = 0; i < 10; i++) {
@@ -166,13 +175,22 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
     return replaceWithUndefinedInPlace();
   }
 
+  Matrix m = Matrix::Builder();
   Expression derivand = childAtIndex(0);
+  if (derivand.type() == ExpressionNode::Type::Dependency) {
+    static_cast<Dependency &>(derivand).extractDependencies(m);
+    derivand = childAtIndex(0);
+  }
   Symbol symbol = childAtIndex(1).convert<Symbol>();
   Expression symbolValue = childAtIndex(2);
+  Expression derivandAsDependency = derivand.clone();
 
   /* Since derivand is a child to the derivative node, it can be replaced in
    * place without derivate having to return the derivative. */
   if (!derivand.derivate(reductionContext, symbol, symbolValue)) {
+    if (m.numberOfChildren() > 0) {
+      replaceChildAtIndexInPlace(0, Dependency::Builder(derivand, m));
+    }
     return *this;
   }
   /* Updates the value of derivand, because derivate may call
@@ -181,19 +199,20 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
    * general formulas used during the derivation process can create some nodes
    * that are not defined for some values (e.g. log), but that would disappear
    * at reduction. */
-  derivand = childAtIndex(0).deepReduce(reductionContext);
+  Dependency d = Dependency::Builder(childAtIndex(0).deepReduce(reductionContext), m);
+  d.addDependency(derivandAsDependency);
+
   /* Deep reduces the child, because derivate may not preserve its reduced
    * status. */
-
-  derivand = derivand.replaceSymbolWithExpression(symbol, symbolValue);
-  derivand = derivand.deepReduce(reductionContext);
-  replaceWithInPlace(derivand);
-  return derivand;
+  Expression result = d.replaceSymbolWithExpression(symbol, symbolValue);
+  replaceWithInPlace(result);
+  return result.deepReduce(reductionContext);
 }
 
 void Derivative::DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext) {
   Expression df = function.unaryFunctionDifferential(reductionContext);
-  Expression dg = Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());
+  Expression g = function.childAtIndex(0);
+  Expression dg = g.derivate(reductionContext, symbol, symbolValue) ? function.childAtIndex(0) : Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());
   function.replaceWithInPlace(Multiplication::Builder(df, dg));
 
 }

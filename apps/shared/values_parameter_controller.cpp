@@ -7,13 +7,12 @@ using namespace Escher;
 namespace Shared {
 
 ValuesParameterController::ValuesParameterController(Responder * parentResponder) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_deleteColumn(I18n::Message::Default),
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::Default),
 #endif
-  m_setInterval(I18n::Message::Default),
-  m_selectableTableView(this, this, this)
+  m_setInterval(I18n::Message::Default)
 {
 }
 
@@ -21,12 +20,8 @@ const char * ValuesParameterController::title() {
   return I18n::translate(m_pageTitle);
 }
 
-View * ValuesParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
 #if COPY_COLUMN
   I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
 #else
@@ -84,19 +79,11 @@ int ValuesParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * ValuesParameterController::reusableCell(int index) {
+HighlightCell * ValuesParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_deleteColumn, &m_setInterval}; //{&m_deleteColumn, &m_copyColumn, &m_setInterval};
   return cells[index];
-}
-
-int ValuesParameterController::reusableCellCount() const {
-  return k_totalNumberOfCell;
-}
-
-KDCoordinate ValuesParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
 }
 
 }

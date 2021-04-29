@@ -25,6 +25,7 @@ QUIZ_CASE(equation_solve) {
     }
   );
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
+  assert_solves_to("(x-√(2))(x-√(3))=0", {"x=√(2)", "x=√(3)", "delta=-2×√(6)+5"});
 
   /* TODO: Cubic
    * x^3-4x^2+6x-24=0
@@ -64,6 +65,10 @@ QUIZ_CASE(equation_solve) {
       "c=5"
     }
   );
+  assert_solves_to_infinite_solutions({
+    "4y+(1-√(5))x=0",
+    "x=(1+√(5))y"
+  });
 
   /* This test case needs the user defined variable. Indeed, in the equation
    * store, m_variables is just before m_userVariables, so bad fetching in
@@ -77,13 +82,34 @@ QUIZ_CASE(equation_solve) {
   });
   unset("x");
 
+  /* Without the user defined variable, this test has too many variables.
+   * With the user defined variable, it has no solutions. */
+  set("g", "0");
+  assert_solves_to_no_solution({
+    "a=a+1",
+    "a+b+c+d+e+f+g=0"
+  });
+  unset("g");
+
   // Monovariable non-polynomial equation
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Degree);
   assert_solves_numerically_to("cos(x)=0", -100, 100, {-90.0, 90.0});
   assert_solves_numerically_to("cos(x)=0", -900, 1000, {-810.0, -630.0, -450.0, -270.0, -90.0, 90.0, 270.0, 450.0, 630.0, 810.0});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0}, "y");
+  assert_solves_numerically_to("√(y+1)=0", -900, 1000, {-1}, "y");
   assert_solves_numerically_to("ℯ^x=0", -1000, 1000, {});
   assert_solves_numerically_to("ℯ^x/1000=0", -1000, 1000, {});
+  assert_solves_numerically_to("(x-1)/(2×(x-2)^2)=20.8", -10, 10, {1.856511, 2.167528});
+  assert_solves_numerically_to("8x^4-22x^2+15=0", -10, 10, {-1.224745, -1.118034, 1.118034, 1.224745});
+  assert_solves_numerically_to("(3x)^3/(0.1-3x)^3=10^(-8)", -10, 10, {0.000071660});
+  assert_solves_numerically_to("4.4ᴇ-9/(0.12+x)^2=1.1ᴇ-9/x^2", -10, 10, {-0.04, 0.12});
+  assert_solves_numerically_to("-2/(x-4)=-x^2+2x-4", -10, 10, {4.154435});
+
+  // The ends of the interval are solutions
+  assert_solves_numerically_to("sin(x)=0", -180, 180, {-180, 0, 180});
+  assert_solves_numerically_to("(x-1)^2×(x+1)^2=0", -1, 1, {-1, 1});
+  assert_solves_numerically_to("(x-1.00001)^2×(x+1.00001)^2=0", -1, 1, {});
+  assert_solves_numerically_to("sin(x)=0", 0, 10000, {0, 180, 360, 540, 720, 900, 1080, 1260, 1440, 1620});
 
   // Long variable names
   assert_solves_to("2abcde+3=4", "abcde=1/2");
@@ -185,7 +211,7 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   set("d", "5");
   set("c", "d");
   set("h(x)", "c+d+3");
-  assert_solves_to({"h(x)=0", "c=-3"}, {"c=-3", "d=0"});
+  assert_solves_to_infinite_solutions({"h(x)=0", "c=-3"});
   // c and d context values should not be used
 
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"});
@@ -201,4 +227,20 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   unset("f");
   unset("g");
   unset("h");
+
+  set("a", "0");
+  assert_solves_to("a=0", "a=0");
+  unset("a");
+
+  set("b", "0");
+  assert_solves_to_no_solution({"b*b=1","a=b"});
+  // If predefined variable had been ignored, there would have been this error
+  // assert_solves_to_error({"b*b=1","a=b"}, NonLinearSystem);
+  unset("b");
+
+  set("x", "-1");
+  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  set("x", "1");
+  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  unset("x");
 }

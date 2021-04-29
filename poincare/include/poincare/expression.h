@@ -38,6 +38,7 @@ class Expression : public TreeHandle {
   friend class Conjugate;
   friend class Cosine;
   friend class Decimal;
+  friend class Dependency;
   friend class Derivative;
   friend class Determinant;
   friend class Division;
@@ -243,6 +244,8 @@ public:
   void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   Expression reduce(ExpressionNode::ReductionContext context);
   Expression reduceAndRemoveUnit(ExpressionNode::ReductionContext context, Expression * Unit);
+  // WARNING: this must be called on reduced expressions
+  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
   /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
@@ -260,10 +263,10 @@ public:
   template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
-  Coordinate2D<double> nextMinimum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  Coordinate2D<double> nextMaximum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  double nextRoot(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  Coordinate2D<double> nextIntersection(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const;
+  Coordinate2D<double> nextMinimum(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const;
+  Coordinate2D<double> nextMaximum(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const;
+  double nextRoot(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const;
+  Coordinate2D<double> nextIntersection(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression, double relativePrecision, double minimalStep, double maximalStep) const;
 
   /* This class is meant to contain data about named functions (e.g. sin, tan...)
    * in one place: their name, their number of children and a pointer to a builder.
@@ -274,7 +277,7 @@ public:
       m_name(name),
       m_numberOfChildren(numberOfChildren),
       m_untypedBuilder(builder) {}
-    const char * name() const { return m_name; }
+    constexpr const char * name() const { return m_name; }
     int numberOfChildren() const { return m_numberOfChildren; }
     Expression build(Expression children) const { return (*m_untypedBuilder)(children); }
   private:
@@ -369,6 +372,7 @@ protected:
    * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
   Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount); }
   Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
+  Expression defaultOddFunctionSetSign(ExpressionNode::Sign, ExpressionNode::ReductionContext reductionContext);
 
   /* Simplification */
   void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
@@ -386,19 +390,21 @@ protected:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
-  // WARNING: this must be called on reduced expressions
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
   /* Derivation */
   /* This method is used for the reduction of Derivative expressions.
    * It returns whether the instance is differentiable, and differentiates it if
    * able. */
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->derivate(reductionContext, symbol, symbolValue); }
+  void derivateChildAtIndexInPlace(int index, ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
+  // Solver parameters
+  static constexpr double k_solverStepPrecision = 1e-2;
+  static constexpr double k_solverMinimalStep = 1e-3;
 
   /* Add missing parenthesis will add parentheses that easen the reading of the
    * expression or that are required by math rules. For example:
@@ -441,14 +447,6 @@ private:
   static bool IsOne(const Expression e);
   static bool IsMinusOne(const Expression e);
   static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
-
-  /* Expression roots/extrema solver*/
-  constexpr static double k_solverPrecision = 1.0E-5;
-  constexpr static double k_maxFloat = 1e100;
-  Coordinate2D<double> nextMinimumOfExpression(const char * symbol, double start, double step, double max, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression = Expression(), bool lookForRootMinimum = false) const;
-  void bracketMinimum(const char * symbol, double start, double step, double max, double result[3], Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression = Expression()) const;
-  double nextIntersectionWithExpression(const char * symbol, double start, double step, double max, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const;
-  void bracketRoot(const char * symbol, double start, double step, double max, double result[2], Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const;
 };
 
 }

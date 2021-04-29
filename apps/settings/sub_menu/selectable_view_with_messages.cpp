@@ -46,14 +46,17 @@ View * SelectableViewWithMessages::subviewAtIndex(int index) {
 }
 
 void SelectableViewWithMessages::layoutSubviews(bool force) {
+  // Prioritize text position
+  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  KDCoordinate defOrigin = std::max<KDCoordinate>(
+    bounds().height() - Metric::CommonBottomMargin - m_numberOfMessages*textHeight,
+    k_minSelectableTableViewHeight + Metric::CommonBottomMargin);
+  assert(defOrigin >= k_minSelectableTableViewHeight + Metric::CommonBottomMargin);
+
   // Layout the table view
-  KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), tableHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), defOrigin - Metric::CommonBottomMargin), force);
 
   // Layout the text
-  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-  KDCoordinate defOrigin = std::max<KDCoordinate>(bounds().height() - Metric::CommonBottomMargin - m_numberOfMessages*textHeight, tableHeight);
-
   for (int i = 0; i < m_numberOfMessages; i++) {
     m_messageLines[i].setFrame(KDRect(0, defOrigin, bounds().width(), textHeight), force);
     defOrigin += textHeight;

@@ -2,6 +2,7 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <apps/shared/settings_message_tree.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_switch.h>
 #include "message_table_cell_with_gauge_with_separator.h"
@@ -22,19 +23,16 @@ extern const Shared::SettingsMessageTree s_modelExamChildren[2];
 extern const Shared::SettingsMessageTree s_modelAboutChildren[3];
 extern const Shared::SettingsMessageTree s_model;
 
-class MainController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class MainController : public Escher::SelectableListViewController {
 public:
   MainController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
-  Escher::View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
-  KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
   TELEMETRY_ID("");
@@ -58,11 +56,10 @@ private:
   Escher::StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = (Ion::Display::Height - Escher::Metric::TitleBarHeight) / Escher::Metric::ParameterCellHeight + 1;
+  constexpr static int k_numberOfSimpleChevronCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   Escher::MessageTableCellWithSwitch m_popUpCell;
-  Escher::SelectableTableView m_selectableTableView;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
   LocalizationController m_localizationController;

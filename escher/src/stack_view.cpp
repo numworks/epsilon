@@ -1,4 +1,5 @@
 #include <escher/stack_view.h>
+#include <escher/metric.h>
 extern "C" {
 #include <assert.h>
 }
@@ -37,9 +38,10 @@ void StackView::drawRect(KDContext * ctx, KDRect rect) const {
   drawInnerRect(ctx, b, m_backgroundColor);
   // Write title
   const KDFont * font = KDFont::SmallFont;
-  KDSize textSize = font->stringSize(m_controller->title());
-  KDPoint origin((m_frame.width() - textSize.width())/2,(m_frame.height() - textSize.height())/2 + 1);
-  ctx->drawString(m_controller->title(), origin, font, m_textColor, m_backgroundColor);
+  // Add horizontal margins
+  KDPoint point = KDPoint(Metric::CellLeftMargin, 0);
+  KDSize size = KDSize(m_frame.width() - Metric::CellLeftMargin - Metric::CellRightMargin, m_frame.height());
+  ctx->alignAndDrawString(m_controller->title(), point, size, 0.5f, 0.5f, font, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING

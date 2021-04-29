@@ -11,13 +11,14 @@ BannerView::BannerView(
   TextFieldDelegate * textFieldDelegate
 ) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_dotNameView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor()),
-  m_regressionTypeView(Font(), (I18n::Message)0, 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_dotNameView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_regressionTypeView(Font(), (I18n::Message)0, 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText0(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText1(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText2(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
   m_subText3(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
-  m_subText4(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
+  m_subText4(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_numberOfSubviews(k_maxNumberOfSubviews)
 {
 }
 
@@ -28,7 +29,7 @@ BufferTextView * BannerView::subTextAtIndex(int index) {
 }
 
 View * BannerView::subviewAtIndex(int index) {
-  assert(0 <= index && index < numberOfSubviews());
+  assert(0 <= index && index < numberOfSubviews() && numberOfSubviews() <= k_maxNumberOfSubviews);
   if (index == 0) {
     return &m_dotNameView;
   }
@@ -41,6 +42,13 @@ View * BannerView::subviewAtIndex(int index) {
     return &m_regressionTypeView;
   }
   return subTextAtIndex(index - 1);
+}
+
+bool BannerView::lineBreakBeforeSubview(Escher::View * subview) const {
+  return subview == &m_regressionTypeView
+    // Force the "Data not suitable" message to be on the next line
+      || (subview == &m_subText0 && !m_coefficientsAreDefined)
+      || Shared::XYBannerView::lineBreakBeforeSubview(subview);
 }
 
 }

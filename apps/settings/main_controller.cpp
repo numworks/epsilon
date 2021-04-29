@@ -17,23 +17,15 @@ constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n
 constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
-  ViewController(parentResponder),
-  m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
-  m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
-  m_selectableTableView(this),
+  SelectableListViewController(parentResponder),
+  m_brightnessCell(I18n::Message::Default),
+  m_popUpCell(I18n::Message::Default),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_localizationController(this, LocalizationController::Mode::Language),
   m_examModeController(this),
   m_aboutController(this)
 {
-  for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-  }
-}
-
-View * MainController::view() {
-  return &m_selectableTableView;
 }
 
 void MainController::didBecomeFirstResponder() {
@@ -98,6 +90,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     assert(selectedSubController);
     if (model()->childAtIndex(rowIndex)->numberOfChildren() != 0) {
       static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(rowIndex));
+      static_cast<GenericSubController *>(selectedSubController)->resetMemoization();
     }
     stackController()->push(selectedSubController);
     return true;
@@ -110,26 +103,15 @@ int MainController::numberOfRows() const {
   return model()->numberOfChildren();
 };
 
-KDCoordinate MainController::rowHeight(int j) {
-  if (j == k_indexOfBrightnessCell) {
-    return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
+KDCoordinate MainController::nonMemoizedRowHeight(int index) {
+  if (index == k_indexOfBrightnessCell) {
+    return heightForCellAtIndex(&m_brightnessCell, index, false);
   }
-  return Metric::ParameterCellHeight;
-}
-
-KDCoordinate MainController::cumulatedHeightFromIndex(int j) {
-  KDCoordinate height = j * rowHeight(0);
-  if (j > k_indexOfBrightnessCell) {
-    height += CellWithSeparator::k_margin;
+  if (hasPrompt() && index == k_indexOfPopUpCell) {
+    return heightForCellAtIndex(&m_popUpCell, index, false);
   }
-  return height;
-}
-
-int MainController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  if (offsetY < rowHeight(0)*k_indexOfBrightnessCell + CellWithSeparator::k_margin) {
-    return offsetY/rowHeight(0);
-  }
-  return (offsetY - CellWithSeparator::k_margin)/rowHeight(0);
+  MessageTableCellWithChevronAndMessage tempCell;
+  return heightForCellAtIndex(&tempCell, index, false);
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {
@@ -153,11 +135,11 @@ int MainController::reusableCellCount(int type) {
   return 1;
 }
 
-int MainController::typeAtLocation(int i, int j) {
-  if (j == k_indexOfBrightnessCell) {
+int MainController::typeAtIndex(int index) {
+  if (index == k_indexOfBrightnessCell) {
     return 1;
   }
-  if (hasPrompt() && j == k_indexOfPopUpCell) {
+  if (hasPrompt() && index == k_indexOfPopUpCell) {
     return 2;
   }
   return 0;
@@ -168,13 +150,13 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Preferences * preferences = Preferences::sharedPreferences();
   I18n::Message title = model()->childAtIndex(index)->label();
   if (index == k_indexOfBrightnessCell) {
-    MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
+    MessageTableCellWithGaugeWithSeparator * myGaugeCell = static_cast<MessageTableCellWithGaugeWithSeparator *>(cell);
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(title);
   if (index == k_indexOfLanguageCell) {
     int index = (int)(globalPreferences->language());
@@ -187,12 +169,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   if (hasPrompt() && index == k_indexOfPopUpCell) {
-    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    MessageTableCellWithSwitch * mySwitchCell = static_cast<MessageTableCellWithSwitch *>(cell);
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
-  MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
+  MessageTableCellWithChevronAndMessage * myTextCell = static_cast<MessageTableCellWithChevronAndMessage *>(cell);
   int childIndex = -1;
   switch (index) {
     case k_indexOfAngleUnitCell:
@@ -217,6 +199,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
 void MainController::viewWillAppear() {
   ViewController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 

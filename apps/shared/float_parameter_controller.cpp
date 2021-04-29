@@ -12,8 +12,7 @@ namespace Shared {
 
 template<typename T>
 FloatParameterController<T>::FloatParameterController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_selectableTableView(this, this, this),
+  SelectableListViewController(parentResponder),
   m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation([](void * context, void * sender) {
       FloatParameterController * parameterController = (FloatParameterController *) context;
       parameterController->buttonAction();
@@ -46,14 +45,12 @@ void FloatParameterController<T>::viewWillAppear() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
 template<typename T>
-void FloatParameterController<T>::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == nullptr) {
-    return;
-  }
+void FloatParameterController<T>::viewDidDisappear() {
   if (parentResponder() == nullptr) {
     m_selectableTableView.deselectTable();
     m_selectableTableView.scrollToCell(0,0);
@@ -70,16 +67,16 @@ bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {
 }
 
 template<typename T>
-int FloatParameterController<T>::typeAtLocation(int i, int j) {
-  if (j == numberOfRows()-1) {
-    return 0;
+int FloatParameterController<T>::typeAtIndex(int index) {
+  if (index == numberOfRows()-1) {
+    return k_buttonCellType;
   }
-  return 1;
+  return k_parameterCellType;
 }
 
 template<typename T>
 int FloatParameterController<T>::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_buttonCellType) {
     return 1;
   }
   return reusableParameterCellCount(type);
@@ -87,34 +84,18 @@ int FloatParameterController<T>::reusableCellCount(int type) {
 
 template<typename T>
 HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
-  if (type == 0) {
+  if (type == k_buttonCellType) {
     return &m_okButton;
   }
   return reusableParameterCell(index, type);
 }
 
 template<typename T>
-KDCoordinate FloatParameterController<T>::rowHeight(int j) {
+KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
   if (j == numberOfRows()-1) {
-    return Metric::ParameterCellHeight+k_buttonMargin;
+    return m_okButton.minimalSizeForOptimalDisplay().height();
   }
-  return Metric::ParameterCellHeight;
-}
-
-template<typename T>
-KDCoordinate FloatParameterController<T>::cumulatedHeightFromIndex(int j) {
-  if (j == numberOfRows()) {
-    return j*Metric::ParameterCellHeight+k_buttonMargin;
-  }
-  return Metric::ParameterCellHeight*j;
-}
-
-template<typename T>
-int FloatParameterController<T>::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  if (offsetY > numberOfRows()*Metric::ParameterCellHeight + k_buttonMargin) {
-    return numberOfRows();
-  }
-  return (offsetY - 1) / Metric::ParameterCellHeight;
+  return MemoizedListViewDataSource::nonMemoizedRowHeight(j);
 }
 
 template<typename T>
@@ -130,7 +111,7 @@ void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell * cell, 
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-  myCell->setAccessoryText(buffer);
+  myCell->setSubLabelText(buffer);
 }
 
 template<typename T>
@@ -151,6 +132,7 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(TextField * textFiel
   if (!setParameterAtIndex(row, floatBody)) {
     return false;
   }
+  resetMemoization();
   m_selectableTableView.reloadCellAtLocation(0, activeCell());
   m_selectableTableView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {

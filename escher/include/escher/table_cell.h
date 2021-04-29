@@ -8,33 +8,53 @@ namespace Escher {
 
 class TableCell : public Bordered, public HighlightCell {
 public:
-  /* Layout enum class determines the way subviews are layouted.
-   * We can split the cell vertically or horizontally.
-   * We can choose which subviews frames are optimized (if there is not enough
-   * space for all subviews, which one is cropped). This case happens so far only
-   * for horizontally splitted cell, so we distinguish only these sub cases.
-   * TODO: implement VerticalTopOverlap, VerticalBottomlap? */
-  enum class Layout {
-    Vertical,
-    HorizontalLeftOverlap, // Label overlaps on SubAccessory which overlaps on Accessory
-    HorizontalRightOverlap, // Reverse
-  };
-  TableCell(Layout layout = Layout::HorizontalLeftOverlap);
-  virtual View * labelView() const;
-  virtual View * accessoryView() const;
-  virtual View * subAccessoryView() const;
+  /* TableCells are layout as follow :
+   * -Accessory is vertically centered on the right of the cell
+   * -Label is vertically centered, aligned on the left of the cell
+   * -If it fits, SubLabel is vertically centered between Label and Accessory,
+      aligned on the right of the available space.
+   * -Otherwise, SubLabel is placed below label, aligned on the left of the cell
+   * With :
+   *     * = As much space as available (or nothing)
+   *     TM / BM / LM / RM : Cell[Top / Bottom / Left / Right]Margin
+   *     HM / VM : Cell[Horizontal / Vertical]ElementMargin
+   * First configuration : SubLabel fits
+   * -------------------------------------------------
+   * |                     TM                        |
+   * | *     *    *   *     *      *       *      *  |
+   * | LM  Label  HM  *  SubLabel  HM  Accessory  RM |
+   * | *     *    *   *     *      *       *      *  |
+   * |                     BM                        |
+   * -------------------------------------------------
+   * Second configuration : SubLabel does not fit
+   * -------------------------------------------------
+   * |                     TM                        |
+   * | *      *      *             *      *       *  |
+   * | LM  Label     *             HM             RM |
+   * | LM    VM      *             HM  Accessory  RM |
+   * | LM  SubLabel  *             HM             RM |
+   * | *      *      *             *      *       *  |
+   * |                     BM                        |
+   * -------------------------------------------------
+   * When isAccessoryAlignedRight returns false, Accessory can be placed on the
+   * left of the Cell. Label and SubLabel also take the two configurations
+   * depending on the fit.
+   */
+  TableCell();
+  virtual const View * labelView() const { return nullptr; }
+  virtual const View * subLabelView() const { return nullptr; }
+  virtual const View * accessoryView() const { return nullptr; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override;
+  static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width);
+  static constexpr KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 18 + Metric::CellTopMargin; // KDFont::LargeFont->glyphSize().height() = 18
+  static constexpr KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 14 + Metric::CellTopMargin; // KDFont::SmallFont->glyphSize().height() = 14
 protected:
   virtual KDColor backgroundColor() const { return KDColorWhite; }
-  virtual KDCoordinate labelMargin() const { return k_horizontalMargin; }
-  virtual KDCoordinate accessoryMargin() const { return k_horizontalMargin; }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  constexpr static KDCoordinate k_verticalMargin = Metric::TableCellVerticalMargin;
-  constexpr static KDCoordinate k_horizontalMargin = Metric::TableCellHorizontalMargin;
-private:
-  Layout m_layout;
+  virtual bool isAccessoryAlignedRight() const { return true; }
 };
 
 }

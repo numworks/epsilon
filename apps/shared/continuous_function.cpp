@@ -23,7 +23,7 @@ namespace Shared {
 
 void ContinuousFunction::DefaultName(char buffer[], size_t bufferSize) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
-  static constexpr const char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
+  constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'
   };
   /* First default names are f, g, h, p and then f0, f1... ie, "f[number]",
@@ -88,12 +88,14 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
 
 Poincare::Expression ContinuousFunction::expressionReduced(Poincare::Context * context) const {
   Poincare::Expression result = ExpressionModelHandle::expressionReduced(context);
-  if (plotType() == PlotType::Parametric && (
-      result.type() != Poincare::ExpressionNode::Type::Matrix ||
-      static_cast<Poincare::Matrix&>(result).numberOfRows() != 2 ||
-      static_cast<Poincare::Matrix&>(result).numberOfColumns() != 1)
-     ) {
-    return Poincare::Expression::Parse("[[undef][undef]]", nullptr);
+  if (plotType() == PlotType::Parametric) {
+    Expression trueExpression = result.type() == ExpressionNode::Type::Dependency ? result.childAtIndex(0) : result;
+    if (trueExpression.type() != Poincare::ExpressionNode::Type::Matrix
+     || static_cast<Poincare::Matrix&>(trueExpression).numberOfRows() != 2
+     || static_cast<Poincare::Matrix&>(trueExpression).numberOfColumns() != 1)
+    {
+      return Poincare::Expression::Parse("[[undef][undef]]", nullptr);
+    }
   }
   return result;
 }
@@ -143,25 +145,24 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
   constexpr int previousTextContentMaxSize = Constant::MaxSerializedExpressionSize;
   char previousTextContent[previousTextContentMaxSize];
   m_model.text(this, previousTextContent, previousTextContentMaxSize, symbol());
-  setContent(previousTextContent, context);
 
+  Ion::Storage::Record::ErrorStatus error = setContent(previousTextContent, context);
   // Handle parametric function switch
-  if (currentPlotType == PlotType::Parametric) {
+  if (currentPlotType == PlotType::Parametric && error == Ion::Storage::Record::ErrorStatus::None) {
     Expression e = expressionClone();
-    // Change [x(t) y(t)] to y(t)
-    if (!e.isUninitialized()
-        && e.type() == ExpressionNode::Type::Matrix
-        && static_cast<Poincare::Matrix&>(e).numberOfRows() == 2
-        && static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1)
-    {
-      Expression nextContent = e.childAtIndex(1);
-      /* We need to detach it, otherwise nextContent will think it has a parent
-       * when we retrieve it from the storage. */
-      nextContent.detachFromParent();
-      setExpressionContent(nextContent);
+    if (e.isUninitialized()
+        || e.type() != ExpressionNode::Type::Matrix
+        || static_cast<Poincare::Matrix&>(e).numberOfRows() != 2
+        || static_cast<Poincare::Matrix&>(e).numberOfColumns() != 1) {
+      return;
     }
-    return;
-  } else if (newPlotType == PlotType::Parametric) {
+    // Change [x(t) y(t)] to y(t)
+    Expression nextContent = e.childAtIndex(1);
+    /* We need to detach it, otherwise nextContent will think it has a parent
+     * when we retrieve it from the storage. */
+    nextContent.detachFromParent();
+    error = setExpressionContent(nextContent);
+  } else if (newPlotType == PlotType::Parametric && error == Ion::Storage::Record::ErrorStatus::None) {
     Expression e = expressionClone();
     // Change y(t) to [t y(t)]
     Matrix newExpr = Matrix::Builder();
@@ -170,7 +171,11 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
     e = e.isUninitialized() ? Multiplication::Builder(Rational::Builder(2), Symbol::Builder(UCodePointUnknown)) : e;
     newExpr.addChildAtIndexInPlace(e, newExpr.numberOfChildren(), newExpr.numberOfChildren());
     newExpr.setDimensions(2, 1);
-    setExpressionContent(newExpr);
+    error = setExpressionContent(newExpr);
+  }
+  if (error != Ion::Storage::Record::ErrorStatus::None) {
+    // An error occurred, reset plot type to the initial one.
+    recordData()->setPlotType(currentPlotType);
   }
 }
 
@@ -294,14 +299,15 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
 
     /* Try to display an orthonormal range. */
     Zoom::RangeWithRatioForDisplay(evaluation, targetRatio, xMin, xMax, yMin, yMax, context, this);
-    if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+    if (std::isfinite(*yMin) && std::isfinite(*yMax)) {
       return;
     }
 
     /* The function's profile is not great for an orthonormal range.
      * Try a basic range. */
-    *xMin = - Zoom::k_defaultHalfRange;
-    *xMax = Zoom::k_defaultHalfRange;
+    assert(*xMin == *xMax);
+    *xMin -= Zoom::k_defaultHalfRange;
+    *xMax += Zoom::k_defaultHalfRange;
     Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
     if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
       return;
@@ -373,6 +379,9 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincar
     assert(type == PlotType::Cartesian || type == PlotType::Polar);
     return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
   }
+  if (e.type() == ExpressionNode::Type::Dependency) {
+    e = e.childAtIndex(0);
+  }
   assert(e.type() == ExpressionNode::Type::Matrix);
   assert(static_cast<Poincare::Matrix&>(e).numberOfRows() == 2);
   assert(static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);
@@ -381,48 +390,48 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincar
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
 
-Coordinate2D<double> ContinuousFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
-  return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return PoincareHelpers::NextMinimum(e, symbol, start, step, max, context); });
+Coordinate2D<double> ContinuousFunction::nextMinimumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> ContinuousFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
-  return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return PoincareHelpers::NextMaximum(e, symbol, start, step, max, context); });
+Coordinate2D<double> ContinuousFunction::nextMaximumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double step, double max, Context * context) const {
-  return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, step, max, context), 0.0); });
+Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin, double eDomainMax) const {
+Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
   double domainMin = std::max<double>(tMin(), eDomainMin);
   double domainMax = std::min<double>(tMax(), eDomainMax);
-  if (step > 0.0f) {
+  if (start < max) {
     start = std::max(start, domainMin);
     max = std::min(max, domainMax);
   } else {
     start = std::min(start, domainMax);
     max = std::max(max, domainMin);
   }
-  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, context, e);
+  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, max, context, e, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double step, double max, Context * context, ComputePointOfInterest compute) const {
+Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
-  if (step > 0.0f) {
+  if (start < max) {
     start = std::max<double>(start, tMin());
     max = std::min<double>(max, tMax());
   } else {
     start = std::min<double>(start, tMax());
     max = std::max<double>(max, tMin());
   }
-  return compute(expressionReduced(context), unknownX, start, step, max, context);
+  return compute(expressionReduced(context), unknownX, start, max, context, relativePrecision, minimalStep, maximalStep);
 }
 
 Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {

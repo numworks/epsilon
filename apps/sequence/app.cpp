@@ -8,15 +8,15 @@ using namespace Escher;
 
 namespace Sequence {
 
-I18n::Message App::Descriptor::name() {
+I18n::Message App::Descriptor::name() const {
   return I18n::Message::SequenceApp;
 }
 
-I18n::Message App::Descriptor::upperName() {
+I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::SequenceAppCapital;
 }
 
-const Image * App::Descriptor::icon() {
+const Image * App::Descriptor::icon() const {
   return ImageStore::SequenceIcon;
 }
 
@@ -35,9 +35,10 @@ void App::Snapshot::reset() {
   m_interval.reset();
 }
 
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
+static constexpr App::Descriptor sDescriptor;
+
+const App::Descriptor * App::Snapshot::descriptor() const {
+  return &sDescriptor;
 }
 
 void App::Snapshot::tidy() {

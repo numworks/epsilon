@@ -48,12 +48,12 @@ KDCoordinate ValuesController::columnWidth(int i) {
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   if (typeAtLocation(i,j) == k_abscissaTitleCellType) {
-    EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
+    EvenOddMessageTextCell * mytitleCell = static_cast<EvenOddMessageTextCell *>(cell);
     mytitleCell->setMessage(I18n::Message::N);
     return;
   }
   if (typeAtLocation(i,j) == k_functionTitleCellType) {
-    Shared::SequenceTitleCell * myCell = (Shared::SequenceTitleCell *)cell;
+    Shared::SequenceTitleCell * myCell = static_cast<Shared::SequenceTitleCell *>(cell);
     Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
     myCell->setLayout(sequence->nameLayout());
     myCell->setColor(sequence->color());

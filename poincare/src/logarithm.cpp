@@ -5,6 +5,7 @@
 #include <poincare/constant.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
@@ -346,53 +347,55 @@ bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Expr
 Expression Logarithm::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
   /* log(x, b)` = (ln(x)/ln(b))`
    *            = 1 / (x * ln(b))
-   *
-   * ln(x) is only defined for x > 0, but 1/x is defined for any x != 0.
-   * Therefore we need to restricted the domain of the derivative function by
-   * adding a part that is undefined for x < 0.
-   * The chosen solution is (√x)^2 / (x * (√x)^2), which has the advantages of :
-   *   - not being reduced with SystemForApproximation, unlike √x/x√x
-   *   - not adding additional undefined points, unlike ln(x)/xln(x) for x = 1
-   *   - not reducing precision, unlike 1/√(x^2)
-   * FIXME: Although the derivative function cannot be observed by the user
-   * directly, me may want to display it one day, which this fix doesn't allow.
    */
-  return Power::Builder(Multiplication::Builder(childAtIndex(0).clone(), NaperianLogarithm::Builder(childAtIndex(1).clone()), Division::Builder(Power::Builder(SquareRoot::Builder(childAtIndex(0).clone()), Rational::Builder(2)), Power::Builder(SquareRoot::Builder(childAtIndex(0).clone()), Rational::Builder(2)))), Rational::Builder(-1));
+  return Power::Builder(Multiplication::Builder(childAtIndex(0).clone(), NaperianLogarithm::Builder(childAtIndex(1).clone())), Rational::Builder(-1));
 }
 
 Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext) {
   assert(!i.isZero());
   assert(!i.isNegative());
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  if (numberOfPrimeFactors == 0) {
-    return Rational::Builder(0);
-  }
-  if (numberOfPrimeFactors < 0) {
-    /* We could not break i in prime factor (either it might take too many
-     * factors or too much time). */
-    Expression e = clone();
-    e.replaceChildAtIndexInPlace(0, Rational::Builder(i));
-    if (!isDenominator) {
-      return e;
+  {
+    // See comment in Arithmetic::resetPrimeFactorization()
+    ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      Arithmetic arithmetic;
+      int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
+      if (numberOfPrimeFactors == 0) {
+        return Rational::Builder(0);
+      }
+      if (numberOfPrimeFactors < 0) {
+        /* We could not break i in prime factor (either it might take too many
+         * factors or too much time). */
+        Expression e = clone();
+        e.replaceChildAtIndexInPlace(0, Rational::Builder(i));
+        if (!isDenominator) {
+          return e;
+        }
+        Multiplication m = Multiplication::Builder(Rational::Builder(-1), e);
+        return std::move(m);
+      }
+      Addition a = Addition::Builder();
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        if (isDenominator) {
+          arithmetic.factorizationCoefficientAtIndex(index)->setNegative(true);
+        }
+        Logarithm e = clone().convert<Logarithm>();
+        e.replaceChildAtIndexInPlace(0, Rational::Builder(*arithmetic.factorizationFactorAtIndex(index)));
+        Multiplication m = Multiplication::Builder(Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)), e);
+        e.simpleShallowReduce(reductionContext);
+        a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+        m.shallowReduce(reductionContext);
+      }
+      return std::move(a);
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
     }
-    Multiplication m = Multiplication::Builder(Rational::Builder(-1), e);
-    return std::move(m);
   }
-  Addition a = Addition::Builder();
-  for (int index = 0; index < numberOfPrimeFactors; index++) {
-    if (isDenominator) {
-      coefficients[index].setNegative(true);
-    }
-    Logarithm e = clone().convert<Logarithm>();
-    e.replaceChildAtIndexInPlace(0, Rational::Builder(factors[index]));
-    Multiplication m = Multiplication::Builder(Rational::Builder(coefficients[index]), e);
-    e.simpleShallowReduce(reductionContext);
-    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
-    m.shallowReduce(reductionContext);
-  }
-  return std::move(a);
+  // As tempEcp has been destroyed, fall back on parent exception checkpoint
+  ExceptionCheckpoint::Raise();
+  // Return to silence warnings
+  return Undefined::Builder();
 }
 
 Expression Logarithm::shallowBeautify() {

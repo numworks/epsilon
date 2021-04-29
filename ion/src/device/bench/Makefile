@@ -29,4 +29,5 @@ ion_device_bench_src += $(addprefix ion/src/device/bench/command/, \
   standby.cpp \
   usb_plugged.cpp \
   vblank.cpp \
+  write_pcb_version.cpp \
 )

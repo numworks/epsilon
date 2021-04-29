@@ -1,4 +1,5 @@
 #include "go_to_parameter_controller.h"
+#include "interactive_curve_view_controller.h"
 #include <assert.h>
 
 using namespace Escher;
@@ -42,8 +43,7 @@ void GoToParameterController::buttonAction() {
   // Update parameter value to m_tempParameter, and proceed if value is valid
   if (confirmParameterAtIndex(0, m_tempParameter)) {
     StackViewController * stack = (StackViewController *)parentResponder();
-    stack->pop();
-    stack->pop();
+    stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth);
   }
 }
 

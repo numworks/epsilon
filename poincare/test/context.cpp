@@ -215,12 +215,27 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
    * to be interrupted. We thus rather approximate it instead of simplifying it.
    * TODO: use parse_and_simplify when matrix are simplified. */
 
-  assert_expression_approximates_to<double>("[[x]]→f(x)", "[[undef]]");
+  assert_expression_approximates_to<double>("[[x]]→f(x)", "undef");
   quiz_assert(Function::Builder("f", 1, Symbol::Builder('x')).recursivelyMatches(Poincare::Expression::IsMatrix, &context));
   assert_expression_approximates_to<double>("0.2*x→g(x)", "undef");
   quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, &context));
 
   // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+}
+
+QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
+  assert_reduce("0→f(x)");
+  assert_reduce("f(1/0)→a");
+  assert_parsed_expression_simplify_to("a", Undefined::Name());
+  assert_reduce("f(1/0)→g(x)");
+  assert_parsed_expression_simplify_to("g(1)", Undefined::Name());
+  assert_reduce("f(undef)→b");
+  assert_parsed_expression_simplify_to("b", Undefined::Name());
+
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();

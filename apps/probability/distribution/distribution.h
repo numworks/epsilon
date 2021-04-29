@@ -29,9 +29,9 @@ public:
   virtual double parameterValueAtIndex(int index) = 0;
   virtual I18n::Message parameterNameAtIndex(int index) = 0;
   virtual I18n::Message parameterDefinitionAtIndex(int index) = 0;
-  virtual void setParameterAtIndex(float f, int index) = 0;
+  virtual void setParameterAtIndex(double f, int index) = 0;
   virtual float evaluateAtAbscissa(float x) const = 0;
-  virtual bool authorizedValueAtIndex(float x, int index) const = 0;
+  virtual bool authorizedValueAtIndex(double x, int index) const = 0;
   virtual double cumulativeDistributiveFunctionAtAbscissa(double x) const;
   double rightIntegralFromAbscissa(double x) const;
   double finiteIntegralBetweenAbscissas(double a, double b) const;

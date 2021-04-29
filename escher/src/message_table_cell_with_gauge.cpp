@@ -3,14 +3,10 @@
 
 namespace Escher {
 
-MessageTableCellWithGauge::MessageTableCellWithGauge(I18n::Message message, const KDFont * font) :
-  MessageTableCell(message, font),
+MessageTableCellWithGauge::MessageTableCellWithGauge(I18n::Message message) :
+  MessageTableCell(message),
   m_accessoryView()
 {
-}
-
-View * MessageTableCellWithGauge::accessoryView() const {
-  return (View *)&m_accessoryView;
 }
 
 void MessageTableCellWithGauge::setHighlighted(bool highlight) {

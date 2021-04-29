@@ -1,8 +1,7 @@
 #include "apps_container.h"
 
-I18n::Message AppsContainer::k_promptMessages[] = {};
+constexpr I18n::Message AppsContainer::k_promptMessages[] = {};
 
-KDColor AppsContainer::k_promptColors[] = {};
+constexpr KDColor AppsContainer::k_promptColors[] = {};
 
-int AppsContainer::k_promptNumberOfMessages = 0;
-
+constexpr int AppsContainer::k_promptNumberOfMessages = 0;

@@ -19,7 +19,7 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);
 private:
-  float cursorBottomMarginRatio() override { return 0.22f; }
+  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
   BannerView * bannerView() override { return m_bannerView; };

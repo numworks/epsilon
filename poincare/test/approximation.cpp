@@ -54,7 +54,7 @@ QUIZ_CASE(poincare_approximation_rational) {
 template<typename T>
 void assert_float_approximates_to(Float<T> f, const char * result) {
   Shared::GlobalContext globalContext;
-  int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
+  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.template approximate<T>(&globalContext, Cartesian, Radian).serialize(buffer, sizeof(buffer), DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
@@ -137,6 +137,8 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<double>("𝐢^𝐢", "2.0787957635076ᴇ-1");
   assert_expression_approximates_to<float>("1.0066666666667^60", "1.48985", Radian, Metric, Cartesian, 6);
   assert_expression_approximates_to<double>("1.0066666666667^60", "1.489845708305", Radian, Metric, Cartesian, 13);
+  assert_expression_approximates_to<double>("1.0092^50", "1.5807460027336");
+  assert_expression_approximates_to<float>("1.0092^50", "1.580744");
   assert_expression_approximates_to<float>("ℯ^(𝐢×π)", "-1");
   assert_expression_approximates_to<double>("ℯ^(𝐢×π)", "-1");
   assert_expression_approximates_to<float>("ℯ^(𝐢×π+2)", "-7.38906", Radian, Metric, Cartesian, 6);
@@ -205,6 +207,15 @@ QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to_scalar<float>("1/2", 0.5f);
   assert_expression_approximates_to_scalar<float>("(3+𝐢)/(4+𝐢)", NAN);
   assert_expression_approximates_to_scalar<float>("[[1,2][3,4][5,6]]/2", NAN);
+
+  assert_expression_approximates_to_scalar<float>("quo(23,12)", 1);
+  assert_expression_approximates_to_scalar<float>("rem(23,12)", 11);
+  assert_expression_approximates_to_scalar<float>("quo(-23,12)", -2);
+  assert_expression_approximates_to_scalar<float>("rem(-23,12)", 1);
+  assert_expression_approximates_to_scalar<float>("quo(23,-12)", -1);
+  assert_expression_approximates_to_scalar<float>("rem(23,-12)", 11);
+  assert_expression_approximates_to_scalar<float>("quo(-23,-12)", 2);
+  assert_expression_approximates_to_scalar<float>("rem(-23,-12)", 1);
 }
 
 QUIZ_CASE(poincare_approximation_logarithm) {
@@ -217,8 +228,8 @@ QUIZ_CASE(poincare_approximation_logarithm) {
   assert_expression_approximates_to<float>("log(5+2×𝐢)", "0.731199+0.1652518×𝐢");
   assert_expression_approximates_to<double>("ln(5+2×𝐢)", "1.6836479149932+3.8050637711236ᴇ-1×𝐢");
   assert_expression_approximates_to<double>("log(0,0)", Undefined::Name());
-  assert_expression_approximates_to<double>("log(0)", "-inf");
-  assert_expression_approximates_to<double>("log(2,0)", "0");
+  assert_expression_approximates_to<double>("log(0)", Undefined::Name());
+  assert_expression_approximates_to<double>("log(2,0)", Undefined::Name());
 
   // WARNING: evaluate on branch cut can be multivalued
   assert_expression_approximates_to<double>("ln(-4)", "1.3862943611199+3.1415926535898×𝐢");
@@ -264,6 +275,14 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("binomial(7, 9)", "0");
   assert_expression_approximates_to<float>("binomial(-7, 9)", "-5005");
   assert_expression_approximates_to<double>("binomial(-7, 9)", "-5005");
+  assert_expression_approximates_to<float>("binomial(13, 0)", "1");
+  assert_expression_approximates_to<double>("binomial(13, 0)", "1");
+  assert_expression_approximates_to<float>("binomial(10, -1)", "0");
+  assert_expression_approximates_to<double>("binomial(10, -1)", "0");
+  assert_expression_approximates_to<float>("binomial(-5, -10)", "0");
+  assert_expression_approximates_to<double>("binomial(-5, -10)", "0");
+  assert_expression_approximates_to<float>("binomial(10, 2.1)", "undef");
+  assert_expression_approximates_to<double>("binomial(10, 2.1)", "undef");
 
   assert_expression_approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", Degree, Metric, Cartesian, 6); // FIXME: precision problem
   assert_expression_approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
@@ -276,15 +295,6 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231×𝐢", Degree, Metric, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
   assert_expression_approximates_to<double>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231×𝐢");
-
-  assert_expression_approximates_to<float>("diff(2×x, x, 2)", "2");
-  assert_expression_approximates_to<double>("diff(2×x, x, 2)", "2");
-
-  assert_expression_approximates_to<float>("diff(2×TO^2, TO, 7)", "28");
-  assert_expression_approximates_to<double>("diff(2×TO^2, TO, 7)", "28");
-
-  //assert_expression_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0"); // FIXME error too big
-  assert_expression_approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
 
   assert_expression_approximates_to<float>("floor(2.3)", "2");
   assert_expression_approximates_to<double>("floor(2.3)", "2");
@@ -318,12 +328,43 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("lcm(6,15,10)", "30");
   assert_expression_approximates_to<float>("lcm(30,105,70,42)", "210");
   assert_expression_approximates_to<double>("lcm(30,105,70,42)", "210");
+  /* Testing LCM and GCD integer limits :
+   * undef result is expected when manipulating overflowing/inaccurate integers
+   * For context :
+   * - INT_MAX =            2,147,483,647
+   * - UINT32_MAX =         4,294,967,295
+   * - Maximal representable integer without loss of precision in :
+   *     - float :             16,777,216
+   *     - double : 9,007,199,254,740,992
+   */
+  // Integers that can't be accurately represented as float
+  assert_expression_approximates_to<float>("gcd(16777219,13)", "undef"); // 1
+  assert_expression_approximates_to<double>("gcd(16777219,13)", "1");
+  assert_expression_approximates_to<float>("lcm(1549, 10831)", "undef"); // 16777219
+  assert_expression_approximates_to<double>("lcm(1549, 10831)", "16777219");
+  // Integers overflowing int, but not uint32_t
+  assert_expression_approximates_to<float>("gcd(2147483650,13)", "undef"); // 13
+  assert_expression_approximates_to<double>("gcd(2147483650,13)", "13");
+  assert_expression_approximates_to<float>("lcm(2,25,13,41,61,1321)", "undef"); // 2147483650
+  assert_expression_approximates_to<double>("lcm(2,25,13,41,61,1321)", "2147483650");
+  // Integers overflowing uint32_t
+  assert_expression_approximates_to<float>("gcd(4294967300,13)", "undef"); // 13
+  assert_expression_approximates_to<double>("gcd(4294967300,13)", "undef"); // 13
+  assert_expression_approximates_to<float>("lcm(4,25,13,41,61,1321)", "undef"); // 4294967300
+  assert_expression_approximates_to<double>("lcm(4,25,13,41,61,1321)", "undef"); // 4294967300
+  // Integers that can't be accurately represented as double
+  assert_expression_approximates_to<float>("gcd(1ᴇ16,10)", "undef");
+  assert_expression_approximates_to<double>("gcd(1ᴇ16,10)", "undef");
 
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
 
   assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
   assert_expression_approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
+  assert_expression_approximates_to<float>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<double>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<float>("invbinom(0.01,150,0.9)", "126");
+  assert_expression_approximates_to<double>("invbinom(0.01,150,0.9)", "126");
 
   assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
   //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error

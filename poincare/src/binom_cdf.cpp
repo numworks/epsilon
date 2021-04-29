@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper BinomCDF::s_functionHelper;
 int BinomCDFNode::numberOfChildren() const { return BinomCDF::s_functionHelper.numberOfChildren(); }
 
 Expression BinomCDFNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return BinomCDF(this);
 }
 

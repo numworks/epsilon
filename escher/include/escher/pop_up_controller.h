@@ -4,7 +4,7 @@
 #include <escher/button.h>
 #include <escher/invocation.h>
 #include <escher/view_controller.h>
-#include <apps/i18n.h>
+#include <escher/i18n.h>
 
 namespace Escher {
 
@@ -16,14 +16,14 @@ public:
 
 class PopUpController : public ViewController {
 public:
-  PopUpController(int numberOfLines, Invocation OkInvocation);
+  PopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
   View * view() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   class ContentView : public View, public Responder {
   public:
-    ContentView(Responder * parentResponder, int numberOfLines, Invocation okInvocation);
+    ContentView(Responder * parentResponder, int numberOfLines, Invocation okInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
     void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(bounds(), KDColorBlack); }
     void setSelectedButton(int selectedButton);
     int selectedButton();

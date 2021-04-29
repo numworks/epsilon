@@ -44,6 +44,7 @@ class SquareRoot final : public Expression {
 public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
   static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>({child}); }
+  static Expression ReduceNestedRadicals(Expression e, ExpressionNode::ReductionContext reductionContext);
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("√", 1, &UntypedBuilderOneChild<SquareRoot>);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

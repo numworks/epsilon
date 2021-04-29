@@ -45,7 +45,7 @@ HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
 }
 
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (typeAtLocation(0, index) == 2) {
+  if (typeAtIndex(index) == 2) {
     static_cast<ExpressionTableCell *>(cell)->setLayout(m_addedCellLayout[index]);
     cell->reloadCell();
     return;
@@ -53,11 +53,24 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MathToolbox::willDisplayCellForIndex(cell, index - stackRowOffset());
 }
 
-int SequenceToolbox::typeAtLocation(int i, int j) {
-  if (stackDepth() == 0 && j < m_numberOfAddedCells) {
+KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
+  if (typeAtIndex(index) == 2) {
+    ExpressionTableCell tempCell;
+    return heightForCellAtIndex(&tempCell, index, false);
+  }
+  if (m_messageTreeModel->childAtIndex(index - stackRowOffset())->numberOfChildren() == 0) {
+    ExpressionTableCellWithMessage tempCell;
+    return heightForCellAtIndex(&tempCell, index, true);
+  }
+  MessageTableCell tempCell;
+  return heightForCellAtIndex(&tempCell, index, false);
+}
+
+int SequenceToolbox::typeAtIndex(int index) {
+  if (stackDepth() == 0 && index < m_numberOfAddedCells) {
     return 2;
   }
-  return MathToolbox::typeAtLocation(i, j - stackRowOffset());
+  return MathToolbox::typeAtIndex(index - stackRowOffset());
 }
 
 void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth) {

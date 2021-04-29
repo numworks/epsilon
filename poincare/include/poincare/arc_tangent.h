@@ -25,6 +25,8 @@ public:
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::ArcTangent; }
 
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -35,7 +37,6 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   //Evaluation
-  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
   }

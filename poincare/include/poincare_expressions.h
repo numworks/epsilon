@@ -3,7 +3,10 @@
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
+#include <poincare/arc_cosecant.h>
 #include <poincare/arc_cosine.h>
+#include <poincare/arc_cotangent.h>
+#include <poincare/arc_secant.h>
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/based_integer.h>
@@ -15,7 +18,9 @@
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
 #include <poincare/constant.h>
+#include <poincare/cosecant.h>
 #include <poincare/cosine.h>
+#include <poincare/cotangent.h>
 #include <poincare/ceiling.h>
 #include <poincare/decimal.h>
 #include <poincare/dependency.h>
@@ -77,6 +82,7 @@
 #include <poincare/rational.h>
 #include <poincare/real_part.h>
 #include <poincare/round.h>
+#include <poincare/secant.h>
 #include <poincare/sequence.h>
 #include <poincare/sign_function.h>
 #include <poincare/sine.h>

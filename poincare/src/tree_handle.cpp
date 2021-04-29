@@ -280,7 +280,10 @@ void TreeHandle::release(uint16_t identifier) {
 template AbsoluteValue TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>(const Tuple &);
 template AbsoluteValueLayout TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(const Tuple &);
 template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(const Tuple &);
+template ArcCosecant TreeHandle::FixedArityBuilder<ArcCosecant, ArcCosecantNode>(const Tuple &);
 template ArcCosine TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(const Tuple &);
+template ArcCotangent TreeHandle::FixedArityBuilder<ArcCotangent, ArcCotangentNode>(const Tuple &);
+template ArcSecant TreeHandle::FixedArityBuilder<ArcSecant, ArcSecantNode>(const Tuple &);
 template ArcSine TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(const Tuple &);
 template ArcTangent TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(const Tuple &);
 template BinomCDF TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>(const Tuple &);
@@ -296,6 +299,8 @@ template CondensedSumLayout TreeHandle::FixedArityBuilder<CondensedSumLayout, Co
 template ConfidenceInterval TreeHandle::FixedArityBuilder<ConfidenceInterval, ConfidenceIntervalNode>(const Tuple &);
 template Conjugate TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>(const Tuple &);
 template ConjugateLayout TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(const Tuple &);
+template Cosecant TreeHandle::FixedArityBuilder<Cosecant, CosecantNode>(const Tuple &);
+template Cotangent TreeHandle::FixedArityBuilder<Cotangent, CotangentNode>(const Tuple &);
 template Cosine TreeHandle::FixedArityBuilder<Cosine, CosineNode>(const Tuple &);
 template Dependency TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(const Tuple &);
 template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(const Tuple &);
@@ -359,6 +364,7 @@ template RealPart TreeHandle::FixedArityBuilder<RealPart, RealPartNode>(const Tu
 template RightParenthesisLayout TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(const Tuple &);
 template RightSquareBracketLayout TreeHandle::FixedArityBuilder<RightSquareBracketLayout, RightSquareBracketLayoutNode>(const Tuple &);
 template Round TreeHandle::FixedArityBuilder<Round, RoundNode>(const Tuple &);
+template Secant TreeHandle::FixedArityBuilder<Secant, SecantNode>(const Tuple &);
 template SignFunction TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>(const Tuple &);
 template SimplePredictionInterval TreeHandle::FixedArityBuilder<SimplePredictionInterval, SimplePredictionIntervalNode>(const Tuple &);
 template Sine TreeHandle::FixedArityBuilder<Sine, SineNode>(const Tuple &);

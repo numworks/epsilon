@@ -27,7 +27,6 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
 {}
 
 int RangeParameterController::typeAtIndex(int index) {
-  /* FIXME: Give names to the types. */
   int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType, k_okCellType};
   return types[index + !displayNormalizeCell()];
 }
@@ -61,13 +60,12 @@ KDCoordinate RangeParameterController::nonMemoizedRowHeight(int j) {
 }
 
 void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  int i = index - displayNormalizeCell();
-  if (i  >= 0 && i < k_numberOfRangeCells) {
-    MessageTableCellWithChevronAndBuffer * castedCell = static_cast<MessageTableCellWithChevronAndBuffer *>(cell);
+  if (typeAtIndex(index) == k_rangeCellType) {
     float min, max;
     bool isAuto = false;
+    int i = static_cast<MessageTableCellWithChevronAndBuffer *>(cell) - m_rangeCells;
     if (i == 0) {
-      castedCell->setMessage(I18n::Message::ValuesOfX);
+      m_rangeCells[0].setMessage(I18n::Message::ValuesOfX);
       if (m_tempInteractiveRange.xAuto()) {
         isAuto = true;
       } else {
@@ -76,7 +74,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
       }
     } else {
       assert(i == 1);
-      castedCell->setMessage(I18n::Message::ValuesOfY);
+      m_rangeCells[1].setMessage(I18n::Message::ValuesOfY);
       if (m_tempInteractiveRange.yAuto()) {
         isAuto = true;
       } else {
@@ -97,9 +95,8 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
       numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(max, buffer + numberOfChars, bufferSize - numberOfChars, precision, Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = '\0';
     }
-    castedCell->setSubLabelText(buffer);
+    m_rangeCells[i].setSubLabelText(buffer);
   }
-  SelectableListViewController::willDisplayCellForIndex(cell, index);
 }
 
 void RangeParameterController::didBecomeFirstResponder() {
@@ -134,6 +131,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (index < k_numberOfRangeCells
    && (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right))
   {
+    assert(typeAtIndex(selectedRow()) == k_rangeCellType);
     m_singleRangeController.setEditXRange(index == 0);
     stackController()->push(&m_singleRangeController);
     return true;

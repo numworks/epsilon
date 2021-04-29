@@ -62,7 +62,7 @@ bool SimpleFloatParameterController<T>::handleEvent(Ion::Events::Event event) {
 
 template<typename T>
 void SimpleFloatParameterController<T>::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
+  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
   if (myCell->isEditing()) {
     return;
   }

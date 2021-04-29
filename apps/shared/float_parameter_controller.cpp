@@ -18,7 +18,7 @@ FloatParameterController<T>::FloatParameterController(Responder * parentResponde
 
 template<typename T>
 void FloatParameterController<T>::viewWillAppear() {
-  if (this->selectedRow() == this->numberOfRows()-1) {
+  if (typeAtIndex(this->selectedRow()) == k_buttonCellType) {
     FloatParameterController<T>::selectCellAtLocation(0, 0);
   };
   SimpleFloatParameterController<T>::viewWillAppear();
@@ -50,7 +50,7 @@ HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
 
 template<typename T>
 KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
-  if (j == this->numberOfRows()-1) {
+  if (typeAtIndex(j) == k_buttonCellType) {
     return m_okButton.minimalSizeForOptimalDisplay().height();
   }
   return SimpleFloatParameterController<T>::nonMemoizedRowHeight(j);
@@ -58,7 +58,7 @@ KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
 
 template<typename T>
 void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == this->numberOfRows()-1) {
+  if (typeAtIndex(index) == k_buttonCellType) {
     return;
   }
   SimpleFloatParameterController<T>::willDisplayCellForIndex(cell, index);

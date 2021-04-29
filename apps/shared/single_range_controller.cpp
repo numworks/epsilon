@@ -21,9 +21,12 @@ SingleRangeController::SingleRangeController(Responder * parentResponder, InputE
 }
 
 void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+  /* We take advantage of this window not being supposed to scroll to
+   * attribute the same type to all cells, which in turns avoid the need to
+   * reimplement methods such as nonMemoizedRowHeight, reusableCellCount,
+   * typeAtIndex... */
   if (index == 0) {
     SwitchView * switchView = static_cast<SwitchView *>(const_cast<View *>(m_autoCell.accessoryView()));
-    /*TODO: Use two different statuses. */
     switchView->setState(autoStatus());
     return;
   }

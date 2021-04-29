@@ -35,9 +35,9 @@ void assert_expression_layouts_and_serializes_to(Expression expression, const ch
 
 QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // Decimal x OneLetter
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Decimal::Builder("2", -4), Symbol::Builder('a')), "0.0002a");
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Decimal::Builder("2", -4), Symbol::Builder('a')), "2ᴇ-4a");
   // Decimal x Decimal
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Decimal::Builder("2", -4), Decimal::Builder("2", -4)), "0.0002×0.0002");
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Decimal::Builder("2", -4), Decimal::Builder("2", -4)), "2ᴇ-4×2ᴇ-4");
   // Integer x Integer
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Rational::Builder(1)), "2×1");
   // Integer x MoreLetters

@@ -9,6 +9,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/n0110/bootloader/drivers
 )
 
 ion_device_bootloader_src += ion/src/device/shared/drivers/internal_flash.cpp
+ion_device_shared_bootloader_kernel_src += ion/src/device/shared/drivers/internal_flash_otp.cpp
 
 ion_device_kernel_src += $(addprefix ion/src/device/n0110/kernel/drivers/, \
   board.cpp \

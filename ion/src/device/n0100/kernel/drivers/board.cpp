@@ -176,23 +176,6 @@ uint32_t slotBUserlandStart() {
   return slotAUserlandStart();
 }
 
-/* The following methods regarding PCB version are dummy implementations.
- * Handling the PCB version is only necessary on the N0110. */
-
-PCBVersion pcbVersion() {
-  return PCB_LATEST;
-}
-
-PCBVersion readPCBVersionInMemory() {
-  return PCB_LATEST;
-}
-
-void writePCBVersion(PCBVersion) {}
-
-void lockPCBVersion() {}
-
-bool pcbVersionIsLocked() { return true; }
-
 }
 }
 }

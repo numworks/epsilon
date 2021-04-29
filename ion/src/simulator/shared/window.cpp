@@ -22,20 +22,34 @@ bool isHeadless() {
   return sWindow == nullptr;
 }
 
+int initialWindowPosition(int * x, int * y) {
+  // Position on second screen if exists
+  // TODO ideally would remember last position
+  if (SDL_GetNumVideoDisplays() == 0) {
+    *x = SDL_WINDOWPOS_CENTERED;
+    *y = SDL_WINDOWPOS_CENTERED;
+  } else {
+    *x = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
+    *y = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
+  }
+}
+
+
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Could not init video");
     return;
   }
 
+  int x, y;
+  initialWindowPosition(&x, &y);
   sWindow = SDL_CreateWindow(
 #if EPSILON_SDL_SCREEN_ONLY
     nullptr,
 #else
     "Epsilon",
 #endif
-    SDL_WINDOWPOS_CENTERED,
-    SDL_WINDOWPOS_CENTERED,
+    x, y,
 #if EPSILON_SDL_SCREEN_ONLY
     // When rendering the screen only, make a non-resizeable window whose size
     // matches the screen's

@@ -125,7 +125,7 @@ PCBVersion pcbVersion() {
 }
 
 PCBVersion readPCBVersionInMemory() {
-  return ~(*reinterpret_cast<const PCBVersion *>(InternalFlash::readOTPAtIndex(k_pcbVersionOTPBlock, k_pcbVersionOTPIndex)));
+  return ~static_cast<PCBVersion>(InternalFlash::readOTPAtIndex(k_pcbVersionOTPBlock, k_pcbVersionOTPIndex));
 }
 
 void writePCBVersion(PCBVersion version) {

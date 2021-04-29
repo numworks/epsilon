@@ -3,6 +3,11 @@
 namespace Ion {
 namespace Events {
 
+// TODO factorize in header without creating conflicts with template named T
+#define TL() EventData::Textless()
+#define U() EventData::Undefined()
+#define T(x) EventData::Text(x)
+
 static_assert('\x11' == UCodePointEmpty, "Unicode error");
 const EventData s_dataForEvent[4 * Event::PageSize] = {
 // Plain

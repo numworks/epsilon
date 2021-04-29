@@ -17,10 +17,6 @@ private:
   const char * m_data;
 };
 
-#define TL() EventData::Textless()
-#define U() EventData::Undefined()
-#define T(x) EventData::Text(x)
-
 }
 }
 

@@ -15,7 +15,6 @@ namespace Escher {
  * takes the selectable table view as instance variable and makes it first
  * responder. The selectable table view bubbles up events when they do not
  * concern selection. */
-
 class SelectableTableView : public TableView, public Responder {
 public:
   SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,

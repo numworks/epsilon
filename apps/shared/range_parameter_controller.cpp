@@ -108,10 +108,19 @@ void RangeParameterController::viewWillAppear() {
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
+    /* If the table has not been deselected, it means we come from the
+     * SingleRangeController. */
+    int row = (m_singleRangeController.editXRange() ? 0 : 1) + displayNormalizeCell();
+    selectCellAtLocation(selectedColumn(), row);
   }
   resetMemoization();
   m_selectableTableView.reloadData();
+}
+
+void RangeParameterController::viewDidDisappear() {
+  if (!stackController()) {
+    m_selectableTableView.deselectTable();
+  }
 }
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
@@ -123,6 +132,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (displayNormalizeCell() && selectedRow() == 0
    && (event == Ion::Events::OK || event == Ion::Events::EXE))
   {
+    m_normalizeCell.setHighlighted(false);
     m_tempInteractiveRange.normalize();
     buttonAction();
     return true;

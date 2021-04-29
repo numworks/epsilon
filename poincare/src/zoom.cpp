@@ -332,7 +332,7 @@ void Zoom::ExpandSparseWindow(ValueAtAbscissa evaluation, float * xMin, float * 
   }
 
   if (emptyCenter > emptyCenterMaxSize && n > k_sampleSize / 10) {
-    SetZoom(ratioCorrection + emptyCenter, xCenter, yCenter, xMin, xMax, yMin ,yMax);
+    SetZoom(ratioCorrection + emptyCenter, xCenter, yCenter, xMin, xMax, yMin, yMax);
   }
 }
 

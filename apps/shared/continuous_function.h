@@ -74,11 +74,11 @@ public:
   void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const override;
 
   // Extremum
-  Poincare::Coordinate2D<double> nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
-  Poincare::Coordinate2D<double> nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
+  Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
+  Poincare::Coordinate2D<double> nextMaximumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
   // Roots
-  Poincare::Coordinate2D<double> nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
-  Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
+  Poincare::Coordinate2D<double> nextRootFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
+  Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
   // Integral
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
 
@@ -88,8 +88,8 @@ public:
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
-  typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);
-  Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double step, double max, Poincare::Context * context, ComputePointOfInterest compute) const;
+  typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
+  Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
   void didBecomeInactive() override { m_cache = nullptr; }
 

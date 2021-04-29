@@ -29,7 +29,7 @@ public:
     return k_totalNumberOfBits;
   }
   static T buildFloat(bool sign, uint16_t exponent, uint64_t mantissa) {
-    static uint64_t oneOnMantissaBits = ((uint64_t)1 << k_mantissaNbBits)-1;
+    constexpr uint64_t oneOnMantissaBits = (static_cast<uint64_t>(1) << k_mantissaNbBits)-1;
     uint_float u;
     u.ui = 0;
     u.ui |= ((uint64_t)sign << (size()-k_signNbBits));
@@ -52,7 +52,7 @@ public:
     return exp;
   }
   static int exponentBase10(T f) {
-    static T k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
+    constexpr T k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
     if (f == (T)0.0) {
       return 0;
     }

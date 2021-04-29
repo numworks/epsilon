@@ -16,6 +16,7 @@ LDFLAGS += --pre-js ion/src/simulator/web/preamble_env.js
 ion_src += $(addprefix ion/src/simulator/web/, \
   clipboard_helper.cpp \
   exports.cpp \
+  journal.cpp \
   keyboard_callback.cpp \
   window_callback.cpp \
 )
@@ -24,7 +25,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/language.cpp \
   dummy/haptics_enabled.cpp \
   haptics.cpp \
-  journal.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp
@@ -35,6 +35,12 @@ ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
 DEFAULT = epsilon.zip
+
+$(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css): ion/src/simulator/shared/layout.json ion/src/simulator/web/layout.py | $$(@D)/.
+	$(call rule_label,LAYOUT)
+	$(Q) $(PYTHON) ion/src/simulator/web/layout.py --html $(BUILD_DIR)/ion/src/simulator/web/calculator.html --css $(BUILD_DIR)/ion/src/simulator/web/calculator.css $<
+
+$(BUILD_DIR)/ion/src/simulator/web/simulator.html: $(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css)
 
 $(BUILD_DIR)/epsilon%zip: $(BUILD_DIR)/epsilon%js $(BUILD_DIR)/ion/src/simulator/web/simulator.html
 	@rm -rf $(basename $@)

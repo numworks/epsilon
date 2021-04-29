@@ -30,8 +30,11 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
     } if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
       return Float<T>::Builder(m_values[index][1]);
     }
-    Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtIndex(index);
+    /* Do not use recordAtIndex : if the sequences have been reordered, the
+     * name index and the record index may not correspond. */
+    Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
     if (!record.isNull()) {
+      assert(record.fullName()[0] == symbol.name()[0]);
       Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
       rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(unknownSymbolValue));
       T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);

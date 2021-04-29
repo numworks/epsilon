@@ -36,41 +36,33 @@ namespace Probability {
 
 View * DistributionController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
-  if (index == 0) {
+  switch (index) {
+  case 0:
     return &m_titleView;
+  case 1:
+    return m_selectableTableView;
+  default:
+    return &m_borderView;
   }
-  return m_selectableTableView;
 }
 
 void DistributionController::ContentView::layoutSubviews(bool force) {
-  assert(KDFont::SmallFont->glyphSize().height() == 14); // otherwise, k_numberOfCells badly computed
-  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
+  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height() + k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height() - titleHeight), force);
+  m_borderView.setFrame(KDRect(m_selectableTableView->leftMargin(), titleHeight + m_selectableTableView->topMargin(), bounds().width() - m_selectableTableView->leftMargin() - m_selectableTableView->rightMargin(), Metric::CellSeparatorThickness), force);
 }
 
-static I18n::Message sMessages[] = {
-  I18n::Message::Binomial,
-  I18n::Message::Uniforme,
-  I18n::Message::Exponential,
-  I18n::Message::Normal,
-  I18n::Message::ChiSquared,
-  I18n::Message::Student,
-  I18n::Message::Geometric,
-  I18n::Message::Poisson,
-  I18n::Message::Fisher
-};
-
 DistributionController::DistributionController(Responder * parentResponder, Distribution * distribution, ParametersController * parametersController) :
-  ViewController(parentResponder),
-  m_selectableTableView(this),
+  SelectableListViewController(parentResponder),
   m_contentView(&m_selectableTableView),
   m_distribution(distribution),
   m_parametersController(parametersController)
 {
   assert(m_distribution != nullptr);
-  m_messages = sMessages;
-  m_selectableTableView.setTopMargin(Metric::CommonTopMargin-ContentView::k_titleMargin);
+  m_selectableTableView.setTopMargin(0);
+  // Fit m_selectableTableView scroll to content size
+  m_selectableTableView.decorator()->setVerticalMargins(0, Metric::CommonBottomMargin);
 }
 
 void Probability::DistributionController::viewWillAppear() {
@@ -98,15 +90,32 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   return false;
 }
 
-HighlightCell * Probability::DistributionController::reusableCell(int index) {
+KDCoordinate Probability::DistributionController::nonMemoizedRowHeight(int j) {
+  Cell tempCell;
+  return heightForCellAtIndex(&tempCell, j, false);
+}
+
+HighlightCell * Probability::DistributionController::reusableCell(int index, int type) {
   assert(index >= 0);
-  assert(index < k_numberOfCells);
+  assert(index < reusableCellCount(type));
   return &m_cells[index];
 }
 
+constexpr I18n::Message sMessages[] = {
+  I18n::Message::Binomial,
+  I18n::Message::Uniforme,
+  I18n::Message::Exponential,
+  I18n::Message::Normal,
+  I18n::Message::ChiSquared,
+  I18n::Message::Student,
+  I18n::Message::Geometric,
+  I18n::Message::Poisson,
+  I18n::Message::Fisher
+};
+
 void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  Cell * myCell = (Cell *)cell;
-  myCell->setLabel(m_messages[index]);
+  Cell * myCell = static_cast<Cell *>(cell);
+  myCell->setLabel(sMessages[index]);
   const Image * images[k_totalNumberOfModels] = {
     ImageStore::BinomialIcon,
     ImageStore::UniformIcon,

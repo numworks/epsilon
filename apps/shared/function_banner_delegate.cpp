@@ -7,34 +7,31 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr int k_precision = Preferences::MediumNumberOfSignificantDigits;
 
 int convertDoubleToText(double t, char * buffer, int bufferSize) {
-  return PoincareHelpers::ConvertFloatToText<double>(t, buffer, bufferSize, k_precision);
+  return PoincareHelpers::ConvertFloatToText<double>(t, buffer, bufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
 }
 
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
-  constexpr int bufferSize = k_maxNumberOfCharacters+PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
-  char buffer[bufferSize];
-  const char * space = " ";
+  char buffer[k_textBufferSize];
   int numberOfChar = 0;
-  numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, bufferSize-numberOfChar);
-  assert(numberOfChar <= bufferSize);
-  strlcpy(buffer + numberOfChar, "=", bufferSize - numberOfChar);
+  numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, k_textBufferSize-numberOfChar);
+  assert(numberOfChar <= k_textBufferSize);
+  strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  numberOfChar = convertDoubleToText(cursor->t(), buffer, bufferSize);
-  assert(numberOfChar <= bufferSize);
-  strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
+  numberOfChar = convertDoubleToText(cursor->t(), buffer, k_textBufferSize);
+  assert(numberOfChar < k_textBufferSize);
+  buffer[numberOfChar++] = '\0';
   bannerView()->abscissaValue()->setText(buffer);
 
-  numberOfChar = function->nameWithArgument(buffer, bufferSize);
-  assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, "=", bufferSize-numberOfChar);
-  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, k_precision, context);
-  assert(numberOfChar <= bufferSize);
-  strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
+  numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
+  assert(numberOfChar <= k_textBufferSize);
+  numberOfChar += strlcpy(buffer+numberOfChar, "=", k_textBufferSize-numberOfChar);
+  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, Preferences::sharedPreferences()->numberOfSignificantDigits(), context);
+  assert(numberOfChar < k_textBufferSize);
+  buffer[numberOfChar++] = '\0';
   bannerView()->ordinateView()->setText(buffer);
 
   bannerView()->reload();
@@ -46,10 +43,9 @@ double FunctionBannerDelegate::getValueDisplayedOnBanner(double t, Poincare::Con
     return 0.0;
   }
   // Convert float to text
-  constexpr int bufferSize = k_maxNumberOfCharacters+PrintFloat::charSizeForFloatsWithPrecision(k_precision);
-  char buffer[bufferSize];
-  int numberOfChar = convertDoubleToText(t, buffer, bufferSize);
-  assert(numberOfChar <= bufferSize);
+  char buffer[k_textBufferSize];
+  int numberOfChar = convertDoubleToText(t, buffer, k_textBufferSize);
+  assert(numberOfChar <= k_textBufferSize);
   // Silence compiler warnings
   (void) numberOfChar;
   // Extract displayed value

@@ -1,19 +1,19 @@
 #ifndef SHARED_STORE_PARAM_CONTROLLER_H
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
-#include <escher/list_view_data_source.h>
+#include <escher/selectable_list_view_controller.h>
+#include <escher/message_table_cell_with_message.h>
 #include <escher/message_table_cell.h>
-#include <escher/selectable_table_view.h>
-#include <escher/selectable_table_view_data_source.h>
-#include <escher/view_controller.h>
-#include "double_pair_store.h"
+#include <escher/pop_up_controller.h>
 #include <apps/i18n.h>
+#include "discard_pop_up_controller.h"
+#include "double_pair_store.h"
 
 namespace Shared {
 
 class StoreController;
 
-class StoreParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class StoreParameterController : public Escher::SelectableListViewController {
 public:
   StoreParameterController(Escher::Responder * parentResponder, DoublePairStore * store, StoreController * storeController);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
@@ -21,35 +21,45 @@ public:
     assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
     m_series = series;
   }
-  Escher::View * view() override { return &m_selectableTableView; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
-  KDCoordinate rowHeight(int j) override { return Escher::Metric::ParameterCellHeight; }
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override {
-    assert(type == k_standardCellType);
-    return k_totalNumberOfCell;
-  }
-  int typeAtLocation(int i, int j) override { return k_standardCellType; }
+  int reusableCellCount(int type) override { return type == k_defaultCellType ? k_totalNumberOfCell - 1 : 1; }
+  int typeAtIndex(int index) override { return index == k_indexOfSortValues ? k_sortCellType : k_defaultCellType; }
+  KDCoordinate nonMemoizedRowHeight(int index) override;
 protected:
-  static constexpr int k_standardCellType = 0;
+  constexpr static int k_totalNumberOfCell = 3;
   DoublePairStore * m_store;
   int m_series;
-  Escher::SelectableTableView m_selectableTableView;
 private:
+
+  class DeleteColumnPopupController : public Escher::PopUpController {
+  public:
+    DeleteColumnPopupController(Escher::Invocation okInvocation);
+  };
+
+  void popFromStackView();
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
-  constexpr static int k_totalNumberOfCell = 3;
-  Escher::MessageTableCell m_cells[k_totalNumberOfCell];
+  void deleteColumn();
+  void sortColumn();
+
+  constexpr static int k_indexOfSortValues = 0;
+  constexpr static int k_indexOfFillFormula = k_indexOfSortValues + 1;
+  constexpr static int k_indexOfRemoveColumn = k_indexOfFillFormula + 1;
+  constexpr static int k_defaultCellType = 0;
+  constexpr static int k_sortCellType = 1;
+
+  DeleteColumnPopupController m_confirmPopUpController;
+  Escher::MessageTableCell m_cells[k_totalNumberOfCell-1];
+  Escher::MessageTableCellWithMessage m_sortCell;
   StoreController * m_storeController;
   bool m_xColumnSelected;
 };
 
 }
 
-#endif
+#endif /* SHARED_STORE_PARAM_CONTROLLER_H */

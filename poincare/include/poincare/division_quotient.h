@@ -20,6 +20,7 @@ public:
 
   // ExpressionNode
   Sign sign(Context * context) const override;
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
   Type type() const override { return Type::DivisionQuotient; }
 
   // Simplification
@@ -44,7 +45,11 @@ public:
   static DivisionQuotient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilderTwoChildren<DivisionQuotient>);
 
+  template <typename T>
+  static T TemplatedQuotient(T a, T b) { return b >= 0 ? std::floor(a/b) : -std::floor(a/(-b)); }
+
   // Expression
+  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(Context * context);
   static Expression Reduce(const Integer & a, const Integer & b);
 };

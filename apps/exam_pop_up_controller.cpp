@@ -2,6 +2,7 @@
 #include "apps_container.h"
 #include "exam_mode_configuration.h"
 #include <assert.h>
+#include <apps/i18n.h>
 
 using namespace Escher;
 
@@ -24,7 +25,8 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
         container->refreshPreferences();
         Container::activeApp()->dismissModalViewController();
         return true;
-      }, this)
+      }, this),
+    I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel
   ),
   m_targetExamMode(GlobalPreferences::ExamMode::Unknown),
   m_delegate(delegate)

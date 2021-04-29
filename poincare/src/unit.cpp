@@ -653,6 +653,11 @@ int UnitNode::SpeedRepresentative::setAdditionalExpressions(double value, Expres
 }
 
 // UnitNode
+Expression UnitNode::setSign(Sign s, ReductionContext reductionContext) {
+  assert(s == sign(reductionContext.context()));
+  return Unit(this);
+}
+
 Expression UnitNode::removeUnit(Expression * unit) {
   return Unit(this).removeUnit(unit);
 }

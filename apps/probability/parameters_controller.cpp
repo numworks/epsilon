@@ -15,6 +15,10 @@ ParametersController::ContentView::ContentView(SelectableTableView * selectableT
   m_secondParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
+  // Remove selectable table top margin to control margin between text and table
+  m_selectableTableView->setTopMargin(0);
+  // Fit m_selectableTableView scroll to content size
+  m_selectableTableView->decorator()->setVerticalMargins(0, Metric::CommonBottomMargin);
 }
 
 void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -55,8 +59,10 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
 void ParametersController::ContentView::layoutSubviews(bool force) {
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
+  // SelectableTableView must be given a width before computing height.
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), m_selectableTableView->bounds().height()), force);
   KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  tableHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight), force);
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   KDCoordinate defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-textHeight)/2;
   m_secondParameterDefinition.setFrame(KDRectZero, force);
@@ -105,6 +111,7 @@ void ParametersController::didBecomeFirstResponder() {
 }
 
 void ParametersController::viewWillAppear() {
+  resetMemoization();
   m_contentView.setNumberOfParameters(m_distribution->numberOfParameter());
   for (int i = 0; i < m_distribution->numberOfParameter(); i++) {
     m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_distribution->parameterDefinitionAtIndex(i));
@@ -139,11 +146,11 @@ int ParametersController::reusableParameterCellCount(int type) {
   return m_distribution->numberOfParameter();
 }
 
-float ParametersController::parameterAtIndex(int index) {
+double ParametersController::parameterAtIndex(int index) {
   return m_distribution->parameterValueAtIndex(index);
 }
 
-bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
+bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   if (!m_distribution->authorizedValueAtIndex(f, parameterIndex)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
@@ -155,6 +162,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
 
 bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
+    resetMemoization();
     m_selectableTableView.reloadData();
     return true;
   }

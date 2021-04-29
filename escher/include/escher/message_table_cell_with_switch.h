@@ -8,8 +8,8 @@ namespace Escher {
 
 class MessageTableCellWithSwitch : public MessageTableCell {
 public:
-  MessageTableCellWithSwitch(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
-  View * accessoryView() const override;
+  MessageTableCellWithSwitch(I18n::Message message = (I18n::Message)0) : MessageTableCell(message), m_accessoryView() {}
+  const View * accessoryView() const override { return &m_accessoryView; }
 private:
   SwitchView m_accessoryView;
 };

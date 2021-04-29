@@ -27,7 +27,7 @@ protected:
   virtual void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j);
   // Responder
   bool handleEventOnExpression(Ion::Events::Event event);
-  virtual void addEmptyModel();
+  virtual void addModel();
   virtual void didChangeModelsList() { resetMemoization(); }
   virtual void reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model);
   virtual void editExpression(Ion::Events::Event event);
@@ -63,6 +63,9 @@ private:
   // Memoization
   static constexpr int k_resetedMemoizedValue = -1;
   void resetMemoization();
+
+  bool addEmptyModel();
+
   // TableViewDataSource
   virtual KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) = 0;
   virtual int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) = 0;

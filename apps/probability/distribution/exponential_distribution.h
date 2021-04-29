@@ -8,7 +8,7 @@ namespace Probability {
 
 class ExponentialDistribution final : public OneParameterDistribution {
 public:
-  ExponentialDistribution() : OneParameterDistribution(1.0f) {}
+  ExponentialDistribution() : OneParameterDistribution(1.0) {}
   I18n::Message title() override { return I18n::Message::ExponentialDistribution; }
   Type type() const override { return Type::Exponential; }
   bool isContinuous() const override { return true; }
@@ -24,7 +24,7 @@ public:
     return I18n::Message::LambdaExponentialDefinition;
   }
   float evaluateAtAbscissa(float x) const override;
-  bool authorizedValueAtIndex(float x, int index) const override;
+  bool authorizedValueAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 };

@@ -56,7 +56,7 @@ public:
   void didBecomeFirstResponder() override;
 
   // Table cell
-  View * labelView() const override { return (View *)&m_view; }
+  const View * labelView() const override { return &m_view; }
 
   void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
   void resetMemoization() { m_view.resetMemoization(); }
@@ -70,8 +70,6 @@ public:
     return m_view.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
   }
 private:
-  // Remove label margin added by TableCell because they're already handled by ScrollableThreeExpressionsView
-  KDCoordinate labelMargin() const override { return 0; }
   ScrollableThreeExpressionsView m_view;
 };
 

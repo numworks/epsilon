@@ -167,6 +167,59 @@ bool addressInUserlandRAM(void * address) {
   return a >= Config::UserlandSRAMAddress && a < Config::UserlandSRAMAddress + Config::UserlandSRAMLength;
 }
 
+void lockUnlockedPCBVersion() {
+  if (pcbVersionIsLocked()) {
+    return;
+  }
+  /* PCB version is unlocked : the device is a N0110 that has been
+   * produced prior to the pcb revision 3.43. */
+  PCBVersion version = pcbVersion();
+  if (version != 0) {
+    /* Some garbage has been written in OTP0. We overwrite it fully, which is
+     * interepreted as blank. */
+    writePCBVersion(k_alternateBlankVersion);
+  }
+  lockPCBVersion();
+}
+
+constexpr int k_pcbVersionOTPIndex = 0;
+
+/* As we want the PCB versions to be in ascending order chronologically, and
+ * because the OTP are initialized with 1s, we store the bitwise-not of the
+ * version number. This way, devices with blank OTP are considered version 0. */
+
+PCBVersion pcbVersion() {
+#if IN_FACTORY
+  /* When flashing for the first time, we want all systems that depend on the
+   * PCB version to function correctly before flashing the PCB version. This
+   * way, flashing the PCB version can be done last. */
+  return PCB_LATEST;
+#else
+  PCBVersion version = readPCBVersionInMemory();
+  return (version == k_alternateBlankVersion ? 0 : version);
+#endif
+}
+
+PCBVersion readPCBVersionInMemory() {
+  return ~(*reinterpret_cast<const PCBVersion *>(InternalFlash::Config::OTPAddress(k_pcbVersionOTPIndex)));
+}
+
+void writePCBVersion(PCBVersion version) {
+  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPAddress(k_pcbVersionOTPIndex));
+  PCBVersion formattedVersion = ~version;
+  InternalFlash::WriteMemory(destination, reinterpret_cast<uint8_t *>(&formattedVersion), sizeof(formattedVersion));
+}
+
+void lockPCBVersion() {
+  uint8_t * destination = reinterpret_cast<uint8_t *>(InternalFlash::Config::OTPLockAddress(k_pcbVersionOTPIndex));
+  uint8_t zero = 0;
+  InternalFlash::WriteMemory(destination, &zero, sizeof(zero));
+}
+
+bool pcbVersionIsLocked() {
+  return *reinterpret_cast<const uint8_t *>(InternalFlash::Config::OTPLockAddress(k_pcbVersionOTPIndex)) == 0;
+}
+
 }
 }
 }

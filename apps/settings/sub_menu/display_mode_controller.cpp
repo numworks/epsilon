@@ -17,22 +17,15 @@ DisplayModeController::DisplayModeController(Responder * parentResponder, InputE
   m_editableCell(&m_selectableTableView, inputEventHandlerDelegate, this)
 {
   m_editableCell.messageTableCellWithEditableText()->setMessage(I18n::Message::SignificantFigures);
-  m_editableCell.messageTableCellWithEditableText()->setMessageFont(KDFont::LargeFont);
 }
 
-KDCoordinate DisplayModeController::rowHeight(int j) {
+KDCoordinate DisplayModeController::nonMemoizedRowHeight(int j) {
   if (j == numberOfRows()-1) {
-    return Metric::ParameterCellHeight+MessageTableCellWithEditableTextWithSeparator::k_margin;
+    // Do not call heightForCellAtIndex as it will reset edited text.
+    m_editableCell.setSize(KDSize(cellWidth(), m_editableCell.bounds().height()));
+    return m_editableCell.minimalSizeForOptimalDisplay().height();
   }
-  return Metric::ParameterCellHeight;
-}
-
-KDCoordinate DisplayModeController::cumulatedHeightFromIndex(int j) {
-  return TableViewDataSource::cumulatedHeightFromIndex(j);
-}
-
-int DisplayModeController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return TableViewDataSource::indexFromCumulatedHeight(offsetY);
+  return PreferencesController::nonMemoizedRowHeight(j);
 }
 
 HighlightCell * DisplayModeController::reusableCell(int index, int type) {
@@ -51,19 +44,15 @@ int DisplayModeController::reusableCellCount(int type) {
   return 1;
 }
 
-int DisplayModeController::typeAtLocation(int i, int j) {
-  return (j == numberOfRows() - 1 ? k_significantDigitsType : k_resultFormatType);
-}
-
 void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   /* Number of significants figure row */
   if (index == numberOfRows()-1) {
-    MessageTableCellWithEditableTextWithSeparator * myCell = (MessageTableCellWithEditableTextWithSeparator *)cell;
+    MessageTableCellWithEditableTextWithSeparator * myCell = static_cast<MessageTableCellWithEditableTextWithSeparator *>(cell);
     GenericSubController::willDisplayCellForIndex(myCell->messageTableCellWithEditableText(), index);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
     Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, bufferSize);
-    myCell->messageTableCellWithEditableText()->setAccessoryText(buffer);
+    myCell->messageTableCellWithEditableText()->setSubLabelText(buffer);
     return;
   }
   PreferencesController::willDisplayCellForIndex(cell, index);

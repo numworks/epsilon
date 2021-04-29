@@ -45,6 +45,9 @@ QUIZ_CASE(poincare_rational_specific_properties) {
   quiz_assert(Rational::Builder(9,3).isInteger());
   quiz_assert(Rational::Builder(-9,3).isInteger());
   quiz_assert(!Rational::Builder(9,10).isInteger());
+  Rational m1 = Rational::IntegerPower(Rational::Builder(2), Integer(1024));
+  quiz_assert(m1.numeratorOrDenominatorIsInfinity());
+  quiz_assert(!m1.integerDenominator().isZero());
 }
 
 static inline void assert_add_to(const Rational i, const Rational j, const Rational k) {

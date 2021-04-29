@@ -13,7 +13,7 @@ namespace Escher {
 /* SelectableTableView is a Table View that handles selection. To implement it,
  * it needs a class which should be both data source and view controller. This
  * takes the selectable table view as instance variable and makes it first
- * responder. The selectable table view bubles up events when they do not
+ * responder. The selectable table view bubbles up events when they do not
  * concern selection. */
 
 class SelectableTableView : public TableView, public Responder {
@@ -34,6 +34,7 @@ public:
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   bool selectCellAtClippedLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   HighlightCell * selectedCell();
+  KDCoordinate columnWidth(int i) { return (bounds().width() - rightMargin() - leftMargin()) / numberOfDisplayableColumns(); }
 protected:
   void unhighlightSelectedCell();
   SelectableTableViewDataSource * m_selectionDataSource;

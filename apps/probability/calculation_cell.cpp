@@ -69,7 +69,8 @@ View * CalculationCell::subviewAtIndex(int index) {
 
 void CalculationCell::layoutSubviews(bool force) {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-  m_text.setFrame(KDRect(k_margin, 0, textSize.width(), bounds().height()), force);
+  // A 1px offset is needed to vertically center text on calculation
+  m_text.setFrame(KDRect(k_margin, 0, textSize.width(), bounds().height() - k_textBottomOffset), force);
   m_calculation.setFrame(KDRect(2*k_margin+textSize.width()+ResponderImageCell::k_outline, ResponderImageCell::k_outline, calculationCellWidth(), ImageCell::k_height), force);
 }
 

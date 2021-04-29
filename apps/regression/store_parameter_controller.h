@@ -14,18 +14,18 @@ class StoreParameterController : public Shared::StoreParameterController {
 public:
   StoreParameterController(Escher::Responder * parentResponder, Store * store, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
-  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  // ListViewDataSource
+  // MemoizedListViewDataSource
   int numberOfRows() const override { return Shared::StoreParameterController::numberOfRows() + 1; }
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
+  constexpr static int k_indexOfRegressionCell = Shared::StoreParameterController::k_totalNumberOfCell;
   I18n::Message sortMessage() override { return I18n::Message::SortValues; }
-  static constexpr int k_regressionCellType = 1;
+  static constexpr int k_regressionCellType = 2;
   Escher::MessageTableCellWithChevronAndExpression m_changeRegressionCell;
   bool m_lastSelectionIsRegression;
 };

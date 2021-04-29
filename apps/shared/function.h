@@ -18,6 +18,7 @@ public:
     None = 0,
     CharacterNotAllowed,
     NameCannotStartWithNumber,
+    NameCannotStartWithUnderscore,
     ReservedName
   };
   static NameNotCompliantError BaseNameCompliant(const char * baseName);

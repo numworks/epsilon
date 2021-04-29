@@ -9,6 +9,7 @@ escher_src += $(addprefix escher/src/,\
   button.cpp \
   button_state.cpp \
   button_row_controller.cpp \
+  buffer_table_cell.cpp \
   chevron_view.cpp \
   clipboard.cpp \
   container.cpp \
@@ -22,8 +23,8 @@ escher_src += $(addprefix escher/src/,\
   even_odd_expression_cell.cpp \
   even_odd_message_text_cell.cpp \
   expression_table_cell.cpp \
-  expression_table_cell_with_pointer.cpp \
   expression_table_cell_with_expression.cpp \
+  expression_table_cell_with_message.cpp \
   expression_view.cpp \
   highlight_cell.cpp \
   gauge_view.cpp \
@@ -33,7 +34,7 @@ escher_src += $(addprefix escher/src/,\
   input_view_controller.cpp \
   key_view.cpp \
   layout_field.cpp \
-  list_view_data_source.cpp \
+  memoized_list_view_data_source.cpp \
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
   message_table_cell_with_chevron.cpp \
@@ -44,7 +45,6 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_expression.cpp \
   message_table_cell_with_gauge.cpp \
   message_table_cell_with_message.cpp \
-  message_table_cell_with_switch.cpp \
   message_text_view.cpp \
   metric.cpp \
   modal_view_controller.cpp \
@@ -61,7 +61,6 @@ escher_src += $(addprefix escher/src/,\
   scrollable_expression_view.cpp \
   scrollable_view.cpp \
   selectable_table_view.cpp \
-  simple_list_view_data_source.cpp \
   simple_table_view_data_source.cpp \
   solid_color_view.cpp \
   stack_view.cpp \
@@ -86,6 +85,7 @@ escher_src += $(addprefix escher/src/,\
   toggleable_view.cpp \
   toolbox.cpp \
   transparent_view.cpp \
+  unequal_view.cpp \
   view.cpp \
   view_controller.cpp \
   warning_controller.cpp \

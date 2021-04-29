@@ -23,7 +23,7 @@ public:
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
   bool isEmpty() const override;
-  bool seriesIsEmpty(int i) const override;
+  bool seriesIsEmpty(int series) const override;
   bool frequenciesAreInteger(int series) const;
   int numberOfNonEmptySeries() const override;
 

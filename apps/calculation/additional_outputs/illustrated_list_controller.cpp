@@ -57,7 +57,7 @@ int IllustratedListController::numberOfRows() const {
 
 int IllustratedListController::reusableCellCount(int type) {
   assert(type < 2);
-  if (type == 0) {
+  if (type == k_illustrationCellType) {
     return 1;
   }
   return k_maxNumberOfAdditionalCalculations;
@@ -66,35 +66,30 @@ int IllustratedListController::reusableCellCount(int type) {
 HighlightCell * IllustratedListController::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);
-  if (type == 0) {
+  if (type == k_illustrationCellType) {
     return illustrationCell();
   }
   return &m_additionalCalculationCells[index];
 }
 
-KDCoordinate IllustratedListController::rowHeight(int j) {
-  if (j == 0) {
+KDCoordinate IllustratedListController::nonMemoizedRowHeight(int j) {
+  if (typeAtIndex(j) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
   int calculationIndex = j-1;
   if (calculationIndex >= m_calculationStore.numberOfCalculations()) {
     return 0;
   }
-  Shared::ExpiringPointer<Calculation> calculation = m_calculationStore.calculationAtIndex(calculationIndex);
-  constexpr bool expanded = true;
-  return calculation->height(expanded) + Metric::CellSeparatorThickness;
-}
-
-int IllustratedListController::typeAtLocation(int i, int j) {
-  return j == 0 ? 0 : 1;
+  ScrollableThreeExpressionsCell tempCell;
+  return heightForCellAtIndex(&tempCell, j, true);
 }
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == 0) {
+  if (typeAtIndex(index) == k_illustrationCellType) {
     return;
   }
   Poincare::Context * context = App::app()->localContext();
-  ScrollableThreeExpressionsCell * myCell = (ScrollableThreeExpressionsCell *)cell;
+  ScrollableThreeExpressionsCell * myCell = static_cast<ScrollableThreeExpressionsCell *>(cell);
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
   myCell->setCalculation(c);
   myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);

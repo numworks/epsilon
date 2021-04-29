@@ -2,9 +2,10 @@
 #define CODE_SCRIPT_NODE_CELL_H
 
 #include "script_node.h"
-#include "script_store.h"
+#include <escher/metric.h>
 #include <escher/table_cell.h>
-#include <kandinsky/coordinate.h>
+#include <escher/buffer_text_view.h>
+#include <ion/display.h>
 
 namespace Code {
 
@@ -13,45 +14,26 @@ public:
   static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
   constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
-  constexpr static KDCoordinate k_simpleItemHeight = 27;
-  constexpr static KDCoordinate k_complexItemHeight = 42;
-
+  // Labels can be formed from user variables, a char limit is enforced.
+  constexpr static int k_maxNumberOfCharsInLabel = (Ion::Display::Width - Escher::Metric::PopUpLeftMargin - 2 * Escher::Metric::CellSeparatorThickness - Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin - Escher::Metric::PopUpRightMargin) / 10; // With 10 = KDFont::LargeFont->glyphSize().width()
+  static_assert(k_maxNumberOfCharsInLabel < Escher::BufferTextView::k_maxNumberOfChar, "k_maxNumberOfCharsInLabel is too high");
   ScriptNodeCell() :
     TableCell(),
-    m_scriptNodeView()
+    m_labelView(KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
+    m_subLabelView(KDFont::SmallFont, 0.0f, 0.5f, Escher::Palette::GrayDark)
   {}
   void setScriptNode(ScriptNode * node);
-  static bool CanDisplayNameAndSource(int nameLength, const char * source);
 
   /* TableCell */
-  Escher::View * labelView() const override { return const_cast<View *>(static_cast<const View *>(&m_scriptNodeView)); }
+  const Escher::View * labelView() const override { return &m_labelView; }
+  const Escher::View * subLabelView() const override;
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
-  const char * text() const override { return m_scriptNodeView.text(); }
-
-protected:
-  class ScriptNodeView : public Escher::HighlightCell {
-  public:
-    constexpr static const KDFont * k_font = KDFont::SmallFont;
-    constexpr static KDCoordinate k_optimalWidth = Ion::Display::Width - Escher::Metric::PopUpLeftMargin - Escher::Metric::PopUpRightMargin;
-    ScriptNodeView() :
-      Escher::HighlightCell(),
-      m_scriptNode(nullptr)
-    {}
-    void setScriptNode(ScriptNode * node) { m_scriptNode = node; }
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    virtual KDSize minimalSizeForOptimalDisplay() const override;
-    const char * text() const override {
-      return m_scriptNode->description();
-    }
-  private:
-    constexpr static KDCoordinate k_bottomMargin = 5;
-    constexpr static KDCoordinate k_topMargin = k_bottomMargin + k_separatorThickness;
-    ScriptNode * m_scriptNode;
-  };
-  ScriptNodeView m_scriptNodeView;
+private:
+  Escher::BufferTextView m_labelView;
+  Escher::BufferTextView m_subLabelView;
 };
 
 }

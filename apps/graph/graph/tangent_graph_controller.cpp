@@ -25,12 +25,11 @@ const char * TangentGraphController::title() {
 
 void TangentGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->drawTangent(true);
-  m_graphView->setOkView(nullptr);
   m_graphView->selectMainView(true);
   m_bannerView->setNumberOfSubviews(BannerView::k_numberOfSubviews);
   reloadBannerView();
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->reload();
 }
 
@@ -69,11 +68,11 @@ void TangentGraphController::reloadBannerView() {
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters + PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   Poincare::Context * context = textFieldDelegateApp()->localContext();
 
-  constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
+  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);

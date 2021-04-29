@@ -202,7 +202,7 @@ int HistoryController::reusableCellCount(int type) {
 }
 
 void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  HistoryViewCell * myCell = (HistoryViewCell *)cell;
+  HistoryViewCell * myCell = static_cast<HistoryViewCell *>(cell);
   myCell->setCalculation(calculationAtIndex(index).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
   myCell->reloadSubviewHighlight();
@@ -215,10 +215,6 @@ KDCoordinate HistoryController::rowHeight(int j) {
   Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
   bool expanded = j == selectedRow() && selectedSubviewType() == SubviewType::Output;
   return calculation->height(expanded);
-}
-
-int HistoryController::typeAtLocation(int i, int j) {
-  return 0;
 }
 
 bool HistoryController::calculationAtIndexToggles(int index) {

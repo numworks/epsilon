@@ -7,26 +7,34 @@ namespace Escher {
 
 class Metric {
 public:
-  constexpr static KDCoordinate CellMargin = 2;
-  constexpr static KDCoordinate CommonLeftMargin = 20;
-  constexpr static KDCoordinate CommonRightMargin = 20;
-  constexpr static KDCoordinate CommonTopMargin = 15;
-  constexpr static KDCoordinate CommonBottomMargin = 15;
+  constexpr static KDCoordinate SmallCellMargin = 2;
+  constexpr static KDCoordinate BigCellMargin = 8;
+  constexpr static KDCoordinate CellTopMargin = BigCellMargin;
+  constexpr static KDCoordinate CellRightMargin = BigCellMargin;
+  constexpr static KDCoordinate CellLeftMargin = BigCellMargin;
+  constexpr static KDCoordinate CellBottomMargin = BigCellMargin;
+  constexpr static KDCoordinate CellHorizontalElementMargin = BigCellMargin;
+  constexpr static KDCoordinate CellVerticalElementMargin = 4;
+  constexpr static KDCoordinate ScrollStep = 10;
+  constexpr static KDCoordinate ScrollViewBarThickness = 2;
+  constexpr static KDCoordinate BannerTextMargin = 2;
+  constexpr static KDCoordinate CommonMargin = 14;
+  constexpr static KDCoordinate CommonLeftMargin = CommonMargin;
+  constexpr static KDCoordinate CommonRightMargin = CommonMargin;
+  constexpr static KDCoordinate CommonTopMargin = CommonMargin;
+  constexpr static KDCoordinate CommonBottomMargin = CommonMargin;
   constexpr static KDCoordinate CommonLargeMargin = 10;
   constexpr static KDCoordinate CommonSmallMargin = 5;
+  constexpr static KDCoordinate CommonMenuMargin = (CommonMargin - ScrollViewBarThickness)/2;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
   constexpr static KDCoordinate TitleBarHeight = 18;
-  constexpr static KDCoordinate ParameterCellHeight = 35;
-  constexpr static KDCoordinate TableCellVerticalMargin = 3;
-  constexpr static KDCoordinate TableCellHorizontalMargin = 10;
   constexpr static KDCoordinate TabHeight = 27;
-  constexpr static KDCoordinate ScrollStep = 10;
-  constexpr static KDCoordinate PopUpLeftMargin = 27;
-  constexpr static KDCoordinate PopUpRightMargin = 27;
-  constexpr static KDCoordinate PopUpTopMargin = 27;
+  constexpr static KDCoordinate PopUpMargin = 27;
+  constexpr static KDCoordinate PopUpLeftMargin = PopUpMargin;
+  constexpr static KDCoordinate PopUpRightMargin = PopUpMargin;
+  constexpr static KDCoordinate PopUpTopMargin = PopUpMargin;
   constexpr static KDCoordinate PopUpBottomMargin = 55;
   constexpr static KDCoordinate StoreRowHeight = 50;
-  constexpr static KDCoordinate ToolboxRowHeight = 40;
   constexpr static KDCoordinate StackTitleHeight = 20;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;

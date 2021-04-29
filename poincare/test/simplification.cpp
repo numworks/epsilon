@@ -59,7 +59,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   assert_parsed_expression_simplify_to("12348/34564", "3087/8641");
   assert_parsed_expression_simplify_to("1-0.3-0.7", "0");
   assert_parsed_expression_simplify_to("123456789123456789+112233445566778899", "235690234690235688");
-  assert_parsed_expression_simplify_to("56^56", "79164324866862966607842406018063254671922245312646690223362402918484170424104310169552592050323456");
+  assert_parsed_expression_simplify_to("56^56", "56^56");
   assert_parsed_expression_simplify_to("999^999", "999^999");
   assert_parsed_expression_simplify_to("999^-999", "1/999^999");
   assert_parsed_expression_simplify_to("0^0", Undefined::Name());
@@ -96,7 +96,7 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("(-inf)^√(2)", "inf×(-1)^√(2)");
   assert_parsed_expression_simplify_to("inf^x", "inf^x");
   assert_parsed_expression_simplify_to("1/inf+24", "24");
-  assert_parsed_expression_simplify_to("ℯ^(inf)/inf", "0×ℯ^inf");
+  assert_parsed_expression_simplify_to("ℯ^(inf)/inf", "0×ℯ^\u0012inf\u0013");
 
   // Logarithm
   assert_parsed_expression_simplify_to("log(inf,0)", "undef");
@@ -141,7 +141,7 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("1/x^2+1/(x^2×π)", "\u0012π+1\u0013/\u0012π×x^2\u0013");
   assert_parsed_expression_simplify_to("1/x^2+1/(x^3×π)", "\u0012π×x+1\u0013/\u0012π×x^3\u0013");
   assert_parsed_expression_simplify_to("4x/x^2+3π/(x^3×π)", "\u00124×x^2+3\u0013/x^3");
-  assert_parsed_expression_simplify_to("3^(1/2)+2^(-2×3^(1/2)×ℯ^π)/2", "\u00122×2^\u00122×√(3)×ℯ^π\u0013×√(3)+1\u0013/\u00122×2^\u00122×√(3)×ℯ^π\u0013\u0013");
+  assert_parsed_expression_simplify_to("3^(1/2)+2^(-2×3^(1/2)×ℯ^π)/2", "\u00122×2^\u00122×√(3)×ℯ^\u0012π\u0013\u0013×√(3)+1\u0013/\u00122×2^\u00122×√(3)×ℯ^\u0012π\u0013\u0013\u0013");
   assert_parsed_expression_simplify_to("[[1,2+𝐢][3,4][5,6]]+[[1,2+𝐢][3,4][5,6]]", "[[2,4+2×𝐢][6,8][10,12]]");
   assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", "undef");
   assert_parsed_expression_simplify_to("[[1][3][5]]+[[1,2+𝐢][3,4][5,6]]", "undef");
@@ -573,7 +573,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("3^(-4)", "1/81");
   assert_parsed_expression_simplify_to("(-3)^3", "-27");
   assert_parsed_expression_simplify_to("1256^(1/3)×x", "2×root(157,3)×x");
-  assert_parsed_expression_simplify_to("1256^(-1/3)", "1/\u00122×root(157,3)\u0013");
+  assert_parsed_expression_simplify_to("1256^(-1/3)", "root(24649,3)/314");
   assert_parsed_expression_simplify_to("32^(-1/5)", "1/2");
   assert_parsed_expression_simplify_to("(2+3-4)^(x)", "1");
   assert_parsed_expression_simplify_to("1^x", "1");
@@ -615,6 +615,11 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("ℯ^log(πℯ)", "ℯ^\u0012log(ℯ)+log(π)\u0013");
   assert_parsed_expression_simplify_to("√(ℯ^2)", "ℯ");
   assert_parsed_expression_simplify_to("999^(10000/3)", "999^\u001210000/3\u0013");
+  assert_parsed_expression_simplify_to("root(4,4)", "√(2)");
+  assert_parsed_expression_simplify_to("root(2^6*3^24*5^9*7^3,12)", "9×root(3500,4)");
+  assert_parsed_expression_simplify_to("1/√(2)", "√(2)/2");
+  assert_parsed_expression_simplify_to("root(8/9,3)", "\u00122×root(3,3)\u0013/3");
+  assert_parsed_expression_simplify_to("√(2)×root(8,4)", "2×root(2,4)");
   /* This does not reduce but should not as the integer is above
    * k_maxNumberOfPrimeFactors and thus it prime decomposition might overflow
    * 32 factors. */
@@ -637,11 +642,19 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Metric, Real);
   // Principal angle of root of unity
-  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "1/\u00122×root(5,3)\u0013-√(3)/\u00122×root(5,3)\u0013×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "root(25,3)/10+root(16875,6)/10×𝐢", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "\u0012√(√(6)+8)+√(6)+9\u0013/√(√(6)+8)", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)", "[[-59/4,27/4][81/8,-37/8]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");
   assert_parsed_expression_simplify_to("(3_m^2)^3", "27×_m^6");
+  assert_parsed_expression_simplify_to("(𝐢×floor(-abs(x)))^(2/3)", "(𝐢×floor(-abs(x)))^\u00122/3\u0013");
+  // Denesting of square roots
+  assert_parsed_expression_simplify_to("√(2+√(3))", "\u0012√(6)+√(2)\u0013/2");
+  assert_parsed_expression_simplify_to("√(3-√(7))", "√(-√(7)+3)");
+  assert_parsed_expression_simplify_to("√(-2+√(3))", "\u0012√(6)-√(2)\u0013/2×𝐢", User, Radian, Metric, Cartesian);
+  assert_parsed_expression_simplify_to("√(17+4×√(13))", "√(13)+2");
+  assert_parsed_expression_simplify_to("√(√(1058)-√(896))", "-root(98,4)+4×root(2,4)");
+  assert_parsed_expression_simplify_to("√(57×√(17)+68×√(10))", "root(4913,4)+2×root(1700,4)");
 }
 
 QUIZ_CASE(poincare_simplification_factorial) {
@@ -726,6 +739,8 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("binomial(10,20)", "0");
+  assert_parsed_expression_simplify_to("binomial(10.34,0)", "1");
+  assert_parsed_expression_simplify_to("binomial(3.34,-1)", "0");
   assert_parsed_expression_simplify_to("binomial(-10,10)", "92378");
   assert_parsed_expression_simplify_to("binomial(2.5,3)", "binomial(5/2,3)");
   assert_parsed_expression_simplify_to("binomial(-200,120)", "binomial(-200,120)");
@@ -1503,8 +1518,8 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("x^2", "x^2", SystemForApproximation);
   assert_parsed_expression_simplify_to("x^2", "x^2", User);
 
-  // Remove square root at denominator for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "1/\u0012√(3)+√(2)\u0013", SystemForApproximation);
+  // Remove square root at denominator for any ReductionTarget
+  assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)", SystemForApproximation);
   assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)", User);
 
   // Always reduce sign for ReductionTarget = User

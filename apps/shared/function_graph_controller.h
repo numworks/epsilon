@@ -19,10 +19,24 @@ public:
   void interestingRanges(Shared::InteractiveCurveViewRange * range) override;
 
 protected:
+  class FunctionSelectionController : public CurveSelectionController {
+  public:
+    FunctionSelectionController(FunctionGraphController * graphController) : CurveSelectionController(graphController) {}
+    const char * title() override { return I18n::translate(I18n::Message::GraphCalculus); }
+    int numberOfRows() const override { return graphController()->functionStore()->numberOfActiveFunctions(); }
+    KDCoordinate rowHeight(int j) override;
+    void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  protected:
+    FunctionGraphController * graphController() const { return static_cast<FunctionGraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
+    virtual Poincare::Layout nameLayoutAtIndex(int j) const = 0;
+  };
+
   float cursorTopMarginRatio() override { return 0.068f; }
+  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
-  bool handleEnter() override;
+  bool openMenuForCurveAtIndex(int index) override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
+  Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorT(Ion::Storage::Record record);
   virtual FunctionStore * functionStore() const;
@@ -32,7 +46,7 @@ protected:
     return closestCurveIndexVertically(goingUp, currentSelectedCurve, context);
   }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
-  int selectedCurveIndex() const override { return *m_indexFunctionSelectedByCursor; }
+  int selectedCurveRelativePosition() const override { return *m_indexFunctionSelectedByCursor; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;
   int numberOfCurves() const override;
   void initCursorParameters() override;
@@ -49,6 +63,7 @@ private:
   bool moveCursorVertically(int direction) override;
   uint32_t rangeVersion() override;
 
+  Escher::Button m_calculusButton;
   int * m_indexFunctionSelectedByCursor;
 };
 

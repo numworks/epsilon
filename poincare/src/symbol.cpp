@@ -134,14 +134,17 @@ bool Symbol::isRegressionSymbol(const char * c, Poincare::Context * context) {
 }
 
 Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-    || reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol)
+  ExpressionNode::SymbolicComputation symbolicComputation = reductionContext.symbolicComputation();
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
+    || symbolicComputation == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol)
   {
     return *this;
   }
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
+  assert(symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined
+    || symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   {
     Expression current = *this;
     Expression p = parent();
@@ -149,7 +152,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
       if (p.isParameteredExpression()) {
         int index = p.indexOfChild(current);
         if (index == ParameteredExpression::ParameterChildIndex()) {
-          // The symbol is a paremetered expression's parameter
+          // The symbol is a parametered expression's parameter
           return *this;
         }
         if (index == ParameteredExpression::ParameteredChildIndex()
@@ -163,16 +166,37 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
     }
   }
 
+  /* Recursively replace all defined symbols and catch circular references
+   * involving symbols as well as functions. The only remaining symbols in
+   * result will be undefined ones. */
   Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
   if (result.isUninitialized()) {
-    if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
-    result = Undefined::Builder();
+    return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
+
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    /* At this point, any remaining symbol was nested and is globally undefined.
+     * It may also be a locally defined parametered expression's parameter.
+     * Regardless of that, we should replace all nested symbols with their
+     * global value, which is undef.
+     * ReductionContext's SymbolicComputation is altered to enforce this.
+     * For example, with x undefined, 1->y and x+y->a, within diff(a,x,1) :
+     *  - a is replaced with result(=x+1), computed in SymbolAbstract::Expand.
+     *  - x is defined locally (parameter of diff) but undefined globally.
+     *  - Therefore, result(=x+1) is deep-reduced to undef+1, then undef.
+     * In the end, a has been reduced to undef and diff(a,x,1) will be as well.
+     */
+    reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  }
   // The stored expression is as entered by the user, so we need to call reduce
-  return result.deepReduce(reductionContext);
+  result = result.deepReduce(reductionContext);
+  // Restore symbolic computation
+  reductionContext.setSymbolicComputation(symbolicComputation);
+  return result;
 }
 
 bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {

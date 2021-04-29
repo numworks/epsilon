@@ -14,13 +14,9 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 {
 }
 
-void StoreParameterController::viewWillAppear() {
-  m_selectableTableView.reloadData();
-  Shared::StoreParameterController::viewWillAppear();
-}
-
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && selectedRow() == numberOfRows() - 1) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right)
+        && selectedRow() == k_indexOfRegressionCell) {
     RegressionController * regressionController = App::app()->regressionController();
     regressionController->setSeries(m_series);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
@@ -33,7 +29,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 
 void StoreParameterController::didBecomeFirstResponder() {
   if (m_lastSelectionIsRegression) {
-    selectCellAtLocation(0, 2);
+    selectCellAtLocation(0, k_indexOfRegressionCell);
   } else {
     selectCellAtLocation(0, 0);
   }
@@ -41,23 +37,19 @@ void StoreParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
+KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
+  if (typeAtIndex(index) == k_regressionCellType) {
+    return heightForCellAtIndex(&m_changeRegressionCell, index, true);
+  }
+  return Shared::StoreParameterController::nonMemoizedRowHeight(index);
+}
+
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
-  assert(index < reusableCellCount(type));
   if (type == k_regressionCellType) {
-    assert(index == 0);
     return &m_changeRegressionCell;
   }
   return Shared::StoreParameterController::reusableCell(index, type);
-}
-KDCoordinate StoreParameterController::rowHeight(int j) {
-  if (j == numberOfRows() - 1) {
-    if (static_cast<Store *>(m_store)->seriesRegressionType(m_series) == Model::Type::Logistic) {
-      return RegressionController::k_logisticCellHeight;
-    }
-    return Metric::ParameterCellHeight;
-  }
-  return Shared::StoreParameterController::rowHeight(j);
 }
 
 int StoreParameterController::reusableCellCount(int type) {
@@ -67,19 +59,20 @@ int StoreParameterController::reusableCellCount(int type) {
   return Shared::StoreParameterController::reusableCellCount(type);
 }
 
-int StoreParameterController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  if (j == numberOfRows() -1) {
+int StoreParameterController::typeAtIndex(int index) {
+  if (index == k_indexOfRegressionCell) {
     return k_regressionCellType;
   }
-  return Shared::StoreParameterController::typeAtLocation(i, j);
+  return Shared::StoreParameterController::typeAtIndex(index);
 }
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows() -1) {
+  if (index == k_indexOfRegressionCell) {
+    assert(cell == &m_changeRegressionCell);
     m_changeRegressionCell.setLayout(static_cast<Store *>(m_store)->modelForSeries(m_series)->layout());
     return;
   }
+  assert(cell != &m_changeRegressionCell);
   Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
 }
 

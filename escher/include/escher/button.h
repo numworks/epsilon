@@ -25,7 +25,8 @@ protected:
   MessageTextView m_messageTextView;
   void layoutSubviews(bool force = false) override;
 private:
-  constexpr static KDCoordinate k_verticalMargin = 5;
+  constexpr static KDCoordinate k_verticalMarginSmall = 5;
+  constexpr static KDCoordinate k_verticalMarginLarge = 17;
   constexpr static KDCoordinate k_horizontalMarginSmall = 10;
   constexpr static KDCoordinate k_horizontalMarginLarge = 20;
   int numberOfSubviews() const override;

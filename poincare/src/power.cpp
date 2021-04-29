@@ -6,6 +6,7 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/infinity.h>
@@ -202,6 +203,9 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 // Serialize
 
 bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
+  if (childAtIndex(0)->type() == Type::Constant && static_cast<const ConstantNode *>(childAtIndex(0))->isExponential() && indexOfChild(child) == 1) {
+    return static_cast<const ExpressionNode *>(child)->type() != Type::Parenthesis;
+  }
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
@@ -492,6 +496,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * - we save computational time by early escaping for these cases. */
   if (indexType == ExpressionNode::Type::Rational) {
     const Rational rationalIndex = static_cast<Rational &>(index);
+    // Rationals containing overflows should have been handled earlier.
+    assert(!rationalIndex.numeratorOrDenominatorIsInfinity());
     // x^0
     if (rationalIndex.isZero()) {
       // 0^0 = undef or (±inf)^0 = undef
@@ -521,6 +527,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
   if (baseType == ExpressionNode::Type::Rational) {
     Rational rationalBase = static_cast<Rational &>(base);
+    // Rationals containing overflows should have been handled earlier.
+    assert(!rationalBase.numeratorOrDenominatorIsInfinity());
     // 0^x
     if (rationalBase.isZero()) {
       // 0^x with x > 0 = 0
@@ -605,11 +613,9 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   /* Step 6: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */
-  if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-    Expression r = removeSquareRootsFromDenominator(reductionContext);
-    if (!r.isUninitialized()) {
-      return r;
-    }
+  Expression r = removeRootsFromDenominator(reductionContext);
+  if (!r.isUninitialized()) {
+    return r;
   }
 
 #if 0
@@ -976,6 +982,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 #endif
+
+  /* Step 16: Try to reduce nested roots of the form √(a√b + c√d) */
+  if (indexType == ExpressionNode::Type::Rational && index.convert<Rational>().isHalf()) {
+    return SquareRoot::ReduceNestedRadicals(*this, reductionContext);
+  }
+
   return *this;
 }
 
@@ -1033,22 +1045,16 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expressi
 
   derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 0, 0);
   derivedFromExponent.addChildAtIndexInPlace(clone(), 1, 1);
-  derivedFromExponent.addChildAtIndexInPlace(Derivative::Builder(
-    exponent.clone(),
-    symbol.clone().convert<Symbol>(),
-    symbolValue.clone()
-    ), 2, 2);
+  derivedFromExponent.addChildAtIndexInPlace(exponent.clone(), 2, 2);
+  derivedFromExponent.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
 
   derivedFromBase.addChildAtIndexInPlace(exponent.clone() , 0, 0);
   derivedFromBase.addChildAtIndexInPlace(Power::Builder(
     base.clone(),
     Subtraction::Builder(exponent.clone(), Rational::Builder(1))
     ), 1, 1);
-  derivedFromBase.addChildAtIndexInPlace(Derivative::Builder(
-    base.clone(),
-    symbol.clone().convert<Symbol>(),
-    symbolValue.clone()
-    ), 2, 2);
+  derivedFromBase.addChildAtIndexInPlace(base.clone(), 2, 2);
+  derivedFromBase.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
 
   Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
   replaceWithInPlace(result);
@@ -1132,51 +1138,81 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   if (i.isOne()) {
     return Rational::Builder(1);
   }
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  if (numberOfPrimeFactors < 0) {
-    /* We could not break i in prime factors (it might take either too many
-     * factors or too much time). */
-    Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, reductionContext);
-    return Power::Builder(Rational::Builder(i), rClone);
-  }
+  /* This methods reduces i^r to the form i1*i2^(r*g), where i1 and i2 are
+   * rational, and g is an integer that divides the denominator of r. */
+  Integer exponentNumerator = r.signedIntegerNumerator();
+  Integer exponentDenominator = r.integerDenominator();
+  Integer i1(1);
+  Integer i2(1);
+  Integer g(exponentDenominator);
+  bool shouldRaiseParentException = false;
+  {
+    // See comment in Arithmetic::resetPrimeFactorization()
+    ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      // Performing PrimeFactorization in this scope to free resources earlier.
+      Arithmetic arithmetic;
+      int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
+      if (numberOfPrimeFactors < 0) {
+        /* We could not break i in prime factors (it might take either too many
+         * factors or too much time). */
+        Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, reductionContext);
+        return Power::Builder(Rational::Builder(i), rClone);
+      }
 
-  Integer r1(1);
-  Integer r2(1);
-  for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Integer n = Integer::Multiplication(coefficients[index], r.signedIntegerNumerator());
-    IntegerDivision div = Integer::Division(n, r.integerDenominator());
-    r1 = Integer::Multiplication(r1, Integer::Power(factors[index], div.quotient));
-    r2 = Integer::Multiplication(r2, Integer::Power(factors[index], div.remainder));
+      /* As g is defined as the gcd of r denominator and the coefficients in i
+       * prime factor decomposition, we need to loop over said coefficients
+       * twice. */
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), exponentNumerator);
+        IntegerDivision div = Integer::Division(n, exponentDenominator);
+        g = Arithmetic::GCD(g, div.remainder);
+      }
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        Integer n = Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(index), exponentNumerator);
+        IntegerDivision div = Integer::Division(n, exponentDenominator);
+        IntegerDivision div2 = Integer::Division(div.remainder, g);
+        assert(div2.remainder.isZero());
+        i1 = Integer::Multiplication(i1, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div.quotient));
+        i2 = Integer::Multiplication(i2, Integer::Power(*arithmetic.factorizationFactorAtIndex(index), div2.quotient));
+      }
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
+      shouldRaiseParentException = true;
+    }
   }
-  if (r2.isOverflow() || r1.isOverflow()) {
+  if (shouldRaiseParentException) {
+    // As tempEcp has been destroyed, fall back on parent exception checkpoint
+    ExceptionCheckpoint::Raise();
+  }
+  if (i2.isOverflow() || i1.isOverflow()) {
     // we overflow Integer at one point: we abort
     return Power::Builder(Rational::Builder(i), r.clone());
   }
-  Rational p1 = Rational::Builder(r2);
+  Rational p1 = Rational::Builder(i2);
   Integer oneExponent = isDenominator ? Integer(-1) : Integer(1);
-  Integer rDenominator = r.integerDenominator();
+  Integer rDenominator = Integer::Division(exponentDenominator, g).quotient;
   Rational p2 = Rational::Builder(oneExponent, rDenominator);
   Power p = Power::Builder(p1, p2);
-  if (r1.isEqualTo(Integer(1)) && !i.isNegative()) {
+  if (i1.isEqualTo(Integer(1)) && !i.isNegative()) {
     return std::move(p);
   }
   Integer one(1);
-  Rational r3 = isDenominator ? Rational::Builder(one, r1) : Rational::Builder(r1);
+  Rational i3 = isDenominator ? Rational::Builder(one, i1) : Rational::Builder(i1);
   Multiplication m = Multiplication::Builder();
-  m.addChildAtIndexInPlace(r3, 0, 0);
-  if (!r2.isOne()) {
+  m.addChildAtIndexInPlace(i3, 0, 0);
+  if (!i2.isOne()) {
     m.addChildAtIndexInPlace(p, 1, 1);
   }
   if (i.isNegative()) {
-    if (reductionContext.complexFormat()  == Preferences::ComplexFormat::Real) {
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       /* On real numbers (-1)^(p/q) =
        * - 1 if p is even
        * - -1 if p and q are odd
        * - has no real solution otherwise */
-      if (!r.unsignedIntegerNumerator().isEven()) {
-        if (r.integerDenominator().isEven()) {
+      if (!exponentNumerator.isEven()) {
+        if (exponentDenominator.isEven()) {
           return Unreal::Builder();
         } else {
           m.addChildAtIndexInPlace(Rational::Builder(-1), 0, m.numberOfChildren());
@@ -1193,35 +1229,51 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   return m.shallowReduce(reductionContext);
 }
 
-Expression Power::removeSquareRootsFromDenominator(ExpressionNode::ReductionContext reductionContext) {
-  assert(reductionContext.target() == ExpressionNode::ReductionTarget::User);
+Expression Power::removeRootsFromDenominator(ExpressionNode::ReductionContext reductionContext) {
   Expression result;
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && (childAtIndex(1).convert<Rational>().isHalf()
-        || childAtIndex(1).convert<Rational>().isMinusHalf()))
+       && reductionContext.target() == ExpressionNode::ReductionTarget::User)
   {
-    /* We are considering a term of the form sqrt(p/q) (or 1/sqrt(p/q)), with p
-     * and q integers. We'll turn those into sqrt(p*q)/q (or sqrt(p*q)/p). */
-    Rational castedChild0 = childAtIndex(0).convert<Rational>();
-    Rational castedChild1 = childAtIndex(1).convert<Rational>();
-    Integer p = castedChild0.signedIntegerNumerator();
-    assert(!p.isZero()); // We eliminated case of form 0^(-1/2) at first step of shallowReduce
-    Integer q = castedChild0.integerDenominator();
-    // We do nothing for terms of the form sqrt(p)
-    if (!q.isOne() || castedChild1.isMinusHalf()) {
-      Integer pq = Integer::Multiplication(p, q);
-      if (pq.isOverflow()) {
-        return result;
-      }
-      Power sqrt = Power::Builder(Rational::Builder(pq), Rational::Builder(1, 2));
-      Integer one(1);
-      if (castedChild1.isHalf()) {
-        result = Multiplication::Builder(Rational::Builder(one, q), sqrt);
+    Rational child0 = childAtIndex(0).convert<Rational>();
+    Integer p = child0.signedIntegerNumerator();
+    Integer q = child0.integerDenominator();
+    Rational child1 = childAtIndex(1).convert<Rational>();
+    Integer a = child1.unsignedIntegerNumerator();
+    Integer b = child1.integerDenominator();
+    assert(!child0.numeratorOrDenominatorIsInfinity() && !child1.numeratorOrDenominatorIsInfinity());
+    if (child1.isNegative()) {
+      Integer temp = p;
+      p = q;
+      p.setNegative(temp.isNegative());
+      q = temp;
+      q.setNegative(false);
+    }
+    if (!q.isOne() && !b.isOne()) {
+      /* We are handling an expression of the form (p/q)^(a/b), with a and b
+       * positive. To avoid irrational number in the denominator, we turn it
+       * into : q^-(a+c)/b * (p^a * q^c)^(1/b), where c is the smallest positive
+       * integer such that (a+c)/b is an integer. */
+      IntegerDivision divAB = Integer::Division(a, b);
+      Integer c, d;
+      if (divAB.remainder.isZero()) {
+        c = Integer(0);
+        d = divAB.quotient;
       } else {
-        result = Multiplication::Builder(Rational::Builder(one, p), sqrt); // We use here the assertion that p != 0
+        c = Integer::Subtraction(b, divAB.remainder);
+        d = Integer::Addition(Integer(1), divAB.quotient);
       }
-      sqrt.shallowReduce(reductionContext);
+      d.setNegative(true);
+      Integer one = Integer(1);
+      Integer e = Integer::Multiplication(Integer::Power(p, a), Integer::Power(q, c));
+      if (q.isOverflow() || d.isOverflow() || e.isOverflow() || b.isOverflow()) {
+        return result; // Escape
+      }
+      Expression f1 = Power::Builder(Rational::Builder(q), Rational::Builder(d));
+      Expression f2 = Power::Builder(Rational::Builder(e), Rational::Builder(one, b));
+      result = Multiplication::Builder({f1, f2});
+      f1.shallowReduce(reductionContext);
+      f2.shallowReduce(reductionContext);
     }
   } else if (childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().isMinusOne()
@@ -1455,7 +1507,8 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
    * integers (ie 3^999, 120232323232^50) that would take too much time to
    * compute:
    *  - we cap the exponent at k_maxExactPowerMatrix
-   *  - we cap the resulting power at DBL_MAX
+   *  - we cap the resulting power at FLT_MAX, as setting it any higher would
+   *    prevent the drawing of some curves.
    * The complexity of computing a power of rational is mainly due to computing
    * the GCD of the resulting numerator and denominator. Euclide algorithm's
    * complexity is apportionned to the number of decimal digits in the smallest
@@ -1465,9 +1518,9 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
     return true;
   }
 
-  double index = maxIntegerExponent.approximate<double>();
-  double powerNumerator = std::pow(b.unsignedIntegerNumerator().approximate<double>(), index);
-  double powerDenominator = std::pow(b.integerDenominator().approximate<double>(), index);
+  float index = maxIntegerExponent.approximate<float>();
+  float powerNumerator = std::pow(b.unsignedIntegerNumerator().approximate<float>(), index);
+  float powerDenominator = std::pow(b.integerDenominator().approximate<float>(), index);
   if (std::isnan(powerNumerator) || std::isnan(powerDenominator) || std::isinf(powerNumerator) || std::isinf(powerDenominator)) {
     return true;
   }

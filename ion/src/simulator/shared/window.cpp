@@ -29,7 +29,11 @@ void init() {
   }
 
   sWindow = SDL_CreateWindow(
+#if EPSILON_SDL_SCREEN_ONLY
+    nullptr,
+#else
     "Epsilon",
+#endif
     SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED,
 #if EPSILON_SDL_SCREEN_ONLY

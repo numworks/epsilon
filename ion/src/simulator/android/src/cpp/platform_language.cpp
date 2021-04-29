@@ -1,5 +1,6 @@
 #include "../../../shared/platform.h"
 #include <jni.h>
+#include <assert.h>
 
 namespace Ion {
 namespace Simulator {
@@ -15,14 +16,18 @@ const char * languageCode() {
     jmethodID j_methodId = env->GetMethodID(
       j_class,
       "retrieveLanguage",
-      "(V)Ljava/lang/String;"
+      "()Ljava/lang/String;"
     );
+    assert(j_methodId != 0);
 
     jstring j_language = static_cast<jstring>(env->CallObjectMethod(activity, j_methodId));
     const char * language = env->GetStringUTFChars(j_language, nullptr);
     memcpy(buffer, language, 4);
     buffer[3] = 0;
     env->ReleaseStringUTFChars(j_language, language);
+    env->DeleteLocalRef(j_language);
+    env->DeleteLocalRef(j_class);
+    env->DeleteLocalRef(activity);
   }
   return buffer;
 }

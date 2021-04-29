@@ -43,10 +43,6 @@ Button * ListController::buttonAtIndex(int index, ButtonRowController::Position 
   return const_cast<Button *>(&m_resolveButton);
 }
 
-int ListController::typeAtLocation(int i, int j) {
-  return isAddEmptyRow(j);
-}
-
 HighlightCell * ListController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfRows);
@@ -209,7 +205,7 @@ void ListController::reloadButtonMessage() {
   footer()->setMessageOfButtonAtIndex(modelStore()->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, 0);
 }
 
-void ListController::addEmptyModel() {
+void ListController::addModel() {
   Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 

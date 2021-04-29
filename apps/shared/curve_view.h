@@ -28,7 +28,6 @@ public:
       CurveViewCursor * curveViewCursor = nullptr,
       BannerView * bannerView = nullptr,
       CursorView * cursorView = nullptr,
-      Escher::View * okView = nullptr,
       bool displayBanner = true);
   virtual void reload();
   // When the main view is selected, the banner view is visible
@@ -38,8 +37,6 @@ public:
   void setCursorView(Shared::CursorView * cursorView);
   View * bannerView() { return m_bannerView; }
   void setBannerView(Escher::View * bannerView);
-  void setOkView(Escher::View * okView);
-  void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float pixelWidth() const;
   float pixelHeight() const;
   float pixelLength(Axis axis) const;
@@ -48,8 +45,6 @@ protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
   constexpr static KDCoordinate k_labelMargin = 4;
-  constexpr static KDCoordinate k_okVerticalMargin = 23;
-  constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_numberSignificantDigits = 6;
   constexpr static int k_bigNumberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
@@ -151,7 +146,6 @@ private:
   void layoutSubviews(bool force = false) override;
   KDRect cursorFrame();
   KDRect bannerFrame();
-  KDRect okFrame();
   int numberOfSubviews() const override;
   Escher::View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and
@@ -161,8 +155,6 @@ private:
   bool bannerIsVisible() const;
   CurveViewRange * m_curveViewRange;
   CursorView * m_cursorView;
-  Escher::View * m_okView;
-  bool m_forceOkDisplay;
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;
 };

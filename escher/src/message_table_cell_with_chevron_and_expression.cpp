@@ -4,15 +4,10 @@
 
 namespace Escher {
 
-MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message, const KDFont * font) :
-  MessageTableCellWithChevron(message, font),
+MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message) :
+  MessageTableCellWithChevron(message),
   m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
 {
-  m_subtitleView.setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
-}
-
-View * MessageTableCellWithChevronAndExpression::subAccessoryView() const {
-  return (View *)&m_subtitleView;
 }
 
 void MessageTableCellWithChevronAndExpression::setHighlighted(bool highlight) {

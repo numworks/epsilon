@@ -7,6 +7,7 @@ poincare_src += $(addprefix poincare/src/,\
   code_point_layout.cpp\
   condensed_sum_layout.cpp \
   conjugate_layout.cpp \
+  derivative_layout.cpp \
   empty_layout.cpp \
   fraction_layout.cpp \
   grid_layout.cpp \
@@ -62,6 +63,7 @@ poincare_src += $(addprefix poincare/src/,\
   constant.cpp \
   cosine.cpp \
   decimal.cpp \
+  dependency.cpp \
   derivative.cpp \
   determinant.cpp \
   division.cpp \
@@ -172,6 +174,7 @@ tests_src += $(addprefix poincare/test/,\
   arithmetic.cpp\
   context.cpp\
   erf_inv.cpp \
+  dependency.cpp\
   derivative.cpp\
   expression.cpp\
   expression_order.cpp\

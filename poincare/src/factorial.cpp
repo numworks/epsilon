@@ -15,7 +15,7 @@ namespace Poincare {
 // Property
 
 Expression FactorialNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return Factorial(this);
 }
 

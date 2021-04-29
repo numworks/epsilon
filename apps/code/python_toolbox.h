@@ -6,6 +6,7 @@
 #include <escher/toolbox.h>
 #include <ion/events.h>
 #include <kandinsky/font.h>
+#include <escher/message_table_cell_with_message.h>
 
 namespace Code {
 
@@ -17,18 +18,18 @@ public:
 
   // Toolbox
   bool handleEvent(Ion::Events::Event event) override;
+
+  // MemoizedListViewDataSource
+  KDCoordinate nonMemoizedRowHeight(int j) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
-  KDCoordinate rowHeight(int j) override;
   bool selectLeaf(int selectedRow) override;
   const Escher::ToolboxMessageTree * rootModel() const override;
   Escher::MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
-  constexpr static int k_maxNumberOfDisplayedRows = 13; // = 240/(13+2*3)
-  // 13 = minimal string height size
-  // 3 = vertical margins
+  constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalSmallFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
 private:
-  constexpr static const KDFont * k_font = KDFont::SmallFont;
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);
   Escher::MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];

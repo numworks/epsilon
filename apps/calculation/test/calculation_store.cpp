@@ -1,9 +1,11 @@
 #include <quiz.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <poincare/test/helper.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"
+#include "../../exam_mode_configuration.h"
 
 typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;
 typedef ::Calculation::Calculation::EqualSign EqualSign ;
@@ -62,9 +64,21 @@ QUIZ_CASE(calculation_store) {
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }
 
+void assertAnsIs(const char * input, const char * expectedAnsInputText, Context * context, CalculationStore * store) {
+  store->push(input, context, dummyHeight);
+  store->push("ans", context, dummyHeight);
+  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
+  quiz_assert(strcmp(lastCalculation->inputText(), expectedAnsInputText) == 0);
+}
+
 QUIZ_CASE(calculation_ans) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
+  // Setup complex format and exam mode
+  Poincare::Preferences::ComplexFormat previousComplexFormat = Poincare::Preferences::sharedPreferences()->complexFormat();
+  GlobalPreferences::ExamMode previousExamMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Off);
 
   store.push("1+3/4", &globalContext, dummyHeight);
   store.push("ans+2/3", &globalContext, dummyHeight);
@@ -77,6 +91,24 @@ QUIZ_CASE(calculation_ans) {
   quiz_assert(lastCalculation->displayOutput(&globalContext) == DisplayOutput::ExactAndApproximateToggle);
   quiz_assert(strcmp(lastCalculation->approximateOutputText(NumberOfSignificantDigits::Maximal),"2.6366666666667") == 0);
 
+  assertAnsIs("1+1→a", "2", &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  assertAnsIs("1+1", "2", &globalContext, &store);
+  assertAnsIs("13.3", "13.3", &globalContext, &store);
+  assertAnsIs("√(-1-1)", "√(-1-1)", &globalContext, &store);
+  assertAnsIs("int(diff(x^2,x,x),x,0,1)", "int(diff(x^2,x,x),x,0,1)", &globalContext, &store);
+
+  assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
+
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
+  assert(ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode::Dutch));
+
+  assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
+
+  // Restore complex format and exam mode
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(previousComplexFormat);
   store.deleteAll();
 }
 
@@ -103,8 +135,8 @@ QUIZ_CASE(calculation_significant_digits) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
-  assertCalculationIs("123456789", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "123456789", "1.234568ᴇ8", "123456789", &globalContext, &store);
-  assertCalculationIs("1234567", DisplayOutput::ApproximateOnly, EqualSign::Equal, "1234567", "1234567", "1234567", &globalContext, &store);
+  assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "11123456789", "1.112345679ᴇ10", "11123456789", &globalContext, &store);
+  assertCalculationIs("1123456789", DisplayOutput::ApproximateOnly, EqualSign::Equal, "1123456789", "1123456789", "1123456789", &globalContext, &store);
 
 }
 
@@ -136,21 +168,114 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
 }
 
+void assertMainCalculationOutputIs(const char * input, const char * output, Context * context, CalculationStore * store) {
+  // For the next test, we only need to checkout input and output text.
+  store->push(input, context, dummyHeight);
+  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
+  switch (lastCalculation->displayOutput(context)) {
+    case DisplayOutput::ApproximateOnly:
+      quiz_assert_print_if_failure(strcmp(lastCalculation->approximateOutputText(NumberOfSignificantDigits::UserDefined), output) == 0, input);
+      break;
+    default:
+      quiz_assert_print_if_failure(strcmp(lastCalculation->exactOutputText(), output) == 0, input);
+      break;
+    }
+  store->deleteAll();
+}
+
 QUIZ_CASE(calculation_symbolic_computation) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
-  assertCalculationIs("x+x+1+3+√(π)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
-  assertCalculationIs("f(x)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
-  assertCalculationIs("1+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "x+1", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("f(x)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
-  assertCalculationIs("f(2)", DisplayOutput::ApproximateOnly, EqualSign::Equal, "3", "3", "3", &globalContext, &store);
-  assertCalculationIs("2→x", DisplayOutput::ApproximateOnly, EqualSign::Equal, "2", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("f(x)", DisplayOutput::ApproximateOnly, EqualSign::Equal, "3", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("x+x+1+3+√(π)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "√(π)+8", nullptr, nullptr, &globalContext, &store);
+  // 1 - General cases
+  assertMainCalculationOutputIs("x+x+1+3+√(π)",        "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("1+x→f(x)",            "x+1",   &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f(2)",                "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)",                "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("x+x+1+3+√(π)",        "√(π)+8",&globalContext, &store);
 
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+
+  // 2 - Circularly defined functions
+  //   A - f(x) = g(x) = f(x)
+  assertMainCalculationOutputIs("1→f(x)",              "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("f(x)→g(x)",           "f(x)",  &globalContext, &store);
+  assertMainCalculationOutputIs("g(x)→f(x)",           "g(x)",  &globalContext, &store);
+  // With x undefined
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  // With x  defined
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+  //   B - f(x) = g(x) = a = f(x)
+  assertMainCalculationOutputIs("f(x)→a",              "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("a→g(x)",              "a",     &globalContext, &store);
+  // With x undefined
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  // With x defined
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+
+  // 3 - Differences between functions and variables
+  assertMainCalculationOutputIs("x+1→f(x)",            "x+1",   &globalContext, &store);
+  assertMainCalculationOutputIs("x+1→y",               "undef", &globalContext, &store);
+  // With x undefined
+  assertMainCalculationOutputIs("y",                   "undef", &globalContext, &store);
+
+  assertMainCalculationOutputIs("int(y,x,1,3)",        "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("sum(y,x,0,1)",        "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("product(y,x,0,1)",    "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y,x,1)",         "undef", &globalContext, &store);
+
+  assertMainCalculationOutputIs("f(y)",                "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(y),x,1)",      "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x)×y,x,1)",    "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x×y),x,1)",    "undef", &globalContext, &store);
+
+  // With x defined
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("y",                   "2",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("int(x+1,x,1,3)",      "6",     &globalContext, &store);
+  assertMainCalculationOutputIs("int(f(x),x,1,3)",     "6",     &globalContext, &store);
+  assertMainCalculationOutputIs("int(y,x,1,3)",        "4",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("sum(x+1,x,0,1)",      "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("sum(f(x),x,0,1)",     "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("sum(y,x,0,1)",        "4",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("product(x+1,x,0,1)",  "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("product(f(x),x,0,1)", "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("product(y,x,0,1)",    "4",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("diff(x+1,x,1)",       "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x),x,1)",      "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y,x,1)",         "0",     &globalContext, &store);
+
+  assertMainCalculationOutputIs("f(y)",                "3",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(y),x,1)",      "0",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x)×y,x,1)",    "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(f(x×y),x,1)",    "2",     &globalContext, &store);
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
@@ -198,7 +323,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("1+𝐢", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "√(2)×ℯ^\u0012π/4×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ℯ^\u0012π/2×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ln(-2)", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, "ℯ^\u00123.141593×𝐢\u0013", "ℯ^\u00123.1415926535898×𝐢\u0013", &globalContext, &store);
+  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, "ℯ^\u00123.141592654×𝐢\u0013", "ℯ^\u00123.1415926535898×𝐢\u0013", &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "2×ℯ^\u0012π/3×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "4×ℯ^\u0012\u00122×π\u0013/3×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(2,4)×ℯ^\u0012π/4×𝐢\u0013", nullptr, nullptr, &globalContext, &store);

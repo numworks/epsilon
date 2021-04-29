@@ -35,7 +35,7 @@ private:
   void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;
   int modelIndexForRow(int j) override;
   int sequenceDefinitionForRow(int j);
-  void addEmptyModel() override;
+  void addModel() override;
   void reinitSelectedExpression(Shared::ExpiringPointer<Shared::ExpressionModelHandle> model) override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;

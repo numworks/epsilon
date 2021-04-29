@@ -14,9 +14,6 @@ namespace Shared {
 
 void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
   m_delegate = delegate;
-  if (delegate) {
-    m_delegate->updateZoomButtons();
-  }
 }
 
 void InteractiveCurveViewRange::setZoomAuto(bool v) {
@@ -76,7 +73,7 @@ float InteractiveCurveViewRange::yGridUnit() const {
      * that it allows enough graduations on the Y axis, but if the standard
      * unit would lead to too many graduations on the X axis, we force the
      * larger unit anyways. */
-    float numberOfUnits = (yMax() - yMin()) / res;
+    float numberOfUnits = (yMax() - yMin() + offscreenYAxis()) / res;
     if (numberOfUnits > k_maxNumberOfXGridUnits || numberOfUnits / 2.f > k_minNumberOfYGridUnits) {
       return 2 * res;
     }
@@ -102,10 +99,13 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   }
   if (!std::isnan(yMi) && !std::isnan(yMa)) {
     setZoomAuto(false);
+    float yMaxOld = yMax(), yMinOld = yMin();
     m_yRange.setMax(yMa, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(yMi, k_lowerMaxFloat, k_upperMaxFloat);
+    /* The factor will typically be equal to ratio, unless yMax and yMin are
+     * close to the maximal values. */
+    m_offscreenYAxis *= (yMax() - yMin()) / (yMaxOld - yMinOld);
   }
-  m_offscreenYAxis *= ratio;
   setZoomNormalize(isOrthonormal());
 }
 
@@ -165,8 +165,10 @@ void InteractiveCurveViewRange::setDefault() {
     return;
   }
 
+  assert(offscreenYAxis() == 0.f);
+
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of
-   * yGridUnit, even if the ranger were not truly normalized. We use
+   * yGridUnit, even if the range were not truly normalized. We use
    * setZoomNormalize to refresh the button in case the graph does not end up
    * normalized. */
   setZoomNormalize(false);
@@ -187,6 +189,11 @@ void InteractiveCurveViewRange::setDefault() {
   m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
   MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+
+  /* We notify the delegate to refresh the cursor's position and update the
+   * bottom margin (which depends on the banner height). */
+  m_delegate->updateBottomMargin();
+
   float yRange = yMax() - yMin();
   m_yRange.setMin(roundLimit(m_delegate->addMargin(yMin(), yRange, true , true), yRange, true), k_lowerMaxFloat, k_upperMaxFloat);
   MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(yMax(), yRange, true , false), yRange, false), k_lowerMaxFloat, k_upperMaxFloat);

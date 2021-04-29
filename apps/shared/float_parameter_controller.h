@@ -3,9 +3,7 @@
 
 #include "parameter_text_field_delegate.h"
 #include "button_with_separator.h"
-#include <escher/list_view_data_source.h>
-#include <escher/selectable_table_view.h>
-#include <escher/selectable_table_view_data_source.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
 namespace Shared {
@@ -14,25 +12,25 @@ namespace Shared {
  * parameterAtIndex and setParameterAtIndex). */
 
 template<typename T>
-class FloatParameterController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public ParameterTextFieldDelegate {
+class FloatParameterController : public Escher::SelectableListViewController, public ParameterTextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
-  Escher::View * view() override { return &m_selectableTableView; }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
+  void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 protected:
+  static constexpr int k_buttonCellType = 0;
+  static constexpr int k_parameterCellType = 1;
+
   enum class InfinityTolerance {
     None,
     PlusInfinity,
@@ -42,10 +40,8 @@ protected:
   Escher::StackViewController * stackController();
   virtual T parameterAtIndex(int index) = 0;
   virtual void buttonAction();
-  Escher::SelectableTableView m_selectableTableView;
   ButtonWithSeparator m_okButton;
 private:
-  constexpr static int k_buttonMargin = 6;
   virtual InfinityTolerance infinityAllowanceForRow(int row) const { return InfinityTolerance::None; }
   virtual int reusableParameterCellCount(int type) = 0;
   virtual Escher::HighlightCell * reusableParameterCell(int index, int type) = 0;

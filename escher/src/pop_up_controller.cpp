@@ -4,9 +4,9 @@
 
 namespace Escher {
 
-PopUpController::PopUpController(int numberOfLines, Invocation OkInvocation) :
+PopUpController::PopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
   ViewController(nullptr),
-  m_contentView(this, numberOfLines, OkInvocation)
+  m_contentView(this, numberOfLines, OkInvocation, warningMessage, okMessage, cancelMessage)
 {
 }
 
@@ -30,18 +30,18 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-PopUpController::ContentView::ContentView(Responder * parentResponder, int numberOfLines, Invocation okInvocation) :
+PopUpController::ContentView::ContentView(Responder * parentResponder, int numberOfLines, Invocation okInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
   Responder(parentResponder),
   m_cancelButton(
-    this, I18n::Message::Cancel,
+    this, cancelMessage,
     Invocation(
       [](void * context, void * sender) {
         Container::activeApp()->dismissModalViewController();
         return true;
       }, this),
     KDFont::SmallFont),
-  m_okButton(this, I18n::Message::Ok, okInvocation, KDFont::SmallFont),
-  m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_okButton(this, okMessage, okInvocation, KDFont::SmallFont),
+  m_warningTextView(KDFont::SmallFont, warningMessage, 0.5, 0.5, KDColorWhite, KDColorBlack),
   m_numberOfLines(numberOfLines),
   m_messageTextViews{}
 {

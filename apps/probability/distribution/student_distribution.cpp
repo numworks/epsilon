@@ -22,8 +22,8 @@ float StudentDistribution::evaluateAtAbscissa(float x) const {
   return std::exp(lnCoefficient() - (d + 1.0f) / 2.0f * std::log(1.0f + x * x / d));
 }
 
-bool StudentDistribution::authorizedValueAtIndex(float x, int index) const {
-  return x >= FLT_EPSILON && x <= 200.0f; // We cannot draw the curve for x > 200 (coefficient() is too small)
+bool StudentDistribution::authorizedValueAtIndex(double x, int index) const {
+  return x >= DBL_EPSILON && x <= 200.0; // We cannot draw the curve for x > 200 (coefficient() is too small)
 }
 
 double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {

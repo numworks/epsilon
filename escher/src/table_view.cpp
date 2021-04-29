@@ -10,7 +10,7 @@ namespace Escher {
 
 TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource) :
   ScrollView(&m_contentView, scrollDataSource),
-  m_contentView(this, dataSource, 0, 1)
+  m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness)
 {
 }
 
@@ -174,8 +174,10 @@ void TableView::ContentView::layoutSubviews(bool force) {
     View * cell = subview(index);
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
-    m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
-    cell->setFrame(cellFrame(i,j), force);
+    m_dataSource->willDisplayCellAtLocation(static_cast<HighlightCell *>(cell), i, j);
+    /* Cell's content might change and fit in the same frame. LayoutSubviews
+     * must be called on each cells even with an unchanged frame. */
+    cell->setFrame(cellFrame(i,j), true);
   }
 }
 

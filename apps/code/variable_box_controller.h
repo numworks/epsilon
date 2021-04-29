@@ -2,7 +2,7 @@
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
 #include <apps/alternate_empty_nested_menu_controller.h>
-#include <escher/message_table_cell.h>
+#include <escher/buffer_table_cell.h>
 #include <escher/toolbox_message_tree.h>
 #include "script_node.h"
 #include "script_node_cell.h"
@@ -19,13 +19,12 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
 
-  /* TableViewDataSource */
-  KDCoordinate rowHeight(int j) override;
+  /* MemoizedListViewDataSource */
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
-  /* ListViewDataSource */
+  int typeAtIndex(int i) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
@@ -42,19 +41,18 @@ public:
   void insertAutocompletionResultAtIndex(int index);
 
 private:
-  constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
-  constexpr static size_t k_maxScriptNodesCount = 32; // Chosen without particular reasons
-  constexpr static int k_totalBuiltinNodesCount = 107;
-  constexpr static uint8_t k_scriptOriginsCount = 3;
+  constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / Escher::TableCell::k_minimalSmallFontCellHeight + 2; // +2 if the cells are cropped on top and at the bottom
+  constexpr static size_t k_maxNumberOfDisplayedSubtitles = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / (Escher::BufferTableCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight) + 2; // Subtitles are at least followed by one item row
+  constexpr static size_t k_totalBuiltinNodesCount = 107;
+  constexpr static size_t k_maxOtherScriptNodesCount = 32; // Chosen without particular reasons
+  constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount; // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin
+  constexpr static uint8_t k_maxOrigins = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
-  constexpr static KDCoordinate k_subtitleRowHeight = 23;
-
-  enum class NodeOrigin : uint8_t {
-    CurrentScript = 0,
-    Builtins = 1,
-    Importation = 2
-  };
+  constexpr static uint8_t k_currentScriptOrigin = 0;
+  constexpr static uint8_t k_builtinsOrigin = 1;
+  constexpr static uint8_t k_importedOrigin = 2; // And above for other imported nodes
+  static_assert(k_currentScriptOrigin == 0 && k_builtinsOrigin == 1 && k_importedOrigin == 2, "These origin index must start at 0 and leave no gaps. k_importedOrigin must be the last one. Otherwise, for loops on origin must be updated.");
 
   /* Returns:
    * - a negative int if the node name is before name in alphabetical
@@ -66,20 +64,17 @@ private:
   static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith = nullptr);
 
   // Nodes and nodes count
-  static size_t MaxNodesCountForOrigin(NodeOrigin origin) {
-    return origin == NodeOrigin::Builtins ? k_totalBuiltinNodesCount : k_maxScriptNodesCount;
-  }
-  int nodesCountForOrigin(NodeOrigin origin) const;
-  size_t * nodesCountPointerForOrigin(NodeOrigin origin);
-  ScriptNode * nodesForOrigin(NodeOrigin origin);
+  bool maxNodesReachedForOrigin(uint8_t origin) const;
+  int nodesCountForOrigin(uint8_t origin) const;
   ScriptNode * scriptNodeAtIndex(int index);
 
   // Cell getters
-  int typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin = nullptr, int * cumulatedOriginsCount = nullptr) const;
+  int typeAndOriginAtLocation(int i, uint8_t * resultOrigin = nullptr, int * cumulatedOriginsCount = nullptr) const;
 
   // NestedMenuController
   Escher::HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }
   Escher::HighlightCell * nodeCellAtIndex(int index) override { assert(false); return nullptr; }
+  I18n::Message subTitle() override { assert(false); return (I18n::Message)0; }
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
 
@@ -98,17 +93,16 @@ private:
    * already contained in the variable box. The returned boolean means we
    * should escape the node scanning process (due to the lexicographical order
    * or full node table). */
-  bool addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr);
+  bool addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, uint8_t origin, const char * nodeName, int nodeNameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;
-  ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
-  ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
-  ScriptNode m_importedNodes[k_maxScriptNodesCount];
+  ScriptNode m_scriptNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
-  Escher::MessageTableCell m_subtitleCells[k_scriptOriginsCount];
+  Escher::BufferTableCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
   ScriptStore * m_scriptStore;
-  size_t m_currentScriptNodesCount;
-  size_t m_builtinNodesCount;
-  size_t m_importedNodesCount;
+  size_t m_nodesCount; // Number of nodes
+  uint8_t m_originsCount; // Number of origins
+  size_t m_rowsPerOrigins[k_maxOrigins]; // Nodes per origins
+  const char * m_originsName[k_maxOrigins]; // Text of origins
   int m_shortenResultCharCount; // This is used to send only the completing text when we are autocompleting
   bool m_displaySubtitles;
 };

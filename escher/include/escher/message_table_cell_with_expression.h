@@ -8,8 +8,8 @@ namespace Escher {
 
 class MessageTableCellWithExpression : public MessageTableCell {
 public:
-  MessageTableCellWithExpression(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
-  View * accessoryView() const override;
+  MessageTableCellWithExpression(I18n::Message message = (I18n::Message)0);
+  const View * subLabelView() const override { return &m_subtitleView; }
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
 private:

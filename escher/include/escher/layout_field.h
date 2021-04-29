@@ -8,7 +8,6 @@
 #include <escher/text_cursor_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
-#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
 // See TODO in EditableField
@@ -35,7 +34,7 @@ public:
   bool hasText() const { return layout().hasText(); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   bool layoutHasNode() const { return m_contentView.expressionView()->layoutHasNode(); }
-  CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
+  bool addXNTCodePoint(CodePoint defaultXNTCodePoint, bool forceDefault) override;
   void putCursorRightOfLayout();
   void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
   void setLayout(Poincare::Layout newLayout);
@@ -45,6 +44,9 @@ public:
     ScrollableView::setBackgroundColor(c);
     m_contentView.setBackgroundColor(c);
   }
+  /* Always keep the full margins on a layout field, as it would otherwise lead
+   * to weird cropping during edition. */
+  float marginPortionTolerance() const override { return 0.f; }
 
   /* Responder */
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
@@ -65,7 +67,7 @@ private:
   bool privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false);
+  void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfText = false);
   bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == m_insertionCursorEvent; }
 
   class ContentView : public View {

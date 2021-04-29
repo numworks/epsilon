@@ -18,6 +18,7 @@
 #include <poincare/cosine.h>
 #include <poincare/ceiling.h>
 #include <poincare/decimal.h>
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>
 #include <poincare/division.h>

@@ -1,17 +1,32 @@
-# Copyright (C) 2009-2017 Wander Lairson Costa
-# Copyright (C) 2017-2018 Robert Wlodarczyk
+# Copyright 2009-2017 Wander Lairson Costa
+# Copyright 2009-2021 PyUSB contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 r"""usb.util - Utility functions.
 
@@ -286,32 +301,28 @@ def get_string(dev, index, langid = None):
 
     The return value is the unicode string present in the descriptor, or None
     if the requested index was zero.
-
-    It is a ValueError to request a real string (index not zero), if: the
-    device's langid tuple is empty, or with an explicit langid the device does
-    not support.
     """
     if 0 == index:
         return None
 
     from usb.control import get_descriptor
-    langids = dev.langids
 
-    if 0 == len(langids):
-        raise ValueError("The device has no langid")
     if langid is None:
+        langids = dev.langids
+        if 0 == len(langids):
+            raise ValueError("The device has no langid"
+                             " (permission issue, no string descriptors supported or device error)")
         langid = langids[0]
-    elif langid not in langids:
-        raise ValueError("The device does not support the specified langid")
 
     buf = get_descriptor(
                 dev,
-                255, # Maximum descriptor size
+                254, # maximum even length
                 DESC_TYPE_STRING,
                 index,
                 langid
             )
+    blen = buf[0] & 0xfe # should be even, ignore any trailing byte (see #154)
     if hexversion >= 0x03020000:
-        return buf[2:buf[0]].tobytes().decode('utf-16-le')
+        return buf[2:blen].tobytes().decode('utf-16-le')
     else:
-        return buf[2:buf[0]].tostring().decode('utf-16-le')
+        return buf[2:blen].tostring().decode('utf-16-le')

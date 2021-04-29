@@ -88,29 +88,29 @@ inline void ParseAndSimplifyAndApproximate(const char * text, Poincare::Expressi
   Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
-inline typename Poincare::Coordinate2D<double> NextMinimum(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {
+inline typename Poincare::Coordinate2D<double> NextMinimum(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.nextMinimum(symbol, start, step, max, context, complexFormat, preferences->angleUnit());
+  return e.nextMinimum(symbol, start, max, context, complexFormat, preferences->angleUnit(), relativePrecision, minimalStep, maximalStep);
 }
 
-inline typename Poincare::Coordinate2D<double> NextMaximum(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {
+inline typename Poincare::Coordinate2D<double> NextMaximum(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.nextMaximum(symbol, start, step, max, context, complexFormat, preferences->angleUnit());
+  return e.nextMaximum(symbol, start, max, context, complexFormat, preferences->angleUnit(), relativePrecision, minimalStep, maximalStep);
 }
 
-inline double NextRoot(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {
+inline double NextRoot(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.nextRoot(symbol, start, step, max, context, complexFormat, preferences->angleUnit());
+  return e.nextRoot(symbol, start, max, context, complexFormat, preferences->angleUnit(), relativePrecision, minimalStep, maximalStep);
 }
 
-inline typename Poincare::Coordinate2D<double> NextIntersection(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context, const Poincare::Expression expression) {
+inline typename Poincare::Coordinate2D<double> NextIntersection(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, const Poincare::Expression expression, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
   complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(complexFormat, expression, context);
-  return e.nextIntersection(symbol, start, step, max, context, complexFormat, preferences->angleUnit(), expression);
+  return e.nextIntersection(symbol, start, max, context, complexFormat, preferences->angleUnit(), expression, relativePrecision, minimalStep, maximalStep);
 }
 
 inline bool equalOrBothNan(double a, double b) { return a == b || (std::isnan(a) && std::isnan(b)); }

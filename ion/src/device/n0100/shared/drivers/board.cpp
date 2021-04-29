@@ -63,11 +63,26 @@ void initSystemClocks() {
   }
 
   // Now that we don't need use it anymore, turn the HSI off
-  RCC.CR()->setHSION(false);
+  RCC.CR()->setHSION(false);^
 }
+
+/* The following methods regarding PCB version are dummy implementations.
+ * Handling the PCB version is only necessary on the N0110. */
+
+PCBVersion pcbVersion() {
+  return PCB_LATEST;
+}
+
+PCBVersion readPCBVersionInMemory() {
+  return PCB_LATEST;
+}
+
+void writePCBVersion(PCBVersion) {}
+
+void lockPCBVersion() {}
+
+bool pcbVersionIsLocked() { return true; }
 
 }
 }
 }
-
-

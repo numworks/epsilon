@@ -52,7 +52,6 @@ ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/reset.cpp
 ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/usb.cpp
 ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
-  external_flash.cpp \
   flash.cpp \
   internal_flash.cpp \
   reset.cpp \

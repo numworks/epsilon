@@ -1,5 +1,5 @@
-apps += Probability::App
-app_headers += apps/probability/app.h
+apps += Probability::NewApp
+app_headers += apps/probability/new_app.h
 
 app_probability_test_src = $(addprefix apps/probability/,\
   distribution/binomial_distribution.cpp \
@@ -16,6 +16,8 @@ app_probability_test_src = $(addprefix apps/probability/,\
 
 app_probability_src = $(addprefix apps/probability/,\
   app.cpp \
+	new_app.cpp \
+	menu_controller.cpp \
   calculation/calculation.cpp \
   calculation/discrete_calculation.cpp \
   calculation/left_integral_calculation.cpp \
@@ -50,7 +52,7 @@ tests_src += $(addprefix apps/probability/test/,\
 
 # Image dependencies
 
-$(eval $(call depends_on_image,apps/probability/app.cpp,apps/probability/probability_icon.png))
+$(eval $(call depends_on_image,apps/probability/app.cpp apps/probability/new_app.cpp,apps/probability/probability_icon.png))
 
 $(eval $(call depends_on_image,apps/probability/distribution_controller.cpp,$(addprefix apps/probability/images/, \
   binomial_icon.png \

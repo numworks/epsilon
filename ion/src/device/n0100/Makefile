@@ -22,7 +22,6 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0100/shar
   usb.cpp \
 )
 
-ion_device_shared_bootloader_kernel_src += ion/src/device/shared/drivers/internal_flash.cpp
 ion_device_bootloader_src += ion/src/device/shared/drivers/internal_flash_otp.cpp
 
 ion_device_userland_src += $(addprefix ion/src/device/n0100/shared/drivers/, \

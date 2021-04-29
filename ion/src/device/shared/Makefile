@@ -5,6 +5,7 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/shared/, \
   drivers/backlight.cpp \
   drivers/base64.cpp \
   drivers/display.cpp \
+  drivers/internal_flash.cpp \
   drivers/reset.cpp \
   drivers/serial_number.cpp \
   drivers/timing.cpp \

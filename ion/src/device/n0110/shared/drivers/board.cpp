@@ -1,5 +1,6 @@
 #include <drivers/board.h>
 #include <drivers/config/clocks.h>
+#include <drivers/internal_flash_otp.h>
 #include <regs/regs.h>
 
 namespace Ion {
@@ -102,6 +103,42 @@ void initSystemClocks() {
 
   // Now that we don't need use it anymore, turn the HSI off
   RCC.CR()->setHSION(false);
+}
+
+constexpr int k_pcbVersionOTPBlock = 0;
+constexpr int k_pcbVersionOTPIndex = 0;
+
+/* As we want the PCB versions to be in ascending order chronologically, and
+ * because the OTP are initialized with 1s, we store the bitwise-not of the
+ * version number. This way, devices with blank OTP are considered version 0. */
+
+PCBVersion pcbVersion() {
+#if IN_FACTORY
+  /* When flashing for the first time, we want all systems that depend on the
+   * PCB version to function correctly before flashing the PCB version. This
+   * way, flashing the PCB version can be done last. */
+  return PCB_LATEST;
+#else
+  PCBVersion version = readPCBVersionInMemory();
+  return (version == k_alternateBlankVersion ? 0 : version);
+#endif
+}
+
+PCBVersion readPCBVersionInMemory() {
+  return ~(*reinterpret_cast<const PCBVersion *>(InternalFlash::readOTPAtIndex(k_pcbVersionOTPBlock, k_pcbVersionOTPIndex)));
+}
+
+void writePCBVersion(PCBVersion version) {
+  PCBVersion formattedVersion = ~version;
+  InternalFlash::writeOTPAtIndex(k_pcbVersionOTPBlock, k_pcbVersionOTPIndex, static_cast<uint32_t>(formattedVersion));
+}
+
+void lockPCBVersion() {
+  InternalFlash::lockOTPAtBlockIndex(k_pcbVersionOTPBlock);
+}
+
+bool pcbVersionIsLocked() {
+  return InternalFlash::isLockedOTPAtBlockIndex(k_pcbVersionOTPBlock);
 }
 
 }

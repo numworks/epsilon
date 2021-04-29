@@ -1,42 +1,36 @@
-#ifndef POINCARE_ARC_COSINE_H
-#define POINCARE_ARC_COSINE_H
+#ifndef POINCARE_ARC_COTANGENT_H
+#define POINCARE_ARC_COTANGENT_H
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/trigonometry.h>
 
 namespace Poincare {
 
-class ArcCosineNode final : public ExpressionNode {
+class ArcCotangentNode final : public ExpressionNode {
 public:
-
   // TreeNode
-  size_t size() const override { return sizeof(ArcCosineNode); }
+  size_t size() const override { return sizeof(ArcCotangentNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "ArcCosine";
+    stream << "ArcCotangent";
   }
 #endif
 
   // Properties
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context) == Sign::Unknown ? Sign::Unknown : Sign::Positive; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
-  Type type() const override { return Type::ArcCosine; }
+  Type type() const override { return Type::ArcCotangent; }
 
-  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
 
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-
-  // Simplification
+  // Simplication
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
-
-  //Evaluation
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
   }
@@ -45,15 +39,14 @@ private:
   }
 };
 
-class ArcCosine final : public Expression {
+class ArcCotangent final : public Expression {
 public:
-  ArcCosine(const ArcCosineNode * n) : Expression(n) {}
-  static ArcCosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>({child}); }
+  ArcCotangent(const ArcCotangentNode * n) : Expression(n) {}
+  static ArcCotangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCotangent, ArcCotangentNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acos", 1, &UntypedBuilderOneChild<ArcCosine>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acot", 1, &UntypedBuilderOneChild<ArcCotangent>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-
 };
 
 }

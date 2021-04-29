@@ -92,11 +92,11 @@ void GraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xM
     }
   }
   Poincare::Zoom::SanitizeRangeForDisplay(xMin, xMax);
-  *xMin = std::max(xMinLimit, *xMin);
-  *xMax = std::min(xMaxLimit, *xMax);
   float dx = (*xMax - *xMin) * k_displayHorizontalMarginRatio;
   *xMin -= dx;
   *xMax += dx;
+  *xMin = std::max(xMinLimit, *xMin);
+  *xMax = std::min(xMaxLimit, *xMax);
   *yMinIntrinsic = FLT_MAX;
   *yMaxIntrinsic = -FLT_MAX;
 }

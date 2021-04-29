@@ -44,7 +44,10 @@ poincare_src += $(addprefix poincare/src/,\
   absolute_value.cpp \
   addition.cpp \
   approximation_helper.cpp \
+  arc_cosecant.cpp \
   arc_cosine.cpp \
+  arc_cotangent.cpp \
+  arc_secant.cpp \
   arc_sine.cpp \
   arc_tangent.cpp \
   arithmetic.cpp \
@@ -60,7 +63,9 @@ poincare_src += $(addprefix poincare/src/,\
   confidence_interval.cpp \
   conjugate.cpp \
   constant.cpp \
+  cosecant.cpp \
   cosine.cpp \
+  cotangent.cpp \
   decimal.cpp \
   dependency.cpp \
   derivative.cpp \
@@ -132,6 +137,7 @@ poincare_src += $(addprefix poincare/src/,\
   real_part.cpp \
   rightwards_arrow_expression.cpp \
   round.cpp \
+  secant.cpp \
   sequence.cpp \
   serialization_helper.cpp \
   simplification_helper.cpp \

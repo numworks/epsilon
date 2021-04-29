@@ -4,13 +4,13 @@
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/tab_view_data_source.h>
 #include <escher/tab_view_controller.h>
+#include <apps/shared/text_field_delegate_app.h>
+#include <apps/shared/shared_app.h>
 #include "box_controller.h"
 #include "calculation_controller.h"
 #include "histogram_controller.h"
 #include "store.h"
 #include "store_controller.h"
-#include "../shared/text_field_delegate_app.h"
-#include "../shared/shared_app.h"
 
 namespace Statistics {
 
@@ -18,16 +18,16 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
   public:
-    I18n::Message name() override;
-    I18n::Message upperName() override;
-    const Escher::Image * icon() override;
+    I18n::Message name() const override;
+    I18n::Message upperName() const override;
+    const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::SharedApp::Snapshot, public Escher::TabViewDataSource {
   public:
     Snapshot();
     App * unpack(Escher::Container * container) override;
     void reset() override;
-    Descriptor * descriptor() override;
+    const Descriptor * descriptor() const override;
     Store * store() { return &m_store; }
     uint32_t * storeVersion() { return &m_storeVersion; }
     uint32_t * barVersion() { return &m_barVersion; }
@@ -60,7 +60,7 @@ private:
   Escher::ButtonRowController m_histogramHeader;
   Escher::StackViewController m_histogramStackViewController;
   StoreController m_storeController;
-  Escher::ButtonRowController m_storeHeader;
+  Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
   Escher::StackViewController m_storeStackViewController;
   Escher::TabViewController m_tabViewController;
 };

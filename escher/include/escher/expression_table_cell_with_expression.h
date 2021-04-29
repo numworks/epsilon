@@ -5,19 +5,17 @@
 #include <escher/i18n.h>
 
 namespace Escher {
-
 class ExpressionTableCellWithExpression : public ExpressionTableCell {
 public:
   ExpressionTableCellWithExpression(Responder * parentResponder = nullptr);
-  View * accessoryView() const override;
+  const View * subLabelView() const override { return &m_subLabelExpressionView; }
   void setHighlighted(bool highlight) override;
-  void setAccessoryLayout(Poincare::Layout l);
+  void setSubLabelLayout(Poincare::Layout l);
   void didBecomeFirstResponder() override;
-  void reloadScroll() override { m_accessoryExpressionView.reloadScroll(); }
+  void reloadScroll() override { m_subLabelExpressionView.reloadScroll(); }
 private:
-  // Accessory margin is already handled in ScrollableExpressionView
-  KDCoordinate accessoryMargin() const override { return 0; }
-  ScrollableExpressionView m_accessoryExpressionView;
+  // SubLabel margin is already handled in ScrollableExpressionView
+  ScrollableExpressionView m_subLabelExpressionView;
 };
 
 }

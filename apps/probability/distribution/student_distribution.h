@@ -8,7 +8,7 @@ namespace Probability {
 
 class StudentDistribution : public OneParameterDistribution {
 public:
-  StudentDistribution() : OneParameterDistribution(1.0f) {}
+  StudentDistribution() : OneParameterDistribution(1.0) {}
   I18n::Message title() override { return I18n::Message::StudentDistribution; }
   Type type() const override { return Type::Student; }
   bool isContinuous() const override { return true; }
@@ -24,7 +24,7 @@ public:
     return I18n::Message::DegreesOfFreedomDefinition;
   }
   float evaluateAtAbscissa(float x) const override;
-  bool authorizedValueAtIndex(float x, int index) const override;
+  bool authorizedValueAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:

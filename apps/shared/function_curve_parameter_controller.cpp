@@ -1,4 +1,5 @@
 #include "function_curve_parameter_controller.h"
+#include "interactive_curve_view_controller.h"
 #include <assert.h>
 
 using namespace Escher;
@@ -6,9 +7,8 @@ using namespace Escher;
 namespace Shared {
 
 FunctionCurveParameterController::FunctionCurveParameterController() :
-  ViewController(nullptr),
+  SelectableListViewController(nullptr),
   m_goToCell(I18n::Message::Goto),
-  m_selectableTableView(this, this, this),
   m_record()
 {
 }
@@ -18,6 +18,19 @@ void FunctionCurveParameterController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
+}
+
+bool FunctionCurveParameterController::handleEvent(Ion::Events::Event event) {
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  if (event == Ion::Events::Left
+   && stack->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth + 1)
+  {
+    /* We only allow popping with Left if there is another menu beneath this
+     * one. */
+    stack->pop();
+    return true;
+  }
+  return false;
 }
 
 bool FunctionCurveParameterController::handleGotoSelection() {
@@ -30,8 +43,9 @@ bool FunctionCurveParameterController::handleGotoSelection() {
   return true;
 }
 
-KDCoordinate FunctionCurveParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
+KDCoordinate FunctionCurveParameterController::nonMemoizedRowHeight(int j) {
+  Escher::HighlightCell * cell = reusableCell(j, typeAtLocation(0, j));
+  return heightForCellAtIndex(cell, j, false);
 }
 
 }

@@ -72,7 +72,9 @@ public:
   template<typename T> T valueAtRank(int n, SequenceContext * sqctx);
 
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
-  constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
+  constexpr static int maxFirstIndex = 255; // m_initialRank is capped by 255
+  // 255 + 1 (to take into account a double recursive sequence) fits in 3 digits
+  constexpr static int k_initialRankNumberOfDigits = 3;
 
   //Range
   void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const override;

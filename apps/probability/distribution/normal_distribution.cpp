@@ -34,17 +34,17 @@ float NormalDistribution::evaluateAtAbscissa(float x) const {
   return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, m_parameter1, m_parameter2);
 }
 
-bool NormalDistribution::authorizedValueAtIndex(float x, int index) const {
+bool NormalDistribution::authorizedValueAtIndex(double x, int index) const {
   if (index == 0) {
     return true;
   }
-  if (x <= FLT_MIN || std::fabs(m_parameter1/x) > k_maxRatioMuSigma) {
+  if (x <= DBL_MIN || std::fabs(m_parameter1/x) > k_maxRatioMuSigma) {
     return false;
   }
   return true;
 }
 
-void NormalDistribution::setParameterAtIndex(float f, int index) {
+void NormalDistribution::setParameterAtIndex(double f, int index) {
   TwoParameterDistribution::setParameterAtIndex(f, index);
   if (index == 0 && std::fabs(m_parameter1/m_parameter2) > k_maxRatioMuSigma) {
     m_parameter2 = m_parameter1/k_maxRatioMuSigma;

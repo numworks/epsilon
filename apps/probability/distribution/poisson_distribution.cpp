@@ -24,8 +24,8 @@ float PoissonDistribution::yMax() const {
   return result * (1.0f + k_displayTopMarginRatio);
 }
 
-bool PoissonDistribution::authorizedValueAtIndex(float x, int index) const {
-  if (x <= 0.0f || x > 999.0f) {
+bool PoissonDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (x <= 0.0 || x > 999.0) {
     return false;
   }
   return true;

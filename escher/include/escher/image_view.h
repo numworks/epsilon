@@ -11,6 +11,7 @@ public:
   ImageView();
   void setImage(const Image * image);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override { return KDSize(m_image->width(), m_image->height()); }
 private:
   const Image * m_image;
 };

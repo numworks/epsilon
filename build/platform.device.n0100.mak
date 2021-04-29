@@ -1,2 +1,3 @@
 TOOLCHAIN ?= arm-gcc-m4f
 ION_KEYBOARD_LAYOUT = layout_B2
+PCB_LATEST = 0

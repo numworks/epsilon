@@ -5,15 +5,11 @@
 
 namespace Escher {
 
-ExpressionTableCell::ExpressionTableCell(Responder * parentResponder, Layout layout) :
+ExpressionTableCell::ExpressionTableCell(Responder * parentResponder) :
   Responder(parentResponder),
-  TableCell(layout),
-  m_labelExpressionView(this, k_horizontalMargin, 0, 0.0f, 0.5f, KDColorBlack, KDColorWhite)
+  TableCell(),
+  m_labelExpressionView(this, 0, 0, 0.0f, 0.5f, KDColorBlack, KDColorWhite)
 {
-}
-
-View * ExpressionTableCell::labelView() const {
-  return (View *)&m_labelExpressionView;
 }
 
 void ExpressionTableCell::setHighlighted(bool highlight) {

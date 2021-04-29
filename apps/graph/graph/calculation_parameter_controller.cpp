@@ -10,9 +10,8 @@ using namespace Escher;
 namespace Graph {
 
 CalculationParameterController::CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
-  ViewController(parentResponder),
+  SelectableListViewController(parentResponder),
   m_preimageCell(I18n::Message::Preimage),
-  m_selectableTableView(this),
   m_record(),
   m_preimageParameterController(nullptr, inputEventHandlerDelegate, range, cursor, &m_preimageGraphController),
   m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
@@ -29,12 +28,9 @@ const char * CalculationParameterController::title() {
   return I18n::translate(I18n::Message::Compute);
 }
 
-View * CalculationParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void CalculationParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -61,8 +57,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     }
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     if (row > 0) {
-      stack->pop();
-      stack->pop();
+      stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
     }
     stack->push(controller);
     return true;
@@ -80,30 +75,29 @@ int CalculationParameterController::numberOfRows() const {
   return 1 + shouldDisplayIntersection() + k_totalNumberOfReusableCells - 1;
 };
 
-KDCoordinate CalculationParameterController::rowHeight(int j) {
-  return Metric::ParameterCellHeight;
+KDCoordinate CalculationParameterController::nonMemoizedRowHeight(int index) {
+  if (typeAtIndex(index) == k_preImageCellType) {
+    return heightForCellAtIndex(&m_preimageCell, index, false);
+  }
+  MessageTableCell tempCell;
+  return heightForCellAtIndex(&tempCell, index, false);
 }
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < reusableCellCount(type));
-  if (type == 0) {
+  if (type == k_defaultCellType) {
     return &m_cells[index];
   }
-  assert(type == 1);
+  assert(type == k_preImageCellType);
   return &m_preimageCell;
 }
 
 int CalculationParameterController::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_defaultCellType) {
     return k_totalNumberOfReusableCells;
   }
   return 1;
-}
-
-int CalculationParameterController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  return j == 0;
 }
 
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

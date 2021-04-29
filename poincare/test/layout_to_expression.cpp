@@ -3,7 +3,9 @@
 #include <poincare/based_integer.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/constant.h>
+#include <poincare/cosine.h>
 #include <poincare/decimal.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/factorial.h>
 #include <poincare/integral.h>
@@ -246,6 +248,23 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
         CodePointLayout::Builder(','),
         CodePointLayout::Builder('1')
       })
+    );
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    /*   d     |
+     * -----(x)|
+     * d 1+x   |1+x=3
+     */
+    Layout l = DerivativeLayout::Builder(
+      CodePointLayout::Builder('x'),
+      HorizontalLayout::Builder({
+        CodePointLayout::Builder('1'),
+        CodePointLayout::Builder('+'),
+        CodePointLayout::Builder('x')
+      }),
+      CodePointLayout::Builder('3')
     );
     assert_layout_is_not_parsed(l);
   }
@@ -506,5 +525,37 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
         Symbol::Builder('x'),
         BasedInteger::Builder(4),
         BasedInteger::Builder(5)));
+  assert_parsed_layout_is(l, e);
+
+  // diff(1/var, var, cos(2))
+  l = DerivativeLayout::Builder(
+      FractionLayout::Builder(
+        CodePointLayout::Builder('1'),
+        HorizontalLayout::Builder({
+          CodePointLayout::Builder('v'),
+          CodePointLayout::Builder('a'),
+          CodePointLayout::Builder('r')
+          })),
+      HorizontalLayout::Builder({
+        CodePointLayout::Builder('v'),
+        CodePointLayout::Builder('a'),
+        CodePointLayout::Builder('r')
+        }),
+      HorizontalLayout::Builder({
+        CodePointLayout::Builder('c'),
+        CodePointLayout::Builder('o'),
+        CodePointLayout::Builder('s'),
+        CodePointLayout::Builder('('),
+        CodePointLayout::Builder('2'),
+        CodePointLayout::Builder(')'),
+        }));
+  e = Derivative::Builder(
+      Division::Builder(
+        BasedInteger::Builder(1),
+        Symbol::Builder("var", 3)),
+      Symbol::Builder("var", 3),
+      Cosine::Builder(
+        BasedInteger::Builder(2))
+      );
   assert_parsed_layout_is(l, e);
 }

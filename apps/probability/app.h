@@ -25,9 +25,9 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
     public:
-      I18n::Message name() override;
-      I18n::Message upperName() override;
-      const Escher::Image * icon() override;
+      I18n::Message name() const override;
+      I18n::Message upperName() const override;
+      const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
@@ -39,7 +39,7 @@ public:
     Snapshot();
     ~Snapshot();
     App * unpack(Escher::Container * container) override;
-    Descriptor * descriptor() override;
+    const Descriptor * descriptor() const override;
     void reset() override;
     Distribution * distribution();
     Calculation * calculation();

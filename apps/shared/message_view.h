@@ -9,7 +9,7 @@ namespace Shared {
 
 class MessageView : public Escher::View {
 public:
-  MessageView(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
+  MessageView(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   int numberOfSubviews() const override { return m_numberOfMessages; }

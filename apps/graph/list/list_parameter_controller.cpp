@@ -16,15 +16,14 @@ ListParameterController::ListParameterController(ListController * listController
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
   m_listController(listController),
   m_typeCell(),
+  m_renameCell(I18n::Message::Rename),
   m_typeParameterController(this),
-  m_domainParameterController(nullptr, inputEventHandlerDelegate),
-  m_renameCell(I18n::Message::Rename)
+  m_domainParameterController(nullptr, inputEventHandlerDelegate)
 {
-  m_selectableTableView.setMargins(Metric::CommonTopMargin, Metric::CommonTopMargin, Metric::CommonBottomMargin, Metric::CommonTopMargin); // Reduce the margins to make te text fit
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  switch (type) {
+  switch (index) {
   case 0:
     return &m_typeCell;
   case 1:
@@ -32,7 +31,7 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
   case 2:
     return &m_renameCell;
   default:
-    return Shared::ListParameterController::reusableCell(index, type - 3);
+    return Shared::ListParameterController::reusableCell(index, type);
   }
 }
 
@@ -56,7 +55,7 @@ char intervalBracket(double value, bool opening) {
 
 int writeInterval(char * buffer, int bufferSize, double min, double max, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   int numberOfChar = 0;
-  assert(bufferSize-1 > numberOfChar);
+  assert(bufferSize > numberOfChar);
   buffer[numberOfChar++] = intervalBracket(min, true);
   int glyphLengthRequiredForFloat = PrintFloat::glyphLengthForFloatWithPrecision(numberOfSignificantDigits);
   PrintFloat::TextLengths minLengths = PrintFloat::ConvertFloatToText<double>(min, buffer+numberOfChar, bufferSize - numberOfChar, glyphLengthRequiredForFloat, numberOfSignificantDigits, mode);
@@ -65,11 +64,11 @@ int writeInterval(char * buffer, int bufferSize, double min, double max, int num
   numberOfChar += strlcpy(buffer+numberOfChar, ",", bufferSize-numberOfChar);
   PrintFloat::TextLengths maxLengths = PrintFloat::ConvertFloatToText<double>(max, buffer+numberOfChar, bufferSize - numberOfChar, glyphLengthRequiredForFloat, numberOfSignificantDigits, mode);
   numberOfChar += maxLengths.CharLength;
-  assert(bufferSize-1 > numberOfChar);
+  assert(bufferSize > numberOfChar);
   buffer[numberOfChar++] = intervalBracket(max, false);
   assert(bufferSize > numberOfChar);
-  strlcpy(buffer+numberOfChar, " ", bufferSize-numberOfChar);
-  return minLengths.GlyphLength + maxLengths. GlyphLength + 3 + 1; // Count "[,] " glyphs
+  strlcpy(buffer+numberOfChar, "", bufferSize-numberOfChar);
+  return minLengths.GlyphLength + maxLengths. GlyphLength + 3; // Count "[,]" glyphs
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -89,12 +88,9 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       double max = function->tMax();
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
-      int glyphLength = writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
-      int numberOfAvailableGlyphs = (m_functionDomain.bounds().width() - m_functionDomain.labelView()->bounds().width() - m_functionDomain.accessoryView()->bounds().width() - 2*Metric::TableCellHorizontalMargin)/KDFont::SmallFont->glyphSize().width();
-      if (glyphLength > numberOfAvailableGlyphs) {
-        writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits-1, Preferences::PrintFloatMode::Scientific);
-      }
-      m_functionDomain.setAccessoryText(buffer);
+      writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
+      // Cell's layout will adapt to fit the subLabel.
+      m_functionDomain.setSubLabelText(buffer);
     }
   }
 }
@@ -114,7 +110,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
     renameFunction();
     return true;
   default:
-    return Shared::ListParameterController::handleEnterOnRow(rowIndex - 3);
+    return Shared::ListParameterController::handleEnterOnRow(rowIndex);
   }
 }
 

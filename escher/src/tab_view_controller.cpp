@@ -9,7 +9,8 @@ namespace Escher {
 
 TabViewController::ContentView::ContentView() :
   View(),
-  m_activeView(nullptr)
+  m_activeView(nullptr),
+  m_displayTabs(true)
 {
 };
 
@@ -19,17 +20,22 @@ void TabViewController::ContentView::setActiveView(View * view) {
   markRectAsDirty(bounds());
 }
 
+void TabViewController::ContentView::setDisplayTabs(bool display) {
+  if (display != m_displayTabs) {
+    m_displayTabs = display;
+    layoutSubviews();
+    markRectAsDirty(bounds());
+  }
+}
+
 void TabViewController::ContentView::layoutSubviews(bool force) {
-  KDRect tabViewFrame = KDRect(
-      0, 0,
-      m_frame.width(), Metric::TabHeight
-      );
+  KDRect tabViewFrame = m_displayTabs ? KDRect(0, 0, m_frame.width(), Metric::TabHeight) : KDRectZero;
   m_tabView.setFrame(tabViewFrame, force);
   if (m_activeView) {
     KDRect activeViewFrame = KDRect(
-        0, Metric::TabHeight,
+        0, tabViewFrame.height(),
         m_frame.width(),
-        m_frame.height() - Metric::TabHeight
+        m_frame.height() - tabViewFrame.height()
         );
     m_activeView->setFrame(activeViewFrame, force);
   }

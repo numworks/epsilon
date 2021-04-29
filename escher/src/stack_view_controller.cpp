@@ -9,9 +9,12 @@ namespace Escher {
 
 StackViewController::ControllerView::ControllerView() :
   View(),
+  m_borderView(Palette::GrayBright),
   m_contentView(nullptr),
   m_numberOfStacks(0),
-  m_displayStackHeaders(true)
+  m_displayStackHeaders(true),
+  m_headersOverlapHeaders(true),
+  m_headersOverlapContent(false)
 {
 }
 
@@ -23,6 +26,12 @@ void StackViewController::ControllerView::setContentView(View * view) {
   m_contentView = view;
   layoutSubviews();
   markRectAsDirty(bounds());
+}
+
+void StackViewController::ControllerView::setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor) {
+  m_headersOverlapHeaders = headersOverlapHeaders;
+  m_headersOverlapContent = headersOverlapContent;
+  m_borderView.setColor(headersContentBorderColor);
 }
 
 void StackViewController::ControllerView::pushStack(Frame frame) {
@@ -41,20 +50,62 @@ void StackViewController::ControllerView::popStack() {
 void StackViewController::ControllerView::layoutSubviews(bool force) {
   KDCoordinate width = m_frame.width();
   if (m_displayStackHeaders) {
-    for (int i=0; i<m_numberOfStacks; i++) {
-      m_stackViews[i].setFrame(KDRect(0, Metric::StackTitleHeight*i, width, Metric::StackTitleHeight + 1), force);
+    for (int i = 0; i < m_numberOfStacks; i++) {
+      // Account for separator thickness in position only if there is no overlap
+      m_stackViews[i].setFrame(
+        KDRect(
+          0,
+          (Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness)) * i,
+          width,
+          Metric::StackTitleHeight + Metric::CellSeparatorThickness)
+        , force);
     }
   }
   if (m_contentView) {
-    KDCoordinate separatorHeight = m_numberOfStacks > 0 ? 1 : 0;
-    KDCoordinate stacksTotalHeight = m_displayStackHeaders * (m_numberOfStacks * Metric::StackTitleHeight + separatorHeight);
+    KDCoordinate stacksTotalHeight = 0;
+    if (m_displayStackHeaders && m_numberOfStacks > 0) {
+      /* Regarding header to header overlap, represented horizontally :
+       *  - Overlap :     | stack 1 | stack 2 | stack 3 |   [Content]
+       *  - No overlap :  | stack 1 || stack 2 || stack 3 |   [Content] */
+      const int numberOfSeparators = m_headersOverlapHeaders ? m_numberOfStacks + 1 : 2 * m_numberOfStacks;
+      const KDCoordinate stackTitleHeightWithoutSeparators = Metric::StackTitleHeight - Metric::CellSeparatorThickness;
+      stacksTotalHeight = m_numberOfStacks * stackTitleHeightWithoutSeparators + numberOfSeparators * Metric::CellSeparatorThickness;
+      if (borderShouldOverlapContent()) {
+        // Shift content position up by the separator thickness
+        stacksTotalHeight -= Metric::CellSeparatorThickness;
+        // Layout the common border (which will override content)
+        m_borderView.setFrame(KDRect(0, stacksTotalHeight, width, Metric::CellSeparatorThickness), force);
+      }
+    }
+    // Layout content view
     KDRect contentViewFrame = KDRect(0, stacksTotalHeight, width, m_frame.height() - stacksTotalHeight);
     m_contentView->setFrame(contentViewFrame, force);
   }
 }
 
+bool StackViewController::ControllerView::borderShouldOverlapContent() const {
+  /* When content is bordered, an additional border may be drawn between content
+   * and headers, on top of everything, to preserve a clean separation when the
+   * content scrolls.
+   * This border should only be added if all these conditions are satisfied :
+   *  - Headers should overlap content :        m_headersOverlapContent
+   *  - There are headers and content to display :
+   *      m_displayStackHeaders && m_numberOfStacks > 0 && m_contentView
+   *  - Either :
+   *    - There is more than one header :       m_numberOfStacks > 1
+   * The last condition prevents border color mismatch. m_headersOverlapHeaders
+   * being false means that the headers' stacks should not share their border.
+   * Currently, it only happens in the toolboxes, where the first header stack
+   * has a different border color, and should not overlap with anything (second
+   * header as well as content). In that case, we ensure that this additional
+   * border will not override the first header stack's bottom border. */
+  return m_headersOverlapContent
+    && m_displayStackHeaders && m_numberOfStacks > 0 && m_contentView
+    && (m_headersOverlapHeaders || m_numberOfStacks > 1);
+}
+
 int StackViewController::ControllerView::numberOfSubviews() const {
-  return (m_displayStackHeaders ? m_numberOfStacks : 0) + (m_contentView == nullptr ? 0 : 1);
+  return (m_displayStackHeaders ? m_numberOfStacks : 0) + (m_contentView == nullptr ? 0 : 1) + (borderShouldOverlapContent() ? 1 : 0);
 }
 
 View * StackViewController::ControllerView::subviewAtIndex(int index) {
@@ -65,9 +116,12 @@ View * StackViewController::ControllerView::subviewAtIndex(int index) {
   if (index < m_numberOfStacks) {
     assert(index >= 0);
     return &m_stackViews[index];
-  } else {
-    assert(index == m_numberOfStacks);
+  } if (index == m_numberOfStacks) {
     return m_contentView;
+  } else {
+    // Border view must be last so that it is layouted on top of content subview
+    assert(index == m_numberOfStacks + 1);
+    return &m_borderView;
   }
 }
 
@@ -100,6 +154,7 @@ ViewController * StackViewController::topViewController() {
 }
 
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) {
+  assert(m_numberOfChildren < kMaxNumberOfStacks);
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
   /* Add the frame to the model */
   pushModel(frame);
@@ -127,6 +182,29 @@ void StackViewController::pop() {
   setupActiveViewController();
   vc->setParentResponder(nullptr);
   vc->viewDidDisappear();
+}
+
+void StackViewController::popUntilDepth(int depth) {
+  assert(depth >= 0);
+  if (depth >= m_numberOfChildren) {
+    return;
+  }
+  int numberOfFramesReleased = m_numberOfChildren - depth;
+  ViewController * vc;
+  for (int i = 0; i < numberOfFramesReleased; i++) {
+    vc = topViewController();
+    if (vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+      m_view.popStack();
+    }
+    m_numberOfChildren--;
+    if (i == numberOfFramesReleased - 1) {
+      setupActiveViewController();
+    }
+    vc->setParentResponder(nullptr);
+    if (i == 0) {
+      vc->viewDidDisappear();
+    }
+  }
 }
 
 void StackViewController::pushModel(Frame frame) {
@@ -183,10 +261,12 @@ void StackViewController::viewDidDisappear() {
   if (m_numberOfChildren > 0 && vc) {
     vc->viewDidDisappear();
   }
-  for (int i = 0; i < m_view.numberOfStacks(); i++) {
+  int numberOfStacks = m_view.numberOfStacks();
+  for (int i = 0; i < numberOfStacks; i++) {
     m_view.popStack();
   }
   m_isVisible = false;
+  assert(m_view.numberOfStacks() == 0);
 }
 
 }

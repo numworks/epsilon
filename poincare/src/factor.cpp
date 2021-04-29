@@ -6,6 +6,7 @@
 #include <poincare/opposite.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/exception_checkpoint.h>
 extern "C" {
 #include <stdlib.h>
 #include <assert.h>
@@ -18,6 +19,10 @@ namespace Poincare {
 constexpr Expression::FunctionHelper Factor::s_functionHelper;
 
 int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
+
+Expression FactorNode::setSign(Sign s, ReductionContext reductionContext) {
+  return Factor(this).setSign(s, reductionContext);
+}
 
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
@@ -50,25 +55,41 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  if (numberOfPrimeFactors == 0) {
-    m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
-    return m;
-  }
-  if (numberOfPrimeFactors < 0) {
-    // Exception: the decomposition failed
-    return m;
-  }
-  for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Expression factor = Rational::Builder(factors[index]);
-    if (!coefficients[index].isOne()) {
-      factor = Power::Builder(factor, Rational::Builder(coefficients[index]));
+  {
+    // See comment in Arithmetic::resetPrimeFactorization()
+    ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      Arithmetic arithmetic;
+      int numberOfPrimeFactors = arithmetic.PrimeFactorization(i);
+      if (numberOfPrimeFactors == 0) {
+        m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
+        return m;
+      }
+      if (numberOfPrimeFactors < 0) {
+        // Exception: the decomposition failed
+        return m;
+      }
+      for (int index = 0; index < numberOfPrimeFactors; index++) {
+        Expression factor = Rational::Builder(*arithmetic.factorizationFactorAtIndex(index));
+        if (!arithmetic.factorizationCoefficientAtIndex(index)->isOne()) {
+          factor = Power::Builder(factor, Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)));
+        }
+        m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
+      }
+      return m;
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
     }
-    m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }
-  return m;
+  // As tempEcp has been destroyed, fall back on parent exception checkpoint
+  ExceptionCheckpoint::Raise();
+  // Return to silence warnings
+  return Multiplication::Builder();
+}
+
+Expression Factor::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
+  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 Expression Factor::shallowReduce(Context * context) {

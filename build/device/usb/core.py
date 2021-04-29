@@ -1,17 +1,32 @@
-# Copyright (C) 2009-2017 Wander Lairson Costa
-# Copyright (C) 2017-2018 Robert Wlodarczyk
+# Copyright 2009-2017 Wander Lairson Costa
+# Copyright 2009-2021 PyUSB contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 r"""usb.core - Core USB features.
 
@@ -27,8 +42,8 @@ show_devices() - a function to show the devices present.
 
 __author__ = 'Wander Lairson Costa'
 
-__all__ = [ 'Device', 'Configuration', 'Interface', 'Endpoint', 'find',
-            'show_devices' ]
+__all__ = [ 'Device', 'Configuration', 'Interface', 'Endpoint', 'USBError',
+            'USBTimeoutError', 'NoBackendError', 'find', 'show_devices' ]
 
 import usb.util as util
 import copy
@@ -45,9 +60,18 @@ _logger = logging.getLogger('usb.core')
 
 _DEFAULT_TIMEOUT = 1000
 
+_sentinel = object()
+
 def _set_attr(input, output, fields):
     for f in fields:
        setattr(output, f, getattr(input, f))
+
+def _try_getattr(object, name):
+    try:
+        attr = getattr(object, name)
+    except :
+        attr = _sentinel
+    return attr
 
 def _try_get_string(dev, index, langid = None, default_str_i0 = "",
         default_access_error = "Error Accessing String"):
@@ -182,6 +206,8 @@ class _ResourceManager(object):
                 i = util.find_descriptor(cfg, bInterfaceNumber=intf, bAlternateSetting=alt)
             else:
                 i = util.find_descriptor(cfg, bInterfaceNumber=intf)
+            if i is None:
+                raise ValueError('No matching interface (' + str(intf) + ',' + str(alt) + ')')
 
         self.managed_claim_interface(device, i)
 
@@ -269,6 +295,14 @@ class USBError(IOError):
 
         IOError.__init__(self, errno, strerror)
         self.backend_error_code = error_code
+
+class USBTimeoutError(USBError):
+    r"""Exception class for connection timeout errors.
+
+    Backends must raise this exception when a call on a USB connection returns
+    a timeout error code.
+    """
+    pass
 
 class NoBackendError(ValueError):
     r"Exception class when a valid backend is not found."
@@ -1247,7 +1281,7 @@ def find(find_all=False, backend = None, custom_match = None, **args):
     def device_iter(**kwargs):
         for dev in backend.enumerate_devices():
             d = Device(dev, backend)
-            tests = (val == getattr(d, key) for key, val in kwargs.items())
+            tests = (val == _try_getattr(d, key) for key, val in kwargs.items())
             if _interop._all(tests) and (custom_match is None or custom_match(d)):
                 yield d
 

@@ -17,12 +17,12 @@ public:
   void viewWillAppear() override;
   void setRecord(Ion::Storage::Record record);
 protected:
-  float cursorBottomMarginRatio() override { return 0.15f; }
+  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
   ContinuousFunctionStore * functionStore() const;
-  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
+  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;
@@ -30,7 +30,6 @@ protected:
   Escher::MessageTextView m_defaultBannerView;
   bool m_isActive;
 private:
-  bool handleEnter() override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }

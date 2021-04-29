@@ -25,6 +25,7 @@ public:
   }
 private:
   constexpr static KDCoordinate k_margin = 5;
+  constexpr static KDCoordinate k_textBottomOffset = 1;
   int numberOfSubviews() const override;
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

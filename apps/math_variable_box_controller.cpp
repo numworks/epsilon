@@ -2,6 +2,7 @@
 #include "shared/global_context.h"
 #include "shared/continuous_function.h"
 #include <escher/metric.h>
+#include <escher/message_table_cell_with_message.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/expression.h>
@@ -46,7 +47,7 @@ void MathVariableBoxController::viewDidDisappear() {
   // Tidy the layouts displayed in the MathVariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
-    m_leafCells[i].setAccessoryLayout(Layout());
+    m_leafCells[i].setSubLabelLayout(Layout());
   }
   /* We reset the page when view disappears rather than when it appears because
    * subview layout is done before viewWillAppear. If the page at that point is
@@ -66,6 +67,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     destroyRecordAtRowIndex(rowIndex);
     int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
     selectCellAtLocation(selectedColumn(), newSelectedRow);
+    resetMemoization();
     m_selectableTableView.reloadData();
     displayEmptyControllerIfNeeded();
     return true;
@@ -99,12 +101,12 @@ int MathVariableBoxController::reusableCellCount(int type) {
 void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     I18n::Message label = nodeLabelAtIndex(index);
-    MessageTableCell * myCell = (MessageTableCell *)cell;
+    MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
     myCell->setMessage(label);
     myCell->reloadCell();
     return;
   }
-  ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
+  ExpressionTableCellWithExpression * myCell = static_cast<ExpressionTableCellWithExpression *>(cell);
   Storage::Record record = recordAtIndex(index);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
@@ -132,22 +134,21 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   }
   myCell->setLayout(symbolLayout);
-  myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
+  myCell->setSubLabelLayout(expressionLayoutForRecord(record, index));
   myCell->reloadScroll();
   myCell->reloadCell();
 }
 
-KDCoordinate MathVariableBoxController::rowHeight(int index) {
-  if (m_currentPage != Page::RootMenu) {
-    Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
-    if (!layoutR.isUninitialized()) {
-      return std::max<KDCoordinate>(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
-    }
+KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
+  if (m_currentPage == Page::RootMenu) {
+    MessageTableCellWithMessage tempCell;
+    return heightForCellAtIndex(&tempCell, index, false);
   }
-  return AlternateEmptyNestedMenuController::rowHeight(index);
+  ExpressionTableCellWithExpression tempCell;
+  return heightForCellAtIndex(&tempCell, index, true);
 }
 
-int MathVariableBoxController::typeAtLocation(int i, int j) {
+int MathVariableBoxController::typeAtIndex(int index) {
   if (m_currentPage == Page::RootMenu) {
     return 1;
   }
@@ -164,6 +165,20 @@ MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int ind
   return &m_nodeCells[index];
 }
 
+I18n::Message MathVariableBoxController::subTitle() {
+  switch (m_currentPage) {
+    case Page::Expression:
+      return I18n::Message::Expressions;
+    case Page::Function:
+      return I18n::Message::Functions;
+    case Page::Sequence:
+      return I18n::Message::Sequences;
+    default:
+      assert(false);
+      return (I18n::Message)0;
+  }
+}
+
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
   Page pages[k_numberOfMenuRows] = {Page::Expression, Page::Function, Page::Sequence};
   return pages[index];
@@ -171,7 +186,7 @@ MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index
 
 void MathVariableBoxController::setPage(Page page) {
   m_currentPage = page;
-  resetMemoization();
+  resetVarBoxMemoization();
 }
 
 bool MathVariableBoxController::selectSubMenu(int selectedRow) {
@@ -287,7 +302,7 @@ ViewController * MathVariableBoxController::emptyViewController() {
   return &m_emptyViewController;
 }
 
-void MathVariableBoxController::resetMemoization() {
+void MathVariableBoxController::resetVarBoxMemoization() {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_layouts[i] = Layout();
   }

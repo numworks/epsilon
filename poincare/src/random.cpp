@@ -13,7 +13,7 @@ constexpr Expression::FunctionHelper Random::s_functionHelper;
 int RandomNode::numberOfChildren() const { return Random::s_functionHelper.numberOfChildren(); }
 
 Expression RandomNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return Random(this);
 }
 

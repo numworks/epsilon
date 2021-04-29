@@ -2,8 +2,8 @@
 #define CALCULATION_ADDITIONAL_OUTPUTS_LIST_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/expression_table_cell_with_pointer.h>
-#include <escher/list_view_data_source.h>
+#include <escher/expression_table_cell_with_message.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
@@ -13,7 +13,7 @@ namespace Calculation {
 
 class EditExpressionController;
 
-class ListController : public Escher::StackViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
+class ListController : public Escher::StackViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   ListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
 
@@ -24,6 +24,8 @@ public:
   // ListController
   virtual void setExpression(Poincare::Expression e) = 0;
 
+  // ListViewDataSource
+  KDCoordinate cellWidth() override { return m_listController.selectableTableView()->columnWidth(0); }
 protected:
   class InnerListController : public ViewController {
   public:

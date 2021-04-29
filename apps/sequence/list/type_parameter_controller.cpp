@@ -13,14 +13,13 @@ using namespace Escher;
 
 namespace Sequence {
 
-TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list, TableCell::Layout cellLayout,
+TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  ViewController(parentResponder),
-  m_explicitCell(&m_selectableTableView, I18n::Message::Explicit, cellLayout),
-  m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence, cellLayout),
-  m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence, cellLayout),
+  SelectableListViewController(parentResponder),
+  m_explicitCell(&m_selectableTableView, I18n::Message::Explicit),
+  m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence),
+  m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence),
   m_layouts{},
-  m_selectableTableView(this),
   m_record(),
   m_listController(list)
 {
@@ -35,12 +34,9 @@ const char * TypeParameterController::title() {
   return I18n::translate(I18n::Message::SequenceType);
 }
 
-View * TypeParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void TypeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -98,38 +94,44 @@ int TypeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * TypeParameterController::reusableCell(int index) {
+HighlightCell * TypeParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_explicitCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
   return cells[index];
 }
 
-int TypeParameterController::reusableCellCount() const {
+int TypeParameterController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-KDCoordinate TypeParameterController::cellHeight() {
-  if (m_record.isNull()) {
-    return 50;
-  }
-  return Metric::ParameterCellHeight;
-}
-
-void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   const char * nextName = sequenceStore()->firstAvailableName();
   const KDFont * font = KDFont::LargeFont;
   if (!m_record.isNull()) {
     nextName = sequence()->fullName();
     font = KDFont::SmallFont;
   }
+  if (nextName == nullptr) {
+    /* When unselecting this controller, rowHeight and willDisplayCellForIndex
+     * might be called with a null record while the sequence still exists.
+     * NextName is then the next available name which is nullptr when dealing
+     * with last sequence. As it won't be actually displayed, we use a default
+     * placeholder. */
+    nextName = "?";
+  }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   m_layouts[j] = HorizontalLayout::Builder(
         CodePointLayout::Builder(nextName[0], font),
         VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Position::Subscript)
       );
-  ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
+  ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
   myCell->setLayout(m_layouts[j]);
+}
+
+KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
+  ExpressionTableCellWithMessage tempCell;
+  return heightForCellAtIndex(&tempCell, j, true);
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

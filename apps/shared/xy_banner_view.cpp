@@ -23,6 +23,7 @@ XYBannerView::XYBannerView(
     TextColor(),
     BackgroundColor()
   ),
+  m_abscissaView(&m_abscissaSymbol, &m_abscissaValue),
   m_ordinateView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
 {
   m_textBody[0] = 0;
@@ -30,7 +31,7 @@ XYBannerView::XYBannerView(
 
 View * XYBannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
-  View * subviews[] = {&m_abscissaSymbol, &m_abscissaValue, &m_ordinateView};
+  View * subviews[] = {&m_abscissaView, &m_ordinateView};
   return subviews[index];
 }
 

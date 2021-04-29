@@ -217,8 +217,8 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(ArcCosine::Builder(Symbol::Builder('a')).sign(&context) == ExpressionNode::Sign::Unknown);
   quiz_assert(ArcSine::Builder(Rational::Builder(-1,7)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(ArcTangent::Builder(Rational::Builder(1,7)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Ceiling::Builder(Rational::Builder(7,3)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Floor::Builder(Rational::Builder(7,3)).sign(&context) == ExpressionNode::Sign::Positive);
+  quiz_assert(Ceiling::Builder(Rational::Builder(7,3)).sign(&context) == ExpressionNode::Sign::Unknown);
+  quiz_assert(Floor::Builder(Rational::Builder(7,3)).sign(&context) == ExpressionNode::Sign::Unknown);
   quiz_assert(Round::Builder(Rational::Builder(7,3), Rational::Builder(1)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3), BasedInteger::Builder(0, Integer::Base::Binary))).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(DivisionRemainder::Builder(Decimal::Builder(2.0), Decimal::Builder(3.0)).sign(&context) == ExpressionNode::Sign::Positive);
@@ -235,7 +235,7 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(VectorNorm::Builder(BasedInteger::Builder(1)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(Division::Builder(Rational::Builder(7,3), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(ArcSine::Builder(Floor::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder(UCodePointGreekSmallLetterPi))))))).sign(&context) == ExpressionNode::Sign::Negative);
+  quiz_assert(ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder(UCodePointGreekSmallLetterPi)))))).sign(&context) == ExpressionNode::Sign::Negative);
 }
 
 QUIZ_CASE(poincare_properties_sign) {
@@ -266,6 +266,40 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduce("42→a");
   assert_reduced_expression_sign("a", Positive);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+}
+
+void assert_sign_sets_to(Expression e, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric) {
+  Shared::GlobalContext context;
+  ExpressionNode::Sign eSign = e.sign(&context);
+  assert(eSign == ExpressionNode::Sign::Positive || eSign == ExpressionNode::Sign::Negative);
+  double eValue = e.approximateToScalar<double>(&context, complexFormat, angleUnit);
+  Expression f = e.setSign(sign, ExpressionNode::ReductionContext(&context, complexFormat, angleUnit, unitFormat, User));
+  quiz_assert(f.sign(&context) == sign);
+  double fValue = f.approximateToScalar<double>(&context, complexFormat, angleUnit);
+  quiz_assert(fValue == (eSign == sign ? eValue : -eValue) || (std::isnan(fValue) == std::isnan(eValue)));
+}
+
+QUIZ_CASE(poincare_properties_set_sign_positive) {
+  assert_sign_sets_to(Factorial::Builder(Rational::Builder(3)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(DivisionRemainder::Builder(Rational::Builder(33), Rational::Builder(-5)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Power::Builder(Rational::Builder(-2), Rational::Builder(5)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Float<float>::Builder(-1.234f), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Float<double>::Builder(-2.468), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Rational::Builder(2, 7), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(RealPart::Builder(ComplexCartesian::Builder(Rational::Builder(3, 2), Rational::Builder(0))), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Constant::Builder(UCodePointGreekSmallLetterPi), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(FracPart::Builder(Rational::Builder(-34, 5)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Round::Builder(Rational::Builder(67, 34), Rational::Builder(1)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(DivisionQuotient::Builder(Rational::Builder(-23), Rational::Builder(12)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Unit::Builder(&Unit::k_massRepresentatives[Unit::k_poundRepresentativeIndex], &Unit::k_prefixes[Unit::k_emptyPrefixIndex]), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Multiplication::Builder(Rational::Builder(-3, 5), Rational::Builder(2), Rational::Builder(-7, 4)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(ArcSine::Builder(Rational::Builder(-1, 3)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Factor::Builder(Rational::Builder(120)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(ArcCosine::Builder(Rational::Builder(1, 4)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(AbsoluteValue::Builder(Symbol::Builder("p", 1)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(SignFunction::Builder(Constant::Builder(UCodePointGreekSmallLetterPi)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Infinity::Builder(true), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Random::Builder(), ExpressionNode::Sign::Positive);
 }
 
 void assert_expression_is_real(const char * expression) {

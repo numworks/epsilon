@@ -1,9 +1,8 @@
 #include "cell_with_separator.h"
-#include <escher/metric.h>
 
 using namespace Escher;
 
-namespace Settings {
+namespace Shared {
 
 void CellWithSeparator::setHighlighted(bool highlight) {
   cell()->setHighlighted(highlight);
@@ -11,7 +10,12 @@ void CellWithSeparator::setHighlighted(bool highlight) {
 }
 
 void CellWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, Metric::CellSeparatorThickness, bounds().width(), k_margin), Palette::WallScreen);
+  ctx->fillRect(KDRect(
+        0,
+        separatorAboveCell() ? k_lineThickness : bounds().height() - k_margin - k_lineThickness,
+        bounds().width(),
+        k_margin
+      ), Palette::WallScreen);
 }
 
 int CellWithSeparator::numberOfSubviews() const {
@@ -24,7 +28,13 @@ View * CellWithSeparator::subviewAtIndex(int index) {
 }
 
 void CellWithSeparator::layoutSubviews(bool force) {
-  cell()->setFrame(KDRect(0, k_margin, bounds().width(), bounds().height()-k_margin), force);
+  // With the separator, an additional border is visible.
+  cell()->setFrame(KDRect(
+        0,
+        separatorAboveCell() ? k_margin + k_lineThickness : 0,
+        bounds().width(),
+        bounds().height() - k_margin - k_lineThickness
+      ), force);
 }
 
 }

@@ -8,12 +8,11 @@ using namespace Escher;
 namespace Graph {
 
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
-  ViewController(valuesController),
+  SelectableListViewController(valuesController),
   m_hideColumn(I18n::Message::HideDerivativeColumn),
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::CopyColumnInList),
 #endif
-  m_selectableTableView(this),
   m_record(),
   m_valuesController(valuesController)
 {
@@ -25,10 +24,6 @@ void DerivativeParameterController::viewWillAppear() {
 
 const char * DerivativeParameterController::title() {
   return m_pageTitle;
-}
-
-View * DerivativeParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void DerivativeParameterController::didBecomeFirstResponder() {
@@ -64,7 +59,7 @@ int DerivativeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * DerivativeParameterController::reusableCell(int index) {
+HighlightCell * DerivativeParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
 #if COPY_COLUMN
@@ -73,14 +68,6 @@ HighlightCell * DerivativeParameterController::reusableCell(int index) {
   HighlightCell * cells[] = {&m_hideColumn};
 #endif
   return cells[index];
-}
-
-int DerivativeParameterController::reusableCellCount() const {
-  return k_totalNumberOfCell;
-}
-
-KDCoordinate DerivativeParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
 }
 
 ContinuousFunctionStore * DerivativeParameterController::functionStore() {

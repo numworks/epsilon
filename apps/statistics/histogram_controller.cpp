@@ -1,6 +1,5 @@
 #include "histogram_controller.h"
 #include "../shared/poincare_helpers.h"
-#include "../shared/text_helpers.h"
 #include "app.h"
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>
@@ -22,7 +21,12 @@ HistogramController::HistogramController(Responder * parentResponder, InputEvent
   m_storeVersion(storeVersion),
   m_barVersion(barVersion),
   m_rangeVersion(rangeVersion),
-  m_histogramParameterController(nullptr, inputEventHandlerDelegate, store)
+  m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
+  m_parameterButton(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
+    HistogramController * histogramController = static_cast<HistogramController * >(context);
+    histogramController->stackController()->push(histogramController->histogramParameterController());
+    return true;
+  }, this), KDFont::SmallFont)
 {
 }
 
@@ -44,12 +48,37 @@ StackViewController * HistogramController::stackController() {
   return stack;
 }
 
+Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  assert(index == 0);
+  return const_cast<Button *>(&m_parameterButton);
+}
+
 const char * HistogramController::title() {
   return I18n::translate(I18n::Message::HistogramTab);
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
-  assert(selectedSeriesIndex() >= 0);
+  if (header()->selectedButton() == 0) {
+    if (event == Ion::Events::Down) {
+      header()->setSelectedButton(-1);
+      multipleDataView()->setDisplayBanner(true);
+      multipleDataView()->selectDataView(selectedSeriesIndex());
+      highlightSelection();
+      reloadBannerView();
+      return true;
+    }
+    if (event == Ion::Events::Up) {
+      Container::activeApp()->setFirstResponder(tabController());
+      return true;
+    }
+    return false;
+  }
+  if (selectedSeriesIndex() == 0 && event == Ion::Events::Up) {
+    multipleDataView()->deselectDataView(selectedSeriesIndex());
+    multipleDataView()->setDisplayBanner(false);
+    header()->setSelectedButton(0);
+    return true;
+  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     stackController()->push(histogramParameterController());
     return true;
@@ -58,7 +87,15 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::viewWillAppear() {
+  if (header()->selectedButton() >= 0) {
+    header()->setSelectedButton(-1);
+  }
   MultipleDataViewController::viewWillAppear();
+
+  multipleDataView()->setDisplayBanner(true);
+  multipleDataView()->selectDataView(selectedSeriesIndex());
+  highlightSelection();
+
   uint32_t storeChecksum = m_store->storeChecksum();
   bool initedRangeParameters = false;
   if (*m_storeVersion != storeChecksum) {
@@ -79,15 +116,25 @@ void HistogramController::viewWillAppear() {
     *m_rangeVersion = rangeChecksum;
     initBarSelection();
     reloadBannerView();
+    multipleDataView()->reload();
+  }
+}
+
+void HistogramController::didEnterResponderChain(Responder * firstResponder) {
+  assert(selectedSeriesIndex() >= 0);
+  if (!multipleDataView()->dataViewAtIndex(selectedSeriesIndex())->isMainViewSelected()) {
+    header()->setSelectedButton(0);
   }
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
-    if (selectedSeriesIndex() >= 0) {
-      m_view.dataViewAtIndex(selectedSeriesIndex())->setForceOkDisplay(false);
+    if (header()->selectedButton() == 0) {
+      header()->setSelectedButton(-1);
+      return;
     }
+    assert(selectedSeriesIndex() >= 0);
   }
   MultipleDataViewController::willExitResponderChain(nextFirstResponder);
 }
@@ -109,13 +156,15 @@ void HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
     return;
   }
-  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(precision);
+  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   char buffer[bufferSize] = "";
   int numberOfChar = 0;
 
   // Add Interval Data
   const char * legend = " [";
+  /* The word Interval is just a bit too long to display two numbers with a sign and maximal precision after it. */
+  int intervalPrecision = std::min(precision, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 2);
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, bufferSize);
   numberOfChar += legendLength;
@@ -123,7 +172,7 @@ void HistogramController::reloadBannerView() {
   // Add lower bound
   if (selectedSeriesIndex() >= 0) {
     double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, intervalPrecision);
   }
 
   numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
@@ -131,33 +180,32 @@ void HistogramController::reloadBannerView() {
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, intervalPrecision);
   }
   numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxIntervalLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
-  numberOfChar = 0;
+  buffer[0] = ' ';
+  numberOfChar = 1;
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
-  numberOfChar = 0;
+  buffer[0] = ' ';
+  numberOfChar = 1;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);
   }
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  buffer[numberOfChar++] = '\0';
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();
@@ -177,10 +225,10 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   {
     *m_selectedBarIndex = newSelectedBarIndex;
     m_view.dataViewAtIndex(selectedSeriesIndex())->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex));
-    if (m_store->scrollToSelectedBarIndex(selectedSeriesIndex(), *m_selectedBarIndex)) {
-      multipleDataView()->reload();
-    }
+    /* Reload the view even if it did not scroll because the banner height
+     * might have changed. */
     reloadBannerView();
+    multipleDataView()->reload();
     return true;
   }
   return false;

@@ -16,14 +16,12 @@ using namespace Poincare;
 namespace Shared {
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
-    CursorView * cursorView, View * okView, bool displayBanner) :
+    CursorView * cursorView, bool displayBanner) :
   View(),
   m_bannerView(bannerView),
   m_curveViewCursor(curveViewCursor),
   m_curveViewRange(curveViewRange),
   m_cursorView(cursorView),
-  m_okView(okView),
-  m_forceOkDisplay(false),
   m_mainViewSelected(false),
   m_drawnRangeVersion(0)
 {
@@ -61,7 +59,7 @@ void CurveView::setCurveViewRange(CurveViewRange * curveViewRange) {
   m_curveViewRange = curveViewRange;
 }
 
-/* When setting cursor, banner or ok view we first dirty the former element
+/* When setting cursor or banner we first dirty the former element
  * frame (in case we set the new element to be nullptr or the new element frame
  * does not recover the former element frame) and then we dirty the new element
  * frame (most of the time it is automatically done by the layout but the frame
@@ -78,12 +76,6 @@ void CurveView::setCursorView(CursorView * cursorView) {
 void CurveView::setBannerView(View * bannerView) {
   markRectAsDirty(bannerFrame());
   m_bannerView = bannerView;
-  layoutSubviews();
-}
-
-void CurveView::setOkView(View * okView) {
-  markRectAsDirty(okFrame());
-  m_okView = okView;
   layoutSubviews();
 }
 
@@ -1012,10 +1004,11 @@ void CurveView::layoutSubviews(bool force) {
     m_cursorView->setCursorFrame(cursorFrame(), force);
   }
   if (m_bannerView != nullptr) {
+    /* Changing the banner frame may move the labels of the horizontal axis. We
+     * thus need to dirty the band that can contain them. */
+    const KDCoordinate dirtyHeight = 2 * (k_font->glyphSize().height() + k_labelMargin);
+    markRectAsDirty(KDRect(0, bounds().height() - m_bannerView->minimalSizeForOptimalDisplay().height() - dirtyHeight, bounds().width(), dirtyHeight));
     m_bannerView->setFrame(bannerFrame(), force);
-  }
-  if (m_okView != nullptr) {
-    m_okView->setFrame(okFrame(), force);
   }
 }
 
@@ -1062,38 +1055,13 @@ KDRect CurveView::bannerFrame() {
   return bannerFrame;
 }
 
-KDRect CurveView::okFrame() {
-  KDRect okFrame = KDRectZero;
-  if (m_okView && (m_mainViewSelected || m_forceOkDisplay)) {
-    KDCoordinate bannerHeight = 0;
-    if (m_bannerView != nullptr) {
-      bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
-    }
-    KDSize okSize = m_okView->minimalSizeForOptimalDisplay();
-    okFrame = KDRect(bounds().width()- okSize.width()-k_okHorizontalMargin, bounds().height()- bannerHeight-okSize.height()-k_okVerticalMargin, okSize);
-  }
-  return okFrame;
-}
-
 int CurveView::numberOfSubviews() const {
-  return (m_bannerView != nullptr) + (m_cursorView != nullptr) + (m_okView != nullptr);
+  return (m_bannerView != nullptr) + (m_cursorView != nullptr);
 };
 
 View * CurveView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 3);
-  /* If all subviews exist, we want Ok view to be the first child to avoid
-   * redrawing it because it falls in the union of dirty rectangles linked to
-   * the banner view and curve view */
-  if (index == 0) {
-    if (m_okView != nullptr) {
-      return m_okView;
-    } else {
-      if (m_cursorView != nullptr) {
-        return m_cursorView;
-      }
-    }
-  }
-  if (index == 1 && m_cursorView != nullptr && m_okView != nullptr) {
+  assert(index >= 0 && index < 2);
+  if (index == 0 && m_cursorView != nullptr) {
     return m_cursorView;
   }
   return m_bannerView;

@@ -95,12 +95,34 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   m_userVariablesUsed = !shouldReplaceFunctionsButNotSymbols;
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
+  assert(m_intervalApproximateSolutions[0] <= m_intervalApproximateSolutions[1]);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
-  double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
+  double maximalStep = Poincare::Solver::DefaultMaximalStep(start, m_intervalApproximateSolutions[1]);
+  /* In order to be able to call NextRoot on the previously found root, the
+   * method cannot return its starting value. To allow the bound of the
+   * interval to be part of the solutions, we need to start the search a
+   * little sooner. */
+  start -= maximalStep;
+  /* The approximated value for a solution located on one of the bound could be
+   * outside the interval, so we need to take a small margin. */
+  double boundMargin = maximalStep * Poincare::Solver::k_zeroPrecision;
   double root;
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
-    root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
+    root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, m_intervalApproximateSolutions[1], context, Poincare::Solver::k_relativePrecision, Poincare::Solver::k_minimalStep, maximalStep);
+
+    /* Handle solutions found outside the reasonnable interval */
+    if (root < m_intervalApproximateSolutions[0] - boundMargin) {
+      /* A solution is found too soon, we simply ignore it and move on. */
+      start = root;
+      i--;
+      continue;
+    } else if (root > m_intervalApproximateSolutions[1] + boundMargin) {
+      /* A solution is found but too late: there is no solution in the
+       * interval, simply return NAN. */
+      root = NAN;
+    }
+
     if (i == k_maxNumberOfApproximateSolutions) {
       m_hasMoreThanMaxNumberOfApproximateSolution = !std::isnan(root);
       break;
@@ -117,13 +139,25 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
 
 EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols) {
   assert(replaceFunctionsButNotSymbols != nullptr);
+  // First, solve the equation using predefined variables if there are
   *replaceFunctionsButNotSymbols = false;
-  Error e = privateExactSolve(context, false);
-  if (m_numberOfUserVariables > 0 && (e != Error::NoError || numberOfSolutions() == 0)) {
+
+  Error firstError = privateExactSolve(context, false);
+  int firstNumberOfSolutions = numberOfSolutions();
+
+  if (m_numberOfUserVariables > 0 && (firstError != Error::NoError || firstNumberOfSolutions == 0 || firstNumberOfSolutions == INT_MAX)) {
+    // If there were predefined variables, and solution isn't good, try without
     *replaceFunctionsButNotSymbols = true;
-    e = privateExactSolve(context, true);
+    Error secondError = privateExactSolve(context, true);
+
+    if (firstError == Error::NoError && secondError != Error::NoError && secondError != Error::RequireApproximateSolution) {
+      // First solution was better, but has been tidied. It is recomputed.
+      *replaceFunctionsButNotSymbols = false;
+      return privateExactSolve(context, false);
+    }
+    return secondError;
   }
-  return e;
+  return firstError;
 }
 
 /* Equations are solved according to the following procedure :

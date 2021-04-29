@@ -19,6 +19,7 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0100/shar
   reset.cpp \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
+  usb.cpp \
 )
 
 ion_device_shared_bootloader_kernel_src += ion/src/device/shared/drivers/internal_flash.cpp

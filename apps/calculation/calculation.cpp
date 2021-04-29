@@ -230,8 +230,8 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 }
 
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
-  // TODO: implement a UserCircuitBreaker
-  if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+  if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())
+    || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), "undef") == 0) {
     return AdditionalInformationType::None;
   }
   Preferences * preferences = Preferences::sharedPreferences();

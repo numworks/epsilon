@@ -60,9 +60,9 @@ void assert_interesting_range_is(const char * definition, float targetXMin, floa
 }
 
 QUIZ_CASE(poincare_zoom_interesting_ranges) {
-  assert_interesting_range_is("0", 0, 0, NAN, NAN);
-  assert_interesting_range_is("1", 0, 0, NAN, NAN);
-  assert_interesting_range_is("-100", 0, 0, NAN, NAN);
+  assert_interesting_range_is("0", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("1", NAN, NAN, NAN, NAN);
+  assert_interesting_range_is("-100", NAN, NAN, NAN, NAN);
   assert_interesting_range_is("x", 0, 0, NAN, NAN);
   assert_interesting_range_is("x^2", 0, 0, NAN, NAN);
   assert_interesting_range_is("-(x^3)", 0, 0, NAN, NAN);
@@ -70,28 +70,28 @@ QUIZ_CASE(poincare_zoom_interesting_ranges) {
   assert_interesting_range_is("ℯ^(-x)", NAN, NAN, NAN, NAN);
   assert_interesting_range_is("√(x^2+1)-x", NAN, NAN, NAN, NAN);
 
-  assert_interesting_range_is("x-21", 20.5423145, 20.5423145, NAN, NAN);
-  assert_interesting_range_is("-11x+100", 9.45824909, 9.45824909, NAN, NAN);
-  assert_interesting_range_is("x^2-1", -8.634861, 8.634861, -1, -1);
-  assert_interesting_range_is("3x^2+x+10", -0.179552406, -0.179552406, NAN, NAN);
-  assert_interesting_range_is("(x+10)(x-10)", -17.205507, 17.205507, -100, -100);
-  assert_interesting_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", -1.61903656, 7.01582479, -16.8975754, 4.9766078);
-  assert_interesting_range_is("1/x", -3.97572827, 3.97572827, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("1/(1-x)", -2.81933546, 4.96758938, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("1/(x-10)", 5.72560453, 15.8184233, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("√(x)", -2.09669948, 9.08569717, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("ln(x)", -1.61903656, 7.01582479, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("sin(x)", -13.2858067, 13.2858067, -0.985581219, 0.985581219);
-  assert_interesting_range_is("cos(x)", -906.33136, 906.33136, -0.996542156, 0.989880025, Degree);
-  assert_interesting_range_is("tan(x)", -14.4815292, 14.4815292, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("1/tan(x)", -987.901184, 987.901184, FLT_MAX, -FLT_MAX, Degree);
-  assert_interesting_range_is("asin(x)", -1.67939043, 1.67939043, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("acos(x)", -1.67939043, 1.67939043, FLT_MAX, -FLT_MAX, Degree);
-  assert_interesting_range_is("atan(x)", -3.34629107, 3.34629107, FLT_MAX, -FLT_MAX);
-  assert_interesting_range_is("x×sin(x)", -14.4815292, 14.4815292, -4.81068802, 7.47825241);
-  assert_interesting_range_is("x×ln(x)", -0.314885706, 1.36450469, -0.367841482, -0.367841482);
-  assert_interesting_range_is("root(x^3+1,3)-x", -2.732898, 2.45420456, 1.58665824, 1.58665824);
-  assert_interesting_range_is("x^x", -0.745449066, 3.23027921, 0.692226887, 0.692226887);
+  assert_interesting_range_is("x-21", 19.3796234, 19.3796234, NAN, NAN);
+  assert_interesting_range_is("-11x+100", 8.92291355, 8.92291355, NAN, NAN);
+  assert_interesting_range_is("x^2-1", -7.80982208, 7.80982208, -1, 0);
+  assert_interesting_range_is("3x^2+x+10", -0.169389784, -0.169389784, NAN, NAN);
+  assert_interesting_range_is("(x+10)(x-10)", -15.5615616, 15.5615616, -100, 0);
+  assert_interesting_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", -1.46434164, 6.34548044, -16.9008026, 5.02076149);
+  assert_interesting_range_is("1/x", -3.5958581, 3.5958581, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("1/(1-x)", -2.54995537, 4.49294949, 0, 0);
+  assert_interesting_range_is("1/(x-10)", 5.98468208, 14.1209784, 0, 0);
+  assert_interesting_range_is("√(x)", -1.89636505, 8.21758175, 0, 0);
+  assert_interesting_range_is("ln(x)", -1.46434164, 6.34548044, 0, 0);
+  assert_interesting_range_is("sin(x)", -13.0978546, 13.0978546, -0.999772608, 0.999772608);
+  assert_interesting_range_is("cos(x)", -893.509644, 893.509644, -0.999294519, 0.998674929, Degree);
+  assert_interesting_range_is("tan(x)", -13.0978546, 13.0978546, 0, 0);
+  assert_interesting_range_is("1/tan(x)", -893.509644, 893.509644, 0, 0, Degree);
+  assert_interesting_range_is("asin(x)", -1.65563226, 1.65563226, 0, 0);
+  assert_interesting_range_is("acos(x)", -1.65563226, 1.65563226, FLT_MAX, -FLT_MAX, Degree);
+  assert_interesting_range_is("atan(x)", -3.2989521, 3.2989521, 0, 0);
+  assert_interesting_range_is("x×sin(x)", -13.0978546, 13.0978546, -4.81180477, 7.73865843);
+  assert_interesting_range_is("x×ln(x)", -0.284799129, 1.23412955, -0.36787945, 0);
+  assert_interesting_range_is("root(x^3+1,3)-x", -2.47177649, 2.21971154, 1.58732843, 1.58732843);
+  assert_interesting_range_is("x^x", -0.674223423, 2.92163467, 0.692200601, 0.692200601);
 }
 
 
@@ -134,7 +134,7 @@ QUIZ_CASE(poincare_zoom_refined_range) {
 }
 
 void assert_orthonormal_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
-  assert((std::isnan(targetXMin) && std::isnan(targetXMax) && std::isnan(targetYMin) && std::isnan(targetYMax))
+  assert((std::isnan(targetXMin) || std::isnan(targetXMax) || std::isnan(targetYMin) || std::isnan(targetYMax))
       || float_equal((targetYMax - targetYMin) / (targetXMax - targetXMin), NormalRatio));
   float xMin, xMax, yMin, yMax;
   Shared::GlobalContext globalContext;
@@ -145,7 +145,7 @@ void assert_orthonormal_range_is(const char * definition, float targetXMin, floa
 }
 
 QUIZ_CASE(poincare_zoom_range_with_ratio) {
-  assert_orthonormal_range_is("1", NAN, NAN, NAN, NAN);
+  assert_orthonormal_range_is("1", 0, 0, NAN, NAN);
   assert_orthonormal_range_is("x", -10, 10, -4.360695, 4.486482);
   assert_orthonormal_range_is("x^2", -10, 10, -0.0527148247, 8.7944622);
   assert_orthonormal_range_is("x^3", -10, 10, -3.91881895, 4.9283576);

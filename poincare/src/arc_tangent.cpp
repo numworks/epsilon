@@ -11,6 +11,10 @@ constexpr Expression::FunctionHelper ArcTangent::s_functionHelper;
 
 int ArcTangentNode::numberOfChildren() const { return ArcTangent::s_functionHelper.numberOfChildren(); }
 
+Expression ArcTangentNode::setSign(Sign s, ReductionContext reductionContext) {
+  return ArcTangent(this).setSign(s, reductionContext);
+}
+
 Layout ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::s_functionHelper.name());
 }
@@ -46,6 +50,10 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
 
 Expression ArcTangentNode::shallowReduce(ReductionContext reductionContext) {
   return ArcTangent(this).shallowReduce(reductionContext);
+}
+
+Expression ArcTangent::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
+  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

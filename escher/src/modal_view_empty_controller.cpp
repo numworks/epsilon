@@ -1,5 +1,5 @@
 #include <escher/modal_view_empty_controller.h>
-#include <apps/i18n.h>
+#include <escher/i18n.h>
 #include <assert.h>
 
 namespace Escher {

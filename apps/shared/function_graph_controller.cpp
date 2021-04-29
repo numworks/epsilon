@@ -3,6 +3,7 @@
 #include "poincare_helpers.h"
 #include "../apps_container.h"
 #include <poincare/coordinate_2D.h>
+#include <poincare/layout_helper.h>
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -15,6 +16,7 @@ namespace Shared {
 
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, rangeVersion),
+  m_calculusButton(this, I18n::Message::GraphCalculus, calculusButtonInvocation(), KDFont::SmallFont),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }
@@ -47,7 +49,12 @@ void FunctionGraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
 }
 
-bool FunctionGraphController::handleEnter() {
+bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
+  if (index != *m_indexFunctionSelectedByCursor) {
+    *m_indexFunctionSelectedByCursor = index;
+    Coordinate2D<double> xy = xyValues(index, m_cursor->t(), textFieldDelegateApp()->localContext());
+    m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
+  }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   curveParameterController()->setRecord(record);
   StackViewController * stack = stackController();
@@ -57,6 +64,18 @@ bool FunctionGraphController::handleEnter() {
 
 void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
   *m_indexFunctionSelectedByCursor = functionIndex;
+}
+
+KDCoordinate FunctionGraphController::FunctionSelectionController::rowHeight(int j) {
+  assert(j < graphController()->functionStore()->numberOfActiveFunctions());
+  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
+  return std::max(function->layout().layoutSize().height(), nameLayoutAtIndex(j).layoutSize().height()) + Metric::CellTopMargin + Metric::CellBottomMargin;
+}
+
+void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index < graphController()->functionStore()->numberOfActiveFunctions());
+  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
+  static_cast<CurveSelectionCell *>(cell)->setLayout(HorizontalLayout::Builder({nameLayoutAtIndex(index), LayoutHelper::String("=", 2), function->layout().clone()}));
 }
 
 void FunctionGraphController::reloadBannerView() {
@@ -156,7 +175,10 @@ int FunctionGraphController::numberOfCurves() const {
 }
 
 void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) {
-  float ratio = InteractiveCurveViewRange::NormalYXRatio() / (1 + cursorTopMarginRatio() + cursorBottomMarginRatio());
+  /* Since the banner has not yet been computed, cursorBottomMarginRatio cannot be called. We compute it manually with an estimation of the banner size. */
+  constexpr int estimateNumberOfBannerLines = 1;
+  float bottomRatio = cursorBottomMarginRatioForBannerHeight(BannerView::HeightGivenNumberOfLines(estimateNumberOfBannerLines));
+  float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - bottomRatio);
   DefaultInterestingRanges(range, textFieldDelegateApp()->localContext(), functionStore(), ratio);
 }
 

@@ -251,32 +251,31 @@ int ConsoleController::indexFromCumulatedHeight(KDCoordinate offsetY ){
 
 HighlightCell * ConsoleController::reusableCell(int index, int type) {
   assert(index >= 0);
-  if (type == LineCellType) {
+  if (type == k_lineCellType) {
     assert(index < k_numberOfLineCells);
     return m_cells+index;
   } else {
-    assert(type == EditCellType);
+    assert(type == k_editCellType);
     assert(index == 0);
     return &m_editCell;
   }
 }
 
 int ConsoleController::reusableCellCount(int type) {
-  if (type == LineCellType) {
+  if (type == k_lineCellType) {
     return k_numberOfLineCells;
   } else {
     return 1;
   }
 }
 
-int ConsoleController::typeAtLocation(int i, int j) {
-  assert(i == 0);
-  assert(j >= 0);
-  if (j < m_consoleStore.numberOfLines()) {
-    return LineCellType;
+int ConsoleController::typeAtIndex(int index) {
+  assert(index >= 0);
+  if (index < m_consoleStore.numberOfLines()) {
+    return k_lineCellType;
   } else {
-    assert(j == m_consoleStore.numberOfLines());
-    return EditCellType;
+    assert(index == m_consoleStore.numberOfLines());
+    return k_editCellType;
   }
 }
 
@@ -374,9 +373,10 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 
 VariableBoxController * ConsoleController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
+  // Subtitle display status must be set before as it alter loaded node order
+  varBox->setDisplaySubtitles(false);
   varBox->loadVariablesImportedFromScripts();
   varBox->setTitle(I18n::Message::FunctionsAndVariables);
-  varBox->setDisplaySubtitles(false);
   return varBox;
 }
 

@@ -19,7 +19,7 @@ Controller::ContentView::ContentView(Controller * controller, SelectableTableVie
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
-  static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->verticalBar()->setMargin(k_indicatorMargin);
+  m_selectableTableView.decorator()->setVerticalMargins(k_indicatorMargin, k_indicatorMargin);
 }
 
 SelectableTableView * Controller::ContentView::selectableTableView() {
@@ -138,7 +138,7 @@ int Controller::reusableCellCount() const {
 }
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  AppCell * appCell = (AppCell *)cell;
+  AppCell * appCell = static_cast<AppCell *>(cell);
   AppsContainer * container = AppsContainer::sharedAppsContainer();
   int appIndex = (j * k_numberOfColumns + i) + 1;
   if (appIndex >= container->numberOfApps()) {
@@ -146,7 +146,7 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   } else {
     appCell->setVisible(true);
     if (appIndex < container->numberOfBuiltinApps()) {
-      ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
+      const ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
       appCell->setAppDescriptor(descriptor);
     } else {
       Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());

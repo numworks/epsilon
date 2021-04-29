@@ -28,27 +28,42 @@ public:
 
 private:
   constexpr static int k_maxLegendLength = 16;
-  constexpr static int k_maxNumberOfCharacters = 50;
+
+  class SeriesSelectionController : public Shared::CurveSelectionController {
+  public:
+    SeriesSelectionController(GraphController * graphController) : Shared::CurveSelectionController(graphController) {}
+    const char * title() override { return I18n::translate(I18n::Message::Regression); }
+    int numberOfRows() const override { return graphController()->m_store->numberOfNonEmptySeries(); }
+    KDCoordinate rowHeight(int j) override;
+    CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < Store::k_numberOfSeries); return m_cells + index; }
+    int reusableCellCount(int type) override { return Store::k_numberOfSeries; }
+    void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  private:
+    GraphController * graphController() const { return static_cast<GraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
+    CurveSelectionCell m_cells[Store::k_numberOfSeries];
+  };
 
   Poincare::Context * globalContext();
 
   // SimpleInteractiveCurveViewController
+  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   Shared::CurveView * curveView() override;
-  bool handleEnter() override;
 
   // InteractiveCurveViewController
   void initCursorParameters() override;
   bool cursorMatchesModel() override;
   uint32_t rangeVersion() override;
-  int selectedCurveIndex() const override { return *m_selectedSeriesIndex; }
+  int selectedCurveRelativePosition() const override;
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double x, Poincare::Context * context) const override;
   double yValue(int curveIndex, double x, Poincare::Context * context) const;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
-  int estimatedBannerNumberOfLines() const override;
+  bool openMenuForCurveAtIndex(int index) override;
+  SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
+  Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }
 
   void setRoundCrossCursorView();
   Shared::CursorView m_crossCursorView;
@@ -57,6 +72,8 @@ private:
   GraphView m_view;
   Store * m_store;
   GraphOptionsController m_graphOptionsController;
+  SeriesSelectionController m_seriesSelectionController;
+  Escher::Button m_calculusButton;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;

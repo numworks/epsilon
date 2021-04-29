@@ -1,9 +1,9 @@
 #include "graph_controller.h"
-#include "../shared/poincare_helpers.h"
-#include "../shared/text_helpers.h"
 #include "../apps_container.h"
+#include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
+#include <poincare/layout_helper.h>
 #include <cmath>
 #include <algorithm>
 
@@ -21,6 +21,8 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
+  m_seriesSelectionController(this),
+  m_calculusButton(this, I18n::Message::Regression, calculusButtonInvocation(), KDFont::SmallFont),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex)
 {
@@ -83,6 +85,20 @@ void GraphController::viewWillAppear() {
 
 // Private
 
+KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {
+  if (j < 0 || j >= numberOfRows()) {
+    return 0;
+  }
+  return KDFont::LargeFont->glyphSize().height() + Metric::CellTopMargin + Metric::CellBottomMargin;
+}
+
+void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  char name[] = "X?/Y?";
+  int j = graphController()->m_store->indexOfKthNonEmptySeries(index);
+  name[1] = name[4] = '1' + j;
+  static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name, sizeof(name) / sizeof(char)));
+}
+
 Poincare::Context * GraphController::globalContext() {
   return AppsContainer::sharedAppsContainer()->globalContext();
 }
@@ -90,11 +106,16 @@ Poincare::Context * GraphController::globalContext() {
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
+  Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
+  Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + (modelType == Model::Type::Linear ? 2 : 0) + model->numberOfCoefficients() + BannerView::k_numberOfSharedSubviews);
+
   // Set point equals: "P(...) ="
-  constexpr size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+  const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  constexpr size_t bufferSize = Shared::FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   int numberOfChar = 0;
-  const char * legend = " P(";
+  const char * legend = "P(";
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     legend = I18n::translate(I18n::Message::MeanDot);
@@ -105,9 +126,9 @@ void GraphController::reloadBannerView() {
     assert(numberOfChar <= bufferSize);
     numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else {
-    numberOfChar += PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Preferences::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    numberOfChar += PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, significantDigits, Preferences::PrintFloatMode::Decimal);
   }
-  legend = ")  ";
+  legend = ")";
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   m_bannerView.dotNameView()->setText(buffer);
@@ -123,9 +144,8 @@ void GraphController::reloadBannerView() {
   }
   m_bannerView.abscissaSymbol()->setText(legend);
 
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, Preferences::MediumNumberOfSignificantDigits);
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, significantDigits);
+  buffer[numberOfChar++] = '\0';
   m_bannerView.abscissaValue()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
@@ -138,13 +158,11 @@ void GraphController::reloadBannerView() {
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::MediumNumberOfSignificantDigits);
-  // Padding
-  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
+  buffer[numberOfChar++] = '\0';
   m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
-  Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
   I18n::Message formula = model->formulaMessage();
   m_bannerView.regressionTypeView()->setMessage(formula);
 
@@ -157,49 +175,44 @@ void GraphController::reloadBannerView() {
       break;
     }
   }
+  m_bannerView.setCoefficientsDefined(coefficientsAreDefined);
   if (!coefficientsAreDefined) {
-    // Force the "Data not suitable" message to be on the next line
-    int numberOfCharToCompleteLine = std::max<int>(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
-    numberOfChar = 0;
-    // Padding
-    Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, numberOfCharToCompleteLine - 1);
-    m_bannerView.subTextAtIndex(0)->setText(buffer);
-
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
-    m_bannerView.subTextAtIndex(1)->setText(const_cast<char *>(dataNotSuitableMessage));
-    for (int i = 2; i < m_bannerView.numberOfsubTexts(); i++) {
+    m_bannerView.subTextAtIndex(0)->setText(const_cast<char *>(dataNotSuitableMessage));
+    for (int i = 1; i < m_bannerView.numberOfsubTexts(); i++) {
       m_bannerView.subTextAtIndex(i)->setText("");
     }
+    m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + BannerView::k_numberOfSharedSubviews + 1);
     m_bannerView.reload();
     return;
   }
   char coefficientName = 'a';
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
     numberOfChar = 0;
-    char leg[] = {' ', coefficientName, '=', 0};
+    char leg[] = {coefficientName, '=', 0};
     legend = leg;
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
     m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
 
-  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
+  if (modelType == Model::Type::Linear) {
     int index = model->numberOfCoefficients();
     // Set "r=..."
     numberOfChar = 0;
-    legend = " r=";
+    legend = "r=";
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
     m_bannerView.subTextAtIndex(0+index)->setText(buffer);
 
     // Set "r2=..."
     numberOfChar = 0;
-    legend = " r2=";
+    legend = "r2=";
     double r2 = m_store->determinationCoefficientForSeries(*m_selectedSeriesIndex, globalContext());
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
     m_bannerView.subTextAtIndex(1+index)->setText(buffer);
 
     // Clean the last subview
@@ -232,7 +245,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
     }
     *m_selectedDotIndex = dotSelected;
   } else {
-    double step = direction * scrollSpeed * m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+    double step = direction * scrollSpeed * static_cast<double>(m_store->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
     y = yValue(*m_selectedSeriesIndex, x, globalContext());
   }
@@ -248,7 +261,13 @@ CurveView * GraphController::curveView() {
   return &m_view;
 }
 
-bool GraphController::handleEnter() {
+bool GraphController::openMenuForCurveAtIndex(int index) {
+  int activeIndex = m_store->indexOfKthNonEmptySeries(index);
+  if (*m_selectedSeriesIndex != activeIndex) {
+    *m_selectedSeriesIndex = activeIndex;
+    Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
+    m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
+  }
   stackController()->push(&m_graphOptionsController);
   return true;
 }
@@ -361,6 +380,19 @@ uint32_t GraphController::rangeVersion() {
   return m_store->rangeChecksum();
 }
 
+int GraphController::selectedCurveRelativePosition() const {
+  int res = *m_selectedSeriesIndex;
+  if (res < 0) {
+    return -1;
+  }
+  for (int i = 0; i < *m_selectedSeriesIndex; i++) {
+    if (m_store->seriesIsEmpty(i)) {
+      res--;
+    }
+  }
+  return res;
+}
+
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
   return newIndex != currentIndex && !m_store->seriesIsEmpty(newIndex);
 }
@@ -379,10 +411,6 @@ bool GraphController::suitableYValue(double y) const {
 
 int GraphController::numberOfCurves() const {
   return Store::k_numberOfSeries;
-}
-
-int GraphController::estimatedBannerNumberOfLines() const {
-  return (selectedSeriesIndex() < 0) ? 3 : m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
 }
 
 void GraphController::setRoundCrossCursorView() {

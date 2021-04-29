@@ -8,8 +8,8 @@ namespace Escher {
 
 class ExpressionTableCell : public Responder, public TableCell {
 public:
-  ExpressionTableCell(Responder * responder = nullptr, Layout layout = Layout::HorizontalRightOverlap);
-  View * labelView() const override;
+  ExpressionTableCell(Responder * responder = nullptr);
+  const View * labelView() const override { return &m_labelExpressionView; }
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
   Poincare::Layout layout() const override { return m_labelExpressionView.layout(); }
@@ -21,7 +21,6 @@ public:
   virtual void reloadScroll() { m_labelExpressionView.reloadScroll(); }
 private:
   // Remove margins added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView
-  KDCoordinate labelMargin() const override { return 0; }
   ScrollableExpressionView m_labelExpressionView;
 };
 

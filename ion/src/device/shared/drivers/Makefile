@@ -12,11 +12,11 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   display.cpp \
   events_keyboard_platform.cpp \
   exam_mode.cpp \
-  external_flash.cpp \
   flash.cpp \
   internal_flash.cpp \
   keyboard.cpp \
   led.cpp \
+  pcb_version.cpp \
   power.cpp\
   random.cpp\
   reset.cpp \

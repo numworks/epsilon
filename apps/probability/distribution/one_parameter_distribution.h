@@ -8,13 +8,13 @@ namespace Probability {
 
 class OneParameterDistribution : public Distribution {
 public:
-  OneParameterDistribution(float parameterValue) : m_parameter1(parameterValue) {}
+  OneParameterDistribution(double parameterValue) : m_parameter1(parameterValue) {}
   int numberOfParameter() override { return 1; }
   double parameterValueAtIndex(int index) override {
     assert(index == 0);
     return m_parameter1;
   }
-  void setParameterAtIndex(float f, int index) override {
+  void setParameterAtIndex(double f, int index) override {
     assert(index == 0);
     m_parameter1 = f;
   }

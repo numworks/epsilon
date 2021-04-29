@@ -87,7 +87,7 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
   SequenceStore * sequenceStore = sqctx->sequenceStore();
   stop = stepMultipleSequences ? sequenceStore->numberOfModels() : start + 1;
   for (int i = start; i < stop; i++) {
-    Ion::Storage::Record record = sequenceStore->recordAtIndex(i);
+    Ion::Storage::Record record = sequenceStore->recordAtNameIndex(i);
     if (!record.isNull()) {
       Sequence * u = sequenceStore->modelForRecord(record);
       int index = stepMultipleSequences ? SequenceStore::sequenceIndexForName(u->fullName()[0]) : 0;

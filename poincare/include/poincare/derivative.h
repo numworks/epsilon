@@ -44,6 +44,7 @@ private:
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;
   constexpr static double k_rateStepSize = 1.4;
+  constexpr static double k_minSignificantError = 3e-11;
 };
 
 class Derivative final : public ParameteredExpression {
@@ -52,6 +53,7 @@ public:
   static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>({child0, child1, child2}); }
   static Expression UntypedBuilder(Expression children);
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
+  static constexpr char k_defaultXNTChar = 'x';
   static void DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext);
 
   Expression shallowReduce(ExpressionNode::ReductionContext context);

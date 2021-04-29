@@ -1,6 +1,7 @@
 app_shared_test_src = $(addprefix apps/shared/,\
   continuous_function.cpp\
   continuous_function_cache.cpp \
+  curve_selection_controller.cpp \
   curve_view_cursor.cpp \
   curve_view_range.cpp \
   curve_view.cpp \
@@ -29,6 +30,7 @@ app_shared_src = $(addprefix apps/shared/,\
   buffer_function_title_cell.cpp \
   buffer_text_view_with_text_field.cpp \
   button_with_separator.cpp \
+  cell_with_separator.cpp \
   cursor_view.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
@@ -85,7 +87,6 @@ app_shared_src = $(addprefix apps/shared/,\
   text_field_delegate.cpp \
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
-  text_helpers.cpp \
   values_controller.cpp \
   values_function_parameter_controller.cpp \
   values_parameter_controller.cpp \

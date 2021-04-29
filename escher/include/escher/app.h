@@ -29,9 +29,9 @@ class App : public Responder {
 public:
   class Descriptor {
   public:
-    virtual I18n::Message name() { return (I18n::Message)0; }
-    virtual I18n::Message upperName() { return (I18n::Message)0; }
-    virtual const Image * icon() { return nullptr; }
+    virtual I18n::Message name() const { return static_cast<I18n::Message>(0); }
+    virtual I18n::Message upperName() const { return static_cast<I18n::Message>(0); }
+    virtual const Image * icon() const { return nullptr; }
   };
   class Snapshot {
   public:
@@ -40,7 +40,7 @@ public:
     /* reset all instances to their initial values */
     virtual void reset() {}
     virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
-    virtual Descriptor * descriptor() = 0;
+    virtual const Descriptor * descriptor() const = 0;
 #if EPSILON_GETOPT
     virtual void setOpt(const char * name, const char * value) {}
 #endif

@@ -1,24 +1,40 @@
-# Copyright (C) 2009-2017 Wander Lairson Costa
-# Copyright (C) 2017-2018 Robert Wlodarczyk
+# Copyright 2009-2017 Wander Lairson Costa
+# Copyright 2009-2021 PyUSB contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from ctypes import *
+import errno
 import os
 import usb.backend
 import usb.util
 import sys
-from usb.core import USBError
+from usb.core import USBError, USBTimeoutError
 from usb._debug import methodtrace
 import usb._interop as _interop
 import logging
@@ -29,6 +45,8 @@ __author__ = 'Wander Lairson Costa'
 __all__ = ['get_backend']
 
 _logger = logging.getLogger('usb.backend.libusb0')
+
+_USBFS_MAXDRIVERNAME = 255
 
 # usb.h
 
@@ -350,6 +368,14 @@ def _setup_prototypes(lib):
 
     # linux only
 
+    # int usb_get_driver_np(usb_dev_handle *dev,
+    #                       int interface,
+    #                       char *name,
+    #                       unsigned int namelen);
+    if hasattr(lib, 'usb_get_driver_np'):
+        lib.usb_get_driver_np.argtypes = \
+            [_usb_dev_handle, c_int, c_char_p, c_uint]
+
     # int usb_detach_kernel_driver_np(usb_dev_handle *dev, int interface);
     if hasattr(lib, 'usb_detach_kernel_driver_np'):
         lib.usb_detach_kernel_driver_np.argtypes = [_usb_dev_handle, c_int]
@@ -415,6 +441,9 @@ def _check(ret):
                 errmsg = os.strerror(-ret)
         else:
             return ret
+
+    if ret is not None and -ret == errno.ETIMEDOUT:
+        raise USBTimeoutError(errmsg, ret, -ret)
     raise USBError(errmsg, ret)
 
 def _has_iso_transfer():
@@ -589,7 +618,34 @@ class _LibUSB(usb.backend.IBackend):
         _check(_lib.usb_reset(dev_handle))
 
     @methodtrace(_logger)
+    def is_kernel_driver_active(self, dev_handle, intf):
+        if not hasattr(_lib, 'usb_get_driver_np'):
+            raise NotImplementedError(self.is_kernel_driver_active.__name__)
+        from errno import ENODATA
+        buf = usb.util.create_buffer(_USBFS_MAXDRIVERNAME + 1)
+        name, length = buf.buffer_info()
+        length *= buf.itemsize
+        # based on the implementation of libusb_kernel_driver_active
+        # (see libusb/os/linux_usbfs.c @@ op_kernel_driver_active):
+        # usb_get_driver_np fails with ENODATA when no kernel driver is bound,
+        # and if 'usbfs' is bound that means that a userspace program is
+        # controlling the device (e.g. using this very library)
+        try:
+            _check(_lib.usb_get_driver_np(
+                        dev_handle,
+                        intf,
+                        cast(name, c_char_p),
+                        length))
+            return cast(name, c_char_p).value != b'usbfs'
+        except USBError as err:
+            if err.backend_error_code == -ENODATA:
+                return False
+            raise err
+
+    @methodtrace(_logger)
     def detach_kernel_driver(self, dev_handle, intf):
+        if not hasattr(_lib, 'usb_detach_kernel_driver_np'):
+            raise NotImplementedError(self.detach_kernel_driver.__name__)
         _check(_lib.usb_detach_kernel_driver_np(dev_handle, intf))
 
     def __write(self, fn, dev_handle, ep, intf, data, timeout):

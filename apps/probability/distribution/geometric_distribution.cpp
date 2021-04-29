@@ -19,9 +19,9 @@ float GeometricDistribution::yMax() const {
   return result * (1.0f + k_displayTopMarginRatio);
 }
 
-bool GeometricDistribution::authorizedValueAtIndex(float x, int index) const {
+bool GeometricDistribution::authorizedValueAtIndex(double x, int index) const {
   assert(index == 0);
-  if (x <= 0.0f || x > 1.0f) {
+  if (x <= 0.0 || x > 1.0) {
     return false;
   }
   return true;

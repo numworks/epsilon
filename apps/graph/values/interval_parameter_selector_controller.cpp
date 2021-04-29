@@ -9,8 +9,7 @@ using namespace Escher;
 namespace Graph {
 
 IntervalParameterSelectorController::IntervalParameterSelectorController() :
-  ViewController(nullptr),
-  m_selectableTableView(this, this, this)
+  SelectableListViewController(nullptr)
 {
 }
 
@@ -23,6 +22,7 @@ void IntervalParameterSelectorController::viewDidDisappear() {
    * it appears: the number of rows might change according to the plot type. */
   m_selectableTableView.deselectTable(false);
   m_selectableTableView.setFrame(KDRectZero, false);
+  resetMemoization();
 }
 
 void IntervalParameterSelectorController::didBecomeFirstResponder() {
@@ -59,12 +59,17 @@ int IntervalParameterSelectorController::numberOfRows() const {
   return rowCount;
 }
 
-HighlightCell * IntervalParameterSelectorController::reusableCell(int index) {
-  assert(0 <= index && index < reusableCellCount());
+KDCoordinate IntervalParameterSelectorController::nonMemoizedRowHeight(int j) {
+  MessageTableCellWithChevron tempCell;
+  return heightForCellAtIndex(&tempCell, j, false);
+}
+
+HighlightCell * IntervalParameterSelectorController::reusableCell(int index, int type) {
+  assert(0 <= index && index < reusableCellCount(type));
   return m_intervalParameterCell + index;
 }
 
-int IntervalParameterSelectorController::reusableCellCount() const {
+int IntervalParameterSelectorController::reusableCellCount(int type) {
   return Shared::ContinuousFunction::k_numberOfPlotTypes;
 }
 

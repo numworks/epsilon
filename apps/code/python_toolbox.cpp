@@ -1,5 +1,6 @@
 #include "python_toolbox.h"
 #include "../shared/toolbox_helpers.h"
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
 #include <layout_events.h>
 extern "C" {
@@ -78,6 +79,7 @@ const ToolboxMessageTree MathModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandCeil, I18n::Message::PythonCeil),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandCopySign, I18n::Message::PythonCopySign),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFabs, I18n::Message::PythonFabs),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFactorial, I18n::Message::PythonFactorial),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFloor, I18n::Message::PythonFloor),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFmod, I18n::Message::PythonFmod),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFrExp, I18n::Message::PythonFrExp),
@@ -113,7 +115,7 @@ const ToolboxMessageTree CMathModuleChildren[] = {
 
 const ToolboxMessageTree MatplotlibPyplotModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportMatplotlibPyplot, I18n::Message::PythonImportMatplotlibPyplot, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMatplotlibPyplot, I18n::Message::PythonImportMatplotlibPyplot, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMatplotlibPyplotTrimmed, I18n::Message::PythonImportMatplotlibPyplot, false, I18n::Message::PythonCommandImportFromMatplotlibPyplot),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMatplotlibPyplotFunction, I18n::Message::PythonMatplotlibPyplotFunction, false, I18n::Message::PythonCommandMatplotlibPyplotFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandArrow, I18n::Message::PythonArrow),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandAxis, I18n::Message::PythonAxis, false, I18n::Message::PythonCommandAxisWithoutArg),
@@ -326,7 +328,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromIon, I18n::Message::PythonImportIon, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromKandinsky, I18n::Message::PythonImportKandinsky, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMath, I18n::Message::PythonImportMath, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMatplotlibPyplot, I18n::Message::PythonImportMatplotlibPyplot, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMatplotlibPyplotTrimmed, I18n::Message::PythonImportMatplotlibPyplot, false, I18n::Message::PythonCommandImportFromMatplotlibPyplot),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromRandom, I18n::Message::PythonImportRandom, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromTurtle, I18n::Message::PythonImportTurtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromTime, I18n::Message::PythonImportTime, false),
@@ -483,26 +485,9 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate PythonToolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == Toolbox::LeafCellType && m_messageTreeModel->label() == I18n::Message::IfStatementMenu) {
-      /* To get the exact height needed for each cell, we have to compute its
-       * text size, which means scan the text char by char to look for '\n'
-       * chars. This is very costly and ruins the speed performance when
-       * scrolling at the bottom of a long table: to compute a position on the
-       * kth row, we call cumulatedHeightFromIndex(k), which calls rowHeight k
-       * times.
-       * We thus decided to compute the real height only for the ifStatement
-       * children of the toolbox, which is the only menu that has special height
-       * rows. */
-    const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(j));
-    return k_font->stringSize(I18n::translate(messageTree->label())).height() + 2*Metric::TableCellVerticalMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
-  }
-  return Toolbox::rowHeight(j);
-}
-
 bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
-  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
+  const ToolboxMessageTree * node = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(selectedRow));
   const char * editedText = I18n::translate(node->insertedText());
   // strippedEditedText array needs to be in the same scope as editedText
   char strippedEditedText[k_maxMessageSize];
@@ -533,6 +518,33 @@ MessageTableCellWithChevron* PythonToolbox::nodeCellAtIndex(int index) {
 
 int PythonToolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
+}
+
+KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
+  if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
+    MessageTableCellWithMessage tempCell;
+    return heightForCellAtIndex(&tempCell, index, false);
+  }
+  return Escher::Toolbox::nonMemoizedRowHeight(index);
+}
+
+void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
+  // Message is leaf
+  if (messageTree->numberOfChildren() == 0) {
+    MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
+    if (messageTree->text() == I18n::Message::Default && UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
+      // Leaf node with a multiple row label and no subLabel have a small font.
+      myCell->setMessageFont(KDFont::SmallFont);
+    } else {
+      // Reset cell's font (to prevent a small font from being memoized)
+      myCell->setMessageFont(KDFont::LargeFont);
+    }
+    myCell->setMessage(messageTree->label());
+    myCell->setSubLabelMessage(messageTree->text());
+    return;
+  }
+  Escher::Toolbox::willDisplayCellForIndex(cell, index);
 }
 
 void PythonToolbox::scrollToLetter(char letter) {

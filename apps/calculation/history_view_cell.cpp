@@ -166,9 +166,9 @@ View * HistoryViewCell::subviewAtIndex(int index) {
   return views[index];
 }
 
-bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth) {
+bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth, bool ellipsis) {
   // k_margin is the separation between the input and output.
-  return (inputViewWidth + k_margin + outputViewWidth) < Ion::Display::Width - Metric::EllipsisCellWidth;
+  return (inputViewWidth + k_margin + outputViewWidth) < Ion::Display::Width - (ellipsis ? Metric::EllipsisCellWidth : 0);
 }
 
 void HistoryViewCell::layoutSubviews(bool force) {
@@ -202,7 +202,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate
 
   /* To compute if the calculation is on a single line, use the expanded width
    * if there is both an exact and an approximate layout. */
-  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width());
+  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(), m_calculationAdditionInformation != Calculation::AdditionalInformationType::None);
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;
@@ -272,6 +272,9 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, b
          * -> raise an exception. */
         Poincare::ExceptionCheckpoint::Raise();
       }
+    }
+    if (canChangeDisplayOutput && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate && exactOutputLayout.layoutSize().width() > Ion::Display::Width) {
+      calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
     }
   }
 

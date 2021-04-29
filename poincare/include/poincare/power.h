@@ -101,7 +101,7 @@ private:
   Expression simplifyRationalRationalPower(ExpressionNode::ReductionContext reductionContext);
 
   static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, ExpressionNode::ReductionContext reductionContext);
-  Expression removeSquareRootsFromDenominator(ExpressionNode::ReductionContext reductionContext);
+  Expression removeRootsFromDenominator(ExpressionNode::ReductionContext reductionContext);
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
   Expression equivalentExpressionUsingStandardExpression() const;

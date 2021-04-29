@@ -80,15 +80,21 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
     return n;
   }
   T proba = probability;
+  const void * pack[3] = { &isDouble, &n, &p };
   return Solver::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
-      [](double x, Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * n, const void * p, const void * isDouble) {
-        if (*(bool *)isDouble) {
-          return (double)BinomialDistribution::EvaluateAtAbscissa<T>(x, *(reinterpret_cast<const double *>(n)), *(reinterpret_cast<const double *>(p)));
+      [](double x, Context * context, const void * auxiliary) {
+        const void * const * pack = static_cast<const void * const *>(auxiliary);
+        bool isDouble = *static_cast<const bool *>(pack[0]);
+        if (isDouble) {
+          double n = *static_cast<const double *>(pack[1]);
+          double p = *static_cast<const double *>(pack[2]);
+          return (double)BinomialDistribution::EvaluateAtAbscissa<T>(x, n, p);
         }
-        return (double)BinomialDistribution::EvaluateAtAbscissa<T>(x, *(reinterpret_cast<const float *>(n)), *(reinterpret_cast<const float *>(p)));
-      }, (Context *)nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, &n, &p, &isDouble);
-    // Context, complex format and angle unit are dummy values
+        double n = *static_cast<const float *>(pack[1]);
+        double p = *static_cast<const float *>(pack[2]);
+        return (double)BinomialDistribution::EvaluateAtAbscissa<T>(x, n, p);
+      }, nullptr, pack);
 }
 
 template<typename T>

@@ -4,10 +4,11 @@
 #include <escher/view_controller.h>
 #include <escher/stack_view.h>
 #include <escher/palette.h>
+#include <escher/solid_color_view.h>
 
 namespace Escher {
 
-constexpr uint8_t kMaxNumberOfStacks = 4;
+constexpr uint8_t kMaxNumberOfStacks = 5;
 
 class StackViewController : public ViewController {
 public:
@@ -17,6 +18,7 @@ public:
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright);
   void pop();
+  void popUntilDepth(int depth);
 
   int depth() const { return m_numberOfChildren; }
   View * view() override { return &m_view; }
@@ -27,6 +29,10 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true, bool headersOverlapContent = false, KDColor headersContentBorderColor = Palette::GrayBright) {
+    m_view.setupHeadersBorderOverlaping(headersOverlapHeaders, headersOverlapContent, headersContentBorderColor);
+  }
+  static constexpr uint8_t k_maxNumberOfChildren = kMaxNumberOfStacks;
 private:
   class Frame {
   public:
@@ -51,6 +57,7 @@ private:
     void shouldDisplayStackHeaders(bool shouldDisplay);
     int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
+    void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(Frame frame);
     void popStack();
   protected:
@@ -61,16 +68,19 @@ private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
+    bool borderShouldOverlapContent() const;
 
     StackView m_stackViews[kMaxNumberOfStacks];
+    SolidColorView m_borderView;
     View * m_contentView;
     int8_t m_numberOfStacks;
     bool m_displayStackHeaders;
+    bool m_headersOverlapHeaders;
+    bool m_headersOverlapContent;
   };
   ControllerView m_view;
   void pushModel(Frame frame);
   void setupActiveViewController();
-  static constexpr uint8_t k_maxNumberOfChildren = 4;
   Frame m_childrenFrame[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;

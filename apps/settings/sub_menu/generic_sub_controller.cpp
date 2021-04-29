@@ -10,12 +10,9 @@ using namespace Escher;
 namespace Settings {
 
 GenericSubController::GenericSubController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_selectableTableView(this),
+  SelectableListViewController(parentResponder),
   m_messageTreeModel(nullptr)
 {
-  m_selectableTableView.setTopMargin(k_topBottomMargin);
-  m_selectableTableView.setBottomMargin(k_topBottomMargin);
 }
 
 const char * GenericSubController::title() {
@@ -39,6 +36,7 @@ void GenericSubController::viewWillAppear() {
   /* A unique SubController is used for all sub pages of settings. We have to
    * reload its data when it is displayed as it could switch from displaying
    * "Angle unit" data to "Complex format" data for instance. */
+  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -57,28 +55,13 @@ int GenericSubController::numberOfRows() const {
   return 0;
 }
 
-KDCoordinate GenericSubController::rowHeight(int j) {
-  return Metric::ParameterCellHeight;
-}
-
-KDCoordinate GenericSubController::cumulatedHeightFromIndex(int j) {
-  return rowHeight(0) * j;
-}
-
-int GenericSubController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  KDCoordinate height = rowHeight(0);
-  if (height == 0) {
-    return 0;
-  }
-  return (offsetY - 1) / height;
-}
-
-int GenericSubController::typeAtLocation(int i, int j) {
-  return 0;
+KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
+  MessageTableCell tempCell;
+  return heightForCellAtIndex(&tempCell, index, false);
 }
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(m_messageTreeModel->childAtIndex(index)->label());
 }
 

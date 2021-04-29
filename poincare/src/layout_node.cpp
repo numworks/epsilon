@@ -162,6 +162,11 @@ bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
   return isCollapsable(&numberOfOpenParentheses, false);
 }
 
+Layout LayoutNode::XNTLayout(int childIndex) const {
+  LayoutNode * p = parent();
+  return p == nullptr ? Layout() : p->XNTLayout(p->indexOfChild(this));
+}
+
 // Protected and private
 
 bool LayoutNode::protectedIsIdenticalTo(Layout l) {

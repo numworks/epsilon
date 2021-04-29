@@ -42,19 +42,18 @@ HighlightCell * ExpressionsListController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-KDCoordinate ExpressionsListController::rowHeight(int j) {
-  Layout l = layoutAtIndex(j);
-  assert(!l.isUninitialized());
-  return l.layoutSize().height() + 2 * Metric::CommonSmallMargin + Metric::CellSeparatorThickness;
+KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int index) {
+  ExpressionTableCellWithMessage tempCell;
+  return heightForCellAtIndex(&tempCell, index, false);
 }
 
 void ExpressionsListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   /* Note : To further optimize memoization space in the pool, layout
    * serialization could be memoized instead, and layout would be recomputed
    * here, when setting cell's layout. */
-  ExpressionTableCellWithPointer * myCell = static_cast<ExpressionTableCellWithPointer *>(cell);
+  ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
   myCell->setLayout(layoutAtIndex(index));
-  myCell->setAccessoryMessage(messageAtIndex(index));
+  myCell->setSubLabelMessage(messageAtIndex(index));
   myCell->reloadScroll();
 }
 
@@ -70,6 +69,7 @@ int ExpressionsListController::numberOfRows() const {
 
 void ExpressionsListController::setExpression(Poincare::Expression e) {
   // Reinitialize memoization
+  resetMemoization();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_layouts[i] = Layout();
   }

@@ -8,8 +8,8 @@ namespace Escher {
 
 class MessageTableCellWithChevron : public MessageTableCell {
 public:
-  MessageTableCellWithChevron(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
-  View * accessoryView() const override;
+  MessageTableCellWithChevron(I18n::Message message = (I18n::Message)0);
+  const View * accessoryView() const override { return &m_accessoryView; }
 private:
   ChevronView m_accessoryView;
 };

@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper NormPDF::s_functionHelper;
 int NormPDFNode::numberOfChildren() const { return NormPDF::s_functionHelper.numberOfChildren(); }
 
 Expression NormPDFNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == Sign::Positive);
+  assert(s == sign(reductionContext.context()));
   return NormPDF(this);
 }
 

@@ -8,6 +8,7 @@
 #include <poincare/ceiling_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/conjugate_layout.h>
+#include <poincare/derivative_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/floor_layout.h>
 #include <poincare/fraction_layout.h>

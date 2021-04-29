@@ -23,8 +23,8 @@ public:
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  KDCoordinate rowHeight(int j) override;
-  int typeAtLocation(int i, int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
+  int typeAtIndex(int index) override;
 
   // Menu
   enum class Page {
@@ -36,11 +36,12 @@ public:
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
- constexpr static int k_maxNumberOfDisplayedRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::Metric::ToolboxRowHeight + 2; // (240 - 18 - 50 - 20) / 40  = 3.8; the 0.8 cell can be above and below so we add +2 to get 5
+  constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   constexpr static int k_numberOfMenuRows = 3;
   constexpr static KDCoordinate k_leafMargin = 20;
   Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
+  I18n::Message subTitle() override;
   Page pageAtIndex(int index);
   void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;
@@ -51,7 +52,7 @@ private:
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
   Escher::ViewController * emptyViewController() override;
-  void resetMemoization();
+  void resetVarBoxMemoization();
   void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
   Page m_lockPageDelete;

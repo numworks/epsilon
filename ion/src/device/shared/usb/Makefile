@@ -47,7 +47,9 @@ ion_device_dfu_deps_src += libaxx/src/cxxabi/pure_virtual.cpp
 ion_device_dfu_deps_src += ion/src/device/shared/usb/boot.cpp
 ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/board.cpp
 ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/cache.cpp
+ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/external_flash.cpp
 ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/reset.cpp
+ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/usb.cpp
 ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
   external_flash.cpp \

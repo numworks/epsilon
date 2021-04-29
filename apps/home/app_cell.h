@@ -20,7 +20,7 @@ public:
 
   void setVisible(bool visible);
   void reloadCell() override;
-  void setAppDescriptor(Escher::App::Descriptor * appDescriptor);
+  void setAppDescriptor(const Escher::App::Descriptor * appDescriptor);
   void setExternalApp(Ion::ExternalApps::App app);
 private:
   static constexpr KDCoordinate k_iconMargin = 22;

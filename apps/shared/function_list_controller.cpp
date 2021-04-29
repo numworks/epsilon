@@ -123,7 +123,7 @@ void FunctionListController::willDisplayCellAtLocation(HighlightCell * cell, int
       willDisplayExpressionCellAtIndex(cell, j);
     }
   }
-  EvenOddCell * myCell = (EvenOddCell *)cell;
+  EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   myCell->reloadCell();

@@ -26,7 +26,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         StackViewController * stack = (StackViewController *)parentResponder();
-        stack->pop();
+        stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
         stack->push(m_graphController->termSumController());
         return true;
       }
@@ -36,22 +36,18 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
         return false;
     }
   }
-  return false;
+  return FunctionCurveParameterController::handleEvent(event);
 }
 
 int CurveParameterController::numberOfRows() const {
   return k_totalNumberOfCells;
 };
 
-HighlightCell * CurveParameterController::reusableCell(int index) {
+HighlightCell * CurveParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
-  HighlightCell * cells[] = {&m_sumCell, &m_goToCell};
+  HighlightCell * cells[k_totalNumberOfCells] = {&m_sumCell, &m_goToCell};
   return cells[index];
-}
-
-int CurveParameterController::reusableCellCount() const {
-  return k_totalNumberOfCells;
 }
 
 GoToParameterController * CurveParameterController::goToParameterController() {

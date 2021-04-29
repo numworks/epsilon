@@ -102,6 +102,8 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
       Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
     } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithNumber) {
       Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithNumber);
+    } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithUnderscore) {
+      Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithUnderscore);
     } else {
       assert(nameError == Function::NameNotCompliantError::ReservedName);
       Container::activeApp()->displayWarning(I18n::Message::ReservedName);
@@ -177,7 +179,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   assert(cell != nullptr);
   assert(j >= 0 && j < modelStore()->numberOfModels());
   Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
-  FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
+  FunctionExpressionCell * myCell = static_cast<FunctionExpressionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);

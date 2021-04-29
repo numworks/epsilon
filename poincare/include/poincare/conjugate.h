@@ -11,6 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(ConjugateNode); }
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
@@ -48,6 +49,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilderOneChild<Conjugate>);;
 
+  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

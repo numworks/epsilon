@@ -2,14 +2,10 @@
 
 namespace Escher {
 
-MessageTableCellWithChevron::MessageTableCellWithChevron(I18n::Message message, const KDFont * font) :
-  MessageTableCell(message, font),
+MessageTableCellWithChevron::MessageTableCellWithChevron(I18n::Message message) :
+  MessageTableCell(message),
   m_accessoryView()
 {
-}
-
-View * MessageTableCellWithChevron::accessoryView() const {
-  return (View *)&m_accessoryView;
 }
 
 }

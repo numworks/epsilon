@@ -6,7 +6,7 @@
 #include <escher/message_table_cell.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
 #include <apps/i18n.h>
@@ -14,7 +14,7 @@
 
 namespace Shared {
 
-class LocalizationController : public Escher::ViewController, public Escher::SimpleListViewDataSource, public Escher::SelectableTableViewDataSource {
+class LocalizationController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
 public:
   static int IndexOfCountry(I18n::Country country);
   static I18n::Country CountryAtIndex(int i);
@@ -40,9 +40,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   int numberOfRows() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
-  KDCoordinate cellHeight() override { return Escher::Metric::ParameterCellHeight; }
-  Escher::HighlightCell * reusableCell(int index) override { return &m_cells[index]; }
-  int reusableCellCount() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
+  KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate cellWidth() override { return m_contentView.selectableTableView()->columnWidth(0); }
+  Escher::HighlightCell * reusableCell(int index, int type) override { return &m_cells[index]; }
 
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
@@ -77,10 +77,10 @@ protected:
   ContentView m_contentView;
 
 private:
+  void setVerticalMargins();
   static constexpr int k_numberOfCells = I18n::NumberOfLanguages > I18n::NumberOfCountries ? I18n::NumberOfLanguages : I18n::NumberOfCountries;
   Escher::MessageTableCell m_cells[k_numberOfCells];
   Mode m_mode;
-  constexpr static KDCoordinate k_verticalMargin = Escher::Metric::CommonTopMargin;
 };
 
 }

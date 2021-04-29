@@ -60,6 +60,7 @@ public:
     Ceiling,
     ComplexArgument,
     Conjugate,
+    Dependency,
     Derivative,
     Determinant,
     DivisionQuotient,
@@ -204,6 +205,7 @@ public:
     }
     Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
     ReductionTarget target() const { return m_target; }
+    void setSymbolicComputation(SymbolicComputation symbolicComputation) { m_symbolicComputation = symbolicComputation; }
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
     UnitConversion unitConversion() const { return m_unitConversion; }
   private:
@@ -230,6 +232,12 @@ public:
     bool m_withinReduce;
   };
 
+  /* During reduction, several functions assume that a node which can take a
+   * sign other than Unknown also has a working setSign method.
+   * Nodes that appear in reduced expressions and override sign must also
+   * override setSign.
+   * FIXME: sign and setSign depends too much on future programmers reading the
+   * above comment. This constraint shouldbe enforced in the design. */
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }

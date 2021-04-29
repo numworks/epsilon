@@ -11,6 +11,10 @@ constexpr Expression::FunctionHelper ArcSine::s_functionHelper;
 
 int ArcSineNode::numberOfChildren() const { return ArcSine::s_functionHelper.numberOfChildren(); }
 
+Expression ArcSineNode::setSign(Sign s, ReductionContext reductionContext) {
+  return ArcSine(this).setSign(s, reductionContext);
+}
+
 Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
 }
@@ -48,6 +52,9 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
+Expression ArcSine::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
+  return defaultOddFunctionSetSign(s, reductionContext);
+}
 
 Expression ArcSine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {

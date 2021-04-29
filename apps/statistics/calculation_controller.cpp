@@ -30,9 +30,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_calculationTitleCells[i].setAlignment(1.0f, 0.5f);
     m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
   }
-  for (int i = 0; i < k_numberOfCalculationCells; i++) {
-    m_calculationCells[i].setTextColor(Palette::GrayDark);
-  }
   m_hideableCell.setHide(true);
 }
 
@@ -57,7 +54,7 @@ int CalculationController::numberOfColumns() const {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  EvenOddCell * evenOddCell = (EvenOddCell *)cell;
+  EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
   evenOddCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   if (i == 0 && j == 0) {

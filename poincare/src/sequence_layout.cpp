@@ -3,6 +3,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
+#include <poincare/sum_and_product.h>
 #include <assert.h>
 #include <algorithm>
 
@@ -149,8 +150,14 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-CodePoint SequenceLayoutNode::XNTCodePoint(int childIndex) const {
-  return (childIndex == k_argumentLayoutIndex || childIndex == k_variableLayoutIndex) ? CodePoint('n') : UCodePointNull;
+Layout SequenceLayoutNode::XNTLayout(int childIndex) const {
+  if (childIndex == k_argumentLayoutIndex) {
+    return Layout(childAtIndex(k_variableLayoutIndex)).clone();
+  }
+  if (childIndex == k_variableLayoutIndex) {
+    return CodePointLayout::Builder(CodePoint(SumAndProduct::k_defaultXNTChar));
+  }
+  return LayoutNode::XNTLayout();
 }
 
 // Protected

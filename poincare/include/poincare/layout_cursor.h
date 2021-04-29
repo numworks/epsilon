@@ -14,6 +14,7 @@ class LayoutCursor final {
   friend class BracketLayoutNode;
   friend class BracketPairLayoutNode;
   friend class ConjugateLayoutNode;
+  friend class DerivativeLayoutNode;
   friend class EmptyLayoutNode;
   friend class FractionLayoutNode;
   friend class GridLayoutNode;
@@ -109,8 +110,7 @@ public:
   void addEmptySquarePowerLayout();
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();
-  void addXNTCodePointLayout();
-  void insertText(const char * text, bool forceCursorRightOfText = false);
+  void insertText(const char * text, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }

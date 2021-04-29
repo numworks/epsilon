@@ -19,6 +19,10 @@ public:
    * need to invalidate its cache as the sequences evaluations might have
    * changed */
   int maxNumberOfModels() const override { return MaxNumberOfSequences; }
+  /* If the sequences have been defined in a unusual order, recordAtIndex(0)
+   * may not be the record for u. */
+  Ion::Storage::Record recordAtNameIndex(int i) const { return Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(k_sequenceNames[i], modelExtension()); }
+
 
   static int sequenceIndexForName(char name);
   static const char * firstAvailableName(int * nameIndex = nullptr);

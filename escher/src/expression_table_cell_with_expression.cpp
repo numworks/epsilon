@@ -6,27 +6,23 @@
 namespace Escher {
 
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder) :
-  ExpressionTableCell(parentResponder, Layout::HorizontalLeftOverlap),
-  m_accessoryExpressionView(this, k_horizontalMargin, 0, 1.0f, 0.5f, Palette::GrayDark, KDColorWhite)
+  ExpressionTableCell(parentResponder),
+  m_subLabelExpressionView(this, 0, 0, 1.0f, 0.5f, Palette::GrayDark, KDColorWhite)
 {}
-
-View * ExpressionTableCellWithExpression::accessoryView() const {
-  return (View *)&m_accessoryExpressionView;
-}
 
 void ExpressionTableCellWithExpression::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
-  m_accessoryExpressionView.setBackgroundColor(backgroundColor);
+  m_subLabelExpressionView.setBackgroundColor(backgroundColor);
 }
 
-void ExpressionTableCellWithExpression::setAccessoryLayout(Poincare::Layout l) {
-  m_accessoryExpressionView.setLayout(l);
+void ExpressionTableCellWithExpression::setSubLabelLayout(Poincare::Layout l) {
+  m_subLabelExpressionView.setLayout(l);
   layoutSubviews();
 }
 
 void ExpressionTableCellWithExpression::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_accessoryExpressionView);
+  Container::activeApp()->setFirstResponder(&m_subLabelExpressionView);
 }
 
 }

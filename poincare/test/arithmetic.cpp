@@ -1,4 +1,5 @@
 #include <poincare/arithmetic.h>
+#include <poincare/exception_checkpoint.h>
 #include <utility>
 #include "helper.h"
 
@@ -24,10 +25,11 @@ void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
   quiz_assert_print_if_failure(gcd.isEqualTo(c), failInformationBuffer);
   if (a.isExtractable() && b.isExtractable()) {
     // Test Arithmetic::GCD(int, int) if possible
+    bool isUndefined = false;
     a.setNegative(false);
     b.setNegative(false);
-    int extractedGcd = Arithmetic::GCD(a.extractedInt(), b.extractedInt());
-    quiz_assert_print_if_failure(extractedGcd == c.extractedInt(), failInformationBuffer);
+    int extractedGcd = Arithmetic::GCD(a.extractedInt(), b.extractedInt(), &isUndefined);
+    quiz_assert_print_if_failure(c.isExtractable() ? extractedGcd == c.extractedInt() : isUndefined, failInformationBuffer);
   }
 }
 
@@ -40,28 +42,41 @@ void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
   quiz_assert_print_if_failure(lcm.isEqualTo(c), failInformationBuffer);
   if (a.isExtractable() && b.isExtractable()) {
     // Test Arithmetic::LCM(int, int) if possible
+    bool isUndefined = false;
     a.setNegative(false);
     b.setNegative(false);
-    int extractedLcm = Arithmetic::LCM(a.extractedInt(), b.extractedInt());
-    quiz_assert_print_if_failure(extractedLcm == c.extractedInt(), failInformationBuffer);
+    int extractedLcm = Arithmetic::LCM(a.extractedInt(), b.extractedInt(), &isUndefined);
+    quiz_assert_print_if_failure(c.isExtractable() ? extractedLcm == c.extractedInt() : isUndefined, failInformationBuffer);
   }
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {
-  Integer outputFactors[100];
-  Integer outputCoefficients[100];
-  Arithmetic::PrimeFactorization(a, outputFactors, outputCoefficients, 10);
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
-  for (int index = 0; index < length; index++) {
-    /* Cheat: instead of comparing to integers, we compare their approximations
-     * (the relation between integers and their approximation is a surjection,
-     * however different integers are really likely to have different
-     * approximations... */
-    quiz_assert_print_if_failure(outputFactors[index].approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
-    quiz_assert_print_if_failure(outputCoefficients[index].approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
+  {
+    // See comment in Arithmetic::resetPrimeFactorization()
+    Poincare::ExceptionCheckpoint tempEcp;
+    if (ExceptionRun(tempEcp)) {
+      Arithmetic arithmetic;
+      int n = arithmetic.PrimeFactorization(a);
+      quiz_assert_print_if_failure(n == length, failInformationBuffer);
+      for (int index = 0; index < length; index++) {
+        /* Cheat: instead of comparing to integers, we compare their
+         * approximations (the relation between integers and their approximation
+         * is a surjection, however different integers are really likely to have
+         * different approximations... */
+        quiz_assert_print_if_failure(arithmetic.factorizationFactorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
+        quiz_assert_print_if_failure(arithmetic.factorizationCoefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
+      }
+      return;
+    } else {
+      // Reset factorization
+      Arithmetic::resetPrimeFactorization();
+    }
   }
+  // Factorization failed, test failed
+  quiz_assert_print_if_failure(false, failInformationBuffer);
 }
 
 QUIZ_CASE(poincare_arithmetic_gcd) {
@@ -77,6 +92,8 @@ QUIZ_CASE(poincare_arithmetic_lcm) {
   assert_lcm_equals_to(Integer(-31), Integer(52), Integer(1612));
   assert_lcm_equals_to(Integer(-8), Integer(-40), Integer(40));
   assert_lcm_equals_to(Integer("1234567899876543456"), Integer("234567890098765445678"), Integer("144794993728852353909143567804987191584"));
+  // Inputs are extractable, but not the output.
+  assert_lcm_equals_to(Integer(24278576), Integer(23334), Integer("283258146192"));
 }
 
 QUIZ_CASE(poincare_arithmetic_factorization) {
@@ -93,4 +110,16 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
   int factors3[7] = {3,7,11, 13, 19, 3607, 3803};
   int coefficients3[7] = {4,2,2,2,2,2,2};
   assert_prime_factorization_equals_to(Integer("5513219850886344455940081"), factors3, coefficients3, 7);
+  int factors4[2] = {8017,8039};
+  int coefficients4[2] = {1,1};
+  assert_prime_factorization_equals_to(Integer(8017*8039), factors4, coefficients4, 2);
+  int factors5[1] = {10007};
+  int coefficients5[1] = {1};
+  assert_prime_factorization_equals_to(Integer(10007), factors5, coefficients5, 1);
+  int factors6[0] = {};
+  int coefficients6[0] = {};
+  assert_prime_factorization_equals_to(Integer(10007*10007), factors6, coefficients6, -2);
+  int factors7[0] = {};
+  int coefficients7[0] = {};
+  assert_prime_factorization_equals_to(Integer(1), factors7, coefficients7, 0);
 }

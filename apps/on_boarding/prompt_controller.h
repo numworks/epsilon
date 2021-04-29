@@ -10,13 +10,13 @@ namespace OnBoarding {
 
 class PromptController : public Escher::ViewController {
 public:
-  PromptController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
+  PromptController(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages);
   Escher::View * view() override { return &m_messageViewWithSkip; }
   bool handleEvent(Ion::Events::Event event) override;
 private:
   class MessageViewWithSkip : public Shared::MessageView {
   public:
-    MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
+    MessageViewWithSkip(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages);
   protected:
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;

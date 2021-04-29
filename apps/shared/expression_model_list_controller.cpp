@@ -170,7 +170,7 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
 }
 
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
-  EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
+  EvenOddExpressionCell * myCell = static_cast<EvenOddExpressionCell *>(cell);
   ExpiringPointer<ExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   myCell->setLayout(m->layout());
 }
@@ -183,7 +183,7 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (isAddEmptyRow(selectedRow())) {
-      addEmptyModel();
+      addModel();
       return true;
     }
     editExpression(event);
@@ -205,22 +205,35 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
   size_t eventTextLength = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
-  if ((eventTextLength > 0 || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var)
-      && !isAddEmptyRow(selectedRow())) {
+  if (eventTextLength > 0 || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var) {
+    // If empty row is selected, try adding an empty model
+    if (isAddEmptyRow(selectedRow()) && !addEmptyModel()) {
+      // Adding an empty model failed
+      return true;
+    }
+    assert(!isAddEmptyRow(selectedRow()));
     editExpression(event);
     return true;
   }
   return false;
 }
-void ExpressionModelListController::addEmptyModel() {
+
+void ExpressionModelListController::addModel() {
+  if (addEmptyModel()) {
+    editExpression(Ion::Events::OK);
+  }
+}
+
+bool ExpressionModelListController::addEmptyModel() {
+  // Return false if empty model couldn't be added.
   Ion::Storage::Record::ErrorStatus error = modelStore()->addEmptyModel();
   if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-    return;
+    return false;
   }
   assert(error == Ion::Storage::Record::ErrorStatus::None);
   didChangeModelsList();
   selectableTableView()->reloadData();
-  editExpression(Ion::Events::OK);
+  return true;
 }
 
 void ExpressionModelListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {

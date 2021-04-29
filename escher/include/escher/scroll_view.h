@@ -2,6 +2,7 @@
 #define ESCHER_SCROLL_VIEW_H
 
 #include <escher/view.h>
+#include <escher/metric.h>
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 
@@ -46,11 +47,13 @@ public:
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
     virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
+    virtual void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {}
   };
 
   class BarDecorator : public Decorator {
   public:
     BarDecorator() : m_verticalBar(), m_horizontalBar() {}
+    void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) override { m_verticalBar.setMargins(top, bottom); }
     int numberOfIndicators() const override { return 2; }
     View * indicatorAtIndex(int index) override;
     KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) override;
@@ -59,7 +62,7 @@ public:
   private:
     ScrollViewVerticalBar m_verticalBar;
     ScrollViewHorizontalBar m_horizontalBar;
-    static constexpr KDCoordinate k_barsFrameBreadth = 13;
+    static constexpr KDCoordinate k_barsFrameBreadth = Metric::CommonRightMargin;
   };
 
   class ArrowDecorator : public Decorator {
@@ -107,6 +110,7 @@ protected:
   KDRect visibleContentRect();
   void layoutSubviews(bool force = false) override;
   virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
+  virtual float marginPortionTolerance() const { return 0.8f; }
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
   void logAttributes(std::ostream &os) const override;
@@ -134,6 +138,8 @@ private:
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
+  mutable KDCoordinate m_excessWidth;
+  mutable KDCoordinate m_excessHeight;
 
   InnerView m_innerView;
   Decorator::Type m_decoratorType;

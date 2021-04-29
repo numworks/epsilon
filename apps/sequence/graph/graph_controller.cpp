@@ -19,6 +19,7 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),
   m_curveParameterController(inputEventHandlerDelegate, this, graphRange, m_cursor),
+  m_sequenceSelectionController(this),
   m_termSumController(this, inputEventHandlerDelegate, &m_view, graphRange, m_cursor)
 {
   m_graphRange->setDelegate(this);
@@ -54,7 +55,7 @@ bool GraphController::textFieldDidFinishEditing(TextField * textField, const cha
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = xyValues(selectedCurveIndex(), floatBody, myApp->localContext()).x2();
+  double y = xyValues(selectedCurveRelativePosition(), floatBody, myApp->localContext()).x2();
   m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   reloadBannerView();
@@ -62,10 +63,17 @@ bool GraphController::textFieldDidFinishEditing(TextField * textField, const cha
   return true;
 }
 
-bool GraphController::handleEnter() {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) const {
+  GraphController * graphController = static_cast<GraphController *>(m_graphController);
+  SequenceStore * store = graphController->functionStore();
+  ExpiringPointer<Shared::Sequence> sequence = store->modelForRecord(store->activeRecordAtIndex(j));
+  return sequence->definitionName().clone();
+}
+
+bool GraphController::openMenuForCurveAtIndex(int index) {
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
   m_termSumController.setRecord(record);
-  return FunctionGraphController::handleEnter();
+  return FunctionGraphController::openMenuForCurveAtIndex(index);
 }
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {

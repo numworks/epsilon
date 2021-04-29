@@ -16,8 +16,8 @@ const char * MinimumGraphController::title() {
   return I18n::translate(I18n::Message::Minimum);
 }
 
-Coordinate2D<double> MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
-  return functionStore()->modelForRecord(m_record)->nextMinimumFrom(start, step, max, context);
+Coordinate2D<double> MinimumGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
+  return functionStore()->modelForRecord(m_record)->nextMinimumFrom(start, max, context, relativePrecision, minimalStep, maximalStep);
 }
 
 MaximumGraphController::MaximumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor) :
@@ -29,8 +29,8 @@ const char * MaximumGraphController::title() {
   return I18n::translate(I18n::Message::Maximum);
 }
 
-Coordinate2D<double> MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
-  return functionStore()->modelForRecord(m_record)->nextMaximumFrom(start, step, max, context);
+Coordinate2D<double> MaximumGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
+  return functionStore()->modelForRecord(m_record)->nextMaximumFrom(start, max, context, relativePrecision, minimalStep, maximalStep);
 }
 
 }

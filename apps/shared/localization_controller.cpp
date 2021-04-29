@@ -22,6 +22,7 @@ LocalizationController::ContentView::ContentView(LocalizationController * contro
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
     m_countryWarningLines[i].setBackgroundColor(Palette::WallScreen);
     m_countryWarningLines[i].setFont(KDFont::SmallFont);
+    m_countryWarningLines[i].setTextColor(Escher::Palette::GrayDark);
     m_countryWarningLines[i].setAlignment(0.5f, 0.5f);
     m_countryWarningLines[i].setMessage(textMessages[i]);
   }
@@ -48,7 +49,9 @@ View * LocalizationController::ContentView::subviewAtIndex(int i) {
 }
 
 void LocalizationController::ContentView::modeHasChanged() {
-  layoutSubviews();
+  if (!m_frame.isEmpty()) {
+    layoutSubviews();
+  }
   markRectAsDirty(bounds());
 }
 
@@ -58,7 +61,7 @@ void LocalizationController::ContentView::layoutSubviews(bool force) {
     origin = layoutTitleSubview(force, Metric::CommonTopMargin + origin);
   }
   if (m_controller->shouldDisplayWarning()) {
-    origin = layoutWarningSubview(force, Metric::CommonTopMargin + origin) + Metric::CommonTopMargin;
+    origin = layoutWarningSubview(force, Metric::CommonTopMargin/2 + origin) + Metric::CommonTopMargin/2 - 1;
   }
   origin = layoutTableSubview(force, origin);
   assert(origin <= bounds().height());
@@ -81,29 +84,20 @@ KDCoordinate LocalizationController::ContentView::layoutWarningSubview(bool forc
 }
 
 KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force, KDCoordinate verticalOrigin) {
+  // SelectableTableView must be given a width before computing height.
+  m_selectableTableView.setFrame(KDRect(0, verticalOrigin, bounds().width(), m_selectableTableView.bounds().height()), force);
   KDCoordinate tableHeight = std::min<KDCoordinate>(
       bounds().height() - verticalOrigin,
       m_selectableTableView.minimalSizeForOptimalDisplay().height());
-  KDCoordinate tableHeightSansMargin = tableHeight - k_verticalMargin;
 
   if (m_controller->shouldDisplayWarning()) {
-    /* If the top cell is cut, bot not enough to hide part of the text, it will
-     * appear squashed. To prevent that, we increase the top margin slightly,
-     * so that the top cell will be cropped in the middle. */
-    KDCoordinate rowHeight = m_controller->cellHeight() + Metric::CellSeparatorThickness;
-    KDCoordinate incompleteCellHeight = tableHeightSansMargin - (tableHeightSansMargin / rowHeight) * rowHeight;
-    KDCoordinate offset = std::max(0, incompleteCellHeight - rowHeight / 2);
-    tableHeight -= offset;
-    verticalOrigin += offset;
-
-    m_borderView.setFrame(KDRect(Metric::CommonLeftMargin, verticalOrigin, bounds().width() - Metric::CommonLeftMargin - Metric::CommonRightMargin, Metric::CellSeparatorThickness), force);
+    m_borderView.setFrame(KDRect(m_selectableTableView.leftMargin(), verticalOrigin + m_selectableTableView.topMargin(), bounds().width() - m_selectableTableView.leftMargin() - m_selectableTableView.rightMargin(), Metric::CellSeparatorThickness), force);
   }
   m_selectableTableView.setFrame(KDRect(0, verticalOrigin, bounds().width(), tableHeight), force);
   return verticalOrigin + tableHeight;
 }
 
 // LocalizationController
-constexpr int LocalizationController::k_numberOfCells;
 
 int LocalizationController::IndexOfCountry(I18n::Country country) {
   /* As we want to order the countries alphabetically in the selected language,
@@ -139,11 +133,7 @@ LocalizationController::LocalizationController(Responder * parentResponder, Loca
   m_contentView(this, this),
   m_mode(mode)
 {
-  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
-  selectableTableView()->setBottomMargin(k_verticalMargin);
-  for (int i = 0; i < k_numberOfCells; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-  }
+  setVerticalMargins();
 }
 
 void LocalizationController::resetSelection() {
@@ -153,8 +143,9 @@ void LocalizationController::resetSelection() {
 
 void LocalizationController::setMode(LocalizationController::Mode mode) {
   selectableTableView()->deselectTable();
+  resetMemoization();
   m_mode = mode;
-  selectableTableView()->setTopMargin((shouldDisplayWarning()) ? 0 : k_verticalMargin);
+  setVerticalMargins();
   m_contentView.modeHasChanged();
 }
 
@@ -174,6 +165,7 @@ const char * LocalizationController::title() {
 void LocalizationController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetSelection();
+  resetMemoization();
   selectableTableView()->reloadData();
 }
 
@@ -191,6 +183,11 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+KDCoordinate LocalizationController::nonMemoizedRowHeight(int j) {
+  MessageTableCell tempCell;
+  return heightForCellAtIndex(&tempCell, j, false);
+}
+
 void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (mode() == Mode::Language) {
     static_cast<MessageTableCell *>(cell)->setMessage(I18n::LanguageNames[index]);
@@ -199,4 +196,12 @@ void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int i
   assert(mode() == Mode::Country);
   static_cast<MessageTableCell *>(cell)->setMessage(I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(index))]);
 }
+
+void LocalizationController::setVerticalMargins() {
+  KDCoordinate topMargin = shouldDisplayWarning() ? 0 : Escher::Metric::CommonTopMargin;
+  selectableTableView()->setTopMargin(topMargin);
+  // Fit m_selectableTableView scroll to content size
+  selectableTableView()->decorator()->setVerticalMargins(topMargin, Escher::Metric::CommonBottomMargin);
+}
+
 }

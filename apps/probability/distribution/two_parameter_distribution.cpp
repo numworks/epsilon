@@ -11,7 +11,7 @@ double TwoParameterDistribution::parameterValueAtIndex(int index) {
   return m_parameter2;
 }
 
-void TwoParameterDistribution::setParameterAtIndex(float f, int index) {
+void TwoParameterDistribution::setParameterAtIndex(double f, int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     m_parameter1 = f;

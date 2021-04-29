@@ -1,4 +1,5 @@
 #include <poincare/function.h>
+#include <poincare/dependency.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
@@ -38,10 +39,6 @@ int FunctionNode::getPolynomialCoefficients(Context * context, const char * symb
 int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
-  /* Since templatedApproximate always evaluates the argument, some apps (such
-   * as Statistics and Regression) need to be aware of it even when it does not
-   * appear in the formula. */
-  nextVariableIndex = childAtIndex(0)->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
   if (e.isUninitialized()) {
     return nextVariableIndex;
   }
@@ -74,10 +71,6 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, ApproximationCon
 
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
-  if (childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
-    return Complex<T>::Undefined();
-  }
-
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true);
   if (e.isUninitialized()) {
@@ -110,15 +103,20 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
-      || childAtIndex(0).isUndefined())
-  {
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) {
     return *this;
   }
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, reductionContext.symbolicComputation());
+  /* Symbols that have a definition while also being the parameter of a
+   * parametered expression should not be replaced in SymbolAbstract::Expand.
+   * With replaceFunctionsOnly's flag, only nested functions will be replaced by
+   * their definitions.
+   * Symbols will be handled in deepReduce, which is aware of parametered
+   * expressions context. For example, with 1->x and 1+x->f(x), f(x) within
+   * diff(f(x),x,1) should be reduced to 1+x instead of 2. */
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, true);
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
@@ -126,14 +124,15 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
-  // The stored expression is as entered by the user, so we need to call reduce
+  /* The stored expression is as entered by the user, so we need to call reduce
+   * Remaining Nested symbols will be properly expanded as they are reduced. */
   return result.deepReduce(reductionContext);
 }
 
 Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
   {
     // Replace replaceable symbols in child
-    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly ,parameteredAncestorsCount);
+    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
     if (self.isUninitialized()) { // if the child is circularly defined, escape
       return self;
     }
@@ -153,9 +152,11 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * did
   {
     return Expression();
   }
-  replaceWithInPlace(e);
+  Dependency d = Dependency::Builder(e);
+  d.addDependency(childAtIndex(0));
+  replaceWithInPlace(d);
   *didReplace = true;
-  return e;
+  return std::move(d);
 }
 
 }

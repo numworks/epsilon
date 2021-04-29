@@ -11,11 +11,6 @@ AboutController::AboutController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_view(&m_selectableTableView)
 {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-    m_cells[i].setAccessoryFont(KDFont::SmallFont);
-    m_cells[i].setAccessoryTextColor(Palette::GrayDark);
-  }
 }
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
@@ -27,12 +22,19 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == 0) {
+      /* When pressing OK on the version cell, the display cycles between
+       * Epsilon version number, the commit hash for this build of Epsilon, and
+       * the PCB revision number. */
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-      if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
-        myCell->setAccessoryText(Ion::epsilonVersion());
-        return true;
+      const char * currentText = myCell->subLabelText();
+      if (strcmp(currentText, Ion::patchLevel()) == 0) {
+        myCell->setSubLabelText(Ion::pcbVersion());
+      } else if (strcmp(currentText, Ion::pcbVersion()) == 0) {
+        myCell->setSubLabelText(Ion::epsilonVersion());
+      } else {
+        assert(strcmp(currentText, Ion::softwareVersion()) == 0);
+        myCell->setSubLabelText(Ion::patchLevel());
       }
-      myCell->setAccessoryText(Ion::patchLevel());
       return true;
     }
     return false;
@@ -46,21 +48,20 @@ HighlightCell * AboutController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-int AboutController::reusableCellCount(int type) {
-  assert(type == 0);
-  return k_totalNumberOfCell;
-}
-
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+  MessageTableCellWithBuffer * myCell = static_cast<MessageTableCellWithBuffer *>(cell);
   const char * messages[] = {
     Ion::epsilonVersion(),
     Ion::serialNumber(),
     Ion::fccId()
   };
   assert(index >= 0 && index < 3);
-  myCell->setAccessoryText(messages[index]);
+  myCell->setSubLabelText(messages[index]);
+}
+
+KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
+  return MemoizedListViewDataSource::nonMemoizedRowHeight(index);
 }
 
 }

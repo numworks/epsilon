@@ -14,7 +14,7 @@ ListParameterController::ListParameterController(Escher::InputEventHandlerDelega
   Shared::ListParameterController(listController, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
   m_typeCell(I18n::Message::SequenceType),
   m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, I18n::Message::FirstTermIndex),
-  m_typeParameterController(this, listController, TableCell::Layout::HorizontalLeftOverlap, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_typeParameterController(this, listController, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)
 {
 }
@@ -24,42 +24,19 @@ const char * ListParameterController::title() {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  bool hasAdditionalRow = hasInitialRankRow();
-#if FUNCTION_COLOR_CHOICE
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
-#else
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
-#endif
     int selectedRowIndex = selectedRow();
-#if FUNCTION_COLOR_CHOICE
     if (selectedRowIndex == 0) {
-      return handleEnterOnRow(selectedRowIndex);
-    }
-    if (selectedRowIndex == 1) {
-#else
-    if (selectedRowIndex == 0) {
-#endif
       StackViewController * stack = (StackViewController *)(parentResponder());
       m_typeParameterController.setRecord(m_record);
       stack->push(&m_typeParameterController);
       return true;
     }
-#if FUNCTION_COLOR_CHOICE
-    if (selectedRowIndex == 2+hasAdditionalRow) {
-
-#else
-    if (selectedRowIndex == 1+hasAdditionalRow) {
-#endif
-      return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
-    }
-#if FUNCTION_COLOR_CHOICE
-    if (selectedRowIndex == 3+hasAdditionalRow) {
-#else
-    if (selectedRowIndex == 2+hasAdditionalRow) {
-#endif
+    if (selectedRowIndex == numberOfNonInheritedCells() + 1) {
+      // Shared::ListParameterController::m_enableCell is selected
       App::app()->localContext()->resetCache();
-      return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }
+    return handleEnterOnRow(selectedRowIndex);
   }
   return false;
 }
@@ -69,15 +46,12 @@ bool ListParameterController::textFieldShouldFinishEditing(TextField * textField
 }
 
 bool ListParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  static float maxFirstIndex = std::pow(10.0f, Shared::Sequence::k_initialRankNumberOfDigits) - 1.0f;
-  /* -1 to take into account a double recursive sequence, which has
-   * SecondIndex = FirstIndex + 1 */
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  int index = std::round(floatBody);
-  if (index < 0  || floatBody >= maxFirstIndex) {
+  int index = std::floor(floatBody);
+  if (index < 0 || index > Shared::Sequence::maxFirstIndex) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
@@ -96,39 +70,29 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
   if (!hasInitialRankRow()) {
     return;
   }
-#if FUNCTION_COLOR_CHOICE
-  if (previousSelectedCellY == 2) {
-#else
   if (previousSelectedCellY == 1) {
-#endif
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     if (myCell) {
       myCell->setEditing(false);
     }
     Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
-#if FUNCTION_COLOR_CHOICE
-  if (t->selectedRow() == 2) {
-#else
   if (t->selectedRow() == 1) {
-#endif
     MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
     Container::activeApp()->setFirstResponder(myNewCell);
   }
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  switch (type) {
-    /*case 0:
-      return Shared::ListParameterController::reusableCell(index);*/
-    case 0://1:
+  switch (index) {
+    case 0:
       return &m_typeCell;
     case 1:
       if (hasInitialRankRow()) {
         return &m_initialRankCell;
       }
     default:
-      return Shared::ListParameterController::reusableCell(index, type-1-hasInitialRankRow());
+      return Shared::ListParameterController::reusableCell(index, type);
   }
 }
 
@@ -145,16 +109,9 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     }
     char buffer[Shared::Sequence::k_initialRankNumberOfDigits+1];
     Poincare::Integer(sequence()->initialRank()).serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits+1);
-    myCell->setAccessoryText(buffer);
+    myCell->setSubLabelText(buffer);
   }
 }
-
-int ListParameterController::totalNumberOfCells() const {
-  if (hasInitialRankRow()) {
-    return k_totalNumberOfCell;
-  }
-  return k_totalNumberOfCell-1;
-};
 
 bool ListParameterController::hasInitialRankRow() const {
   return !m_record.isNull() && const_cast<ListParameterController *>(this)->sequence()->type() != Shared::Sequence::Type::Explicit;

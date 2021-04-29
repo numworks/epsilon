@@ -23,6 +23,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
         bool isDisplayingDerivative = function()->displayDerivative();
         function()->setDisplayDerivative(!isDisplayingDerivative);
         m_valuesController->selectCellAtLocation(isDisplayingDerivative ? m_selectedFunctionColumn : m_selectedFunctionColumn + 1, m_valuesController->selectedRow());
+        resetMemoization();
         m_selectableTableView.reloadData();
         return true;
       }
@@ -43,7 +44,7 @@ int FunctionParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * FunctionParameterController::reusableCell(int index) {
+HighlightCell * FunctionParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
 #if COPY_COLUMN
@@ -52,10 +53,6 @@ HighlightCell * FunctionParameterController::reusableCell(int index) {
   HighlightCell * cells[] = {&m_displayDerivativeColumn};
 #endif
   return cells[index];
-}
-
-int FunctionParameterController::reusableCellCount() const {
-  return k_totalNumberOfCell;
 }
 
 void FunctionParameterController::viewWillAppear() {

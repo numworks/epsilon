@@ -31,11 +31,10 @@ void CalculationGraphController::viewWillAppear() {
     m_isActive = true;
     assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == Shared::ContinuousFunction::PlotType::Cartesian);
     m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(), pointOfInterest.x2());
-    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
+    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }
-  m_graphView->setOkView(nullptr);
   m_graphView->reload();
 }
 
@@ -49,20 +48,12 @@ void CalculationGraphController::reloadBannerView() {
 }
 
 Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, int direction) {
-  double step = m_graphRange->xGridUnit()/10.0;
-  step = direction < 0 ? -step : step;
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
-  return computeNewPointOfInterest(start, step, max, textFieldDelegateApp()->localContext());
+  return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext(), Solver::k_relativePrecision, Solver::k_minimalStep, Solver::DefaultMaximalStep(start, max));
 }
 
 ContinuousFunctionStore * CalculationGraphController::functionStore() const {
   return App::app()->functionStore();
-}
-
-bool CalculationGraphController::handleEnter() {
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  stack->pop();
-  return true;
 }
 
 bool CalculationGraphController::moveCursorHorizontally(int direction, int scrollspeed) {

@@ -17,16 +17,16 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
   public:
-    I18n::Message name() override;
-    I18n::Message upperName() override;
-    const Escher::Image * icon() override;
+    I18n::Message name() const override;
+    I18n::Message upperName() const override;
+    const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::SharedApp::Snapshot, public Escher::TabViewDataSource {
   public:
     Snapshot();
     App * unpack(Escher::Container * container) override;
     void reset() override;
-    Descriptor * descriptor() override;
+    const Descriptor * descriptor() const override;
     Store * store() { return &m_store; }
     Shared::CurveViewCursor * cursor() { return &m_cursor; }
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }

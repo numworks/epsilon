@@ -1,4 +1,5 @@
 #include <poincare/division_remainder.h>
+#include <poincare/division_quotient.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -11,6 +12,11 @@ namespace Poincare {
 constexpr Expression::FunctionHelper DivisionRemainder::s_functionHelper;
 
 int DivisionRemainderNode::numberOfChildren() const { return DivisionRemainder::s_functionHelper.numberOfChildren(); }
+
+Expression DivisionRemainderNode::setSign(Sign s, ReductionContext reductionContext) {
+  assert(s == sign(reductionContext.context()));
+  return DivisionRemainder(this);
+}
 
 Layout DivisionRemainderNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::s_functionHelper.name());
@@ -33,7 +39,7 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(ApproximationContext a
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return Complex<T>::RealUndefined();
   }
-  return Complex<T>::Builder(std::round(f1-f2*std::floor(f1/f2)));
+  return Complex<T>::Builder(std::round(f1 - f2 * DivisionQuotient::TemplatedQuotient(f1, f2)));
 }
 
 

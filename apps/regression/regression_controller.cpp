@@ -10,6 +10,7 @@
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
+#include "../shared/interactive_curve_view_controller.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -18,10 +19,7 @@ using namespace Escher;
 namespace Regression {
 
 RegressionController::RegressionController(Responder * parentResponder, Store * store) :
-  ViewController(parentResponder),
-  ListViewDataSource(),
-  SelectableTableViewDataSource(),
-  m_selectableTableView(this, this, this),
+  SelectableListViewController(parentResponder),
   m_store(store),
   m_series(-1)
 {
@@ -41,8 +39,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
     assert(m_series > -1);
     m_store->setSeriesRegressionType(m_series, (Model::Type)selectedRow());
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->pop();
-    stack->pop();
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
     return true;
   }
   if (event == Ion::Events::Left) {
@@ -53,27 +50,10 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
   return false;
 
 }
-KDCoordinate RegressionController::rowHeight(int j) {
+KDCoordinate RegressionController::nonMemoizedRowHeight(int j) {
   assert (j >= 0 && j < numberOfRows());
-  return j == numberOfRows() -1 ? k_logisticCellHeight : Metric::ParameterCellHeight;
-}
-
-KDCoordinate RegressionController::cumulatedHeightFromIndex(int j) {
-  assert (j >= 0 && j <= numberOfRows());
-  KDCoordinate result = 0;
-  for (int i = 0; i < j; i++) {
-    result+= rowHeight(i);
-  }
-  return result;
-}
-
-int RegressionController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  int result = 0;
-  int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
-    result += rowHeight(j++);
-  }
-  return (result < offsetY || offsetY == 0) ? j : j - 1;
+  MessageTableCellWithExpression tempCell;
+  return heightForCellAtIndex(&tempCell, j, true);
 }
 
 HighlightCell * RegressionController::reusableCell(int index, int type) {
@@ -82,13 +62,12 @@ HighlightCell * RegressionController::reusableCell(int index, int type) {
   return &m_regressionCells[index];
 }
 
-void RegressionController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  assert(i == 0);
-  assert(j >= 0 && j < k_numberOfRows);
+void RegressionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index >= 0 && index < k_numberOfRows);
   I18n::Message messages[k_numberOfRows] = {I18n::Message::Linear, I18n::Message::Proportional, I18n::Message::Quadratic, I18n::Message::Cubic, I18n::Message::Quartic, I18n::Message::Logarithmic, I18n::Message::Exponential, I18n::Message::Power, I18n::Message::Trigonometrical, I18n::Message::Logistic};
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
-  castedCell->setMessage(messages[j]);
-  castedCell->setLayout(m_store->regressionModel((Model::Type) j)->layout());
+  castedCell->setMessage(messages[index]);
+  castedCell->setLayout(m_store->regressionModel((Model::Type) index)->layout());
 }
 
 }

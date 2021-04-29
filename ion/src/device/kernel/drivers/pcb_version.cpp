@@ -1,7 +1,9 @@
-#include <ion.h>
-#include "board.h"
+#include "pcb_version.h"
+#include <kernel/drivers/board.h>
+#include <assert.h>
 
 namespace Ion {
+namespace Device {
 
 const char * pcbVersion() {
   constexpr int pcbVersionLength = 5; // xx.yy
@@ -22,4 +24,5 @@ const char * pcbVersion() {
   return pcbVer;
 }
 
+}
 }

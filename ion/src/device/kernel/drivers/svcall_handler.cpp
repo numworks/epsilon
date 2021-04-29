@@ -10,6 +10,7 @@
 #include <kernel/drivers/fcc_id.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/led.h>
+#include <kernel/drivers/pcb_version.h>
 #include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
@@ -109,6 +110,7 @@ void * svcallHandler(int svcNumber) {
     MAKE_SVCALL_HANDLER(SVC_LED_SET_BLINKING, Ion::Device::LED::setBlinking)
     MAKE_SVCALL_HANDLER(SVC_LED_SET_COLOR, Ion::Device::LED::setColor)
     MAKE_SVCALL_HANDLER(SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE, Ion::Device::LED::updateColorWithPlugAndCharge)
+    MAKE_SVCALL_HANDLER(SVC_PCB_VERSION, Ion::Device::pcbVersion)
     MAKE_SVCALL_HANDLER(SVC_PERSISTING_BYTES_READ, Ion::Device::PersistingBytes::read)
     MAKE_SVCALL_HANDLER(SVC_PERSISTING_BYTES_WRITE, Ion::Device::PersistingBytes::write)
     MAKE_SVCALL_HANDLER(SVC_POWER_SELECT_STANDBY_MODE, Ion::Device::Power::selectStandbyMode)

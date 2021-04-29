@@ -398,17 +398,26 @@ constexpr ToolboxMessageTree arithmeticChildren[] = {
 };
 
 constexpr ToolboxMessageTree hyperbolicTrigonometryChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::CoshCommandWithArg, I18n::Message::HyperbolicCosine),
   ToolboxMessageTree::Leaf(I18n::Message::SinhCommandWithArg, I18n::Message::HyperbolicSine),
+  ToolboxMessageTree::Leaf(I18n::Message::CoshCommandWithArg, I18n::Message::HyperbolicCosine),
   ToolboxMessageTree::Leaf(I18n::Message::TanhCommandWithArg, I18n::Message::HyperbolicTangent),
-  ToolboxMessageTree::Leaf(I18n::Message::AcoshCommandWithArg, I18n::Message::InverseHyperbolicCosine),
   ToolboxMessageTree::Leaf(I18n::Message::AsinhCommandWithArg, I18n::Message::InverseHyperbolicSine),
+  ToolboxMessageTree::Leaf(I18n::Message::AcoshCommandWithArg, I18n::Message::InverseHyperbolicCosine),
   ToolboxMessageTree::Leaf(I18n::Message::AtanhCommandWithArg, I18n::Message::InverseHyperbolicTangent)
+};
+
+constexpr ToolboxMessageTree advancedTrigonometryChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::CscCommandWithArg, I18n::Message::Cosecant),
+  ToolboxMessageTree::Leaf(I18n::Message::SecCommandWithArg, I18n::Message::Secant),
+  ToolboxMessageTree::Leaf(I18n::Message::CotCommandWithArg, I18n::Message::Cotangent),
+  ToolboxMessageTree::Leaf(I18n::Message::AcscCommandWithArg, I18n::Message::ArcCosecant),
+  ToolboxMessageTree::Leaf(I18n::Message::AsecCommandWithArg, I18n::Message::ArcSecant),
+  ToolboxMessageTree::Leaf(I18n::Message::AcotCommandWithArg, I18n::Message::ArcCotangent)
 };
 
 constexpr ToolboxMessageTree trigonometryChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, hyperbolicTrigonometryChildren),
-  // TODO : add advanced trigonometric functions
+  ToolboxMessageTree::Node(I18n::Message::AdvancedTrigonometry, advancedTrigonometryChildren),
 };
 
 constexpr ToolboxMessageTree decimalNumbersChildren[] = {

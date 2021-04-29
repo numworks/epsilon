@@ -311,8 +311,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
   if (computeX || intrinsicYRangeIsUnset()) {
     float xMinLimit, xMaxLimit;
     if (computeX) {
-      xMinLimit = -FLT_MAX;
-      xMaxLimit = FLT_MAX;
+      xMinLimit = -INFINITY;
+      xMaxLimit = INFINITY;
     } else {
       xMinLimit = xMin();
       xMaxLimit = xMax();

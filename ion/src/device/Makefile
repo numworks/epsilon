@@ -35,7 +35,7 @@ $(call object_for,$(ion_device_userland_src)): SFLAGS += $(ION_DEVICE_SFLAGS) $(
 $(call object_for,$(libsodium_src)): SFLAGS += -Iion/src/external/libsodium/include/sodium -Iion/src/external/libsodium/include/device -DCONFIGURED=1 -w
 
 IN_FACTORY ?= 0
-ION_DEVICE_SFLAGS = -DPCB_LATEST=$(PCB_LATEST) -DIN_FACTORY=$(IN_FACTORY)
+ION_DEVICE_SFLAGS += -DPCB_LATEST=$(PCB_LATEST) -DIN_FACTORY=$(IN_FACTORY)
 
 ion_device_bootloader_src += $(libsodium_src)
 

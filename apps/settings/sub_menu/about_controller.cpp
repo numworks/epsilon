@@ -32,7 +32,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       } else if (strcmp(currentText, Ion::pcbVersion()) == 0) {
         myCell->setSubLabelText(Ion::epsilonVersion());
       } else {
-        assert(strcmp(currentText, Ion::softwareVersion()) == 0);
+        assert(strcmp(currentText, Ion::epsilonVersion()) == 0);
         myCell->setSubLabelText(Ion::patchLevel());
       }
       return true;

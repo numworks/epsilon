@@ -21,7 +21,10 @@ class Symbol;
 class Expression : public TreeHandle {
   friend class AbsoluteValue;
   friend class Addition;
+  friend class ArcCosecant;
   friend class ArcCosine;
+  friend class ArcCotangent;
+  friend class ArcSecant;
   friend class ArcSine;
   friend class ArcTangent;
   friend class Arithmetic;
@@ -37,7 +40,9 @@ class Expression : public TreeHandle {
   friend class ComplexHelper;
   friend class ConfidenceInterval;
   friend class Conjugate;
+  friend class Cosecant;
   friend class Cosine;
+  friend class Cotangent;
   friend class Decimal;
   friend class Dependency;
   friend class Derivative;
@@ -89,6 +94,7 @@ class Expression : public TreeHandle {
   friend class Randint;
   friend class RealPart;
   friend class Round;
+  friend class Secant;
   friend class Sequence;
   friend class SequenceNode;
   friend class SignFunction;

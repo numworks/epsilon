@@ -16,6 +16,7 @@ public:
   int numberOfRows() const override { return k_numberOfTextCells + 1; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool handleEvent(Ion::Events::Event event) override;
+  bool editXRange() const { return m_editXRange; }
   void setEditXRange(bool editXRange) { m_editXRange = editXRange; }
 
 private:

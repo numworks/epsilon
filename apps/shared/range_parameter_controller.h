@@ -26,6 +26,7 @@ public:
 
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
+  void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   void setRange(InteractiveCurveViewRange * range);

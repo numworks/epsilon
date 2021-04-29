@@ -208,7 +208,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   /* We force scientific mode if the number of digits before the dot is superior
    * to the number of significant digits (ie with 4 significant digits,
    * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
-  bool forceScientificMode = mode != Preferences::PrintFloatMode::Engineering && (mode == Preferences::PrintFloatMode::Scientific || exponent >= numberOfSignificantDigits);
+  bool forceScientificMode = mode != Preferences::PrintFloatMode::Engineering && (mode == Preferences::PrintFloatMode::Scientific || exponent >= numberOfSignificantDigits || std::pow(10., exponent) < PrintFloat::DecimalModeMinimalValue<double>());
   int numberOfRequiredDigits = mantissaLength;
   if (mode == Preferences::PrintFloatMode::Decimal && !forceScientificMode) {
     if (exponent < 0) {

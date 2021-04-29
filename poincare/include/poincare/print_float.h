@@ -65,6 +65,8 @@ public:
   static TextLengths ConvertFloatToText(T d, char * buffer, int bufferSize, int availableGlyphLength, int numberOfSignificantDigits, Preferences::PrintFloatMode mode);
   template <class T>
   constexpr static int SignificantDecimalDigits() { return sizeof(T) == sizeof(double) ? k_numberOfStoredSignificantDigits : k_floatNumberOfSignificantDigits; }
+  template <class T>
+  constexpr static T DecimalModeMinimalValue() { return sizeof(T) == sizeof(double) ? 1e-3 : 1e-3f; }
 
   // Engineering notation
   static int EngineeringExponentFromBase10Exponent(int exponent);

@@ -14,8 +14,8 @@ class NewApp : public Shared::TextFieldDelegateApp {
 public:
 class Descriptor : public Escher::App::Descriptor {
     public:
-      I18n::Message name() const override { return I18n::Message::ProbaApp; };
-      I18n::Message upperName() const override { return I18n::Message::ProbaAppCapital; };
+      I18n::Message name() const override { return I18n::Message::DistributionApp; };
+      I18n::Message upperName() const override { return I18n::Message::DistributionAppCapital; };
       const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::SharedApp::Snapshot {

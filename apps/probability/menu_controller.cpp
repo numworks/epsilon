@@ -11,7 +11,7 @@ namespace Probability {
 
 MenuController::MenuController(Responder * parentResponder) :
  SelectableListViewController(parentResponder),
- m_labels{I18n::Message::ProbaApp, I18n::Message::ProbaApp, I18n::Message::ProbaApp}
+ m_labels{I18n::Message::ProbaApp, I18n::Message::SignificanceTest, I18n::Message::ConfidenceInterval}
 { }
 
 void MenuController::willDisplayCellForIndex(Escher::HighlightCell * cell, int row) {

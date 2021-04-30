@@ -122,18 +122,23 @@ void replayFrom(Journal * l) { sSourceJournal = l; }
 void logTo(Journal * l) { sDestinationJournal = l; }
 
 Event getEvent(int * timeout) {
+  Event res = Events::None;
+  // Replay
   if (sSourceJournal != nullptr) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
     } else {
-      return sSourceJournal->popEvent();
+      res = sSourceJournal->popEvent();
     }
   }
-  Event e = innerGetEvent(timeout);
-  if (sDestinationJournal != nullptr) {
-    sDestinationJournal->pushEvent(e);
+
+  if (res == Events::None) {
+    res = innerGetEvent(timeout);
   }
-  return e;
+  if (sDestinationJournal != nullptr) {
+    sDestinationJournal->pushEvent(res);
+  }
+  return res;
 }
 
 #else

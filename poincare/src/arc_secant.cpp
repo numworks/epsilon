@@ -2,7 +2,6 @@
 #include <poincare/complex.h>
 #include <poincare/arc_secant.h>
 #include <poincare/layout_helper.h>
-#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
 
@@ -41,11 +40,7 @@ Expression ArcSecant::shallowReduce(ExpressionNode::ReductionContext reductionCo
       return e;
     }
   }
-  Power p = Power::Builder(childAtIndex(0), Rational::Builder(-1));
-  ArcCosine a = ArcCosine::Builder(p);
-  replaceWithInPlace(a);
-  p.shallowReduce(reductionContext);
-  return a.shallowReduce(reductionContext);
+  return Trigonometry::shallowReduceInverseAdvancedFunction(*this, reductionContext);
 }
 
 

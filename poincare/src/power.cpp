@@ -23,6 +23,7 @@
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
+#include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
 #include <poincare/unreal.h>
 #include <poincare/vertical_offset_layout.h>
@@ -1003,6 +1004,10 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext * reductionCo
   Expression p = denominator(*reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
+    if (Trigonometry::isDirectTrigonometryFunction(p)) {
+      // Replace this inverse with denominator's advanced equivalent.
+      return Trigonometry::replaceWithAdvancedFunction(*this, p);
+    }
     Division d = Division::Builder(Rational::Builder(1), p);
     replaceWithInPlace(d);
     p.shallowReduce(*reductionContext);

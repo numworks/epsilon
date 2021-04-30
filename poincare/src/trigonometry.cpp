@@ -4,7 +4,9 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/addition.h>
 #include <poincare/constant.h>
+#include <poincare/cosecant.h>
 #include <poincare/cosine.h>
+#include <poincare/cotangent.h>
 #include <poincare/decimal.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
@@ -13,6 +15,7 @@
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
+#include <poincare/secant.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/sign_function.h>
@@ -462,6 +465,29 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, Ex
   e.replaceWithInPlace(result);
   p.shallowReduce(reductionContext);
   return result.shallowReduce(reductionContext);
+}
+
+Expression Trigonometry::replaceWithAdvancedFunction(Expression & e, Expression & denominator) {
+  /* Replace direct trigonometric function with their advanced counterpart.
+   * This function must be called within a denominator. */
+  assert(e.type() == ExpressionNode::Type::Power && !denominator.isUninitialized());
+  assert(isDirectTrigonometryFunction(denominator));
+  Expression result;
+  switch (denominator.type()) {
+    case ExpressionNode::Type::Cosine:
+      result = Secant::Builder(denominator.childAtIndex(0));
+      break;
+    case ExpressionNode::Type::Sine:
+      result = Cosecant::Builder(denominator.childAtIndex(0));
+      break;
+    case ExpressionNode::Type::Tangent:
+      result = Cotangent::Builder(denominator.childAtIndex(0));
+      break;
+    default:
+      break;
+  }
+  e.replaceWithInPlace(result);
+  return result;
 }
 
 template <typename T>

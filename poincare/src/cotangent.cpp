@@ -1,4 +1,5 @@
-#include <poincare/tangent.h>
+#include <poincare/sine.h>
+#include <poincare/cosine.h>
 #include <poincare/complex.h>
 #include <poincare/cotangent.h>
 #include <poincare/layout_helper.h>
@@ -15,11 +16,12 @@ int CotangentNode::numberOfChildren() const { return Cotangent::s_functionHelper
 
 template<typename T>
 Complex<T> CotangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  std::complex<T> denominator = TangentNode::computeOnComplex<T>(c, complexFormat, angleUnit).stdComplex();
+  std::complex<T> denominator = SineNode::computeOnComplex<T>(c, complexFormat, angleUnit).stdComplex();
+  std::complex<T> nominator = CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit).stdComplex();
   if (denominator == (T)0.0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>::Builder(std::complex<T>(1) / denominator);
+  return Complex<T>::Builder(nominator / denominator);
 }
 
 Layout CotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

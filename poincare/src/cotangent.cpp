@@ -2,8 +2,8 @@
 #include <poincare/complex.h>
 #include <poincare/cotangent.h>
 #include <poincare/layout_helper.h>
-#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/trigonometry.h>
 
 #include <cmath>
 
@@ -41,11 +41,7 @@ Expression Cotangent::shallowReduce(ExpressionNode::ReductionContext reductionCo
       return e;
     }
   }
-  Tangent t = Tangent::Builder(childAtIndex(0));
-  Power p = Power::Builder(t, Rational::Builder(-1));
-  replaceWithInPlace(p);
-  t.shallowReduce(reductionContext);
-  return p.shallowReduce(reductionContext);
+  return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
 }
 
 

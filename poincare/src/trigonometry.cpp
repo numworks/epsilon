@@ -1,6 +1,10 @@
 #include <poincare/trigonometry.h>
+#include <poincare/arc_cosine.h>
+#include <poincare/arc_sine.h>
+#include <poincare/arc_tangent.h>
 #include <poincare/addition.h>
 #include <poincare/constant.h>
+#include <poincare/cosine.h>
 #include <poincare/decimal.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
@@ -12,8 +16,10 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/sign_function.h>
+#include <poincare/sine.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
+#include <poincare/tangent.h>
 #include <poincare/trigonometry_cheat_table.h>
 #include <poincare/undefined.h>
 #include <poincare/opposite.h>
@@ -67,6 +73,18 @@ bool Trigonometry::isInverseTrigonometryFunction(const Expression & e) {
   return e.type() == ExpressionNode::Type::ArcCosine
     || e.type() == ExpressionNode::Type::ArcSine
     || e.type() == ExpressionNode::Type::ArcTangent;
+}
+
+bool Trigonometry::isAdvancedTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::Secant
+    || e.type() == ExpressionNode::Type::Cosecant
+    || e.type() == ExpressionNode::Type::Cotangent;
+}
+
+bool Trigonometry::isInverseAdvancedTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::ArcSecant
+    || e.type() == ExpressionNode::Type::ArcCosecant
+    || e.type() == ExpressionNode::Type::ArcCotangent;
 }
 
 bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction) {
@@ -398,6 +416,52 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
   }
 
   return e;
+}
+
+Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+  assert(isAdvancedTrigonometryFunction(e));
+  // Step 0. Replace with inverse (^-1) of equivalent direct function.
+  Expression result;
+  switch (e.type()) {
+    case ExpressionNode::Type::Secant:
+      result = Cosine::Builder(e.childAtIndex(0));
+      break;
+    case ExpressionNode::Type::Cosecant:
+      result = Sine::Builder(e.childAtIndex(0));
+      break;
+    case ExpressionNode::Type::Cotangent:
+      result = Tangent::Builder(e.childAtIndex(0));
+      break;
+    default:
+      break;
+  }
+  Power p = Power::Builder(result, Rational::Builder(-1));
+  e.replaceWithInPlace(p);
+  result.shallowReduce(reductionContext);
+  return p.shallowReduce(reductionContext);
+}
+
+Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+  assert(isInverseAdvancedTrigonometryFunction(e));
+  // Step 0. Replace with equivalent inverse function on inverse (^-1) argument
+  Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
+  Expression result;
+  switch (e.type()) {
+    case ExpressionNode::Type::ArcSecant:
+      result = ArcCosine::Builder(p);
+      break;
+    case ExpressionNode::Type::ArcCosecant:
+      result = ArcSine::Builder(p);
+      break;
+    case ExpressionNode::Type::ArcCotangent:
+      result = ArcTangent::Builder(p);
+      break;
+    default:
+      break;
+  }
+  e.replaceWithInPlace(result);
+  p.shallowReduce(reductionContext);
+  return result.shallowReduce(reductionContext);
 }
 
 template <typename T>

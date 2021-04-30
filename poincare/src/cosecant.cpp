@@ -2,8 +2,8 @@
 #include <poincare/complex.h>
 #include <poincare/cosecant.h>
 #include <poincare/layout_helper.h>
-#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/trigonometry.h>
 
 #include <cmath>
 
@@ -41,11 +41,7 @@ Expression Cosecant::shallowReduce(ExpressionNode::ReductionContext reductionCon
       return e;
     }
   }
-  Sine s = Sine::Builder(childAtIndex(0));
-  Power p = Power::Builder(s, Rational::Builder(-1));
-  replaceWithInPlace(p);
-  s.shallowReduce(reductionContext);
-  return p.shallowReduce(reductionContext);
+  return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
 }
 
 

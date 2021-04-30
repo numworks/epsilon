@@ -426,14 +426,21 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
   // Step 0. Replace with inverse (^-1) of equivalent direct function.
   Expression result;
   switch (e.type()) {
+    case ExpressionNode::Type::Cotangent: {
+      // Use cot(x)=cos(x)/sin(x) definition to handle cot(pi/2)=0
+      Cosine c = Cosine::Builder(e.childAtIndex(0).clone());
+      Sine s = Sine::Builder(e.childAtIndex(0));
+      Division d = Division::Builder(c, s);
+      e.replaceWithInPlace(d);
+      c.shallowReduce(reductionContext);
+      s.shallowReduce(reductionContext);
+      return d.shallowReduce(reductionContext);
+    }
     case ExpressionNode::Type::Secant:
       result = Cosine::Builder(e.childAtIndex(0));
       break;
     case ExpressionNode::Type::Cosecant:
       result = Sine::Builder(e.childAtIndex(0));
-      break;
-    case ExpressionNode::Type::Cotangent:
-      result = Tangent::Builder(e.childAtIndex(0));
       break;
     default:
       break;

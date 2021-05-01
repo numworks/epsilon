@@ -23,6 +23,9 @@ public:
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
 
+  // Circle
+  void drawCircle(KDPoint c, KDCoordinate r, KDColor color);
+
   // Rect
   void fillRect(KDRect rect, KDColor color);
   void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);

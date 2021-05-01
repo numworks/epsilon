@@ -2,6 +2,7 @@ SFLAGS += -Ikandinsky/include
 
 kandinsky_src += $(addprefix kandinsky/src/,\
   color.cpp \
+  context_circle.cpp \
   context_line.cpp \
   context_pixel.cpp \
   context_rect.cpp \

@@ -78,6 +78,21 @@ mp_obj_t modkandinsky_draw_line(size_t n_args, const mp_obj_t * args) {
   return mp_const_none;
 }
 
+mp_obj_t modkandinsky_draw_circle(size_t n_args, const mp_obj_t * args) {
+  mp_int_t cx = mp_obj_get_int(args[0]);
+  mp_int_t cy = mp_obj_get_int(args[1]);
+  mp_int_t r = mp_obj_get_int(args[2]);
+  if(r<0)
+  {
+    r = -r;
+  }
+  KDPoint center = KDPoint(cx, cy);
+  KDColor color = MicroPython::Color::Parse(args[3]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->drawCircle(center, r, color);
+  return mp_const_none;
+}
+
 mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   mp_int_t x = mp_obj_get_int(args[0]);
   mp_int_t y = mp_obj_get_int(args[1]);

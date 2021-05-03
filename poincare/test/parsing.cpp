@@ -357,8 +357,11 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   // Reserved functions
   assert_parsed_expression_is("acos(1)", ArcCosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("acosh(1)", HyperbolicArcCosine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("acot(1)", ArcCotangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("acsc(1)", ArcCosecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("abs(1)", AbsoluteValue::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("arg(1)", ComplexArgument::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("asec(1)", ArcSecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("asin(1)", ArcSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("asinh(1)", HyperbolicArcSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("atan(1)", ArcTangent::Builder(BasedInteger::Builder(1)));
@@ -372,10 +375,12 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("diff(1,x,3)", Derivative::Builder(BasedInteger::Builder(1),Symbol::Builder("x",1),BasedInteger::Builder(3)));
   assert_parsed_expression_is("dim(1)", MatrixDimension::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("conj(1)", Conjugate::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("cot(1)", Cotangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("det(1)", Determinant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("dot(1,1)", VectorDot::Builder(BasedInteger::Builder(1),BasedInteger::Builder(1)));
   assert_parsed_expression_is("cos(1)", Cosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("cosh(1)", HyperbolicCosine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("csc(1)", Cosecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("factor(1)", Factor::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("floor(1)", Floor::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("frac(1)", FracPart::Builder(BasedInteger::Builder(1)));
@@ -410,6 +415,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("root(1,2)", NthRoot::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("round(1,2)", Round::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("rref(1)", MatrixReducedRowEchelonForm::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("sec(1)", Secant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sin(1)", Sine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sign(1)", SignFunction::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sinh(1)", HyperbolicSine::Builder(BasedInteger::Builder(1)));

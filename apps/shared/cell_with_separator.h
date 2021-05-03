@@ -22,7 +22,7 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  virtual Escher::TableCell * cell() = 0;
+  Escher::TableCell * cell() { return const_cast<Escher::TableCell *>(constCell()); }
   virtual bool separatorAboveCell() const { return true; }
 };
 

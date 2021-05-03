@@ -6,7 +6,12 @@
 #include <escher/container.h>
 #include <escher/app.h>
 #include <escher/stack_view_controller.h>
+#include "distribution/binomial_distribution.h"
+#include "calculation/discrete_calculation.h"
 #include "menu_controller.h"
+#include "distribution_controller.h"
+#include "test_controller.h"
+#include "parameters_controller.h"
 
 namespace Probability {
 
@@ -38,8 +43,16 @@ private:
   NewApp(Escher::App::Snapshot *);
 
   // Controllers
+  CalculationController m_calculationController;
+  ParametersController m_parameterController;
+  DistributionController m_distributionController;
+  TestController m_testController;
   MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
+
+  // To be removed
+  BinomialDistribution m_distribution;
+  DiscreteCalculation m_calculation;
 };
 
 }

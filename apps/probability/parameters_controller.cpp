@@ -1,6 +1,5 @@
 #include "parameters_controller.h"
 #include "../constant.h"
-#include "app.h"
 #include <assert.h>
 #include <string.h>
 
@@ -106,7 +105,7 @@ void ParametersController::reinitCalculation() {
 }
 
 void ParametersController::didBecomeFirstResponder() {
-  App::app()->snapshot()->setActivePage(App::Snapshot::Page::Parameters);
+  // App::app()->snapshot()->setActivePage(App::Snapshot::Page::Parameters);
   FloatParameterController::didBecomeFirstResponder();
 }
 

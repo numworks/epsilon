@@ -1,11 +1,11 @@
 #ifndef PROBABILITY_DISTRIBUTION_CONTROLLER_H
 #define PROBABILITY_DISTRIBUTION_CONTROLLER_H
 
+#include <new>
 #include <escher/selectable_list_view_controller.h>
 #include "cell.h"
 #include "distribution/distribution.h"
 #include "parameters_controller.h"
-#include <new>
 
 namespace Probability {
 

@@ -1,7 +1,6 @@
 #include "distribution_controller.h"
 #include <assert.h>
 #include <new>
-#include "app.h"
 #include "distribution/binomial_distribution.h"
 #include "distribution/chi_squared_distribution.h"
 #include "distribution/exponential_distribution.h"
@@ -71,7 +70,7 @@ void Probability::DistributionController::viewWillAppear() {
 }
 
 void Probability::DistributionController::didBecomeFirstResponder() {
-  App::app()->snapshot()->setActivePage(App::Snapshot::Page::Distribution);
+  // App::app()->snapshot()->setActivePage(App::Snapshot::Page::Distribution);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {

@@ -46,6 +46,13 @@ define use_dfu_symbol_file
   add-symbol-file build/debug/device/ion/src/device/shared/usb/dfu.elf 0x20038000
 end
 
+define use_application_symbol_file
+# Discard previous symbol file
+  symbol-file
+# Load new symbol file
+  add-symbol-file apps/third_party_app/custom_application.elf
+end
+
 document armex
 ARMv7 Exception entry behavior.
 xPSR, ReturnAddress, LR (R14), R12, R3, R2, R1, and R0

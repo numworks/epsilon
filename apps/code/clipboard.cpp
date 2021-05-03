@@ -74,7 +74,8 @@ const UTF8Helper::TextPair * Clipboard::PythonTextPairs() {
 
 void Clipboard::replaceCharForPython(bool entersPythonApp) {
   s_replacementRuleStartingPoint = 0;
-  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize(), PythonTextPairs(), k_numberOfPythonTextPairs, entersPythonApp);
+  /* Size is maxBufferSize - 1 to ensure null termination. */
+  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize() - 1, PythonTextPairs(), k_numberOfPythonTextPairs, entersPythonApp);
 }
 
 }

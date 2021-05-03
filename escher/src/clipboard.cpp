@@ -42,7 +42,8 @@ const char * Clipboard::storedText() {
     UTF8Helper::TextPair("\x12\x13", "\x12\x11\x13"),
   };
 
-  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize(), textPairs, numberOfPairs, true);
+  /* Size is maxBufferSize - 1 to ensure null termination. */
+  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize() - 1, textPairs, numberOfPairs, true);
   return m_textBuffer;
 }
 

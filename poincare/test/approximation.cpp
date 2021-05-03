@@ -549,6 +549,12 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("cos(𝐢-4)", "-1.008625-0.8893952×𝐢", Radian);
   assert_expression_approximates_to<float>("cos(𝐢-4)", "0.997716+0.00121754×𝐢", Degree, Metric, Cartesian, 6);
   assert_expression_approximates_to<float>("cos(𝐢-4)", "0.99815+9.86352ᴇ-4×𝐢", Gradian, Metric, Cartesian, 6);
+  // Advanced function : sec
+  assert_expression_approximates_to<double>("sec(2)", "-2.4029979617224", Radian);
+  assert_expression_approximates_to<float>("sec(200)", "-1", Gradian);
+  assert_expression_approximates_to<float>("sec(3×𝐢)", "0.9986307", Degree);
+  assert_expression_approximates_to<float>("sec(-3×𝐢)", "0.9986307", Degree);
+  assert_expression_approximates_to<float>("sec(𝐢-4)", "-0.55776+0.491828×𝐢", Radian, Metric, Cartesian, 6);
 
   /* sin: R  ->  R (oscillator)
    *      Ri ->  Ri (odd)
@@ -578,6 +584,12 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("sin(𝐢-4)", "-0.0697671+0.0174117×𝐢", Degree, Metric, Cartesian, 6);
   assert_expression_approximates_to<float>("sin(𝐢-4)", "-0.0627983+0.0156776×𝐢", Gradian, Metric, Cartesian, 6);
   assert_expression_approximates_to<float>("sin(1.234567890123456ᴇ-15)", "1.23457ᴇ-15", Radian, Metric, Cartesian, 6);
+  // Advanced function : csc
+  assert_expression_approximates_to<double>("csc(2)", "1.0997501702946", Radian);
+  assert_expression_approximates_to<float>("csc(100)", "1", Gradian);
+  assert_expression_approximates_to<float>("csc(3×𝐢)", "-19.08987×𝐢", Degree);
+  assert_expression_approximates_to<float>("csc(-3×𝐢)", "19.08987×𝐢", Degree);
+  assert_expression_approximates_to<float>("csc(𝐢-4)", "0.597696+0.393154×𝐢", Radian, Metric, Cartesian, 6);
 
   /* tan: R  ->  R (tangent-style)
    *      Ri ->  Ri (odd)
@@ -602,6 +614,12 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("tan(𝐢-4)", "-0.273553+1.00281×𝐢", Radian, Metric, Cartesian, 6);
   assert_expression_approximates_to<float>("tan(𝐢-4)", "-0.0699054+0.0175368×𝐢", Degree, Metric, Cartesian, 6);
   assert_expression_approximates_to<float>("tan(𝐢-4)", "-0.0628991+0.0157688×𝐢", Gradian, Metric, Cartesian, 6);
+  // Advanced function : cot
+  assert_expression_approximates_to<double>("cot(2)", "-4.5765755436029ᴇ-1", Radian);
+  assert_expression_approximates_to<float>("cot(100)", "0", Gradian);
+  assert_expression_approximates_to<float>("cot(3×𝐢)", "-19.11604×𝐢", Degree);
+  assert_expression_approximates_to<float>("cot(-3×𝐢)", "19.11604×𝐢", Degree);
+  assert_expression_approximates_to<float>("cot(𝐢-4)", "-0.253182-0.928133×𝐢", Radian, Metric, Cartesian, 6);
 
   /* acos: [-1,1]    -> R
    *       ]-inf,-1[ -> π+R×i (odd imaginary)
@@ -644,6 +662,11 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("acos(0)", "100", Gradian);
   assert_expression_approximates_to<float>("acos(-1)", "200", Gradian);
   assert_expression_approximates_to<double>("acos(1)", "0", Gradian);
+  // Advanced function : asec
+  assert_expression_approximates_to<double>("asec(-2.4029979617224)", "2", Radian);
+  assert_expression_approximates_to<float>("asec(-1)", "200", Gradian);
+  assert_expression_approximates_to<float>("asec(0.9986307857)", "2.999943×𝐢", Degree);
+  assert_expression_approximates_to<float>("asec(-0.55776+0.491828×𝐢)", "2.28319+1×𝐢", Radian, Metric, Cartesian, 6);
 
   /* asin: [-1,1]    -> R
    *       ]-inf,-1[ -> -π/2+R×i (odd)
@@ -684,6 +707,12 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("asin(-1)", "-100", Gradian, Metric, Cartesian, 6);
   assert_expression_approximates_to<double>("asin(1)", "90", Degree);
   assert_expression_approximates_to<double>("asin(1)", "100", Gradian, Metric, Cartesian);
+  // Advanced function : acsc
+  assert_expression_approximates_to<double>("acsc(1.0997501702946)", "1.1415926535898", Radian);
+  assert_expression_approximates_to<float>("acsc(1)", "99.99999", Gradian);
+  assert_expression_approximates_to<float>("acsc(-19.08987×𝐢)", "2.999995×𝐢", Degree);
+  assert_expression_approximates_to<float>("acsc(19.08987×𝐢)", "-3.000001×𝐢", Degree);
+  assert_expression_approximates_to<float>("acsc(0.597696+0.393154×𝐢)", "0.858407-1×𝐢", Radian, Metric, Cartesian, 6);
 
   /* atan: R         ->  R (odd)
    *       [-𝐢,𝐢]    ->  R×𝐢 (odd)
@@ -724,6 +753,12 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("atan(0)", "0", Gradian);
   assert_expression_approximates_to<double>("atan(-𝐢)", "-inf×𝐢", Radian);
   assert_expression_approximates_to<double>("atan(𝐢)", "inf×𝐢", Radian);
+  // Advanced function : acot
+  assert_expression_approximates_to<double>("acot(-4.5765755436029ᴇ-1)", "-1.1415926535898", Radian);
+  assert_expression_approximates_to<float>("acot(0)", Undefined::Name(), Gradian);
+  assert_expression_approximates_to<float>("acot(-19.11604×𝐢)", "3.000001×𝐢", Degree);
+  assert_expression_approximates_to<float>("acot(19.11604×𝐢)", "-2.999999×𝐢", Degree);
+  assert_expression_approximates_to<float>("acot(-0.253182-0.928133×𝐢)", "-0.858407+1×𝐢", Radian, Metric, Cartesian, 6);
 
   /* cosh: R         -> R (even)
    *       R×𝐢       -> R (oscillator)

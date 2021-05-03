@@ -51,7 +51,6 @@ private:
     NormalizeCell() : m_cell(I18n::Message::MakeOrthonormal) {}
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
-    Escher::TableCell * cell() override { return &m_cell; }
     const Escher::TableCell * constCell() const override { return &m_cell; }
     bool separatorAboveCell() const override { return false; }
     mutable CellWithUnequal m_cell;

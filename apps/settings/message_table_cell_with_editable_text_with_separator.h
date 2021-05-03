@@ -15,7 +15,6 @@ public:
   Poincare::Layout layout() const override { return m_cell.layout(); }
   Escher::MessageTableCellWithEditableText * messageTableCellWithEditableText() { return &m_cell; }
 private:
-  Escher::TableCell * cell() override { return &m_cell; }
   const Escher::TableCell * constCell() const override { return &m_cell; }
   Escher::MessageTableCellWithEditableText m_cell;
 };

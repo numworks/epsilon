@@ -12,6 +12,7 @@
 #include "distribution_controller.h"
 #include "test_controller.h"
 #include "parameters_controller.h"
+#include "hypothesis_controller.h"
 
 namespace Probability {
 
@@ -43,6 +44,7 @@ private:
   NewApp(Escher::App::Snapshot *);
 
   // Controllers
+  HypothesisController m_hypothesisController;
   CalculationController m_calculationController;
   ParametersController m_parameterController;
   DistributionController m_distributionController;

@@ -41,6 +41,7 @@ app_probability_src += $(addprefix apps/probability/,\
   distribution_controller.cpp \
 	menu_controller.cpp \
 	test_controller.cpp \
+	hypothesis_controller.cpp\
 )
 
 app_probability_src += $(app_probability_test_src)

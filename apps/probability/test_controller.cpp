@@ -2,10 +2,12 @@
 #include <assert.h>
 #include <apps/i18n.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/stack_view_controller.h>
 #include <escher/container.h>
+#include "hypothesis_controller.h"
 
-TestController::TestController(Escher::Responder * parentResponder)
-  : SelectableListViewController(parentResponder) {
+TestController::TestController(Escher::Responder * parentResponder, HypothesisController * hypothesisController)
+  : SelectableListViewController(parentResponder), m_hypothesisController(hypothesisController) {
   // Create cells
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
   m_cells[k_indexOfOneProp].setSubtitle(I18n::Message::TestOnePropSub);
@@ -32,4 +34,16 @@ void TestController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+}
+
+bool TestController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    Escher::StackViewController * stack = (Escher::StackViewController *)parentResponder();
+    int row = selectedRow();
+    if (row == k_indexOfOneProp || row == k_indexOfTwoProps) {
+      stack->push(m_hypothesisController);
+      return true;
+    }
+  }
+  return false;
 }

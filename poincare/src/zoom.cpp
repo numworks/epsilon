@@ -27,14 +27,14 @@ constexpr float
 void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
 
-  float center, maxDistance;
-  if (std::isfinite(tMin) && std::isfinite(tMax)) {
-    center = (tMax + tMin) / 2.f;
-    maxDistance = (tMax - tMin) / 2.f;
-  } else {
-    center = 0.f;
-    maxDistance = k_maximalDistance;
+  if (!std::isfinite(tMin) || tMin < -k_maximalDistance || tMin > k_maximalDistance) {
+    tMin = -k_maximalDistance;
   }
+  if (!std::isfinite(tMax) || tMax < -k_maximalDistance || tMax > k_maximalDistance) {
+    tMax = k_maximalDistance;
+  }
+  float center = (tMax + tMin) / 2.f;
+  float maxDistance = (tMax - tMin) / 2.f;
 
   SolverHelper<float>::BracketSearch search = [](float a, float b, float c, float fa, float fb, float fc, ValueAtAbscissa f, Context * context, const void * auxiliary) {
     if (BoundOfIntervalOfDefinitionIsReached(fa, fc)) {

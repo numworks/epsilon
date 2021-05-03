@@ -36,6 +36,7 @@ QUIZ_CASE(code_clipboard_enters_and_exits_python) {
 
   /* The character 'e' should only be changed to 'ᴇ' if it is part of a
    * floating-point number. */
+  assert_clipboard_enters_and_exits_python("1ᴇ2", "1e2");
   assert_clipboard_enters_and_exits_python("123ᴇ4", "123e4");
   assert_clipboard_enters_and_exits_python("someVariableName", "someVariableName");
   assert_clipboard_enters_and_exits_python("leg+1.23ᴇ-4.56", "leg+1.23e-4.56");

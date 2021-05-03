@@ -15,10 +15,8 @@ app_probability_test_src = $(addprefix apps/probability/,\
 )
 
 app_probability_src = $(addprefix apps/probability/,\
-  app.cpp \
-	new_app.cpp \
-	menu_controller.cpp \
-  calculation/calculation.cpp \
+  new_app.cpp \
+	calculation/calculation.cpp \
   calculation/discrete_calculation.cpp \
   calculation/left_integral_calculation.cpp \
   calculation/right_integral_calculation.cpp \
@@ -39,6 +37,12 @@ app_probability_src = $(addprefix apps/probability/,\
   responder_image_cell.cpp \
 )
 
+app_probability_src += $(addprefix apps/probability/,\
+  distribution_controller.cpp \
+	menu_controller.cpp \
+	test_controller.cpp \
+)
+
 app_probability_src += $(app_probability_test_src)
 apps_src += $(app_probability_src)
 
@@ -49,6 +53,8 @@ tests_src += $(addprefix apps/probability/test/,\
   distributions.cpp\
   regularized_gamma.cpp \
 )
+
+$(warning $(app_probability_src))
 
 # Image dependencies
 

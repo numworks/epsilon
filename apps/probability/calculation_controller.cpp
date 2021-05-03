@@ -1,6 +1,5 @@
 #include "calculation_controller.h"
-#include "../shared/poincare_helpers.h"
-#include "app.h"
+#include <apps/shared/poincare_helpers.h>
 #include "calculation/discrete_calculation.h"
 #include "calculation/left_integral_calculation.h"
 #include "calculation/right_integral_calculation.h"
@@ -73,7 +72,7 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
 }
 
 void CalculationController::didEnterResponderChain(Responder * previousResponder) {
-  App::app()->snapshot()->setActivePage(App::Snapshot::Page::Calculations);
+  // App::app()->snapshot()->setActivePage(App::Snapshot::Page::Calculations);
   updateTitle();
   reloadDistributionCurveView();
   m_selectableTableView.reloadData();

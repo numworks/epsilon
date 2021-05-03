@@ -821,7 +821,7 @@ QUIZ_CASE(poincare_simplification_function) {
 QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   // -- sin/cos -> tan
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
-  assert_parsed_expression_simplify_to("cos(x)/sin(x)", "1/tan(x)");
+  assert_parsed_expression_simplify_to("cos(x)/sin(x)", "cot(x)");
   assert_parsed_expression_simplify_to("sin(x)×π/cos(x)", "π×tan(x)");
   assert_parsed_expression_simplify_to("sin(x)/(π×cos(x))", "tan(x)/π");
   assert_parsed_expression_simplify_to("1×tan(2)×tan(5)", "tan(2)×tan(5)");
@@ -1699,6 +1699,52 @@ QUIZ_CASE(poincare_hyperbolic_trigonometry) {
   assert_parsed_expression_simplify_to("atanh(tanh(3))", "3", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3", User, Radian, Metric, Real);
+}
+
+QUIZ_CASE(poincare_advanced_trigonometry) {
+  // Exact values
+  assert_parsed_expression_simplify_to("csc(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("sec(0)", "1");
+  assert_parsed_expression_simplify_to("cot(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("acsc(2/√(3))", "π/3");
+  assert_parsed_expression_simplify_to("asec(2/√(3))", "π/6");
+  assert_parsed_expression_simplify_to("acot(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("csc(π/2)", "1");
+  assert_parsed_expression_simplify_to("sec(π/2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("cot(π/2)", "0");
+  assert_parsed_expression_simplify_to("acsc(1)", "π/2");
+  assert_parsed_expression_simplify_to("asec(1)", "0");
+  assert_parsed_expression_simplify_to("acot(1)", "π/4");
+
+  // asec(sec)
+  assert_parsed_expression_simplify_to("asec(sec(3))", "3");
+  assert_parsed_expression_simplify_to("asec(sec(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("asec(sec(-3))", "3");
+
+  // sec(asec)
+  assert_parsed_expression_simplify_to("sec(asec(3))", "3");
+  assert_parsed_expression_simplify_to("sec(asec(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("sec(asec(-3))", "sec(-acos(1/3)+π)");
+
+  // acsc(csc)
+  assert_parsed_expression_simplify_to("acsc(csc(3))", "π-3");
+  assert_parsed_expression_simplify_to("acsc(csc(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("acsc(csc(-3))", "-π+3");
+
+  // csc(acsc)
+  assert_parsed_expression_simplify_to("csc(acsc(3))", "3");
+  assert_parsed_expression_simplify_to("csc(acsc(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("csc(acsc(-3))", "-3");
+
+  // acot(cot)
+  assert_parsed_expression_simplify_to("acot(cot(3))", "-π+3");
+  assert_parsed_expression_simplify_to("acot(cot(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("acot(cot(-3))", "π-3");
+
+  // cot(acot)
+  assert_parsed_expression_simplify_to("cot(acot(3))", "3");
+  assert_parsed_expression_simplify_to("cot(acot(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("cot(acot(-3))", "-3");
 }
 
 QUIZ_CASE(poincare_probability) {

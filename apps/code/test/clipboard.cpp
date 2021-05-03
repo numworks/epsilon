@@ -41,6 +41,11 @@ QUIZ_CASE(code_clipboard_enters_and_exits_python) {
   assert_clipboard_enters_and_exits_python("leg+1.23ᴇ-4.56", "leg+1.23e-4.56");
   assert_clipboard_enters_and_exits_python("ceil(x)", "ceil(x)");
   assert_clipboard_enters_and_exits_python("for i in range(1ᴇ2):\n  res[i] = 1ᴇ-1 × i", "for i in range(1e2):\n  res[i] = 1e-1 * i");
+  /* Since ᴇ takes more space than e, we cannot convert is it would overflow
+   * the buffer. */
+  assert_clipboard_enters_and_exits_python(
+      "e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+exec()",
+      "e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+exec()");
 }
 
 }

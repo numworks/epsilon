@@ -30,4 +30,12 @@ private:
   uint16_t m_value;
 };
 
+constexpr static Color Black = Color::RGB24(0x000000);
+constexpr static Color DarkBlue = Color::RGB24(0x0A0C39);
+constexpr static Color Green = Color::RGB24(0x28F52E);
+constexpr static Color Grey = Color::RGB24(0xF7F7F7);
+constexpr static Color Pink = Color::RGB24(0xCB6E79);
+constexpr static Color Red = Color::RGB24(0xFF0000);
+constexpr static Color White = Color::RGB24(0xFFFFFF);
+
 #endif

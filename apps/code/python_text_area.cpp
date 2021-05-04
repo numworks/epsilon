@@ -385,9 +385,11 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position,
 }
 
 void PythonTextArea::didBecomeFirstResponder() {
-  /* We are coming from a Varbox opened while autocompleting. The text was
+  /* If we are coming from a Varbox opened while autocompleting, the text was
    * removed to preserve the ScriptNodes name pointers. */
-  addAutocompletion(m_autocompletionResultIndex);
+  if (!m_contentView.isAutocompleting()) {
+    addAutocompletion(m_autocompletionResultIndex);
+  }
 }
 
 bool PythonTextArea::handleEvent(Ion::Events::Event event) {

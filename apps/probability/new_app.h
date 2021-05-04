@@ -13,6 +13,7 @@
 #include "test_controller.h"
 #include "parameters_controller.h"
 #include "hypothesis_controller.h"
+#include "categorical_type_controller.h"
 
 namespace Probability {
 
@@ -44,6 +45,8 @@ private:
   NewApp(Escher::App::Snapshot *);
 
   // Controllers
+  // TODO store only memory for one controller (as a union ?)
+  CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;
   CalculationController m_calculationController;
   ParametersController m_parameterController;

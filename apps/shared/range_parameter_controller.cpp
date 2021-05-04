@@ -138,7 +138,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   int index = selectedRow() - displayNormalizeCell();
-  if (index < k_numberOfRangeCells
+  if (index >= 0 && index < k_numberOfRangeCells
    && (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right))
   {
     assert(typeAtIndex(selectedRow()) == k_rangeCellType);

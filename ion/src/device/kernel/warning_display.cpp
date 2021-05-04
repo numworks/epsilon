@@ -1,8 +1,18 @@
 #include "warning_display.h"
+#include <drivers/keyboard.h>
 
 namespace Ion {
 namespace Device {
 namespace WarningDisplay {
+
+void waitUntilKeyPress() {
+  while (1) {
+    Ion::Keyboard::State s = Keyboard::scan();
+    if (s != 0) {
+      break;
+    }
+  }
+}
 
 constexpr static int sUnauthenticatedUserlandNumberOfMessages = 7;
 constexpr static const char * sUnauthenticatedUserlandMessages[sUnauthenticatedUserlandNumberOfMessages] = {
@@ -17,6 +27,7 @@ constexpr static const char * sUnauthenticatedUserlandMessages[sUnauthenticatedU
 
 void unauthenticatedUserland() {
   showMessage(sUnauthenticatedUserlandMessages, sUnauthenticatedUserlandNumberOfMessages);
+  waitUntilKeyPress();
 }
 
 constexpr static int sObsoleteSoftwareNumberOfMessages = 6;
@@ -31,6 +42,7 @@ constexpr static const char * sObsoleteSoftwareMessages[sObsoleteSoftwareNumberO
 
 void obsoleteSoftware() {
   showMessage(sObsoleteSoftwareMessages, sObsoleteSoftwareNumberOfMessages);
+  waitUntilKeyPress();
 }
 
 constexpr static int sKernelUpgradeRequiredNumberOfMessages = 8;
@@ -47,6 +59,7 @@ constexpr static const char * sKernelUpgradeRequiredMessages[sKernelUpgradeRequi
 
 void kernelUpgradeRequired() {
   showMessage(sKernelUpgradeRequiredMessages, sKernelUpgradeRequiredNumberOfMessages);
+  waitUntilKeyPress();
 }
 
 constexpr static int sExternalAppsAvailableNumberOfMessages = 7;
@@ -62,6 +75,7 @@ constexpr static const char * sExternalAppsAvailableMessages[sExternalAppsAvaila
 
 void externalAppsAvailable() {
   showMessage(sExternalAppsAvailableMessages, sExternalAppsAvailableNumberOfMessages);
+  waitUntilKeyPress();
 }
 
 }

@@ -134,12 +134,10 @@ uint32_t switchExecutableSlot() {
 
   if (deltaKernelVersion < 0 || (otherSlotUserlandAuthentication && deltaUserlandVersion < 0)) {
     WarningDisplay::obsoleteSoftware();
-    Ion::Timing::msleep(5000);
     return 0;
   }
   if (!otherSlotUserlandAuthentication && deltaKernelVersion > 0) {
     WarningDisplay::kernelUpgradeRequired();
-    Ion::Timing::msleep(5000);
     return 0;
   }
   if (otherSlotUserlandAuthentication) {
@@ -149,7 +147,6 @@ uint32_t switchExecutableSlot() {
     assert(deltaKernelVersion == 0);
     Authentication::updateTrust(false);
     WarningDisplay::unauthenticatedUserland();
-    Ion::Timing::msleep(5000);
   }
   return slotARunning ? slotBUserlandStart() : slotAUserlandStart();
 }
@@ -157,7 +154,6 @@ uint32_t switchExecutableSlot() {
 void downgradeTrustLevel(bool displayPopup) {
   if (displayPopup) {
     WarningDisplay::externalAppsAvailable();
-    Ion::Timing::msleep(5000);
   }
   Authentication::updateTrust(false);
 }

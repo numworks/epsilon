@@ -57,7 +57,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     }
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     if (row > 0) {
-      stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
+      stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, false);
     }
     stack->push(controller);
     return true;

@@ -26,7 +26,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         StackViewController * stack = (StackViewController *)parentResponder();
-        stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
+        stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, false);
         stack->push(m_graphController->termSumController());
         return true;
       }

@@ -43,7 +43,7 @@ void GoToParameterController::buttonAction() {
   // Update parameter value to m_tempParameter, and proceed if value is valid
   if (confirmParameterAtIndex(0, m_tempParameter)) {
     StackViewController * stack = (StackViewController *)parentResponder();
-    stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth);
+    stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth, false);
   }
 }
 

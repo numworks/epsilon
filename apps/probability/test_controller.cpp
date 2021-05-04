@@ -8,12 +8,13 @@
 #include <escher/view_controller.h>
 
 #include "categorical_type_controller.h"
+#include "gui/selectable_cell_list_controller.h"
 #include "hypothesis_controller.h"
 #include "type_controller.h"
 
 TestController::TestController(Escher::Responder * parentResponder, HypothesisController * hypothesisController,
                                TypeController * typeController, CategoricalTypeController * categoricalController)
-    : SelectableListViewController(parentResponder),
+    : SelectableCellListController(parentResponder),
       m_hypothesisController(hypothesisController),
       m_categoricalController(categoricalController),
       m_typeController(typeController) {
@@ -28,12 +29,6 @@ TestController::TestController(Escher::Responder * parentResponder, HypothesisCo
   m_cells[k_indexOfTwoMeans].setSubtitle(I18n::Message::TOrZTest);
   m_cells[k_indexOfCategorical].setMessage(I18n::Message::TestCategorical);
   m_cells[k_indexOfCategorical].setSubtitle(I18n::Message::X2Test);
-}
-
-Escher::HighlightCell * TestController::reusableCell(int index, int type) {
-  assert(type == 0);
-  assert(index >= 0 && index <= k_numberOfCells);
-  return &m_cells[index];
 }
 
 void TestController::didBecomeFirstResponder() {

@@ -1,5 +1,5 @@
 #include "parameters_controller.h"
-#include "../constant.h"
+#include <apps/constant.h>
 #include <assert.h>
 #include <string.h>
 

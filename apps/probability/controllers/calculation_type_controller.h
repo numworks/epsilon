@@ -1,21 +1,25 @@
 #ifndef PROBABILITY_CALCULATION_TYPE_CONTROLLER_H
 #define PROBABILITY_CALCULATION_TYPE_CONTROLLER_H
 
+#include <escher/list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/list_view_data_source.h>
 #include <escher/view_controller.h>
-#include "calculation/calculation.h"
-#include "distribution/distribution.h"
-#include "image_cell.h"
+
+#include "../calculation/calculation.h"
+#include "../distribution/distribution.h"
+#include "../gui/image_cell.h"
 
 namespace Probability {
 
 class CalculationController;
 
-class CalculationTypeController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource {
-public:
-  CalculationTypeController(Escher::Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController);
+class CalculationTypeController : public Escher::ViewController,
+                                  public Escher::ListViewDataSource,
+                                  public Escher::SelectableTableViewDataSource {
+ public:
+  CalculationTypeController(Escher::Responder * parentResponder, Distribution * distribution, Calculation * calculation,
+                            CalculationController * calculationController);
   Escher::View * view() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -28,7 +32,8 @@ public:
   int reusableCellCount(int type) override { return k_numberOfImages; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   constexpr static int k_numberOfImages = 4;
-private:
+
+ private:
   ImageCell m_imageCells[k_numberOfImages];
   Escher::SelectableTableView m_selectableTableView;
   Distribution * m_distribution;
@@ -36,6 +41,6 @@ private:
   CalculationController * m_calculationController;
 };
 
-}
+}  // namespace Probability
 
 #endif

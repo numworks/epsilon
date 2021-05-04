@@ -14,31 +14,37 @@ app_probability_test_src = $(addprefix apps/probability/,\
   distribution/two_parameter_distribution.cpp \
 )
 
-app_probability_src = $(addprefix apps/probability/,\
-  new_app.cpp \
-	calculation/calculation.cpp \
-  calculation/discrete_calculation.cpp \
-  calculation/left_integral_calculation.cpp \
-  calculation/right_integral_calculation.cpp \
-  calculation/finite_integral_calculation.cpp \
-  calculation_controller.cpp \
+app_probability_src = apps/probability/new_app.cpp
+
+app_probability_src += $(addprefix apps/probability/distribution/,\
+  exponential_distribution.cpp \
+  normal_distribution.cpp \
+  poisson_distribution.cpp \
+  regularized_gamma.cpp \
+  uniform_distribution.cpp \
+)
+
+app_probability_src += $(addprefix apps/probability/calculation/,\
+	calculation.cpp \
+  discrete_calculation.cpp \
+  left_integral_calculation.cpp \
+  right_integral_calculation.cpp \
+  finite_integral_calculation.cpp \
+)
+
+app_probability_src += $(addprefix apps/probability/gui/,\
   calculation_cell.cpp \
-  calculation_type_controller.cpp \
   cell.cpp \
-  image_cell.cpp \
-  distribution/exponential_distribution.cpp \
-  distribution/normal_distribution.cpp \
-  distribution/poisson_distribution.cpp \
-  distribution/regularized_gamma.cpp \
-  distribution/uniform_distribution.cpp \
-  distribution_controller.cpp \
   distribution_curve_view.cpp \
-  parameters_controller.cpp \
+	image_cell.cpp \
   responder_image_cell.cpp \
 )
 
-app_probability_src += $(addprefix apps/probability/,\
+app_probability_src += $(addprefix apps/probability/controllers/,\
+	calculation_controller.cpp \
   distribution_controller.cpp \
+  parameters_controller.cpp \
+	calculation_type_controller.cpp \
 	menu_controller.cpp \
 	test_controller.cpp \
 	hypothesis_controller.cpp\
@@ -50,7 +56,7 @@ app_probability_src += $(addprefix apps/probability/,\
 app_probability_src += $(app_probability_test_src)
 apps_src += $(app_probability_src)
 
-i18n_files += $(call i18n_with_universal_for,probability/base)
+i18n_files += $(call i18n_with_universal_for,probability/translations/base)
 
 tests_src += $(addprefix apps/probability/test/,\
   hypergeometric_function.cpp\
@@ -58,11 +64,13 @@ tests_src += $(addprefix apps/probability/test/,\
   regularized_gamma.cpp \
 )
 
+# $(call object_for,$(wildcard apps/probability/controllers/*.cpp)): SFLAGS += -Iapps/probability
+
 # Image dependencies
 
-$(eval $(call depends_on_image,apps/probability/app.cpp apps/probability/new_app.cpp,apps/probability/probability_icon.png))
+$(eval $(call depends_on_image,apps/probability/new_app.cpp,apps/probability/probability_icon.png))
 
-$(eval $(call depends_on_image,apps/probability/distribution_controller.cpp,$(addprefix apps/probability/images/, \
+$(eval $(call depends_on_image,apps/probability/controllers/distribution_controller.cpp,$(addprefix apps/probability/images/,\
   binomial_icon.png \
   chi_squared_icon.png \
   exponential_icon.png \
@@ -83,7 +91,7 @@ $(eval $(call depends_on_image,apps/probability/distribution_controller.cpp,$(ad
   uniform_icon.png \
 )))
 
-$(eval $(call depends_on_image,$(addprefix apps/probability/,calculation_type_controller.cpp calculation_controller.cpp),$(addprefix apps/probability/images/, \
+$(eval $(call depends_on_image,$(addprefix apps/probability/controllers/,calculation_type_controller.cpp calculation_controller.cpp),$(addprefix apps/probability/images/,\
   calcul1_icon.png \
   calcul2_icon.png \
   calcul3_icon.png \

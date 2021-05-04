@@ -69,7 +69,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   const char * inputSerialization = beginingOfFreeSpace;
   {
     Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
-    if (!pushSerializeExpression(input, beginingOfFreeSpace, &endOfFreeSpace)) {
+    if (!pushSerializedExpression(input, beginingOfFreeSpace, &endOfFreeSpace)) {
       /* If the input does not fit in the store (event if the current
        * calculation is the only calculation), just replace the calculation with
        * undef. */
@@ -98,12 +98,12 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       if (i == numberOfOutputs - 1) {
         numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
       }
-      if (!pushSerializeExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
+      if (!pushSerializedExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
         /* If the exat/approximate output does not fit in the store (event if the
          * current calculation is the only calculation), replace the output with
          * undef if it fits, else replace the whole calcualtion with undef. */
         Expression undef = Undefined::Builder();
-        if (!pushSerializeExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
+        if (!pushSerializedExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
           return emptyStoreAndPushUndef(context, heightComputer);
         }
       }
@@ -193,7 +193,7 @@ Expression CalculationStore::ansExpression(Context * context) {
 }
 
 // Push converted expression in the buffer
-bool CalculationStore::pushSerializeExpression(Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits) {
+bool CalculationStore::pushSerializedExpression(Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits) {
   assert(*newCalculationsLocation <= m_buffer + m_bufferSize);
   bool expressionIsPushed = false;
   while (true) {

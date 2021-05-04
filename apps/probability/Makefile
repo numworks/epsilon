@@ -46,6 +46,7 @@ app_probability_src += $(addprefix apps/probability/,\
 	type_controller.cpp\
 )
 
+
 app_probability_src += $(app_probability_test_src)
 apps_src += $(app_probability_src)
 

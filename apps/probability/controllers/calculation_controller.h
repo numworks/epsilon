@@ -1,18 +1,26 @@
 #ifndef PROBABILITY_CALCULATION_CONTROLLER_H
 #define PROBABILITY_CALCULATION_CONTROLLER_H
 
-#include "distribution/distribution.h"
-#include "distribution_curve_view.h"
-#include "calculation_cell.h"
-#include "responder_image_cell.h"
-#include "calculation/calculation.h"
-#include "../shared/parameter_text_field_delegate.h"
+#include <apps/shared/parameter_text_field_delegate.h>
+
+#include "../calculation/calculation.h"
+#include "../distribution/distribution.h"
+#include "../gui/calculation_cell.h"
+#include "../gui/distribution_curve_view.h"
+#include "../gui/responder_image_cell.h"
 
 namespace Probability {
 
-class CalculationController : public Escher::ViewController, public Escher::TableViewDataSource, public Escher::SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
-public:
-  CalculationController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation);
+class ResponderImageCell;
+
+class CalculationController : public Escher::ViewController,
+                              public Escher::TableViewDataSource,
+                              public Escher::SelectableTableViewDataSource,
+                              public Shared::ParameterTextFieldDelegate {
+ public:
+  CalculationController(Escher::Responder * parentResponder,
+                        Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution,
+                        Calculation * calculation);
   /* Responder */
   void didEnterResponderChain(Escher::Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
@@ -44,17 +52,18 @@ public:
   void reloadDistributionCurveView();
   void reload();
   void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
-private:
+
+ private:
   constexpr static int k_numberOfCalculationCells = 3;
   constexpr static KDCoordinate k_tableMargin = 3;
   void updateTitle();
   class ContentView : public Escher::View {
-  public:
-    ContentView(Escher::SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation);
-    DistributionCurveView * distributionCurveView() {
-      return &m_distributionCurveView;
-    }
-  private:
+   public:
+    ContentView(Escher::SelectableTableView * selectableTableView, Distribution * distribution,
+                Calculation * calculation);
+    DistributionCurveView * distributionCurveView() { return &m_distributionCurveView; }
+
+   private:
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
@@ -71,6 +80,6 @@ private:
   char m_titleBuffer[k_titleBufferSize];
 };
 
-}
+}  // namespace Probability
 
 #endif

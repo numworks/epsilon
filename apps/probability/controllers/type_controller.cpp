@@ -28,4 +28,5 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     stack->push(m_hypothesisController);
     return true;
   }
+  return false;
 }

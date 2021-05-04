@@ -1,11 +1,13 @@
 #ifndef PROBABILITY_RESPONDER_IMAGE_CELL_H
 #define PROBABILITY_RESPONDER_IMAGE_CELL_H
 
-#include "calculation/calculation.h"
-#include "calculation_type_controller.h"
+#include "../calculation/calculation.h"
 #include "image_cell.h"
+#include "../controllers/calculation_type_controller.h"
 
 namespace Probability {
+
+class CalculationController;
 
 class ResponderImageCell : public Escher::HighlightCell, public Escher::Responder {
 public:

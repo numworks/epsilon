@@ -6,7 +6,7 @@
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/responder.h>
 
-#include "gui/selectable_cell_list_controller.h"
+#include "../gui/selectable_cell_list_controller.h"
 
 constexpr static int k_numberOfCategoricalCells = 2;
 

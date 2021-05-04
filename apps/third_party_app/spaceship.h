@@ -11,7 +11,6 @@ public:
   Spaceship();
   int x() const { return m_x; }
   int y() const { return m_y; }
-  void draw(const Color c) const;
   void move(int deltaX, int deltaY);
   bool hit();
   void createRocket();
@@ -27,6 +26,7 @@ private:
   static constexpr int k_xUpperBound = Display::Width - Display::CommonHorizontalMargin;
   static constexpr int k_yLowerBound = 3*Display::CommonVerticalMargin;
   static constexpr int k_yUpperBound = Display::Height - Display::CommonVerticalMargin;
+  void draw(const Color c) const;
   int m_x;
   int m_y;
   Rocket m_rockets[k_maxNumberOfRockets];

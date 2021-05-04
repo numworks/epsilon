@@ -43,6 +43,7 @@ app_probability_src += $(addprefix apps/probability/,\
 	test_controller.cpp \
 	hypothesis_controller.cpp\
 	categorical_type_controller.cpp\
+	type_controller.cpp\
 )
 
 app_probability_src += $(app_probability_test_src)
@@ -55,8 +56,6 @@ tests_src += $(addprefix apps/probability/test/,\
   distributions.cpp\
   regularized_gamma.cpp \
 )
-
-$(warning $(app_probability_src))
 
 # Image dependencies
 

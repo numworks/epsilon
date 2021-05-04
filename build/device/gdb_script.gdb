@@ -50,7 +50,7 @@ define use_application_symbol_file
 # Discard previous symbol file
   symbol-file
 # Load new symbol file
-  add-symbol-file apps/third_party_app/custom_application.elf
+  symbol-file -o 0x90350000 apps/third_party_app/custom_application.elf
 end
 
 document armex

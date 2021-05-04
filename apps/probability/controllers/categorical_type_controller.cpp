@@ -1,6 +1,6 @@
 #include "categorical_type_controller.h"
 #include <apps/i18n.h>
-#include "gui/selectable_cell_list_controller.h"
+#include "../gui/selectable_cell_list_controller.h"
 
 CategoricalTypeController::CategoricalTypeController(Escher::Responder * parent)
   : SelectableCellListController(parent)

@@ -5,7 +5,7 @@
 #include <escher/responder.h>
 #include <ion/events.h>
 
-#include "gui/selectable_cell_list_controller.h"
+#include "../gui/selectable_cell_list_controller.h"
 #include "categorical_type_controller.h"
 #include "hypothesis_controller.h"
 #include "type_controller.h"

@@ -8,13 +8,13 @@
 #include <escher/stack_view_controller.h>
 #include "distribution/binomial_distribution.h"
 #include "calculation/discrete_calculation.h"
-#include "menu_controller.h"
-#include "distribution_controller.h"
-#include "test_controller.h"
-#include "parameters_controller.h"
-#include "hypothesis_controller.h"
-#include "categorical_type_controller.h"
-#include "type_controller.h"
+#include "controllers/menu_controller.h"
+#include "controllers/distribution_controller.h"
+#include "controllers/test_controller.h"
+#include "controllers/parameters_controller.h"
+#include "controllers/hypothesis_controller.h"
+#include "controllers/categorical_type_controller.h"
+#include "controllers/type_controller.h"
 
 namespace Probability {
 

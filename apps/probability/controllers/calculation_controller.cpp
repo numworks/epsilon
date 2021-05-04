@@ -1,21 +1,25 @@
 #include "calculation_controller.h"
+
 #include <apps/shared/poincare_helpers.h>
-#include "calculation/discrete_calculation.h"
-#include "calculation/left_integral_calculation.h"
-#include "calculation/right_integral_calculation.h"
-#include "calculation/finite_integral_calculation.h"
-#include "images/calcul1_icon.h"
-#include "images/calcul2_icon.h"
-#include "images/calcul3_icon.h"
-#include "images/calcul4_icon.h"
-#include "images/focused_calcul1_icon.h"
-#include "images/focused_calcul2_icon.h"
-#include "images/focused_calcul3_icon.h"
-#include "images/focused_calcul4_icon.h"
-#include <poincare/preferences.h>
 #include <assert.h>
+#include <poincare/preferences.h>
+
 #include <algorithm>
 #include <cmath>
+
+#include "../calculation/discrete_calculation.h"
+#include "../calculation/finite_integral_calculation.h"
+#include "../calculation/left_integral_calculation.h"
+#include "../calculation/right_integral_calculation.h"
+#include "../images/calcul1_icon.h"
+#include "../images/calcul2_icon.h"
+#include "../images/calcul3_icon.h"
+#include "../images/calcul4_icon.h"
+#include "../images/focused_calcul1_icon.h"
+#include "../images/focused_calcul2_icon.h"
+#include "../images/focused_calcul3_icon.h"
+#include "../images/focused_calcul4_icon.h"
+#include "../gui/responder_image_cell.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -25,15 +29,11 @@ namespace Probability {
 
 constexpr int CalculationController::k_titleBufferSize;
 
-CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
-  m_selectableTableView(selectableTableView),
-  m_distributionCurveView(distribution, calculation)
-{
-}
+CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution,
+                                                Calculation * calculation)
+    : m_selectableTableView(selectableTableView), m_distributionCurveView(distribution, calculation) {}
 
-int CalculationController::ContentView::numberOfSubviews() const {
-  return 2;
-}
+int CalculationController::ContentView::numberOfSubviews() const { return 2; }
 
 View * CalculationController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
@@ -44,26 +44,27 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 }
 
 void CalculationController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight+2*k_tableMargin;
+  KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight + 2 * k_tableMargin;
   m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), calculationHeight), force);
-  m_distributionCurveView.setFrame(KDRect(0, calculationHeight, bounds().width(), bounds().height() - calculationHeight), force);
+  m_distributionCurveView.setFrame(
+      KDRect(0, calculationHeight, bounds().width(), bounds().height() - calculationHeight), force);
 }
 
-CalculationController::CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation) :
-  ViewController(parentResponder),
-  m_contentView(&m_selectableTableView, distribution, calculation),
-  m_selectableTableView(this),
-  m_imageCell(&m_selectableTableView, distribution, calculation, this),
-  m_calculation(calculation),
-  m_distribution(distribution)
-{
+CalculationController::CalculationController(Responder * parentResponder,
+                                             InputEventHandlerDelegate * inputEventHandlerDelegate,
+                                             Distribution * distribution, Calculation * calculation)
+    : ViewController(parentResponder),
+      m_contentView(&m_selectableTableView, distribution, calculation),
+      m_selectableTableView(this),
+      m_imageCell(&m_selectableTableView, distribution, calculation, this),
+      m_calculation(calculation),
+      m_distribution(distribution) {
   assert(distribution != nullptr);
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
-
 
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].editableTextCell()->setParentResponder(&m_selectableTableView);
@@ -82,13 +83,9 @@ void CalculationController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-View * CalculationController::view() {
-  return &m_contentView;
-}
+View * CalculationController::view() { return &m_contentView; }
 
-const char * CalculationController::title() {
-  return m_titleBuffer;
-}
+const char * CalculationController::title() { return m_titleBuffer; }
 
 void CalculationController::viewWillAppear() {
   ViewController::viewWillAppear();
@@ -100,13 +97,9 @@ void CalculationController::viewDidDisappear() {
   ViewController::viewDidDisappear();
 }
 
-int CalculationController::numberOfRows() const {
-  return 1;
-}
+int CalculationController::numberOfRows() const { return 1; }
 
-int CalculationController::numberOfColumns() const {
-  return m_calculation->numberOfParameters()+1;
-}
+int CalculationController::numberOfColumns() const { return m_calculation->numberOfParameters() + 1; }
 
 /* WARNING: we set one type per cell to be able to deduce the column width from
  * the cell minimalSizeForOptimalDisplay. Otherwise, we can not know which cell
@@ -119,16 +112,12 @@ KDCoordinate CalculationController::columnWidth(int i) {
     return m_imageCell.minimalSizeForOptimalDisplay().width();
   }
   // WARNING: that is possible only because we know which view cell corresponds to which cell
-  return m_calculationCells[i-1].minimalSizeForOptimalDisplay().width();
+  return m_calculationCells[i - 1].minimalSizeForOptimalDisplay().width();
 }
 
-KDCoordinate CalculationController::rowHeight(int j) {
-  return ResponderImageCell::k_oneCellHeight;
-}
+KDCoordinate CalculationController::rowHeight(int j) { return ResponderImageCell::k_oneCellHeight; }
 
-KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
-  return rowHeight(0) * j;
-}
+KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) { return rowHeight(0) * j; }
 
 int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   KDCoordinate height = rowHeight(0);
@@ -140,33 +129,33 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index == 0);
-  switch(type) {
+  switch (type) {
     case 0:
       return &m_imageCell;
     default:
-      return &m_calculationCells[type-1];
+      return &m_calculationCells[type - 1];
   }
 }
 
-int CalculationController::reusableCellCount(int type) {
-  return 1;
-}
+int CalculationController::reusableCellCount(int type) { return 1; }
 
-int CalculationController::typeAtLocation(int i, int j) {
-  return i;
-}
+int CalculationController::typeAtLocation(int i, int j) { return i; }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (i == 0) {
     ResponderImageCell * myCell = static_cast<ResponderImageCell *>(cell);
-    const Image *  images[CalculationTypeController::k_numberOfImages] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon, ImageStore::Calcul4Icon};
-    const Image * focusedImages[CalculationTypeController::k_numberOfImages] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon, ImageStore::FocusedCalcul4Icon};
+    const Image * images[CalculationTypeController::k_numberOfImages] = {
+        ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon, ImageStore::Calcul4Icon};
+    const Image * focusedImages[CalculationTypeController::k_numberOfImages] = {
+        ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon,
+        ImageStore::FocusedCalcul4Icon};
     myCell->setImage(images[(int)m_calculation->type()], focusedImages[(int)m_calculation->type()]);
   } else {
     CalculationCell * myCell = static_cast<CalculationCell *>(cell);
-    myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i-1));
+    myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i - 1));
     bool calculationCellIsResponder = true;
-    if ((m_distribution->type() != Distribution::Type::Normal && i == 3) || (m_calculation->type() == Calculation::Type::Discrete && i == 2)) {
+    if ((m_distribution->type() != Distribution::Type::Normal && i == 3) ||
+        (m_calculation->type() == Calculation::Type::Discrete && i == 2)) {
       calculationCellIsResponder = false;
     }
     myCell->setResponder(calculationCellIsResponder);
@@ -178,7 +167,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
     // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using scientific mode
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(m_calculation->parameterAtIndex(i-1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+        m_calculation->parameterAtIndex(i - 1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     field->setText(buffer);
   }
 }
@@ -197,15 +187,15 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField, boo
 }
 
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
-       || (event == Ion::Events::Right
-           && textField->cursorLocation() == textField->text() + textField->draftTextLength()
-           && selectedColumn() < m_calculation->numberOfParameters())
-       || (event == Ion::Events::Left
-           && textField->cursorLocation() == textField->text());
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
+         (event == Ion::Events::Right &&
+          textField->cursorLocation() == textField->text() + textField->draftTextLength() &&
+          selectedColumn() < m_calculation->numberOfParameters()) ||
+         (event == Ion::Events::Left && textField->cursorLocation() == textField->text());
 }
 
-bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text,
+                                                      Ion::Events::Event event) {
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
@@ -218,10 +208,11 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
       floatBody = 1.0;
     }
   }
-  if (!m_distribution->isContinuous() && (selectedColumn() == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
+  if (!m_distribution->isContinuous() &&
+      (selectedColumn() == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
     floatBody = std::round(floatBody);
   }
-  m_calculation->setParameterAtIndex(floatBody, selectedColumn()-1);
+  m_calculation->setParameterAtIndex(floatBody, selectedColumn() - 1);
   if (event == Ion::Events::Right || event == Ion::Events::Left) {
     m_selectableTableView.handleEvent(event);
   }
@@ -229,9 +220,7 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
   return true;
 }
 
-void CalculationController::reloadDistributionCurveView() {
-  m_contentView.distributionCurveView()->reload();
-}
+void CalculationController::reloadDistributionCurveView() { m_contentView.distributionCurveView()->reload(); }
 
 void CalculationController::reload() {
   m_selectableTableView.reloadData();
@@ -245,19 +234,19 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
   m_calculation->~Calculation();
   switch (index) {
     case 0:
-      new(m_calculation) LeftIntegralCalculation(m_distribution);
+      new (m_calculation) LeftIntegralCalculation(m_distribution);
       return;
     case 1:
-      new(m_calculation) FiniteIntegralCalculation(m_distribution);
+      new (m_calculation) FiniteIntegralCalculation(m_distribution);
       return;
     case 2:
-      new(m_calculation) RightIntegralCalculation(m_distribution);
+      new (m_calculation) RightIntegralCalculation(m_distribution);
       return;
     case 3:
-      new(m_calculation) DiscreteCalculation(m_distribution);
+      new (m_calculation) DiscreteCalculation(m_distribution);
       return;
     default:
-     return;
+      return;
   }
 }
 
@@ -266,11 +255,12 @@ void CalculationController::updateTitle() {
   for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
     /* strlcpy returns the size of src, not the size copied, but it is not a
      * problem here. */
-    currentChar += strlcpy(m_titleBuffer+currentChar, I18n::translate(m_distribution->parameterNameAtIndex(index)), k_titleBufferSize - currentChar);
+    currentChar += strlcpy(m_titleBuffer + currentChar, I18n::translate(m_distribution->parameterNameAtIndex(index)),
+                           k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;
     }
-    currentChar += strlcpy(m_titleBuffer+currentChar, " = ", k_titleBufferSize - currentChar);
+    currentChar += strlcpy(m_titleBuffer + currentChar, " = ", k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;
     }
@@ -288,4 +278,4 @@ void CalculationController::updateTitle() {
   m_titleBuffer[std::min(currentChar, k_titleBufferSize) - 1] = 0;
 }
 
-}
+}  // namespace Probability

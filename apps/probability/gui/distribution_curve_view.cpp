@@ -1,6 +1,8 @@
 #include "distribution_curve_view.h"
-#include "distribution/normal_distribution.h"
+
 #include <assert.h>
+
+#include "../distribution/normal_distribution.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -30,9 +32,11 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
     return;
   }
   if (m_distribution->isContinuous()) {
-    drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr, Palette::YellowDark, true, true, lowerBound, upperBound);
+    drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr,
+                       Palette::YellowDark, true, true, lowerBound, upperBound);
   } else {
-    drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::GrayMiddle, Palette::YellowDark, lowerBound, upperBound+0.5f);
+    drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::GrayMiddle,
+                  Palette::YellowDark, lowerBound, upperBound + 0.5f);
   }
 }
 
@@ -48,11 +52,13 @@ float DistributionCurveView::EvaluateAtAbscissa(float abscissa, void * model, vo
   return distribution->evaluateAtAbscissa(abscissa);
 }
 
-Poincare::Coordinate2D<float> DistributionCurveView::EvaluateXYAtAbscissa(float abscissa, void * model, void * context) {
+Poincare::Coordinate2D<float> DistributionCurveView::EvaluateXYAtAbscissa(float abscissa, void * model,
+                                                                          void * context) {
   return Poincare::Coordinate2D<float>(abscissa, EvaluateAtAbscissa(abscissa, model, context));
 }
 
-void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBoundPixel, float colorUpperBoundPixel) const {
+void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBoundPixel,
+                                               float colorUpperBoundPixel) const {
   // Save the previous curve view range
   DistributionCurveView * constCastedThis = const_cast<DistributionCurveView *>(this);
   CurveViewRange * previousRange = curveViewRange();
@@ -60,10 +66,12 @@ void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, flo
   // Draw a centered reduced normal curve
   NormalDistribution n;
   constCastedThis->setCurveViewRange(&n);
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, true, pixelToFloat(Axis::Horizontal, colorLowerBoundPixel), pixelToFloat(Axis::Horizontal, colorUpperBoundPixel));
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, true,
+                     pixelToFloat(Axis::Horizontal, colorLowerBoundPixel),
+                     pixelToFloat(Axis::Horizontal, colorUpperBoundPixel));
 
   // Put back the previous curve view range
   constCastedThis->setCurveViewRange(previousRange);
 }
 
-}
+}  // namespace Probability

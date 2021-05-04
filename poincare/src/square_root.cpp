@@ -102,9 +102,13 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
   }
   z = Rational::Multiplication(z, Rational::IntegerPower(w, Integer(-1)));
   y = Rational::Multiplication(y, Rational::IntegerPower(x, Integer(-1)));
+  Rational y2 = Rational::IntegerPower(y, Integer(2));
+  if (y2.numeratorOrDenominatorIsInfinity() || w.numeratorOrDenominatorIsInfinity() || x.numeratorOrDenominatorIsInfinity() || z.numeratorOrDenominatorIsInfinity()) {
+    return e;
+  }
   /* √(y+√z) can be turned into √u+√v if √(y^2-z) is rational. Because of our
    * choice of w, x, y and z, we know that y^2 > z. */
-  Expression delta = Power::Builder(Rational::Addition(Rational::IntegerPower(y, Integer(2)), Rational::Multiplication(z, Rational::Builder(-1))), Rational::Builder(1, 2)).shallowReduce(reductionContext);
+  Expression delta = Power::Builder(Rational::Addition(y2, Rational::Multiplication(z, Rational::Builder(-1))), Rational::Builder(1, 2)).shallowReduce(reductionContext);
   if (delta.type() != ExpressionNode::Type::Rational) {
     return e;
   }

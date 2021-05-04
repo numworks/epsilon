@@ -14,6 +14,7 @@
 #include "parameters_controller.h"
 #include "hypothesis_controller.h"
 #include "categorical_type_controller.h"
+#include "type_controller.h"
 
 namespace Probability {
 
@@ -46,6 +47,7 @@ private:
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)
+  TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;
   CalculationController m_calculationController;

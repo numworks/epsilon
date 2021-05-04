@@ -8,15 +8,17 @@
 
 #include "categorical_type_controller.h"
 #include "hypothesis_controller.h"
+#include "type_controller.h"
 
 class TestController : public Escher::SelectableListViewController {
  public:
   TestController(Escher::Responder * parentResponder, HypothesisController * hypothesisController,
-                 CategoricalTypeController * categoricalController);
+                 TypeController * typeController, CategoricalTypeController * categoricalController);
   int numberOfRows() const override { return k_numberOfCells; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
+  const char * title() override { return "Test"; }
 
  private:
   constexpr static int k_numberOfCells = 5;
@@ -29,6 +31,7 @@ class TestController : public Escher::SelectableListViewController {
 
   HypothesisController * m_hypothesisController;
   CategoricalTypeController * m_categoricalController;
+  TypeController * m_typeController;
 };
 
 #endif /* TEST_CONTROLLER_H */

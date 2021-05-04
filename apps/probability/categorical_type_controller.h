@@ -5,12 +5,22 @@
 #include <escher/responder.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
+#include <escher/container.h>
 
 class CategoricalTypeController : public Escher::SelectableListViewController {
 public:
   CategoricalTypeController(Escher::Responder * parent);
   Escher::HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override {return k_numberOfCells; }
+  void didBecomeFirstResponder() override {
+    // TODO factor out
+    if (selectedRow() == -1) {
+      selectCellAtLocation(0, 0);
+    } else {
+      selectCellAtLocation(selectedColumn(), selectedRow());
+    }
+    Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  }
 
 private:
   constexpr static int k_numberOfCells = 2;

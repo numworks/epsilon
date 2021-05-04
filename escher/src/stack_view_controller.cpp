@@ -253,7 +253,12 @@ void StackViewController::viewWillAppear() {
     }
   }
   /* Load the visible controller view */
-  setupActiveViewController();
+  ViewController * vc = topViewController();
+  if (m_numberOfChildren > 0 && vc) {
+    m_view.setContentView(vc->view());
+    m_view.shouldDisplayStackHeaders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
+    vc->viewWillAppear();
+  }
   m_isVisible = true;
 }
 

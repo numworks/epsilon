@@ -59,12 +59,12 @@ SECTIONS {
      * That's why we're defining three symbols that we'll use in the initial-
      * -ization routine. */
     . = ALIGN(4);
-    _data_section_start_flash = LOADADDR(.data);
     _data_section_start_ram = .;
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
     _app_flash_end = LOADADDR(.data) + SIZEOF(.data);
+    ASSERT ((_data_section_start_ram == _data_section_end_ram), "External app data section is not empty");
   } >SRAM_DATA_BSS AT> FLASH
 
   .bss : {
@@ -82,6 +82,7 @@ SECTIONS {
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
     _bss_section_end_ram = .;
+    ASSERT ((_bss_section_start_ram == _bss_section_end_ram), "External app bss section is not empty");
   } >SRAM_DATA_BSS
 
   /DISCARD/ : {

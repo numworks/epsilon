@@ -35,18 +35,19 @@ class CalculationStore {
 public:
   CalculationStore();
   CalculationStore(char * buffer, int size);
-  Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
+
   typedef KDCoordinate (*HeightComputer)(Calculation * c, bool expanded);
   Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context, HeightComputer heightComputer);
+
+  Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   void deleteCalculationAtIndex(int i);
   void deleteAll();
+  int bufferSize() { return m_bufferSize; }
   int remainingBufferSize() const { assert(m_calculationAreaEnd >= m_buffer); return m_bufferSize - (m_calculationAreaEnd - m_buffer) - m_numberOfCalculations*sizeof(Calculation*); }
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Poincare::Expression ansExpression(Poincare::Context * context);
-  int bufferSize() { return m_bufferSize; }
 
 private:
-
   class CalculationIterator {
   public:
     CalculationIterator(const char * c) : m_calculation(reinterpret_cast<Calculation *>(const_cast<char *>(c))) {}
@@ -63,20 +64,19 @@ private:
   CalculationIterator begin() const { return CalculationIterator(m_buffer); }
   CalculationIterator end() const { return CalculationIterator(m_calculationAreaEnd); }
 
-  bool pushSerializeExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+  bool pushSerializedExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context, HeightComputer heightComputer);
-
-  char * m_buffer;
-  int m_bufferSize;
-  const char * m_calculationAreaEnd;
-  int m_numberOfCalculations;
-
   size_t deleteOldestCalculation();
   char * addressOfPointerToCalculationOfIndex(int i) {return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}
 
   // Memoization
   char * beginingOfMemoizationArea() {return addressOfPointerToCalculationOfIndex(0);};
   void recomputeMemoizedPointersAfterCalculationIndex(int index);
+
+  char * m_buffer;
+  int m_bufferSize;
+  const char * m_calculationAreaEnd;
+  int m_numberOfCalculations;
 };
 
 }

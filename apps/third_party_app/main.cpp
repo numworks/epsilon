@@ -3,13 +3,6 @@
 #include "spaceship.h"
 #include "svc.h"
 
-extern "C" {
-  extern char _data_section_start_ram;
-  extern char _data_section_end_ram;
-  extern char _bss_section_start_ram;
-  extern char _bss_section_end_ram;
-}
-
 constexpr const char title[] = "Third-party app";
 
 void checkForSpaceshipAliensCollisions(Alien aliens[], int numberOfAliens, Spaceship * spaceship) {
@@ -30,13 +23,6 @@ void checkForRocketsAliensCollisions(Spaceship * spaceship, Alien aliens[], int 
 }
 
 void app_main() {
-  // Configure data/bss in RAM?
-  if (&_data_section_start_ram != &_data_section_end_ram
-      || &_bss_section_start_ram != &_bss_section_end_ram) {
-    Ion::Display::pushRectUniform(Rect(0, 0, Display::Width, Display::Height), Red);
-    while (1) {}
-  }
-
   Ion::Display::pushRectUniform(Rect(0, 0, Display::Width, Display::Height), DarkBlue);
 
   constexpr int k_maxNumberOfAliens = 10;

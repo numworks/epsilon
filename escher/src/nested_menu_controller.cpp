@@ -101,10 +101,8 @@ int NestedMenuController::Stack::depth() const {
 }
 
 void NestedMenuController::Stack::resetStack() {
-  // Remove breadcrumb if it is visible
-  if (depth() > 0) {
-    m_parentMenu->pop();
-  }
+  // Breadcrumb shouldn't be visible
+  assert(m_parentMenu->depth() == k_nestedMenuStackDepth);
   for (int i = 0; i < k_maxModelTreeDepth; i++) {
     m_statesStack[i] = State();
   }
@@ -136,7 +134,7 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
 }
 
 void NestedMenuController::viewWillAppear() {
-  assert(depth() == 1 && stackDepth() == 0);
+  assert(depth() == k_nestedMenuStackDepth && stackDepth() == 0);
   // Reset memoization first, so that the right cells are manipulated
   resetMemoization();
   StackViewController::viewWillAppear();
@@ -145,15 +143,18 @@ void NestedMenuController::viewWillAppear() {
 }
 
 void NestedMenuController::viewDidDisappear() {
-  /* Clean NestedMenuController state as it disappears, because it isn't needed.
-   * In addition, stacks and stack states are very intertwined, and
+  /* As stacks and stack states are very intertwined, and
    * StackViewController::viewDidDisappear() alone would leave the
-   * NestedMenuController in an invalid state that couldn't be cleaned in
+   * NestedMenuController in an invalid state which couldn't be cleaned in
    * viewWillAppear. Stacks (and breadcrumb) must be reseted here. */
+  // Restore stack depth (will remove breadcrumb if it was visible)
+  popUntilDepth(k_nestedMenuStackDepth, false);
+  // Reset state stacks
   m_stack.resetStack();
+
   StackViewController::viewDidDisappear();
   m_selectableTableView.deselectTable();
-  assert(depth() == 1 && stackDepth() == 0);
+  assert(depth() == k_nestedMenuStackDepth && stackDepth() == 0);
 }
 
 HighlightCell * NestedMenuController::reusableCell(int index, int type) {

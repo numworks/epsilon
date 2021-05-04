@@ -184,7 +184,11 @@ void StackViewController::pop() {
   vc->viewDidDisappear();
 }
 
-void StackViewController::popUntilDepth(int depth) {
+void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewController) {
+  /* If final active view is meant to disappear afterward, there is no need to
+   * call setupActiveViewController(), which layouts the final view.
+   * For example, shouldSetupTopViewController should be set to false if push,
+   * viewDidDisappear, viewWillAppear or pop are called afterward. */
   assert(depth >= 0);
   if (depth >= m_numberOfChildren) {
     return;
@@ -197,7 +201,7 @@ void StackViewController::popUntilDepth(int depth) {
       m_view.popStack();
     }
     m_numberOfChildren--;
-    if (i == numberOfFramesReleased - 1) {
+    if (shouldSetupTopViewController && i == numberOfFramesReleased - 1) {
       setupActiveViewController();
     }
     vc->setParentResponder(nullptr);
@@ -213,12 +217,14 @@ void StackViewController::pushModel(Frame frame) {
 
 void StackViewController::setupActiveViewController() {
   ViewController * vc = topViewController();
-  vc->setParentResponder(this);
-  m_view.shouldDisplayStackHeaders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
-  m_view.setContentView(vc->view());
-  vc->viewWillAppear();
-  vc->setParentResponder(this);
-  Container::activeApp()->setFirstResponder(vc);
+  if (vc) {
+    vc->setParentResponder(this);
+    m_view.shouldDisplayStackHeaders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
+    m_view.setContentView(vc->view());
+    vc->viewWillAppear();
+    vc->setParentResponder(this);
+    Container::activeApp()->setFirstResponder(vc);
+  }
 }
 
 void StackViewController::didBecomeFirstResponder() {
@@ -247,12 +253,7 @@ void StackViewController::viewWillAppear() {
     }
   }
   /* Load the visible controller view */
-  ViewController * vc = topViewController();
-  if (m_numberOfChildren > 0 && vc) {
-    m_view.setContentView(vc->view());
-    m_view.shouldDisplayStackHeaders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
-    vc->viewWillAppear();
-  }
+  setupActiveViewController();
   m_isVisible = true;
 }
 

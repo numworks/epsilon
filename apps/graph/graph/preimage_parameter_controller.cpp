@@ -33,7 +33,7 @@ void PreimageParameterController::buttonAction() {
   if (confirmParameterAtIndex(0, m_tempParameter)) {
     m_preimageGraphController->setRecord(m_record);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, false);
     stack->push(m_preimageGraphController);
   }
 }

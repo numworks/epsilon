@@ -9,6 +9,7 @@
 #include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/led.h>
 #include <kernel/drivers/trampoline.h>
+#include <kernel/warning_display.h>
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
@@ -112,6 +113,10 @@ void suspend(bool checkIfOnOffKeyReleased) {
    * not be done before. */
   if (Ion::USB::isPlugged()) {
     Ion::USB::disable();
+  }
+
+  if (!Authentication::trustedUserland()) {
+    WarningDisplay::unauthenticatedUserland();
   }
 
   /* Power::suspend has flushed the Keyboard queue, the very next event is the

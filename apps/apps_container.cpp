@@ -213,6 +213,8 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 typedef void (*ExternalAppMain)();
 
 void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
+  // TODO: should we set stricter MPU bounds?
+  reloadTitleBarView();
   ExternalAppMain appStart = reinterpret_cast<ExternalAppMain>(app.entryPoint());
   appStart();
 }

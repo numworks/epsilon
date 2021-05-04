@@ -101,6 +101,7 @@ protected:
   Stack m_stack;
   ListController m_listController;
 private:
+  static constexpr int k_nestedMenuStackDepth = 1;
   InputEventHandler * m_sender;
 };
 

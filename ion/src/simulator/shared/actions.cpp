@@ -37,8 +37,8 @@ void takeScreenshot() {
 
 void saveStateForReload() {
   char state_filename[100];
-  strcpy(state_filename, getenv("HOME"));
-  strcat(state_filename, "/reload.nws");
+  strcpy(state_filename, getenv("HOME"));  // Breaks on Windows
+  strcat(state_filename, "/.numworks.reload.nws");
   StateFile::save(state_filename);
 }
 

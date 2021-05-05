@@ -377,6 +377,7 @@ Q(draw_line)
 Q(draw_string)
 Q(draw_circle)
 Q(fill_rect)
+Q(fill_circle)
 Q(get_pixel)
 Q(set_pixel)
 

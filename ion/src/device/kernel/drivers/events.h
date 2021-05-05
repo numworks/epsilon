@@ -24,6 +24,7 @@ Ion::Events::Event getPlatformEvent();
 size_t copyTextSecure(uint8_t eventId, char * buffer, size_t bufferSize);
 bool isDefinedSecure(uint8_t eventId);
 
+void setSpinner(bool spinner);
 void stall();
 
 void resetPendingKeyboardState();

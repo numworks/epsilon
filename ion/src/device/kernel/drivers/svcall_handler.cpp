@@ -71,6 +71,7 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
 void * svcallHandler(int svcNumber) {
   static void * SVCallTable[SVC_NUMBER_OF_CALLS] = {0};
   if (SVCallTable[0] == 0) {
+    MAKE_SVCALL_HANDLER(SVC_AUTHENTICATION_TRUSTED_USERLAND, Ion::Device::Authentication::trustedUserland)
     MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_BRIGHTNESS, Ion::Device::Backlight::brightness)
     MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_INIT, Ion::Device::Backlight::init)
     MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_IS_INITIALIZED, Ion::Device::Backlight::isInitialized)
@@ -100,6 +101,7 @@ void * svcallHandler(int svcNumber) {
     MAKE_SVCALL_HANDLER(SVC_EVENTS_IS_DEFINED, Ion::Device::Events::isDefinedSecure)
     MAKE_SVCALL_HANDLER(SVC_EVENTS_REPETITION_FACTOR, Ion::Events::repetitionFactor)
     MAKE_SVCALL_HANDLER(SVC_EVENTS_SET_SHIFT_ALPHA_STATUS, Ion::Events::setShiftAlphaStatus)
+    MAKE_SVCALL_HANDLER(SVC_EVENTS_SET_SPINNER, Ion::Device::Events::setSpinner)
     MAKE_SVCALL_HANDLER(SVC_EVENTS_SHIFT_ALPHA_STATUS, Ion::Events::shiftAlphaStatus)
     MAKE_SVCALL_HANDLER(SVC_FCC_ID, Ion::Device::fccId)
     MAKE_SVCALL_HANDLER(SVC_FLASH_ERASE_SECTOR, Ion::Device::Flash::EraseSector)

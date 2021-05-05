@@ -32,7 +32,7 @@ void IllustratedListController::viewDidDisappear() {
   ListController::viewDidDisappear();
   // Reset the context as it was before displaying the IllustratedListController
   Poincare::Context * context = App::app()->localContext();
-  if (m_savedExpression.isUninitialized()) {
+  if (m_savedExpression.isUninitialized() || m_savedExpression.wasErasedByException()) {
     /* If no expression was stored in the symbol used by the
      * IllustratedListController, we delete the record we stored */
     char symbolName[3];

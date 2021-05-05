@@ -88,7 +88,7 @@ void AppsContainer::reset() {
   Ion::Storage::sharedStorage()->destroyAllRecords();
   // Empty clipboard
   Clipboard::sharedClipboard()->reset();
-  for (int i = 0; i < numberOfApps(); i++) {
+  for (int i = 0; i < numberOfBuiltinApps(); i++) {
     appSnapshotAtIndex(i)->reset();
   }
 }
@@ -347,9 +347,13 @@ void AppsContainer::redrawWindow() {
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
-  reset();
-  Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
-  Ion::LED::setBlinking(1000, 0.1f);
+  if (Ion::Authentication::trustedUserland()) {
+    reset();
+    Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
+    Ion::LED::setBlinking(1000, 0.1f);
+  } else {
+    Ion::Reset::core();
+  }
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {

@@ -1,6 +1,7 @@
 #ifndef ION_ION_H
 #define ION_ION_H
 
+#include <ion/authentication.h>
 #include <ion/backlight.h>
 #include <ion/battery.h>
 #include <ion/circuit_breaker.h>
@@ -12,6 +13,7 @@
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
+#include <ion/reset.h>
 #include <ion/storage.h>
 #include <ion/timing.h>
 #include <ion/usb.h>

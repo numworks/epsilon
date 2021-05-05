@@ -2,7 +2,6 @@
 #include <shared/boot/rt0.h>
 #include <ion.h>
 #include <shared/drivers/config/board.h>
-#include <userland/drivers/svcall.h>
 
 extern "C" {
   void abort();
@@ -10,7 +9,7 @@ extern "C" {
 
 void abort() {
 #ifdef NDEBUG
-  SVC_RETURNING_VOID(SVC_RESET_CORE);
+  Ion::Reset::core();
 #else
   while (1) {
   }

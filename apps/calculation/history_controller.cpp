@@ -116,6 +116,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         vc = &m_matrixController;
       }
       if (vc) {
+        assert(!e.isUninitialized());
         vc->setExpression(e);
         Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
       }

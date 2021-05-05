@@ -141,6 +141,10 @@ uint8_t SVC_ATTRIBUTES getEvent(int * timeout) {
   SVC_RETURNING_R0(SVC_EVENTS_GET_EVENT, uint8_t)
 }
 
+void SVC_ATTRIBUTES setSpinner(bool spiner) {
+  SVC_RETURNING_VOID(SVC_EVENTS_SET_SPINNER)
+}
+
 }
 
 const char * SVC_ATTRIBUTES fccId() {

@@ -172,7 +172,7 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
     return;
   }
   // Step 2: some svc calls require authentication
-  constexpr unsigned authentificationRequired[] = {SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_LED_SET_COLOR, SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE, SVC_LED_SET_BLINKING, SVC_PERSISTING_BYTES_READ, SVC_PERSISTING_BYTES_WRITE};
+  constexpr unsigned authentificationRequired[] = {SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_LED_SET_COLOR, SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE, SVC_LED_SET_BLINKING};
   for (size_t i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
     if (svcNumber == authentificationRequired[i] && !Ion::Device::Authentication::trustedUserland()) {
       return;

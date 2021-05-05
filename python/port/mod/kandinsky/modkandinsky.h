@@ -7,3 +7,4 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t *args);
 mp_obj_t modkandinsky_draw_line(size_t n_args, const mp_obj_t *args);
 mp_obj_t modkandinsky_draw_circle(size_t n_args, const mp_obj_t *args);
 mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t *args);
+mp_obj_t modkandinsky_fill_circle(size_t n_args, const mp_obj_t *args);

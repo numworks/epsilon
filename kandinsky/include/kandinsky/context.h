@@ -25,12 +25,14 @@ public:
 
   // Circle
   void drawCircle(KDPoint c, KDCoordinate r, KDColor color);
+  void fillCircle(KDPoint c, KDCoordinate r, KDColor color);
 
   // Rect
   void fillRect(KDRect rect, KDColor color);
   void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
+
 protected:
   KDContext(KDPoint origin, KDRect clippingRect) :
     m_origin(origin),

@@ -1,5 +1,6 @@
 #include <kandinsky/context.h>
 #include <assert.h>
+#include <math.h>
 
 void KDContext::drawCircle(KDPoint c, KDCoordinate r, KDColor color) {
 
@@ -27,4 +28,17 @@ void KDContext::drawCircle(KDPoint c, KDCoordinate r, KDColor color) {
 		x = x + 1 ;
 		m = m + 8*x + 4 ;
 	}
+}
+
+void KDContext::fillCircle(KDPoint c, KDCoordinate r, KDColor color)
+{
+    for(KDCoordinate x=-r; x<=r; x++)
+    {
+        KDCoordinate height = sqrt((r*r)-(x*x));
+        
+        for (KDCoordinate y=c.y()-height; y <= c.y()+height; y++)
+        {
+            setPixel(KDPoint(c.x()+x,y), color);
+        }
+    }
 }

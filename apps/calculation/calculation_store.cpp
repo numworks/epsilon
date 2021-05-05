@@ -165,12 +165,16 @@ void CalculationStore::deleteAll() {
 
 // Replace "Ans" by its expression
 Expression CalculationStore::ansExpression(Context * context) {
+  const Expression defaultAns = Rational::Builder(0);
   if (numberOfCalculations() == 0) {
-    return Rational::Builder(0);
+    return defaultAns;
   }
   ExpiringPointer<Calculation> mostRecentCalculation = calculationAtIndex(0);
   Expression exactOutput = mostRecentCalculation->exactOutput();
   Expression input = mostRecentCalculation->input();
+  if (exactOutput.isUninitialized() || input.isUninitialized()) {
+    return defaultAns;
+  }
   /* Special case: the exact output is a Store/Equal expression.
    * Store/Equal expression can only be at the root of an expression.
    * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
@@ -178,7 +182,11 @@ Expression CalculationStore::ansExpression(Context * context) {
    * Equal expression appears. */
   bool exactOuptutInvolvesStoreEqual = exactOutput.type() == ExpressionNode::Type::Store || exactOutput.type() == ExpressionNode::Type::Equal;
   if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
-    return mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
+    Expression approximate = mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
+    if (approximate.isUninitialized()) {
+      return defaultAns;
+    }
+    return approximate;
   }
   /* Special case: If exact output was hidden, it should not be accessible using
    * ans, unless it is equal to a non-undef and non-unreal approximation. */

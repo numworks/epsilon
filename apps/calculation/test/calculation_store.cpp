@@ -48,9 +48,8 @@ QUIZ_CASE(calculation_store) {
   store.deleteAll();
 
   // Checking if the store handles correctly the delete of the oldest calculation when full
-  static int minSize = ::Calculation::Calculation::MinimalSize();
   char text[2] = {'0', 0};
-  while (store.remainingBufferSize() > minSize) {
+  while (store.remainingBufferSize() > ::Calculation::Calculation::k_minimalSize) {
     store.push(text, &globalContext, dummyHeight);
   }
   int numberOfCalculations1 = store.numberOfCalculations();

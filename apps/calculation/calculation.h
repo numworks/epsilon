@@ -49,7 +49,7 @@ public:
    * calculations instead of clearing less space, then fail to serialize, clear
    * more space, fail to serialize, clear more space, etc., until reaching
    * sufficient free space. */
-  static int MinimalSize() { return sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + 3*Constant::MaxSerializedExpressionSize + sizeof(Calculation *); }
+  static constexpr int k_minimalSize = sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + 4*Constant::MaxSerializedExpressionSize + sizeof(Calculation *);
 
   Calculation() :
     m_displayOutput(DisplayOutput::Unknown),

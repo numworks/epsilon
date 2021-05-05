@@ -29,5 +29,9 @@ Event SVC_ATTRIBUTES getEvent(int * timeout) {
   SVC_RETURNING_R0(SVC_EVENTS_GET_EVENT, Event)
 }
 
+void SVC_ATTRIBUTES setSpinner(bool spiner) {
+  SVC_RETURNING_VOID(SVC_EVENTS_SET_SPINNER)
+}
+
 }
 }

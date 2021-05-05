@@ -67,6 +67,7 @@ void logTo(Journal * l);
 // TODO EMILIE: Clean --> these are needed by userland
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
+void setSpinner(bool spinner);
 int repetitionFactor();
 
 //void didPressNewKey(); // TODO EMILIE --> only for simulators

@@ -64,7 +64,7 @@ private:
   CalculationIterator begin() const { return CalculationIterator(m_buffer); }
   CalculationIterator end() const { return CalculationIterator(m_calculationAreaEnd); }
 
-  bool pushSerializedExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+  bool pushSerializedExpression(Poincare::Expression e, char ** start, char * end, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context, HeightComputer heightComputer);
   size_t deleteOldestCalculation();
   char * addressOfPointerToCalculationOfIndex(int i) {return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}

@@ -56,14 +56,10 @@ Expression Calculation::exactOutput() {
    * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
-  Expression exactOutput = Expression::Parse(exactOutputText(), nullptr);
-  assert(!exactOutput.isUninitialized());
-  return exactOutput;
+  return Expression::Parse(exactOutputText(), nullptr);
 }
 
 Expression Calculation::approximateOutput(Context * context, NumberOfSignificantDigits numberOfSignificantDigits) {
-  Expression exp = Expression::Parse(approximateOutputText(numberOfSignificantDigits), nullptr);
-  assert(!exp.isUninitialized());
   /* Warning:
    * Since quite old versions of Epsilon, the Expression 'exp' was used to be
    * approximated again to ensure its content was in the expected form - a
@@ -93,7 +89,7 @@ Expression Calculation::approximateOutput(Context * context, NumberOfSignificant
    *  |--------------------------------------------------------------------------------------|
    *
    */
-   return exp;
+  return Expression::Parse(approximateOutputText(numberOfSignificantDigits), nullptr);
 }
 
 Layout Calculation::createInputLayout() {

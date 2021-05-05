@@ -1,4 +1,5 @@
 ion_device_userland_svc_src += $(addprefix ion/src/device/userland/, \
+  drivers/authentication.cpp \
   drivers/backlight.cpp \
   drivers/battery.cpp \
   drivers/board.cpp \

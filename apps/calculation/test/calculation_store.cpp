@@ -48,7 +48,16 @@ QUIZ_CASE(calculation_store) {
   store.deleteAll();
 
   // Checking if the store handles correctly the delete of the oldest calculation when full
-  char text[2] = {'0', 0};
+  constexpr int calculationSize = 200;
+  assert(calculationSize < store.remainingBufferSize());
+  char text[calculationSize];
+  constexpr const char * pattern = "123456789+";
+  int patternSize = strlen(pattern);
+  for (int i = 0; i < calculationSize; i += patternSize) {
+    memcpy(text + i, pattern, patternSize);
+  }
+  text[calculationSize - 1] = '\0';
+
   while (store.remainingBufferSize() > ::Calculation::Calculation::k_minimalSize) {
     store.push(text, &globalContext, dummyHeight);
   }

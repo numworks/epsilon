@@ -69,13 +69,12 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   const char * inputSerialization = beginingOfFreeSpace;
   {
     Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
-    if (!pushSerializedExpression(input, beginingOfFreeSpace, &endOfFreeSpace)) {
+    if (!pushSerializedExpression(input, &beginingOfFreeSpace, endOfFreeSpace)) {
       /* If the input does not fit in the store (event if the current
        * calculation is the only calculation), just replace the calculation with
        * undef. */
       return emptyStoreAndPushUndef(context, heightComputer);
     }
-    beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
   }
 
   // Compute and serialize the outputs
@@ -98,16 +97,15 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       if (i == numberOfOutputs - 1) {
         numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
       }
-      if (!pushSerializedExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
-        /* If the exat/approximate output does not fit in the store (event if the
-         * current calculation is the only calculation), replace the output with
-         * undef if it fits, else replace the whole calcualtion with undef. */
+      if (!pushSerializedExpression(outputs[i], &beginingOfFreeSpace, endOfFreeSpace, numberOfSignificantDigits)) {
+        /* If the exact/approximate output does not fit in the store (even if the
+         * current calculation is the only one), replace the output with
+         * undef if it fits, else replace the whole calculation with undef. */
         Expression undef = Undefined::Builder();
-        if (!pushSerializedExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
+        if (!pushSerializedExpression(undef, &beginingOfFreeSpace, endOfFreeSpace)) {
           return emptyStoreAndPushUndef(context, heightComputer);
         }
       }
-      beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
     }
   }
   // Storing the pointer of the end of the new calculation
@@ -193,19 +191,22 @@ Expression CalculationStore::ansExpression(Context * context) {
 }
 
 // Push converted expression in the buffer
-bool CalculationStore::pushSerializedExpression(Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits) {
-  assert(*newCalculationsLocation <= m_buffer + m_bufferSize);
-  bool expressionIsPushed = false;
+bool CalculationStore::pushSerializedExpression(Expression e, char ** start, char * end, int numberOfSignificantDigits) {
+  assert(end <= addressOfPointerToCalculationOfIndex(0) && *start < end && end - *start < m_bufferSize);
   while (true) {
-    size_t locationSize = *newCalculationsLocation - location;
-    expressionIsPushed = (PoincareHelpers::Serialize(e, location, locationSize, numberOfSignificantDigits) < (int)locationSize-1);
-    if (expressionIsPushed || *newCalculationsLocation >= m_buffer + m_bufferSize) {
+    assert(*start >= m_buffer);
+    int availableSize = end - *start;
+    int serializationSize = PoincareHelpers::Serialize(e, *start, availableSize, numberOfSignificantDigits);
+    if (serializationSize < availableSize - 1) {
+      *start += serializationSize + 1;
+      return true;
+    }
+    if (*start == m_buffer) {
       break;
     }
-    *newCalculationsLocation = *newCalculationsLocation + deleteOldestCalculation();
-    assert(*newCalculationsLocation <= m_buffer + m_bufferSize);
+    *start -= deleteOldestCalculation();
   }
-  return expressionIsPushed;
+  return false;
 }
 
 

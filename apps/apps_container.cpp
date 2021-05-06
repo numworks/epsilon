@@ -21,6 +21,7 @@ AppsContainer * AppsContainer::sharedAppsContainer() {
 
 AppsContainer::AppsContainer() :
   Container(),
+  m_firstUSBEnumeration(true),
   m_window(),
   m_emptyBatteryWindow(),
   m_globalContext(),
@@ -148,11 +149,10 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
-      if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+      if (m_firstUSBEnumeration && GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
         displayExamModePopUp(GlobalPreferences::ExamMode::Off);
         // Warning: if the window is dirtied, you need to call window()->redraw()
         window()->redraw();
-        return true;
       } else {
         App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
         /* Just after a software update, the battery timer does not have time to
@@ -166,8 +166,9 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
         // Update LED when exiting DFU mode
         Ion::LED::updateColorWithPlugAndCharge();
         switchTo(activeSnapshot);
-        return true;
       }
+      m_firstUSBEnumeration = false;
+      return true;
     } else {
       /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
        * from a non-USB communicating host (e.g. a USB charger). The interrupt
@@ -182,6 +183,8 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::USB::enable();
       Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
     } else {
+      m_firstUSBEnumeration = true;
+      Ion::USB::clearEnumerationInterrupt();
       Ion::USB::disable();
     }
     return true;
@@ -361,9 +364,7 @@ void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {
-  if (Ion::USB::isPlugged()) {
-    Ion::USB::enable();
-  }
+  Ion::USB::clearEnumerationInterrupt();
 }
 
 void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record) {

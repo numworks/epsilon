@@ -9,7 +9,7 @@ uint32_t SVC_ATTRIBUTES devicePcbVersion() {
 
 const char * pcbVersion() {
   constexpr int pcbVersionLength = 5; // xx.yy
-  static char pcbVer[pcbVersionLength] = {'\0'};
+  static char pcbVer[pcbVersionLength + 1] = {'\0'};
   if (pcbVer[0] == '\0') {
     uint32_t ver = devicePcbVersion();
     /* As PCB version only uses 4 chars, value should be at most 9999. */
@@ -22,6 +22,7 @@ const char * pcbVersion() {
         ver /= 10;
       }
     }
+    pcbVer[pcbVersionLength] = 0;
   }
   return pcbVer;
 }

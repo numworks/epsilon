@@ -6,8 +6,9 @@
 #include <escher/invocation.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
+#include "input_controller.h"
 
-HypothesisController::HypothesisController(Escher::Responder * parent, InputController * inputController,
+HypothesisController::HypothesisController(Escher::Responder * parent, NormalInputController * inputController,
                                            InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate)
     : SelectableListViewController(parent),
       m_inputController(inputController),

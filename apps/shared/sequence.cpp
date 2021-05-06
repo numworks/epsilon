@@ -135,37 +135,49 @@ bool Sequence::isEmpty() {
 }
 
 bool Sequence::badlyReferencesItself(Context * context) {
-  Expression e = expressionReduced(context);
-  bool value = e.hasExpression([](Expression e, const void * sequencePointer) {
-    if (e.type() != ExpressionNode::Type::Sequence) {
+    bool allowFirstCondition = false, allowSecondCondition = false, allowFirstOrderSelfReference = false, allowSecondOrderSelfReference = false;
+    const void * pack[] = { this, &allowFirstCondition, &allowSecondCondition, &allowFirstOrderSelfReference, &allowSecondOrderSelfReference };
+
+    Poincare::Expression::ExpressionTypeTest test = [](const Expression e, const void * aux) {
+      if (e.type() != ExpressionNode::Type::Sequence) {
+        return false;
+      }
+      const char * eName = static_cast<const Symbol &>(e).name();
+      assert(strlen(eName) == 1);
+      const void * const * pack = static_cast<const void * const *>(aux);
+      const Sequence * sequence = static_cast<const Sequence *>(pack[0]);
+      if (sequence->fullName()[0] == eName[0]) {
+        Expression rank = e.childAtIndex(0);
+        bool allowFirstCondition = *static_cast<const bool *>(pack[1]),
+             allowSecondCondition = *static_cast<const bool *>(pack[2]),
+             allowFirstOrderSelfReference = *static_cast<const bool *>(pack[3]),
+             allowSecondOrderSelfReference = *static_cast<const bool *>(pack[4]);
+        return !(
+            (allowFirstCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank())))
+         || (allowSecondCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank() + 1)))
+         || (allowFirstOrderSelfReference && rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown)))
+         || (allowSecondOrderSelfReference && rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))))
+         );
+      }
       return false;
-    }
-    Sequence * seq = (Sequence *)(sequencePointer);
-    const char * symbolName = static_cast<Symbol&>(e).name();
-    /* symbolName is either u, v or w while seq->fullName has the extention .seq
-     * at the end. Therefore we cannot use strcmp on the two strings. We just
-     * want to check if the first char are identical*/
-    if (strncmp(symbolName, seq->fullName(), strlen(symbolName)) == 0) {
-      /* The expression of the sequence contains a reference to itself.
-       * We must check if the sequence can be calculated before continuing
-       * If the sequence is of explicit type, it cannot reference itself.
-       * If the sequence is of SingleRecurrent type, it can be defined by:
-       * u(initialRank and u(n).
-       * If the sequence is of DoubleRecurrent type, it can be defined by:
-       * u(initialRank), u(initialRank+1), u(n) and u(n+1).
-       * In any other case, the value of the sequence cannot be computed.
-       * We therefore return NAN. */
-      Expression rank = e.childAtIndex(0);
-      if (seq->type() == Sequence::Type::Explicit ||
-         (!(rank.isIdenticalTo(Rational::Builder(seq->initialRank())) || rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) &&
-         (seq->type() == Sequence::Type::SingleRecurrence || (seq->type() == Sequence::Type::DoubleRecurrence && !(rank.isIdenticalTo(Rational::Builder(seq->initialRank()+1)) || rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))))))))
-         {
-        return true;
+    };
+
+    bool res = false;
+    if (type() != Sequence::Type::Explicit) {
+      res |= firstInitialConditionExpressionReduced(context).hasExpression(test, pack);
+      if (type() == Sequence::Type::DoubleRecurrence) {
+        allowFirstCondition = true;
+        res |= secondInitialConditionExpressionReduced(context).hasExpression(test, pack);
+        allowSecondCondition = true;
+        allowFirstOrderSelfReference = true;
+        allowSecondOrderSelfReference = true;
+      } else {
+        allowFirstCondition = true;
+        allowFirstOrderSelfReference = true;
       }
     }
-      return false;
-    }, reinterpret_cast<const void *>(this));
-    return value;
+
+    return res || expressionReduced(context).hasExpression(test, pack);
 }
 
 template<typename T>

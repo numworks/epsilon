@@ -458,6 +458,17 @@ QUIZ_CASE(sequence_evaluation) {
   definitions[1] = "10";
   definitions[2] = nullptr;
   check_sequences_defined_by(results35, types, definitions, conditions1, conditions2);
+
+  // Self-reference in the initial condition
+  double result36[MaxNumberOfSequences][10] = {{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {9., NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  types[1] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "u(n)";
+  definitions[1] = "u(n+1)+u(n)";
+  conditions1[0] = "u(1)";
+  conditions1[1] = "9";
+  conditions2[1] = "u(u(0))";
+  check_sequences_defined_by(result36, types, definitions, conditions1, conditions2);
 }
 
 QUIZ_CASE(sequence_order) {

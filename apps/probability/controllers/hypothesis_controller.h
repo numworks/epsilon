@@ -17,7 +17,7 @@ using namespace Escher;
 
 class HypothesisController : public SelectableListViewController {
  public:
-  HypothesisController(Escher::Responder * parent, InputController * inputController,
+  HypothesisController(Escher::Responder * parent, NormalInputController * inputController,
                        InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate);
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
@@ -32,7 +32,7 @@ class HypothesisController : public SelectableListViewController {
   MessageTableCellWithEditableText m_ha;  // TODO change to dropdown
   Shared::ButtonWithSeparator m_next;     // TODO real separator ?
 
-  InputController * m_inputController;
+  NormalInputController * m_inputController;
 };
 
 #endif /* HYPOTHESIS_CONTROLLER_H */

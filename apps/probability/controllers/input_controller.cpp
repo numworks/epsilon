@@ -1,14 +1,8 @@
 #include "input_controller.h"
 
-#include <apps/i18n.h>
-#include <escher/highlight_cell.h>
-#include <escher/input_event_handler_delegate.h>
-#include <escher/invocation.h>
-#include <escher/selectable_list_view_controller.h>
-#include <escher/text_field_delegate.h>
-
-InputController::InputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
-                                 Escher::TextFieldDelegate * textFieldDelegate)
+template <int n>
+inline InputController<n>::InputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+                                           Escher::TextFieldDelegate * textFieldDelegate)
     : Escher::SelectableListViewController(parent),
       m_next(&m_selectableTableView, I18n::Message::Ok,
              Escher::Invocation(
@@ -17,15 +11,17 @@ InputController::InputController(Escher::Responder * parent, Escher::InputEventH
                    return true;
                  },
                  this)),
-      // syntax to initialize list of objects
-      m_parameters{{&m_selectableTableView, handler, textFieldDelegate}, {&m_selectableTableView, handler, textFieldDelegate}} {
-  m_parameters[0].setMessage(I18n::Message::X);
-  m_parameters[0].setAccessoryText(I18n::translate(I18n::Message::NumberOfSuccesses));
-  m_parameters[1].setMessage(I18n::Message::N);
-  m_parameters[1].setAccessoryText(I18n::translate(I18n::Message::SampleSize));
+      m_parameters{{&m_selectableTableView, handler, textFieldDelegate},
+                   {&m_selectableTableView, handler, textFieldDelegate}} {
+  // Initialize parameter cells
+  for (int i = 0; i < k_numberOfParameters; i++) {
+    m_parameters[i].setParentResponder(&m_selectableTableView);
+    m_parameters[i].textField()->setDelegates(handler, textFieldDelegate);
+  }
 }
 
-Escher::HighlightCell * InputController::reusableCell(int i, int type) {
+template <int n>
+inline Escher::HighlightCell * InputController<n>::reusableCell(int i, int type) {
   if (i < k_numberOfParameters) {
     return &m_parameters[i];
   }
@@ -33,4 +29,14 @@ Escher::HighlightCell * InputController::reusableCell(int i, int type) {
   return &m_next;
 }
 
-void InputController::buttonAction() {}
+template <int n>
+inline void InputController<n>::buttonAction() {}
+
+NormalInputController::NormalInputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+                                             Escher::TextFieldDelegate * textFieldDelegate)
+    : InputController(parent, handler, textFieldDelegate) {
+  m_parameters[k_indexOfX].setMessage(I18n::Message::X);
+  m_parameters[k_indexOfX].setAccessoryText(I18n::translate(I18n::Message::NumberOfSuccesses));
+  m_parameters[k_indexOfN].setMessage(I18n::Message::N);
+  m_parameters[k_indexOfN].setAccessoryText(I18n::translate(I18n::Message::SampleSize));
+}

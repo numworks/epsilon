@@ -48,7 +48,7 @@ private:
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)
-  InputController m_inputController;
+  NormalInputController m_inputController;
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;

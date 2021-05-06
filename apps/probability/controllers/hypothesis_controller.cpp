@@ -7,12 +7,19 @@
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 
-HypothesisController::HypothesisController(Escher::Responder * parent, InputEventHandlerDelegate * handler,
-                                           TextFieldDelegate * textFieldDelegate)
+HypothesisController::HypothesisController(Escher::Responder * parent, InputController * inputController,
+                                           InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate)
     : SelectableListViewController(parent),
+      m_inputController(inputController),
       m_h0(&m_selectableTableView, handler, textFieldDelegate),
       m_ha(&m_selectableTableView, handler, textFieldDelegate),
-      m_next(&m_selectableTableView, I18n::Message::Ok, Escher::Invocation([](void * c, void * s) { return false; }, this)) {
+      m_next(&m_selectableTableView, I18n::Message::Ok,
+             Escher::Invocation(
+                 [](void * c, void * s) {
+                   reinterpret_cast<HypothesisController *>(c)->buttonAction();
+                   return true;
+                 },
+                 this)) {
   m_h0.setMessage(I18n::Message::H0);
   m_h0.setAccessoryText("p=");
   m_ha.setMessage(I18n::Message::Ha);
@@ -40,4 +47,9 @@ void HypothesisController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+}
+
+void HypothesisController::buttonAction() {
+  StackViewController * stack = reinterpret_cast<StackViewController *>(parentResponder());
+  stack->push(m_inputController);
 }

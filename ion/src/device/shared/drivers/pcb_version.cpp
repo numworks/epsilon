@@ -5,7 +5,7 @@ namespace Ion {
 
 const char * pcbVersion() {
   constexpr int pcbVersionLength = 5; // xx.yy
-  static char pcbVer[pcbVersionLength] = {'\0'};
+  static char pcbVer[pcbVersionLength + 1] = {'\0'};
   if (pcbVer[0] == '\0') {
     Device::Board::PCBVersion ver = Device::Board::pcbVersion();
     /* As PCB version only uses 4 chars, value should be at most 9999. */
@@ -18,6 +18,7 @@ const char * pcbVersion() {
         ver /= 10;
       }
     }
+    pcbVer[pcbVersionLength] = 0;
   }
   return pcbVer;
 }

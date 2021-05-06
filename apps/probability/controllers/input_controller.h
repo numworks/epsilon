@@ -12,10 +12,13 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+#include "results_controller.h"
+
 template <int numberOfParams>
 class InputController : public Escher::SelectableListViewController {
  public:
-  InputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,  // TODO same obj
+  InputController(Escher::Responder * parent, TestResults * resultsController,
+                  Escher::InputEventHandlerDelegate * handler,  // TODO same obj
                   Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfParameters + 1 /* button */; }
   Escher::HighlightCell * reusableCell(int i, int type) override;
@@ -34,12 +37,14 @@ class InputController : public Escher::SelectableListViewController {
   constexpr static int k_numberOfParameters = numberOfParams;
   Escher::MessageTableCellWithEditableText m_parameters[k_numberOfParameters];
   Shared::ButtonWithSeparator m_next;
+
+  TestResults * m_resultsController;
 };
 
 class NormalInputController : public InputController<2> {
  public:
-  NormalInputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
-                        Escher::TextFieldDelegate * textFieldDelegate);
+  NormalInputController(Escher::Responder * parent, TestResults * resultsController,
+                        Escher::InputEventHandlerDelegate * handler, Escher::TextFieldDelegate * textFieldDelegate);
 
  private:
   constexpr static int k_indexOfX = 0;

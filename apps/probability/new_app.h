@@ -16,6 +16,7 @@
 #include "controllers/categorical_type_controller.h"
 #include "controllers/type_controller.h"
 #include "controllers/input_controller.h"
+#include "controllers/results_controller.h"
 
 namespace Probability {
 
@@ -48,6 +49,7 @@ private:
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)
+  TestResults m_resultsController;
   NormalInputController m_inputController;
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;

@@ -50,6 +50,7 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	hypothesis_controller.cpp\
 	categorical_type_controller.cpp\
 	type_controller.cpp\
+	input_controller.cpp\
 )
 
 

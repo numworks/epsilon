@@ -215,6 +215,7 @@ typedef void (*ExternalAppMain)();
 void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   // TODO: should we set stricter MPU bounds?
   reloadTitleBarView();
+  Ion::Events::setSpinner(false);
   ExternalAppMain appStart = reinterpret_cast<ExternalAppMain>(app.entryPoint());
   appStart();
 }
@@ -272,6 +273,7 @@ void AppsContainer::run() {
       s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
     }
   } else {
+    Ion::Events::setSpinner(true);
     handleRunException(false);
   }
 

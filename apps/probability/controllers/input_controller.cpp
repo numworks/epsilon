@@ -1,9 +1,11 @@
 #include "input_controller.h"
 
 template <int n>
-inline InputController<n>::InputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+inline InputController<n>::InputController(Escher::Responder * parent, TestResults * resultsController,
+                                           Escher::InputEventHandlerDelegate * handler,
                                            Escher::TextFieldDelegate * textFieldDelegate)
     : Escher::SelectableListViewController(parent),
+      m_resultsController(resultsController),
       m_next(&m_selectableTableView, I18n::Message::Ok,
              Escher::Invocation(
                  [](void * ctx, void * sender) -> bool {
@@ -32,9 +34,10 @@ inline Escher::HighlightCell * InputController<n>::reusableCell(int i, int type)
 template <int n>
 inline void InputController<n>::buttonAction() {}
 
-NormalInputController::NormalInputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+NormalInputController::NormalInputController(Escher::Responder * parent, TestResults * resultsController,
+                                             Escher::InputEventHandlerDelegate * handler,
                                              Escher::TextFieldDelegate * textFieldDelegate)
-    : InputController(parent, handler, textFieldDelegate) {
+    : InputController(parent, resultsController, handler, textFieldDelegate) {
   m_parameters[k_indexOfX].setMessage(I18n::Message::X);
   m_parameters[k_indexOfX].setAccessoryText(I18n::translate(I18n::Message::NumberOfSuccesses));
   m_parameters[k_indexOfN].setMessage(I18n::Message::N);

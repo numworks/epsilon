@@ -11,7 +11,8 @@ const Escher::Image * NewApp::Descriptor::icon() const { return ImageStore::Prob
 
 NewApp::NewApp(Escher::App::Snapshot * snapshot)
     : TextFieldDelegateApp(snapshot, &m_stackViewController),
-      m_inputController(&m_stackViewController, this, this),
+      m_resultsController(&m_stackViewController, this, this),
+      m_inputController(&m_stackViewController, &m_resultsController, this, this),
       m_typeController(&m_stackViewController, &m_hypothesisController),
       m_categoricalTypeController(&m_stackViewController),
       m_hypothesisController(&m_stackViewController, &m_inputController, this, this),

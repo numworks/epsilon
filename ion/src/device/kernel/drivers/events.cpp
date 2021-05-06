@@ -322,6 +322,12 @@ Ion::Events::Event getEvent(int * timeout) {
   return e;
 }
 
+static bool s_spinner = true;
+
+void setSpinner(bool spinner) {
+  s_spinner = spinner;
+}
+
 void stall() {
   // Clear update interrupt flag
   TIM2.SR()->setUIF(false);
@@ -330,6 +336,7 @@ void stall() {
     return;
   }
 
+  if (s_spinner) {
   /* TODO: set another quick timer that would restore the image below in a few ms...*/
   //if (CircuitBreaker::hasCheckpoint()) {
     // TODO: should we shutdown any interruption here to be sure to complete our drawing
@@ -341,6 +348,7 @@ void stall() {
   /*} else {
     // TODO: go back to the home!
   }*/
+  }
 }
 
 void resetPendingKeyboardState() {

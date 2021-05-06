@@ -71,6 +71,7 @@ private:
   static const I18n::Message k_promptMessages[];
   static const KDColor k_promptColors[];
   static const int k_promptNumberOfMessages;
+  bool m_firstUSBEnumeration;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;

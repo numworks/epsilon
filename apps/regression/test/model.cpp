@@ -247,36 +247,33 @@ QUIZ_CASE(logistic_regression) {
 
   double x3[] = {-400.0, 0.0, 400.0, 450.0, 800.0};
   double y3[] = {1.523, 76.92, 819.8, 882.4, 996.0};
-  double coefficients3[] = {10.6, 1.0, 899.0}; // target : {12.0, 0.01, 1000.0};
-  double r23 = 0.982; // target : 1.0;
+  double coefficients3[] = {12.0, 0.01, 1000.0};
+  double r23 = 1.0;
   assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, r23);
 
-  // TODO : This test fits with a negative R2
-  // double x4[] = {-2.0, -1.0, 0.0, 1.0, 2.0, 3.0};
-  // double y4[] = {-5.0, -5.0, -4.99, -4.90, -3.56, -0.55};
-  // double coefficients4[] = {-1.41e5, -702.0, -5.0}; // target : {0.001, -3.0, -5.0};
-  // double r24 = -2.89; // target : 1.0;
-  // assert_regression_is(x4, y4, 6, Model::Type::Logistic, coefficients4, r24);
+  double x4[] = {-2.0, -1.0, 0.0, 1.0, 2.0, 3.0};
+  double y4[] = {-5.0, -5.0, -4.99, -4.90, -3.56, -0.55};
+  double coefficients4[] = {0.001, -3.0, -5.0};
+  double r24 = 1.0;
+  assert_regression_is(x4, y4, 6, Model::Type::Logistic, coefficients4, r24);
 
   double x5[] = {3.0, 7.0, 11.0, 20.0, 43.0};
   double y5[] = {11.66, 13.51, 15.21, 17.38, 18.7};
-  double coefficients5[] = {94.2, 19.3, 15.3};// target : {0.88, 0.118, 18.81};
-  double r25 = 0.0; // target : 1.0;
+  double coefficients5[] = {0.88, 0.118, 18.8};
+  double r25 = 1.0;
   assert_regression_is(x5, y5, 5, Model::Type::Logistic, coefficients5, r25);
 
   double x6[] = {-0.1, -0.09, -0.08, -0.07, -0.06 };
   double y6[] = {1.82e-6, 3.66e-6, 7.34e-6, 1.46e-5, 2.91e-5};
-  double coefficients6[] = {0.136, 63.2, 0.000146}; // target : {0.5, 70.0, 0.001};
-  double r26 = 0.84; // target : 1.0;
+  double coefficients6[] = {1.17e-8, 250.0, 2.77e-5}; // target : {0.5, 70.0, 0.001};
+  double r26 = 0.902321; // target : 1.0;
   assert_regression_is(x6, y6, 5, Model::Type::Logistic, coefficients6, r26);
 
-  // No source of truth for these coefficients, r2 should at least be positive.
-  // TODO : This test fits with a negative R2
-  // double x7[] = {1.0, 3.0, 4.0, 6.0, 8.0};
-  // double y7[] = {4.0, 4.0, 0.0, 58.0, 5.0};
-  // double coefficients7[] = {9.14, -63.3, 148.0};
-  // double r27 = -0.418; // target : anything positive
-  // assert_regression_is(x7, y7, 5, Model::Type::Logistic, coefficients7, r27);
+  double x7[] = {1.0, 3.0, 4.0, 6.0, 8.0};
+  double y7[] = {4.0, 4.0, 0.0, 58.0, 5.0};
+  double coefficients7[] = {3.56e8, 4.256, 31.4}; // No target
+  double r27 = 0.4; // No target (But should be positive)
+  assert_regression_is(x7, y7, 5, Model::Type::Logistic, coefficients7, r27);
 }
 
 // Testing column and regression calculation

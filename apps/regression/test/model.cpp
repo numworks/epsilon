@@ -235,24 +235,48 @@ QUIZ_CASE(logistic_regression) {
    * the test. */
   double x1[] = {2.3, 5.6, 1.1, 4.3};
   double y1[] = {3.948, 4.694, 2.184, 4.656};
-  double coefficients1[] = {6, 1.5, 4.7};
+  double coefficients1[] = {6.0, 1.5, 4.7};
   double r21 = 0.9999999917270119;
   assert_regression_is(x1, y1, 4, Model::Type::Logistic, coefficients1, r21);
 
-  // This data produced a wrong fit before
   double x2[] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
   double y2[] = {5.0, 9.0, 40.0, 64.0, 144.0, 200.0, 269.0, 278.0, 290.0, 295.0};
   double coefficients2[] = {64.9, 1.0, 297.4};
   double r22 = 0.9984396821656006;
   assert_regression_is(x2, y2, 10, Model::Type::Logistic, coefficients2, r22);
 
-  // TODO : This data produce a wrong fit currently
-  // double x3[] = {1.0, 3.0, 4.0, 6.0, 8.0};
-  // double y3[] = {4.0, 4.0, 0.0, 58.0, 5.0};
-  // No source of truth for coefficient, r2 should at least be positive.
-  // double coefficients3[] = {-0.1, -0.4, -4};
-  // double r23 = 0.75;
-  // assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, r23);
+  double x3[] = {-400.0, 0.0, 400.0, 450.0, 800.0};
+  double y3[] = {1.523, 76.92, 819.8, 882.4, 996.0};
+  double coefficients3[] = {10.6, 1.0, 899.0}; // target : {12.0, 0.01, 1000.0};
+  double r23 = 0.982; // target : 1.0;
+  assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, r23);
+
+  // TODO : This test fits with a negative R2
+  // double x4[] = {-2.0, -1.0, 0.0, 1.0, 2.0, 3.0};
+  // double y4[] = {-5.0, -5.0, -4.99, -4.90, -3.56, -0.55};
+  // double coefficients4[] = {-1.41e5, -702.0, -5.0}; // target : {0.001, -3.0, -5.0};
+  // double r24 = -2.89; // target : 1.0;
+  // assert_regression_is(x4, y4, 6, Model::Type::Logistic, coefficients4, r24);
+
+  double x5[] = {3.0, 7.0, 11.0, 20.0, 43.0};
+  double y5[] = {11.66, 13.51, 15.21, 17.38, 18.7};
+  double coefficients5[] = {94.2, 19.3, 15.3};// target : {0.88, 0.118, 18.81};
+  double r25 = 0.0; // target : 1.0;
+  assert_regression_is(x5, y5, 5, Model::Type::Logistic, coefficients5, r25);
+
+  double x6[] = {-0.1, -0.09, -0.08, -0.07, -0.06 };
+  double y6[] = {1.82e-6, 3.66e-6, 7.34e-6, 1.46e-5, 2.91e-5};
+  double coefficients6[] = {0.136, 63.2, 0.000146}; // target : {0.5, 70.0, 0.001};
+  double r26 = 0.84; // target : 1.0;
+  assert_regression_is(x6, y6, 5, Model::Type::Logistic, coefficients6, r26);
+
+  // No source of truth for these coefficients, r2 should at least be positive.
+  // TODO : This test fits with a negative R2
+  // double x7[] = {1.0, 3.0, 4.0, 6.0, 8.0};
+  // double y7[] = {4.0, 4.0, 0.0, 58.0, 5.0};
+  // double coefficients7[] = {9.14, -63.3, 148.0};
+  // double r27 = -0.418; // target : anything positive
+  // assert_regression_is(x7, y7, 5, Model::Type::Logistic, coefficients7, r27);
 }
 
 // Testing column and regression calculation

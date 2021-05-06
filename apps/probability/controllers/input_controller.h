@@ -1,6 +1,7 @@
 #ifndef INPUT_CONTROLLER_H
 #define INPUT_CONTROLLER_H
 
+#include <apps/i18n.h>
 #include <apps/shared/button_with_separator.h>
 #include <apps/shared/cell_with_separator.h>
 #include <escher/container.h>
@@ -11,11 +12,12 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+template <int numberOfParams>
 class InputController : public Escher::SelectableListViewController {
  public:
-  InputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+  InputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,  // TODO same obj
                   Escher::TextFieldDelegate * textFieldDelegate);
-  int numberOfRows() const override { return k_numberOfParameters + 1; }
+  int numberOfRows() const override { return k_numberOfParameters + 1 /* button */; }
   Escher::HighlightCell * reusableCell(int i, int type) override;
   void didBecomeFirstResponder() override {
     // TODO factor out
@@ -28,10 +30,20 @@ class InputController : public Escher::SelectableListViewController {
   }
   void buttonAction();
 
- private:
-  constexpr static int k_numberOfParameters = 2;
+ protected:
+  constexpr static int k_numberOfParameters = numberOfParams;
   Escher::MessageTableCellWithEditableText m_parameters[k_numberOfParameters];
   Shared::ButtonWithSeparator m_next;
+};
+
+class NormalInputController : public InputController<2> {
+ public:
+  NormalInputController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+                        Escher::TextFieldDelegate * textFieldDelegate);
+
+ private:
+  constexpr static int k_indexOfX = 0;
+  constexpr static int k_indexOfN = 1;
 };
 
 #endif /* INPUT_CONTROLLER_H */

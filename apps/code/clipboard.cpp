@@ -2,6 +2,7 @@
 
 extern "C" {
 #include "py/lexer.h"
+#include "py/nlr.h"
 }
 
 using namespace Escher;
@@ -33,17 +34,25 @@ bool Clipboard::ShouldReplaceLetterE(const char * text, int length, int position
     start++;
   }
 
-  mp_lexer_t * lex = mp_lexer_new_from_str_len(0, text + start, length - start, 0);
-  int lastColumn = lex->tok_column;
-  mp_token_kind_t lastKind = lex->tok_kind;
-  while (lex->line == 1 && start + lex->tok_column - lastColumn <= position) {
-    start += lex->tok_column - lastColumn;
-    lastColumn = lex->tok_column;
-    lastKind = lex->tok_kind;
-    mp_lexer_to_next(lex);
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, text + start, length - start, 0);
+    int lastColumn = lex->tok_column;
+    mp_token_kind_t lastKind = lex->tok_kind;
+    while (lex->line == 1 && start + lex->tok_column - lastColumn <= position) {
+      start += lex->tok_column - lastColumn;
+      lastColumn = lex->tok_column;
+      lastKind = lex->tok_kind;
+      mp_lexer_to_next(lex);
+    }
+    s_replacementRuleStartingPoint = start;
+    mp_lexer_free(lex);
+    nlr_pop();
+    return lastKind == MP_TOKEN_FLOAT_OR_IMAG;
+  } else {
+    /* Lexer encountered an exception. */
+    return false;
   }
-  s_replacementRuleStartingPoint = start;
-  return lastKind == MP_TOKEN_FLOAT_OR_IMAG;
 }
 
 const UTF8Helper::TextPair * Clipboard::PythonTextPairs() {

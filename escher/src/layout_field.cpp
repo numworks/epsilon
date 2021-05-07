@@ -334,6 +334,9 @@ Context * LayoutField::context() const {
 }
 
 bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+  if (!isEditing()) {
+    setEditing(true);
+  }
   // Query bottom-most layout
   Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {

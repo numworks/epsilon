@@ -354,7 +354,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     /* Normalize the axes, so that a polar circle is displayed as a circle.
      * If we are displaying cartesian functions, we want the X bounds
      * untouched. */
-    protectedNormalize(m_delegate->defaultRangeIsNormalized() && computeX, computeY, true);
+    bool shrink = m_delegate->canShrinkWhenNormalizing();
+    protectedNormalize((m_delegate->defaultRangeIsNormalized() || !shrink) && computeX, computeY, shrink);
   }
 }
 

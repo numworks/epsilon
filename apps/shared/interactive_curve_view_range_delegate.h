@@ -24,6 +24,7 @@ public:
   virtual void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) { assert(false); }
   virtual void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) { assert(false); }
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;
+  virtual bool canShrinkWhenNormalizing() const { return false; }
   virtual void updateBottomMargin() = 0;
   virtual void updateZoomButtons() = 0;
 };

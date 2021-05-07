@@ -20,6 +20,7 @@ public:
   void viewWillAppear() override;
   bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
   void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
+  bool canShrinkWhenNormalizing() const override { return true; }
 private:
   class FunctionSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
   public:

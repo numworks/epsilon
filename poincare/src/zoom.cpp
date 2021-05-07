@@ -67,6 +67,7 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   };
 
   float resultXMin = FLT_MAX, resultXMax = -FLT_MAX, resultYMin = FLT_MAX, resultYMax = -FLT_MAX;
+  float resultBoundXMin = FLT_MAX, resultBoundXMax = -FLT_MAX;
   float fallbackXMin = NAN, fallbackXMax = NAN, fallbackYMin = NAN, fallbackYMax = NAN, firstPoint = NAN;
   float asymptoteXMin = FLT_MAX, asymptoteXMax = -FLT_MAX, explosionXMin = FLT_MAX, explosionXMax = -FLT_MAX;
   int numberOfExtrema = 0;
@@ -110,14 +111,22 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
         asymptoteXMin = std::min(asymptoteXMin, x);
       }
     } else {
-      resultXMin = std::min(resultXMin, x);
-      resultXMax = std::max(resultXMax, x);
+      float * xmin, * xmax;
+      if (std::isnan(y)) {
+        xmin = &resultBoundXMin;
+        xmax = &resultBoundXMax;
+      } else {
+        xmin = &resultXMin;
+        xmax = &resultXMax;
+      }
+      *xmin = std::min(*xmin, x);
+      *xmax = std::max(*xmax, x);
       if (std::isnan(firstPoint)) {
         firstPoint = x;
       }
       if (y != 0.f && ++numberOfExtrema == k_peakNumberOfPointsOfInterest) {
-        fallbackXMin = resultXMin;
-        fallbackXMax = resultXMax;
+        fallbackXMin = *xmin;
+        fallbackXMax = *xmax;
         fallbackYMin = resultYMin;
         fallbackYMax = resultYMax;
       }
@@ -150,6 +159,13 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
   if (xMaxWithExplosion - xMinWithExplosion < k_maxRatioBetweenPointsOfInterest * (resultXMax - resultXMin)) {
     resultXMin = xMinWithExplosion;
     resultXMax = xMaxWithExplosion;
+  }
+  /* Bounds of definition, but only if it does not hide other points. */
+  float xMinWithBounds = std::min(resultXMin, resultBoundXMin);
+  float xMaxWithBounds = std::max(resultXMax, resultBoundXMax);
+  if (resultXMax <= resultXMin || xMaxWithBounds - xMinWithBounds < k_maxRatioBetweenBoundsAndPointsOfInterest * (resultXMax - resultXMin)) {
+    resultXMin = xMinWithBounds;
+    resultXMax = xMaxWithBounds;
   }
   /* Cut the range if it is too large to show some points */
   if (resultXMax - resultXMin > std::fabs(firstPoint) * k_maxRatioBetweenPointsOfInterest && std::isfinite(fallbackXMin) && std::isfinite(fallbackXMax)) {

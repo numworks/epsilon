@@ -12,8 +12,10 @@ class CalculationStore;
 
 
 /* A calculation is:
- *  |     uint8_t   |KDCoordinate|  KDCoordinate  |  uint8_t  |   ...     |      ...       |         ...          |
- *  |m_displayOutput|  m_height  |m_expandedHeight|m_equalSign|m_inputText|m_exactOuputText|m_approximateOuputText|
+ *  |     uint8_t   |KDCoordinate|  KDCoordinate  |  uint8_t  |   ...     |      ...       |         ...           |          ...          |
+ *  |m_displayOutput|  m_height  |m_expandedHeight|m_equalSign|m_inputText|m_exactOuputText|m_approximateOuputText1|m_approximateOuputText2|
+ *                                                                                               with maximal           with displayed
+ *                                                                                            significant digits      significant digits
  *
  * */
 
@@ -49,7 +51,7 @@ public:
    * calculations instead of clearing less space, then fail to serialize, clear
    * more space, fail to serialize, clear more space, etc., until reaching
    * sufficient free space. */
-  static constexpr int k_minimalSize = sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + 4*Constant::MaxSerializedExpressionSize + sizeof(Calculation *);
+  static constexpr int k_minimalSize = sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + k_numberOfExpressions*Constant::MaxSerializedExpressionSize;
 
   Calculation() :
     m_displayOutput(DisplayOutput::Unknown),

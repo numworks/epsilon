@@ -93,35 +93,38 @@ Expression Calculation::approximateOutput(Context * context, NumberOfSignificant
 }
 
 Layout Calculation::createInputLayout() {
-  Expression e = input();
   Poincare::ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp) && !e.isUninitialized()) {
-    return e.createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
-  } else {
-    return Layout();
+  if (ExceptionRun(ecp)) {
+    Expression e = input();
+    if (!e.isUninitialized()) {
+      return e.createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
+    }
   }
+  return Layout();
 }
 
 Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
-  Expression e = exactOutput();
   Poincare::ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp) && !e.isUninitialized()) {
-    return PoincareHelpers::CreateLayout(e);
-  } else {
-    *couldNotCreateExactLayout = true;
-    return Layout();
+  if (ExceptionRun(ecp)) {
+    Expression e = exactOutput();
+    if (!e.isUninitialized()) {
+      return PoincareHelpers::CreateLayout(e);
+    }
   }
+  *couldNotCreateExactLayout = true;
+  return Layout();
 }
 
 Layout Calculation::createApproximateOutputLayout(Context * context, bool * couldNotCreateApproximateLayout) {
-  Expression e = approximateOutput(context, NumberOfSignificantDigits::UserDefined);
   Poincare::ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp) && !e.isUninitialized()) {
-    return PoincareHelpers::CreateLayout(e);
-  } else {
-    *couldNotCreateApproximateLayout = true;
-    return Layout();
+  if (ExceptionRun(ecp)) {
+    Expression e = approximateOutput(context, NumberOfSignificantDigits::UserDefined);
+    if (!e.isUninitialized()) {
+      return PoincareHelpers::CreateLayout(e);
+    }
   }
+  *couldNotCreateApproximateLayout = true;
+  return Layout();
 }
 
 KDCoordinate Calculation::height(bool expanded) {

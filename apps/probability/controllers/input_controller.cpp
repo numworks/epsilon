@@ -1,5 +1,7 @@
 #include "input_controller.h"
 
+#include <escher/stack_view_controller.h>
+
 template <int n>
 inline InputController<n>::InputController(Escher::Responder * parent, TestResults * resultsController,
                                            Escher::InputEventHandlerDelegate * handler,
@@ -32,7 +34,11 @@ inline Escher::HighlightCell * InputController<n>::reusableCell(int i, int type)
 }
 
 template <int n>
-inline void InputController<n>::buttonAction() {}
+inline void InputController<n>::buttonAction() {
+  Escher::StackViewController * stack = (Escher::StackViewController *)parentResponder();
+  stack->pop();  // Pop self
+  stack->push(m_resultsController);
+}
 
 NormalInputController::NormalInputController(Escher::Responder * parent, TestResults * resultsController,
                                              Escher::InputEventHandlerDelegate * handler,

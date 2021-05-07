@@ -42,6 +42,7 @@ class TypeController : public SelectableListViewController {
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfRows; };
   HighlightCell * reusableCell(int i, int type) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
  private:
   constexpr static int k_numberOfRows = 3;

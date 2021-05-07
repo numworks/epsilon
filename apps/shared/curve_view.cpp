@@ -1010,7 +1010,7 @@ void CurveView::layoutSubviews(bool force) {
     m_bannerView->setFrame(bannerFrame(), force);
     if (!(m_bannerView->bounds() == oldFrame)) {
       const KDCoordinate dirtyHeight = 2 * (k_font->glyphSize().height() + k_labelMargin);
-      markRectAsDirty(KDRect(0, bounds().height() - m_bannerView->minimalSizeForOptimalDisplay().height() - dirtyHeight, bounds().width(), dirtyHeight));
+      markRectAsDirty(KDRect(0, bounds().height() - m_bannerView->minimalSizeForOptimalDisplay().height() - dirtyHeight, bounds().width(), dirtyHeight + m_bannerView->bounds().height()));
     }
   }
 }

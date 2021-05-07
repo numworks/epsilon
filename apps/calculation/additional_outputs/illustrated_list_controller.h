@@ -42,7 +42,7 @@ private:
   virtual CodePoint expressionSymbol() const = 0;
   // Set the size of the buffer needed to store the additional calculation
   constexpr static int k_maxNumberOfAdditionalCalculations = 4;
-  constexpr static int k_calculationStoreBufferSize = k_maxNumberOfAdditionalCalculations * (sizeof(Calculation) + Calculation::k_numberOfExpressions * Constant::MaxSerializedExpressionSize + sizeof(Calculation *));
+  constexpr static int k_calculationStoreBufferSize = k_maxNumberOfAdditionalCalculations * (Calculation::k_minimalSize + sizeof(Calculation *));
   char m_calculationStoreBuffer[k_calculationStoreBufferSize];
   // Cells
   virtual Escher::HighlightCell * illustrationCell() = 0;

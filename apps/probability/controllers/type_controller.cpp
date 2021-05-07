@@ -20,3 +20,22 @@ TypeController::TypeController(Responder * parent, HypothesisController * hypoth
 }
 
 HighlightCell * TypeController::reusableCell(int i, int type) { return &m_cells[i]; }
+
+bool TypeController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+  Escher::ViewController * view;
+  switch (selectedRow()) {
+    case k_indexOfTTest:
+    case k_indexOfPooledTest:
+    case k_indexOfZTest:
+      view = m_hypothesisController;
+      break;
+  }
+  assert(view != nullptr);
+  Escher::StackViewController * stack = (Escher::StackViewController *)parentResponder();
+  stack->pop(); // Pop self
+  stack->push(view);
+  return true;
+}
+return false;
+}

@@ -58,7 +58,8 @@ QUIZ_CASE(calculation_store) {
   }
   text[calculationSize - 1] = '\0';
 
-  while (store.remainingBufferSize() > ::Calculation::Calculation::k_minimalSize) {
+  constexpr int minimalSize = ::Calculation::Calculation::k_minimalSize + sizeof(::Calculation::Calculation *);
+  while (store.remainingBufferSize() > minimalSize) {
     store.push(text, &globalContext, dummyHeight);
   }
   int numberOfCalculations1 = store.numberOfCalculations();

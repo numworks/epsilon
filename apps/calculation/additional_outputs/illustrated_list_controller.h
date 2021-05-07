@@ -35,11 +35,11 @@ protected:
   constexpr static uint8_t k_illustrationCellType = 0;
   constexpr static uint8_t k_additionalCalculationCellType = 1;
   static KDCoordinate CalculationHeight(Calculation * c, bool expanded) { return ScrollableThreeExpressionsCell::Height(c); }
-  Poincare::Expression m_savedExpression;
+  Poincare::Expression m_expression;
   CalculationStore m_calculationStore;
 private:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
-  virtual CodePoint expressionSymbol() const = 0;
+  virtual const char * symbol() const = 0;
   // Set the size of the buffer needed to store the additional calculation
   constexpr static int k_maxNumberOfAdditionalCalculations = 4;
   constexpr static int k_calculationStoreBufferSize = k_maxNumberOfAdditionalCalculations * (Calculation::k_minimalSize + sizeof(Calculation *));

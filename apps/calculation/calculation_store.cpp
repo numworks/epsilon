@@ -39,10 +39,12 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
    * might be deleted */
   Expression ans = ansExpression(context);
 
-  /* Prepare the buffer for the new calculation
-   *The minimal size to store the new calculation is the minimal size of a calculation plus the pointer to its end */
-  assert(m_bufferSize > Calculation::k_minimalSize);
-  while (remainingBufferSize() < Calculation::k_minimalSize) {
+  /* Prepare the buffer for the new calculation.
+   * The minimal size to store the new calculation is the minimal size of a
+   * calculation plus the pointer to its end */
+  constexpr int minimalSize = Calculation::k_minimalSize + sizeof(Calculation *);
+  assert(m_bufferSize > minimalSize);
+  while (remainingBufferSize() < minimalSize) {
     // If there is no more space to store a calculation, we delete the oldest one
     deleteOldestCalculation();
   }

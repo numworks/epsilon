@@ -381,6 +381,10 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, i
     { Poincare::Product::s_functionHelper.name(), Poincare::Product::k_defaultXNTChar },
     { Poincare::Sum::s_functionHelper.name(), Poincare::Sum::k_defaultXNTChar }
   };
+  if (!isEditing()) {
+    reinitDraftTextBuffer();
+    setEditing(true);
+  }
   const char * text = this->text();
   assert(text == m_contentView.editedText());
   const char * locationOfCursor = cursorLocation();

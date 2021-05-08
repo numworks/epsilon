@@ -8,6 +8,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_draw_line_obj, 5, 5, mod
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_draw_circle_obj, 4, 4, modkandinsky_draw_circle);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_fill_rect_obj, 5, 5, modkandinsky_fill_rect);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_fill_circle_obj, 4, 4, modkandinsky_fill_circle);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_fill_polygon_obj, 2, 2, modkandinsky_fill_polygon);
 
 STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_kandinsky) },
@@ -19,6 +20,7 @@ STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_draw_circle), (mp_obj_t)&modkandinsky_draw_circle_obj },
   { MP_ROM_QSTR(MP_QSTR_fill_rect), (mp_obj_t)&modkandinsky_fill_rect_obj },
   { MP_ROM_QSTR(MP_QSTR_fill_circle), (mp_obj_t)&modkandinsky_fill_circle_obj },
+  { MP_ROM_QSTR(MP_QSTR_fill_polygon), (mp_obj_t)&modkandinsky_fill_polygon_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(modkandinsky_module_globals, modkandinsky_module_globals_table);

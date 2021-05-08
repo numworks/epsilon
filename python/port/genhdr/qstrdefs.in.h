@@ -378,6 +378,7 @@ Q(draw_string)
 Q(draw_circle)
 Q(fill_rect)
 Q(fill_circle)
+Q(fill_polygon)
 Q(get_pixel)
 Q(set_pixel)
 

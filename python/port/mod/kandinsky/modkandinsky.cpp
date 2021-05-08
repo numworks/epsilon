@@ -5,6 +5,7 @@ extern "C" {
 #include <kandinsky.h>
 #include "port.h"
 
+#define TOO_MANY_POINTS(x) "polygon can't have more than " #x " points"
 
 static mp_obj_t TupleForKDColor(KDColor c) {
   mp_obj_tuple_t * t = static_cast<mp_obj_tuple_t *>(MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL)));
@@ -125,5 +126,40 @@ mp_obj_t modkandinsky_fill_circle(size_t n_args, const mp_obj_t * args) {
   KDColor color = MicroPython::Color::Parse(args[3]);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->fillCircle(center, r, color);
+  return mp_const_none;
+}
+
+mp_obj_t modkandinsky_fill_polygon(size_t n_args, const mp_obj_t * args) {
+  
+
+
+  KDCoordinate pointsX[KDContext::k_polygonMaxNumberOfPoints];
+  KDCoordinate pointsY[KDContext::k_polygonMaxNumberOfPoints];
+
+  size_t itemLength;
+  mp_obj_t * items;
+
+  mp_obj_get_array(args[0], &itemLength, &items);
+
+  
+  if (itemLength < 3) {
+    mp_raise_ValueError("polygon must have at least 3 points");
+  }
+  else if (itemLength > KDContext::k_polygonMaxNumberOfPoints) {
+    mp_raise_ValueError(TOO_MANY_POINTS(KDContext::k_polygonMaxNumberOfPoints));
+  }
+
+  for(int i=0; i < itemLength; i++)
+  {
+    mp_obj_t * coordinates;
+    mp_obj_get_array_fixed_n(items[i], 2, &coordinates);
+
+    pointsX[i] = mp_obj_get_int(coordinates[0]);
+    pointsY[i] = mp_obj_get_int(coordinates[1]);
+  }
+
+  KDColor color = MicroPython::Color::Parse(args[1]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->fillPolygon(pointsX, pointsY, itemLength, color);
   return mp_const_none;
 }

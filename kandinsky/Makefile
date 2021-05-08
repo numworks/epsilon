@@ -5,6 +5,7 @@ kandinsky_src += $(addprefix kandinsky/src/,\
   context_circle.cpp \
   context_line.cpp \
   context_pixel.cpp \
+  context_polygon.cpp \
   context_rect.cpp \
   context_text.cpp \
   font.cpp \

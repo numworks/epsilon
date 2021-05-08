@@ -33,6 +33,9 @@ public:
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
 
+  //Polygon 
+  static const int k_polygonMaxNumberOfPoints = 32;
+  void fillPolygon(KDCoordinate pointsX[], KDCoordinate pointsY[], int numberOfPoints, KDColor color);
 protected:
   KDContext(KDPoint origin, KDRect clippingRect) :
     m_origin(origin),

@@ -319,6 +319,8 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExp, I18n::Message::PythonExp),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExpm1, I18n::Message::PythonExpm1),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFabs, I18n::Message::PythonFabs),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillCircle, I18n::Message::PythonFillCircle),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillPolygon, I18n::Message::PythonFillPolygon),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillRect, I18n::Message::PythonFillRect),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillPolygon, I18n::Message::PythonFillPolygon),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillCircle, I18n::Message::PythonFillCircle),

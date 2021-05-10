@@ -29,10 +29,7 @@ void ComplexListController::setExpression(Poincare::Expression e) {
     preferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   }
 
-  // Create variable context containing expression for symbol
-  VariableContext context = VariableContext(symbol(), App::app()->localContext());
-  assert(!m_expression.isUninitialized() && !m_expression.wasErasedByException());
-  context.setExpressionForSymbolAbstract(m_expression, Poincare::Symbol::Builder(symbol(), strlen(symbol())));
+  VariableContext context = illustratedListContext();
 
   // Fill Calculation Store
   m_calculationStore.push("im(z)", &context, CalculationHeight);

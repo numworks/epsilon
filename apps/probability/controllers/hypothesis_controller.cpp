@@ -8,6 +8,8 @@
 #include <escher/stack_view_controller.h>
 #include "input_controller.h"
 
+using namespace Probability;
+
 HypothesisController::HypothesisController(Escher::StackViewController * parent, NormalInputController * inputController,
                                            InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate)
     : SelectableListViewPage(parent),

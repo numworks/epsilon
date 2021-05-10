@@ -10,11 +10,14 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
-#include "../gui/page_controller.h"
+
 #include "../abstract/button_delegate.h"
+#include "../gui/page_controller.h"
 #include "input_controller.h"
 
 using namespace Escher;
+
+namespace Probability {
 
 class HypothesisController : public SelectableListViewPage, public ButtonDelegate {
  public:
@@ -35,5 +38,7 @@ class HypothesisController : public SelectableListViewPage, public ButtonDelegat
 
   NormalInputController * m_inputController;
 };
+
+}  // namespace Probability
 
 #endif /* HYPOTHESIS_CONTROLLER_H */

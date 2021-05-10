@@ -2,6 +2,8 @@
 
 #include <escher/stack_view_controller.h>
 
+using namespace Probability;
+
 template <int n>
 inline InputController<n>::InputController(Escher::StackViewController * parent, TestResults * resultsController,
                                            Escher::InputEventHandlerDelegate * handler,

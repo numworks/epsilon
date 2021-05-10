@@ -9,6 +9,8 @@
 #include <escher/table_view_data_source.h>
 #include <escher/text_field_delegate.h>
 
+using namespace Probability;
+
 InputGoodnessView::InputGoodnessView(Responder * parentResponder, TableViewDataSource * dataSource,
                                      InputEventHandlerDelegate * inputEventHandlerDelegate,
                                      TextFieldDelegate * textFieldDelegate)
@@ -38,3 +40,4 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent,
                                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                  TextFieldDelegate * textFieldDelegate)
     : Page(parent), m_contentView(this, this, inputEventHandlerDelegate, textFieldDelegate) {}
+

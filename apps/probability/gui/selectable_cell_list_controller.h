@@ -8,7 +8,7 @@
 /*
  * This Class is useful to create a SelectableListViewController of
  * the same type of cells.
- * Warning: by design it's the opposite of the memoization implemented in MemoizedListViewDataSource.
+ * Warning: by design it's the opposite of the memoization implemented in MemoizedListViewDataSource (every cell is stored).
  */
 template <typename Cell, int n>
 class SelectableCellListController : public Escher::SelectableListViewController {

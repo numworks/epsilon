@@ -47,11 +47,12 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	calculation_type_controller.cpp \
 	menu_controller.cpp \
 	test_controller.cpp \
-	hypothesis_controller.cpp\
-	categorical_type_controller.cpp\
-	type_controller.cpp\
-	input_controller.cpp\
-	results_controller.cpp\
+	hypothesis_controller.cpp \
+	categorical_type_controller.cpp \
+	type_controller.cpp \
+	input_controller.cpp \
+	results_controller.cpp \
+	input_goodness_controller.cpp \
 )
 
 

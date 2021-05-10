@@ -17,6 +17,7 @@
 #include "controllers/type_controller.h"
 #include "controllers/input_controller.h"
 #include "controllers/results_controller.h"
+#include "controllers/input_goodness_controller.h"
 
 namespace Probability {
 
@@ -49,6 +50,7 @@ private:
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)
+  InputGoodnessController m_inputGoodnessController;
   TestResults m_resultsController;
   NormalInputController m_inputController;
   TypeController m_typeController;

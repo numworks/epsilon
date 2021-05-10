@@ -3,10 +3,10 @@
 #include <escher/stack_view_controller.h>
 
 template <int n>
-inline InputController<n>::InputController(Escher::Responder * parent, TestResults * resultsController,
+inline InputController<n>::InputController(Escher::StackViewController * parent, TestResults * resultsController,
                                            Escher::InputEventHandlerDelegate * handler,
                                            Escher::TextFieldDelegate * textFieldDelegate)
-    : Escher::SelectableListViewController(parent),
+    : SelectableListViewPage(parent),
       m_resultsController(resultsController),
       m_next(&m_selectableTableView, I18n::Message::Ok,
              Escher::Invocation(
@@ -35,12 +35,10 @@ inline Escher::HighlightCell * InputController<n>::reusableCell(int i, int type)
 
 template <int n>
 inline void InputController<n>::buttonAction() {
-  Escher::StackViewController * stack = (Escher::StackViewController *)parentResponder();
-  stack->pop();  // Pop self
-  stack->push(m_resultsController);
+  openPage(m_resultsController, true);
 }
 
-NormalInputController::NormalInputController(Escher::Responder * parent, TestResults * resultsController,
+NormalInputController::NormalInputController(Escher::StackViewController * parent, TestResults * resultsController,
                                              Escher::InputEventHandlerDelegate * handler,
                                              Escher::TextFieldDelegate * textFieldDelegate)
     : InputController(parent, resultsController, handler, textFieldDelegate) {

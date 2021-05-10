@@ -40,7 +40,7 @@ HighlightCell * InputGoodnessDataSource::reusableCell(int i, int type) {
   return &m_cells[i];
 }
 
-InputGoodnessController::InputGoodnessController(Responder * parent,
+InputGoodnessController::InputGoodnessController(StackViewController * parent,
                                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                  TextFieldDelegate * textFieldDelegate)
-    : ViewController(parent), m_contentView(this, this, inputEventHandlerDelegate, textFieldDelegate) {}
+    : Page(parent), m_contentView(this, this, inputEventHandlerDelegate, textFieldDelegate) {}

@@ -5,9 +5,9 @@
 
 #include "../gui/selectable_cell_list_controller.h"
 
-CategoricalTypeController::CategoricalTypeController(Escher::Responder * parent,
+CategoricalTypeController::CategoricalTypeController(Escher::StackViewController * parent,
                                                      InputGoodnessController * inputGoodnessController)
-    : SelectableCellListController(parent), m_inputGoodnessController(inputGoodnessController) {
+    : SelectableCellListPage(parent), m_inputGoodnessController(inputGoodnessController) {
   m_cells[k_indexOfGoodness].setMessage(I18n::Message::GoodnessOfFit);
   m_cells[k_indexOfHomogeneity].setMessage(I18n::Message::Homogeneity);
 }

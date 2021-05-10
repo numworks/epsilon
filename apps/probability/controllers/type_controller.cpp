@@ -5,8 +5,8 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
-TypeController::TypeController(Responder * parent, HypothesisController * hypothesisController)
-    : Escher::SelectableListViewController(parent),
+TypeController::TypeController(StackViewController * parent, HypothesisController * hypothesisController)
+    : SelectableListViewPage(parent),
       m_hypothesisController(hypothesisController),
       m_contentView(&m_selectableTableView, &m_description) {
   m_cells[k_indexOfTTest].setMessage(I18n::Message::TTest);
@@ -32,9 +32,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
       break;
   }
   assert(view != nullptr);
-  Escher::StackViewController * stack = (Escher::StackViewController *)parentResponder();
-  stack->pop(); // Pop self
-  stack->push(view);
+  openPage(view, false);
   return true;
 }
 return false;

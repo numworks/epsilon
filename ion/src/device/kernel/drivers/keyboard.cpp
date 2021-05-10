@@ -123,18 +123,14 @@ static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30};
 void initInterruptions() {
   /* Init EXTI interrupts (corresponding to keyboard column pins) and TIM4
    * interrupt. */
-  class NVIC::NVIC_ISER0 iser0(0); // Reset value
-  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
   for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
-    iser0.setBit(interruptionISRIndex[i], true);
-    icpr0.setBit(interruptionISRIndex[i], true);
+      // Flush pending interruptions
+    while (NVIC.NVIC_ICPR()->getBit(interruptionISRIndex[i])) { // Read to force writing
+      NVIC.NVIC_ICPR()->setBit(interruptionISRIndex[i], true);
+    }
+    // Enable interruptions
+    NVIC.NVIC_ISER()->setBit(interruptionISRIndex[i], true);
   }
-  // Flush pending interruptions
-  while (NVIC.NVIC_ICPR0()->get() & icpr0.get()) { // Read to force writing
-    NVIC.NVIC_ICPR0()->set(icpr0);
-  }
-  // Enable interruptions
-  NVIC.NVIC_ISER0()->set(iser0);
 
   initExtendedInterruptions();
   initTimer();
@@ -144,12 +140,10 @@ void shutdownInterruptions() {
   shutdownTimer();
   shutdownExtendedInterruptions();
 
-  class NVIC::NVIC_ICER0 icer0(0); // Reset value
   for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
-    icer0.setBit(interruptionISRIndex[i], true);
+    // Disable interruptions
+    NVIC.NVIC_ICER()->setBit(interruptionISRIndex[i], true);
   }
-  // Disable interruptions
-  NVIC.NVIC_ICER0()->set(icer0);
 }
 
 void init(bool activateInterruptions) {

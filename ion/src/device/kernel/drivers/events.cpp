@@ -73,16 +73,14 @@ static constexpr int tim2interruptionISRIndex = 28;
 
 void initInterruptions() {
   // Flush pending interruptions
-  class NVIC::NVIC_ICPR0 icpr0(0); // Reset value
-  icpr0.setBit(tim2interruptionISRIndex, true);
-  while (NVIC.NVIC_ICPR0()->get() & icpr0.get()) { // Read to force writing
-    NVIC.NVIC_ICPR0()->set(icpr0);
+  while (NVIC.NVIC_ICPR()->getBit(tim2interruptionISRIndex)) { // Read to force writing
+    NVIC.NVIC_ICPR()->setBit(tim2interruptionISRIndex, true);
   }
   /* Configure the priority: the event stalling interruption should not
    * interrupt SVCalls (send data to display...) */
   NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, NVIC::NVIC_IPR::InterruptionPriority::MediumLow);
   // Enable interruptions
-  NVIC.NVIC_ISER0()->setBit(tim2interruptionISRIndex, true);
+  NVIC.NVIC_ISER()->setBit(tim2interruptionISRIndex, true);
 
   initTimer();
 }
@@ -90,7 +88,7 @@ void initInterruptions() {
 void shutdownInterruptions() {
   shutdownTimer();
   // Disable interruptions
-  NVIC.NVIC_ICER0()->setBit(tim2interruptionISRIndex, true);
+  NVIC.NVIC_ICER()->setBit(tim2interruptionISRIndex, true);
 }
 
 void init() {
@@ -309,7 +307,7 @@ Ion::Events::Event nextEvent(int * timeout) {
   }
 }
 
-void resetTimer() {
+void resetStallingTimer() {
   // Init timer on the first call to getEvent
   TIM2.CR1()->setCEN(true);
   // Reset the counter
@@ -318,7 +316,7 @@ void resetTimer() {
 
 Ion::Events::Event getEvent(int * timeout) {
   Ion::Events::Event e = nextEvent(timeout);
-  resetTimer();
+  resetStallingTimer();
   return e;
 }
 

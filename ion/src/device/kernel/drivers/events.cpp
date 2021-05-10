@@ -336,7 +336,7 @@ Ion::Events::Event getEvent(int * timeout) {
   return e;
 }
 
-static bool s_spinner = true;
+static bool s_spinner = false;
 
 static KDColor s_spinnerPixels[k_spinnerSize][k_spinnerSize] = {
   {KDColor::RGB16(0xBD), KDColor::RGB16(0xC6), KDColor::RGB16(0xEA), KDColor::RGB16(0xFB), KDColor::RGB16(0xFB), KDColor::RGB16(0xEA), KDColor::RGB16(0xC6), KDColor::RGB16(0xBD)},

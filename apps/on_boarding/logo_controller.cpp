@@ -55,6 +55,7 @@ void LogoController::viewDidDisappear() {
       AppsContainer::sharedAppsContainer()->activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
     }
   }
+  Ion::Events::setSpinner(true);
   ViewController::viewDidDisappear();
 }
 

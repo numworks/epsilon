@@ -1,18 +1,19 @@
 #include "sequence.h"
 #include "sequence_cache_context.h"
 #include "sequence_store.h"
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
+#include "../shared/poincare_helpers.h"
+#include <apps/i18n.h>
+#include <poincare/addition.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/integer.h>
+#include <poincare/layout_helper.h>
+#include <poincare/rational.h>
+#include <poincare/sequence.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/sum.h>
 #include <poincare/vertical_offset_layout.h>
-#include <poincare/integer.h>
-#include <poincare/rational.h>
-#include <poincare/addition.h>
 #include <poincare/zoom.h>
-#include "../shared/poincare_helpers.h"
 #include <string.h>
-#include <apps/i18n.h>
 #include <cmath>
 #include <float.h>
 
@@ -135,49 +136,46 @@ bool Sequence::isEmpty() {
 }
 
 bool Sequence::badlyReferencesItself(Context * context) {
-    bool allowFirstCondition = false, allowSecondCondition = false, allowFirstOrderSelfReference = false, allowSecondOrderSelfReference = false;
-    const void * pack[] = { this, &allowFirstCondition, &allowSecondCondition, &allowFirstOrderSelfReference, &allowSecondOrderSelfReference };
+  bool allowFirstCondition = false, allowSecondCondition = false, allowFirstOrderSelfReference = false, allowSecondOrderSelfReference = false;
+  const void * pack[] = { this, &allowFirstCondition, &allowSecondCondition, &allowFirstOrderSelfReference, &allowSecondOrderSelfReference };
 
-    Poincare::Expression::ExpressionTypeTest test = [](const Expression e, const void * aux) {
-      if (e.type() != ExpressionNode::Type::Sequence) {
-        return false;
-      }
-      const char * eName = static_cast<const Symbol &>(e).name();
-      assert(strlen(eName) == 1);
-      const void * const * pack = static_cast<const void * const *>(aux);
-      const Sequence * sequence = static_cast<const Sequence *>(pack[0]);
-      if (sequence->fullName()[0] == eName[0]) {
-        Expression rank = e.childAtIndex(0);
-        bool allowFirstCondition = *static_cast<const bool *>(pack[1]),
-             allowSecondCondition = *static_cast<const bool *>(pack[2]),
-             allowFirstOrderSelfReference = *static_cast<const bool *>(pack[3]),
-             allowSecondOrderSelfReference = *static_cast<const bool *>(pack[4]);
-        return !(
-            (allowFirstCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank())))
-         || (allowSecondCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank() + 1)))
-         || (allowFirstOrderSelfReference && rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown)))
-         || (allowSecondOrderSelfReference && rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))))
-         );
-      }
+  Poincare::Expression::ExpressionTypeTest test = [](const Expression e, const void * aux) {
+    if (e.type() != ExpressionNode::Type::Sequence) {
       return false;
-    };
-
-    bool res = false;
-    if (type() != Sequence::Type::Explicit) {
-      res |= firstInitialConditionExpressionReduced(context).hasExpression(test, pack);
-      if (type() == Sequence::Type::DoubleRecurrence) {
-        allowFirstCondition = true;
-        res |= secondInitialConditionExpressionReduced(context).hasExpression(test, pack);
-        allowSecondCondition = true;
-        allowFirstOrderSelfReference = true;
-        allowSecondOrderSelfReference = true;
-      } else {
-        allowFirstCondition = true;
-        allowFirstOrderSelfReference = true;
-      }
     }
+    const char * eName = static_cast<const Poincare::Sequence &>(e).name();
+    assert(strlen(eName) == 1);
+    const void * const * pack = static_cast<const void * const *>(aux);
+    const Sequence * sequence = static_cast<const Sequence *>(pack[0]);
+    if (sequence->fullName()[0] == eName[0]) {
+      Expression rank = e.childAtIndex(0);
+      bool allowFirstCondition = *static_cast<const bool *>(pack[1]),
+           allowSecondCondition = *static_cast<const bool *>(pack[2]),
+           allowFirstOrderSelfReference = *static_cast<const bool *>(pack[3]),
+           allowSecondOrderSelfReference = *static_cast<const bool *>(pack[4]);
+      return !(
+          (allowFirstCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank())))
+       || (allowSecondCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank() + 1)))
+       || (allowFirstOrderSelfReference && rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown)))
+       || (allowSecondOrderSelfReference && rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))))
+       );
+    }
+    return false;
+  };
 
-    return res || expressionReduced(context).hasExpression(test, pack);
+  bool res = false;
+  if (type() != Sequence::Type::Explicit) {
+    res |= firstInitialConditionExpressionReduced(context).hasExpression(test, pack);
+    allowFirstCondition = true;
+    if (type() == Sequence::Type::DoubleRecurrence) {
+      res |= secondInitialConditionExpressionReduced(context).hasExpression(test, pack);
+      allowSecondCondition = true;
+      allowSecondOrderSelfReference = true;
+    }
+    allowFirstOrderSelfReference = true;
+  }
+
+  return res || expressionReduced(context).hasExpression(test, pack);
 }
 
 template<typename T>

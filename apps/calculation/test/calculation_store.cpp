@@ -300,6 +300,24 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  // 4 - Nested local variables within variables
+  assertMainCalculationOutputIs("int(x+1,x,1,3)→a",    "6",     &globalContext, &store);
+  assertMainCalculationOutputIs("a",                   "undef", &globalContext, &store); // 6 is expected
+  assertMainCalculationOutputIs("a+y→a",               "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y×a,y,1)",       "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("1→y",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y×a,y,1)",       "undef", &globalContext, &store); // 7 is expected
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(x,x,x)→a",       "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(a,x,3)",         "undef", &globalContext, &store); // 0 is expected
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

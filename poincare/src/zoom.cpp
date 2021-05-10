@@ -356,17 +356,17 @@ void Zoom::FullRange(ValueAtAbscissa evaluation, float tMin, float tMax, float t
 
 void Zoom::CombineRanges(float min1, float max1, float min2, float max2, float * minRes, float * maxRes) {
   assert(minRes != nullptr && maxRes != nullptr);
-  if (!std::isfinite(min1)) {
+  if (std::isnan(min1)) {
     *minRes = min2;
-  } else if (!std::isfinite(min2)) {
+  } else if (std::isnan(min2)) {
     *minRes = min1;
   } else {
     *minRes = std::min(min1, min2);
   }
 
-  if (!std::isfinite(max1)) {
+  if (std::isnan(max1)) {
     *maxRes = max2;
-  } else if (!std::isfinite(max2)) {
+  } else if (std::isnan(max2)) {
     *maxRes = max1;
   } else {
     *maxRes = std::max(max1, max2);

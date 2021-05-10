@@ -10,39 +10,43 @@ namespace Regs {
 // http://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf
 class NVIC {
 public:
-  class MaskRegister : public Register32 {
+  class MaskRegister  {
   public:
-    using Register32::Register32;
-    bool getBit(int index) { return (bool)getBitRange(index, index); }
-    void setBit(int index, bool state) volatile { setBitRange(index, index, state); }
+    bool getBit(int index) volatile {
+      assert(index < static_cast<int>(sizeof(m_values)/sizeof(Register32) * 32));
+      int indexMod32 = index % 32;
+      return static_cast<bool>(m_values[index / 32].getBitRange(indexMod32, indexMod32));
+    }
+    void setBit(int index, bool value) volatile {
+      assert(index < static_cast<int>(sizeof(m_values)/sizeof(Register32) * 32));
+      int indexMod32 = index % 32;
+      m_values[index / 32].setBitRange(indexMod32, indexMod32, value);
+    }
+  private:
+    Register32 m_values[8];
   };
 
-  class NVIC_ISER0 : public MaskRegister {
+  class NVIC_ISER : public MaskRegister {
   public:
     using MaskRegister::MaskRegister;
   };
-  class NVIC_ISER1 : public MaskRegister { };
-  class NVIC_ISER2 : public MaskRegister { };
-  class NVIC_ICER0 : public MaskRegister {
+  class NVIC_ICER : public MaskRegister {
   public:
     using MaskRegister::MaskRegister;
   };
-  class NVIC_ICER1 : public MaskRegister { };
-  class NVIC_ICER2 : public MaskRegister { };
 
-  class NVIC_ICPR0 : public MaskRegister {
+  class NVIC_ICPR : public MaskRegister {
   public:
     using MaskRegister::MaskRegister;
   };
-  class NVIC_ICPR1 : public MaskRegister { };
-  class NVIC_ICPR2 : public MaskRegister { };
 
-  class NVIC_IABR0 : public MaskRegister { };
+  class NVIC_IABR : public MaskRegister { };
 
   class NVIC_IPR  {
   public:
     /* STM32 implements only 16 programable priority levels - when Cortex M(4/7)
-     * would offer a maximal range of 256. */
+     * would offer a maximal range of 256. Only the 4 most significant bits are
+     * meaningful. */
     enum class InterruptionPriority : uint8_t {
       High = 0b00000000,
       MediumHigh = 0b00010000,
@@ -64,16 +68,10 @@ public:
   };
 
   constexpr NVIC() {};
-  REGS_REGISTER_AT(NVIC_ISER0, 0x00);
-  REGS_REGISTER_AT(NVIC_ISER1, 0x04);
-  REGS_REGISTER_AT(NVIC_ISER2, 0x08);
-  REGS_REGISTER_AT(NVIC_ICER0, 0x80);
-  REGS_REGISTER_AT(NVIC_ICER1, 0x84);
-  REGS_REGISTER_AT(NVIC_ICER2, 0x88);
-  REGS_REGISTER_AT(NVIC_ICPR0, 0x180);
-  REGS_REGISTER_AT(NVIC_ICPR1, 0x184);
-  REGS_REGISTER_AT(NVIC_ICPR2, 0x188);
-  REGS_REGISTER_AT(NVIC_IABR0, 0x200);
+  REGS_REGISTER_AT(NVIC_ISER, 0x00);
+  REGS_REGISTER_AT(NVIC_ICER, 0x80);
+  REGS_REGISTER_AT(NVIC_ICPR, 0x180);
+  REGS_REGISTER_AT(NVIC_IABR, 0x200);
   REGS_REGISTER_AT(NVIC_IPR, 0x300);
 private:
   constexpr uint32_t Base() const {

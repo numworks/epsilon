@@ -82,7 +82,7 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
 
   ScrollableThreeExpressionsCell * myCell = static_cast<ScrollableThreeExpressionsCell *>(cell);
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
-  myCell->setCalculation(c);
+  myCell->setCalculation(c, &context);
   myCell->setDisplayCenter(c->displayOutput(&context) != Calculation::DisplayOutput::ApproximateOnly);
 }
 

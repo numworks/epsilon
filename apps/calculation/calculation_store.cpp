@@ -123,8 +123,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
    * can't change anymore: the calculation heights are fixed which ensures that
    * scrolling computation is right. */
   calculation->setHeights(
-      heightComputer(calculation.pointer(), false),
-      heightComputer(calculation.pointer(), true));
+      heightComputer(calculation.pointer(), context, false),
+      heightComputer(calculation.pointer(), context, true));
   return calculation;
 }
 

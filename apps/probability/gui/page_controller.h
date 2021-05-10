@@ -1,0 +1,43 @@
+#ifndef PAGE_CONTROLLER_H
+#define PAGE_CONTROLLER_H
+
+#include <escher/selectable_list_view_controller.h>
+#include <escher/stack_view_controller.h>
+#include <escher/view_controller.h>
+
+using namespace Escher;
+
+/*
+ * This templatized class adds some utils function to handle the parentResponder as a StackViewController.
+ * To enforce correct typing, the specialization class must require a StackViewController * be passed
+ * as argument to the constructor.
+ */
+template <typename T>
+class PageController : public T {
+  using T::T;
+
+ public:
+  StackViewController * stackViewController() { return static_cast<StackViewController *>(T::parentResponder()); }
+  void openPage(ViewController * nextPage, bool subPage = true, KDColor textColor = Palette::SubTab,
+                KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright) {
+    if (subPage) {
+      assert(stackViewController()->topViewController() == this);
+      stackViewController()->pop();
+    }
+    stackViewController()->push(nextPage, textColor, backgroundColor, separatorColor);
+  }
+};
+
+class PageViewController : public PageController<ViewController> {
+ public:
+  PageViewController(StackViewController * stackViewController) : PageController(stackViewController){};
+};
+
+class SelectableListViewPage : public PageController<SelectableListViewController> {
+ public:
+  SelectableListViewPage(StackViewController * stackViewController,
+                         SelectableTableViewDelegate * tableDelegate = nullptr)
+      : PageController(stackViewController, tableDelegate){};
+};
+
+#endif /* PAGE_CONTROLLER_H */

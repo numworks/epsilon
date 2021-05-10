@@ -14,17 +14,18 @@
 #include <escher/view_controller.h>
 #include <kandinsky/coordinate.h>
 
+#include "../abstract/button_delegate.h"
 #include "../gui/page_controller.h"
 
 using namespace Escher;
 
-class InputGoodnessView : public VerticalLayout<3>, public SelectableTableViewDataSource {
+class InputGoodnessView : public VerticalLayout<3>, public SelectableTableViewDataSource, public ButtonDelegate {
  public:
   InputGoodnessView(Responder * parentResponder, TableViewDataSource * dataSource,
                     InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
 
  private:
-  void buttonAction() {}
+  void buttonAction() override {}
 
   constexpr static int k_indexOfTable = 0;
   constexpr static int k_indexOfSignificance = 1;

@@ -14,13 +14,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_inputController(inputController),
       m_h0(&m_selectableTableView, handler, textFieldDelegate),
       m_ha(&m_selectableTableView, handler, textFieldDelegate),
-      m_next(&m_selectableTableView, I18n::Message::Ok,
-             Escher::Invocation(
-                 [](void * c, void * s) {
-                   reinterpret_cast<HypothesisController *>(c)->buttonAction();
-                   return true;
-                 },
-                 this)) {
+      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
   m_h0.setMessage(I18n::Message::H0);
   m_h0.setAccessoryText("p=");
   m_ha.setMessage(I18n::Message::Ha);

@@ -13,10 +13,11 @@
 #include <escher/text_field_delegate.h>
 
 #include "../gui/page_controller.h"
+#include "../abstract/button_delegate.h"
 #include "results_controller.h"
 
 template <int numberOfParams>
-class InputController : public SelectableListViewPage {
+class InputController : public SelectableListViewPage, public ButtonDelegate {
  public:
   InputController(Escher::StackViewController * parent, TestResults * resultsController,
                   Escher::InputEventHandlerDelegate * handler,  // TODO same obj
@@ -32,7 +33,7 @@ class InputController : public SelectableListViewPage {
     }
     Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
-  void buttonAction();
+  void buttonAction() override;
 
  protected:
   constexpr static int k_numberOfParameters = numberOfParams;

@@ -11,10 +11,11 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+#include "../abstract/button_delegate.h"
 #include "../gui/page_controller.h"
 
 template <int numberOfResults>
-class ResultsController : public SelectableListViewPage {
+class ResultsController : public SelectableListViewPage, public ButtonDelegate {
  public:
   ResultsController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
@@ -29,7 +30,7 @@ class ResultsController : public SelectableListViewPage {
     }
     Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
-  void buttonAction();
+  void buttonAction() override;
 
  protected:
   constexpr static int k_numberOfRows = numberOfResults + 1;

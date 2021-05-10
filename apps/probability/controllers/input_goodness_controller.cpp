@@ -15,13 +15,7 @@ InputGoodnessView::InputGoodnessView(Responder * parentResponder, TableViewDataS
     : VerticalLayout(),
       m_tableView(parentResponder, dataSource, this),
       m_significance(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-      m_next(parentResponder, I18n::Message::Ok,
-             Escher::Invocation(
-                 [](void * ctx, void * sender) -> bool {
-                   reinterpret_cast<InputGoodnessView *>(ctx)->buttonAction();
-                   return true;
-                 },
-                 this)) {
+      m_next(parentResponder, I18n::Message::Ok, buttonActionInvocation()) {
   // m_significance.setMessage(I18n::Message::A);
   // m_significance.setSubLabelMessage(I18n::Message::SignificanceLevel);
   // m_significance.setAccessoryText("0.05");

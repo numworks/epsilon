@@ -1,7 +1,6 @@
 #include "illustrated_list_controller.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/symbol.h>
-#include <poincare/variable_context.h>
 #include "../app.h"
 
 using namespace Poincare;
@@ -75,10 +74,7 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
   if (typeAtIndex(index) == k_illustrationCellType) {
     return;
   }
-  // Create variable context containing expression for symbol
-  VariableContext context = VariableContext(symbol(), App::app()->localContext());
-  assert(!m_expression.isUninitialized() && !m_expression.wasErasedByException());
-  context.setExpressionForSymbolAbstract(m_expression, Poincare::Symbol::Builder(symbol(), strlen(symbol())));
+  VariableContext context = illustratedListContext();
 
   ScrollableThreeExpressionsCell * myCell = static_cast<ScrollableThreeExpressionsCell *>(cell);
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
@@ -105,6 +101,14 @@ void IllustratedListController::tableViewDidChangeSelection(SelectableTableView 
 void IllustratedListController::setExpression(Poincare::Expression e) {
   m_calculationStore.deleteAll();
   m_expression = e.clone();
+}
+
+Poincare::VariableContext IllustratedListController::illustratedListContext() {
+  // Create variable context containing expression for symbol
+  VariableContext context = VariableContext(symbol(), App::app()->localContext());
+  assert(!m_expression.isUninitialized() && !m_expression.wasErasedByException());
+  context.setExpressionForSymbolAbstract(m_expression, Poincare::Symbol::Builder(symbol(), strlen(symbol())));
+  return context;
 }
 
 int IllustratedListController::textAtIndex(char * buffer, size_t bufferSize, int index) {

@@ -74,7 +74,7 @@ void VerticalLayout<n>::drawRect(KDContext * ctx, KDRect rectToRedraw) const {
 
 class TestVerticalController : public VerticalLayoutController<3> {
  public:
-  TestVerticalController(Escher::Responder * parent) : VerticalLayoutController<3>(parent), m_list(parent) {
+  TestVerticalController(Escher::StackViewController * parent) : VerticalLayoutController<3>(parent), m_list(parent) {
     m_title.setMessage(I18n::Message::ProbaApp);
     m_description.setMessage(I18n::Message::ProbaAppCapital);
     verticalLayout()->setView(&m_title, 0);
@@ -88,7 +88,7 @@ class TestVerticalController : public VerticalLayoutController<3> {
 
  private:
   Escher::MessageTextView m_title, m_description;
-  SelectableCellListController<Escher::MessageTableCellWithChevron, 4> m_list;
+  SelectableCellListPage<Escher::MessageTableCellWithChevron, 4> m_list;
 };
 
 #endif /* VERTICAL_LAYOUT_H */

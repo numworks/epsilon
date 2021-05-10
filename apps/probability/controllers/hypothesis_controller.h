@@ -10,14 +10,14 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
-
+#include "../gui/page_controller.h"
 #include "input_controller.h"
 
 using namespace Escher;
 
-class HypothesisController : public SelectableListViewController {
+class HypothesisController : public SelectableListViewPage {
  public:
-  HypothesisController(Escher::Responder * parent, NormalInputController * inputController,
+  HypothesisController(Escher::StackViewController * parent, NormalInputController * inputController,
                        InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate);
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }

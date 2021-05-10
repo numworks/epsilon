@@ -11,6 +11,8 @@
 #include "../gui/selectable_cell_list_controller.h"
 #include "input_goodness_controller.h"
 
+namespace Probability {
+
 constexpr static int k_numberOfCategoricalCells = 2;
 
 class CategoricalTypeController
@@ -35,4 +37,5 @@ class CategoricalTypeController
   InputGoodnessController * m_inputGoodnessController;
 };
 
+}  // namespace Probability
 #endif /* CATEGORICAL_TYPE_CONTROLLER_H */

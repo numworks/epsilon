@@ -14,6 +14,8 @@
 #include "../abstract/button_delegate.h"
 #include "../gui/page_controller.h"
 
+namespace Probability {
+
 template <int numberOfResults>
 class ResultsController : public SelectableListViewPage, public ButtonDelegate {
  public:
@@ -48,5 +50,7 @@ class TestResults : public ResultsController<2> {
   constexpr static int k_indexOfZ = 0;
   constexpr static int k_indexOfPVal = 1;
 };
+
+}  // namespace Probability
 
 #endif /* RESULTS_CONTROLLER_H */

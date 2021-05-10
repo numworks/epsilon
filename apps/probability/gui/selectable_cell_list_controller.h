@@ -8,6 +8,7 @@
 
 #include "page_controller.h"
 
+namespace Probability {
 /*
  * This Class is useful to create a SelectableListViewController of
  * the same type of cells.
@@ -30,5 +31,7 @@ class SelectableCellListPage : public SelectableListViewPage {
   constexpr static int k_numberOfRows = n;
   Cell m_cells[n];
 };
+
+}  // namespace Probability
 
 #endif /* SELECTABLE_CELL_LIST_CONTROLLER_H */

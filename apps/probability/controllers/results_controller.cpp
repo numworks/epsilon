@@ -7,6 +7,8 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+using namespace Probability;
+
 template <int numberOfResults>
 ResultsController<numberOfResults>::ResultsController(Escher::StackViewController * parent,
                                                       Escher::InputEventHandlerDelegate * handler,

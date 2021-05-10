@@ -9,7 +9,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
-namespace Probability {
+using namespace Probability;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Escher::ViewController * distributionController, Escher::ViewController * testController)
@@ -54,5 +54,3 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-
-}  // namespace Probability

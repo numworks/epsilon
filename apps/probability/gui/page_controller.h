@@ -7,6 +7,8 @@
 
 using namespace Escher;
 
+namespace Probability {
+
 /*
  * This templatized class adds some utils function to handle the parentResponder as a StackViewController.
  * To enforce correct typing, the specialization class must require a StackViewController * be passed
@@ -42,5 +44,7 @@ class SelectableListViewPage : public PageController<SelectableListViewControlle
                          SelectableTableViewDelegate * tableDelegate = nullptr)
       : PageController(stackViewController, tableDelegate){};
 };
+
+}
 
 #endif /* PAGE_CONTROLLER_H */

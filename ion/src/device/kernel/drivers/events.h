@@ -2,6 +2,7 @@
 #define ION_DEVICE_KERNEL_EVENTS_H
 
 #include <ion/events.h>
+#include <kandinsky/rect.h>
 
 namespace Ion {
 namespace Device {
@@ -26,6 +27,9 @@ bool isDefinedSecure(uint8_t eventId);
 
 void setSpinner(bool spinner);
 void stall();
+constexpr int k_spinnerSize = 8;
+constexpr KDRect k_spinnerRect(250, 5, k_spinnerSize, k_spinnerSize);
+void hideSpinner();
 
 void resetPendingKeyboardState();
 bool setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State keyboardState);

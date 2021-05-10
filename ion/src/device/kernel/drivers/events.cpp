@@ -56,31 +56,46 @@ bool isDefinedSecure(uint8_t eventId) {
  * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
  * not to overflow PSC. */
 static constexpr int k_prescalerFactor = 4;
-static constexpr int k_stallingDelay = 2*1000*k_prescalerFactor; // TODO: calibrate
+static constexpr int k_stallingDelay = 200*k_prescalerFactor; // TODO: calibrate
+static constexpr int k_spinnerHidingDelay = 300*k_prescalerFactor; // TODO: calibrate
 
 void initTimer() {
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
   TIM2.DIER()->setUIE(true);
   TIM2.ARR()->set(k_stallingDelay);
+
+  TIM12.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
+  TIM12.DIER()->setUIE(true);
+  TIM12.ARR()->set(k_spinnerHidingDelay);
 }
 
 void shutdownTimer() {
   TIM2.DIER()->setUIE(false);
   TIM2.CR1()->setCEN(false);
+
+  TIM12.DIER()->setUIE(false);
+  TIM12.CR1()->setCEN(false);
 }
 
 static constexpr int tim2interruptionISRIndex = 28;
+static constexpr int tim12interruptionISRIndex = 43; // TODO: add static assert?
 
 void initInterruptions() {
   // Flush pending interruptions
   while (NVIC.NVIC_ICPR()->getBit(tim2interruptionISRIndex)) { // Read to force writing
     NVIC.NVIC_ICPR()->setBit(tim2interruptionISRIndex, true);
   }
+  while (NVIC.NVIC_ICPR()->getBit(tim12interruptionISRIndex)) { // Read to force writing
+    NVIC.NVIC_ICPR()->setBit(tim12interruptionISRIndex, true);
+  }
+
   /* Configure the priority: the event stalling interruption should not
    * interrupt SVCalls (send data to display...) */
   NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, NVIC::NVIC_IPR::InterruptionPriority::MediumLow);
+  NVIC.NVIC_IPR()->setPriority(tim12interruptionISRIndex, NVIC::NVIC_IPR::InterruptionPriority::MediumLow);
   // Enable interruptions
   NVIC.NVIC_ISER()->setBit(tim2interruptionISRIndex, true);
+  NVIC.NVIC_ISER()->setBit(tim12interruptionISRIndex, true);
 
   initTimer();
 }
@@ -89,6 +104,7 @@ void shutdownInterruptions() {
   shutdownTimer();
   // Disable interruptions
   NVIC.NVIC_ICER()->setBit(tim2interruptionISRIndex, true);
+  NVIC.NVIC_ICER()->setBit(tim12interruptionISRIndex, true);
 }
 
 void init() {
@@ -322,8 +338,38 @@ Ion::Events::Event getEvent(int * timeout) {
 
 static bool s_spinner = true;
 
+static KDColor s_spinnerPixels[k_spinnerSize][k_spinnerSize] = {
+  {KDColor::RGB16(0xBD), KDColor::RGB16(0xC6), KDColor::RGB16(0xEA), KDColor::RGB16(0xFB), KDColor::RGB16(0xFB), KDColor::RGB16(0xEA), KDColor::RGB16(0xC6), KDColor::RGB16(0xBD)},
+  {KDColor::RGB16(0xC6), KDColor::RGB16(0xF4), KDColor::RGB16(0xD7), KDColor::RGB16(0xC1), KDColor::RGB16(0xC1), KDColor::RGB16(0xD7), KDColor::RGB16(0xF4), KDColor::RGB16(0xC6)},
+  {KDColor::RGB16(0xE1), KDColor::RGB16(0xD4), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xD6), KDColor::RGB16(0xE1)},
+  {KDColor::RGB16(0xE6), KDColor::RGB16(0xC0), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xC0), KDColor::RGB16(0xE6)},
+  {KDColor::RGB16(0xDC), KDColor::RGB16(0xC0), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xC0), KDColor::RGB16(0xDC)},
+  {KDColor::RGB16(0xCC), KDColor::RGB16(0xC7), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xC8), KDColor::RGB16(0xCC)},
+  {KDColor::RGB16(0xBF), KDColor::RGB16(0xCA), KDColor::RGB16(0xC2), KDColor::RGB16(0xBE), KDColor::RGB16(0xBE), KDColor::RGB16(0xC2), KDColor::RGB16(0xC9), KDColor::RGB16(0xBF)},
+  {KDColor::RGB16(0xBD), KDColor::RGB16(0xBE), KDColor::RGB16(0xC1), KDColor::RGB16(0xC2), KDColor::RGB16(0xC2), KDColor::RGB16(0xC1), KDColor::RGB16(0xBE), KDColor::RGB16(0xBD)}
+};
+
+void spin() {
+  KDCoordinate size = k_spinnerRect.height();
+  assert(size == k_spinnerRect.width());
+  for (int i = 0; i < size/2; i++) {
+    for (int j = i; j < size - 2*i; j++) {
+      KDColor temp = s_spinnerPixels[i][j];
+      s_spinnerPixels[i][j] = s_spinnerPixels[size-1-j][i];
+      s_spinnerPixels[size-1-j][i] = s_spinnerPixels[size-1-i][size-1-j];
+      s_spinnerPixels[size-1-i][size-1-j] = s_spinnerPixels[j][size-1-i];
+      s_spinnerPixels[j][size-1-i] = temp;
+    }
+  }
+}
+
 void setSpinner(bool spinner) {
   s_spinner = spinner;
+}
+
+void launchSpinnerDismissTimer() {
+  TIM12.CR1()->setCEN(true);
+  TIM12.CNT()->set(0);
 }
 
 void stall() {
@@ -335,18 +381,20 @@ void stall() {
   }
 
   if (s_spinner) {
-  /* TODO: set another quick timer that would restore the image below in a few ms...*/
-  //if (CircuitBreaker::hasCheckpoint()) {
+    spin();
+    // TODO: stalling when no User/System checkpoint is set could lead to checkout the home
     // TODO: should we shutdown any interruption here to be sure to complete our drawing
     // TODO: draw a hourglass or spinning circle?
-    static KDColor c = KDColorGreen;
-    Ion::Device::Display::pushRectUniform(KDRect(155,115,10,10), c);
-    c = c == KDColorGreen ? KDColorRed : KDColorGreen;
-
-  /*} else {
-    // TODO: go back to the home!
-  }*/
+    Ion::Device::Display::pushRect(k_spinnerRect, reinterpret_cast<KDColor *>(s_spinnerPixels));
+    launchSpinnerDismissTimer();
   }
+}
+
+void hideSpinner() {
+  // Clear update interrupt flag
+  TIM12.SR()->setUIF(false);
+  TIM12.CR1()->setCEN(false);
+  Ion::Device::Display::pushRectUniform(k_spinnerRect, KDColor::RGB24(0xffb734));
 }
 
 void resetPendingKeyboardState() {

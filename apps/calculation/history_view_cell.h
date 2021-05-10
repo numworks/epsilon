@@ -35,7 +35,7 @@ public:
   constexpr static KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
   constexpr static KDCoordinate k_inputViewHorizontalMargin = Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
-  static KDCoordinate Height(Calculation * calculation, bool expanded);
+  static KDCoordinate Height(Calculation * calculation, Poincare::Context * context, bool expanded);
   HistoryViewCell(Responder * parentResponder = nullptr);
   static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth, bool ellipsis);
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType = HistoryViewCellDataSource::SubviewType::None);
@@ -52,7 +52,7 @@ public:
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override { return m_even ? KDColorWhite : Escher::Palette::WallScreen; }
   void resetMemoization();
-  void setCalculation(Calculation * calculation, bool expanded, bool canChangeDisplayOutput = false);
+  void setCalculation(Calculation * calculation, bool expanded, Poincare::Context * context, bool canChangeDisplayOutput = false);
   int numberOfSubviews() const override { return 2 + displayedEllipsis(); }
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

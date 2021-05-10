@@ -35,8 +35,7 @@ class CalculationStore {
 public:
   CalculationStore();
   CalculationStore(char * buffer, int size);
-
-  typedef KDCoordinate (*HeightComputer)(Calculation * c, bool expanded);
+  typedef KDCoordinate (*HeightComputer)(Calculation * c, Poincare::Context * context, bool expanded);
   Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context, HeightComputer heightComputer);
 
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);

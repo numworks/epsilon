@@ -24,7 +24,7 @@ void assert_store_is(CalculationStore * store, const char * * result) {
   }
 }
 
-KDCoordinate dummyHeight(::Calculation::Calculation * c, bool expanded) { return 0; }
+KDCoordinate dummyHeight(::Calculation::Calculation * c, Poincare::Context * context, bool expanded) { return 0; }
 
 QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;

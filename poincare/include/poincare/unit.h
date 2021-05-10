@@ -97,11 +97,12 @@ public:
     static constexpr int k_numberOfDimensions = 24;
     static const Representative * const * DefaultRepresentatives();
     static const Representative * RepresentativeForDimension(Vector<int> vector);
-    constexpr Representative(const char * rootSymbol, double ratio, Prefixable inputPrefixable, Prefixable outputPrefixable) :
+    constexpr Representative(const char * rootSymbol, const char * ratioExpression, Prefixable inputPrefixable, Prefixable outputPrefixable) :
       m_rootSymbol(rootSymbol),
-      m_ratio(ratio),
+      m_ratioExpression(ratioExpression),
       m_inputPrefixable(inputPrefixable),
-      m_outputPrefixable(outputPrefixable)
+      m_outputPrefixable(outputPrefixable),
+      m_ratio(NAN)
     {}
 
     virtual const Vector<int> dimensionVector() const { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; };
@@ -119,37 +120,43 @@ public:
     virtual int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const { return 0; }
 
     const char * rootSymbol() const { return m_rootSymbol; }
-    double ratio() const { return m_ratio; }
+    double ratio() const;
     bool isInputPrefixable() const { return m_inputPrefixable != Prefixable::None; }
     bool isOutputPrefixable() const { return m_outputPrefixable != Prefixable::None; }
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
     bool canParseWithEquivalents(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix) const;
     bool canParse(const char * symbol, size_t length, const Prefix * * prefix) const;
-    Expression toBaseUnits() const;
+    Expression toBaseUnits(ExpressionNode::ReductionContext reductionContext) const;
     bool canPrefix(const Prefix * prefix, bool input) const;
     const Prefix * findBestPrefix(double value, double exponent) const;
 
   protected:
     static const Representative * DefaultFindBestRepresentative(double value, double exponent, const Representative * representatives, int length, const Prefix * * prefix);
+
+    Expression ratioExpressionReduced(ExpressionNode::ReductionContext reductionContext) const;
+
     const char * m_rootSymbol;
     /* m_ratio is the factor used to convert a unit made of the representative
      * and its base prefix into base SI units.
      * ex : m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m).
-     *      m_ratio for gram is 1 (as k is its best prefix and _kg is SI) */
-    const double m_ratio;
+     *      m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
+     * m_ratioExpression is the expression expressed as a formula, to be used
+     * as an expression in reductions. */
+    const char * m_ratioExpression;
     const Prefixable m_inputPrefixable;
     const Prefixable m_outputPrefixable;
+    mutable double m_ratio;
   };
 
   class TimeRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static TimeRepresentative Default() { return TimeRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static TimeRepresentative Default() { return TimeRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 1, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 7; }
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
-    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return m_ratio * value >= representativesOfSameDimension()[1].ratio(); }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return ratio() * value >= representativesOfSameDimension()[1].ratio(); }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -158,7 +165,7 @@ public:
   class DistanceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static DistanceRepresentative Default() { return DistanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static DistanceRepresentative Default() { return DistanceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 8; }
     const Representative * representativesOfSameDimension() const override;
@@ -173,7 +180,7 @@ public:
   class MassRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static MassRepresentative Default() { return MassRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static MassRepresentative Default() { return MassRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 7; }
     const Representative * representativesOfSameDimension() const override;
@@ -189,7 +196,7 @@ public:
   class CurrentRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static CurrentRepresentative Default() { return CurrentRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static CurrentRepresentative Default() { return CurrentRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -202,7 +209,7 @@ public:
     friend class Unit;
   public:
     static double ConvertTemperatures(double value, const Representative * source, const Representative * target);
-    constexpr static TemperatureRepresentative Default() { return TemperatureRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static TemperatureRepresentative Default() { return TemperatureRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 1, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 3; }
     const Representative * representativesOfSameDimension() const override;
@@ -219,7 +226,7 @@ public:
   class AmountOfSubstanceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static AmountOfSubstanceRepresentative Default() { return AmountOfSubstanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static AmountOfSubstanceRepresentative Default() { return AmountOfSubstanceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 1, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -231,7 +238,7 @@ public:
   class LuminousIntensityRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static LuminousIntensityRepresentative Default() { return LuminousIntensityRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static LuminousIntensityRepresentative Default() { return LuminousIntensityRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 1}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -243,7 +250,7 @@ public:
   class FrequencyRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static FrequencyRepresentative Default() { return FrequencyRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static FrequencyRepresentative Default() { return FrequencyRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -1, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -254,7 +261,7 @@ public:
   class ForceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static ForceRepresentative Default() { return ForceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static ForceRepresentative Default() { return ForceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 1, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -265,7 +272,7 @@ public:
   class PressureRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static PressureRepresentative Default() { return PressureRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static PressureRepresentative Default() { return PressureRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = -1, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 3; }
     const Representative * representativesOfSameDimension() const override;
@@ -276,7 +283,7 @@ public:
   class EnergyRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static EnergyRepresentative Default() { return EnergyRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static EnergyRepresentative Default() { return EnergyRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
@@ -289,7 +296,7 @@ public:
   class PowerRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static PowerRepresentative Default() { return PowerRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static PowerRepresentative Default() { return PowerRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -301,7 +308,7 @@ public:
     friend class Unit;
   public:
     using Representative::Representative;
-    constexpr static ElectricChargeRepresentative Default() { return ElectricChargeRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static ElectricChargeRepresentative Default() { return ElectricChargeRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 1, .distance = 0, .mass = 0, .current = 1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -310,7 +317,7 @@ public:
   class ElectricPotentialRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static ElectricPotentialRepresentative Default() { return ElectricPotentialRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static ElectricPotentialRepresentative Default() { return ElectricPotentialRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = -1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -321,7 +328,7 @@ public:
   class ElectricCapacitanceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static ElectricCapacitanceRepresentative Default() { return ElectricCapacitanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static ElectricCapacitanceRepresentative Default() { return ElectricCapacitanceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 4, .distance = -2, .mass = -1, .current = 2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -332,7 +339,7 @@ public:
   class ElectricResistanceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static ElectricResistanceRepresentative Default() { return ElectricResistanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static ElectricResistanceRepresentative Default() { return ElectricResistanceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = -2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -343,7 +350,7 @@ public:
   class ElectricConductanceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static ElectricConductanceRepresentative Default() { return ElectricConductanceRepresentative(nullptr, 1., Prefixable::None, Prefixable::None); }
+    constexpr static ElectricConductanceRepresentative Default() { return ElectricConductanceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 3, .distance = -2, .mass = -1, .current = 2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -354,7 +361,7 @@ public:
   class MagneticFluxRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static MagneticFluxRepresentative Default() { return MagneticFluxRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static MagneticFluxRepresentative Default() { return MagneticFluxRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = -1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -365,7 +372,7 @@ public:
   class MagneticFieldRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static MagneticFieldRepresentative Default() { return MagneticFieldRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static MagneticFieldRepresentative Default() { return MagneticFieldRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 0, .mass = 1, .current = -1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -376,7 +383,7 @@ public:
   class InductanceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static InductanceRepresentative Default() { return InductanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static InductanceRepresentative Default() { return InductanceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = -2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -387,7 +394,7 @@ public:
   class CatalyticActivityRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static CatalyticActivityRepresentative Default() { return CatalyticActivityRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static CatalyticActivityRepresentative Default() { return CatalyticActivityRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -1, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 1, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
@@ -398,7 +405,7 @@ public:
   class SurfaceRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static SurfaceRepresentative Default() { return SurfaceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static SurfaceRepresentative Default() { return SurfaceRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 2, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
@@ -412,7 +419,7 @@ public:
   class VolumeRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static VolumeRepresentative Default() { return VolumeRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static VolumeRepresentative Default() { return VolumeRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 3, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 8; }
     const Representative * representativesOfSameDimension() const override;
@@ -426,7 +433,7 @@ public:
   class SpeedRepresentative : public Representative {
     friend class Unit;
   public:
-    constexpr static SpeedRepresentative Default() { return SpeedRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    constexpr static SpeedRepresentative Default() { return SpeedRepresentative(nullptr, nullptr, Prefixable::None, Prefixable::None); }
     const Vector<int>dimensionVector() const override { return Vector<int>{.time = -1, .distance = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override { return nullptr; }
     bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
@@ -521,100 +528,98 @@ public:
   typedef Representative::Prefixable Prefixable;
   typedef UnitNode::TimeRepresentative TimeRepresentative;
   static constexpr const TimeRepresentative k_timeRepresentatives[] = {
-    TimeRepresentative("s", 1., Prefixable::All, Prefixable::NegativeLongScale),
-    TimeRepresentative("min", 60., Prefixable::None, Prefixable::None),
-    TimeRepresentative("h", 3600., Prefixable::None, Prefixable::None),
-    TimeRepresentative("day", 24.*3600., Prefixable::None, Prefixable::None),
-    TimeRepresentative("week", 7.*24.*3600., Prefixable::None, Prefixable::None),
-    TimeRepresentative("month", 365.25/12.*24.*3600., Prefixable::None, Prefixable::None),
-    TimeRepresentative("year", 365.25*24.*3600., Prefixable::None, Prefixable::None),
+    TimeRepresentative("s", "1", Prefixable::All, Prefixable::NegativeLongScale),
+    TimeRepresentative("min", "60", Prefixable::None, Prefixable::None),
+    TimeRepresentative("h", "3600", Prefixable::None, Prefixable::None),
+    TimeRepresentative("day", "86400", Prefixable::None, Prefixable::None),
+    TimeRepresentative("week", "604800", Prefixable::None, Prefixable::None),
+    TimeRepresentative("month", "2629800", Prefixable::None, Prefixable::None),
+    TimeRepresentative("year", "31557600", Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::DistanceRepresentative DistanceRepresentative;
   static constexpr const DistanceRepresentative k_distanceRepresentatives[] = {
-    DistanceRepresentative("m", 1., Prefixable::All, Prefixable::NegativeAndKilo),
-    DistanceRepresentative("au", 149597870700., Prefixable::None, Prefixable::None),
-    DistanceRepresentative("ly", 299792458.*365.25*24.*3600., Prefixable::None, Prefixable::None),
-    DistanceRepresentative("pc", 180.*3600./M_PI*149587870700., Prefixable::None, Prefixable::None),
-    DistanceRepresentative("in", 0.0254, Prefixable::None, Prefixable::None),
-    DistanceRepresentative("ft", 12*0.0254, Prefixable::None, Prefixable::None),
-    DistanceRepresentative("yd", 3*12*0.0254, Prefixable::None, Prefixable::None),
-    DistanceRepresentative("mi", 1760*3*12*0.0254, Prefixable::None, Prefixable::None),
+    DistanceRepresentative("m", "1", Prefixable::All, Prefixable::NegativeAndKilo),
+    DistanceRepresentative("au", "149597870700", Prefixable::None, Prefixable::None),
+    DistanceRepresentative("ly", "299792458*31557600", Prefixable::None, Prefixable::None),
+    DistanceRepresentative("pc", "180*3600/π*149587870700", Prefixable::None, Prefixable::None),
+    DistanceRepresentative("in", "0.0254", Prefixable::None, Prefixable::None),
+    DistanceRepresentative("ft", "12*0.0254", Prefixable::None, Prefixable::None),
+    DistanceRepresentative("yd", "36*0.0254", Prefixable::None, Prefixable::None),
+    DistanceRepresentative("mi", "63360*0.0254", Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::MassRepresentative MassRepresentative;
   static constexpr const MassRepresentative k_massRepresentatives[] = {
-    MassRepresentative("g", 1., Prefixable::All, Prefixable::NegativeAndKilo),
-    MassRepresentative("t", 1e3, Prefixable::PositiveLongScale, Prefixable::PositiveLongScale),
-    MassRepresentative("Da", 1/(6.02214076e26), Prefixable::All, Prefixable::All),
-    MassRepresentative("oz", 0.028349523125, Prefixable::None, Prefixable::None),
-    MassRepresentative("lb", 16*0.028349523125, Prefixable::None, Prefixable::None),
-    MassRepresentative("shtn", 2000*16*0.028349523125, Prefixable::None, Prefixable::None),
-    MassRepresentative("lgtn", 2240*16*0.028349523125, Prefixable::None, Prefixable::None),
+    MassRepresentative("g", "1", Prefixable::All, Prefixable::NegativeAndKilo),
+    MassRepresentative("t", "1000", Prefixable::PositiveLongScale, Prefixable::PositiveLongScale),
+    MassRepresentative("Da", "1/(6.02214076ᴇ26)", Prefixable::All, Prefixable::All),
+    MassRepresentative("oz", "0.028349523125", Prefixable::None, Prefixable::None),
+    MassRepresentative("lb", "16*0.028349523125", Prefixable::None, Prefixable::None),
+    MassRepresentative("shtn", "2000*16*0.028349523125", Prefixable::None, Prefixable::None),
+    MassRepresentative("lgtn", "2240*16*0.028349523125", Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::CurrentRepresentative CurrentRepresentative;
-  static constexpr const CurrentRepresentative k_currentRepresentatives[] = { CurrentRepresentative("A", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const CurrentRepresentative k_currentRepresentatives[] = { CurrentRepresentative("A", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::TemperatureRepresentative TemperatureRepresentative;
   static constexpr const TemperatureRepresentative k_temperatureRepresentatives[] = {
-    TemperatureRepresentative("K", 1., Prefixable::All, Prefixable::None),
-    TemperatureRepresentative("°C", 1., Prefixable::None, Prefixable::None),
-    TemperatureRepresentative("°F", 5./9., Prefixable::None, Prefixable::None),
+    TemperatureRepresentative("K", "1", Prefixable::All, Prefixable::None),
+    TemperatureRepresentative("°C", "1", Prefixable::None, Prefixable::None),
+    TemperatureRepresentative("°F", "5/9", Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::AmountOfSubstanceRepresentative AmountOfSubstanceRepresentative;
-  static constexpr const AmountOfSubstanceRepresentative k_amountOfSubstanceRepresentatives[] = { AmountOfSubstanceRepresentative("mol", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const AmountOfSubstanceRepresentative k_amountOfSubstanceRepresentatives[] = { AmountOfSubstanceRepresentative("mol", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::LuminousIntensityRepresentative LuminousIntensityRepresentative;
-  static constexpr const LuminousIntensityRepresentative k_luminousIntensityRepresentatives[] = { LuminousIntensityRepresentative("cd", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const LuminousIntensityRepresentative k_luminousIntensityRepresentatives[] = { LuminousIntensityRepresentative("cd", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::FrequencyRepresentative FrequencyRepresentative;
-  static constexpr const FrequencyRepresentative k_frequencyRepresentatives[] = { FrequencyRepresentative("Hz", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const FrequencyRepresentative k_frequencyRepresentatives[] = { FrequencyRepresentative("Hz", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ForceRepresentative ForceRepresentative;
-  static constexpr const ForceRepresentative k_forceRepresentatives[] = { ForceRepresentative("N", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const ForceRepresentative k_forceRepresentatives[] = { ForceRepresentative("N", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::PressureRepresentative PressureRepresentative;
   static constexpr const PressureRepresentative k_pressureRepresentatives[] = {
-    PressureRepresentative("Pa", 1., Prefixable::All, Prefixable::LongScale),
-    PressureRepresentative("bar", 100000, Prefixable::All, Prefixable::LongScale),
-    PressureRepresentative("atm", 101325, Prefixable::None, Prefixable::None),
+    PressureRepresentative("Pa", "1", Prefixable::All, Prefixable::LongScale),
+    PressureRepresentative("bar", "100000", Prefixable::All, Prefixable::LongScale),
+    PressureRepresentative("atm", "101325", Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::EnergyRepresentative EnergyRepresentative;
   static constexpr const EnergyRepresentative k_energyRepresentatives[] = {
-    EnergyRepresentative("J", 1., Prefixable::All, Prefixable::LongScale),
-    EnergyRepresentative("eV", 1.602176634e-19, Prefixable::All, Prefixable::LongScale),
+    EnergyRepresentative("J", "1", Prefixable::All, Prefixable::LongScale),
+    EnergyRepresentative("eV", "1.602176634ᴇ-19", Prefixable::All, Prefixable::LongScale),
   };
   typedef UnitNode::PowerRepresentative PowerRepresentative;
-  static constexpr const PowerRepresentative k_powerRepresentatives[] = { PowerRepresentative("W", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const PowerRepresentative k_powerRepresentatives[] = { PowerRepresentative("W", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricChargeRepresentative ElectricChargeRepresentative;
-  static constexpr const ElectricChargeRepresentative k_electricChargeRepresentatives[] = { ElectricChargeRepresentative("C", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const ElectricChargeRepresentative k_electricChargeRepresentatives[] = { ElectricChargeRepresentative("C", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricPotentialRepresentative ElectricPotentialRepresentative;
-  static constexpr const ElectricPotentialRepresentative k_electricPotentialRepresentatives[] = { ElectricPotentialRepresentative("V", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const ElectricPotentialRepresentative k_electricPotentialRepresentatives[] = { ElectricPotentialRepresentative("V", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricCapacitanceRepresentative ElectricCapacitanceRepresentative;
-  static constexpr const ElectricCapacitanceRepresentative k_electricCapacitanceRepresentatives[] = { ElectricCapacitanceRepresentative("F", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const ElectricCapacitanceRepresentative k_electricCapacitanceRepresentatives[] = { ElectricCapacitanceRepresentative("F", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricResistanceRepresentative ElectricResistanceRepresentative;
-  static constexpr const ElectricResistanceRepresentative k_electricResistanceRepresentatives[] = { ElectricResistanceRepresentative("Ω", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const ElectricResistanceRepresentative k_electricResistanceRepresentatives[] = { ElectricResistanceRepresentative("Ω", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricConductanceRepresentative ElectricConductanceRepresentative;
-  static constexpr const ElectricConductanceRepresentative k_electricConductanceRepresentatives[] = { ElectricConductanceRepresentative("S", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const ElectricConductanceRepresentative k_electricConductanceRepresentatives[] = { ElectricConductanceRepresentative("S", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::MagneticFluxRepresentative MagneticFluxRepresentative;
-  static constexpr const MagneticFluxRepresentative k_magneticFluxRepresentatives[] = { MagneticFluxRepresentative("Wb", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const MagneticFluxRepresentative k_magneticFluxRepresentatives[] = { MagneticFluxRepresentative("Wb", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::MagneticFieldRepresentative MagneticFieldRepresentative;
-  static constexpr const MagneticFieldRepresentative k_magneticFieldRepresentatives[] = { MagneticFieldRepresentative("T", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const MagneticFieldRepresentative k_magneticFieldRepresentatives[] = { MagneticFieldRepresentative("T", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::InductanceRepresentative InductanceRepresentative;
-  static constexpr const InductanceRepresentative k_inductanceRepresentatives[] = { InductanceRepresentative("H", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const InductanceRepresentative k_inductanceRepresentatives[] = { InductanceRepresentative("H", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::CatalyticActivityRepresentative CatalyticActivityRepresentative;
-  static constexpr const CatalyticActivityRepresentative k_catalyticActivityRepresentatives[] = { CatalyticActivityRepresentative("kat", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const CatalyticActivityRepresentative k_catalyticActivityRepresentatives[] = { CatalyticActivityRepresentative("kat", "1", Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::SurfaceRepresentative SurfaceRepresentative;
   static constexpr const SurfaceRepresentative k_surfaceRepresentatives[] = {
-    SurfaceRepresentative("ha", 10000., Prefixable::None, Prefixable::None),
-    SurfaceRepresentative("acre", 4046.8564224, Prefixable::None, Prefixable::None),
+    SurfaceRepresentative("ha", "10000", Prefixable::None, Prefixable::None),
+    SurfaceRepresentative("acre", "4046.8564224", Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::VolumeRepresentative VolumeRepresentative;
   static constexpr const VolumeRepresentative k_volumeRepresentatives[] = {
-    VolumeRepresentative("L", 0.001, Prefixable::All, Prefixable::Negative),
-    VolumeRepresentative("tsp", 0.00000492892159375, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("tbsp", 3*0.00000492892159375, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("floz", 0.0000295735295625, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("cup", 8*0.0000295735295625, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("pt", 16*0.0000295735295625, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("qt", 32*0.0000295735295625, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("gal", 128*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("L", "0.001", Prefixable::All, Prefixable::Negative),
+    VolumeRepresentative("tsp", "0.00000492892159375", Prefixable::None, Prefixable::None),
+    VolumeRepresentative("tbsp", "3*0.00000492892159375", Prefixable::None, Prefixable::None),
+    VolumeRepresentative("floz", "0.0000295735295625", Prefixable::None, Prefixable::None),
+    VolumeRepresentative("cup", "8*0.0000295735295625", Prefixable::None, Prefixable::None),
+    VolumeRepresentative("pt", "16*0.0000295735295625", Prefixable::None, Prefixable::None),
+    VolumeRepresentative("qt", "32*0.0000295735295625", Prefixable::None, Prefixable::None),
+    VolumeRepresentative("gal", "128*0.0000295735295625", Prefixable::None, Prefixable::None),
   };
-  /* FIXME : Some ratio are too precise too be well approximated by double.
-   * Maybe switch to a rationnal representation with two int. */
 
   /* Define access points to some prefixes and representatives. */
   static constexpr int k_emptyPrefixIndex = 6;

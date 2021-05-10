@@ -34,7 +34,7 @@ public:
 protected:
   constexpr static uint8_t k_illustrationCellType = 0;
   constexpr static uint8_t k_additionalCalculationCellType = 1;
-  static KDCoordinate CalculationHeight(Calculation * c, bool expanded) { return ScrollableThreeExpressionsCell::Height(c); }
+  static KDCoordinate CalculationHeight(Calculation * c, Poincare::Context * context, bool expanded) { return ScrollableThreeExpressionsCell::Height(c, context); }
   Poincare::Expression m_expression;
   CalculationStore m_calculationStore;
 private:

@@ -36,9 +36,9 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 
 /* HistoryViewCell */
 
-KDCoordinate HistoryViewCell::Height(Calculation * calculation, bool expanded) {
+KDCoordinate HistoryViewCell::Height(Calculation * calculation, Poincare::Context * context, bool expanded) {
   HistoryViewCell cell(nullptr);
-  cell.setCalculation(calculation, expanded, true);
+  cell.setCalculation(calculation, expanded, context, true);
   KDRect ellipsisFrame = KDRectZero;
   KDRect inputFrame = KDRectZero;
   KDRect outputFrame = KDRectZero;
@@ -239,12 +239,11 @@ void HistoryViewCell::resetMemoization() {
   m_calculationCRC32 = 0;
 }
 
-void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, bool canChangeDisplayOutput) {
+void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, Poincare::Context * context, bool canChangeDisplayOutput) {
   uint32_t newCalculationCRC = Ion::crc32Byte((const uint8_t *)calculation, ((char *)calculation->next()) - ((char *) calculation));
   if (newCalculationCRC == m_calculationCRC32 && m_calculationExpanded == expanded) {
     return;
   }
-  Poincare::Context * context = App::app()->localContext();
 
   // TODO: maybe do this only when the layout won't change to avoid blinking
   resetMemoization();

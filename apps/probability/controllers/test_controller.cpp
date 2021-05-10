@@ -12,6 +12,8 @@
 #include "hypothesis_controller.h"
 #include "type_controller.h"
 
+using namespace Probability;
+
 TestController::TestController(Escher::StackViewController * parentResponder, HypothesisController * hypothesisController,
                                TypeController * typeController, CategoricalTypeController * categoricalController)
     : SelectableCellListPage(parentResponder),

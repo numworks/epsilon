@@ -3,6 +3,8 @@
 
 #include <escher/invocation.h>
 
+namespace Probability {
+
 class ButtonDelegate {
  public:
   virtual void buttonAction() = 0;
@@ -17,5 +19,7 @@ class ButtonDelegate {
         this);
   }
 };
+
+}  // namespace Probability
 
 #endif /* BUTTON_CONTROLLER_H */

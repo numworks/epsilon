@@ -10,9 +10,12 @@
 #include "hypothesis_controller.h"
 #include "type_controller.h"
 
+namespace Probability {
+
 constexpr static int k_numberOfTestCells = 5;
 
-class TestController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells> {
+class TestController
+    : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells> {
  public:
   TestController(Escher::StackViewController * parentResponder, HypothesisController * hypothesisController,
                  TypeController * typeController, CategoricalTypeController * categoricalController);
@@ -31,5 +34,7 @@ class TestController : public SelectableCellListPage<Escher::MessageTableCellWit
   CategoricalTypeController * m_categoricalController;
   TypeController * m_typeController;
 };
+
+}  // namespace Probability
 
 #endif /* TEST_CONTROLLER_H */

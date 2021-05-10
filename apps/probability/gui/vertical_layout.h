@@ -14,6 +14,8 @@
 
 #include "selectable_cell_list_controller.h"
 
+namespace Probability {
+
 /*
  * View that lays out its subviews vertically.
  */
@@ -90,5 +92,7 @@ class TestVerticalController : public VerticalLayoutController<3> {
   Escher::MessageTextView m_title, m_description;
   SelectableCellListPage<Escher::MessageTableCellWithChevron, 4> m_list;
 };
+
+}  // namespace Probability
 
 #endif /* VERTICAL_LAYOUT_H */

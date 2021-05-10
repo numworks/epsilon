@@ -19,6 +19,8 @@
 
 using namespace Escher;
 
+namespace Probability {
+
 class InputGoodnessView : public VerticalLayout<3>, public SelectableTableViewDataSource, public ButtonDelegate {
  public:
   InputGoodnessView(Responder * parentResponder, TableViewDataSource * dataSource,
@@ -68,5 +70,7 @@ class InputGoodnessController : public Page, InputGoodnessDataSource {
  private:
   InputGoodnessView m_contentView;
 };
+
+}  // namespace Probability
 
 #endif /* INPUT_GOODNESS_CONTROLLER_H */

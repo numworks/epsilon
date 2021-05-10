@@ -20,6 +20,8 @@
 
 using namespace Escher;
 
+namespace Probability {
+
 /* Simple view to include list and description below */
 class TypeView : public VerticalLayout<2> {
  public:
@@ -60,5 +62,7 @@ class TypeController : public SelectableListViewPage {
   TypeView m_contentView;
   MessageTextView m_description;
 };
+
+}  // namespace Probability
 
 #endif /* TYPE_CONTROLLER_H */

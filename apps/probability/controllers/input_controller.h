@@ -12,9 +12,11 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/text_field_delegate.h>
 
-#include "../gui/page_controller.h"
 #include "../abstract/button_delegate.h"
+#include "../gui/page_controller.h"
 #include "results_controller.h"
+
+namespace Probability {
 
 template <int numberOfParams>
 class InputController : public SelectableListViewPage, public ButtonDelegate {
@@ -52,5 +54,7 @@ class NormalInputController : public InputController<2> {
   constexpr static int k_indexOfX = 0;
   constexpr static int k_indexOfN = 1;
 };
+
+}  // namespace Probability
 
 #endif /* INPUT_CONTROLLER_H */

@@ -5,6 +5,8 @@
 
 #include "../gui/selectable_cell_list_controller.h"
 
+using namespace Probability;
+
 CategoricalTypeController::CategoricalTypeController(Escher::StackViewController * parent,
                                                      InputGoodnessController * inputGoodnessController)
     : SelectableCellListPage(parent), m_inputGoodnessController(inputGoodnessController) {

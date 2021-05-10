@@ -5,6 +5,8 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
+using namespace Probability;
+
 TypeController::TypeController(StackViewController * parent, HypothesisController * hypothesisController)
     : SelectableListViewPage(parent),
       m_hypothesisController(hypothesisController),
@@ -37,3 +39,4 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
 }
 return false;
 }
+

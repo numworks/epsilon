@@ -4,6 +4,7 @@
 #include "scrollable_three_expressions_cell.h"
 #include "list_controller.h"
 #include "../calculation_store.h"
+#include <poincare/variable_context.h>
 #include <apps/i18n.h>
 
 namespace Calculation {
@@ -35,6 +36,7 @@ protected:
   constexpr static uint8_t k_illustrationCellType = 0;
   constexpr static uint8_t k_additionalCalculationCellType = 1;
   static KDCoordinate CalculationHeight(Calculation * c, Poincare::Context * context, bool expanded) { return ScrollableThreeExpressionsCell::Height(c, context); }
+  Poincare::VariableContext illustratedListContext();
   Poincare::Expression m_expression;
   CalculationStore m_calculationStore;
 private:

@@ -41,6 +41,8 @@ void initPeripheralsClocks() {
   RCC.APB1ENR()->setTIM3EN(true);
   // We're using TIM4 for keyboard
   RCC.APB1ENR()->setTIM4EN(true);
+  // We're using TIM12 for events
+  RCC.APB1ENR()->setTIM12EN(true);
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0); // Reset value

@@ -2,6 +2,7 @@
 #define VERTICAL_LAYOUT_H
 
 #include <apps/i18n.h>
+#include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_text_view.h>
 #include <escher/responder.h>
 #include <escher/view.h>
@@ -10,13 +11,15 @@
 #include <kandinsky/context.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/rect.h>
-#include <escher/message_table_cell_with_chevron.h>
-#include <apps/i18n.h>
 
 #include "selectable_cell_list_controller.h"
 
+/*
+ * View that lays out its subviews vertically.
+ */
 template <int numberOfChildren>
 class VerticalLayout : public Escher::View {
+  // To inherit, just provide the list of subviews, either to the constructor of by calling setView
  public:
   VerticalLayout(Escher::View * views) : m_views{views} {}
   VerticalLayout() : VerticalLayout(nullptr) {}
@@ -26,7 +29,8 @@ class VerticalLayout : public Escher::View {
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setView(Escher::View * v, int i) { m_views[i] = v; }
 
- private:
+ protected:
+  constexpr static int k_numberOfChildren = numberOfChildren;
   Escher::View * m_views[numberOfChildren];
 };
 
@@ -70,8 +74,7 @@ void VerticalLayout<n>::drawRect(KDContext * ctx, KDRect rectToRedraw) const {
 
 class TestVerticalController : public VerticalLayoutController<3> {
  public:
-  TestVerticalController(Escher::Responder * parent)
-      : VerticalLayoutController<3>(parent), m_list(parent) {
+  TestVerticalController(Escher::Responder * parent) : VerticalLayoutController<3>(parent), m_list(parent) {
     m_title.setMessage(I18n::Message::ProbaApp);
     m_description.setMessage(I18n::Message::ProbaAppCapital);
     verticalLayout()->setView(&m_title, 0);

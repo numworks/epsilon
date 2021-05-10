@@ -19,7 +19,7 @@ public:
     setBackgroundColor(KDColorWhite);
   }
   void resetMemoization();
-  void setCalculation(Calculation * calculation, bool canChangeDisplayOutput);
+  void setCalculation(Calculation * calculation, Poincare::Context * context, bool canChangeDisplayOutput);
   void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
     return m_contentCell.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
   }
@@ -41,7 +41,7 @@ private:
 
 class ScrollableThreeExpressionsCell : public Escher::TableCell, public Escher::Responder {
 public:
-  static KDCoordinate Height(Calculation * calculation);
+  static KDCoordinate Height(Calculation * calculation, Poincare::Context * context);
   ScrollableThreeExpressionsCell() :
     Responder(nullptr),
     m_view(this) {}
@@ -60,7 +60,7 @@ public:
 
   void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
   void resetMemoization() { m_view.resetMemoization(); }
-  void setCalculation(Calculation * calculation, bool canChangeDisplayOutput = false);
+  void setCalculation(Calculation * calculation, Poincare::Context * context, bool canChangeDisplayOutput = false);
   void setDisplayCenter(bool display);
   ScrollableThreeExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }

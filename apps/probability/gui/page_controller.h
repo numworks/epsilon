@@ -18,19 +18,22 @@ class PageController : public T {
 
  public:
   StackViewController * stackViewController() { return static_cast<StackViewController *>(T::parentResponder()); }
-  void openPage(ViewController * nextPage, bool subPage = true, KDColor textColor = Palette::SubTab,
+  /* Pushes the given controller onto the StackViewController */
+  void openPage(ViewController * nextPage, bool subPage, KDColor textColor = Palette::SubTab,
                 KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright) {
-    if (subPage) {
-      assert(stackViewController()->topViewController() == this);
-      stackViewController()->pop();
+    StackViewController * stack =
+        stackViewController();  // We need to keep a ref, otherwise parentResponder might become nullptr
+    if (!subPage) {
+      assert(stack->topViewController() == this);
+      stack->pop();
     }
-    stackViewController()->push(nextPage, textColor, backgroundColor, separatorColor);
+    stack->push(nextPage, textColor, backgroundColor, separatorColor);
   }
 };
 
-class PageViewController : public PageController<ViewController> {
+class Page : public PageController<ViewController> {
  public:
-  PageViewController(StackViewController * stackViewController) : PageController(stackViewController){};
+  Page(StackViewController * stackViewController) : PageController(stackViewController){};
 };
 
 class SelectableListViewPage : public PageController<SelectableListViewController> {

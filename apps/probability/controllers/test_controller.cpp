@@ -12,9 +12,9 @@
 #include "hypothesis_controller.h"
 #include "type_controller.h"
 
-TestController::TestController(Escher::Responder * parentResponder, HypothesisController * hypothesisController,
+TestController::TestController(Escher::StackViewController * parentResponder, HypothesisController * hypothesisController,
                                TypeController * typeController, CategoricalTypeController * categoricalController)
-    : SelectableCellListController(parentResponder),
+    : SelectableCellListPage(parentResponder),
       m_hypothesisController(hypothesisController),
       m_categoricalController(categoricalController),
       m_typeController(typeController) {

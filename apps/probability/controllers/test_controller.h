@@ -12,9 +12,9 @@
 
 constexpr static int k_numberOfTestCells = 5;
 
-class TestController : public SelectableCellListController<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells> {
+class TestController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells> {
  public:
-  TestController(Escher::Responder * parentResponder, HypothesisController * hypothesisController,
+  TestController(Escher::StackViewController * parentResponder, HypothesisController * hypothesisController,
                  TypeController * typeController, CategoricalTypeController * categoricalController);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;

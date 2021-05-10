@@ -4,16 +4,19 @@
 #include <apps/shared/button_with_separator.h>
 #include <escher/container.h>
 #include <escher/highlight_cell.h>
+#include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
-#include <escher/input_event_handler_delegate.h>
+#include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+#include "../gui/page_controller.h"
+
 template <int numberOfResults>
-class ResultsController : public Escher::SelectableListViewController {
+class ResultsController : public SelectableListViewPage {
  public:
-  ResultsController(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+  ResultsController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfRows; }
   Escher::HighlightCell * reusableCell(int i, int type) override;
@@ -37,7 +40,7 @@ class ResultsController : public Escher::SelectableListViewController {
 
 class TestResults : public ResultsController<2> {
  public:
-  TestResults(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+  TestResults(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler,
               Escher::TextFieldDelegate * textFieldDelegate);
 
  private:

@@ -8,9 +8,9 @@
 #include <escher/stack_view_controller.h>
 #include "input_controller.h"
 
-HypothesisController::HypothesisController(Escher::Responder * parent, NormalInputController * inputController,
+HypothesisController::HypothesisController(Escher::StackViewController * parent, NormalInputController * inputController,
                                            InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate)
-    : SelectableListViewController(parent),
+    : SelectableListViewPage(parent),
       m_inputController(inputController),
       m_h0(&m_selectableTableView, handler, textFieldDelegate),
       m_ha(&m_selectableTableView, handler, textFieldDelegate),
@@ -51,6 +51,5 @@ void HypothesisController::didBecomeFirstResponder() {
 }
 
 void HypothesisController::buttonAction() {
-  StackViewController * stack = reinterpret_cast<StackViewController *>(parentResponder());
-  stack->push(m_inputController);
+  openPage(m_inputController, false);
 }

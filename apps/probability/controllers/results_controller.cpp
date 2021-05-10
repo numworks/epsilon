@@ -8,10 +8,10 @@
 #include <escher/text_field_delegate.h>
 
 template <int numberOfResults>
-ResultsController<numberOfResults>::ResultsController(Escher::Responder * parent,
+ResultsController<numberOfResults>::ResultsController(Escher::StackViewController * parent,
                                                       Escher::InputEventHandlerDelegate * handler,
                                                       Escher::TextFieldDelegate * textFieldDelegate)
-    : Escher::SelectableListViewController(parent),
+    : SelectableListViewPage(parent),
       m_next(&m_selectableTableView, I18n::Message::Ok,
              Escher::Invocation(
                  [](void * ctx, void * sender) -> bool {
@@ -32,7 +32,7 @@ Escher::HighlightCell * ResultsController<numberOfResults>::reusableCell(int i, 
 template <int numberOfResults>
 void ResultsController<numberOfResults>::buttonAction() {}
 
-TestResults::TestResults(Escher::Responder * parent, Escher::InputEventHandlerDelegate * handler,
+TestResults::TestResults(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler,
                          Escher::TextFieldDelegate * textFieldDelegate)
     : ResultsController(parent, handler, textFieldDelegate) {
   m_cells[k_indexOfZ].setMessage(I18n::Message::Z);

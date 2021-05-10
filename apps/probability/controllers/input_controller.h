@@ -12,12 +12,13 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+#include "../gui/page_controller.h"
 #include "results_controller.h"
 
 template <int numberOfParams>
-class InputController : public Escher::SelectableListViewController {
+class InputController : public SelectableListViewPage {
  public:
-  InputController(Escher::Responder * parent, TestResults * resultsController,
+  InputController(Escher::StackViewController * parent, TestResults * resultsController,
                   Escher::InputEventHandlerDelegate * handler,  // TODO same obj
                   Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfParameters + 1 /* button */; }
@@ -43,7 +44,7 @@ class InputController : public Escher::SelectableListViewController {
 
 class NormalInputController : public InputController<2> {
  public:
-  NormalInputController(Escher::Responder * parent, TestResults * resultsController,
+  NormalInputController(Escher::StackViewController * parent, TestResults * resultsController,
                         Escher::InputEventHandlerDelegate * handler, Escher::TextFieldDelegate * textFieldDelegate);
 
  private:

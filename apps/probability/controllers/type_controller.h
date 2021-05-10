@@ -10,9 +10,11 @@
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
+#include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
+#include "../gui/page_controller.h"
 #include "../gui/vertical_layout.h"
 #include "hypothesis_controller.h"
 
@@ -31,9 +33,9 @@ class TypeView : public VerticalLayout<2> {
   MessageTextView * m_description;
 };
 
-class TypeController : public SelectableListViewController {
+class TypeController : public SelectableListViewPage {
  public:
-  TypeController(Responder * parent, HypothesisController * hypothesisController);
+  TypeController(StackViewController * parent, HypothesisController * hypothesisController);
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override {
     m_selectableTableView.selectRow(0);

@@ -3,9 +3,10 @@
 
 #include <escher/container.h>
 #include <escher/highlight_cell.h>
-#include <ion/events.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/responder.h>
+#include <escher/stack_view_controller.h>
+#include <ion/events.h>
 
 #include "../gui/selectable_cell_list_controller.h"
 #include "input_goodness_controller.h"
@@ -13,9 +14,9 @@
 constexpr static int k_numberOfCategoricalCells = 2;
 
 class CategoricalTypeController
-    : public SelectableCellListController<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells> {
+    : public SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells> {
  public:
-  CategoricalTypeController(Escher::Responder * parent, InputGoodnessController * inputGoodnessController);
+  CategoricalTypeController(Escher::StackViewController * parent, InputGoodnessController * inputGoodnessController);
   void didBecomeFirstResponder() override {
     // TODO factor out
     if (selectedRow() == -1) {

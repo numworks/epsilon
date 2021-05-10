@@ -574,6 +574,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("sign(_s)", "1");
   assert_parsed_expression_simplify_to("abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "14×_m");
   assert_parsed_expression_simplify_to("sign(3_m) + 2", "3");
+  assert_parsed_expression_simplify_to("1/_m+1/_km", "1.001×_m^\u0012-1\u0013");
 
 
 }

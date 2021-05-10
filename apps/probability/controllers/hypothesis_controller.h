@@ -11,18 +11,19 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
 #include "../gui/page_controller.h"
+#include "../abstract/button_delegate.h"
 #include "input_controller.h"
 
 using namespace Escher;
 
-class HypothesisController : public SelectableListViewPage {
+class HypothesisController : public SelectableListViewPage, public ButtonDelegate {
  public:
   HypothesisController(Escher::StackViewController * parent, NormalInputController * inputController,
                        InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate);
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
   void didBecomeFirstResponder() override;
-  void buttonAction();
+  void buttonAction() override;
 
  private:
   constexpr static int k_indexOfH0 = 0;

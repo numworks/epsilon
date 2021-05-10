@@ -12,13 +12,7 @@ ResultsController<numberOfResults>::ResultsController(Escher::StackViewControlle
                                                       Escher::InputEventHandlerDelegate * handler,
                                                       Escher::TextFieldDelegate * textFieldDelegate)
     : SelectableListViewPage(parent),
-      m_next(&m_selectableTableView, I18n::Message::Ok,
-             Escher::Invocation(
-                 [](void * ctx, void * sender) -> bool {
-                   reinterpret_cast<ResultsController *>(ctx)->buttonAction();
-                   return true;
-                 },
-                 this)) {}
+      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {}
 
 template <int numberOfResults>
 Escher::HighlightCell * ResultsController<numberOfResults>::reusableCell(int i, int type) {

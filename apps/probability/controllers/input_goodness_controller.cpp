@@ -20,6 +20,7 @@ InputGoodnessView::InputGoodnessView(Responder * parentResponder, TableViewDataS
       m_tableView(this, dataSource, &m_tableSelection),
       m_significance(this, inputEventHandlerDelegate, textFieldDelegate),
       m_next(this, I18n::Message::Ok, buttonActionInvocation()) {
+  // TODO
   // m_significance.setMessage(I18n::Message::A);
   // m_significance.setSubLabelMessage(I18n::Message::SignificanceLevel);
   // m_significance.setAccessoryText("0.05");
@@ -31,7 +32,7 @@ InputGoodnessView::InputGoodnessView(Responder * parentResponder, TableViewDataS
 void InputGoodnessView::didBecomeFirstResponder() {
   // Pass focus to subview
   if (m_viewSelection.selectedRow() < 0) {
-    m_viewSelection.selectRow(2);
+    m_viewSelection.selectRow(0);
   }
   setResponderForSelectedRow();
   highlightViewForSelectedRow();
@@ -87,19 +88,18 @@ void Probability::InputGoodnessView::highlightViewForSelectedRow() {
   }
 }
 
-void Probability::InputGoodnessDataSource::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  auto evenCell = static_cast<EvenOddEditableTextCell *>(cell);
-  evenCell->setEven(j % 2 == 0);
-}
-
 InputGoodnessDataSource::InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
                                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                  TextFieldDelegate * delegate) {
   m_header[0].setMessage(I18n::Message::Observed);
   m_header[1].setMessage(I18n::Message::Expected);
-  for (int i = 0; i < 10; i++) {
+  m_header[0].setEven(true);
+  m_header[1].setEven(true);
+
+  for (int i = 0; i < k_numberOfColumns * k_initialNumberOfRows; i++) {
     m_cells[i].setParentResponder(tableView);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, delegate);
+    m_cells[i].setEven((i / 2) % 2 == 0);
   }
 }
 

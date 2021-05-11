@@ -75,13 +75,12 @@ State scan() {
 
 using namespace Regs;
 
-/* We want to prescale the timer to be able to set the auto-reload in
- * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
- * not to overflow PSC. */
-static constexpr int k_prescalerFactor = 4;
+static constexpr int k_debouncingDelay = 100;
 
 void initTimer() {
-  TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
+  TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency-1);
+  TIM4.DIER()->setUIE(true);
+  TIM4.ARR()->set(k_debouncingDelay);
 }
 
 void shutdownTimer() {
@@ -191,9 +190,8 @@ void shutdown() {
   }
 }
 
-void launchDebounceTimer(uint16_t ms) {
-  TIM4.ARR()->set(ms*k_prescalerFactor);
-  TIM4.DIER()->setUIE(true);
+void launchDebounceTimer() {
+  TIM4.CNT()->set(0);
   TIM4.CR1()->setCEN(true);
 }
 
@@ -201,7 +199,8 @@ static bool sBouncing = false;
 
 void debounce() {
   sBouncing = false;
-  shutdownTimer();
+  TIM4.SR()->setUIF(false);
+  TIM4.CR1()->setCEN(false);
 }
 
 void handleInterruption() {
@@ -221,7 +220,7 @@ void handleInterruption() {
     if (!Events::setPendingKeyboardStateIfPreemtive(state)) {
       Queue::sharedQueue()->push(state);
     }
-    launchDebounceTimer(10);
+    launchDebounceTimer();
   }
 }
 

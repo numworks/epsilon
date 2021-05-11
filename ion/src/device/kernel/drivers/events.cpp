@@ -222,7 +222,7 @@ Ion::Events::Event nextEvent(int * timeout) {
     return Ion::Events::None;
   }
 
-  uint64_t keysSeenUp = -1;
+  static uint64_t keysSeenUp = -1;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   uint64_t startTime = Ion::Timing::millis();
   while (true) {
@@ -251,8 +251,8 @@ Ion::Events::Event nextEvent(int * timeout) {
     while (!Keyboard::Queue::sharedQueue()->isEmpty()) {
       sCurrentKeyboardState = Keyboard::Queue::sharedQueue()->pop();
 
-      keysSeenUp |= ~sCurrentKeyboardState;
       keysSeenTransitionningFromUpToDown = keysSeenUp & sCurrentKeyboardState;
+      keysSeenUp = ~sCurrentKeyboardState;
 
       if (keysSeenTransitionningFromUpToDown != 0) {
         sEventIsRepeating = false;

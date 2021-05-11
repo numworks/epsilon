@@ -94,8 +94,7 @@ void Probability::InputGoodnessDataSource::willDisplayCellAtLocation(HighlightCe
 
 InputGoodnessDataSource::InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
                                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                                 TextFieldDelegate * delegate)
-    : TableViewDataSource(), m_observed(), m_expected(), m_cells() {
+                                                 TextFieldDelegate * delegate) {
   m_header[0].setMessage(I18n::Message::Observed);
   m_header[1].setMessage(I18n::Message::Expected);
   for (int i = 0; i < 10; i++) {
@@ -116,9 +115,8 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent,
                                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                  TextFieldDelegate * textFieldDelegate)
     : Page(parent),
-      InputGoodnessDataSource(parent, m_contentView.selectableTableView(), inputEventHandlerDelegate,
-                              textFieldDelegate),
-      m_contentView(this, this, inputEventHandlerDelegate, textFieldDelegate) {}
+      m_data(parent, m_contentView.selectableTableView(), inputEventHandlerDelegate, textFieldDelegate),
+      m_contentView(this, &m_data, inputEventHandlerDelegate, textFieldDelegate) {}
 
 void InputGoodnessController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);

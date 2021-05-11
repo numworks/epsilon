@@ -296,6 +296,9 @@ Ion::Events::Event nextEvent(int * timeout) {
         keyboardInterruptionOccured = true;
         break;
       }
+      if (sPreemtiveState != Ion::Keyboard::State(0)) {
+        return Ion::Events::None;
+      }
       elapsedTime = static_cast<int>(Ion::Timing::millis() - startTime);
     }
     Board::setClockStandardFrequency();

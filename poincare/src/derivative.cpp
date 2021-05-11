@@ -5,6 +5,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -163,9 +164,8 @@ T DerivativeNode::riddersApproximation(ApproximationContext approximationContext
 
 Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

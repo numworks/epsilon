@@ -116,14 +116,16 @@ private:
   QUADSPI::CCR::OperatingMode m_dataOperatingMode;
 };
 
-/* W25Q64JV does not implement QPI-4-4-4, so we always send the instructions on
- * one wire only.*/
+/* W25Q64JV does not implement QPI-4-4-4, so we almost always send the
+ * instructions on one wire only. The only exception is when sending the reset
+ * command, see comment in initChip.*/
 static constexpr OperatingModes sOperatingModes100(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::NoData);
 static constexpr OperatingModes sOperatingModes101(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::Single);
 static constexpr OperatingModes sOperatingModes110(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData);
 static constexpr OperatingModes sOperatingModes111(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single);
 static constexpr OperatingModes sOperatingModes114(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad);
 static constexpr OperatingModes sOperatingModes144(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad, QUADSPI::CCR::OperatingMode::Quad);
+static constexpr OperatingModes sOperatingModes400(QUADSPI::CCR::OperatingMode::Quad, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::NoData);
 
 static QUADSPI::CCR::OperatingMode sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
 
@@ -146,10 +148,10 @@ static void send_command_full(
     uint8_t * data,
     size_t dataLength);
 
-static inline void send_command(Command c) {
+static inline void send_command(Command c, OperatingModes operatingModes = sOperatingModes100) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
-    sOperatingModes100,
+    operatingModes,
     c,
     reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
     0, 0,
@@ -326,7 +328,21 @@ static void initQSPI() {
   QUADSPI.CR()->set(cr);
 }
 
+static void send_reset_commands(OperatingModes operatingModes = sOperatingModes100) {
+  send_command(Command::EnableReset, operatingModes);
+  send_command(Command::Reset, operatingModes);
+  Timing::usleep(30);
+  sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
+}
+
 static void initChip() {
+  /* Reset the chip, in case we jumped to start and the chip is already
+   * initialized (otherwise the chip might for instance be in QPI, and not
+   * understand SPI/QSPI instructions). As we don't know the current chip mode,
+   * we need to send the instructions on 1 wire and on 4 wires.*/
+  send_reset_commands();
+  send_reset_commands(sOperatingModes400);
+
   // Release sleep deep
   send_command(Command::ReleaseDeepPowerDown);
   Timing::usleep(3);
@@ -365,10 +381,7 @@ static void shutdownGPIO() {
 static void shutdownChip() {
   unset_memory_mapped_mode();
   // Reset
-  send_command(Command::EnableReset);
-  send_command(Command::Reset);
-  sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
-  Timing::usleep(30);
+  send_reset_commands();
 
   // Sleep deep
   send_command(Command::DeepPowerDown);

@@ -3,6 +3,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -36,9 +37,8 @@ Evaluation<T> MatrixEchelonFormNode::templatedApproximate(ApproximationContext a
 
 Expression MatrixEchelonForm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

@@ -2,6 +2,7 @@
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -38,9 +39,8 @@ Expression GreatCommonDivisor::shallowBeautify(Context * context) {
 
 Expression GreatCommonDivisor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

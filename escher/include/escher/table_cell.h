@@ -39,6 +39,8 @@ public:
    * When isAccessoryAlignedRight returns false, Accessory can be placed on the
    * left of the Cell. Label and SubLabel also take the two configurations
    * depending on the fit.
+   * When giveAccessoryAllWidth returns true, Accessory will take all available
+   * horizontal space, forcing label and subLabel to layout over two rows.
    */
   TableCell();
   virtual const View * labelView() const { return nullptr; }
@@ -46,7 +48,8 @@ public:
   virtual const View * accessoryView() const { return nullptr; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width);
+  virtual bool giveAccessoryAllWidth() const { return false; }
+  static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width, bool giveAccessoryAllWidth);
   static constexpr KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 18 + Metric::CellTopMargin; // KDFont::LargeFont->glyphSize().height() = 18
   static constexpr KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 14 + Metric::CellTopMargin; // KDFont::SmallFont->glyphSize().height() = 14
 protected:

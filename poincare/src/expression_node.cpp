@@ -11,6 +11,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/constant.h>
 #include <poincare/undefined.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -91,15 +92,20 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool a
 }
 
 void ExpressionNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  Expression(this).defaultDeepReduceChildren(reductionContext);
+  SimplificationHelper::defaultDeepReduceChildren(Expression(this), reductionContext);
 }
 
 void ExpressionNode::deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
-  Expression(this).defaultDeepBeautifyChildren(reductionContext);
+  SimplificationHelper::defaultDeepBeautifyChildren(Expression(this), reductionContext);
 }
 
 Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
-  return Expression(this).defaultShallowReduce();
+  Expression e(this);
+  Expression res = SimplificationHelper::shallowReduceUndefined(e);
+  if (!res.isUninitialized()) {
+    return res;
+  }
+  return e;
 }
 
 Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) {

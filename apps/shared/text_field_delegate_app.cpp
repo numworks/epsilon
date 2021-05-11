@@ -62,10 +62,7 @@ TextFieldDelegateApp::TextFieldDelegateApp(Snapshot * snapshot, ViewController *
 
 bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
-    if (!field->isEditing()) {
-      field->setEditing(true);
-    }
-    return field->addXNTCodePoint(XNT(), !XNTCanBeOverriden());
+    return field->addXNTCodePoint(XNT());
   }
   return false;
 }

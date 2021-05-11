@@ -43,7 +43,6 @@ public:
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
   TELEMETRY_ID("Graph");
-  bool XNTCanBeOverriden() const override { return false; }
   CodePoint XNT() override;
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }

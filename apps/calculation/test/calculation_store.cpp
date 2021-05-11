@@ -24,7 +24,7 @@ void assert_store_is(CalculationStore * store, const char * * result) {
   }
 }
 
-KDCoordinate dummyHeight(::Calculation::Calculation * c, bool expanded) { return 0; }
+KDCoordinate dummyHeight(::Calculation::Calculation * c, Poincare::Context * context, bool expanded) { return 0; }
 
 QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;
@@ -48,9 +48,18 @@ QUIZ_CASE(calculation_store) {
   store.deleteAll();
 
   // Checking if the store handles correctly the delete of the oldest calculation when full
-  static int minSize = ::Calculation::Calculation::MinimalSize();
-  char text[2] = {'0', 0};
-  while (store.remainingBufferSize() > minSize) {
+  constexpr int calculationSize = 200;
+  assert(calculationSize < store.remainingBufferSize());
+  char text[calculationSize];
+  constexpr const char * pattern = "123456789+";
+  int patternSize = strlen(pattern);
+  for (int i = 0; i < calculationSize; i += patternSize) {
+    memcpy(text + i, pattern, patternSize);
+  }
+  text[calculationSize - 1] = '\0';
+
+  constexpr int minimalSize = ::Calculation::Calculation::k_minimalSize + sizeof(::Calculation::Calculation *);
+  while (store.remainingBufferSize() > minimalSize) {
     store.push(text, &globalContext, dummyHeight);
   }
   int numberOfCalculations1 = store.numberOfCalculations();

@@ -10,6 +10,7 @@
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>

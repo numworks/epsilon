@@ -77,21 +77,53 @@ double LogisticModel::partialDerivate(double * modelCoefficients, int derivateCo
 
 void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series));
-  modelCoefficients[0] = defaultValue;
-  modelCoefficients[1] = defaultValue;
-  /* If the data is a standard logistic function, the ordinates are between 0
-   * and c. Twice the standard vertical deviation is a rough estimate of c
-   * that is "close enough" to c to seed the coefficient, without being too
-   * dependent on outliers.*/
-  modelCoefficients[2] = 2.0 * store->standardDeviationOfColumn(series, 1);
-  /* TODO : Try two different sets of seeds to find a better fit for both
-   * x = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}
-   * y = {5.0, 9.0, 40.0, 64.0, 144.0, 200.0, 269.0, 278.0, 290.0, 295.0}
-   * (Coefficients should be {64.9, 1.0, 297.4})
-   * And
-   * x = {4, 3, 21, 1, 6}
-   * y = {0, 4, 5, 4, 58}
-   * (Coefficients should be {370162529, 4.266, 31.445} with R2=0.4 at least) */
+  /* We optimize fit for data that actually follow a logistic function curve :
+   * f(x)=c/(1+a*e^(-bx))
+   * We use these properties :
+   * (1) f(x) = c/2 <=> x = ln(a)/b
+   * (2) f(x + ln(a)/b) = r * c <=> x = ln(r/(1-r)) / b
+   * Coefficients are initiated assuming the data is equally distributed on the
+   * interesting part of a logistic function curve.
+   * We assume this interesting part to be where 0.01*c < f(x) < 0.99*c.
+   * Using (2), it roughly corresponds to (ln(a)-5)/b < x < (ln(a)+5)/b
+   * Data is assumed equally distributed around the point (ln(a)/b, c/2) (1)
+   * The curve and significant values look like this :
+   *                             ln(a)/b         _  _  _ c
+   *                   c/2  _  _  _  _ ¦/¦‾‾‾‾‾‾
+   *                             ______/ ¦
+   *                   0 ‾  ‾  ‾        ~(ln(a)+5)/b
+   */
+
+  /* We assume the average of Y data is c/2. This handles both positive and
+   * negative c coefficients while not being too dependent on outliers. */
+  double c = 2.0 * store->meanOfColumn(series, 1);
+
+  /* We assume most data point are distributed around the interesting part,
+   * where X data is within (ln(a)-5)/b  and (ln(a)+5)/b (2). We can therefore
+   * estimate b from X's range of values (dependent on outliers). */
+  double b = 10.0 / (store->maxValueOfColumn(series, 0) - store->minValueOfColumn(series, 0));
+  double slope = store->slope(series);
+  if (!std::isfinite(b)) {
+    b = defaultValue;
+  }
+  /* The sign of b depends on the sign of c and overall slope of data values :
+   * Sign of b if :                  c positive         c negative
+   * - Positive slope (__/‾‾) :      b positive         b negative
+   * - Negative slope (‾‾\__) :      b negative         b positive */
+  if (slope < 0.0 != c < 0.0) {
+    b = -b;
+  }
+
+  /* We assume the average of X data is ln(a)/b. This handles both positive and
+   * negative values while not being too dependent on outliers. */
+  double a = std::exp(b * store->meanOfColumn(series, 0));
+  if (!std::isfinite(a)) {
+    a = defaultValue;
+  }
+
+  modelCoefficients[0] = a;
+  modelCoefficients[1] = b;
+  modelCoefficients[2] = c;
 }
 
 

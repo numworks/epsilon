@@ -16,8 +16,9 @@ namespace Poincare {
 Expression UnitConvertNode::removeUnit(Expression * unit) {
   /* Warning: removeUnit of a UnitConvert doesn't make much sense but we
    * implement a 'dummy' version since UnitConvert still exists among the
-   * reduced expression. */
-  childAtIndex(1)->removeUnit(unit);
+   * reduced expression. We do not return any unit as we do not want the caller
+   * to believe the call to removeUnit has succeeded. */
+  *unit = Expression();
   return UnitConvert(this).replaceWithUndefinedInPlace();
 }
 Expression UnitConvertNode::shallowBeautify(ReductionContext * reductionContext) {
@@ -63,7 +64,7 @@ void UnitConvert::deepBeautifyChildren(ExpressionNode::ReductionContext reductio
       reductionContext.target(),
       reductionContext.symbolicComputation(),
       ExpressionNode::UnitConversion::None);
-  defaultDeepBeautifyChildren(reductionContextKeepUnitAsIs);
+  SimplificationHelper::defaultDeepBeautifyChildren(*this, reductionContextKeepUnitAsIs);
 }
 
 Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {

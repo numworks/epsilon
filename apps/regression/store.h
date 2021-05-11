@@ -50,9 +50,6 @@ public:
     return regressionModel((int) type);
   }
 
-  // Window
-  void setDefault() override;
-
   // Series
   bool seriesIsEmpty(int series) const override;
 
@@ -79,7 +76,6 @@ public:
   float minValueOfColumn(int series, int i) const;
 private:
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
-  constexpr static float k_displayHorizontalMarginRatio = 0.05f;
   void resetMemoization();
   Model * regressionModel(int index);
   uint32_t m_seriesChecksum[k_numberOfSeries];

@@ -8,15 +8,19 @@ namespace UTF8Helper {
 
 class TextPair {
 public:
-  constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtention = false) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtention(removeParenthesesExtention){}
+  typedef bool (*ReplacementRule)(const char *, int, int);
+
+  constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtension = false, ReplacementRule rule = nullptr) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtension(removeParenthesesExtension), m_rule(rule) {}
   const char * firstString() { return m_firstString; }
   const char * secondString() { return m_secondString; }
-  bool removeParenthesesExtention() { return m_removeParenthesesExtention; }
+  bool removeParenthesesExtension() { return m_removeParenthesesExtension; }
+  bool shouldReplace(const char * s, int length, int position) { return m_rule ? m_rule(s, length, position) : true; }
   static constexpr int k_maxLength = 20;
 private:
   const char * m_firstString;
   const char * m_secondString;
-  bool m_removeParenthesesExtention;
+  bool m_removeParenthesesExtension;
+  ReplacementRule m_rule;
 };
 
 // Returns the number of occurences of a code point in a string
@@ -58,7 +62,7 @@ bool SlideStringByNumberOfChar(char * text, int slidingSize, size_t textMaxLengt
  * - stoppingPosition allows partial replacement in the string.
  *
  * Ensure null termination of the string or set the value of stoppingPosition*/
-void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxSize, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
+void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxSize, const TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
 
 /* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);

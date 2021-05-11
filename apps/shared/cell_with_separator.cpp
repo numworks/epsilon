@@ -37,4 +37,23 @@ void CellWithSeparator::layoutSubviews(bool force) {
       ), force);
 }
 
+/* MinimalSizeForOptimalDisplay being const, we have no way of ensuring that the
+ * width of cell's frame is equal to our frame width. We then cannot call cell's
+ * minimalSizeForOptimalDisplay and must handle everything here. */
+KDSize CellWithSeparator::minimalSizeForOptimalDisplay() const {
+  // Available width is necessary to compute it minimal height.
+  KDCoordinate expectedWidth = m_frame.width();
+  assert(expectedWidth > 0);
+  return KDSize(
+    expectedWidth,
+    TableCell::minimalHeightForOptimalDisplay(
+      constCell()->labelView(),
+      constCell()->subLabelView(),
+      constCell()->accessoryView(),
+      expectedWidth,
+      constCell()->giveAccessoryAllWidth()
+    ) + k_margin + Metric::CellSeparatorThickness
+  );
+}
+
 }

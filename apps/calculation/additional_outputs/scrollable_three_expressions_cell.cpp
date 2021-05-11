@@ -11,9 +11,7 @@ void ScrollableThreeExpressionsView::resetMemoization() {
 }
 
 // TODO: factorize with HistoryViewCell!
-void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, bool canChangeDisplayOutput) {
-  Poincare::Context * context = App::app()->localContext();
-
+void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, Poincare::Context * context, bool canChangeDisplayOutput) {
   // Clean the layouts to make room in the pool
   resetMemoization();
 
@@ -68,9 +66,9 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, b
   layoutSubviews();
 }
 
-KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation) {
+KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation, Poincare::Context * context) {
   ScrollableThreeExpressionsCell cell;
-  cell.setCalculation(calculation, true);
+  cell.setCalculation(calculation, context, true);
   KDRect leftFrame = KDRectZero;
   KDRect centerFrame = KDRectZero;
   KDRect approximateSignFrame = KDRectZero;
@@ -90,8 +88,8 @@ void ScrollableThreeExpressionsCell::reinitSelection() {
   m_view.reloadScroll();
 }
 
-void ScrollableThreeExpressionsCell::setCalculation(Calculation * calculation, bool canChangeDisplayOutput) {
-  m_view.setCalculation(calculation, canChangeDisplayOutput);
+void ScrollableThreeExpressionsCell::setCalculation(Calculation * calculation, Poincare::Context * context, bool canChangeDisplayOutput) {
+  m_view.setCalculation(calculation, context, canChangeDisplayOutput);
   layoutSubviews();
 }
 

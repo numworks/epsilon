@@ -267,67 +267,69 @@ void ContinuousFunction::setTMax(float tMax) {
   setCache(nullptr);
 }
 
-void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const {
+void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const {
   if (plotType() != PlotType::Cartesian) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
+    *yMinIntrinsic = FLT_MAX;
+    *yMaxIntrinsic = -FLT_MAX;
+    return;
+  }
+
+  *xMin = NAN;
+  *xMax = NAN;
+  *yMinIntrinsic = NAN;
+  *yMaxIntrinsic = NAN;
+
+  if (basedOnCostlyAlgorithms(context)) {
+    /* The function makes use of some costly algorithms, such as integration or
+     * sequences, and cannot be computed in a timely manner. */
+    return;
+  }
+
+  Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+    /* When evaluating sin(x)/x close to zero using the standard sine function,
+     * one can detect small variations, while the cardinal sine is supposed to
+     * be locally monotonous. To smooth out such variations, we round the
+     * result of the evaluations. As we are not interested in precise results
+     * but only in ordering, this approximation is sufficient. */
+    constexpr float precision = 1e-5;
+    return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
+  };
+  Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
+}
+
+void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const {
+  if (plotType() != PlotType::Cartesian) {
+    assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
     return;
   }
 
-  if (!basedOnCostlyAlgorithms(context)) {
-    Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-      /* When evaluating sin(x)/x close to zero using the standard sine function,
-       * one can detect small variations, while the cardinal sine is supposed to be
-       * locally monotonous. To smooth our such variations, we round the result of
-       * the evaluations. As we are not interested in precise results but only in
-       * ordering, this approximation is sufficient. */
-      constexpr float precision = 1e-5;
-      return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
-    };
-    bool fullyComputed = Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMin, yMax, tMin(), tMax(), context, this);
+  *yMin = NAN;
+  *yMax = NAN;
 
-    evaluation = [](float x, Context * context, const void * auxiliary) {
-      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
-    };
+  if (basedOnCostlyAlgorithms(context)) {
+    /* The function makes use of some costly algorithms, such as integration or
+     * sequences, and cannot be computed in a timely manner. */
+    return;
+  }
 
-    if (fullyComputed) {
-      /* The function has points of interest. */
-      Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
-      return;
-    }
+  Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+  };
 
-    /* Try to display an orthonormal range. */
-    Zoom::RangeWithRatioForDisplay(evaluation, targetRatio, xMin, xMax, yMin, yMax, context, this);
-    if (std::isfinite(*yMin) && std::isfinite(*yMax)) {
-      return;
-    }
-
-    /* The function's profile is not great for an orthonormal range.
-     * Try a basic range. */
-    assert(*xMin == *xMax);
-    *xMin -= Zoom::k_defaultHalfRange;
-    *xMax += Zoom::k_defaultHalfRange;
-    Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
-    if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
-      return;
-    }
-
-    /* The function's order of magnitude cannot be computed. Try to just display
-     * the full function. */
-    float step =  (*xMax - *xMin) / k_polarParamRangeSearchNumberOfPoints;
-    Zoom::FullRange(evaluation, *xMin, *xMax, step, yMin, yMax, context, this);
-    if (std::isfinite(*xMin) && std::isfinite(*xMax) && std::isfinite(*yMin) && std::isfinite(*yMax)) {
+  if (yMaxForced - yMinForced <= ratio * (xMax - xMin)) {
+    Zoom::RangeWithRatioForDisplay(evaluation, ratio, xMin, xMax, yMinForced, yMaxForced, yMin, yMax, context, this);
+    if (*yMin < *yMax) {
       return;
     }
   }
 
-  /* The function makes use of some costly algorithms and cannot be computed in
-   * a timely manner, or it is probably undefined. */
-  *xMin = NAN;
-  *xMax = NAN;
   *yMin = NAN;
   *yMax = NAN;
+
+  Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
 }
 
 void ContinuousFunction::Model::tidy() const {
@@ -424,12 +426,11 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
-  if (start < max) {
-    start = std::max<double>(start, tMin());
-    max = std::min<double>(max, tMax());
-  } else {
-    start = std::min<double>(start, tMax());
-    max = std::max<double>(max, tMin());
+  double tmin = tMin(), tmax = tMax();
+  start = start < tmin ? tmin : start > tmax ? tmax : start;
+  max = max < tmin ? tmin : max > tmax ? tmax : max;
+  if (start == max) {
+    return NAN;
   }
   return compute(expressionReduced(context), unknownX, start, max, context, relativePrecision, minimalStep, maximalStep);
 }
@@ -451,9 +452,9 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
   return expressionReduced(context).hasExpression([](const Expression e, const void * context) {
-        return e.type() == ExpressionNode::Type::Sequence
-            || e.type() == ExpressionNode::Type::Integral
-            || e.type() == ExpressionNode::Type::Derivative;
+      return e.type() == ExpressionNode::Type::Sequence
+          || e.type() == ExpressionNode::Type::Integral
+          || e.type() == ExpressionNode::Type::Derivative;
       }, nullptr);
 }
 

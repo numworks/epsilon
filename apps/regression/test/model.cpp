@@ -191,7 +191,7 @@ QUIZ_CASE(power_regression) {
   // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 }
 
-void assert_trigonomatric_regression_is(double * xi, double * yi, int numberOfPoints, double * trueCoefficients, double trueR2, Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
+void assert_trigonometric_regression_is(double * xi, double * yi, int numberOfPoints, double * trueCoefficients, double trueR2, Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
   const Poincare::Preferences::AngleUnit units[3] = {Poincare::Preferences::AngleUnit::Radian, Poincare::Preferences::AngleUnit::Degree, Poincare::Preferences::AngleUnit::Gradian};
@@ -215,7 +215,7 @@ QUIZ_CASE(trigonometric_regression1) {
   int numberOfPoints = sizeof(x) / sizeof(double);
   assert(sizeof(y) == sizeof(double) * numberOfPoints);
 
-  assert_trigonomatric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
+  assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
 }
 
 QUIZ_CASE(trigonometric_regression2) {
@@ -226,7 +226,7 @@ QUIZ_CASE(trigonometric_regression2) {
   int numberOfPoints = sizeof(x) / sizeof(double);
   assert(sizeof(y) == sizeof(double) * numberOfPoints);
 
-  assert_trigonomatric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
+  assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
 }
 
 
@@ -235,24 +235,45 @@ QUIZ_CASE(logistic_regression) {
    * the test. */
   double x1[] = {2.3, 5.6, 1.1, 4.3};
   double y1[] = {3.948, 4.694, 2.184, 4.656};
-  double coefficients1[] = {6, 1.5, 4.7};
+  double coefficients1[] = {6.0, 1.5, 4.7};
   double r21 = 0.9999999917270119;
   assert_regression_is(x1, y1, 4, Model::Type::Logistic, coefficients1, r21);
 
-  // This data produced a wrong fit before
   double x2[] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
   double y2[] = {5.0, 9.0, 40.0, 64.0, 144.0, 200.0, 269.0, 278.0, 290.0, 295.0};
   double coefficients2[] = {64.9, 1.0, 297.4};
   double r22 = 0.9984396821656006;
   assert_regression_is(x2, y2, 10, Model::Type::Logistic, coefficients2, r22);
 
-  // TODO : This data produce a wrong fit currently
-  // double x3[] = {1.0, 3.0, 4.0, 6.0, 8.0};
-  // double y3[] = {4.0, 4.0, 0.0, 58.0, 5.0};
-  // No source of truth for coefficient, r2 should at least be positive.
-  // double coefficients3[] = {-0.1, -0.4, -4};
-  // double r23 = 0.75;
-  // assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, r23);
+  double x3[] = {-400.0, 0.0, 400.0, 450.0, 800.0};
+  double y3[] = {1.523, 76.92, 819.8, 882.4, 996.0};
+  double coefficients3[] = {12.0, 0.01, 1000.0};
+  double r23 = 1.0;
+  assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, r23);
+
+  double x4[] = {-2.0, -1.0, 0.0, 1.0, 2.0, 3.0};
+  double y4[] = {-5.0, -5.0, -4.99, -4.90, -3.56, -0.55};
+  double coefficients4[] = {0.001, -3.0, -5.0};
+  double r24 = 1.0;
+  assert_regression_is(x4, y4, 6, Model::Type::Logistic, coefficients4, r24);
+
+  double x5[] = {3.0, 7.0, 11.0, 20.0, 43.0};
+  double y5[] = {11.66, 13.51, 15.21, 17.38, 18.7};
+  double coefficients5[] = {0.88, 0.118, 18.8};
+  double r25 = 1.0;
+  assert_regression_is(x5, y5, 5, Model::Type::Logistic, coefficients5, r25);
+
+  double x6[] = {-0.1, -0.09, -0.08, -0.07, -0.06 };
+  double y6[] = {1.82e-6, 3.66e-6, 7.34e-6, 1.46e-5, 2.91e-5};
+  double coefficients6[] = {1.17e-8, 250.0, 2.77e-5}; // target : {0.5, 70.0, 0.001};
+  double r26 = 0.902321; // target : 1.0;
+  assert_regression_is(x6, y6, 5, Model::Type::Logistic, coefficients6, r26);
+
+  double x7[] = {1.0, 3.0, 4.0, 6.0, 8.0};
+  double y7[] = {4.0, 4.0, 0.0, 58.0, 5.0};
+  double coefficients7[] = {3.56e8, 4.256, 31.4}; // No target
+  double r27 = 0.4; // No target (But should be positive)
+  assert_regression_is(x7, y7, 5, Model::Type::Logistic, coefficients7, r27);
 }
 
 // Testing column and regression calculation

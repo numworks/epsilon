@@ -9,6 +9,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <cmath>
 #include <utility>
@@ -61,8 +62,8 @@ Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximati
 
 Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

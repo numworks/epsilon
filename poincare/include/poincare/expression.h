@@ -8,6 +8,7 @@
 #include <poincare/expression_node.h>
 #include <poincare/complex.h>
 #include <poincare/solver.h>
+#include <poincare/simplification_helper.h>
 #include <ion/storage.h>
 #include <utility>
 
@@ -128,6 +129,8 @@ class Expression : public TreeHandle {
   friend class StoreNode;
   friend class SymbolNode;
   friend class UnitNode;
+
+  friend class SimplificationHelper;
 
 public:
   static bool IsExpression() { return true; }
@@ -422,17 +425,15 @@ private:
   static constexpr double k_largestExactIEEE754Integer = 9007199254740992.0;
   Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-    return node()->deepReduceChildren(reductionContext);
+    node()->deepReduceChildren(reductionContext);
   }
-  void defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext);
-  Expression defaultShallowReduce();
-  Expression defaultHandleUnitsInChildren(); // Children must be reduced
+
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
   void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
     node()->deepBeautifyChildren(reductionContext);
   }
-  void defaultDeepBeautifyChildren(ExpressionNode::ReductionContext reductionContext);
+
   bool defaultDidDerivate() { return false; }
   Expression defaultUnaryFunctionDifferential() { return *this; }
 

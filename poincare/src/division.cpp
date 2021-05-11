@@ -7,6 +7,7 @@
 #include <poincare/addition.h>
 #include <poincare/subtraction.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <cmath>
 #include <assert.h>
 #include <string.h>
@@ -81,8 +82,8 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

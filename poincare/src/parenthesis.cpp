@@ -1,6 +1,7 @@
 #include <poincare/parenthesis.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -26,8 +27,8 @@ Evaluation<T> ParenthesisNode::templatedApproximate(ApproximationContext approxi
 }
 
 Expression Parenthesis::shallowReduce() {
-  Expression e = Expression::defaultShallowReduce();
-  if (e.isUndefined()) {
+  Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+  if (!e.isUninitialized()) {
     return e;
   }
   Expression c = childAtIndex(0);

@@ -3,6 +3,7 @@
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -65,9 +66,8 @@ T BinomialCoefficientNode::compute(T k, T n) {
 
 Expression BinomialCoefficient::shallowReduce(Context * context) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

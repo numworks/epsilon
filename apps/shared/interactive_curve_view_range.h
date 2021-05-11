@@ -15,7 +15,10 @@ public:
     MemoizedCurveViewRange(),
     m_delegate(delegate),
     m_offscreenYAxis(0.f),
-    m_zoomAuto(true),
+    m_yMinIntrinsic(NAN),
+    m_yMaxIntrinsic(NAN),
+    m_xAuto(true),
+    m_yAuto(true),
     m_zoomNormalize(false)
   {}
 
@@ -26,8 +29,12 @@ public:
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
 
-  bool zoomAuto() const { return m_zoomAuto; }
-  void setZoomAuto(bool v);
+  bool zoomAuto() const { return m_xAuto && m_yAuto; }
+  void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
+  bool xAuto() const { return m_xAuto; }
+  void setXAuto(bool v) { privateSetZoomAuto(v, m_yAuto); }
+  bool yAuto() const { return m_yAuto; }
+  void setYAuto(bool v) { privateSetZoomAuto(m_xAuto, v); }
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v);
   float roundLimit(float y, float range, bool isMin);
@@ -43,13 +50,13 @@ public:
   void setYMax(float f) override;
 
   float offscreenYAxis() const override { return m_offscreenYAxis; }
-  void setOffscreenYAxis(float f) { m_offscreenYAxis = f; }
+  void setOffscreenYAxis(float f);
 
   // Window
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
-  virtual void normalize(bool forceChangeY = false);
-  virtual void setDefault();
+  void computeRanges() { privateComputeRanges(m_xAuto, m_yAuto); }
+  void normalize();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
 
@@ -76,13 +83,21 @@ protected:
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
   bool shouldBeNormalized() const;
   virtual bool hasDefaultRange() const { return (xMin() == std::round(xMin())) && (xMax() == std::round(xMax())); }
+  /* This method only updates the zoomNormalize status, and does not change either the auto statuses or the intrinsic Y range. */
+  virtual void protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink);
 
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
   int normalizationSignificantBits() const;
+  void privateSetZoomAuto(bool xAuto, bool yAuto);
+  void privateComputeRanges(bool computeX, bool computeY);
+  bool intrinsicYRangeIsUnset() const { return std::isnan(m_yMinIntrinsic) && std::isnan(m_yMaxIntrinsic); }
 
   float m_offscreenYAxis;
-  bool m_zoomAuto;
+  float m_yMinIntrinsic;
+  float m_yMaxIntrinsic;
+  bool m_xAuto;
+  bool m_yAuto;
   bool m_zoomNormalize;
 };
 

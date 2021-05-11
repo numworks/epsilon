@@ -384,6 +384,14 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position,
   );
 }
 
+void PythonTextArea::didBecomeFirstResponder() {
+  /* If we are coming from a Varbox opened while autocompleting, the text was
+   * removed to preserve the ScriptNodes name pointers. */
+  if (!m_contentView.isAutocompleting()) {
+    addAutocompletion(m_autocompletionResultIndex);
+  }
+}
+
 bool PythonTextArea::handleEvent(Ion::Events::Event event) {
   if (m_contentView.isAutocompleting()) {
     // Handle event with autocompletion
@@ -399,7 +407,6 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
         return true;
       }
     } else if (event == Ion::Events::Toolbox
-        || event == Ion::Events::Var
         || event == Ion::Events::Shift
         || event == Ion::Events::Alpha
         || event == Ion::Events::OnOff)
@@ -410,11 +417,15 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
       cycleAutocompletion(event == Ion::Events::Down);
       return true;
     } else {
+      /* Remove the autocompletion text so that opening the Varbox does not
+       * invalidate the ScriptNodes name pointers. */
       removeAutocompletion();
-      m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
-      if (event == Ion::Events::Back) {
-        // Do not process the event more
-        return true;
+      if (event != Ion::Events::Var) {
+        m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
+        if (event == Ion::Events::Back) {
+          // Do not process the event more
+          return true;
+        }
       }
     }
   }
@@ -456,11 +467,11 @@ void PythonTextArea::removeAutocompletionText() {
   m_contentView.removeText(autocompleteStart, autocompleteEnd);
 }
 
-void PythonTextArea::addAutocompletion() {
+void PythonTextArea::addAutocompletion(int index) {
   assert(!m_contentView.isAutocompleting());
   const char * autocompletionTokenBeginning = nullptr;
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());
-  m_autocompletionResultIndex = 0;
+  m_autocompletionResultIndex = index;
   if (autocompletionType(autocompletionLocation, &autocompletionTokenBeginning) != AutocompletionType::EndOfIdentifier) {
     // The cursor is not at the end of an identifier.
     return;
@@ -470,7 +481,7 @@ void PythonTextArea::addAutocompletion() {
   const int scriptIndex = m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
   m_contentView.pythonDelegate()->variableBoxController()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
 
-  addAutocompletionTextAtIndex(0);
+  addAutocompletionTextAtIndex(index);
 }
 
 bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate) {

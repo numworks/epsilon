@@ -30,21 +30,7 @@ void IllustratedListController::didEnterResponderChain(Responder * previousFirst
 
 void IllustratedListController::viewDidDisappear() {
   ListController::viewDidDisappear();
-  // Reset the context as it was before displaying the IllustratedListController
-  Poincare::Context * context = App::app()->localContext();
-  if (m_savedExpression.isUninitialized()) {
-    /* If no expression was stored in the symbol used by the
-     * IllustratedListController, we delete the record we stored */
-    char symbolName[3];
-    size_t length = UTF8Decoder::CodePointToChars(expressionSymbol(), symbolName, 3);
-    assert(length < 3);
-    symbolName[length] = 0;
-    const char * const extensions[2] = {"exp", "func"};
-    Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(symbolName, extensions, 2).destroy();
-  } else {
-    Poincare::Symbol s = Poincare::Symbol::Builder(expressionSymbol());
-    context->setExpressionForSymbolAbstract(m_savedExpression, s);
-  }
+  m_expression = Expression();
   // Reset cell memoization to avoid taking extra space in the pool
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
      m_additionalCalculationCells[i].resetMemoization();
@@ -88,11 +74,12 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
   if (typeAtIndex(index) == k_illustrationCellType) {
     return;
   }
-  Poincare::Context * context = App::app()->localContext();
+  VariableContext context = illustratedListContext();
+
   ScrollableThreeExpressionsCell * myCell = static_cast<ScrollableThreeExpressionsCell *>(cell);
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
-  myCell->setCalculation(c);
-  myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);
+  myCell->setCalculation(c, &context);
+  myCell->setDisplayCenter(c->displayOutput(&context) != Calculation::DisplayOutput::ApproximateOnly);
 }
 
 void IllustratedListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -113,10 +100,15 @@ void IllustratedListController::tableViewDidChangeSelection(SelectableTableView 
 
 void IllustratedListController::setExpression(Poincare::Expression e) {
   m_calculationStore.deleteAll();
-  Poincare::Context * context = App::app()->localContext();
-  Poincare::Symbol s = Poincare::Symbol::Builder(expressionSymbol());
-  m_savedExpression = context->expressionForSymbolAbstract(s, false);
-  context->setExpressionForSymbolAbstract(e, s);
+  m_expression = e.clone();
+}
+
+Poincare::VariableContext IllustratedListController::illustratedListContext() {
+  // Create variable context containing expression for symbol
+  VariableContext context = VariableContext(symbol(), App::app()->localContext());
+  assert(!m_expression.isUninitialized() && !m_expression.wasErasedByException());
+  context.setExpressionForSymbolAbstract(m_expression, Poincare::Symbol::Builder(symbol(), strlen(symbol())));
+  return context;
 }
 
 int IllustratedListController::textAtIndex(char * buffer, size_t bufferSize, int index) {

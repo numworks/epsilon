@@ -11,6 +11,7 @@
 #include <poincare/naperian_logarithm.h>
 #include <poincare/rational.h>
 #include <poincare/square_root.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/sine.h>
 #include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
@@ -68,9 +69,8 @@ Complex<T> ComplexCartesianNode::templatedApproximate(ApproximationContext appro
 
 Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

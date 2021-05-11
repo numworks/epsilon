@@ -2,7 +2,7 @@
 #include <poincare/constant.h>
 #include <poincare/ceiling_layout.h>
 #include <poincare/serialization_helper.h>
-
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -38,12 +38,12 @@ Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnits(*this, reductionContext);
+    if (!e.isUninitialized()) {
       return e;
     }
   }
+
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);

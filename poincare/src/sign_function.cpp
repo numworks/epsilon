@@ -3,6 +3,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <ion.h>
 #include <assert.h>
@@ -52,11 +53,13 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 
 Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
+    // Discard units if any
+    Expression unit;
+    childAtIndex(0).removeUnit(&unit);
   }
   Expression child = childAtIndex(0);
   if (child.deepIsMatrix(reductionContext.context())) {

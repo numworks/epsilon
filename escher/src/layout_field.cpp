@@ -334,16 +334,16 @@ Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
 
-bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint, bool forceDefault) {
-  Layout xnt;
-  if (forceDefault) {
-    xnt = CodePointLayout::Builder(defaultXNTCodePoint);
-  } else {
-    xnt = m_contentView.cursor()->layout().XNTLayout();
-    if (xnt.isUninitialized()) {
-      xnt = CodePointLayout::Builder(defaultXNTCodePoint);
-    }
+bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+  if (!isEditing()) {
+    setEditing(true);
   }
+  // Query bottom-most layout
+  Layout xnt = m_contentView.cursor()->layout().XNTLayout();
+  if (xnt.isUninitialized()) {
+    xnt = CodePointLayout::Builder(defaultXNTCodePoint);
+  }
+
   // Delete the selected layouts if needed
   deleteSelection();
   // Do not insert layout if it has too many descendants

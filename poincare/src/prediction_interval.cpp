@@ -6,6 +6,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
 #include <cmath>
@@ -48,9 +49,8 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(ApproximationContext 
 
 Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

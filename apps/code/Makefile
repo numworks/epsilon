@@ -18,6 +18,7 @@ app_code_src = $(addprefix apps/code/,\
 )
 
 app_code_test_src = $(addprefix apps/code/,\
+  clipboard.cpp \
   python_toolbox.cpp \
   script.cpp \
   script_node_cell.cpp \
@@ -28,6 +29,7 @@ app_code_test_src = $(addprefix apps/code/,\
 )
 
 tests_src += $(addprefix apps/code/test/,\
+  clipboard.cpp \
   variable_box_controller.cpp\
 )
 

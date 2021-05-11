@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-
+#include <poincare/simplification_helper.h>
 #include <cmath>
 
 namespace Poincare {
@@ -58,9 +58,8 @@ Expression ArcSine::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionCon
 
 Expression ArcSine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

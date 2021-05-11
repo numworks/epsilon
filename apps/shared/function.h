@@ -1,10 +1,10 @@
 #ifndef SHARED_FUNCTION_H
 #define SHARED_FUNCTION_H
 
+#include "expression_model_handle.h"
 #include <poincare/function.h>
 #include <poincare/symbol.h>
 #include <escher/i18n.h>
-#include "expression_model_handle.h"
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>
@@ -56,7 +56,9 @@ public:
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 
   // Range
-  virtual void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const = 0;
+  virtual bool basedOnCostlyAlgorithms(Poincare::Context * context) const = 0;
+  virtual void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const = 0;
+  virtual void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const = 0;
 
 protected:
   /* RecordDataBuffer is the layout of the data buffer of Record

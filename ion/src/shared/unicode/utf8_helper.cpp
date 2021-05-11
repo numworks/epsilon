@@ -170,11 +170,11 @@ static bool replaceFirstCharsByPattern(char * text, size_t lengthOfPatternToRemo
   return false;
 }
 
-void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * pointerToUpdate, const char * stoppingPosition) {
+void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, const TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * pointerToUpdate, const char * stoppingPosition) {
   size_t i = 0;
   size_t iPrev = 0;
   size_t textLength = strlen(text);
-  size_t lengthOfParenthesisExtention = strlen("(\x11)");
+  size_t lengthOfParenthesisExtension = strlen("(\x11)");
   while(i < textLength) {
     iPrev = i;
     bool didReplace = false;
@@ -187,9 +187,9 @@ void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, Tex
        * first and register it as "function". Therefore we can decide to remove
        * the (\x11) part or not depending on the application. This process is
        * repeated for all 4 function keys usable in python (√, ℯ, ln, log)*/
-      if (p.removeParenthesesExtention()) {
-        firstStringLength -= lengthOfParenthesisExtention;
-        secondStringLength -= lengthOfParenthesisExtention;
+      if (p.removeParenthesesExtension()) {
+        firstStringLength -= lengthOfParenthesisExtension;
+        secondStringLength -= lengthOfParenthesisExtension;
       }
       char firstString[TextPair::k_maxLength];
       char secondString[TextPair::k_maxLength];
@@ -202,7 +202,7 @@ void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, Tex
       char * replacingString = firstToSecond ? secondString : firstString;
       size_t replacingStringLength = strlen(replacingString);
 
-      if (strncmp(&text[i], matchedString, matchedStringLength) == 0) {
+      if (strncmp(&text[i], matchedString, matchedStringLength) == 0 && p.shouldReplace(text, textMaxLength, i)) {
         didReplace = replaceFirstCharsByPattern(&text[i], matchedStringLength, replacingString, textMaxLength - i);
         if (didReplace) {
           int delta = replacingStringLength - matchedStringLength;

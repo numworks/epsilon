@@ -71,7 +71,9 @@ public:
   void setTMax(float tMax);
   float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
 
-  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, float targetRatio, Poincare::Context * context) const override;
+  bool basedOnCostlyAlgorithms(Poincare::Context * context) const override;
+  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
+  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const override;
 
   // Extremum
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
@@ -94,7 +96,6 @@ private:
   void didBecomeInactive() override { m_cache = nullptr; }
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
-  bool basedOnCostlyAlgorithms(Poincare::Context * context) const;
 
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a ContinuousFunction. See comment on

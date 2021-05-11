@@ -6,7 +6,7 @@
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-
+#include <poincare/simplification_helper.h>
 #include <poincare/sine.h>
 #include <poincare/trigonometry.h>
 #include <cmath>
@@ -46,9 +46,8 @@ Expression TangentNode::unaryFunctionDifferential(ReductionContext reductionCont
 
 Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

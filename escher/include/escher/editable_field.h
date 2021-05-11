@@ -17,7 +17,7 @@ public:
   using InputEventHandler::InputEventHandler;
   virtual bool isEditing() const = 0;
   virtual void setEditing(bool isEditing) = 0;
-  virtual bool addXNTCodePoint(CodePoint defaultXNTCodePoint, bool forceDefault) = 0;
+  virtual bool addXNTCodePoint(CodePoint defaultXNTCodePoint) = 0;
   virtual bool shouldFinishEditing(Ion::Events::Event event) = 0;
 };
 

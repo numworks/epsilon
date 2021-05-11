@@ -1,6 +1,7 @@
 #include <poincare/normal_distribution_function.h>
 #include <poincare/normal_distribution.h>
 #include <poincare/square_root.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -14,9 +15,8 @@ Expression NormalDistributionFunction::shallowReduce(Context * context, bool * s
     *stopReduction = true;
   }
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

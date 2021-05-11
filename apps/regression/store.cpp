@@ -136,51 +136,6 @@ int Store::nextDot(int series, int direction, int dot) {
   return selectedDot;
 }
 
-/* Window */
-
-void Store::setDefault() {
-  setZoomNormalize(false);
-
-  float xMin, xMax, yMin, yMax;
-  float mins[k_numberOfSeries], maxs[k_numberOfSeries];
-  for (int series = 0; series < k_numberOfSeries; series++) {
-    bool empty = seriesIsEmpty(series);
-    mins[series] = empty ? NAN : minValueOfColumn(series, 0);
-    maxs[series] = empty ? NAN : maxValueOfColumn(series, 0);
-  }
-  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &xMin, &xMax);
-
-  for (int series = 0; series < k_numberOfSeries; series++) {
-    bool empty = seriesIsEmpty(series);
-    mins[series] = empty ? NAN : minValueOfColumn(series, 1);
-    maxs[series] = empty ? NAN : maxValueOfColumn(series, 1);
-  }
-  Poincare::Zoom::CombineRanges(k_numberOfSeries, mins, maxs, &yMin, &yMax);
-
-  Poincare::Zoom::SanitizeRange(&xMin, &xMax, &yMin, &yMax, NormalYXRatio());
-
-  m_xRange.setMin(xMin);
-  m_xRange.setMax(xMax);
-  m_yRange.setMin(yMin);
-  m_yRange.setMax(yMax);
-  bool revertToOrthonormal = shouldBeNormalized();
-
-  float range = xMax - xMin;
-  setXMin(xMin - k_displayHorizontalMarginRatio * range);
-  setXMax(xMax + k_displayHorizontalMarginRatio * range);
-
-  m_delegate->updateBottomMargin();
-
-  range = yMax - yMin;
-  setYMin(roundLimit(m_delegate->addMargin(yMin, range, true, true ), range, true));
-  setYMax(roundLimit(m_delegate->addMargin(yMax, range, true, false), range, false));
-
-  if (revertToOrthonormal) {
-    normalize();
-  }
-  setZoomAuto(true);
-}
-
 /* Series */
 
 bool Store::seriesIsEmpty(int series) const {

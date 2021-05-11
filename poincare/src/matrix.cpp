@@ -14,6 +14,7 @@
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
@@ -545,9 +546,8 @@ Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionConte
 
 Expression Matrix::shallowReduce(Context * context) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

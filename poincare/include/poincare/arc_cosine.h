@@ -1,6 +1,7 @@
 #ifndef POINCARE_ARC_COSINE_H
 #define POINCARE_ARC_COSINE_H
 
+#include <poincare/arc_secant.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/trigonometry.h>
@@ -8,6 +9,7 @@
 namespace Poincare {
 
 class ArcCosineNode final : public ExpressionNode {
+friend class ArcSecantNode;
 public:
 
   // TreeNode
@@ -24,8 +26,6 @@ public:
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   Type type() const override { return Type::ArcCosine; }
 
-  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -37,6 +37,7 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   //Evaluation
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
   }

@@ -73,8 +73,8 @@ Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
-  return Symbol(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return Symbol(this).deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation);
 }
 
 ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
@@ -93,7 +93,8 @@ bool SymbolNode::derivate(ReductionContext reductionContext, Expression symbol, 
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(ApproximationContext approximationContext) const {
   Symbol s(this);
-  Expression e = SymbolAbstract::Expand(s, approximationContext.context(), false);
+  // No need to preserve undefined symbols because they will be approximated.
+  Expression e = SymbolAbstract::Expand(s, approximationContext.context(), false, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -166,10 +167,17 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
     }
   }
 
-  /* Recursively replace all defined symbols and catch circular references
-   * involving symbols as well as functions. The only remaining symbols in
-   * result will be undefined ones. */
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
+  /* Recursively replace symbols and catch circular references involving symbols
+   * as well as functions.
+   * A symbol does not behave the same as a function : any nested symbol that
+   * is either undefined or was the parameter of a functions defined in the
+   * parents of this expression must be replaced with undefined.
+   * For example, within the expression 'diff(a,x,3)', with 'a' defined as
+   * 'diff(x,x,x)' :
+   * If x is globally undefined, 'a' should be expanded to 'diff(x,x,undef)'
+   * If x is defined as '2', 'a' should be expanded to 'diff(x,x,2)'.
+   * Reduction's symbolic computation only apply on non-nested variables. */
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (result.isUninitialized()) {
     if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
@@ -178,20 +186,13 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   }
   replaceWithInPlace(result);
 
-  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
-    /* At this point, any remaining symbol was nested and is globally undefined.
-     * It may also be a locally defined parametered expression's parameter.
-     * Regardless of that, we should replace all nested symbols with their
-     * global value, which is undef.
-     * ReductionContext's SymbolicComputation is altered to enforce this.
-     * For example, with x undefined, 1->y and x+y->a, within diff(a,x,1) :
-     *  - a is replaced with result(=x+1), computed in SymbolAbstract::Expand.
-     *  - x is defined locally (parameter of diff) but undefined globally.
-     *  - Therefore, result(=x+1) is deep-reduced to undef+1, then undef.
-     * In the end, a has been reduced to undef and diff(a,x,1) will be as well.
-     */
-    reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
-  }
+  /* At this point, any remaining symbol in result is a parameter of a
+   * parametered function nested in this expression, (such as 'diff(x,x,2)' in
+   * previous example) and it must be preserved.
+   * ReductionContext's SymbolicComputation is altered, enforcing preservation
+   * of remaining variables only to save computation that has already been
+   * done in SymbolAbstract::Expand, when looking for parametered functions. */
+  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   // The stored expression is as entered by the user, so we need to call reduce
   result = result.deepReduce(reductionContext);
   // Restore symbolic computation
@@ -227,8 +228,12 @@ int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
-  if (replaceFunctionsOnly || isSystemSymbol()) {
+Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+  /* These two symbolic computations parameters make no sense in this method.
+   * They are therefore not handled. */
+  assert(symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
+    && symbolicComputation != ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions || isSystemSymbol()) {
     return *this;
   }
 
@@ -248,7 +253,10 @@ Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didRe
 
   Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
-    return *this;
+    if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+      return *this;
+    }
+    return replaceWithUndefinedInPlace();
   }
   // If the symbol contains itself, return undefined
   if (e.hasExpression([](Expression e, const void * context) {

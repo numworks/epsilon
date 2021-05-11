@@ -355,7 +355,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
      * If we are displaying cartesian functions, we want the X bounds
      * untouched. */
     bool shrink = m_delegate->canShrinkWhenNormalizing();
-    protectedNormalize((m_delegate->defaultRangeIsNormalized() || !shrink) && computeX, computeY, shrink);
+    bool canChangeX = computeX && (m_delegate->defaultRangeIsNormalized() || !shrink);
+    protectedNormalize(canChangeX, computeY, shrink);
   }
 }
 

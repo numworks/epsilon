@@ -17,7 +17,8 @@ public:
   PythonTextArea(Escher::Responder * parentResponder, App * pythonDelegate, const KDFont * font) :
     Escher::TextArea(parentResponder, &m_contentView, font),
     m_contentView(pythonDelegate, font),
-    m_autocompletionResultIndex(0)
+    m_autocompletionResultIndex(0),
+    m_wasAutocompleting(false)
   {
   }
   void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
@@ -70,6 +71,7 @@ private:
   const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;
   int m_autocompletionResultIndex;
+  bool m_wasAutocompleting;
 };
 
 }

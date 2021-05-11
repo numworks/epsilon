@@ -14,7 +14,7 @@ public:
   // Expression
   bool isParameteredExpression() const override { return true; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) override;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) override;
 
   // Expression properties
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
@@ -38,7 +38,7 @@ public:
    * f(X)=diff(cos(x),x,X), X being an unknown. ReplaceUnknownInExpression does
    * that. */
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
   Symbol parameter();
 protected:
   ParameteredExpression(const ParameteredExpressionNode * node) : Expression(node) {}

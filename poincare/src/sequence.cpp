@@ -117,8 +117,4 @@ Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return *this;
 }
 
-Expression Sequence::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
-  return *this;
-}
-
 }

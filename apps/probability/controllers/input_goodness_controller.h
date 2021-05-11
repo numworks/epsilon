@@ -4,8 +4,8 @@
 #include <apps/probability/gui/vertical_layout.h>
 #include <apps/shared/button_with_separator.h>
 #include <escher/buffer_table_cell.h>
-#include <escher/even_odd_message_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
+#include <escher/even_odd_message_text_cell.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
@@ -24,6 +24,9 @@ using namespace Escher;
 
 namespace Probability {
 
+/* This view contains a TableView, an EditableCell and a Button,
+ * layed out vertically, and is able to move selection between them.
+ */
 class InputGoodnessView : public VerticalLayout<3>, public ButtonDelegate, public Responder {
  public:
   InputGoodnessView(Responder * parentResponder, TableViewDataSource * dataSource,
@@ -54,6 +57,7 @@ class InputGoodnessView : public VerticalLayout<3>, public ButtonDelegate, publi
   SelectableTableViewDataSource m_viewSelection;
 };
 
+
 class InputGoodnessDataSource : public TableViewDataSource {
  public:
   InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
@@ -63,8 +67,7 @@ class InputGoodnessDataSource : public TableViewDataSource {
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
   HighlightCell * reusableCell(int i, int type) override;
   int typeAtLocation(int i, int j) override { return 0; }
-  void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-
+  
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 

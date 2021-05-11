@@ -10,6 +10,7 @@
 
 #include "../gui/selectable_cell_list_controller.h"
 #include "input_goodness_controller.h"
+#include "input_homogeneity_controller.h"
 
 namespace Probability {
 
@@ -18,7 +19,8 @@ constexpr static int k_numberOfCategoricalCells = 2;
 class CategoricalTypeController
     : public SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells> {
  public:
-  CategoricalTypeController(Escher::StackViewController * parent, InputGoodnessController * inputGoodnessController);
+  CategoricalTypeController(Escher::StackViewController * parent, InputGoodnessController * inputGoodnessController,
+                            InputHomogeneityController * inputHomogeneityController);
   void didBecomeFirstResponder() override {
     // TODO factor out
     if (selectedRow() == -1) {
@@ -35,6 +37,7 @@ class CategoricalTypeController
   constexpr static int k_indexOfHomogeneity = 1;
 
   InputGoodnessController * m_inputGoodnessController;
+  InputHomogeneityController * m_inputHomogeneityController;
 };
 
 }  // namespace Probability

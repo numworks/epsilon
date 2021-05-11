@@ -8,8 +8,11 @@
 using namespace Probability;
 
 CategoricalTypeController::CategoricalTypeController(Escher::StackViewController * parent,
-                                                     InputGoodnessController * inputGoodnessController)
-    : SelectableCellListPage(parent), m_inputGoodnessController(inputGoodnessController) {
+                                                     InputGoodnessController * inputGoodnessController,
+                                                     InputHomogeneityController * inputHomogeneityController)
+    : SelectableCellListPage(parent),
+      m_inputGoodnessController(inputGoodnessController),
+      m_inputHomogeneityController(inputHomogeneityController) {
   m_cells[k_indexOfGoodness].setMessage(I18n::Message::GoodnessOfFit);
   m_cells[k_indexOfHomogeneity].setMessage(I18n::Message::Homogeneity);
 }
@@ -19,8 +22,10 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
     Escher::ViewController * view;
     switch (selectedRow()) {
       case k_indexOfGoodness:
-      case k_indexOfHomogeneity:
         view = m_inputGoodnessController;
+        break;
+      case k_indexOfHomogeneity:
+        view = m_inputHomogeneityController;
         break;
     }
     assert(view != nullptr);

@@ -54,34 +54,33 @@ class InputGoodnessView : public VerticalLayout<3>, public ButtonDelegate, publi
   SelectableTableViewDataSource m_viewSelection;
 };
 
-// TODO member
 class InputGoodnessDataSource : public TableViewDataSource {
  public:
   InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
                           InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
-  int numberOfRows() const override { return 4; };
-  int numberOfColumns() const override { return 2; }
+  int numberOfRows() const override { return k_initialNumberOfRows; };
+  int numberOfColumns() const override { return k_numberOfColumns; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
   HighlightCell * reusableCell(int i, int type) override;
   int typeAtLocation(int i, int j) override { return 0; }
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 
-  // TODO needed ?
-  KDCoordinate columnWidth(int i) override { return 150; }
-  KDCoordinate rowHeight(int j) override { return 20; }
+  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
+  KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
  private:
-  struct IntRepr {
-    char m_content[10];
-  };
+  constexpr static int k_initialNumberOfRows = 4;
+  constexpr static int k_numberOfColumns = 2;
+  // TODO needed ?
+  constexpr static int k_columnWidth = 150;
+  constexpr static int k_rowHeight = 20;
 
-  IntRepr m_observed[5];
-  IntRepr m_expected[5];
-  EvenOddMessageTextCell m_header[2];
+  // TODO actually store input here
+  EvenOddMessageTextCell m_header[k_numberOfColumns];
   EvenOddEditableTextCell m_cells[8];  // TODO should it contain views?
 };
 
-class InputGoodnessController : public Page, public InputGoodnessDataSource {
+class InputGoodnessController : public Page {
  public:
   InputGoodnessController(StackViewController * parent, InputEventHandlerDelegate * inputEventHandlerDelegate,
                           TextFieldDelegate * textFieldDelegate);
@@ -89,6 +88,7 @@ class InputGoodnessController : public Page, public InputGoodnessDataSource {
   void didBecomeFirstResponder() override;
 
  private:
+  InputGoodnessDataSource m_data;
   InputGoodnessView m_contentView;
 };
 

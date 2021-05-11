@@ -426,7 +426,14 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
   // Step 0. Replace with inverse (^-1) of equivalent direct function.
   Expression result;
   switch (e.type()) {
-    case ExpressionNode::Type::Cotangent: {
+    case ExpressionNode::Type::Secant:
+      result = Cosine::Builder(e.childAtIndex(0));
+      break;
+    case ExpressionNode::Type::Cosecant:
+      result = Sine::Builder(e.childAtIndex(0));
+      break;
+    default:
+      assert(e.type() == ExpressionNode::Type::Cotangent);
       // Use cot(x)=cos(x)/sin(x) definition to handle cot(pi/2)=0
       Cosine c = Cosine::Builder(e.childAtIndex(0).clone());
       Sine s = Sine::Builder(e.childAtIndex(0));
@@ -435,14 +442,6 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
       c.shallowReduce(reductionContext);
       s.shallowReduce(reductionContext);
       return d.shallowReduce(reductionContext);
-    }
-    case ExpressionNode::Type::Secant:
-      result = Cosine::Builder(e.childAtIndex(0));
-      break;
-    case ExpressionNode::Type::Cosecant:
-      result = Sine::Builder(e.childAtIndex(0));
-      break;
-    default:
       break;
   }
   Power p = Power::Builder(result, Rational::Builder(-1));
@@ -463,10 +462,9 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, Ex
     case ExpressionNode::Type::ArcCosecant:
       result = ArcSine::Builder(p);
       break;
-    case ExpressionNode::Type::ArcCotangent:
-      result = ArcTangent::Builder(p);
-      break;
     default:
+      assert(e.type() == ExpressionNode::Type::ArcCotangent);
+      result = ArcTangent::Builder(p);
       break;
   }
   e.replaceWithInPlace(result);
@@ -487,10 +485,9 @@ Expression Trigonometry::replaceWithAdvancedFunction(Expression & e, Expression 
     case ExpressionNode::Type::Sine:
       result = Cosecant::Builder(denominator.childAtIndex(0));
       break;
-    case ExpressionNode::Type::Tangent:
-      result = Cotangent::Builder(denominator.childAtIndex(0));
-      break;
     default:
+      assert(denominator.type() == ExpressionNode::Type::Tangent);
+      result = Cotangent::Builder(denominator.childAtIndex(0));
       break;
   }
   e.replaceWithInPlace(result);

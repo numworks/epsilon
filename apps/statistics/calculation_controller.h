@@ -56,8 +56,10 @@ private:
   static constexpr int k_hideableCellType = 3;
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 175;
-  // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
-  static constexpr KDCoordinate k_calculationCellWidth = 7*(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits));
+  /* Margins from EvenOddCell::layoutSubviews (and derived classes
+   * implementations) must be accounted for here.
+   * TODO: change 7 for KDFont::SmallFont->glyphSize().width() */
+  static constexpr KDCoordinate k_calculationCellWidth = 7*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+2*Escher::EvenOddCell::k_horizontalMargin;
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 

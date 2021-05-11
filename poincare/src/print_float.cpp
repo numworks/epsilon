@@ -1,4 +1,5 @@
 #include <poincare/print_float.h>
+#include <poincare/decimal.h>
 #include <poincare/ieee754.h>
 #include <poincare/infinity.h>
 #include <poincare/preferences.h>
@@ -140,10 +141,16 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToText(T f, char * buffer, int b
    * the buffer with the decimal version of 1.234E-30. */
   assert(glyphLength <= k_maxFloatGlyphLength);
 
-  TextLengths requiredLengths = ConvertFloatToTextPrivate(f, buffer, bufferSize, glyphLength, numberOfSignificantDigits, mode);
+  bool forceScientific = mode == Preferences::PrintFloatMode::Decimal && std::fabs(f) < DecimalModeMinimalValue<T>();
+  TextLengths requiredLengths;
+  if (!forceScientific) {
+    requiredLengths = ConvertFloatToTextPrivate(f, buffer, bufferSize, glyphLength, numberOfSignificantDigits, mode);
+    forceScientific |= mode == Preferences::PrintFloatMode::Decimal && (requiredLengths.CharLength > bufferSize - 1 || requiredLengths.GlyphLength > glyphLength);
+  }
+  if (forceScientific) {
   /* If the required buffer size overflows the buffer size, we force the display
-   * mode to scientific. */
-  if (mode == Preferences::PrintFloatMode::Decimal && (requiredLengths.CharLength > bufferSize - 1 || requiredLengths.GlyphLength > glyphLength)) {
+   * mode to scientific. We also force it if the number is too small, to avoid
+   * displaying things like 0.0000001. */
     requiredLengths = ConvertFloatToTextPrivate(f, buffer, bufferSize, glyphLength, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific);
   }
 

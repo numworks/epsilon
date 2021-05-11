@@ -106,7 +106,7 @@ QUIZ_CASE(poincare_serialization_decimal) {
   assert_expression_serialize_to(Decimal::Builder(0.9999999999999996), "1");
   assert_expression_serialize_to(Decimal::Builder(0.99999999999995), "9.9999999999995ᴇ-1", ScientificMode, 14);
   assert_expression_serialize_to(Decimal::Builder(0.00000099999999999995), "9.9999999999995ᴇ-7", ScientificMode, 14);
-  assert_expression_serialize_to(Decimal::Builder(0.000000999999999999995), "0.000001", DecimalMode);
+  assert_expression_serialize_to(Decimal::Builder(0.000000999999999999995), "1ᴇ-6", DecimalMode);
   assert_expression_serialize_to(Decimal::Builder(0.000000999999999901200121020102010201201201021099995), "9.999999999012ᴇ-7", DecimalMode, 14);
   assert_expression_serialize_to(Decimal::Builder(9999999999999.53), "9999999999999.5", DecimalMode, 14);
   assert_expression_serialize_to(Decimal::Builder(99999999999999.54), "1ᴇ14", DecimalMode, 14);
@@ -141,7 +141,7 @@ QUIZ_CASE(poincare_serialization_float) {
   assert_expression_serialize_to(Float<float>::Builder(0.9999999999999995), "1", DecimalMode);
   assert_expression_serialize_to(Float<float>::Builder(1.2345E6), "1234500", DecimalMode);
   assert_expression_serialize_to(Float<float>::Builder(-1.2345E6), "-1234500", DecimalMode);
-  assert_expression_serialize_to(Float<float>::Builder(0.0000009999999999999995), "0.000001", DecimalMode);
+  assert_expression_serialize_to(Float<float>::Builder(0.0000009999999999999995), "1ᴇ-6", DecimalMode);
   assert_expression_serialize_to(Float<float>::Builder(-1.2345E-1), "-0.12345", DecimalMode);
 
   assert_expression_serialize_to(Float<double>::Builder(INFINITY), Infinity::Name(), DecimalMode);

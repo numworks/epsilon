@@ -27,7 +27,7 @@ View * TableCell::subviewAtIndex(int index) {
   return  const_cast<View *>(accessoryView());
 }
 
-KDCoordinate TableCell::minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width) {
+KDCoordinate TableCell::minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width, bool giveAccessoryAllWidth) {
   KDSize labelSize = label ? label->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize subLabelSize = subLabel ? subLabel->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize accessorySize = accessory ? accessory->minimalSizeForOptimalDisplay() : KDSizeZero;
@@ -41,7 +41,7 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(const View * label, const
   KDCoordinate subLabelHeight = subLabelSize.height();
   // Compute minimal Height for Label and subLabel
   KDCoordinate labelsHeight;
-  if (label && subLabel && labelSize.width() + Metric::CellHorizontalElementMargin + subLabelSize.width() > width) {
+  if (label && subLabel && (labelSize.width() + Metric::CellHorizontalElementMargin + subLabelSize.width() > width || giveAccessoryAllWidth)) {
     // Two rows are required to fit content
     labelsHeight = labelHeight + Metric::CellVerticalElementMargin + subLabelHeight;
   } else {
@@ -55,10 +55,10 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(const View * label, const
 }
 
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
-  // TableCell's available width is necessary to compute it minimal height.
+  // TableCell's available width is necessary to compute its minimal height.
   KDCoordinate expectedWidth = m_frame.width();
   assert(expectedWidth > 0);
-  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), subLabelView(), accessoryView(), expectedWidth));
+  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(labelView(), subLabelView(), accessoryView(), expectedWidth, giveAccessoryAllWidth()));
 }
 
 KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
@@ -94,10 +94,22 @@ void TableCell::layoutSubviews(bool force) {
   height -= topOffset + Metric::CellBottomMargin + k_separatorThickness;
 
   assert(width > 0 && height > 0);
+  KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);
+  KDCoordinate labelWidth = cropIfOverflow(labelSize.width(), width);
+  KDCoordinate subLabelHeight = cropIfOverflow(subLabelSize.height(), height);
+  KDCoordinate subLabelWidth = cropIfOverflow(subLabelSize.width(), width);
 
   // If cell contains an accessory, place it first and update remaining space.
   if (accessory) {
-    KDCoordinate accessoryWidth = cropIfOverflow(accessorySize.width(), width - (label || subLabel ? Metric::CellHorizontalElementMargin : 0));
+    // Compute Label and SubLabel minimal required width
+    KDCoordinate labelsMinimalWidth = (label || subLabel) ? cropIfOverflow(std::max<KDCoordinate>(labelWidth, subLabelWidth) + Metric::CellHorizontalElementMargin, width) : 0;
+    KDCoordinate accessoryWidth;
+    if (giveAccessoryAllWidth()) {
+      // Accessory takes as much width as available
+      accessoryWidth = width - labelsMinimalWidth;
+    } else {
+      accessoryWidth = cropIfOverflow(accessorySize.width(), width - labelsMinimalWidth);
+    }
     KDCoordinate accessoryHeight = cropIfOverflow(accessorySize.height(), height);
     // Depending on alignment, accessory is placed left or right.
     KDCoordinate accessoryX = x;
@@ -116,26 +128,14 @@ void TableCell::layoutSubviews(bool force) {
     width -= horizontalOffset;
   }
 
-  KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);
-  KDCoordinate labelWidth = cropIfOverflow(labelSize.width(), width);
-  KDCoordinate subLabelHeight = cropIfOverflow(subLabelSize.height(), height);
-  KDCoordinate subLabelWidth = cropIfOverflow(subLabelSize.width(), width);
-  bool singleRow = true;
-
-  // The shortest element on a same row is vertically centered.
-  KDCoordinate maxHeight = std::max<KDCoordinate>(labelHeight, subLabelHeight);
-
-  if (label && subLabel && labelWidth + Metric::CellHorizontalElementMargin + subLabelWidth > width) {
+  bool singleRow = !(label && subLabel && labelWidth + Metric::CellHorizontalElementMargin + subLabelWidth > width);
+  KDCoordinate maxHeight;
+  if (singleRow) {
+    // On a single row, the shortest element must be vertically centered.
+    maxHeight = std::max<KDCoordinate>(labelHeight, subLabelHeight);
+  } else {
     // Two rows are needed to fit both label and subLabel.
-    singleRow = false;
-    // No need to center the shortest element
     maxHeight = labelHeight;
-    if (labelWidth > width) {
-      labelWidth = width;
-    }
-    if (subLabelWidth > width) {
-      subLabelWidth = width;
-    }
     subLabelHeight = cropIfOverflow(subLabelHeight, height - labelHeight - Metric::CellVerticalElementMargin);
   }
 

@@ -3,6 +3,7 @@
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 
 extern "C" {
 #include <assert.h>
@@ -57,9 +58,8 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(ApproximationContext 
 
 Expression PermuteCoefficient::shallowReduce(Context * context) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

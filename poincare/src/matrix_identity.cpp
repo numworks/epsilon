@@ -5,6 +5,7 @@
 #include <poincare/matrix_complex.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
 #include <limits.h>
@@ -43,9 +44,8 @@ Evaluation<T> MatrixIdentityNode::templatedApproximate(ApproximationContext appr
 
 Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

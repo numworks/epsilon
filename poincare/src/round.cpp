@@ -3,6 +3,7 @@
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
 #include <cmath>
@@ -49,9 +50,14 @@ Expression Round::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionConte
 
 Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    if (childAtIndex(1).hasUnit()) {
+      // Number of digits cannot have units
+      Expression undefined = Undefined::Builder();
+      replaceWithInPlace(undefined);
+      return undefined;
+    }
+    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnits(*this, reductionContext);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

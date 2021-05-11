@@ -1,7 +1,7 @@
 #include <poincare/imaginary_part.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-
+#include <poincare/simplification_helper.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -26,9 +26,8 @@ Expression ImaginaryPartNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

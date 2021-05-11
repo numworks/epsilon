@@ -2,6 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/integral_layout.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
@@ -213,9 +214,8 @@ Expression Integral::UntypedBuilder(Expression children) {
 
 Expression Integral::shallowReduce(Context * context) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    e = e.defaultHandleUnitsInChildren();
-    if (e.isUndefined()) {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
       return e;
     }
   }

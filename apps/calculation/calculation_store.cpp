@@ -54,11 +54,12 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
      * might be deleted */
     Expression ans = ansExpression(context);
 
-    /* Prepare the buffer for the new calculation
-     *The minimal size to store the new calculation is the minimal size of a calculation plus the pointer to its end */
-    int minSize = Calculation::MinimalSize() + sizeof(Calculation *);
-    assert(m_bufferSize > minSize);
-    while (remainingBufferSize() < minSize) {
+    /* Prepare the buffer for the new calculation.
+     * The minimal size to store the new calculation is the minimal size of a
+     * calculation plus the pointer to its end */
+    constexpr int minimalSize = Calculation::k_minimalSize + sizeof(Calculation *);
+    assert(m_bufferSize > minimalSize);
+    while (remainingBufferSize() < minimalSize) {
       // If there is no more space to store a calculation, we delete the oldest one
       deleteOldestCalculation();
       // Update the calculation buffer state
@@ -87,7 +88,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     const char * inputSerialization = beginingOfFreeSpace;
     {
       Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
-      if (!pushSerializeExpression(input, beginingOfFreeSpace, &endOfFreeSpace)) {
+      if (!pushSerializedExpression(input, &beginingOfFreeSpace, endOfFreeSpace)) {
         // Update the calculation buffer state
         calculationAreaEnd = m_buffer;
         numberOfCalculations = 0;
@@ -96,7 +97,6 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
          * undef. */
         return emptyStoreAndPushUndef(context, heightComputer);
       }
-      beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
     }
 
     // Compute and serialize the outputs
@@ -119,19 +119,18 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         if (i == numberOfOutputs - 1) {
           numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
         }
-        if (!pushSerializeExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
-          /* If the exat/approximate output does not fit in the store (event if the
-           * current calculation is the only calculation), replace the output with
+        if (!pushSerializedExpression(outputs[i], &beginingOfFreeSpace, endOfFreeSpace, numberOfSignificantDigits)) {
+          /* If the exact/approximate output does not fit in the store (even if the
+           * current calculation is the only one), replace the output with
            * undef if it fits, else replace the whole calculation with undef. */
           Expression undef = Undefined::Builder();
-          if (!pushSerializeExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
+          if (!pushSerializedExpression(undef, &beginingOfFreeSpace, endOfFreeSpace)) {
             // Update the calculation buffer state
             calculationAreaEnd = m_buffer;
             numberOfCalculations = 0;
             return emptyStoreAndPushUndef(context, heightComputer);
           }
         }
-        beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
       }
     }
     // Storing the pointer of the end of the new calculation
@@ -148,8 +147,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
      * can't change anymore: the calculation heights are fixed which ensures that
      * scrolling computation is right. */
     calculation->setHeights(
-        heightComputer(calculation.pointer(), false),
-        heightComputer(calculation.pointer(), true));
+        heightComputer(calculation.pointer(), context, false),
+        heightComputer(calculation.pointer(), context, true));
     return calculation;
   } else {
     m_calculationAreaEnd = calculationAreaEnd;
@@ -195,12 +194,16 @@ void CalculationStore::deleteAll() {
 
 // Replace "Ans" by its expression
 Expression CalculationStore::ansExpression(Context * context) {
+  const Expression defaultAns = Rational::Builder(0);
   if (numberOfCalculations() == 0) {
-    return Rational::Builder(0);
+    return defaultAns;
   }
   ExpiringPointer<Calculation> mostRecentCalculation = calculationAtIndex(0);
   Expression exactOutput = mostRecentCalculation->exactOutput();
   Expression input = mostRecentCalculation->input();
+  if (exactOutput.isUninitialized() || input.isUninitialized()) {
+    return defaultAns;
+  }
   /* Special case: the exact output is a Store/Equal expression.
    * Store/Equal expression can only be at the root of an expression.
    * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
@@ -208,7 +211,11 @@ Expression CalculationStore::ansExpression(Context * context) {
    * Equal expression appears. */
   bool exactOuptutInvolvesStoreEqual = exactOutput.type() == ExpressionNode::Type::Store || exactOutput.type() == ExpressionNode::Type::Equal;
   if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
-    return mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
+    Expression approximate = mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
+    if (approximate.isUninitialized()) {
+      return defaultAns;
+    }
+    return approximate;
   }
   /* Special case: If exact output was hidden, it should not be accessible using
    * ans, unless it is equal to a non-undef and non-unreal approximation. */
@@ -222,19 +229,22 @@ Expression CalculationStore::ansExpression(Context * context) {
 }
 
 // Push converted expression in the buffer
-bool CalculationStore::pushSerializeExpression(Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits) {
-  assert(*newCalculationsLocation <= m_buffer + m_bufferSize);
-  bool expressionIsPushed = false;
+bool CalculationStore::pushSerializedExpression(Expression e, char ** start, char * end, int numberOfSignificantDigits) {
+  assert(end <= addressOfPointerToCalculationOfIndex(0) && *start < end && end - *start < m_bufferSize);
   while (true) {
-    size_t locationSize = *newCalculationsLocation - location;
-    expressionIsPushed = (PoincareHelpers::Serialize(e, location, locationSize, numberOfSignificantDigits) < (int)locationSize-1);
-    if (expressionIsPushed || *newCalculationsLocation >= m_buffer + m_bufferSize) {
+    assert(*start >= m_buffer);
+    int availableSize = end - *start;
+    int serializationSize = PoincareHelpers::Serialize(e, *start, availableSize, numberOfSignificantDigits);
+    if (serializationSize < availableSize - 1) {
+      *start += serializationSize + 1;
+      return true;
+    }
+    if (*start == m_buffer) {
       break;
     }
-    *newCalculationsLocation = *newCalculationsLocation + deleteOldestCalculation();
-    assert(*newCalculationsLocation <= m_buffer + m_bufferSize);
+    *start -= deleteOldestCalculation();
   }
-  return expressionIsPushed;
+  return false;
 }
 
 

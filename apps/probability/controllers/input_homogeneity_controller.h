@@ -27,8 +27,8 @@ class SolidColorCell : public HighlightCell {
 
 class InputHomogeneityDataSource : public TableViewDataSource {
  public:
-  InputHomogeneityDataSource(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             TextFieldDelegate * delegate);
+  InputHomogeneityDataSource(Responder * parentResponder, SelectableTableView * tableView,
+                             InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
   int numberOfRows() const override { return k_initialNumberOfRows; }
   int numberOfColumns() const override { return k_initialNumberOfColumns; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
@@ -42,7 +42,7 @@ class InputHomogeneityDataSource : public TableViewDataSource {
   int indexForEditableCell(int i);
 
   // TODO needed ?
-  constexpr static int k_columnWidth = 150;
+  constexpr static int k_columnWidth = 80;
   constexpr static int k_rowHeight = 20;
 
   constexpr static int k_initialNumberOfRows = 4;
@@ -63,6 +63,7 @@ class InputHomogeneityController : public Page {
   InputHomogeneityController(StackViewController * parent, InputEventHandlerDelegate * inputEventHandlerDelegate,
                              TextFieldDelegate * delegate);
   View * view() override { return &m_contentView; }
+  void didBecomeFirstResponder() override;
 
  private:
   InputHomogeneityDataSource m_data;

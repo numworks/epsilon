@@ -58,45 +58,31 @@ bool isDefinedSecure(uint8_t eventId) {
 static constexpr int k_prescalerFactor = 4;
 static constexpr int k_stallingDelay = 500*k_prescalerFactor; // TODO: calibrate
 static constexpr int k_spinningDelay = 200*k_prescalerFactor; // TODO: calibrate
-static constexpr int k_hideSpinnerDelay = 201*k_prescalerFactor; // TODO: calibrate
 
 void initTimer() {
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
   TIM2.DIER()->setUIE(true);
   TIM2.ARR()->set(k_stallingDelay);
-
-  TIM12.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
-  TIM12.DIER()->setUIE(true);
-  TIM12.ARR()->set(k_hideSpinnerDelay);
 }
 
 void shutdownTimer() {
   TIM2.DIER()->setUIE(false);
   TIM2.CR1()->setCEN(false);
-
-  TIM12.DIER()->setUIE(false);
-  TIM12.CR1()->setCEN(false);
 }
 
 static constexpr int tim2interruptionISRIndex = 28;
-static constexpr int tim12interruptionISRIndex = 43; // TODO: add static assert?
 
 void initInterruptions() {
   // Flush pending interruptions
   while (NVIC.NVIC_ICPR()->getBit(tim2interruptionISRIndex)) { // Read to force writing
     NVIC.NVIC_ICPR()->setBit(tim2interruptionISRIndex, true);
   }
-  while (NVIC.NVIC_ICPR()->getBit(tim12interruptionISRIndex)) { // Read to force writing
-    NVIC.NVIC_ICPR()->setBit(tim12interruptionISRIndex, true);
-  }
 
   /* Configure the priority: the event stalling interruption should not
    * interrupt SVCalls (send data to display...) */
   NVIC.NVIC_IPR()->setPriority(tim2interruptionISRIndex, NVIC::NVIC_IPR::InterruptionPriority::MediumLow);
-  NVIC.NVIC_IPR()->setPriority(tim12interruptionISRIndex, NVIC::NVIC_IPR::InterruptionPriority::MediumLow);
   // Enable interruptions
   NVIC.NVIC_ISER()->setBit(tim2interruptionISRIndex, true);
-  NVIC.NVIC_ISER()->setBit(tim12interruptionISRIndex, true);
 
   initTimer();
 }
@@ -105,7 +91,6 @@ void shutdownInterruptions() {
   shutdownTimer();
   // Disable interruptions
   NVIC.NVIC_ICER()->setBit(tim2interruptionISRIndex, true);
-  NVIC.NVIC_ICER()->setBit(tim12interruptionISRIndex, true);
 }
 
 void init() {
@@ -327,11 +312,24 @@ Ion::Events::Event nextEvent(int * timeout) {
   }
 }
 
+enum class SpinnerState : uint8_t {
+  Spinning,
+  Hidden,
+  Disabled
+};
+
+static SpinnerState s_spinner = SpinnerState::Disabled;
+
 void resetStallingTimer() {
   // Init timer on the first call to getEvent
   TIM2.CR1()->setCEN(true);
   // Reset the counter
   TIM2.CNT()->set(0);
+  if (s_spinner == SpinnerState::Spinning) {
+    // Configure the delay
+    TIM2.ARR()->set(k_stallingDelay);
+    hideSpinner();
+  }
 }
 
 Ion::Events::Event getEvent(int * timeout) {
@@ -339,8 +337,6 @@ Ion::Events::Event getEvent(int * timeout) {
   resetStallingTimer();
   return e;
 }
-
-static bool s_spinner = false;
 
 static KDColor s_spinnerPixels[k_spinnerSize][k_spinnerSize] = {
   {KDColor::RGB16(0xBD), KDColor::RGB16(0xC6), KDColor::RGB16(0xEA), KDColor::RGB16(0xFB), KDColor::RGB16(0xFB), KDColor::RGB16(0xEA), KDColor::RGB16(0xC6), KDColor::RGB16(0xBD)},
@@ -367,19 +363,8 @@ void spin() {
   }
 }
 
-void setSpinner(bool spinner) {
-  s_spinner = spinner;
-}
-
-void launchSpinnerDismissTimer() {
-  if (!TIM12.CR1()->getCEN()) {
-    /* The first time we display the spinner, we:
-     * - enable the timer to hide it after a while without spinning,
-     * - change the timer configuration from stalling to spinning. */
-    TIM12.CR1()->setCEN(true);
-    TIM2.ARR()->set(k_spinningDelay);
-  }
-  TIM12.CNT()->set(0);
+void setSpinner(bool activate) {
+  s_spinner = activate ? SpinnerState::Hidden : SpinnerState::Disabled;
 }
 
 void stall() {
@@ -390,21 +375,19 @@ void stall() {
     return;
   }
 
-  if (s_spinner) {
+  if (s_spinner != SpinnerState::Disabled) {
+    s_spinner = SpinnerState::Spinning;
     spin();
     // TODO: stalling when no User/System checkpoint is set could lead to checkout the home
     // TODO: should we shutdown any interruption here to be sure to complete our drawing
     // TODO: draw a hourglass or spinning circle?
     Ion::Device::Display::pushRect(k_spinnerRect, reinterpret_cast<KDColor *>(s_spinnerPixels));
-    launchSpinnerDismissTimer();
   }
 }
 
 void hideSpinner() {
   Ion::Device::Display::pushRectUniform(k_spinnerRect, KDColor::RGB24(0xffb734));
-  TIM12.SR()->setUIF(false);
-  TIM12.CR1()->setCEN(false);
-  TIM2.ARR()->set(k_stallingDelay);
+  s_spinner = SpinnerState::Hidden;
 }
 
 void resetPendingKeyboardState() {

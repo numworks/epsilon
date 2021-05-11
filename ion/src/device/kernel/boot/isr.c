@@ -71,7 +71,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // EXTI Line[15:10] interrupts
   0, // EXTI Line 17 interrupt RTC Alarms (A and B) through EXTI line interrupt
   0, // EXTI Line 18 interrupt / USB On-The-Go FS Wakeup through EXTI line interrupt
-  tim12_handler, // TIM8 Break interrupt TIM12 global interrupt
+  0, // TIM8 Break interrupt TIM12 global interrupt
   0, // TIM8 Update interrupt TIM13 global interrupt
   0, // TIM8 Trigger & Commutation interrupt TIM14 global interrupt
   0, // TIM8 Cap/Com interrupt

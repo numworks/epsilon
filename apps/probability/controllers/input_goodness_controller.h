@@ -19,44 +19,11 @@
 
 #include "../abstract/button_delegate.h"
 #include "../gui/page_controller.h"
+#include "../gui/input_table_view.h"
 
 using namespace Escher;
 
 namespace Probability {
-
-/* This view contains a TableView, an EditableCell and a Button,
- * layed out vertically, and is able to move selection between them.
- */
-class InputGoodnessView : public VerticalLayout<3>, public ButtonDelegate, public Responder {
- public:
-  InputGoodnessView(Responder * parentResponder, TableViewDataSource * dataSource,
-                    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
-
-  SelectableTableView * selectableTableView() { return &m_tableView; }
-  MessageTableCellWithEditableTextWithMessage * significanceLevelView() { return &m_significance; }
-  Shared::ButtonWithSeparator * nextButton() { return &m_next; }
-  // Responder
-  void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
-
- private:
-  void buttonAction() override {}
-  Responder * responderForRow(int row);
-  void setResponderForSelectedRow();
-  void highlightViewForSelectedRow();
-
-  constexpr static int k_indexOfTable = 0;
-  constexpr static int k_indexOfSignificance = 1;
-  constexpr static int k_indexOfNext = 2;
-
-  SelectableTableView m_tableView;
-  MessageTableCellWithEditableTextWithMessage m_significance;
-  Shared::ButtonWithSeparator m_next;
-
-  SelectableTableViewDataSource m_tableSelection;
-  SelectableTableViewDataSource m_viewSelection;
-};
-
 
 class InputGoodnessDataSource : public TableViewDataSource {
  public:
@@ -67,7 +34,7 @@ class InputGoodnessDataSource : public TableViewDataSource {
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
   HighlightCell * reusableCell(int i, int type) override;
   int typeAtLocation(int i, int j) override { return 0; }
-  
+
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
@@ -92,7 +59,8 @@ class InputGoodnessController : public Page {
 
  private:
   InputGoodnessDataSource m_data;
-  InputGoodnessView m_contentView;
+  InputTableView m_contentView;
+  SelectableTableView m_table;
 };
 
 }  // namespace Probability

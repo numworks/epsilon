@@ -54,6 +54,7 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	input_controller.cpp \
 	results_controller.cpp \
 	input_goodness_controller.cpp \
+	input_homogeneity_controller.cpp \
 )
 
 

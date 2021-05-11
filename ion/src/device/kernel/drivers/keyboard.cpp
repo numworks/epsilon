@@ -75,7 +75,7 @@ State scan() {
 
 using namespace Regs;
 
-static constexpr int k_debouncingDelay = 100;
+static constexpr int k_debouncingDelay = 50;
 
 void initTimer() {
   TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency-1);

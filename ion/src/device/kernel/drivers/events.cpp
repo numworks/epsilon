@@ -56,8 +56,9 @@ bool isDefinedSecure(uint8_t eventId) {
  * milliseconds. However, since the prescaler range is 2^16-1, we use a factor
  * not to overflow PSC. */
 static constexpr int k_prescalerFactor = 4;
-static constexpr int k_stallingDelay = 200*k_prescalerFactor; // TODO: calibrate
-static constexpr int k_spinnerHidingDelay = 300*k_prescalerFactor; // TODO: calibrate
+static constexpr int k_stallingDelay = 500*k_prescalerFactor; // TODO: calibrate
+static constexpr int k_spinningDelay = 200*k_prescalerFactor; // TODO: calibrate
+static constexpr int k_hideSpinnerDelay = 201*k_prescalerFactor; // TODO: calibrate
 
 void initTimer() {
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
@@ -66,7 +67,7 @@ void initTimer() {
 
   TIM12.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
   TIM12.DIER()->setUIE(true);
-  TIM12.ARR()->set(k_spinnerHidingDelay);
+  TIM12.ARR()->set(k_hideSpinnerDelay);
 }
 
 void shutdownTimer() {
@@ -368,7 +369,13 @@ void setSpinner(bool spinner) {
 }
 
 void launchSpinnerDismissTimer() {
-  TIM12.CR1()->setCEN(true);
+  if (!TIM12.CR1()->getCEN()) {
+    /* The first time we display the spinner, we:
+     * - enable the timer to hide it after a while without spinning,
+     * - change the timer configuration from stalling to spinning. */
+    TIM12.CR1()->setCEN(true);
+    TIM2.ARR()->set(k_spinningDelay);
+  }
   TIM12.CNT()->set(0);
 }
 
@@ -391,10 +398,10 @@ void stall() {
 }
 
 void hideSpinner() {
-  // Clear update interrupt flag
+  Ion::Device::Display::pushRectUniform(k_spinnerRect, KDColor::RGB24(0xffb734));
   TIM12.SR()->setUIF(false);
   TIM12.CR1()->setCEN(false);
-  Ion::Device::Display::pushRectUniform(k_spinnerRect, KDColor::RGB24(0xffb734));
+  TIM2.ARR()->set(k_stallingDelay);
 }
 
 void resetPendingKeyboardState() {

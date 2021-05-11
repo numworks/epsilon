@@ -264,8 +264,10 @@ public:
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
   /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
-   * circularly defined. Same convention as for 'deepReplaceReplaceableSymbols'.*/
-  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, bool replaceFunctionsOnly = false);
+   * circularly defined. SymbolicComputation defines how to handle functions
+   * and undefined symbols. Same convention as for
+   * 'deepReplaceReplaceableSymbols'. */
+  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
   Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
@@ -385,9 +387,10 @@ protected:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation); }
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
-   * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
+   * is circularly defined. SymbolicComputation defines how to handle functions
+   * and undefined symbols. Same convention as for 'ExpressionWithoutSymbols'.*/
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
   Expression defaultOddFunctionSetSign(ExpressionNode::Sign, ExpressionNode::ReductionContext reductionContext);
 
   /* Simplification */

@@ -9,8 +9,8 @@ Expression ParameteredExpressionNode::replaceSymbolWithExpression(const SymbolAb
   return ParameteredExpression(this).replaceSymbolWithExpression(symbol, expression);
 }
 
-Expression ParameteredExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
-  return ParameteredExpression(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+Expression ParameteredExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return ParameteredExpression(this).deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation);
 }
 
 int ParameteredExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
@@ -63,7 +63,7 @@ Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstra
   return *this;
 }
 
-Expression ParameteredExpression::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+Expression ParameteredExpression::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   /* All children replaceable symbols should be replaced apart from symbols that
    * are parameters in parametered expressions.*/
   int childrenCount = numberOfChildren();
@@ -76,7 +76,7 @@ Expression ParameteredExpression::deepReplaceReplaceableSymbols(Context * contex
      * that when replacing symbols, the expressions check that the symbols are
      * not the parametered symbols. */
     bool shouldIncreaseParameteredAncestorsCount = i == ParameteredChildIndex();
-    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount + (shouldIncreaseParameteredAncestorsCount ? 1 : 0));
+    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount + (shouldIncreaseParameteredAncestorsCount ? 1 : 0), symbolicComputation);
     if (c.isUninitialized()) { // the expression is circularly defined, escape
       return Expression();
     }

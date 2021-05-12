@@ -161,6 +161,17 @@ int TableView::ContentView::absoluteRowNumberFromSubviewIndex(int index) const {
   return j + rowOffset;
 }
 
+View * TableView::ContentView::subview(int index) {
+  /* This is a hack: the redrawing routine tracks a rectangle which has to be
+   * redrawn. Thereby, the union of the rectangles that need to be redrawn
+   * sometimes covers areas that are uselessly redrawn. We reverse the order of
+   * subviews when redrawing the TableView to make it more likely to uselessly
+   * redraw the top left cells rather than the bottom right cells. Due to the
+   * screen driver specifications, blinking is less visible at the top left
+   * corner than at the bottom right. */
+  return View::subview(numberOfSubviews() - 1 - index);
+}
+
 View * TableView::ContentView::subviewAtIndex(int index) {
   int type = typeOfSubviewAtIndex(index);
   int typeIndex = typeIndexFromSubviewIndex(index, type);
@@ -171,7 +182,7 @@ void TableView::ContentView::layoutSubviews(bool force) {
   /* The number of subviews might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
-    View * cell = subview(index);
+    View * cell = subviewAtIndex(index);
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
     m_dataSource->willDisplayCellAtLocation(static_cast<HighlightCell *>(cell), i, j);

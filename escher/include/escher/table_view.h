@@ -54,6 +54,7 @@ protected:
     KDCoordinate width() const;
 
     int numberOfSubviews() const override;
+    View * subview(int index) override;
     View * subviewAtIndex(int index) override;
 
     /* These two methods transform an index (of subview for instance) into

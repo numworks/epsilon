@@ -12,18 +12,10 @@
 
 #include "../gui/input_table_view.h"
 #include "../gui/page_controller.h"
+#include "../gui/solid_color_cell.h"
 
 namespace Probability {
 
-// TODO anything better?
-class SolidColorCell : public HighlightCell {
- public:
-  SolidColorCell(KDColor color) : HighlightCell(), m_color(color){};
-  void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(rect, m_color); }
-
- private:
-  KDColor m_color;
-};
 
 class InputHomogeneityDataSource : public TableViewDataSource {
  public:

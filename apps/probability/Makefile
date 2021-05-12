@@ -70,7 +70,8 @@ tests_src += $(addprefix apps/probability/test/,\
   regularized_gamma.cpp \
 )
 
-# $(call object_for,$(wildcard apps/probability/controllers/*.cpp)): SFLAGS += -Iapps/probability
+# Allow #include <probability/...>
+$(call object_for,apps/apps_container.cpp apps/apps_container_storage.cpp apps/main.cpp) $(call object_for,$(app_probability_src)): SFLAGS += -Iapps
 
 # Image dependencies
 

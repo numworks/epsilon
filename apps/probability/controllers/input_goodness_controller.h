@@ -17,9 +17,9 @@
 #include <ion/events.h>
 #include <kandinsky/coordinate.h>
 
-#include "../abstract/button_delegate.h"
-#include "../gui/input_table_view.h"
-#include "../gui/page_controller.h"
+#include "probability/abstract/button_delegate.h"
+#include "probability/gui/input_table_view.h"
+#include "probability/gui/page_controller.h"
 #include "results_controller.h"
 
 using namespace Escher;

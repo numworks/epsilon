@@ -3,11 +3,11 @@
 
 #include <apps/shared/parameter_text_field_delegate.h>
 
-#include "../calculation/calculation.h"
-#include "../distribution/distribution.h"
-#include "../gui/calculation_cell.h"
-#include "../gui/distribution_curve_view.h"
-#include "../gui/responder_image_cell.h"
+#include "probability/calculation/calculation.h"
+#include "probability/distribution/distribution.h"
+#include "probability/gui/calculation_cell.h"
+#include "probability/gui/distribution_curve_view.h"
+#include "probability/gui/responder_image_cell.h"
 
 namespace Probability {
 

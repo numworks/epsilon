@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
-#include "../distribution/chi_squared_distribution.h"
-#include "../distribution/regularized_gamma.h"
+#include "probability/distribution/chi_squared_distribution.h"
+#include "probability/distribution/regularized_gamma.h"
 
 void assert_regularized_gamma_is(double s, double x, double result) {
   double r = 0.0;

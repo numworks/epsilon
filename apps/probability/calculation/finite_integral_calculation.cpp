@@ -1,5 +1,5 @@
 #include "finite_integral_calculation.h"
-#include "../distribution/normal_distribution.h"
+#include "probability/distribution/normal_distribution.h"
 #include <assert.h>
 #include <ion.h>
 #include <cmath>

@@ -11,8 +11,8 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
-#include "../abstract/button_delegate.h"
-#include "../gui/page_controller.h"
+#include "probability/abstract/button_delegate.h"
+#include "probability/gui/page_controller.h"
 #include "graph_controller.h"
 
 namespace Probability {

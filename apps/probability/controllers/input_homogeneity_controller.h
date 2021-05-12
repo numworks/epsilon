@@ -10,10 +10,10 @@
 #include <kandinsky/color.h>
 #include <kandinsky/coordinate.h>
 
-#include "../abstract/button_delegate.h"
-#include "../gui/input_table_view.h"
-#include "../gui/page_controller.h"
-#include "../gui/solid_color_cell.h"
+#include "probability/abstract/button_delegate.h"
+#include "probability/gui/input_table_view.h"
+#include "probability/gui/page_controller.h"
+#include "probability/gui/solid_color_cell.h"
 #include "homogeneity_results_controller.h"
 
 namespace Probability {

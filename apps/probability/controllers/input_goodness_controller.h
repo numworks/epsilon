@@ -60,11 +60,11 @@ class InputGoodnessController : public Page, public ButtonDelegate {
   void buttonAction() override;
 
  private:
+  TestResults * m_resultsController;
+
   InputGoodnessDataSource m_data;
   InputTableView m_contentView;
   SelectableTableView m_table;
-
-  TestResults * m_resultsController;
 };
 
 }  // namespace Probability

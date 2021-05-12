@@ -42,7 +42,7 @@ class HomogeneityResultsController : public Page, public TableViewDataSource, pu
   int numberOfColumns() const override { return k_initialNumberOfColumns; }
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
-  int typeAtLocation(int i, int j) { return 0; }
+  int typeAtLocation(int i, int j) override { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
 

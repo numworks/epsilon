@@ -8,8 +8,6 @@ namespace Probability {
 class ButtonDelegate {
  public:
   virtual void buttonAction() = 0;
-
- protected:
   Escher::Invocation buttonActionInvocation() {
     return Escher::Invocation(
         [](void * c, void * s) {

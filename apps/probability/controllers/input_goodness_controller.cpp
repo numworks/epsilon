@@ -40,7 +40,7 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent,
                                                  TextFieldDelegate * textFieldDelegate)
     : Page(parent),
       m_data(parent, &m_table, inputEventHandlerDelegate, textFieldDelegate),
-      m_contentView(this, &m_table, inputEventHandlerDelegate, textFieldDelegate),
+      m_contentView(this, this, &m_table, inputEventHandlerDelegate, textFieldDelegate),
       m_table(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
 
 void InputGoodnessController::didBecomeFirstResponder() {

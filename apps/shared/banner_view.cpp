@@ -73,7 +73,7 @@ void BannerView::layoutSubviews(bool force) {
 
 int BannerView::numberOfLinesGivenWidth(KDCoordinate width) const {
   int lineNumber = 1;
-  const KDCoordinate lineWidth = width;
+  const KDCoordinate lineWidth = width - k_minimalSpaceBetweenSubviews;
   KDCoordinate remainingWidth = lineWidth;
   for (int i = 0; i < numberOfSubviews(); i++) {
     View * subview = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i);

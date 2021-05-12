@@ -2,8 +2,8 @@
 
 #include <apps/i18n.h>
 #include <escher/container.h>
-#include <kandinsky/color.h>
 #include <escher/palette.h>
+#include <kandinsky/color.h>
 #include <kandinsky/font.h>
 #include <string.h>
 
@@ -65,13 +65,19 @@ int InputHomogeneityDataSource::indexForEditableCell(int i) {
 }
 
 InputHomogeneityController::InputHomogeneityController(StackViewController * parent,
+                                                       HomogeneityResultsController * homogeneityResultsController,
                                                        InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                        TextFieldDelegate * delegate)
     : Page(parent),
       m_data(this, &m_table, inputEventHandlerDelegate, delegate),
-      m_contentView(this, &m_table, inputEventHandlerDelegate, delegate),
-      m_table(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
+      m_contentView(this, this, &m_table, inputEventHandlerDelegate, delegate),
+      m_table(&m_contentView, &m_data, m_contentView.selectionDataSource()),
+      m_homogeneityResultsController(homogeneityResultsController) {}
 
 void InputHomogeneityController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_contentView);
+}
+
+void InputHomogeneityController::buttonAction() {
+  openPage(m_homogeneityResultsController, false);
 }

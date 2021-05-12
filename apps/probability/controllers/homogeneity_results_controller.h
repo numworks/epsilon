@@ -32,7 +32,7 @@ class HomogeneityResultsView : public VerticalLayout<3>, public ButtonDelegate {
   Shared::ButtonWithSeparator m_next;
 };
 
-class HomogeneityResultsController : public Page, public TableViewDataSource {
+class HomogeneityResultsController : public Page, public TableViewDataSource, public SelectableTableViewDataSource {
  public:
   HomogeneityResultsController(StackViewController * stackViewController);
   View * view() override { return &m_contentView; }
@@ -65,6 +65,8 @@ class HomogeneityResultsController : public Page, public TableViewDataSource {
   EvenOddBufferTextCell m_colHeader[k_maxNumberOfColumns];
   EvenOddBufferTextCell m_cells[k_maxNumberOfResultCells];
   HomogeneityResultsView m_contentView;
+
+  SelectableTableView m_table;
 };
 
 }  // namespace Probability

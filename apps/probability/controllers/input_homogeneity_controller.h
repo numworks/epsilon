@@ -10,12 +10,13 @@
 #include <kandinsky/color.h>
 #include <kandinsky/coordinate.h>
 
+#include "../abstract/button_delegate.h"
 #include "../gui/input_table_view.h"
 #include "../gui/page_controller.h"
 #include "../gui/solid_color_cell.h"
+#include "homogeneity_results_controller.h"
 
 namespace Probability {
-
 
 class InputHomogeneityDataSource : public TableViewDataSource {
  public:
@@ -50,17 +51,20 @@ class InputHomogeneityDataSource : public TableViewDataSource {
   EvenOddEditableTextCell m_cells[k_maxNumberOfEditableCells];
 };
 
-class InputHomogeneityController : public Page {
+class InputHomogeneityController : public Page, public ButtonDelegate {
  public:
-  InputHomogeneityController(StackViewController * parent, InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             TextFieldDelegate * delegate);
+  InputHomogeneityController(StackViewController * parent, HomogeneityResultsController * homogeneityResultsController,
+                             InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
+  void buttonAction() override;
 
  private:
   InputHomogeneityDataSource m_data;
   InputTableView m_contentView;
   SelectableTableView m_table;
+
+  HomogeneityResultsController * m_homogeneityResultsController;
 };
 
 }  // namespace Probability

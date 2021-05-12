@@ -2,14 +2,14 @@
 
 using namespace Probability;
 
-InputTableView::InputTableView(Responder * parentResponder, SelectableTableView * table,
+InputTableView::InputTableView(Responder * parentResponder, ButtonDelegate * buttonDelegate, SelectableTableView * table,
                                InputEventHandlerDelegate * inputEventHandlerDelegate,
                                TextFieldDelegate * textFieldDelegate)
     : VerticalLayout(),
       Responder(parentResponder),
       m_tableView(table),
       m_significance(this, inputEventHandlerDelegate, textFieldDelegate),
-      m_next(this, I18n::Message::Ok, buttonActionInvocation()) {
+      m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation()) {
   // TODO
   // m_significance.setMessage(I18n::Message::A);
   // m_significance.setSubLabelMessage(I18n::Message::SignificanceLevel);

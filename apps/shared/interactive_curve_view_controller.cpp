@@ -205,11 +205,12 @@ bool InteractiveCurveViewController::isCursorVisible() {
   InteractiveCurveViewRange * range = interactiveCurveViewRange();
   float xRange = range->xMax() - range->xMin();
   float yRange = range->yMax() - range->yMin();
-  return
-    m_cursor->x() >= range->xMin() +   cursorLeftMarginRatio() * xRange &&
-    m_cursor->x() <= range->xMax() -  cursorRightMarginRatio() * xRange &&
-    m_cursor->y() >= range->yMin() + cursorBottomMarginRatio() * yRange &&
-    m_cursor->y() <= range->yMax() -    cursorTopMarginRatio() * yRange;
+  float x = m_cursor->x(), y = m_cursor->y();
+  return x >= range->xMin() + cursorLeftMarginRatio() * xRange
+      && x <= range->xMax() - cursorRightMarginRatio() * xRange
+      && (std::isnan(y)
+       || (y >= range->yMin() + cursorBottomMarginRatio() * yRange
+        && y <= range->yMax() - cursorTopMarginRatio() * yRange));
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {

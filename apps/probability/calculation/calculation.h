@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_CALCULATION_H
 #define PROBABILITE_CALCULATION_H
 
-#include "../distribution/distribution.h"
+#include "probability/distribution/distribution.h"
 
 namespace Probability {
 

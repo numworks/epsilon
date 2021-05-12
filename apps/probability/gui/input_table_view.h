@@ -10,7 +10,7 @@
 #include <escher/text_field_delegate.h>
 #include <ion/events.h>
 
-#include "../abstract/button_delegate.h"
+#include "probability/abstract/button_delegate.h"
 #include "vertical_layout.h"
 
 namespace Probability {

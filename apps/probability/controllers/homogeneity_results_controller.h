@@ -11,10 +11,10 @@
 #include <escher/view.h>
 #include <kandinsky/coordinate.h>
 
-#include "../abstract/button_delegate.h"
-#include "../gui/page_controller.h"
-#include "../gui/solid_color_cell.h"
-#include "../gui/vertical_layout.h"
+#include "probability/abstract/button_delegate.h"
+#include "probability/gui/page_controller.h"
+#include "probability/gui/solid_color_cell.h"
+#include "probability/gui/vertical_layout.h"
 
 using namespace Escher;
 

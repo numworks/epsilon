@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <escher/container.h>
 
-#include "../gui/responder_image_cell.h"
+#include "probability/gui/responder_image_cell.h"
 #include "../images/calcul1_icon.h"
 #include "../images/calcul2_icon.h"
 #include "../images/calcul3_icon.h"

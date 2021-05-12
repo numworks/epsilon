@@ -8,7 +8,7 @@
 #include <escher/table_cell.h>
 #include <escher/view_controller.h>
 
-#include "../gui/page_controller.h"
+#include "probability/gui/page_controller.h"
 
 namespace Probability {
 

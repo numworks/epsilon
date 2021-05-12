@@ -6,8 +6,8 @@
 #include <poincare/coordinate_2D.h>
 #include <poincare/print_float.h>
 
-#include "../calculation/calculation.h"
-#include "../distribution/distribution.h"
+#include "probability/calculation/calculation.h"
+#include "probability/distribution/distribution.h"
 
 namespace Probability {
 

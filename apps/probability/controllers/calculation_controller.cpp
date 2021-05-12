@@ -7,10 +7,10 @@
 #include <algorithm>
 #include <cmath>
 
-#include "../calculation/discrete_calculation.h"
-#include "../calculation/finite_integral_calculation.h"
-#include "../calculation/left_integral_calculation.h"
-#include "../calculation/right_integral_calculation.h"
+#include "probability/calculation/discrete_calculation.h"
+#include "probability/calculation/finite_integral_calculation.h"
+#include "probability/calculation/left_integral_calculation.h"
+#include "probability/calculation/right_integral_calculation.h"
 #include "../images/calcul1_icon.h"
 #include "../images/calcul2_icon.h"
 #include "../images/calcul3_icon.h"
@@ -19,7 +19,7 @@
 #include "../images/focused_calcul2_icon.h"
 #include "../images/focused_calcul3_icon.h"
 #include "../images/focused_calcul4_icon.h"
-#include "../gui/responder_image_cell.h"
+#include "probability/gui/responder_image_cell.h"
 
 using namespace Poincare;
 using namespace Shared;

@@ -7,7 +7,9 @@
 #include <escher/message_text_view.h>
 #include <escher/responder.h>
 #include <escher/selectable_table_view.h>
+#include <escher/table_view_data_source.h>
 #include <escher/view.h>
+#include <kandinsky/coordinate.h>
 
 #include "../abstract/button_delegate.h"
 #include "../gui/page_controller.h"
@@ -30,12 +32,20 @@ class HomogeneityResultsView : public VerticalLayout<3>, public ButtonDelegate {
   Shared::ButtonWithSeparator m_next;
 };
 
-class HomogeneityResultsController : public SelectableListViewPage {
+class HomogeneityResultsController : public Page, public TableViewDataSource {
  public:
   HomogeneityResultsController(StackViewController * stackViewController);
   View * view() override { return &m_contentView; }
+
+  // TableViewDataSource
+  int numberOfRows() const override { return k_initialNumberOfRows; }
+  int numberOfColumns() const override { return k_initialNumberOfColumns; }
+  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
+  KDCoordinate rowHeight(int j) override { return k_rowHeight; }
+  int typeAtLocation(int i, int j) { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
+
   int indexForEditableCell(int i);
 
  private:

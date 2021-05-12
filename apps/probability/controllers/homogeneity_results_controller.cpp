@@ -18,9 +18,9 @@ HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent, Esche
 void HomogeneityResultsView::buttonAction() {}
 
 HomogeneityResultsController::HomogeneityResultsController(StackViewController * stackViewController)
-    : SelectableListViewPage(stackViewController),
+    : Page(stackViewController),
       m_topLeftCell(Escher::Palette::GrayMiddle),
-      m_contentView(this, &m_selectableTableView) {
+      m_contentView(this, &m_table), m_table(this, this, this) {
   // Row header
   for (int i = 0; i < k_initialNumberOfColumns; i++) {
     m_rowHeader[i].setFont(KDFont::SmallFont);

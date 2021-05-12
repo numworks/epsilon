@@ -18,9 +18,9 @@ namespace Probability {
 /* This view contains an EditableCell, a Button and a pointer to a TableView,
  * layed out vertically, and is able to move selection between them.
  */
-class InputTableView : public VerticalLayout<3>, public ButtonDelegate, public Responder {
+class InputTableView : public VerticalLayout<3>, public Responder {
  public:
-  InputTableView(Responder * parentResponder, SelectableTableView * table,
+  InputTableView(Responder * parentResponder, ButtonDelegate * buttonDelegate, SelectableTableView * table,
                  InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
 
   MessageTableCellWithEditableTextWithMessage * significanceLevelView() { return &m_significance; }
@@ -32,7 +32,6 @@ class InputTableView : public VerticalLayout<3>, public ButtonDelegate, public R
   SelectableTableViewDataSource * selectionDataSource() { return &m_tableSelection; }
 
  private:
-  void buttonAction() override {}
   Responder * responderForRow(int row);
   void setResponderForSelectedRow();
   void highlightViewForSelectedRow();

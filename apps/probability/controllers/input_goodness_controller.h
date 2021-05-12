@@ -50,12 +50,13 @@ class InputGoodnessDataSource : public TableViewDataSource {
   EvenOddEditableTextCell m_cells[8];  // TODO should it contain views?
 };
 
-class InputGoodnessController : public Page {
+class InputGoodnessController : public Page, public ButtonDelegate {
  public:
   InputGoodnessController(StackViewController * parent, InputEventHandlerDelegate * inputEventHandlerDelegate,
                           TextFieldDelegate * textFieldDelegate);
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
+  void buttonAction() override {};
 
  private:
   InputGoodnessDataSource m_data;

@@ -25,10 +25,12 @@ Ion::Events::Event getPlatformEvent();
 size_t copyTextSecure(uint8_t eventId, char * buffer, size_t bufferSize);
 bool isDefinedSecure(uint8_t eventId);
 
-void setSpinner(bool spinner);
+void resetStallingTimer();
 void stall();
 constexpr int k_spinnerSize = 8;
 constexpr KDRect k_spinnerRect(250, 5, k_spinnerSize, k_spinnerSize);
+void setSpinner(bool spinner);
+void displaySpinner();
 void hideSpinner();
 
 void resetPendingKeyboardState();

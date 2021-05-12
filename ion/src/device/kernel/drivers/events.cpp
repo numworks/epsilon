@@ -312,26 +312,6 @@ Ion::Events::Event nextEvent(int * timeout) {
   }
 }
 
-enum class SpinnerState : uint8_t {
-  Spinning,
-  Hidden,
-  Disabled
-};
-
-static SpinnerState s_spinner = SpinnerState::Disabled;
-
-void resetStallingTimer() {
-  // Init timer on the first call to getEvent
-  TIM2.CR1()->setCEN(true);
-  // Reset the counter
-  TIM2.CNT()->set(0);
-  if (s_spinner == SpinnerState::Spinning) {
-    // Configure the delay
-    TIM2.ARR()->set(k_stallingDelay);
-    hideSpinner();
-  }
-}
-
 Ion::Events::Event getEvent(int * timeout) {
   Ion::Events::Event e = nextEvent(timeout);
   resetStallingTimer();
@@ -348,6 +328,14 @@ static KDColor s_spinnerPixels[k_spinnerSize][k_spinnerSize] = {
   {KDColor::RGB16(0xBF), KDColor::RGB16(0xCA), KDColor::RGB16(0xC2), KDColor::RGB16(0xBE), KDColor::RGB16(0xBE), KDColor::RGB16(0xC2), KDColor::RGB16(0xC9), KDColor::RGB16(0xBF)},
   {KDColor::RGB16(0xBD), KDColor::RGB16(0xBE), KDColor::RGB16(0xC1), KDColor::RGB16(0xC2), KDColor::RGB16(0xC2), KDColor::RGB16(0xC1), KDColor::RGB16(0xBE), KDColor::RGB16(0xBD)}
 };
+
+enum class SpinnerState : uint8_t {
+  Spinning,
+  Hidden,
+  Disabled
+};
+
+static SpinnerState s_spinner = SpinnerState::Disabled;
 
 void spin() {
   KDCoordinate size = k_spinnerRect.height();
@@ -367,6 +355,31 @@ void setSpinner(bool activate) {
   s_spinner = activate ? SpinnerState::Hidden : SpinnerState::Disabled;
 }
 
+void displaySpinner() {
+  s_spinner = SpinnerState::Spinning;
+  Ion::Device::Display::pushRect(k_spinnerRect, reinterpret_cast<KDColor *>(s_spinnerPixels));
+}
+
+void hideSpinner() {
+  Ion::Device::Display::pushRectUniform(k_spinnerRect, KDColor::RGB24(0xffb734));
+  s_spinner = SpinnerState::Hidden;
+}
+
+void resetStallingTimer() {
+  // Init timer on the first call to getEvent
+  if (!TIM2.CR1()->getCEN()) {
+    TIM2.CR1()->setCEN(true);
+  }
+  // Reset the counter
+  TIM2.CNT()->set(0);
+  if (s_spinner == SpinnerState::Spinning) {
+    /* Hide the spinner and reset the delay if the spinner was previously
+     * displayed. */
+    hideSpinner();
+    TIM2.ARR()->set(k_stallingDelay);
+  }
+}
+
 void stall() {
   // Clear update interrupt flag
   TIM2.SR()->setUIF(false);
@@ -376,19 +389,15 @@ void stall() {
   }
 
   if (s_spinner != SpinnerState::Disabled) {
-    s_spinner = SpinnerState::Spinning;
     spin();
     // TODO: stalling when no User/System checkpoint is set could lead to checkout the home
     // TODO: should we shutdown any interruption here to be sure to complete our drawing
     // TODO: draw a hourglass or spinning circle?
-    Ion::Device::Display::pushRect(k_spinnerRect, reinterpret_cast<KDColor *>(s_spinnerPixels));
+    displaySpinner();
   }
 }
 
-void hideSpinner() {
-  Ion::Device::Display::pushRectUniform(k_spinnerRect, KDColor::RGB24(0xffb734));
-  s_spinner = SpinnerState::Hidden;
-}
+
 
 void resetPendingKeyboardState() {
   sPreemtiveState = Ion::Keyboard::State(0);

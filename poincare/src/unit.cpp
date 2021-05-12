@@ -282,16 +282,6 @@ const UnitNode::Representative * UnitNode::Representative::DefaultFindBestRepres
   return res;
 }
 
-double UnitNode::Representative::ratio() const {
-  if (!std::isfinite(m_ratio)) {
-    /* We are content with this minimal context, since units definitions should
-     * only contain numbers and constants. */
-    Expression e = Expression::Parse(m_ratioExpression, nullptr);
-    m_ratio = e.approximateToScalar<double>(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian);
-  }
-  return m_ratio;
-}
-
 int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Prefix * prefix) const {
   int length = 0;
   length += prefix->serialize(buffer, bufferSize);
@@ -409,15 +399,6 @@ const UnitNode::Prefix * UnitNode::Representative::findBestPrefix(double value, 
     }
   }
   return res;
-}
-
-Expression UnitNode::Representative::ratioExpressionReduced(ExpressionNode::ReductionContext reductionContext) const {
-  Expression e = Expression::Parse(m_ratioExpression, nullptr);
-  e = e.deepReduce(reductionContext);
-  if (!std::isfinite(m_ratio)) {
-    m_ratio = e.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
-  }
-  return e;
 }
 
 // UnitNode::___Representative

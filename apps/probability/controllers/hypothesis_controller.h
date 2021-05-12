@@ -32,11 +32,11 @@ class HypothesisController : public SelectableListViewPage, public ButtonDelegat
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_indexOfNext = 2;
+  NormalInputController * m_inputController;
+
   MessageTableCellWithEditableText m_h0;
   MessageTableCellWithEditableText m_ha;  // TODO change to dropdown
   Shared::ButtonWithSeparator m_next;     // TODO real separator ?
-
-  NormalInputController * m_inputController;
 };
 
 }  // namespace Probability

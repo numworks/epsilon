@@ -10,9 +10,9 @@ inline InputController<n>::InputController(Escher::StackViewController * parent,
                                            Escher::TextFieldDelegate * textFieldDelegate)
     : SelectableListViewPage(parent),
       m_resultsController(resultsController),
-      m_next(&m_selectableTableView, I18n::Message::Ok,buttonActionInvocation()),
       m_parameters{{&m_selectableTableView, handler, textFieldDelegate},
-                   {&m_selectableTableView, handler, textFieldDelegate}} {
+                   {&m_selectableTableView, handler, textFieldDelegate}},
+      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
   // Initialize parameter cells
   for (int i = 0; i < k_numberOfParameters; i++) {
     m_parameters[i].setParentResponder(&m_selectableTableView);

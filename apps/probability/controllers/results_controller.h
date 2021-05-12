@@ -13,6 +13,7 @@
 
 #include "../abstract/button_delegate.h"
 #include "../gui/page_controller.h"
+#include "graph_controller.h"
 
 namespace Probability {
 
@@ -32,7 +33,6 @@ class ResultsController : public SelectableListViewPage, public ButtonDelegate {
     }
     Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
-  void buttonAction() override;
 
  protected:
   constexpr static int k_numberOfRows = numberOfResults + 1;
@@ -43,12 +43,16 @@ class ResultsController : public SelectableListViewPage, public ButtonDelegate {
 
 class TestResults : public ResultsController<2> {
  public:
-  TestResults(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler,
-              Escher::TextFieldDelegate * textFieldDelegate);
+  TestResults(Escher::StackViewController * parent, GraphController * graphController,
+              Escher::InputEventHandlerDelegate * handler, Escher::TextFieldDelegate * textFieldDelegate);
+
+  void buttonAction() override { openPage(m_graphController, true); }
 
  private:
   constexpr static int k_indexOfZ = 0;
   constexpr static int k_indexOfPVal = 1;
+
+  GraphController * m_graphController;
 };
 
 }  // namespace Probability

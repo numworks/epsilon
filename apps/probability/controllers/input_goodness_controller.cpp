@@ -35,14 +35,19 @@ HighlightCell * InputGoodnessDataSource::reusableCell(int i, int type) {
   return &m_cells[i];
 }
 
-InputGoodnessController::InputGoodnessController(StackViewController * parent,
+InputGoodnessController::InputGoodnessController(StackViewController * parent, TestResults * resultsController,
                                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                  TextFieldDelegate * textFieldDelegate)
     : Page(parent),
+      m_resultsController(resultsController),
       m_data(parent, &m_table, inputEventHandlerDelegate, textFieldDelegate),
       m_contentView(this, this, &m_table, inputEventHandlerDelegate, textFieldDelegate),
       m_table(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
 
 void InputGoodnessController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);
+}
+
+void InputGoodnessController::buttonAction() {
+  openPage(m_resultsController, true);
 }

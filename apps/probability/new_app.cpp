@@ -13,7 +13,7 @@ NewApp::NewApp(Escher::App::Snapshot * snapshot)
     : TextFieldDelegateApp(snapshot, &m_stackViewController),
       m_homogeneityResultsController(&m_stackViewController),
       m_inputHomogeneityController(&m_stackViewController, &m_homogeneityResultsController, this, this),
-      m_inputGoodnessController(&m_stackViewController, this, this),
+      m_inputGoodnessController(&m_stackViewController, &m_resultsController, this, this),
       m_resultsController(&m_stackViewController, this, this),
       m_inputController(&m_stackViewController, &m_resultsController, this, this),
       m_typeController(&m_stackViewController, &m_hypothesisController),

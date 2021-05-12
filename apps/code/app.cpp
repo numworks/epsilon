@@ -124,10 +124,6 @@ Toolbox * App::toolboxForInputEventHandler(InputEventHandler * textInput) {
   return &m_toolbox;
 }
 
-Code::toolboxIonKeys * App::toolboxIonKeys() {
-  return &m_toolboxIonKeys;
-}
-
 VariableBoxController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   return &m_variableBoxController;
 }

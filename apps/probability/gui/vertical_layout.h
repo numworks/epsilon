@@ -36,20 +36,6 @@ class VerticalLayout : public Escher::View {
   Escher::View * m_views[numberOfChildren];
 };
 
-// TODO can it be a view only ?
-template <int numberOfChildren>
-class VerticalLayoutController : public Escher::ViewController {
- public:
-  VerticalLayoutController(Escher::Responder * parent, Escher::View ** subviews)
-      : Escher::ViewController(parent), m_contentView(subviews) {}
-  VerticalLayoutController(Escher::Responder * parent) : Escher::ViewController(parent){};
-  Escher::View * view() override { return &m_contentView; }
-  VerticalLayout<numberOfChildren> * verticalLayout() { return &m_contentView; }
-
- private:
-  VerticalLayout<numberOfChildren> m_contentView;
-};
-
 template <int n>
 void VerticalLayout<n>::layoutSubviews(bool force) {
   KDRect frame = bounds();
@@ -73,25 +59,6 @@ template <int n>
 void VerticalLayout<n>::drawRect(KDContext * ctx, KDRect rectToRedraw) const {
   ctx->fillRect(rectToRedraw, KDColorOrange);
 }
-
-class TestVerticalController : public VerticalLayoutController<3> {
- public:
-  TestVerticalController(Escher::StackViewController * parent) : VerticalLayoutController<3>(parent), m_list(parent) {
-    m_title.setMessage(I18n::Message::ProbaApp);
-    m_description.setMessage(I18n::Message::ProbaAppCapital);
-    verticalLayout()->setView(&m_title, 0);
-    verticalLayout()->setView(&m_description, 1);
-    verticalLayout()->setView(m_list.view(), 2);
-    m_list.cellAtIndex(0)->setMessage(I18n::Message::ProbaAppCapital);
-    m_list.cellAtIndex(1)->setMessage(I18n::Message::ProbaApp);
-    m_list.cellAtIndex(2)->setMessage(I18n::Message::ProbaAppCapital);
-    m_list.cellAtIndex(3)->setMessage(I18n::Message::ProbaApp);
-  }
-
- private:
-  Escher::MessageTextView m_title, m_description;
-  SelectableCellListPage<Escher::MessageTableCellWithChevron, 4> m_list;
-};
 
 }  // namespace Probability
 

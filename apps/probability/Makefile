@@ -14,7 +14,9 @@ app_probability_test_src = $(addprefix apps/probability/,\
   distribution/two_parameter_distribution.cpp \
 )
 
-app_probability_src = apps/probability/new_app.cpp
+app_probability_src = $(addprefix apps/probability/,\
+new_app.cpp helpers.cpp \
+)
 
 app_probability_src += $(addprefix apps/probability/distribution/,\
   exponential_distribution.cpp \

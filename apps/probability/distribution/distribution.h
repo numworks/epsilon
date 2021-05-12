@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_DISTRIBUTION_H
 #define PROBABILITE_DISTRIBUTION_H
 
-#include "../../shared/curve_view_range.h"
+#include <apps/shared/curve_view_range.h>
 #include <apps/i18n.h>
 #include <poincare/preferences.h>
 

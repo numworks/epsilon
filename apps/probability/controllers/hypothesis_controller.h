@@ -11,8 +11,8 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
 
-#include "../abstract/button_delegate.h"
-#include "../gui/page_controller.h"
+#include "probability/abstract/button_delegate.h"
+#include "probability/gui/page_controller.h"
 #include "input_controller.h"
 
 using namespace Escher;

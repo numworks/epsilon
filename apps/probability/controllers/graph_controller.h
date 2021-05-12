@@ -4,7 +4,7 @@
 #include <escher/buffer_table_cell.h>
 #include <escher/stack_view_controller.h>
 
-#include "../gui/selectable_cell_list_controller.h"
+#include "probability/gui/selectable_cell_list_controller.h"
 
 namespace Probability {
 

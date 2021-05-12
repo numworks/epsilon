@@ -1,9 +1,9 @@
 #ifndef PROBABILITY_RESPONDER_IMAGE_CELL_H
 #define PROBABILITY_RESPONDER_IMAGE_CELL_H
 
-#include "../calculation/calculation.h"
+#include "probability/calculation/calculation.h"
 #include "image_cell.h"
-#include "../controllers/calculation_type_controller.h"
+#include "probability/controllers/calculation_type_controller.h"
 
 namespace Probability {
 

@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
-#include "../distribution/student_distribution.h"
-#include "../distribution/hypergeometric_function.h"
+#include "probability/distribution/student_distribution.h"
+#include "probability/distribution/hypergeometric_function.h"
 
 void assert_hypergeometric_is(double a, double b, double c, double z, double result) {
   double r = 0.0;

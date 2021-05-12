@@ -18,8 +18,9 @@
 #include <kandinsky/coordinate.h>
 
 #include "../abstract/button_delegate.h"
-#include "../gui/page_controller.h"
 #include "../gui/input_table_view.h"
+#include "../gui/page_controller.h"
+#include "results_controller.h"
 
 using namespace Escher;
 
@@ -52,16 +53,18 @@ class InputGoodnessDataSource : public TableViewDataSource {
 
 class InputGoodnessController : public Page, public ButtonDelegate {
  public:
-  InputGoodnessController(StackViewController * parent, InputEventHandlerDelegate * inputEventHandlerDelegate,
-                          TextFieldDelegate * textFieldDelegate);
+  InputGoodnessController(StackViewController * parent, TestResults * resultsController,
+                          InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
-  void buttonAction() override {};
+  void buttonAction() override;
 
  private:
   InputGoodnessDataSource m_data;
   InputTableView m_contentView;
   SelectableTableView m_table;
+
+  TestResults * m_resultsController;
 };
 
 }  // namespace Probability

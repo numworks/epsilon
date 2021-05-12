@@ -50,7 +50,7 @@ void BannerView::layoutSubviews(bool force) {
       int nbOfSubviewsOnLine = i > indexOfFirstViewOfCurrentLine ? i-indexOfFirstViewOfCurrentLine : 1;
       KDCoordinate roundingError = remainingWidth % nbOfSubviewsOnLine;
       View * subviewPreviousLine = nullptr;
-      for (int j = indexOfFirstViewOfCurrentLine; j < i; j++) {
+      for (int j = indexOfFirstViewOfCurrentLine; j < nbOfSubviewsOnLine + indexOfFirstViewOfCurrentLine; j++) {
         subviewPreviousLine = subviewAtIndex(j);
         KDCoordinate width = subviewPreviousLine->minimalSizeForOptimalDisplay().width() + remainingWidth/nbOfSubviewsOnLine + (j == i-1) * roundingError;
         KDCoordinate height = subviewPreviousLine->minimalSizeForOptimalDisplay().height();

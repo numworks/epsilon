@@ -45,7 +45,7 @@ class InputHomogeneityDataSource : public TableViewDataSource {
   constexpr static int k_columnWidth = 80;
   constexpr static int k_rowHeight = 20;
 
-  constexpr static int k_initialNumberOfRows = 4;
+  constexpr static int k_initialNumberOfRows = 5;
   constexpr static int k_initialNumberOfColumns = 4;
   constexpr static int k_maxNumberOfColumns = 6;
   constexpr static int k_maxNumberOfRows = 6;

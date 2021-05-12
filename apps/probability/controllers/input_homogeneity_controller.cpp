@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <escher/container.h>
 #include <kandinsky/color.h>
+#include <escher/palette.h>
 #include <kandinsky/font.h>
 #include <string.h>
 
@@ -11,7 +12,7 @@ using namespace Probability;
 InputHomogeneityDataSource::InputHomogeneityDataSource(Responder * parentResponder, SelectableTableView * tableView,
                                                        InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                        TextFieldDelegate * delegate)
-    : m_topLeftCell(KDColorWhite) {
+    : m_topLeftCell(Escher::Palette::GrayMiddle) {
   // Headers
   char txt[20];
   char alphabet[] = "ABCDEFGHIJ";

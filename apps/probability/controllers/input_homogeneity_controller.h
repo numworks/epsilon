@@ -25,7 +25,7 @@ class InputHomogeneityDataSource : public TableViewDataSource {
   int numberOfRows() const override { return k_initialNumberOfRows; }
   int numberOfColumns() const override { return k_initialNumberOfColumns; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
-  int typeAtLocation(int i, int j) { return 0; }
+  int typeAtLocation(int i, int j) override { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
 
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }

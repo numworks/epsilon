@@ -39,10 +39,10 @@ class InputController : public SelectableListViewPage, public ButtonDelegate {
 
  protected:
   constexpr static int k_numberOfParameters = numberOfParams;
+  TestResults * m_resultsController;
+
   Escher::MessageTableCellWithEditableText m_parameters[k_numberOfParameters];
   Shared::ButtonWithSeparator m_next;
-
-  TestResults * m_resultsController;
 };
 
 class NormalInputController : public InputController<2> {

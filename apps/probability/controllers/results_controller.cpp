@@ -13,8 +13,7 @@ template <int numberOfResults>
 ResultsController<numberOfResults>::ResultsController(Escher::StackViewController * parent,
                                                       Escher::InputEventHandlerDelegate * handler,
                                                       Escher::TextFieldDelegate * textFieldDelegate)
-    : SelectableListViewPage(parent),
-      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {}
+    : SelectableListViewPage(parent), m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {}
 
 template <int numberOfResults>
 Escher::HighlightCell * ResultsController<numberOfResults>::reusableCell(int i, int type) {
@@ -25,12 +24,9 @@ Escher::HighlightCell * ResultsController<numberOfResults>::reusableCell(int i, 
   return &m_next;
 }
 
-template <int numberOfResults>
-void ResultsController<numberOfResults>::buttonAction() {}
-
-TestResults::TestResults(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler,
-                         Escher::TextFieldDelegate * textFieldDelegate)
-    : ResultsController(parent, handler, textFieldDelegate) {
+TestResults::TestResults(Escher::StackViewController * parent, GraphController * graphController,
+                         Escher::InputEventHandlerDelegate * handler, Escher::TextFieldDelegate * textFieldDelegate)
+    : ResultsController(parent, handler, textFieldDelegate), m_graphController(graphController) {
   m_cells[k_indexOfZ].setMessage(I18n::Message::Z);
   m_cells[k_indexOfPVal].setMessage(I18n::Message::PValue);
 }

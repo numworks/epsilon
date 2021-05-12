@@ -5,6 +5,8 @@
 
 namespace Probability {
 
+/* Simple Delegate interface to use a button
+ * Just need to define buttonAction() */
 class ButtonDelegate {
  public:
   virtual void buttonAction() = 0;

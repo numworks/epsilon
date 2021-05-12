@@ -33,11 +33,14 @@ class PageController : public T {
   }
 };
 
+/* A Page is a controller that requires a StackViewController as its parent
+ * and can open subPages easily by pushing them to the StackViewController. */
 class Page : public PageController<ViewController> {
  public:
   Page(StackViewController * stackViewController) : PageController(stackViewController){};
 };
 
+/* Similar to a Page but for SelectableListViewController */
 class SelectableListViewPage : public PageController<SelectableListViewController> {
  public:
   SelectableListViewPage(StackViewController * stackViewController,
@@ -45,6 +48,6 @@ class SelectableListViewPage : public PageController<SelectableListViewControlle
       : PageController(stackViewController, tableDelegate){};
 };
 
-}
+}  // namespace Probability
 
 #endif /* PAGE_CONTROLLER_H */

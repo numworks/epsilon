@@ -9,6 +9,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - run: make -j2 PLATFORM=simulator test.headless.bin
-      - run: output/release/simulator/linux/test.headless.bin
+      - run: make -j2 PLATFORM=simulator test.bin
+      - run: output/release/simulator/linux/test.bin
 

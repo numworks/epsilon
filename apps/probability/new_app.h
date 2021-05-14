@@ -52,6 +52,7 @@ class NewApp : public Shared::TextFieldDelegateApp {
     textField->setText(text);
     return true;
   }
+  
 
  private:
   NewApp(Escher::App::Snapshot *);

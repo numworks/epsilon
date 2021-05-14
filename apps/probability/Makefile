@@ -60,6 +60,10 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	homogeneity_results_controller.cpp \
 )
 
+app_probability_src +=  $(addprefix apps/probability/abstract/,\
+  homogeneity_data_source.cpp \
+)
+
 
 app_probability_src += $(app_probability_test_src)
 apps_src += $(app_probability_src)

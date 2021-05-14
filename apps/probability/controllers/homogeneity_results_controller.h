@@ -12,6 +12,7 @@
 #include <kandinsky/coordinate.h>
 
 #include "probability/abstract/button_delegate.h"
+#include "probability/abstract/homogeneity_data_source.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/solid_color_cell.h"
 #include "probability/gui/vertical_layout.h"
@@ -32,39 +33,31 @@ class HomogeneityResultsView : public VerticalLayout<3>, public ButtonDelegate {
   Shared::ButtonWithSeparator m_next;
 };
 
-class HomogeneityResultsController : public Page, public TableViewDataSource, public SelectableTableViewDataSource {
+class HomogeneityResultsDataSource : public TableViewDataSource {
  public:
-  HomogeneityResultsController(StackViewController * stackViewController);
-  View * view() override { return &m_contentView; }
-
-  // TableViewDataSource
-  int numberOfRows() const override { return k_initialNumberOfRows; }
-  int numberOfColumns() const override { return k_initialNumberOfColumns; }
-  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
-  KDCoordinate rowHeight(int j) override { return k_rowHeight; }
+  HomogeneityResultsDataSource();
+  int numberOfRows() const override { return HomogeneityTableDataSource::k_initialNumberOfRows; }
+  int numberOfColumns() const override { return HomogeneityTableDataSource::k_initialNumberOfColumns; }
+  KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
+  KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
   int typeAtLocation(int i, int j) override { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
 
-  int indexForEditableCell(int i);
+ private:
+  EvenOddBufferTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
+};
+
+class HomogeneityResultsController : public Page {
+ public:
+  HomogeneityResultsController(StackViewController * stackViewController);
+  View * view() override { return &m_contentView; }
+  void didBecomeFirstResponder() override;
 
  private:
-  // TODO share all with InputHomogeneityController
-  constexpr static int k_columnWidth = 80;
-  constexpr static int k_rowHeight = 20;
-
-  constexpr static int k_initialNumberOfRows = 5;
-  constexpr static int k_initialNumberOfColumns = 4;
-  constexpr static int k_maxNumberOfColumns = 6;
-  constexpr static int k_maxNumberOfRows = 6;
-  constexpr static int k_maxNumberOfResultCells = (k_maxNumberOfColumns - 1) * (k_maxNumberOfRows - 1);
-
-  // TODO we can probably reuse the same DataSource as InputHomogeneityController
-  SolidColorCell m_topLeftCell;
-  EvenOddBufferTextCell m_rowHeader[k_maxNumberOfRows];
-  EvenOddBufferTextCell m_colHeader[k_maxNumberOfColumns];
-  EvenOddBufferTextCell m_cells[k_maxNumberOfResultCells];
   HomogeneityResultsView m_contentView;
+  HomogeneityTableDataSource m_tableData;
+  HomogeneityResultsDataSource m_innerTableData;
 
   SelectableTableView m_table;
 };

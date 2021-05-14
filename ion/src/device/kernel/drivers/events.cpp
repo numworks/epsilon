@@ -156,6 +156,7 @@ bool handlePreemption(bool stalling) {
   sPreemtiveState = Ion::Keyboard::State(0);
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Home)) {
     if (CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
+      Keyboard::Queue::sharedQueue()->flush();
       CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::Home);
       return true;
     }

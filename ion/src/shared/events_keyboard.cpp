@@ -1,6 +1,9 @@
 #include <ion/events.h>
 #include <ion/timing.h>
 #include <assert.h>
+#ifndef NDEBUG && !PLATFORM_DEVICE
+#include <iostream>
+#endif
 
 namespace Ion {
 namespace Events {
@@ -127,8 +130,16 @@ Event getEvent(int * timeout) {
   if (sSourceJournal != nullptr) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
+#ifndef NDEBUG && !PLATFORM_DEVICE
+      std::cout << "----- STATE FILE FULLY LOADED -----\n";
+#endif
+
     } else {
       res = sSourceJournal->popEvent();
+#ifndef NDEBUG && !PLATFORM_DEVICE
+      std::cout << "(From state file) ";
+#endif
+
     }
   }
 

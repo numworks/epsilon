@@ -1,8 +1,8 @@
 #include <ion/events.h>
 #include <ion/timing.h>
 #include <assert.h>
-#ifndef NDEBUG && !PLATFORM_DEVICE
-#include <iostream>
+#if ESCHER_LOG_EVENTS_NAME
+#include <ion/console.h>
 #endif
 
 namespace Ion {
@@ -130,14 +130,14 @@ Event getEvent(int * timeout) {
   if (sSourceJournal != nullptr) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
-#ifndef NDEBUG && !PLATFORM_DEVICE
-      std::cout << "----- STATE FILE FULLY LOADED -----\n";
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----\n");
 #endif
 
     } else {
       res = sSourceJournal->popEvent();
-#ifndef NDEBUG && !PLATFORM_DEVICE
-      std::cout << "(From state file) ";
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("(From state file) ", false);
 #endif
 
     }

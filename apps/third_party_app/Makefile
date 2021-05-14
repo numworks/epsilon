@@ -1,6 +1,6 @@
 INFO_API_LEVEL := 0
 
-objects = main.o icon.o svc.o app_info.o spaceship.o alien.o rocket.o life.o memcpy.o
+objects = main.o icon.o svc.o app_info.o spaceship.o alien.o rocket.o life.o memcpy.o memset.o
 
 custom_application.bin: custom_application.elf
 	arm-none-eabi-objcopy -O binary $^ $@

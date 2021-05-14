@@ -5,6 +5,7 @@
 
 class Color {
 public:
+  constexpr Color() : Color(0) {}
   static constexpr Color RGB24(uint32_t rgb) {
     return Color(((rgb&0xF80000)>>8)|((rgb&0x00FC00)>>5)|((rgb&0x0000F8)>>3));
   }

@@ -1,5 +1,5 @@
 #include "layout.h"
-#include "main.h"
+#include "window.h"
 #include "platform.h"
 #include <ion.h>
 #include <limits.h>
@@ -202,9 +202,9 @@ static SDL_Texture * sBackgroundTexture = nullptr;
 static SDL_Texture * sKeyLayoutTextures[KeyLayout::NumberOfShapes];
 
 void init(SDL_Renderer * renderer) {
-  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
+  sBackgroundTexture = Platform::loadImage(renderer, "background.jpg");
   for (size_t i = 0; i < KeyLayout::NumberOfShapes; i++) {
-    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::assetName[i]);
+    sKeyLayoutTextures[i] = Platform::loadImage(renderer, KeyLayout::assetName[i]);
   }
 }
 
@@ -239,13 +239,13 @@ void highlightKeyAt(SDL_Point * p) {
   }
   if (newHighlightedKeyIndex != sHighlightedKeyIndex) {
     sHighlightedKeyIndex = newHighlightedKeyIndex;
-    Main::setNeedsRefresh();
+    Window::setNeedsRefresh();
   }
 }
 
 void unhighlightKey() {
   sHighlightedKeyIndex = -1;
-  Main::setNeedsRefresh();
+  Window::setNeedsRefresh();
 }
 
 void drawHighlightedKey(SDL_Renderer * renderer) {

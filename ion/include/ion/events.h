@@ -53,6 +53,18 @@ enum class ShiftAlphaStatus {
 // Timeout is decremented
 Event getEvent(int * timeout);
 
+#if ION_EVENTS_JOURNAL
+class Journal {
+public:
+  virtual void pushEvent(Event e) = 0;
+  virtual Event popEvent() = 0;
+  virtual bool isEmpty() = 0;
+};
+
+void replayFrom(Journal * l);
+void logTo(Journal * l);
+#endif
+
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
 void removeShift();

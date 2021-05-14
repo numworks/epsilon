@@ -16,6 +16,13 @@ constexpr static uint32_t SectorAddresses[NumberOfSectors+1] = {
   0x08010000
 };
 
+constexpr static uint32_t OTPStartAddress = 0x1FF07800;
+constexpr static uint32_t OTPLocksAddress = 0x1FF07A00;
+constexpr static int NumberOfOTPBlocks = 16;
+constexpr static uint32_t OTPBlockSize = 0x20;
+constexpr uint32_t OTPAddress(int block) { return OTPStartAddress + block * OTPBlockSize; };
+constexpr uint32_t OTPLockAddress(int block) { return OTPLocksAddress + block; }
+
 }
 }
 }

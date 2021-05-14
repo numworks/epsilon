@@ -1,15 +1,20 @@
+ION_SIMULATOR_FILES = 1
+
 ion_src += $(addprefix ion/src/simulator/macos/, \
-  images.m \
+  platform_files.mm \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  apple/language.m \
-  dummy/callback.cpp \
+  apple/platform_images.mm \
+  apple/platform_language.mm \
   dummy/haptics_enabled.cpp \
+  dummy/keyboard_callback.cpp \
+  dummy/window_callback.cpp \
   clipboard_helper.cpp \
   collect_registers_x86_64.s \
   collect_registers.cpp \
   haptics.cpp \
+  journal.cpp \
 )
 
 ifeq ($(EPSILON_TELEMETRY),1)

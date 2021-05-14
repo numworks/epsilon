@@ -1,31 +1,34 @@
+ion_src += $(addprefix ion/src/shared/dummy/, \
+  backlight.cpp \
+  board.cpp \
+  battery.cpp \
+  display.cpp \
+  exam_mode.cpp \
+  fcc_id.cpp \
+  led.cpp \
+  pcb_version.cpp \
+  power.cpp \
+  serial_number.cpp \
+  stack.cpp \
+  usb.cpp \
+)
+
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  dummy/backlight.cpp \
-  dummy/battery.cpp \
-  dummy/display.cpp \
-  dummy/exam_mode.cpp \
-  dummy/fcc_id.cpp \
-  dummy/led.cpp \
-  dummy/serial_number.cpp \
-  dummy/stack.cpp \
-  dummy/usb.cpp \
   clipboard.cpp \
-  console_stdio.cpp:-consoledisplay \
+  console.cpp \
   rtc.cpp \
   crc32.cpp \
-  display.cpp:-headless \
+  display.cpp \
   events.cpp \
-  events_keyboard.cpp:-headless \
-  events_stdin.cpp:+headless \
-  framebuffer_base.cpp \
-  framebuffer_png.cpp:+headless \
-  keyboard_dummy.cpp:+headless \
-  keyboard_sdl.cpp:-headless \
-  layout.cpp:-headless \
-  main_headless.cpp:+headless \
-  main_sdl.cpp:-headless \
-  power.cpp \
+  events_platform.cpp \
+  framebuffer.cpp \
+  keyboard.cpp \
+  layout.cpp \
+  main.cpp \
   random.cpp \
   timing.cpp \
+  window.cpp \
+  store_script.cpp \
 )
 
 ion_simulator_assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
@@ -33,3 +36,13 @@ ion_simulator_assets_paths = $(add_prefix ion/src/simulator/assets/,$(ion_simula
 
 include ion/src/simulator/$(TARGET)/Makefile
 include ion/src/simulator/external/Makefile
+
+SFLAGS += -DION_EVENTS_JOURNAL
+
+ifeq ($(ION_SIMULATOR_FILES),1)
+ion_src += $(addprefix ion/src/simulator/shared/, \
+  actions.cpp \
+  state_file.cpp \
+)
+SFLAGS += -DION_SIMULATOR_FILES=1
+endif

@@ -1,4 +1,5 @@
 #include "serial_number.h"
+#include "board.h"
 #include <drivers/config/serial_number.h>
 #include "base64.h"
 

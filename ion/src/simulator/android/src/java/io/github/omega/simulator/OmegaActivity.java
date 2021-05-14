@@ -25,13 +25,6 @@ public class OmegaActivity extends SDLActivity {
     };
   }
 
-  @Override
-  protected String[] getArguments() {
-    Locale currentLocale = getResources().getConfiguration().locale;
-    String[] arguments = {"--language", currentLocale.getLanguage()};
-    return arguments;
-  }
-
   public Bitmap retrieveBitmapAsset(String identifier) {
     Bitmap bitmap = null;
     try {
@@ -42,6 +35,10 @@ public class OmegaActivity extends SDLActivity {
       Log.w("LoadTexture", "Coundn't load a file:" + identifier);
     }
     return bitmap;
+  }
+
+  public String retrieveLanguage() {
+    return getResources().getConfiguration().locale.getLanguage();
   }
 
   public boolean hapticFeedbackIsEnabled() {

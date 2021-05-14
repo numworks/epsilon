@@ -129,6 +129,8 @@ jobs:
           submodules: 'recursive'
       - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng
       - run: make -j2 PLATFORM=simulator
+      - run: make -j2 PLATFORM=simulator test.exe
+      - run: cmd /c output\release\simulator\windows\test.exe --headless
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-windows.exe
@@ -143,6 +145,8 @@ jobs:
         with:
           submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=web
+      - run: make -j2 PLATFORM=simulator TARGET=web test.js
+      - run: node output/release/simulator/web/test.js --headless
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-web.zip
@@ -155,6 +159,8 @@ jobs:
         with:
           submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator
+      - run: make -j2 PLATFORM=simulator test.bin
+      - run: output/release/simulator/linux/test.bin --headless
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-linux.bin
@@ -168,6 +174,8 @@ jobs:
         with:
           submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator
+      - run: make -j2 PLATFORM=simulator ARCH=x86_64 test.bin
+      - run: output/release/simulator/macos/x86_64/test.bin --headless
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-macos.zip

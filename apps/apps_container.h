@@ -24,7 +24,6 @@ class AppsContainer : public Escher::Container, ExamPopUpControllerDelegate, Ion
 public:
   static AppsContainer * sharedAppsContainer();
   AppsContainer();
-  static bool poincareCircuitBreaker();
   virtual int numberOfBuiltinApps() = 0;
   int numberOfApps() { return numberOfExternalApps() + numberOfBuiltinApps(); }
   virtual Escher::App::Snapshot * appSnapshotAtIndex(int index) = 0;

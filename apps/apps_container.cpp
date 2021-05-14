@@ -40,27 +40,6 @@ AppsContainer::AppsContainer() :
   Ion::Storage::sharedStorage()->setDelegate(this);
 }
 
-bool AppsContainer::poincareCircuitBreaker() {
-  // TODO EMILIE: implement the checkpoint!
-  constexpr uint64_t minimalPressDuration = 20;
-  static uint64_t beginningOfInterruption = 0;
-  Ion::Keyboard::State state = Ion::Keyboard::scan();
-  bool interrupt = state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::OnOff);
-  if (!interrupt) {
-    beginningOfInterruption = 0;
-    return false;
-  }
-  if (beginningOfInterruption == 0) {
-    beginningOfInterruption = Ion::Timing::millis();
-    return false;
-  }
-  if (Ion::Timing::millis() - beginningOfInterruption > minimalPressDuration) {
-    beginningOfInterruption = 0;
-    return true;
-  }
-  return false;
-}
-
 Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {
   for (Ion::ExternalApps::App a : Ion::ExternalApps::Apps()) {
     if (index == 0) {

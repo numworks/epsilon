@@ -52,9 +52,15 @@ bool micropython_port_interruptible_msleep(int32_t delay) {
 }
 
 bool micropython_port_interrupt_if_needed() {
-  Ion::Keyboard::State scan = Ion::Keyboard::scan();
+  Ion::Keyboard::State state;
   Ion::Keyboard::Key interruptKey = static_cast<Ion::Keyboard::Key>(mp_interrupt_char);
-  if (scan.keyDown(interruptKey)) {
+  bool interruption = false;
+  do {
+    state = Ion::Keyboard::popState();
+    interruption = state.keyDown(interruptKey) ? true : interruption;
+  } while (state != Ion::Keyboard::State(0));
+
+  if (interruption) {
     mp_keyboard_interrupt();
     return true;
   }

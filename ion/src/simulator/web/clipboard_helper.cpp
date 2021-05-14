@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <string.h>
+#include <ion/timing.h>
 
 enum class AsyncStatus : uint32_t {
   Pending,
@@ -76,7 +77,7 @@ void fetchFromSystemClipboard(char * buffer, size_t bufferSize) {
   static_assert(sizeof(size_t) <= sizeof(uint32_t), "Cast from size_t to uint32_t may overflow.");
   get_clipboard_text(buffer, static_cast<uint32_t>(bufferSize), &lock, AsyncStatus::Failure, AsyncStatus::Success);
   while (lock == AsyncStatus::Pending) {
-    emscripten_sleep_with_yield(10);
+    Timing::msleep(10);
   }
   if (lock == AsyncStatus::Success) {
     return;

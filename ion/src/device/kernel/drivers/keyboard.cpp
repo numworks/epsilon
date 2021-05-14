@@ -73,6 +73,13 @@ State scan() {
   return State(state);
 }
 
+State popState() {
+  if (Queue::sharedQueue()->isEmpty()) {
+    return State(0);
+  }
+  return Queue::sharedQueue()->pop();
+}
+
 using namespace Regs;
 
 static constexpr int k_debouncingDelay = 10;

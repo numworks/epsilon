@@ -19,6 +19,7 @@ void debounce();
 void handleInterruption();
 
 State scan();
+State popState();
 
 inline uint8_t rowForKey(Key key) {
   return (int)key/Config::numberOfColumns;

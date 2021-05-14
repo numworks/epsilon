@@ -1,8 +1,8 @@
 #include <escher/run_loop.h>
 #include <kandinsky/font.h>
 #include <assert.h>
-#ifndef NDEBUG && !PLATFORM_DEVICE
-#include <iostream>
+#if ESCHER_LOG_EVENTS_NAME
+#include <ion/console.h>
 #include <layout_events.h>
 #endif
 
@@ -36,11 +36,6 @@ bool RunLoop::step() {
   int timeout = eventDuration;
 
   Ion::Events::Event event = Ion::Events::getEvent(&timeout);
-#ifndef NDEBUG && !PLATFORM_DEVICE
-  if (event.name() != nullptr) {
-    std::cout << "Event: " << event.name() << std::endl;
-  }
-#endif
   assert(event.isDefined());
 
   eventDuration -= timeout;
@@ -72,6 +67,8 @@ bool RunLoop::step() {
   if (name == nullptr) {
     name = "UNDEFINED";
   }
+  // TODO don't write to display if not headless
+  Ion::Console::writeLine("Event: ", false);
   Ion::Console::writeLine(name);
 #endif
 

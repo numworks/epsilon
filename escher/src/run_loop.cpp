@@ -1,6 +1,10 @@
 #include <escher/run_loop.h>
 #include <kandinsky/font.h>
 #include <assert.h>
+#ifndef NDEBUG && !PLATFORM_DEVICE
+#include <iostream>
+#include <layout_events.h>
+#endif
 
 namespace Escher {
 
@@ -32,6 +36,11 @@ bool RunLoop::step() {
   int timeout = eventDuration;
 
   Ion::Events::Event event = Ion::Events::getEvent(&timeout);
+#ifndef NDEBUG && !PLATFORM_DEVICE
+  if (event.name() != nullptr) {
+    std::cout << "Event: " << event.name() << std::endl;
+  }
+#endif
   assert(event.isDefined());
 
   eventDuration -= timeout;

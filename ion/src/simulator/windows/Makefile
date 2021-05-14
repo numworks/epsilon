@@ -15,7 +15,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   clipboard_helper.cpp \
   haptics.cpp \
   journal.cpp \
-  platform_action_modifier_ctrl.cpp \
   state_file.cpp \
   store_script.cpp \
 )

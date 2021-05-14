@@ -17,6 +17,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   journal.cpp \
   platform_action_modifier_ctrl.cpp \
   state_file.cpp \
+  store_script.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp

@@ -10,6 +10,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/window_callback.cpp \
   clipboard_helper.cpp \
   haptics.cpp \
+	store_script.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp

@@ -28,7 +28,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   random.cpp \
   timing.cpp \
   window.cpp \
-  store_script.cpp \
 )
 
 ion_simulator_assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png

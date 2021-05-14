@@ -12,6 +12,7 @@
 #include <sys/resource.h>
 #endif
 #include "store_script.h"
+#include <iostream>
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
@@ -84,13 +85,13 @@ int main(int argc, char * argv[]) {
 #endif
 
   if (help) {
-    printf("Usage: %s [options]\n", argv[0]);
-    printf("Options:\n");
-    printf("  -f, --fullscreen          Starts the emulator in fullscreen\n");
-    printf("  -s, --screen-only         Disable the keyboard.\n");
-    printf("  -v, --volatile            Disable saving and loading python scripts from file.\n");
-    printf("  -u, --unresizable         Disable resizing the window.\n");
-    printf("  -h, --help                Show this help menu.\n");
+    std::cout << "Usage: " << argv[0] << "[options]" << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "  -f, --fullscreen          Starts the emulator in fullscreen" << std::endl;
+    std::cout << "  -s, --screen-only         Disable the keyboard." << std::endl;
+    std::cout << "  -v, --volatile            Disable saving and loading python scripts from file." << std::endl;
+    std::cout << "  -u, --unresizable         Disable resizing the window." << std::endl;
+    std::cout << "  -h, --help                Show this help menu." << std::endl;
     return 0;
   }
 

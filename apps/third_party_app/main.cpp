@@ -3,7 +3,7 @@
 #include "spaceship.h"
 #include "svc.h"
 
-constexpr const char title[] = "Third-party app";
+constexpr const char title[] = "NumWars";
 
 void checkForSpaceshipAliensCollisions(Alien aliens[], int numberOfAliens, Spaceship * spaceship) {
   for (int i = 0; i < numberOfAliens; i++) {
@@ -23,7 +23,7 @@ void checkForRocketsAliensCollisions(Spaceship * spaceship, Alien aliens[], int 
 }
 
 void app_main() {
-  Ion::Display::pushRectUniform(Rect(0, 0, Display::Width, Display::Height), DarkBlue);
+  Ion::Display::pushRectUniform(Rect(0, 0, Display::Width, Display::Height), Black);
 
   constexpr int k_maxNumberOfAliens = 10;
   Alien aliens[k_maxNumberOfAliens];

@@ -6,7 +6,7 @@ void Life::setIndex(int index) {
 }
 
 void Life::draw() const {
-  Color c = m_broken ? DarkBlue : Pink;
+  Color c = m_broken ? Black : Pink;
   Ion::Display::pushRectUniform(Rect(m_x - k_size/2, m_y - k_size/2, k_size, k_size), c);
 }
 

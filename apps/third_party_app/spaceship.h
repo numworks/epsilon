@@ -17,8 +17,8 @@ public:
   int numberOfRockets() const { return k_maxNumberOfRockets; }
   Rocket * rocketAtIndex(int index) { return &m_rockets[index]; }
   static constexpr int k_step = 10;
-  static constexpr int k_width = 15;
-  static constexpr int k_height = 12;
+  static constexpr int k_width = 35;
+  static constexpr int k_height = 20;
 private:
   static constexpr int k_maxNumberOfRockets = 12;
   static constexpr int k_maxNumberOfLives = 3;

@@ -14,11 +14,23 @@ Spaceship::Spaceship() :
   }
 }
 void Spaceship::draw(const Color color) const {
-  Ion::Display::pushRectUniform(Rect(m_x - k_width/2, m_y - k_height/2, k_width, k_height), color);
+  int xMin = m_x - k_width/2;
+  int xMax = xMin + k_width;
+  int yMin = m_y - k_height/2;
+  Ion::Display::pushRectUniform(Rect(xMin + 11, yMin + 10, 13, 11), color);
+  // Wings
+  Ion::Display::pushRectUniform(Rect(xMin, yMin + 14, k_width, 2), color);
+  Ion::Display::pushRectUniform(Rect(xMin + 3, yMin + 17, k_width - 6, 2), color);
+  Ion::Display::pushRectUniform(Rect(xMin + 2, yMin + 8, 1, 6), color);
+  Ion::Display::pushRectUniform(Rect(xMax - 3, yMin + 8, 1, 6), color);
+  // Nose
+  Ion::Display::pushRectUniform(Rect(xMin + 15, yMin + 6, 5, 4), color);
+  Ion::Display::pushRectUniform(Rect(xMin + 16, yMin + 4, 3, 2), color);
+  Ion::Display::pushRectUniform(Rect(xMin + 17, yMin, 1, 4), color);
 }
 
 void Spaceship::move(int deltaX, int deltaY) {
-  draw(DarkBlue);
+  draw(Black);
   m_x += deltaX;
   m_y += deltaY;
   m_x = m_x <= k_xLowerBound ? k_xLowerBound : m_x;

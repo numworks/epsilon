@@ -17,7 +17,7 @@ public:
   bool off() const { return m_y < 0; }
   static constexpr int k_period = 10;
 private:
-  static constexpr int k_length = 10;
+  static constexpr int k_length = 13;
   void draw(const Color c) const;
   void switchOff() { m_y = -1; }
   int m_x;

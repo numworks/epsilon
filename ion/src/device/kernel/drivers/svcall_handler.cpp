@@ -106,6 +106,7 @@ void * svcallHandler(int svcNumber) {
     MAKE_SVCALL_HANDLER(SVC_FLASH_ERASE_SECTOR, Ion::Device::Flash::EraseSector)
     MAKE_SVCALL_HANDLER(SVC_FLASH_MASS_ERASE, Ion::Device::Flash::MassErase)
     MAKE_SVCALL_HANDLER(SVC_FLASH_WRITE_MEMORY, Ion::Device::Flash::WriteMemory)
+    MAKE_SVCALL_HANDLER(SVC_KEYBOARD_POP_STATE, Ion::Device::Keyboard::popState)
     MAKE_SVCALL_HANDLER(SVC_KEYBOARD_SCAN, Ion::Device::Keyboard::scan)
     MAKE_SVCALL_HANDLER(SVC_LED_GET_COLOR, Ion::Device::LED::getColor)
     MAKE_SVCALL_HANDLER(SVC_LED_SET_BLINKING, Ion::Device::LED::setBlinking)

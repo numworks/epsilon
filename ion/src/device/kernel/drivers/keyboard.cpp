@@ -75,7 +75,7 @@ State scan() {
 
 State popState() {
   if (Queue::sharedQueue()->isEmpty()) {
-    return State(0);
+    return State(-1);
   }
   return Queue::sharedQueue()->pop();
 }

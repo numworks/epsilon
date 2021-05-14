@@ -1,39 +1,40 @@
 #ifndef NEW_APP_H
 #define NEW_APP_H
 
-#include <apps/shared/text_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
-#include <escher/container.h>
+#include <apps/shared/text_field_delegate_app.h>
 #include <escher/app.h>
+#include <escher/container.h>
 #include <escher/stack_view_controller.h>
-#include "distribution/binomial_distribution.h"
+
 #include "calculation/discrete_calculation.h"
-#include "controllers/menu_controller.h"
-#include "controllers/distribution_controller.h"
-#include "controllers/test_controller.h"
-#include "controllers/parameters_controller.h"
-#include "controllers/hypothesis_controller.h"
 #include "controllers/categorical_type_controller.h"
-#include "controllers/type_controller.h"
+#include "controllers/distribution_controller.h"
+#include "controllers/graph_controller.h"
+#include "controllers/homogeneity_results_controller.h"
+#include "controllers/hypothesis_controller.h"
 #include "controllers/input_controller.h"
-#include "controllers/results_controller.h"
 #include "controllers/input_goodness_controller.h"
 #include "controllers/input_homogeneity_controller.h"
-#include "controllers/homogeneity_results_controller.h"
-#include "controllers/graph_controller.h"
+#include "controllers/menu_controller.h"
+#include "controllers/parameters_controller.h"
+#include "controllers/results_controller.h"
+#include "controllers/test_controller.h"
+#include "controllers/type_controller.h"
+#include "distribution/binomial_distribution.h"
 
 namespace Probability {
 
 class NewApp : public Shared::TextFieldDelegateApp {
-public:
-class Descriptor : public Escher::App::Descriptor {
-    public:
-      I18n::Message name() const override { return I18n::Message::DistributionApp; };
-      I18n::Message upperName() const override { return I18n::Message::DistributionAppCapital; };
-      const Escher::Image * icon() const override;
+ public:
+  class Descriptor : public Escher::App::Descriptor {
+   public:
+    I18n::Message name() const override { return I18n::Message::DistributionApp; };
+    I18n::Message upperName() const override { return I18n::Message::DistributionAppCapital; };
+    const Escher::Image * icon() const override;
   };
   class Snapshot : public Shared::SharedApp::Snapshot {
-  public:
+   public:
     Snapshot() {}
     ~Snapshot() {}
     App * unpack(Escher::Container * container) override { return new (container->currentAppBuffer()) NewApp(this); };
@@ -41,14 +42,18 @@ class Descriptor : public Escher::App::Descriptor {
       static Descriptor s_descriptor;
       return &s_descriptor;
     };
-    void reset() override {};
+    void reset() override{};
   };
-  static App * app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+  static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
   Escher::App::Snapshot * snapshot() const { return Escher::App::snapshot(); }
   TELEMETRY_ID("Probability");
-private:
+  // TODO better handling
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+    textField->setText(text);
+    return true;
+  }
+
+ private:
   NewApp(Escher::App::Snapshot *);
 
   // Controllers
@@ -74,6 +79,6 @@ private:
   DiscreteCalculation m_calculation;
 };
 
-}
+}  // namespace Probability
 
 #endif /* NEW_APP_H */

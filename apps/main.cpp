@@ -21,7 +21,9 @@ void ion_main(int argc, const char * const argv[]) {
 void ion_main(int argc, const char * const argv[]) {
   /* Lock OTP on older devices to prevent garbage being written where the PCB
    * version is read. */
+#if 0 // We don't want OTP locked on omega :p
   Ion::Board::lockUnlockedPCBVersion();
+#endif
 
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();

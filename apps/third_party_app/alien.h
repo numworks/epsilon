@@ -16,9 +16,11 @@ public:
   void killed();
   static constexpr int k_stepPeriod = 10;
   static constexpr int k_materializationPeriod = 100;
-  static constexpr int k_size = 12;
+  static constexpr int k_width = 15;
+  static constexpr int k_height = 18;
 private:
   void draw(const Color c) const;
+  void hide() const;
   void ghostify() { m_x = -1; }
   static constexpr int k_step = 10;
   int m_x;

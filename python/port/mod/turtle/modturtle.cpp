@@ -30,8 +30,6 @@ mp_obj_t modturtle___init__() {
 
 mp_obj_t modturtle_reset() {
   sTurtle.reset();
-  // Cf comment on modkandinsky_draw_string
-  micropython_port_interrupt_if_needed();
   return mp_const_none;
 }
 

@@ -28,11 +28,6 @@ endif
 
 # RC file dependencies
 $(call object_for,ion/src/simulator/windows/resources.rc): WRFLAGS += -I $(BUILD_DIR)
-$(call object_for,ion/src/simulator/windows/resources.rc): $(addprefix $(BUILD_DIR)/,logo.ico)
-
-$(addprefix $(BUILD_DIR)/,logo.ico): ion/src/simulator/assets/logo.svg | $$(@D)/.
-	$(call rule_label,CONVERT)
-	$(Q) convert -background "#FFB734" -resize 256x256 $< $@
 
 # Linker flags
 LDFLAGS += -lgdiplus -lcomdlg32

@@ -12,7 +12,7 @@ const char * languageCode() {
     JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
     jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
-    jclass j_class = env->FindClass("com/numworks/calculator/EpsilonActivity");
+    jclass j_class = env->FindClass("io/github/omega/OmegaActivity");
     jmethodID j_methodId = env->GetMethodID(
       j_class,
       "retrieveLanguage",

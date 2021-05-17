@@ -7,7 +7,7 @@ Spaceship::Spaceship() :
   m_numberOfLives(k_maxNumberOfLives)
 {
 
-  draw(Grey);
+  draw(Yellow);
   for (int i = 0; i < k_maxNumberOfLives; i++) {
     m_lives[i].setIndex(i);
     m_lives[i].draw();
@@ -37,7 +37,7 @@ void Spaceship::move(int deltaX, int deltaY) {
   m_y = m_y <= k_yLowerBound ? k_yLowerBound : m_y;
   m_x = m_x >= k_xUpperBound ? k_xUpperBound : m_x;
   m_y = m_y >= k_yUpperBound ? k_yUpperBound : m_y;
-  draw(Grey);
+  draw(Yellow);
 }
 
 bool Spaceship::hit() {
@@ -46,25 +46,28 @@ bool Spaceship::hit() {
   for (int i = 0; i < 5; i++) {
     draw(Red);
     Ion::Timing::msleep(10);
-    draw(Grey);
+    draw(Yellow);
     Ion::Timing::msleep(10);
   }
   return m_numberOfLives == 0;
 }
 
-void Spaceship::createRocket() {
-  int x = m_x;
-  int y = m_y - k_height;
-  for (int i = 0; i < k_maxNumberOfRockets; i++) {
-    if (m_rockets[i].x() == x && m_rockets[i].y() == y) {
-      // A rocket has already been launched at this location
-      return;
+void Spaceship::createRockets() {
+  int deltaX[] = {-15, 0, 14};
+  for (int dx : deltaX) {
+    int x = m_x + dx;
+    int y = m_y - k_height;
+    for (int i = 0; i < k_maxNumberOfRockets; i++) {
+      if (m_rockets[i].x() == x && m_rockets[i].y() == y) {
+        // A rocket has already been launched at this location
+        continue;
+      }
     }
-  }
-  for (int i = 0; i < k_maxNumberOfRockets; i++) {
-    if (m_rockets[i].off()) {
-      m_rockets[i].setLocation(x, y);
-      return;
+    for (int i = 0; i < k_maxNumberOfRockets; i++) {
+      if (m_rockets[i].off()) {
+        m_rockets[i].setLocation(x, y);
+        break;
+      }
     }
   }
 }

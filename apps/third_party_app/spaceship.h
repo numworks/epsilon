@@ -13,14 +13,14 @@ public:
   int y() const { return m_y; }
   void move(int deltaX, int deltaY);
   bool hit();
-  void createRocket();
+  void createRockets();
   int numberOfRockets() const { return k_maxNumberOfRockets; }
   Rocket * rocketAtIndex(int index) { return &m_rockets[index]; }
   static constexpr int k_step = 10;
   static constexpr int k_width = 35;
   static constexpr int k_height = 20;
 private:
-  static constexpr int k_maxNumberOfRockets = 12;
+  static constexpr int k_maxNumberOfRockets = 3*50;
   static constexpr int k_maxNumberOfLives = 3;
   static constexpr int k_xLowerBound = Display::CommonHorizontalMargin;
   static constexpr int k_xUpperBound = Display::Width - Display::CommonHorizontalMargin;

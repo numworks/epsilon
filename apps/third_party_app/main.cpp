@@ -36,7 +36,7 @@ void app_main() {
   while (1) {
     Ion::Keyboard::State keyboardState = Ion::Keyboard::scan();
     if (keyboardState.keyDown(Ion::Keyboard::Key::OK)) {
-      spaceship.createRocket();
+      spaceship.createRockets();
     }
     if (keyboardState.keyDown(Ion::Keyboard::Key::Up)) {
       spaceship.move(0, -Spaceship::k_step);

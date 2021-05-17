@@ -9,8 +9,9 @@ public:
   void setIndex(int index);
   void draw() const;
   void breaks();
+  static constexpr int k_width = 11;
+  static constexpr int k_height = 9;
 private:
-  static constexpr int k_size = 5;
   int m_x;
   int m_y;
   bool m_broken;

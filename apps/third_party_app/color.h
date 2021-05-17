@@ -32,12 +32,13 @@ private:
 };
 
 constexpr static Color Black = Color::RGB24(0x000000);
-constexpr static Color Orange = Color::RGB24(0xD55422);
 constexpr static Color Green = Color::RGB24(0x28F52E);
 constexpr static Color Grey = Color::RGB24(0xF7F7F7);
+constexpr static Color LightBlue = Color::RGB24(0XC9DBFD);
+constexpr static Color Orange = Color::RGB24(0xD55422);
 constexpr static Color Pink = Color::RGB24(0xCB6E79);
 constexpr static Color Red = Color::RGB24(0xFF0000);
 constexpr static Color White = Color::RGB24(0xFFFFFF);
-constexpr static Color LightBlue = Color::RGB24(0XC9DBFD);
+constexpr static Color Yellow = Color::RGB24(0xF3B443);
 
 #endif

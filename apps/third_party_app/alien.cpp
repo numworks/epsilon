@@ -42,10 +42,6 @@ bool Alien::hits(Spaceship * s) {
   }
   if (abs(m_x - s->x()) < Spaceship::k_width/2 + k_width/2 &&
       abs(m_y - s->y()) < Spaceship::k_height/2 + k_height/2) {
-    int deltax = abs(m_x - s->x());
-    int deltay = abs(m_y - s->y());
-    int X = Spaceship::k_width/2 + k_width/2;
-    int Y = Spaceship::k_height/2 + k_height/2;
     hide();
     ghostify();
     return s->hit();

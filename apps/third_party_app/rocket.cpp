@@ -6,7 +6,7 @@
 void Rocket::setLocation(int x, int y) {
   m_x = x;
   m_y = y;
-  draw(Red);
+  draw(LightBlue);
 }
 
 void Rocket::draw(const Color c) const {
@@ -15,7 +15,7 @@ void Rocket::draw(const Color c) const {
   }
   Ion::Display::pushRectUniform(Rect(m_x, m_y - k_length/2, 1, 8), c);
   Ion::Display::pushRectUniform(Rect(m_x, m_y - k_length/2 + 8 + 1, 1, 2), c);
-  Ion::Display::pushRectUniform(Rect(m_x, m_y + k_length - 1, 1, 1), c);
+  Ion::Display::pushRectUniform(Rect(m_x, m_y + k_length/2, 1, 1), c);
 }
 
 void Rocket::forward() {

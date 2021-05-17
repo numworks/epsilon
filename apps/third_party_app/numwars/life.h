@@ -1,7 +1,7 @@
 #ifndef LIFE_H
 #define LIFE_H
 
-#include "display.h"
+#include "../utils/display.h"
 
 class Life {
 public:

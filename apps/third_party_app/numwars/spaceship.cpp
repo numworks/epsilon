@@ -1,5 +1,5 @@
 #include "spaceship.h"
-#include "svc.h"
+#include "../utils/svc.h"
 
 Spaceship::Spaceship() :
   m_x(Display::Width/2),

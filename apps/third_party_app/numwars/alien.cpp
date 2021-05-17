@@ -1,12 +1,14 @@
 #include "alien.h"
-#include "stdlib.h"
-#include "svc.h"
+#include "../utils/stdlib.h"
+#include "../utils/svc.h"
 
 Alien::Alien(int x) :
   m_x(x),
   m_y(2*Display::CommonVerticalMargin)
 {
-  draw(Orange);
+  if (!isGhost()) {
+    draw(Orange);
+  }
 }
 
 void Alien::hide() const {
@@ -32,7 +34,9 @@ void Alien::step() {
     if (m_y >= Display::Height) {
       ghostify();
     }
-    draw(Orange);
+    if (!isGhost()) {
+      draw(Orange);
+    }
   }
 }
 

@@ -1,8 +1,8 @@
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
 
-#include "color.h"
-#include "display.h"
+#include "../utils/color.h"
+#include "../utils/display.h"
 #include "life.h"
 #include "rocket.h"
 

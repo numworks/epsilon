@@ -1,5 +1,5 @@
 #include "life.h"
-#include "svc.h"
+#include "../utils/svc.h"
 
 void Life::setIndex(int index) {
   m_x = Display::Width - (index + 1) * Display::CommonHorizontalMargin;

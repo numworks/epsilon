@@ -222,6 +222,29 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
   return t+1;
 }
 
+int Arithmetic::PositiveDivisors(const Integer & i) {
+  // Check no other Arithmetic instance is under lock
+  if (s_factorizationLock) {
+    assert(false);
+    return k_errorAlreadyInUse;
+  }
+  // Lock Prime factorization
+  s_factorizationLock = true;
+
+  int numberOfDivisors = 0;
+  float upper = std::ceil(std::fabs(i.approximate<float>()));
+  for (int k = 1; k <= upper; k++) {
+    Integer kInteger(k);
+    if (Integer::Division(i, kInteger).remainder.isZero()) {
+      if (numberOfDivisors >= k_maxNumberOfPrimeFactors) {
+        return k_errorTooManyFactors;
+      }
+      *factorizationFactorAtIndex(numberOfDivisors++) = kInteger;
+    }
+  }
+  return numberOfDivisors;
+}
+
 void Arithmetic::resetPrimeFactorization() {
   // Clean Factors and coefficients arrays
   for (int i = 0; i < k_maxNumberOfPrimeFactors; ++i) {

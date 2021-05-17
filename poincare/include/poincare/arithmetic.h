@@ -53,6 +53,11 @@ public:
    * ExceptionCheckpoint has been destroyed, another exception shall be manually
    * raised to fall back on the intended checkpoint. */
   static void resetPrimeFactorization();
+
+  /* Method PositiveDivisors follows the same API as PrimeFactorization, as it
+   * uses the same array. */
+  int PositiveDivisors(const Integer & i);
+
 private:
   /* When decomposing an integer into primes factors, we look for its prime
    * factors among integer from 2 to 10000. */

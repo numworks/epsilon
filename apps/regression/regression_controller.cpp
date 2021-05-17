@@ -39,7 +39,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
     assert(m_series > -1);
     m_store->setSeriesRegressionType(m_series, (Model::Type)selectedRow());
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, false);
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
     return true;
   }
   if (event == Ion::Events::Left) {

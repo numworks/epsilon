@@ -29,9 +29,7 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    Escher::StackViewController * stack = (Escher::StackViewController *)parentResponder();
-    stack->pop();  // Pop self
-    stack->push(view);
+    openPage(view, true);
     return true;
   }
   return false;

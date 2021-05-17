@@ -1,5 +1,5 @@
 #include "app_info.h"
-#include "icon.h"
+#include "../icon.h"
 
 #ifndef INFO_API_LEVEL
 #error This file expects INFO_API_LEVEL to be defined

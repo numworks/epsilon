@@ -18,8 +18,12 @@ public:
   static uint32_t LCM(uint32_t i, uint32_t j, bool * hasOverflown);
   template<typename T> static Evaluation<T> GCD(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
   template<typename T> static Evaluation<T> LCM(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
+
   constexpr static int k_numberOfPrimeFactors = 1000;
   constexpr static int k_maxNumberOfPrimeFactors = 32;
+  constexpr static int k_errorTooManyFactors = -1;
+  constexpr static int k_errorFactorTooLarge = -2;
+  constexpr static int k_errorAlreadyInUse = -3;
 
   /* To save memory on stack, arrays of factor and coefficients for prime
    * factorization are static and shared.

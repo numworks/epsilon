@@ -16,4 +16,4 @@ endif
 # Reload the simulator
 reload: default
 	$(Q) pgrep Epsilon && pkill -USR1 Epsilon || echo "No Epsilon executable running"
-	$(Q) open output/debug/simulator/macos/epsilon.app --args --load-state-file ~/reload.nws
+	$(Q) open $(BUILD_DIR)/$(firstword $(HANDY_TARGETS)).$(firstword $(HANDY_TARGETS_EXTENSIONS)) --args --load-state-file /tmp/numworks.reload.nws

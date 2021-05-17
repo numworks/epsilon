@@ -1,9 +1,9 @@
-#include "alien.h"
-#include "display.h"
-#include "spaceship.h"
-#include "svc.h"
+#include "numwars/alien.h"
+#include "numwars/spaceship.h"
+#include "utils/display.h"
+#include "utils/svc.h"
 
-constexpr const char title[] = "NumWars";
+constexpr const char title[] __attribute__((used)) = "NumWars";
 
 void checkForSpaceshipAliensCollisions(Alien aliens[], int numberOfAliens, Spaceship * spaceship) {
   for (int i = 0; i < numberOfAliens; i++) {
@@ -69,7 +69,7 @@ void app_main() {
       checkForRocketsAliensCollisions(&spaceship, aliens, k_maxNumberOfAliens);
     }
 
-    Ion::Timing::msleep(5);
+    Ion::Timing::msleep(20);
 
     // New alien
     if (alienMaterializationTimer == Alien::k_materializationPeriod) {

@@ -1,8 +1,8 @@
 #ifndef ROCKET_H
 #define ROCKET_H
 
-#include "color.h"
-#include "display.h"
+#include "../utils/color.h"
+#include "../utils/display.h"
 
 class Alien;
 

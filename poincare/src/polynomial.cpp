@@ -56,7 +56,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   return !root1->isUndefined() + !root2->isUndefined();
 }
 
-int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, Expression d, Expression * root1, Expression * root2, Expression * root3, Expression * delta, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, Expression d, Expression * root1, Expression * root2, Expression * root3, Expression * delta, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * approximateSolutions) {
   assert(root1 && root2 && root3 && delta);
   assert(!(a.isUninitialized() || b.isUninitialized() || c.isUninitialized() || d.isUninitialized()));
   const Expression coefficients[] = { d, c, b, a };
@@ -193,6 +193,10 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root1 = *root2;
     *root2 = *root3;
     *root3 = Undefined::Builder();
+  }
+
+  if (approximateSolutions != nullptr) {
+    *approximateSolutions = approximate;
   }
   return !root1->isUndefined() + !root2->isUndefined() + !root3->isUndefined();
 }

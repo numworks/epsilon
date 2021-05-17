@@ -79,6 +79,30 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
   quiz_assert_print_if_failure(false, failInformationBuffer);
 }
 
+template <int N>
+void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
+  ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    Arithmetic arithmetic;
+    int numberOfDivisors = arithmetic.PositiveDivisors(a);
+    if (numberOfDivisors == Arithmetic::k_errorTooManyFactors) {
+      numberOfDivisors = Arithmetic::k_maxNumberOfPrimeFactors;
+    } else {
+      assert(numberOfDivisors >= 0);
+    }
+    constexpr size_t bufferSize = 100;
+    char failInformationBuffer[bufferSize];
+    fill_buffer_with(failInformationBuffer, bufferSize, "divisors(", &a, 1);
+    quiz_assert_print_if_failure(numberOfDivisors == N, failInformationBuffer);
+    for (int i = 0; i < N; i++) {
+      quiz_assert_print_if_failure(arithmetic.factorizationFactorAtIndex(i)->approximate<float>() == Integer(divisors[i]).approximate<float>(), failInformationBuffer);
+    }
+  } else {
+    Arithmetic::resetPrimeFactorization();
+    quiz_assert_print_if_failure(false, "Poincare exception");
+  }
+}
+
 QUIZ_CASE(poincare_arithmetic_gcd) {
   assert_gcd_equals_to(Integer(11), Integer(121), Integer(11));
   assert_gcd_equals_to(Integer(-256), Integer(321), Integer(1));
@@ -122,4 +146,15 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
   int factors7[0] = {};
   int coefficients7[0] = {};
   assert_prime_factorization_equals_to(Integer(1), factors7, coefficients7, 0);
+}
+
+QUIZ_CASE(poincare_arithmetic_divisors) {
+  quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer(0)) == 0, "divisors(0)");
+  assert_divisors_equal_to(Integer(1), {1});
+  assert_divisors_equal_to(Integer(2), {1, 2});
+  assert_divisors_equal_to(Integer(-12), {1, 2, 3, 4, 6, 12});
+  assert_divisors_equal_to(Integer(-100), {1, 2, 4, 5, 10, 20, 25, 50, 100});
+  assert_divisors_equal_to(Integer(225), {1, 3, 5, 9, 15, 25, 45, 75, 225});
+  /* Too many divisors */
+  assert_divisors_equal_to(Integer(1680), {1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 15, 16, 20, 21, 24, 28, 30, 35, 40, 42, 48, 56, 60, 70, 80, 84, 105, 112, 120, 140, 168});
 }

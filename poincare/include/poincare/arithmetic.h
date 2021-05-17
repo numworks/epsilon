@@ -20,7 +20,7 @@ public:
   template<typename T> static Evaluation<T> LCM(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);
 
   constexpr static int k_numberOfPrimeFactors = 1000;
-  constexpr static int k_maxNumberOfPrimeFactors = 32;
+  constexpr static int k_maxNumberOfFactors = 32;
   constexpr static int k_errorTooManyFactors = -1;
   constexpr static int k_errorFactorTooLarge = -2;
   constexpr static int k_errorAlreadyInUse = -3;
@@ -30,7 +30,8 @@ public:
    * An error is returned if a second non-destructed instance of Arithmetic
    * calls PrimeFactorization. This situation must be prevented. */
   Arithmetic() {}
-  ~Arithmetic() { resetPrimeFactorization(); }
+  ~Arithmetic() { resetLock(); }
+
   /* When output is negative that indicates a special case:
    *  - -1 : too many factors.
    *  - -2 : a prime factor is too big.
@@ -38,43 +39,44 @@ public:
    * Before calling PrimeFactorization, we instantiate an Arithmetic object.
    * Outputs are retrieved using getFactorization_(index) methods. */
   int PrimeFactorization(const Integer & i);
-  static Integer * factorizationFactorAtIndex(int index) {
-    assert(index < k_maxNumberOfPrimeFactors);
-    return factorizationFactors() + index;
-  }
-  static Integer * factorizationCoefficientAtIndex(int index) {
-    assert(index < k_maxNumberOfPrimeFactors);
-    return factorizationCoefficients() + index;
-  }
+  /* Method PositiveDivisors follows the same API as PrimeFactorization, as it
+   * uses the same array. */
+  int PositiveDivisors(const Integer & i);
+
   /* Factorization's lock can be compromised if an exception is raised while it
    * is locked. To prevent that, any prime factorization must be enclosed within
    * an intermediary ExceptionCheckpoint. resetPrimeFactorization() shall be
    * called in the associated ErrorHandler and, once the intermediary
    * ExceptionCheckpoint has been destroyed, another exception shall be manually
    * raised to fall back on the intended checkpoint. */
-  static void resetPrimeFactorization();
+  static void resetLock();
 
-  /* Method PositiveDivisors follows the same API as PrimeFactorization, as it
-   * uses the same array. */
-  int PositiveDivisors(const Integer & i);
+  static Integer * factorAtIndex(int index) {
+    assert(index < k_maxNumberOfFactors);
+    return factors() + index;
+  }
+  static Integer * coefficientAtIndex(int index) {
+    assert(index < k_maxNumberOfFactors);
+    return coefficients() + index;
+  }
 
 private:
   /* When decomposing an integer into primes factors, we look for its prime
    * factors among integer from 2 to 10000. */
   constexpr static int k_biggestPrimeFactor = 10000;
-  static bool s_factorizationLock;
+  static bool s_lock;
   /* The following methods are equivalent to a simple static array declaration
    * in the header and an initialization in the source file. However, as Integer
    * itself rely on static objects, such a declaration could cause a static
    * init order fiasco. Here, the object is created on first use only. */
-  static Integer * factorizationFactors() {
-    static Integer staticFactorizationFactors[k_maxNumberOfPrimeFactors];
-    return staticFactorizationFactors;
+  static Integer * factors() {
+    static Integer staticFactors[k_maxNumberOfFactors];
+    return staticFactors;
   }
 
-  static Integer * factorizationCoefficients() {
-    static Integer staticFactorizationCoefficients[k_maxNumberOfPrimeFactors];
-    return staticFactorizationCoefficients;
+  static Integer * coefficients() {
+    static Integer staticCoefficients[k_maxNumberOfFactors];
+    return staticCoefficients;
   }
 };
 

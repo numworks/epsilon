@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-bool Arithmetic::s_factorizationLock = false;
+bool Arithmetic::s_lock = false;
 
 Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
   if (a.isOverflow() || b.isOverflow()) {
@@ -161,12 +161,12 @@ const short primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 
 int Arithmetic::PrimeFactorization(const Integer & n) {
   assert(!n.isOverflow());
   // Check no other Arithmetic instance is under lock
-  if (s_factorizationLock) {
+  if (s_lock) {
     assert(false);
     return k_errorAlreadyInUse;
   }
   // Lock Prime factorization
-  s_factorizationLock = true;
+  s_lock = true;
 
   // Compute the absolute value of n
   Integer m = n;
@@ -187,21 +187,21 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
   int t = 0; // n prime factor index
   int k = 0; // prime factor index
   Integer testedPrimeFactor((int)primeFactors[k]); // prime factor
-  *factorizationFactorAtIndex(t) = testedPrimeFactor;
+  *factorAtIndex(t) = testedPrimeFactor;
   IntegerDivision d = {.quotient = 0, .remainder = 0};
   bool stopCondition;
   do {
     stopCondition = Integer::NaturalOrder(Integer::Power(testedPrimeFactor, Integer(2)), m) < 0;
     d = Integer::Division(m, testedPrimeFactor);
     if (d.remainder.isZero()) {
-      *factorizationCoefficientAtIndex(t) = Integer::Addition(*factorizationCoefficientAtIndex(t), Integer(1));
+      *coefficientAtIndex(t) = Integer::Addition(*coefficientAtIndex(t), Integer(1));
       m = d.quotient;
       if (m.isOne()) {
         return t+1;
       }
       continue;
     }
-    if (!factorizationCoefficientAtIndex(t)->isZero()) {
+    if (!coefficientAtIndex(t)->isZero()) {
       t++;
     }
     k++;
@@ -209,7 +209,7 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
      * the prime factorization for low numbers). When k_numberOfPrimeFactors is
      * overflow, try every odd number as divisor. */
     testedPrimeFactor = k < k_numberOfPrimeFactors ? Integer((int)primeFactors[k]) : Integer::Addition(testedPrimeFactor, Integer(2));
-    *factorizationFactorAtIndex(t) = testedPrimeFactor;
+    *factorAtIndex(t) = testedPrimeFactor;
   } while (stopCondition && Integer::NaturalOrder(testedPrimeFactor,Integer(k_biggestPrimeFactor)) < 0);
   if (Integer::NaturalOrder(Integer::Power(Integer(k_biggestPrimeFactor), Integer(2)), m) < 0) {
     /* Special case 2: We do not want to break i in prime factor because it
@@ -217,42 +217,42 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
      * k_biggestPrimeFactor. -2 is returned to indicate a special case. */
     return k_errorFactorTooLarge;
   }
-  *factorizationFactorAtIndex(t) = m;
-  *factorizationCoefficientAtIndex(t) = Integer::Addition(*factorizationCoefficientAtIndex(t), Integer(1));
+  *factorAtIndex(t) = m;
+  *coefficientAtIndex(t) = Integer::Addition(*coefficientAtIndex(t), Integer(1));
   return t+1;
 }
 
 int Arithmetic::PositiveDivisors(const Integer & i) {
   // Check no other Arithmetic instance is under lock
-  if (s_factorizationLock) {
+  if (s_lock) {
     assert(false);
     return k_errorAlreadyInUse;
   }
   // Lock Prime factorization
-  s_factorizationLock = true;
+  s_lock = true;
 
   int numberOfDivisors = 0;
   float upper = std::ceil(std::fabs(i.approximate<float>()));
   for (int k = 1; k <= upper; k++) {
     Integer kInteger(k);
     if (Integer::Division(i, kInteger).remainder.isZero()) {
-      if (numberOfDivisors >= k_maxNumberOfPrimeFactors) {
+      if (numberOfDivisors >= k_maxNumberOfFactors) {
         return k_errorTooManyFactors;
       }
-      *factorizationFactorAtIndex(numberOfDivisors++) = kInteger;
+      *factorAtIndex(numberOfDivisors++) = kInteger;
     }
   }
   return numberOfDivisors;
 }
 
-void Arithmetic::resetPrimeFactorization() {
+void Arithmetic::resetLock() {
   // Clean Factors and coefficients arrays
-  for (int i = 0; i < k_maxNumberOfPrimeFactors; ++i) {
-    *factorizationFactorAtIndex(i) = Integer();
-    *factorizationCoefficientAtIndex(i) = Integer();
+  for (int i = 0; i < k_maxNumberOfFactors; ++i) {
+    *factorAtIndex(i) = Integer();
+    *coefficientAtIndex(i) = Integer();
   }
   // Unlock Prime Factorization
-  s_factorizationLock = false;
+  s_lock = false;
 }
 
 template Evaluation<double> Arithmetic::GCD<double>(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);

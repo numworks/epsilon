@@ -1,8 +1,8 @@
 #ifndef ALIEN_H
 #define ALIEN_H
 
-#include "color.h"
-#include "display.h"
+#include "../utils/color.h"
+#include "../utils/display.h"
 #include "spaceship.h"
 
 class Alien {
@@ -15,7 +15,7 @@ public:
   bool isGhost() const { return m_x < 0; }
   void killed();
   static constexpr int k_stepPeriod = 10;
-  static constexpr int k_materializationPeriod = 100;
+  static constexpr int k_materializationPeriod = 20;
   static constexpr int k_width = 15;
   static constexpr int k_height = 18;
 private:

@@ -30,6 +30,7 @@ public:
   float addMargin(float x, float range, bool isVertical, bool isMin) override { return DefaultAddMargin(x, range, isVertical, isMin, k_topMargin, k_bottomMargin, k_leftMargin, k_rightMargin); }
   void updateZoomButtons() override {}
   void updateBottomMargin() override {}
+  void tidyModels() override {}
 
 private:
   mutable GlobalContext m_context;

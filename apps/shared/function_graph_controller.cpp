@@ -191,4 +191,12 @@ void FunctionGraphController::improveFullRange(float * xMin, float * xMax, float
   DefaultImproveFullRange(xMin, xMax, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore());
 }
 
+void FunctionGraphController::tidyModels() {
+  int nbOfFunctions = functionStore()->numberOfActiveFunctions();
+  for (int i = 0; i < nbOfFunctions; i++) {
+    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    f->tidy();
+  }
+}
+
 }

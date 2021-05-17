@@ -26,6 +26,7 @@ public:
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;
   virtual void updateBottomMargin() = 0;
   virtual void updateZoomButtons() = 0;
+  virtual void tidyModels() = 0;
 };
 
 }

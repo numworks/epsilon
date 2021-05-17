@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stddef.h>
 #include <assert.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>
 #include <poincare/zoom.h>
@@ -308,53 +309,67 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
 
   float newXMin, newXMax, newYMin, newYMax;
 
-  if (computeX || intrinsicYRangeIsUnset()) {
-    float xMinLimit, xMaxLimit;
-    if (computeX) {
-      xMinLimit = -INFINITY;
-      xMaxLimit = INFINITY;
-    } else {
-      xMinLimit = xMin();
-      xMaxLimit = xMax();
+  Poincare::UserCircuitBreakerCheckpoint checkpoint;
+  if (CircuitBreakerRun(checkpoint)) {
+    if (computeX || intrinsicYRangeIsUnset()) {
+      float xMinLimit, xMaxLimit;
+      if (computeX) {
+        xMinLimit = -INFINITY;
+        xMaxLimit = INFINITY;
+      } else {
+        xMinLimit = xMin();
+        xMaxLimit = xMax();
+      }
+      m_delegate->computeXRange(xMinLimit, xMaxLimit, &newXMin, &newXMax, &m_yMinIntrinsic, &m_yMaxIntrinsic);
     }
-    m_delegate->computeXRange(xMinLimit, xMaxLimit, &newXMin, &newXMax, &m_yMinIntrinsic, &m_yMaxIntrinsic);
-  }
-  if (computeX) {
-    m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
-    /* Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit */
-    MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-    if (!hasDefaultRange()) {
-      float dx = xMax() - xMin();
-      m_xRange.setMin(roundLimit(m_delegate->addMargin(newXMin, dx, false , true), dx, true),  k_lowerMaxFloat, k_upperMaxFloat);
-      MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(newXMax, dx, false , false), dx, false), k_lowerMaxFloat, k_upperMaxFloat);
-    }
-  }
-
-  /* We notify the delegate to refresh the cursor's position and update the
-   * bottom margin (which depends on the banner height). */
-  m_delegate->updateBottomMargin();
-
-  if (computeY || (computeX && m_yAuto)) {
-    assert(!intrinsicYRangeIsUnset());
-    m_delegate->computeYRange(xMin(), xMax(), m_yMinIntrinsic, m_yMaxIntrinsic, &newYMin, &newYMax);
     if (computeX) {
-      newXMin = xMin();
-      newXMax = xMax();
-      m_delegate->improveFullRange(&newXMin, &newXMax, &newYMin, &newYMax);
       m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+      /* Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit */
       MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+      if (!hasDefaultRange()) {
+        float dx = xMax() - xMin();
+        m_xRange.setMin(roundLimit(m_delegate->addMargin(newXMin, dx, false , true), dx, true),  k_lowerMaxFloat, k_upperMaxFloat);
+        MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(newXMax, dx, false , false), dx, false), k_lowerMaxFloat, k_upperMaxFloat);
+      }
     }
-    /* Add vertical margins */
-    float dy = newYMax - newYMin;
-    m_yRange.setMin(roundLimit(m_delegate->addMargin(newYMin, dy, true , true), dy, true), k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(newYMax, dy, true , false), dy, false), k_lowerMaxFloat, k_upperMaxFloat);
-  }
 
-  if (m_delegate->defaultRangeIsNormalized() || shouldBeNormalized()) {
-    /* Normalize the axes, so that a polar circle is displayed as a circle.
-     * If we are displaying cartesian functions, we want the X bounds
-     * untouched. */
-    protectedNormalize(m_delegate->defaultRangeIsNormalized() && computeX, computeY, true);
+    /* We notify the delegate to refresh the cursor's position and update the
+     * bottom margin (which depends on the banner height). */
+    m_delegate->updateBottomMargin();
+
+    if (computeY || (computeX && m_yAuto)) {
+      assert(!intrinsicYRangeIsUnset());
+      m_delegate->computeYRange(xMin(), xMax(), m_yMinIntrinsic, m_yMaxIntrinsic, &newYMin, &newYMax);
+      if (computeX) {
+        newXMin = xMin();
+        newXMax = xMax();
+        m_delegate->improveFullRange(&newXMin, &newXMax, &newYMin, &newYMax);
+        m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+        MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+      }
+      /* Add vertical margins */
+      float dy = newYMax - newYMin;
+      m_yRange.setMin(roundLimit(m_delegate->addMargin(newYMin, dy, true , true), dy, true), k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(newYMax, dy, true , false), dy, false), k_lowerMaxFloat, k_upperMaxFloat);
+    }
+
+    if (m_delegate->defaultRangeIsNormalized() || shouldBeNormalized()) {
+      /* Normalize the axes, so that a polar circle is displayed as a circle.
+       * If we are displaying cartesian functions, we want the X bounds
+       * untouched. */
+      protectedNormalize(m_delegate->defaultRangeIsNormalized() && computeX, computeY, true);
+    }
+  } else {
+    m_delegate->tidyModels();
+
+    float xMin = -10.f;
+    float xMax = 10.f;
+    m_xRange.setMin(xMin, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetXMax(xMax, k_lowerMaxFloat, k_upperMaxFloat);
+    float yMin, yMax;
+    Poincare::Zoom::SanitizeRangeForDisplay(&yMin, &yMax, NormalYXRatio() * (xMax - xMin) / 2.f);
+    m_yRange.setMin(yMin, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
   }
 }
 

@@ -379,15 +379,17 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
 EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients], Context * context) {
   /* Equation ax^2+bx+c = 0 */
   Expression delta;
+  bool solutionsAreApproximated = false;
   if (m_degree == 2) {
     m_numberOfSolutions = Poincare::Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], exactSolutions, exactSolutions + 1, &delta, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
   } else {
     assert(m_degree == 3);
-    m_numberOfSolutions = Poincare::Polynomial::CubicPolynomialRoots(coefficients[3], coefficients[2], coefficients[1], coefficients[0], exactSolutions, exactSolutions + 1, exactSolutions + 2, &delta, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+    m_numberOfSolutions = Poincare::Polynomial::CubicPolynomialRoots(coefficients[3], coefficients[2], coefficients[1], coefficients[0], exactSolutions, exactSolutions + 1, exactSolutions + 2, &delta, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), &solutionsAreApproximated);
   }
   exactSolutions[m_numberOfSolutions++] = delta;
   for (int i = 0; i < m_numberOfSolutions; i++) {
-    exactSolutions[i].simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+    Expression placeholder;
+    exactSolutions[i].simplifyAndApproximate(solutionsAreApproximated ? &placeholder : exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
   }
   return Error::NoError;
 }

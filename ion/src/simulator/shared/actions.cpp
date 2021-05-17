@@ -1,9 +1,13 @@
 #include "actions.h"
+
 #include <ion/display.h>
+
 #include "framebuffer.h"
 #include "platform.h"
 #include "state_file.h"
 #include "screenshot.h"
+#include "window.h"
+
 #include <signal.h>
 
 namespace Ion {
@@ -43,7 +47,8 @@ void saveStateForReload() {
 void handleUSR1Sig(int s) {
   if (s == SIGUSR1) {
     saveStateForReload();
-    exit(0);  // Pretty hard exit
+    Window::shutdown();
+    exit(0);
   }
 }
 

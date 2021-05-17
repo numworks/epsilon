@@ -55,7 +55,7 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
   {
-    // See comment in Arithmetic::resetPrimeFactorization()
+    // See comment in Arithmetic::resetLock()
     Poincare::ExceptionCheckpoint tempEcp;
     if (ExceptionRun(tempEcp)) {
       Arithmetic arithmetic;
@@ -66,13 +66,13 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
          * approximations (the relation between integers and their approximation
          * is a surjection, however different integers are really likely to have
          * different approximations... */
-        quiz_assert_print_if_failure(arithmetic.factorizationFactorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
-        quiz_assert_print_if_failure(arithmetic.factorizationCoefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
+        quiz_assert_print_if_failure(arithmetic.factorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
+        quiz_assert_print_if_failure(arithmetic.coefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
       }
       return;
     } else {
       // Reset factorization
-      Arithmetic::resetPrimeFactorization();
+      Arithmetic::resetLock();
     }
   }
   // Factorization failed, test failed
@@ -86,7 +86,7 @@ void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
     Arithmetic arithmetic;
     int numberOfDivisors = arithmetic.PositiveDivisors(a);
     if (numberOfDivisors == Arithmetic::k_errorTooManyFactors) {
-      numberOfDivisors = Arithmetic::k_maxNumberOfPrimeFactors;
+      numberOfDivisors = Arithmetic::k_maxNumberOfFactors;
     } else {
       assert(numberOfDivisors >= 0);
     }
@@ -95,10 +95,10 @@ void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
     fill_buffer_with(failInformationBuffer, bufferSize, "divisors(", &a, 1);
     quiz_assert_print_if_failure(numberOfDivisors == N, failInformationBuffer);
     for (int i = 0; i < N; i++) {
-      quiz_assert_print_if_failure(arithmetic.factorizationFactorAtIndex(i)->approximate<float>() == Integer(divisors[i]).approximate<float>(), failInformationBuffer);
+      quiz_assert_print_if_failure(arithmetic.factorAtIndex(i)->approximate<float>() == Integer(divisors[i]).approximate<float>(), failInformationBuffer);
     }
   } else {
-    Arithmetic::resetPrimeFactorization();
+    Arithmetic::resetLock();
     quiz_assert_print_if_failure(false, "Poincare exception");
   }
 }

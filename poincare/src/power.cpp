@@ -1063,7 +1063,7 @@ Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionN
   Integer i1(1), i2(1), g(b);
   bool shouldRaiseParentException = false;
   {
-    // See comment in Arithmetic::resetPrimeFactorization()
+    // See comment in Arithmetic::resetLock()
     ExceptionCheckpoint tempEcp;
     if (ExceptionRun(tempEcp)) {
       Arithmetic arithmetic;
@@ -1077,19 +1077,19 @@ Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionN
        * iterate over the coefficients twice: once to compute g, and once to
        * compute i1 and i2. */
       for (int j = 0; j < numberOfPrimeFactors; j++) {
-        IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(j), a), b);
+        IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.coefficientAtIndex(j), a), b);
         g = Arithmetic::GCD(g, div.remainder);
       }
       for (int j = 0; j < numberOfPrimeFactors; j++) {
-        IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.factorizationCoefficientAtIndex(j), a), b);
+        IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.coefficientAtIndex(j), a), b);
         IntegerDivision div2 = Integer::Division(div.remainder, g);
         assert(div2.remainder.isZero());
-        i1 = Integer::Multiplication(i1, Integer::Power(*arithmetic.factorizationFactorAtIndex(j), div.quotient));
-        i2 = Integer::Multiplication(i2, Integer::Power(*arithmetic.factorizationFactorAtIndex(j), div2.quotient));
+        i1 = Integer::Multiplication(i1, Integer::Power(*arithmetic.factorAtIndex(j), div.quotient));
+        i2 = Integer::Multiplication(i2, Integer::Power(*arithmetic.factorAtIndex(j), div2.quotient));
       }
     } else {
       shouldRaiseParentException = true;
-      Arithmetic::resetPrimeFactorization();
+      Arithmetic::resetLock();
     }
   }
   if (shouldRaiseParentException) {

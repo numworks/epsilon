@@ -27,10 +27,10 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-√(2))(x-√(3))=0", {"x=√(2)", "x=√(3)", "delta=-2×√(6)+5"});
 
-  /* TODO: Cubic
-   * x^3-4x^2+6x-24=0
-   * x^3+x^2+1=0
-   * x^3-3x-2=0 */
+   assert_solves_to("x^3-4x^2+6x-24=0", {"x=4", "x=-√(6)×𝐢", "x=√(6)×𝐢", "delta=-11616"});
+   assert_solves_to("x^3+x^2+1=0", {"x=-1.465571232", "x=0.2327856159-0.7925519925×𝐢", "x=0.2327856159+0.7925519925×𝐢", "delta=-31"});
+   assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"});
+   assert_solves_to("x^3+x+1=0", {"x=-0.6823278038", "x=0.3411639019-1.1615414×𝐢", "x=0.3411639019+1.1615414×𝐢", "delta=-31"});
 
   // Linear System
   assert_solves_to_infinite_solutions("x+y=0");
@@ -257,8 +257,8 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   unset("b");
 
   set("x", "-1");
-  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   set("x", "1");
-  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   unset("x");
 }

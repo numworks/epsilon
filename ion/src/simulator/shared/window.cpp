@@ -1,11 +1,13 @@
 #include "window.h"
+
+#include <SDL.h>
+#include <assert.h>
+#include <ion.h>
+#include <stdio.h>
+
 #include "display.h"
 #include "layout.h"
 #include "platform.h"
-
-#include <assert.h>
-#include <ion.h>
-#include <SDL.h>
 
 namespace Ion {
 namespace Simulator {
@@ -22,18 +24,38 @@ bool isHeadless() {
   return sWindow == nullptr;
 }
 
-int initialWindowPosition(int * x, int * y) {
-  // Position on second screen if exists
-  // TODO ideally would remember last position
-  if (SDL_GetNumVideoDisplays() == 0) {
-    *x = SDL_WINDOWPOS_CENTERED;
-    *y = SDL_WINDOWPOS_CENTERED;
-  } else {
+bool readCachedWindowPosition(int * x, int * y) {
+  // Read previous location if exists
+  const char * path = Platform::filePathInTempDir("numworks.pos");
+  FILE * pos = fopen(path, "r");
+  if (pos == nullptr) {
+    return false;
+  }
+  int read = fscanf(pos, "%d %d", x, y);
+  fclose(pos);
+  return read > 0;
+}
+
+bool cacheWindowPosition() {
+  const char * path = Platform::filePathInTempDir("numworks.pos");
+  FILE * pos = fopen(path, "w");
+  if (pos == nullptr) {
+    return false;
+  }
+  int x, y;
+  SDL_GetWindowPosition(sWindow, &x, &y);
+  fprintf(pos, "%d %d", x, y);
+
+  fclose(pos);
+  return true;
+}
+
+void initialWindowPosition(int * x, int * y) {
+  if (!readCachedWindowPosition(x, y)) {
     *x = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
     *y = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
   }
 }
-
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -45,24 +67,23 @@ void init() {
   initialWindowPosition(&x, &y);
   sWindow = SDL_CreateWindow(
 #if EPSILON_SDL_SCREEN_ONLY
-    nullptr,
+      nullptr,
 #else
-    "Epsilon",
+      "Epsilon",
 #endif
-    x, y,
+      x, y,
 #if EPSILON_SDL_SCREEN_ONLY
-    // When rendering the screen only, make a non-resizeable window whose size
-    // matches the screen's
-    Ion::Display::Width,
-    Ion::Display::Height,
-    0 // Default flags: no high-dpi, not resizeable.
+      // When rendering the screen only, make a non-resizeable window whose size
+      // matches the screen's
+      Ion::Display::Width, Ion::Display::Height,
+      0  // Default flags: no high-dpi, not resizeable.
 #else
-    458, 888, // Otherwise use a default size that makes the screen pixel-perfect
-    SDL_WINDOW_ALLOW_HIGHDPI
+      458, 888,  // Otherwise use a default size that makes the screen pixel-perfect
+      SDL_WINDOW_ALLOW_HIGHDPI
 #if EPSILON_SDL_FULLSCREEN
-    | SDL_WINDOW_FULLSCREEN
+          | SDL_WINDOW_FULLSCREEN
 #else
-    | SDL_WINDOW_RESIZABLE
+          | SDL_WINDOW_RESIZABLE
 #endif
 #endif
   );
@@ -134,6 +155,7 @@ void refresh() {
 }
 
 void shutdown() {
+  cacheWindowPosition();
   if (isHeadless()) {
     return;
   }
@@ -146,6 +168,6 @@ void shutdown() {
   SDL_Quit();
 }
 
-}
-}
-}
+}  // namespace Window
+}  // namespace Simulator
+}  // namespace Ion

@@ -4,6 +4,9 @@
 #if ESCHER_LOG_EVENTS_NAME
 #include <ion/console.h>
 #endif
+#if ION_SIMULATOR_FILES
+#include "compare_screenshot.h"
+#endif
 
 namespace Ion {
 namespace Events {
@@ -133,7 +136,12 @@ Event getEvent(int * timeout) {
 #if ESCHER_LOG_EVENTS_NAME
       Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
 #endif
-
+#if ION_SIMULATOR_FILES
+      // Save screenshot
+      if (CompareScreenshot::isCompareScreenshotEnabled()) {
+        CompareScreenshot::saveCompareScreenshot();
+      }
+#endif
     } else {
       res = sSourceJournal->popEvent();
 #if ESCHER_LOG_EVENTS_NAME

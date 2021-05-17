@@ -41,6 +41,8 @@ ifeq ($(ION_SIMULATOR_FILES),1)
 ion_src += $(addprefix ion/src/simulator/shared/, \
   actions.cpp \
   state_file.cpp \
+	compare_screenshot.cpp \
 )
 SFLAGS += -DION_SIMULATOR_FILES=1
+$(call object_for,ion/src/shared/events_keyboard.cpp): SFLAGS += -Iion/src/simulator/shared/
 endif

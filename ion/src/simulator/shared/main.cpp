@@ -13,6 +13,9 @@
 #include <signal.h>
 #include <sys/resource.h>
 #endif
+#if ION_SIMULATOR_FILES
+#include "compare_screenshot.h"
+#endif
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
@@ -104,6 +107,12 @@ int main(int argc, char * argv[]) {
       args.push("--language", replayJournalLanguage);
     }
   }
+
+  const char * screenshotPath = args.pop("--take-screenshot");
+  if (screenshotPath) {
+    Ion::CompareScreenshot::saveCompareScreenshotTo(screenshotPath);
+  }
+
 #endif
 
   // Default language

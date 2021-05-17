@@ -16,6 +16,14 @@ const char * filePathForWriting(const char * extension) {
   return path;
 }
 
+const char * filePathInTempDir(const char * filename) {
+  static char path[64];
+  if (snprintf(path, sizeof(path), "/tmp/%s", filename) < 0) {
+    return nullptr;
+  }
+  return path;
+}
+
 }
 }
 }

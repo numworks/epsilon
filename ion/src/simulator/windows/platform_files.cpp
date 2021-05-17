@@ -46,6 +46,17 @@ const char * filePathForWriting(const char * extension) {
   return nullptr;
 }
 
+const char * filePathInTempDir(const char * filename) {
+  static char path[64];
+  int written = 0;
+  written = GetTempPath(sizeof(path), path);
+  if(written == 0) {
+    return nullptr;
+  }
+  strcpy(&path[written], filename);
+  return path;
+}
+
 }
 }
 }

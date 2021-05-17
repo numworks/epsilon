@@ -11,11 +11,26 @@ namespace StateFile {
 static constexpr const char * sHeader = "NWSF";
 static constexpr int sHeaderLength = 4;
 static constexpr int sVersionLength = 8;
-static constexpr int sLanguageLength = 2;
 static constexpr const char * sWildcardVersion = "**.**.**";
+static constexpr uint8_t sLatestFormatVersion = 0xFF - 0;
+static constexpr int sLanguageLength = 2;
 static constexpr const char * sWildcardLanguage = "**";
 
-/* File format: * "NWSF" + "XXXXXXXX" (version) + "XX" (language) + EVENTS... */
+/* File format:
+ * Format version 0xFF (latest) :
+ *   "NWSF" : Header
+ * + "XXXXXXXX" : Software version
+ * + "0xFF" : State file format version
+ * + "XX" : Language code (en, fr, nl, pt, it, de, or es)
+ * + EVENTS...
+ *
+ * To minimize chances of mixing up events and state file format version when
+ * parsing a state file, format version value should be further beyond any
+ * currently defined keyboard event id (last Event::Special event id, which is
+ * currently 0xDE). First format version is 0xFF and the following ones will go
+ * decreasing from there. That way, there is room for multiple future new events
+ * as well as new format versions.
+ */
 
 static inline bool load(FILE * f) {
   char buffer[sVersionLength+1];
@@ -41,6 +56,13 @@ static inline bool load(FILE * f) {
   // Journal
   Ion::Events::Journal * journal = Journal::replayJournal();
 
+  // Format version
+  int c = 0;
+  if ((c = getc(f)) == EOF || c != sLatestFormatVersion) {
+    // Only the latest version is handled for now.
+    return false;
+  }
+
   // Language
   buffer[sLanguageLength] = 0;
   if (fread(buffer, sLanguageLength, 1, f) != 1) {
@@ -51,7 +73,6 @@ static inline bool load(FILE * f) {
   }
 
   // Events
-  int c = 0;
   while ((c = getc(f)) != EOF) {
     Ion::Events::Event e = Ion::Events::Event(c);
     if (e.isDefined() && e.isKeyboardEvent()) {
@@ -85,6 +106,9 @@ static inline bool save(FILE * f) {
     return false;
   }
   if (fwrite(softwareVersion(), sVersionLength, 1, f) != 1) {
+    return false;
+  }
+  if (fwrite(&sLatestFormatVersion, 1, 1, f) != 1) {
     return false;
   }
   Ion::Events::Journal * journal = Journal::logJournal();

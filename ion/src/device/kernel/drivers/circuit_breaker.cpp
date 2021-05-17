@@ -1,5 +1,6 @@
 #include <drivers/circuit_breaker.h>
 #include <drivers/cache.h>
+#include <drivers/keyboard_queue.h>
 #include <kernel/boot/isr.h>
 #include <regs/regs.h>
 #include <assert.h>
@@ -146,6 +147,7 @@ bool setCheckpoint(CheckpointType type) {
 
 void loadCheckpoint(CheckpointType type) {
   assert(Device::CircuitBreaker::hasCheckpoint(type));
+  Keyboard::Queue::sharedQueue()->flush();
   setPendingAction(type, InternalStatus::PendingLoadCheckpoint);
 }
 

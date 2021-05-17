@@ -154,9 +154,11 @@ bool canRepeatEventWithState() {
 bool handlePreemption(bool stalling) {
   Ion::Keyboard::State currentPreemptiveState = sPreemtiveState;
   sPreemtiveState = Ion::Keyboard::State(0);
+  if (currentPreemptiveState != Ion::Keyboard::State(0)) {
+    sCurrentKeyboardState = currentPreemptiveState;
+  }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Home)) {
     if (CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
-      Keyboard::Queue::sharedQueue()->flush();
       CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::Home);
       return true;
     }
@@ -184,7 +186,6 @@ bool handlePreemption(bool stalling) {
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Back)) {
     if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::User)) {
-      Keyboard::Queue::sharedQueue()->flush();
       CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::User);
       return true;
     } else {

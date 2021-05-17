@@ -15,7 +15,7 @@ public:
   void forward();
   void tryToKill(Alien * a);
   bool off() const { return m_y < 0; }
-  static constexpr int k_period = 10;
+  static constexpr int k_period = 5;
 private:
   static constexpr int k_length = 13;
   void draw(const Color c) const;

@@ -163,7 +163,7 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
   // Check no other Arithmetic instance is under lock
   if (s_factorizationLock) {
     assert(false);
-    return -3;
+    return k_errorAlreadyInUse;
   }
   // Lock Prime factorization
   s_factorizationLock = true;
@@ -181,7 +181,7 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
     /* Special case 1: We do not want to break i in prime factor because it
      * might take too many factors... More than k_maxNumberOfPrimeFactors.
      * -1 is returned to indicate a special case. */
-    return -1;
+    return k_errorTooManyFactors;
   }
 
   int t = 0; // n prime factor index
@@ -215,7 +215,7 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
     /* Special case 2: We do not want to break i in prime factor because it
      * take too much time: the prime factor that should be tested is above
      * k_biggestPrimeFactor. -2 is returned to indicate a special case. */
-    return -2;
+    return k_errorFactorTooLarge;
   }
   *factorizationFactorAtIndex(t) = m;
   *factorizationCoefficientAtIndex(t) = Integer::Addition(*factorizationCoefficientAtIndex(t), Integer(1));

@@ -268,7 +268,6 @@ void AppsContainer::run() {
     bool switched = switchTo(appSnapshotAtIndex(0));
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
-    Poincare::Tidy();
     s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
   }
   Container::run();

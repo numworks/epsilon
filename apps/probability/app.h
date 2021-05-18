@@ -25,7 +25,7 @@
 
 namespace Probability {
 
-class NewApp : public Shared::TextFieldDelegateApp {
+class App : public Shared::TextFieldDelegateApp {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -37,7 +37,7 @@ class NewApp : public Shared::TextFieldDelegateApp {
    public:
     Snapshot() {}
     ~Snapshot() {}
-    App * unpack(Escher::Container * container) override { return new (container->currentAppBuffer()) NewApp(this); };
+    App * unpack(Escher::Container * container) override { return new (container->currentAppBuffer()) App(this); };
     const Descriptor * descriptor() const override {
       static Descriptor s_descriptor;
       return &s_descriptor;
@@ -55,7 +55,7 @@ class NewApp : public Shared::TextFieldDelegateApp {
   
 
  private:
-  NewApp(Escher::App::Snapshot *);
+  App(Escher::App::Snapshot *);
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)

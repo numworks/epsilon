@@ -1,4 +1,4 @@
-#include "new_app.h"
+#include "app.h"
 
 #include <apps/shared/text_field_delegate_app.h>
 #include <escher/app.h>
@@ -7,9 +7,9 @@
 
 namespace Probability {
 
-const Escher::Image * NewApp::Descriptor::icon() const { return ImageStore::ProbabilityIcon; }
+const Escher::Image * App::Descriptor::icon() const { return ImageStore::ProbabilityIcon; }
 
-NewApp::NewApp(Escher::App::Snapshot * snapshot)
+App::App(Escher::App::Snapshot * snapshot)
     : TextFieldDelegateApp(snapshot, &m_stackViewController),
       m_graphController(&m_stackViewController),
       m_homogeneityResultsController(&m_stackViewController),

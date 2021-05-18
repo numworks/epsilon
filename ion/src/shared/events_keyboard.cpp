@@ -5,7 +5,7 @@
 #include <ion/console.h>
 #endif
 #if ION_SIMULATOR_FILES
-#include "compare_screenshot.h"
+#include "screenshot.h"
 #endif
 
 namespace Ion {
@@ -138,9 +138,7 @@ Event getEvent(int * timeout) {
 #endif
 #if ION_SIMULATOR_FILES
       // Save screenshot
-      if (CompareScreenshot::isCompareScreenshotEnabled()) {
-        CompareScreenshot::saveCompareScreenshot();
-      }
+      Simulator::Screenshot::commandlineScreenshot()-> capture();
 #endif
     } else {
       res = sSourceJournal->popEvent();

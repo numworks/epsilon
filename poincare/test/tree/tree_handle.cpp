@@ -72,7 +72,6 @@ QUIZ_CASE(tree_handle_memory_failure) {
       tree = PairByReference::Builder(tree, BlobByReference::Builder(1));
     }
   } else {
-    Poincare::Tidy();
     memoryFailureHasBeenHandled = true;
   }
   quiz_assert(memoryFailureHasBeenHandled);

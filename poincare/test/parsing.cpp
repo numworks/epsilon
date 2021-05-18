@@ -100,7 +100,6 @@ QUIZ_CASE(poincare_parsing_memory_exhaustion) {
         a.addChildAtIndexInPlace(e, 0, a.numberOfChildren());
       }
     } else {
-      Poincare::Tidy();
       memoryFailureHasBeenHandled = true;
     }
   }

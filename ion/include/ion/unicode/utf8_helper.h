@@ -8,7 +8,7 @@ namespace UTF8Helper {
 
 class TextPair {
 public:
-  typedef bool (*ReplacementRule)(const char *, int, int);
+  typedef bool (*ReplacementRule)(const char *, size_t, size_t);
 
   constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtension = false, ReplacementRule rule = nullptr) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtension(removeParenthesesExtension), m_rule(rule) {}
   const char * firstString() { return m_firstString; }

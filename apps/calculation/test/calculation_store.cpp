@@ -325,6 +325,17 @@ QUIZ_CASE(calculation_symbolic_computation) {
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+
+  // 5 - Double nested local variables within variables
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("x→a",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(a,x,x)→b",       "0",     &globalContext, &store);
+  // TODO : Fix this case
+  assertMainCalculationOutputIs("b",                   "1",     &globalContext, &store);
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

@@ -73,8 +73,8 @@ Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
-  return Symbol(this).deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation);
+Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return Symbol(this).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
 }
 
 ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
@@ -228,7 +228,7 @@ int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   /* These two symbolic computations parameters make no sense in this method.
    * They are therefore not handled. */
   assert(symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
@@ -258,18 +258,19 @@ Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didRe
     }
     return replaceWithUndefinedInPlace();
   }
-  // If the symbol contains itself, return undefined
-  if (e.hasExpression([](Expression e, const void * context) {
-          if (e.type() != ExpressionNode::Type::Symbol) {
-            return false;
-          }
-          return strcmp(static_cast<Symbol&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
-        }, reinterpret_cast<const void *>(name())))
-  {
-    return replaceWithUndefinedInPlace();
+
+  // Symbol is about to be replaced, decrement maxSymbolsToReplace
+  maxSymbolsToReplace--;
+  if (maxSymbolsToReplace < 0) {
+    // We replaced too many symbols and consider the expression to be circular
+    *isCircular = true;
+    return *this;
   }
+
   replaceWithInPlace(e);
-  *didReplace = true;
+  /* Reset parameteredAncestorsCount, because outer local context is ignored
+   * within symbol's expression. */
+  e = e.deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, 0, symbolicComputation);
   return e;
 }
 

@@ -1,5 +1,5 @@
-apps += Probability::NewApp
-app_headers += apps/probability/new_app.h
+apps += Probability::App
+app_headers += apps/probability/app.h
 
 app_probability_test_src = $(addprefix apps/probability/,\
   distribution/binomial_distribution.cpp \
@@ -15,7 +15,7 @@ app_probability_test_src = $(addprefix apps/probability/,\
 )
 
 app_probability_src = $(addprefix apps/probability/,\
-new_app.cpp helpers.cpp \
+app.cpp helpers.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/distribution/,\
@@ -81,7 +81,7 @@ $(call object_for,apps/apps_container.cpp apps/apps_container_storage.cpp apps/m
 
 # Image dependencies
 
-$(eval $(call depends_on_image,apps/probability/new_app.cpp,apps/probability/probability_icon.png))
+$(eval $(call depends_on_image,apps/probability/app.cpp,apps/probability/probability_icon.png))
 
 $(eval $(call depends_on_image,apps/probability/controllers/distribution_controller.cpp,$(addprefix apps/probability/images/,\
   binomial_icon.png \

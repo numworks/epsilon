@@ -16,15 +16,15 @@ Clipboard * Clipboard::sharedClipboard() {
   return static_cast<Clipboard *>(Escher::Clipboard::sharedClipboard());
 }
 
-bool Clipboard::ShouldReplaceLetterE(const char * text, int length, int position) {
+bool Clipboard::ShouldReplaceLetterE(const char * text, size_t length, size_t position) {
   if (text[position] != 'e') {
     /* This method only exists to prevent the letter 'e' from being replaced
      * everywhere. */
     return true;
   }
 
-  int start;
-  int nextNewline = s_replacementRuleStartingPoint - 1;
+  size_t start;
+  size_t nextNewline = s_replacementRuleStartingPoint - 1;
   assert(nextNewline < position);
   while (nextNewline < position) {
     start = nextNewline + 1;
@@ -37,7 +37,7 @@ bool Clipboard::ShouldReplaceLetterE(const char * text, int length, int position
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     mp_lexer_t * lex = mp_lexer_new_from_str_len(0, text + start, length - start, 0);
-    int lastColumn = lex->tok_column;
+    size_t lastColumn = lex->tok_column;
     mp_token_kind_t lastKind = lex->tok_kind;
     while (lex->line == 1 && start + lex->tok_column - lastColumn <= position) {
       start += lex->tok_column - lastColumn;

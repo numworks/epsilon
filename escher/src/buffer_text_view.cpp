@@ -5,7 +5,7 @@
 namespace Escher {
 
 BufferTextView::BufferTextView(const KDFont * font, float horizontalAlignment, float verticalAlignment,
-    KDColor textColor, KDColor backgroundColor, int maxDisplayedTextLength) :
+    KDColor textColor, KDColor backgroundColor, size_t maxDisplayedTextLength) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_buffer(),
   m_maxDisplayedTextLength(maxDisplayedTextLength)

@@ -65,7 +65,7 @@ private:
 
   // Nodes and nodes count
   bool maxNodesReachedForOrigin(uint8_t origin) const;
-  int nodesCountForOrigin(uint8_t origin) const;
+  size_t nodesCountForOrigin(uint8_t origin) const;
   ScriptNode * scriptNodeAtIndex(int index);
 
   // Cell getters

@@ -165,7 +165,7 @@ double Solver::DefaultMaximalStep(double start, double stop) {
   double step = std::fmax(k_minimalStep, k_relativePrecision * width);
   /* The maximal step must be large enough not to be cancelled out in a sum. */
   double bound = std::fmax(std::fabs(start), std::fabs(stop));
-  double epsilon = std::nextafter(bound, INFINITY) - bound;
+  double epsilon = std::nextafter(bound, static_cast<double>(INFINITY)) - bound;
   return std::fmax(step, epsilon);
 }
 

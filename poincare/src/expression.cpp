@@ -374,12 +374,13 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation);
-    if (c.isUninitialized()) { // the expression is circularly defined, escape
-      return Expression();
+    childAtIndex(i).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+    if (*isCircular) {
+      // the expression is circularly defined, escape
+      return *this;
     }
   }
   return *this;
@@ -716,19 +717,14 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context,
   if (e.isUninitialized()) {
     return e;
   }
-  // Replace all the symbols iteratively.
-  int replacementCount = 0;
-  while (replacementCount <= k_maxSymbolReplacementsCount) {
-    replacementCount++;
-    bool didReplace = false;
-    e = e.deepReplaceReplaceableSymbols(context, &didReplace, 0, symbolicComputation);
-    if (e.isUninitialized() || !didReplace) {
-      // The expression is circularly defined or has been entirely replaced.
-      return e;
-    }
+  // Replace all the symbols in depth.
+  bool isCircular = false;
+  e = e.deepReplaceReplaceableSymbols(context, &isCircular, k_maxSymbolReplacementsCount, 0, symbolicComputation);
+  if (!isCircular) {
+    return e;
   }
-  /* We made too many replacements, the symbols are likely to be defined
-   * circularly, in which case we return an uninitialized expression. */
+  /* Symbols are defined circularly (or likely to be if we made too many
+   * replacements), in which case we return an uninitialized expression. */
   return Expression();
 }
 

@@ -60,8 +60,8 @@ Expression FunctionNode::shallowReduce(ReductionContext reductionContext) {
   return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
 }
 
-Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
-  return Function(this).deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation);
+Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return Function(this).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
@@ -134,18 +134,17 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result.deepReduce(reductionContext);
 }
 
-Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   /* These two symbolic computations parameters make no sense in this method.
    * They are therefore not handled. */
   assert(symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
     && symbolicComputation != ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   {
     // Replace replaceable symbols in child
-    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation);
-    if (self.isUninitialized()) { // if the child is circularly defined, escape
-      return self;
+    defaultReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+    if (*isCircular) { // if the child is circularly defined, escape
+      return *this;
     }
-    assert(*this == self);
   }
   Expression e = context->expressionForSymbolAbstract(*this, false);
   /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
@@ -156,20 +155,21 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * did
     }
     return replaceWithUndefinedInPlace();
   }
-  // If the function contains itself, return undefined
-  if (e.hasExpression([](Expression e, const void * context) {
-          if (e.type() != ExpressionNode::Type::Function) {
-            return false;
-          }
-          return strcmp(static_cast<Function&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
-        }, reinterpret_cast<const void *>(name())))
-  {
-    return Expression();
+
+  // Symbol is about to be replaced, decrement maxSymbolsToReplace
+  maxSymbolsToReplace--;
+  if (maxSymbolsToReplace < 0) {
+    // We replaced too many symbols and consider the expression to be circular
+    *isCircular = true;
+    return *this;
   }
+
+  // Build dependency to keep track of function's parameter
   Dependency d = Dependency::Builder(e);
   d.addDependency(childAtIndex(0));
   replaceWithInPlace(d);
-  *didReplace = true;
+
+  e = e.deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
   return std::move(d);
 }
 

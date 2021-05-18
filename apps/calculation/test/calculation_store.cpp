@@ -323,8 +323,7 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
   assertMainCalculationOutputIs("x→a",                 "1",     &globalContext, &store);
   assertMainCalculationOutputIs("diff(a,x,x)→b",       "0",     &globalContext, &store);
-  // TODO : Fix this case
-  assertMainCalculationOutputIs("b",                   "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("b",                   "0",     &globalContext, &store);
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();

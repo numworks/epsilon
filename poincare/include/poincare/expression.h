@@ -263,10 +263,10 @@ public:
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
-  /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
-   * circularly defined. SymbolicComputation defines how to handle functions
-   * and undefined symbols. Same convention as for
-   * 'deepReplaceReplaceableSymbols'. */
+  /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
+   * uninitialized expression if it is circularly defined.
+   * SymbolicComputation defines how to handle functions
+   * and undefined symbols. */
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
@@ -384,11 +384,12 @@ protected:
   /* Properties */
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation); }
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
-  /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
-   * is circularly defined. SymbolicComputation defines how to handle functions
-   * and undefined symbols. Same convention as for 'ExpressionWithoutSymbols'.*/
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, didReplace, parameteredAncestorsCount, symbolicComputation); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
+  /* 'deepReplaceReplaceableSymbols' replaces symbols in place. isCircular
+   * indicates if it is circularly defined and has been interrupted.
+   * SymbolicComputation defines how to handle functions and undefined symbols.
+   */
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
   Expression defaultOddFunctionSetSign(ExpressionNode::Sign, ExpressionNode::ReductionContext reductionContext);
 
   /* Simplification */

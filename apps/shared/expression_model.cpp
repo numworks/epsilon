@@ -58,10 +58,8 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
    *  - GlobalContext::expressionForSymbolAbstract returns an uninitialized
    *    expression,
    *  - so do Expression::ExpressionWithoutSymbols and SymbolAbstract::Expand,
-   *  - Expression::deepReplaceReplaceableSymbols leaves unchanged the symbols,
-   *    whose expression is uninitialized, but returns Undefined if the
-   *    expression for a symbol contains the symbol itself,
-   *  - Symbol::shallowReduce and Function::shallowReduce return Undefined or
+   *  - Symbol::shallowReduce and Function::shallowReduce and
+   *    Expression::deepReplaceReplaceableSymbols return Undefined or
    *    the expression unaltered according to symbolic-computation setting,
    *  - expressionReduced returns Undefined if the expression
    *    isCircularlyDefined but leaves the expression unchanged if Simplify

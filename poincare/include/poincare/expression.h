@@ -303,8 +303,6 @@ public:
     Expression (* const m_untypedBuilder)(Expression children);
   };
 
-  static void Tidy() { sSymbolReplacementsCountLock = false; }
-
   /* Tuple */
   typedef std::initializer_list<Expression> Tuple;
 
@@ -420,7 +418,6 @@ protected:
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
-  static bool sSymbolReplacementsCountLock;
   // Solver parameters
   static constexpr double k_solverStepPrecision = 1e-2;
   static constexpr double k_solverMinimalStep = 1e-3;

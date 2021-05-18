@@ -16,7 +16,6 @@
 
 namespace Poincare {
 
-bool Expression::sSymbolReplacementsCountLock = false;
 static bool sApproximationEncounteredComplex = false;
 
 /* Constructor & Destructor */
@@ -717,36 +716,20 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context,
   if (e.isUninitialized()) {
     return e;
   }
-  /* Replace all the symbols iteratively. If we make too many replacements, the
-   * symbols are likely to be defined circularly, in which case we return an
-   * uninitialized expression.
-   * We need a static "replacement count" to aggregate all calls to
-   * ExpressionWithoutSymbols, as this method might be called from
-   * hasReplaceableSymbols. */
-  static int replacementCount = 0;
-  bool unlock = false;
-  if (!sSymbolReplacementsCountLock) {
-    replacementCount = 0;
-    sSymbolReplacementsCountLock = true;
-    unlock = true;
-  }
-  bool didReplace;
-  do {
+  // Replace all the symbols iteratively.
+  int replacementCount = 0;
+  while (replacementCount <= k_maxSymbolReplacementsCount) {
     replacementCount++;
-    if (replacementCount > k_maxSymbolReplacementsCount) {
-      e = Expression();
-      break;
-    }
-    didReplace = false;
+    bool didReplace = false;
     e = e.deepReplaceReplaceableSymbols(context, &didReplace, 0, symbolicComputation);
-    if (e.isUninitialized()) { // the expression is circularly defined, escape
-      replacementCount = k_maxSymbolReplacementsCount;
+    if (e.isUninitialized() || !didReplace) {
+      // The expression is circularly defined or has been entirely replaced.
+      return e;
     }
-  } while (didReplace);
-  if (unlock) {
-    sSymbolReplacementsCountLock = false;
   }
-  return e;
+  /* We made too many replacements, the symbols are likely to be defined
+   * circularly, in which case we return an uninitialized expression. */
+  return Expression();
 }
 
 Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext) {

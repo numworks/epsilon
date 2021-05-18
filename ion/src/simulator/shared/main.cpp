@@ -14,7 +14,7 @@
 #include <sys/resource.h>
 #endif
 #if ION_SIMULATOR_FILES
-#include "compare_screenshot.h"
+#include "screenshot.h"
 #endif
 
 /* The Args class allows parsing and editing command-line arguments
@@ -110,7 +110,7 @@ int main(int argc, char * argv[]) {
 
   const char * screenshotPath = args.pop("--take-screenshot");
   if (screenshotPath) {
-    Ion::CompareScreenshot::saveCompareScreenshotTo(screenshotPath);
+    Ion::Simulator::Screenshot::commandlineScreenshot()->init(screenshotPath);
   }
 
 #endif

@@ -10,6 +10,7 @@ namespace Shared {
   m_prefaceView(&m_prefaceDataSource, &m_prefaceDataSource),
   m_mainTableView(mainTableView),
   m_mainTableDelegate(delegate),
+  m_marginDelegate(nullptr),
   m_storedMargin(0)
 {
   m_mainTableView->setParentResponder(parentResponder);
@@ -56,8 +57,10 @@ void PrefacedTableView::layoutSubviews(bool force) {
   if (hidePreface) {
     m_mainTableView->setLeftMargin(m_storedMargin);
     m_mainTableView->setFrame(bounds(), force);
+    m_prefaceView.setRightMargin(0);
     m_prefaceView.setFrame(KDRectZero, force);
   } else {
+    m_prefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_prefaceView) : 0);
     KDCoordinate prefaceWidth = m_prefaceView.minimalSizeForOptimalDisplay().width();
     if (m_prefaceView.bounds().isEmpty()) {
       m_storedMargin = m_mainTableView->leftMargin();

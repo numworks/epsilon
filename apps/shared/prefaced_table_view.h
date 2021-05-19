@@ -13,7 +13,7 @@ namespace Shared {
 
 class PrefacedTableView : public Escher::View, public Escher::Responder, public Escher::SelectableTableViewDelegate {
 public:
-  PrefacedTableView(int prefaceColumn, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate);
+  PrefacedTableView(int prefaceColumn, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr);
 
   // Responder
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(m_mainTableView); }
@@ -25,6 +25,13 @@ public:
   Escher::SelectableTableView * selectableTableView() { return m_mainTableView; }
   void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left);
   void setBackgroundColor(KDColor color);
+
+  class MarginDelegate {
+  public:
+    virtual KDCoordinate prefaceMargin(Escher::TableView * preface) = 0;
+  };
+
+  void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }
 
 private:
   class PrefaceDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
@@ -57,6 +64,7 @@ private:
   Escher::TableView m_prefaceView;
   Escher::SelectableTableView * m_mainTableView;
   Escher::SelectableTableViewDelegate * m_mainTableDelegate;
+  MarginDelegate * m_marginDelegate;
   KDCoordinate m_storedMargin;
 };
 

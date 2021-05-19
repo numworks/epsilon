@@ -85,10 +85,6 @@ private:
   TestController m_testController;
   MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
-
-  // To be removed
-  BinomialDistribution m_distribution;
-  DiscreteCalculation m_calculation;
 };
 
 }  // namespace Probability

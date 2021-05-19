@@ -8,6 +8,8 @@
  * and provide convenient methods to access it.
  */
 
+#include <new>
+
 #include "calculation/discrete_calculation.h"
 #include "calculation/finite_integral_calculation.h"
 #include "calculation/left_integral_calculation.h"
@@ -169,7 +171,11 @@ typedef char DataBuffer[maxDataSize];
 
 class Data {
 public:
-  // TODO constructor initialize correct path
+  Data() {
+    // Fill in defaults
+    new (distribution()) BinomialDistribution();
+    new (calculation()) LeftIntegralCalculation(distribution());
+  }
   // naive getter / setters
   ProbaData * probaData() { return reinterpret_cast<ProbaData *>(&m_buffer); }
   TestIntervalData * testIntervalData() { return reinterpret_cast<TestIntervalData *>(&m_buffer); }

@@ -72,7 +72,6 @@ void Probability::DistributionController::viewWillAppear() {
 }
 
 void Probability::DistributionController::didBecomeFirstResponder() {
-  // App::app()->snapshot()->setActivePage(App::Snapshot::Page::Distribution);
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Distribution);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);

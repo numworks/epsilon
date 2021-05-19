@@ -44,15 +44,26 @@ Escher::HighlightCell * MenuController::reusableCell(int index, int type) {
 
 bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    Data::SubApp subapp;
+    ViewController * view = nullptr;
     switch (selectedRow())
     {
     case k_indexOfDistribution:
-      openPage(m_distributionController, true);
+      view = m_distributionController;
+      subapp = Data::SubApp::Probability;
       break;
     case k_indexOfTest:
+      subapp = Data::SubApp::Tests;
+      view = m_testController;
+      break;
     case k_indexOfInterval:
-      openPage(m_testController, true);
+      subapp = Data::SubApp::Probability;
+      view = m_testController;
+      break;
     }
+    assert(view != nullptr);
+    App::app()->snapshot()->navigation()->setSubapp(subapp);
+    openPage(view, true);
     return true;
   }
   return false;

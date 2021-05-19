@@ -16,11 +16,12 @@
 
 #include "probability/gui/page_controller.h"
 #include "probability/gui/vertical_layout.h"
-#include "hypothesis_controller.h"
 
 using namespace Escher;
 
 namespace Probability {
+
+class HypothesisController;
 
 /* Simple view to include list and description below */
 class TypeView : public VerticalLayout<2> {

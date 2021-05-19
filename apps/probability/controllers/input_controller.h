@@ -14,9 +14,10 @@
 
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
-#include "results_controller.h"
 
 namespace Probability {
+
+class TestResults;
 
 template <int numberOfParams>
 class InputController : public SelectableListViewPage, public ButtonDelegate {

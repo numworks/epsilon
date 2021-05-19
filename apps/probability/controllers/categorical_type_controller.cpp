@@ -3,6 +3,8 @@
 #include <apps/i18n.h>
 #include <escher/stack_view_controller.h>
 
+#include "input_goodness_controller.h"
+#include "input_homogeneity_controller.h"
 #include "probability/gui/selectable_cell_list_controller.h"
 
 using namespace Probability;

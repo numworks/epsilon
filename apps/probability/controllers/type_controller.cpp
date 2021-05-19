@@ -5,6 +5,10 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
+#include "hypothesis_controller.h"
+#include "type_controller.h"
+#include "categorical_type_controller.h"
+
 using namespace Probability;
 
 TypeController::TypeController(StackViewController * parent, HypothesisController * hypothesisController)

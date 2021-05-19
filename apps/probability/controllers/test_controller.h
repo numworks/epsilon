@@ -6,11 +6,12 @@
 #include <ion/events.h>
 
 #include "probability/gui/selectable_cell_list_controller.h"
-#include "categorical_type_controller.h"
-#include "hypothesis_controller.h"
-#include "type_controller.h"
 
 namespace Probability {
+
+class HypothesisController;
+class CategoricalTypeController;
+class TypeController;
 
 constexpr static int k_numberOfTestCells = 5;
 

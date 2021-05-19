@@ -13,11 +13,12 @@
 
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
-#include "input_controller.h"
 
 using namespace Escher;
 
 namespace Probability {
+
+class NormalInputController;
 
 class HypothesisController : public SelectableListViewPage, public ButtonDelegate {
  public:

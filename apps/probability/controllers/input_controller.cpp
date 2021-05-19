@@ -2,6 +2,8 @@
 
 #include <escher/stack_view_controller.h>
 
+#include "results_controller.h"
+
 using namespace Probability;
 
 template <int n>

@@ -24,6 +24,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_selectableTableView.setVerticalCellOverlap(0);
   m_tableView.setBackgroundColor(Palette::WallScreenDark);
   m_tableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_tableView.setMarginDelegate(this);
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i].setSeparatorLeft(true);
   }
@@ -207,6 +208,24 @@ void CalculationController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
+}
+
+// MarginDelegate
+
+KDCoordinate CalculationController::prefaceMargin(Escher::TableView * preface) {
+  KDCoordinate prefaceRightSide = offset().x() + (preface->bounds().isEmpty() ? preface->minimalSizeForOptimalDisplay().width() : 0);
+
+  for (int i = 0; i < numberOfColumns(); i++) {
+    constexpr KDCoordinate maxMargin = Escher::Metric::TableSeparatorThickness;
+    KDCoordinate delta = prefaceRightSide - cumulatedWidthFromIndex(i);
+    if (delta < 0) {
+      return maxMargin;
+    } else if (delta <= maxMargin) {
+      return delta;
+    }
+  }
+  assert(false);
+  return 0;
 }
 
 // Private

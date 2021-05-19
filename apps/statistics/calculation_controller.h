@@ -15,7 +15,7 @@
 
 namespace Statistics {
 
-class CalculationController : public Shared::TabTableController, public Escher::ButtonRowDelegate, public Escher::TableViewDataSource, public Escher::AlternateEmptyViewDefaultDelegate {
+class CalculationController : public Shared::TabTableController, public Escher::ButtonRowDelegate, public Escher::TableViewDataSource, public Escher::AlternateEmptyViewDefaultDelegate, public Shared::PrefacedTableView::MarginDelegate {
 
 public:
   CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
@@ -45,6 +45,10 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+
+  // MarginDelegate
+  KDCoordinate prefaceMargin(Escher::TableView * preface) override;
+
 private:
   static constexpr int k_totalNumberOfRows = 15;
   static constexpr int k_maxNumberOfDisplayableRows = 11;

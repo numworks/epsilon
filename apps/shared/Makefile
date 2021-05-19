@@ -2,9 +2,9 @@ app_shared_test_src = $(addprefix apps/shared/,\
   continuous_function.cpp\
   continuous_function_cache.cpp \
   curve_selection_controller.cpp \
+  curve_view.cpp \
   curve_view_cursor.cpp \
   curve_view_range.cpp \
-  curve_view.cpp \
   dots.cpp \
   double_pair_store.cpp \
   expression_model.cpp \
@@ -32,6 +32,7 @@ app_shared_src = $(addprefix apps/shared/,\
   button_with_separator.cpp \
   cell_with_separator.cpp \
   cursor_view.cpp \
+  discard_pop_up_controller.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
   expression_model_list_controller.cpp \
@@ -40,9 +41,9 @@ app_shared_src = $(addprefix apps/shared/,\
   function_banner_delegate.cpp \
   function_curve_parameter_controller.cpp \
   function_expression_cell.cpp \
+  function_go_to_parameter_controller.cpp \
   function_graph_controller.cpp \
   function_graph_view.cpp \
-  function_go_to_parameter_controller.cpp \
   function_list_controller.cpp \
   function_store.cpp \
   function_title_cell.cpp \
@@ -61,20 +62,19 @@ app_shared_src = $(addprefix apps/shared/,\
   message_view.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
-  discard_pop_up_controller.cpp \
   post_and_hardware_tests.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \
+  separable.cpp \
+  separator_even_odd_buffer_text_cell.cpp \
   sequence.cpp\
   sequence_cache_context.cpp \
   sequence_context.cpp\
   sequence_store.cpp\
   sequence_title_cell.cpp \
-  separable.cpp \
-  separator_even_odd_buffer_text_cell.cpp \
   shared_app.cpp \
   simple_float_parameter_controller.cpp \
   simple_interactive_curve_view_controller.cpp \

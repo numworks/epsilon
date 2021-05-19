@@ -10,6 +10,9 @@
 #include <escher/table_view_data_source.h>
 #include <escher/text_field_delegate.h>
 
+#include "probability/app.h"
+#include "probability/data.h"
+
 using namespace Probability;
 
 InputGoodnessDataSource::InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
@@ -45,6 +48,7 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent, T
       m_table(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
 
 void InputGoodnessController::didBecomeFirstResponder() {
+  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::InputGoodness);
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);
 }
 

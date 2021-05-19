@@ -5,13 +5,16 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
-#include "hypothesis_controller.h"
-#include "type_controller.h"
 #include "categorical_type_controller.h"
+#include "hypothesis_controller.h"
+#include "probability/app.h"
+#include "probability/data.h"
+#include "type_controller.h"
 
 using namespace Probability;
 
-TypeController::TypeController(StackViewController * parent, HypothesisController * hypothesisController)
+TypeController::TypeController(StackViewController * parent,
+                               HypothesisController * hypothesisController)
     : SelectableListViewPage(parent),
       m_hypothesisController(hypothesisController),
       m_contentView(&m_selectableTableView, &m_description) {
@@ -25,22 +28,27 @@ TypeController::TypeController(StackViewController * parent, HypothesisControlle
   m_description.setMessage(I18n::Message::TypeDescr);
 }
 
+void TypeController::didBecomeFirstResponder() {
+  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Type);
+  m_selectableTableView.selectRow(0);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+}
+
 HighlightCell * TypeController::reusableCell(int i, int type) { return &m_cells[i]; }
 
 bool TypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-  Escher::ViewController * view;
-  switch (selectedRow()) {
-    case k_indexOfTTest:
-    case k_indexOfPooledTest:
-    case k_indexOfZTest:
-      view = m_hypothesisController;
-      break;
+    Escher::ViewController * view;
+    switch (selectedRow()) {
+      case k_indexOfTTest:
+      case k_indexOfPooledTest:
+      case k_indexOfZTest:
+        view = m_hypothesisController;
+        break;
+    }
+    assert(view != nullptr);
+    openPage(view, false);
+    return true;
   }
-  assert(view != nullptr);
-  openPage(view, false);
-  return true;
+  return false;
 }
-return false;
-}
-

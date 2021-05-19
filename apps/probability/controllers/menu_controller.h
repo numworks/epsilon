@@ -21,7 +21,7 @@ class MenuController : public SelectableListViewPage {
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  
+
  private:
   ViewController * m_distributionController;
   ViewController * m_testController;

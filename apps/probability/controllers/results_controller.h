@@ -11,30 +11,23 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+#include "graph_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
-#include "graph_controller.h"
 
 namespace Probability {
 
 template <int numberOfResults>
 class ResultsController : public SelectableListViewPage, public ButtonDelegate {
- public:
-  ResultsController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler,
+public:
+  ResultsController(Escher::StackViewController * parent,
+                    Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfRows; }
   Escher::HighlightCell * reusableCell(int i, int type) override;
-  void didBecomeFirstResponder() override {
-    // TODO factor out
-    if (selectedRow() == -1) {
-      selectCellAtLocation(0, 0);
-    } else {
-      selectCellAtLocation(selectedColumn(), selectedRow());
-    }
-    Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
-  }
+  void didBecomeFirstResponder() override;
 
- protected:
+protected:
   constexpr static int k_numberOfRows = numberOfResults + 1;
 
   Escher::MessageTableCellWithMessage m_cells[numberOfResults];
@@ -42,13 +35,14 @@ class ResultsController : public SelectableListViewPage, public ButtonDelegate {
 };
 
 class TestResults : public ResultsController<2> {
- public:
+public:
   TestResults(Escher::StackViewController * parent, GraphController * graphController,
-              Escher::InputEventHandlerDelegate * handler, Escher::TextFieldDelegate * textFieldDelegate);
+              Escher::InputEventHandlerDelegate * handler,
+              Escher::TextFieldDelegate * textFieldDelegate);
 
   void buttonAction() override { openPage(m_graphController, true); }
 
- private:
+private:
   constexpr static int k_indexOfZ = 0;
   constexpr static int k_indexOfPVal = 1;
 

@@ -7,15 +7,19 @@
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 
-#include "probability/gui/selectable_cell_list_controller.h"
 #include "categorical_type_controller.h"
 #include "hypothesis_controller.h"
+#include "probability/app.h"
+#include "probability/data.h"
+#include "probability/gui/selectable_cell_list_controller.h"
 #include "type_controller.h"
 
 using namespace Probability;
 
-TestController::TestController(Escher::StackViewController * parentResponder, HypothesisController * hypothesisController,
-                               TypeController * typeController, CategoricalTypeController * categoricalController)
+TestController::TestController(Escher::StackViewController * parentResponder,
+                               HypothesisController * hypothesisController,
+                               TypeController * typeController,
+                               CategoricalTypeController * categoricalController)
     : SelectableCellListPage(parentResponder),
       m_hypothesisController(hypothesisController),
       m_categoricalController(categoricalController),
@@ -34,6 +38,7 @@ TestController::TestController(Escher::StackViewController * parentResponder, Hy
 }
 
 void TestController::didBecomeFirstResponder() {
+  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Test);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {

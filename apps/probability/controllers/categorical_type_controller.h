@@ -17,23 +17,16 @@ class InputHomogeneityController;
 
 constexpr static int k_numberOfCategoricalCells = 2;
 
-class CategoricalTypeController
-    : public SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells> {
- public:
-  CategoricalTypeController(Escher::StackViewController * parent, InputGoodnessController * inputGoodnessController,
+class CategoricalTypeController : public SelectableCellListPage<Escher::MessageTableCellWithChevron,
+                                                                k_numberOfCategoricalCells> {
+public:
+  CategoricalTypeController(Escher::StackViewController * parent,
+                            InputGoodnessController * inputGoodnessController,
                             InputHomogeneityController * inputHomogeneityController);
-  void didBecomeFirstResponder() override {
-    // TODO factor out
-    if (selectedRow() == -1) {
-      selectCellAtLocation(0, 0);
-    } else {
-      selectCellAtLocation(selectedColumn(), selectedRow());
-    }
-    Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
-  }
+  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
- private:
+private:
   constexpr static int k_indexOfGoodness = 0;
   constexpr static int k_indexOfHomogeneity = 1;
 

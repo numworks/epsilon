@@ -6,12 +6,17 @@
 #include <escher/invocation.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
+
 #include "input_controller.h"
+#include "probability/app.h"
+#include "probability/data.h"
 
 using namespace Probability;
 
-HypothesisController::HypothesisController(Escher::StackViewController * parent, NormalInputController * inputController,
-                                           InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate)
+HypothesisController::HypothesisController(Escher::StackViewController * parent,
+                                           NormalInputController * inputController,
+                                           InputEventHandlerDelegate * handler,
+                                           TextFieldDelegate * textFieldDelegate)
     : SelectableListViewPage(parent),
       m_inputController(inputController),
       m_h0(&m_selectableTableView, handler, textFieldDelegate),
@@ -37,6 +42,7 @@ HighlightCell * HypothesisController::reusableCell(int i, int type) {
 }
 
 void HypothesisController::didBecomeFirstResponder() {
+  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Hypothesis);
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
@@ -46,6 +52,4 @@ void HypothesisController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-void HypothesisController::buttonAction() {
-  openPage(m_inputController, false);
-}
+void HypothesisController::buttonAction() { openPage(m_inputController, false); }

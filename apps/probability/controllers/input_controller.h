@@ -21,24 +21,16 @@ class TestResults;
 
 template <int numberOfParams>
 class InputController : public SelectableListViewPage, public ButtonDelegate {
- public:
+public:
   InputController(Escher::StackViewController * parent, TestResults * resultsController,
                   Escher::InputEventHandlerDelegate * handler,  // TODO same obj
                   Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfParameters + 1 /* button */; }
   Escher::HighlightCell * reusableCell(int i, int type) override;
-  void didBecomeFirstResponder() override {
-    // TODO factor out
-    if (selectedRow() == -1) {
-      selectCellAtLocation(0, 0);
-    } else {
-      selectCellAtLocation(selectedColumn(), selectedRow());
-    }
-    Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
-  }
+  void didBecomeFirstResponder() override;
   void buttonAction() override;
 
- protected:
+protected:
   constexpr static int k_numberOfParameters = numberOfParams;
   TestResults * m_resultsController;
 
@@ -47,11 +39,12 @@ class InputController : public SelectableListViewPage, public ButtonDelegate {
 };
 
 class NormalInputController : public InputController<2> {
- public:
+public:
   NormalInputController(Escher::StackViewController * parent, TestResults * resultsController,
-                        Escher::InputEventHandlerDelegate * handler, Escher::TextFieldDelegate * textFieldDelegate);
+                        Escher::InputEventHandlerDelegate * handler,
+                        Escher::TextFieldDelegate * textFieldDelegate);
 
- private:
+private:
   constexpr static int k_indexOfX = 0;
   constexpr static int k_indexOfN = 1;
 };

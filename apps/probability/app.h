@@ -1,5 +1,5 @@
-#ifndef NEW_APP_H
-#define NEW_APP_H
+#ifndef APP_H
+#define APP_H
 
 #include <apps/shared/shared_app.h>
 #include <apps/shared/text_field_delegate_app.h>
@@ -28,16 +28,35 @@ namespace Probability {
 
 class App : public Shared::TextFieldDelegateApp {
 public:
+  // Descriptor
   class Descriptor : public Escher::App::Descriptor {
   public:
     I18n::Message name() const override { return I18n::Message::DistributionApp; };
     I18n::Message upperName() const override { return I18n::Message::DistributionAppCapital; };
     const Escher::Image * icon() const override;
   };
-  class Snapshot;
+
+  // Snapshot
+  class Snapshot : public Shared::SharedApp::Snapshot {
+  public:
+    App * unpack(Escher::Container * container) override {
+      return new (container->currentAppBuffer()) App(this);
+    };
+    const Descriptor * descriptor() const override {
+      static Descriptor s_descriptor;
+      return &s_descriptor;
+    };
+    void reset() override{};
+    Data::AppNavigation * navigation() { return &m_navigation; }
+    Data::Data * data() { return &m_data; }
+
+  private:
+    Data::AppNavigation m_navigation;
+    Data::Data m_data;
+  };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
-  Escher::App::Snapshot * snapshot() const { return Escher::App::snapshot(); }
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   TELEMETRY_ID("Probability");
   // TODO better handling
   bool textFieldDidFinishEditing(TextField * textField, const char * text,
@@ -72,24 +91,6 @@ private:
   DiscreteCalculation m_calculation;
 };
 
-class App::Snapshot : public Shared::SharedApp::Snapshot {
-public:
-  App * unpack(Escher::Container * container) override {
-    return new (container->currentAppBuffer()) App(this);
-  };
-  const Descriptor * descriptor() const override {
-    static Descriptor s_descriptor;
-    return &s_descriptor;
-  };
-  void reset() override{};
-  Data::AppNavigation * navigation() { return &m_navigation; }
-  Data::Data * data() { return &m_data; }
-
-private:
-  Data::AppNavigation m_navigation;
-  Data::Data m_data;
-};
-
 }  // namespace Probability
 
-#endif /* NEW_APP_H */
+#endif /* APP_H */

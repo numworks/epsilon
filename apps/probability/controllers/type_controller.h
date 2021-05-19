@@ -40,10 +40,7 @@ class TypeController : public SelectableListViewPage {
  public:
   TypeController(StackViewController * parent, HypothesisController * hypothesisController);
   View * view() override { return &m_contentView; }
-  void didBecomeFirstResponder() override {
-    m_selectableTableView.selectRow(0);
-    Container::activeApp()->setFirstResponder(&m_selectableTableView);
-  }
+  void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfRows; };
   HighlightCell * reusableCell(int i, int type) override;

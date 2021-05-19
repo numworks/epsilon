@@ -13,6 +13,7 @@ class GraphController : public SelectableCellListPage<Escher::BufferTableCell, 1
   GraphController(StackViewController * stack) : SelectableCellListPage(stack) {
     m_cells[0].setLabelText("WAIT FOR IT...");
   }
+  
 };
 }  // namespace Probability
 #endif /* GRAPH_CONTROLLER_H */

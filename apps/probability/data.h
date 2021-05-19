@@ -29,14 +29,14 @@ namespace Data {
 // Navigation
 
 enum class Page {
-  Home = 0,
+  Menu = 0,
   Distribution = 1,
   Test = 2,
   Type = 3,
   Hypothesis = 4,
   Categorical = 5,
   Input = 6,
-  InputGoddness = 7,
+  InputGoodness = 7,
   InputHomogeneity = 8,
   Results = 9,
   ResultsHomogeneity = 10,

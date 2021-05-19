@@ -34,8 +34,8 @@ void shutdownCompensationCell() {
 }
 
 void initPeripherals(bool fromBootloader) {
-  Display::init();
   if (!fromBootloader) {
+    Display::init();
     Backlight::init();
   }
   Keyboard::init();

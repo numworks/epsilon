@@ -1,6 +1,7 @@
 #include "port.h"
 
 #include <ion.h>
+#include <stdlib.h>
 
 #include <math.h>
 #include <stdint.h>
@@ -302,7 +303,9 @@ void gc_collect(void) {
 }
 
 void nlr_jump_fail(void *val) {
-    while (1);
+  /* Called by nlr_jump if no nlr buf has been pushed.
+   * Bail out with a fatal error. */
+  abort();
 }
 
 mp_lexer_t * mp_lexer_new_from_file(const char * filename) {

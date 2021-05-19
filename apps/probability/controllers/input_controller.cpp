@@ -2,14 +2,17 @@
 
 #include <escher/stack_view_controller.h>
 
+#include "probability/app.h"
+#include "probability/data.h"
 #include "results_controller.h"
 
 using namespace Probability;
 
 template <int n>
-inline InputController<n>::InputController(Escher::StackViewController * parent, TestResults * resultsController,
-                                           Escher::InputEventHandlerDelegate * handler,
-                                           Escher::TextFieldDelegate * textFieldDelegate)
+InputController<n>::InputController(Escher::StackViewController * parent,
+                                    TestResults * resultsController,
+                                    Escher::InputEventHandlerDelegate * handler,
+                                    Escher::TextFieldDelegate * textFieldDelegate)
     : SelectableListViewPage(parent),
       m_resultsController(resultsController),
       m_parameters{{&m_selectableTableView, handler, textFieldDelegate},
@@ -23,7 +26,7 @@ inline InputController<n>::InputController(Escher::StackViewController * parent,
 }
 
 template <int n>
-inline Escher::HighlightCell * InputController<n>::reusableCell(int i, int type) {
+Escher::HighlightCell * InputController<n>::reusableCell(int i, int type) {
   if (i < k_numberOfParameters) {
     return &m_parameters[i];
   }
@@ -32,11 +35,24 @@ inline Escher::HighlightCell * InputController<n>::reusableCell(int i, int type)
 }
 
 template <int n>
-inline void InputController<n>::buttonAction() {
+void InputController<n>::didBecomeFirstResponder() {
+  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Input);
+  // TODO factor out
+  if (selectedRow() == -1) {
+    selectCellAtLocation(0, 0);
+  } else {
+    selectCellAtLocation(selectedColumn(), selectedRow());
+  }
+  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+}
+
+template <int n>
+void InputController<n>::buttonAction() {
   openPage(m_resultsController, true);
 }
 
-NormalInputController::NormalInputController(Escher::StackViewController * parent, TestResults * resultsController,
+NormalInputController::NormalInputController(Escher::StackViewController * parent,
+                                             TestResults * resultsController,
                                              Escher::InputEventHandlerDelegate * handler,
                                              Escher::TextFieldDelegate * textFieldDelegate)
     : InputController(parent, resultsController, handler, textFieldDelegate) {

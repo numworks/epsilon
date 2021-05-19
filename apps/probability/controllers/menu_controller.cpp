@@ -9,6 +9,9 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
+#include <probability/app.h>
+#include <probability/data.h>
+
 using namespace Probability;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
@@ -22,6 +25,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
 }
 
 void MenuController::didBecomeFirstResponder() {
+  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Menu);
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);

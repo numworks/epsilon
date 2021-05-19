@@ -13,6 +13,7 @@ SFLAGS += -Iion/include/ion/keyboard/$(ION_KEYBOARD_LAYOUT)
 SFLAGS += -Iion/include/ion/keyboard/
 ion_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
 
+include ion/image/Makefile
 include ion/src/$(PLATFORM)/Makefile
 -include ion/test/$(PLATFORM)/Makefile
 include ion/src/shared/tools/Makefile

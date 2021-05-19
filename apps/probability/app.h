@@ -66,7 +66,7 @@ public:
   }
 
 private:
-  App(Escher::App::Snapshot *);
+  App(Snapshot *);
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)

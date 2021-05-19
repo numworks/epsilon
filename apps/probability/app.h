@@ -21,40 +21,32 @@
 #include "controllers/results_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
+#include "data.h"
 #include "distribution/binomial_distribution.h"
 
 namespace Probability {
 
 class App : public Shared::TextFieldDelegateApp {
- public:
+public:
   class Descriptor : public Escher::App::Descriptor {
-   public:
+  public:
     I18n::Message name() const override { return I18n::Message::DistributionApp; };
     I18n::Message upperName() const override { return I18n::Message::DistributionAppCapital; };
     const Escher::Image * icon() const override;
   };
-  class Snapshot : public Shared::SharedApp::Snapshot {
-   public:
-    Snapshot() {}
-    ~Snapshot() {}
-    App * unpack(Escher::Container * container) override { return new (container->currentAppBuffer()) App(this); };
-    const Descriptor * descriptor() const override {
-      static Descriptor s_descriptor;
-      return &s_descriptor;
-    };
-    void reset() override{};
-  };
+  class Snapshot;
+
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
   Escher::App::Snapshot * snapshot() const { return Escher::App::snapshot(); }
   TELEMETRY_ID("Probability");
   // TODO better handling
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  bool textFieldDidFinishEditing(TextField * textField, const char * text,
+                                 Ion::Events::Event event) {
     textField->setText(text);
     return true;
   }
-  
 
- private:
+private:
   App(Escher::App::Snapshot *);
 
   // Controllers
@@ -78,6 +70,24 @@ class App : public Shared::TextFieldDelegateApp {
   // To be removed
   BinomialDistribution m_distribution;
   DiscreteCalculation m_calculation;
+};
+
+class App::Snapshot : public Shared::SharedApp::Snapshot {
+public:
+  App * unpack(Escher::Container * container) override {
+    return new (container->currentAppBuffer()) App(this);
+  };
+  const Descriptor * descriptor() const override {
+    static Descriptor s_descriptor;
+    return &s_descriptor;
+  };
+  void reset() override{};
+  Data::AppNavigation * navigation() { return &m_navigation; }
+  Data::Data * data() { return &m_data; }
+
+private:
+  Data::AppNavigation m_navigation;
+  Data::Data m_data;
 };
 
 }  // namespace Probability

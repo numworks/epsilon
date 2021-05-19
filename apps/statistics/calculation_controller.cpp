@@ -14,15 +14,16 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_selectableTableView(this, this, this),
+  m_tableView(1, this, &m_selectableTableView, this),
   m_seriesTitleCells{},
   m_calculationTitleCells{},
   m_calculationCells{},
   m_hideableCell(),
   m_store(store)
 {
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_tableView.setBackgroundColor(Palette::WallScreenDark);
+  m_tableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i].setSeparatorLeft(true);
   }

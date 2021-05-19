@@ -8,6 +8,7 @@
 #include "store.h"
 #include "calculation_selectable_table_view.h"
 #include "../shared/hideable_even_odd_cell.h"
+#include "../shared/prefaced_table_view.h"
 #include "../shared/separator_even_odd_buffer_text_cell.h"
 #include "../shared/store_title_cell.h"
 #include "../shared/tab_table_controller.h"
@@ -38,6 +39,7 @@ public:
 
   // ViewController
   const char * title() override;
+  Escher::View * view() override { return &m_tableView; }
   TELEMETRY_ID("Calculation");
 
   // Responder
@@ -69,6 +71,7 @@ private:
   Escher::Responder * tabController() const override;
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   CalculationSelectableTableView m_selectableTableView;
+  Shared::PrefacedTableView m_tableView;
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
   Escher::EvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
   Escher::EvenOddMessageTextCell m_calculationSymbolCells[k_numberOfCalculationTitleCells];

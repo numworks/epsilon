@@ -9,7 +9,7 @@ namespace Probability {
 
 const Escher::Image * App::Descriptor::icon() const { return ImageStore::ProbabilityIcon; }
 
-App::App(Escher::App::Snapshot * snapshot)
+App::App(Snapshot * snapshot)
     : TextFieldDelegateApp(snapshot, &m_stackViewController),
       m_graphController(&m_stackViewController),
       m_homogeneityResultsController(&m_stackViewController),
@@ -27,6 +27,52 @@ App::App(Escher::App::Snapshot * snapshot)
                        &m_categoricalTypeController),
       m_menuController(&m_stackViewController, &m_distributionController, &m_testController),
       m_stackViewController(&m_modalViewController, &m_menuController),
-      m_calculation(&m_distribution) {}
+      m_calculation(&m_distribution) {
+  switch (snapshot->navigation()->page())
+  {
+  case Data::Page::Menu:
+    break;
+  case Data::Page::Distribution:
+    m_stackViewController.push(&m_distributionController);
+    break;
+  case Data::Page::Test:
+    m_stackViewController.push(&m_testController);
+    break;
+  case Data::Page::Type:
+    m_stackViewController.push(&m_typeController);
+    break;
+  case Data::Page::Hypothesis:
+    m_stackViewController.push(&m_hypothesisController);
+    break;
+  case Data::Page::Categorical:
+    m_stackViewController.push(&m_categoricalTypeController);
+    break;
+  case Data::Page::Input:
+    m_stackViewController.push(&m_hypothesisController);
+    m_stackViewController.push(&m_inputController);
+    break;
+  case Data::Page::InputGoodness:
+    m_stackViewController.push(&m_inputGoodnessController);
+    break;
+  case Data::Page::InputHomogeneity:
+    m_stackViewController.push(&m_inputHomogeneityController);
+    break;
+  case Data::Page::Results:
+    m_stackViewController.push(&m_hypothesisController);
+    m_stackViewController.push(&m_resultsController);
+    break;
+  case Data::Page::ResultsHomogeneity:
+    m_stackViewController.push(&m_inputHomogeneityController);
+    m_stackViewController.push(&m_homogeneityResultsController);
+    break;
+  case Data::Page::ProbaGraph:
+    m_stackViewController.push(&m_calculationController);
+    break;
+  case Data::Page::Graph:
+      m_stackViewController.push(&m_inputController);
+      m_stackViewController.push(&m_graphController);
+    break;
+  }
+}
 
 }  // namespace Probability

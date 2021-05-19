@@ -49,13 +49,16 @@ private:
   static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
   static constexpr int k_numberOfSeriesTitleCells = 3;
   static constexpr int k_numberOfCalculationTitleCells = k_maxNumberOfDisplayableRows;
+  static constexpr int k_numberOfHeaderColumns = 2; // Title & Symbol
 
   static constexpr int k_calculationTitleCellType = 0;
-  static constexpr int k_calculationCellType = 1;
-  static constexpr int k_seriesTitleCellType = 2;
-  static constexpr int k_hideableCellType = 3;
+  static constexpr int k_calculationSymbolCellType = 1;
+  static constexpr int k_calculationCellType = 2;
+  static constexpr int k_seriesTitleCellType = 3;
+  static constexpr int k_hideableCellType = 4;
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 175;
+  static constexpr KDCoordinate k_calculationSymbolCellWidth = 25;
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.
    * TODO: change 7 for KDFont::SmallFont->glyphSize().width() */
@@ -68,8 +71,9 @@ private:
   CalculationSelectableTableView m_selectableTableView;
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
   Escher::EvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
+  Escher::EvenOddMessageTextCell m_calculationSymbolCells[k_numberOfCalculationTitleCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
-  Shared::HideableEvenOddCell m_hideableCell;
+  Shared::HideableEvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store * m_store;
 };
 

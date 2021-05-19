@@ -7,11 +7,14 @@
 #include <kandinsky/font.h>
 #include <string.h>
 
+#include "probability/app.h"
+#include "probability/data.h"
+
 using namespace Probability;
 
-InputHomogeneityDataSource::InputHomogeneityDataSource(SelectableTableView * tableView,
-                                                       InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                                       TextFieldDelegate * delegate) {
+InputHomogeneityDataSource::InputHomogeneityDataSource(
+    SelectableTableView * tableView, InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * delegate) {
   int numberOfCols = numberOfColumns();
   for (int i = 0; i < HomogeneityTableDataSource::k_maxNumberOfInnerCells; i++) {
     m_cells[i].setParentResponder(tableView);
@@ -22,10 +25,9 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(SelectableTableView * tab
 
 HighlightCell * InputHomogeneityDataSource::reusableCell(int i, int type) { return &m_cells[i]; }
 
-InputHomogeneityController::InputHomogeneityController(StackViewController * parent,
-                                                       HomogeneityResultsController * homogeneityResultsController,
-                                                       InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                                       TextFieldDelegate * delegate)
+InputHomogeneityController::InputHomogeneityController(
+    StackViewController * parent, HomogeneityResultsController * homogeneityResultsController,
+    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate)
     : Page(parent),
       m_innerTableData(&m_table, inputEventHandlerDelegate, delegate),
       m_tableData(&m_innerTableData),
@@ -34,6 +36,7 @@ InputHomogeneityController::InputHomogeneityController(StackViewController * par
       m_homogeneityResultsController(homogeneityResultsController) {}
 
 void InputHomogeneityController::didBecomeFirstResponder() {
+  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::InputHomogeneity);
   Container::activeApp()->setFirstResponder(&m_contentView);
 }
 

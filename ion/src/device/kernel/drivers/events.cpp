@@ -337,7 +337,7 @@ enum class SpinnerState : uint8_t {
   Disabled
 };
 
-static SpinnerState s_spinner = SpinnerState::Disabled;
+static SpinnerState s_spinner = SpinnerState::Hidden;
 
 void spin() {
   KDCoordinate size = k_spinnerRect.height();

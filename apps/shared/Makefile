@@ -63,6 +63,7 @@ app_shared_src = $(addprefix apps/shared/,\
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
   post_and_hardware_tests.cpp \
+  prefaced_table_view.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \

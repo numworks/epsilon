@@ -30,7 +30,10 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_calculationTitleCells[i].setAlignment(1.0f, 0.5f);
     m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
   }
-  m_hideableCell.setHide(true);
+  for (int i = 0; i < k_numberOfHeaderColumns; i++) {
+    m_hideableCell[0].setHide(true);
+    m_hideableCell[1].setHide(true);
+  }
 }
 
 // AlternateEmptyViewDefaultDelegate
@@ -50,19 +53,19 @@ Responder * CalculationController::defaultController() {
 // TableViewDataSource
 
 int CalculationController::numberOfColumns() const {
-  return 1 + m_store->numberOfNonEmptySeries();
+  return 2 + m_store->numberOfNonEmptySeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
   evenOddCell->setHighlighted(i == selectedColumn() && j == selectedRow());
-  if (i == 0 && j == 0) {
+  if (i <= 1 && j == 0) {
     return;
   }
   if (j == 0) {
     // Display a series title cell
-    int seriesNumber = m_store->indexOfKthNonEmptySeries(i-1);
+    int seriesNumber = m_store->indexOfKthNonEmptySeries(i-2);
     char titleBuffer[] = {'V', static_cast<char>('1'+seriesNumber), '/', 'N', static_cast<char>('1'+seriesNumber), 0};
     StoreTitleCell * storeTitleCell = static_cast<StoreTitleCell *>(cell);
     storeTitleCell->setText(titleBuffer);
@@ -90,11 +93,17 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     calcTitleCell->setMessage(titles[j-1]);
     return;
   }
+  if (i == 1) {
+    // Display a calculation symbol
+    EvenOddMessageTextCell * calcSymbolCell = static_cast<EvenOddMessageTextCell *>(cell);
+    calcSymbolCell->setMessage(I18n::Message::UnitTimeSecondSymbol);
+    return;
+  }
   // Display a calculation cell
   CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
     &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
     &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
-  int seriesIndex = m_store->indexOfKthNonEmptySeries(i-1);
+  int seriesIndex = m_store->indexOfKthNonEmptySeries(i-2);
   double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
   EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
   constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
@@ -105,7 +114,13 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {
-  return i == 0 ? k_calculationTitleCellWidth : k_calculationCellWidth;
+  if (i == 0) {
+    return k_calculationTitleCellWidth;
+  }
+  if (i == 1) {
+    return k_calculationSymbolCellWidth;
+  }
+  return k_calculationCellWidth;
 }
 
 KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
@@ -119,10 +134,13 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_hideableCellType) {
-    return &m_hideableCell;
+    return &m_hideableCell[index];
   }
   if (type == k_calculationTitleCellType) {
     return &m_calculationTitleCells[index];
+  }
+  if (type == k_calculationSymbolCellType) {
+    return &m_calculationSymbolCells[index];
   }
   if (type == k_seriesTitleCellType) {
     return &m_seriesTitleCells[index];
@@ -133,9 +151,12 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
 
 int CalculationController::reusableCellCount(int type) {
   if (type == k_hideableCellType) {
-    return 1;
+    return 2;
   }
   if (type == k_calculationTitleCellType) {
+    return k_numberOfCalculationTitleCells;
+  }
+  if (type == k_calculationSymbolCellType) {
     return k_numberOfCalculationTitleCells;
   }
   if (type == k_seriesTitleCellType) {
@@ -148,11 +169,14 @@ int CalculationController::reusableCellCount(int type) {
 int CalculationController::typeAtLocation(int i, int j) {
   assert(i >= 0 && i < numberOfColumns());
   assert(j >= 0 && j < numberOfRows());
-  if (i == 0 && j == 0) {
+  if (i <= 1 && j == 0) {
     return k_hideableCellType;
   }
   if (i == 0) {
     return k_calculationTitleCellType;
+  }
+  if (i == 1) {
+    return k_calculationSymbolCellType;
   }
   if (j == 0) {
     return k_seriesTitleCellType;

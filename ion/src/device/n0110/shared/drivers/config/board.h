@@ -27,7 +27,8 @@ constexpr static uint32_t ITCMInterface = 0x00200000;
 constexpr static uint32_t AXIMInterface = 0x08000000;
 constexpr static uint32_t BootloaderStartAddress = ITCMInterface;
 constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
-constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + (InternalFlash::Config::NumberOfSectors - 1) * BootloaderSectionSize;
+constexpr static uint32_t BootloaderTrampolineSize = 0x2000; // 8k
+constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
 
 // Kernel
 constexpr static uint32_t KernelAStartAddress = ExternalFlash::Config::StartAddress + PersistingBytes::Config::BufferSize;

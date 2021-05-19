@@ -53,7 +53,7 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
 
 void PrefacedTableView::layoutSubviews(bool force) {
   KDPoint mainContentOffset = m_mainTableView->contentOffset();
-  bool hidePreface = m_prefaceDataSource.prefaceFullyInFrame(mainContentOffset.x());
+  bool hidePreface = m_prefaceDataSource.prefaceFullyInFrame(mainContentOffset.x()) || m_mainTableView->selectedRow() == -1;
   if (hidePreface) {
     m_mainTableView->setLeftMargin(m_storedMargin);
     m_mainTableView->setFrame(bounds(), force);

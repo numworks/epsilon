@@ -9,10 +9,11 @@
 #include <ion/events.h>
 
 #include "probability/gui/selectable_cell_list_controller.h"
-#include "input_goodness_controller.h"
-#include "input_homogeneity_controller.h"
 
 namespace Probability {
+
+class InputGoodnessController;
+class InputHomogeneityController;
 
 constexpr static int k_numberOfCategoricalCells = 2;
 

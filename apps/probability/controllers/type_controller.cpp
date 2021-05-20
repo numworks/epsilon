@@ -42,14 +42,21 @@ HighlightCell * TypeController::reusableCell(int i, int type) { return &m_cells[
 bool TypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Escher::ViewController * view;
+    Data::TestType t;
     switch (selectedRow()) {
       case k_indexOfTTest:
+        t = Data::TestType::TTest;
+        break;
       case k_indexOfPooledTest:
+        t = Data::TestType::PooledTTest;
+        break;
       case k_indexOfZTest:
-        view = m_hypothesisController;
+        t = Data::TestType::ZTest;
         break;
     }
+    view = m_hypothesisController;  // TODO toggle with IntervalInputController
     assert(view != nullptr);
+    App::app()->snapshot()->data()->setTestType(t);
     openPage(view, false);
     return true;
   }

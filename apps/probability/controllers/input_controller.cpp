@@ -26,6 +26,12 @@ InputController<n>::InputController(Escher::StackViewController * parent,
 }
 
 template <int n>
+const char * InputController<n>::title() {
+  return "blaaaa";
+}
+
+
+template <int n>
 Escher::HighlightCell * InputController<n>::reusableCell(int i, int type) {
   if (i < k_numberOfParameters) {
     return &m_parameters[i];

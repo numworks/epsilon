@@ -64,7 +64,7 @@ private:
   static constexpr int k_hideableCellType = 4;
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 175;
-  static constexpr KDCoordinate k_calculationSymbolCellWidth = 25;
+  static constexpr KDCoordinate k_calculationSymbolCellWidth = 3 * 7 + 2 * Escher::Metric::CellVerticalElementMargin;
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.
    * TODO: change 7 for KDFont::SmallFont->glyphSize().width() */

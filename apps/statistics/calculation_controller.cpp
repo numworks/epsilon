@@ -31,6 +31,8 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
     m_calculationTitleCells[i].setAlignment(1.0f, 0.5f);
     m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
+    m_calculationSymbolCells[i].setAlignment(0.5f, 0.5f);
+    m_calculationSymbolCells[i].setMessageFont(KDFont::SmallFont);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[0].setHide(true);
@@ -74,31 +76,26 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     storeTitleCell->setColor(DoublePairStore::colorOfSeriesAtIndex(seriesNumber));
     return;
   }
-  if (i == 0) {
-    // Display a calculation title cell
-    I18n::Message titles[k_totalNumberOfRows] = {
-      I18n::Message::TotalFrequency,
-      I18n::Message::Minimum,
-      I18n::Message::Maximum,
-      I18n::Message::Range,
-      I18n::Message::Mean,
-      I18n::Message::StandardDeviationSigma,
-      I18n::Message::Deviation,
-      I18n::Message::FirstQuartile,
-      I18n::Message::ThirdQuartile,
-      I18n::Message::Median,
-      I18n::Message::InterquartileRange,
-      I18n::Message::SumValues,
-      I18n::Message::SumSquareValues,
-      I18n::Message::SampleStandardDeviationS};
+  if (i <= 1) {
+    // Display a calculation title or symbol
+    I18n::Message titles[k_totalNumberOfRows][k_numberOfHeaderColumns] = {
+      { I18n::Message::TotalFrequency, I18n::Message::TotalFrequencySymbol },
+      { I18n::Message::Minimum, I18n::Message::MinimumSymbol },
+      { I18n::Message::Maximum, I18n::Message::MaximumSymbol },
+      { I18n::Message::Range, I18n::Message::RangeSymbol },
+      { I18n::Message::Mean, I18n::Message::MeanSymbol },
+      { I18n::Message::StandardDeviationSigma, I18n::Message::StandardDeviationSigmaSymbol },
+      { I18n::Message::Deviation, I18n::Message::DeviationSymbol },
+      { I18n::Message::FirstQuartile, I18n::Message::FirstQuartileSymbol },
+      { I18n::Message::ThirdQuartile, I18n::Message::ThirdQuartileSymbol },
+      { I18n::Message::Median, I18n::Message::MedianSymbol },
+      { I18n::Message::InterquartileRange, I18n::Message::InterquartileRangeSymbol },
+      { I18n::Message::SumValues, I18n::Message::SumValuesSymbol },
+      { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol },
+      { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol },
+    };
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
-    calcTitleCell->setMessage(titles[j-1]);
-    return;
-  }
-  if (i == 1) {
-    // Display a calculation symbol
-    EvenOddMessageTextCell * calcSymbolCell = static_cast<EvenOddMessageTextCell *>(cell);
-    calcSymbolCell->setMessage(I18n::Message::UnitTimeSecondSymbol);
+    calcTitleCell->setMessage(titles[j-1][i]);
     return;
   }
   // Display a calculation cell

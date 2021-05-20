@@ -41,6 +41,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	image_cell.cpp \
   responder_image_cell.cpp \
 	input_table_view.cpp \
+	vertical_layout.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

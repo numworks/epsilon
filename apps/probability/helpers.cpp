@@ -27,7 +27,7 @@ int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
       txt = "two proportions";
       break;
     case Data::Test::TwoMeans:
-      txt = "twt means";
+      txt = "two means";
       break;
   }
   assert(strlen(txt) < bufferLength);

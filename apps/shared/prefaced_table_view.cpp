@@ -23,6 +23,7 @@ void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right, KDCoord
   m_mainTableView->setRightMargin(right);
   m_mainTableView->setBottomMargin(bottom);
   m_mainTableView->setLeftMargin(left);
+  m_storedMargin = left;
 
   m_prefaceView.setTopMargin(top);
   m_prefaceView.setBottomMargin(bottom);
@@ -73,7 +74,6 @@ void PrefacedTableView::layoutSubviews(bool force) {
     m_prefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_prefaceView) : 0);
     KDCoordinate prefaceWidth = m_prefaceView.minimalSizeForOptimalDisplay().width();
     if (m_prefaceView.bounds().isEmpty()) {
-      m_storedMargin = m_mainTableView->leftMargin();
       m_mainTableView->setLeftMargin(0);
     }
     m_mainTableView->setFrame(KDRect(prefaceWidth, 0, bounds().width() - prefaceWidth, bounds().height()), force);

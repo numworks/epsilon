@@ -95,7 +95,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol },
     };
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
-    calcTitleCell->setMessage(titles[j-1][i]);
+    KDColor color = i == 1 ? Palette::GrayDark : KDColorBlack;
+    calcTitleCell->setMessage(titles[j-1][i], color);
     return;
   }
   // Display a calculation cell

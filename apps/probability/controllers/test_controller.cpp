@@ -72,6 +72,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     assert(view != nullptr);
     App::app()->snapshot()->data()->setTest(test);
     App::app()->snapshot()->data()->setTestType(Data::TestType::TTest);
+    initializeHypothesisParams(test);
     openPage(view, true);
     return true;
   }
@@ -100,4 +101,23 @@ void TestController::selectRowAccordingToTest(Data::Test t) {
   }
   assert(row >= 0);
   selectRow(row);
+}
+
+void TestController::initializeHypothesisParams(Data::Test t) {
+  float firstParam = t == Data::Test::OneProp ? 0.5 : 0;
+  switch (t)
+  {
+  case Data::Test::OneProp:
+    firstParam = 0.5;
+    break;
+  case Data::Test::OneMean:
+    firstParam = 128;
+    break;
+  case Data::Test::TwoProps:
+  case Data::Test::TwoMeans:
+    firstParam = 0;
+    break;
+  }
+  App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
+  App::app()->snapshot()->data()->hypothesisParams()->setOp(Data::ComparisonOperator::Higher);
 }

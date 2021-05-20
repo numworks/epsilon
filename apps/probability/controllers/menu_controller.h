@@ -9,6 +9,7 @@
 #include <escher/view_controller.h>
 
 #include "probability/gui/page_controller.h"
+#include "probability/data.h"
 
 namespace Probability {
 
@@ -23,6 +24,7 @@ class MenuController : public SelectableListViewPage {
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
+  void initializeData(Data::SubApp subapp);
   ViewController * m_distributionController;
   ViewController * m_testController;
 

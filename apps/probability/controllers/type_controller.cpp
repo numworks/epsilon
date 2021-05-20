@@ -5,6 +5,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
+#include <string.h>
 
 #include "categorical_type_controller.h"
 #include "hypothesis_controller.h"
@@ -78,4 +79,29 @@ Escher::View * TypeView::subviewAtIndex(int i) {
     case 1:
       return m_description;
   }
+}
+
+const char * TypeController::title() {
+  // TODO replace with messages
+  char * testOn = "Test on ";
+  int offset = strlen(testOn);
+  memcpy(m_titleBuffer, testOn, offset);
+  char * txt;
+  switch (App::app()->snapshot()->data()->test()) {
+    case Data::Test::OneProp:
+      txt = "one proportion";
+      break;
+    case Data::Test::OneMean:
+      txt = "one mean";
+      break;
+    case Data::Test::TwoProps:
+      txt = "two proportions";
+      break;
+    case Data::Test::TwoMeans:
+      txt = "two means";
+      break;
+  }
+  assert(offset + strlen(txt) < sizeof(m_titleBuffer));
+  memcpy(m_titleBuffer + offset, txt, strlen(txt));
+  return m_titleBuffer;
 }

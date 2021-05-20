@@ -6,6 +6,14 @@
 #include <assert.h>
 #include <escher/container.h>
 
+#include "data.h"
+
+namespace Probability {
+
 Shared::TextFieldDelegateApp * getProbabilityApp();
+
+int testToText(Data::Test t, char * buffer, int bufferLength);
+
+}  // namespace Probability
 
 #endif /* HELPER_H */

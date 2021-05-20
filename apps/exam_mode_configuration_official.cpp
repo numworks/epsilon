@@ -54,3 +54,7 @@ bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, Glob
 bool ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode mode) {
   return mode == GlobalPreferences::ExamMode::Dutch;
 }
+
+bool ExamModeConfiguration::additionalResultsAreForbidden(GlobalPreferences::ExamMode mode) {
+  return mode == GlobalPreferences::ExamMode::Dutch;
+}

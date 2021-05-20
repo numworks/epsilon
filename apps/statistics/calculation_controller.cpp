@@ -64,10 +64,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
   evenOddCell->setHighlighted(i == selectedColumn() && j == selectedRow());
-  if (i <= 1 && j == 0) {
-    return;
-  }
-  if (j == 0) {
+  int type = typeAtLocation(i, j);
+  if (type == k_seriesTitleCellType) {
     // Display a series title cell
     int seriesNumber = m_store->indexOfKthNonEmptySeries(i-2);
     char titleBuffer[] = {'V', static_cast<char>('1'+seriesNumber), '/', 'N', static_cast<char>('1'+seriesNumber), 0};
@@ -76,7 +74,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     storeTitleCell->setColor(DoublePairStore::colorOfSeriesAtIndex(seriesNumber));
     return;
   }
-  if (i <= 1) {
+  if (type == k_calculationTitleCellType || type == k_calculationSymbolCellType) {
     // Display a calculation title or symbol
     I18n::Message titles[k_totalNumberOfRows][k_numberOfHeaderColumns] = {
       { I18n::Message::TotalFrequency, I18n::Message::TotalFrequencySymbol },
@@ -94,23 +92,26 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol },
       { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol },
     };
+    assert((i == 0 && type == k_calculationTitleCellType) || (i == 1 && type == k_calculationSymbolCellType));
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
     KDColor color = i == 1 ? Palette::GrayDark : KDColorBlack;
     calcTitleCell->setMessage(titles[j-1][i], color);
     return;
   }
-  // Display a calculation cell
-  CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
-    &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
-    &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
-  int seriesIndex = m_store->indexOfKthNonEmptySeries(i-2);
-  double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
-  EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
-  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
-  char buffer[bufferSize];
-  PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
-  calculationCell->setText(buffer);
+  if (type == k_calculationCellType) {
+    // Display a calculation cell
+    CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
+      &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
+      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
+    int seriesIndex = m_store->indexOfKthNonEmptySeries(i-2);
+    double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
+    EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
+    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+    char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
+    calculationCell->setText(buffer);
+  }
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {

@@ -23,6 +23,8 @@ public:
   CategoricalTypeController(Escher::StackViewController * parent,
                             InputGoodnessController * inputGoodnessController,
                             InputHomogeneityController * inputHomogeneityController);
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  const char * title() override { return "x2-test"; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 

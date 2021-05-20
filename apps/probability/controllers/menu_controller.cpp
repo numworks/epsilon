@@ -9,13 +9,16 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
-#include <probability/app.h>
-#include <probability/data.h>
+#include <new>
+
+#include "probability/app.h"
+#include "probability/data.h"
 
 using namespace Probability;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
-                               Escher::ViewController * distributionController, Escher::ViewController * testController)
+                               Escher::ViewController * distributionController,
+                               Escher::ViewController * testController)
     : SelectableListViewPage(parentResponder),
       m_distributionController(distributionController),
       m_testController(testController) {
@@ -46,22 +49,24 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Data::SubApp subapp;
     ViewController * view = nullptr;
-    switch (selectedRow())
-    {
-    case k_indexOfDistribution:
-      view = m_distributionController;
-      subapp = Data::SubApp::Probability;
-      break;
-    case k_indexOfTest:
-      subapp = Data::SubApp::Tests;
-      view = m_testController;
-      break;
-    case k_indexOfInterval:
-      subapp = Data::SubApp::Probability;
-      view = m_testController;
-      break;
+    switch (selectedRow()) {
+      case k_indexOfDistribution:
+        view = m_distributionController;
+        subapp = Data::SubApp::Probability;
+        break;
+      case k_indexOfTest:
+        subapp = Data::SubApp::Tests;
+        view = m_testController;
+        break;
+      case k_indexOfInterval:
+        subapp = Data::SubApp::Probability;
+        view = m_testController;
+        break;
     }
     assert(view != nullptr);
+    if (App::app()->snapshot()->navigation()->subapp() != subapp) {
+      initializeData(subapp);
+    }
     App::app()->snapshot()->navigation()->setSubapp(subapp);
     openPage(view, true);
     return true;
@@ -69,3 +74,15 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void MenuController::initializeData(Data::SubApp subapp) {
+  switch (subapp) {
+    case Data::SubApp::Probability:
+      new (App::app()->snapshot()->data()->distribution()) BinomialDistribution();
+      new (App::app()->snapshot()->data()->calculation())
+          LeftIntegralCalculation(App::app()->snapshot()->data()->distribution());
+      break;
+    case Data::SubApp::Tests:
+    case Data::SubApp::Intervals:
+      App::app()->snapshot()->data()->setTest(Data::Test::OneProp);
+  }
+}

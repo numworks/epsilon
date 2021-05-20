@@ -289,7 +289,6 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   }
   // Create the results' layouts
   // Some exam mode configuration requires to display only approximate solutions
-  bool forbidExactSolutions = ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
   int solutionIndex = 0;
   int initialNumberOfSolutions = m_numberOfSolutions <= k_maxNumberOfExactSolutions ? m_numberOfSolutions : -1;
   // We iterate through the solutions and the potential delta
@@ -309,9 +308,9 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
       m_exactSolutionExactLayouts[solutionIndex].serializeForParsing(exactBuffer, ::Constant::MaxSerializedExpressionSize);
       m_exactSolutionApproximateLayouts[solutionIndex].serializeForParsing(approximateBuffer, ::Constant::MaxSerializedExpressionSize);
       /* Cheat: declare exact and approximate solutions to be identical in when
-       * 'forbidExactSolutions' is true to display only the approximate
-       * solutions. */
-      m_exactSolutionIdentity[solutionIndex] = forbidExactSolutions || strcmp(exactBuffer, approximateBuffer) == 0;
+       * the exam mode forbids this exact solution to display only the
+       * approximate solutions. */
+      m_exactSolutionIdentity[solutionIndex] = ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode(), exactSolutions[solutionIndex]) || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
         m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
       }

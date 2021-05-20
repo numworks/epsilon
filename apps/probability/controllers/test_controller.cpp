@@ -71,6 +71,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     }
     assert(view != nullptr);
     App::app()->snapshot()->data()->setTest(test);
+    App::app()->snapshot()->data()->setTestType(Data::TestType::TTest);
     openPage(view, true);
     return true;
   }

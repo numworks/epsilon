@@ -16,6 +16,7 @@
 
 #include "probability/gui/page_controller.h"
 #include "probability/gui/vertical_layout.h"
+#include "probability/data.h"
 
 using namespace Escher;
 
@@ -47,6 +48,8 @@ class TypeController : public SelectableListViewPage {
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
+  void selectRowAccordingToType(Data::TestType t);
+
   constexpr static int k_numberOfRows = 3;
   constexpr static int k_indexOfTTest = 0;
   constexpr static int k_indexOfPooledTest = 1;

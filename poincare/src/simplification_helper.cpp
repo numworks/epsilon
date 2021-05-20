@@ -87,13 +87,12 @@ Expression SimplificationHelper::shallowReduceKeepingUnits(Expression e, Express
   Expression unit;
   child.removeUnit(&unit);
   if (!unit.isUninitialized()) {
-
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
     Expression value = e.shallowReduce(reductionContext);
     mul.addChildAtIndexInPlace(value, 0, 1);
     mul.mergeSameTypeChildrenInPlace();
-    return std::move(mul);
+    return mul.shallowReduce(reductionContext);
   }
   return Expression();
 }

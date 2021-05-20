@@ -1,6 +1,7 @@
 #include "hypothesis_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/poincare_helpers.h>
 #include <escher/container.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/invocation.h>
@@ -49,14 +50,30 @@ void HypothesisController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-void HypothesisController::buttonAction() { openPage(m_inputController, false); }
+void HypothesisController::buttonAction() {
+  storeHypothesisParams();
+  openPage(m_inputController, false);
+}
 
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = 20;
-  char buffer[bufferSize] {"<"};
+  char buffer[bufferSize]{"<"};
   float p = App::app()->snapshot()->data()->hypothesisParams()->firstParam();
   Poincare::PrintFloat::ConvertFloatToText(p, buffer + 1, bufferSize, k_maxInputLength, 5,
                                            Poincare::Preferences::PrintFloatMode::Decimal);
   m_h0.setAccessoryText(buffer + 1);
   m_ha.setAccessoryText(buffer);
+}
+
+void HypothesisController::storeHypothesisParams() {
+  // TODO maybe parse at the same time as when checking validity
+  Data::HypothesisParams * params = App::app()->snapshot()->data()->hypothesisParams();
+  constexpr int precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
+  constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize];
+  Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+      params->firstParam(), buffer, bufferSize, precision,
+      Poincare::Preferences::PrintFloatMode::Decimal);
+
+  params->setOp(Data::ComparisonOperator::Lower);
 }

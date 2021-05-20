@@ -21,7 +21,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell(),
   m_store(store)
 {
-  m_selectableTableView.setVerticalCellOverlap(0);
+  m_tableView.setCellOverlap(0, 0);
   m_tableView.setBackgroundColor(Palette::WallScreenDark);
   m_tableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   m_tableView.setMarginDelegate(this);

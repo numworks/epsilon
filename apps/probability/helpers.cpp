@@ -16,7 +16,7 @@ Shared::TextFieldDelegateApp * getProbabilityApp() {
 int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
   // TODO replace with messages
   const char * txt;
-  switch (App::app()->snapshot()->data()->test()) {
+  switch (t) {
     case Data::Test::OneProp:
       txt = "one proportion";
       break;
@@ -32,4 +32,6 @@ int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
   }
   assert(strlen(txt) < bufferLength);
   memcpy(buffer, txt, strlen(txt) + 1);
+
+  return strlen(txt) + 1;
 }

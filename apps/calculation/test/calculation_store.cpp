@@ -2,6 +2,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <poincare/test/helper.h>
+#include <poincare_expressions.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"
@@ -111,7 +112,7 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
   GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
-  assert(ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode::Dutch));
+  assert(ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode::Dutch, SquareRoot::Builder(Rational::Builder(2))));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 
@@ -174,7 +175,21 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("confidence(0.5,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("prediction(0.5,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("prediction95(0.5,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(45)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(π/2)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
+  GlobalPreferences::ExamMode previousExamMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
+
+  assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
+  assertCalculationIs("0.5", DisplayOutput::ExactAndApproximateToggle, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
+  assertCalculationIs("√(8)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(45)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(π/2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
 }
 
 void assertMainCalculationOutputIs(const char * input, const char * output, Context * context, CalculationStore * store) {

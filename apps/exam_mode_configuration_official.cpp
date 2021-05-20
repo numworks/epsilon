@@ -51,8 +51,12 @@ bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, Glob
   return appName == I18n::Message::CodeApp && mode == GlobalPreferences::ExamMode::Dutch;
 }
 
-bool ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode mode) {
-  return mode == GlobalPreferences::ExamMode::Dutch;
+bool ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Poincare::Expression e) {
+  if (mode != GlobalPreferences::ExamMode::Dutch) {
+    return false;
+  }
+  bool isFraction = e.type() == Poincare::ExpressionNode::Type::Division && e.childAtIndex(0).isNumber() && e.childAtIndex(1).isNumber();
+  return !(e.isNumber() || isFraction);
 }
 
 bool ExamModeConfiguration::additionalResultsAreForbidden(GlobalPreferences::ExamMode mode) {

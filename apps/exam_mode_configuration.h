@@ -4,6 +4,7 @@
 #include "global_preferences.h"
 #include "shared/settings_message_tree.h"
 #include <apps/i18n.h>
+#include <poincare/expression.h>
 
 namespace ExamModeConfiguration {
 
@@ -19,7 +20,7 @@ I18n::Message examModeActivationWarningMessage(GlobalPreferences::ExamMode mode,
 // Exam mode behaviour
 KDColor examModeColor(GlobalPreferences::ExamMode mode);
 bool appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode);
-bool exactExpressionsAreForbidden(GlobalPreferences::ExamMode mode);
+bool exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Poincare::Expression e);
 bool additionalResultsAreForbidden(GlobalPreferences::ExamMode mode);
 
 }

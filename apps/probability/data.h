@@ -185,7 +185,7 @@ public:
   TestData * testData() { return &testIntervalData()->m_data.m_test; }
   CategoricalData * categoricalData() { return &testIntervalData()->m_data.m_categorical; }
   TestType testType() { return testData()->m_testType; }
-  HypothesisParams hypothesisParams() { return testData()->m_hypothesisParams; }
+  HypothesisParams * hypothesisParams() { return &testData()->m_hypothesisParams; }
   InputParameters testInputParams() { return testData()->m_inputParams; }
   void setTestType(TestType t) { testData()->m_testType = t; }
   CategoricalType categoricalType() { return categoricalData()->m_type; }

@@ -7,9 +7,6 @@
  * The entrypoint is the Data class, which is meant to contain all the data,
  * and provide convenient methods to access it.
  */
-
-#include <new>
-
 #include "calculation/discrete_calculation.h"
 #include "calculation/finite_integral_calculation.h"
 #include "calculation/left_integral_calculation.h"
@@ -46,7 +43,7 @@ enum class Page {
   Graph = 12
 };
 
-enum class SubApp { Probability, Tests, Intervals };
+enum class SubApp { None, Probability, Tests, Intervals };
 
 class AppNavigation {
 public:
@@ -159,9 +156,12 @@ struct TestData {
   InputParameters m_inputParams;
 };
 
-union TestIntervalData {
-  TestData m_test;
-  CategoricalData m_categorical;
+struct TestIntervalData {
+  Test m_test;
+  union {
+    TestData m_test;
+    CategoricalData m_categorical;
+  } m_data;
 };
 
 constexpr static int dataSizes[] = {sizeof(ProbaData), sizeof(TestIntervalData)};
@@ -171,11 +171,6 @@ typedef char DataBuffer[maxDataSize];
 
 class Data {
 public:
-  Data() {
-    // Fill in defaults
-    new (distribution()) BinomialDistribution();
-    new (calculation()) LeftIntegralCalculation(distribution());
-  }
   // naive getter / setters
   ProbaData * probaData() { return reinterpret_cast<ProbaData *>(&m_buffer); }
   TestIntervalData * testIntervalData() { return reinterpret_cast<TestIntervalData *>(&m_buffer); }
@@ -185,8 +180,10 @@ public:
   Calculation * calculation() { return reinterpret_cast<Calculation *>(probaData()->m_calculationBuffer); }
 
   // TestIntervalData
-  TestData * testData() { return reinterpret_cast<TestData *>(testIntervalData()); }
-  CategoricalData * categoricalData() { return reinterpret_cast<CategoricalData *>(testIntervalData()); }
+  Test test() { return testIntervalData()->m_test; }
+  void setTest(Test t) { testIntervalData()->m_test = t; }
+  TestData * testData() { return &testIntervalData()->m_data.m_test; }
+  CategoricalData * categoricalData() { return &testIntervalData()->m_data.m_categorical; }
   TestType testType() { return testData()->m_testType; }
   HypothesisParams hypothesisParams() { return testData()->m_hypothesisParams; }
   InputParameters testInputParams() { return testData()->m_inputParams; }

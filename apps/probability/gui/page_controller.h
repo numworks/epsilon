@@ -10,24 +10,28 @@ using namespace Escher;
 namespace Probability {
 
 /*
- * This templatized class adds some utils function to handle the parentResponder as a StackViewController.
- * To enforce correct typing, the specialization class must require a StackViewController * be passed
- * as argument to the constructor.
+ * This templatized class adds some utils function to handle the parentResponder as a
+ * StackViewController. To enforce correct typing, the specialization class must require a
+ * StackViewController * be passed as argument to the constructor.
  */
 template <typename T>
 class PageController : public T {
   using T::T;
 
- public:
-  StackViewController * stackViewController() { return static_cast<StackViewController *>(T::parentResponder()); }
+public:
+  StackViewController * stackViewController() {
+    return static_cast<StackViewController *>(T::parentResponder());
+  }
   /* Pushes the given controller onto the StackViewController */
-  void openPage(ViewController * nextPage, bool subPage, KDColor textColor = Palette::SubTab,
-                KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright) {
-    StackViewController * stack =
-        stackViewController();  // We need to keep a ref, otherwise parentResponder might become nullptr
+  void openPage(ViewController * nextPage, bool subPage, KDColor textColor = KDColorWhite,
+                KDColor backgroundColor = Palette::PurpleBright,
+                KDColor separatorColor = Palette::PurpleBright) {
+    StackViewController * stack = stackViewController();  // We need to keep a ref, otherwise
+                                                          // parentResponder might become nullptr
     if (!subPage) {
       assert(stack->topViewController() == this);
-      stack->pop();
+      // TODO cleanup
+      // stack->pop();
     }
     stack->push(nextPage, textColor, backgroundColor, separatorColor);
   }
@@ -36,13 +40,13 @@ class PageController : public T {
 /* A Page is a controller that requires a StackViewController as its parent
  * and can open subPages easily by pushing them to the StackViewController. */
 class Page : public PageController<ViewController> {
- public:
+public:
   Page(StackViewController * stackViewController) : PageController(stackViewController){};
 };
 
 /* Similar to a Page but for SelectableListViewController */
 class SelectableListViewPage : public PageController<SelectableListViewController> {
- public:
+public:
   SelectableListViewPage(StackViewController * stackViewController,
                          SelectableTableViewDelegate * tableDelegate = nullptr)
       : PageController(stackViewController, tableDelegate){};

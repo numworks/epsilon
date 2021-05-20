@@ -16,6 +16,7 @@ class DistributionController : public Escher::SelectableListViewController {
   DistributionController(Escher::Responder * parentResponder, Distribution * m_distribution,
                          ParametersController * parametersController);
   Escher::View * view() override { return &m_contentView; }
+  const char * title() override { return "Probability distributions"; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;

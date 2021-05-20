@@ -41,6 +41,7 @@ class TypeController : public SelectableListViewPage {
 public:
   TypeController(StackViewController * parent, HypothesisController * hypothesisController);
   View * view() override { return &m_contentView; }
+  const char * title() override;
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfRows; };
@@ -62,6 +63,8 @@ private:
 
   TypeView m_contentView;
   MessageTextView m_description;
+
+  char m_titleBuffer[30];  // TODO count max
 };
 
 }  // namespace Probability

@@ -620,6 +620,9 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("cot(3×𝐢)", "-19.11604×𝐢", Degree);
   assert_expression_approximates_to<float>("cot(-3×𝐢)", "19.11604×𝐢", Degree);
   assert_expression_approximates_to<float>("cot(𝐢-4)", "-0.253182-0.928133×𝐢", Radian, Metric, Cartesian, 6);
+  // Other
+  assert_expression_approximates_to<double>("tan(π/2)", Undefined::Name(), Radian);
+  assert_expression_approximates_to<double>("1/tan(π/2)", Undefined::Name(), Radian);
 
   /* acos: [-1,1]    -> R
    *       ]-inf,-1[ -> π+R×i (odd imaginary)

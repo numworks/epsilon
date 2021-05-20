@@ -1,6 +1,6 @@
 #include "colors_lcd_test_controller.h"
 #include "../apps_container.h"
-#include <apps/shared/post_and_hardware_tests.h>
+#include <ion/post_and_hardware_tests.h>
 
 using namespace Poincare;
 
@@ -17,7 +17,7 @@ bool ColorsLCDTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void ColorsLCDTestController::viewWillAppear() {
-  bool testOK = Shared::POSTAndHardwareTests::ColorsLCDPixelFailures() <= k_numberOfAcceptablesGlyphErrors;
+  bool testOK = Ion::POSTAndHardwareTests::ColorsLCDPixelFailures() <= k_numberOfAcceptablesGlyphErrors;
   m_view.setColor(testOK ? KDColorGreen : KDColorRed);
   m_view.colorsLCDStateTextView()->setText(testOK ? k_colorsLCDOKText : k_colorsLCDFailTest);
 }

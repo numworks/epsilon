@@ -1,7 +1,7 @@
 #include "lcd_data_test_controller.h"
-#include <apps/shared/post_and_hardware_tests.h>
 #include <ion/backlight.h>
 #include <ion/display.h>
+#include <ion/post_and_hardware_tests.h>
 #include <poincare/print_int.h>
 
 using namespace Poincare;
@@ -9,7 +9,7 @@ using namespace Poincare;
 namespace HardwareTest {
 
 void LCDDataTestController::runTest() {
-  int pixelFailures = Shared::POSTAndHardwareTests::LCDDataGlyphFailures();
+  int pixelFailures = Ion::POSTAndHardwareTests::LCDDataGlyphFailures();
   m_testSuccessful = pixelFailures <= k_errorLimit;
   m_view.setStatus(m_testSuccessful, pixelFailures);
 }

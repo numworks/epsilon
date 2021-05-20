@@ -6,6 +6,8 @@
 #include <escher/invocation.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
+#include <poincare/preferences.h>
+#include <poincare/print_float.h>
 
 #include "input_controller.h"
 #include "probability/app.h"
@@ -23,9 +25,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_ha(&m_selectableTableView, handler, textFieldDelegate),
       m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
   m_h0.setMessage(I18n::Message::H0);
-  m_h0.setAccessoryText("p=");
   m_ha.setMessage(I18n::Message::Ha);
-  m_ha.setAccessoryText("p>");
 }
 
 HighlightCell * HypothesisController::reusableCell(int i, int type) {
@@ -44,12 +44,19 @@ HighlightCell * HypothesisController::reusableCell(int i, int type) {
 void HypothesisController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Hypothesis);
   // TODO factor out
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
+  selectCellAtLocation(0, 0);
+  loadHypothesisParam();
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void HypothesisController::buttonAction() { openPage(m_inputController, false); }
+
+void HypothesisController::loadHypothesisParam() {
+  constexpr int bufferSize = 20;
+  char buffer[bufferSize] {"<"};
+  float p = App::app()->snapshot()->data()->hypothesisParams()->firstParam();
+  Poincare::PrintFloat::ConvertFloatToText(p, buffer + 1, bufferSize, k_maxInputLength, 5,
+                                           Poincare::Preferences::PrintFloatMode::Decimal);
+  m_h0.setAccessoryText(buffer + 1);
+  m_ha.setAccessoryText(buffer);
+}

@@ -30,9 +30,12 @@ class HypothesisController : public SelectableListViewPage, public ButtonDelegat
   void buttonAction() override;
 
  private:
+  void loadHypothesisParam();
+
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_indexOfNext = 2;
+  constexpr static int k_maxInputLength = 10;
   NormalInputController * m_inputController;
 
   MessageTableCellWithEditableText m_h0;

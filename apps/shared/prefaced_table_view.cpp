@@ -44,7 +44,12 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
   assert(t == m_mainTableView);
   /* FIXME: We need a +1 to align the TableView with the SelectableTableView.
    * Find out why! */
-  m_prefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y() + 1));
+  if (!m_prefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().x())) {
+    /* Do not call setContentOffset if the preface is not going to appear.
+     * Otherwise, as setContentOffset calls layoutSubviews, the preface would
+     * "steal" its first cell from the table. */
+    m_prefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y() + 1));
+  }
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }

@@ -31,6 +31,7 @@ class HypothesisController : public SelectableListViewPage, public ButtonDelegat
 
  private:
   void loadHypothesisParam();
+  void storeHypothesisParams();
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;

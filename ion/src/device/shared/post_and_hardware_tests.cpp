@@ -1,17 +1,20 @@
-#include "post_and_hardware_tests.h"
-#include <ion/backlight.h>
+#include "display_helper.h"
 #include <ion/battery.h>
+#include <ion/display.h>
+#include <ion/post_and_hardware_tests.h>
 #include <ion/timing.h>
-#include <kandinsky/font.h>
-#include <kandinsky/ion_context.h>
+#include <kandinsky/color.h>
 
-namespace Shared {
+namespace Ion {
+namespace POSTAndHardwareTests {
 
-bool POSTAndHardwareTests::BatteryOK() {
+static constexpr int k_stampSize = 8;
+
+bool BatteryOK() {
   return Ion::Battery::level() == Ion::Battery::Charge::FULL;
 }
 
-bool POSTAndHardwareTests::VBlankOK() {
+bool VBlankOK() {
   bool result = true;
   for (int i = 0; i < 3; i++) {
     result = result && Ion::Display::waitForVBlank();
@@ -19,11 +22,11 @@ bool POSTAndHardwareTests::VBlankOK() {
   return result;
 }
 
-int POSTAndHardwareTests::LCDDataGlyphFailures() {
+int LCDDataGlyphFailures() {
   return Ion::Display::displayColoredTilingSize10();
 }
 
-int POSTAndHardwareTests::LCDTimingGlyphFailures() {
+int LCDTimingGlyphFailures() {
   int numberOfFailures = 0;
   const int rootNumberTiles = 3; //TODO 1 ?
   for (int i = 0; i < 100; i++) {
@@ -48,7 +51,7 @@ int POSTAndHardwareTests::LCDTimingGlyphFailures() {
   return numberOfFailures;
 }
 
-int POSTAndHardwareTests::ColorsLCDPixelFailures() {
+int ColorsLCDPixelFailures() {
   int result = 0;
   constexpr KDColor k_colors[] = {KDColorBlack, KDColorRed, KDColorBlue, KDColorGreen, KDColorWhite};
   for (KDColor c : k_colors) {
@@ -57,24 +60,25 @@ int POSTAndHardwareTests::ColorsLCDPixelFailures() {
   return result;
 }
 
-int POSTAndHardwareTests::TextLCDGlyphFailures() {
+bool TextLCDGlyphFailures() {
   const char * text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   const KDFont * font = KDFont::SmallFont;
   KDCoordinate glyphHeight = font->glyphSize().height();
-
+  KDCoordinate currentHeight = 0;
   // Fill the screen
-  KDIonContext * context = KDIonContext::sharedContext();
-  context->setOrigin(KDPointZero);
-  context->setClippingRect(KDRect(KDPointZero, Ion::Display::Width, Ion::Display::Height));
-  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
-    context->drawString(text, KDPoint(0, i * glyphHeight), font);
+  while (currentHeight + glyphHeight < Ion::Display::Height ) {
+    Ion::Device::DisplayHelper::drawString(text, &currentHeight, KDFont::SmallFont);
   }
   // Check the drawing
-  int numberOfFailures = 0;
-  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
-    numberOfFailures += context->checkDrawnString(text, KDPoint(0, i * glyphHeight), font);
+  currentHeight = 0;
+  while (currentHeight + glyphHeight < Ion::Display::Height ) {
+    if (!Ion::Device::DisplayHelper::checkDrawnString(text, &currentHeight, font)) {
+      return false;
+    }
   }
-  return numberOfFailures;
+  return true;
 }
 
 }
+}
+

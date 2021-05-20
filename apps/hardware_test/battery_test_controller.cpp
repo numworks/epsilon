@@ -1,10 +1,10 @@
 #include "battery_test_controller.h"
-#include <apps/shared/post_and_hardware_tests.h>
 #include "app.h"
 #include <apps/shared/poincare_helpers.h>
 extern "C" {
 #include <assert.h>
 }
+#include <ion/post_and_hardware_tests.h>
 #include <poincare/print_float.h>
 #include <poincare/preferences.h>
 
@@ -36,7 +36,7 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void BatteryTestController::viewWillAppear() {
-  bool batteryOK = Shared::POSTAndHardwareTests::BatteryOK();
+  bool batteryOK = Ion::POSTAndHardwareTests::BatteryOK();
   const char * text = batteryOK ? k_batteryOKText : k_batteryNeedChargingText;
   KDColor color = batteryOK ? KDColorGreen : KDColorRed;
   m_view.setColor(color);

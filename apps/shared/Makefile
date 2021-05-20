@@ -62,7 +62,6 @@ app_shared_src = $(addprefix apps/shared/,\
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
   discard_pop_up_controller.cpp \
-  post_and_hardware_tests.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \

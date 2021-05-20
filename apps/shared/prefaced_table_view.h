@@ -25,6 +25,7 @@ public:
   Escher::SelectableTableView * selectableTableView() { return m_mainTableView; }
   void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left);
   void setBackgroundColor(KDColor color);
+  void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical);
 
   class MarginDelegate {
   public:

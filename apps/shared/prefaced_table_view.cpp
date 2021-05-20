@@ -33,6 +33,13 @@ void PrefacedTableView::setBackgroundColor(KDColor color) {
   m_prefaceView.setBackgroundColor(color);
 }
 
+void PrefacedTableView::setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) {
+  m_mainTableView->setHorizontalCellOverlap(horizontal);
+  m_mainTableView->setVerticalCellOverlap(vertical);
+  m_prefaceView.setHorizontalCellOverlap(horizontal);
+  m_prefaceView.setVerticalCellOverlap(vertical);
+}
+
 void PrefacedTableView::tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
   if (m_mainTableDelegate) {
@@ -42,13 +49,11 @@ void PrefacedTableView::tableViewDidChangeSelection(Escher::SelectableTableView 
 
 void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
-  /* FIXME: We need a +1 to align the TableView with the SelectableTableView.
-   * Find out why! */
   if (!m_prefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().x())) {
     /* Do not call setContentOffset if the preface is not going to appear.
      * Otherwise, as setContentOffset calls layoutSubviews, the preface would
      * "steal" its first cell from the table. */
-    m_prefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y() + 1));
+    m_prefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y()));
   }
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);

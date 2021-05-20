@@ -39,33 +39,64 @@ TestController::TestController(Escher::StackViewController * parentResponder,
 
 void TestController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Test);
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
+  selectRowAccordingToTest(Probability::App::app()->snapshot()->data()->test());
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Escher::ViewController * view;
+    Escher::ViewController * view = nullptr;
+    Data::Test test;
     switch (selectedRow()) {
       case k_indexOfOneProp:
+        test = Data::Test::OneProp;
+        view = m_hypothesisController;
+        break;
       case k_indexOfTwoProps:
+        test = Data::Test::TwoProps;
         view = m_hypothesisController;
         break;
       case k_indexOfOneMean:
+        test = Data::Test::OneMean;
+        view = m_typeController;
+        break;
       case k_indexOfTwoMeans:
+        test = Data::Test::TwoMeans;
         view = m_typeController;
         break;
       case k_indexOfCategorical:
+        test = Data::Test::Categorical;
         view = m_categoricalController;
         break;
     }
     assert(view != nullptr);
+    App::app()->snapshot()->data()->setTest(test);
     openPage(view, true);
     return true;
   }
   return false;
+}
+
+void TestController::selectRowAccordingToTest(Data::Test t) {
+  // TODO this overrides the m_selectedRow behavior, is that needed ?
+  int row = -1;
+  switch (t) {
+    case Data::Test::OneProp:
+      row = k_indexOfOneProp;
+      break;
+    case Data::Test::TwoProps:
+      row = k_indexOfTwoProps;
+      break;
+    case Data::Test::OneMean:
+      row = k_indexOfOneMean;
+      break;
+    case Data::Test::TwoMeans:
+      row = k_indexOfTwoMeans;
+      break;
+    case Data::Test::Categorical:
+      row = k_indexOfCategorical;
+      break;
+  }
+  assert(row >= 0);
+  selectRow(row);
 }

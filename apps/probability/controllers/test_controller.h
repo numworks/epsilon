@@ -6,6 +6,7 @@
 #include <ion/events.h>
 
 #include "probability/gui/selectable_cell_list_controller.h"
+#include "probability/data.h"
 
 namespace Probability {
 
@@ -25,6 +26,8 @@ class TestController
   const char * title() override { return "Test"; }
 
  private:
+  void selectRowAccordingToTest(Data::Test t);
+
   constexpr static int k_indexOfOneProp = 0;
   constexpr static int k_indexOfOneMean = 1;
   constexpr static int k_indexOfTwoProps = 2;

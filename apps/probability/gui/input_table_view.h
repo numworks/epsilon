@@ -18,13 +18,17 @@ namespace Probability {
 /* This view contains an EditableCell, a Button and a pointer to a TableView,
  * layed out vertically, and is able to move selection between them.
  */
-class InputTableView : public VerticalLayout<3>, public Responder {
+class InputTableView : public VerticalLayout, public Responder {
  public:
   InputTableView(Responder * parentResponder, ButtonDelegate * buttonDelegate, SelectableTableView * table,
                  InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
 
   MessageTableCellWithEditableTextWithMessage * significanceLevelView() { return &m_significance; }
   Shared::ButtonWithSeparator * nextButton() { return &m_next; }
+  // VerticalLayout
+  int numberOfSubviews() const override { return 3; }
+  Escher::View * subviewAtIndex(int i) override;
+
   // Responder
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

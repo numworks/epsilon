@@ -70,3 +70,12 @@ void TypeController::selectRowAccordingToType(Data::TestType t) {
   assert(row >= 0);
   selectRow(row);
 }
+
+Escher::View * TypeView::subviewAtIndex(int i) {
+  switch (i) {
+    case 0:
+      return m_list;
+    case 1:
+      return m_description;
+  }
+}

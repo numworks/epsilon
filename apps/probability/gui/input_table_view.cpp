@@ -14,9 +14,6 @@ InputTableView::InputTableView(Responder * parentResponder, ButtonDelegate * but
   // m_significance.setMessage(I18n::Message::A);
   // m_significance.setSubLabelMessage(I18n::Message::SignificanceLevel);
   // m_significance.setAccessoryText("0.05");
-  setView(m_tableView, 0);
-  setView(&m_significance, 1);
-  setView(&m_next, 2);
 }
 
 void InputTableView::didBecomeFirstResponder() {
@@ -33,7 +30,7 @@ bool InputTableView::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
       m_viewSelection.selectRow(m_viewSelection.selectedRow() - 1);
     }
-    if (event == Ion::Events::Down && m_viewSelection.selectedRow() < k_numberOfChildren - 1) {
+    if (event == Ion::Events::Down && m_viewSelection.selectedRow() < numberOfSubviews() - 1) {
       m_viewSelection.selectRow(m_viewSelection.selectedRow() + 1);
     }
     setResponderForSelectedRow();
@@ -76,4 +73,20 @@ void InputTableView::highlightViewForSelectedRow() {
       m_next.setHighlighted(true);
       break;
   }
+}
+
+Escher::View * InputTableView::subviewAtIndex(int i) {
+  switch (i)
+  {
+  case k_indexOfTable:
+    return m_tableView;
+    break;
+  case k_indexOfSignificance:
+    return &m_significance;
+    break;
+  case k_indexOfNext:
+    return &m_next;
+    break;
+  }
+  assert(false);
 }

@@ -80,9 +80,9 @@ protected:
   virtual void logAttributes(std::ostream &os) const;
 #endif
   KDRect m_frame;
-private:
   virtual int numberOfSubviews() const { return 0; }
   virtual View * subviewAtIndex(int index) { return nullptr; }
+private:
   virtual void layoutSubviews(bool force = false) {}
   virtual const Window * window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);

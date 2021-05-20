@@ -20,6 +20,7 @@ I18n::Message examModeActivationWarningMessage(GlobalPreferences::ExamMode mode,
 KDColor examModeColor(GlobalPreferences::ExamMode mode);
 bool appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode);
 bool exactExpressionsAreForbidden(GlobalPreferences::ExamMode mode);
+bool additionalResultsAreForbidden(GlobalPreferences::ExamMode mode);
 
 }
 

@@ -1,6 +1,6 @@
 #include "vblank_test_controller.h"
 #include "../apps_container.h"
-#include <apps/shared/post_and_hardware_tests.h>
+#include <ion/post_and_hardware_tests.h>
 
 using namespace Poincare;
 
@@ -17,7 +17,7 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void VBlankTestController::viewWillAppear() {
-  bool testOK = Shared::POSTAndHardwareTests::VBlankOK();
+  bool testOK = Ion::POSTAndHardwareTests::VBlankOK();
   m_view.setColor(testOK ? KDColorGreen : KDColorRed);
   m_view.vBlankStateTextView()->setText(testOK ? k_vBlankOKText : k_vBlankFailTest);
 }

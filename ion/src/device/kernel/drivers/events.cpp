@@ -1,10 +1,10 @@
 #include <kernel/drivers/events.h>
 #include <algorithm>
 #include <assert.h>
-#include <drivers/battery.h>
 #include <drivers/config/clocks.h>
 #include <drivers/display.h>
 #include <drivers/usb_privileged.h>
+#include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/config/keyboard.h>
@@ -337,7 +337,7 @@ enum class SpinnerState : uint8_t {
   Disabled
 };
 
-static SpinnerState s_spinner = SpinnerState::Hidden;
+static SpinnerState s_spinner = SpinnerState::Disabled;
 
 void spin() {
   KDCoordinate size = k_spinnerRect.height();

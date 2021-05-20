@@ -1,5 +1,17 @@
 #include "warning_display.h"
 #include <drivers/keyboard.h>
+#include <drivers/display.h>
+#include <ion/display.h>
+#include <kandinsky/rect.h>
+
+namespace Ion {
+
+/* For the kernel, we shortcut the SVC made by WarningDisplay to
+ * direct calls to the right drivers. */
+
+void Display::pullRect(KDRect r, KDColor * pixels) { Device::Display::pullRect(r, pixels); }
+
+}
 
 namespace Ion {
 namespace Device {

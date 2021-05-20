@@ -37,14 +37,11 @@ void initPeripherals(bool fromBootloader) {
   if (!fromBootloader) {
     Display::init();
     Backlight::init();
+    Battery::init();
+    USB::init();
   }
   Keyboard::init();
   LED::init();
-  Battery::init();
-  if (!fromBootloader) {
-    // USB has already be initialized by the bootloader
-    USB::init();
-  }
   SWD::init();
   Timing::init();
   Events::init();
@@ -54,12 +51,12 @@ void shutdownPeripherals(bool keepLEDAwake) {
   Events::shutdown();
   Timing::shutdown();
   SWD::shutdown();
-  USB::shutdown();
-  Battery::shutdown();
   if (!keepLEDAwake) {
     LED::shutdown();
   }
   Keyboard::shutdown();
+  USB::shutdown();
+  Battery::shutdown();
   Backlight::shutdown();
   Display::shutdown();
   shutdownCompensationCell();

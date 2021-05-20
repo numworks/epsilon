@@ -1,6 +1,7 @@
 #include "type_controller.h"
 
 #include <apps/i18n.h>
+#include <assert.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
@@ -30,7 +31,7 @@ TypeController::TypeController(StackViewController * parent,
 
 void TypeController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Type);
-  m_selectableTableView.selectRow(0);
+  selectRowAccordingToType(App::app()->snapshot()->data()->testType());
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -51,4 +52,21 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+void TypeController::selectRowAccordingToType(Data::TestType t) {
+  int row = -1;
+  switch (t) {
+    case Data::TestType::TTest:
+      row = k_indexOfTTest;
+      break;
+    case Data::TestType::PooledTTest:
+      row = k_indexOfPooledTest;
+      break;
+    case Data::TestType::ZTest:
+      row = k_indexOfZTest;
+      break;
+  }
+  assert(row >= 0);
+  selectRow(row);
 }

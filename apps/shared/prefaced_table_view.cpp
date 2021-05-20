@@ -70,9 +70,10 @@ void PrefacedTableView::layoutSubviews(bool force) {
     if (m_prefaceView.bounds().isEmpty()) {
       m_storedMargin = m_mainTableView->leftMargin();
       m_mainTableView->setLeftMargin(0);
-      m_mainTableView->setContentOffset(mainContentOffset.translatedBy(KDPoint(prefaceWidth - m_storedMargin, 0)));
     }
     m_mainTableView->setFrame(KDRect(prefaceWidth, 0, bounds().width() - prefaceWidth, bounds().height()), force);
+    /* Scroll to reset the update the content offset with the new margins. */
+    m_mainTableView->scrollToCell(m_mainTableView->selectedColumn(), m_mainTableView->selectedRow());
     m_prefaceView.setFrame(KDRect(0, 0, prefaceWidth, bounds().height()), force);
   }
 }

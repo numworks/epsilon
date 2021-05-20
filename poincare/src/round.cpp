@@ -52,9 +52,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
   {
     if (childAtIndex(1).hasUnit()) {
       // Number of digits cannot have units
-      Expression undefined = Undefined::Builder();
-      replaceWithInPlace(undefined);
-      return undefined;
+      return replaceWithUndefinedInPlace();
     }
     Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnits(*this, reductionContext);
     if (!e.isUninitialized()) {

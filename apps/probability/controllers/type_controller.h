@@ -14,9 +14,9 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
+#include "probability/data.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/vertical_layout.h"
-#include "probability/data.h"
 
 using namespace Escher;
 
@@ -25,20 +25,20 @@ namespace Probability {
 class HypothesisController;
 
 /* Simple view to include list and description below */
-class TypeView : public VerticalLayout<2> {
- public:
-  TypeView(SelectableTableView * list, MessageTextView * description) : m_list(list), m_description(description) {
-    setView(m_list, 0);
-    setView(m_description, 1);
-  }
+class TypeView : public VerticalLayout {
+public:
+  TypeView(SelectableTableView * list, MessageTextView * description)
+      : m_list(list), m_description(description) {}
+  int numberOfSubviews() const override { return 2; }
+  Escher::View * subviewAtIndex(int i) override;
 
- private:
+private:
   SelectableTableView * m_list;
   MessageTextView * m_description;
 };
 
 class TypeController : public SelectableListViewPage {
- public:
+public:
   TypeController(StackViewController * parent, HypothesisController * hypothesisController);
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
@@ -47,7 +47,7 @@ class TypeController : public SelectableListViewPage {
   HighlightCell * reusableCell(int i, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
 
- private:
+private:
   void selectRowAccordingToType(Data::TestType t);
 
   constexpr static int k_numberOfRows = 3;

@@ -14,11 +14,7 @@ HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
                                                Escher::SelectableTableView * table)
     : m_title(KDFont::SmallFont, I18n::Message::HomogeneityResultsTitle),
       m_table(table),
-      m_next(parent, I18n::Message::Next, buttonActionInvocation()) {
-  setView(&m_title, 0);
-  setView(m_table, 1);
-  setView(&m_next, 2);
-}
+      m_next(parent, I18n::Message::Next, buttonActionInvocation()) {}
 
 void HomogeneityResultsView::buttonAction() {}
 
@@ -41,4 +37,16 @@ HomogeneityResultsController::HomogeneityResultsController(
 void HomogeneityResultsController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::ResultsHomogeneity);
   Escher::Container::activeApp()->setFirstResponder(&m_table);
+}
+
+Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
+  switch (i) {
+    case k_indexOfTitle:
+      return &m_title;
+    case k_indexOfTable:
+      return m_table;
+    case k_indexOfButton:
+      return &m_next;
+  }
+  assert(false);
 }

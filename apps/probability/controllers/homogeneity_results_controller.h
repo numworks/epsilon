@@ -21,40 +21,48 @@ using namespace Escher;
 
 namespace Probability {
 
-class HomogeneityResultsView : public VerticalLayout<3>, public ButtonDelegate {
- public:
+class HomogeneityResultsView : public VerticalLayout, public ButtonDelegate {
+public:
   HomogeneityResultsView(Responder * parent, SelectableTableView * table);
   void buttonAction() override;
+  int numberOfSubviews() const override { return 3; }
+  Escher::View * subviewAtIndex(int i) override;
   // TODO add selection behavior
 
- private:
+private:
+  constexpr static int k_indexOfTitle = 0;
+  constexpr static int k_indexOfTable = 1;
+  constexpr static int k_indexOfButton = 2;
+
   MessageTextView m_title;
   SelectableTableView * m_table;
   Shared::ButtonWithSeparator m_next;
 };
 
 class HomogeneityResultsDataSource : public TableViewDataSource {
- public:
+public:
   HomogeneityResultsDataSource();
   int numberOfRows() const override { return HomogeneityTableDataSource::k_initialNumberOfRows; }
-  int numberOfColumns() const override { return HomogeneityTableDataSource::k_initialNumberOfColumns; }
+  int numberOfColumns() const override {
+    return HomogeneityTableDataSource::k_initialNumberOfColumns;
+  }
   KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
   int typeAtLocation(int i, int j) override { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
 
- private:
+private:
   EvenOddBufferTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
 };
 
 class HomogeneityResultsController : public Page {
- public:
+public:
   HomogeneityResultsController(StackViewController * stackViewController);
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
 
- private:
+private:
   HomogeneityResultsView m_contentView;
   HomogeneityTableDataSource m_tableData;
   HomogeneityResultsDataSource m_innerTableData;

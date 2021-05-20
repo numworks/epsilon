@@ -55,6 +55,7 @@ private:
   public:
     ControllerView();
     void shouldDisplayStackHeaders(bool shouldDisplay);
+    void shouldDisplayonlyLastHeader(bool shouldDisplay);
     int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
@@ -75,6 +76,7 @@ private:
     View * m_contentView;
     int8_t m_numberOfStacks;
     bool m_displayStackHeaders;
+    bool m_displayOnlyLastHeader;
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;
   };

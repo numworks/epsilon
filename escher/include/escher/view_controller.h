@@ -39,11 +39,13 @@ public:
    * modifies the stack headers display. */
   enum class DisplayParameter {
     Default,
-    DoNotShowOwnTitle,
     /* With DoNotShowOwnTitle, the title of the ViewController is not added to
      * the stack headers. */
-    WantsMaximumSpace
+    DoNotShowOwnTitle,
+    /* Hide all previous headers but the last one. */
+    OnlyShowOwnTitle,
     /* With WantsMaximumSpace, no stack headers are displayed. */
+    WantsMaximumSpace
   };
 
   ViewController(Responder * parentResponder) : Responder(parentResponder) {}

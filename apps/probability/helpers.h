@@ -13,6 +13,7 @@ namespace Probability {
 Shared::TextFieldDelegateApp * getProbabilityApp();
 
 int testToText(Data::Test t, char * buffer, int bufferLength);
+int testTypeToText(Data::TestType t, char * buffer, int bufferLength);
 
 }  // namespace Probability
 

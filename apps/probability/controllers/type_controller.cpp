@@ -11,6 +11,7 @@
 #include "hypothesis_controller.h"
 #include "probability/app.h"
 #include "probability/data.h"
+#include "probability/helpers.h"
 #include "type_controller.h"
 
 using namespace Probability;
@@ -83,25 +84,9 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 
 const char * TypeController::title() {
   // TODO replace with messages
-  char * testOn = "Test on ";
+  const char * testOn = "Test on ";
   int offset = strlen(testOn);
   memcpy(m_titleBuffer, testOn, offset);
-  char * txt;
-  switch (App::app()->snapshot()->data()->test()) {
-    case Data::Test::OneProp:
-      txt = "one proportion";
-      break;
-    case Data::Test::OneMean:
-      txt = "one mean";
-      break;
-    case Data::Test::TwoProps:
-      txt = "two proportions";
-      break;
-    case Data::Test::TwoMeans:
-      txt = "two means";
-      break;
-  }
-  assert(offset + strlen(txt) < sizeof(m_titleBuffer));
-  memcpy(m_titleBuffer + offset, txt, strlen(txt));
+  testToText(App::app()->snapshot()->data()->test(), m_titleBuffer + offset, sizeof(m_titleBuffer) - offset);
   return m_titleBuffer;
 }

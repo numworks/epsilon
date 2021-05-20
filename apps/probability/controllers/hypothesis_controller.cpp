@@ -13,6 +13,7 @@
 #include "input_controller.h"
 #include "probability/app.h"
 #include "probability/data.h"
+#include "probability/helpers.h"
 
 using namespace Probability;
 
@@ -27,6 +28,19 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
   m_h0.setMessage(I18n::Message::H0);
   m_ha.setMessage(I18n::Message::Ha);
+}
+
+const char * Probability::HypothesisController::title() {
+  int bufferSize = sizeof(m_titleBuffer);
+  int written =
+      testTypeToText(App::app()->snapshot()->data()->testType(), m_titleBuffer, bufferSize);
+  const char on[] = " on ";
+  memcpy(m_titleBuffer + written - 1, on, sizeof(on));
+  written += sizeof(on) - 1;
+  written += testToText(App::app()->snapshot()->data()->test(), m_titleBuffer + written - 1,
+                        bufferSize - written - 1);
+  assert(written < bufferSize);
+  return m_titleBuffer;
 }
 
 HighlightCell * HypothesisController::reusableCell(int i, int type) {

@@ -21,15 +21,20 @@ namespace Probability {
 class NormalInputController;
 
 class HypothesisController : public SelectableListViewPage, public ButtonDelegate {
- public:
-  HypothesisController(Escher::StackViewController * parent, NormalInputController * inputController,
-                       InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate);
+public:
+  HypothesisController(Escher::StackViewController * parent,
+                       NormalInputController * inputController, InputEventHandlerDelegate * handler,
+                       TextFieldDelegate * textFieldDelegate);
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTitles;
+  };
+  const char * title() override;
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
   void didBecomeFirstResponder() override;
   void buttonAction() override;
 
- private:
+private:
   void loadHypothesisParam();
   void storeHypothesisParams();
 
@@ -42,6 +47,8 @@ class HypothesisController : public SelectableListViewPage, public ButtonDelegat
   MessageTableCellWithEditableText m_h0;
   MessageTableCellWithEditableText m_ha;  // TODO change to dropdown
   Shared::ButtonWithSeparator m_next;     // TODO real separator ?
+
+  char m_titleBuffer[40];
 };
 
 }  // namespace Probability

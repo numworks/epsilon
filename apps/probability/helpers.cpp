@@ -35,3 +35,21 @@ int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
 
   return strlen(txt) + 1;
 }
+
+int Probability::testTypeToText(Data::TestType t, char * buffer, int bufferLength) {
+  const char * txt;
+  switch (t) {
+    case Data::TestType::TTest:
+      txt = "t-test";
+      break;
+    case Data::TestType::PooledTTest:
+      txt = "Pooled t-test";
+      break;
+    case Data::TestType::ZTest:
+      txt = "z-test";
+      break;
+  }
+  assert(strlen(txt) + 1 < bufferLength);
+  memcpy(buffer, txt, strlen(txt) + 1);
+  return strlen(txt) + 1;
+}

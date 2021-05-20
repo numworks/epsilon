@@ -42,6 +42,7 @@ public:
   TypeController(StackViewController * parent, HypothesisController * hypothesisController);
   View * view() override { return &m_contentView; }
   const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfRows; };

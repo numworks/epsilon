@@ -26,6 +26,7 @@ public:
                   Escher::InputEventHandlerDelegate * handler,  // TODO same obj
                   Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfParameters + 1 /* button */; }
+  const char * title() override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
   void didBecomeFirstResponder() override;
   void buttonAction() override;

@@ -5,6 +5,7 @@
 #include <escher/container.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/invocation.h>
+#include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
@@ -66,7 +67,7 @@ void HypothesisController::didBecomeFirstResponder() {
 
 void HypothesisController::buttonAction() {
   storeHypothesisParams();
-  openPage(m_inputController, false);
+  openPage(m_inputController, false, Escher::Palette::GrayDark, Escher::Palette::GrayDark);
 }
 
 void HypothesisController::loadHypothesisParam() {

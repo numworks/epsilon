@@ -23,9 +23,9 @@ public:
     return static_cast<StackViewController *>(T::parentResponder());
   }
   /* Pushes the given controller onto the StackViewController */
-  void openPage(ViewController * nextPage, bool subPage, KDColor textColor = KDColorWhite,
+  void openPage(ViewController * nextPage, bool subPage,
                 KDColor backgroundColor = Palette::PurpleBright,
-                KDColor separatorColor = Palette::PurpleBright) {
+                KDColor separatorColor = Palette::PurpleBright, KDColor textColor = KDColorWhite) {
     StackViewController * stack = stackViewController();  // We need to keep a ref, otherwise
                                                           // parentResponder might become nullptr
     if (!subPage) {

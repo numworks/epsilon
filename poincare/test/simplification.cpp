@@ -544,6 +544,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("rem(1,_s)", "undef");
   assert_parsed_expression_simplify_to("round(1,_s)", "undef");
   assert_parsed_expression_simplify_to("round(1_s,_s)", "undef");
+  assert_parsed_expression_simplify_to("round(1_s,0.1)", "undef");
+  assert_parsed_expression_simplify_to("round(1_s,0.1)+abs(1_s)", "undef");
   assert_parsed_expression_simplify_to("rref(_s)", "undef");
   assert_parsed_expression_simplify_to("sin(_s)", "undef");
   assert_parsed_expression_simplify_to("sinh(_s)", "undef");

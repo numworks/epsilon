@@ -36,6 +36,22 @@ int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
   return strlen(txt) + 1;
 }
 
+
+const char * Probability::testToTextSymbol(Data::Test t) {
+  switch (t) {
+    case Data::Test::OneProp:
+      return "p";
+    case Data::Test::OneMean:
+      return "u";  // TODO mu
+    case Data::Test::TwoProps:
+      return "p1-p2";  // TODO subscript
+    case Data::Test::TwoMeans:
+      return "u1-u2";
+  }
+  assert(false);
+  return nullptr;
+}
+
 int Probability::testTypeToText(Data::TestType t, char * buffer, int bufferLength) {
   const char * txt;
   switch (t) {

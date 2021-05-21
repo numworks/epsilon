@@ -59,6 +59,8 @@ private:
 class HomogeneityResultsController : public Page {
 public:
   HomogeneityResultsController(StackViewController * stackViewController);
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  const char * title() override { return "x2-test: Homogeneity/Independence"; }
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
 

@@ -1,9 +1,12 @@
 #include "input_controller.h"
 
 #include <escher/stack_view_controller.h>
+#include <poincare/print_float.h>
+#include <string.h>
 
 #include "probability/app.h"
 #include "probability/data.h"
+#include "probability/helpers.h"
 #include "results_controller.h"
 
 using namespace Probability;
@@ -27,9 +30,31 @@ InputController<n>::InputController(Escher::StackViewController * parent,
 
 template <int n>
 const char * InputController<n>::title() {
-  return "blaaaa";
-}
+  // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams>
+  m_titleBuffer[0] = 0;
+  size_t bufferSize = sizeof(m_titleBuffer);
+  const char * H0 = "H0:";
+  const char * Ha = "  Ha:";
+  const char * eq = "=";  // TODO Must be somewhere else
+  const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
+  char op[2] = {0, 0};
+  op[0] = static_cast<const char>(App::app()->snapshot()->data()->hypothesisParams()->op());
+  char paramBuffer[10];
+  Poincare::PrintFloat::ConvertFloatToText(
+      App::app()->snapshot()->data()->hypothesisParams()->firstParam(), paramBuffer,
+      sizeof(paramBuffer), 5, 5, Poincare::Preferences::PrintFloatMode::Decimal);
 
+  strlcat(m_titleBuffer, H0, bufferSize);
+  strlcat(m_titleBuffer, symbol, bufferSize);
+  strlcat(m_titleBuffer, eq, bufferSize);
+  strlcat(m_titleBuffer, paramBuffer, bufferSize);
+  strlcat(m_titleBuffer, Ha, bufferSize);
+  strlcat(m_titleBuffer, symbol, bufferSize);
+  strlcat(m_titleBuffer, op, bufferSize);
+  strlcat(m_titleBuffer, paramBuffer, bufferSize);
+
+  return m_titleBuffer;
+}
 
 template <int n>
 Escher::HighlightCell * InputController<n>::reusableCell(int i, int type) {

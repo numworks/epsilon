@@ -101,8 +101,10 @@ enum class TestType {
   TTest, PooledTTest, ZTest
 };
 
-enum class ComparisonOperator {
-  Lower, Higher, Different
+enum class ComparisonOperator : char {
+  Lower = '<',
+  Higher = '>',
+  Different = '='  // TODO correct symbol
 };
 
 struct HypothesisParams {

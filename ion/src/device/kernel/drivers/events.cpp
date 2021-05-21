@@ -2,12 +2,12 @@
 #include <algorithm>
 #include <assert.h>
 #include <drivers/config/clocks.h>
+#include <drivers/config/keyboard.h>
 #include <drivers/display.h>
 #include <drivers/usb_privileged.h>
 #include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>
-#include <kernel/drivers/config/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>

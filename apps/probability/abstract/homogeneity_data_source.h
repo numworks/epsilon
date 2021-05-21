@@ -34,7 +34,7 @@ class HomogeneityTableDataSource : public TableViewDataSource, public Selectable
   constexpr static int k_columnWidth = 80;
   constexpr static int k_rowHeight = 20;
 
-  constexpr static int k_initialNumberOfRows = 4;
+  constexpr static int k_initialNumberOfRows = 3;
   constexpr static int k_initialNumberOfColumns = 3;
   constexpr static int k_maxNumberOfColumns = 6;
   constexpr static int k_maxNumberOfRows = 6;

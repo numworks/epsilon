@@ -27,9 +27,10 @@ using namespace Escher;
 namespace Probability {
 
 class InputGoodnessDataSource : public TableViewDataSource {
- public:
+public:
   InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
-                          InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
+                          InputEventHandlerDelegate * inputEventHandlerDelegate,
+                          TextFieldDelegate * delegate);
   int numberOfRows() const override { return k_initialNumberOfRows; };
   int numberOfColumns() const override { return k_numberOfColumns; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
@@ -39,7 +40,7 @@ class InputGoodnessDataSource : public TableViewDataSource {
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
- private:
+private:
   constexpr static int k_initialNumberOfRows = 4;
   constexpr static int k_numberOfColumns = 2;
   // TODO needed ?
@@ -52,14 +53,19 @@ class InputGoodnessDataSource : public TableViewDataSource {
 };
 
 class InputGoodnessController : public Page, public ButtonDelegate {
- public:
+public:
   InputGoodnessController(StackViewController * parent, TestResults * resultsController,
-                          InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
+                          InputEventHandlerDelegate * inputEventHandlerDelegate,
+                          TextFieldDelegate * textFieldDelegate);
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTitles;
+  }
+  const char * title() override { return "x2-test: Homogeneity/Independence"; }
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   void buttonAction() override;
 
- private:
+private:
   TestResults * m_resultsController;
 
   InputGoodnessDataSource m_data;

@@ -41,6 +41,8 @@ class InputHomogeneityController : public Page, public ButtonDelegate {
  public:
   InputHomogeneityController(StackViewController * parent, HomogeneityResultsController * homogeneityResultsController,
                              InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  const char * title() override { return "x2-test: Homogeneity/Independence"; }
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   void buttonAction() override;

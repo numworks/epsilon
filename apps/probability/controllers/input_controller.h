@@ -27,12 +27,17 @@ public:
                   Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfParameters + 1 /* button */; }
   const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  }
   Escher::HighlightCell * reusableCell(int i, int type) override;
   void didBecomeFirstResponder() override;
   void buttonAction() override;
 
 protected:
   constexpr static int k_numberOfParameters = numberOfParams;
+  char m_titleBuffer[30];
+
   TestResults * m_resultsController;
 
   Escher::MessageTableCellWithEditableText m_parameters[k_numberOfParameters];

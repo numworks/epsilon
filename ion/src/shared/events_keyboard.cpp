@@ -131,7 +131,7 @@ Event getEvent(int * timeout) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
 #if ESCHER_LOG_EVENTS_NAME
-      Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----\n");
+      Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
 #endif
 
     } else {

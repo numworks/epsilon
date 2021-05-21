@@ -64,12 +64,10 @@ bool RunLoop::step() {
 #endif
 #if ESCHER_LOG_EVENTS_NAME
   const char * name = event.name();
-  if (name == nullptr) {
-    name = "UNDEFINED";
-  }
-  // TODO don't write to display if not headless
-  Ion::Console::writeLine("Event: ", false);
+  if (name != nullptr) {
+    Ion::Console::writeLine("Event: ", false);
   Ion::Console::writeLine(name);
+  }
 #endif
 
   if (event != Ion::Events::None) {

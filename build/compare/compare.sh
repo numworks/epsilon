@@ -1,14 +1,23 @@
 #!/bin/bash
 
-
-if [[ $# -lt 3 ]]; then
-  echo "Compare two Epsilon executable on a sequence of scenari (state files)"
-  echo "Output a report of all scenari whose screenshot are not exactly the same"
-  echo "Usage: compare <folder_with_scenarii> <epsilon_1> <epsilon_2>"
-  exit 1
-fi
+set -e
 
 # === Functions definition ===
+
+function print_help() {
+  echo -e "Usage: compare [--debug] [MAKEFLAGS=...] <folder_with_scenarii> <source_1> <source_2>"
+  echo -e "\nCompare two sources of screenshots on a sequence of scenari (state files)"
+  echo -e "A source can either be:"
+  echo -e " - a folder, containing png images of the same name as the state files"
+  echo -e " - an Epsilon executable"
+  echo -e " - a git ref (i.e. a commit hash, a branch, HEAD...)"
+  echo -e "Outputs a report of which screenshot mismatched, and stores the corresponding images"
+  echo -e "\nExample:"
+  echo -e "\t$ compare Epsilon_master Epsilon_new"
+  echo -e "\t$ compare folder_with_images/ Epsilon_new"
+  echo -e "\t$ compare MAKEFLAGS=\"-j4 PLATFORM=simulator DEBUG=1\" folder_with_images/ HEAD"
+}
+
 
 debug=0
 if [[ $1 == "--debug" ]]
@@ -22,6 +31,10 @@ function log() {
   fi
 }
 
+function error() {
+  echo -e "$@" 1>&2
+}
+
 function stem() {
   filename=$(basename "$1")
   echo "${filename%.*}"
@@ -32,7 +45,7 @@ count=0
 # compare <png1> <png2> <png_output>
 function compare() {
   log "compare $1 $2 $3"
-  res=$(magick compare -metric mae "$1" "$2" "$3" 2>&1)
+  res=$(magick compare -metric mae "$1" "$2" "$3" 2>&1 || return 0)
   if [[ ${res} == "0 (0)" ]]
   then
     rm "$3"
@@ -56,14 +69,28 @@ function img_for_executable() {
 function create_git_executable() {
   # TODO catch if --take-screenshot not supported
   echo "Creating executable from ref $1"
-  git checkout $1
+  git checkout $1 > /dev/null
   output_exe="${output_folder}/Epsilon_$1"
-  # TODO add MAKEFLAGS
-  make PLATFORM=simulator DEBUG=1
+  log "make ${MAKEFLAGS}"
+  make ${MAKEFLAGS}
 
+  # TODO guess real path
   cp output/debug/simulator/macos/epsilon.app/Contents/MacOS/Epsilon "${output_exe}"
   eval exe$2=${output_exe}
   echo "Executable stored at ${output_exe}"
+}
+
+MAKEFLAGS=
+
+function parse_makeflags() {
+  if [[ $1 == "MAKEFLAGS="* ]]
+  then
+    MAKEFLAGS="${1#MAKEFLAGS=}"
+    echo true
+  else
+    MAKEFLAGS="PLATFORM=simulator DEBUG=1"
+  fi
+  log MAKEFLAGS=${MAKEFLAGS}
 }
 
 arg1_mode=
@@ -84,10 +111,9 @@ function parse_arg() {
   elif [[ -x "$1" ]]
   then
     # executable -> must be espilon
-    log "executable"
     eval arg$2_mode="e"
     eval exe$2=$1
-  elif git show-ref "$1"
+  elif git show-ref "$1" > /dev/null
   then
     # git ref
     eval arg$2_mode="g"
@@ -131,9 +157,26 @@ function print_report() {
 
 # === Main ===
 
+
+if [[ $# -lt 3 ]]; then
+  error "Error: not enough arguments"
+  print_help
+  exit 1
+fi
+
 log "START"
 
+if parse_makeflags "$1"
+then
+  shift
+fi
+
 scenarii_folder="$1"
+if [[ $( find "${scenarii_folder}" -type f -name "*.nws" -depth 1 | wc -w ) -eq 0 ]]
+then
+  error "No state file found in ${scenarii_folder}"
+  exit 3
+fi
 
 output_folder="compare_output_$(date +%d-%m-%Y_%Hh%M)"
 mkdir -p ${output_folder}

@@ -20,7 +20,142 @@ namespace Board {
 
 using namespace Regs;
 
+void initMPU() {
+  /* Reconfigure the MPU for kernel+userland */
+  // 1. Disable the MPU
+  // 1.1 Memory barrier
+  Cache::dmb();
+
+  // 1.3 Disable the MPU and clear the control register
+  MPU.CTRL()->setENABLE(false);
+
+  // 2. MPU settings
+  int sector = 0;
+
+  /* We will activate the default memory map as the background region which is
+   * accessible from privileged software only (PM0253). */
+
+  /* 2.1 Enable unprivileged access to the SRAM - except the range dedicated to
+   * the kernel */
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(Board::Config::UserlandSRAMAddress);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256KB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(1);
+  MPU.RASR()->setC(1);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  // Forbid unprivileged access to kernel RAM
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(Board::Config::KernelRAMAddress);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_16KB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::PrivilegedRW);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(1);
+  MPU.RASR()->setC(1);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  // 2.2 Enable unprivileged access to the OTG registers
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(OTG.Base());
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256KB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(1);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(1);
+  MPU.RASR()->setENABLE(true);
+
+  // 2.3 Configure a MPU region for the FMC memory area
+  /* This is needed for interfacing with the LCD
+   * We define the whole FMC memory bank 1 as strongly ordered, non-executable
+   * and not accessible. We define the FMC command and data addresses as
+   * writeable non-cachable, non-buffereable and non shareable.
+   *
+   * NB: we could set the all 256MB as readable/writable in order to save up
+   * MPU regions. */
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0x60000000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setTEX(2);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0x60000000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32B);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setTEX(2);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0x60000000+0x20000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32B);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setTEX(2);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  // 2.4 Configure MPU regions for the QUADSPI peripheral
+  /* L1 Cache can issue speculative reads to any memory address. But, when the
+   * Quad-SPI is in memory-mapped mode, if an access is made to an address
+   * outside of the range defined by FSIZE but still within the 256Mbytes range,
+   * then an AHB error is given (AN4760). To prevent this to happen, we
+   * configure the MPU to define the whole Quad-SPI addressable space as
+   * strongly ordered, non-executable and not accessible. Plus, we define the
+   * Quad-SPI region corresponding to the Expternal Chip as executable and
+   * fully accessible (AN4861). */
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0x90000000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0x90000000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_8MB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(1);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  // 3. Enable default memory map
+  MPU.CTRL()->setPRIVDEFENA(true);
+  // 4. Enable MPU
+  MPU.CTRL()->setENABLE(true);
+
+  // 5. Data/instruction synchronisation barriers to ensure that the new MPU configuration is used by subsequent instructions.
+  Cache::dsb();
+  Cache::isb();
+}
+
 void init() {
+  initMPU();
   initPeripheralsClocks();
   initInterruptionPriorities();
   // Ensure right location of interrupt vectors

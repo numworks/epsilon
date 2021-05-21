@@ -15,12 +15,8 @@ char readChar() {
 }
 
 void writeChar(char c) {
-  if (Simulator::Window::isHeadless()) {
-    putchar(c);
-    fflush(stdout);
-  } else {
-    KDIonContext::putchar(c);
-  }
+  putchar(c);
+  fflush(stdout);
 }
 
 bool transmissionDone() {

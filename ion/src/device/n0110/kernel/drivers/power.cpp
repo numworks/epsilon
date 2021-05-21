@@ -1,8 +1,8 @@
 #include <drivers/power.h>
-#include <drivers/keyboard.h>
 #include <drivers/power.h>
 #include <drivers/wakeup.h>
 #include <kernel/drivers/board.h>
+#include <kernel/drivers/keyboard.h>
 #include <regs/regs.h>
 
 namespace Ion {

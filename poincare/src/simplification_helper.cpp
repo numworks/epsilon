@@ -90,9 +90,15 @@ Expression SimplificationHelper::shallowReduceKeepingUnits(Expression e, Express
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
     Expression value = e.shallowReduce(reductionContext);
+    if (value.type() == ExpressionNode::Type::Unreal || value.type() == ExpressionNode::Type::Undefined) {
+      // Undefined * _unit is Undefined. Same with Unreal.
+      mul.replaceWithInPlace(value);
+      return value;
+    }
     mul.addChildAtIndexInPlace(value, 0, 1);
+    // In case `unit` was a multiplication of units, flatten
     mul.mergeSameTypeChildrenInPlace();
-    return mul.shallowReduce(reductionContext);
+    return std::move(mul);
   }
   return Expression();
 }

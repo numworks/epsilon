@@ -84,7 +84,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
     Board::initPeripheralsClocks();
 
     // Check power key
-    Keyboard::init(false); // Don't activate interruptions which would override wake-up configurations
+    Keyboard::init(false, false); // Don't activate interruptions which would override wake-up configurations
     Keyboard::State scan = Keyboard::scan();
     Keyboard::State OnlyOnOffKeyDown = Keyboard::State(Keyboard::Key::OnOff);
 

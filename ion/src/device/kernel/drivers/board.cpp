@@ -4,7 +4,6 @@
 #include <drivers/battery.h>
 #include <drivers/display.h>
 #include <drivers/events.h>
-#include <drivers/keyboard.h>
 #include <drivers/led.h>
 #include <drivers/reset.h>
 #include <drivers/swd.h>
@@ -12,6 +11,7 @@
 #include <drivers/usb_privileged.h>
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/backlight.h>
+#include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
 #include <ion/src/shared/platform_info.h>
@@ -40,7 +40,7 @@ void initPeripherals(bool fromBootloader) {
     Battery::init();
     USB::init();
   }
-  Keyboard::init();
+  Keyboard::init(fromBootloader);
   LED::init();
   SWD::init();
   Timing::init();

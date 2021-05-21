@@ -19,11 +19,11 @@ public:
   * Returns uninitialized handle otherwise. */
   static Expression shallowReduceBanningUnits(Expression e);
   static Expression defaultShallowReduce(Expression e);
-  /* *In place* shallowReduce while keeping the units.
+  /* *In place* shallowReduce while keeping the units from first child.
   * The returned expression is the result with the units if units were handled.
   * Otherwise returns unitialized handle. */
-  static Expression shallowReduceKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression shallowReduceUndefinedKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext);
 };
 }
 

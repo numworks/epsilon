@@ -38,7 +38,7 @@ Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnits(*this, reductionContext);
+    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

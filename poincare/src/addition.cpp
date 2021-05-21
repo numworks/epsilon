@@ -186,8 +186,10 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
        * Recurse to run the reduction, then create the result
        * result = MUL( addition, unit1, unit2...) */
       Expression addition = shallowReduce(reductionContext);
+      assert((addition.type() != ExpressionNode::Type::Unreal && addition.type() != ExpressionNode::Type::Undefined));
       Multiplication result = Multiplication::Builder(unit);
-      result.mergeSameTypeChildrenInPlace();  // In case `unit` was a multiplication of units, flatten
+      // In case `unit` was a multiplication of units, flatten
+      result.mergeSameTypeChildrenInPlace();
       addition.replaceWithInPlace(result);
       result.addChildAtIndexInPlace(addition, 0, 1);
       return std::move(result);

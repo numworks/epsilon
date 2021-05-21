@@ -82,7 +82,7 @@ Expression SimplificationHelper::defaultShallowReduce(Expression e) {
   return res;
 }
 
-Expression SimplificationHelper::shallowReduceKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
+Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext) {
   Expression child = e.childAtIndex(0);
   Expression unit;
   child.removeUnit(&unit);
@@ -103,10 +103,10 @@ Expression SimplificationHelper::shallowReduceKeepingUnits(Expression e, Express
   return Expression();
 }
 
-Expression SimplificationHelper::shallowReduceUndefinedKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
+Expression SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext) {
   Expression res = shallowReduceUndefined(e);
   if (res.isUninitialized()) {
-    res = shallowReduceKeepingUnits(e, reductionContext);
+    res = shallowReduceKeepingUnitsFromFirstChild(e, reductionContext);
   }
   return res;
 }

@@ -54,7 +54,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
       // Number of digits cannot have units
       return replaceWithUndefinedInPlace();
     }
-    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnits(*this, reductionContext);
+    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

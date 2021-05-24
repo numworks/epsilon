@@ -32,60 +32,58 @@ void BannerView::layoutSubviews(bool force) {
      * TODO: Do not call layout Subviews if the frame has not been set? */
     return;
   }
-  /* We iterate on subviews, adding their width until we exceed the view bound.
-   * The last subview that exceeds the bound is recorded as the first subview of
-   * the next line. For the current line, we scan again the subviews and frame
-   * them by equally distributing the remaining width. We then jump to the next
-   * line and iterate the process. */
-  const KDCoordinate lineWidth = m_frame.width();
-  KDCoordinate remainingWidth = lineWidth;
-  KDCoordinate mandatorySpacing = k_minimalSpaceBetweenSubviews;
-  int indexOfFirstViewOfCurrentLine = 0;
+  const KDCoordinate width = m_frame.width();
+  int firstSubview = 0;
   KDCoordinate y = LineSpacing;
-  /* We do a last iteration of the loop to layout the last line. */
-  for (int i = 0; i <= numberOfSubviews(); i++) {
-    KDCoordinate subviewWidth = i < numberOfSubviews() ? subviewAtIndex(i)->minimalSizeForOptimalDisplay().width() : lineWidth;
-    if (subviewWidth + mandatorySpacing > remainingWidth || lineBreakBeforeSubview(subviewAtIndex(i))) {
-      KDCoordinate x = 0;
-      int nbOfSubviewsOnLine = i > indexOfFirstViewOfCurrentLine ? i-indexOfFirstViewOfCurrentLine : 1;
-      KDCoordinate roundingError = remainingWidth % nbOfSubviewsOnLine;
-      View * subviewPreviousLine = nullptr;
-      for (int j = indexOfFirstViewOfCurrentLine; j < nbOfSubviewsOnLine + indexOfFirstViewOfCurrentLine; j++) {
-        subviewPreviousLine = subviewAtIndex(j);
-        KDCoordinate width = subviewPreviousLine->minimalSizeForOptimalDisplay().width() + remainingWidth/nbOfSubviewsOnLine + (j == i-1) * roundingError;
-        KDCoordinate height = subviewPreviousLine->minimalSizeForOptimalDisplay().height();
-        /* A subview's structure can change without it being reflected on the
-         * frame. As such, we force a relayout. */
-        subviewPreviousLine->setFrame(KDRect(x, y, width, height), true);
-        x += width;
+  while (firstSubview < numberOfSubviews()) {
+    KDCoordinate remainingWidth;
+    int numberOfSubviewsCurrentLine = numberOfSubviewsOnOneLine(firstSubview, width, &remainingWidth);
+    KDCoordinate roundingError = remainingWidth % numberOfSubviewsCurrentLine;
+    KDCoordinate spacePerSubview = remainingWidth / numberOfSubviewsCurrentLine;
+    KDCoordinate x = 0;
+    KDCoordinate maxHeight = 0;
+    for (int i = firstSubview; i < firstSubview + numberOfSubviewsCurrentLine; i++) {
+      assert(i < numberOfSubviews());
+      KDSize size = subviewAtIndex(i)->minimalSizeForOptimalDisplay();
+      KDCoordinate width = size.width() + k_minimalSpaceBetweenSubviews + spacePerSubview + (i == firstSubview + numberOfSubviewsCurrentLine - 1) * roundingError;
+      if (size.height() > maxHeight) {
+        maxHeight = size.height();
       }
-      // Next line
-      assert(subviewPreviousLine);
-      y += subviewPreviousLine->minimalSizeForOptimalDisplay().height() + LineSpacing;
-      remainingWidth = lineWidth;
-      mandatorySpacing = 0;
-      indexOfFirstViewOfCurrentLine = i;
+      /* A subview's structure can change without it being reflected on the
+       * frame. As such, we force a relayout. */
+      subviewAtIndex(i)->setFrame(KDRect(x, y, width, size.height()), true);
+      x += width;
     }
-    mandatorySpacing += k_minimalSpaceBetweenSubviews;
-    remainingWidth -= subviewWidth;
+    y += maxHeight + LineSpacing;
+    firstSubview += numberOfSubviewsCurrentLine;
   }
 }
 
 int BannerView::numberOfLinesGivenWidth(KDCoordinate width) const {
-  int lineNumber = 1;
-  const KDCoordinate lineWidth = width - k_minimalSpaceBetweenSubviews;
-  KDCoordinate remainingWidth = lineWidth;
-  for (int i = 0; i < numberOfSubviews(); i++) {
-    View * subview = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i);
-    KDCoordinate subviewWidth = subview->minimalSizeForOptimalDisplay().width();
-    if (subviewWidth > remainingWidth || lineBreakBeforeSubview(subview)) {
-      remainingWidth = lineWidth;
-      lineNumber++;
-    }
-    remainingWidth -= subviewWidth + k_minimalSpaceBetweenSubviews;
+  int currentSubview = 0;
+  int numberOfLines = 0;
+  while (currentSubview < numberOfSubviews()) {
+    currentSubview += numberOfSubviewsOnOneLine(currentSubview, width);
+    numberOfLines++;
   }
-  return lineNumber;
+  return numberOfLines;
 }
+
+int BannerView::numberOfSubviewsOnOneLine(int firstSubview, KDCoordinate width, KDCoordinate * remainingWidth) const {
+  KDCoordinate tempWidth;
+  KDCoordinate * lineWidth = remainingWidth ? remainingWidth : &tempWidth;
+  *lineWidth = width;
+  for (int i = firstSubview; i < numberOfSubviews(); i++) {
+    View * subview = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i);
+    KDCoordinate subviewWidth = subview->minimalSizeForOptimalDisplay().width() + k_minimalSpaceBetweenSubviews;
+    if (subviewWidth > *lineWidth || (lineBreakBeforeSubview(subview) && i != firstSubview)) {
+      return i == firstSubview ? 1 : i - firstSubview;
+    }
+    *lineWidth -= subviewWidth;
+  }
+  return numberOfSubviews() - firstSubview;
+}
+
 
 // BannerView::LabelledView
 

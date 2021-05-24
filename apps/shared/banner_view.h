@@ -42,7 +42,7 @@ private:
   View * subviewAtIndex(int index) override = 0;
   void layoutSubviews(bool force = false) override;
   int numberOfLinesGivenWidth(KDCoordinate width) const;
-  int numberOfSubviewsOnOneLine(int firstSubview, KDCoordinate width,  KDCoordinate * remainingWidth = nullptr) const;
+  int numberOfSubviewsOnOneLine(int firstSubview, KDCoordinate width, KDCoordinate * remainingWidth = nullptr) const;
 };
 
 }

@@ -95,6 +95,7 @@ QUIZ_CASE(equation_solve) {
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Degree);
   assert_solves_numerically_to("cos(x)=0", -100, 100, {-90.0, 90.0});
   assert_solves_numerically_to("cos(x)=0", -900, 1000, {-810.0, -630.0, -450.0, -270.0, -90.0, 90.0, 270.0, 450.0, 630.0, 810.0});
+  assert_solves_numerically_to("1/cos(x)=0", 0, 10000, {});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0}, "y");
   assert_solves_numerically_to("√(y+1)=0", -900, 1000, {-1}, "y");
   assert_solves_numerically_to("ℯ^x=0", -1000, 1000, {});

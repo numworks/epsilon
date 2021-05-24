@@ -1022,12 +1022,17 @@ double Expression::nextRoot(const char * symbol, double start, double max, Conte
     return start + std::copysign(maximalStep, max - start);
   }
   if (type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot || type() == ExpressionNode::Type::SquareRoot) {
+    if ((type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot) && childAtIndex(1).sign(context) == ExpressionNode::Sign::Negative) {
+      // Powers at negative index can't be null
+      return NAN;
+    }
     /* A power such as sqrt(x) can have a vertical derivative around its root,
      * making the tolerance used for finding zeroes ill-suited. As such, we
      * make use of the fact that the base of the power needs to be null for the
      * root to be null. */
     double result = childAtIndex(0).nextRoot(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
-    if (std::isnan(result)) {
+    if (std::isnan(result) || (result < start && max > result) || (result > start && max < result)) {
+      // result is Nan or out of bounds
       return NAN;
     }
     double exponent = type() == ExpressionNode::Type::SquareRoot ? 0.5 : childAtIndex(1).approximateWithValueForSymbol(symbol, result, context, complexFormat, angleUnit);
@@ -1037,6 +1042,8 @@ double Expression::nextRoot(const char * symbol, double start, double max, Conte
         return result;
       }
     }
+    // result should be between max and start
+    assert((result >= start && max >= result) || (result <= start && max <= result));
     return nextRoot(symbol, result, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
   }
   const void * pack[] = { this, symbol, &complexFormat, &angleUnit };

@@ -84,7 +84,6 @@ int BannerView::numberOfSubviewsOnOneLine(int firstSubview, KDCoordinate width, 
   return numberOfSubviews() - firstSubview;
 }
 
-
 // BannerView::LabelledView
 
 KDSize BannerView::LabelledView::minimalSizeForOptimalDisplay() const {

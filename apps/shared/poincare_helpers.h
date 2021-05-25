@@ -25,6 +25,10 @@ inline int ConvertFloatToTextWithDisplayMode(T d, char * buffer, int bufferSize,
   return Poincare::PrintFloat::ConvertFloatToText(d, buffer, bufferSize, Poincare::PrintFloat::glyphLengthForFloatWithPrecision(numberOfSignificantDigits), numberOfSignificantDigits, displayMode).CharLength;
 }
 
+template <class T>
+// Return the nearest number from t's representation with given precision.
+T GetDisplayedFloat(T t, int precision, Poincare::Context * context);
+
 inline int Serialize(const Poincare::Expression e, char * buffer, int bufferSize, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits) {
   return e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits);
 }

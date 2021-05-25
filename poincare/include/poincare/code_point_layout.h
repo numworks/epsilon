@@ -17,6 +17,7 @@ public:
   CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
     LayoutNode(),
     m_codePoint(c),
+    m_displayType(DisplayType::None),
     m_font(font)
   {}
 
@@ -50,6 +51,20 @@ public:
   }
 #endif
 
+  enum class DisplayType : uint8_t {
+    None,
+    /* Add a thin margin between groups of three digits, except if one digit
+     * would be alone. */
+    Integer,
+    /* Add a thick margin before the code point, to separate two factors. */
+    Implicit,
+    /* Add a thick margin on each side of the code point. */
+    Operator
+  };
+
+  DisplayType displayType() const { return m_displayType; }
+  void setDisplayType(DisplayType type) { m_displayType = type; }
+
 protected:
   // LayoutNode
   KDSize computeSize() override;
@@ -64,6 +79,7 @@ private:
   bool isMultiplicationCodePoint() const;
   bool protectedIsIdenticalTo(Layout l) override;
   CodePoint m_codePoint;
+  DisplayType m_displayType;
   const KDFont * m_font;
 };
 

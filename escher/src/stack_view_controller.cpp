@@ -50,8 +50,8 @@ void StackViewController::ControllerView::popStack() {
   m_numberOfStacks--;
 }
 
-bool StackViewController::ControllerView::isHeaderDisplayed(int i) {
-  return maskBit(i);
+bool StackViewController::ControllerView::isHeaderDisplayed(int i) const {
+  return maskBit(m_numberOfStacks - 1 - i);
 }
 
 void StackViewController::ControllerView::layoutSubviews(bool force) {
@@ -106,7 +106,7 @@ bool StackViewController::ControllerView::borderShouldOverlapContent() const {
 int StackViewController::ControllerView::numberOfDisplayedHeaders() const {
   unsigned int count = 0;
   for (int i=0; i<m_numberOfStacks; i++) {
-    count += (m_displayMask >> i) & 1U;
+    count += isHeaderDisplayed(i);
   }
   return count;
 }
@@ -122,13 +122,14 @@ void StackViewController::ControllerView::setMaskBit(int i, bool b) {
 
 bool StackViewController::ControllerView::maskBit(int i) const {
   assert(i >= 0 && i < kMaxNumberOfStacks);
-  return m_displayMask & ~(1 << i);
+  return (m_displayMask >> i) & 1U;
 }
 
 int StackViewController::ControllerView::displayedIndex(int i) {
+  assert(i < numberOfDisplayedHeaders());
   int index = 0;
-  for (; i>0; i--) {
-    index += isHeaderDisplayed(i);
+  while (index < i) {
+    index += isHeaderDisplayed(index);
   }
   return index;
 }

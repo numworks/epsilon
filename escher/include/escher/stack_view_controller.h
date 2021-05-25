@@ -5,6 +5,7 @@
 #include <escher/stack_view.h>
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
+#include <stdint.h>
 
 namespace Escher {
 
@@ -61,7 +62,7 @@ private:
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(Frame frame);
     void popStack();
-    bool isHeaderDisplayed(int i);
+    bool isHeaderDisplayed(int i) const;
   protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -82,6 +83,8 @@ private:
     SolidColorView m_borderView;
     View * m_contentView;
     int8_t m_numberOfStacks;
+    /* Represents the stacks to display, _starting from the end_.
+     * m_displayMask = 0b11111011   ->  shoudln't display m_stackViews[2]. */
     uint8_t m_displayMask;
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;

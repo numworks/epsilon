@@ -14,6 +14,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   global_context.cpp \
   interactive_curve_view_range.cpp \
   interactive_curve_view_range_delegate.cpp \
+  interval.cpp \
   labeled_curve_view.cpp \
   memoized_curve_view_range.cpp \
   range_1D.cpp \
@@ -114,5 +115,6 @@ app_shared_test_src += $(addprefix apps/shared/,\
 )
 
 tests_src += $(addprefix apps/shared/test/,\
-  function_alignement.cpp\
+  function_alignement.cpp \
+  interval.cpp \
 )

@@ -7,11 +7,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-
-int convertDoubleToText(double t, char * buffer, int bufferSize) {
-  return PoincareHelpers::ConvertFloatToText<double>(t, buffer, bufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
-}
-
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
@@ -21,7 +16,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  numberOfChar = convertDoubleToText(cursor->t(), buffer, k_textBufferSize);
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(cursor->t(), buffer, k_textBufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
   bannerView()->abscissaValue()->setText(buffer);
@@ -42,14 +37,8 @@ double FunctionBannerDelegate::getValueDisplayedOnBanner(double t, Poincare::Con
     // Round to 0 to avoid rounding to unnecessary low non-zero value.
     return 0.0;
   }
-  // Convert float to text
-  char buffer[k_textBufferSize];
-  int numberOfChar = convertDoubleToText(t, buffer, k_textBufferSize);
-  assert(numberOfChar <= k_textBufferSize);
-  // Silence compiler warnings
-  (void) numberOfChar;
-  // Extract displayed value
-  double displayedValue = PoincareHelpers::ApproximateToScalar<double>(buffer, context);
+  // Round to displayed value
+  double displayedValue = PoincareHelpers::GetDisplayedFloat<double>(t, Preferences::sharedPreferences()->numberOfSignificantDigits(), context);
   // Return displayed value if difference from t is under deltaThreshold
   return std::fabs(displayedValue-t) < deltaThreshold ? displayedValue : t;
 }

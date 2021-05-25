@@ -87,6 +87,8 @@ private:
 
 class CodePointLayout final : public Layout {
 public:
+  static void StripDisplayTypeFromCodePoints(Layout l);
+
   CodePointLayout(const CodePointLayoutNode * n) : Layout(n) {}
   static CodePointLayout Builder(CodePoint c, const KDFont * font = KDFont::LargeFont);
   const KDFont * font() const { return const_cast<CodePointLayout *>(this)->node()->font(); }

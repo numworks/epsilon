@@ -166,6 +166,17 @@ bool CodePointLayoutNode::thousandsSeparator() {
   return numberOfFollowingDigits % 3 == 0 && numberOfFollowingDigits > 0;
 }
 
+void CodePointLayout::StripDisplayTypeFromCodePoints(Layout l) {
+  if (l.type() == LayoutNode::Type::CodePointLayout) {
+    static_cast<CodePointLayoutNode *>(l.node())->setDisplayType(CodePointLayoutNode::DisplayType::None);
+  } else {
+    int n = l.numberOfChildren();
+    for (int i = 0; i < n; i++) {
+      StripDisplayTypeFromCodePoints(l.childAtIndex(i));
+    }
+  }
+}
+
 CodePointLayout CodePointLayout::Builder(CodePoint c, const KDFont * font) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CodePointLayoutNode));
   CodePointLayoutNode * node = new (bufferNode) CodePointLayoutNode(c, font);

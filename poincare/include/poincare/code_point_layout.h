@@ -53,9 +53,9 @@ public:
 
   enum class DisplayType : uint8_t {
     None,
-    /* Add a thin margin between groups of three digits, except if one digit
-     * would be alone. */
-    Integer,
+    /* Add a thin margin to the right of the code point. Used to separate
+     * groups of three digits. */
+    Thousand,
     /* Add a thick margin before the code point, to separate two factors. */
     Implicit,
     /* Add a thick margin on each side of the code point. */
@@ -78,7 +78,6 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool isMultiplicationCodePoint() const;
   bool protectedIsIdenticalTo(Layout l) override;
-  bool thousandsSeparator();
 
   CodePoint m_codePoint;
   DisplayType m_displayType;
@@ -88,6 +87,7 @@ private:
 class CodePointLayout final : public Layout {
 public:
   static void StripDisplayTypeFromCodePoints(Layout l);
+  static void DistributeThousandDisplayType(Layout l, int start, int stop);
 
   CodePointLayout(const CodePointLayoutNode * n) : Layout(n) {}
   static CodePointLayout Builder(CodePoint c, const KDFont * font = KDFont::LargeFont);

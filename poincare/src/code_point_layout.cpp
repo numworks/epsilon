@@ -102,7 +102,7 @@ KDSize CodePointLayoutNode::computeSize() {
     totalHorizontalMargin += Escher::Metric::OperatorHorizontalMargin;
   } else if (m_displayType == DisplayType::Operator) {
     totalHorizontalMargin += 2 * Escher::Metric::OperatorHorizontalMargin;
-  } else if (thousandsSeparator()) {
+  } else if (m_displayType == DisplayType::Thousand) {
     totalHorizontalMargin += Escher::Metric::ThousandsSeparatorWidth;
   }
   KDSize glyph = m_font->glyphSize();
@@ -135,37 +135,6 @@ bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
   return codePoint() == cpl.codePoint() && font() == cpl.font();
 }
 
-bool CodePointLayoutNode::thousandsSeparator() {
-  LayoutNode * p = parent();
-  if (!p || m_displayType != DisplayType::Integer) {
-    return false;
-  }
-
-  int selfIndex = indexInParent();
-  if (selfIndex == 0) {
-    return false;
-  }
-  LayoutNode * precedingNode = p->childAtIndex(selfIndex - 1);
-  if (precedingNode->type() != LayoutNode::Type::CodePointLayout
-      || static_cast<CodePointLayoutNode *>(precedingNode)->displayType() != DisplayType::Integer)
-  {
-    return false;
-  }
-
-  int firstNonDigit = selfIndex + 1;
-  int numberOfSiblings = p->numberOfChildren();
-  while (firstNonDigit < numberOfSiblings)
-  {
-    LayoutNode * s = p->childAtIndex(firstNonDigit);
-    if (s->type() != LayoutNode::Type::CodePointLayout || static_cast<CodePointLayoutNode *>(s)->displayType() != DisplayType::Integer) {
-      break;
-    }
-    firstNonDigit++;
-  }
-  int numberOfFollowingDigits = firstNonDigit - selfIndex - 1;
-  return numberOfFollowingDigits % 3 == 0 && numberOfFollowingDigits > 0;
-}
-
 void CodePointLayout::StripDisplayTypeFromCodePoints(Layout l) {
   if (l.type() == LayoutNode::Type::CodePointLayout) {
     static_cast<CodePointLayoutNode *>(l.node())->setDisplayType(CodePointLayoutNode::DisplayType::None);
@@ -174,6 +143,19 @@ void CodePointLayout::StripDisplayTypeFromCodePoints(Layout l) {
     for (int i = 0; i < n; i++) {
       StripDisplayTypeFromCodePoints(l.childAtIndex(i));
     }
+  }
+}
+
+void CodePointLayout::DistributeThousandDisplayType(Layout l, int start, int stop) {
+  if (l.type() != LayoutNode::Type::HorizontalLayout
+   || stop - start < 5) {
+    /* Do not add a separator two a number with less than five digits.
+     * i.e. : 12 345 but 1234 */
+    return;
+  }
+  for (int i = stop - 4; i >= start; i -= 3) {
+    assert(l.childAtIndex(i).type() == LayoutNode::Type::CodePointLayout);
+    static_cast<CodePointLayoutNode *>(l.childAtIndex(i).node())->setDisplayType(CodePointLayoutNode::DisplayType::Thousand);
   }
 }
 

@@ -124,14 +124,17 @@ Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   Layout res = LayoutHelper::String(buffer, numberOfChars);
-  for (int i = m_negative; i < res.numberOfChildren(); i++) {
-    assert(res.childAtIndex(i).type() == LayoutNode::Type::CodePointLayout);
-    CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(res.childAtIndex(i).node());
+  int dotIndex = m_negative;
+  int n = res.numberOfChildren();
+  while(dotIndex < n) {
+    assert(res.childAtIndex(dotIndex).type() == LayoutNode::Type::CodePointLayout);
+    CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(res.childAtIndex(dotIndex).node());
     if (!codePointNode->codePoint().isDecimalDigit()) {
       break;
     }
-    codePointNode->setDisplayType(CodePointLayoutNode::DisplayType::Integer);
+    dotIndex++;
   }
+  CodePointLayout::DistributeThousandDisplayType(res, m_negative, dotIndex);
   return res;
 }
 

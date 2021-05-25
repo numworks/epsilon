@@ -308,10 +308,7 @@ Layout Integer::createLayout(Base base) const {
   }
   Layout res = LayoutHelper::String(buffer, numberOfChars);
   if (base == Base::Decimal) {
-    for (int i = 0; i < res.numberOfChildren(); i++) {
-      assert(res.childAtIndex(i).type() == LayoutNode::Type::CodePointLayout);
-      static_cast<CodePointLayoutNode *>(res.childAtIndex(i).node())->setDisplayType(CodePointLayoutNode::DisplayType::Integer);
-    }
+    CodePointLayout::DistributeThousandDisplayType(res, 0, res.numberOfChildren());
   }
   return res;
 }

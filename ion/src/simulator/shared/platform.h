@@ -15,6 +15,7 @@ const char * filePathForReading(const char * extension);
 const char * filePathForWriting(const char * extension);
 void saveImage(const KDColor * pixels, int width, int height, const char * path);
 const char * filePathInTempDir(const char * filename);
+const char * cacheWindowPositionFilePath();
 #endif
 
 }

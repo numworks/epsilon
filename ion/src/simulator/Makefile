@@ -47,6 +47,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   state_file.cpp \
   screenshot.cpp \
 	window_pos_cached.cpp \
+	platform_files.cpp \
 )
 SFLAGS += -DION_SIMULATOR_FILES=1
 else

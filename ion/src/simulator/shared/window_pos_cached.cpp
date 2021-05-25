@@ -8,14 +8,14 @@ namespace Ion {
 namespace Simulator {
 namespace Window {
 
-bool readCachedWindowPosition(WindowPos * windowPos) {
+bool readCachedWindowPosition(int * x, int * y) {
   // Read previous location if exists
   const char * path = Platform::cacheWindowPositionFilePath();
   FILE * pos = fopen(path, "r");
   if (pos == nullptr) {
     return false;
   }
-  int read = fscanf(pos, "%d %d", &windowPos->x, &windowPos->y);
+  int read = fscanf(pos, "%d %d", x, y);
   fclose(pos);
   return read == 2;
 }
@@ -34,13 +34,14 @@ bool cacheWindowPosition(SDL_Window * window) {
   return true;
 }
 
-WindowPos initialWindowPosition() {
-  WindowPos pos;
-  if (!readCachedWindowPosition(&pos)) {
-    pos.x = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
-    pos.y = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
+
+void didInit(SDL_Window * window) {
+  int x, y;
+  if (!readCachedWindowPosition(&x, &y)) {
+    x = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
+    y = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
   }
-  return pos;
+  SDL_SetWindowPosition(window, x, y);
 }
 
 void willShutdown(SDL_Window * window) {

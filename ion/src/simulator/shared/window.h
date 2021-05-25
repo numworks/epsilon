@@ -7,10 +7,6 @@ namespace Ion {
 namespace Simulator {
 namespace Window {
 
-struct WindowPos { int x, y; };
-
-WindowPos initialWindowPosition();
-
 void init();
 void shutdown();
 
@@ -20,8 +16,10 @@ void setNeedsRefresh();
 void refresh();
 void relayout();
 
+// Callbacks
 void didRefresh();
 
+void didInit(SDL_Window * window);
 void willShutdown(SDL_Window * window);
 
 }

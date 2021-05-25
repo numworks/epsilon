@@ -1,6 +1,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <escher/metric.h>
 
 namespace Poincare {
 
@@ -96,7 +97,16 @@ bool CodePointLayoutNode::canBeOmittedMultiplicationRightFactor() const {
 
 // Sizing and positioning
 KDSize CodePointLayoutNode::computeSize() {
-  return m_font->glyphSize();
+  KDCoordinate totalHorizontalMargin = 0;
+  if (m_displayType == DisplayType::Implicit) {
+    totalHorizontalMargin += Escher::Metric::OperatorHorizontalMargin;
+  } else if (m_displayType == DisplayType::Operator) {
+    totalHorizontalMargin += 2 * Escher::Metric::OperatorHorizontalMargin;
+  } else if (thousandsSeparator()) {
+    totalHorizontalMargin += Escher::Metric::ThousandsSeparatorWidth;
+  }
+  KDSize glyph = m_font->glyphSize();
+  return KDSize(glyph.width() + totalHorizontalMargin, glyph.height());
 }
 
 KDCoordinate CodePointLayoutNode::computeBaseline() {
@@ -107,6 +117,9 @@ void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionC
   constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
   char buffer[bufferSize];
   SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
+  if (m_displayType == DisplayType::Operator || m_displayType == DisplayType::Implicit) {
+    p = p.translatedBy(KDPoint(Escher::Metric::OperatorHorizontalMargin, 0));
+  }
   ctx->drawString(buffer, p, m_font, expressionColor, backgroundColor);
 }
 
@@ -120,6 +133,37 @@ bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
   assert(l.type() == Type::CodePointLayout);
   CodePointLayout & cpl = static_cast<CodePointLayout &>(l);
   return codePoint() == cpl.codePoint() && font() == cpl.font();
+}
+
+bool CodePointLayoutNode::thousandsSeparator() {
+  LayoutNode * p = parent();
+  if (!p || m_displayType != DisplayType::Integer) {
+    return false;
+  }
+
+  int selfIndex = indexInParent();
+  if (selfIndex == 0) {
+    return false;
+  }
+  LayoutNode * precedingNode = p->childAtIndex(selfIndex - 1);
+  if (precedingNode->type() != LayoutNode::Type::CodePointLayout
+      || static_cast<CodePointLayoutNode *>(precedingNode)->displayType() != DisplayType::Integer)
+  {
+    return false;
+  }
+
+  int firstNonDigit = selfIndex + 1;
+  int numberOfSiblings = p->numberOfChildren();
+  while (firstNonDigit < numberOfSiblings)
+  {
+    LayoutNode * s = p->childAtIndex(firstNonDigit);
+    if (s->type() != LayoutNode::Type::CodePointLayout || static_cast<CodePointLayoutNode *>(s)->displayType() != DisplayType::Integer) {
+      break;
+    }
+    firstNonDigit++;
+  }
+  int numberOfFollowingDigits = firstNonDigit - selfIndex - 1;
+  return numberOfFollowingDigits % 3 == 0 && numberOfFollowingDigits > 0;
 }
 
 CodePointLayout CodePointLayout::Builder(CodePoint c, const KDFont * font) {

@@ -33,7 +33,7 @@ bool readCachedWindowPosition(int * x, int * y) {
   }
   int read = fscanf(pos, "%d %d", x, y);
   fclose(pos);
-  return read > 0;
+  return read == 2;
 }
 
 bool cacheWindowPosition() {

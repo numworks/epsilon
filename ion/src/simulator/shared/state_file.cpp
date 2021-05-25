@@ -12,24 +12,18 @@ static constexpr const char * sHeader = "NWSF";
 static constexpr int sHeaderLength = 4;
 static constexpr int sVersionLength = 8;
 static constexpr const char * sWildcardVersion = "**.**.**";
-static constexpr uint8_t sLatestFormatVersion = 0xFF - 0;
-static constexpr int sLanguageLength = 2;
+static constexpr int sFormatVersionLength = 1;
+static constexpr uint8_t sLatestFormatVersion = 1;
+static constexpr int sLanguageLength = Ion::Events::Journal::k_languageSize-1;
 static constexpr const char * sWildcardLanguage = "**";
 
 /* File format:
  * Format version 0xFF (latest) :
  *   "NWSF" : Header
  * + "XXXXXXXX" : Software version
- * + "0xFF" : State file format version
+ * + "0x01" : State file format version
  * + "XX" : Language code (en, fr, nl, pt, it, de, or es)
  * + EVENTS...
- *
- * To minimize chances of mixing up events and state file format version when
- * parsing a state file, format version value should be further beyond any
- * currently defined keyboard event id (last Event::Special event id, which is
- * currently 0xDE). First format version is 0xFF and the following ones will go
- * decreasing from there. That way, there is room for multiple future new events
- * as well as new format versions.
  */
 
 static inline bool load(FILE * f) {
@@ -58,12 +52,14 @@ static inline bool load(FILE * f) {
 
   // Format version
   int c = 0;
+  static_assert(sFormatVersionLength == 1, "sFormatVersionLength is incorrect");
   if ((c = getc(f)) == EOF || c != sLatestFormatVersion) {
     // Only the latest version is handled for now.
     return false;
   }
 
   // Language
+  static_assert(sVersionLength + 1 > sLanguageLength, "Buffer isn't long enough for language");
   buffer[sLanguageLength] = 0;
   if (fread(buffer, sLanguageLength, 1, f) != 1) {
     return false;
@@ -108,7 +104,7 @@ static inline bool save(FILE * f) {
   if (fwrite(softwareVersion(), sVersionLength, 1, f) != 1) {
     return false;
   }
-  if (fwrite(&sLatestFormatVersion, 1, 1, f) != 1) {
+  if (fwrite(&sLatestFormatVersion, sFormatVersionLength, 1, f) != 1) {
     return false;
   }
   Ion::Events::Journal * journal = Journal::logJournal();

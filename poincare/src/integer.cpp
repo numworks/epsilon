@@ -302,11 +302,18 @@ Layout Integer::createLayout(Base base) const {
   char buffer[k_maxNumberOfDigitsBase10];
   int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10, base);
   assert(numberOfChars >= 1);
-  if ((int)UTF8Decoder::CharSizeOfCodePoint(buffer[0]) == numberOfChars) {
+  if (static_cast<int>(UTF8Decoder::CharSizeOfCodePoint(buffer[0])) == numberOfChars) {
     UTF8Decoder decoder = UTF8Decoder(buffer);
     return CodePointLayout::Builder(decoder.nextCodePoint());
   }
-  return LayoutHelper::String(buffer, numberOfChars);
+  Layout res = LayoutHelper::String(buffer, numberOfChars);
+  if (base == Base::Decimal) {
+    for (int i = 0; i < res.numberOfChildren(); i++) {
+      assert(res.childAtIndex(i).type() == LayoutNode::Type::CodePointLayout);
+      static_cast<CodePointLayoutNode *>(res.childAtIndex(i).node())->setDisplayType(CodePointLayoutNode::DisplayType::Integer);
+    }
+  }
+  return res;
 }
 
 // Approximation

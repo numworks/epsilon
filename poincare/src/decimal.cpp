@@ -212,7 +212,9 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   int numberOfRequiredDigits = mantissaLength;
   if (mode == Preferences::PrintFloatMode::Decimal && !forceScientificMode) {
     if (exponent < 0) {
-      numberOfRequiredDigits = mantissaLength-exponent;
+      /* Zeroes that are added before mantissa are not "additional" digits, in
+       * the sense that they do not belie the true precision. */
+      numberOfRequiredDigits = mantissaLength;
     } else {
       numberOfRequiredDigits = std::max(mantissaLength, exponent);
     }

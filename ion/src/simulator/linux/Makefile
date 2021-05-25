@@ -28,6 +28,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   collect_registers.cpp \
   haptics.cpp \
   journal.cpp \
+  platform_files.cpp \
 )
 
 ifeq ($(EPSILON_TELEMETRY),1)

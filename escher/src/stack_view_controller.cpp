@@ -12,17 +12,16 @@ StackViewController::ControllerView::ControllerView()
       m_borderView(Palette::GrayBright),
       m_contentView(nullptr),
       m_numberOfStacks(0),
-      m_displayStackHeaders(true),
-      m_displayOnlyLastHeader(false),
+      m_displayMask(~0),
       m_headersOverlapHeaders(true),
       m_headersOverlapContent(false) {}
 
 void StackViewController::ControllerView::shouldDisplayStackHeaders(bool shouldDisplay) {
-  m_displayStackHeaders = shouldDisplay;
+  m_displayMask = shouldDisplay ? ~0 : 0;
 }
 
 void StackViewController::ControllerView::shouldDisplayonlyLastHeader(bool shouldDisplay) {
-  m_displayOnlyLastHeader = shouldDisplay;
+  setMaskBit(0, !shouldDisplay);
 }
 
 void StackViewController::ControllerView::setContentView(View * view) {
@@ -51,45 +50,35 @@ void StackViewController::ControllerView::popStack() {
   m_numberOfStacks--;
 }
 
+bool StackViewController::ControllerView::isHeaderDisplayed(int i) {
+  return maskBit(i);
+}
+
 void StackViewController::ControllerView::layoutSubviews(bool force) {
+  // Compute view frames
   KDCoordinate width = m_frame.width();
-  if (m_displayStackHeaders) {
-    int startHeaderIndex = m_displayOnlyLastHeader ? m_numberOfStacks - 1 : 0;
-    for (int i = startHeaderIndex; i < m_numberOfStacks; i++) {
+  int heightOffset = 0;
+  int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
+  for (int i = 0; i < m_numberOfStacks; i++) {
+    if (isHeaderDisplayed(i)) {
       // Account for separator thickness in position only if there is no overlap
-      m_stackViews[i].setFrame(
-          KDRect(0,
-                 (Metric::StackTitleHeight +
-                  (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness)) *
-                     (i - startHeaderIndex),
-                 width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
-          force);
+      m_stackViews[i].setFrame(KDRect(0,heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
+                               force);
+      heightOffset += heightDiff;
     }
   }
   if (m_contentView) {
-    KDCoordinate stacksTotalHeight = 0;
-    if (m_displayStackHeaders && m_numberOfStacks > 0) {
-      /* Regarding header to header overlap, represented horizontally :
-       *  - Overlap :     | stack 1 | stack 2 | stack 3 |   [Content]
-       *  - No overlap :  | stack 1 || stack 2 || stack 3 |   [Content] */
-      const int numberOfSeparators =
-          m_headersOverlapHeaders ? m_numberOfStacks + 1 : 2 * m_numberOfStacks;
-      const KDCoordinate stackTitleHeightWithoutSeparators =
-          Metric::StackTitleHeight - Metric::CellSeparatorThickness;
-      int numberOfDisplayedStacks = m_displayOnlyLastHeader ? 1 : m_numberOfStacks;
-      stacksTotalHeight = numberOfDisplayedStacks * stackTitleHeightWithoutSeparators +
-                          numberOfSeparators * Metric::CellSeparatorThickness;
-      if (borderShouldOverlapContent()) {
-        // Shift content position up by the separator thickness
-        stacksTotalHeight -= Metric::CellSeparatorThickness;
-        // Layout the common border (which will override content)
-        m_borderView.setFrame(KDRect(0, stacksTotalHeight, width, Metric::CellSeparatorThickness),
-                              force);
+    if (borderShouldOverlapContent()) {
+      if (!m_headersOverlapHeaders) {
+        heightOffset -= Metric::CellSeparatorThickness;
       }
+      // Layout the common border (which will override content)
+      m_borderView.setFrame(KDRect(0, heightOffset, width, Metric::CellSeparatorThickness),
+                            force);
+
     }
     // Layout content view
-    KDRect contentViewFrame =
-        KDRect(0, stacksTotalHeight, width, m_frame.height() - stacksTotalHeight);
+    KDRect contentViewFrame = KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
     m_contentView->setFrame(contentViewFrame, force);
   }
 }
@@ -110,34 +99,60 @@ bool StackViewController::ControllerView::borderShouldOverlapContent() const {
    * has a different border color, and should not overlap with anything (second
    * header as well as content). In that case, we ensure that this additional
    * border will not override the first header stack's bottom border. */
-  return m_headersOverlapContent && m_displayStackHeaders && m_numberOfStacks > 0 &&
+  return m_headersOverlapContent && numberOfDisplayedHeaders() > 0 &&
          m_contentView && (m_headersOverlapHeaders || m_numberOfStacks > 1);
 }
 
+int StackViewController::ControllerView::numberOfDisplayedHeaders() const {
+  unsigned int count = 0;
+  for (int i=0; i<m_numberOfStacks; i++) {
+    count += (m_displayMask >> i) & 1U;
+  }
+  return count;
+}
+
+void StackViewController::ControllerView::setMaskBit(int i, bool b) {
+  assert(i >= 0 && i < kMaxNumberOfStacks);
+  if (b) {
+    m_displayMask |= (1U << i);
+  } else {
+    m_displayMask &= ~(1U << i);
+  }
+}
+
+bool StackViewController::ControllerView::maskBit(int i) const {
+  assert(i >= 0 && i < kMaxNumberOfStacks);
+  return m_displayMask & ~(1 << i);
+}
+
+int StackViewController::ControllerView::displayedIndex(int i) {
+  int index = 0;
+  for (; i>0; i--) {
+    index += isHeaderDisplayed(i);
+  }
+  return index;
+}
+
 int StackViewController::ControllerView::numberOfSubviews() const {
-  int numberOfStacks = m_displayStackHeaders ? (m_displayOnlyLastHeader ? 1 : m_numberOfStacks) : 0;
-  return numberOfStacks + (m_contentView == nullptr ? 0 : 1) +
+  return numberOfDisplayedHeaders() + (m_contentView == nullptr ? 0 : 1) +
          (borderShouldOverlapContent() ? 1 : 0);
 }
 
 View * StackViewController::ControllerView::subviewAtIndex(int index) {
-  if (!m_displayStackHeaders) {
+  if (m_displayMask == 0) {
     assert(index == 0);
     return m_contentView;
   }
-  if (m_displayOnlyLastHeader) {
-    // Move index position to last
-    index += m_numberOfStacks - 1;
-  }
-  if (index < m_numberOfStacks) {
+  int numberOfHeaders = numberOfDisplayedHeaders();
+  if (index < numberOfHeaders) {
     assert(index >= 0);
-    return &m_stackViews[index];
+    return &m_stackViews[displayedIndex(index)];
   }
-  if (index == m_numberOfStacks) {
+  if (index == numberOfHeaders) {
     return m_contentView;
   } else {
     // Border view must be last so that it is layouted on top of content subview
-    assert(index == m_numberOfStacks + 1);
+    assert(index == numberOfHeaders + 1);
     return &m_borderView;
   }
 }

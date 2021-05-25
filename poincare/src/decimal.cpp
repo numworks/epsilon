@@ -1,4 +1,5 @@
 #include <poincare/decimal.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/infinity.h>
@@ -122,7 +123,16 @@ Expression DecimalNode::shallowBeautify(ReductionContext * reductionContext) {
 Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
-  return LayoutHelper::String(buffer, numberOfChars);
+  Layout res = LayoutHelper::String(buffer, numberOfChars);
+  for (int i = m_negative; i < res.numberOfChildren(); i++) {
+    assert(res.childAtIndex(i).type() == LayoutNode::Type::CodePointLayout);
+    CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(res.childAtIndex(i).node());
+    if (!codePointNode->codePoint().isDecimalDigit()) {
+      break;
+    }
+    codePointNode->setDisplayType(CodePointLayoutNode::DisplayType::Integer);
+  }
+  return res;
 }
 
 int DecimalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -39,11 +39,16 @@ include ion/src/simulator/external/Makefile
 
 SFLAGS += -DION_EVENTS_JOURNAL
 
+# This flags the ability to store files on the local system
+# These include state-files and cached SDL window postion
 ifeq ($(ION_SIMULATOR_FILES),1)
 ion_src += $(addprefix ion/src/simulator/shared/, \
   actions.cpp \
   state_file.cpp \
   screenshot.cpp \
+	window_pos_cached.cpp \
 )
 SFLAGS += -DION_SIMULATOR_FILES=1
+else
+ion_src += ion/src/simulator/shared/dummy/window_pos.cpp
 endif

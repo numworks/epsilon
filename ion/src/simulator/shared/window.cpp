@@ -24,38 +24,6 @@ bool isHeadless() {
   return sWindow == nullptr;
 }
 
-bool readCachedWindowPosition(int * x, int * y) {
-  // Read previous location if exists
-  const char * path = Platform::filePathInTempDir("numworks.pos");
-  FILE * pos = fopen(path, "r");
-  if (pos == nullptr) {
-    return false;
-  }
-  int read = fscanf(pos, "%d %d", x, y);
-  fclose(pos);
-  return read == 2;
-}
-
-bool cacheWindowPosition() {
-  const char * path = Platform::filePathInTempDir("numworks.pos");
-  FILE * pos = fopen(path, "w");
-  if (pos == nullptr) {
-    return false;
-  }
-  int x, y;
-  SDL_GetWindowPosition(sWindow, &x, &y);
-  fprintf(pos, "%d %d", x, y);
-
-  fclose(pos);
-  return true;
-}
-
-void initialWindowPosition(int * x, int * y) {
-  if (!readCachedWindowPosition(x, y)) {
-    *x = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
-    *y = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
-  }
-}
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -63,15 +31,14 @@ void init() {
     return;
   }
 
-  int x, y;
-  initialWindowPosition(&x, &y);
+  WindowPos initialPos = initialWindowPosition();
   sWindow = SDL_CreateWindow(
 #if EPSILON_SDL_SCREEN_ONLY
       nullptr,
 #else
       "Epsilon",
 #endif
-      x, y,
+      initialPos.x, initialPos.y,
 #if EPSILON_SDL_SCREEN_ONLY
       // When rendering the screen only, make a non-resizeable window whose size
       // matches the screen's
@@ -155,7 +122,7 @@ void refresh() {
 }
 
 void shutdown() {
-  cacheWindowPosition();
+  willShutdown(sWindow);
   if (isHeadless()) {
     return;
   }

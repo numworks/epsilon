@@ -78,6 +78,8 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool isMultiplicationCodePoint() const;
   bool protectedIsIdenticalTo(Layout l) override;
+  bool thousandsSeparator();
+
   CodePoint m_codePoint;
   DisplayType m_displayType;
   const KDFont * m_font;

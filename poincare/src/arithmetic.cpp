@@ -232,7 +232,10 @@ int Arithmetic::PositiveDivisors(const Integer & i) {
   s_lock = true;
 
   int numberOfDivisors = 0;
-  float upper = std::ceil(std::fabs(i.approximate<float>()));
+  int upper = i.isExtractable() ? i.extractedInt() : INT_MAX;
+  if (upper < 0) {
+    upper = -upper;
+  }
   for (int k = 1; k <= upper; k++) {
     Integer kInteger(k);
     if (Integer::Division(i, kInteger).remainder.isZero()) {

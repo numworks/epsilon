@@ -61,6 +61,7 @@ private:
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(Frame frame);
     void popStack();
+    bool isHeaderDisplayed(int i);
   protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -71,12 +72,17 @@ private:
     void layoutSubviews(bool force = false) override;
     bool borderShouldOverlapContent() const;
 
+    int numberOfDisplayedHeaders() const;
+    void setMaskBit(int i, bool b);
+    bool maskBit(int i) const;
+    // Returns the index in m_stackViews for a given display index
+    int displayedIndex(int i);
+
     StackView m_stackViews[kMaxNumberOfStacks];
     SolidColorView m_borderView;
     View * m_contentView;
     int8_t m_numberOfStacks;
-    bool m_displayStackHeaders;
-    bool m_displayOnlyLastHeader;
+    uint8_t m_displayMask;
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;
   };

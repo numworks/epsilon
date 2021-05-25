@@ -16,13 +16,30 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
   const int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
   for (int i = 0; i < numberOfChildren; i++) {
-    if (i > 0 && operatorLength > 0) {
-      result.addOrMergeChildAtIndex(String(operatorName, operatorLength), result.numberOfChildren(), true);
+    Layout childLayout = expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits);
+
+    if (i > 0) {
+      /* Handle the operator */
+      if (operatorLength > 0) {
+        Layout operatorLayout = String(operatorName, operatorLength);
+        assert(operatorLayout.type() == LayoutNode::Type::CodePointLayout);
+        CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(operatorLayout.node());
+        codePointNode->setDisplayType(CodePointLayoutNode::DisplayType::Operator);
+        result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren(), true);
+      } else {
+        CodePointLayoutNode * implicitFactorNode = nullptr;
+        if (childLayout.type() == LayoutNode::Type::CodePointLayout) {
+          implicitFactorNode = static_cast<CodePointLayoutNode *>(childLayout.node());
+        } else if (childLayout.type() == LayoutNode::Type::HorizontalLayout && childLayout.childAtIndex(0).type() == LayoutNode::Type::CodePointLayout) {
+          implicitFactorNode = static_cast<CodePointLayoutNode *>(childLayout.childAtIndex(0).node());
+        }
+        if (implicitFactorNode) {
+          implicitFactorNode->setDisplayType(CodePointLayoutNode::DisplayType::Implicit);
+        }
+      }
     }
-    result.addOrMergeChildAtIndex(
-        expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits),
-        result.numberOfChildren(),
-        true);
+
+    result.addOrMergeChildAtIndex(childLayout, result.numberOfChildren(), true);
   }
   return std::move(result);
 }

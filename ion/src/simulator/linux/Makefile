@@ -22,13 +22,13 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/haptics_enabled.cpp \
   dummy/keyboard_callback.cpp \
   dummy/window_callback.cpp \
+  unix/platform_files.cpp \
   circuit_breaker.cpp \
   clipboard_helper.cpp \
   collect_registers_x86_64.s \
   collect_registers.cpp \
   haptics.cpp \
   journal.cpp \
-  platform_files.cpp \
 )
 
 ifeq ($(EPSILON_TELEMETRY),1)

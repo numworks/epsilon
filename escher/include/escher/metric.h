@@ -42,12 +42,14 @@ public:
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisHeight = 18;
+  constexpr static KDCoordinate OperatorHorizontalMargin = 4;
   constexpr static KDCoordinate ScrollStep = 10;
   constexpr static KDCoordinate SmallCellMargin = 2;
   constexpr static KDCoordinate StackTitleHeight = 20;
   constexpr static KDCoordinate StoreRowHeight = 50;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate TableSeparatorThickness = 5;
+  constexpr static KDCoordinate ThousandsSeparatorWidth = 2;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
   constexpr static KDCoordinate TitleBarHeight = 18;
 };

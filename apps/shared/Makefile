@@ -17,6 +17,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   interval.cpp \
   labeled_curve_view.cpp \
   memoized_curve_view_range.cpp \
+  poincare_helpers.cpp \
   range_1D.cpp \
   sequence.cpp\
   sequence_context.cpp\
@@ -63,6 +64,7 @@ app_shared_src = $(addprefix apps/shared/,\
   message_view.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
+  poincare_helpers.cpp \
   post_and_hardware_tests.cpp \
   prefaced_table_view.cpp \
   range_parameter_controller.cpp \

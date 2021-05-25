@@ -11,12 +11,10 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/haptics_enabled.cpp \
   dummy/keyboard_callback.cpp \
   dummy/window_callback.cpp \
-  actions.cpp \
   circuit_breaker.cpp \
   clipboard_helper.cpp \
   haptics.cpp \
   journal.cpp \
-  state_file.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp

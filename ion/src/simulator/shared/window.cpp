@@ -31,14 +31,13 @@ void init() {
     return;
   }
 
-  WindowPos initialPos = initialWindowPosition();
   sWindow = SDL_CreateWindow(
 #if EPSILON_SDL_SCREEN_ONLY
       nullptr,
 #else
       "Epsilon",
 #endif
-      initialPos.x, initialPos.y,
+      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 #if EPSILON_SDL_SCREEN_ONLY
       // When rendering the screen only, make a non-resizeable window whose size
       // matches the screen's
@@ -69,6 +68,8 @@ void init() {
 #if !EPSILON_SDL_SCREEN_ONLY
   Layout::init(sRenderer);
 #endif
+
+  didInit(sWindow);
 
   relayout();
 }

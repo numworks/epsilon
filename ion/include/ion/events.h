@@ -62,8 +62,8 @@ public:
   virtual bool isEmpty() = 0;
   const char * startingLanguage() const { return m_startingLanguage; }
   void setStartingLanguage(const char * language) { strlcpy(m_startingLanguage, language, k_languageSize); }
-private:
   static constexpr int k_languageSize = 3;
+private:
   char m_startingLanguage[k_languageSize] = {0};
 };
 

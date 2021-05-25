@@ -78,10 +78,16 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
    * a simple solution, based on some particularly common forms of cubic
    * equations in school problems. */
   *root1 = Expression();
+  /* If d is null, the polynom can easily be factored by X. We handle it here
+   * (even though in moste case it would be caught by the following case) in
+   * case c is null. */
+  if (d.nullStatus(context) == ExpressionNode::NullStatus::Null || d.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
+    *root1 = Rational::Builder(0);
+  }
   /* Polynoms of the forms "kx^2(cx+d)+cx+d" and "kx(bx^2+d)+bx^2+d" have a
    * simple solution x1 = -d/c. */
   Expression r = Division::Builder(Opposite::Builder(d.clone()), c.clone());
-  if (IsRoot(coefficients, degree, r, reductionContext)) {
+  if (root1->isUninitialized() && IsRoot(coefficients, degree, r, reductionContext)) {
     *root1 = r;
   }
   if (root1->isUninitialized() && a.type() == ExpressionNode::Type::Rational && d.type() == ExpressionNode::Type::Rational) {
@@ -101,7 +107,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     /* We have found a simple solution, we can factor and solve the quadratic
      * equation. */
     Expression beta = Addition::Builder({b, Multiplication::Builder(a.clone(), root1->clone())}).simplify(reductionContext);
-    Expression gamma = Opposite::Builder(Division::Builder(d, root1->clone())).simplify(reductionContext);
+    Expression gamma = root1->nullStatus(context) == ExpressionNode::NullStatus::Null ? c : Opposite::Builder(Division::Builder(d, root1->clone())).simplify(reductionContext);
     Expression delta2;
     QuadraticPolynomialRoots(a, beta, gamma, root2, root3, &delta2, context, Preferences::ComplexFormat::Cartesian, angleUnit);
     assert(!root2->isUninitialized() && !root3->isUninitialized());

@@ -149,7 +149,7 @@ void CodePointLayout::StripDisplayTypeFromCodePoints(Layout l) {
 void CodePointLayout::DistributeThousandDisplayType(Layout l, int start, int stop) {
   if (l.type() != LayoutNode::Type::HorizontalLayout
    || stop - start < 5) {
-    /* Do not add a separator two a number with less than five digits.
+    /* Do not add a separator to a number with less than five digits.
      * i.e. : 12 345 but 1234 */
     return;
   }

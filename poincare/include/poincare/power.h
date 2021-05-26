@@ -104,7 +104,6 @@ private:
   Expression removeRootsFromDenominator(ExpressionNode::ReductionContext reductionContext);
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
-  Expression equivalentExpressionUsingStandardExpression() const;
   static Expression CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext); // Returns e^(i*pi*r)
   static bool TermIsARationalSquareRootOrRational(const Expression& e);
   static const Rational RadicandInExpression(const Expression & e);

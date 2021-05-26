@@ -1423,21 +1423,6 @@ bool Power::isNthRootOfUnity() const {
   return false;
 }
 
-Expression Power::equivalentExpressionUsingStandardExpression() const {
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
-    if (childAtIndex(1).convert<Rational>().isMinusOne()) {
-      return Division::Builder(Rational::Builder(1), childAtIndex(0).clone());
-    }
-    if (childAtIndex(1).convert<Rational>().isHalf()) {
-      return SquareRoot::Builder(childAtIndex(0).clone());
-    }
-    if (childAtIndex(1).convert<Rational>().isMinusHalf()) {
-      return Division::Builder(Rational::Builder(1), SquareRoot::Builder(childAtIndex(0).clone()));
-    }
-  }
-  return Expression();
-}
-
 Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext) {
   // Returns e^(i*pi*r)
   const Constant exp = Constant::Builder(UCodePointScriptSmallE);

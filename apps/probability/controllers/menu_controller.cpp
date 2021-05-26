@@ -68,7 +68,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
       initializeData(subapp);
     }
     App::app()->snapshot()->navigation()->setSubapp(subapp);
-    openPage(view, true);
+    openPage(view);
     return true;
   }
   return false;

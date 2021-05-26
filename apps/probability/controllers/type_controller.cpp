@@ -57,7 +57,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     view = m_hypothesisController;  // TODO toggle with IntervalInputController
     assert(view != nullptr);
     App::app()->snapshot()->data()->setTestType(t);
-    openPage(view, false);
+    openPage(view);
     return true;
   }
   return false;

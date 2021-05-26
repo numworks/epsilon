@@ -73,7 +73,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     App::app()->snapshot()->data()->setTest(test);
     App::app()->snapshot()->data()->setTestType(Data::TestType::ZTest);
     initializeHypothesisParams(test);
-    openPage(view, true);
+    openPage(view);
     return true;
   }
   return false;

@@ -54,22 +54,24 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
   for (int i = 0; i < m_numberOfStacks; i++) {
     if (isHeaderDisplayed(i)) {
       // Account for separator thickness in position only if there is no overlap
-      m_stackViews[i].setFrame(KDRect(0,heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
+      m_stackViews[i].setFrame(KDRect(0, heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
                                force);
       heightOffset += heightDiff;
     }
   }
+  // Border frame
   if (m_contentView) {
-    heightOffset += Metric::CellSeparatorThickness;
+    if (m_headersOverlapHeaders) {
+      heightOffset += Metric::CellSeparatorThickness;  // last separator
+    }
     if (borderShouldOverlapContent()) {
-      if (!m_headersOverlapHeaders) {
-        heightOffset -= Metric::CellSeparatorThickness;
-      }
+      // Shift content position up by the separator thickness
+      heightOffset -= Metric::CellSeparatorThickness;
       // Layout the common border (which will override content)
       m_borderView.setFrame(KDRect(0, heightOffset, width, Metric::CellSeparatorThickness),
                             force);
     }
-    // Layout content view
+    // Content view frame
     KDRect contentViewFrame = KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
     m_contentView->setFrame(contentViewFrame, force);
   }

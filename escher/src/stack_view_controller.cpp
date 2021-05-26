@@ -14,7 +14,9 @@ StackViewController::ControllerView::ControllerView()
       m_numberOfStacks(0),
       m_displayMask(~0),
       m_headersOverlapHeaders(true),
-      m_headersOverlapContent(false) {}
+      m_headersOverlapContent(false) {
+  assert(kMaxNumberOfStacks < 8);  // Would break the bit mask representation
+}
 
 void StackViewController::ControllerView::setContentView(View * view) {
   m_contentView = view;

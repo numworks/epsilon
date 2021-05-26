@@ -9,7 +9,7 @@
 
 namespace Escher {
 
-constexpr uint8_t kMaxNumberOfStacks = 5;
+constexpr uint8_t kMaxNumberOfStacks = 7;
 
 class StackViewController : public ViewController {
 public:

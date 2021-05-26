@@ -69,12 +69,12 @@ void Interval::computeElements() {
     m_numberOfElements = m_parameters.step() > 0 ? 1 + (m_parameters.end() - m_parameters.start())/m_parameters.step() : k_maxNumberOfElements;
     m_numberOfElements = m_numberOfElements > k_maxNumberOfElements || m_numberOfElements < 0 ? k_maxNumberOfElements : m_numberOfElements;
   }
-  /* Even though elements are displayed with 7 significant numbers, we round the
+  /* Even though elements are displayed with 7 significant digits, we round the
    * element to 14 significant digits to prevent unexpected imprecisions due to
    * doubles. For example, with start=-0.2 and step=0.2, 6th element is
    * 1.0000000000000002 although 1.0 was expected. */
   constexpr int precision = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
-  static_assert(precision == 14, "ratioThreshold Value should be updated");
+  static_assert(precision == 14, "ratioThreshold value should be updated");
   // Save some calls to std::pow(10.0, -precision)
   constexpr double ratioThreshold = 10e-14;
   bool checkForElementZero = (m_parameters.start() < 0.0);
@@ -85,7 +85,7 @@ void Interval::computeElements() {
        * instead of 2.22e-16. */
       m_intervalBuffer[i] = 0.0;
     } else {
-      m_intervalBuffer[i] = PoincareHelpers::GetDisplayedFloat<double>(m_parameters.start() + i * m_parameters.step(), precision, nullptr);
+      m_intervalBuffer[i] = PoincareHelpers::ValueOfFloatAsDisplayed<double>(m_parameters.start() + i * m_parameters.step(), precision, nullptr);
       checkForElementZero &= (m_intervalBuffer[i] < 0.0);
     }
   }

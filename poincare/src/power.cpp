@@ -90,7 +90,7 @@ Expression PowerNode::removeUnit(Expression * unit) {
   return Power(this).removeUnit(unit);
 }
 
-int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 

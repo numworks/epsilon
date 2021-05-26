@@ -209,16 +209,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
    * to the number of significant digits (ie with 4 significant digits,
    * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
   bool forceScientificMode = mode != Preferences::PrintFloatMode::Engineering && (mode == Preferences::PrintFloatMode::Scientific || exponent >= numberOfSignificantDigits || std::pow(10., exponent) < PrintFloat::DecimalModeMinimalValue<double>());
-  int numberOfRequiredDigits = mantissaLength;
-  if (mode == Preferences::PrintFloatMode::Decimal && !forceScientificMode) {
-    if (exponent < 0) {
-      /* Zeroes that are added before mantissa are not "additional" digits, in
-       * the sense that they do not belie the true precision. */
-      numberOfRequiredDigits = mantissaLength;
-    } else {
-      numberOfRequiredDigits = std::max(mantissaLength, exponent);
-    }
-  }
+  int numberOfRequiredDigits = (mode == Preferences::PrintFloatMode::Decimal && !forceScientificMode && exponent >= 0) ? std::max(mantissaLength, exponent) : mantissaLength;
 
   /* Case 1: Engineering and Scientific mode. Three cases:
    * - the user chooses the scientific mode

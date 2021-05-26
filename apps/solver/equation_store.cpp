@@ -195,9 +195,9 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
      * know  if it might be due to a user variable. */
     if (m_numberOfUserVariables < Expression::k_maxNumberOfVariables) {
       const Expression eWithSymbols = eq->standardForm(context, true, ExpressionNode::ReductionTarget::SystemForAnalysis);
-      /* if replaceFunctionsButNotSymbols is true we can memoize the expressions
+      /* If replaceFunctionsButNotSymbols is true we can memoize the expressions
        * for the rest of the function. Otherwise, we will memoize them at the
-       * next call to standardForm*/
+       * next call to standardForm */
       if (replaceFunctionsButNotSymbols == true) {
         simplifiedExpressions[i] = eWithSymbols;
       }

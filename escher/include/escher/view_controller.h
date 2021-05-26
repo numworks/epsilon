@@ -30,6 +30,7 @@ extern "C" {
 
 #include <escher/view.h>
 #include <escher/responder.h>
+#include <stdint.h>
 
 namespace Escher {
 
@@ -37,15 +38,15 @@ class ViewController : public Responder {
 public:
   /* DisplayParameter is only used within StackViewController for now. It
    * modifies the stack headers display. */
-  enum class DisplayParameter {
-    Default,
+  enum class DisplayParameter : uint8_t {
+    Default = 0b11111111,
     /* With DoNotShowOwnTitle, the title of the ViewController is not added to
      * the stack headers. */
-    DoNotShowOwnTitle,
+    DoNotShowOwnTitle = 0b11111110,
     /* Hide all previous headers but the last one. */
-    OnlyShowOwnTitle,
+    OnlyShowOwnTitle = 0b00000001,
     /* With WantsMaximumSpace, no stack headers are displayed. */
-    WantsMaximumSpace
+    WantsMaximumSpace = 0b00000000
   };
 
   ViewController(Responder * parentResponder) : Responder(parentResponder) {}

@@ -55,8 +55,7 @@ private:
   class ControllerView : public View {
   public:
     ControllerView();
-    void shouldDisplayStackHeaders(bool shouldDisplay);
-    void shouldDisplayonlyLastHeader(bool shouldDisplay);
+    void setDisplayMode(ViewController::DisplayParameter mode) { m_displayMask = static_cast<uint8_t>(mode); }
     int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);

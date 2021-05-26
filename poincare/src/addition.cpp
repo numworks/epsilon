@@ -27,8 +27,8 @@ int AdditionNode::polynomialDegree(Context * context, const char * symbolName) c
   return degree;
 }
 
-int AdditionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
-  return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
+int AdditionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+  return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
 // Layout
@@ -66,7 +66,7 @@ const Number Addition::NumeralFactor(const Expression & e) {
   return Rational::Builder(1);
 }
 
-int Addition::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+int Addition::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;
@@ -76,7 +76,7 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
   }
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   for (int i = 0; i < numberOfChildren(); i++) {
-    int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients, symbolicComputation);
+    int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients);
     assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
       static_cast<Addition&>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());

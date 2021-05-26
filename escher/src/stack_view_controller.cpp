@@ -123,11 +123,18 @@ bool StackViewController::ControllerView::maskBit(int i) const {
 
 int StackViewController::ControllerView::displayedIndex(int i) {
   assert(i < numberOfDisplayedHeaders());
-  int index = 0;
-  while (index < i) {
-    index += isHeaderDisplayed(index);
+  int counted = 0;
+  for (int j=0; j<m_numberOfStacks; j++) {
+    if (isHeaderDisplayed(j)) {
+      if (counted == i) {
+        return j;
+      } else {
+        counted++;
+      }
+    }
   }
-  return index;
+  assert(false);
+  return -1;
 }
 
 int StackViewController::ControllerView::numberOfSubviews() const {
@@ -191,8 +198,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
     return;
   }
   /* Load stack view if the View Controller has a title. */
-  if (vc->title() != nullptr &&
-      vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+  if (vc->title() != nullptr) {
     m_view.pushStack(frame);
   }
   setupActiveViewController();

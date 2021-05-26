@@ -3,8 +3,9 @@
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/highlight_cell.h>
-#include <escher/input_event_handler_delegate.h>  // TODO shouldn't be needed
+#include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_editable_text.h>
+#include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -33,6 +34,12 @@ public:
   int numberOfRows() const override { return 3; }
   void didBecomeFirstResponder() override;
   void buttonAction() override;
+
+  void openPage(ViewController * nextPage, KDColor backgroundColor = Escher::Palette::GrayDark,
+                KDColor separatorColor = Escher::Palette::GrayDark,
+                KDColor textColor = KDColorWhite) {
+    SelectableListViewPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
+  }
 
 private:
   void loadHypothesisParam();

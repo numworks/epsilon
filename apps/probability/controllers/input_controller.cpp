@@ -79,7 +79,7 @@ void InputController<n>::didBecomeFirstResponder() {
 
 template <int n>
 void InputController<n>::buttonAction() {
-  openPage(m_resultsController, true);
+  openPage(m_resultsController);
 }
 
 NormalInputController::NormalInputController(Escher::StackViewController * parent,

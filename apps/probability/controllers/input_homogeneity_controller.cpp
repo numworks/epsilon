@@ -40,4 +40,4 @@ void InputHomogeneityController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_contentView);
 }
 
-void InputHomogeneityController::buttonAction() { openPage(m_homogeneityResultsController, false); }
+void InputHomogeneityController::buttonAction() { openPage(m_homogeneityResultsController); }

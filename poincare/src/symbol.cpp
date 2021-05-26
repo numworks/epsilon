@@ -170,7 +170,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   /* Recursively replace symbols and catch circular references involving symbols
    * as well as functions.
    * A symbol does not behave the same as a function : any nested symbol that
-   * is either undefined or was the parameter of a functions defined in the
+   * is either undefined or was the parameter of a function defined in the
    * parents of this expression must be replaced with undefined.
    * For example, within the expression 'diff(a,x,3)', with 'a' defined as
    * 'diff(x,x,x)' :

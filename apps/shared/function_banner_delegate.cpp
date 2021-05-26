@@ -38,7 +38,7 @@ double FunctionBannerDelegate::getValueDisplayedOnBanner(double t, Poincare::Con
     return 0.0;
   }
   // Round to displayed value
-  double displayedValue = PoincareHelpers::GetDisplayedFloat<double>(t, Preferences::sharedPreferences()->numberOfSignificantDigits(), context);
+  double displayedValue = PoincareHelpers::ValueOfFloatAsDisplayed<double>(t, Preferences::sharedPreferences()->numberOfSignificantDigits(), context);
   // Return displayed value if difference from t is under deltaThreshold
   return std::fabs(displayedValue-t) < deltaThreshold ? displayedValue : t;
 }

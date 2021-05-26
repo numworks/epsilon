@@ -5,7 +5,7 @@ namespace Shared {
 namespace PoincareHelpers {
 
 template <class T>
-T GetDisplayedFloat(T t, int precision, Poincare::Context * context) {
+T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
   assert(precision <= Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   constexpr size_t bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   char buffer[bufferSize];
@@ -18,8 +18,8 @@ T GetDisplayedFloat(T t, int precision, Poincare::Context * context) {
   return ApproximateToScalar<T>(buffer, context);
 }
 
-template float GetDisplayedFloat<float>(float t, int precision, Poincare::Context * context);
-template double GetDisplayedFloat<double>(double t, int precision, Poincare::Context * context);
+template float ValueOfFloatAsDisplayed<float>(float t, int precision, Poincare::Context * context);
+template double ValueOfFloatAsDisplayed<double>(double t, int precision, Poincare::Context * context);
 }
 
 }

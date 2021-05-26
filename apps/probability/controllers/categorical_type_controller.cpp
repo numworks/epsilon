@@ -44,7 +44,7 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    openPage(view, true);
+    openPage(view);
     return true;
   }
   return false;

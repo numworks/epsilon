@@ -40,7 +40,7 @@ public:
               Escher::InputEventHandlerDelegate * handler,
               Escher::TextFieldDelegate * textFieldDelegate);
 
-  void buttonAction() override { openPage(m_graphController, true); }
+  void buttonAction() override { openPage(m_graphController); }
 
 private:
   constexpr static int k_indexOfZ = 0;

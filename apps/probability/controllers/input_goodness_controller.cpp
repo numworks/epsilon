@@ -53,5 +53,5 @@ void InputGoodnessController::didBecomeFirstResponder() {
 }
 
 void InputGoodnessController::buttonAction() {
-  openPage(m_resultsController, true);
+  openPage(m_resultsController);
 }

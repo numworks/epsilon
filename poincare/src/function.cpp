@@ -18,10 +18,13 @@ Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symb
   return Function(this).replaceSymbolWithExpression(symbol, expression);
 }
 
+/* Usual behavior for functions is to expand itself (as well as any function it
+ * contains), before calling the same method on its definition (or handle it if
+ * uninitialized). We do this in polynomialDegree, getPolynomialCoefficients,
+ * getVariables, templatedApproximate and shallowReduce. */
 int FunctionNode::polynomialDegree(Context * context, const char * symbolName) const {
   Function f(this);
-  // Undefined symbols must be preserved.
-  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return -1;
   }
@@ -30,8 +33,7 @@ int FunctionNode::polynomialDegree(Context * context, const char * symbolName) c
 
 int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   Function f(this);
-  // Undefined symbols must be preserved.
-  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return -1;
   }
@@ -40,8 +42,7 @@ int FunctionNode::getPolynomialCoefficients(Context * context, const char * symb
 
 int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   Function f(this);
-  // Undefined symbols must be preserved.
-  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return nextVariableIndex;
   }
@@ -75,8 +76,7 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, ApproximationCon
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
   Function f(this);
-  // No need to preserve undefined symbols because they will be approximated.
-  Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }

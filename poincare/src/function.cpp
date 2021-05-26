@@ -28,14 +28,14 @@ int FunctionNode::polynomialDegree(Context * context, const char * symbolName) c
   return e.polynomialDegree(context, symbolName);
 }
 
-int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   Function f(this);
   // Undefined symbols must be preserved.
   Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   if (e.isUninitialized()) {
     return -1;
   }
-  return e.getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
+  return e.getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
 int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {

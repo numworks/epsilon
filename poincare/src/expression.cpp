@@ -457,7 +457,7 @@ int Expression::defaultGetPolynomialCoefficients(Context * context, const char *
 
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const {
   // Reset interrupting flag because we use deepReduce
-  int degree = getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
+  int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
   }

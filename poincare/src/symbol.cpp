@@ -28,8 +28,11 @@ Expression SymbolNode::replaceSymbolWithExpression(const SymbolAbstract & symbol
 
 int SymbolNode::polynomialDegree(Context * context, const char * symbolName) const {
   if (strcmp(m_name, symbolName) == 0) {
+    // This is the symbol we are looking for.
     return 1;
   }
+  /* No variable expansion is expected within this method. Only functions are
+   * expanded and replaced. */
   return 0;
 }
 
@@ -38,9 +41,11 @@ int SymbolNode::getPolynomialCoefficients(Context * context, const char * symbol
 }
 
 int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
-  // variables is in fact of type char[k_maxNumberOfVariables][maxSizeVariable]
+  /* No variable expansion is expected within this method. Only functions are
+   * expanded and replaced. */
   if (isVariable(m_name, context)) {
     int index = 0;
+    // variables is in fact of type char[k_maxNumberOfVariables][maxSizeVariable]
     while (index < maxSizeVariable*Expression::k_maxNumberOfVariables && variables[index] != 0) {
       if (strcmp(m_name, &variables[index]) == 0) {
         return nextVariableIndex;
@@ -220,10 +225,13 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
 
 int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   if (strcmp(name(), symbolName) == 0) {
+    // This is the symbol we are looking for.
     coefficients[0] = Rational::Builder(0);
     coefficients[1] = Rational::Builder(1);
     return 1;
   }
+  /* No variable expansion is expected within this method. Only functions are
+   * expanded and replaced. */
   coefficients[0] = clone();
   return 0;
 }

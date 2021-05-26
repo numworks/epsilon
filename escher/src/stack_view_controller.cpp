@@ -16,14 +16,6 @@ StackViewController::ControllerView::ControllerView()
       m_headersOverlapHeaders(true),
       m_headersOverlapContent(false) {}
 
-void StackViewController::ControllerView::shouldDisplayStackHeaders(bool shouldDisplay) {
-  m_displayMask = shouldDisplay ? ~0 : 0;
-}
-
-void StackViewController::ControllerView::shouldDisplayonlyLastHeader(bool shouldDisplay) {
-  setMaskBit(0, !shouldDisplay);
-}
-
 void StackViewController::ControllerView::setContentView(View * view) {
   m_contentView = view;
   layoutSubviews();
@@ -68,6 +60,7 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
     }
   }
   if (m_contentView) {
+    heightOffset += Metric::CellSeparatorThickness;
     if (borderShouldOverlapContent()) {
       if (!m_headersOverlapHeaders) {
         heightOffset -= Metric::CellSeparatorThickness;
@@ -75,7 +68,6 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
       // Layout the common border (which will override content)
       m_borderView.setFrame(KDRect(0, heightOffset, width, Metric::CellSeparatorThickness),
                             force);
-
     }
     // Layout content view
     KDRect contentViewFrame = KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
@@ -252,10 +244,7 @@ void StackViewController::setupActiveViewController() {
   ViewController * vc = topViewController();
   if (vc) {
     vc->setParentResponder(this);
-    m_view.shouldDisplayStackHeaders(vc->displayParameter() !=
-                                     ViewController::DisplayParameter::WantsMaximumSpace);
-    m_view.shouldDisplayonlyLastHeader(vc->displayParameter() ==
-                                       ViewController::DisplayParameter::OnlyShowOwnTitle);
+    m_view.setDisplayMode(vc->displayParameter());
     m_view.setContentView(vc->view());
     vc->viewWillAppear();
     vc->setParentResponder(this);
@@ -291,8 +280,7 @@ void StackViewController::viewWillAppear() {
   ViewController * vc = topViewController();
   if (m_numberOfChildren > 0 && vc) {
     m_view.setContentView(vc->view());
-    m_view.shouldDisplayStackHeaders(vc->displayParameter() !=
-                                     ViewController::DisplayParameter::WantsMaximumSpace);
+    m_view.setDisplayMode(vc->displayParameter());
     vc->viewWillAppear();
   }
   m_isVisible = true;

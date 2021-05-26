@@ -44,7 +44,9 @@ public:
      * the stack headers. */
     DoNotShowOwnTitle = 0b11111110,
     /* Hide all previous headers but the last one. */
-    OnlyShowOwnTitle = 0b00000001,
+    OnlyShowLastTitle = 0b00000001,
+    OnlyShowLastTwoTitles = 0b00000011,
+    OnlyShowLastThreeTitles = 0b00000111,
     /* With WantsMaximumSpace, no stack headers are displayed. */
     WantsMaximumSpace = 0b00000000
   };

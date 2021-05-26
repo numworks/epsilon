@@ -33,8 +33,8 @@ int SymbolNode::polynomialDegree(Context * context, const char * symbolName) con
   return 0;
 }
 
-int SymbolNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
-  return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
+int SymbolNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+  return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
 int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
@@ -218,7 +218,7 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
   return *this;
 }
 
-int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   if (strcmp(name(), symbolName) == 0) {
     coefficients[0] = Rational::Builder(0);
     coefficients[1] = Rational::Builder(1);

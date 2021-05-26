@@ -16,9 +16,9 @@ public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
   CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
     LayoutNode(),
+    m_font(font),
     m_codePoint(c),
-    m_displayType(DisplayType::None),
-    m_font(font)
+    m_displayType(DisplayType::None)
   {}
 
   // Layout
@@ -79,9 +79,9 @@ private:
   bool isMultiplicationCodePoint() const;
   bool protectedIsIdenticalTo(Layout l) override;
 
+  const KDFont * m_font;
   CodePoint m_codePoint;
   DisplayType m_displayType;
-  const KDFont * m_font;
 };
 
 class CodePointLayout final : public Layout {

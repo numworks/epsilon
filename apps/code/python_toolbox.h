@@ -5,6 +5,7 @@
 #include <escher.h>
 #include <ion/events.h>
 #include <kandinsky/font.h>
+#include "toolbox_ion_keys.h"
 
 namespace Code {
 
@@ -32,6 +33,7 @@ private:
   void scrollToAndSelectChild(int i);
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
+  toolboxIonKeys m_ionKeys;
 };
 
 }

@@ -495,8 +495,8 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   if(node->insertedText() == I18n::Message::IonSelector){
-    App::app()->toolboxIonKeys()->setSender(sender());
-    Container::activeApp()->displayModalViewController(static_cast<ViewController*>(App::app()->toolboxIonKeys()), 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    m_ionKeys.setSender(sender());
+    Container::activeApp()->displayModalViewController(static_cast<ViewController*>(&m_ionKeys), 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
   const char * editedText = I18n::translate(node->insertedText());

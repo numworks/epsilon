@@ -30,6 +30,7 @@ app_code_test_src = $(addprefix apps/code/,\
 
 tests_src += $(addprefix apps/code/test/,\
   variable_box_controller.cpp\
+  toolbox_ion_keys_dummy.cpp \
 )
 
 app_code_src += $(app_code_test_src)

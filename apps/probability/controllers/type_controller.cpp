@@ -17,9 +17,11 @@
 using namespace Probability;
 
 TypeController::TypeController(StackViewController * parent,
-                               HypothesisController * hypothesisController)
+                               HypothesisController * hypothesisController,
+                               IntervalInputController * intervalInputController)
     : SelectableListViewPage(parent),
       m_hypothesisController(hypothesisController),
+      m_intervalInputController(intervalInputController),
       m_contentView(&m_selectableTableView, &m_description) {
   m_cells[k_indexOfTTest].setMessage(I18n::Message::TTest);
   m_cells[k_indexOfTTest].setSubtitle(I18n::Message::Recommended);
@@ -58,7 +60,11 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
         t = Data::TestType::ZTest;
         break;
     }
-    view = m_hypothesisController;  // TODO toggle with IntervalInputController
+    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+      view = m_hypothesisController;
+    } else {
+      view = m_intervalInputController;
+    }
     assert(view != nullptr);
     App::app()->snapshot()->data()->setTestType(t);
     openPage(view);
@@ -98,6 +104,7 @@ const char * TypeController::title() {
   const char * testOn = "Test on ";
   int offset = strlen(testOn);
   memcpy(m_titleBuffer, testOn, offset);
-  testToText(App::app()->snapshot()->data()->test(), m_titleBuffer + offset, sizeof(m_titleBuffer) - offset);
+  testToText(App::app()->snapshot()->data()->test(), m_titleBuffer + offset,
+             sizeof(m_titleBuffer) - offset);
   return m_titleBuffer;
 }

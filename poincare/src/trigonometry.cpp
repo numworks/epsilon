@@ -44,15 +44,15 @@ static constexpr int s_piDivisor[] {
 };
 
 
-static Expression piExpression(Preferences::AngleUnit angleUnit) {
+Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Radian) {
-    return static_cast<Expression>(Constant::Builder(UCodePointGreekSmallLetterPi));
+    return Constant::Builder(UCodePointGreekSmallLetterPi);
   }
   if (angleUnit == Preferences::AngleUnit::Degree) {
-    return static_cast<Expression>(Rational::Builder(180));
+    return Rational::Builder(180);
   }
   assert(angleUnit == Preferences::AngleUnit::Gradian);
-  return static_cast<Expression>(Rational::Builder(200));
+  return Rational::Builder(200);
 }
 
 double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
@@ -115,7 +115,7 @@ Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit, P
     // Just an optimisation to gain some time at reduction
     return Rational::Builder(1);
   }
-  return Division::Builder(piExpression(toUnit), piExpression(fromUnit));
+  return Division::Builder(PiExpressionInAngleUnit(toUnit), PiExpressionInAngleUnit(fromUnit));
 }
 
 bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
@@ -324,11 +324,11 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
       float k = (e.type() == ExpressionNode::Type::ArcCosine) ? std::floor(x/pi) : std::floor((x+pi/2.0f)/pi);
       if (!std::isinf(k) && !std::isnan(k) && std::fabs(k) <= static_cast<float>(INT_MAX)) {
         int kInt = static_cast<int>(k);
-        Multiplication mult = Multiplication::Builder(Rational::Builder(-kInt), piExpression(reductionContext.angleUnit()));
+        Multiplication mult = Multiplication::Builder(Rational::Builder(-kInt), PiExpressionInAngleUnit(reductionContext.angleUnit()));
         result = Addition::Builder(result.clone(), mult);
         mult.shallowReduce(reductionContext);
         if ((e.type() == ExpressionNode::Type::ArcCosine) && ((int)k%2 == 1)) {
-          Expression sub = Subtraction::Builder(piExpression(reductionContext.angleUnit()), result);
+          Expression sub = Subtraction::Builder(PiExpressionInAngleUnit(reductionContext.angleUnit()), result);
           result.shallowReduce(reductionContext);
           result = sub;
         }
@@ -362,7 +362,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
      *   reduced to undef) */
     if (reductionContext.target() == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, piExpression(angleUnit));
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, PiExpressionInAngleUnit(angleUnit));
       sign.shallowReduce(reductionContext);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a = Addition::Builder(m0);
@@ -400,7 +400,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
       // The argument was made positive
       // acos(-x) = π-acos(x)
       if (e.type() == ExpressionNode::Type::ArcCosine) {
-        Expression pi = piExpression(angleUnit);
+        Expression pi = PiExpressionInAngleUnit(angleUnit);
         Subtraction s = Subtraction::Builder();
         e.replaceWithInPlace(s);
         s.replaceChildAtIndexInPlace(0, pi);

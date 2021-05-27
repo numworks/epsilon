@@ -171,6 +171,23 @@ QUIZ_CASE(equation_solve_complex_polar) {
 }
 
 QUIZ_CASE(equation_and_symbolic_computation) {
+  set("a", "x");
+  // a is used
+  assert_solves_to({"a=0"}, {"x=0"});
+
+  set("x", "1");
+  // a is ignored
+  assert_solves_to({"a=0"}, {"a=0"});
+
+  set("a", "x+y");
+  // a and x are used
+  /* FIXME : a is displayed as the only used predefined variable despite having
+   *   x in its definition. */
+  assert_solves_to({"a=0"}, {"y=-1"});
+
+  unset("a");
+  unset("x");
+
   assert_solves_to_infinite_solutions("x+a=0");
 
   set("a", "-3");

@@ -28,6 +28,10 @@ TypeController::TypeController(StackViewController * parent,
   m_cells[k_indexOfZTest].setMessage(I18n::Message::ZTest);
   m_cells[k_indexOfZTest].setSubtitle(I18n::Message::RarelyUsed);
 
+  m_description.setBackgroundColor(Palette::WallScreen);
+  m_description.setTextColor(Palette::GrayDark);
+  m_description.setAlignment(0.5, 0);
+  m_description.setFont(KDFont::SmallFont);
   m_description.setMessage(I18n::Message::TypeDescr);
 }
 

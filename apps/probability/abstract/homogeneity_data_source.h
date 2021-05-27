@@ -1,5 +1,5 @@
-#ifndef HOMOGENEITY_DATA_SOURCE_H
-#define HOMOGENEITY_DATA_SOURCE_H
+#ifndef APPS_PROBABILITY_ABSTRACT_HOMOGENEITY_DATA_SOURCE_H
+#define APPS_PROBABILITY_ABSTRACT_HOMOGENEITY_DATA_SOURCE_H
 
 #include <apps/i18n.h>
 #include <escher/even_odd_buffer_text_cell.h>
@@ -52,4 +52,4 @@ class HomogeneityTableDataSource : public TableViewDataSource, public Selectable
 
 }  // namespace Probability
 
-#endif /* HOMOGENEITY_DATA_SOURCE_H */
+#endif /* APPS_PROBABILITY_ABSTRACT_HOMOGENEITY_DATA_SOURCE_H */

@@ -1,5 +1,5 @@
-#ifndef APP_H
-#define APP_H
+#ifndef APPS_PROBABILITY_APP_H
+#define APPS_PROBABILITY_APP_H
 
 #include <apps/shared/shared_app.h>
 #include <apps/shared/text_field_delegate_app.h>
@@ -90,4 +90,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APP_H */
+#endif /* APPS_PROBABILITY_APP_H */

@@ -14,6 +14,8 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
+#include "hypothesis_controller.h"
+#include "input_controller.h"
 #include "probability/data.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/vertical_layout.h"
@@ -27,8 +29,8 @@ class HypothesisController;
 /* Simple view to include list and description below */
 class TypeView : public VerticalLayout {
 public:
-  TypeView(SelectableTableView * list, MessageTextView * description)
-      : m_list(list), m_description(description) {}
+  TypeView(SelectableTableView * list, MessageTextView * description) :
+      m_list(list), m_description(description) {}
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
 
@@ -39,10 +41,14 @@ private:
 
 class TypeController : public SelectableListViewPage {
 public:
-  TypeController(StackViewController * parent, HypothesisController * hypothesisController);
+  TypeController(StackViewController * parent,
+                 HypothesisController * hypothesisController,
+                 IntervalInputController * intervalInputController);
   View * view() override { return &m_contentView; }
   const char * title() override;
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTitles;
+  }
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfRows; };
@@ -61,6 +67,7 @@ private:
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfRows];
 
   HypothesisController * m_hypothesisController;
+  IntervalInputController * m_intervalInputController;
 
   TypeView m_contentView;
   MessageTextView m_description;

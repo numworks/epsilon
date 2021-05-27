@@ -23,7 +23,7 @@ template <int numberOfParams>
 class InputController : public SelectableListViewPage, public ButtonDelegate {
 public:
   InputController(Escher::StackViewController * parent, TestResults * resultsController,
-                  Escher::InputEventHandlerDelegate * handler,  // TODO same obj
+                  Escher::InputEventHandlerDelegate * handler,
                   Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return k_numberOfParameters + 1 /* button */; }
   const char * title() override;
@@ -44,6 +44,8 @@ protected:
   Shared::ButtonWithSeparator m_next;
 };
 
+
+
 class NormalInputController : public InputController<2> {
 public:
   NormalInputController(Escher::StackViewController * parent, TestResults * resultsController,
@@ -53,6 +55,20 @@ public:
 private:
   constexpr static int k_indexOfX = 0;
   constexpr static int k_indexOfN = 1;
+};
+
+
+// TODO factor with InputController and FloatParameterController ?
+class IntervalInputController : public InputController<3> {
+public:
+  IntervalInputController(Escher::StackViewController * parent, TestResults * resultsController,
+                          Escher::InputEventHandlerDelegate * handler,
+                          Escher::TextFieldDelegate * textFieldDelegate);
+
+private:
+  enum Cells {
+    Mean, Size, Std
+  };
 };
 
 }  // namespace Probability

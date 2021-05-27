@@ -79,7 +79,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
    * equations in school problems. */
   *root1 = Expression();
   /* If d is null, the polynom can easily be factored by X. We handle it here
-   * (even though in moste case it would be caught by the following case) in
+   * (even though in most case it would be caught by the following case) in
    * case c is null. */
   if (d.nullStatus(context) == ExpressionNode::NullStatus::Null || d.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
     *root1 = Rational::Builder(0);

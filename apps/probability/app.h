@@ -76,6 +76,7 @@ private:
   InputGoodnessController m_inputGoodnessController;
   TestResults m_resultsController;
   NormalInputController m_inputController;
+  IntervalInputController m_intervalInputController;
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;

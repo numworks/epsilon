@@ -1,5 +1,5 @@
-#ifndef BUTTON_CONTROLLER_H
-#define BUTTON_CONTROLLER_H
+#ifndef APPS_PROBABILITY_ABSTRACT_BUTTON_DELEGATE_H
+#define APPS_PROBABILITY_ABSTRACT_BUTTON_DELEGATE_H
 
 #include <escher/invocation.h>
 
@@ -22,4 +22,4 @@ class ButtonDelegate {
 
 }  // namespace Probability
 
-#endif /* BUTTON_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_ABSTRACT_BUTTON_DELEGATE_H */

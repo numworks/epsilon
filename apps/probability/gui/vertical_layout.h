@@ -1,5 +1,5 @@
-#ifndef VERTICAL_LAYOUT_H
-#define VERTICAL_LAYOUT_H
+#ifndef APPS_PROBABILITY_GUI_VERTICAL_LAYOUT_H
+#define APPS_PROBABILITY_GUI_VERTICAL_LAYOUT_H
 
 #include <apps/i18n.h>
 #include <escher/message_table_cell_with_chevron.h>
@@ -32,4 +32,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* VERTICAL_LAYOUT_H */
+#endif /* APPS_PROBABILITY_GUI_VERTICAL_LAYOUT_H */

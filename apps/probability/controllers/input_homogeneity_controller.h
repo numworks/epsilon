@@ -1,5 +1,5 @@
-#ifndef INPUT_HOMOGENEITY_CONTROLLER_H
-#define INPUT_HOMOGENEITY_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_INPUT_HOMOGENEITY_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_INPUT_HOMOGENEITY_CONTROLLER_H
 
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
@@ -58,4 +58,4 @@ class InputHomogeneityController : public Page, public ButtonDelegate {
 
 }  // namespace Probability
 
-#endif /* INPUT_HOMOGENEITY_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_INPUT_HOMOGENEITY_CONTROLLER_H */

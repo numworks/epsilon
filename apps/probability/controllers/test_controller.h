@@ -1,5 +1,5 @@
-#ifndef TEST_CONTROLLER_H
-#define TEST_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_TEST_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_TEST_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/responder.h>
@@ -42,4 +42,4 @@ class TestController
 
 }  // namespace Probability
 
-#endif /* TEST_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_TEST_CONTROLLER_H */

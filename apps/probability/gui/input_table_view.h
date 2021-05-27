@@ -1,5 +1,5 @@
-#ifndef TABLE_INPUT_CONTROLLER_H
-#define TABLE_INPUT_CONTROLLER_H
+#ifndef APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H
+#define APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/input_event_handler_delegate.h>
@@ -54,4 +54,4 @@ class InputTableView : public VerticalLayout, public Responder {
 
 }  // namespace Probability
 
-#endif /* TABLE_INPUT_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H */

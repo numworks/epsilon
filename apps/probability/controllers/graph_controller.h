@@ -1,5 +1,5 @@
-#ifndef GRAPH_CONTROLLER_H
-#define GRAPH_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H
 
 #include <escher/buffer_table_cell.h>
 #include <escher/stack_view_controller.h>
@@ -16,4 +16,4 @@ class GraphController : public SelectableCellListPage<Escher::BufferTableCell, 1
   
 };
 }  // namespace Probability
-#endif /* GRAPH_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H */

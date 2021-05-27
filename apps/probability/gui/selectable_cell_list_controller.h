@@ -1,5 +1,5 @@
-#ifndef SELECTABLE_CELL_LIST_CONTROLLER_H
-#define SELECTABLE_CELL_LIST_CONTROLLER_H
+#ifndef APPS_PROBABILITY_GUI_SELECTABLE_CELL_LIST_CONTROLLER_H
+#define APPS_PROBABILITY_GUI_SELECTABLE_CELL_LIST_CONTROLLER_H
 
 #include <escher/highlight_cell.h>
 #include <escher/responder.h>
@@ -34,4 +34,4 @@ class SelectableCellListPage : public SelectableListViewPage {
 
 }  // namespace Probability
 
-#endif /* SELECTABLE_CELL_LIST_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_GUI_SELECTABLE_CELL_LIST_CONTROLLER_H */

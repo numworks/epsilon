@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_RESPONDER_IMAGE_CELL_H
-#define PROBABILITY_RESPONDER_IMAGE_CELL_H
+#ifndef APPS_PROBABILITY_GUI_RESPONDER_IMAGE_CELL_H
+#define APPS_PROBABILITY_GUI_RESPONDER_IMAGE_CELL_H
 
 #include "probability/calculation/calculation.h"
 #include "image_cell.h"
@@ -33,4 +33,4 @@ private:
 
 }
 
-#endif
+#endif /* APPS_PROBABILITY_GUI_RESPONDER_IMAGE_CELL_H */

@@ -1,5 +1,5 @@
-#ifndef INPUT_CONTROLLER_H
-#define INPUT_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_INPUT_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_INPUT_CONTROLLER_H
 
 #include <apps/i18n.h>
 #include <apps/shared/button_with_separator.h>
@@ -73,4 +73,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* INPUT_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_INPUT_CONTROLLER_H */

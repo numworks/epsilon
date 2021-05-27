@@ -1,5 +1,5 @@
-#ifndef PAGE_CONTROLLER_H
-#define PAGE_CONTROLLER_H
+#ifndef APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H
+#define APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -46,4 +46,4 @@ public:
 
 }  // namespace Probability
 
-#endif /* PAGE_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H */

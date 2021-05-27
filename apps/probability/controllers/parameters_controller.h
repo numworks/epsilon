@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_PARAMETERS_CONTROLLER_H
-#define PROBABILITY_PARAMETERS_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H
 
 #include <escher/message_table_cell_with_editable_text.h>
 #include <apps/shared/float_parameter_controller.h>
@@ -55,4 +55,4 @@ private:
 
 }
 
-#endif
+#endif /* APPS_PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H */

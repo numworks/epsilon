@@ -1,5 +1,5 @@
-#ifndef HYPOTHESIS_CONTROLLER_H
-#define HYPOTHESIS_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_HYPOTHESIS_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_HYPOTHESIS_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/highlight_cell.h>
@@ -60,4 +60,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* HYPOTHESIS_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_HYPOTHESIS_CONTROLLER_H */

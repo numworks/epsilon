@@ -1,5 +1,5 @@
-#ifndef INPUT_GOODNESS_CONTROLLER_H
-#define INPUT_GOODNESS_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
 
 #include <apps/probability/gui/vertical_layout.h>
 #include <apps/shared/button_with_separator.h>
@@ -75,4 +75,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* INPUT_GOODNESS_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H */

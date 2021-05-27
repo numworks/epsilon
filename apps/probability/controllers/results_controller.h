@@ -1,5 +1,5 @@
-#ifndef RESULTS_CONTROLLER_H
-#define RESULTS_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_RESULTS_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_RESULTS_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/container.h>
@@ -51,4 +51,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* RESULTS_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_RESULTS_CONTROLLER_H */

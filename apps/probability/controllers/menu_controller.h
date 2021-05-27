@@ -1,5 +1,5 @@
-#ifndef MENU_CONTROLLER_H
-#define MENU_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_MENU_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_MENU_CONTROLLER_H
 
 #include <apps/i18n.h>
 #include <escher/message_table_cell_with_chevron.h>
@@ -37,4 +37,4 @@ class MenuController : public SelectableListViewPage {
 
 }  // namespace Probability
 
-#endif /* MENU_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_MENU_CONTROLLER_H */

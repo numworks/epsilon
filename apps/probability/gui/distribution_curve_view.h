@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_DISTRIBUTION_CURVE_VIEW_H
-#define PROBABILITY_DISTRIBUTION_CURVE_VIEW_H
+#ifndef APPS_PROBABILITY_GUI_DISTRIBUTION_CURVE_VIEW_H
+#define APPS_PROBABILITY_GUI_DISTRIBUTION_CURVE_VIEW_H
 
 #include <apps/constant.h>
 #include <apps/shared/curve_view.h>
@@ -40,4 +40,4 @@ class DistributionCurveView : public Shared::CurveView {
 
 }  // namespace Probability
 
-#endif
+#endif /* APPS_PROBABILITY_GUI_DISTRIBUTION_CURVE_VIEW_H */

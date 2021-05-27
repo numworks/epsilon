@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_IMAGE_CELL_H
-#define PROBABILITY_IMAGE_CELL_H
+#ifndef APPS_PROBABILITY_GUI_IMAGE_CELL_H
+#define APPS_PROBABILITY_GUI_IMAGE_CELL_H
 
 #include <escher/highlight_cell.h>
 #include <escher/image_view.h>
@@ -25,4 +25,4 @@ private:
 
 }
 
-#endif
+#endif /* APPS_PROBABILITY_GUI_IMAGE_CELL_H */

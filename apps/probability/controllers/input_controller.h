@@ -57,20 +57,6 @@ private:
   constexpr static int k_indexOfN = 1;
 };
 
-
-// TODO factor with InputController and FloatParameterController ?
-class IntervalInputController : public InputController<3> {
-public:
-  IntervalInputController(Escher::StackViewController * parent, TestResults * resultsController,
-                          Escher::InputEventHandlerDelegate * handler,
-                          Escher::TextFieldDelegate * textFieldDelegate);
-
-private:
-  enum Cells {
-    Mean, Size, Std
-  };
-};
-
 }  // namespace Probability
 
 #endif /* APPS_PROBABILITY_CONTROLLERS_INPUT_CONTROLLER_H */

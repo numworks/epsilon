@@ -92,16 +92,3 @@ NormalInputController::NormalInputController(Escher::StackViewController * paren
   m_parameters[k_indexOfN].setMessage(I18n::Message::N);
   m_parameters[k_indexOfN].setAccessoryText(I18n::translate(I18n::Message::SampleSize));
 }
-
-
-IntervalInputController::IntervalInputController(
-    Escher::StackViewController * parent, TestResults * resultsController,
-    Escher::InputEventHandlerDelegate * handler, Escher::TextFieldDelegate * textFieldDelegate)
-    : InputController(parent, resultsController, handler, textFieldDelegate) {
-  m_parameters[Cells::Mean].setMessage(I18n::Message::X);
-  m_parameters[Cells::Mean].setAccessoryText(I18n::translate(I18n::Message::SampleMean));
-  m_parameters[Cells::Size].setMessage(I18n::Message::N);
-  m_parameters[Cells::Size].setAccessoryText(I18n::translate(I18n::Message::SampleSize));
-  m_parameters[Cells::Std].setMessage(I18n::Message::Sigma);
-  m_parameters[Cells::Std].setAccessoryText(I18n::translate(I18n::Message::PopStd));
-}

@@ -431,8 +431,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
       return true;
     }
     // The text is parsable, we create its layout an insert it.
-    Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-    CodePointLayout::StripDisplayTypeFromCodePoints(resultLayout);
+    Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits, true);
     if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
       return true;
     }

@@ -135,17 +135,6 @@ bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
   return codePoint() == cpl.codePoint() && font() == cpl.font();
 }
 
-void CodePointLayout::StripDisplayTypeFromCodePoints(Layout l) {
-  if (l.type() == LayoutNode::Type::CodePointLayout) {
-    static_cast<CodePointLayoutNode *>(l.node())->setDisplayType(CodePointLayoutNode::DisplayType::None);
-  } else {
-    int n = l.numberOfChildren();
-    for (int i = 0; i < n; i++) {
-      StripDisplayTypeFromCodePoints(l.childAtIndex(i));
-    }
-  }
-}
-
 void CodePointLayout::DistributeThousandDisplayType(Layout l, int start, int stop) {
   if (l.type() != LayoutNode::Type::HorizontalLayout
    || stop - start < 5) {

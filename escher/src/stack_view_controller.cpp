@@ -7,15 +7,15 @@ extern "C" {
 
 namespace Escher {
 
-StackViewController::ControllerView::ControllerView()
-    : View(),
-      m_borderView(Palette::GrayBright),
-      m_contentView(nullptr),
-      m_numberOfStacks(0),
-      m_displayMask(~0),
-      m_headersOverlapHeaders(true),
-      m_headersOverlapContent(false) {
-  assert(kMaxNumberOfStacks < 8);  // Would break the bit mask representation
+StackViewController::ControllerView::ControllerView() :
+    View(),
+    m_borderView(Palette::GrayBright),
+    m_contentView(nullptr),
+    m_numberOfStacks(0),
+    m_displayMask(~0),
+    m_headersOverlapHeaders(true),
+    m_headersOverlapContent(false) {
+  static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less than 8 stacks");
 }
 
 void StackViewController::ControllerView::setContentView(View * view) {
@@ -50,14 +50,19 @@ bool StackViewController::ControllerView::isHeaderDisplayed(int i) const {
 
 void StackViewController::ControllerView::layoutSubviews(bool force) {
   // Compute view frames
+  /* Regarding header to header overlap, represented horizontally :
+  *  - Overlap :     | stack 1 | stack 2 | stack 3 |   [Content]
+  *  - No overlap :  | stack 1 || stack 2 || stack 3 |   [Content] */
   KDCoordinate width = m_frame.width();
   int heightOffset = 0;
-  int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
+  int heightDiff =
+      Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   for (int i = 0; i < m_numberOfStacks; i++) {
     if (isHeaderDisplayed(i)) {
       // Account for separator thickness in position only if there is no overlap
-      m_stackViews[i].setFrame(KDRect(0, heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
-                               force);
+      m_stackViews[i].setFrame(
+          KDRect(0, heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
+          force);
       heightOffset += heightDiff;
     }
   }
@@ -70,8 +75,7 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
       // Shift content position up by the separator thickness
       heightOffset -= Metric::CellSeparatorThickness;
       // Layout the common border (which will override content)
-      m_borderView.setFrame(KDRect(0, heightOffset, width, Metric::CellSeparatorThickness),
-                            force);
+      m_borderView.setFrame(KDRect(0, heightOffset, width, Metric::CellSeparatorThickness), force);
     }
     // Content view frame
     KDRect contentViewFrame = KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
@@ -86,29 +90,30 @@ bool StackViewController::ControllerView::borderShouldOverlapContent() const {
    * This border should only be added if all these conditions are satisfied :
    *  - Headers should overlap content :        m_headersOverlapContent
    *  - There are headers and content to display :
-   *      m_displayStackHeaders && m_numberOfStacks > 0 && m_contentView
+   *      m_displayStackHeaders && numberOfDisplayedHeaders() > 0 && m_contentView
    *  - Either :
    *    - There is more than one header :       m_numberOfStacks > 1
+   *    - Or headers overlap each other :       m_headersOverlapHeaders
    * The last condition prevents border color mismatch. m_headersOverlapHeaders
    * being false means that the headers' stacks should not share their border.
    * Currently, it only happens in the toolboxes, where the first header stack
    * has a different border color, and should not overlap with anything (second
    * header as well as content). In that case, we ensure that this additional
    * border will not override the first header stack's bottom border. */
-  return m_headersOverlapContent && numberOfDisplayedHeaders() > 0 &&
-         m_contentView && (m_headersOverlapHeaders || m_numberOfStacks > 1);
+  return m_headersOverlapContent && numberOfDisplayedHeaders() > 0 && m_contentView &&
+         (m_headersOverlapHeaders || m_numberOfStacks > 1);
 }
 
 int StackViewController::ControllerView::numberOfDisplayedHeaders() const {
   unsigned int count = 0;
-  for (int i=0; i<m_numberOfStacks; i++) {
+  for (int i = 0; i < m_numberOfStacks; i++) {
     count += isHeaderDisplayed(i);
   }
   return count;
 }
 
 void StackViewController::ControllerView::setMaskBit(int i, bool b) {
-  assert(i >= 0 && i < kMaxNumberOfStacks);
+  assert(i >= 0 && i < k_MaxNumberOfStacks);
   if (b) {
     m_displayMask |= (1U << i);
   } else {
@@ -117,14 +122,14 @@ void StackViewController::ControllerView::setMaskBit(int i, bool b) {
 }
 
 bool StackViewController::ControllerView::maskBit(int i) const {
-  assert(i >= 0 && i < kMaxNumberOfStacks);
+  assert(i >= 0 && i < k_MaxNumberOfStacks);
   return (m_displayMask >> i) & 1U;
 }
 
 int StackViewController::ControllerView::displayedIndex(int i) {
   assert(i < numberOfDisplayedHeaders());
   int counted = 0;
-  for (int j=0; j<m_numberOfStacks; j++) {
+  for (int j = 0; j < m_numberOfStacks; j++) {
     if (isHeaderDisplayed(j)) {
       if (counted == i) {
         return j;
@@ -169,8 +174,8 @@ const char * StackViewController::ControllerView::className() const {
 
 StackViewController::StackViewController(Responder * parentResponder,
                                          ViewController * rootViewController, KDColor textColor,
-                                         KDColor backgroundColor, KDColor separatorColor)
-    : ViewController(parentResponder), m_view(), m_numberOfChildren(0), m_isVisible(false) {
+                                         KDColor backgroundColor, KDColor separatorColor) :
+    ViewController(parentResponder), m_view(), m_numberOfChildren(0), m_isVisible(false) {
   pushModel(Frame(rootViewController, textColor, backgroundColor, separatorColor));
   rootViewController->setParentResponder(this);
 }
@@ -189,7 +194,7 @@ ViewController * StackViewController::topViewController() {
 
 void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor,
                                KDColor separatorColor) {
-  assert(m_numberOfChildren < kMaxNumberOfStacks);
+  assert(m_numberOfChildren < k_MaxNumberOfStacks);
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
   /* Add the frame to the model */
   pushModel(frame);
@@ -287,6 +292,7 @@ void StackViewController::viewWillAppear() {
     }
   }
   /* Load the visible controller view */
+  // TODO factor with setupActiveViewController
   ViewController * vc = topViewController();
   if (m_numberOfChildren > 0 && vc) {
     m_view.setContentView(vc->view());

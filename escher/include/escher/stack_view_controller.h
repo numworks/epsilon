@@ -9,7 +9,7 @@
 
 namespace Escher {
 
-constexpr uint8_t kMaxNumberOfStacks = 7;
+constexpr uint8_t k_MaxNumberOfStacks = 7;
 
 class StackViewController : public ViewController {
 public:
@@ -33,7 +33,7 @@ public:
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true, bool headersOverlapContent = false, KDColor headersContentBorderColor = Palette::GrayBright) {
     m_view.setupHeadersBorderOverlaping(headersOverlapHeaders, headersOverlapContent, headersContentBorderColor);
   }
-  static constexpr uint8_t k_maxNumberOfChildren = kMaxNumberOfStacks;
+  static constexpr uint8_t k_maxNumberOfChildren = k_MaxNumberOfStacks;
 private:
   class Frame {
   public:
@@ -78,12 +78,12 @@ private:
     // Returns the index in m_stackViews for a given display index
     int displayedIndex(int i);
 
-    StackView m_stackViews[kMaxNumberOfStacks];
+    StackView m_stackViews[k_MaxNumberOfStacks];
     SolidColorView m_borderView;
     View * m_contentView;
     int8_t m_numberOfStacks;
     /* Represents the stacks to display, _starting from the end_.
-     * m_displayMask = 0b11111011   ->  shoudln't display m_stackViews[2]. */
+     * m_displayMask = 0b11111011   ->  shoudln't display m_stackViews[m_numberOfStacks - 1 - 2]. */
     uint8_t m_displayMask;
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;

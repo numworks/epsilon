@@ -7,13 +7,13 @@ InputTableView::InputTableView(Responder * parentResponder, ButtonDelegate * but
                                TextFieldDelegate * textFieldDelegate)
     : VerticalLayout(),
       Responder(parentResponder),
-      m_tableView(table),
-      m_significance(this, inputEventHandlerDelegate, textFieldDelegate),
+      m_dataInputTableView(table),
+      m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
       m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation()) {
   // TODO
-  // m_significance.setMessage(I18n::Message::A);
-  // m_significance.setSubLabelMessage(I18n::Message::SignificanceLevel);
-  // m_significance.setAccessoryText("0.05");
+  // m_significanceCell.setMessage(I18n::Message::A);
+  // m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+  // m_significanceCell.setAccessoryText("0.05");
 }
 
 void InputTableView::didBecomeFirstResponder() {
@@ -22,7 +22,7 @@ void InputTableView::didBecomeFirstResponder() {
     m_viewSelection.selectRow(0);
   }
   setResponderForSelectedRow();
-  highlightViewForSelectedRow();
+  selectCorrectView();
 }
 
 bool InputTableView::handleEvent(Ion::Events::Event event) {
@@ -34,7 +34,7 @@ bool InputTableView::handleEvent(Ion::Events::Event event) {
       m_viewSelection.selectRow(m_viewSelection.selectedRow() + 1);
     }
     setResponderForSelectedRow();
-    highlightViewForSelectedRow();
+    selectCorrectView();
     return true;
   }
   return false;
@@ -43,9 +43,9 @@ bool InputTableView::handleEvent(Ion::Events::Event event) {
 Responder * InputTableView::responderForRow(int row) {
   switch (m_viewSelection.selectedRow()) {
     case k_indexOfTable:
-      return m_tableView;
+      return m_dataInputTableView;
     case k_indexOfSignificance:
-      return &m_significance;
+      return &m_significanceCell;
     case k_indexOfNext:
       return &m_next;
   }
@@ -56,20 +56,21 @@ void InputTableView::setResponderForSelectedRow() {
   Escher::Container::activeApp()->setFirstResponder(responderForRow(m_viewSelection.selectedRow()));
 }
 
-void InputTableView::highlightViewForSelectedRow() {
+void InputTableView::selectCorrectView() {
   // TODO set behavior in didBecomeFirstResponder?
-  m_significance.setHighlighted(false);
+  m_significanceCell.setHighlighted(false);
   m_next.setHighlighted(false);
   switch (m_viewSelection.selectedRow()) {
     case k_indexOfTable:
-      if (m_tableView->selectedRow() < 0) {
-        m_tableView->selectCellAtLocation(0, 0);  // TODO or last ?
+      if (m_dataInputTableView->selectedRow() < 0) {
+        m_dataInputTableView->selectCellAtLocation(0, 0);  // TODO or last ?
       }
       break;
     case k_indexOfSignificance:
-      m_significance.setHighlighted(true);
+      m_significanceCell.setHighlighted(true);
       break;
-    case k_indexOfNext:
+    default:
+      assert(m_viewSelection.selectedRow() == k_indexOfNext);
       m_next.setHighlighted(true);
       break;
   }
@@ -79,10 +80,10 @@ Escher::View * InputTableView::subviewAtIndex(int i) {
   switch (i)
   {
   case k_indexOfTable:
-    return m_tableView;
+    return m_dataInputTableView;
     break;
   case k_indexOfSignificance:
-    return &m_significance;
+    return &m_significanceCell;
     break;
   case k_indexOfNext:
     return &m_next;

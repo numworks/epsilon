@@ -43,9 +43,9 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent, T
                                                  TextFieldDelegate * textFieldDelegate)
     : Page(parent),
       m_resultsController(resultsController),
-      m_data(parent, &m_table, inputEventHandlerDelegate, textFieldDelegate),
-      m_contentView(this, this, &m_table, inputEventHandlerDelegate, textFieldDelegate),
-      m_table(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
+      m_data(parent, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate),
+      m_contentView(this, this, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate),
+      m_dataTable(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
 
 void InputGoodnessController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::InputGoodness);

@@ -29,8 +29,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
-  constexpr static int k_indexOfGoodness = 0;
-  constexpr static int k_indexOfHomogeneity = 1;
+  constexpr static int k_indexOfGoodnessCell = 0;
+  constexpr static int k_indexOfHomogeneityCell = 1;
 
   InputGoodnessController * m_inputGoodnessController;
   InputHomogeneityController * m_inputHomogeneityController;

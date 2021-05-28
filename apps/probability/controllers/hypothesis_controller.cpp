@@ -49,10 +49,9 @@ HighlightCell * HypothesisController::reusableCell(int i, int type) {
       return &m_h0;
     case k_indexOfHa:
       return &m_ha;
-    case k_indexOfNext:
-      return &m_next;
     default:
-      assert(false);
+      assert(i == k_indexOfNext);
+      return &m_next;
   }
 }
 

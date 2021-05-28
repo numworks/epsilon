@@ -1,5 +1,6 @@
 #include <poincare/expression.h>
 #include <poincare/expression_node.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/ghost.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
@@ -557,8 +558,29 @@ bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Con
 
 /* Layout Helper */
 
+static bool hasCodePointWithDisplayType(Layout l, CodePointLayoutNode::DisplayType type) {
+  if (l.type() == LayoutNode::Type::CodePointLayout) {
+    return static_cast<CodePointLayoutNode *>(l.node())->displayType() == type;
+  }
+  int n = l.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if (hasCodePointWithDisplayType(l.childAtIndex(i), type)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return isUninitialized() ? Layout() : node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  if (isUninitialized()) {
+    return Layout();
+  }
+  Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  assert(!l.isUninitialized());
+  if (!hasCodePointWithDisplayType(l, CodePointLayoutNode::DisplayType::Thousand)) {
+    CodePointLayout::StripDisplayTypeFromCodePoints(l);
+  }
+  return l;
 }
 
 int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return isUninitialized() ? 0 : node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }

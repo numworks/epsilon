@@ -43,8 +43,6 @@ void TypeController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-HighlightCell * TypeController::reusableCell(int i, int type) { return &m_cells[i]; }
-
 bool TypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Escher::ViewController * view;
@@ -91,6 +89,7 @@ void TypeController::selectRowAccordingToType(Data::TestType t) {
 }
 
 Escher::View * TypeView::subviewAtIndex(int i) {
+  // TODO rm ?
   switch (i) {
     case 0:
       return m_list;

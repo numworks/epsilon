@@ -17,8 +17,8 @@ CategoricalTypeController::CategoricalTypeController(
     : SelectableCellListPage(parent),
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {
-  m_cells[k_indexOfGoodness].setMessage(I18n::Message::GoodnessOfFit);
-  m_cells[k_indexOfHomogeneity].setMessage(I18n::Message::Homogeneity);
+  m_cells[k_indexOfGoodnessCell].setMessage(I18n::Message::GoodnessOfFit);
+  m_cells[k_indexOfHomogeneityCell].setMessage(I18n::Message::Homogeneity);
 }
 
 void CategoricalTypeController::didBecomeFirstResponder() {
@@ -36,10 +36,10 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Escher::ViewController * view;
     switch (selectedRow()) {
-      case k_indexOfGoodness:
+      case k_indexOfGoodnessCell:
         view = m_inputGoodnessController;
         break;
-      case k_indexOfHomogeneity:
+      case k_indexOfHomogeneityCell:
         view = m_inputHomogeneityController;
         break;
     }

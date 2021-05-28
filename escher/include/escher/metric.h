@@ -49,7 +49,7 @@ public:
   constexpr static KDCoordinate StoreRowHeight = 50;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate TableSeparatorThickness = 5;
-  constexpr static KDCoordinate ThousandsSeparatorWidth = 2;
+  constexpr static KDCoordinate ThousandsSeparatorWidth = 3;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
   constexpr static KDCoordinate TitleBarHeight = 18;
 };

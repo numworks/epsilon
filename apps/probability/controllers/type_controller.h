@@ -52,7 +52,7 @@ public:
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfRows; };
-  HighlightCell * reusableCell(int i, int type) override;
+  HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
@@ -64,11 +64,10 @@ private:
   constexpr static int k_indexOfZTest = 2;
   constexpr static int k_indexOfDescription = 3;
 
-  MessageTableCellWithChevronAndMessage m_cells[k_numberOfRows];
-
   HypothesisController * m_hypothesisController;
   IntervalInputController * m_intervalInputController;
 
+  MessageTableCellWithChevronAndMessage m_cells[k_numberOfRows];
   TypeView m_contentView;
   MessageTextView m_description;
 

@@ -70,7 +70,7 @@ private:
 
   InputGoodnessDataSource m_data;
   InputTableView m_contentView;
-  SelectableTableView m_table;
+  SelectableTableView m_dataTable;
 };
 
 }  // namespace Probability

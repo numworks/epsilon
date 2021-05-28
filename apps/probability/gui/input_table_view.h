@@ -15,7 +15,7 @@
 
 namespace Probability {
 
-/* This view contains an EditableCell, a Button and a pointer to a TableView,
+/* This view contains  pointer to a TableView, an EditableCell and a Button,
  * layed out vertically, and is able to move selection between them.
  */
 class InputTableView : public VerticalLayout, public Responder {
@@ -23,7 +23,7 @@ class InputTableView : public VerticalLayout, public Responder {
   InputTableView(Responder * parentResponder, ButtonDelegate * buttonDelegate, SelectableTableView * table,
                  InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
 
-  MessageTableCellWithEditableTextWithMessage * significanceLevelView() { return &m_significance; }
+  MessageTableCellWithEditableTextWithMessage * significanceLevelView() { return &m_significanceCell; }
   Shared::ButtonWithSeparator * nextButton() { return &m_next; }
   // VerticalLayout
   int numberOfSubviews() const override { return 3; }
@@ -38,14 +38,14 @@ class InputTableView : public VerticalLayout, public Responder {
  private:
   Responder * responderForRow(int row);
   void setResponderForSelectedRow();
-  void highlightViewForSelectedRow();
+  void selectCorrectView();
 
   constexpr static int k_indexOfTable = 0;
   constexpr static int k_indexOfSignificance = 1;
   constexpr static int k_indexOfNext = 2;
 
-  SelectableTableView * m_tableView;
-  MessageTableCellWithEditableTextWithMessage m_significance;
+  SelectableTableView * m_dataInputTableView;
+  MessageTableCellWithEditableTextWithMessage m_significanceCell;
   Shared::ButtonWithSeparator m_next;
 
   SelectableTableViewDataSource m_tableSelection;

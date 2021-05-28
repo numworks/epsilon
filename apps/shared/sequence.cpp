@@ -4,6 +4,7 @@
 #include "../shared/poincare_helpers.h"
 #include <apps/i18n.h>
 #include <poincare/addition.h>
+#include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
@@ -154,10 +155,10 @@ bool Sequence::badlyReferencesItself(Context * context) {
            allowFirstOrderSelfReference = *static_cast<const bool *>(pack[3]),
            allowSecondOrderSelfReference = *static_cast<const bool *>(pack[4]);
       return !(
-          (allowFirstCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank())))
-       || (allowSecondCondition && rank.isIdenticalTo(Rational::Builder(sequence->initialRank() + 1)))
+          (allowFirstCondition && rank.isIdenticalTo(BasedInteger::Builder(sequence->initialRank())))
+       || (allowSecondCondition && rank.isIdenticalTo(BasedInteger::Builder(sequence->initialRank() + 1)))
        || (allowFirstOrderSelfReference && rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown)))
-       || (allowSecondOrderSelfReference && rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))))
+       || (allowSecondOrderSelfReference && rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), BasedInteger::Builder(1))))
        );
     }
     return false;
@@ -165,17 +166,17 @@ bool Sequence::badlyReferencesItself(Context * context) {
 
   bool res = false;
   if (type() != Sequence::Type::Explicit) {
-    res |= firstInitialConditionExpressionReduced(context).hasExpression(test, pack);
+    res |= firstInitialConditionExpressionClone().hasExpression(test, pack);
     allowFirstCondition = true;
     if (type() == Sequence::Type::DoubleRecurrence) {
-      res |= secondInitialConditionExpressionReduced(context).hasExpression(test, pack);
+      res |= secondInitialConditionExpressionClone().hasExpression(test, pack);
       allowSecondCondition = true;
       allowSecondOrderSelfReference = true;
     }
     allowFirstOrderSelfReference = true;
   }
 
-  return res || expressionReduced(context).hasExpression(test, pack);
+  return res || expressionClone().hasExpression(test, pack);
 }
 
 template<typename T>

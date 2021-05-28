@@ -571,14 +571,25 @@ static bool hasCodePointWithDisplayType(Layout l, CodePointLayoutNode::DisplayTy
   return false;
 }
 
-Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+static void stripDisplayTypeFromCodePoints(Layout l) {
+  if (l.type() == LayoutNode::Type::CodePointLayout) {
+    static_cast<CodePointLayoutNode *>(l.node())->setDisplayType(CodePointLayoutNode::DisplayType::None);
+  } else {
+    int n = l.numberOfChildren();
+    for (int i = 0; i < n; i++) {
+      stripDisplayTypeFromCodePoints(l.childAtIndex(i));
+    }
+  }
+}
+
+Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool isEditing) const {
   if (isUninitialized()) {
     return Layout();
   }
   Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
   assert(!l.isUninitialized());
-  if (!hasCodePointWithDisplayType(l, CodePointLayoutNode::DisplayType::Thousand)) {
-    CodePointLayout::StripDisplayTypeFromCodePoints(l);
+  if (isEditing || !hasCodePointWithDisplayType(l, CodePointLayoutNode::DisplayType::Thousand)) {
+    stripDisplayTypeFromCodePoints(l);
   }
   return l;
 }

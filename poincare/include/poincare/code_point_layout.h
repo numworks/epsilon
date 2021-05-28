@@ -86,7 +86,6 @@ private:
 
 class CodePointLayout final : public Layout {
 public:
-  static void StripDisplayTypeFromCodePoints(Layout l);
   static void DistributeThousandDisplayType(Layout l, int start, int stop);
 
   CodePointLayout(const CodePointLayoutNode * n) : Layout(n) {}

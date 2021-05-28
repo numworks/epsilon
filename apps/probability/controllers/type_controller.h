@@ -16,6 +16,7 @@
 
 #include "hypothesis_controller.h"
 #include "input_controller.h"
+#include "interval_input_controller.h"
 #include "probability/data.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/vertical_layout.h"

@@ -58,7 +58,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
         t = Data::TestType::ZTest;
         break;
     }
-    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
       view = m_hypothesisController;
     } else {
       view = m_intervalInputController;

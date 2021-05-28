@@ -16,6 +16,7 @@
 #include "controllers/input_controller.h"
 #include "controllers/input_goodness_controller.h"
 #include "controllers/input_homogeneity_controller.h"
+#include "controllers/interval_input_controller.h"
 #include "controllers/menu_controller.h"
 #include "controllers/parameters_controller.h"
 #include "controllers/results_controller.h"

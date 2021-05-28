@@ -19,7 +19,7 @@ App::App(Snapshot * snapshot)
       m_resultsController(&m_stackViewController, &m_graphController, this, this),
       m_inputController(&m_stackViewController, &m_resultsController, this, this),
       m_typeController(&m_stackViewController, &m_hypothesisController, &m_intervalInputController),
-      m_intervalInputController(&m_stackViewController, &m_resultsController, this, this),
+      m_intervalInputController(&m_stackViewController, &m_resultsController, this),
       m_categoricalTypeController(&m_stackViewController, &m_inputGoodnessController,
                                   &m_inputHomogeneityController),
       m_hypothesisController(&m_stackViewController, &m_inputController, this, this),

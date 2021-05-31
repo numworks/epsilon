@@ -51,8 +51,8 @@ bool StackViewController::ControllerView::isHeaderDisplayed(int i) const {
 void StackViewController::ControllerView::layoutSubviews(bool force) {
   // Compute view frames
   /* Regarding header to header overlap, represented horizontally :
-  *  - Overlap :     | stack 1 | stack 2 | stack 3 |   [Content]
-  *  - No overlap :  | stack 1 || stack 2 || stack 3 |   [Content] */
+   *  - Overlap :     | stack 1 | stack 2 | stack 3 |   [Content]
+   *  - No overlap :  | stack 1 || stack 2 || stack 3 |   [Content] */
   KDCoordinate width = m_frame.width();
   int heightOffset = 0;
   int heightDiff =
@@ -237,7 +237,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
   ViewController * vc;
   for (int i = 0; i < numberOfFramesReleased; i++) {
     vc = topViewController();
-    if (vc->title() != nullptr) {
+    if (shouldStoreOnStack(vc)) {
       m_view.popStack();
     }
     m_numberOfChildren--;
@@ -257,7 +257,10 @@ void StackViewController::setupActiveViewController() {
   ViewController * vc = topViewController();
   if (vc) {
     vc->setParentResponder(this);
-    m_view.setDisplayMode(vc->displayParameter());
+    ViewController::DisplayParameter d = vc->displayParameter();
+    m_view.setDisplayMode(d == ViewController::DisplayParameter::NeverShowOwnTitle
+                              ? ViewController::DisplayParameter::Default
+                              : d);
     m_view.setContentView(vc->view());
     vc->viewWillAppear();
     vc->setParentResponder(this);
@@ -313,7 +316,8 @@ void StackViewController::viewDidDisappear() {
 }
 
 bool StackViewController::shouldStoreOnStack(ViewController * vc) {
-  return vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::NeverShowOwnTitle;
+  return vc->title() != nullptr &&
+         vc->displayParameter() != ViewController::DisplayParameter::NeverShowOwnTitle;
 }
 
 }  // namespace Escher

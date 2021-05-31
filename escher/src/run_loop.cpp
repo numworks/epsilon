@@ -66,7 +66,7 @@ bool RunLoop::step() {
   const char * name = event.name();
   if (name != nullptr) {
     Ion::Console::writeLine("Event: ", false);
-  Ion::Console::writeLine(name);
+    Ion::Console::writeLine(name);
   }
 #endif
 

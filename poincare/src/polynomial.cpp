@@ -5,6 +5,7 @@
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
+#include <poincare/least_common_multiple.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
 #include <poincare/power.h>
@@ -90,7 +91,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   if (root1->isUninitialized() && IsRoot(coefficients, degree, r, reductionContext)) {
     *root1 = r;
   }
-  if (root1->isUninitialized() && a.type() == ExpressionNode::Type::Rational && d.type() == ExpressionNode::Type::Rational) {
+  if (root1->isUninitialized() && a.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && c.type() == ExpressionNode::Type::Rational && d.type() == ExpressionNode::Type::Rational) {
     /* Since d/a = x1*x2*x3, a rational root p/q must be so that p divides the
      * numerator of d/a, and q divides its denominator. */
     *root1 = RationalRootSearch(coefficients, degree, reductionContext);
@@ -221,12 +222,18 @@ Expression Polynomial::ReducePolynomial(const Expression * coefficients, int deg
 
 Expression Polynomial::RationalRootSearch(const Expression * coefficients, int degree, ExpressionNode::ReductionContext reductionContext) {
   assert(degree <= Expression::k_maxPolynomialDegree);
-  Expression a0 = coefficients[0];
-  Expression aN = coefficients[degree];
 
-  assert(a0.type() == ExpressionNode::Type::Rational && aN.type() == ExpressionNode::Type::Rational);
-  Integer a0Int = Integer::Multiplication(static_cast<Rational &>(a0).unsignedIntegerNumerator(), static_cast<Rational &>(aN).integerDenominator());
-  Integer aNInt = Integer::Multiplication(static_cast<Rational &>(aN).unsignedIntegerNumerator(), static_cast<Rational &>(a0).integerDenominator());
+  LeastCommonMultiple lcm = LeastCommonMultiple::Builder();
+  for (int i = 0; i <= degree; i++) {
+    assert(coefficients[i].type() == ExpressionNode::Type::Rational);
+    lcm.addChildAtIndexInPlace(Rational::Builder(static_cast<const Rational &>(coefficients[i]).integerDenominator()), i, i);
+  }
+  Expression lcmResult = lcm.shallowReduce(reductionContext);
+  assert(lcmResult.type() == ExpressionNode::Type::Rational);
+  Rational rationalLCM = static_cast<Rational &>(lcmResult);
+
+  Integer a0Int = Rational::Multiplication(static_cast<const Rational &>(coefficients[0]), rationalLCM).unsignedIntegerNumerator();
+  Integer aNInt = Rational::Multiplication(static_cast<const Rational &>(coefficients[degree]), rationalLCM).unsignedIntegerNumerator();
 
   Integer a0Divisors[Arithmetic::k_maxNumberOfFactors];
   int a0NumberOfDivisors, aNNumberOfDivisors;
@@ -252,16 +259,19 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
     if (ExceptionRun(ecp)) {
       Arithmetic arithmetic;
       aNNumberOfDivisors = arithmetic.PositiveDivisors(aNInt);
-
       for (int i = 0; i < a0NumberOfDivisors; i++) {
         for (int j = 0; j < aNNumberOfDivisors; j++) {
-          Rational r = Rational::Builder(a0Divisors[i], *arithmetic.divisorAtIndex(j));
-          if (IsRoot(coefficients, degree, r, reductionContext)) {
-            return std::move(r);
-          }
-          r = Rational::Multiplication(Rational::Builder(-1), r);
-          if (IsRoot(coefficients, degree, r, reductionContext)) {
-            return std::move(r);
+          /* If i and j are not coprime, i/j has already been tested. */
+          Integer p = a0Divisors[i], q = *arithmetic.divisorAtIndex(j);
+          if (Arithmetic::GCD(p, q).isOne()) {
+            Rational r = Rational::Builder(p, q);
+            if (IsRoot(coefficients, degree, r, reductionContext)) {
+              return std::move(r);
+            }
+            r = Rational::Multiplication(Rational::Builder(-1), r);
+            if (IsRoot(coefficients, degree, r, reductionContext)) {
+              return std::move(r);
+            }
           }
         }
       }

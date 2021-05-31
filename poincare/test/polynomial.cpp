@@ -50,7 +50,7 @@ QUIZ_CASE(poincare_polynomial_roots_quadratic) {
 QUIZ_CASE(poincare_polynomial_roots_cubic) {
   assert_roots_of_polynomial_are("x^3-3×x^2+3×x-1", {"1"}, "0", Real);
   assert_roots_of_polynomial_are("1/9×(x+√(2))^3", {"-√(2)"}, "0", Real);
-  assert_roots_of_polynomial_are("x^3+x^2-15/4×x-9/2", {"-3/2", "2"}, "0", Real);
+  assert_roots_of_polynomial_are("x^3+x^2-15/4×x-9/2", {"2", "-3/2"}, "0", Real);
   assert_roots_of_polynomial_are("4×x^3+3×x+𝐢", {"-𝐢/2", "𝐢"}, "0", Cartesian);
   assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2"}, "\u0012180×√(3)-465\u0013/16", Real);
   assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2", "1/2-√(5)/2×𝐢", "1/2+√(5)/2×𝐢"}, "\u0012180×√(3)-465\u0013/16", Cartesian);

@@ -9,7 +9,7 @@
 #include <escher/view_controller.h>
 
 #include "probability/gui/page_controller.h"
-#include "probability/data.h"
+#include "probability/models/data.h"
 
 namespace Probability {
 

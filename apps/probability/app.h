@@ -7,7 +7,7 @@
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
 
-#include "calculation/discrete_calculation.h"
+#include "models/calculation/discrete_calculation.h"
 #include "controllers/categorical_type_controller.h"
 #include "controllers/distribution_controller.h"
 #include "controllers/graph_controller.h"
@@ -22,8 +22,8 @@
 #include "controllers/results_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
-#include "data.h"
-#include "distribution/binomial_distribution.h"
+#include "models/data.h"
+#include "models/distribution/binomial_distribution.h"
 
 namespace Probability {
 

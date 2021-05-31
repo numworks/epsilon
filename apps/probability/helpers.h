@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <escher/container.h>
 
-#include "data.h"
+#include "models/data.h"
 
 namespace Probability {
 

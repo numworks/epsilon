@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include "probability/app.h"
-#include "probability/data.h"
+#include "probability/models/data.h"
 
 using namespace Probability;
 

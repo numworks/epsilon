@@ -26,12 +26,12 @@ namespace Solver {
 
 EquationStore::EquationStore() :
   ExpressionModelStore(),
-  m_type(Type::LinearSystem),
-  m_degree(-1),
-  m_numberOfSolutions(0),
   m_exactSolutionExactLayouts{},
   m_exactSolutionApproximateLayouts{},
-  m_numberOfUserVariables(0)
+  m_degree(-1),
+  m_numberOfSolutions(0),
+  m_numberOfUserVariables(0),
+  m_type(Type::LinearSystem)
 {
 }
 
@@ -388,8 +388,11 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions++] = delta;
   for (int i = 0; i < m_numberOfSolutions; i++) {
-    Expression placeholder;
-    exactSolutions[i].simplifyAndApproximate(solutionsAreApproximated ? &placeholder : exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+    if (solutionsAreApproximated) {
+      exactSolutionsApproximations[i] = exactSolutions[i].clone();
+    } else {
+      exactSolutions[i].simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+    }
   }
   return Error::NoError;
 }

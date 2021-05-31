@@ -101,19 +101,19 @@ private:
   Poincare::Preferences::ComplexFormat updatedComplexFormat(Poincare::Context * context);
 
   mutable Equation m_equations[k_maxNumberOfEquations];
-  Type m_type;
-  int m_degree;
-  char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
-  char m_userVariables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
-  int m_numberOfSolutions;
   Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
-  bool m_exactSolutionIdentity[k_maxNumberOfExactSolutions];
-  bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
+  char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
+  char m_userVariables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   double m_intervalApproximateSolutions[2];
   double m_approximateSolutions[k_maxNumberOfApproximateSolutions];
+  int m_degree;
+  int m_numberOfSolutions;
   int m_numberOfUserVariables;
+  Type m_type;
   bool m_userVariablesUsed;
+  bool m_exactSolutionIdentity[k_maxNumberOfExactSolutions];
+  bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
 };
 
 }

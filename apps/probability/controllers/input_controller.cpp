@@ -11,25 +11,27 @@
 
 using namespace Probability;
 
-template <int n>
-InputController<n>::InputController(Escher::StackViewController * parent,
+InputController::InputController(Escher::StackViewController * parent,
                                     TestResults * resultsController,
                                     Escher::InputEventHandlerDelegate * handler,
                                     Escher::TextFieldDelegate * textFieldDelegate)
     : SelectableListViewPage(parent),
       m_resultsController(resultsController),
-      m_parameters{{&m_selectableTableView, handler, textFieldDelegate},
+      m_parameterCells{{&m_selectableTableView, handler, textFieldDelegate},
                    {&m_selectableTableView, handler, textFieldDelegate}},
       m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
-  // Initialize parameter cells
-  for (int i = 0; i < k_numberOfParameters; i++) {
-    m_parameters[i].setParentResponder(&m_selectableTableView);
-    m_parameters[i].textField()->setDelegates(handler, textFieldDelegate);
+  // Initialize cells
+  for (int i = 0; i < k_numberOfReusableCells; i++) {
+    m_parameterCells[i].setParentResponder(&m_selectableTableView);
+    m_parameterCells[i].textField()->setDelegates(handler, textFieldDelegate);
   }
+  m_significanceCell.setParentResponder(&m_selectableTableView);
+  m_significanceCell.textField()->setDelegates(handler, textFieldDelegate);
+  m_significanceCell.setMessage(I18n::Message::Alpha);
+  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
 
-template <int n>
-const char * InputController<n>::title() {
+const char * InputController::title() {
   // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams>
   m_titleBuffer[0] = 0;
   size_t bufferSize = sizeof(m_titleBuffer);
@@ -56,18 +58,32 @@ const char * InputController<n>::title() {
   return m_titleBuffer;
 }
 
-template <int n>
-Escher::HighlightCell * InputController<n>::reusableCell(int i, int type) {
-  if (i < k_numberOfParameters) {
-    return &m_parameters[i];
+int InputController::typeAtIndex(int i) {
+  int numberOfParams = numberOfParameters();
+  if (i < numberOfParams) {
+    return k_parameterCellType;
   }
-  assert(i == k_numberOfParameters);
+  if (i == numberOfParams) {
+    return k_significanceCellType;
+  }
+  assert(i == numberOfParams + 1);
+  return k_buttonCellType;
+}
+
+Escher::HighlightCell * InputController::reusableCell(int i, int type) {
+  if (type == k_parameterCellType) {
+    return &m_parameterCells[i];
+  }
+  if (type == k_significanceCellType) {
+    // assert(i == 0);
+    return &m_significanceCell;
+  }
+  assert(type == k_buttonCellType);
   return &m_next;
 }
 
-template <int n>
-void InputController<n>::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Input);
+void InputController::didBecomeFirstResponder() {
+  App::app()->snapshot()->navigation()->setPage(Data::Page::Input);
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
@@ -77,18 +93,24 @@ void InputController<n>::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-template <int n>
-void InputController<n>::buttonAction() {
+void InputController::buttonAction() {
   openPage(m_resultsController);
 }
 
-NormalInputController::NormalInputController(Escher::StackViewController * parent,
-                                             TestResults * resultsController,
-                                             Escher::InputEventHandlerDelegate * handler,
-                                             Escher::TextFieldDelegate * textFieldDelegate)
-    : InputController(parent, resultsController, handler, textFieldDelegate) {
-  m_parameters[k_indexOfX].setMessage(I18n::Message::X);
-  m_parameters[k_indexOfX].setAccessoryText(I18n::translate(I18n::Message::NumberOfSuccesses));
-  m_parameters[k_indexOfN].setMessage(I18n::Message::N);
-  m_parameters[k_indexOfN].setAccessoryText(I18n::translate(I18n::Message::SampleSize));
+void NormalInputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+  MessageTableCellWithEditableTextWithMessage * mCell = static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
+  switch (index)
+  {
+  case 0:
+    mCell->setMessage(I18n::Message::X);
+    mCell->setSubLabelMessage(I18n::Message::NumberOfSuccesses);
+    break;
+  case 1:
+    mCell->setMessage(I18n::Message::N);
+    mCell->setSubLabelMessage(I18n::Message::SampleSize);
+    break;
+  default:
+    break;
+  }
 }
+

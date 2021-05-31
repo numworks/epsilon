@@ -1,17 +1,8 @@
-#include "helpers.h"
+#include "text_helpers.h"
 
 #include <string.h>
 
 #include "app.h"
-
-Shared::TextFieldDelegateApp * getProbabilityApp() {
-  Escher::App * app = Escher::Container::activeApp();
-  if (app->snapshot()->descriptor()->name() == I18n::Message::ProbaApp) {
-    return static_cast<Shared::TextFieldDelegateApp *>(app);
-  }
-  assert(false);
-  return nullptr;
-}
 
 int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
   // TODO replace with messages

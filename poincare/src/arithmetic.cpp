@@ -239,10 +239,10 @@ int Arithmetic::PositiveDivisors(const Integer & i) {
   for (int k = 1; k <= upper; k++) {
     Integer kInteger(k);
     if (Integer::Division(i, kInteger).remainder.isZero()) {
-      if (numberOfDivisors >= k_maxNumberOfFactors) {
+      if (numberOfDivisors >= k_maxNumberOfDivisors) {
         return k_errorTooManyFactors;
       }
-      *factorAtIndex(numberOfDivisors++) = kInteger;
+      *divisorAtIndex(numberOfDivisors++) = kInteger;
     }
   }
   return numberOfDivisors;

@@ -3,11 +3,11 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
-#include "probability/distribution/binomial_distribution.h"
-#include "probability/distribution/chi_squared_distribution.h"
-#include "probability/distribution/geometric_distribution.h"
-#include "probability/distribution/student_distribution.h"
-#include "probability/distribution/fisher_distribution.h"
+#include "probability/models/distribution/binomial_distribution.h"
+#include "probability/models/distribution/chi_squared_distribution.h"
+#include "probability/models/distribution/geometric_distribution.h"
+#include "probability/models/distribution/student_distribution.h"
+#include "probability/models/distribution/fisher_distribution.h"
 
 void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::Distribution * distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);

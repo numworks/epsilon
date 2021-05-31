@@ -10,7 +10,7 @@
 #include "categorical_type_controller.h"
 #include "hypothesis_controller.h"
 #include "probability/app.h"
-#include "probability/data.h"
+#include "probability/models/data.h"
 #include "probability/helpers.h"
 #include "type_controller.h"
 

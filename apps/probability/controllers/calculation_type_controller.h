@@ -6,8 +6,8 @@
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/view_controller.h>
 
-#include "probability/calculation/calculation.h"
-#include "probability/distribution/distribution.h"
+#include "probability/models/calculation/calculation.h"
+#include "probability/models/distribution/distribution.h"
 #include "probability/gui/image_cell.h"
 
 namespace Probability {

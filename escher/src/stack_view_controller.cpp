@@ -203,7 +203,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
     return;
   }
   /* Load stack view if the View Controller has a title. */
-  if (vc->title() != nullptr) {
+  if (shouldStoreOnStack(vc)) {
     m_view.pushStack(frame);
   }
   setupActiveViewController();
@@ -215,8 +215,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
 void StackViewController::pop() {
   assert(m_numberOfChildren > 0);
   ViewController * vc = topViewController();
-  if (vc->title() != nullptr &&
-      vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+  if (shouldStoreOnStack(vc)) {
     m_view.popStack();
   }
   m_numberOfChildren--;
@@ -238,8 +237,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
   ViewController * vc;
   for (int i = 0; i < numberOfFramesReleased; i++) {
     vc = topViewController();
-    if (vc->title() != nullptr &&
-        vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+    if (vc->title() != nullptr) {
       m_view.popStack();
     }
     m_numberOfChildren--;
@@ -286,8 +284,7 @@ void StackViewController::viewWillAppear() {
   /* Load the stack view */
   for (int i = 0; i < m_numberOfChildren; i++) {
     ViewController * childrenVC = m_childrenFrame[i].viewController();
-    if (childrenVC->title() != nullptr &&
-        childrenVC->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+    if (shouldStoreOnStack(childrenVC)) {
       m_view.pushStack(m_childrenFrame[i]);
     }
   }
@@ -295,8 +292,8 @@ void StackViewController::viewWillAppear() {
   // TODO factor with setupActiveViewController
   ViewController * vc = topViewController();
   if (m_numberOfChildren > 0 && vc) {
-    m_view.setContentView(vc->view());
     m_view.setDisplayMode(vc->displayParameter());
+    m_view.setContentView(vc->view());
     vc->viewWillAppear();
   }
   m_isVisible = true;
@@ -313,6 +310,10 @@ void StackViewController::viewDidDisappear() {
   }
   m_isVisible = false;
   assert(m_view.numberOfStacks() == 0);
+}
+
+bool StackViewController::shouldStoreOnStack(ViewController * vc) {
+  return vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle;
 }
 
 }  // namespace Escher

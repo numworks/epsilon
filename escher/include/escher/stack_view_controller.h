@@ -35,6 +35,7 @@ public:
   }
   static constexpr uint8_t k_maxNumberOfChildren = k_MaxNumberOfStacks;
 private:
+  bool shouldStoreOnStack(ViewController * vc);
   class Frame {
   public:
     Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright) :

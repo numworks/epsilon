@@ -40,9 +40,9 @@ public:
    * modifies the stack headers display. */
   enum class DisplayParameter : uint8_t {
     Default = 0b11111111,
-    /* With DoNotShowOwnTitle, the title of the ViewController is not added to
+    /* With NeverShowOwnTitle, the title of the ViewController is not added to
      * the stack headers. */
-    DoNotShowOwnTitle = 0b11111110,
+    NeverShowOwnTitle = 0b11111110,
     /* Hide all previous headers but the last one. */
     OnlyShowLastTitle = 0b00000001,
     OnlyShowLastTwoTitles = 0b00000011,

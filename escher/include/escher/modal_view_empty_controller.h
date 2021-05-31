@@ -13,7 +13,7 @@ public:
   ModalViewEmptyController() : ViewController(nullptr) {}
   void setMessages(I18n::Message * messages);
   // View Controller
-  DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
+  DisplayParameter displayParameter() override { return DisplayParameter::NeverShowOwnTitle; }
 protected:
   class ModalViewEmptyView : public View, public Bordered {
   public:

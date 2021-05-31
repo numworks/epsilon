@@ -297,7 +297,6 @@ void StackViewController::viewWillAppear() {
     }
   }
   /* Load the visible controller view */
-  // TODO factor with setupActiveViewController
   setupActiveView();
   m_isVisible = true;
 }

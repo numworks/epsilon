@@ -21,6 +21,8 @@
 #include "distribution/regularized_gamma.h"
 #include "distribution/student_distribution.h"
 #include "distribution/uniform_distribution.h"
+#include "input_parameters.h"
+#include "probability/helpers.h"
 
 namespace Probability {
 namespace Data {
@@ -57,21 +59,7 @@ private:
   Page m_page;
 };
 
-
 // Buffers for dynamic allocation
-
-constexpr static int max(int a, int b) {
-  return a > b ? a : b;
-}
-
-constexpr static int max_between(const int * begin, const int * end) {
-  return begin + 1 == end ? *begin : max_between(begin + 1, end);
-}
-
-template<int N>
-constexpr static int arrayMax(const int (&data)[N]) {
-  return max_between(data, data + N);
-}
 
 static constexpr int distributionSizes[9] = {
     sizeof(ChiSquaredDistribution), sizeof(ExponentialDistribution), sizeof(GeometricDistribution),
@@ -81,8 +69,9 @@ static constexpr int distributionSizes[9] = {
 static constexpr int maxDistributionSize = arrayMax(distributionSizes);
 typedef char DistributionBuffer[maxDistributionSize];
 
-static constexpr int calculationSizes[4] = {sizeof(DiscreteCalculation), sizeof(FiniteIntegralCalculation),
-                                           sizeof(LeftIntegralCalculation), sizeof(RightIntegralCalculation)};
+static constexpr int calculationSizes[4] = {
+    sizeof(DiscreteCalculation), sizeof(FiniteIntegralCalculation), sizeof(LeftIntegralCalculation),
+    sizeof(RightIntegralCalculation)};
 static constexpr int maxCalculationSize = arrayMax(calculationSizes);
 typedef char CalculationBuffer[maxCalculationSize];
 
@@ -93,13 +82,9 @@ struct ProbaData {
 
 // Test sub app
 
-enum class Test {
-  OneProp, OneMean, TwoProps, TwoMeans, Categorical
-};
+enum class Test { OneProp, OneMean, TwoProps, TwoMeans, Categorical };
 
-enum class TestType {
-  TTest, PooledTTest, ZTest
-};
+enum class TestType { TTest, PooledTTest, ZTest };
 
 enum class ComparisonOperator : char {
   Lower = '<',
@@ -120,29 +105,15 @@ private:
   ComparisonOperator m_op;
 };
 
-constexpr int k_maxNumberOfInputParameters = 3 * 2;  // t-test on two means (mean, std, size)
-class InputParameters {
-public:
-  float paramAtIndex(int i) const { return m_params[i]; }
-  void setParamAtIndex(int i, float p) { m_params[i] = p; }
-  float significanceLevel() const { return m_significanceLevel; }
-  void setSignificanceLevel(float s) { m_significanceLevel = s; }
-
-private:
-  float m_params[k_maxNumberOfInputParameters];
-  float m_significanceLevel;
-};
-
-enum class CategoricalType {
-  Goodness, Homogeneity
-};
+enum class CategoricalType { Goodness, Homogeneity };
 
 constexpr static int k_maxNumberOfGoodnessInputRows = 10;
 // TODO Store ?
 typedef float InputGoodnessData[k_maxNumberOfGoodnessInputRows * 2];
 constexpr static int k_maxNumberOfHomogeneityInputRows = 10;
 constexpr static int k_maxNumberOfHomogeneityInputColumns = 10;
-typedef float InputHomogeneityData[k_maxNumberOfHomogeneityInputRows][k_maxNumberOfHomogeneityInputColumns];
+typedef float InputHomogeneityData[k_maxNumberOfHomogeneityInputRows]
+                                  [k_maxNumberOfHomogeneityInputColumns];
 
 struct CategoricalData {
   CategoricalType m_type;
@@ -155,7 +126,9 @@ struct CategoricalData {
 struct TestData {
   TestType m_testType;
   HypothesisParams m_hypothesisParams;
-  InputParameters m_inputParams;
+  InputParametersBuffer m_inputParams;
+
+  InputParameters * inputParameters() { return reinterpret_cast<InputParameters *>(m_inputParams); }
 };
 
 struct TestIntervalData {
@@ -178,8 +151,12 @@ public:
   TestIntervalData * testIntervalData() { return reinterpret_cast<TestIntervalData *>(&m_buffer); }
 
   // ProbaData
-  Distribution * distribution() { return reinterpret_cast<Distribution *>(probaData()->m_distributionBuffer); }
-  Calculation * calculation() { return reinterpret_cast<Calculation *>(probaData()->m_calculationBuffer); }
+  Distribution * distribution() {
+    return reinterpret_cast<Distribution *>(probaData()->m_distributionBuffer);
+  }
+  Calculation * calculation() {
+    return reinterpret_cast<Calculation *>(probaData()->m_calculationBuffer);
+  }
 
   // TestIntervalData
   Test test() { return testIntervalData()->m_test; }
@@ -188,12 +165,14 @@ public:
   CategoricalData * categoricalData() { return &testIntervalData()->m_data.m_categorical; }
   TestType testType() { return testData()->m_testType; }
   HypothesisParams * hypothesisParams() { return &testData()->m_hypothesisParams; }
-  InputParameters testInputParams() { return testData()->m_inputParams; }
+  InputParameters * testInputParams() { return testData()->inputParameters(); }
   void setTestType(TestType t) { testData()->m_testType = t; }
   CategoricalType categoricalType() { return categoricalData()->m_type; }
   void setCategoricalType(CategoricalType t) { categoricalData()->m_type = t; }
   InputGoodnessData * inputGoodnessData() { return &(categoricalData()->m_data.m_goodness); }
-  InputHomogeneityData * inputHomogeneityData() { return &(categoricalData()->m_data.m_homogeneity); }
+  InputHomogeneityData * inputHomogeneityData() {
+    return &(categoricalData()->m_data.m_homogeneity);
+  }
 
 private:
   DataBuffer m_buffer;

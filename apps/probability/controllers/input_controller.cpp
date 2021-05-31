@@ -12,14 +12,15 @@
 using namespace Probability;
 
 InputController::InputController(Escher::StackViewController * parent,
-                                    TestResults * resultsController,
-                                    Escher::InputEventHandlerDelegate * handler,
-                                    Escher::TextFieldDelegate * textFieldDelegate)
-    : SelectableListViewPage(parent),
-      m_resultsController(resultsController),
-      m_parameterCells{{&m_selectableTableView, handler, textFieldDelegate},
-                   {&m_selectableTableView, handler, textFieldDelegate}},
-      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
+                                 TestResults * resultsController, InputParameters * inputParameters,
+                                 Escher::InputEventHandlerDelegate * handler,
+                                 Escher::TextFieldDelegate * textFieldDelegate) :
+    SelectableListViewPage(parent),
+    m_resultsController(resultsController),
+    m_inputParameters(inputParameters),
+    m_parameterCells{{&m_selectableTableView, handler, textFieldDelegate},
+                     {&m_selectableTableView, handler, textFieldDelegate}},
+    m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
   // Initialize cells
   for (int i = 0; i < k_numberOfReusableCells; i++) {
     m_parameterCells[i].setParentResponder(&m_selectableTableView);
@@ -59,7 +60,7 @@ const char * InputController::title() {
 }
 
 int InputController::typeAtIndex(int i) {
-  int numberOfParams = numberOfParameters();
+  int numberOfParams = m_inputParameters->numberOfParameters();
   if (i < numberOfParams) {
     return k_parameterCellType;
   }
@@ -93,24 +94,13 @@ void InputController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-void InputController::buttonAction() {
-  openPage(m_resultsController);
-}
+void InputController::buttonAction() { openPage(m_resultsController); }
 
-void NormalInputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  MessageTableCellWithEditableTextWithMessage * mCell = static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
-  switch (index)
-  {
-  case 0:
-    mCell->setMessage(I18n::Message::X);
-    mCell->setSubLabelMessage(I18n::Message::NumberOfSuccesses);
-    break;
-  case 1:
-    mCell->setMessage(I18n::Message::N);
-    mCell->setSubLabelMessage(I18n::Message::SampleSize);
-    break;
-  default:
-    break;
+void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+  if (index < m_inputParameters->numberOfParameters()) {
+    MessageTableCellWithEditableTextWithMessage * mCell =
+        static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
+    mCell->setMessage(m_inputParameters->paramSymbolAtIndex(index));
+    mCell->setSubLabelMessage(m_inputParameters->paramDescriptionAtIndex(index));
   }
 }
-

@@ -14,6 +14,7 @@
 
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
+#include "probability/models/data.h"
 
 namespace Probability {
 
@@ -21,12 +22,11 @@ class TestResults;
 
 class InputController : public SelectableListViewPage, public ButtonDelegate {
 public:
-  InputController(Escher::StackViewController * parent,
-                  TestResults * resultsController,
-                  Escher::InputEventHandlerDelegate * handler,
+  InputController(Escher::StackViewController * parent, TestResults * resultsController,
+                  InputParameters * inputParameters, Escher::InputEventHandlerDelegate * handler,
                   Escher::TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override {
-    return numberOfParameters() + 1 /* significance */ + 1 /* button */;
+    return m_inputParameters->numberOfParameters() + 1 /* significance */ + 1 /* button */;
   }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
@@ -36,10 +36,10 @@ public:
   Escher::HighlightCell * reusableCell(int i, int type) override;
   void didBecomeFirstResponder() override;
   void buttonAction() override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
-protected:
-  virtual int numberOfParameters() const = 0;
-
+private:
+  InputParameters * m_inputParameters;
   char m_titleBuffer[30];
   TestResults * m_resultsController;
 
@@ -51,17 +51,6 @@ protected:
   Escher::MessageTableCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];
   Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
   Shared::ButtonWithSeparator m_next;
-};
-
-class NormalInputController : public InputController {
-public:
-  using InputController::InputController;
-  int numberOfParameters() const override { return 2; }
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-
-private:
-  constexpr static int k_indexOfX = 0;
-  constexpr static int k_indexOfN = 1;
 };
 
 }  // namespace Probability

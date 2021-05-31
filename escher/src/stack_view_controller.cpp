@@ -49,17 +49,17 @@ bool StackViewController::ControllerView::isHeaderDisplayed(int i) const {
 }
 
 void StackViewController::ControllerView::layoutSubviews(bool force) {
-  // Compute view frames
-  /* Regarding header to header overlap, represented horizontally :
+  /* Layout represented horizontally :
+   *                  <-height-->
    *  - Overlap :     | stack 1 | stack 2 | stack 3 |   [Content]
    *  - No overlap :  | stack 1 || stack 2 || stack 3 |   [Content] */
+  // Compute view frames
   KDCoordinate width = m_frame.width();
   int heightOffset = 0;
   int heightDiff =
       Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   for (int i = 0; i < m_numberOfStacks; i++) {
     if (isHeaderDisplayed(i)) {
-      // Account for separator thickness in position only if there is no overlap
       m_stackViews[i].setFrame(
           KDRect(0, heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
           force);
@@ -177,7 +177,6 @@ StackViewController::StackViewController(Responder * parentResponder,
                                          KDColor backgroundColor, KDColor separatorColor) :
     ViewController(parentResponder), m_view(), m_numberOfChildren(0), m_isVisible(false) {
   pushModel(Frame(rootViewController, textColor, backgroundColor, separatorColor));
-  rootViewController->setParentResponder(this);
 }
 
 const char * StackViewController::title() {
@@ -253,16 +252,22 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
 
 void StackViewController::pushModel(Frame frame) { m_childrenFrame[m_numberOfChildren++] = frame; }
 
-void StackViewController::setupActiveViewController() {
+void StackViewController::setupActiveView() {
   ViewController * vc = topViewController();
   if (vc) {
-    vc->setParentResponder(this);
     ViewController::DisplayParameter d = vc->displayParameter();
     m_view.setDisplayMode(d == ViewController::DisplayParameter::NeverShowOwnTitle
                               ? ViewController::DisplayParameter::Default
                               : d);
     m_view.setContentView(vc->view());
     vc->viewWillAppear();
+  }
+}
+
+void StackViewController::setupActiveViewController() {
+  setupActiveView();
+  ViewController * vc = topViewController();
+  if (vc) {
     vc->setParentResponder(this);
     Container::activeApp()->setFirstResponder(vc);
   }
@@ -293,18 +298,13 @@ void StackViewController::viewWillAppear() {
   }
   /* Load the visible controller view */
   // TODO factor with setupActiveViewController
-  ViewController * vc = topViewController();
-  if (m_numberOfChildren > 0 && vc) {
-    m_view.setDisplayMode(vc->displayParameter());
-    m_view.setContentView(vc->view());
-    vc->viewWillAppear();
-  }
+  setupActiveView();
   m_isVisible = true;
 }
 
 void StackViewController::viewDidDisappear() {
   ViewController * vc = topViewController();
-  if (m_numberOfChildren > 0 && vc) {
+  if (vc) {
     vc->viewDidDisappear();
   }
   int numberOfStacks = m_view.numberOfStacks();

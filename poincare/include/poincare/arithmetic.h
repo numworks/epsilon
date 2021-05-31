@@ -21,6 +21,7 @@ public:
 
   constexpr static int k_numberOfPrimeFactors = 1000;
   constexpr static int k_maxNumberOfFactors = 32;
+  constexpr static int k_maxNumberOfDivisors = 2 * k_maxNumberOfFactors;
   constexpr static int k_errorTooManyFactors = -1;
   constexpr static int k_errorFactorTooLarge = -2;
   constexpr static int k_errorAlreadyInUse = -3;
@@ -58,6 +59,10 @@ public:
   static Integer * coefficientAtIndex(int index) {
     assert(index < k_maxNumberOfFactors);
     return coefficients() + index;
+  }
+  static Integer * divisorAtIndex(int index) {
+    assert(index < k_maxNumberOfDivisors);
+    return index < k_maxNumberOfFactors ? factorAtIndex(index) : coefficientAtIndex(index - k_maxNumberOfFactors);
   }
 
 private:

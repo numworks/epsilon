@@ -64,8 +64,50 @@ private:
   float m_params[k_numberOfParams];
 };
 
-constexpr static int classesSizes[] = {sizeof(ZTestOnePropInputParameters),
-                                       sizeof(TTestOneMeanInputParameters)};
+// TODO redundant messages, could be dynamically computed?
+class ZTestTwoPropsInputParameters : public InputParameters {
+public:
+  int numberOfParameters() const override { return k_numberOfParams; }
+
+private:
+  constexpr static int k_numberOfParams = 4;
+  const ParameterRepr * paramReprAtIndex(int i) const override {
+    constexpr static ParameterRepr params[k_numberOfParams] = {
+        {I18n::Message::X1, I18n::Message::SuccessSample1},
+        {I18n::Message::N1, I18n::Message::Sample1Size},
+        {I18n::Message::X1, I18n::Message::SuccessSample2},
+        {I18n::Message::N1, I18n::Message::Sample2Size}};
+    return &(params[i]);
+  }
+  float * paramArray() override { return m_params; }
+
+  float m_params[k_numberOfParams];
+};
+
+class TTestTwoMeanInputParameters : public InputParameters {
+public:
+  int numberOfParameters() const override { return k_numberOfParams; }
+
+private:
+  constexpr static int k_numberOfParams = 6;
+  const ParameterRepr * paramReprAtIndex(int i) const override {
+    constexpr static ParameterRepr params[k_numberOfParams] = {
+        {I18n::Message::Mean1Symbol, I18n::Message::Sample1Mean},
+        {I18n::Message::s1, I18n::Message::STD1},
+        {I18n::Message::N1, I18n::Message::Sample1Size},
+        {I18n::Message::Mean2Symbol, I18n::Message::Sample2Mean},
+        {I18n::Message::s2, I18n::Message::STD2},
+        {I18n::Message::N2, I18n::Message::Sample1Size}};
+    return &(params[i]);
+  }
+  float * paramArray() override { return m_params; }
+
+  float m_params[k_numberOfParams];
+};
+
+constexpr static int classesSizes[] = {
+    sizeof(ZTestOnePropInputParameters), sizeof(TTestOneMeanInputParameters),
+    sizeof(ZTestTwoPropsInputParameters), sizeof(TTestTwoMeanInputParameters)};
 constexpr static int maxClassesSize = arrayMax(classesSizes);
 
 typedef char InputParametersBuffer[maxClassesSize];

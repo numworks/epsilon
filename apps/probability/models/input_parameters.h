@@ -75,8 +75,8 @@ private:
     constexpr static ParameterRepr params[k_numberOfParams] = {
         {I18n::Message::X1, I18n::Message::SuccessSample1},
         {I18n::Message::N1, I18n::Message::Sample1Size},
-        {I18n::Message::X1, I18n::Message::SuccessSample2},
-        {I18n::Message::N1, I18n::Message::Sample2Size}};
+        {I18n::Message::X2, I18n::Message::SuccessSample2},
+        {I18n::Message::N2, I18n::Message::Sample2Size}};
     return &(params[i]);
   }
   float * paramArray() override { return m_params; }

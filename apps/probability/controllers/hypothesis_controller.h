@@ -12,6 +12,7 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
 
+#include "input_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
 
@@ -23,9 +24,8 @@ class NormalInputController;
 
 class HypothesisController : public SelectableListViewPage, public ButtonDelegate {
 public:
-  HypothesisController(Escher::StackViewController * parent,
-                       NormalInputController * inputController, InputEventHandlerDelegate * handler,
-                       TextFieldDelegate * textFieldDelegate);
+  HypothesisController(Escher::StackViewController * parent, InputController * inputController,
+                       InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   };
@@ -44,12 +44,13 @@ public:
 private:
   void loadHypothesisParam();
   void storeHypothesisParams();
+  void initializeInputParams();
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_indexOfNext = 2;
   constexpr static int k_maxInputLength = 10;
-  NormalInputController * m_inputController;
+  InputController * m_inputController;
 
   MessageTableCellWithEditableText m_h0;
   MessageTableCellWithEditableText m_ha;  // TODO change to dropdown

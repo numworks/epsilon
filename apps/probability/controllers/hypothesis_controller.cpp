@@ -10,22 +10,25 @@
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
+#include <new>
+
 #include "input_controller.h"
 #include "probability/app.h"
 #include "probability/models/data.h"
+#include "probability/models/input_parameters.h"
 #include "probability/text_helpers.h"
 
 using namespace Probability;
 
 HypothesisController::HypothesisController(Escher::StackViewController * parent,
-                                           NormalInputController * inputController,
+                                           InputController * inputController,
                                            InputEventHandlerDelegate * handler,
-                                           TextFieldDelegate * textFieldDelegate)
-    : SelectableListViewPage(parent),
-      m_inputController(inputController),
-      m_h0(&m_selectableTableView, handler, textFieldDelegate),
-      m_ha(&m_selectableTableView, handler, textFieldDelegate),
-      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
+                                           TextFieldDelegate * textFieldDelegate) :
+    SelectableListViewPage(parent),
+    m_inputController(inputController),
+    m_h0(&m_selectableTableView, handler, textFieldDelegate),
+    m_ha(&m_selectableTableView, handler, textFieldDelegate),
+    m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
   m_h0.setMessage(I18n::Message::H0);
   m_ha.setMessage(I18n::Message::Ha);
 }
@@ -65,6 +68,7 @@ void HypothesisController::didBecomeFirstResponder() {
 
 void HypothesisController::buttonAction() {
   storeHypothesisParams();
+  initializeInputParams();
   openPage(m_inputController);
 }
 
@@ -89,4 +93,25 @@ void HypothesisController::storeHypothesisParams() {
       Poincare::Preferences::PrintFloatMode::Decimal);
 
   params->setOp(Data::ComparisonOperator::Lower);
+}
+
+void HypothesisController::initializeInputParams() {
+  Data::Test test = App::app()->snapshot()->data()->test();
+  switch (test) {
+    case Data::Test::OneProp:
+      new (App::app()->snapshot()->data()->testInputParams()) ZTestOnePropInputParameters();
+      break;
+    case Data::Test::OneMean:
+      new (App::app()->snapshot()->data()->testInputParams()) TTestOneMeanInputParameters();
+      break;
+    case Data::Test::TwoProps:
+      new (App::app()->snapshot()->data()->testInputParams()) ZTestTwoPropsInputParameters();
+      break;
+    case Data::Test::TwoMeans:
+      new (App::app()->snapshot()->data()->testInputParams()) TTestTwoMeanInputParameters();
+      break;
+    default:
+      assert(false);
+      break;
+  }
 }

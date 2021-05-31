@@ -76,7 +76,7 @@ private:
   InputHomogeneityController m_inputHomogeneityController;
   InputGoodnessController m_inputGoodnessController;
   TestResults m_resultsController;
-  NormalInputController m_inputController;
+  InputController m_inputController;
   IntervalInputController m_intervalInputController;
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;

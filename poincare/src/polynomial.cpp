@@ -176,8 +176,6 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
 
   /* Simplify the results with the correct complexFormat */
   if (approximate) {
-    /* Use Float nodes instead of Decimal to avoid displaying a wrong exact
-     * result.*/
     *root1 = root1->approximate<double>(context, complexFormat, angleUnit);
     *root2 = root2->approximate<double>(context, complexFormat, angleUnit);
     *root3 = root3->approximate<double>(context, complexFormat, angleUnit);

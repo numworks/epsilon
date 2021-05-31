@@ -236,7 +236,7 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
        * its own buffer. */
       a0NumberOfDivisors = arithmetic.PositiveDivisors(a0Int);
       for (int i = 0; i < a0NumberOfDivisors; i++) {
-        a0Divisors[i] = *arithmetic.factorAtIndex(i);
+        a0Divisors[i] = *arithmetic.divisorAtIndex(i);
       }
     } else {
       Arithmetic::resetLock();
@@ -252,7 +252,7 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
 
       for (int i = 0; i < a0NumberOfDivisors; i++) {
         for (int j = 0; j < aNNumberOfDivisors; j++) {
-          Rational r = Rational::Builder(a0Divisors[i], *arithmetic.factorAtIndex(j));
+          Rational r = Rational::Builder(a0Divisors[i], *arithmetic.divisorAtIndex(j));
           if (IsRoot(coefficients, degree, r, reductionContext)) {
             return std::move(r);
           }

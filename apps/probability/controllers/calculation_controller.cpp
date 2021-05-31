@@ -16,11 +16,11 @@
 #include "../images/focused_calcul3_icon.h"
 #include "../images/focused_calcul4_icon.h"
 #include "probability/app.h"
-#include "probability/calculation/discrete_calculation.h"
-#include "probability/calculation/finite_integral_calculation.h"
-#include "probability/calculation/left_integral_calculation.h"
-#include "probability/calculation/right_integral_calculation.h"
-#include "probability/data.h"
+#include "probability/models/calculation/discrete_calculation.h"
+#include "probability/models/calculation/finite_integral_calculation.h"
+#include "probability/models/calculation/left_integral_calculation.h"
+#include "probability/models/calculation/right_integral_calculation.h"
+#include "probability/models/data.h"
 #include "probability/gui/responder_image_cell.h"
 
 using namespace Poincare;

@@ -6,7 +6,7 @@
 #include <ion/events.h>
 
 #include "probability/gui/selectable_cell_list_controller.h"
-#include "probability/data.h"
+#include "probability/models/data.h"
 
 namespace Probability {
 

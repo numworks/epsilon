@@ -1,24 +1,24 @@
 apps += Probability::App
 app_headers += apps/probability/app.h
 
-app_probability_test_src = $(addprefix apps/probability/,\
-  distribution/binomial_distribution.cpp \
-  distribution/chi_squared_distribution.cpp \
-  distribution/fisher_distribution.cpp \
-  distribution/geometric_distribution.cpp \
-  distribution/helper.cpp \
-  distribution/hypergeometric_function.cpp\
-  distribution/distribution.cpp \
-  distribution/regularized_gamma.cpp \
-  distribution/student_distribution.cpp \
-  distribution/two_parameter_distribution.cpp \
+app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
+  binomial_distribution.cpp \
+  chi_squared_distribution.cpp \
+  fisher_distribution.cpp \
+  geometric_distribution.cpp \
+  helper.cpp \
+  hypergeometric_function.cpp\
+  distribution.cpp \
+  regularized_gamma.cpp \
+  student_distribution.cpp \
+  two_parameter_distribution.cpp \
 )
 
 app_probability_src = $(addprefix apps/probability/,\
 app.cpp helpers.cpp \
 )
 
-app_probability_src += $(addprefix apps/probability/distribution/,\
+app_probability_src += $(addprefix apps/probability/models/distribution/,\
   exponential_distribution.cpp \
   normal_distribution.cpp \
   poisson_distribution.cpp \
@@ -26,7 +26,7 @@ app_probability_src += $(addprefix apps/probability/distribution/,\
   uniform_distribution.cpp \
 )
 
-app_probability_src += $(addprefix apps/probability/calculation/,\
+app_probability_src += $(addprefix apps/probability/models/calculation/,\
 	calculation.cpp \
   discrete_calculation.cpp \
   left_integral_calculation.cpp \
@@ -78,7 +78,7 @@ tests_src += $(addprefix apps/probability/test/,\
   regularized_gamma.cpp \
 )
 
-# Allow #include <probability/...>
+# Allow #include "probability/..."
 $(call object_for,apps/apps_container.cpp apps/apps_container_storage.cpp apps/main.cpp) $(call object_for,$(app_probability_src)): SFLAGS += -Iapps
 
 # Image dependencies

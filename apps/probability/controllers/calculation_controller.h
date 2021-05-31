@@ -3,8 +3,8 @@
 
 #include <apps/shared/parameter_text_field_delegate.h>
 
-#include "probability/calculation/calculation.h"
-#include "probability/distribution/distribution.h"
+#include "probability/models/calculation/calculation.h"
+#include "probability/models/distribution/distribution.h"
 #include "probability/gui/calculation_cell.h"
 #include "probability/gui/distribution_curve_view.h"
 #include "probability/gui/responder_image_cell.h"

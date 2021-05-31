@@ -3,7 +3,7 @@
 
 #include <escher/message_table_cell_with_editable_text.h>
 #include <apps/shared/float_parameter_controller.h>
-#include "probability/distribution/distribution.h"
+#include "probability/models/distribution/distribution.h"
 #include "calculation_controller.h"
 
 namespace Probability {

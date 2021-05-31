@@ -1,7 +1,7 @@
 #ifndef APPS_PROBABILITY_GUI_RESPONDER_IMAGE_CELL_H
 #define APPS_PROBABILITY_GUI_RESPONDER_IMAGE_CELL_H
 
-#include "probability/calculation/calculation.h"
+#include "probability/models/calculation/calculation.h"
 #include "image_cell.h"
 #include "probability/controllers/calculation_type_controller.h"
 

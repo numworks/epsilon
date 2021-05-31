@@ -232,17 +232,17 @@ int Arithmetic::PositiveDivisors(const Integer & i) {
   s_lock = true;
 
   int numberOfDivisors = 0;
-  int upper = i.isExtractable() ? i.extractedInt() : INT_MAX;
-  if (upper < 0) {
-    upper = -upper;
+  int iInt = i.isExtractable() ? i.extractedInt() : INT_MAX;
+  if (iInt < 0) {
+    iInt = -iInt;
   }
-  for (int k = 1; k <= upper; k++) {
-    Integer kInteger(k);
-    if (Integer::Division(i, kInteger).remainder.isZero()) {
+  int step = 1 + (iInt % 2 != 0);
+  for (int k = 1; k <= iInt; k += step) {
+    if (iInt % k == 0) {
       if (numberOfDivisors >= k_maxNumberOfDivisors) {
         return k_errorTooManyFactors;
       }
-      *divisorAtIndex(numberOfDivisors++) = kInteger;
+      *divisorAtIndex(numberOfDivisors++) = Integer(k);
     }
   }
   return numberOfDivisors;

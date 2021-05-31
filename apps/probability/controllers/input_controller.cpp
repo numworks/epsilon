@@ -6,7 +6,7 @@
 
 #include "probability/app.h"
 #include "probability/models/data.h"
-#include "probability/helpers.h"
+#include "probability/text_helpers.h"
 #include "results_controller.h"
 
 using namespace Probability;

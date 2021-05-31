@@ -13,7 +13,7 @@
 #include "input_controller.h"
 #include "probability/app.h"
 #include "probability/models/data.h"
-#include "probability/helpers.h"
+#include "probability/text_helpers.h"
 
 using namespace Probability;
 

@@ -11,7 +11,7 @@
 #include "hypothesis_controller.h"
 #include "probability/app.h"
 #include "probability/models/data.h"
-#include "probability/helpers.h"
+#include "probability/text_helpers.h"
 #include "type_controller.h"
 
 using namespace Probability;

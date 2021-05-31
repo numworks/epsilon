@@ -10,11 +10,19 @@
 
 namespace Probability {
 
-Shared::TextFieldDelegateApp * getProbabilityApp();
 
-int testToText(Data::Test t, char * buffer, int bufferLength);
-const char * testToTextSymbol(Data::Test t);
-int testTypeToText(Data::TestType t, char * buffer, int bufferLength);
+constexpr static int max(int a, int b) {
+  return a > b ? a : b;
+}
+
+constexpr static int max_between(const int * begin, const int * end) {
+  return begin + 1 == end ? *begin : max_between(begin + 1, end);
+}
+
+template<int N>
+constexpr static int arrayMax(const int (&data)[N]) {
+  return max_between(data, data + N);
+}
 
 }  // namespace Probability
 

@@ -23,17 +23,16 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
 
   *delta = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), a.clone(), c.clone()));
   *delta = delta->simplify(reductionContext);
-  if (delta->isUninitialized()) {
-    *delta = Undefined::Builder();
-  }
-
+  assert(!delta->isUninitialized());
   if (delta->isUndefined()){
     *root1 = Undefined::Builder();
     *root2 = Undefined::Builder();
     return 0;
   }
-  if (delta->nullStatus(context) == ExpressionNode::NullStatus::Null
-   || (delta->nullStatus(context) == ExpressionNode::NullStatus::Unknown && delta->approximateToScalar<double>(context, complexFormat, angleUnit) == 0.))
+
+  ExpressionNode::NullStatus deltaNull = delta->nullStatus(context);
+  if (deltaNull == ExpressionNode::NullStatus::Null
+   || (deltaNull == ExpressionNode::NullStatus::Unknown && delta->approximateToScalar<double>(context, complexFormat, angleUnit) == 0.))
   {
     *root1 = Division::Builder(Opposite::Builder(b), Multiplication::Builder(Rational::Builder(2), a)).simplify(reductionContext);
     *root2 = Undefined::Builder();
@@ -66,6 +65,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
   bool approximate = false;
 
+  // b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
   *delta = Addition::Builder({
       Power::Builder(Multiplication::Builder(b.clone(), c.clone()), Rational::Builder(2)),
       Multiplication::Builder({Rational::Builder(18), a.clone(), b.clone(), c.clone(), d.clone()}),
@@ -109,7 +109,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     Expression beta = Addition::Builder({b, Multiplication::Builder(a.clone(), root1->clone())}).simplify(reductionContext);
     Expression gamma = root1->nullStatus(context) == ExpressionNode::NullStatus::Null ? c : Opposite::Builder(Division::Builder(d, root1->clone())).simplify(reductionContext);
     Expression delta2;
-    QuadraticPolynomialRoots(a, beta, gamma, root2, root3, &delta2, context, Preferences::ComplexFormat::Cartesian, angleUnit);
+    QuadraticPolynomialRoots(a, beta, gamma, root2, root3, &delta2, context, complexFormat, angleUnit);
     assert(!root2->isUninitialized() && !root3->isUninitialized());
   } else {
     /* We did not manage to find any simple root : we resort to using Cardano's
@@ -121,18 +121,23 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       double deltaValue = delta->approximateToScalar<double>(context, complexFormat, angleUnit);
       deltaSign = deltaValue == 0. ? 0 : deltaValue > 0. ? 1 : -1;
     }
+    // b^2 - 3ac
     Expression delta0 = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(3), a.clone(), c.clone())).simplify(reductionContext);
     if (deltaSign == 0) {
       if (delta0.nullStatus(context) == ExpressionNode::NullStatus::Null || delta0.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
+        // -b / 3a
         *root1 = Division::Builder(b, Multiplication::Builder(Rational::Builder(-3), a));
         *root2 = Undefined::Builder();
         *root3 = Undefined::Builder();
       } else {
+        // (9ad - bc) / (2*delta0)
         *root1 = Division::Builder(Subtraction::Builder(Multiplication::Builder(Rational::Builder(9), a.clone(), d.clone()), Multiplication::Builder(b.clone(), c.clone())), Multiplication::Builder(Rational::Builder(2), delta0.clone()));
+        // (4abc - 9da^2 - b^3) / (a*delta0)
         *root2 = Division::Builder(Addition::Builder({Multiplication::Builder(Rational::Builder(4), a.clone(), b.clone(), c.clone()), Multiplication::Builder(Rational::Builder(-9), Power::Builder(a.clone(), Rational::Builder(2)), d.clone()), Opposite::Builder(Power::Builder(b.clone(), Rational::Builder(3)))}), Multiplication::Builder(a.clone(), delta0.clone()));
         *root3 = Undefined::Builder();
       }
     } else {
+      // 2b^3 - 9abc + 27da^2
       Expression delta1 = Addition::Builder({
           Multiplication::Builder(Rational::Builder(2), Power::Builder(b.clone(), Rational::Builder(3))),
           Multiplication::Builder(Rational::Builder(-9), a.clone(), b.clone(), c.clone()),

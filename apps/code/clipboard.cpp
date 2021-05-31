@@ -24,11 +24,11 @@ bool Clipboard::ShouldReplaceLetterE(const char * text, size_t length, size_t po
   }
 
   size_t start;
-  size_t nextNewline = s_replacementRuleStartingPoint - 1;
-  assert(nextNewline < position);
-  while (nextNewline < position) {
-    start = nextNewline + 1;
-    nextNewline = UTF8Helper::CodePointSearch(text + start, '\n') - text;
+  size_t nextLineStart = s_replacementRuleStartingPoint;
+  assert(nextLineStart <= position);
+  while (nextLineStart <= position) {
+    start = nextLineStart;
+    nextLineStart = UTF8Helper::CodePointSearch(text + start, '\n') - text + 1;
   }
   while (text[start] == ' ') {
     start++;

@@ -68,7 +68,7 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
   }
   // Border frame
   if (m_contentView) {
-    if (m_headersOverlapHeaders) {
+    if (m_headersOverlapHeaders && numberOfDisplayedHeaders() > 0) {
       heightOffset += Metric::CellSeparatorThickness;  // last separator
     }
     if (borderShouldOverlapContent()) {

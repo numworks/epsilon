@@ -38,7 +38,7 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  ViewController::DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
+  ViewController::DisplayParameter displayParameter() override { return DisplayParameter::NeverShowOwnTitle; }
 private:
   class ContentView : public View {
   public:

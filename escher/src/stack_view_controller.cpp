@@ -313,7 +313,7 @@ void StackViewController::viewDidDisappear() {
 }
 
 bool StackViewController::shouldStoreOnStack(ViewController * vc) {
-  return vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle;
+  return vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::NeverShowOwnTitle;
 }
 
 }  // namespace Escher

@@ -13,21 +13,19 @@ using namespace Probability;
 
 InputController::InputController(Escher::StackViewController * parent,
                                  TestResults * resultsController, InputParameters * inputParameters,
-                                 Escher::InputEventHandlerDelegate * handler,
-                                 Escher::TextFieldDelegate * textFieldDelegate) :
-    SelectableListViewPage(parent),
+                                 Escher::InputEventHandlerDelegate * handler) :
+    FloatParameterPage(parent),
     m_resultsController(resultsController),
     m_inputParameters(inputParameters),
-    m_parameterCells{{&m_selectableTableView, handler, textFieldDelegate},
-                     {&m_selectableTableView, handler, textFieldDelegate}},
-    m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
+    m_parameterCells{{&m_selectableTableView, handler, this},
+                     {&m_selectableTableView, handler, this}} {
   // Initialize cells
   for (int i = 0; i < k_numberOfReusableCells; i++) {
     m_parameterCells[i].setParentResponder(&m_selectableTableView);
-    m_parameterCells[i].textField()->setDelegates(handler, textFieldDelegate);
+    m_parameterCells[i].textField()->setDelegates(handler, this);
   }
   m_significanceCell.setParentResponder(&m_selectableTableView);
-  m_significanceCell.textField()->setDelegates(handler, textFieldDelegate);
+  m_significanceCell.textField()->setDelegates(handler, this);
   m_significanceCell.setMessage(I18n::Message::Alpha);
   m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
@@ -60,27 +58,10 @@ const char * InputController::title() {
 }
 
 int InputController::typeAtIndex(int i) {
-  int numberOfParams = m_inputParameters->numberOfParameters();
-  if (i < numberOfParams) {
-    return k_parameterCellType;
-  }
-  if (i == numberOfParams) {
+  if (i == m_inputParameters->numberOfParameters()) {
     return k_significanceCellType;
   }
-  assert(i == numberOfParams + 1);
-  return k_buttonCellType;
-}
-
-Escher::HighlightCell * InputController::reusableCell(int i, int type) {
-  if (type == k_parameterCellType) {
-    return &m_parameterCells[i];
-  }
-  if (type == k_significanceCellType) {
-    // assert(i == 0);
-    return &m_significanceCell;
-  }
-  assert(type == k_buttonCellType);
-  return &m_next;
+  return FloatParameterPage::typeAtIndex(i);
 }
 
 void InputController::didBecomeFirstResponder() {
@@ -103,4 +84,12 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
     mCell->setMessage(m_inputParameters->paramSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_inputParameters->paramDescriptionAtIndex(index));
   }
+}
+
+Escher::HighlightCell * InputController::reusableParameterCell(int index, int type) {
+  if (type == k_parameterCellType) {
+    return &(m_parameterCells[index]);
+  }
+  assert(type == k_significanceCellType);
+  return &m_significanceCell;
 }

@@ -18,7 +18,7 @@ App::App(Snapshot * snapshot) :
     m_inputGoodnessController(&m_stackViewController, &m_resultsController, this, this),
     m_resultsController(&m_stackViewController, &m_graphController, this, this),
     m_inputController(&m_stackViewController, &m_resultsController,
-                      snapshot->data()->testInputParams(), this, this),
+                      snapshot->data()->testInputParams(), this),
     m_typeController(&m_stackViewController, &m_hypothesisController, &m_intervalInputController),
     m_intervalInputController(&m_stackViewController, &m_resultsController, this),
     m_categoricalTypeController(&m_stackViewController, &m_inputGoodnessController,

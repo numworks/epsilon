@@ -1,6 +1,7 @@
 #ifndef APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H
 #define APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H
 
+#include <apps/shared/float_parameter_controller.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
@@ -40,8 +41,14 @@ public:
 class SelectableListViewPage : public PageController<SelectableListViewController> {
 public:
   SelectableListViewPage(StackViewController * stackViewController,
-                         SelectableTableViewDelegate * tableDelegate = nullptr)
-      : PageController(stackViewController, tableDelegate){};
+                         SelectableTableViewDelegate * tableDelegate = nullptr) :
+      PageController(stackViewController, tableDelegate){};
+};
+
+class FloatParameterPage : public PageController<Shared::FloatParameterController<float>> {
+public:
+  FloatParameterPage(StackViewController * stackViewController) :
+      PageController(stackViewController) {}
 };
 
 }  // namespace Probability

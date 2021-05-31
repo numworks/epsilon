@@ -20,11 +20,10 @@ namespace Probability {
 
 class TestResults;
 
-class InputController : public SelectableListViewPage, public ButtonDelegate {
+class InputController : public FloatParameterPage {
 public:
   InputController(Escher::StackViewController * parent, TestResults * resultsController,
-                  InputParameters * inputParameters, Escher::InputEventHandlerDelegate * handler,
-                  Escher::TextFieldDelegate * textFieldDelegate);
+                  InputParameters * inputParameters, Escher::InputEventHandlerDelegate * handler);
   int numberOfRows() const override {
     return m_inputParameters->numberOfParameters() + 1 /* significance */ + 1 /* button */;
   }
@@ -33,24 +32,29 @@ public:
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   int typeAtIndex(int i) override;
-  Escher::HighlightCell * reusableCell(int i, int type) override;
   void didBecomeFirstResponder() override;
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
+protected:
+  float parameterAtIndex(int i) override { return m_inputParameters->paramAtIndex(i); }
+
 private:
+  int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
+  Escher::HighlightCell * reusableParameterCell(int index, int type);
+  bool setParameterAtIndex(int parameterIndex, float f) {
+    m_inputParameters->setParamAtIndex(parameterIndex, f);
+  }
+
   InputParameters * m_inputParameters;
   char m_titleBuffer[30];
   TestResults * m_resultsController;
 
   constexpr static int k_numberOfReusableCells = 8;  // TODO count
-  constexpr static int k_parameterCellType = 0;
-  constexpr static int k_significanceCellType = 1;
-  constexpr static int k_buttonCellType = 2;
+  constexpr static int k_significanceCellType = 2;
 
   Escher::MessageTableCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];
   Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
-  Shared::ButtonWithSeparator m_next;
 };
 
 }  // namespace Probability

@@ -10,8 +10,8 @@
 #include "categorical_type_controller.h"
 #include "hypothesis_controller.h"
 #include "probability/app.h"
-#include "probability/models/data.h"
 #include "probability/gui/selectable_cell_list_controller.h"
+#include "probability/models/data.h"
 #include "type_controller.h"
 
 using namespace Probability;
@@ -19,11 +19,11 @@ using namespace Probability;
 TestController::TestController(Escher::StackViewController * parentResponder,
                                HypothesisController * hypothesisController,
                                TypeController * typeController,
-                               CategoricalTypeController * categoricalController)
-    : SelectableCellListPage(parentResponder),
-      m_hypothesisController(hypothesisController),
-      m_categoricalController(categoricalController),
-      m_typeController(typeController) {
+                               CategoricalTypeController * categoricalController) :
+    SelectableCellListPage(parentResponder),
+    m_hypothesisController(hypothesisController),
+    m_categoricalController(categoricalController),
+    m_typeController(typeController) {
   // Create cells
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
   m_cells[k_indexOfOneProp].setSubtitle(I18n::Message::ZTest);
@@ -70,9 +70,14 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    App::app()->snapshot()->data()->setTest(test);
-    App::app()->snapshot()->data()->setTestType(Data::TestType::ZTest);
-    initializeHypothesisParams(test);
+    if (App::app()->snapshot()->data()->test() != test || test == Data::Test::OneMean ||
+        test == Data::Test::TwoMeans) {
+      initializeHypothesisParams(test);
+    }
+    if (App::app()->snapshot()->data()->test() != test) {
+      App::app()->snapshot()->data()->setTest(test);
+      App::app()->snapshot()->data()->setTestType(Data::TestType::TTest);
+    }
     openPage(view);
     return true;
   }
@@ -104,19 +109,18 @@ void TestController::selectRowAccordingToTest(Data::Test t) {
 }
 
 void TestController::initializeHypothesisParams(Data::Test t) {
-  float firstParam = t == Data::Test::OneProp ? 0.5 : 0;
-  switch (t)
-  {
-  case Data::Test::OneProp:
-    firstParam = 0.5;
-    break;
-  case Data::Test::OneMean:
-    firstParam = 128;
-    break;
-  case Data::Test::TwoProps:
-  case Data::Test::TwoMeans:
-    firstParam = 0;
-    break;
+  float firstParam;
+  switch (t) {
+    case Data::Test::OneProp:
+      firstParam = 0.5;
+      break;
+    case Data::Test::OneMean:
+      firstParam = 128;
+      break;
+    case Data::Test::TwoProps:
+    case Data::Test::TwoMeans:
+      firstParam = 0;
+      break;
   }
   App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
   App::app()->snapshot()->data()->hypothesisParams()->setOp(Data::ComparisonOperator::Higher);

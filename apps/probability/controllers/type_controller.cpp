@@ -59,9 +59,9 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
-      view = m_hypothesisController;
-    } else {
       view = m_intervalInputController;
+    } else {
+      view = m_hypothesisController;
     }
     assert(view != nullptr);
     App::app()->snapshot()->data()->setTestType(t);

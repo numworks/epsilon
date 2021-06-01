@@ -316,6 +316,13 @@ uint32_t slotBUserlandStart() {
   return Config::KernelBStartAddress + Config::UserlandOffsetFromKernel;
 }
 
+bool isInReflashableSector(uint32_t address) {
+  if (isRunningSlotA()) {
+    return address >= ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2 && address < ExternalFlash::Config::EndAddress;
+  }
+  return address >= ExternalFlash::Config::StartAddress && address < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+}
+
 }
 }
 }

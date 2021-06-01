@@ -13,19 +13,19 @@ namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
-   if (leaveAddress >= reinterpret_cast<uint32_t>(&_external_apps_start) && leaveAddress < reinterpret_cast<uint32_t>(&_external_apps_start + Board::Config::ExternalAppsSectionLength)) {
-     Ion::ExternalApps::setVisible(true);
-     if (Ion::ExternalApps::numberOfApps() > 0) {
-       Board::downgradeTrustLevel(true); // Display pop-up
-     } else {
-       Ion::ExternalApps::setVisible(false);
-     }
-     return;
-   }
-  uint32_t addressToJumpTo = Board::switchExecutableSlot();
-  if (addressToJumpTo) {
-    Reset::jump(addressToJumpTo);
+  if (leaveAddress >= reinterpret_cast<uint32_t>(&_external_apps_start) && leaveAddress < reinterpret_cast<uint32_t>(&_external_apps_start + Board::Config::ExternalAppsSectionLength)) {
+    Ion::ExternalApps::setVisible(true);
+    if (Ion::ExternalApps::numberOfApps() > 0) {
+      Board::downgradeTrustLevel(true); // Display pop-up
+    } else {
+      Ion::ExternalApps::setVisible(false);
+    }
+    return;
   }
+  Board::switchExecutableSlot(leaveAddress);
+  /* The jump can't be done from switchExecutableSlot since we need to
+   * terminate the interruption procedure before jumping. */
+  Reset::jump(leaveAddress);
 }
 
 }

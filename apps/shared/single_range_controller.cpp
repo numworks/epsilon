@@ -8,7 +8,7 @@ namespace Shared {
 // SingleRangeController
 
 SingleRangeController::SingleRangeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
-  SimpleFloatParameterController<float>(parentResponder),
+  FloatParameterController<float>(parentResponder),
   m_autoCell(I18n::Message::DefaultSetting),
   m_boundsCells{},
   m_range(interactiveRange)
@@ -20,24 +20,37 @@ SingleRangeController::SingleRangeController(Responder * parentResponder, InputE
   }
 }
 
+HighlightCell * SingleRangeController::reusableCell(int index, int type) {
+  if (type == k_autoCellType) {
+    return &m_autoCell;
+  }
+  if (type == k_parameterCellType) {
+    return m_boundsCells + index;
+  }
+  return FloatParameterController<float>::reusableCell(index, type);
+}
+
+KDCoordinate SingleRangeController::nonMemoizedRowHeight(int j) {
+  int type = typeAtIndex(j);
+  HighlightCell * cell = type == k_autoCellType ? static_cast<HighlightCell *>(&m_autoCell) : type == k_parameterCellType ? static_cast<HighlightCell *>(&m_boundsCells[j - 1]) : nullptr;
+  return cell ? heightForCellAtIndex(cell, j, false) : FloatParameterController<float>::nonMemoizedRowHeight(j);
+}
+
 void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  /* We take advantage of this window not being supposed to scroll to
-   * attribute the same type to all cells, which in turns avoid the need to
-   * reimplement methods such as nonMemoizedRowHeight, reusableCellCount,
-   * typeAtIndex... */
-  if (index == 0) {
+  int type = typeAtIndex(index);
+  if (type == k_autoCellType) {
     SwitchView * switchView = static_cast<SwitchView *>(const_cast<View *>(m_autoCell.accessoryView()));
     switchView->setState(autoStatus());
     return;
   }
-  if (index < k_numberOfTextCells + 1) {
+  if (type == k_parameterCellType) {
     LockableEditableCell * castedCell = static_cast<LockableEditableCell *>(cell);
     castedCell->setMessage(index == 1 ? I18n::Message::Minimum : I18n::Message::Maximum);
     KDColor color = autoStatus() ? Palette::GrayDark : KDColorBlack;
     castedCell->setTextColor(color);
     castedCell->textField()->setTextColor(color);
   }
-  SimpleFloatParameterController<float>::willDisplayCellForIndex(cell, index);
+  FloatParameterController<float>::willDisplayCellForIndex(cell, index);
 }
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
@@ -56,7 +69,7 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.reloadData();
     return true;
   }
-  return SimpleFloatParameterController<float>::handleEvent(event);
+  return FloatParameterController<float>::handleEvent(event);
 }
 
 float SingleRangeController::parameterAtIndex(int index) {
@@ -67,9 +80,7 @@ float SingleRangeController::parameterAtIndex(int index) {
 }
 
 HighlightCell * SingleRangeController::reusableParameterCell(int index, int type) {
-  if (index == 0) {
-    return &m_autoCell;
-  }
+  assert(index >= 1 && index < k_numberOfTextCells + 1);
   return &m_boundsCells[index - 1];
 }
 

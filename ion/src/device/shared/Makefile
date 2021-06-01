@@ -13,6 +13,7 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/shared/, \
   drivers/display.cpp \
   drivers/keyboard.cpp \
   drivers/internal_flash.cpp \
+  drivers/random.cpp \
   drivers/reset.cpp \
   drivers/serial_number.cpp \
   drivers/timing.cpp \

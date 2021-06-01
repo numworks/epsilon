@@ -15,7 +15,7 @@ private:
   static Expression ReducePolynomial(const Expression * coefficients, int degree, Expression parameter, ExpressionNode::ReductionContext reductionContext);
   static bool IsRoot(const Expression * coefficients, int degree, Expression root, ExpressionNode::ReductionContext reductionContext) { return ReducePolynomial(coefficients, degree, root, reductionContext).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null; }
   static Expression RationalRootSearch(const Expression * coefficients, int degree, ExpressionNode::ReductionContext reductionContext);
-  static Expression PowerRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, ExpressionNode::ReductionContext reductionContext);
+  static Expression SumRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, ExpressionNode::ReductionContext reductionContext);
   static Expression CardanoNumber(Expression delta0, Expression delta1, bool * approximate, ExpressionNode::ReductionContext reductionContext);
 };
 

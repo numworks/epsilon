@@ -102,7 +102,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
      * multiplicity. As additions containing roots or powers are in general not
      * reducible, if there exists an irrational root, it might still be
      * explicit in the expression for b. */
-    *root1 = PowerRootSearch(coefficients, degree, 2, reductionContext);
+    *root1 = SumRootSearch(coefficients, degree, 2, reductionContext);
   }
 
   if (!root1->isUninitialized()) {
@@ -285,19 +285,19 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
   return Expression();
 }
 
-Expression Polynomial::PowerRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, ExpressionNode::ReductionContext reductionContext) {
-  Expression a = coefficients[relevantCoefficient];
+Expression Polynomial::SumRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, ExpressionNode::ReductionContext reductionContext) {
+  Expression a = coefficients[degree];
+  Expression b = coefficients[relevantCoefficient].clone();
 
-  for (int i = 0; i < a.numberOfChildren(); i++) {
-    Expression b = a.childAtIndex(i);
-    if (b.hasExpression([](Expression e, const void * context) {
-          return e.type() == ExpressionNode::Type::Power || e.type() == ExpressionNode::Type::NthRoot || e.type() == ExpressionNode::Type::SquareRoot;
-          }, nullptr))
-    {
-      Expression r = Opposite::Builder(b.clone());
-      if (IsRoot(coefficients, degree, r, reductionContext)) {
-        return r;
-      }
+  if (b.type() != ExpressionNode::Type::Addition) {
+    Expression r = Opposite::Builder(Division::Builder(b, a.clone()));
+    return IsRoot(coefficients, degree, r, reductionContext) ? r : Expression();
+  }
+  int n = b.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    Expression r = Opposite::Builder(Division::Builder(b.childAtIndex(i), a.clone()));
+    if (IsRoot(coefficients, degree, r, reductionContext)) {
+      return r;
     }
   }
 

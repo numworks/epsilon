@@ -10,21 +10,22 @@ SIGNATURE_LENGTH = 64;
  * - Overflowing the userland stack should not impact the kernel (the MPU region
  * should protect it anyway)
  *
- * |                                SRAM                                        |
- * | USERLAND DATA/BSS | HEAP | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS |
+ * |                                SRAM                                                 |
+ * | USERLAND DATA/BSS | HEAP | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS | canary |
  *
  * Bootloader SRAM is mapped like:
- * |                                    STACK                                   |
+ * |                                    STACK                                   | canary |
  * Kernel SRAM is mapped like:
- * | xxxxxxxxxxxxxxxxxxxxxxxx | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS |
+ * | xxxxxxxxxxxxxxxxxxxxxxxx | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS | canary |
  * Userland SRAM is mapped like:
- * | USERLAND DATA/BSS | HEAP | USERLAND STACK | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
+ * | USERLAND DATA/BSS | HEAP | USERLAND STACK | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
  *
  */
 
 SRAM_ORIGIN = 0x20000000;
 SRAM_LENGTH = 256K;
 USERLAND_STACK_LENGTH = 32K;
+CANARY_LENGTH = 4;
 /* WARNING: when choosing the kernel RAM length, keep in mind that the MPU
  * region address should be aligned on the MPU region size! */
 KERNEL_STACK_LENGTH = 8K;

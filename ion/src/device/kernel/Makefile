@@ -16,7 +16,6 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/wakeup.cpp \
   drivers/persisting_bytes.cpp \
   drivers/power.cpp \
-  drivers/random.cpp \
   drivers/svcall_handler.cpp \
   drivers/svcall_handler_as.s \
   drivers/swd.cpp \

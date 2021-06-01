@@ -13,13 +13,13 @@
 #include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
-#include <kernel/drivers/random.h>
-#include <shared/drivers/usb.h>
 #include <shared/drivers/display.h>
 #include <shared/drivers/flash_privileged.h>
+#include <shared/drivers/random.h>
 #include <shared/drivers/reset.h>
 #include <shared/drivers/serial_number.h>
 #include <shared/drivers/svcall.h>
+#include <shared/drivers/usb.h>
 #include <string.h>
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language

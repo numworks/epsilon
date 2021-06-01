@@ -1,6 +1,7 @@
 #include <poincare/polynomial.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
+#include <poincare/complex_argument.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
@@ -303,15 +304,24 @@ Expression Polynomial::PowerRootSearch(const Expression * coefficients, int degr
   return Expression();
 }
 
-Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool * approximate, ExpressionNode::ReductionContext reductionContext, bool subtract) {
+Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool * approximate, ExpressionNode::ReductionContext reductionContext) {
   assert(approximate != nullptr);
+
+  /* C = root(delta1 ± sqrt(delta1^2 - 4*delta0^3), 3)
+   * The sign of ± is chosen so that C is not null:
+   * - if delta0 != 0, we chose +
+   * - if delta0 = 0:
+   *   - if arg(delta1) < π (i.e. sqrt(delta1^2) = delta1), we chose +
+   *   - if arg(delta1) >= π (i.e. sqrt(delta1^2) = -delta1), we chose - */
 
   Expression rootDeltaDifference = SquareRoot::Builder(Subtraction::Builder(
         Power::Builder(delta1.clone(), Rational::Builder(2)),
         Multiplication::Builder(Rational::Builder(4), Power::Builder(delta0.clone(), Rational::Builder(3)))
         ));
   Expression C;
-  if (subtract) {
+
+  if (delta0.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null
+   && ComplexArgument::Builder(delta1.clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()) >= M_PI) {
     C = Subtraction::Builder(delta1.clone(), rootDeltaDifference);
   } else {
     C = Addition::Builder(delta1.clone(), rootDeltaDifference);
@@ -324,9 +334,7 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
   } else {
     *approximate = false;
   }
-  if (C.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null && !subtract) {
-    C = CardanoNumber(delta0, delta1, approximate, reductionContext, true);
-  }
+  assert(C.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null);
   return C;
 }
 }

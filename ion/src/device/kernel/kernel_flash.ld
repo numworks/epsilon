@@ -103,6 +103,15 @@ SECTIONS {
     _bss_section_end_ram = .;
   } >SRAM_DATA_BSS
 
+  .canary (NOLOAD): {
+    . = (ORIGIN(SRAM_DATA_BSS) + LENGTH(SRAM_DATA_BSS) - CANARY_LENGTH);
+    . = ALIGN(4);
+    _canary_section_start_ram = .;
+    KEEP(*(.canary))
+    _canary_section_end_ram = .;
+    ASSERT ((_canary_section_start_ram + CANARY_LENGTH == _canary_section_end_ram), "Bootloader canary section should only contain the canary");
+  } >SRAM_DATA_BSS
+
   .process_stack : {
     . = (ORIGIN(SRAM_PROCESS_STACK));
     . = ALIGN(8);

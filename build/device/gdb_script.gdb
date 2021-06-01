@@ -32,10 +32,10 @@ define switch_symbol_file
   symbol-file
 # Load new symbol file
   if $argc == 2
-    add-symbol-file output/$arg0/device/n0110/$arg1.elf
+    add-symbol-file output/$arg0/device/n0110/$arg1/$arg1.elf
   end
   if $argc == 3
-    add-symbol-file output/$arg0/device/n0110/$arg1.$arg2.elf
+    add-symbol-file output/$arg0/device/n0110/$arg1/$arg1.$arg2.elf
   end
 end
 

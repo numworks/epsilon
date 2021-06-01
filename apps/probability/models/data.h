@@ -82,7 +82,7 @@ struct ProbaData {
 
 // Test sub app
 
-enum class Test { OneProp, OneMean, TwoProps, TwoMeans, Categorical };
+enum class Test { None, OneProp, OneMean, TwoProps, TwoMeans, Categorical };
 
 enum class TestType { TTest, PooledTTest, ZTest };
 

@@ -1,5 +1,6 @@
 #include "hypothesis_controller.h"
 
+#include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <escher/container.h>
@@ -74,25 +75,21 @@ void HypothesisController::buttonAction() {
 
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = 20;
-  char buffer[bufferSize]{"<"};
+  char buffer[bufferSize]{"p<"};
   float p = App::app()->snapshot()->data()->hypothesisParams()->firstParam();
-  Poincare::PrintFloat::ConvertFloatToText(p, buffer + 1, bufferSize, k_maxInputLength, 5,
+  Poincare::PrintFloat::ConvertFloatToText(p, buffer + 2, bufferSize, k_maxInputLength, 5,
                                            Poincare::Preferences::PrintFloatMode::Decimal);
-  m_h0.setAccessoryText(buffer + 1);
+  m_h0.setAccessoryText(buffer + 2);
   m_ha.setAccessoryText(buffer);
 }
 
 void HypothesisController::storeHypothesisParams() {
   // TODO maybe parse at the same time as when checking validity
+  // TODO use TextFieldDelegateApp
   Data::HypothesisParams * params = App::app()->snapshot()->data()->hypothesisParams();
-  constexpr int precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
-  constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
-  char buffer[bufferSize];
-  Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-      params->firstParam(), buffer, bufferSize, precision,
-      Poincare::Preferences::PrintFloatMode::Decimal);
-
-  params->setOp(Data::ComparisonOperator::Lower);
+  params->setFirstParam(Shared::PoincareHelpers::ApproximateToScalar<float>(
+      m_h0.textField()->text(), AppsContainer::sharedAppsContainer()->globalContext()));
+  params->setOp(Data::ComparisonOperator::Higher);
 }
 
 void HypothesisController::initializeInputParams() {

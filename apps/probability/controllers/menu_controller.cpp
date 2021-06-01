@@ -54,15 +54,15 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     ViewController * view = nullptr;
     switch (selectedRow()) {
       case k_indexOfDistribution:
-        view = m_distributionController;
         subapp = Data::SubApp::Probability;
+        view = m_distributionController;
         break;
       case k_indexOfTest:
         subapp = Data::SubApp::Tests;
         view = m_testController;
         break;
       case k_indexOfInterval:
-        subapp = Data::SubApp::Probability;
+        subapp = Data::SubApp::Intervals;
         view = m_testController;
         break;
     }

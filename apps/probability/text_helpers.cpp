@@ -1,10 +1,28 @@
 #include "text_helpers.h"
 
+#include <stdarg.h>
 #include <string.h>
 
 #include "app.h"
 
-int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
+namespace Probability {
+
+int sprintf(char * buffer, const char * format, ...) {
+  char * origin;
+  va_list args;
+  va_start(args, format);
+  while (format != 0) {
+    if (*format == '%' && *(format + 1) == 's') {
+      // Insert text now
+      buffer += strlcpy(buffer, va_arg(args, char *), 10000);
+      buffer += 2;
+    }
+    *(buffer++) = *(format++);
+  }
+  return buffer - origin;
+}
+
+int testToText(Data::Test t, char * buffer, int bufferLength) {
   // TODO replace with messages
   const char * txt;
   switch (t) {
@@ -27,8 +45,7 @@ int Probability::testToText(Data::Test t, char * buffer, int bufferLength) {
   return strlen(txt) + 1;
 }
 
-
-const char * Probability::testToTextSymbol(Data::Test t) {
+const char * testToTextSymbol(Data::Test t) {
   switch (t) {
     case Data::Test::OneProp:
       return "p";
@@ -43,7 +60,7 @@ const char * Probability::testToTextSymbol(Data::Test t) {
   return nullptr;
 }
 
-int Probability::testTypeToText(Data::TestType t, char * buffer, int bufferLength) {
+int testTypeToText(Data::TestType t, char * buffer, int bufferLength) {
   const char * txt;
   switch (t) {
     case Data::TestType::TTest:
@@ -59,4 +76,6 @@ int Probability::testTypeToText(Data::TestType t, char * buffer, int bufferLengt
   assert(strlen(txt) + 1 < bufferLength);
   memcpy(buffer, txt, strlen(txt) + 1);
   return strlen(txt) + 1;
+}
+
 }

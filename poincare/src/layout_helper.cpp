@@ -16,7 +16,7 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
   const int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
   for (int i = 0; i < numberOfChildren; i++) {
-    Layout childLayout = expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits);
+    Layout childLayout = expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, false, true);
 
     if (i > 0) {
       /* Handle the operator */
@@ -56,7 +56,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
     if (i > 0) {
       args.addChildAtIndex(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
     }
-    args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
+    args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, false, true), args.numberOfChildren(), true);
   }
   // Add the parenthesed arguments.
   result.addOrMergeChildAtIndex(Parentheses(args, false), result.numberOfChildren(), true);

@@ -42,21 +42,6 @@ void unauthenticatedUserland() {
   waitUntilKeyPress();
 }
 
-constexpr static int sObsoleteSoftwareNumberOfMessages = 6;
-constexpr static const char * sObsoleteSoftwareMessages[sObsoleteSoftwareNumberOfMessages] = {
-  "OBSOLETE SOFTWARE",
-  "The software you were about",
-  "to execute is older than the",
-  "current one.",
-  "Only more recent software can",
-  "be executed."
-};
-
-void obsoleteSoftware() {
-  showMessage(sObsoleteSoftwareMessages, sObsoleteSoftwareNumberOfMessages);
-  waitUntilKeyPress();
-}
-
 constexpr static int sKernelUpgradeRequiredNumberOfMessages = 8;
 constexpr static const char * sKernelUpgradeRequiredMessages[sKernelUpgradeRequiredNumberOfMessages] = {
   "OFFICIAL UPGRADE REQUIRED",
@@ -69,7 +54,8 @@ constexpr static const char * sKernelUpgradeRequiredMessages[sKernelUpgradeRequi
   "again."
 };
 
-void kernelUpgradeRequired() {
+void upgradeRequired() {
+  // TODO image instead of words
   showMessage(sKernelUpgradeRequiredMessages, sKernelUpgradeRequiredNumberOfMessages);
   waitUntilKeyPress();
 }

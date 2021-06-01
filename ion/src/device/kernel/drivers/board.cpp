@@ -13,6 +13,7 @@
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
+#include <kernel/drivers/usb.h>
 #include <kernel/warning_display.h>
 #include <ion/src/shared/platform_info.h>
 #include <regs/regs.h>
@@ -111,41 +112,33 @@ uint32_t userlandStart() {
   return isRunningSlotA() ? slotAUserlandStart() : slotBUserlandStart();
 }
 
-uint32_t switchExecutableSlot() {
-  assert(Authentication::trustedUserland());
-  PlatformInfo * platformInfoA = reinterpret_cast<PlatformInfo *>(slotAUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
-  PlatformInfo * platformInfoB = reinterpret_cast<PlatformInfo *>(slotBUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
-  bool slotARunning = isRunningSlotA();
-  int deltaKernelVersion = -1;
-  int deltaUserlandVersion = -1;
-  if (platformInfoA->isValid() && platformInfoB->isValid()) {
-    deltaKernelVersion = platformInfoA->kernelVersionValue() - platformInfoB->kernelVersionValue();
-    deltaUserlandVersion = platformInfoA->epsilonVersionComparedTo(platformInfoB->epsilonVersion());
-    // Delta = newVersion - oldVersion
-    if (slotARunning) {
-      deltaKernelVersion = -deltaKernelVersion;
-      deltaUserlandVersion = -deltaUserlandVersion;
-    }
-  }
-  bool otherSlotUserlandAuthentication = Authentication::userlandTrust(!slotARunning);
+uint32_t otherUserlandStart() {
+  return isRunningSlotA() ? slotBUserlandStart() : slotAUserlandStart();
+}
 
-  if (deltaKernelVersion < 0 || (otherSlotUserlandAuthentication && deltaUserlandVersion < 0)) {
-    WarningDisplay::obsoleteSoftware();
-    return 0;
+void switchExecutableSlot(uint32_t leaveAddress) {
+  assert(Authentication::trustedUserland());
+  if (!isInReflashableSector(leaveAddress)) {
+    return Reset::coreWhilePlugged();
   }
-  if (!otherSlotUserlandAuthentication && deltaKernelVersion > 0) {
-    WarningDisplay::kernelUpgradeRequired();
-    return 0;
+  /* In N0100, the userland has been overriden, we have to extract the
+   * platform information from the slot information kept in RAM. */
+  PlatformInfo * currentPlatformInfo = USB::slotInfo()->platformInfo();
+  PlatformInfo * otherPlatformInfo = reinterpret_cast<PlatformInfo *>(otherUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
+
+  if (!otherPlatformInfo->isValid()) {
+    // Can't get any information on the kernel version required
+    return Reset::coreWhilePlugged();
   }
-  if (otherSlotUserlandAuthentication) {
-    assert(deltaKernelVersion >= 0 && deltaUserlandVersion >= 0);
-    Reset::coreWhilePlugged();
+  // Delta = newVersion - oldVersion
+  int deltaKernelVersion = currentPlatformInfo->kernelVersionValue() - otherPlatformInfo->kernelVersionValue();
+  if (deltaKernelVersion != 0) {
+    WarningDisplay::upgradeRequired(); // TODO: image instead of words
+    return Reset::coreWhilePlugged();
   } else {
-    assert(deltaKernelVersion == 0);
     Authentication::updateTrust(false);
-    WarningDisplay::unauthenticatedUserland();
+    WarningDisplay::unauthenticatedUserland(); // UNOFFICIAL SOFTWARE
   }
-  return slotARunning ? slotBUserlandStart() : slotAUserlandStart();
 }
 
 void downgradeTrustLevel(bool displayPopup) {

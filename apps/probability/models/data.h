@@ -30,19 +30,20 @@ namespace Data {
 // Navigation
 
 enum class Page {
-  Menu = 0,
-  Distribution = 1,
-  Test = 2,
-  Type = 3,
-  Hypothesis = 4,
-  Categorical = 5,
-  Input = 6,
-  InputGoodness = 7,
-  InputHomogeneity = 8,
-  Results = 9,
-  ResultsHomogeneity = 10,
-  ProbaGraph = 11,
-  Graph = 12
+  Menu,
+  Distribution,
+  Test,
+  Type,
+  Hypothesis,
+  Categorical,
+  Input,
+  IntervalInput,
+  InputGoodness,
+  InputHomogeneity,
+  Results,
+  ResultsHomogeneity,
+  ProbaGraph,
+  Graph
 };
 
 enum class SubApp { None, Probability, Tests, Intervals };
@@ -83,6 +84,8 @@ struct ProbaData {
 // Test sub app
 
 enum class Test { None, OneProp, OneMean, TwoProps, TwoMeans, Categorical };
+
+inline bool isProportion(Test t)  { return t == Test::OneProp || t == Test::TwoProps; }
 
 enum class TestType { TTest, PooledTTest, ZTest };
 

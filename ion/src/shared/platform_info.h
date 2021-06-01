@@ -16,20 +16,22 @@ public:
       || m_footer != Magic) {
       return false;
     }
-    for (size_t i = 0; i < sizeof(m_epsilonVersion); i++) {
-      if (!(m_epsilonVersion[i] == '.'
-           || (m_epsilonVersion[i] >= '0' && m_epsilonVersion[i] <= '9'))) {
+    const char * c = m_epsilonVersion;
+    while (*c != 0) {
+      if (!(*c == '.'
+            || (*c >= '0' && *c <= '9'))) {
         return false;
       }
-      assert(sizeof(m_kernelVersion) == sizeof(m_epsilonVersion));
-      if (!(m_kernelVersion[i] >= '0' && m_kernelVersion[i] <= '9')) {
+      c++;
+    }
+    c = m_kernelVersion;
+    while (*c != 0) {
+      if (!(*c >= '0' && *c <= '9')) {
         return false;
       }
+      c++;
     }
-    if (kernelVersionValue() >= k_kernelMaxVersion) {
-      return false;
-    }
-    return true;
+    return kernelVersionValue() <= k_kernelMaxVersion;
   }
   const char * epsilonVersion() const {
     assert(m_storageAddress != nullptr);

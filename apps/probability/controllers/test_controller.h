@@ -13,19 +13,22 @@ namespace Probability {
 class HypothesisController;
 class CategoricalTypeController;
 class TypeController;
+class IntervalInputController;
 
 constexpr static int k_numberOfTestCells = 5;
 
-class TestController
-    : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells> {
- public:
-  TestController(Escher::StackViewController * parentResponder, HypothesisController * hypothesisController,
-                 TypeController * typeController, CategoricalTypeController * categoricalController);
+class TestController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
+                                                     k_numberOfTestCells> {
+public:
+  TestController(Escher::StackViewController * parentResponder,
+                 HypothesisController * hypothesisController, TypeController * typeController,
+                 CategoricalTypeController * categoricalController,
+                 IntervalInputController * intervalInputController);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return "Test"; }
 
- private:
+private:
   void selectRowAccordingToTest(Data::Test t);
   void initializeHypothesisParams(Data::Test t);
 
@@ -36,8 +39,9 @@ class TestController
   constexpr static int k_indexOfCategorical = 4;
 
   HypothesisController * m_hypothesisController;
-  CategoricalTypeController * m_categoricalController;
   TypeController * m_typeController;
+  IntervalInputController * m_intervalInputController;
+  CategoricalTypeController * m_categoricalController;
 };
 
 }  // namespace Probability

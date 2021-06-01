@@ -20,7 +20,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   }
-  const char * title() { return "z-interval blabla..."; }
+  const char * title() override { return "z-interval blabla..."; }
 
 protected:
   float parameterAtIndex(int i) override { return m_params[i]; }

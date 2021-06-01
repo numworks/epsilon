@@ -36,7 +36,6 @@ App::App(Snapshot * snapshot) :
     m_stackViewController(&m_modalViewController, &m_menuController) {
   // Reopen correct page
   // TODO delegate decisions to controllers somehow
-  // TODO fix branching
   Data::Page page = snapshot->navigation()->page();
   Data::SubApp subapp = snapshot->navigation()->subapp();
   Data::Test test = snapshot->data()->test();
@@ -56,11 +55,24 @@ App::App(Snapshot * snapshot) :
       break;
     case Data::Page::Hypothesis:
       m_menuController.openPage(&m_testController);
-      m_testController.openPage(&m_hypothesisController);
+      if (!Data::isProportion(test)) {
+        m_testController.openPage(&m_typeController);
+        m_typeController.openPage(&m_hypothesisController);
+      } else {
+        m_testController.openPage(&m_hypothesisController);
+      }
       break;
     case Data::Page::Categorical:
       m_menuController.openPage(&m_testController);
       m_testController.openPage(&m_categoricalTypeController);
+      break;
+    case Data::Page::IntervalInput:
+      if (!Data::isProportion(test)) {
+        m_testController.openPage(&m_typeController);
+        m_typeController.openPage(&m_intervalInputController);
+      } else {
+        m_testController.openPage(&m_intervalInputController);
+      }
       break;
     case Data::Page::Input:
       m_menuController.openPage(&m_testController);
@@ -85,9 +97,35 @@ App::App(Snapshot * snapshot) :
       break;
     case Data::Page::Results:
       m_menuController.openPage(&m_testController);
-      m_testController.openPage(&m_hypothesisController);
-      m_hypothesisController.openPage(&m_inputController);
-      m_inputController.openPage(&m_resultsController);
+      if (test == Data::Test::Categorical) {
+        m_testController.openPage(&m_categoricalTypeController);
+        if (snapshot->data()->categoricalData()->m_type == Data::CategoricalType::Goodness) {
+          m_categoricalTypeController.openPage(&m_inputGoodnessController);
+          m_inputGoodnessController.openPage(&m_resultsController);
+        } else {
+          m_categoricalTypeController.openPage(&m_inputHomogeneityController);
+          m_inputHomogeneityController.openPage(&m_homogeneityResultsController);
+          m_homogeneityResultsController.openPage(&m_resultsController);
+        }
+      } else if (subapp == Data::SubApp::Intervals)
+      {
+        if (Data::isProportion(test)) {
+          m_testController.openPage(&m_intervalInputController);
+        } else {
+          m_testController.openPage(&m_typeController);
+          m_typeController.openPage(&m_intervalInputController);
+        }
+        // TODO open results from interval
+      } else {
+        if (Data::isProportion(test)) {
+          m_testController.openPage(&m_hypothesisController);
+        } else {
+          m_testController.openPage(&m_typeController);
+          m_typeController.openPage(&m_hypothesisController);
+        }
+        m_hypothesisController.openPage(&m_inputController);
+        m_inputController.openPage(&m_resultsController);
+      }
       break;
     case Data::Page::ProbaGraph:
       m_menuController.openPage(&m_distributionController);

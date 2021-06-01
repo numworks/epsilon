@@ -18,6 +18,10 @@ app_probability_src = $(addprefix apps/probability/,\
 app.cpp text_helpers.cpp \
 )
 
+# app_probability_src = $(addprefix apps/probability/models/,\
+#   data.cpp \
+# )
+
 app_probability_src += $(addprefix apps/probability/models/distribution/,\
   exponential_distribution.cpp \
   normal_distribution.cpp \

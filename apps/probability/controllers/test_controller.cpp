@@ -19,11 +19,13 @@ using namespace Probability;
 TestController::TestController(Escher::StackViewController * parentResponder,
                                HypothesisController * hypothesisController,
                                TypeController * typeController,
-                               CategoricalTypeController * categoricalController) :
+                               CategoricalTypeController * categoricalController,
+                               IntervalInputController * intervalInputController) :
     SelectableCellListPage(parentResponder),
     m_hypothesisController(hypothesisController),
-    m_categoricalController(categoricalController),
-    m_typeController(typeController) {
+    m_typeController(typeController),
+    m_intervalInputController(intervalInputController),
+    m_categoricalController(categoricalController) {
   // Create cells
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
   m_cells[k_indexOfOneProp].setSubtitle(I18n::Message::ZTest);
@@ -45,16 +47,25 @@ void TestController::didBecomeFirstResponder() {
 
 bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    Data::SubApp subapp = App::app()->snapshot()->navigation()->subapp();
     Escher::ViewController * view = nullptr;
     Data::Test test;
     switch (selectedRow()) {
       case k_indexOfOneProp:
         test = Data::Test::OneProp;
-        view = m_hypothesisController;
+        if (subapp == Data::SubApp::Tests) {
+          view = m_hypothesisController;
+        } else {
+          view = m_intervalInputController;
+        }
         break;
       case k_indexOfTwoProps:
         test = Data::Test::TwoProps;
-        view = m_hypothesisController;
+        if (subapp == Data::SubApp::Tests) {
+          view = m_hypothesisController;
+        } else {
+          view = m_intervalInputController;
+        }
         break;
       case k_indexOfOneMean:
         test = Data::Test::OneMean;

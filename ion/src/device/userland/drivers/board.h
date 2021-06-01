@@ -7,7 +7,7 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-uint32_t switchExecutableSlot();
+void switchExecutableSlot(uint32_t leaveAddress);
 void downgradeTrustLevel(bool displayPopup);
 
 }

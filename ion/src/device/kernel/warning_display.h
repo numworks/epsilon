@@ -8,8 +8,7 @@ namespace Device {
 namespace WarningDisplay {
 
 void unauthenticatedUserland();
-void obsoleteSoftware();
-void kernelUpgradeRequired();
+void upgradeRequired();
 void externalAppsAvailable();
 
 }

@@ -30,8 +30,9 @@ void setStandardFrequency(Frequency f);
 bool isRunningSlotA();
 uint32_t slotAUserlandStart();
 uint32_t slotBUserlandStart();
+bool isInReflashableSector(uint32_t address);
 uint32_t userlandStart();
-uint32_t switchExecutableSlot();
+void switchExecutableSlot(uint32_t address);
 void downgradeTrustLevel(bool displayPopup);
 
 bool addressInUserlandRAM(void * address);

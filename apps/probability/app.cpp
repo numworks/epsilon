@@ -31,7 +31,7 @@ App::App(Snapshot * snapshot) :
     m_distributionController(&m_stackViewController, snapshot->data()->distribution(),
                              &m_parameterController),
     m_testController(&m_stackViewController, &m_hypothesisController, &m_typeController,
-                     &m_categoricalTypeController),
+                     &m_categoricalTypeController, &m_intervalInputController),
     m_menuController(&m_stackViewController, &m_distributionController, &m_testController),
     m_stackViewController(&m_modalViewController, &m_menuController) {
   // Reopen correct page

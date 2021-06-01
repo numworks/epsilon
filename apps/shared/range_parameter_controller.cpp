@@ -23,7 +23,7 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
     ((RangeParameterController *)context)->stackController()->pop();
     return true;
   }, this)),
-  m_singleRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange)
+  m_singleRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange, &m_confirmPopUpController)
 {}
 
 int RangeParameterController::typeAtIndex(int index) {

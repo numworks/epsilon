@@ -2,7 +2,7 @@
 #define APPS_PROBABILITY_CONTROLLERS_MENU_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/table_cell.h>
@@ -32,7 +32,7 @@ class MenuController : public SelectableListViewPage {
   constexpr static int k_indexOfDistribution = 0;
   constexpr static int k_indexOfTest = 1;
   constexpr static int k_indexOfInterval = 2;
-  Escher::MessageTableCellWithChevron m_cells[k_numberOfCells];
+  Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfCells];
 };
 
 }  // namespace Probability

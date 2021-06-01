@@ -23,8 +23,11 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
       m_distributionController(distributionController),
       m_testController(testController) {
   m_cells[k_indexOfDistribution].setMessage(I18n::Message::ProbaApp);
+  m_cells[k_indexOfDistribution].setSubtitle(I18n::Message::ProbaDescr);
   m_cells[k_indexOfTest].setMessage(I18n::Message::SignificanceTest);
+  m_cells[k_indexOfTest].setSubtitle(I18n::Message::TestDescr);
   m_cells[k_indexOfInterval].setMessage(I18n::Message::ConfidenceInterval);
+  m_cells[k_indexOfInterval].setSubtitle(I18n::Message::IntervalDescr);
 }
 
 void MenuController::didBecomeFirstResponder() {

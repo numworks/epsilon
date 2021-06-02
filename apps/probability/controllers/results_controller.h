@@ -14,7 +14,7 @@
 #include "graph_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
-#include "probability/models/results_data_source.h"
+#include "probability/gui/results_data_source.h"
 
 namespace Probability {
 

@@ -8,7 +8,7 @@
 #include <escher/responder.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "test_results_data_source.h"
+#include "probability/models/test_results_data_source.h"
 
 namespace Probability {
 

@@ -87,7 +87,8 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     }
     if (App::app()->snapshot()->data()->test() != test) {
       App::app()->snapshot()->data()->setTest(test);
-      App::app()->snapshot()->data()->setTestType(Data::TestType::TTest);
+      Data::TestType testType = Data::isProportion(test) ? Data::TestType::ZTest : Data::TestType::TTest;
+      App::app()->snapshot()->data()->setTestType(testType);
     }
     openPage(view);
     return true;

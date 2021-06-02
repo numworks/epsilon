@@ -87,6 +87,7 @@ void MenuController::initializeData(Data::SubApp subapp) {
     case Data::SubApp::Tests:
     case Data::SubApp::Intervals:
       App::app()->snapshot()->data()->setTest(Data::Test::OneProp);
+      break;
     default:
       assert(false);
   }

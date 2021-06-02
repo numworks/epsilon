@@ -6,6 +6,7 @@
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
+#include <poincare/imaginary_part.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
@@ -66,6 +67,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
 
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
   bool approximate = false;
+  const bool equationIsReal = a.isReal(context) && b.isReal(context) && c.isReal(context) && d.isReal(context);
 
   // b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
   *delta = Addition::Builder({
@@ -160,6 +162,8 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
         Division::Builder(ComplexCartesian::Builder(Rational::Builder(-1), SquareRoot::Builder(Rational::Builder(3))), Rational::Builder(2)),
         Division::Builder(ComplexCartesian::Builder(Rational::Builder(1), SquareRoot::Builder(Rational::Builder(3))), Rational::Builder(-2))
       };
+      int loneRealRootIndex = -1;
+      float minimalImaginaryPart = static_cast<float>(INFINITY);
       for (int i = 0; i < 3; i++) {
         Expression cz = Multiplication::Builder(cardano.clone(), roots[i]);
         roots[i] = Division::Builder(
@@ -172,9 +176,19 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
             roots[i]= RealPart::Builder(roots[i]);
           }
           roots[i] = roots[i].approximate<double>(context, complexContext.complexFormat(), complexContext.angleUnit());
+          if (equationIsReal && deltaSign < 0) {
+            float im = std::fabs(ImaginaryPart::Builder(roots[i]).approximateToScalar<float>(context, complexContext.complexFormat(), complexContext.angleUnit()));
+            if (im < minimalImaginaryPart) {
+              minimalImaginaryPart = im;
+              loneRealRootIndex = i;
+            }
+          }
         } else {
           roots[i] = roots[i].simplify(complexContext);
         }
+      }
+      if (loneRealRootIndex >= 0) {
+        roots[loneRealRootIndex] = RealPart::Builder(roots[loneRealRootIndex]).approximate<double>(context, complexContext.complexFormat(), complexContext.angleUnit());
       }
       *root1 = roots[0];
       *root2 = roots[1];

@@ -9,10 +9,10 @@
 namespace Probability {
 
 ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
-                                     TestResultsDataSource * testResults,
+                                     Statistic * statistic,
                                      ButtonDelegate * delegate) :
     MemoizedListViewDataSource(),
-    m_testResultsDataSource(testResults),
+    m_statistic(statistic),
     m_next(parent, I18n::Message::Ok, delegate->buttonActionInvocation()) {
   Escher::BufferTextView * buffer;
   // Correct cell styles
@@ -25,7 +25,7 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
 }
 
 void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
-  if (!m_testResultsDataSource->hasDegreeOfFreedom() && i == k_indexOfDegrees) {
+  if (!m_statistic->hasDegreeOfFreedom() && i == k_indexOfDegrees) {
     i++;  // offset to match button index
   }
   if (i < k_indexOfButton) {
@@ -37,15 +37,15 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
     switch (i) {
       case k_indexOfZ:
         message = I18n::Message::Z;
-        value = m_testResultsDataSource->z();
+        value = m_statistic->testCriticalValue();
         break;
       case k_indexOfP:
         message = I18n::Message::PValue;
-        value = m_testResultsDataSource->pValue();
+        value = m_statistic->pValue();
         break;
       case k_indexOfDegrees:
         message = I18n::Message::DegreesOfFreedomDefinition;
-        value = m_testResultsDataSource->degreeOfFreedom();
+        value = m_statistic->degreeOfFreedom();
         break;
     }
     // Parse float

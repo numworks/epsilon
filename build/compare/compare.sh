@@ -13,9 +13,9 @@ function print_help() {
   echo -e " - a git ref (i.e. a commit hash, a branch, HEAD...)"
   echo -e "Outputs a report of which screenshot mismatched, and stores the corresponding images"
   echo -e "\nExample:"
-  echo -e "\t$ compare Epsilon_master Epsilon_new"
-  echo -e "\t$ compare folder_with_images/ Epsilon_new"
-  echo -e "\t$ compare MAKEFLAGS=\"-j4 PLATFORM=simulator DEBUG=1\" folder_with_images/ HEAD"
+  echo -e "\t$ compare scenarii/ Epsilon_master Epsilon_new"
+  echo -e "\t$ compare scenarii/ folder_with_images/ Epsilon_new"
+  echo -e "\t$ compare MAKEFLAGS=\"-j4 PLATFORM=simulator DEBUG=1\" scenarii/ folder_with_images/ HEAD"
 }
 
 
@@ -63,12 +63,18 @@ function img_for_executable() {
   cmd="./$1 ${args}"
   log "${cmd}"
   eval "$cmd"
+  # Check
+  if [ ! -f "$2" ]; then
+    echo "Error: No image created ($2)"
+    echo "Error: Maybe the executable was made from a wrong version of Epsilon ?"
+  fi
 }
 
 # create_git_executable <ref> <arg_number>
 function create_git_executable() {
   # TODO catch if --take-screenshot not supported
   echo "Creating executable from ref $1"
+  sleep 1  # This is needed to avoid changed files and target having the same last modified date
   git checkout $1 > /dev/null
   output_exe="${output_folder}/Epsilon_$1"
   log "make ${MAKEFLAGS}"
@@ -114,7 +120,7 @@ function parse_arg() {
     # executable -> must be espilon
     eval arg$2_mode="e"
     eval exe$2=$1
-  elif git show-ref "$1" > /dev/null
+  elif git show "$1" > /dev/null
   then
     # git ref
     eval arg$2_mode="g"
@@ -174,7 +180,7 @@ then
 fi
 
 scenarii_folder="$1"
-if [[ $( find "${scenarii_folder}" -type f -name "*.nws" -depth 1 | wc -w ) -eq 0 ]]
+if ! find "${scenarii_folder}" -type f -name "*.nws" -depth 1 > /dev/null
 then
   error "No state file found in ${scenarii_folder}"
   exit 3

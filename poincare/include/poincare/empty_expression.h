@@ -26,7 +26,8 @@ public:
 
   // Simplification
   LayoutShape leftLayoutShape() const override {
-    assert(false);
+    // leftLayoutShape of EmptyExpression is only called from Conjugate
+    assert(parent() && parent()->type() == Type::Conjugate);
     return LayoutShape::OneLetter;
   };
 private:

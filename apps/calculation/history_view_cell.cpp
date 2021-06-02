@@ -272,7 +272,14 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, P
         Poincare::ExceptionCheckpoint::Raise();
       }
     }
-    if (canChangeDisplayOutput && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate && exactOutputLayout.layoutSize().width() > Ion::Display::Width) {
+    KDCoordinate maxVisibleWidth = Ion::Display::Width - (
+        m_scrollableOutputView.leftMargin()
+      + m_scrollableOutputView.rightMargin()
+      + 2 * KDFont::LargeFont->glyphSize().width()); // > arrow and = sign
+    if (canChangeDisplayOutput
+     && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate
+     && exactOutputLayout.layoutSize().width() > maxVisibleWidth)
+    {
       calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
     }
   }

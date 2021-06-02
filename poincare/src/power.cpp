@@ -429,7 +429,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   /* Step 2
    * Handle matrices in the base.
-   * We already now there are no matrices in the index. */
+   * We already know there are no matrices in the index. */
   if (base.deepIsMatrix(context)) {
     if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
       return replaceWithUndefinedInPlace();
@@ -478,13 +478,17 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   ExpressionNode::NullStatus indexNull = index.nullStatus(context);
   if (base.type() == ExpressionNode::Type::Infinity) {
     if (indexNull == ExpressionNode::NullStatus::Null) {
+      // inf^0 -> undef
       return replaceWithUndefinedInPlace();
     }
     switch (indexSign) {
       case ExpressionNode::Sign::Negative:
+        // inf^-x -> 0
         trivialResult = Rational::Builder(0);
         break;
       case ExpressionNode::Sign::Positive:
+        // +inf^+x -> +inf
+        // -inf^+x -> +inf * (-1)^+x
         trivialResult = Infinity::Builder(false);
         if (baseSign == ExpressionNode::Sign::Negative) {
           Power p = Power::Builder(Rational::Builder(-1), index);
@@ -495,16 +499,19 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       default:
         break;
     }
-  } else if (baseType == ExpressionNode::Type::Rational && static_cast<Rational &>(base).isOne()&& !index.recursivelyMatches(Expression::IsInfinity, context)) {
+  } else if (baseType == ExpressionNode::Type::Rational && static_cast<Rational &>(base).isOne() && !index.recursivelyMatches(Expression::IsInfinity, context)) {
+    // 1^x -> 1
     trivialResult = Rational::Builder(1);
   } else {
     ExpressionNode::NullStatus baseNull = base.nullStatus(context);
     switch (indexNull) {
       case ExpressionNode::NullStatus::Null:
         if (baseNull == ExpressionNode::NullStatus::Null) {
+          // 0^0 -> undef
           trivialResult = Undefined::Builder();
           break;
         } else if (baseNull == ExpressionNode::NullStatus::NonNull || reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+          // x^0 -> 1
           trivialResult = Rational::Builder(1);
           break;
         }
@@ -512,9 +519,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         if (baseNull == ExpressionNode::NullStatus::Null) {
           switch (indexSign) {
             case ExpressionNode::Sign::Negative:
+              // 0^-x -> undef
               trivialResult = Undefined::Builder();
               break;
             case ExpressionNode::Sign::Positive:
+              // 0^+x -> 0
               trivialResult = Rational::Builder(0);
               break;
             default:
@@ -621,8 +630,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Rational rationalBase = static_cast<Rational &>(base);
     Addition additionIndex = static_cast<Addition &>(index);
     Rational rationalIndex = index.childAtIndex(0).convert<Rational>();
-    if ((rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.isInteger())
-     || RationalExponentShouldNotBeReduced(rationalBase, rationalIndex)) {
+    Expression p1 = PowerRationalRational(rationalBase, rationalIndex, reductionContext);
+    if ((rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.isInteger()) || p1.isUndefined()) {
       /* Escape here to avoid infinite loops with the multiplication.
        * TODO: do something more sensible here:
        * - add rule (-rational)^x --> (-1)^x*rational^x so we only consider
@@ -632,7 +641,6 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
        *   this rule in that case */
       return *this;
     }
-    Expression p1 = PowerRationalRational(rationalBase, rationalIndex, reductionContext);
     additionIndex.removeChildAtIndexInPlace(0);
     /* If the addition had only 2 children. */
     additionIndex.squashUnaryHierarchyInPlace();
@@ -692,6 +700,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         }
         multiplicationBase.shallowReduce(reductionContext);
         Power p = Power::Builder(child, index.clone());
+        child.setSign(ExpressionNode::Sign::Positive, reductionContext);
         Multiplication m = Multiplication::Builder(p);
         p.shallowReduce(reductionContext);
         Power thisRef = *this;
@@ -1061,7 +1070,6 @@ Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionN
       int numberOfPrimeFactors = arithmetic.PrimeFactorization(base);
       if (numberOfPrimeFactors < 0) {
         /* Prime factorization failed. */
-        Arithmetic::resetPrimeFactorization();
         return Power::Builder(Rational::Builder(base), index);
       }
       /* g is defined as gcd(b, a*k_1, a*k_2, ...) where the k_i are the

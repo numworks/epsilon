@@ -80,13 +80,14 @@ function create_git_executable() {
   echo "Executable stored at ${output_exe}"
 }
 
+hasFlags=0
 MAKEFLAGS=
 
 function parse_makeflags() {
   if [[ $1 == "MAKEFLAGS="* ]]
   then
     MAKEFLAGS="${1#MAKEFLAGS=}"
-    echo true
+    hasFlags=1
   else
     MAKEFLAGS="PLATFORM=simulator DEBUG=1"
   fi
@@ -166,7 +167,8 @@ fi
 
 log "START"
 
-if parse_makeflags "$1"
+parse_makeflags "$1"
+if [ $hasFlags = 1 ]
 then
   shift
 fi

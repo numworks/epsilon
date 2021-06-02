@@ -93,8 +93,9 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root1 = r;
   }
   if (root1->isUninitialized() && a.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && c.type() == ExpressionNode::Type::Rational && d.type() == ExpressionNode::Type::Rational) {
-    /* Since d/a = x1*x2*x3, a rational root p/q must be so that p divides the
-     * numerator of d/a, and q divides its denominator. */
+    /* The equation can be written with integer coefficients. Under that form,
+     * since d/a = x1*x2*x3, a rational root p/q must be so that p divides d
+     * and q divides a. */
     *root1 = RationalRootSearch(coefficients, degree, reductionContext);
   }
   if (root1->isUninitialized()) {

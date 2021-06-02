@@ -2,6 +2,7 @@
 #define POINCARE_POLYNOMIAL_H
 
 #include <poincare/expression.h>
+#include <poincare/rational.h>
 
 namespace Poincare {
 
@@ -13,6 +14,7 @@ public:
 
 private:
   static Expression ReducePolynomial(const Expression * coefficients, int degree, Expression parameter, ExpressionNode::ReductionContext reductionContext);
+  static Rational ReduceRationalPolynomial(const Rational * coefficients, int degree, Rational parameter);
   static bool IsRoot(const Expression * coefficients, int degree, Expression root, ExpressionNode::ReductionContext reductionContext) { return ReducePolynomial(coefficients, degree, root, reductionContext).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null; }
   static Expression RationalRootSearch(const Expression * coefficients, int degree, ExpressionNode::ReductionContext reductionContext);
   static Expression SumRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, ExpressionNode::ReductionContext reductionContext);

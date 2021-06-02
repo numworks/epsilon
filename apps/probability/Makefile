@@ -35,6 +35,10 @@ app_probability_src += $(addprefix apps/probability/models/calculation/,\
   finite_integral_calculation.cpp \
 )
 
+app_probability_src += $(addprefix apps/probability/models/statistic/,\
+	one_proportion_statistic.cpp \
+)
+
 app_probability_src += $(addprefix apps/probability/gui/,\
   calculation_cell.cpp \
   cell.cpp \

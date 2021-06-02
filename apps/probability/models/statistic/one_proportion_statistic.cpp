@@ -9,15 +9,16 @@ namespace Probability {
 
 void OneProportionStatistic::computeTest() {
   Data::Data * data = App::app()->snapshot()->data();
-  int p0 = data->hypothesisParams()->firstParam();
+  float p0 = data->hypothesisParams()->firstParam();
   // TODO weird to know the position
-  int x = data->testInputParams()->paramAtIndex(0);
+  float x = data->testInputParams()->paramAtIndex(0);
   int n = data->testInputParams()->paramAtIndex(1);
-  int p = _pEstimate(x, n);
+  float p = _pEstimate(x, n);
   // Z
   m_z = _z(p0, p, n);
   // p-value
-  m_pValue = _pVal(m_z, data->hypothesisParams()->op());
+  char fakeOp = static_cast<char>(data->hypothesisParams()->op());
+  m_pValue = _pVal(m_z, fakeOp);
 
 }
 
@@ -39,11 +40,12 @@ float OneProportionStatistic::_pEstimate(float x, float n) {
 
 
 float OneProportionStatistic::_z(float p0, float p, int n) {
-  return (p - p0) / sqrt(p0 * (1 - p0) / n);
+  return std::abs((p - p0) / sqrt(p0 * (1 - p0) / n));
 }
 
-float OneProportionStatistic::_pVal(float z, Data::ComparisonOperator op) {
-  switch (op)
+float OneProportionStatistic::_pVal(float z, char op) {
+  Data::ComparisonOperator realOp = static_cast<Data::ComparisonOperator>(op);
+  switch (realOp)
   {
   case Data::ComparisonOperator::Lower:
     return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(z, 0, 1);
@@ -51,8 +53,7 @@ float OneProportionStatistic::_pVal(float z, Data::ComparisonOperator op) {
   case Data::ComparisonOperator::Higher:
     return 1 - Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(-z, 0, 1);
   case Data::ComparisonOperator::Different:
-    z = std::min(-z, z);
-    return 2 * Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(z / 2, 0, 1);;
+    return 2 * Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(- z / 2, 0, 1);;
   }
 }
 

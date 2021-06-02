@@ -14,7 +14,7 @@ CurveParameterController::CurveParameterController(InputEventHandlerDelegate * i
   m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
-  m_derivativeCell(I18n::Message::DerivateNumber),
+  m_derivativeCell(I18n::Message::GraphDerivative),
   m_calculationParameterController(this, inputEventHandlerDelegate, graphView, bannerView, graphRange, cursor)
 {
 }

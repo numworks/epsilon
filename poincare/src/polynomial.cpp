@@ -308,26 +308,22 @@ Expression Polynomial::SumRootSearch(const Expression * coefficients, int degree
 Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool * approximate, ExpressionNode::ReductionContext reductionContext) {
   assert(approximate != nullptr);
 
-  /* C = root(delta1 ± sqrt(delta1^2 - 4*delta0^3), 3)
-   * The sign of ± is chosen so that C is not null:
-   * - if delta0 != 0, we chose +
-   * - if delta0 = 0:
-   *   - if arg(delta1) < π (i.e. sqrt(delta1^2) = delta1), we chose +
-   *   - if arg(delta1) >= π (i.e. sqrt(delta1^2) = -delta1), we chose - */
+  /* C = root((delta1 ± sqrt(delta1^2 - 4*delta0^3)) / 2, 3)
+   * The sign of ± must be chosen so that C is not null. In practice, we always
+   * chose +, unless delta0 is null, in which case we enforce
+   * C = root(delta1, 3). */
 
-  Expression rootDeltaDifference = SquareRoot::Builder(Subtraction::Builder(
-        Power::Builder(delta1.clone(), Rational::Builder(2)),
-        Multiplication::Builder(Rational::Builder(4), Power::Builder(delta0.clone(), Rational::Builder(3)))
-        ));
   Expression C;
-
-  if (delta0.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null
-   && ComplexArgument::Builder(delta1.clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()) >= M_PI) {
-    C = Subtraction::Builder(delta1.clone(), rootDeltaDifference);
+  if (delta0.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+    C = delta1.clone();
   } else {
-    C = Addition::Builder(delta1.clone(), rootDeltaDifference);
+    Expression rootDeltaDifference = SquareRoot::Builder(Subtraction::Builder(
+          Power::Builder(delta1.clone(), Rational::Builder(2)),
+          Multiplication::Builder(Rational::Builder(4), Power::Builder(delta0.clone(), Rational::Builder(3)))
+          ));
+    C = Division::Builder(Addition::Builder(delta1.clone(), rootDeltaDifference), Rational::Builder(2));
   }
-  C = NthRoot::Builder(Division::Builder(C, Rational::Builder(2)), Rational::Builder(3)).simplify(reductionContext);
+  C = NthRoot::Builder(C, Rational::Builder(3)).simplify(reductionContext);
 
   if (C.type() == ExpressionNode::Type::NthRoot || C.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Unknown) {
     C = C.approximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());

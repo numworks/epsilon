@@ -40,13 +40,14 @@ protected:
 
 private:
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
-  Escher::HighlightCell * reusableParameterCell(int index, int type);
-  bool setParameterAtIndex(int parameterIndex, float f) {
+  Escher::HighlightCell * reusableParameterCell(int index, int type) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override {
     m_inputParameters->setParamAtIndex(parameterIndex, f);
+    return true;
   }
 
-  InputParameters * m_inputParameters;
   char m_titleBuffer[30];
+  InputParameters * m_inputParameters;
   ResultsController * m_resultsController;
 
   constexpr static int k_numberOfReusableCells = 8;  // TODO count

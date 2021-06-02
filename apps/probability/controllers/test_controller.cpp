@@ -114,6 +114,8 @@ void TestController::selectRowAccordingToTest(Data::Test t) {
     case Data::Test::Categorical:
       row = k_indexOfCategorical;
       break;
+    default:
+      assert(false);
   }
   assert(row >= 0);
   selectRow(row);
@@ -132,6 +134,8 @@ void TestController::initializeHypothesisParams(Data::Test t) {
     case Data::Test::TwoMeans:
       firstParam = 0;
       break;
+    default:
+      return;
   }
   App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
   App::app()->snapshot()->data()->hypothesisParams()->setOp(Data::ComparisonOperator::Higher);

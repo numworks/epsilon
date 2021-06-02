@@ -12,24 +12,17 @@
 
 using namespace Probability;
 
-template <int numberOfResults>
-ResultsController<numberOfResults>::ResultsController(Escher::StackViewController * parent,
-                                                      Escher::InputEventHandlerDelegate * handler,
-                                                      Escher::TextFieldDelegate * textFieldDelegate)
-    : SelectableListViewPage(parent),
-      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {}
+ResultsController::ResultsController(Escher::StackViewController * parent,
+                                     TestResultsDataSource * results,
+                                     GraphController * graphController,
+                                     Escher::InputEventHandlerDelegate * handler,
+                                     Escher::TextFieldDelegate * textFieldDelegate) :
+    Page(parent),
+    m_graphController(graphController),
+    m_resultsDataSource(&m_tableView, results, this),
+    m_tableView(this, &m_resultsDataSource, this, nullptr) {}
 
-template <int numberOfResults>
-Escher::HighlightCell * ResultsController<numberOfResults>::reusableCell(int i, int type) {
-  if (i < numberOfResults) {
-    return &m_cells[i];
-  }
-  assert(i == numberOfResults);
-  return &m_next;
-}
-
-template <int numberOfResults>
-void ResultsController<numberOfResults>::didBecomeFirstResponder() {
+void ResultsController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Results);
   // TODO factor out
   if (selectedRow() == -1) {
@@ -37,13 +30,5 @@ void ResultsController<numberOfResults>::didBecomeFirstResponder() {
   } else {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
-}
-
-TestResults::TestResults(Escher::StackViewController * parent, GraphController * graphController,
-                         Escher::InputEventHandlerDelegate * handler,
-                         Escher::TextFieldDelegate * textFieldDelegate)
-    : ResultsController(parent, handler, textFieldDelegate), m_graphController(graphController) {
-  m_cells[k_indexOfZ].setMessage(I18n::Message::Z);
-  m_cells[k_indexOfPVal].setMessage(I18n::Message::PValue);
+  Escher::Container::activeApp()->setFirstResponder(&m_tableView);
 }

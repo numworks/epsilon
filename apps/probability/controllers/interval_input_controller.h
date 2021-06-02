@@ -13,7 +13,7 @@ namespace Probability {
 
 class IntervalInputController : public Shared::FloatParameterController<float> {
 public:
-  IntervalInputController(Escher::StackViewController * stack, TestResults * resultsController,
+  IntervalInputController(Escher::StackViewController * stack, ResultsController * resultsController,
                           Escher::InputEventHandlerDelegate * handler);
   int numberOfRows() const override { return k_numberOfParams + 2; }
   int typeAtIndex(int index) override;
@@ -38,7 +38,7 @@ private:
   Escher::MessageTableCellWithEditableTextWithMessage m_paramCells[k_numberOfParams];
   Escher::MessageTableCellWithEditableText m_confidenceCell;
 
-  TestResults * m_resultsController;
+  ResultsController * m_resultsController;
 };
 
 }  // namespace Probability

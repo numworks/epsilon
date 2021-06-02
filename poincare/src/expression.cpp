@@ -588,8 +588,8 @@ Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
   }
   Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
   assert(!l.isUninitialized());
-  if (!nested
-   && (stripCodePointStyle || !hasCodePointWithDisplayType(l, CodePointLayoutNode::DisplayType::Thousand))) {
+  if (stripCodePointStyle
+   || !(nested || hasCodePointWithDisplayType(l, CodePointLayoutNode::DisplayType::Thousand))) {
     stripDisplayTypeFromCodePoints(l);
   }
   return l;

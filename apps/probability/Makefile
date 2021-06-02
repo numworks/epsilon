@@ -19,10 +19,6 @@ app_probability_src = $(addprefix apps/probability/,\
   text_helpers.cpp \
 )
 
-app_probability_src += $(addprefix apps/probability/models/,\
-  results_data_source.cpp \
-)
-
 app_probability_src += $(addprefix apps/probability/models/distribution/,\
   exponential_distribution.cpp \
   normal_distribution.cpp \
@@ -47,6 +43,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   responder_image_cell.cpp \
 	input_table_view.cpp \
 	vertical_layout.cpp \
+	results_data_source.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

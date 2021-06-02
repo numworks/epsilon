@@ -11,10 +11,10 @@
 using namespace Probability;
 
 HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
-                                               Escher::SelectableTableView * table)
-    : m_title(KDFont::SmallFont, I18n::Message::HomogeneityResultsTitle),
-      m_table(table),
-      m_next(parent, I18n::Message::Next, buttonActionInvocation()) {}
+                                               Escher::SelectableTableView * table) :
+    m_title(KDFont::SmallFont, I18n::Message::HomogeneityResultsTitle),
+    m_table(table),
+    m_next(parent, I18n::Message::Next, buttonActionInvocation()) {}
 
 void HomogeneityResultsView::buttonAction() {}
 
@@ -28,11 +28,11 @@ HomogeneityResultsDataSource::HomogeneityResultsDataSource() {
 HighlightCell * HomogeneityResultsDataSource::reusableCell(int i, int type) { return &m_cells[i]; }
 
 HomogeneityResultsController::HomogeneityResultsController(
-    StackViewController * stackViewController)
-    : Page(stackViewController),
-      m_contentView(this, &m_table),
-      m_table(this, &m_tableData, &m_tableData),
-      m_tableData(&m_innerTableData) {}
+    StackViewController * stackViewController) :
+    Page(stackViewController),
+    m_contentView(this, &m_table),
+    m_tableData(&m_innerTableData),
+    m_table(this, &m_tableData, &m_tableData) {}
 
 void HomogeneityResultsController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::ResultsHomogeneity);

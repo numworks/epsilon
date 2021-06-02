@@ -15,8 +15,8 @@ InputController::InputController(Escher::StackViewController * parent,
                                  ResultsController * resultsController, InputParameters * inputParameters,
                                  Escher::InputEventHandlerDelegate * handler) :
     FloatParameterPage(parent),
-    m_resultsController(resultsController),
     m_inputParameters(inputParameters),
+    m_resultsController(resultsController),
     m_parameterCells{{&m_selectableTableView, handler, this},
                      {&m_selectableTableView, handler, this}} {
   // Initialize cells

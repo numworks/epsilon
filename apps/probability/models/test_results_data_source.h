@@ -22,7 +22,7 @@ public:
   void compute() override {}
   float z() override { return 2.3; }
   float pValue() override { return 0.867; }
-  bool hasDegreeOfFreedom() { return false; }
+  bool hasDegreeOfFreedom() override { return false; }
 };
 
 }

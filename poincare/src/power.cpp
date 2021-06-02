@@ -428,6 +428,49 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* Step 2
+   * Handle matrices in the base.
+   * We already now there are no matrices in the index. */
+  if (base.deepIsMatrix(context)) {
+    if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
+      return replaceWithUndefinedInPlace();
+    }
+    if (baseType == ExpressionNode::Type::Matrix) {
+      Matrix matrixBase = static_cast<Matrix &>(base);
+      int baseNumberOfRows = matrixBase.numberOfRows();
+      if (baseNumberOfRows != matrixBase.numberOfColumns()) {
+        return replaceWithUndefinedInPlace();
+      }
+      Integer integerIndex = static_cast<Rational &>(index).signedIntegerNumerator();
+      if (integerIndex.isNegative()) {
+        index.setSign(ExpressionNode::Sign::Positive, reductionContext);
+        Expression e = shallowReduce(reductionContext);
+        if (e.type() == ExpressionNode::Type::Power) {
+          /* The power cannot be reduced, return to avoid an infinite loop. */
+          e.childAtIndex(1).setSign(ExpressionNode::Sign::Negative, reductionContext);
+          return e;
+        }
+        Expression temp = Undefined::Builder();
+        MatrixInverse inv = MatrixInverse::Builder(temp);
+        e.replaceWithInPlace(inv);
+        temp.replaceWithInPlace(e);
+        return inv.shallowReduce(reductionContext);
+      }
+      if (Integer::NaturalOrder(integerIndex, Integer(k_maxExactPowerMatrix)) > 0) {
+        return *this;
+      }
+      /* Ok because 0 < index < k_maxExactPowerMatrix */
+      int i = integerIndex.extractedInt();
+      Expression result = Matrix::CreateIdentity(baseNumberOfRows);
+      /* TODO: implement a quick exponentiation */
+      for (int j = 0; j < i; j++) {
+        result = Multiplication::Builder(result, matrixBase.clone()).shallowReduce(reductionContext);
+      }
+      replaceWithInPlace(result);
+      return result;
+    }
+  }
+
+  /* Step 3
    * Trivial simplifications when base or index is 0, 1 or infinity. */
   Expression trivialResult;
   ExpressionNode::Sign baseSign = base.sign(context);
@@ -485,49 +528,6 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   if (!trivialResult.isUninitialized()) {
     replaceWithInPlace(trivialResult);
     return trivialResult.shallowReduce(reductionContext);
-  }
-
-  /* Step 3
-   * Handle matrices in the base.
-   * We already now there are no matrices in the index. */
-  if (base.deepIsMatrix(context)) {
-    if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
-      return replaceWithUndefinedInPlace();
-    }
-    if (baseType == ExpressionNode::Type::Matrix) {
-      Matrix matrixBase = static_cast<Matrix &>(base);
-      int baseNumberOfRows = matrixBase.numberOfRows();
-      if (baseNumberOfRows != matrixBase.numberOfColumns()) {
-        return replaceWithUndefinedInPlace();
-      }
-      Integer integerIndex = static_cast<Rational &>(index).signedIntegerNumerator();
-      if (integerIndex.isNegative()) {
-        index.setSign(ExpressionNode::Sign::Positive, reductionContext);
-        Expression e = shallowReduce(reductionContext);
-        if (e.type() == ExpressionNode::Type::Power) {
-          /* The power cannot be reduced, return to avoid an infinite loop. */
-          e.childAtIndex(1).setSign(ExpressionNode::Sign::Negative, reductionContext);
-          return e;
-        }
-        Expression temp = Undefined::Builder();
-        MatrixInverse inv = MatrixInverse::Builder(temp);
-        e.replaceWithInPlace(inv);
-        temp.replaceWithInPlace(e);
-        return inv.shallowReduce(reductionContext);
-      }
-      if (Integer::NaturalOrder(integerIndex, Integer(k_maxExactPowerMatrix)) > 0) {
-        return *this;
-      }
-      /* Ok because 0 < index < k_maxExactPowerMatrix */
-      int i = integerIndex.extractedInt();
-      Expression result = Matrix::CreateIdentity(baseNumberOfRows);
-      /* TODO: implement a quick exponentiation */
-      for (int j = 0; j < i; j++) {
-        result = Multiplication::Builder(result, matrixBase.clone()).shallowReduce(reductionContext);
-      }
-      replaceWithInPlace(result);
-      return result;
-    }
   }
 
   /* Step 4

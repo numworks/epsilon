@@ -1070,6 +1070,9 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6][7,8,9]]^3", "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]^(-1)", Undefined::Name());
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)", "[[-2,1][3/2,-1/2]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]^0", "[[1,0][0,1]]");
+  assert_parsed_expression_simplify_to("[[1][2]]^0", Undefined::Name());
+  assert_parsed_expression_simplify_to("[[1][2]]^1", Undefined::Name());
 
   // Determinant
   assert_parsed_expression_simplify_to("det(π+π)", "2×π");

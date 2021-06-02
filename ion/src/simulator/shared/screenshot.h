@@ -6,6 +6,7 @@ namespace Simulator {
 
 class Screenshot {
  public:
+  Screenshot(const char * path = nullptr);
   void init(const char * path);
   void capture();
   static Screenshot * commandlineScreenshot();

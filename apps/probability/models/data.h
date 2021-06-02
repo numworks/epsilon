@@ -156,8 +156,12 @@ struct DataWithResults {
 class Data {
 public:
   // naive getter / setters
-  ProbaData * probaData() { return reinterpret_cast<ProbaData *>(&m_dataWithResults.m_inputBuffer); }
-  TestIntervalData * testIntervalData() { return reinterpret_cast<TestIntervalData *>(&m_dataWithResults.m_inputBuffer); }
+  ProbaData * probaData() {
+    return reinterpret_cast<ProbaData *>(&m_dataWithResults.m_inputBuffer);
+  }
+  TestIntervalData * testIntervalData() {
+    return reinterpret_cast<TestIntervalData *>(&m_dataWithResults.m_inputBuffer);
+  }
 
   // ProbaData
   Distribution * distribution() {

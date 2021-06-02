@@ -12,7 +12,7 @@
 using namespace Probability;
 
 InputController::InputController(Escher::StackViewController * parent,
-                                 TestResults * resultsController, InputParameters * inputParameters,
+                                 ResultsController * resultsController, InputParameters * inputParameters,
                                  Escher::InputEventHandlerDelegate * handler) :
     FloatParameterPage(parent),
     m_resultsController(resultsController),

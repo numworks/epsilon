@@ -3,7 +3,7 @@
 using namespace Probability;
 
 IntervalInputController::IntervalInputController(Escher::StackViewController * stack,
-                                                 TestResults * resultsController,
+                                                 ResultsController * resultsController,
                                                  Escher::InputEventHandlerDelegate * handler)
     : Shared::FloatParameterController<float>(stack), m_resultsController(resultsController) {
   m_paramCells[0].setMessage(I18n::Message::Mean);

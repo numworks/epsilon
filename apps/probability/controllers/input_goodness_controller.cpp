@@ -38,7 +38,7 @@ HighlightCell * InputGoodnessDataSource::reusableCell(int i, int type) {
   return &m_cells[i];
 }
 
-InputGoodnessController::InputGoodnessController(StackViewController * parent, TestResults * resultsController,
+InputGoodnessController::InputGoodnessController(StackViewController * parent, ResultsController * resultsController,
                                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                  TextFieldDelegate * textFieldDelegate)
     : Page(parent),

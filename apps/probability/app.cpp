@@ -16,7 +16,8 @@ App::App(Snapshot * snapshot) :
     m_inputHomogeneityController(&m_stackViewController, &m_homogeneityResultsController, this,
                                  this),
     m_inputGoodnessController(&m_stackViewController, &m_resultsController, this, this),
-    m_resultsController(&m_stackViewController, &m_graphController, this, this),
+    m_resultsController(&m_stackViewController, snapshot->data()->testResultsDataSource(),
+                        &m_graphController, this, this),
     m_inputController(&m_stackViewController, &m_resultsController,
                       snapshot->data()->testInputParams(), this),
     m_typeController(&m_stackViewController, &m_hypothesisController, &m_intervalInputController),
@@ -107,8 +108,7 @@ App::App(Snapshot * snapshot) :
           m_inputHomogeneityController.openPage(&m_homogeneityResultsController);
           m_homogeneityResultsController.openPage(&m_resultsController);
         }
-      } else if (subapp == Data::SubApp::Intervals)
-      {
+      } else if (subapp == Data::SubApp::Intervals) {
         if (Data::isProportion(test)) {
           m_testController.openPage(&m_intervalInputController);
         } else {

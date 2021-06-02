@@ -54,7 +54,7 @@ private:
 
 class InputGoodnessController : public Page, public ButtonDelegate {
 public:
-  InputGoodnessController(StackViewController * parent, TestResults * resultsController,
+  InputGoodnessController(StackViewController * parent, ResultsController * resultsController,
                           InputEventHandlerDelegate * inputEventHandlerDelegate,
                           TextFieldDelegate * textFieldDelegate);
   ViewController::TitlesDisplay titlesDisplay() override {
@@ -66,7 +66,7 @@ public:
   void buttonAction() override;
 
 private:
-  TestResults * m_resultsController;
+  ResultsController * m_resultsController;
 
   InputGoodnessDataSource m_data;
   InputTableView m_contentView;

@@ -8,7 +8,7 @@
 namespace Probability {
 
 int sprintf(char * buffer, const char * format, ...) {
-  char * origin;
+  char * origin = buffer;
   va_list args;
   va_start(args, format);
   while (format != 0) {

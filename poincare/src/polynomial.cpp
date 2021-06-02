@@ -222,13 +222,22 @@ Expression Polynomial::ReducePolynomial(const Expression * coefficients, int deg
   return polynomial.simplify(reductionContext);
 }
 
+Rational Polynomial::ReduceRationalPolynomial(const Rational * coefficients, int degree, Rational parameter) {
+  Rational result = coefficients[degree];
+  for (int i = degree - 1; i <= 0; i--) {
+    result = Rational::Addition(Rational::Multiplication(result, parameter), coefficients[i]);
+  }
+  return result;
+}
+
 Expression Polynomial::RationalRootSearch(const Expression * coefficients, int degree, ExpressionNode::ReductionContext reductionContext) {
   assert(degree <= Expression::k_maxPolynomialDegree);
 
+  const Rational * rationalCoefficients = static_cast<const Rational *>(coefficients);
   LeastCommonMultiple lcm = LeastCommonMultiple::Builder();
   for (int i = 0; i <= degree; i++) {
     assert(coefficients[i].type() == ExpressionNode::Type::Rational);
-    lcm.addChildAtIndexInPlace(Rational::Builder(static_cast<const Rational &>(coefficients[i]).integerDenominator()), i, i);
+    lcm.addChildAtIndexInPlace(Rational::Builder(rationalCoefficients[i].integerDenominator()), i, i);
   }
   Expression lcmResult = lcm.shallowReduce(reductionContext);
   assert(lcmResult.type() == ExpressionNode::Type::Rational);
@@ -237,7 +246,7 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
   Integer a0Int = Rational::Multiplication(static_cast<const Rational &>(coefficients[0]), rationalLCM).unsignedIntegerNumerator();
   Integer aNInt = Rational::Multiplication(static_cast<const Rational &>(coefficients[degree]), rationalLCM).unsignedIntegerNumerator();
 
-  Integer a0Divisors[Arithmetic::k_maxNumberOfFactors];
+  Integer a0Divisors[Arithmetic::k_maxNumberOfDivisors];
   int a0NumberOfDivisors, aNNumberOfDivisors;
   {
     ExceptionCheckpoint ecp;
@@ -267,11 +276,11 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
           Integer p = a0Divisors[i], q = *arithmetic.divisorAtIndex(j);
           if (Arithmetic::GCD(p, q).isOne()) {
             Rational r = Rational::Builder(p, q);
-            if (IsRoot(coefficients, degree, r, reductionContext)) {
+            if (ReduceRationalPolynomial(rationalCoefficients, degree, r).isZero()) {
               return std::move(r);
             }
             r = Rational::Multiplication(Rational::Builder(-1), r);
-            if (IsRoot(coefficients, degree, r, reductionContext)) {
+            if (ReduceRationalPolynomial(rationalCoefficients, degree, r).isZero()) {
               return std::move(r);
             }
           }

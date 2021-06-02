@@ -7,7 +7,6 @@
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
 
-#include "models/calculation/discrete_calculation.h"
 #include "controllers/categorical_type_controller.h"
 #include "controllers/distribution_controller.h"
 #include "controllers/graph_controller.h"
@@ -22,6 +21,7 @@
 #include "controllers/results_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
+#include "models/calculation/discrete_calculation.h"
 #include "models/data.h"
 #include "models/distribution/binomial_distribution.h"
 
@@ -75,7 +75,7 @@ private:
   HomogeneityResultsController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
   InputGoodnessController m_inputGoodnessController;
-  TestResults m_resultsController;
+  ResultsController m_resultsController;
   InputController m_inputController;
   IntervalInputController m_intervalInputController;
   TypeController m_typeController;

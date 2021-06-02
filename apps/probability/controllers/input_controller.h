@@ -15,14 +15,13 @@
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/data.h"
+#include "results_controller.h"
 
 namespace Probability {
 
-class TestResults;
-
 class InputController : public FloatParameterPage {
 public:
-  InputController(Escher::StackViewController * parent, TestResults * resultsController,
+  InputController(Escher::StackViewController * parent, ResultsController * resultsController,
                   InputParameters * inputParameters, Escher::InputEventHandlerDelegate * handler);
   int numberOfRows() const override {
     return m_inputParameters->numberOfParameters() + 1 /* significance */ + 1 /* button */;
@@ -48,7 +47,7 @@ private:
 
   InputParameters * m_inputParameters;
   char m_titleBuffer[30];
-  TestResults * m_resultsController;
+  ResultsController * m_resultsController;
 
   constexpr static int k_numberOfReusableCells = 8;  // TODO count
   constexpr static int k_significanceCellType = 2;

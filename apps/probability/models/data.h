@@ -23,6 +23,7 @@
 #include "distribution/uniform_distribution.h"
 #include "input_parameters.h"
 #include "probability/helpers.h"
+#include "probability/models/test_results_data_source.h"
 
 namespace Probability {
 namespace Data {
@@ -85,7 +86,7 @@ struct ProbaData {
 
 enum class Test { None, OneProp, OneMean, TwoProps, TwoMeans, Categorical };
 
-inline bool isProportion(Test t)  { return t == Test::OneProp || t == Test::TwoProps; }
+inline bool isProportion(Test t) { return t == Test::OneProp || t == Test::TwoProps; }
 
 enum class TestType { TTest, PooledTTest, ZTest };
 
@@ -145,13 +146,18 @@ struct TestIntervalData {
 constexpr static int dataSizes[] = {sizeof(ProbaData), sizeof(TestIntervalData)};
 constexpr static int maxDataSize = arrayMax(dataSizes);
 
-typedef char DataBuffer[maxDataSize];
+typedef char InputDataBuffer[maxDataSize];
+
+struct DataWithResults {
+  InputDataBuffer m_inputBuffer;
+  MockupDataSource m_results;  // TODO store a pseudo-union as usual
+};
 
 class Data {
 public:
   // naive getter / setters
-  ProbaData * probaData() { return reinterpret_cast<ProbaData *>(&m_buffer); }
-  TestIntervalData * testIntervalData() { return reinterpret_cast<TestIntervalData *>(&m_buffer); }
+  ProbaData * probaData() { return reinterpret_cast<ProbaData *>(&m_dataWithResults.m_inputBuffer); }
+  TestIntervalData * testIntervalData() { return reinterpret_cast<TestIntervalData *>(&m_dataWithResults.m_inputBuffer); }
 
   // ProbaData
   Distribution * distribution() {
@@ -176,9 +182,10 @@ public:
   InputHomogeneityData * inputHomogeneityData() {
     return &(categoricalData()->m_data.m_homogeneity);
   }
+  TestResultsDataSource * testResultsDataSource() { return &(m_dataWithResults.m_results); }
 
 private:
-  DataBuffer m_buffer;
+  DataWithResults m_dataWithResults;
 };
 
 }  // namespace Data

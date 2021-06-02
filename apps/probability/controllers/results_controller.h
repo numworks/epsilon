@@ -7,44 +7,33 @@
 #include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
 #include "graph_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
+#include "probability/models/results_data_source.h"
 
 namespace Probability {
 
-template <int numberOfResults>
-class ResultsController : public SelectableListViewPage, public ButtonDelegate {
+class ResultsController : public Page, public ButtonDelegate, public SelectableTableViewDataSource {
 public:
-  ResultsController(Escher::StackViewController * parent,
-                    Escher::InputEventHandlerDelegate * handler,
+  ResultsController(Escher::StackViewController * parent, TestResultsDataSource * results,
+                    GraphController * graphController, Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
-  int numberOfRows() const override { return k_numberOfRows; }
-  Escher::HighlightCell * reusableCell(int i, int type) override;
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  }
   void didBecomeFirstResponder() override;
+  void buttonAction() override { openPage(m_graphController); }
+  Escher::View * view() override { return &m_tableView; }
 
 protected:
-  constexpr static int k_numberOfRows = numberOfResults + 1;
+  Escher::SelectableTableView m_tableView;
 
-  Escher::MessageTableCellWithMessage m_cells[numberOfResults];
-  Shared::ButtonWithSeparator m_next;
-};
-
-class TestResults : public ResultsController<2> {
-public:
-  TestResults(Escher::StackViewController * parent, GraphController * graphController,
-              Escher::InputEventHandlerDelegate * handler,
-              Escher::TextFieldDelegate * textFieldDelegate);
-
-  void buttonAction() override { openPage(m_graphController); }
-
-private:
-  constexpr static int k_indexOfZ = 0;
-  constexpr static int k_indexOfPVal = 1;
+  ResultsDataSource m_resultsDataSource;
 
   GraphController * m_graphController;
 };

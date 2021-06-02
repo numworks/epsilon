@@ -95,6 +95,9 @@ Escher::View * TypeView::subviewAtIndex(int i) {
       return m_list;
     case 1:
       return m_description;
+    default:
+      assert(false);
+      return nullptr;
   }
 }
 

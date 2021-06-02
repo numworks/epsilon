@@ -38,6 +38,9 @@ int testToText(Data::Test t, char * buffer, int bufferLength) {
     case Data::Test::TwoMeans:
       txt = "two means";
       break;
+    default:
+      txt = "";
+      break;
   }
   assert(strlen(txt) < bufferLength);
   memcpy(buffer, txt, strlen(txt) + 1);
@@ -55,9 +58,10 @@ const char * testToTextSymbol(Data::Test t) {
       return "p1-p2";  // TODO subscript
     case Data::Test::TwoMeans:
       return "u1-u2";
+    default:
+      assert(false);
+      return nullptr;
   }
-  assert(false);
-  return nullptr;
 }
 
 int testTypeToText(Data::TestType t, char * buffer, int bufferLength) {

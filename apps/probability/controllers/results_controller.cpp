@@ -18,9 +18,9 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :
     Page(parent),
-    m_graphController(graphController),
+    m_tableView(this, &m_resultsDataSource, this, nullptr),
     m_resultsDataSource(&m_tableView, results, this),
-    m_tableView(this, &m_resultsDataSource, this, nullptr) {}
+    m_graphController(graphController) {}
 
 void ResultsController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Results);

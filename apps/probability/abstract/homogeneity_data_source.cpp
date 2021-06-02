@@ -6,7 +6,7 @@
 using namespace Probability;
 
 HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * contentTable, I18n::Message headerPrefix)
-    : m_topLeftCell(Escher::Palette::GrayMiddle), m_contentTable(contentTable) {
+    : m_contentTable(contentTable), m_topLeftCell(Escher::Palette::GrayMiddle) {
   // Headers
   constexpr int bufferSize = 20;
   char txt[bufferSize];

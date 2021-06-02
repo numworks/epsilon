@@ -5,7 +5,7 @@
 #include <ion/console.h>
 #endif
 #if ION_SIMULATOR_FILES
-#include "screenshot.h"
+#include <ion/src/simulator/shared/screenshot.h>
 #endif
 
 namespace Ion {

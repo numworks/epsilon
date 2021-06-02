@@ -8,10 +8,10 @@
 namespace Ion {
 namespace Simulator {
 
-static bool wasInited = false;
+Screenshot::Screenshot(const char * path) { init(path); }
 
 void Screenshot::init(const char * path) {
-  if (!wasInited) {
+  if (path != m_path) {
     // Hack flag to write to buffer without enabling the SDL
     Simulator::Framebuffer::setActive(true);
   }
@@ -21,7 +21,8 @@ void Screenshot::init(const char * path) {
 
 void Screenshot::capture() {
   if (m_path != nullptr) {
-    Simulator::Platform::saveImage(Simulator::Framebuffer::address(), Display::Width, Display::Height, m_path);
+    Simulator::Platform::saveImage(Simulator::Framebuffer::address(), Display::Width,
+                                   Display::Height, m_path);
   }
 }
 

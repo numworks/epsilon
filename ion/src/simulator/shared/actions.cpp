@@ -30,9 +30,7 @@ void loadState() {
 #endif
 
 void takeScreenshot() {
-  Screenshot s;
-  const char * path = Platform::filePathForWriting("png");
-  s.init(path);
+  Screenshot s(Platform::filePathForWriting("png"));
   s.capture();
 }
 

@@ -15,7 +15,7 @@ public:
   // Test statistic
   virtual const char * testCriticalValueSymbol() = 0;
   virtual float testCriticalValue() = 0;
-  virtual void pValue() = 0;
+  virtual float pValue() = 0;
   virtual bool hasDegreeOfFreedom() = 0;
   virtual float degreeOfFreedom() { return -1; };
 

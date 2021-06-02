@@ -23,7 +23,8 @@
 #include "distribution/uniform_distribution.h"
 #include "input_parameters.h"
 #include "probability/helpers.h"
-#include "probability/models/test_results_data_source.h"
+#include "probability/models/statistic/statistic.h"
+#include "probability/models/statistic/one_proportion_statistic.h"
 
 namespace Probability {
 namespace Data {
@@ -150,7 +151,7 @@ typedef char InputDataBuffer[maxDataSize];
 
 struct DataWithResults {
   InputDataBuffer m_inputBuffer;
-  MockupDataSource m_results;  // TODO store a pseudo-union as usual
+  OneProportionStatistic m_statistic;  // TODO store a pseudo-union as usual
 };
 
 class Data {
@@ -186,7 +187,7 @@ public:
   InputHomogeneityData * inputHomogeneityData() {
     return &(categoricalData()->m_data.m_homogeneity);
   }
-  TestResultsDataSource * testResultsDataSource() { return &(m_dataWithResults.m_results); }
+  Statistic * statistic() { return &(m_dataWithResults.m_statistic); }
 
 private:
   DataWithResults m_dataWithResults;

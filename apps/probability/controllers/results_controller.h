@@ -15,12 +15,13 @@
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/results_data_source.h"
+#include "probability/models/statistic/statistic.h"
 
 namespace Probability {
 
 class ResultsController : public Page, public ButtonDelegate, public SelectableTableViewDataSource {
 public:
-  ResultsController(Escher::StackViewController * parent, TestResultsDataSource * results,
+  ResultsController(Escher::StackViewController * parent, Statistic * results,
                     GraphController * graphController, Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
   ViewController::TitlesDisplay titlesDisplay() override {

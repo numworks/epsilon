@@ -2,7 +2,6 @@
 #define APPS_PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_STATISTIC_H
 
 #include "statistic.h"
-#include "probability/models/data.h"
 
 namespace Probability
 {
@@ -15,7 +14,7 @@ public:
   // Test statistic
   const char * testCriticalValueSymbol() override { return "z"; };
   float testCriticalValue() override { return m_z; };
-  void pValue() override { return m_pValue; };
+  float pValue() override { return m_pValue; };
   bool hasDegreeOfFreedom() override { return false; };
 
   // Confidence interval
@@ -30,16 +29,16 @@ public:
 private:
   float _pEstimate(float x, float n);
   float _z(float p0, float p, int n);
-  float _pVal(float z, Data::ComparisonOperator op);
+  float _pVal(float z, char op);
   float _zCritical(float confidenceLevel);
   float _SE(float pEstimate, int n);
 
-  int m_z;
-  int m_pValue;
-  int m_pEstimate;
-  int m_zCritical;
-  int m_SE;
-  int m_ME;
+  float m_z;
+  float m_pValue;
+  float m_pEstimate;
+  float m_zCritical;
+  float m_SE;
+  float m_ME;
 };
 
 

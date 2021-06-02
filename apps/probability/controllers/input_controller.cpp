@@ -75,7 +75,10 @@ void InputController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-void InputController::buttonAction() { openPage(m_resultsController); }
+void InputController::buttonAction() {
+  App::app()->snapshot()->data()->statistic()->computeTest();
+  openPage(m_resultsController);
+}
 
 void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index < m_inputParameters->numberOfParameters()) {
@@ -84,6 +87,7 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
     mCell->setMessage(m_inputParameters->paramSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_inputParameters->paramDescriptionAtIndex(index));
   }
+  FloatParameterPage::willDisplayCellForIndex(cell, index);
 }
 
 Escher::HighlightCell * InputController::reusableParameterCell(int index, int type) {

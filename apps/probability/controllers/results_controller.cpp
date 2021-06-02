@@ -13,7 +13,7 @@
 using namespace Probability;
 
 ResultsController::ResultsController(Escher::StackViewController * parent,
-                                     TestResultsDataSource * results,
+                                     Statistic * results,
                                      GraphController * graphController,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :

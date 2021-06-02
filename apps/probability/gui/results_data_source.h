@@ -8,14 +8,17 @@
 #include <escher/responder.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "probability/models/test_results_data_source.h"
+#include "probability/models/statistic/statistic.h"
 
 namespace Probability {
 
 class ResultsDataSource : public Escher::MemoizedListViewDataSource {
 public:
-  ResultsDataSource(Escher::Responder * parent, TestResultsDataSource * testResults, ButtonDelegate * delegate);
-  int numberOfRows() const override { return 2 + m_testResultsDataSource->hasDegreeOfFreedom() + 1; };
+  ResultsDataSource(Escher::Responder * parent, Statistic * statistic,
+                    ButtonDelegate * delegate);
+  int numberOfRows() const override {
+    return 2 + m_statistic->hasDegreeOfFreedom() + 1;
+  };
   KDCoordinate cellWidth() override { return 290; /* TODO */ };
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
@@ -29,7 +32,7 @@ private:
   constexpr static int k_indexOfButton = 3;
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
-  TestResultsDataSource * m_testResultsDataSource;
+  Statistic * m_statistic;
   Escher::MessageTableCellWithBuffer m_resultCells[5];
   Shared::ButtonWithSeparator m_next;
 };

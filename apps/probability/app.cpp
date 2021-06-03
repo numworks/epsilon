@@ -16,12 +16,11 @@ App::App(Snapshot * snapshot) :
     m_inputHomogeneityController(&m_stackViewController, &m_homogeneityResultsController, this,
                                  this),
     m_inputGoodnessController(&m_stackViewController, &m_resultsController, this, this),
-    m_resultsController(&m_stackViewController, snapshot->data()->statistic(),
-                        &m_graphController, this, this),
+    m_resultsController(&m_stackViewController, snapshot->data()->statistic(), &m_graphController,
+                        this, this),
     m_inputController(&m_stackViewController, &m_resultsController,
                       snapshot->data()->testInputParams(), this),
-    m_intervalInputController(&m_stackViewController, &m_resultsController, this),
-    m_typeController(&m_stackViewController, &m_hypothesisController, &m_intervalInputController),
+    m_typeController(&m_stackViewController, &m_hypothesisController, &m_inputController),
     m_categoricalTypeController(&m_stackViewController, &m_inputGoodnessController,
                                 &m_inputHomogeneityController),
     m_hypothesisController(&m_stackViewController, &m_inputController, this, this),
@@ -32,7 +31,7 @@ App::App(Snapshot * snapshot) :
     m_distributionController(&m_stackViewController, snapshot->data()->distribution(),
                              &m_parameterController),
     m_testController(&m_stackViewController, &m_hypothesisController, &m_typeController,
-                     &m_categoricalTypeController, &m_intervalInputController),
+                     &m_categoricalTypeController, &m_inputController),
     m_menuController(&m_stackViewController, &m_distributionController, &m_testController),
     m_stackViewController(&m_modalViewController, &m_menuController) {
   // Reopen correct page
@@ -70,9 +69,9 @@ App::App(Snapshot * snapshot) :
     case Data::Page::IntervalInput:
       if (!Data::isProportion(test)) {
         m_testController.openPage(&m_typeController);
-        m_typeController.openPage(&m_intervalInputController);
+        m_typeController.openPage(&m_inputController);
       } else {
-        m_testController.openPage(&m_intervalInputController);
+        m_testController.openPage(&m_inputController);
       }
       break;
     case Data::Page::Input:
@@ -110,10 +109,10 @@ App::App(Snapshot * snapshot) :
         }
       } else if (subapp == Data::SubApp::Intervals) {
         if (Data::isProportion(test)) {
-          m_testController.openPage(&m_intervalInputController);
+          m_testController.openPage(&m_inputController);
         } else {
           m_testController.openPage(&m_typeController);
-          m_typeController.openPage(&m_intervalInputController);
+          m_typeController.openPage(&m_inputController);
         }
         // TODO open results from interval
       } else {

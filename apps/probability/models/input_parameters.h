@@ -19,14 +19,15 @@ public:
   void setParamAtIndex(int i, float p) { paramArray()[i] = p; }
   I18n::Message paramSymbolAtIndex(int i) const { return paramReprAtIndex(i)->m_symbol; }
   I18n::Message paramDescriptionAtIndex(int i) const { return paramReprAtIndex(i)->m_description; }
-  float significanceLevel() const { return m_significanceLevel; }
-  void setSignificanceLevel(float s) { m_significanceLevel = s; }
+  float threshold() const { return m_threshold; }
+  void setThreshold(float s) { m_threshold = s; }
 
 protected:
   virtual const ParameterRepr * paramReprAtIndex(int i) const = 0;
   virtual float * paramArray() = 0;
 
-  float m_significanceLevel;
+private:
+  float m_threshold;
 };
 
 class ZTestOnePropInputParameters : public InputParameters {

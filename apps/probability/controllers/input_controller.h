@@ -27,9 +27,7 @@ public:
     return m_inputParameters->numberOfParameters() + 1 /* significance */ + 1 /* button */;
   }
   const char * title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
-  }
+  ViewController::TitlesDisplay titlesDisplay() override;
   int typeAtIndex(int i) override;
   void didBecomeFirstResponder() override;
   void buttonAction() override;

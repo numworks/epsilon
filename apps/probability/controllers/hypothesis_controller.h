@@ -44,7 +44,6 @@ public:
 private:
   void loadHypothesisParam();
   void storeHypothesisParams();
-  void initializeInputParams();
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;

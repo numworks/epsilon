@@ -3,11 +3,11 @@
 namespace Ion {
 namespace Power {
 
-void suspend(bool checkIfOnOffKeyReleased) {
-}
+void suspend(bool checkIfOnOffKeyReleased) {}
 
-void standby() {
-}
+void standby() {}
+
+void selectStandbyMode(bool standbyMode) {}
 
 }
 }

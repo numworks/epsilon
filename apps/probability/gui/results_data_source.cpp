@@ -24,29 +24,59 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
   }
 }
 
+
+int ResultsDataSource::numberOfRows() const {
+  Data::SubApp subapp = App::app()->snapshot()->navigation()->subapp();
+  int index = subapp == Data::SubApp::Tests ? 2 : 4;
+  index += m_statistic->hasDegreeOfFreedom();
+  return index + 1 /* button */;
+}
+
 void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
-  if (!m_statistic->hasDegreeOfFreedom() && i == k_indexOfDegrees) {
-    i++;  // offset to match button index
-  }
-  if (i < k_indexOfButton) {
+  if (i < numberOfRows() - 1) {
     Escher::MessageTableCellWithBuffer * messageCell =
         static_cast<Escher::MessageTableCellWithBuffer *>(cell);
     I18n::Message message;
     float value;
-
-    switch (i) {
-      case k_indexOfZ:
+    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+      switch (i) {
+        case TestCellOrder::Z:
+          message = I18n::Message::Z;
+          value = m_statistic->testCriticalValue();
+          break;
+        case TestCellOrder::PValue:
+          message = I18n::Message::PValue;
+          value = m_statistic->pValue();
+          break;
+        case TestCellOrder::TestDegree:
+          message = I18n::Message::DegreesOfFreedomDefinition;
+          value = m_statistic->degreeOfFreedom();
+          break;
+      }
+    } else {
+      switch (i)
+      {
+      case IntervalCellOrder::Estimate:
         message = I18n::Message::Z;
-        value = m_statistic->testCriticalValue();
+        value = m_statistic->estimate();
         break;
-      case k_indexOfP:
-        message = I18n::Message::PValue;
-        value = m_statistic->pValue();
+      case IntervalCellOrder::Critical:
+        message = I18n::Message::Z; // TODO use m_statistic->intervalCriticalValueSymbol();
+        value = m_statistic->intervalCriticalValue();
         break;
-      case k_indexOfDegrees:
-        message = I18n::Message::DegreesOfFreedomDefinition;
+      case IntervalCellOrder::SE:
+        message = I18n::Message::SE;
+        value = m_statistic->standardError();
+        break;
+      case IntervalCellOrder::ME:
+        message = I18n::Message::ME;
+        value = m_statistic->marginOfError();
+        break;
+      case IntervalCellOrder::IntervalDegree:
+        message = I18n::Message::DegreesOfFreedom;
         value = m_statistic->degreeOfFreedom();
         break;
+      }
     }
     // Parse float
     // TODO do that better

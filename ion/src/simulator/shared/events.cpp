@@ -22,6 +22,15 @@ const char * Event::text() const {
   return defaultText();
 }
 
+size_t copyText(uint8_t eventId, char * buffer, size_t bufferSize) {
+  Ion::Events::Event e(eventId);
+  if (e.text()) {
+    return strlcpy(buffer, e.text(), bufferSize);
+  } else {
+    return 0;
+  }
+}
+
 bool isDefined(uint8_t eventId) {
   Event e(eventId);
   if (e.isKeyboardEvent()) {

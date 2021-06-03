@@ -1,12 +1,16 @@
 ion_src += $(addprefix ion/src/shared/dummy/, \
+  authentification.cpp \
   backlight.cpp \
   board.cpp \
   battery.cpp \
+  circuit_breaker.cpp \
   display.cpp \
   exam_mode.cpp \
+  external_apps.cpp \
   fcc_id.cpp \
   led.cpp \
   pcb_version.cpp \
+  post_and_hardware_tests.cpp \
   power.cpp \
   serial_number.cpp \
   stack.cpp \
@@ -25,6 +29,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   keyboard.cpp \
   layout.cpp \
   main.cpp \
+  persisting_bytes.cpp \
   random.cpp \
   timing.cpp \
   window.cpp \

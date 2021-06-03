@@ -1,6 +1,7 @@
 #include "events.h"
 #include "haptics.h"
 #include <ion/events.h>
+#include <layout_events.h>
 
 namespace Ion {
 namespace Events {
@@ -19,6 +20,15 @@ const char * Event::text() const {
     return const_cast<const char *>(sharedExternalTextBuffer());
   }
   return defaultText();
+}
+
+bool isDefined(uint8_t eventId) {
+  Event e(eventId);
+  if (e.isKeyboardEvent()) {
+    return s_dataForEvent[static_cast<uint8_t>(e)].isDefined();
+  } else {
+    return (e == None || e == Termination || e == USBEnumeration || e == USBPlug || e == BatteryCharging || e == ExternalText);
+  }
 }
 
 }

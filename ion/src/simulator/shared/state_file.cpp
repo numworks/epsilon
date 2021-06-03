@@ -71,7 +71,7 @@ static inline bool load(FILE * f) {
   // Events
   while ((c = getc(f)) != EOF) {
     Ion::Events::Event e = Ion::Events::Event(c);
-    if (e.isDefined() && e.isKeyboardEvent()) {
+    if (Events::isDefined(static_cast<uint8_t>(e)) && e.isKeyboardEvent()) {
       // Avoid pushing invalid events - useful when fuzzing
       journal->pushEvent(e);
     }

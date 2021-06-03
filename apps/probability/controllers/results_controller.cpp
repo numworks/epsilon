@@ -30,5 +30,6 @@ void ResultsController::didBecomeFirstResponder() {
   } else {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
+  m_tableView.reloadData();
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
 }

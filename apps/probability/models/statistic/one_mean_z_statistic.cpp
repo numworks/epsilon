@@ -24,7 +24,7 @@ void OneMeanZStatistic::computeInterval() {
   float meanSample = params->paramAtIndex(0);
   float n = params->paramAtIndex(1);
   float sigma = params->paramAtIndex(2);
-  float confidenceLevel = params->paramAtIndex(3);
+  float confidenceLevel = params->threshold();
 
   m_pEstimate = meanSample;
   m_zCritical = _zCritical(confidenceLevel);

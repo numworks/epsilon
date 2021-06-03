@@ -1138,11 +1138,13 @@ bool Power::isLogarithmOfSameBase(Expression e) const {
     /* Because e is a logarthim, we simplified e.childAtIndex(1) before
      * e.childAtIndex(0), so e.childAtIndex(1) can be compared to base even if
      * e is our parent. */
-    return (e.numberOfChildren() == 1
-        && base.type() == ExpressionNode::Type::Rational
-        && static_cast<Rational &>(base).isTen()
-        )
-      || base.isIdenticalTo(e.childAtIndex(1));
+    if (e.numberOfChildren() == 1) {
+      return base.type() == ExpressionNode::Type::Rational
+          && static_cast<Rational &>(base).isTen();
+    } else {
+      assert(e.numberOfChildren() == 2);
+      return base.isIdenticalTo(e.childAtIndex(1));
+    }
   }
   return e.type() == ExpressionNode::Type::NaperianLogarithm
     && base.type() == ExpressionNode::Type::Constant

@@ -11,14 +11,9 @@ public:
   void computeTest() override;
   void computeInterval() override;
 
-  // Test statistic
-  const char * testCriticalValueSymbol() override { return "z"; };
-  bool hasDegreeOfFreedom() override { return false; };
-
   // Confidence interval
   const char * estimateSymbol() override { return "p"; };
   I18n::Message estimateDescription() override { return I18n::Message::SampleProportion; };
-  const char * intervalCriticalValueSymbol() override { return "z*"; };
 
 private:
   float _pEstimate(float x, float n);

@@ -5,7 +5,6 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
   battery.cpp \
   circuit_breaker.cpp \
   display.cpp \
-  exam_mode.cpp \
   external_apps.cpp \
   fcc_id.cpp \
   led.cpp \

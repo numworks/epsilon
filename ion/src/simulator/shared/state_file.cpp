@@ -43,7 +43,7 @@ static inline bool load(FILE * f) {
   if (fread(buffer, sVersionLength, 1, f) != 1) {
     return false;
   }
-  if (strcmp(buffer, softwareVersion()) != 0 && strcmp(buffer, sWildcardVersion) != 0) {
+  if (strcmp(buffer, epsilonVersion()) != 0 && strcmp(buffer, sWildcardVersion) != 0) {
     return false;
   }
 
@@ -101,7 +101,7 @@ static inline bool save(FILE * f) {
   if (fwrite(sHeader, sHeaderLength, 1, f) != 1) {
     return false;
   }
-  if (fwrite(softwareVersion(), sVersionLength, 1, f) != 1) {
+  if (fwrite(epsilonVersion(), sVersionLength, 1, f) != 1) {
     return false;
   }
   if (fwrite(&sLatestFormatVersion, sFormatVersionLength, 1, f) != 1) {

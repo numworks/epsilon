@@ -11,9 +11,11 @@ jobs:
     steps:
       - name: Checkout PR head
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Just checking
         run: git branch
       - name: Compare screenshot images
-        run: ./build/compare/compare.sh tests/screenshots_dataset/scenarii/ tests/screenshots_dataset/reference_images/ changed_stuff
+        run: ./build/compare/compare.sh --debug tests/screenshots_dataset/scenarii/ tests/screenshots_dataset/reference_images/ ${{ github.event.pull_request.head.sha }}
       - name: Cleanup
         run: rm -r compare_output_*

@@ -16,9 +16,7 @@ class ResultsDataSource : public Escher::MemoizedListViewDataSource {
 public:
   ResultsDataSource(Escher::Responder * parent, Statistic * statistic,
                     ButtonDelegate * delegate);
-  int numberOfRows() const override {
-    return 2 + m_statistic->hasDegreeOfFreedom() + 1;
-  };
+  int numberOfRows() const override;
   KDCoordinate cellWidth() override { return 290; /* TODO */ };
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
@@ -26,10 +24,12 @@ public:
   int typeAtIndex(int index) override;
 
 private:
-  constexpr static int k_indexOfZ = 0;
-  constexpr static int k_indexOfP = 1;
-  constexpr static int k_indexOfDegrees = 2;
-  constexpr static int k_indexOfButton = 3;
+  enum TestCellOrder {
+    Z, PValue, TestDegree
+  };
+  enum IntervalCellOrder {
+    Estimate, Critical, SE, ME, IntervalDegree
+  };
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
   Statistic * m_statistic;

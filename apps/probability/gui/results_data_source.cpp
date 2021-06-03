@@ -57,7 +57,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
       switch (i)
       {
       case IntervalCellOrder::Estimate:
-        message = I18n::Message::Z;
+        message = I18n::Message::P;
         value = m_statistic->estimate();
         break;
       case IntervalCellOrder::Critical:

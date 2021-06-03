@@ -29,6 +29,28 @@ public:
   virtual float marginOfError() = 0;
 };
 
+/* Store computed results as members to avoid recomputing at every call */
+class CachedStatistic : public Statistic {
+public:
+  // Test statistic
+  float testCriticalValue() override { return m_z; };
+  float pValue() override { return m_pValue; };
+
+  // Confidence interval
+  float estimate() override { return m_pEstimate; };
+  float intervalCriticalValue() override { return m_zCritical; };
+  float standardError() override { return m_SE; };
+  float marginOfError() override { return m_ME; };
+
+protected:
+  float m_z;
+  float m_pValue;
+  float m_pEstimate;
+  float m_zCritical;
+  float m_SE;
+  float m_ME;
+};
+
 }  // namespace Probability
 
 #endif /* APPS_PROBABILITY_MODELS_STATISTIC_STATISTIC_H */

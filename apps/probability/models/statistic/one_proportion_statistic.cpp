@@ -31,7 +31,7 @@ void OneProportionStatistic::computeInterval() {
   m_pEstimate = _pEstimate(x, n);
   m_zCritical = _zCritical(confidenceLevel);
   m_SE = _SE(m_pEstimate, n);
-  m_ME = m_SE * m_zCritical;
+  m_ME = _ME(m_zCritical, m_SE);
 }
 
 float OneProportionStatistic::_pEstimate(float x, float n) {
@@ -41,24 +41,6 @@ float OneProportionStatistic::_pEstimate(float x, float n) {
 
 float OneProportionStatistic::_z(float p0, float p, int n) {
   return std::abs((p - p0) / sqrt(p0 * (1 - p0) / n));
-}
-
-float OneProportionStatistic::_pVal(float z, char op) {
-  Data::ComparisonOperator realOp = static_cast<Data::ComparisonOperator>(op);
-  switch (realOp)
-  {
-  case Data::ComparisonOperator::Lower:
-    return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(z, 0, 1);
-    break;
-  case Data::ComparisonOperator::Higher:
-    return 1 - Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(-z, 0, 1);
-  case Data::ComparisonOperator::Different:
-    return 2 * Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(- z / 2, 0, 1);;
-  }
-}
-
-float OneProportionStatistic::_zCritical(float confidenceLevel) {
-  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(confidenceLevel, 0, 1);
 }
 
 float OneProportionStatistic::_SE(float pEstimate, int n) {

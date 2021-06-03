@@ -69,7 +69,6 @@ void HypothesisController::didBecomeFirstResponder() {
 
 void HypothesisController::buttonAction() {
   storeHypothesisParams();
-  initializeInputParams();
   openPage(m_inputController);
 }
 
@@ -92,23 +91,3 @@ void HypothesisController::storeHypothesisParams() {
   params->setOp(Data::ComparisonOperator::Higher);
 }
 
-void HypothesisController::initializeInputParams() {
-  Data::Test test = App::app()->snapshot()->data()->test();
-  switch (test) {
-    case Data::Test::OneProp:
-      new (App::app()->snapshot()->data()->testInputParams()) ZTestOnePropInputParameters();
-      break;
-    case Data::Test::OneMean:
-      new (App::app()->snapshot()->data()->testInputParams()) TTestOneMeanInputParameters();
-      break;
-    case Data::Test::TwoProps:
-      new (App::app()->snapshot()->data()->testInputParams()) ZTestTwoPropsInputParameters();
-      break;
-    case Data::Test::TwoMeans:
-      new (App::app()->snapshot()->data()->testInputParams()) TTestTwoMeanInputParameters();
-      break;
-    default:
-      assert(false);
-      break;
-  }
-}

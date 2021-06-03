@@ -16,7 +16,6 @@
 
 #include "hypothesis_controller.h"
 #include "input_controller.h"
-#include "interval_input_controller.h"
 #include "probability/models/data.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/vertical_layout.h"
@@ -42,9 +41,8 @@ private:
 
 class TypeController : public SelectableListViewPage {
 public:
-  TypeController(StackViewController * parent,
-                 HypothesisController * hypothesisController,
-                 IntervalInputController * intervalInputController);
+  TypeController(StackViewController * parent, HypothesisController * hypothesisController,
+                 InputController * intervalInputController);
   View * view() override { return &m_contentView; }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
@@ -66,7 +64,7 @@ private:
   constexpr static int k_indexOfDescription = 3;
 
   HypothesisController * m_hypothesisController;
-  IntervalInputController * m_intervalInputController;
+  InputController * m_inputController;
 
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfRows];
   TypeView m_contentView;

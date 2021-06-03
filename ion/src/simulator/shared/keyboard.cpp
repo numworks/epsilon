@@ -76,6 +76,16 @@ State scan() {
   return state;
 }
 
+State popState() {
+  static State oldState = State(0);
+  State newState = scan();
+  if (oldState == newState) {
+    return State(-1);
+  }
+  oldState = newState;
+  return newState;
+}
+
 }
 }
 

@@ -51,6 +51,11 @@ def source_definition(i18n_string):
             # (for the non-extended set)
             copyCodePoint = (ord(s[i]) < 0x300) or (ord(s[i]) > 0x36F)
             checkForCombining = False
+        # Combine "\n" into '\n'
+        if s[i] == '\\' and i+1 < length and s[i+1] == 'n':
+            result = result + '\n'
+            i+=2
+            continue
         if copyCodePoint:
             # Remove the uppercase characters with combining chars
             checkForCombining = s[i].isupper()
@@ -83,7 +88,7 @@ def message_exceeds_length_limit(definition, type):
         type = "default"
     length_limit = message_length_limit_for_type[type]
     # Handle multi-line messages
-    for definition_line in re.split(r"\\n", definition.decode('utf-8')):
+    for definition_line in re.split(r"\n", definition.decode('utf-8')):
         # Ignore combining characters
         if (len([c for c in definition_line if not unicodedata.combining(c)]) > length_limit):
             return True

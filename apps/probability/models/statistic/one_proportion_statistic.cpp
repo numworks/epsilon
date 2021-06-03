@@ -27,7 +27,7 @@ void OneProportionStatistic::computeInterval() {
   // TODO super weird
   float x = params->paramAtIndex(0);
   int n = params->paramAtIndex(1);
-  float confidenceLevel = params->paramAtIndex(2);
+  float confidenceLevel = params->threshold();
   m_pEstimate = _pEstimate(x, n);
   m_zCritical = _zCritical(confidenceLevel);
   m_SE = _SE(m_pEstimate, n);

@@ -37,9 +37,11 @@ app_probability_src += $(addprefix apps/probability/models/calculation/,\
 
 app_probability_src += $(addprefix apps/probability/models/statistic/,\
 	z_statistic.cpp \
+	t_statistic.cpp \
 	one_proportion_statistic.cpp \
 	two_proportions_statistic.cpp \
 	one_mean_z_statistic.cpp \
+	one_mean_t_statistic.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\

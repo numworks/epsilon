@@ -28,7 +28,7 @@ void TwoProportionsStatistic::computeInterval() {
   int n1 = params->paramAtIndex(1);
   float x2 = params->paramAtIndex(2);
   int n2 = params->paramAtIndex(3);
-  float confidenceLevel = params->paramAtIndex(4);
+  float confidenceLevel = params->threshold();
 
   m_pEstimate = _pEstimate(x1, n1, x2, n2);
   m_zCritical = _zCritical(confidenceLevel);

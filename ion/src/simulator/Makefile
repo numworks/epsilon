@@ -11,6 +11,7 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
   pcb_version.cpp \
   post_and_hardware_tests.cpp \
   power.cpp \
+  reset.h \
   serial_number.cpp \
   stack.cpp \
   usb.cpp \

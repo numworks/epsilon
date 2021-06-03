@@ -213,3 +213,5 @@ do
 done
 
 print_report
+
+exit $count

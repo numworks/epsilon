@@ -15,7 +15,6 @@
 #include "controllers/input_controller.h"
 #include "controllers/input_goodness_controller.h"
 #include "controllers/input_homogeneity_controller.h"
-#include "controllers/interval_input_controller.h"
 #include "controllers/menu_controller.h"
 #include "controllers/parameters_controller.h"
 #include "controllers/results_controller.h"
@@ -77,7 +76,6 @@ private:
   InputGoodnessController m_inputGoodnessController;
   ResultsController m_resultsController;
   InputController m_inputController;
-  IntervalInputController m_intervalInputController;
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;

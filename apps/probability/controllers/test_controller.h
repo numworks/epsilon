@@ -13,7 +13,7 @@ namespace Probability {
 class HypothesisController;
 class CategoricalTypeController;
 class TypeController;
-class IntervalInputController;
+class InputController;
 
 constexpr static int k_numberOfTestCells = 5;
 
@@ -23,7 +23,7 @@ public:
   TestController(Escher::StackViewController * parentResponder,
                  HypothesisController * hypothesisController, TypeController * typeController,
                  CategoricalTypeController * categoricalController,
-                 IntervalInputController * intervalInputController);
+                 InputController * inputController);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return "Test"; }
@@ -31,6 +31,7 @@ public:
 private:
   void selectRowAccordingToTest(Data::Test t);
   void initializeHypothesisParams(Data::Test t);
+  void initializeInputParams(Data::Test t);
 
   constexpr static int k_indexOfOneProp = 0;
   constexpr static int k_indexOfOneMean = 1;
@@ -40,7 +41,7 @@ private:
 
   HypothesisController * m_hypothesisController;
   TypeController * m_typeController;
-  IntervalInputController * m_intervalInputController;
+  InputController * m_inputController;
   CategoricalTypeController * m_categoricalController;
 };
 

@@ -31,30 +31,42 @@ InputController::InputController(Escher::StackViewController * parent,
 }
 
 const char * InputController::title() {
-  // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams>
-  m_titleBuffer[0] = 0;
   size_t bufferSize = sizeof(m_titleBuffer);
-  const char * H0 = "H0:";
-  const char * Ha = "  Ha:";
-  const char * eq = "=";  // TODO Must be somewhere else
-  const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
-  char op[2] = {0, 0};
-  op[0] = static_cast<const char>(App::app()->snapshot()->data()->hypothesisParams()->op());
-  char paramBuffer[10];
-  Poincare::PrintFloat::ConvertFloatToText(
-      App::app()->snapshot()->data()->hypothesisParams()->firstParam(), paramBuffer,
-      sizeof(paramBuffer), 5, 5, Poincare::Preferences::PrintFloatMode::Decimal);
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams>
+    m_titleBuffer[0] = 0;
+    const char * H0 = "H0:";
+    const char * Ha = "  Ha:";
+    const char * eq = "=";  // TODO Must be somewhere else
+    const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
+    char op[2] = {0, 0};
+    op[0] = static_cast<const char>(App::app()->snapshot()->data()->hypothesisParams()->op());
+    char paramBuffer[10];
+    Poincare::PrintFloat::ConvertFloatToText(
+        App::app()->snapshot()->data()->hypothesisParams()->firstParam(), paramBuffer,
+        sizeof(paramBuffer), 5, 5, Poincare::Preferences::PrintFloatMode::Decimal);
 
-  strlcat(m_titleBuffer, H0, bufferSize);
-  strlcat(m_titleBuffer, symbol, bufferSize);
-  strlcat(m_titleBuffer, eq, bufferSize);
-  strlcat(m_titleBuffer, paramBuffer, bufferSize);
-  strlcat(m_titleBuffer, Ha, bufferSize);
-  strlcat(m_titleBuffer, symbol, bufferSize);
-  strlcat(m_titleBuffer, op, bufferSize);
-  strlcat(m_titleBuffer, paramBuffer, bufferSize);
+    strlcat(m_titleBuffer, H0, bufferSize);
+    strlcat(m_titleBuffer, symbol, bufferSize);
+    strlcat(m_titleBuffer, eq, bufferSize);
+    strlcat(m_titleBuffer, paramBuffer, bufferSize);
+    strlcat(m_titleBuffer, Ha, bufferSize);
+    strlcat(m_titleBuffer, symbol, bufferSize);
+    strlcat(m_titleBuffer, op, bufferSize);
+    strlcat(m_titleBuffer, paramBuffer, bufferSize);
+  } else {
+    strlcpy(m_titleBuffer, "z-interval bla...", bufferSize);
+  }
 
   return m_titleBuffer;
+}
+
+
+ViewController::TitlesDisplay InputController::titlesDisplay() {
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  }
+  return ViewController::TitlesDisplay::DisplayLastTitles;
 }
 
 int InputController::typeAtIndex(int i) {
@@ -97,3 +109,4 @@ Escher::HighlightCell * InputController::reusableParameterCell(int index, int ty
   assert(type == k_significanceCellType);
   return &m_significanceCell;
 }
+

@@ -20,11 +20,11 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                HypothesisController * hypothesisController,
                                TypeController * typeController,
                                CategoricalTypeController * categoricalController,
-                               IntervalInputController * intervalInputController) :
+                               InputController * inputController) :
     SelectableCellListPage(parentResponder),
     m_hypothesisController(hypothesisController),
     m_typeController(typeController),
-    m_intervalInputController(intervalInputController),
+    m_inputController(inputController),
     m_categoricalController(categoricalController) {
   // Create cells
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
@@ -56,7 +56,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         if (subapp == Data::SubApp::Tests) {
           view = m_hypothesisController;
         } else {
-          view = m_intervalInputController;
+          view = m_inputController;
         }
         break;
       case k_indexOfTwoProps:
@@ -64,7 +64,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         if (subapp == Data::SubApp::Tests) {
           view = m_hypothesisController;
         } else {
-          view = m_intervalInputController;
+          view = m_inputController;
         }
         break;
       case k_indexOfOneMean:
@@ -90,6 +90,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       Data::TestType testType = Data::isProportion(test) ? Data::TestType::ZTest : Data::TestType::TTest;
       App::app()->snapshot()->data()->setTestType(testType);
     }
+    initializeInputParams(test);
     openPage(view);
     return true;
   }
@@ -140,4 +141,24 @@ void TestController::initializeHypothesisParams(Data::Test t) {
   }
   App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
   App::app()->snapshot()->data()->hypothesisParams()->setOp(Data::ComparisonOperator::Higher);
+}
+
+void TestController::initializeInputParams(Data::Test t) {
+  switch (t) {
+    case Data::Test::OneProp:
+      new (App::app()->snapshot()->data()->testInputParams()) ZTestOnePropInputParameters();
+      break;
+    case Data::Test::OneMean:
+      new (App::app()->snapshot()->data()->testInputParams()) TTestOneMeanInputParameters();
+      break;
+    case Data::Test::TwoProps:
+      new (App::app()->snapshot()->data()->testInputParams()) ZTestTwoPropsInputParameters();
+      break;
+    case Data::Test::TwoMeans:
+      new (App::app()->snapshot()->data()->testInputParams()) TTestTwoMeanInputParameters();
+      break;
+    default:
+      assert(false);
+      break;
+  }
 }

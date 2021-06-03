@@ -18,11 +18,11 @@ using namespace Probability;
 
 TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
-                               IntervalInputController * intervalInputController)
-    : SelectableListViewPage(parent),
-      m_hypothesisController(hypothesisController),
-      m_intervalInputController(intervalInputController),
-      m_contentView(&m_selectableTableView, &m_description) {
+                               InputController * inputController) :
+    SelectableListViewPage(parent),
+    m_hypothesisController(hypothesisController),
+    m_inputController(inputController),
+    m_contentView(&m_selectableTableView, &m_description) {
   m_cells[k_indexOfTTest].setMessage(I18n::Message::TTest);
   m_cells[k_indexOfTTest].setSubtitle(I18n::Message::Recommended);
   m_cells[k_indexOfPooledTest].setMessage(I18n::Message::PooledTTest);
@@ -59,7 +59,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
-      view = m_intervalInputController;
+      view = m_inputController;
     } else {
       view = m_hypothesisController;
     }

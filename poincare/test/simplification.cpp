@@ -633,6 +633,9 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("1/√(2)", "√(2)/2");
   assert_parsed_expression_simplify_to("root(8/9,3)", "\u00122×root(3,3)\u0013/3");
   assert_parsed_expression_simplify_to("√(2)×root(8,4)", "2×root(2,4)");
+  assert_parsed_expression_simplify_to("ℯ^ln(π)", "π");
+  assert_parsed_expression_simplify_to("10^log(1.23)", "123/100");
+  assert_parsed_expression_simplify_to("2^log(3,2)", "3");
   /* This does not reduce but should not as the integer is above
    * k_maxNumberOfPrimeFactors and thus it prime decomposition might overflow
    * 32 factors. */

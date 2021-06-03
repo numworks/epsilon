@@ -12,6 +12,7 @@ struct ParameterRepr {
   I18n::Message m_description;
 };
 
+// TODO should InputParameters and Statistic be the same object ?
 class InputParameters {
 public:
   virtual int numberOfParameters() const = 0;

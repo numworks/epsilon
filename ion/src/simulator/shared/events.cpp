@@ -40,5 +40,7 @@ bool isDefined(uint8_t eventId) {
   }
 }
 
+void setSpinner(bool) {}
+
 }
 }

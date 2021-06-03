@@ -23,7 +23,6 @@ ion_src += $(addprefix ion/src/shared/, \
   crc32_eat_byte.cpp \
   decompress.cpp \
   events.cpp \
-  events_keyboard.cpp \
   events_modifier.cpp \
   sha256.cpp \
   stack_position.cpp \

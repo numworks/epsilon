@@ -1,3 +1,5 @@
+#include "events.h"
+#include "../../shared/events_modifier.h"
 #include <ion/events.h>
 #include <ion/timing.h>
 #include <assert.h>
@@ -11,7 +13,6 @@
 namespace Ion {
 namespace Events {
 
-#if 0
 static bool sleepWithTimeout(int duration, int * timeout) {
   if (*timeout >= duration) {
     Timing::msleep(duration);
@@ -23,43 +24,32 @@ static bool sleepWithTimeout(int duration, int * timeout) {
     return true;
   }
 }
-#endif
 
-//Event sLastEvent = Events::None;
-//Keyboard::State sLastKeyboardState;
-//bool sLastEventShift;
-//bool sLastEventAlpha;
-//bool sEventIsRepeating = false;
-int sEventRepetitionCount = 0;
+Event sLastEvent = Events::None;
+Keyboard::State sLastKeyboardState;
+bool sLastEventShift;
+bool sLastEventAlpha;
+bool sEventIsRepeating = false;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
 
-//Event getPlatformEvent();
+Event getPlatformEvent();
 
-void ComputeAndSetRepetionFactor(int eventRepetitionCount) {
-  // The Repetition factor is increased by 4 every 20 loops in getEvent(2 sec)
-  setLongRepetition((eventRepetitionCount / 20) * 4 + 1);
-}
-
-void resetLongRepetition() {
-  sEventRepetitionCount = 0;
-  ComputeAndSetRepetionFactor(sEventRepetitionCount);
-}
-
-#if 0
 static inline Event innerGetEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
+
   int time = 0;
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
+
   while (true) {
     Event platformEvent = getPlatformEvent();
     if (platformEvent != None) {
       return platformEvent;
     }
 
-    Keyboard::State state = Ion::Keyboard::hasNextState() ? Ion::Keyboard::nextState() : Keyboard::State(0);
+    Keyboard::State state = Keyboard::scan();
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;
 
@@ -103,14 +93,12 @@ static inline Event innerGetEvent(int * timeout) {
       int delay = (sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat);
       if (time >= delay) {
         sEventIsRepeating = true;
-        sEventRepetitionCount++;
-        ComputeAndSetRepetionFactor(sEventRepetitionCount);
+        incrementRepetitionFactor();
         return sLastEvent;
       }
     }
   }
 }
-#endif
 
 #if ION_EVENTS_JOURNAL
 

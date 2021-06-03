@@ -43,6 +43,8 @@ public:
   float marginOfError() override { return m_ME; };
 
 protected:
+  float _ME(float zCritical, float SE) { return zCritical * SE; }
+
   float m_z;
   float m_pValue;
   float m_pEstimate;

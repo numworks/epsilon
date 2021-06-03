@@ -1,12 +1,11 @@
 #ifndef APPS_PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_STATISTIC_H
 #define APPS_PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_STATISTIC_H
 
-#include "proportion_statistic.h"
+#include "z_statistic.h"
 
-namespace Probability
-{
+namespace Probability {
 
-class OneProportionStatistic : public ProportionStatistic {
+class OneProportionStatistic : public ZStatistic {
 public:
   void computeTest() override;
   void computeInterval() override;
@@ -21,8 +20,6 @@ private:
   float _SE(float pEstimate, int n);
 };
 
-
-} // namespace Probability
-
+}  // namespace Probability
 
 #endif /* APPS_PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_STATISTIC_H */

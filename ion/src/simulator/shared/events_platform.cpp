@@ -5,6 +5,7 @@
 #include "layout.h"
 #include "state_file.h"
 #include "window.h"
+#include "../../shared/events_modifier.h"
 
 #include <assert.h>
 #include <ion/events.h>

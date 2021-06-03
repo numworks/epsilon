@@ -193,6 +193,10 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
           }
           roots[i] = roots[i].approximate<double>(context, complexContext.complexFormat(), complexContext.angleUnit());
           if (equationIsReal && deltaSign < 0) {
+            /* We know there is exactly one real root (and two complex
+             * conjugate). Because of approximation errors, this real root can
+             * have an infinitesimal imaginary size. As such, we strip the
+             * imaginary part from the root with the smallest imaginary part. */
             float im = std::fabs(ImaginaryPart::Builder(roots[i]).approximateToScalar<float>(context, complexContext.complexFormat(), complexContext.angleUnit()));
             if (im < minimalImaginaryPart) {
               minimalImaginaryPart = im;
@@ -255,7 +259,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
         Preferences::ComplexFormat complexFormat = *reinterpret_cast<Preferences::ComplexFormat *>(pack[4]);
         Preferences::AngleUnit angleUnit = *reinterpret_cast<Preferences::AngleUnit *>(pack[5]);
         return rootSmallerThan(tab[j], tab[i], context, complexFormat, angleUnit);
-      }, pack, 3);
+      }, pack, degree);
 
   if (approximateSolutions != nullptr) {
     *approximateSolutions = approximate;

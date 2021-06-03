@@ -69,10 +69,6 @@ SECTIONS {
     . = ALIGN(4);
     _data_section_start_flash = LOADADDR(.data);
     _data_section_start_ram = .;
-    /* The first RAM area is dedicated to the app buffer (where the running
-     * application is unpacked). This way, this very region can be easily found
-     * and allocated to an external app (for its data and bss) if necessary. */
-    KEEP(*(.app_buffer))
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;

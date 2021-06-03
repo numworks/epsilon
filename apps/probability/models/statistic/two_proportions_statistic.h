@@ -1,11 +1,11 @@
 #ifndef APPS_PROBABILITY_MODELS_STATISTIC_TWO_PROPORTIONS_STATISTIC_H
 #define APPS_PROBABILITY_MODELS_STATISTIC_TWO_PROPORTIONS_STATISTIC_H
 
-#include "proportion_statistic.h"
+#include "z_statistic.h"
 
 namespace Probability {
 
-class TwoProportionsStatistic : public ProportionStatistic {
+class TwoProportionsStatistic : public ZStatistic {
 public:
   void computeTest() override;
   void computeInterval() override;

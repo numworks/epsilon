@@ -1,4 +1,4 @@
-#include "proportion_statistic.h"
+#include "z_statistic.h"
 
 #include <poincare/normal_distribution.h>
 
@@ -6,12 +6,7 @@
 
 namespace Probability {
 
-float ProportionStatistic::_zCritical(float confidenceLevel) {
-  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(
-      confidenceLevel, 0, 1);
-}
-
-float ProportionStatistic::_pVal(float z, char op) {
+float ZStatistic::_pVal(float z, char op) {
   Data::ComparisonOperator realOp = static_cast<Data::ComparisonOperator>(op);
   switch (realOp) {
     case Data::ComparisonOperator::Lower:
@@ -27,8 +22,10 @@ float ProportionStatistic::_pVal(float z, char op) {
   }
 }
 
-float ProportionStatistic::_ME(float zCritical, float SE) {
-  return zCritical * SE;
+
+float ZStatistic::_zCritical(float confidenceLevel) {
+  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(
+      confidenceLevel, 0, 1);
 }
 
 }  // namespace Probability

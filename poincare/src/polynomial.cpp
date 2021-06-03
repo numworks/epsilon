@@ -58,6 +58,22 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   return !root1->isUndefined() + !root2->isUndefined();
 }
 
+static bool rootSmallerThan(const Expression * root1, const Expression * root2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  if (root2->type() == ExpressionNode::Type::Undefined || root2->type() == ExpressionNode::Type::Unreal) {
+    return true;
+  }
+  if (root1->type() == ExpressionNode::Type::Undefined || root1->type() == ExpressionNode::Type::Unreal) {
+    return false;
+  }
+  float r1 = root1->approximateToScalar<float>(context, complexFormat, angleUnit);
+  float r2 = root2->approximateToScalar<float>(context, complexFormat, angleUnit);
+  if (std::isfinite(r2)) {
+    return std::isfinite(r1) && r1 <= r2;
+  }
+  return std::isfinite(r1)
+      || ImaginaryPart::Builder(root1->clone()).approximateToScalar<float>(context, complexFormat, angleUnit) <= ImaginaryPart::Builder(root2->clone()).approximateToScalar<float>(context, complexFormat, angleUnit);
+}
+
 int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, Expression d, Expression * root1, Expression * root2, Expression * root3, Expression * delta, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * approximateSolutions) {
   assert(root1 && root2 && root3 && delta);
   assert(!(a.isUninitialized() || b.isUninitialized() || c.isUninitialized() || d.isUninitialized()));
@@ -220,6 +236,26 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root2 = *root3;
     *root3 = Undefined::Builder();
   }
+
+  /* Sort the roots. The real roots go first, in ascending order, then the
+   * complex roots in order of ascending imaginary part. */
+  void * pack[] = { root1, root2, root3, context, &complexFormat, &angleUnit };
+  Helpers::Sort([](int i, int j, void * ctx, int n) { // Swap method
+        assert(i < n && j < n);
+        Expression ** tab = reinterpret_cast<Expression **>(reinterpret_cast<void **>(ctx));
+        Expression t = *tab[i];
+        *tab[i] = *tab[j];
+        *tab[j] = t;
+      },
+      [](int i, int j, void * ctx, int n) { // Comparison method
+        assert(i < n && j < n);
+        void ** pack = reinterpret_cast<void **>(ctx);
+        Expression ** tab = reinterpret_cast<Expression **>(pack);
+        Context * context = reinterpret_cast<Context *>(pack[3]);
+        Preferences::ComplexFormat complexFormat = *reinterpret_cast<Preferences::ComplexFormat *>(pack[4]);
+        Preferences::AngleUnit angleUnit = *reinterpret_cast<Preferences::AngleUnit *>(pack[5]);
+        return rootSmallerThan(tab[j], tab[i], context, complexFormat, angleUnit);
+      }, pack, 3);
 
   if (approximateSolutions != nullptr) {
     *approximateSolutions = approximate;

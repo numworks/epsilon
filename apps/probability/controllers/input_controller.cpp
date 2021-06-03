@@ -88,7 +88,11 @@ void InputController::didBecomeFirstResponder() {
 }
 
 void InputController::buttonAction() {
-  App::app()->snapshot()->data()->statistic()->computeTest();
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    App::app()->snapshot()->data()->statistic()->computeTest();
+  } else {
+    App::app()->snapshot()->data()->statistic()->computeInterval();
+  }
   openPage(m_resultsController);
 }
 

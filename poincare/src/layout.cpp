@@ -60,7 +60,7 @@ Layout Layout::recursivelyMatches(LayoutTest test) const {
 
 Layout Layout::XNTLayout() const {
   Layout xntLayout = const_cast<Layout *>(this)->node()->XNTLayout();
-  assert(xntLayout.numberOfDescendants(true) >= 0);
+  assert(xntLayout.isUninitialized() || xntLayout.numberOfDescendants(true) >= 0);
   if (!xntLayout.isUninitialized() && static_cast<size_t>(xntLayout.numberOfDescendants(true)) <= SymbolAbstract::k_maxNameSize && xntLayout.recursivelyMatches(
       [](const Layout l) {
         if (l.type() != LayoutNode::Type::CodePointLayout) {

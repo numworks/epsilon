@@ -734,7 +734,9 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is -1. */
   if (baseType == ExpressionNode::Type::Power) {
     Expression a = base.childAtIndex(0);
-    bool apply = rationalIndex.isMinusOne() || a.sign(context) == ExpressionNode::Sign::Positive;
+    bool apply = rationalIndex.isMinusOne()
+      || a.sign(context) == ExpressionNode::Sign::Positive
+      || a.approximateToScalar<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) > 0.f;
     if (!apply && rationalIndex.isInteger()) {
       if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
         Expression approximation = base.approximate<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);

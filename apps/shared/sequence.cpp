@@ -141,7 +141,7 @@ bool Sequence::badlyReferencesItself(Context * context) {
   const void * pack[] = { this, &allowFirstCondition, &allowSecondCondition, &allowFirstOrderSelfReference, &allowSecondOrderSelfReference };
 
   Poincare::Expression::ExpressionTypeTest test = [](const Expression e, const void * aux) {
-    if (e.type() != ExpressionNode::Type::Sequence) {
+    if (e.isUninitialized() || e.type() != ExpressionNode::Type::Sequence) {
       return false;
     }
     const char * eName = static_cast<const Poincare::Sequence &>(e).name();

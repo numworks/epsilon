@@ -5,6 +5,7 @@
 
 namespace Probability {
 
+/* A t-Statistic is a Statistic whose distribution is a normal law. */
 class ZStatistic : public CachedStatistic {
 public:
   const char * testCriticalValueSymbol() override { return "z"; };

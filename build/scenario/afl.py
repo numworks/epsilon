@@ -6,7 +6,7 @@ NUMBER_OF_FUZZERS=multiprocessing.cpu_count()
 
 def afl_command(name):
   master_option = "-M" if name.startswith("master") else "-S"
-  return ["afl-fuzz", "-t", "10000", "-i", "scenari", "-o", "afl_out", master_option, "epsilon-fuzz-" + name, "./epsilon.bin"]
+  return ["afl-fuzz", "-t", "10000", "-i", "scenari", "-o", "afl_out", master_option, "epsilon-fuzz-" + name, "./epsilon.bin", "--headless", "--load-state-file -"]
 
 def run_afl(commands, name):
   # Launch the fuzzer

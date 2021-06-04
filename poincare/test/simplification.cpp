@@ -594,6 +594,8 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("0^3", "0");
   assert_parsed_expression_simplify_to("0^0", Undefined::Name());
   assert_parsed_expression_simplify_to("0^(-3)", Undefined::Name());
+  assert_parsed_expression_simplify_to("0^(-5+ln(5))", Undefined::Name());
+  assert_parsed_expression_simplify_to("0^(5+ln(5))", "0");
   assert_parsed_expression_simplify_to("4^0.5", "2");
   assert_parsed_expression_simplify_to("8^0.5", "2×√(2)");
   assert_parsed_expression_simplify_to("(12^4×3)^(0.5)", "144×√(3)");

@@ -24,7 +24,6 @@ ion_src += $(addprefix ion/src/shared/, \
   decompress.cpp \
   events.cpp \
   events_modifier.cpp \
-  sha256.cpp \
   stack_position.cpp \
   storage.cpp \
   unicode/utf8_decoder.cpp\
@@ -67,7 +66,6 @@ tests_src += $(addprefix ion/test/,\
   crc32.cpp\
   events.cpp\
   keyboard.cpp\
-  sha256.cpp \
   storage.cpp\
   utf8_decoder.cpp\
   utf8_helper.cpp\

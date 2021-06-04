@@ -10,6 +10,7 @@ public:
   const char * testCriticalValueSymbol() override { return "t"; };
   const char * intervalCriticalValueSymbol() override { return "t*"; };
   bool hasDegreeOfFreedom() override { return true; }
+  float degreeOfFreedom() { return m_degreesOfFreedom; }
 
 protected:
   float _pVal(float degreesOfFreedom, float t);

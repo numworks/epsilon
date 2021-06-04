@@ -26,15 +26,14 @@ void waitUntilKeyPress() {
   }
 }
 
-constexpr static int sUnauthenticatedUserlandNumberOfMessages = 7;
+constexpr static int sUnauthenticatedUserlandNumberOfMessages = 6;
 constexpr static const char * sUnauthenticatedUserlandMessages[sUnauthenticatedUserlandNumberOfMessages] = {
-  "NON-AUTHENTICATED SOFTWARE",
-  "Caution: you're using an",
-  "unofficial software version.",
-  "NumWorks can't be held responsible",
-  "for any resulting damage.",
-  "Some features (blue and green LED)",
-  "are unavailable."
+  "UNOFFICIAL SOFTWARE",
+  "Caution: You are using an unofficial",
+  "software. This software does not match",
+  "the requirements of some exams.",
+  "NumWorks is not responsible for problems",
+  "that arise from the use of this software."
 };
 
 void unauthenticatedUserland() {

@@ -631,7 +631,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Addition additionIndex = static_cast<Addition &>(index);
     Rational rationalIndex = index.childAtIndex(0).convert<Rational>();
     Expression p1 = PowerRationalRational(rationalBase, rationalIndex, reductionContext);
-    if ((rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.isInteger()) || p1.isUndefined()) {
+    if ((rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.isInteger()) || p1.isUninitialized()) {
       /* Escape here to avoid infinite loops with the multiplication.
        * TODO: do something more sensible here:
        * - add rule (-rational)^x --> (-1)^x*rational^x so we only consider
@@ -1021,6 +1021,17 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
     return Expression();
   }
   assert(!base.numeratorOrDenominatorIsInfinity() && !index.numeratorOrDenominatorIsInfinity());
+  if (base.isZero()) {
+    if (index.isNegative() || index.isZero()) {
+      return Undefined::Builder();
+    } else {
+      return Rational::Builder(0);
+    }
+  }
+  assert(!base.isZero());
+  if (index.isZero()) {
+    return Rational::Builder(1);
+  }
   if (index.isNegative()) {
     base = Rational::IntegerPower(base, Integer(-1));
     if (index.isMinusOne()) {
@@ -1029,6 +1040,7 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
     index.setSign(ExpressionNode::Sign::Positive);
     return PowerRationalRational(base, index, reductionContext);
   }
+  assert(!index.isNegative());
   /* We are handling an expression of the form (p/q)^(a/b), with a and b
    * positive. To avoid irrational numbers in the denominator, we turn it
    * into : (1/q)^(a+c)/b * (p^a * q^c)^(1/b), where c is the smallest positive
@@ -1056,6 +1068,17 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
 
 Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionNode::ReductionContext reductionContext) {
   assert(!index.isNegative());
+  if (base.isZero()) {
+    if (index.isZero()) {
+      return Undefined::Builder();
+    } else {
+      return Rational::Builder(0);
+    }
+  }
+  assert(!base.isZero());
+  if (index.isZero()) {
+    return Rational::Builder(1);
+  }
   Integer a = index.signedIntegerNumerator(), b = index.integerDenominator();
   /* This methods reduces base^(a/b) to the form i1*i2^(a*g/b), where i1 and i2
    * are integers, and g is an integer that divides b.

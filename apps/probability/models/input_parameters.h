@@ -13,6 +13,9 @@ struct ParameterRepr {
 };
 
 // TODO should InputParameters and Statistic be the same object ?
+/* An InputParameters is in charge a providing the list of parameters needed
+ * for a Statistic.
+ */
 class InputParameters {
 public:
   virtual int numberOfParameters() const = 0;

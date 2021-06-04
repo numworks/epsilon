@@ -5,6 +5,9 @@
 
 namespace Probability {
 
+/* A Statistic is something that is computed from a sample and whose distribution is known.
+ * From its distribution, we can compute statistical test results and confidence intervals.
+ */
 class Statistic {
 public:
   virtual ~Statistic() = default;
@@ -33,13 +36,24 @@ public:
 class CachedStatistic : public Statistic {
 public:
   // Test statistic
+  /* Returns the critical value above which the probability
+   * of landing is inferior to a given significance level. */
   float testCriticalValue() override { return m_z; };
+  /* The p-value is the probability of obtaining a results at least
+   * as extreme as what was observed with the sample */
   float pValue() override { return m_pValue; };
 
   // Confidence interval
+  /* The estimate is the center of the confidence interval,
+   * and estimate the parameter of interest. */
   float estimate() override { return m_pEstimate; };
+  /* Returns the critical value above which the probability
+   * of landing is inferior to a given confidence level,
+   *  for the normed distribution. */
   float intervalCriticalValue() override { return m_zCritical; };
+  /* Returns the variance estimated from the sample. */
   float standardError() override { return m_SE; };
+  /* Returns the half-width of the confidence interval. */
   float marginOfError() override { return m_ME; };
 
 protected:

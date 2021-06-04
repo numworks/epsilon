@@ -12,10 +12,12 @@
 
 namespace Probability {
 
+/* A ResultsDataSource is a TableViewDataSource which is meant to represent
+ * data provided (and computed) by a Statistic.
+ */
 class ResultsDataSource : public Escher::MemoizedListViewDataSource {
 public:
-  ResultsDataSource(Escher::Responder * parent, Statistic * statistic,
-                    ButtonDelegate * delegate);
+  ResultsDataSource(Escher::Responder * parent, Statistic * statistic, ButtonDelegate * delegate);
   int numberOfRows() const override;
   KDCoordinate cellWidth() override { return 290; /* TODO */ };
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
@@ -24,12 +26,8 @@ public:
   int typeAtIndex(int index) override;
 
 private:
-  enum TestCellOrder {
-    Z, PValue, TestDegree
-  };
-  enum IntervalCellOrder {
-    Estimate, Critical, SE, ME, IntervalDegree
-  };
+  enum TestCellOrder { Z, PValue, TestDegree };
+  enum IntervalCellOrder { Estimate, Critical, SE, ME, IntervalDegree };
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
   Statistic * m_statistic;

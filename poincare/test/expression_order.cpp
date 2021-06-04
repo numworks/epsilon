@@ -19,8 +19,7 @@ void assert_greater(Expression e1, Expression e2) {
   Addition a = Addition::Builder(e1, e2);
   a.sortChildrenInPlace(
       [](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); },
-      &globalContext,
-      true);
+      &globalContext);
   quiz_assert(a.childAtIndex(0) == e1);
   quiz_assert(a.childAtIndex(1) == e2);
 }
@@ -80,14 +79,12 @@ void assert_multiplication_or_addition_is_ordered_as(Expression e1, Expression e
   if (e1.type() == ExpressionNode::Type::Multiplication) {
     static_cast<Multiplication&>(e1).sortChildrenInPlace(
         [](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); },
-        &globalContext,
-        true);
+        &globalContext);
   } else {
     quiz_assert(e1.type() == ExpressionNode::Type::Addition);
     static_cast<Addition&>(e1).sortChildrenInPlace(
         [](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); },
-        &globalContext,
-        true);
+        &globalContext);
   }
   quiz_assert(e1.isIdenticalTo(e2));
 }

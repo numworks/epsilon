@@ -8,12 +8,12 @@ using namespace Ion::Events;
 QUIZ_CASE(ion_events_from_keyboard) {
   /* Ensure all events generated from the keyboard are properly defined */
   for (Key k : ValidKeys) {
-    quiz_assert(Event(k, false, false, false).isDefined());
-    quiz_assert(Event(k, true, false, false).isDefined());
-    quiz_assert(Event(k, false, true, false).isDefined());
-    quiz_assert(Event(k, true, true, false).isDefined());
-    quiz_assert(Event(k, false, true, true).isDefined());
-    quiz_assert(Event(k, true, true, true).isDefined());
+    quiz_assert(isDefined(static_cast<uint8_t>(Event(k, false, false, false))));
+    quiz_assert(isDefined(static_cast<uint8_t>(Event(k, true, false, false))));
+    quiz_assert(isDefined(static_cast<uint8_t>(Event(k, false, true, false))));
+    quiz_assert(isDefined(static_cast<uint8_t>(Event(k, true, true, false))));
+    quiz_assert(isDefined(static_cast<uint8_t>(Event(k, false, true, true))));
+    quiz_assert(isDefined(static_cast<uint8_t>(Event(k, true, true, true))));
   }
 
   // Test some fallbacks

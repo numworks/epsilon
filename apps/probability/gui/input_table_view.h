@@ -17,6 +17,7 @@ namespace Probability {
 
 /* This view contains  pointer to a TableView, an EditableCell and a Button,
  * layed out vertically, and is able to move selection between them.
+ * Meant for InputGoodnessController and InputHomogeneityController.
  */
 class InputTableView : public VerticalLayout, public Responder {
  public:

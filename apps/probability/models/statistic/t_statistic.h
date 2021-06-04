@@ -5,6 +5,7 @@
 
 namespace Probability {
 
+/* A t-Statistic is a Statistic whose distribution is a Student law. */
 class TStatistic : public CachedStatistic {
 public:
   const char * testCriticalValueSymbol() override { return "t"; };

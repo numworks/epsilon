@@ -155,11 +155,10 @@ bool canRepeatEventWithState() {
 bool handlePreemption(bool stalling) {
   Ion::Keyboard::State currentPreemptiveState = sPreemtiveState;
   sPreemtiveState = Ion::Keyboard::State(0);
-  if (currentPreemptiveState != Ion::Keyboard::State(0)) {
-    sCurrentKeyboardState = currentPreemptiveState;
-    sKeysSeenUp = ~sCurrentKeyboardState;
-  }
+  bool updateKeyboardState = false;
+
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Home)) {
+    updateKeyboardState = true;
     if (CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
       CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::Home);
       return true;
@@ -167,6 +166,7 @@ bool handlePreemption(bool stalling) {
     return false;
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::OnOff)) {
+    updateKeyboardState = true;
     if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::User)) {
       /* If we are still processing an event (stalling) and in a middle of a
        * "hard-might-be-long computation" (custom checkpoint is set), we
@@ -191,12 +191,17 @@ bool handlePreemption(bool stalling) {
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Back)) {
     if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::User)) {
+      updateKeyboardState = true;
       CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::User);
       return true;
     } else {
       Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
       return false;
     }
+  }
+  if (updateKeyboardState) {
+    sCurrentKeyboardState = currentPreemptiveState;
+    sKeysSeenUp = ~sCurrentKeyboardState;
   }
   assert(currentPreemptiveState == Ion::Keyboard::State(0));
   return false;

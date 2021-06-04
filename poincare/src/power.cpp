@@ -402,6 +402,34 @@ Expression Power::removeUnit(Expression * unit) {
   return *this;
 }
 
+static bool isSquare(Expression e) {
+  if (e.type() != ExpressionNode::Type::Power) {
+    return false;
+  }
+  Expression c = e.childAtIndex(1);
+  return c.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(c).isTwo();
+}
+
+static int indexOfChildWithSquare(Expression e) {
+  assert(e.type() == ExpressionNode::Type::Addition);
+  int n = e.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    Expression c = e.childAtIndex(i);
+    if (isSquare(c)) {
+      return i;
+    }
+    if (c.type() == ExpressionNode::Type::Multiplication) {
+      int n2 = c.numberOfChildren();
+      for (int j = 0; j < n2; j++) {
+        if (isSquare(c.childAtIndex(j))) {
+          return i;
+        }
+      }
+    }
+  }
+  return -1;
+}
+
 Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
@@ -917,6 +945,48 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         replaceWithInPlace(result);
         return result.shallowReduce(reductionContext);
       }
+    }
+
+    /* Step 11.3
+     * Try to reduce √(a^2±2ab+b^2) */
+    if (baseChildren == 3 && (rationalIndex.isHalf() || rationalIndex.isMinusHalf())) {
+      int squareIndex = indexOfChildWithSquare(base);
+      if (squareIndex < 0 || squareIndex >= 3) {
+        return *this;
+      }
+      Expression firstTerm = Power::Builder(base.childAtIndex(squareIndex).clone(), Rational::Builder(1, 2)).shallowReduce(reductionContext);
+      Expression secondTerm;
+      for (int i = 0; i < 3; i++) {
+        if (i == squareIndex) {
+          continue;
+        }
+        int j = 3 - i - squareIndex;
+        secondTerm = Power::Builder(base.childAtIndex(i).clone(), Rational::Builder(1, 2)).shallowReduce(reductionContext);
+        Expression m = Multiplication::Builder(Rational::Builder(2), firstTerm.clone(), secondTerm.clone()).shallowReduce(reductionContext);
+        if (m.isIdenticalTo(base.childAtIndex(j))) {
+          break;
+        }
+        m = Multiplication::Builder(m, Rational::Builder(-1)).shallowReduce(reductionContext);
+        if (m.isIdenticalTo(base.childAtIndex(j))) {
+          secondTerm = Multiplication::Builder(Rational::Builder(-1), secondTerm).shallowReduce(reductionContext);
+          break;
+        } else {
+          secondTerm = Expression();
+        }
+      }
+      if (secondTerm.isUninitialized()) {
+        return *this;
+      }
+      /* FIXME: Invert firstTerm and secondTerm to always return something positive */
+      Expression result = Addition::Builder(firstTerm, secondTerm);
+      if (result.approximateToScalar<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) < 0.f) {
+        result = Multiplication::Builder(Rational::Builder(-1), result).shallowReduce(reductionContext);
+      }
+      if (rationalIndex.isMinusHalf()) {
+        result = Power::Builder(result, Rational::Builder(-1));
+      }
+      replaceWithInPlace(result);
+      return result.shallowReduce(reductionContext);
     }
   }
 

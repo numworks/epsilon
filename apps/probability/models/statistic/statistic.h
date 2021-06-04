@@ -45,7 +45,7 @@ public:
 
   // Confidence interval
   /* The estimate is the center of the confidence interval,
-   * and estimate the parameter of interest. */
+   * and estimates the parameter of interest. */
   float estimate() override { return m_pEstimate; };
   /* Returns the critical value above which the probability
    * of landing is inferior to a given confidence level,

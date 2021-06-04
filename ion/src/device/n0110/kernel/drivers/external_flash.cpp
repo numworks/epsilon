@@ -1,15 +1,14 @@
 #include <shared/drivers/external_flash.h>
 #include <kernel/drivers/trampoline.h>
+#include <assert.h>
 
 namespace Ion {
 namespace Device {
 namespace ExternalFlash {
 
-typedef void (*MassEraseFunction)();
-
-void TRAMPOLINE_ATTRIBUTES MassErase() {
-  MassEraseFunction * trampolineFunction = reinterpret_cast<MassEraseFunction *>(Trampoline::addressOfFunction(TRAMPOLINE_EXTERNAL_FLASH_MASS_ERASE));
-  (*trampolineFunction)();
+void MassErase() {
+  // Mass erase is not enabled on kernel
+  assert(false);
 }
 
 typedef void (*EraseSectorFunction)(int);

@@ -25,6 +25,7 @@ void OneMeanTStatistic::computeInterval() {
   int n = data->testData()->inputParameters()->paramAtIndex(2);
   float confidenceLevel = data->testData()->inputParameters()->threshold();
 
+  m_pEstimate = meanSample;
   m_degreesOfFreedom = _degreesOfFreedom(n);
   m_zCritical = _tCritical(m_degreesOfFreedom, confidenceLevel);
   m_SE = _SE(s, n);

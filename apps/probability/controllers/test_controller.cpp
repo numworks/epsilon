@@ -90,7 +90,9 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       Data::TestType testType = Data::isProportion(test) ? Data::TestType::ZTest : Data::TestType::TTest;
       App::app()->snapshot()->data()->setTestType(testType);
     }
-    initializeInputParams(test);
+    if (test != Data::Test::Categorical) {
+      initializeInputParams(test);
+    }
     openPage(view);
     return true;
   }

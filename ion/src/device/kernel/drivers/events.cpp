@@ -138,6 +138,7 @@ constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
 Ion::Events::Event sLastEvent = Ion::Events::None;
 Ion::Keyboard::State sCurrentKeyboardState(0);
+static uint64_t sKeysSeenUp = -1;
 Ion::Keyboard::State sLastKeyboardState(0);
 bool sLastEventShift;
 bool sLastEventAlpha;
@@ -156,6 +157,7 @@ bool handlePreemption(bool stalling) {
   sPreemtiveState = Ion::Keyboard::State(0);
   if (currentPreemptiveState != Ion::Keyboard::State(0)) {
     sCurrentKeyboardState = currentPreemptiveState;
+    sKeysSeenUp = ~sCurrentKeyboardState;
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Home)) {
     if (CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
@@ -175,6 +177,9 @@ bool handlePreemption(bool stalling) {
       return true;
     }
     Power::suspend(true);
+    /* Special case: Power::suspend waits for the release of the OnOff key. We
+     * update sKeysSeenUp accordingly. */
+    sKeysSeenUp = -1;
     if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
       /* If we were stalling (in the middle of processing an event), we load
        * the Home checkpoint to avoid resuming the execution in the middle of
@@ -209,7 +214,6 @@ Ion::Events::Event nextEvent(int * timeout) {
     return Ion::Events::None;
   }
 
-  static uint64_t keysSeenUp = -1;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   uint64_t startTime = Ion::Timing::millis();
   while (true) {
@@ -238,8 +242,8 @@ Ion::Events::Event nextEvent(int * timeout) {
     while (!Keyboard::Queue::sharedQueue()->isEmpty()) {
       sCurrentKeyboardState = Keyboard::Queue::sharedQueue()->pop();
 
-      keysSeenTransitionningFromUpToDown = keysSeenUp & sCurrentKeyboardState;
-      keysSeenUp = ~sCurrentKeyboardState;
+      keysSeenTransitionningFromUpToDown = sKeysSeenUp & sCurrentKeyboardState;
+      sKeysSeenUp = ~sCurrentKeyboardState;
 
       if (keysSeenTransitionningFromUpToDown != 0) {
         sEventIsRepeating = false;

@@ -57,7 +57,7 @@ bool isDefinedSecure(uint8_t eventId) {
  * not to overflow PSC. */
 static constexpr int k_prescalerFactor = 4;
 static constexpr int k_stallingDelay = 500*k_prescalerFactor; // TODO: calibrate
-static constexpr int k_spinningDelay = 200*k_prescalerFactor; // TODO: calibrate
+static constexpr int k_spinningDelay = 100*k_prescalerFactor; // TODO: calibrate
 
 void initTimer() {
   TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
@@ -320,51 +320,97 @@ Ion::Events::Event getEvent(int * timeout) {
   return e;
 }
 
-static KDColor s_spinnerPixels[k_spinnerSize][k_spinnerSize] = {
-  {KDColor::RGB16(0xBD), KDColor::RGB16(0xC6), KDColor::RGB16(0xEA), KDColor::RGB16(0xFB), KDColor::RGB16(0xFB), KDColor::RGB16(0xEA), KDColor::RGB16(0xC6), KDColor::RGB16(0xBD)},
-  {KDColor::RGB16(0xC6), KDColor::RGB16(0xF4), KDColor::RGB16(0xD7), KDColor::RGB16(0xC1), KDColor::RGB16(0xC1), KDColor::RGB16(0xD7), KDColor::RGB16(0xF4), KDColor::RGB16(0xC6)},
-  {KDColor::RGB16(0xE1), KDColor::RGB16(0xD4), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xD6), KDColor::RGB16(0xE1)},
-  {KDColor::RGB16(0xE6), KDColor::RGB16(0xC0), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xC0), KDColor::RGB16(0xE6)},
-  {KDColor::RGB16(0xDC), KDColor::RGB16(0xC0), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xC0), KDColor::RGB16(0xDC)},
-  {KDColor::RGB16(0xCC), KDColor::RGB16(0xC7), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xBD), KDColor::RGB16(0xC8), KDColor::RGB16(0xCC)},
-  {KDColor::RGB16(0xBF), KDColor::RGB16(0xCA), KDColor::RGB16(0xC2), KDColor::RGB16(0xBE), KDColor::RGB16(0xBE), KDColor::RGB16(0xC2), KDColor::RGB16(0xC9), KDColor::RGB16(0xBF)},
-  {KDColor::RGB16(0xBD), KDColor::RGB16(0xBE), KDColor::RGB16(0xC1), KDColor::RGB16(0xC2), KDColor::RGB16(0xC2), KDColor::RGB16(0xC1), KDColor::RGB16(0xBE), KDColor::RGB16(0xBD)}
+static KDColor s_spinnerFullPixels[k_spinnerHalfHeight][k_spinnerHalfWidth] = {
+  { KDColor::RGB24(0xEDB558), KDColor::RGB24(0xF7CE5C), KDColor::RGB24(0xF5DE7E), KDColor::RGB24(0xFDF6C2), KDColor::RGB24(0xF6F3BE), KDColor::RGB24(0xE9D767), KDColor::RGB24(0xFBC42C), KDColor::RGB24(0xFFAA15) },
+  { KDColor::RGB24(0xE8CE45), KDColor::RGB24(0xFFE6B9), KDColor::RGB24(0xFFE8ED), KDColor::RGB24(0xFFEDDC), KDColor::RGB24(0xFCECDC), KDColor::RGB24(0xFFE4E4), KDColor::RGB24(0xFFDB98), KDColor::RGB24(0xF1BE0D) },
+  { KDColor::RGB24(0xEDE894), KDColor::RGB24(0xFFEEF1), KDColor::RGB24(0xFFDBDC), KDColor::RGB24(0xF2D380), KDColor::RGB24(0xEFD98D), KDColor::RGB24(0xFFE4F0), KDColor::RGB24(0xFFEEF2), KDColor::RGB24(0xEEDB7C) },
+  { KDColor::RGB24(0xF8F9F4), KDColor::RGB24(0xFAE4BF), KDColor::RGB24(0xE9BF53), KDColor::RGB24(0xEBBD12), KDColor::RGB24(0xEDC92A), KDColor::RGB24(0xEED885), KDColor::RGB24(0xFCF3E4), KDColor::RGB24(0xFAF7FF) }
 };
 
-enum class SpinnerState : uint8_t {
+static KDColor s_spinnerFirstStepPixels[k_spinnerHalfHeight][k_spinnerHalfWidth] = {
+  { KDColor::RGB24(0xFFB734), KDColor::RGB24(0xFFB731), KDColor::RGB24(0xFFDA95), KDColor::RGB24(0xFEE5BD), KDColor::RGB24(0xFED995), KDColor::RGB24(0xFFBF4E), KDColor::RGB24(0xFFB636), KDColor::RGB24(0xFCB934) },
+  { KDColor::RGB24(0xFCB535), KDColor::RGB24(0xFFBB34), KDColor::RGB24(0xFCFEF9), KDColor::RGB24(0xFBFFFE), KDColor::RGB24(0xFFFFFD), KDColor::RGB24(0xFFFBF2), KDColor::RGB24(0xFFC55D), KDColor::RGB24(0xFFB734) },
+  { KDColor::RGB24(0xFEB834), KDColor::RGB24(0xFFB532), KDColor::RGB24(0xFFD796), KDColor::RGB24(0xFCC65A), KDColor::RGB24(0xFED07A), KDColor::RGB24(0xFFF9EF), KDColor::RGB24(0xFFFCED), KDColor::RGB24(0xFFCE79) },
+  { KDColor::RGB24(0xFFB732), KDColor::RGB24(0xFCB936), KDColor::RGB24(0xFFB435), KDColor::RGB24(0xFFB933), KDColor::RGB24(0xFFB636), KDColor::RGB24(0xFFC45C), KDColor::RGB24(0xFFFEFF), KDColor::RGB24(0xFFFFFD) }
+};
+
+static KDColor s_spinnerSecondStepPixels[k_spinnerHalfHeight][k_spinnerHalfWidth] = {
+  { KDColor::RGB24(0xFFB631), KDColor::RGB24(0xFEBC44), KDColor::RGB24(0xFFB633), KDColor::RGB24(0xFFB636), KDColor::RGB24(0xFFDA93), KDColor::RGB24(0xFEC14C), KDColor::RGB24(0xFFB633), KDColor::RGB24(0xFFB633) },
+  { KDColor::RGB24(0xFCBC40), KDColor::RGB24(0xFFFAEE), KDColor::RGB24(0xFEB834), KDColor::RGB24(0xFDB932), KDColor::RGB24(0xFFFFFF), KDColor::RGB24(0xFFFBF2), KDColor::RGB24(0xFFC65D), KDColor::RGB24(0xFDB735) },
+  { KDColor::RGB24(0xFFE1AD), KDColor::RGB24(0xFFFEFD), KDColor::RGB24(0xFEB832), KDColor::RGB24(0xFDB735), KDColor::RGB24(0xFED078), KDColor::RGB24(0xFFF9F4), KDColor::RGB24(0xFFFBF0), KDColor::RGB24(0xFED07B) },
+  { KDColor::RGB24(0xFFF3E3), KDColor::RGB24(0xFDE4AC), KDColor::RGB24(0xFFB635), KDColor::RGB24(0xFDB836), KDColor::RGB24(0xFFB631), KDColor::RGB24(0xFBC559), KDColor::RGB24(0xFEFEFF), KDColor::RGB24(0xFEFFFA) }
+};
+
+static KDColor s_spinnerThirdStepPixels[k_spinnerHalfHeight][k_spinnerHalfWidth] = {
+  { KDColor::RGB24(0xFEB834), KDColor::RGB24(0xFFBB42), KDColor::RGB24(0xFFDA93), KDColor::RGB24(0xFCE5BC), KDColor::RGB24(0xFEB832), KDColor::RGB24(0xFFB538), KDColor::RGB24(0xFFB736), KDColor::RGB24(0xFFB633) },
+  { KDColor::RGB24(0xFFBC42), KDColor::RGB24(0xFEFCEF), KDColor::RGB24(0xFEFEFE), KDColor::RGB24(0xFFFFFD), KDColor::RGB24(0xFFB731), KDColor::RGB24(0xFFB734), KDColor::RGB24(0xFFC662), KDColor::RGB24(0xFDB932) },
+  { KDColor::RGB24(0xFEE2B0), KDColor::RGB24(0xFAFFFF), KDColor::RGB24(0xFFD996), KDColor::RGB24(0xFFC45F), KDColor::RGB24(0xFFB734), KDColor::RGB24(0xFEB836), KDColor::RGB24(0xFEFAEF), KDColor::RGB24(0xFFCE79) },
+  { KDColor::RGB24(0xFEF5E4), KDColor::RGB24(0xFFE2AF), KDColor::RGB24(0xFDB733), KDColor::RGB24(0xFCB535), KDColor::RGB24(0xFEB834), KDColor::RGB24(0xFFB734), KDColor::RGB24(0xFFFEFF), KDColor::RGB24(0xFFFFFD) }
+};
+
+static KDColor s_spinnerFourthStepPixels[k_spinnerHalfHeight][k_spinnerHalfWidth] = {
+  { KDColor::RGB24(0xFFB734), KDColor::RGB24(0xFFBB42), KDColor::RGB24(0xFCD995), KDColor::RGB24(0xFFE7B9), KDColor::RGB24(0xFDDB91), KDColor::RGB24(0xFFC24F), KDColor::RGB24(0xFFB538), KDColor::RGB24(0xFEB834) },
+  { KDColor::RGB24(0xFDBC44), KDColor::RGB24(0xFFFBF0), KDColor::RGB24(0xFFFEFF), KDColor::RGB24(0xFFFEFF), KDColor::RGB24(0xFFFFFF), KDColor::RGB24(0xFFF7F2), KDColor::RGB24(0xFEB834), KDColor::RGB24(0xFEB836) },
+  { KDColor::RGB24(0xFFE2AE), KDColor::RGB24(0xFCFFFD), KDColor::RGB24(0xFFD692), KDColor::RGB24(0xFFC65B), KDColor::RGB24(0xFFCE79), KDColor::RGB24(0xFCFCF0), KDColor::RGB24(0xFDB636), KDColor::RGB24(0xFFB635) },
+  { KDColor::RGB24(0xFFF6E5), KDColor::RGB24(0xFFE1B0), KDColor::RGB24(0xFDB836), KDColor::RGB24(0xFDB735), KDColor::RGB24(0xFEB532), KDColor::RGB24(0xFFC459), KDColor::RGB24(0xFDB836), KDColor::RGB24(0xFFB933) }
+};
+
+enum class SpinnerStatus : uint8_t {
   Spinning,
   Hidden,
   Disabled
 };
 
-static SpinnerState s_spinner = SpinnerState::Disabled;
+static SpinnerStatus s_spinnerStatus = SpinnerStatus::Disabled;
+static constexpr int k_numberOfSpinnerPositions = 16;
+static int s_spinnerPosition = 0;
+
+void setSpinner(bool activate) {
+  s_spinnerStatus = activate ? SpinnerStatus::Hidden : SpinnerStatus::Disabled;
+}
 
 void spin() {
-  KDCoordinate size = k_spinnerRect.height();
-  assert(size == k_spinnerRect.width());
-  for (int i = 0; i < size/2; i++) {
-    for (int j = i; j < size - 2*i; j++) {
-      KDColor temp = s_spinnerPixels[i][j];
-      s_spinnerPixels[i][j] = s_spinnerPixels[size-1-j][i];
-      s_spinnerPixels[size-1-j][i] = s_spinnerPixels[size-1-i][size-1-j];
-      s_spinnerPixels[size-1-i][size-1-j] = s_spinnerPixels[j][size-1-i];
-      s_spinnerPixels[j][size-1-i] = temp;
+  // Update spinner state
+  if (s_spinnerStatus != SpinnerStatus::Spinning) {
+    TIM2.ARR()->set(k_spinningDelay);
+    s_spinnerStatus = SpinnerStatus::Spinning;
+  }
+  s_spinnerPosition = (s_spinnerPosition + 1) % k_numberOfSpinnerPositions;
+
+  static constexpr int k_numberOfQuadrants = 4;
+  /* Each quadrant displays the four steps alternatively. Quadrant are indexed Left to right top to bottom*/
+  KDColor buffer[k_spinnerHalfHeight][k_spinnerHalfWidth];
+  KDColor * steps[k_numberOfQuadrants] = {reinterpret_cast<KDColor *>(s_spinnerFirstStepPixels), reinterpret_cast<KDColor *>(s_spinnerSecondStepPixels), reinterpret_cast<KDColor *>(s_spinnerThirdStepPixels), reinterpret_cast<KDColor *>(s_spinnerFourthStepPixels)};
+  int movingQuandrantIndex = s_spinnerPosition/4;
+  for (int q = 0; q < k_numberOfQuadrants; q++) {
+    KDRect rect(k_spinnerX + (q == 1 || q == 2)*k_spinnerHalfWidth,
+                k_spinnerY + (q == 1 || q == 3)*k_spinnerHalfHeight,
+                k_spinnerHalfWidth,
+                k_spinnerHalfHeight);
+    KDColor * pixels;
+    if (q == movingQuandrantIndex) {
+      // Select the right step to display (the order is reversed for odd quadrant)
+      int stepIndex = s_spinnerPosition % 4;
+      pixels = steps[q % 2 ? 3 - stepIndex : stepIndex];
+    } else {
+      pixels = reinterpret_cast<KDColor *>(s_spinnerFullPixels);
     }
+    // Flip the image (axial or central symmetry depending on quadrant)
+    for (int i = 0; i < k_spinnerHalfHeight; i++) {
+      for (int j = 0; j < k_spinnerHalfWidth; j++) {
+        int newJ = q == 0 || q == 3 ? j : k_spinnerHalfWidth - 1 - j;
+        int newI = q == 0 || q == 2 ? i : k_spinnerHalfHeight - 1 - i;
+        buffer[i][j] = pixels[newI * k_spinnerHalfWidth + newJ];
+      }
+    }
+    Ion::Device::Display::pushRect(rect, reinterpret_cast<KDColor *>(buffer));
   }
 }
 
-void setSpinner(bool activate) {
-  s_spinner = activate ? SpinnerState::Hidden : SpinnerState::Disabled;
-}
-
-void displaySpinner() {
-  s_spinner = SpinnerState::Spinning;
-  Ion::Device::Display::pushRect(k_spinnerRect, reinterpret_cast<KDColor *>(s_spinnerPixels));
-}
-
 void hideSpinner() {
-  Ion::Device::Display::pushRectUniform(k_spinnerRect, KDColor::RGB24(0xffb734));
-  s_spinner = SpinnerState::Hidden;
+  TIM2.ARR()->set(k_stallingDelay);
+  Ion::Device::Display::pushRectUniform(KDRect(k_spinnerX, k_spinnerY, 2 * k_spinnerHalfWidth, 2 * k_spinnerHalfHeight), KDColor::RGB24(0xffb734));
+  s_spinnerStatus = SpinnerStatus::Hidden;
 }
 
 void resetStallingTimer() {
@@ -374,11 +420,10 @@ void resetStallingTimer() {
   }
   // Reset the counter
   TIM2.CNT()->set(0);
-  if (s_spinner == SpinnerState::Spinning) {
+  if (s_spinnerStatus == SpinnerStatus::Spinning) {
     /* Hide the spinner and reset the delay if the spinner was previously
      * displayed. */
     hideSpinner();
-    TIM2.ARR()->set(k_stallingDelay);
   }
 }
 
@@ -390,12 +435,11 @@ void stall() {
     return;
   }
 
-  if (s_spinner != SpinnerState::Disabled) {
+  if (s_spinnerStatus != SpinnerStatus::Disabled) {
     spin();
     // TODO: stalling when no User/System checkpoint is set could lead to checkout the home
     // TODO: should we shutdown any interruption here to be sure to complete our drawing
     // TODO: draw a hourglass or spinning circle?
-    displaySpinner();
   }
 }
 

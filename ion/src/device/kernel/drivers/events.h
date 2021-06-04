@@ -27,10 +27,13 @@ bool isDefinedSecure(uint8_t eventId);
 
 void resetStallingTimer();
 void stall();
-constexpr int k_spinnerSize = 8;
-constexpr KDRect k_spinnerRect(250, 5, k_spinnerSize, k_spinnerSize);
+constexpr int k_spinnerHalfHeight = 4;
+constexpr int k_spinnerHalfWidth = 8;
+constexpr int k_barHeight = 18; // Escher::Metric::TitleBarHeight
+constexpr int k_spinnerX = 228;
+constexpr int k_spinnerY = k_barHeight/2 - k_spinnerHalfHeight;
 void setSpinner(bool spinner);
-void displaySpinner();
+void spin();
 void hideSpinner();
 
 void resetPendingKeyboardState();

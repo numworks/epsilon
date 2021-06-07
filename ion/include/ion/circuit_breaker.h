@@ -1,6 +1,7 @@
 #ifndef ION_CIRCUIT_BREAKER_H
 #define ION_CIRCUIT_BREAKER_H
 
+#include <setjmp.h>
 #include <stdint.h>
 
 namespace Ion {
@@ -23,7 +24,14 @@ Status status();
 bool hasCheckpoint(CheckpointType type);
 void unsetCheckpoint(CheckpointType type);
 void loadCheckpoint(CheckpointType type);
+
+#if EPSILON_GETOPT
+#define setCheckpoint(type) statusAfterSetjmp(setjmp(*jmpbufForType(type)), (type))
+Status statusAfterSetjmp(int jmpStatus, CheckpointType type);
+jmp_buf * jmpbufForType(CheckpointType type);
+#else
 Status setCheckpoint(CheckpointType type);
+#endif
 
 }
 }

@@ -3,7 +3,6 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
   backlight.cpp \
   board.cpp \
   battery.cpp \
-  circuit_breaker.cpp \
   display.cpp \
   external_apps.cpp \
   fcc_id.cpp \
@@ -18,6 +17,7 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  circuit_breaker.cpp \
   clipboard.cpp \
   console.cpp \
   crc32.cpp \

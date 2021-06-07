@@ -43,7 +43,10 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::OneLetter; };
+  LayoutShape leftLayoutShape() const override {
+    // leftLayoutShape of Opposite is only called from Conjugate
+    assert(parent() && parent()->type() == Type::Conjugate);
+    return LayoutShape::OneLetter; };
   LayoutShape rightLayoutShape() const override { return childAtIndex(0)->rightLayoutShape(); }
 };
 

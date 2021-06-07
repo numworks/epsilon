@@ -18,7 +18,7 @@
 #include "input_controller.h"
 #include "probability/models/data.h"
 #include "probability/gui/page_controller.h"
-#include "probability/gui/vertical_layout.h"
+#include "probability/gui/horizontal_or_vertical_layout.h"
 
 using namespace Escher;
 

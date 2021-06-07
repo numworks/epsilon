@@ -12,14 +12,10 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
 }
 
 KDPoint KDContext::alignAndDrawSingleLineString(const char * text, KDPoint p, KDSize frame, float horizontalAlignment, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
-  /* We ceil vertical alignment so that, when total vertical margin is odd, text
-   * is shifted 1px downward instead of upward, so that the text look better
-   * centered. */
-  KDSize textSize = font->stringSize(text, maxLength);  // TODO check usages
+  KDSize textSize = font->stringSize(text, maxLength);
   assert(textSize.width() <= frame.width() && textSize.height() <= frame.height());
-  KDPoint origin(
-      p.x() + std::round(horizontalAlignment * (frame.width() - textSize.width())),
-      p.y());
+  KDPoint origin(p.x() + std::round(horizontalAlignment * (frame.width() - textSize.width())),
+                 p.y());
   return drawString(text, origin, font, textColor, backgroundColor, maxLength);
 }
 
@@ -28,6 +24,7 @@ KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame
   // Align vertically
   // Then split lines and horizontal-align each independently
   KDSize textSize = font->stringSize(text, maxLength);
+  // We ceil vertical alignment to prefer shifting down than up.
   KDPoint origin(p.x(), p.y() + std::ceil(verticalAlignment * (frame.height() - textSize.height())));
 
   KDCoordinate glyphHeight = font->glyphSize().height();
@@ -38,8 +35,9 @@ KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame
   const char * codePointPointer = decoder.stringPosition();
   while (codePoint != UCodePointNull && (maxLength < 0 || codePointPointer < text + maxLength)) {
     if (codePoint == UCodePointLineFeed) {
-      newOrigin = alignAndDrawSingleLineString(startLine, origin, frame, horizontalAlignment,
-                                               font, textColor, backgroundColor, codePointPointer - startLine - 1);
+      newOrigin = alignAndDrawSingleLineString(startLine, origin, frame, horizontalAlignment, font,
+                                               textColor, backgroundColor,
+                                               codePointPointer - startLine - 1);
       startLine = codePointPointer;
       origin = KDPoint(p.x(), newOrigin.y() + glyphHeight);
     }
@@ -47,8 +45,8 @@ KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame
     codePointPointer = decoder.stringPosition();
   }
   // Last line
-  return alignAndDrawSingleLineString(startLine, origin, frame, horizontalAlignment,
-                               font, textColor, backgroundColor, maxLength + text - startLine);
+  return alignAndDrawSingleLineString(startLine, origin, frame, horizontalAlignment, font,
+                                      textColor, backgroundColor, maxLength + text - startLine);
 }
 
 int KDContext::checkDrawnString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {

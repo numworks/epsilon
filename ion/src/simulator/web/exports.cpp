@@ -5,7 +5,7 @@
 #include <ion.h>
 
 const char * IonSoftwareVersion() {
-  return Ion::softwareVersion();
+  return Ion::epsilonVersion();
 }
 
 const char * IonPatchLevel() {

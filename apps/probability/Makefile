@@ -53,6 +53,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	input_table_view.cpp \
 	vertical_layout.cpp \
 	results_data_source.cpp \
+	distribution_graph_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

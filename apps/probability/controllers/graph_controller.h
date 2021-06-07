@@ -5,15 +5,18 @@
 #include <escher/stack_view_controller.h>
 
 #include "probability/gui/selectable_cell_list_controller.h"
+#include "probability/gui/distribution_graph_view.h"
 
 namespace Probability {
 
-class GraphController : public SelectableCellListPage<Escher::BufferTableCell, 1> {
+class GraphController : public Page {
  public:
-  GraphController(StackViewController * stack) : SelectableCellListPage(stack) {
-    m_cells[0].setLabelText("WAIT FOR IT...");
-  }
-  
+  GraphController(StackViewController * stack) : Page(stack) {}
+  Escher::View * view() override { return &m_graphView; }
+  void didBecomeFirstResponder() override { m_graphView.computeMode(); }
+
+private:
+  GraphView m_graphView;
 };
 }  // namespace Probability
 #endif /* APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H */

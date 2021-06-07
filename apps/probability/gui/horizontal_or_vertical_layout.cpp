@@ -1,4 +1,4 @@
-#include "vertical_layout.h"
+#include "horizontal_or_vertical_layout.h"
 
 using namespace Probability;
 
@@ -22,6 +22,22 @@ void VerticalLayout::layoutSubviews(bool force) {
   }
 }
 
-void VerticalLayout::drawRect(KDContext * ctx, KDRect rectToRedraw) const {
-  ctx->fillRect(rectToRedraw, m_backgroundColor);
+void HorizontalLayout::layoutSubviews(bool force) {
+  KDRect frame = bounds();
+  KDCoordinate availableWidth = frame.width();
+  KDRect proposedFrame = KDRect(0, 0, frame.width(), 0);
+  int width;
+  for (int i = 0; i < numberOfSubviews(); i++) {
+    subviewAtIndex(i)->setFrame(
+        KDRect(proposedFrame.x() + proposedFrame.width(), 0, availableWidth, frame.height()),
+        false);
+    width = subviewAtIndex(i)->minimalSizeForOptimalDisplay().width();
+    proposedFrame = KDRect(proposedFrame.x() + proposedFrame.width(), 0, width, frame.height());
+    subviewAtIndex(i)->setFrame(proposedFrame, false);
+    availableWidth -= width;
+    if (availableWidth < 0) {
+      assert(false);
+      availableWidth = 0;
+    }
+  }
 }

@@ -1,7 +1,7 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
 
-#include <apps/probability/gui/vertical_layout.h>
+#include <apps/probability/gui/horizontal_or_vertical_layout.h>
 #include <apps/shared/button_with_separator.h>
 #include <escher/buffer_table_cell.h>
 #include <escher/even_odd_editable_text_cell.h>

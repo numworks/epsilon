@@ -51,7 +51,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	image_cell.cpp \
   responder_image_cell.cpp \
 	input_table_view.cpp \
-	vertical_layout.cpp \
+	horizontal_or_vertical_layout.cpp \
 	results_data_source.cpp \
 	distribution_graph_view.cpp \
 	test_conclusion_view.cpp \

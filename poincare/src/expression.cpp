@@ -123,6 +123,9 @@ bool Expression::hasExpression(ExpressionTypeTest test, const void * context) co
   if (test(*this, context)) {
     return true;
   }
+  if (isUninitialized()) {
+    return false;
+  }
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     if (childAtIndex(i).hasExpression(test, context)) {

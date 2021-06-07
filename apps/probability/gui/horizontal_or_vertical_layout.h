@@ -4,31 +4,32 @@
 #include <apps/i18n.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_text_view.h>
+#include <escher/palette.h>
 #include <escher/responder.h>
-#include <escher/view.h>
+#include <escher/solid_color_view.h>
 #include <kandinsky/color.h>
 #include <kandinsky/context.h>
 #include <kandinsky/rect.h>
-#include <escher/palette.h>
 
 #include "selectable_cell_list_controller.h"
 
 namespace Probability {
 
-/*
- * View that lays out its subviews vertically.
- */
-class VerticalLayout : public Escher::View {
+/* View that lays out its subviews vertically.*/
+class VerticalLayout : public Escher::SolidColorView {
 public:
-  VerticalLayout() : m_backgroundColor(Escher::Palette::WallScreen) {}
+  VerticalLayout(KDColor color = Palette::WallScreen) : Escher::SolidColorView(color) {}
   void layoutSubviews(bool force = false) override;
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDColor backgroundColor() const { return m_backgroundColor; }
-  void setBackgroundColor(KDColor backgroundColor) { m_backgroundColor = backgroundColor; }
-
-private:
-  KDColor m_backgroundColor;
 };
+
+
+/* View that lays out its subviews horizontally.*/
+class HorizontalLayout : public Escher::SolidColorView {
+public:
+  HorizontalLayout(KDColor color = Palette::WallScreen) : Escher::SolidColorView(color) {}
+  void layoutSubviews(bool force = false) override;
+};
+
 
 }  // namespace Probability
 

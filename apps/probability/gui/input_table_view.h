@@ -11,7 +11,7 @@
 #include <ion/events.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "vertical_layout.h"
+#include "horizontal_or_vertical_layout.h"
 
 namespace Probability {
 

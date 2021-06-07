@@ -2,16 +2,19 @@
 
 #include <kandinsky/color.h>
 
+namespace Probability
+{
+
 GraphView::GraphView()
   : m_curveViewLeft(KDColorGreen),
     m_curveViewRight(KDColorGreen),
     m_separatorView(KDColorBlue),
-    m_conclusionView(KDColorRed)
+    m_legend(KDColorOrange)
 {}
 
 void GraphView::computeMode() {
   // TODO query data to decide on mode
-  m_mode = Mode::OneCurveView;
+  m_mode = Mode::TwoCurveViews;
   markRectAsDirty(bounds());
   layoutSubviews();  // TODO have to call here for the second time to account for mode change
 }
@@ -37,10 +40,16 @@ void GraphView::layoutSubviews(bool force) {
     m_curveViewRight.setFrame(KDRect(KDPoint(width + k_separatorWidth, 0), size), force);
   }
   m_conclusionView.setFrame(KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)), force);
+  constexpr KDSize k_legendSize = KDSize(k_legendWidth, k_legendHeight);
+  m_legend.setFrame(KDRect(KDPoint(availableWidth - k_legendWidth - k_legendMarginRight, 20), k_legendSize), force);
 }
 
 Escher::View * GraphView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
-  Escher::View * subviews[] = {&m_curveViewLeft, &m_curveViewRight, &m_separatorView, &m_conclusionView};
+  Escher::View * subviews[] = {&m_curveViewLeft, &m_curveViewRight, &m_separatorView, &m_conclusionView, &m_legend};
   return subviews[i];
 }
+
+  
+} // namespace Probability
+

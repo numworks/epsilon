@@ -4,16 +4,19 @@
 #include <escher/buffer_table_cell.h>
 #include <escher/stack_view_controller.h>
 
-#include "probability/gui/selectable_cell_list_controller.h"
 #include "probability/gui/distribution_graph_view.h"
+#include "probability/gui/selectable_cell_list_controller.h"
 
 namespace Probability {
 
 class GraphController : public Page {
- public:
+public:
   GraphController(StackViewController * stack) : Page(stack) {}
   Escher::View * view() override { return &m_graphView; }
-  void didBecomeFirstResponder() override { m_graphView.computeMode(); }
+  void didBecomeFirstResponder() override {
+    m_graphView.computeMode();
+    m_graphView.setType(TestConclusionView::Type::Failure);
+  }
 
 private:
   GraphView m_graphView;

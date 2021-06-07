@@ -1,6 +1,7 @@
 #include "events.h"
 #include "../../shared/events_modifier.h"
 #include <ion/events.h>
+#include <ion/circuit_breaker.h>
 #include <ion/timing.h>
 #include <assert.h>
 #if ESCHER_LOG_EVENTS_NAME
@@ -65,6 +66,11 @@ static inline Event innerGetEvent(int * timeout) {
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
+
+      if (key == Keyboard::Key::Home && CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::Home)) {
+        CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::Home);
+      }
+
       bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
       bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
       Event event(key, shift, alpha, lock);

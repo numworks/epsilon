@@ -5,12 +5,12 @@
 #include <escher/view.h>
 
 #include "test_conclusion_view.h"
+#include "legend_view.h"
 
 namespace Probability {
 
 typedef Escher::SolidColorView FakeDistributionCurveView;
 typedef Escher::SolidColorView Separator;
-typedef Escher::SolidColorView Legend;
 
 /* This is the common view for Significance Tests and Confidence Intervals.
  * It displays either 1 or 2 CurveViews separated by a Separator, a legend, and a ConclusionView.
@@ -32,12 +32,10 @@ private:
   constexpr static int k_conclusionViewHeight = 40;
   constexpr static int k_separatorWidth = 14;
   constexpr static int k_legendMarginRight = 10;
-  constexpr static int k_legendWidth = 70;
-  constexpr static int k_legendHeight = 40;
   FakeDistributionCurveView m_curveViewLeft;
   FakeDistributionCurveView m_curveViewRight;
   Escher::SolidColorView m_separatorView;
-  Legend m_legend;
+  LegendView m_legend;
   TestConclusionView m_conclusionView;
   Mode m_mode;
 };

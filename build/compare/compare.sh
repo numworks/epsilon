@@ -42,10 +42,10 @@ function stem() {
 
 count=0
 
-# compare <png1> <png2> <png_output>
-function compare() {
+# compare_images <png1> <png2> <png_output>
+function compare_images() {
   log "compare $1 $2 $3"
-  res=$(magick compare -metric mae "$1" "$2" "$3" 2>&1 || return 0)
+  res=$(compare -metric mae "$1" "$2" "$3" 2>&1 || return 0)
   if [[ ${res} == "0 (0)" ]]
   then
     rm "$3"
@@ -70,6 +70,21 @@ function img_for_executable() {
   fi
 }
 
+function executable_built_path() {
+  BUILD_TYPE=debug
+  host=$(uname -s)
+  if [ $host = Linux ]
+  then
+    EXECUTABLE=linux/epsilon.bin
+  elif [ $host = Darwin ]
+  then
+    EXECUTABLE=macos/epsilon.app/Contents/MacOS/Epsilon
+  else
+    exit 4
+  fi
+  echo output/${BUILD_TYPE}/simulator/${EXECUTABLE}
+}
+
 # create_git_executable <ref> <arg_number>
 function create_git_executable() {
   # TODO catch if --take-screenshot not supported
@@ -80,8 +95,7 @@ function create_git_executable() {
   log "make ${MAKEFLAGS}"
   make ${MAKEFLAGS}
 
-  # TODO guess real path
-  cp output/debug/simulator/macos/epsilon.app/Contents/MacOS/Epsilon "${output_exe}"
+  cp "$(executable_built_path)" "${output_exe}"
   eval exe$2=${output_exe}
   echo "Executable stored at ${output_exe}"
 }
@@ -95,7 +109,7 @@ function parse_makeflags() {
     MAKEFLAGS="${1#MAKEFLAGS=}"
     hasFlags=1
   else
-    MAKEFLAGS="PLATFORM=simulator DEBUG=1"
+    MAKEFLAGS="PLATFORM=simulator DEBUG=1 -j4"
   fi
   log MAKEFLAGS=${MAKEFLAGS}
 }
@@ -180,7 +194,7 @@ then
 fi
 
 scenarii_folder="$1"
-if ! find "${scenarii_folder}" -type f -name "*.nws" -depth 1 > /dev/null
+if ! find "${scenarii_folder}" -type f -name '*.nws' > /dev/null
 then
   error "No state file found in ${scenarii_folder}"
   exit 3
@@ -208,7 +222,7 @@ do
 
   # Compare screenshots
   out_diff="${out_file1%-1.png}-diff.png"
-  compare "${out_file1}" "${out_file2}" "${out_diff}"
+  compare_images "${out_file1}" "${out_file2}" "${out_diff}"
 
 done
 

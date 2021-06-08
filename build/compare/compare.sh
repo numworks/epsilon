@@ -48,7 +48,7 @@ function compare_images() {
   res=$(compare -metric mae "$1" "$2" "$3" 2>&1 || return 0)
   if [[ ${res} == "0 (0)" ]]
   then
-    rm "$3"
+    rm "$1" "$2" "$3"
     echo -e "\033[1m${state_file}\t \033[32mOK\033[0m"
   else
     echo -e "\033[1m${state_file}\t\033[0m \033[31m${res}\033[0m (diff saved as $3)"

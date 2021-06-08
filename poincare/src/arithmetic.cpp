@@ -228,23 +228,33 @@ int Arithmetic::PositiveDivisors(const Integer & i) {
     assert(false);
     return k_errorAlreadyInUse;
   }
+  if (i.isZero()) {
+    return k_errorTooManyFactors;
+  }
+  Integer iClone = i;
+  iClone.setNegative(false);
+  if (!iClone.isExtractable()) {
+    return k_errorFactorTooLarge;
+  }
+  int iInt = iClone.extractedInt();
   // Lock Prime factorization
   s_lock = true;
-
   int numberOfDivisors = 0;
-  int iInt = i.isExtractable() ? i.extractedInt() : INT_MAX;
-  if (iInt < 0) {
-    iInt = -iInt;
-  }
-  int step = 1 + (iInt % 2 != 0);
-  for (int k = 1; k <= iInt; k += step) {
+  // Except himself, all divisors of i are under i/2
+  int kEnd = iInt/2;
+  // No need to look for even divisors if i is odd
+  int kStep = 1 + (iInt%2);
+  // Look for divisors of i
+  for (int k = 1; k <= kEnd; k += kStep) {
     if (iInt % k == 0) {
+      *divisorAtIndex(numberOfDivisors++) = Integer(k);
       if (numberOfDivisors >= k_maxNumberOfDivisors) {
         return k_errorTooManyFactors;
       }
-      *divisorAtIndex(numberOfDivisors++) = Integer(k);
     }
   }
+  // i divides i
+  *divisorAtIndex(numberOfDivisors++) = Integer(iInt);
   return numberOfDivisors;
 }
 

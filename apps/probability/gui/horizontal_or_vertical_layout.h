@@ -19,6 +19,7 @@ namespace Probability {
 class VerticalLayout : public Escher::SolidColorView {
 public:
   VerticalLayout(KDColor color = Palette::WallScreen) : Escher::SolidColorView(color) {}
+  KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
 };
 
@@ -27,6 +28,7 @@ public:
 class HorizontalLayout : public Escher::SolidColorView {
 public:
   HorizontalLayout(KDColor color = Palette::WallScreen) : Escher::SolidColorView(color) {}
+  KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
 };
 

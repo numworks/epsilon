@@ -6,6 +6,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/n0110/bootloader/drivers
   external_flash_command.cpp \
   flash_privileged.cpp \
   option_bytes.cpp \
+  power.cpp \
 )
 
 ion_device_shared_bootloader_kernel_src += ion/src/device/shared/drivers/internal_flash_otp.cpp
@@ -24,6 +25,7 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0110/shar
   board.cpp \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
+  power.cpp \
   reset.cpp \
   usb.cpp \
 )

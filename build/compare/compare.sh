@@ -62,7 +62,7 @@ function img_for_executable() {
   args="--headless --load-state-file ${state_file} --take-screenshot $2"
   cmd="./$1 ${args}"
   log "${cmd}"
-  eval "$cmd"
+  eval "$cmd" > /dev/null
   # Check
   if [ ! -f "$2" ]; then
     echo "Error: No image created ($2)"

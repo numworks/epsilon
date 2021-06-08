@@ -25,4 +25,4 @@ jobs:
           path: compare_output_*/
       - name: Cleanup
         if: always()
-        run: rm -r compare_output_*
+        run: rm -rf compare_output_*

@@ -2,15 +2,11 @@
 
 #include <kandinsky/color.h>
 
-namespace Probability
-{
+namespace Probability {
 
-GraphView::GraphView()
-  : m_curveViewLeft(KDColorGreen),
-    m_curveViewRight(KDColorGreen),
-    m_separatorView(KDColorBlue),
-    m_legend(KDColorOrange)
-{}
+GraphView::GraphView() :
+    m_curveViewLeft(KDColorGreen), m_curveViewRight(KDColorGreen), m_separatorView(KDColorBlue) {
+}
 
 void GraphView::computeMode() {
   // TODO query data to decide on mode
@@ -36,20 +32,23 @@ void GraphView::layoutSubviews(bool force) {
     int width = (availableWidth - k_separatorWidth) / 2;
     KDSize size(width, curveViewHeight);
     m_curveViewLeft.setFrame(KDRect(KDPointZero, size), force);
-    m_separatorView.setFrame(KDRect(KDPoint(width, 0), KDSize(k_separatorWidth, curveViewHeight)), force);
+    m_separatorView.setFrame(KDRect(KDPoint(width, 0), KDSize(k_separatorWidth, curveViewHeight)),
+                             force);
     m_curveViewRight.setFrame(KDRect(KDPoint(width + k_separatorWidth, 0), size), force);
   }
-  m_conclusionView.setFrame(KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)), force);
-  constexpr KDSize k_legendSize = KDSize(k_legendWidth, k_legendHeight);
-  m_legend.setFrame(KDRect(KDPoint(availableWidth - k_legendWidth - k_legendMarginRight, 20), k_legendSize), force);
+  m_conclusionView.setFrame(
+      KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)), force);
+  KDSize k_legendSize = m_legend.minimalSizeForOptimalDisplay();
+  m_legend.setFrame(KDRect(KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight, 20),
+                           k_legendSize),
+                    force);
 }
 
 Escher::View * GraphView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
-  Escher::View * subviews[] = {&m_curveViewLeft, &m_curveViewRight, &m_separatorView, &m_conclusionView, &m_legend};
+  Escher::View * subviews[] = {&m_curveViewLeft, &m_curveViewRight, &m_separatorView,
+                               &m_conclusionView, &m_legend};
   return subviews[i];
 }
 
-  
-} // namespace Probability
-
+}  // namespace Probability

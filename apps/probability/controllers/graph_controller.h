@@ -15,7 +15,7 @@ public:
   Escher::View * view() override { return &m_graphView; }
   void didBecomeFirstResponder() override {
     m_graphView.computeMode();
-    m_graphView.setType(TestConclusionView::Type::Failure);
+    m_graphView.setType(TestConclusionView::Type::Success);
   }
 
 private:

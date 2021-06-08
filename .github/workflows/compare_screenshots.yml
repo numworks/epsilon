@@ -16,6 +16,13 @@ jobs:
       - name: Just checking
         run: git branch
       - name: Compare screenshot images
-        run: ./build/compare/compare.sh --debug tests/screenshots_dataset/scenarii/ tests/screenshots_dataset/reference_images/ ${{ github.event.pull_request.head.sha }}
+        run: ./build/compare/compare.sh --debug MAKEFLAGS="-j32 PLATFORM=simulator DEBUG=1" tests/screenshots_dataset/scenarii/ tests/screenshots_dataset/reference_images/ ${{ github.event.pull_request.head.sha }}
+      - name: Gather screenshots
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshots
+          path: compare_output_*/
       - name: Cleanup
+        if: always()
         run: rm -r compare_output_*

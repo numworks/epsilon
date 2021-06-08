@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <assert.h>
+#include <limits.h>
 #include <poincare/horizontal_layout.h>
 
 namespace Poincare {
@@ -154,7 +155,7 @@ public:
   constexpr static int k_maxNumberOfDigits = 32;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
-  constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
+  constexpr static int k_maxExtractableInteger = INT_MAX;
 
   // Constructors
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);

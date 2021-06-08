@@ -6,7 +6,6 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
 
 ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/shared/, \
   boot/rt0.cpp \
-  display_helper.cpp \
   drivers/backlight.cpp \
   drivers/battery.cpp \
   drivers/base64.cpp \
@@ -20,12 +19,10 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/shared/, \
   drivers/usb_privileged.cpp \
   drivers/usb_unprivileged.cpp \
   drivers/usb.cpp \
-  warning_display.cpp \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/shared/, \
   boot/rt0.cpp \
-  display_helper.cpp \
   drivers/usb.cpp \
   drivers/usb_unprivileged.cpp \
   post_and_hardware_tests.cpp \

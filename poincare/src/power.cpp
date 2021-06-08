@@ -984,10 +984,14 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
       Expression result = Addition::Builder(firstTerm, secondTerm);
       if (result.approximateToScalar<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) < 0.f) {
-        result = Multiplication::Builder(Rational::Builder(-1), result).shallowReduce(reductionContext);
+        Multiplication m = Multiplication::Builder(Rational::Builder(-1), result);
+        result.shallowReduce(reductionContext);
+        result = m;
       }
       if (rationalIndex.isMinusHalf()) {
-        result = Power::Builder(result, Rational::Builder(-1));
+        Power p = Power::Builder(result, Rational::Builder(-1));
+        result.shallowReduce(reductionContext);
+        result = p;
       }
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);

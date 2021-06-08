@@ -1,4 +1,3 @@
-#include "display_helper.h"
 #include <ion/battery.h>
 #include <ion/display.h>
 #include <ion/post_and_hardware_tests.h>
@@ -60,25 +59,68 @@ int ColorsLCDPixelFailures() {
   return result;
 }
 
-bool TextLCDGlyphFailures() {
-  const char * text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  const KDFont * font = KDFont::SmallFont;
-  KDCoordinate glyphHeight = font->glyphSize().height();
+static constexpr int k_smallAWidth = 7;
+static constexpr int k_smallAHeight = 14;
+
+static constexpr KDColor k_smallABuffer[k_smallAHeight][k_smallAWidth] = {
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(42292), KDColor::RGB16(42292), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(42292), KDColor::RGB16(59196), KDColor::RGB16(61342), KDColor::RGB16(61342) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(52889), KDColor::RGB16(42292), KDColor::RGB16(42324), KDColor::RGB16(55035) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) },
+  { KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455), KDColor::RGB16(63455) }
+};
+
+bool pushOrPullAs(bool push) {
+  KDCoordinate currentWidth = 0;
   KDCoordinate currentHeight = 0;
-  // Fill the screen
-  while (currentHeight + glyphHeight < Ion::Display::Height ) {
-    Ion::Device::DisplayHelper::drawString(text, &currentHeight, KDFont::SmallFont);
-  }
-  // Check the drawing
-  currentHeight = 0;
-  while (currentHeight + glyphHeight < Ion::Display::Height ) {
-    if (!Ion::Device::DisplayHelper::checkDrawnString(text, &currentHeight, font)) {
-      return false;
+  KDSize size(k_smallAWidth, k_smallAHeight);
+  while (currentHeight + k_smallAHeight < Ion::Display::Height ) {
+    while (currentWidth + k_smallAWidth < Ion::Display::Width ) {
+      KDPoint position(currentWidth, currentHeight);
+      if (push) {
+        // Push the character on the screen
+        Ion::Display::pushRect(KDRect(position, size), reinterpret_cast<const KDColor *>(k_smallABuffer));
+      } else {
+        // Pull and compare the character from the screen
+        KDColor workingBuffer[k_smallAHeight][k_smallAWidth];
+        for (int i = 0; i < k_smallAHeight; i++) {
+          for (int j = 0; j < k_smallAWidth; j++) {
+            workingBuffer[i][j] = KDColorRed;
+          }
+        }
+        /* Caution: Unlike fillRectWithPixels, pullRect accesses outside (0, 0,
+         * Ion::Display::Width, Ion::Display::Height) might give weird data. */
+        Ion::Display::pullRect(KDRect(position, size), reinterpret_cast<KDColor *>(workingBuffer));
+        for (int i = 0; i < k_smallAHeight; i++) {
+          for (int j = 0; j < k_smallAWidth; j++) {
+            if (k_smallABuffer[i][j] != workingBuffer[i][j]) {
+              return false;
+            }
+          }
+        }
+      }
+      currentWidth += k_smallAWidth;
     }
+    currentHeight += k_smallAHeight;
   }
   return true;
 }
 
-}
+bool TextLCDGlyphFailures() {
+  // Fill the screen with 'a'
+  pushOrPullAs(true);
+ // Check the drawing
+  return pushOrPullAs(false);
 }
 
+}
+}

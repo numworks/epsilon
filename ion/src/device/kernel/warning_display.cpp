@@ -2,20 +2,44 @@
 #include <drivers/keyboard.h>
 #include <drivers/display.h>
 #include <ion/display.h>
+#include <kandinsky/font.h>
 #include <kandinsky/rect.h>
-
-namespace Ion {
-
-/* For the kernel, we shortcut the SVC made by WarningDisplay to
- * direct calls to the right drivers. */
-
-void Display::pullRect(KDRect r, KDColor * pixels) { Device::Display::pullRect(r, pixels); }
-
-}
+#include <string.h>
 
 namespace Ion {
 namespace Device {
 namespace WarningDisplay {
+
+void drawString(const char * text, KDCoordinate * yOffset, const KDFont * font) {
+  KDSize glyphSize = font->glyphSize();
+  KDFont::RenderPalette palette = font->renderPalette(KDColorBlack, KDColorWhite);
+  KDFont::GlyphBuffer glyphBuffer;
+  size_t len = strlen(text);
+  KDPoint position((Ion::Display::Width - len*glyphSize.width())/2, *yOffset);
+
+  while (*text) {
+    font->setGlyphGrayscalesForCharacter(*text++, &glyphBuffer);
+    font->colorizeGlyphBuffer(&palette, &glyphBuffer);
+    // Push the character on the screen
+    Ion::Device::Display::pushRect(KDRect(position, glyphSize), glyphBuffer.colorBuffer());
+    position = position.translatedBy(KDPoint(glyphSize.width(), 0));
+  }
+  *yOffset += glyphSize.height();
+}
+
+void showMessage(const char * const * messages, int numberOfMessages) {
+  KDRect screen = KDRect(0,0,Ion::Display::Width,Ion::Display::Height);
+  Ion::Device::Display::pushRectUniform(screen, KDColorWhite);
+  const char * title = messages[0];
+  KDCoordinate currentHeight = 60;
+  drawString(title, &currentHeight, KDFont::LargeFont);
+  currentHeight += KDFont::LargeFont->glyphSize().height();
+  for (int j = 1; j < numberOfMessages; j++) {
+    const char * message = messages[j];
+    // Move draw string here are you're the only on to use it!
+    drawString(message, &currentHeight, KDFont::SmallFont);
+  }
+}
 
 void waitUntilKeyPress() {
   while (1) {

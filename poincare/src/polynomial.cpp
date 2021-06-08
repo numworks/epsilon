@@ -221,6 +221,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root1 = root1->approximate<double>(context, complexFormat, angleUnit);
     *root2 = root2->approximate<double>(context, complexFormat, angleUnit);
     *root3 = root3->approximate<double>(context, complexFormat, angleUnit);
+    *delta = delta->approximate<double>(context, complexFormat, angleUnit);
   } else {
     *root1 = root1->simplify(reductionContext);
     *root2 = root2->simplify(reductionContext);

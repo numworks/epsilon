@@ -93,7 +93,14 @@ function create_git_executable() {
   git checkout $1 > /dev/null
   output_exe="${output_folder}/Epsilon_$1"
   log "make ${MAKEFLAGS}"
-  make ${MAKEFLAGS}
+  REDIRECT=
+  if [[ $debug == 0 ]]
+  then
+    REDIRECT='> /dev/null 2>&1'
+  fi
+  cmd="make ${MAKEFLAGS} ${REDIRECT}"
+  echo $cmd
+  eval $cmd
 
   cp "$(executable_built_path)" "${output_exe}"
   eval exe$2=${output_exe}

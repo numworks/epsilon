@@ -134,7 +134,7 @@ function parse_arg() {
     # executable -> must be espilon
     eval arg$2_mode="e"
     eval exe$2=$1
-  elif git show "$1" > /dev/null
+  elif git rev-parse --verify "$1" > /dev/null
   then
     # git ref
     eval arg$2_mode="g"

@@ -411,6 +411,11 @@ static bool isSquare(Expression e) {
 }
 
 static int indexOfChildWithSquare(Expression e) {
+  /* We look for a square to reduce a^2+2ab+b^2.
+   * We always need to look in the three children, because there are such
+   * expressions with only one square (e.g. (π+1)^2 = π^2+2π+1).
+   * We also look in children that are products, as they can contain squares
+   * (e.g. (2π+1)^2 = 4π^2+4π+1) */
   assert(e.type() == ExpressionNode::Type::Addition);
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
@@ -977,7 +982,6 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       if (secondTerm.isUninitialized()) {
         return *this;
       }
-      /* FIXME: Invert firstTerm and secondTerm to always return something positive */
       Expression result = Addition::Builder(firstTerm, secondTerm);
       if (result.approximateToScalar<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) < 0.f) {
         result = Multiplication::Builder(Rational::Builder(-1), result).shallowReduce(reductionContext);

@@ -19,7 +19,7 @@ void TestConclusionView::Icon::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->drawLine(KDPoint(i, middle - width), KDPoint(i, middle + width), KDColorBlack);
   }
   // Then either checkmark or cross
-  if (m_type == Type::Success) {
+  if (m_type == Type::Failure) {
     KDPoint p1 = KDPoint(k_size / 4, k_size / 4);
     KDPoint p2 = KDPoint(3 * k_size / 4 + 1, 3 * k_size / 4 + 1);
     KDPoint p3 = KDPoint(k_size / 4, 3 * k_size / 4);

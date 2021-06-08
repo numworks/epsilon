@@ -228,4 +228,10 @@ done
 
 print_report
 
+# Cleanup
+if [[ $count == 0 ]] && [[ $debug == 0]]
+then
+  rm -r "$output_folder"
+fi
+
 exit $count

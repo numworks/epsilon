@@ -19,7 +19,7 @@ typedef Escher::SolidColorView Separator;
 class GraphView : public Escher::View {
 public:
   GraphView(StatisticViewRange * rangeLeft, StatisticViewRange * rangeRight);
-  void computeMode();
+  void setMode(GraphDisplayMode m);
   void setType(TestConclusionView::Type t) { m_conclusionView.setType(t); }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setStatistic(Statistic * statistic) {
@@ -37,7 +37,6 @@ protected:
   Escher::View * subviewAtIndex(int i) override;
 
 private:
-  enum class Mode { OneCurveView, TwoCurveViews };
   constexpr static int k_conclusionViewHeight = 40;
   constexpr static int k_separatorWidth = 14;
   constexpr static int k_legendMarginRight = 10;
@@ -46,7 +45,7 @@ private:
   StatisticCurveView m_curveViewRight;
   LegendView m_legend;
   TestConclusionView m_conclusionView;
-  Mode m_mode;
+  GraphDisplayMode m_mode;
 };
 
 }  // namespace Probability

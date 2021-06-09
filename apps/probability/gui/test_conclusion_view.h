@@ -2,6 +2,7 @@
 #define APPS_PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
 
 #include <escher/message_text_view.h>
+#include <escher/palette.h>
 #include <escher/view.h>
 
 namespace Probability {
@@ -12,6 +13,7 @@ namespace Probability {
 class TestConclusionView : public Escher::View {
 public:
   enum class Type { Success, Failure };
+  TestConclusionView() { m_textView.setBackgroundColor(Escher::Palette::WallScreen); }
   void setType(Type t);
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;

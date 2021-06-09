@@ -8,6 +8,7 @@ namespace Probability {
 
 void TestConclusionView::Icon::drawRect(KDContext * ctx, KDRect rect) const {
   // TODO replace with actual images
+  ctx->fillRect(bounds(), Escher::Palette::WallScreen);
   // Draw circle
   float middle = k_size / 2, width;
   int start, end;

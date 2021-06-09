@@ -64,6 +64,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
       view = m_hypothesisController;
     }
     assert(view != nullptr);
+    initializeStatistic(App::app()->snapshot()->data()->test(), t);
     App::app()->snapshot()->data()->setTestType(t);
     openPage(view);
     return true;
@@ -109,4 +110,21 @@ const char * TypeController::title() {
   testToText(App::app()->snapshot()->data()->test(), m_titleBuffer + offset,
              sizeof(m_titleBuffer) - offset);
   return m_titleBuffer;
+}
+
+void Probability::TypeController::initializeStatistic(Data::Test test, Data::TestType type) {
+  if (test == Data::Test::OneMean) {
+    if (type == Data::TestType::TTest) {
+      new (App::app()->snapshot()->data()->statistic()) OneMeanTStatistic();
+    } else if (type == Data::TestType::ZTest) {
+      new (App::app()->snapshot()->data()->statistic()) OneMeanZStatistic();
+    }
+  } else if (test == Data::Test::TwoMeans) {
+    if (type == Data::TestType::TTest) {
+      new (App::app()->snapshot()->data()->statistic()) TwoMeansTStatistic();
+
+    } else if (type == Data::TestType::ZTest) {
+      new (App::app()->snapshot()->data()->statistic()) TwoMeansZStatistic();
+    }
+  }
 }

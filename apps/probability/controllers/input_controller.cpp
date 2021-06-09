@@ -12,10 +12,10 @@
 using namespace Probability;
 
 InputController::InputController(Escher::StackViewController * parent,
-                                 ResultsController * resultsController, InputParameters * inputParameters,
+                                 ResultsController * resultsController, Statistic * statistic,
                                  Escher::InputEventHandlerDelegate * handler) :
     FloatParameterPage(parent),
-    m_inputParameters(inputParameters),
+    m_statistic(statistic),
     m_resultsController(resultsController),
     m_parameterCells{{&m_selectableTableView, handler, this},
                      {&m_selectableTableView, handler, this}} {
@@ -40,11 +40,11 @@ const char * InputController::title() {
     const char * eq = "=";  // TODO Must be somewhere else
     const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
     char op[2] = {0, 0};
-    op[0] = static_cast<const char>(App::app()->snapshot()->data()->hypothesisParams()->op());
+    op[0] = static_cast<const char>(m_statistic->hypothesisParams()->op());
     char paramBuffer[10];
-    Poincare::PrintFloat::ConvertFloatToText(
-        App::app()->snapshot()->data()->hypothesisParams()->firstParam(), paramBuffer,
-        sizeof(paramBuffer), 5, 5, Poincare::Preferences::PrintFloatMode::Decimal);
+    Poincare::PrintFloat::ConvertFloatToText(m_statistic->hypothesisParams()->firstParam(),
+                                             paramBuffer, sizeof(paramBuffer), 5, 5,
+                                             Poincare::Preferences::PrintFloatMode::Decimal);
 
     strlcat(m_titleBuffer, H0, bufferSize);
     strlcat(m_titleBuffer, symbol, bufferSize);
@@ -70,7 +70,7 @@ ViewController::TitlesDisplay InputController::titlesDisplay() {
 }
 
 int InputController::typeAtIndex(int i) {
-  if (i == m_inputParameters->numberOfParameters() - 1) {
+  if (i == m_statistic->indexOfThreshold()) {
     return k_significanceCellType;
   }
   return FloatParameterPage::typeAtIndex(i);
@@ -97,12 +97,12 @@ void InputController::buttonAction() {
 }
 
 void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  if (index < m_inputParameters->numberOfParameters() - 1) {
+  if (index < m_statistic->indexOfThreshold()) {
     MessageTableCellWithEditableTextWithMessage * mCell =
         static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
-    mCell->setMessage(m_inputParameters->paramSymbolAtIndex(index));
-    mCell->setSubLabelMessage(m_inputParameters->paramDescriptionAtIndex(index));
-  } else if (index == m_inputParameters->numberOfParameters() - 1) {
+    mCell->setMessage(m_statistic->paramSymbolAtIndex(index));
+    mCell->setSubLabelMessage(m_statistic->paramDescriptionAtIndex(index));
+  } else if (index == m_statistic->indexOfThreshold()) {
     MessageTableCellWithEditableTextWithMessage * thresholdCell =
         static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
     I18n::Message name, description;

@@ -83,11 +83,11 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (App::app()->snapshot()->data()->test() != test) {
-      App::app()->snapshot()->data()->setTest(test);
-      Data::TestType testType = Data::isProportion(test) ? Data::TestType::ZTest : Data::TestType::TTest;
-      App::app()->snapshot()->data()->setTestType(testType);
-    }
+    App::app()->snapshot()->data()->setTest(test);
+    Data::TestType testType =
+        Data::isProportion(test) ? Data::TestType::ZTest : Data::TestType::TTest;
+    App::app()->snapshot()->data()->setTestType(testType);
+
     if (Data::isProportion(test)) {
       initializeStatistic(test);
     }
@@ -124,7 +124,6 @@ void TestController::selectRowAccordingToTest(Data::Test t) {
   selectRow(row);
 }
 
-
 void Probability::TestController::initializeStatistic(Data::Test t) {
   switch (t) {
     case Data::Test::OneProp:
@@ -156,5 +155,6 @@ void TestController::initializeHypothesisParams(Data::Test t) {
       return;
   }
   App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
-  App::app()->snapshot()->data()->hypothesisParams()->setOp(HypothesisParams::ComparisonOperator::Higher);
+  App::app()->snapshot()->data()->hypothesisParams()->setOp(
+      HypothesisParams::ComparisonOperator::Higher);
 }

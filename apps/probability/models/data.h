@@ -88,11 +88,11 @@ struct ProbaData {
   CalculationBuffer m_calculationBuffer;
 };
 
-static constexpr int statisticSizes[9] = {
+static constexpr int statisticSizes[6] = {
     sizeof(OneProportionStatistic),  sizeof(OneMeanZStatistic),  sizeof(OneMeanTStatistic),
     sizeof(TwoProportionsStatistic), sizeof(TwoMeansZStatistic), sizeof(TwoMeansTStatistic)};
 
-static constexpr int maxStatisticSize = arrayMax(statisticSizes);
+constexpr int maxStatisticSize = arrayMax(statisticSizes);
 typedef char StatisticBuffer[maxStatisticSize];
 
 // Test sub app
@@ -124,7 +124,7 @@ struct CategoricalData {
   } m_data;
 };
 
-struct TestIntervalData {
+struct StatisticData {
   Test m_test;
   StatisticBuffer m_statisticBuffer;
   union {
@@ -134,18 +134,16 @@ struct TestIntervalData {
   Statistic * statistic() { return reinterpret_cast<Statistic *>(m_statisticBuffer); }
 };
 
-constexpr static int dataSizes[] = {sizeof(ProbaData), sizeof(TestIntervalData)};
-constexpr static int maxDataSize = arrayMax(dataSizes);
-
-typedef char DataBuffer[maxDataSize];
+union DataBuffer {
+  StatisticData m_statisticData;
+  ProbaData m_probaData;
+};
 
 class Data {
 public:
   // naive getter / setters
-  ProbaData * probaData() { return reinterpret_cast<ProbaData *>(&m_dataBuffer); }
-  TestIntervalData * testIntervalData() {
-    return reinterpret_cast<TestIntervalData *>(&m_dataBuffer);
-  }
+  ProbaData * probaData() { return &(m_dataBuffer.m_probaData); }
+  StatisticData * statisticData() { return &(m_dataBuffer.m_statisticData); }
 
   // ProbaData
   Distribution * distribution() {
@@ -155,19 +153,19 @@ public:
     return reinterpret_cast<Calculation *>(probaData()->m_calculationBuffer);
   }
 
-  // TestIntervalData
-  Test test() { return testIntervalData()->m_test; }
-  void setTest(Test t) { testIntervalData()->m_test = t; }
-  CategoricalData * categoricalData() { return &testIntervalData()->m_data.m_categorical; }
-  TestType testType() { return testIntervalData()->m_data.m_testType; }
-  void setTestType(TestType t) { testIntervalData()->m_data.m_testType = t; }
+  // StatisticData
+  Test test() { return statisticData()->m_test; }
+  void setTest(Test t) { statisticData()->m_test = t; }
+  CategoricalData * categoricalData() { return &statisticData()->m_data.m_categorical; }
+  TestType testType() { return statisticData()->m_data.m_testType; }
+  void setTestType(TestType t) { statisticData()->m_data.m_testType = t; }
   CategoricalType categoricalType() { return categoricalData()->m_type; }
   void setCategoricalType(CategoricalType t) { categoricalData()->m_type = t; }
   InputGoodnessData * inputGoodnessData() { return &(categoricalData()->m_data.m_goodness); }
   InputHomogeneityData * inputHomogeneityData() {
     return &(categoricalData()->m_data.m_homogeneity);
   }
-  Statistic * statistic() { return testIntervalData()->statistic(); }
+  Statistic * statistic() { return statisticData()->statistic(); }
   HypothesisParams * hypothesisParams() { return statistic()->hypothesisParams(); }
 
 private:

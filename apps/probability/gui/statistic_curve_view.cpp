@@ -1,5 +1,9 @@
 #include "statistic_curve_view.h"
 
+#include <math.h>
+
+#include "probability/helpers.h"
+
 namespace Probability {
 
 constexpr KDColor StatisticCurveView::k_backgroundColor;
@@ -11,13 +15,16 @@ void StatisticCurveView::drawRect(KDContext * ctx, KDRect rect) const {
 
   float z = m_statistic->testCriticalValue();
   float p = m_statistic->pValue();
-  float min = fmin(z, p);
-  float max = fmax(z, p);
+  float min = fminf(z, p);
+  float max = fmaxf(z, p);
   KDColor middleColor = z > p ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   KDColor afterColor = z < p ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
-  drawCartesianCurve(ctx, rect, min, max, evaluateAtAbsissa, m_statistic, nullptr, afterColor, true, true, min, max);
-  drawCartesianCurve(ctx, rect, max, INFINITY, evaluateAtAbsissa, m_statistic, nullptr, middleColor, true, true, max, INFINITY);
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbsissa, m_statistic, nullptr, Escher::Palette::GrayVeryDark);
+  drawCartesianCurve(ctx, rect, min, max, evaluateAtAbsissa, m_statistic, nullptr, afterColor, true,
+                     true, min, max);
+  drawCartesianCurve(ctx, rect, max, INFINITY, evaluateAtAbsissa, m_statistic, nullptr, middleColor,
+                     true, true, max, INFINITY);
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbsissa, m_statistic, nullptr,
+                     Escher::Palette::GrayVeryDark);
 }
 
 char * StatisticCurveView::label(Axis axis, int index) const {
@@ -27,4 +34,4 @@ char * StatisticCurveView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-} // namespace Probability
+}  // namespace Probability

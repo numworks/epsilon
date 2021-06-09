@@ -3,6 +3,8 @@
 #include <ion/display.h>
 #include <math.h>
 
+#include "probability/helpers.h"
+
 namespace Probability {
 
 float StatisticViewRange::xMin() const {
@@ -16,8 +18,8 @@ float StatisticViewRange::xMax() const {
 StatisticViewRange::Range StatisticViewRange::computeRange() const {
   float p = m_statistic->pValue();
   float z = m_statistic->testCriticalValue();
-  float min = fmin(p, z);
-  float max = fmax(p, z);
+  float min = fminf(p, z);
+  float max = fmaxf(p, z);
   float pixelWidth = (max - min) / k_areaSize;
   if (m_mode == GraphDisplayMode::OneCurveView) {
     return Range{min - k_marginLeftOfMin * pixelWidth,

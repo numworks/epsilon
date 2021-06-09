@@ -59,4 +59,6 @@ QUIZ_CASE(poincare_polynomial_roots_cubic) {
   assert_roots_of_polynomial_are("x^3+3×x^2+3×x+0.7", {"-3.30567ᴇ-1", "-1.334716-5.797459ᴇ-1×𝐢", "-1.334716+5.797459ᴇ-1×𝐢"}, "-2.43", Cartesian);
   assert_roots_of_polynomial_are("x^3+3×x^2+3×x+0.7", {"-3.30567ᴇ-1"}, "-2.43", Real);
   assert_roots_of_polynomial_are("(x-4.231)^3", {"4231/1000"}, "0", Real);
+  assert_roots_of_polynomial_are("(x-7/3)(x-π)(x-log(3))", {"log(3)", "7/3", "π"}, "1.598007ᴇ1", Real);
+  assert_roots_of_polynomial_are("(x-2𝐢+1)(x+3𝐢-1)(x-𝐢+2)", {"1-3×𝐢", "-2+𝐢", "-1+2×𝐢"}, "-1.288ᴇ3-6.66ᴇ2×𝐢", Cartesian);
 }

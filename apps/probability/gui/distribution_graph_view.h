@@ -4,12 +4,13 @@
 #include <escher/solid_color_view.h>
 #include <escher/view.h>
 
-#include "test_conclusion_view.h"
 #include "legend_view.h"
+#include "probability/models/statistic/statistic_view_range.h"
+#include "statistic_curve_view.h"
+#include "test_conclusion_view.h"
 
 namespace Probability {
 
-typedef Escher::SolidColorView FakeDistributionCurveView;
 typedef Escher::SolidColorView Separator;
 
 /* This is the common view for Significance Tests and Confidence Intervals.
@@ -17,10 +18,18 @@ typedef Escher::SolidColorView Separator;
  */
 class GraphView : public Escher::View {
 public:
-  GraphView();
+  GraphView(StatisticViewRange * rangeLeft, StatisticViewRange * rangeRight);
   void computeMode();
   void setType(TestConclusionView::Type t) { m_conclusionView.setType(t); }
   KDSize minimalSizeForOptimalDisplay() const override;
+  void setStatistic(Statistic * statistic) {
+    m_curveViewLeft.setStatistic(statistic);
+    m_curveViewRight.setStatistic(statistic);
+  }
+  void reload() {
+    m_curveViewLeft.reload();
+    m_curveViewRight.reload();
+  }
 
 protected:
   int numberOfSubviews() const override { return 5; }  // TODO could change according to mode
@@ -32,9 +41,9 @@ private:
   constexpr static int k_conclusionViewHeight = 40;
   constexpr static int k_separatorWidth = 14;
   constexpr static int k_legendMarginRight = 10;
-  FakeDistributionCurveView m_curveViewLeft;
-  FakeDistributionCurveView m_curveViewRight;
   Escher::SolidColorView m_separatorView;
+  StatisticCurveView m_curveViewLeft;
+  StatisticCurveView m_curveViewRight;
   LegendView m_legend;
   TestConclusionView m_conclusionView;
   Mode m_mode;

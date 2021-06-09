@@ -15,6 +15,9 @@ public:
   virtual void computeTest() = 0;
   virtual void computeInterval() = 0;
 
+  virtual float normedDensityFunction(float x) = 0;
+  virtual float densityFunction(float x) {return 0;}  // TODO
+
   // Test statistic
   virtual const char * testCriticalValueSymbol() = 0;
   virtual float testCriticalValue() = 0;

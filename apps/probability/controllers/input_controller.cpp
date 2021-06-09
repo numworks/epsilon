@@ -70,7 +70,7 @@ ViewController::TitlesDisplay InputController::titlesDisplay() {
 }
 
 int InputController::typeAtIndex(int i) {
-  if (i == m_inputParameters->numberOfParameters()) {
+  if (i == m_inputParameters->numberOfParameters() - 1) {
     return k_significanceCellType;
   }
   return FloatParameterPage::typeAtIndex(i);
@@ -97,11 +97,24 @@ void InputController::buttonAction() {
 }
 
 void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  if (index < m_inputParameters->numberOfParameters()) {
+  if (index < m_inputParameters->numberOfParameters() - 1) {
     MessageTableCellWithEditableTextWithMessage * mCell =
         static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
     mCell->setMessage(m_inputParameters->paramSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_inputParameters->paramDescriptionAtIndex(index));
+  } else if (index == m_inputParameters->numberOfParameters() - 1) {
+    MessageTableCellWithEditableTextWithMessage * thresholdCell =
+        static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
+    I18n::Message name, description;
+    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+      name = I18n::Message::Alpha;
+      description = I18n::Message::SignificanceLevel;
+    } else {
+      name = I18n::Message::ConfidenceLevel;
+      description = I18n::Message::Default;
+    }
+    thresholdCell->setMessage(name);
+    thresholdCell->setSubLabelMessage(description);
   }
   FloatParameterPage::willDisplayCellForIndex(cell, index);
 }

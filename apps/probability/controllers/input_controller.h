@@ -24,7 +24,7 @@ public:
   InputController(Escher::StackViewController * parent, ResultsController * resultsController,
                   InputParameters * inputParameters, Escher::InputEventHandlerDelegate * handler);
   int numberOfRows() const override {
-    return m_inputParameters->numberOfParameters() + 1 /* significance */ + 1 /* button */;
+    return m_inputParameters->numberOfParameters() + 1 /* button */;
   }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override;

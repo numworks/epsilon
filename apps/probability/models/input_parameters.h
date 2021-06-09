@@ -19,7 +19,7 @@ struct ParameterRepr {
 class InputParameters {
 public:
   virtual int numberOfParameters() const = 0;
-  float paramAtIndex(int i) { return paramArray()[i]; }
+  float paramAtIndex(int i) { return i == numberOfParameters() - 1 ? m_threshold : paramArray()[i]; }
   void setParamAtIndex(int i, float p) { paramArray()[i] = p; }
   I18n::Message paramSymbolAtIndex(int i) const { return paramReprAtIndex(i)->m_symbol; }
   I18n::Message paramDescriptionAtIndex(int i) const { return paramReprAtIndex(i)->m_description; }
@@ -30,13 +30,18 @@ protected:
   virtual const ParameterRepr * paramReprAtIndex(int i) const = 0;
   virtual float * paramArray() = 0;
 
-private:
+protected:
   float m_threshold;
 };
 
 class ZTestOnePropInputParameters : public InputParameters {
 public:
-  int numberOfParameters() const override { return k_numberOfParams; }
+  ZTestOnePropInputParameters() {
+    m_params[0] = 20;
+    m_params[1] = 50;
+    m_threshold = 0.95;
+  }
+  int numberOfParameters() const override { return k_numberOfParams + 1; }
 
 private:
   constexpr static int k_numberOfParams = 2;

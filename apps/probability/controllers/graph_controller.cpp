@@ -10,14 +10,17 @@ GraphController::GraphController(StackViewController * stack) :
 
 void GraphController::didBecomeFirstResponder() {
   // TODO compute mode based on data
+  Statistic * statistic = App::app()->snapshot()->data()->statistic();
+  TestConclusionView::Type t = statistic->testPassed() ? TestConclusionView::Type::Success
+                                                       : TestConclusionView::Type::Failure;
   GraphDisplayMode m = GraphDisplayMode::OneCurveView;
   m_graphView.setMode(m);
-  m_graphView.setType(TestConclusionView::Type::Success);
-  m_graphView.setStatistic(App::app()->snapshot()->data()->statistic());
+  m_graphView.setType(t);
+  m_graphView.setStatistic(statistic);
   m_rangeLeft.setMode(m);
   m_rangeRight.setMode(m);
-  m_rangeLeft.setStatistic(App::app()->snapshot()->data()->statistic());
-  m_rangeRight.setStatistic(App::app()->snapshot()->data()->statistic());
+  m_rangeLeft.setStatistic(statistic);
+  m_rangeRight.setStatistic(statistic);
   m_rangeLeft.setInputParams(App::app()->snapshot()->data()->testInputParams());
   m_rangeRight.setInputParams(App::app()->snapshot()->data()->testInputParams());
   m_graphView.reload();

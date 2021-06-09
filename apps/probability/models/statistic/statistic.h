@@ -24,6 +24,7 @@ public:
   virtual float pValue() = 0;
   virtual bool hasDegreeOfFreedom() = 0;
   virtual float degreeOfFreedom() { return -1; };
+  bool testPassed();
 
   // Confidence interval
   virtual const char * estimateSymbol() = 0;

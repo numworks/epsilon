@@ -11,9 +11,8 @@ GraphView::GraphView(StatisticViewRange * rangeLeft,
     m_curveViewRight(rangeRight) {
 }
 
-void GraphView::computeMode() {
-  // TODO query data to decide on mode
-  m_mode = Mode::TwoCurveViews;
+void GraphView::setMode(GraphDisplayMode m) {
+  m_mode = m;
   markRectAsDirty(bounds());
   layoutSubviews();  // TODO have to call here for the second time to account for mode change
 }
@@ -27,7 +26,7 @@ void GraphView::layoutSubviews(bool force) {
   int availableWidth = m_frame.width();
   int curveViewHeight = availableHeight - k_conclusionViewHeight;
   // Layout curve views and sep according to mode
-  if (m_mode == Mode::OneCurveView) {
+  if (m_mode == GraphDisplayMode::OneCurveView) {
     m_curveViewLeft.setFrame(KDRect(KDPointZero, KDSize(availableWidth, curveViewHeight)), force);
     m_separatorView.setFrame(KDRectZero, force);
     m_curveViewRight.setFrame(KDRectZero, force);

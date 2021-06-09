@@ -8,7 +8,7 @@ void StatisticCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
   drawAxis(ctx, rect, Axis::Horizontal);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbsissa, m_statistic, nullptr, KDColorBlue);
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbsissa, m_statistic, nullptr, Escher::Palette::GrayVeryDark);
 }
 
 char * StatisticCurveView::label(Axis axis, int index) const {

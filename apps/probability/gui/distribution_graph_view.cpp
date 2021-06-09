@@ -6,7 +6,7 @@ namespace Probability {
 
 GraphView::GraphView(StatisticViewRange * rangeLeft,
                      StatisticViewRange * rangeRight) :
-    m_separatorView(KDColorBlue),
+    m_separatorView(Palette::WallScreen),
     m_curveViewLeft(rangeLeft),
     m_curveViewRight(rangeRight) {
 }

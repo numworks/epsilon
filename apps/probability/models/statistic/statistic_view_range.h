@@ -3,10 +3,14 @@
 
 #include <apps/shared/curve_view_range.h>
 
-#include "statistic.h"
 #include "probability/models/input_parameters.h"
+#include "statistic.h"
 
 namespace Probability {
+
+
+enum class GraphDisplayMode { OneCurveView, TwoCurveViews };
+
 
 /* This class is in charge of computing the range to display for a given statistic.
  * In case two ranges are needed (the graph is split), the StatisticViewRange has a m_isLeftRange.
@@ -20,13 +24,22 @@ public:
   float yMax() const override { return k_yMax; }
   float xMin() const override;
   float xMax() const override;
+  void setMode(GraphDisplayMode m) { m_mode = m; }
 
 private:
-  constexpr static float k_yMin = -0.2;
-  constexpr static float k_yMax = 1.2;
+  struct Range {
+    float min;
+    float max;
+  };
+  Range computeRange() const;
+  constexpr static float k_yMin = -0.1;
+  constexpr static float k_yMax = 0.4;
+  constexpr static int k_marginLeftOfMin = 30;
+  constexpr static int k_areaSize = 50;
   Statistic * m_statistic;
   InputParameters * m_inputParams;
   bool m_isLeftRange;
+  GraphDisplayMode m_mode;
 };
 
 }  // namespace Probability

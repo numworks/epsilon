@@ -15,13 +15,15 @@ float StatisticViewRange::xMax() const {
 
 StatisticViewRange::Range StatisticViewRange::computeRange() const {
   float p = m_statistic->pValue();
-  float a = m_inputParams->threshold();
-  float min = fmin(p, a);
-  float max = fmax(p, a);
+  float z = m_statistic->testCriticalValue();
+  float min = fmin(p, z);
+  float max = fmax(p, z);
   float pixelWidth = (max - min) / k_areaSize;
-  return m_mode == GraphDisplayMode::OneCurveView ? Range{-10, 10}
-         : m_isLeftRange                         ? Range{-10, -0.5}
-                                                 : Range{0.5, 10};
+  if (m_mode == GraphDisplayMode::OneCurveView) {
+    return Range{min - k_marginLeftOfMin * pixelWidth,
+                 min + (Ion::Display::Width - k_marginLeftOfMin) * pixelWidth};
+  }
+  return m_isLeftRange ? Range{-10, -0.5} : Range{0.5, 10};
 }
 
 }  // namespace Probability

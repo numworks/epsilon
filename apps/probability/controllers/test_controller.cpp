@@ -91,6 +91,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     if (Data::isProportion(test)) {
       initializeStatistic(test);
     }
+    initializeHypothesisParams(test);
     openPage(view);
     return true;
   }
@@ -136,4 +137,24 @@ void Probability::TestController::initializeStatistic(Data::Test t) {
       assert(false);
       break;
   }
+}
+
+void TestController::initializeHypothesisParams(Data::Test t) {
+  float firstParam;
+  switch (t) {
+    case Data::Test::OneProp:
+      firstParam = 0.5;
+      break;
+    case Data::Test::OneMean:
+      firstParam = 128;
+      break;
+    case Data::Test::TwoProps:
+    case Data::Test::TwoMeans:
+      firstParam = 0;
+      break;
+    default:
+      return;
+  }
+  App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
+  App::app()->snapshot()->data()->hypothesisParams()->setOp(HypothesisParams::ComparisonOperator::Higher);
 }

@@ -56,6 +56,7 @@ public:
 
 private:
   void selectRowAccordingToType(Data::TestType t);
+  void initializeStatistic(Data::Test test, Data::TestType type);
 
   constexpr static int k_numberOfRows = 3;
   constexpr static int k_indexOfTTest = 0;

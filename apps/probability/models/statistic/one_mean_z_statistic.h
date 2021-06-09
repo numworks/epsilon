@@ -7,6 +7,7 @@ namespace Probability {
 
 class OneMeanZStatistic : public ZStatistic {
 public:
+  OneMeanZStatistic();
   void computeTest() override;
   void computeInterval() override;
 
@@ -15,8 +16,23 @@ public:
   I18n::Message estimateDescription() override { return I18n::Message::Default; };
 
 protected:
+  // Parameters
+  constexpr static int k_numberOfParams = 3;
+  int numberOfStatisticParameters() const override { return k_numberOfParams; }
+  enum ParamsOrder { X, N, Sigma };
+  const ParameterRepr * paramReprAtIndex(int i) const override;
+  float * paramArray() override { return m_params; }
+
+private:
+  float x() { return m_params[ParamsOrder::X]; }
+  float n() { return m_params[ParamsOrder::N]; }
+  float sigma() { return m_params[ParamsOrder::Sigma]; }
+
+  // Computation
   float _z(float meanSample, float mean, float n, float sigma);
   float _SE(float sigma, int n);
+
+  float m_params[k_numberOfParams];
 };
 
 }  // namespace Probability

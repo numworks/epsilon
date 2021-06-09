@@ -12,6 +12,8 @@
 #include "probability/app.h"
 #include "probability/gui/selectable_cell_list_controller.h"
 #include "probability/models/data.h"
+#include "probability/models/statistic/one_proportion_statistic.h"
+#include "probability/models/statistic/two_proportions_statistic.h"
 #include "type_controller.h"
 
 using namespace Probability;
@@ -81,17 +83,13 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (App::app()->snapshot()->data()->test() != test || test == Data::Test::OneMean ||
-        test == Data::Test::TwoMeans) {
-      initializeHypothesisParams(test);
-    }
     if (App::app()->snapshot()->data()->test() != test) {
       App::app()->snapshot()->data()->setTest(test);
       Data::TestType testType = Data::isProportion(test) ? Data::TestType::ZTest : Data::TestType::TTest;
       App::app()->snapshot()->data()->setTestType(testType);
     }
-    if (test != Data::Test::Categorical) {
-      initializeInputParams(test);
+    if (Data::isProportion(test)) {
+      initializeStatistic(test);
     }
     openPage(view);
     return true;
@@ -125,39 +123,14 @@ void TestController::selectRowAccordingToTest(Data::Test t) {
   selectRow(row);
 }
 
-void TestController::initializeHypothesisParams(Data::Test t) {
-  float firstParam;
-  switch (t) {
-    case Data::Test::OneProp:
-      firstParam = 0.5;
-      break;
-    case Data::Test::OneMean:
-      firstParam = 128;
-      break;
-    case Data::Test::TwoProps:
-    case Data::Test::TwoMeans:
-      firstParam = 0;
-      break;
-    default:
-      return;
-  }
-  App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
-  App::app()->snapshot()->data()->hypothesisParams()->setOp(Data::ComparisonOperator::Higher);
-}
 
-void TestController::initializeInputParams(Data::Test t) {
+void Probability::TestController::initializeStatistic(Data::Test t) {
   switch (t) {
     case Data::Test::OneProp:
-      new (App::app()->snapshot()->data()->testInputParams()) ZTestOnePropInputParameters();
-      break;
-    case Data::Test::OneMean:
-      new (App::app()->snapshot()->data()->testInputParams()) TTestOneMeanInputParameters();
+      new (App::app()->snapshot()->data()->statistic()) OneProportionStatistic();
       break;
     case Data::Test::TwoProps:
-      new (App::app()->snapshot()->data()->testInputParams()) ZTestTwoPropsInputParameters();
-      break;
-    case Data::Test::TwoMeans:
-      new (App::app()->snapshot()->data()->testInputParams()) TTestTwoMeanInputParameters();
+      new (App::app()->snapshot()->data()->statistic()) TwoProportionsStatistic();
       break;
     default:
       assert(false);

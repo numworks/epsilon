@@ -15,6 +15,7 @@
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/data.h"
+#include "probability/models/statistic/statistic.h"
 #include "results_controller.h"
 
 namespace Probability {
@@ -22,9 +23,9 @@ namespace Probability {
 class InputController : public FloatParameterPage {
 public:
   InputController(Escher::StackViewController * parent, ResultsController * resultsController,
-                  InputParameters * inputParameters, Escher::InputEventHandlerDelegate * handler);
+                  Statistic * statistic, Escher::InputEventHandlerDelegate * handler);
   int numberOfRows() const override {
-    return m_inputParameters->numberOfParameters() + 1 /* button */;
+    return m_statistic->numberOfParameters() + 1 /* button */;
   }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override;
@@ -34,18 +35,18 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
 protected:
-  float parameterAtIndex(int i) override { return m_inputParameters->paramAtIndex(i); }
+  float parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
 
 private:
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, float f) override {
-    m_inputParameters->setParamAtIndex(parameterIndex, f);
+    m_statistic->setParamAtIndex(parameterIndex, f);
     return true;
   }
 
   char m_titleBuffer[30];
-  InputParameters * m_inputParameters;
+  Statistic * m_statistic;
   ResultsController * m_resultsController;
 
   constexpr static int k_numberOfReusableCells = 8;  // TODO count

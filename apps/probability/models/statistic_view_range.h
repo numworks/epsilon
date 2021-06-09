@@ -3,8 +3,7 @@
 
 #include <apps/shared/curve_view_range.h>
 
-#include "probability/models/input_parameters.h"
-#include "statistic.h"
+#include "probability/models/statistic/statistic.h"
 
 namespace Probability {
 
@@ -19,7 +18,6 @@ class StatisticViewRange : public Shared::CurveViewRange {
 public:
   StatisticViewRange(bool isLeftRange) : m_isLeftRange(isLeftRange) {}
   void setStatistic(Statistic * statistic) { m_statistic = statistic; }
-  void setInputParams(InputParameters * inputParams) { m_inputParams = inputParams; }
   float yMin() const override { return k_yMin; }
   float yMax() const override { return k_yMax; }
   float xMin() const override;
@@ -37,7 +35,6 @@ private:
   constexpr static int k_marginLeftOfMin = 30;
   constexpr static int k_areaSize = 50;
   Statistic * m_statistic;
-  InputParameters * m_inputParams;
   bool m_isLeftRange;
   GraphDisplayMode m_mode;
 };

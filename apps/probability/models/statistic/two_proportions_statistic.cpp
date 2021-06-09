@@ -5,35 +5,38 @@
 #include <cmath>
 
 #include "probability/app.h"
-#include "probability/models/input_parameters.h"
 
 namespace Probability {
 
-void TwoProportionsStatistic::computeTest() {
-  Data::Data * data = App::app()->snapshot()->data();
-  float deltaP0 = data->hypothesisParams()->firstParam();
-  float x1 = data->testData()->inputParameters()->paramAtIndex(0);
-  float n1 = data->testData()->inputParameters()->paramAtIndex(1);
-  float x2 = data->testData()->inputParameters()->paramAtIndex(2);
-  float n2 = data->testData()->inputParameters()->paramAtIndex(3);
+TwoProportionsStatistic::TwoProportionsStatistic() {
+  m_params[ParamsOrder::X1] = 20;
+  m_params[ParamsOrder::N1] = 50;
+  m_params[ParamsOrder::X2] = 40;
+  m_params[ParamsOrder::N2] = 60;
+}
 
-  m_z = _z(deltaP0, x1, n1, x2, n2);
-  char op = static_cast<char>(data->hypothesisParams()->op());
+void TwoProportionsStatistic::computeTest() {
+  float deltaP0 = m_hypothesisParams.firstParam();
+
+  m_z = _z(deltaP0, x1(), n1(), x2(), n2());
+  char op = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, op);
 }
 
 void TwoProportionsStatistic::computeInterval() {
-  InputParameters * params = App::app()->snapshot()->data()->testData()->inputParameters();
-  float x1 = params->paramAtIndex(0);
-  int n1 = params->paramAtIndex(1);
-  float x2 = params->paramAtIndex(2);
-  int n2 = params->paramAtIndex(3);
-  float confidenceLevel = params->threshold();
-
-  m_pEstimate = _pEstimate(x1, n1, x2, n2);
-  m_zCritical = _zCritical(confidenceLevel);
-  m_SE = _SE(x1, n1, x2, n2);
+  m_pEstimate = _pEstimate(x1(), n1(), x2(), n2());
+  m_zCritical = _zCritical(threshold());
+  m_SE = _SE(x1(), n1(), x2(), n2());
   m_ME = _ME(m_zCritical, m_SE);
+}
+
+const ParameterRepr * TwoProportionsStatistic::paramReprAtIndex(int i) const {
+  constexpr static ParameterRepr params[k_numberOfParams] = {
+      {I18n::Message::X1, I18n::Message::SuccessSample1},
+      {I18n::Message::N1, I18n::Message::Sample1Size},
+      {I18n::Message::X2, I18n::Message::SuccessSample2},
+      {I18n::Message::N2, I18n::Message::Sample2Size}};
+  return &(params[i]);
 }
 
 float TwoProportionsStatistic::_pEstimate(float x1, float n1, float x2, float n2) {

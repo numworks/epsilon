@@ -7,15 +7,15 @@
 namespace Probability {
 
 float ZStatistic::_pVal(float z, char op) {
-  Data::ComparisonOperator realOp = static_cast<Data::ComparisonOperator>(op);
+  HypothesisParams::ComparisonOperator realOp = static_cast<HypothesisParams::ComparisonOperator>(op);
   switch (realOp) {
-    case Data::ComparisonOperator::Lower:
+    case HypothesisParams::ComparisonOperator::Lower:
       return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(z, 0, 1);
       break;
-    case Data::ComparisonOperator::Higher:
+    case HypothesisParams::ComparisonOperator::Higher:
       return 1 - Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(
                      -z, 0, 1);
-    case Data::ComparisonOperator::Different:
+    case HypothesisParams::ComparisonOperator::Different:
       return 2 * Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(
                      -z / 2, 0, 1);
       ;

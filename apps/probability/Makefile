@@ -19,6 +19,10 @@ app_probability_src = $(addprefix apps/probability/,\
   text_helpers.cpp \
 )
 
+app_probability_src += $(addprefix apps/probability/models/,\
+	statistic_view_range.cpp \
+)
+
 app_probability_src += $(addprefix apps/probability/models/distribution/,\
   exponential_distribution.cpp \
   normal_distribution.cpp \
@@ -43,7 +47,8 @@ app_probability_src += $(addprefix apps/probability/models/statistic/,\
 	two_proportions_statistic.cpp \
 	one_mean_z_statistic.cpp \
 	one_mean_t_statistic.cpp \
-	statistic_view_range.cpp \
+	two_means_z_statistic.cpp \
+	two_means_t_statistic.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\

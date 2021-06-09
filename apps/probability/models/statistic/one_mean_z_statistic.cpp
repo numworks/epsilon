@@ -6,30 +6,31 @@
 
 namespace Probability {
 
-void OneMeanZStatistic::computeTest() {
-  Data::HypothesisParams * hypothesis = App::app()->snapshot()->data()->hypothesisParams();
-  InputParameters * params = App::app()->snapshot()->data()->testData()->inputParameters();
-  float mean = hypothesis->firstParam();
-  float meanSample = params->paramAtIndex(0);
-  float n = params->paramAtIndex(1);
-  float sigma = params->paramAtIndex(2);
+OneMeanZStatistic::OneMeanZStatistic() {
+  m_params[ParamsOrder::X] = 20;
+  m_params[ParamsOrder::N] = 50;
+  m_params[ParamsOrder::Sigma] = 2;
+}
 
-  m_z = _z(mean, meanSample, n, sigma);
-  char op = static_cast<char>(hypothesis->op());
+void OneMeanZStatistic::computeTest() {
+  m_z = _z(m_hypothesisParams.firstParam(), x(), n(), sigma());
+  char op = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, op);
 }
 
 void OneMeanZStatistic::computeInterval() {
-  InputParameters * params = App::app()->snapshot()->data()->testData()->inputParameters();
-  float meanSample = params->paramAtIndex(0);
-  float n = params->paramAtIndex(1);
-  float sigma = params->paramAtIndex(2);
-  float confidenceLevel = params->threshold();
-
-  m_pEstimate = meanSample;
-  m_zCritical = _zCritical(confidenceLevel);
-  m_SE = _SE(sigma, n);
+  m_pEstimate = x();
+  m_zCritical = _zCritical(threshold());
+  m_SE = _SE(sigma(), n());
   m_ME = _ME(m_zCritical, m_SE);
+}
+
+const ParameterRepr * OneMeanZStatistic::paramReprAtIndex(int i) const {
+  constexpr static ParameterRepr params[k_numberOfParams] = {
+      {I18n::Message::MeanSymbol, I18n::Message::SampleMean},
+      {I18n::Message::N, I18n::Message::SampleSize},
+      {I18n::Message::Sigma, I18n::Message::StandardDeviation}};
+  return &(params[i]);
 }
 
 float OneMeanZStatistic::_z(float mean, float meanSample, float n, float sigma) {

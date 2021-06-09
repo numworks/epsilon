@@ -8,6 +8,7 @@ namespace Probability {
 // TODO factor with OneMeanZStatistic
 class OneMeanTStatistic : public TStatistic {
 public:
+  OneMeanTStatistic();
   void computeTest() override;
   void computeInterval() override;
 
@@ -16,9 +17,24 @@ public:
   I18n::Message estimateDescription() override { return I18n::Message::Default; };
 
 protected:
+  // Parameters
+  constexpr static int k_numberOfParams = 3;
+  int numberOfStatisticParameters() const override { return k_numberOfParams; }
+  enum ParamsOrder { X, S, N };
+  const ParameterRepr * paramReprAtIndex(int i) const override;
+  float * paramArray() override { return m_params; }
+
+private:
+  float x() { return m_params[ParamsOrder::X]; }
+  float s() { return m_params[ParamsOrder::S]; }
+  float n() { return m_params[ParamsOrder::N]; }
+
+  // Computation
   float _degreesOfFreedom(int n);
   float _t(float mean, float meanSample, float s, float n);
   float _SE(float s, float n);
+
+  float m_params[k_numberOfParams];
 };
 
 }  // namespace Probability

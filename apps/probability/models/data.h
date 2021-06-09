@@ -21,10 +21,15 @@
 #include "distribution/regularized_gamma.h"
 #include "distribution/student_distribution.h"
 #include "distribution/uniform_distribution.h"
-#include "input_parameters.h"
 #include "probability/helpers.h"
-#include "probability/models/statistic/statistic.h"
+#include "probability/models/hypothesis_params.h"
+#include "probability/models/statistic/one_mean_t_statistic.h"
+#include "probability/models/statistic/one_mean_z_statistic.h"
 #include "probability/models/statistic/one_proportion_statistic.h"
+#include "probability/models/statistic/statistic.h"
+#include "probability/models/statistic/two_means_t_statistic.h"
+#include "probability/models/statistic/two_means_z_statistic.h"
+#include "probability/models/statistic/two_proportions_statistic.h"
 
 namespace Probability {
 namespace Data {
@@ -83,32 +88,22 @@ struct ProbaData {
   CalculationBuffer m_calculationBuffer;
 };
 
+static constexpr int statisticSizes[9] = {
+    sizeof(OneProportionStatistic),  sizeof(OneMeanZStatistic),  sizeof(OneMeanTStatistic),
+    sizeof(TwoProportionsStatistic), sizeof(TwoMeansZStatistic), sizeof(TwoMeansTStatistic)};
+
+static constexpr int maxStatisticSize = arrayMax(statisticSizes);
+typedef char StatisticBuffer[maxStatisticSize];
+
 // Test sub app
 
 enum class Test { None, OneProp, OneMean, TwoProps, TwoMeans, Categorical };
 
-inline bool isProportion(Test t) { return t == Test::OneProp || t == Test::TwoProps; }
+inline bool isProportion(Test t) {
+  return t == Test::OneProp || t == Test::TwoProps;
+}
 
 enum class TestType { TTest, PooledTTest, ZTest };
-
-enum class ComparisonOperator : char {
-  Lower = '<',
-  Higher = '>',
-  Different = '='  // TODO correct symbol
-};
-
-struct HypothesisParams {
-public:
-  float firstParam() const { return m_firstParam; }
-  void setFirstParam(float firstParam) { m_firstParam = firstParam; }
-
-  ComparisonOperator op() const { return m_op; }
-  void setOp(const ComparisonOperator op) { m_op = op; }
-
-private:
-  float m_firstParam;
-  ComparisonOperator m_op;
-};
 
 enum class CategoricalType { Goodness, Homogeneity };
 
@@ -120,6 +115,7 @@ constexpr static int k_maxNumberOfHomogeneityInputColumns = 10;
 typedef float InputHomogeneityData[k_maxNumberOfHomogeneityInputRows]
                                   [k_maxNumberOfHomogeneityInputColumns];
 
+// TODO store in Statistic too ?
 struct CategoricalData {
   CategoricalType m_type;
   union {
@@ -128,40 +124,27 @@ struct CategoricalData {
   } m_data;
 };
 
-struct TestData {
-  TestType m_testType;
-  HypothesisParams m_hypothesisParams;
-  InputParametersBuffer m_inputParams;
-
-  InputParameters * inputParameters() { return reinterpret_cast<InputParameters *>(m_inputParams); }
-};
-
 struct TestIntervalData {
   Test m_test;
+  StatisticBuffer m_statisticBuffer;
   union {
-    TestData m_test;
+    TestType m_testType;
     CategoricalData m_categorical;
   } m_data;
+  Statistic * statistic() { return reinterpret_cast<Statistic *>(m_statisticBuffer); }
 };
 
 constexpr static int dataSizes[] = {sizeof(ProbaData), sizeof(TestIntervalData)};
 constexpr static int maxDataSize = arrayMax(dataSizes);
 
-typedef char InputDataBuffer[maxDataSize];
-
-struct DataWithResults {
-  InputDataBuffer m_inputBuffer;
-  OneProportionStatistic m_statistic;  // TODO store a pseudo-union as usual
-};
+typedef char DataBuffer[maxDataSize];
 
 class Data {
 public:
   // naive getter / setters
-  ProbaData * probaData() {
-    return reinterpret_cast<ProbaData *>(&m_dataWithResults.m_inputBuffer);
-  }
+  ProbaData * probaData() { return reinterpret_cast<ProbaData *>(&m_dataBuffer); }
   TestIntervalData * testIntervalData() {
-    return reinterpret_cast<TestIntervalData *>(&m_dataWithResults.m_inputBuffer);
+    return reinterpret_cast<TestIntervalData *>(&m_dataBuffer);
   }
 
   // ProbaData
@@ -175,22 +158,20 @@ public:
   // TestIntervalData
   Test test() { return testIntervalData()->m_test; }
   void setTest(Test t) { testIntervalData()->m_test = t; }
-  TestData * testData() { return &testIntervalData()->m_data.m_test; }
   CategoricalData * categoricalData() { return &testIntervalData()->m_data.m_categorical; }
-  TestType testType() { return testData()->m_testType; }
-  HypothesisParams * hypothesisParams() { return &testData()->m_hypothesisParams; }
-  InputParameters * testInputParams() { return testData()->inputParameters(); }
-  void setTestType(TestType t) { testData()->m_testType = t; }
+  TestType testType() { return testIntervalData()->m_data.m_testType; }
+  void setTestType(TestType t) { testIntervalData()->m_data.m_testType = t; }
   CategoricalType categoricalType() { return categoricalData()->m_type; }
   void setCategoricalType(CategoricalType t) { categoricalData()->m_type = t; }
   InputGoodnessData * inputGoodnessData() { return &(categoricalData()->m_data.m_goodness); }
   InputHomogeneityData * inputHomogeneityData() {
     return &(categoricalData()->m_data.m_homogeneity);
   }
-  Statistic * statistic() { return &(m_dataWithResults.m_statistic); }
+  Statistic * statistic() { return testIntervalData()->statistic(); }
+  HypothesisParams * hypothesisParams() { return statistic()->hypothesisParams(); }
 
 private:
-  DataWithResults m_dataWithResults;
+  DataBuffer m_dataBuffer;
 };
 
 }  // namespace Data

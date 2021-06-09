@@ -119,6 +119,7 @@ __ZN6Escher11LayoutField11handleEventEN3Ion6Events5EventE \
 __ZN6Escher8TextArea18privateHandleEventEN3Ion6Events5EventE \
 __ZN6Escher8TextArea11handleEventEN3Ion6Events5EventE \
 __ZN6Escher15ExpressionField11handleEventEN3Ion6Events5EventE \
+__ZN3Ion14CircuitBreaker14loadCheckpointENS0_14CheckpointTypeE \
 _msleep
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END

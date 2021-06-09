@@ -4,6 +4,10 @@
 
 namespace Probability {
 
+float TStatistic::normedDensityFunction(float x) {
+  return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, 0, 1);
+}
+
 float TStatistic::_pVal(float degreesOfFreedom, float t) {
   return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(t, 0, 1);
 }

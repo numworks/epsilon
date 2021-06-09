@@ -19,6 +19,7 @@ private:
   static Expression RationalRootSearch(const Expression * coefficients, int degree, ExpressionNode::ReductionContext reductionContext);
   static Expression SumRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, ExpressionNode::ReductionContext reductionContext);
   static Expression CardanoNumber(Expression delta0, Expression delta1, bool * approximate, ExpressionNode::ReductionContext reductionContext);
+  static constexpr int k_maxNumberOfNodesBeforeApproximatingDelta = 50;
 };
 
 }

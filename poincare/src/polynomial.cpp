@@ -83,6 +83,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
 
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
   bool approximate = false;
+  bool approximateDelta = false;
   const bool equationIsReal = a.isReal(context) && b.isReal(context) && c.isReal(context) && d.isReal(context);
 
   // b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
@@ -93,6 +94,11 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       Multiplication::Builder(Rational::Builder(-4), a.clone(), Power::Builder(c.clone(), Rational::Builder(3))),
       Multiplication::Builder(Rational::Builder(-4), d.clone(), Power::Builder(b.clone(), Rational::Builder(3)))});
   *delta = delta->simplify(reductionContext);
+  if (delta->numberOfDescendants(true) > k_maxNumberOfNodesBeforeApproximatingDelta) {
+    // Delta is too big and cannot be reduced. Approximate it for display.
+    approximateDelta = true;
+    *delta = delta->approximate<double>(context, complexFormat, angleUnit);
+  }
 
   /* To avoid applying Cardano's formula right away, we use techniques to find
    * a simple solution, based on some particularly common forms of cubic
@@ -140,7 +146,10 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       deltaSign = 0;
     } else {
       double deltaValue = delta->approximateToScalar<double>(context, complexFormat, angleUnit);
+      /* A complex delta (NAN deltaValue) must be handled like a negative delta
+       * This ternary operator's condition order is important here. */
       deltaSign = deltaValue == 0. ? 0 : deltaValue > 0. ? 1 : -1;
+      assert(!std::isnan(deltaValue) || deltaSign == -1);
     }
     // b^2 - 3ac
     Expression delta0 = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(3), a.clone(), c.clone())).simplify(reductionContext);
@@ -221,7 +230,9 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root1 = root1->approximate<double>(context, complexFormat, angleUnit);
     *root2 = root2->approximate<double>(context, complexFormat, angleUnit);
     *root3 = root3->approximate<double>(context, complexFormat, angleUnit);
-    *delta = delta->approximate<double>(context, complexFormat, angleUnit);
+    if (!approximateDelta) {
+      *delta = delta->approximate<double>(context, complexFormat, angleUnit);
+    }
   } else {
     *root1 = root1->simplify(reductionContext);
     *root2 = root2->simplify(reductionContext);

@@ -3,13 +3,21 @@
 
 #include <apps/i18n.h>
 
+#include "probability/models/hypothesis_params.h"
+
 namespace Probability {
+
+struct ParameterRepr {
+  I18n::Message m_symbol;
+  I18n::Message m_description;
+};
 
 /* A Statistic is something that is computed from a sample and whose distribution is known.
  * From its distribution, we can compute statistical test results and confidence intervals.
  */
 class Statistic {
 public:
+  Statistic() : m_threshold(0.95) {}
   virtual ~Statistic() = default;
 
   virtual void computeTest() = 0;
@@ -18,9 +26,23 @@ public:
   virtual float normedDensityFunction(float x) = 0;
   virtual float densityFunction(float x) {return 0;}  // TODO
 
+  // Input
+  int numberOfParameters() { return numberOfStatisticParameters() + 1 /* threshold */;}
+  float paramAtIndex(int i);
+  void setParamAtIndex(int i, float p) { paramArray()[i] = p; }
+  I18n::Message paramSymbolAtIndex(int i) const { return paramReprAtIndex(i)->m_symbol; }
+  I18n::Message paramDescriptionAtIndex(int i) const { return paramReprAtIndex(i)->m_description; }
+  float threshold() const { return m_threshold; }
+  void setThreshold(float s) { m_threshold = s; }
+  HypothesisParams * hypothesisParams() { return &m_hypothesisParams; }
+
   // Test statistic
   virtual const char * testCriticalValueSymbol() = 0;
+  /* Returns the critical value above which the probability
+   * of landing is inferior to a given significance level. */
   virtual float testCriticalValue() = 0;
+  /* The p-value is the probability of obtaining a results at least
+   * as extreme as what was observed with the sample */
   virtual float pValue() = 0;
   virtual bool hasDegreeOfFreedom() = 0;
   virtual float degreeOfFreedom() { return -1; };
@@ -29,35 +51,43 @@ public:
   // Confidence interval
   virtual const char * estimateSymbol() = 0;
   virtual I18n::Message estimateDescription() = 0;
+  /* The estimate is the center of the confidence interval,
+   * and estimates the parameter of interest. */
   virtual float estimate() = 0;
   virtual const char * intervalCriticalValueSymbol() = 0;
+  /* Returns the critical value above which the probability
+   * of landing is inferior to a given confidence level,
+   *  for the normed distribution. */
   virtual float intervalCriticalValue() = 0;
+  /* Returns the variance estimated from the sample. */
   virtual float standardError() = 0;
+  /* Returns the half-width of the confidence interval. */
   virtual float marginOfError() = 0;
+
+  int indexOfThreshold() { return numberOfStatisticParameters(); }
+
+protected:
+  virtual int numberOfStatisticParameters() const = 0;
+  virtual const ParameterRepr * paramReprAtIndex(int i) const = 0;
+  virtual float * paramArray() = 0;
+
+  /* Threshold is either the confidence level or the significance level */
+  float m_threshold;
+  /* Hypothesis chosen */
+  HypothesisParams m_hypothesisParams;
 };
 
 /* Store computed results as members to avoid recomputing at every call */
 class CachedStatistic : public Statistic {
 public:
   // Test statistic
-  /* Returns the critical value above which the probability
-   * of landing is inferior to a given significance level. */
   float testCriticalValue() override { return m_z; };
-  /* The p-value is the probability of obtaining a results at least
-   * as extreme as what was observed with the sample */
   float pValue() override { return m_pValue; };
 
   // Confidence interval
-  /* The estimate is the center of the confidence interval,
-   * and estimates the parameter of interest. */
   float estimate() override { return m_pEstimate; };
-  /* Returns the critical value above which the probability
-   * of landing is inferior to a given confidence level,
-   *  for the normed distribution. */
   float intervalCriticalValue() override { return m_zCritical; };
-  /* Returns the variance estimated from the sample. */
   float standardError() override { return m_SE; };
-  /* Returns the half-width of the confidence interval. */
   float marginOfError() override { return m_ME; };
 
 protected:

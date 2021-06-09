@@ -5,7 +5,7 @@
 #include <escher/view.h>
 
 #include "legend_view.h"
-#include "probability/models/statistic/statistic_view_range.h"
+#include "probability/models/statistic_view_range.h"
 #include "statistic_curve_view.h"
 #include "test_conclusion_view.h"
 

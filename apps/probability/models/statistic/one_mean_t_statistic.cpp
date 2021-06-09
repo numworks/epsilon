@@ -6,30 +6,33 @@
 
 namespace Probability {
 
-void OneMeanTStatistic::computeTest() {
-  Data::Data * data = App::app()->snapshot()->data();
-  float mean = data->hypothesisParams()->firstParam();
-  float meanSample = data->testData()->inputParameters()->paramAtIndex(0);
-  float s = data->testData()->inputParameters()->paramAtIndex(1);
-  int n = data->testData()->inputParameters()->paramAtIndex(2);
+OneMeanTStatistic::OneMeanTStatistic() {
+  m_params[ParamsOrder::X] = 20;
+  m_params[ParamsOrder::N] = 50;
+  m_params[ParamsOrder::S] = 2;
+}
 
-  m_degreesOfFreedom = _degreesOfFreedom(n);
-  m_z = _t(mean, meanSample, s, n);
+void OneMeanTStatistic::computeTest() {
+  float mean = m_hypothesisParams.firstParam();
+  m_degreesOfFreedom = _degreesOfFreedom(n());
+  m_z = _t(mean, x(), s(), n());
   m_pValue = _pVal(m_degreesOfFreedom, m_z);
 }
 
 void OneMeanTStatistic::computeInterval() {
-  Data::Data * data = App::app()->snapshot()->data();
-  float meanSample = data->testData()->inputParameters()->paramAtIndex(0);
-  float s = data->testData()->inputParameters()->paramAtIndex(1);
-  int n = data->testData()->inputParameters()->paramAtIndex(2);
-  float confidenceLevel = data->testData()->inputParameters()->threshold();
-
-  m_pEstimate = meanSample;
-  m_degreesOfFreedom = _degreesOfFreedom(n);
-  m_zCritical = _tCritical(m_degreesOfFreedom, confidenceLevel);
-  m_SE = _SE(s, n);
+  m_pEstimate = x();
+  m_degreesOfFreedom = _degreesOfFreedom(n());
+  m_zCritical = _tCritical(m_degreesOfFreedom, threshold());
+  m_SE = _SE(s(), n());
   m_ME = _ME(m_zCritical, m_SE);
+}
+
+const ParameterRepr * OneMeanTStatistic::paramReprAtIndex(int i) const {
+  constexpr static ParameterRepr params[k_numberOfParams] = {
+      {I18n::Message::MeanSymbol, I18n::Message::SampleMean},
+      {I18n::Message::s, I18n::Message::StandardDeviation},
+      {I18n::Message::N, I18n::Message::SampleSize}};
+  return &(params[i]);
 }
 
 float OneMeanTStatistic::_degreesOfFreedom(int n) {

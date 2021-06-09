@@ -16,7 +16,6 @@
 #include "input_controller.h"
 #include "probability/app.h"
 #include "probability/models/data.h"
-#include "probability/models/input_parameters.h"
 #include "probability/text_helpers.h"
 
 using namespace Probability;
@@ -85,9 +84,9 @@ void HypothesisController::loadHypothesisParam() {
 void HypothesisController::storeHypothesisParams() {
   // TODO maybe parse at the same time as when checking validity
   // TODO use TextFieldDelegateApp
-  Data::HypothesisParams * params = App::app()->snapshot()->data()->hypothesisParams();
+  HypothesisParams * params = App::app()->snapshot()->data()->hypothesisParams();
   params->setFirstParam(Shared::PoincareHelpers::ApproximateToScalar<float>(
       m_h0.textField()->text(), AppsContainer::sharedAppsContainer()->globalContext()));
-  params->setOp(Data::ComparisonOperator::Higher);
+  params->setOp(HypothesisParams::ComparisonOperator::Higher);
 }
 

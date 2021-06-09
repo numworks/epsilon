@@ -21,8 +21,6 @@ void GraphController::didBecomeFirstResponder() {
   m_rangeRight.setMode(m);
   m_rangeLeft.setStatistic(statistic);
   m_rangeRight.setStatistic(statistic);
-  m_rangeLeft.setInputParams(App::app()->snapshot()->data()->testInputParams());
-  m_rangeRight.setInputParams(App::app()->snapshot()->data()->testInputParams());
   m_graphView.reload();
 }
 

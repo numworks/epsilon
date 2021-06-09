@@ -6,7 +6,7 @@
 
 #include "probability/gui/distribution_graph_view.h"
 #include "probability/gui/selectable_cell_list_controller.h"
-#include "probability/models/statistic/statistic_view_range.h"
+#include "probability/models/statistic_view_range.h"
 
 namespace Probability {
 

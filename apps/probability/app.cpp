@@ -19,7 +19,7 @@ App::App(Snapshot * snapshot) :
     m_resultsController(&m_stackViewController, snapshot->data()->statistic(), &m_graphController,
                         this, this),
     m_inputController(&m_stackViewController, &m_resultsController,
-                      snapshot->data()->testInputParams(), this),
+                      snapshot->data()->statistic(), this),
     m_typeController(&m_stackViewController, &m_hypothesisController, &m_inputController),
     m_categoricalTypeController(&m_stackViewController, &m_inputGoodnessController,
                                 &m_inputHomogeneityController),

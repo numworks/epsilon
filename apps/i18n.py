@@ -281,12 +281,8 @@ def print_implementation(data, path, locales):
     f.write("constexpr static size_t localizedMessagesCount = " + str(len(data["messages"])) + ";\n")
     f.write("constexpr static size_t totalMessagesCount = universalMessagesCount + localizedMessagesCount;\n\n")
 
-    f.write("// Universal messages\n")
-    # Write the default message
-    f.write("static char universalDefault[] = {0};\n")
-    messageSizes = [1]
-
-    # Concatenate texts by locale (+ universal)
+    # Concatenate texts by locale (+ universal), keep track of message positions
+    messagePosition = [0]
     concatenatedData={"universal" : b''}
     for locale in locales:
         if not locale in data["data"]:
@@ -294,17 +290,17 @@ def print_implementation(data, path, locales):
             sys.exit(-1)
         concatenatedData[locale] = b''
 
-    # Write the universal messages
+    # Add universalDefault message
+    messagePosition.append(1 + messagePosition[-1])
+    concatenatedData["universal"] += b'\x00'
+
+    # Concatenate the universal messages
     for message in data["universal_messages"]:
         messageSize = len(data["data"]["universal"][message])+1
-        messageSizes.append(messageSize)
-        concatenatedData["universal"] += data["data"]["universal"][message]
+        messagePosition.append(messageSize + messagePosition[-1])
+        concatenatedData["universal"] += data["data"]["universal"][message] + b'\x00'
 
-        f.write("static char " + message + "[" + str(messageSize) + "] = \"\";\n")
-    f.write("\n")
-
-    f.write("// Localized messages\n")
-    # Write the localized messages
+    # Concatenate the localized messages
     for message in data["messages"]:
         maxMessageSize = 0
         # Compute max message size
@@ -312,37 +308,42 @@ def print_implementation(data, path, locales):
             if not message in data["data"][locale]:
                 sys.stderr.write("Error: Undefined key \"" + message + "\" for locale \"" + locale + "\"\n")
                 sys.exit(-1)
-            maxMessageSize = max(maxMessageSize, len(data["data"][locale][message])+1)
-            concatenatedData[locale] += data["data"][locale][message]
+            messageSize = len(data["data"][locale][message])+1
+            maxMessageSize = max(maxMessageSize, messageSize)
+            concatenatedData[locale] += data["data"][locale][message] + b'\x00'
         # Fill remaining space with empty chars. This allow having the same
         # concatenatedData size for all locales
         for locale in locales:
-            concatenatedData[locale] += b'\x00' * (maxMessageSize - (len(data["data"][locale][message]) + 1))
-        messageSizes.append(maxMessageSize)
-        f.write("static char " + message + "[" + str(maxMessageSize) + "] = \"\";\n")
+            messageSize = len(data["data"][locale][message])+1
+            concatenatedData[locale] += b'\x00' * (maxMessageSize - messageSize)
+        messagePosition.append(maxMessageSize + messagePosition[-1])
     f.write("\n")
 
-    # Message sizes must be stored to decompress data
+    # Remove last message position, which is total uncompressed size
+    TotalUncompressedSize = messagePosition.pop()
+
+    # Message position within the uncompressed text buffer
     print_block_from_list(f,
-        "constexpr static const size_t messageSizes[totalMessagesCount] = {\n",
-        messageSizes, lambda arg: str(arg), prefix="  ", elementPerLine=254)
-    # Messages, including universal and universalDefault
-    print_block_from_list(f,
-            "static char * messages[totalMessagesCount] = {\n",
-            ["universalDefault"]+data["universal_messages"]+data["messages"], prefix="  ", elementPerLine=16)
-    f.write("\n")
+        "constexpr static const size_t messagePosition[totalMessagesCount] = {\n",
+        messagePosition, lambda arg: str(arg), prefix="  ", elementPerLine=254)
 
     # Uncompressed sizes data
     localizedUncompressedSize = 0
     for locale in locales:
-        uncompressedLocaleSize = len(concatenatedData[locale])
+        uncompressedSize = len(concatenatedData[locale])
         # assert all language take the same space uncompressed
-        if (localizedUncompressedSize != 0 and uncompressedLocaleSize != localizedUncompressedSize):
+        if (localizedUncompressedSize != 0 and uncompressedSize != localizedUncompressedSize):
             sys.stderr.write("Error: Language uncompressed size differs : \"" + locale + "\"\n")
             sys.exit(-1)
-        localizedUncompressedSize = uncompressedLocaleSize
-    f.write("constexpr static size_t universalUncompressedSize = " + str(len(concatenatedData["universal"])) + ";\n")
+        localizedUncompressedSize = uncompressedSize
+    universalUncompressedSize = len(concatenatedData["universal"])
+    if (universalUncompressedSize + localizedUncompressedSize != TotalUncompressedSize):
+        sys.stderr.write("Error: Total uncompressed size differs : " + str(universalUncompressedSize + localizedUncompressedSize) + " instead of " + str(TotalUncompressedSize) + "\n")
+        sys.exit(-1)
+    f.write("constexpr static size_t universalUncompressedSize = " + str(universalUncompressedSize) + ";\n")
     f.write("constexpr static size_t localizedUncompressedSize = " + str(localizedUncompressedSize) + ";\n")
+    f.write("// Big buffer where current language messages are stored.\n")
+    f.write("static char uncompressedText[universalUncompressedSize + localizedUncompressedSize] = \"\";\n")
     f.write("\n")
 
     # Compressed data
@@ -369,32 +370,13 @@ def print_implementation(data, path, locales):
 
     # Write the translate method
     code = """
-void unpack(const uint8_t * compressed, uint8_t * uncompressed, size_t compressedSize, size_t uncompressedSize, size_t messageIndexStart, size_t messageIndexEnd) {
-  Ion::decompress(compressed, uncompressed, compressedSize, uncompressedSize);
-  size_t textStart = 0;
-  for (size_t messageIndex = messageIndexStart; messageIndex < messageIndexEnd; ++messageIndex) {
-    char * message = messages[messageIndex];
-    size_t messageSize = messageSizes[messageIndex]-1;
-    assert(textStart < uncompressedSize);
-    memcpy(message, uncompressed+textStart, messageSize);
-    message[messageSize] = 0;
-    textStart+=messageSize;
-  }
-}
-
 void unpackUniversal() {
-  uint8_t uncompressed[universalUncompressedSize];
-  // That's a VERY big buffer we're allocating on the stack
-  assert(Ion::stackSafe());
-  unpack(universalCompressed, uncompressed, universalCompressedSize, universalUncompressedSize, 1, universalMessagesCount);
+  Ion::decompress(universalCompressed, (uint8_t *)uncompressedText, universalCompressedSize, universalUncompressedSize);
 }
 
 void unpackLocalized(int selectedLanguage) {
   assert(selectedLanguage >= 0 && selectedLanguage < NumberOfLanguages);
-  uint8_t uncompressed[localizedUncompressedSize];
-  // That's a VERY big buffer we're allocating on the stack
-  assert(Ion::stackSafe());
-  unpack(localizedCompressed[selectedLanguage], uncompressed, localizedCompressedSizes[selectedLanguage], localizedUncompressedSize, universalMessagesCount, totalMessagesCount);
+  Ion::decompress(localizedCompressed[selectedLanguage], (uint8_t *)(uncompressedText + universalUncompressedSize), localizedCompressedSizes[selectedLanguage], localizedUncompressedSize);
 }
 
 // Last loaded language
@@ -412,8 +394,8 @@ const char * translate(Message m) {
     currentLanguage = selectedLanguage;
   }
   size_t messageIndex = (size_t)m;
-  assert(messageIndex * sizeof(char *) < sizeof(messages));
-  return messages[messageIndex];
+  assert(messagePosition[messageIndex] < sizeof(uncompressedText));
+  return uncompressedText + messagePosition[messageIndex];
 }
 
 }

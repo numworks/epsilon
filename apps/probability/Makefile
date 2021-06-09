@@ -42,6 +42,7 @@ app_probability_src += $(addprefix apps/probability/models/statistic/,\
 	two_proportions_statistic.cpp \
 	one_mean_z_statistic.cpp \
 	one_mean_t_statistic.cpp \
+	statistic_view_range.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\
@@ -55,6 +56,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	results_data_source.cpp \
 	distribution_graph_view.cpp \
 	test_conclusion_view.cpp \
+	statistic_curve_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\
@@ -72,6 +74,7 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	input_goodness_controller.cpp \
 	input_homogeneity_controller.cpp \
 	homogeneity_results_controller.cpp \
+	graph_controller.cpp \
 )
 
 app_probability_src +=  $(addprefix apps/probability/abstract/,\

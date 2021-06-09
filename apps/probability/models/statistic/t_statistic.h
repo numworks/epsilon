@@ -12,6 +12,7 @@ public:
   const char * intervalCriticalValueSymbol() override { return "t*"; };
   bool hasDegreeOfFreedom() override { return true; }
   float degreeOfFreedom() override { return m_degreesOfFreedom; }
+  float normedDensityFunction(float x) override;
 
 protected:
   float _pVal(float degreesOfFreedom, float t);

@@ -4,8 +4,11 @@
 
 namespace Probability {
 
-GraphView::GraphView() :
-    m_curveViewLeft(KDColorGreen), m_curveViewRight(KDColorGreen), m_separatorView(KDColorBlue) {
+GraphView::GraphView(StatisticViewRange * rangeLeft,
+                     StatisticViewRange * rangeRight) :
+    m_separatorView(KDColorBlue),
+    m_curveViewLeft(rangeLeft),
+    m_curveViewRight(rangeRight) {
 }
 
 void GraphView::computeMode() {

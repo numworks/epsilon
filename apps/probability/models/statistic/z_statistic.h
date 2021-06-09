@@ -11,6 +11,7 @@ public:
   const char * testCriticalValueSymbol() override { return "z"; };
   const char * intervalCriticalValueSymbol() override { return "z*"; };
   bool hasDegreeOfFreedom() override { return false; }
+  float normedDensityFunction(float x) override;
 
 protected:
   float _zCritical(float confidenceLevel);

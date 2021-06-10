@@ -1,4 +1,5 @@
 INFO_API_LEVEL := 0
+APPLICATION_INDEX ?= 0
 
 objects = $(addprefix numwars/,\
   alien.o \
@@ -16,10 +17,17 @@ objects += $(addprefix utils/,\
 
 objects += main.o icon.o
 
-custom_application.bin: custom_application.elf
+address = $(shell echo $$(( 0x90350000 + $(APPLICATION_INDEX) * 0x10000 )))
+
+.PHONY: run
+run: external_application.bin
+#read where which slot is used?
+	python3 dfu/dfu.py -s $(address):leave -D external_application.bin
+
+external_application.bin: external_application.elf
 	arm-none-eabi-objcopy -O binary $^ $@
 
-custom_application.elf: $(objects) flash.ld
+external_application.elf: $(objects) flash.ld
 	arm-none-eabi-gcc -Wl,--gc-sections -Os -Ilib -I. -Wall -MD -MP -ggdb3 -fdata-sections -ffunction-sections -fpie -mthumb -mfloat-abi=hard -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -ffreestanding -nostdinc -nostdlib -lgcc -Wl,-T,flash.ld $(filter-out %.ld,$^) -o $@
 
 %.o: %.cpp icon.h

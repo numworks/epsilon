@@ -19,7 +19,8 @@ constexpr AppInfo::AppInfo() :
   m_compressedPixelIconSize(k_compressedPixelSize),
   m_compressedPixelIcon(&_icon_symbol),
   m_entryPoint(&_main_symbol),
-  /* The app code is relocatable so the start of the flash is by default 0 which makes the size equals to the end address. */
+  /* The app code is relocatable so the start of the flash is by default 0
+   * which makes the size equals to the end address. */
   m_size(&_app_flash_end),
   m_footer(Magic)
 {

@@ -25,7 +25,7 @@ public:
 
   virtual float normedDensityFunction(float x) = 0;
   virtual float densityFunction(float x) {return 0;}  // TODO
-
+  
   // Input
   int numberOfParameters() { return numberOfStatisticParameters() + 1 /* threshold */;}
   float paramAtIndex(int i);
@@ -46,6 +46,7 @@ public:
   virtual float pValue() = 0;
   virtual bool hasDegreeOfFreedom() = 0;
   virtual float degreeOfFreedom() { return -1; };
+  virtual float zAlpha() = 0;
   bool testPassed();
 
   // Confidence interval
@@ -83,6 +84,7 @@ public:
   // Test statistic
   float testCriticalValue() override { return m_z; };
   float pValue() override { return m_pValue; };
+  float zAlpha() override { return m_zAlpha; }
 
   // Confidence interval
   float estimate() override { return m_pEstimate; };
@@ -94,6 +96,7 @@ protected:
   float _ME(float zCritical, float SE) { return zCritical * SE; }
 
   float m_z;
+  float m_zAlpha;
   float m_pValue;
   float m_pEstimate;
   float m_zCritical;

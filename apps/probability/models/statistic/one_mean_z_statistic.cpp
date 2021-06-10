@@ -14,6 +14,7 @@ OneMeanZStatistic::OneMeanZStatistic() {
 
 void OneMeanZStatistic::computeTest() {
   m_z = _z(m_hypothesisParams.firstParam(), x(), n(), sigma());
+  m_zAlpha = _zAlpha(m_threshold);
   char op = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, op);
 }

@@ -62,6 +62,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	results_data_source.cpp \
 	distribution_graph_view.cpp \
 	test_conclusion_view.cpp \
+	interval_conclusion_view.cpp \
 	statistic_curve_view.cpp \
 )
 

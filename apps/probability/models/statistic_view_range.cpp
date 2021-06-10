@@ -9,6 +9,9 @@
 namespace Probability {
 
 float StatisticViewRange::yMax() const {
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
+    return 0.5;
+  }
   float zAlpha = m_statistic->zAlpha();
   float z = m_statistic->testCriticalValue();
   float max =

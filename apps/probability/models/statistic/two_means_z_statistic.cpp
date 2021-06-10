@@ -8,7 +8,7 @@ namespace Probability {
 
 void TwoMeansZStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
-
+  m_zAlpha = _zAlpha(m_threshold);
   m_z = _z(deltaMean, x1(), n1(), sigma1(), x2(), n2(), sigma2());
   char op = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, op);

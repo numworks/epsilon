@@ -27,6 +27,10 @@ float ZStatistic::normedDensityFunction(float x) {
   return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, 0, 1);
 }
 
+float ZStatistic::_zAlpha(float alpha) {
+  return _zCritical(alpha);
+}
+
 float ZStatistic::_zCritical(float confidenceLevel) {
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(
       confidenceLevel, 0, 1);

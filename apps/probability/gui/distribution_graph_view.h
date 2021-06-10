@@ -11,8 +11,6 @@
 
 namespace Probability {
 
-typedef Escher::SolidColorView Separator;
-
 /* This is the common view for Significance Tests and Confidence Intervals.
  * It displays either 1 or 2 CurveViews separated by a Separator, a legend, and a ConclusionView.
  */

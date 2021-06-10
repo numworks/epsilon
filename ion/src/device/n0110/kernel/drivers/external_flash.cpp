@@ -1,5 +1,5 @@
 #include <shared/drivers/external_flash.h>
-#include <kernel/drivers/trampoline.h>
+#include <shared/drivers/trampoline.h>
 #include <assert.h>
 
 namespace Ion {

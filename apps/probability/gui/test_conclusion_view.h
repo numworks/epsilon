@@ -5,12 +5,13 @@
 #include <escher/palette.h>
 #include <escher/view.h>
 
+#include "probability/gui/horizontal_or_vertical_layout.h"
+
 namespace Probability {
 
-// TODO use a HorizontalLayout instead
 /* This view displays a message "test has been rejected / can't be rejected"
  * and a little checkmark or cross */
-class TestConclusionView : public Escher::View {
+class TestConclusionView : public HorizontalLayout {
 public:
   enum class Type { Success, Failure };
   TestConclusionView() { m_textView.setBackgroundColor(Escher::Palette::WallScreen); }

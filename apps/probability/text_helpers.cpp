@@ -11,14 +11,22 @@ int sprintf(char * buffer, const char * format, ...) {
   char * origin = buffer;
   va_list args;
   va_start(args, format);
-  while (format != 0) {
-    if (*format == '%' && *(format + 1) == 's') {
-      // Insert text now
-      buffer += strlcpy(buffer, va_arg(args, char *), 10000);
-      buffer += 2;
+  while (*format != 0) {
+    if (*format == '%') {
+      if (*(format + 1) == 's') {
+        // Insert text now
+        buffer += strlcpy(buffer, va_arg(args, char *), 10000);
+      } else if (*(format + 1) == 'c') {
+        // Insert char
+        *buffer = static_cast<char>(va_arg(args, int));
+        buffer++;
+      }
+      format += 2;
+    } else {
+      *(buffer++) = *(format++);
     }
-    *(buffer++) = *(format++);
   }
+  *buffer = '\0'; 
   return buffer - origin;
 }
 
@@ -82,4 +90,4 @@ int testTypeToText(Data::TestType t, char * buffer, int bufferLength) {
   return strlen(txt) + 1;
 }
 
-}
+}  // namespace Probability

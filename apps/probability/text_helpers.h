@@ -10,7 +10,7 @@
 
 namespace Probability {
 
-/* Fake sprintf, only supports %s. */
+/* Fake sprintf, only supports %s or %c */
 int sprintf(char * buffer, const char * format, ...);
 
 int testToText(Data::Test t, char * buffer, int bufferLength);

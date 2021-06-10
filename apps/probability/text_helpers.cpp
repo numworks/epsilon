@@ -26,11 +26,11 @@ int sprintf(char * buffer, const char * format, ...) {
       *(buffer++) = *(format++);
     }
   }
-  *buffer = '\0'; 
+  *buffer = '\0';
   return buffer - origin;
 }
 
-int testToText(Data::Test t, char * buffer, int bufferLength) {
+const char * testToText(Data::Test t) {
   // TODO replace with messages
   const char * txt;
   switch (t) {
@@ -46,14 +46,9 @@ int testToText(Data::Test t, char * buffer, int bufferLength) {
     case Data::Test::TwoMeans:
       txt = "two means";
       break;
-    default:
-      txt = "";
-      break;
   }
-  assert(strlen(txt) < bufferLength);
-  memcpy(buffer, txt, strlen(txt) + 1);
-
-  return strlen(txt) + 1;
+  assert(txt != nullptr);
+  return txt;
 }
 
 const char * testToTextSymbol(Data::Test t) {
@@ -72,22 +67,17 @@ const char * testToTextSymbol(Data::Test t) {
   }
 }
 
-int testTypeToText(Data::TestType t, char * buffer, int bufferLength) {
-  const char * txt;
+const char * testTypeToText(Data::TestType t) {
   switch (t) {
     case Data::TestType::TTest:
-      txt = "t-test";
-      break;
+      return "t-test";
     case Data::TestType::PooledTTest:
-      txt = "Pooled t-test";
-      break;
+      return "Pooled t-test";
     case Data::TestType::ZTest:
-      txt = "z-test";
-      break;
+      return "z-test";
   }
-  assert(strlen(txt) + 1 < bufferLength);
-  memcpy(buffer, txt, strlen(txt) + 1);
-  return strlen(txt) + 1;
+  assert(false);
+  return nullptr;
 }
 
 }  // namespace Probability

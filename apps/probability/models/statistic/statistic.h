@@ -24,10 +24,12 @@ public:
   virtual void computeInterval() = 0;
 
   virtual float normedDensityFunction(float x) = 0;
-  virtual float densityFunction(float x) {return 0;}  // TODO
+  virtual float densityFunction(float x) {
+    return normedDensityFunction((x - estimate()) / standardError());
+  };
 
   // Input
-  int numberOfParameters() { return numberOfStatisticParameters() + 1 /* threshold */;}
+  int numberOfParameters() { return numberOfStatisticParameters() + 1 /* threshold */; }
   float paramAtIndex(int i);
   void setParamAtIndex(int i, float p);
   I18n::Message paramSymbolAtIndex(int i) const { return paramReprAtIndex(i)->m_symbol; }

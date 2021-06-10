@@ -33,7 +33,6 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
 }
 
 const char * Probability::HypothesisController::title() {
-  int bufferSize = sizeof(m_titleBuffer);
   const char * testType = testTypeToText(App::app()->snapshot()->data()->testType());
   const char * test = testToText(App::app()->snapshot()->data()->test());
   sprintf(m_titleBuffer, "%s on %s", testType, test);
@@ -49,7 +48,6 @@ bool Probability::HypothesisController::textFieldShouldFinishEditing(Escher::Tex
 bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
   if (textField == m_h0.textField()) {
     float h0;
-    int row = selectedRow();
     if (textFieldDelegateApp()->hasUndefinedValue(text, h0, false, false)) {
       return false;
     }

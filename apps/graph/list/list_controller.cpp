@@ -20,7 +20,9 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
     TextFieldFunctionTitleCell(this),
   },
   m_expressionCells{},
-  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, inputEventHandlerDelegate)
+  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, inputEventHandlerDelegate),
+  m_modelsParameterController(this, nullptr, this),
+  m_modelsStackController(nullptr, &m_modelsParameterController)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);
@@ -190,6 +192,10 @@ void ListController::setFunctionNameInTextField(ExpiringPointer<ContinuousFuncti
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar);
   textField->setText(bufferName);
+}
+
+void ListController::addModel() {
+  Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 
 ContinuousFunctionStore * ListController::modelStore() {

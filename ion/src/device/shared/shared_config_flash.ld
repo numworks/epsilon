@@ -11,12 +11,12 @@ SIGNATURE_LENGTH = 64;
  * should protect it anyway)
  *
  * |                                SRAM                                                 |
- * | USERLAND DATA/BSS | HEAP | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS | canary |
+ * | USERLAND DATA/BSS | HEAP | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS - canary |
  *
  * Bootloader SRAM is mapped like:
  * |                                    STACK                                   | canary |
  * Kernel SRAM is mapped like:
- * | xxxxxxxxxxxxxxxxxxxxxxxx | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS | canary |
+ * | xxxxxxxxxxxxxxxxxxxxxxxx | USERLAND STACK | KERNEL STACK | KERNEL DATA/BSS - canary |
  * Userland SRAM is mapped like:
  * | USERLAND DATA/BSS | HEAP | USERLAND STACK | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
  *

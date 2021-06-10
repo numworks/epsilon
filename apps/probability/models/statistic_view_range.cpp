@@ -8,11 +8,11 @@
 namespace Probability {
 
 float StatisticViewRange::yMax() const {
-  float p = m_statistic->pValue();
+  float zAlpha = m_statistic->zAlpha();
   float z = m_statistic->testCriticalValue();
-  float max = fmaxf(p, z);
+  float max = fmaxf(m_statistic->normedDensityFunction(z), m_statistic->normedDensityFunction(zAlpha));
   float pixelHeight = max / k_areaHeight;
-  return 65 * pixelHeight;  // TODO access or compute view height
+  return 100 * pixelHeight;  // TODO access or compute view height
 }
 
 float StatisticViewRange::xMin() const {
@@ -24,10 +24,11 @@ float StatisticViewRange::xMax() const {
 }
 
 StatisticViewRange::Range StatisticViewRange::computeRange() const {
-  float p = m_statistic->pValue();
+  // TODO this is called +100 times, optimize ?
+  float zAlpha = m_statistic->zAlpha();
   float z = m_statistic->testCriticalValue();
-  float min = fminf(p, z);
-  float max = fmaxf(p, z);
+  float min = fminf(zAlpha, z);
+  float max = fmaxf(zAlpha, z);
   float pixelWidth = (max - min) / k_areaWidth;
   if (m_mode == GraphDisplayMode::OneCurveView) {
     return Range{min - k_marginLeftOfMin * pixelWidth,

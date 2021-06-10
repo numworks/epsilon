@@ -50,6 +50,18 @@ void initMPU() {
   /* We will activate the default memory map as the background region which is
    * accessible from privileged software only (PM0253). */
 
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(Board::Config::BootloaderStartAddress);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_64KB);
+  MPU.RASR()->setSRD(0);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RO);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(1);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
   /* 2.1 Enable unprivileged access to the SRAM - except the range dedicated to
    * the kernel */
   MPU.RNR()->setREGION(sector++);

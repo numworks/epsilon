@@ -8,11 +8,11 @@
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/led.h>
-#include <kernel/drivers/trampoline.h>
 #include <kernel/warning_display.h>
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
+#include <shared/drivers/trampoline.h>
 #include <shared/drivers/usb_privileged.h>
 
 namespace Ion {

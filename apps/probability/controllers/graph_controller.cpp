@@ -21,6 +21,9 @@ void GraphController::didBecomeFirstResponder() {
   m_rangeRight.setMode(m);
   m_rangeLeft.setStatistic(statistic);
   m_rangeRight.setStatistic(statistic);
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
+    m_graphView.intervalConclusionView()->setInterval(statistic->estimate(), statistic->marginOfError());
+  }
   m_graphView.reload();
 }
 

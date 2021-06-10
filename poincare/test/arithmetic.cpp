@@ -63,7 +63,7 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
       int tempAValue = a.isExtractable() ? a.extractedInt() : INT_MAX;
       int n = arithmetic.PrimeFactorization(a);
       // a should remain unchanged
-      assert(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX));
+      quiz_assert_print_if_failure(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX), failInformationBuffer);
       quiz_assert_print_if_failure(n == length, failInformationBuffer);
       for (int index = 0; index < length; index++) {
         /* Cheat: instead of comparing to integers, we compare their
@@ -90,8 +90,6 @@ void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
     Arithmetic arithmetic;
     int tempAValue = a.isExtractable() ? a.extractedInt() : INT_MAX;
     int numberOfDivisors = arithmetic.PositiveDivisors(a);
-    // a should remain unchanged
-    assert(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX));
     if (numberOfDivisors == Arithmetic::k_errorTooManyFactors) {
       numberOfDivisors = Arithmetic::k_maxNumberOfDivisors;
     } else {
@@ -100,6 +98,8 @@ void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
     constexpr size_t bufferSize = 100;
     char failInformationBuffer[bufferSize];
     fill_buffer_with(failInformationBuffer, bufferSize, "divisors(", &a, 1);
+    // a should remain unchanged
+    quiz_assert_print_if_failure(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX), failInformationBuffer);
     quiz_assert_print_if_failure(numberOfDivisors == N, failInformationBuffer);
     for (int i = 0; i < N; i++) {
       quiz_assert_print_if_failure(arithmetic.divisorAtIndex(i)->approximate<float>() == Integer(divisors[i]).approximate<float>(), failInformationBuffer);
@@ -168,6 +168,6 @@ QUIZ_CASE(poincare_arithmetic_divisors) {
   assert_divisors_equal_to(Integer(10080), {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 24, 28, 30, 32, 35, 36, 40, 42, 45, 48, 56, 60, 63, 70, 72, 80, 84, 90, 96, 105, 112, 120, 126, 140, 144, 160, 168, 180, 210, 224, 240, 252, 280, 288, 315, 336, 360, 420, 480, 504, 560, 630, 672, 720, 840, 1008, 1120});
   quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer(10080)) == Arithmetic::k_errorTooManyFactors, "divisors(10080)");
   /* Factor too large */
-  quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer(INT_MIN)) == Arithmetic::k_errorFactorTooLarge, "divisors(INT_MIN)");
+  quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer((int)INT_MIN)) == Arithmetic::k_errorFactorTooLarge, "divisors(INT_MIN)");
   quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer::Addition(Integer(INT_MAX), Integer(1))) == Arithmetic::k_errorFactorTooLarge, "divisors(INT_MAX+1)");
 }

@@ -23,7 +23,6 @@ private:
   uint32_t m_header;
   uint32_t m_apiLevel;
   const char * m_title;
-  // TODO: add explanation on how to generate m_compressedPixelIcon
   uint32_t m_compressedPixelIconSize;
   char * m_compressedPixelIcon;
   char * m_entryPoint;

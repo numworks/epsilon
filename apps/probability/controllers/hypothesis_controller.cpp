@@ -35,14 +35,9 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
 
 const char * Probability::HypothesisController::title() {
   int bufferSize = sizeof(m_titleBuffer);
-  int written =
-      testTypeToText(App::app()->snapshot()->data()->testType(), m_titleBuffer, bufferSize);
-  const char on[] = " on ";
-  memcpy(m_titleBuffer + written - 1, on, sizeof(on));
-  written += sizeof(on) - 1;
-  written += testToText(App::app()->snapshot()->data()->test(), m_titleBuffer + written - 1,
-                        bufferSize - written - 1);
-  assert(written < bufferSize);
+  const char * testType = testTypeToText(App::app()->snapshot()->data()->testType());
+  const char * test = testToText(App::app()->snapshot()->data()->test());
+  sprintf(m_titleBuffer, "%s on %s", testType, test);
   return m_titleBuffer;
 }
 
@@ -73,13 +68,10 @@ void HypothesisController::buttonAction() {
 
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = 20;
-  char buffer[bufferSize] { 0 };
+  char buffer[bufferSize]{0};
   const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
-  strlcat(buffer, symbol, bufferSize);
-  int written = strlen(buffer);
   const char op = static_cast<const char>(App::app()->snapshot()->data()->hypothesisParams()->op());
-  memcpy(buffer + written, &op, 1);
-  written++;
+  int written = sprintf(buffer, "%s%c", symbol, op);
   float p = App::app()->snapshot()->data()->hypothesisParams()->firstParam();
   Poincare::PrintFloat::ConvertFloatToText(p, buffer + written, bufferSize, k_maxInputLength, 5,
                                            Poincare::Preferences::PrintFloatMode::Decimal);
@@ -95,4 +87,3 @@ void HypothesisController::storeHypothesisParams() {
       m_h0.textField()->text(), AppsContainer::sharedAppsContainer()->globalContext()));
   params->setOp(HypothesisParams::ComparisonOperator::Higher);
 }
-

@@ -104,11 +104,7 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 
 const char * TypeController::title() {
   // TODO replace with messages
-  const char * testOn = "Test on ";
-  int offset = strlen(testOn);
-  memcpy(m_titleBuffer, testOn, offset);
-  testToText(App::app()->snapshot()->data()->test(), m_titleBuffer + offset,
-             sizeof(m_titleBuffer) - offset);
+  sprintf(m_titleBuffer, "Test on %s", testToText(App::app()->snapshot()->data()->test()));
   return m_titleBuffer;
 }
 

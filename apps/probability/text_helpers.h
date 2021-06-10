@@ -13,9 +13,9 @@ namespace Probability {
 /* Fake sprintf, only supports %s or %c */
 int sprintf(char * buffer, const char * format, ...);
 
-int testToText(Data::Test t, char * buffer, int bufferLength);
+const char * testToText(Data::Test t);
 const char * testToTextSymbol(Data::Test t);
-int testTypeToText(Data::TestType t, char * buffer, int bufferLength);
+const char * testTypeToText(Data::TestType t);
 
 
 }  // namespace Probability

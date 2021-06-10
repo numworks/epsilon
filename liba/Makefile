@@ -8,6 +8,9 @@ liba_bootloader_src += $(addprefix liba/src/, \
   memset.c \
   ssp.c \
   strchr.c \
+  strcmp.c \
+  strlcat.c \
+  strlcpy.c \
   strlen.c \
 )
 
@@ -15,14 +18,7 @@ liba_kernel_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \
   assert.c \
-  memcmp.c \
-  memcpy.c \
-  memmove.c \
-  memset.c \
   ssp.c \
-  strchr.c \
-  strlcpy.c \
-  strlen.c \
 )
 
 liba_src += $(addprefix liba/src/, \
@@ -37,17 +33,8 @@ liba_src += $(addprefix liba/src/, \
   fpclassifyf.c \
   ieee754.c \
   malloc.c \
-  memcmp.c \
-  memcpy.c \
-  memmove.c \
-  memset.c \
   nearbyint.c \
   nearbyintf.c \
-  strcmp.c \
-  strchr.c \
-  strlcat.c \
-  strlcpy.c \
-  strlen.c \
   external/sqlite/mem5.c \
 )
 

@@ -33,38 +33,3 @@ TRAMPOLINE_INTERFACE(TRAMPOLINE_STRLCAT, strlcat, (a,b,c), size_t, char * a, con
 TRAMPOLINE_INTERFACE(TRAMPOLINE_STRLCPY, strlcpy, (a,b,c), size_t, char * a, const char * b, size_t c)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_STRLEN, strlen, (a), size_t, const char * a)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_STRNCMP, strncmp, (a,b,c), int, const char * a, const char * b, size_t c)
-
-#if 0
-typedef int (*MemcmpFunction)(const void *, const const void *, size_t);
-
-int memcmp(const void * s1, const void * s2, size_t n) {
-  MemcmpFunction * trampolineFunction = reinterpret_cast<MemcmpFunction *>(Ion::Device::Trampoline::addressOfFunction(TRAMPOLINE_MEMCMP));
-  return (*trampolineFunction)(s1, s2, n);
-}
-
-typedef void * (*MemcpyFunction)(void *, const void *, size_t);
-
-void * __attribute__((noinline)) memcpy(void * dst, const void * src, size_t n) {
-  MemcpyFunction * trampolineFunction = reinterpret_cast<MemcpyFunction *>(Ion::Device::Trampoline::addressOfFunction(TRAMPOLINE_MEMCPY));
-  return (*trampolineFunction)(dst, src, n);
-}
-
-void * memmove(void * dst, const void * src, size_t n) {
-  MemcpyFunction * trampolineFunction = reinterpret_cast<MemcpyFunction *>(Ion::Device::Trampoline::addressOfFunction(TRAMPOLINE_MEMMOVE));
-  return (*trampolineFunction)(dst, src, n);
-}
-
-typedef void * (*MemsetFunction)(void *, int, size_t);
-
-void * __attribute__((noinline)) memset(void * des, int c, size_t n) {
-  MemsetFunction * trampolineFunction = reinterpret_cast<MemsetFunction *>(Ion::Device::Trampoline::addressOfFunction(TRAMPOLINE_MEMSET));
-  return (*trampolineFunction)(dst, c, n);
-}
-
-typedef void * (*MemsetFunction)(void *, int, size_t);
-
-void * __attribute__((noinline)) memset(void * des, int c, size_t n) {
-  MemsetFunction * trampolineFunction = reinterpret_cast<MemsetFunction *>(Ion::Device::Trampoline::addressOfFunction(TRAMPOLINE_MEMSET));
-  return (*trampolineFunction)(dst, c, n);
-}
-#endif

@@ -73,11 +73,17 @@ void HypothesisController::buttonAction() {
 
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = 20;
-  char buffer[bufferSize]{"p<"};
+  char buffer[bufferSize] { 0 };
+  const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
+  strlcat(buffer, symbol, bufferSize);
+  int written = strlen(buffer);
+  const char op = static_cast<const char>(App::app()->snapshot()->data()->hypothesisParams()->op());
+  memcpy(buffer + written, &op, 1);
+  written++;
   float p = App::app()->snapshot()->data()->hypothesisParams()->firstParam();
-  Poincare::PrintFloat::ConvertFloatToText(p, buffer + 2, bufferSize, k_maxInputLength, 5,
+  Poincare::PrintFloat::ConvertFloatToText(p, buffer + written, bufferSize, k_maxInputLength, 5,
                                            Poincare::Preferences::PrintFloatMode::Decimal);
-  m_h0.setAccessoryText(buffer + 2);
+  m_h0.setAccessoryText(buffer + written);
   m_ha.setAccessoryText(buffer);
 }
 

@@ -7,6 +7,14 @@
 
 namespace Probability {
 
+float StatisticViewRange::yMax() const {
+  float p = m_statistic->pValue();
+  float z = m_statistic->testCriticalValue();
+  float max = fmaxf(p, z);
+  float pixelHeight = max / k_areaHeight;
+  return 65 * pixelHeight;  // TODO access or compute view height
+}
+
 float StatisticViewRange::xMin() const {
   return computeRange().min;
 }
@@ -20,7 +28,7 @@ StatisticViewRange::Range StatisticViewRange::computeRange() const {
   float z = m_statistic->testCriticalValue();
   float min = fminf(p, z);
   float max = fmaxf(p, z);
-  float pixelWidth = (max - min) / k_areaSize;
+  float pixelWidth = (max - min) / k_areaWidth;
   if (m_mode == GraphDisplayMode::OneCurveView) {
     return Range{min - k_marginLeftOfMin * pixelWidth,
                  min + (Ion::Display::Width - k_marginLeftOfMin) * pixelWidth};

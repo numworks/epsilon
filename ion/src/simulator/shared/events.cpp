@@ -99,21 +99,11 @@ Event getEvent(int * timeout) {
 #endif
 
 size_t copyText(uint8_t eventId, char * buffer, size_t bufferSize) {
-  Ion::Events::Event e(eventId);
-  if (e.text()) {
-    return strlcpy(buffer, e.text(), bufferSize);
-  } else {
-    return 0;
-  }
+  return sharedCopyText(eventId, buffer, bufferSize);
 }
 
 bool isDefined(uint8_t eventId) {
-  Event e(eventId);
-  if (e.isKeyboardEvent()) {
-    return s_dataForEvent[static_cast<uint8_t>(e)].isDefined();
-  } else {
-    return (e == None || e == Termination || e == USBEnumeration || e == USBPlug || e == BatteryCharging || e == ExternalText);
-  }
+  return sharedIsDefined(eventId);
 }
 
 void setSpinner(bool) {}

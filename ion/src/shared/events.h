@@ -8,6 +8,8 @@ namespace Ion {
 namespace Events {
 
 Event sharedGetEvent(int * timeout);
+size_t sharedCopyText(uint8_t eventId, char * buffer, size_t bufferSize);
+bool sharedIsDefined(uint8_t eventId);
 
 /* Platform specific functions */
 bool handlePreemption(bool stalling);

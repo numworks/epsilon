@@ -2,13 +2,12 @@
 
 #include <kandinsky/color.h>
 
+#include "probability/app.h"
+
 namespace Probability {
 
-GraphView::GraphView(StatisticViewRange * rangeLeft,
-                     StatisticViewRange * rangeRight) :
-    m_separatorView(Palette::WallScreen),
-    m_curveViewLeft(rangeLeft),
-    m_curveViewRight(rangeRight) {
+GraphView::GraphView(StatisticViewRange * rangeLeft, StatisticViewRange * rangeRight) :
+    m_separatorView(Palette::WallScreen), m_curveViewLeft(rangeLeft), m_curveViewRight(rangeRight) {
 }
 
 void GraphView::setMode(GraphDisplayMode m) {
@@ -38,7 +37,7 @@ void GraphView::layoutSubviews(bool force) {
                              force);
     m_curveViewRight.setFrame(KDRect(KDPoint(width + k_separatorWidth, 0), size), force);
   }
-  m_conclusionView.setFrame(
+  conclusionView()->setFrame(
       KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)), force);
   KDSize k_legendSize = m_legend.minimalSizeForOptimalDisplay();
   m_legend.setFrame(KDRect(KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight, 20),
@@ -49,8 +48,15 @@ void GraphView::layoutSubviews(bool force) {
 Escher::View * GraphView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   Escher::View * subviews[] = {&m_curveViewLeft, &m_curveViewRight, &m_separatorView,
-                               &m_conclusionView, &m_legend};
+                               conclusionView(), &m_legend};
   return subviews[i];
+}
+
+Escher::View * GraphView::conclusionView() {
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    return &m_testConclusionView;
+  }
+  return &m_intervalConclusionView;
 }
 
 }  // namespace Probability

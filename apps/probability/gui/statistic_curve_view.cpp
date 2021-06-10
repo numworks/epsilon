@@ -14,11 +14,11 @@ void StatisticCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
 
   float z = m_statistic->testCriticalValue();
-  float p = m_statistic->pValue();
-  float min = fminf(z, p);
-  float max = fmaxf(z, p);
-  KDColor middleColor = z > p ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
-  KDColor afterColor = z < p ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
+  float zAlpha = m_statistic->zAlpha();
+  float min = fminf(z, zAlpha);
+  float max = fmaxf(z, zAlpha);
+  KDColor middleColor = z > zAlpha ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
+  KDColor afterColor = z < zAlpha ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   drawCartesianCurve(ctx, rect, min, max, evaluateAtAbsissa, m_statistic, nullptr, afterColor, true,
                      true, min, max);
   drawCartesianCurve(ctx, rect, max, INFINITY, evaluateAtAbsissa, m_statistic, nullptr, middleColor,

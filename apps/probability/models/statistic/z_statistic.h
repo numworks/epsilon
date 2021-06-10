@@ -14,6 +14,7 @@ public:
   float normedDensityFunction(float x) override;
 
 protected:
+  float _zAlpha(float alpha);
   float _zCritical(float confidenceLevel);
   float _pVal(float z, char op);
 };

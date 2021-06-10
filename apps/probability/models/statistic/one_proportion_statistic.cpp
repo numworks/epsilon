@@ -16,15 +16,16 @@ OneProportionStatistic::OneProportionStatistic() {
 void OneProportionStatistic::computeTest() {
   float p0 = m_hypothesisParams.firstParam();
   float prop = _pEstimate(x(), n());
-  // Z
+
+  m_zAlpha = _zAlpha(m_threshold);
   m_z = _z(p0, prop, n());
-  // p-value
   char fakeOp = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, fakeOp);
 }
 
 void OneProportionStatistic::computeInterval() {
   m_pEstimate = _pEstimate(x(), n());
+  m_zAlpha = _zAlpha(m_threshold);
   m_zCritical = _zCritical(threshold());
   m_SE = _SE(m_pEstimate, n());
   m_ME = _ME(m_zCritical, m_SE);

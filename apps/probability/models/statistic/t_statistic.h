@@ -15,6 +15,7 @@ public:
   float normedDensityFunction(float x) override;
 
 protected:
+  float _tAlpha(float degreesOfFreedom, float alpha);
   float _pVal(float degreesOfFreedom, float t);
   float _tCritical(float degreesOfFreedom, float confidenceLevel);
   float m_degreesOfFreedom;

@@ -13,6 +13,7 @@ namespace Probability {
 class GraphController : public Page {
 public:
   GraphController(StackViewController * stack);
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastThreeTitles; }
   Escher::View * view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;
 

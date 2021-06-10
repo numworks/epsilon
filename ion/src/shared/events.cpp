@@ -5,6 +5,7 @@
 #include <layout_events.h>
 #include <limits.h>
 #include <algorithm>
+#include <string.h>
 
 extern "C" {
 #include <assert.h>
@@ -145,6 +146,24 @@ Event sharedGetEvent(int * timeout) {
       Ion::Events::incrementRepetitionFactor();
       return sLastEvent;
     }
+  }
+}
+
+size_t sharedCopyText(uint8_t eventId, char * buffer, size_t bufferSize) {
+  Event e(eventId);
+  if (e.text()) {
+    return strlcpy(buffer, e.text(), bufferSize);
+  } else {
+    return 0;
+  }
+}
+
+bool sharedIsDefined(uint8_t eventId) {
+  Event e(eventId);
+  if (e.isKeyboardEvent()) {
+    return s_dataForEvent[static_cast<uint8_t>(e)].isDefined();
+  } else {
+    return (e == None || e == Termination || e == USBEnumeration || e == USBPlug || e == BatteryCharging || e == ExternalText);
   }
 }
 

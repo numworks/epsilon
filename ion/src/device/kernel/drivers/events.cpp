@@ -18,7 +18,6 @@
 #include <ion/src/shared/events_modifier.h>
 #include <layout_events.h>
 #include <limits.h>
-#include <string.h>
 
 namespace Ion {
 namespace Events {
@@ -170,21 +169,11 @@ namespace Events {
 using namespace Regs;
 
 size_t copyTextSecure(uint8_t eventId, char * buffer, size_t bufferSize) {
-  Ion::Events::Event e(eventId);
-  if (e.text()) {
-    return strlcpy(buffer, e.text(), bufferSize);
-  } else {
-    return 0;
-  }
+  return Ion::Events::sharedCopyText(eventId, buffer, bufferSize);
 }
 
 bool isDefinedSecure(uint8_t eventId) {
-  Ion::Events::Event e(eventId);
-  if (e.isKeyboardEvent()) {
-    return Ion::Events::s_dataForEvent[static_cast<uint8_t>(e)].isDefined();
-  } else {
-    return (e == Ion::Events::None || e == Ion::Events::Termination || e == Ion::Events::USBEnumeration || e == Ion::Events::USBPlug || e == Ion::Events::BatteryCharging || e == Ion::Events::ExternalText);
-  }
+  return Ion::Events::sharedIsDefined(eventId);
 }
 
 /* We want to prescale the timer to be able to set the auto-reload in

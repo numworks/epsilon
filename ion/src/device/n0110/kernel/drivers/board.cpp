@@ -89,12 +89,10 @@ void initMPU() {
 
   // 2.4 Configure a MPU region for the FMC memory area
   /* This is needed for interfacing with the LCD
-   * We define the whole FMC memory bank 1 as strongly ordered, non-executable
-   * and not accessible. We define the FMC command and data addresses as
-   * writeable non-cachable, non-buffereable and non shareable.
-   *
-   * NB: we could set the all 256MB as readable/writable in order to save up
-   * MPU regions. */
+   * Actually, we only need to access the FMC command and data addresses (32
+   * bits respectively at 0x60000000 and 0x60020000). However, we can only
+   * configure 8 MPU regions so to save an extra sector we set all 256MB as
+   * readable/writable non-cachable, non-buffereable and non shareable. */
 
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x60000000);

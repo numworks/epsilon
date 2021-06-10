@@ -2,6 +2,7 @@
 #define APPS_PROBABILITY_CONTROLLERS_HYPOTHESIS_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
+#include <apps/shared/text_field_delegate.h>
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_editable_text.h>
@@ -9,7 +10,6 @@
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <escher/text_field_delegate.h>
 #include <escher/view.h>
 
 #include "input_controller.h"
@@ -22,10 +22,12 @@ namespace Probability {
 
 class NormalInputController;
 
-class HypothesisController : public SelectableListViewPage, public ButtonDelegate {
+class HypothesisController : public SelectableListViewPage,
+                             public ButtonDelegate,
+                             public Shared::TextFieldDelegate {
 public:
   HypothesisController(Escher::StackViewController * parent, InputController * inputController,
-                       InputEventHandlerDelegate * handler, TextFieldDelegate * textFieldDelegate);
+                       InputEventHandlerDelegate * handler);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   };
@@ -41,8 +43,14 @@ public:
     SelectableListViewPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }
 
+  // TextFieldDelegate
+  bool textFieldShouldFinishEditing(Escher::TextField * textField,
+                                    Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text,
+                                 Ion::Events::Event event) override;
+
 private:
-  void loadHypothesisParam();
+  void loadHypothesisParam(bool h0Only = false);
   void storeHypothesisParams();
 
   constexpr static int k_indexOfH0 = 0;

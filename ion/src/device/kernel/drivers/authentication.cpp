@@ -1,8 +1,8 @@
 #include <kernel/drivers/authentication.h>
 #include <drivers/led.h>
 #include <kernel/drivers/board.h>
-#include <kernel/drivers/trampoline.h>
 #include <shared/drivers/config/board.h>
+#include <shared/drivers/trampoline.h>
 
 namespace Ion {
 namespace Device {

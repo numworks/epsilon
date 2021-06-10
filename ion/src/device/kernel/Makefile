@@ -20,7 +20,6 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   drivers/svcall_handler_as.s \
   drivers/swd.cpp \
   drivers/timing.cpp \
-  drivers/trampoline.cpp \
   drivers/usb.cpp \
   drivers/wakeup.cpp \
   main.cpp \

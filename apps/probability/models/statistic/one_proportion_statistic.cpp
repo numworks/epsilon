@@ -43,7 +43,7 @@ float OneProportionStatistic::_pEstimate(float x, float n) {
 }
 
 float OneProportionStatistic::_z(float p0, float p, int n) {
-  return std::abs((p - p0) / sqrt(p0 * (1 - p0) / n));
+  return (p - p0) / sqrt(p0 * (1 - p0) / n);
 }
 
 float OneProportionStatistic::_SE(float pEstimate, int n) {

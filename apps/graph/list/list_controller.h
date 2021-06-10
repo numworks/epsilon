@@ -7,6 +7,7 @@
 #include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
+#include "../function_models_parameter_controller.h"
 
 namespace Graph {
 
@@ -20,8 +21,12 @@ public:
   bool textFieldDidAbortEditing(Escher::TextField * textField) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  // Make methods public
+  void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }
+  bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
 private:
   constexpr static int k_maxNumberOfDisplayableRows = 5;
+  void addModel() override;
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
@@ -33,6 +38,8 @@ private:
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;
+  FunctionModelsParameterController m_modelsParameterController;
+  Escher::StackViewController m_modelsStackController;
 };
 
 }

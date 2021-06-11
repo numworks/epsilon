@@ -44,7 +44,7 @@ StatisticViewRange::Range StatisticViewRange::computeXRange() const {
   // Confidence interval
   float center = m_statistic->estimate();
   float delta = m_statistic->standardError();
-  constexpr static float factor = 2.5;
+  constexpr static float factor = 4;
   return Range{center - factor * delta, center + factor * delta};
 }
 
@@ -60,7 +60,7 @@ StatisticViewRange::Range StatisticViewRange::computeTestXRange(float z, float z
 
 StatisticViewRange::Range StatisticViewRange::computeYRange() const {
   if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
-    return Range{-0.01, 0.5};
+    return Range{-0.1, 0.5};
   }
   float zAlpha = m_statistic->zAlpha();
   float z = m_statistic->testCriticalValue();

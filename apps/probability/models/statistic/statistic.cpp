@@ -1,5 +1,7 @@
 #include "statistic.h"
 
+#include <math.h>
+
 #include "probability/app.h"
 
 namespace Probability {
@@ -27,6 +29,11 @@ void Statistic::initThreshold() {
   } else {
     m_threshold = 0.95;
   }
+}
+
+float Statistic::absIfNeeded(float f) {
+  return m_hypothesisParams.op() == HypothesisParams::ComparisonOperator::Different ? std::abs(f)
+                                                                                    : f;
 }
 
 }  // namespace Probability

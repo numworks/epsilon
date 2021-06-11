@@ -38,7 +38,7 @@ float TwoMeansZStatistic::_xEstimate(float meanSample1, float meanSample2) {
 
 float TwoMeansZStatistic::_z(float deltaMean, float meanSample1, float n1, float sigma1,
                              float meanSample2, float n2, float sigma2) {
-  return ((meanSample1 - meanSample2) - (deltaMean)) / _SE(sigma1, n1, sigma2, n2);
+  return absIfNeeded(((meanSample1 - meanSample2) - (deltaMean)) / _SE(sigma1, n1, sigma2, n2));
 }
 
 float TwoMeansZStatistic::_SE(float sigma1, int n1, float sigma2, int n2) {

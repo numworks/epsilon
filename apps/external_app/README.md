@@ -2,7 +2,7 @@
 
 ## Quick installation
 
-1. Plug your calculator to your computer, 'THE CALCULATOR IS CONNECTED' sreen should be displayed.
+1. Plug your calculator to your computer. The calculator should display 'THE CALCULATOR IS CONNECTED'.
 2. To compile and flash the external application, run the following command:
 ```shell
 make clean
@@ -11,7 +11,6 @@ make
 
 By default, the application is sent to the calculator as the first external application. You might set the application index as in the following example:
 ```shell
-make clean
 make APPLICATION_INDEX=1
 ```
 

@@ -1,6 +1,7 @@
 #ifndef POINCARE_ARC_COSINE_H
 #define POINCARE_ARC_COSINE_H
 
+#include <poincare/arc_secant.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/trigonometry.h>
@@ -8,6 +9,7 @@
 namespace Poincare {
 
 class ArcCosineNode final : public ExpressionNode {
+friend class ArcSecantNode;
 public:
 
   // TreeNode

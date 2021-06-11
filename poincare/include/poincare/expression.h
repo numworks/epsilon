@@ -21,7 +21,10 @@ class Symbol;
 class Expression : public TreeHandle {
   friend class AbsoluteValue;
   friend class Addition;
+  friend class ArcCosecant;
   friend class ArcCosine;
+  friend class ArcCotangent;
+  friend class ArcSecant;
   friend class ArcSine;
   friend class ArcTangent;
   friend class Arithmetic;
@@ -37,7 +40,9 @@ class Expression : public TreeHandle {
   friend class ComplexHelper;
   friend class ConfidenceInterval;
   friend class Conjugate;
+  friend class Cosecant;
   friend class Cosine;
+  friend class Cotangent;
   friend class Decimal;
   friend class Dependency;
   friend class Derivative;
@@ -89,6 +94,7 @@ class Expression : public TreeHandle {
   friend class Randint;
   friend class RealPart;
   friend class Round;
+  friend class Secant;
   friend class Sequence;
   friend class SequenceNode;
   friend class SignFunction;
@@ -163,6 +169,7 @@ public:
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   typedef bool (*ExpressionTypeTest)(const Expression e, const void * context);
+  // The test should be able to handle uninitialized expressions.
   bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context) const;
@@ -194,7 +201,7 @@ public:
    * of the first 3 polynomial coefficients and returns the  polynomial degree.
    * It is supposed to be called on a reduced expression.
    * coefficients has up to 3 entries.  */
-  static constexpr int k_maxPolynomialDegree = 2;
+  static constexpr int k_maxPolynomialDegree = 3;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
@@ -222,7 +229,7 @@ public:
   static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat);
 
   /* Layout Helper */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripCodePointsStyle = false, bool nested = false) const;
   /* TODO:
    * - change signature to
    *   size_t serialize(char * buffer, size_t bufferSize...)
@@ -251,9 +258,11 @@ public:
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
-  /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
-   * circularly defined. Same convention as for 'deepReplaceReplaceableSymbols'.*/
-  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, bool replaceFunctionsOnly = false);
+  /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
+   * uninitialized expression if it is circularly defined.
+   * SymbolicComputation defines how to handle functions
+   * and undefined symbols. */
+  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
   Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
@@ -288,8 +297,6 @@ public:
     const int m_numberOfChildren;
     Expression (* const m_untypedBuilder)(Expression children);
   };
-
-  static void Tidy() { sSymbolReplacementsCountLock = false; }
 
   /* Tuple */
   typedef std::initializer_list<Expression> Tuple;
@@ -369,12 +376,14 @@ protected:
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation); }
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
-  /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
-   * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
+  /* 'deepReplaceReplaceableSymbols' replaces symbols in place. isCircular
+   * indicates if it is circularly defined and has been interrupted.
+   * SymbolicComputation defines how to handle functions and undefined symbols.
+   */
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
   Expression defaultOddFunctionSetSign(ExpressionNode::Sign, ExpressionNode::ReductionContext reductionContext);
 
   /* Simplification */
@@ -404,7 +413,6 @@ protected:
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
-  static bool sSymbolReplacementsCountLock;
   // Solver parameters
   static constexpr double k_solverStepPrecision = 1e-2;
   static constexpr double k_solverMinimalStep = 1e-3;

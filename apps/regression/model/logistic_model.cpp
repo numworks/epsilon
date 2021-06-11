@@ -110,7 +110,7 @@ void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients
    * Sign of b if :                  c positive         c negative
    * - Positive slope (__/‾‾) :      b positive         b negative
    * - Negative slope (‾‾\__) :      b negative         b positive */
-  if (slope < 0.0 != c < 0.0) {
+  if ((slope < 0.0) != (c < 0.0)) {
     b = -b;
   }
 

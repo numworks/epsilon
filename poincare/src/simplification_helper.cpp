@@ -78,26 +78,31 @@ Expression SimplificationHelper::defaultShallowReduce(Expression e) {
   return res;
 }
 
-Expression SimplificationHelper::shallowReduceKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
+Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext) {
   Expression child = e.childAtIndex(0);
   Expression unit;
   child.removeUnit(&unit);
   if (!unit.isUninitialized()) {
-
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
     Expression value = e.shallowReduce(reductionContext);
+    if (value.type() == ExpressionNode::Type::Unreal || value.type() == ExpressionNode::Type::Undefined) {
+      // Undefined * _unit is Undefined. Same with Unreal.
+      mul.replaceWithInPlace(value);
+      return value;
+    }
     mul.addChildAtIndexInPlace(value, 0, 1);
+    // In case `unit` was a multiplication of units, flatten
     mul.mergeSameTypeChildrenInPlace();
     return std::move(mul);
   }
   return Expression();
 }
 
-Expression SimplificationHelper::shallowReduceUndefinedKeepingUnits(Expression e, ExpressionNode::ReductionContext reductionContext) {
+Expression SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext) {
   Expression res = shallowReduceUndefined(e);
   if (res.isUninitialized()) {
-    res = shallowReduceKeepingUnits(e, reductionContext);
+    res = shallowReduceKeepingUnitsFromFirstChild(e, reductionContext);
   }
   return res;
 }

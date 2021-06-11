@@ -18,27 +18,31 @@ Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symb
   return Function(this).replaceSymbolWithExpression(symbol, expression);
 }
 
+/* Usual behavior for functions is to expand itself (as well as any function it
+ * contains), before calling the same method on its definition (or handle it if
+ * uninitialized). We do this in polynomialDegree, getPolynomialCoefficients,
+ * getVariables, templatedApproximate and shallowReduce. */
 int FunctionNode::polynomialDegree(Context * context, const char * symbolName) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(f, context, true);
+  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return -1;
   }
   return e.polynomialDegree(context, symbolName);
 }
 
-int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(f, context, true);
+  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return -1;
   }
-  return e.getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
+  return e.getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
 int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(f, context, true);
+  Expression e = SymbolAbstract::Expand(f, context, true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return nextVariableIndex;
   }
@@ -57,8 +61,8 @@ Expression FunctionNode::shallowReduce(ReductionContext reductionContext) {
   return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
 }
 
-Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
-  return Function(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return Function(this).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
@@ -72,7 +76,7 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, ApproximationCon
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true);
+  Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -110,13 +114,14 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return *this;
   }
   /* Symbols that have a definition while also being the parameter of a
-   * parametered expression should not be replaced in SymbolAbstract::Expand.
-   * With replaceFunctionsOnly's flag, only nested functions will be replaced by
-   * their definitions.
+   * parametered expression should not be replaced in SymbolAbstract::Expand,
+   * which won't handle this expression's parents.
+   * With ReplaceDefinedFunctionsWithDefinitions symbolic computation, only
+   * nested functions will be replaced by their definitions.
    * Symbols will be handled in deepReduce, which is aware of parametered
    * expressions context. For example, with 1->x and 1+x->f(x), f(x) within
    * diff(f(x),x,1) should be reduced to 1+x instead of 2. */
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, true);
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
@@ -129,33 +134,42 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result.deepReduce(reductionContext);
 }
 
-Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+  /* These two symbolic computations parameters make no sense in this method.
+   * They are therefore not handled. */
+  assert(symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
+    && symbolicComputation != ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   {
     // Replace replaceable symbols in child
-    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
-    if (self.isUninitialized()) { // if the child is circularly defined, escape
-      return self;
+    defaultReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+    if (*isCircular) { // if the child is circularly defined, escape
+      return *this;
     }
-    assert(*this == self);
   }
   Expression e = context->expressionForSymbolAbstract(*this, false);
+  /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
+   * to ReplaceAllDefinedSymbolsWithDefinition, like in shallowReduce. */
   if (e.isUninitialized()) {
+    if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+      return *this;
+    }
+    return replaceWithUndefinedInPlace();
+  }
+
+  // Symbol is about to be replaced, decrement maxSymbolsToReplace
+  maxSymbolsToReplace--;
+  if (maxSymbolsToReplace < 0) {
+    // We replaced too many symbols and consider the expression to be circular
+    *isCircular = true;
     return *this;
   }
-  // If the function contains itself, return undefined
-  if (e.hasExpression([](Expression e, const void * context) {
-          if (e.type() != ExpressionNode::Type::Function) {
-            return false;
-          }
-          return strcmp(static_cast<Function&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
-        }, reinterpret_cast<const void *>(name())))
-  {
-    return Expression();
-  }
+
+  // Build dependency to keep track of function's parameter
   Dependency d = Dependency::Builder(e);
   d.addDependency(childAtIndex(0));
   replaceWithInPlace(d);
-  *didReplace = true;
+
+  e = e.deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
   return std::move(d);
 }
 

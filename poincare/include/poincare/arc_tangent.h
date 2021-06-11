@@ -1,6 +1,7 @@
 #ifndef POINCARE_ARC_TANGENT_H
 #define POINCARE_ARC_TANGENT_H
 
+#include <poincare/arc_cotangent.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/trigonometry.h>
@@ -8,6 +9,7 @@
 namespace Poincare {
 
 class ArcTangentNode final : public ExpressionNode {
+friend class ArcCotangentNode;
 public:
 
   // TreeNode

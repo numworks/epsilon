@@ -226,7 +226,6 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
     dispatchEvent(Ion::Events::Back);
   }
   switchTo(appSnapshotAtIndex(0));
-  Poincare::Tidy();
 }
 
 void AppsContainer::run() {

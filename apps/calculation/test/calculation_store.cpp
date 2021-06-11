@@ -2,6 +2,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <poincare/test/helper.h>
+#include <poincare_expressions.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"
@@ -111,7 +112,7 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
   GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
-  assert(ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode::Dutch));
+  assert(ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode::Dutch, SquareRoot::Builder(Rational::Builder(2))));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 
@@ -174,7 +175,21 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("confidence(0.5,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("prediction(0.5,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("prediction95(0.5,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(45)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(π/2)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
+  GlobalPreferences::ExamMode previousExamMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
+
+  assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
+  assertCalculationIs("0.5", DisplayOutput::ExactAndApproximateToggle, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
+  assertCalculationIs("√(8)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(45)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(π/2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+
+  GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
 }
 
 void assertMainCalculationOutputIs(const char * input, const char * output, Context * context, CalculationStore * store) {
@@ -285,6 +300,34 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  // 4 - Nested local variables within variables
+  assertMainCalculationOutputIs("int(x+1,x,1,3)→a",    "6",     &globalContext, &store);
+  assertMainCalculationOutputIs("a",                   "6",     &globalContext, &store);
+  assertMainCalculationOutputIs("a+y→a",               "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y×a,y,1)",       "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("1→y",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(y×a,y,1)",       "7",     &globalContext, &store);
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(x,x,x)→a",       "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(a,x,3)",         "0",     &globalContext, &store);
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+
+  // 5 - Double nested local variables within variables
+  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("x→a",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("diff(a,x,x)→b",       "0",     &globalContext, &store);
+  assertMainCalculationOutputIs("b",                   "0",     &globalContext, &store);
+  // Destroy records
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

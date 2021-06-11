@@ -36,7 +36,7 @@ public:
   Expression removeUnit(Expression * unit) override;
 
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
 
   template<typename T> static Complex<T> computeNotPrincipalRealRootOfRationalPow(const std::complex<T> c, T p, T q);
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
@@ -90,26 +90,18 @@ private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
+  // Simplification
+  static Expression PowerRationalRational(Rational base, Rational index, ExpressionNode::ReductionContext reductionContext);
+  static Expression PowerIntegerRational(Integer base, Rational index, ExpressionNode::ReductionContext reductionContext);
+  static Expression CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext); // Returns e^(i*pi*r)
+  static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
+  bool isLogarithmOfSameBase(Expression e) const;
+  bool isNthRootOfUnity() const;
+
   // Unit
   Expression removeUnit(Expression * unit);
 
-  // Simplification
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
-
-  Expression simplifyPowerPower(ExpressionNode::ReductionContext reductionContext);
-  Expression simplifyPowerMultiplication(ExpressionNode::ReductionContext reductionContext);
-  Expression simplifyRationalRationalPower(ExpressionNode::ReductionContext reductionContext);
-
-  static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, ExpressionNode::ReductionContext reductionContext);
-  Expression removeRootsFromDenominator(ExpressionNode::ReductionContext reductionContext);
-  bool parentIsALogarithmOfSameBase() const;
-  bool isNthRootOfUnity() const;
-  Expression equivalentExpressionUsingStandardExpression() const;
-  static Expression CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext); // Returns e^(i*pi*r)
-  static bool TermIsARationalSquareRootOrRational(const Expression& e);
-  static const Rational RadicandInExpression(const Expression & e);
-  static const Rational RationalFactorInExpression(const Expression & e);
-  static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
 };
 
 }

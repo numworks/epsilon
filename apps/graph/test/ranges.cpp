@@ -26,6 +26,7 @@ public:
   void computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) override { DefaultComputeXRange(xMinLimit, xMaxLimit, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, context(), functionStore()); }
   void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) override { DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, Ratio(), yMin, yMax, context(), functionStore()); }
   void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) override { DefaultImproveFullRange(xMin, xMax, yMin, yMax, context(), functionStore()); }
+  bool canShrinkWhenNormalizing() const override { return true; }
 
   float addMargin(float x, float range, bool isVertical, bool isMin) override { return DefaultAddMargin(x, range, isVertical, isMin, k_topMargin, k_bottomMargin, k_leftMargin, k_rightMargin); }
   void updateZoomButtons() override {}
@@ -101,6 +102,7 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("ℯ^x+4", -10, 10, 2.28750038, 12.9124994);
   assert_best_cartesian_range_is("ℯ^(-x)", -10, 10, -1.71249962, 8.91249943);
   assert_best_cartesian_range_is("(1-x)ℯ^(1/(1-x))", -1.62682521, 2.726825, -3, 5.0999999);
+  assert_best_cartesian_range_is("(ℯ^x-1)/(ℯ^x+1)", -3.7, 3.7, -2.115625, 1.815625);
 
   assert_best_cartesian_range_is("ln(x)", -1.89999998, 6.80000019, -2.81093717, 1.81093717);
   assert_best_cartesian_range_is("log(x)", -0.900000036, 3.10000014, -1.21249986, 0.912499905);

@@ -1,4 +1,5 @@
 #include <poincare/decimal.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/infinity.h>
@@ -122,7 +123,19 @@ Expression DecimalNode::shallowBeautify(ReductionContext * reductionContext) {
 Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
-  return LayoutHelper::String(buffer, numberOfChars);
+  Layout res = LayoutHelper::String(buffer, numberOfChars);
+  int dotIndex = m_negative;
+  int n = res.numberOfChildren();
+  while(dotIndex < n) {
+    assert(res.childAtIndex(dotIndex).type() == LayoutNode::Type::CodePointLayout);
+    CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(res.childAtIndex(dotIndex).node());
+    if (!codePointNode->codePoint().isDecimalDigit()) {
+      break;
+    }
+    dotIndex++;
+  }
+  CodePointLayout::DistributeThousandDisplayType(res, m_negative, dotIndex);
+  return res;
 }
 
 int DecimalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -209,14 +222,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
    * to the number of significant digits (ie with 4 significant digits,
    * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
   bool forceScientificMode = mode != Preferences::PrintFloatMode::Engineering && (mode == Preferences::PrintFloatMode::Scientific || exponent >= numberOfSignificantDigits || std::pow(10., exponent) < PrintFloat::DecimalModeMinimalValue<double>());
-  int numberOfRequiredDigits = mantissaLength;
-  if (mode == Preferences::PrintFloatMode::Decimal && !forceScientificMode) {
-    if (exponent < 0) {
-      numberOfRequiredDigits = mantissaLength-exponent;
-    } else {
-      numberOfRequiredDigits = std::max(mantissaLength, exponent);
-    }
-  }
+  int numberOfRequiredDigits = (mode == Preferences::PrintFloatMode::Decimal && !forceScientificMode && exponent >= 0) ? std::max(mantissaLength, exponent) : mantissaLength;
 
   /* Case 1: Engineering and Scientific mode. Three cases:
    * - the user chooses the scientific mode

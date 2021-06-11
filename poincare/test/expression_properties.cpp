@@ -373,10 +373,24 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("2-x-x^3", 3);
   assert_reduced_expression_polynomial_degree("π×x", 1);
   assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);
-  // f: x→x^2+πx+1
-  assert_reduce("1+π×x+x^2→f(x)");
+  // f: y→y^2+πy+1
+  assert_reduce("1+π×y+y^2→f(y)");
+  assert_reduced_expression_polynomial_degree("f(x)", 2);
+  // With y=1
+  assert_reduce("1→y");
   assert_reduced_expression_polynomial_degree("f(x)", 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
+  // a : y and f : y→ay+πy+1
+  assert_reduce("y→a");
+  assert_reduce("1+π×y+y×a→f(y)");
+  assert_reduced_expression_polynomial_degree("f(x)", -1); // y is undefined
+  // With y=1
+  assert_reduce("1→y");
+  assert_reduced_expression_polynomial_degree("f(x)", 1);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
 }
 
 void assert_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {
@@ -435,8 +449,8 @@ QUIZ_CASE(poincare_properties_get_variables) {
   // f: x → a, with a = 12
   assert_reduce("12→a");
   assert_reduce("a→f(x)");
-  const char * variableBuffer13[] = {"var", ""};
-  assert_expression_has_variables("f(var)", variableBuffer13, 1);
+  const char * variableBuffer13[] = {"a", "var", ""};
+  assert_expression_has_variables("f(var)", variableBuffer13, 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // f: x → 1, g: x → 2
@@ -446,6 +460,30 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("f(g(x)+y)", variableBuffer14, 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+
+  // x = 1
+  assert_reduce("1→x");
+  const char * variableBuffer15[] = {"x","y",""};
+  assert_expression_has_variables("x+y", variableBuffer15, 2);
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+
+  // x = a + b
+  assert_reduce("1→a");
+  assert_reduce("a+b+c→x");
+  const char * variableBuffer16[] = {"x","y",""};
+  assert_expression_has_variables("x+y", variableBuffer16, 2);
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  // f: x → a+g(y+x), g: x → x+b, a = b + c + x
+  assert_reduce("b+c+x→a");
+  assert_reduce("x+b→g(x)");
+  assert_reduce("a+g(x+y)→f(x)");
+  const char * variableBuffer17[] = {"a", "var", "y", "b", ""};
+  assert_expression_has_variables("f(var)", variableBuffer17, 4);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {

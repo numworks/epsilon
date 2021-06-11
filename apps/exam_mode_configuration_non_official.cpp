@@ -33,6 +33,10 @@ bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, Glob
   return false;
 }
 
-bool ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode mode) {
+bool ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Poincare::Expression e) {
+  return false;
+}
+
+bool ExamModeConfiguration::additionalResultsAreForbidden(GlobalPreferences::ExamMode mode) {
   return false;
 }

@@ -332,14 +332,17 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length, cons
   return false;
 }
 
-Expression UnitNode::Representative::toBaseUnits() const {
+Expression UnitNode::Representative::toBaseUnits(ExpressionNode::ReductionContext reductionContext) const {
   Expression result;
   if (isBaseUnit()) {
     result =  Unit::Builder(this, basePrefix());
   } else {
     result = dimensionVector().toBaseUnits();
   }
-  return Multiplication::Builder(Float<double>::Builder(m_ratio * std::pow(10., - basePrefix()->exponent())), result);
+  Rational basePrefixFactor = Rational::IntegerPower(Rational::Builder(10), -basePrefix()->exponent());
+  Expression factor = Multiplication::Builder(basePrefixFactor, ratioExpressionReduced(reductionContext)).shallowReduce(reductionContext);
+  return Multiplication::Builder(factor, result);
+
 }
 
 bool UnitNode::Representative::canPrefix(const UnitNode::Prefix * prefix, bool input) const {
@@ -518,8 +521,8 @@ int UnitNode::TemperatureRepresentative::setAdditionalExpressions(double value, 
       continue;
     }
     dest[numberOfExpressionsSet++] = Multiplication::Builder(
-      Float<double>::Builder(TemperatureRepresentative::ConvertTemperatures(value, this, targets[i])),
-      Unit::Builder(targets[i], Prefix::EmptyPrefix()));
+        Float<double>::Builder(TemperatureRepresentative::ConvertTemperatures(value, this, targets[i])),
+        Unit::Builder(targets[i], Prefix::EmptyPrefix()));
   }
   assert(numberOfExpressionsSet == 2);
   return numberOfExpressionsSet;
@@ -781,7 +784,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
   };
 
   return (representative != nullptr && representative->hasSpecialAdditionalExpressions(value, unitFormat))
-      || unit.hasExpression(isNonBase, nullptr);
+    || unit.hasExpression(isNonBase, nullptr);
 }
 
 int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {
@@ -856,7 +859,7 @@ Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode
 
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
-   || isBaseUnit()) {
+      || isBaseUnit()) {
     /* We escape early if we are one of the seven base units.
      * Nb : For masses, k is considered the base prefix, so kg will be escaped
      * here but not g */
@@ -899,7 +902,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   const Representative * representative = unitNode->representative();
   const Prefix * prefix = unitNode->prefix();
 
-  Expression result = representative->toBaseUnits().deepReduce(reductionContext);
+  Expression result = representative->toBaseUnits(reductionContext).deepReduce(reductionContext);
   if (prefix != Prefix::EmptyPrefix()) {
     Expression prefixFactor = Power::Builder(Rational::Builder(10), Rational::Builder(prefix->exponent()));
     prefixFactor = prefixFactor.shallowReduce(reductionContext);

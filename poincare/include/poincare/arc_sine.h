@@ -1,6 +1,7 @@
 #ifndef POINCARE_ARC_SINE_H
 #define POINCARE_ARC_SINE_H
 
+#include <poincare/arc_cosecant.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/trigonometry.h>
@@ -8,6 +9,7 @@
 namespace Poincare {
 
 class ArcSineNode final : public ExpressionNode {
+friend class ArcCosecantNode;
 public:
 
   // TreeNode
@@ -24,6 +26,7 @@ public:
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::ArcSine; }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

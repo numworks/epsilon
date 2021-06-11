@@ -5,7 +5,10 @@
 namespace Probability {
 
 GraphController::GraphController(StackViewController * stack) :
-    Page(stack), m_rangeLeft(true), m_rangeRight(false), m_graphView(&m_rangeLeft, &m_rangeRight) {
+    Page(stack),
+    m_rangeLeft(m_graphView.curveViewLeft(), true),
+    m_rangeRight(m_graphView.curveViewRight(), false),
+    m_graphView(&m_rangeLeft, &m_rangeRight) {
 }
 
 void GraphController::didBecomeFirstResponder() {

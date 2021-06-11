@@ -7,16 +7,16 @@
 
 namespace Probability {
 
-
+class StatisticCurveView;
 enum class GraphDisplayMode { OneCurveView, TwoCurveViews };
-
 
 /* This class is in charge of computing the range to display for a given statistic.
  * In case two ranges are needed (the graph is split), the StatisticViewRange has a m_isLeftRange.
  */
 class StatisticViewRange : public Shared::CurveViewRange {
 public:
-  StatisticViewRange(bool isLeftRange) : m_isLeftRange(isLeftRange) {}
+  StatisticViewRange(StatisticCurveView * curveView, bool isLeftRange) :
+      m_isLeftRange(isLeftRange), m_statisticCurveView(curveView) {}
   void setStatistic(Statistic * statistic) { m_statistic = statistic; }
   float yMin() const override;
   float yMax() const override;
@@ -30,13 +30,15 @@ private:
     float max;
   };
   Range computeXRange() const;
+  Range computeTestXRange(float z, float zAlpha) const;
   Range computeYRange() const;
-  constexpr static int k_marginLeftOfMin = 30;
+  constexpr static int k_marginSide = 30;
   constexpr static int k_areaWidth = 50;
   constexpr static int k_areaHeight = 65;
   Statistic * m_statistic;
   bool m_isLeftRange;
   GraphDisplayMode m_mode;
+  StatisticCurveView * m_statisticCurveView;
 };
 
 }  // namespace Probability

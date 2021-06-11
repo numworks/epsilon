@@ -29,6 +29,12 @@ void lockPCBVersion();
 bool pcbVersionIsLocked();
 void lockUnlockedPCBVersion();
 
+bool isRunningSlotA();
+uint32_t slotAUserlandStart();
+uint32_t slotBUserlandStart();
+uint32_t userlandStart();
+uint32_t otherUserlandStart();
+
 }
 }
 }

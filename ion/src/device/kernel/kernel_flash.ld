@@ -71,9 +71,6 @@ SECTIONS {
     . = ALIGN(4);
     _data_section_start_flash = LOADADDR(.data);
     _data_section_start_ram = .;
-    /* Slot information goes right after the isr_vector_table to be easily
-     * retrieved from DFU request.*/
-    *(.slot_info*)
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;

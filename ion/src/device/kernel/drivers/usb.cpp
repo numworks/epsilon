@@ -1,4 +1,5 @@
-#include <kernel/drivers/usb.h>
+#include <shared/drivers/usb.h>
+#include <kernel/drivers/board.h>
 #include <kernel/drivers/keyboard.h>
 #include <string.h>
 
@@ -7,8 +8,7 @@ namespace Device {
 namespace USB {
 
 SlotInfo * slotInfo() {
-  static SlotInfo slotInformation __attribute__((section(".slot_info")));
-  return &slotInformation;
+  return reinterpret_cast<SlotInfo *>(Board::Config::SRAMAddress);
 }
 
 void willExecuteDFU() {

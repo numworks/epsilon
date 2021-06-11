@@ -31,6 +31,9 @@ public:
   }
   IntervalConclusionView * intervalConclusionView() { return &m_intervalConclusionView; }
 
+  StatisticCurveView * curveViewLeft() { return &m_curveViewLeft; }
+  StatisticCurveView * curveViewRight() { return &m_curveViewRight; }
+
 protected:
   int numberOfSubviews() const override { return 5; }  // TODO could change according to mode
   void layoutSubviews(bool force = false) override;

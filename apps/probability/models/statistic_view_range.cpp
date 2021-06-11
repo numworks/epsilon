@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "probability/app.h"
+#include "probability/gui/statistic_curve_view.h"
 #include "probability/helpers.h"
 
 namespace Probability {
@@ -25,23 +26,36 @@ float StatisticViewRange::yMax() const {
 }
 
 StatisticViewRange::Range StatisticViewRange::computeXRange() const {
-  // TODO this is called +100 times, optimize ?
+  // TODO this is called +100 times, memoize ?
   if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
     float zAlpha = m_statistic->zAlpha();
     float z = m_statistic->testCriticalValue();
-    float min = fminf(zAlpha, z);
-    float max = fmaxf(zAlpha, z);
-    float pixelWidth = (max - min) / k_areaWidth;
-    if (m_mode == GraphDisplayMode::OneCurveView) {
-      return Range{min - k_marginLeftOfMin * pixelWidth,
-                   min + (Ion::Display::Width - k_marginLeftOfMin) * pixelWidth};
+    if (m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different) {
+      zAlpha = std::abs(zAlpha);
+      z = std::abs(z);
+      Range r = computeTestXRange(z, zAlpha);
+      if (m_isLeftRange) {
+        // Flip
+        r = Range{-r.max, -r.min};
+      }
+      return r;
     }
-    return m_isLeftRange ? Range{-10, -0.5} : Range{0.5, 10};
   }
+  // Confidence interval
   float center = m_statistic->estimate();
   float delta = m_statistic->standardError();
   constexpr static float factor = 2.5;
   return Range{center - factor * delta, center + factor * delta};
+}
+
+StatisticViewRange::Range StatisticViewRange::computeTestXRange(float z, float zAlpha) const {
+  // |-----------------|-------------------|-------
+  // <-k_marginSide-> min <-k_areaWidth-> max
+  float min = fminf(zAlpha, z);
+  float max = fmaxf(zAlpha, z);
+  float pixelWidth = (max - min) / k_areaWidth;
+  return Range{min - k_marginSide * pixelWidth,
+               min + (m_statisticCurveView->bounds().width() - k_marginSide) * pixelWidth};
 }
 
 StatisticViewRange::Range StatisticViewRange::computeYRange() const {

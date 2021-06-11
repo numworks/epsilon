@@ -156,5 +156,5 @@ void TestController::initializeHypothesisParams(Data::Test t) {
   }
   App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
   App::app()->snapshot()->data()->hypothesisParams()->setOp(
-      HypothesisParams::ComparisonOperator::Higher);
+      HypothesisParams::ComparisonOperator::Different);
 }

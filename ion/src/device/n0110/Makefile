@@ -31,5 +31,10 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/n0110/shar
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
+  board.cpp \
   flash_unprivileged.cpp \
+)
+
+ion_device_userland_src += $(addprefix ion/src/device/n0110/userland/drivers/, \
+  board.cpp \
 )

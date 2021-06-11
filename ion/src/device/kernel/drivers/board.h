@@ -27,10 +27,7 @@ enum class Frequency {
 };
 void setStandardFrequency(Frequency f);
 
-uint32_t slotAUserlandStart();
-uint32_t slotBUserlandStart();
 bool isInReflashableSector(uint32_t address);
-uint32_t userlandStart();
 void switchExecutableSlot(uint32_t address);
 void downgradeTrustLevel(bool displayPopup);
 

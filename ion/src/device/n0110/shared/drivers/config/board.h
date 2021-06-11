@@ -46,6 +46,8 @@ constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
 constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
 
 // External Apps
+constexpr static int ExternalAppsAStartAddress = ExternalFlash::Config::StartAddress + 0x350000;
+constexpr static int ExternalAppsBStartAddress = ExternalAppsAStartAddress + ExternalFlash::Config::TotalSize/2;
 constexpr static int ExternalAppsNumberOfSector = 11;
 constexpr static int ExternalAppsSectorLength = 0x10000; // 64K
 constexpr static int ExternalAppsSectionLength = ExternalAppsNumberOfSector * ExternalAppsSectorLength;

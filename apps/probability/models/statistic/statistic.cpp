@@ -18,7 +18,15 @@ void Statistic::setParamAtIndex(int i, float p) {
 }
 
 bool Statistic::testPassed() {
-   return pValue() > threshold();
+  return pValue() > threshold();
 }
 
-} // namespace Probability
+void Statistic::initThreshold() {
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    m_threshold = 0.05;
+  } else {
+    m_threshold = 0.95;
+  }
+}
+
+}  // namespace Probability

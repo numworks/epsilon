@@ -17,7 +17,7 @@ struct ParameterRepr {
  */
 class Statistic {
 public:
-  Statistic() : m_threshold(0.95) {}
+  Statistic() : m_threshold(-1) {}
   virtual ~Statistic() = default;
 
   virtual void computeTest() = 0;
@@ -68,6 +68,7 @@ public:
   virtual float marginOfError() = 0;
 
   int indexOfThreshold() { return numberOfStatisticParameters(); }
+  void initThreshold();
 
 protected:
   virtual int numberOfStatisticParameters() const = 0;

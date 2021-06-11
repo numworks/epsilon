@@ -220,10 +220,12 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     }
   }
   int size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-  if (size <= bufferSize - 1) {
+  if (size < bufferSize) {
     buffer[size] = 0;
   } else {
-    assert(size - 1 == bufferSize - 1);
+    /* CodePoint didn't fit, nothing should have been inserted to prevent any
+     * invalid truncated UTF8 character. */
+    assert(size == bufferSize && buffer[0] == 0);
     buffer[--size] = 0;
   }
   return size;

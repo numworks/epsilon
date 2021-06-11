@@ -16,8 +16,8 @@ objects += $(addprefix utils/,\
 
 objects += main.o icon.o
 
-FLASH_ADDRESS_SLOT_A = $(shell printf '%x' $$(( 0x90350000 + $(APPLICATION_INDEX) * 0x10000 )))
-FLASH_ADDRESS_SLOT_B = $(shell printf '%x' $$(( 0x90750000 + $(APPLICATION_INDEX) * 0x10000 )))
+FLASH_ADDRESS_SLOT_A = $(shell printf '%x' $$(( 0x90350000 + $(APPLICATION_INDEX) * $(SIZE_OF_EXTERNAL_FLASH_SECTOR_HEX) )))
+FLASH_ADDRESS_SLOT_B = $(shell printf '%x' $$(( 0x90750000 + $(APPLICATION_INDEX) * $(SIZE_OF_EXTERNAL_FLASH_SECTOR_HEX) )))
 
 
 .PHONY: run

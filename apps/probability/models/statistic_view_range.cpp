@@ -8,27 +8,23 @@
 
 namespace Probability {
 
-float StatisticViewRange::yMax() const {
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
-    return 0.5;
-  }
-  float zAlpha = m_statistic->zAlpha();
-  float z = m_statistic->testCriticalValue();
-  float max =
-      fmaxf(m_statistic->normedDensityFunction(z), m_statistic->normedDensityFunction(zAlpha));
-  float pixelHeight = max / k_areaHeight;
-  return 100 * pixelHeight;  // TODO access or compute view height
-}
-
 float StatisticViewRange::xMin() const {
-  return computeRange().min;
+  return computeXRange().min;
 }
 
 float StatisticViewRange::xMax() const {
-  return computeRange().max;
+  return computeXRange().max;
 }
 
-StatisticViewRange::Range StatisticViewRange::computeRange() const {
+float StatisticViewRange::yMin() const {
+  return computeYRange().min;
+}
+
+float StatisticViewRange::yMax() const {
+  return computeYRange().max;
+}
+
+StatisticViewRange::Range StatisticViewRange::computeXRange() const {
   // TODO this is called +100 times, optimize ?
   if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
     float zAlpha = m_statistic->zAlpha();
@@ -46,6 +42,18 @@ StatisticViewRange::Range StatisticViewRange::computeRange() const {
   float delta = m_statistic->standardError();
   constexpr static float factor = 2.5;
   return Range{center - factor * delta, center + factor * delta};
+}
+
+StatisticViewRange::Range StatisticViewRange::computeYRange() const {
+  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
+    return Range{-0.01, 0.5};
+  }
+  float zAlpha = m_statistic->zAlpha();
+  float z = m_statistic->testCriticalValue();
+  float min =
+      fminf(m_statistic->normedDensityFunction(z), m_statistic->normedDensityFunction(zAlpha));
+  float pixelHeight = min / k_areaHeight;
+  return Range{-25 * pixelHeight, 100 * pixelHeight};  // TODO access or compute view height
 }
 
 }  // namespace Probability

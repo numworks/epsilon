@@ -1,6 +1,6 @@
 include config.mak
 
-objects = $(addprefix numvaders/,\
+objects = $(addprefix voord/,\
   alien.o \
   life.o \
   rocket.o \

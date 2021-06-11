@@ -38,8 +38,8 @@ bool cacheWindowPosition(SDL_Window * window) {
 void didInit(SDL_Window * window) {
   int x, y;
   if (!readCachedWindowPosition(&x, &y)) {
-    x = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
-    y = SDL_WINDOWPOS_CENTERED_DISPLAY(1);
+    x = SDL_WINDOWPOS_CENTERED;
+    y = SDL_WINDOWPOS_CENTERED;
   }
   SDL_SetWindowPosition(window, x, y);
 }

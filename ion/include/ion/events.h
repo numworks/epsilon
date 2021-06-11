@@ -2,6 +2,7 @@
 #define ION_EVENTS_H
 
 #include <ion/keyboard.h>
+#include <string.h>
 
 namespace Ion {
 namespace Events {
@@ -58,6 +59,11 @@ public:
   virtual void pushEvent(Event e) = 0;
   virtual Event popEvent() = 0;
   virtual bool isEmpty() = 0;
+  const char * startingLanguage() const { return m_startingLanguage; }
+  void setStartingLanguage(const char * language) { strlcpy(m_startingLanguage, language, k_languageSize); }
+  static constexpr int k_languageSize = 3;
+private:
+  char m_startingLanguage[k_languageSize] = {0};
 };
 
 void replayFrom(Journal * l);

@@ -28,6 +28,11 @@ bool SVC_ATTRIBUTES shouldInterruptDFU() {
   SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, bool)
 }
 
+SlotInfo * slotInfo() {
+  static SlotInfo __attribute__((used)) __attribute__((section(".slot_info"))) slotInformation;
+  return &slotInformation;
+}
+
 }
 }
 }

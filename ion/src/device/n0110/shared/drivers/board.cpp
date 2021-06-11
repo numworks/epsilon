@@ -1,4 +1,5 @@
 #include <drivers/board.h>
+#include <drivers/config/board.h>
 #include <drivers/config/clocks.h>
 #include <drivers/internal_flash_otp.h>
 #include <regs/regs.h>
@@ -141,7 +142,14 @@ bool pcbVersionIsLocked() {
   return InternalFlash::isLockedOTPAtBlockIndex(k_pcbVersionOTPBlock);
 }
 
+uint32_t slotAUserlandStart() {
+  return Config::KernelAStartAddress + Config::UserlandOffsetFromKernel;
+
 }
-}
+uint32_t slotBUserlandStart() {
+  return Config::KernelBStartAddress + Config::UserlandOffsetFromKernel;
 }
 
+}
+}
+}

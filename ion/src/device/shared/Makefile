@@ -22,11 +22,13 @@ ion_device_shared_bootloader_kernel_src += $(addprefix ion/src/device/shared/, \
 )
 
 ion_device_kernel_src += $(addprefix ion/src/device/shared/, \
+  drivers/board.cpp \
   drivers/trampoline.cpp \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/shared/, \
   boot/rt0.cpp \
+  drivers/board.cpp \
   drivers/trampoline.cpp \
   drivers/usb.cpp \
   drivers/usb_unprivileged.cpp \

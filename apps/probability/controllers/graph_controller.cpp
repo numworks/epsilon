@@ -13,7 +13,10 @@ void GraphController::didBecomeFirstResponder() {
   Statistic * statistic = App::app()->snapshot()->data()->statistic();
   TestConclusionView::Type t = statistic->testPassed() ? TestConclusionView::Type::Success
                                                        : TestConclusionView::Type::Failure;
-  GraphDisplayMode m = GraphDisplayMode::OneCurveView;
+  GraphDisplayMode m =
+      statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different
+          ? GraphDisplayMode::TwoCurveViews
+          : GraphDisplayMode::OneCurveView;
   m_graphView.setMode(m);
   m_graphView.setType(t);
   m_graphView.setStatistic(statistic);
@@ -22,7 +25,8 @@ void GraphController::didBecomeFirstResponder() {
   m_rangeLeft.setStatistic(statistic);
   m_rangeRight.setStatistic(statistic);
   if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
-    m_graphView.intervalConclusionView()->setInterval(statistic->estimate(), statistic->marginOfError());
+    m_graphView.intervalConclusionView()->setInterval(statistic->estimate(),
+                                                      statistic->marginOfError());
   }
   m_graphView.reload();
 }

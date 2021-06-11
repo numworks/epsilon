@@ -21,11 +21,15 @@ protected:
 private:
   void drawTest(KDContext * ctx, KDRect rect) const;
   void drawInterval(KDContext * ctx, KDRect rect) const;
-  static Poincare::Coordinate2D<float> evaluateTestAtAbsissa(float x, void * model, void * context) {
+  void colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op,
+                       float z, float zAlpha) const;
+  static Poincare::Coordinate2D<float> evaluateTestAtAbsissa(float x, void * model,
+                                                             void * context) {
     Statistic * statistic = static_cast<Statistic *>(model);
     return Poincare::Coordinate2D<float>(x, statistic->normedDensityFunction(x));
   }
-  static Poincare::Coordinate2D<float> evaluateIntervalAtAbsissa(float x, void * model, void * context) {
+  static Poincare::Coordinate2D<float> evaluateIntervalAtAbsissa(float x, void * model,
+                                                                 void * context) {
     Statistic * statistic = static_cast<Statistic *>(model);
     return Poincare::Coordinate2D<float>(x, statistic->densityFunction(x));
   }

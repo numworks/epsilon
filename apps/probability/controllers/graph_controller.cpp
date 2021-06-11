@@ -17,7 +17,8 @@ void GraphController::didBecomeFirstResponder() {
   TestConclusionView::Type t = statistic->testPassed() ? TestConclusionView::Type::Success
                                                        : TestConclusionView::Type::Failure;
   GraphDisplayMode m =
-      statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different
+      statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different &&
+              App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests
           ? GraphDisplayMode::TwoCurveViews
           : GraphDisplayMode::OneCurveView;
   m_graphView.setMode(m);

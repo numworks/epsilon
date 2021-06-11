@@ -21,7 +21,8 @@ class Args {
 public:
   Args(int argc, char * argv[]) : m_arguments(argv, argv+argc) {}
   bool has(const char * key) const;
-  const char * pop(const char * key);
+  const char * get(const char * key, bool pop = false);
+  const char * pop(const char * key) { return get(key, true); }
   bool popFlag(const char * flag);
   void push(const char * key, const char * value) {
     if (key != nullptr && value != nullptr) {
@@ -41,17 +42,21 @@ bool Args::has(const char * name) const {
   return find(name) != m_arguments.end();
 }
 
-const char * Args::pop(const char * argument) {
+const char * Args::get(const char * argument, bool pop) {
   auto nameIt = find(argument);
   if (nameIt != m_arguments.end()) {
     auto valueIt = std::next(nameIt);
     if (valueIt != m_arguments.end()) {
       const char * value = *valueIt;
-      m_arguments.erase(valueIt);
-      m_arguments.erase(nameIt);
+      if (pop) {
+        m_arguments.erase(valueIt);
+        m_arguments.erase(nameIt);
+      }
       return value;
     }
-    m_arguments.erase(nameIt);
+    if (pop) {
+      m_arguments.erase(nameIt);
+    }
   }
   return nullptr;
 }
@@ -77,10 +82,6 @@ using namespace Ion::Simulator;
 int main(int argc, char * argv[]) {
   Args args(argc, argv);
 
-  if (!args.has("--language")) {
-    args.push("--language", Platform::languageCode());
-  }
-
 #ifndef __WIN32__
   if (args.popFlag("--limit-stack-usage")) {
     // Limit stack usage
@@ -90,18 +91,33 @@ int main(int argc, char * argv[]) {
   }
 #endif
 
-  bool headless = args.popFlag("--headless");
-
 #if ION_SIMULATOR_FILES
   const char * stateFile = args.pop("--load-state-file");
   if (stateFile) {
     StateFile::load(stateFile);
+    const char * replayJournalLanguage = Journal::replayJournal()->startingLanguage();
+    if (replayJournalLanguage[0] != 0) {
+      // Override any language setting if there is
+      args.pop("--language");
+      args.push("--language", replayJournalLanguage);
+    }
   }
 #endif
+
+  // Default language
+  if (!args.has("--language")) {
+    args.push("--language", Platform::languageCode());
+  }
+
+  bool headless = args.popFlag("--headless");
 
   Random::init();
   if (!headless) {
     Journal::init();
+    if (args.has("--language")) {
+      // Set log journal starting language
+      Journal::logJournal()->setStartingLanguage(args.get("--language"));
+    }
 #if EPSILON_TELEMETRY
     Telemetry::init();
 #endif

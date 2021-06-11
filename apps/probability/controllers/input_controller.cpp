@@ -65,6 +65,10 @@ int InputController::typeAtIndex(int i) {
 }
 
 void InputController::didBecomeFirstResponder() {
+  if (m_statistic->threshold() == -1) {
+    m_statistic->initThreshold();
+    m_selectableTableView.reloadCellAtLocation(0, m_statistic->indexOfThreshold());
+  }
   App::app()->snapshot()->navigation()->setPage(Data::Page::Input);
   // TODO factor out
   if (selectedRow() == -1) {

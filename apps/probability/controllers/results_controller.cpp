@@ -31,5 +31,6 @@ void ResultsController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
+  m_resultsDataSource.resetMemoization();
   m_tableView.reloadData();
 }

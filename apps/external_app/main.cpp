@@ -1,9 +1,9 @@
-#include "numvaders/alien.h"
-#include "numvaders/spaceship.h"
+#include "voord/alien.h"
+#include "voord/spaceship.h"
 #include "utils/display.h"
 #include "utils/svc.h"
 
-constexpr const char title[] __attribute__((used)) = "NumVaders";
+constexpr const char title[] __attribute__((used)) = "Voord";
 
 void checkForSpaceshipAliensCollisions(Alien aliens[], int numberOfAliens, Spaceship * spaceship) {
   for (int i = 0; i < numberOfAliens; i++) {

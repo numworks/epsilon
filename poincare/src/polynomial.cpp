@@ -83,7 +83,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
 
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
   bool approximate = false;
-  bool approximateDelta = false;
+  bool deltaIsApproximate = false;
   const bool equationIsReal = a.isReal(context) && b.isReal(context) && c.isReal(context) && d.isReal(context);
 
   // b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
@@ -96,8 +96,8 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   *delta = delta->simplify(reductionContext);
   if (delta->numberOfDescendants(true) > k_maxNumberOfNodesBeforeApproximatingDelta) {
     // Delta is too big and cannot be reduced. Approximate it for display.
-    approximateDelta = true;
     *delta = delta->approximate<double>(context, complexFormat, angleUnit);
+    deltaIsApproximate = true;
   }
 
   /* To avoid applying Cardano's formula right away, we use techniques to find
@@ -230,7 +230,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root1 = root1->approximate<double>(context, complexFormat, angleUnit);
     *root2 = root2->approximate<double>(context, complexFormat, angleUnit);
     *root3 = root3->approximate<double>(context, complexFormat, angleUnit);
-    if (!approximateDelta) {
+    if (!deltaIsApproximate) {
       *delta = delta->approximate<double>(context, complexFormat, angleUnit);
     }
   } else {

@@ -247,7 +247,7 @@ void VariableBoxController::empty() {
   m_shortenResultCharCount = 0;
   resetMemoization();
   m_scriptStore->clearVariableBoxFetchInformation();
-  for (int i = 0; i < k_maxOrigins; ++i) {
+  for (uint8_t i = 0; i < k_maxOrigins; ++i) {
     m_rowsPerOrigins[i] = 0;
     // ScriptInProgress and BuiltinsAndKeywords cells stay unchanged
     if (i >= k_importedOrigin) {
@@ -312,7 +312,7 @@ bool VariableBoxController::maxNodesReachedForOrigin(uint8_t origin) const {
   return m_nodesCount >= nodesCountForOrigin(k_builtinsOrigin) + nodesCountForOrigin(k_currentScriptOrigin) + k_maxOtherScriptNodesCount;
 }
 
-int VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
+size_t VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
   return m_rowsPerOrigins[origin];
 }
 
@@ -507,7 +507,7 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
     {qstr_str(MP_QSTR_zip), ScriptNode::Type::WithParentheses}
   };
   assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
-  for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
+  for (size_t i = 0; i < k_totalBuiltinNodesCount; i++) {
     if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, builtinNames[i].type, k_builtinsOrigin, builtinNames[i].name)) {
       /* We can leverage on the fact that builtin nodes are stored in
        * alphabetical order. */
@@ -564,7 +564,7 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
       parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
     }
     nlr_pop();
-  } else if (textToAutocomplete != nullptr && textToAutocomplete >= scriptContent && textToAutocomplete - scriptContent <= strlen(scriptContent) && nlr_push(&nlr) == 0) {
+  } else if (textToAutocomplete != nullptr && textToAutocomplete >= scriptContent && textToAutocomplete  <= strlen(scriptContent) + scriptContent && nlr_push(&nlr) == 0) {
     /* When VariableBoxController has been emptied, and the text to autocomplete
      * is within scriptContent, an unfinished Autocompletion might remain as
      * ImportedVariables are being reloaded. Parsing this unfinished line may
@@ -977,7 +977,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
         // By default, insert node at the end of its origin's nodes.
         insertionIndex = cumulatedNodeCount + originNodesCount;
       }
-      for (int i = 0; i < originNodesCount; i++) {
+      for (size_t i = 0; i < originNodesCount; i++) {
         ScriptNode * matchingNode = scriptNodeAtIndex(cumulatedNodeCount + i);
         int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
         if (comparisonResult == 0 || (comparisonResult == '(' && nodeType == ScriptNode::Type::WithParentheses)) {

@@ -354,7 +354,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
   assert(!i.isZero());
   assert(!i.isNegative());
   {
-    // See comment in Arithmetic::resetPrimeFactorization()
+    // See comment in Arithmetic::resetLock()
     ExceptionCheckpoint tempEcp;
     if (ExceptionRun(tempEcp)) {
       Arithmetic arithmetic;
@@ -376,11 +376,11 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
       Addition a = Addition::Builder();
       for (int index = 0; index < numberOfPrimeFactors; index++) {
         if (isDenominator) {
-          arithmetic.factorizationCoefficientAtIndex(index)->setNegative(true);
+          arithmetic.coefficientAtIndex(index)->setNegative(true);
         }
         Logarithm e = clone().convert<Logarithm>();
-        e.replaceChildAtIndexInPlace(0, Rational::Builder(*arithmetic.factorizationFactorAtIndex(index)));
-        Multiplication m = Multiplication::Builder(Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)), e);
+        e.replaceChildAtIndexInPlace(0, Rational::Builder(*arithmetic.factorAtIndex(index)));
+        Multiplication m = Multiplication::Builder(Rational::Builder(*arithmetic.coefficientAtIndex(index)), e);
         e.simpleShallowReduce(reductionContext);
         a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
         m.shallowReduce(reductionContext);
@@ -388,7 +388,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
       return std::move(a);
     } else {
       // Reset factorization
-      Arithmetic::resetPrimeFactorization();
+      Arithmetic::resetLock();
     }
   }
   // As tempEcp has been destroyed, fall back on parent exception checkpoint

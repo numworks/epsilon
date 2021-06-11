@@ -14,23 +14,30 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_selectableTableView(this, this, this),
+  m_tableView(1, this, &m_selectableTableView, this),
   m_seriesTitleCells{},
   m_calculationTitleCells{},
   m_calculationCells{},
   m_hideableCell(),
   m_store(store)
 {
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_tableView.setCellOverlap(0, 0);
+  m_tableView.setBackgroundColor(Palette::WallScreenDark);
+  m_tableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_tableView.setMarginDelegate(this);
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i].setSeparatorLeft(true);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
     m_calculationTitleCells[i].setAlignment(1.0f, 0.5f);
     m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
+    m_calculationSymbolCells[i].setAlignment(0.5f, 0.5f);
+    m_calculationSymbolCells[i].setMessageFont(KDFont::SmallFont);
   }
-  m_hideableCell.setHide(true);
+  for (int i = 0; i < k_numberOfHeaderColumns; i++) {
+    m_hideableCell[0].setHide(true);
+    m_hideableCell[1].setHide(true);
+  }
 }
 
 // AlternateEmptyViewDefaultDelegate
@@ -50,62 +57,71 @@ Responder * CalculationController::defaultController() {
 // TableViewDataSource
 
 int CalculationController::numberOfColumns() const {
-  return 1 + m_store->numberOfNonEmptySeries();
+  return 2 + m_store->numberOfNonEmptySeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
   evenOddCell->setHighlighted(i == selectedColumn() && j == selectedRow());
-  if (i == 0 && j == 0) {
-    return;
-  }
-  if (j == 0) {
+  int type = typeAtLocation(i, j);
+  if (type == k_seriesTitleCellType) {
     // Display a series title cell
-    int seriesNumber = m_store->indexOfKthNonEmptySeries(i-1);
+    int seriesNumber = m_store->indexOfKthNonEmptySeries(i-2);
     char titleBuffer[] = {'V', static_cast<char>('1'+seriesNumber), '/', 'N', static_cast<char>('1'+seriesNumber), 0};
     StoreTitleCell * storeTitleCell = static_cast<StoreTitleCell *>(cell);
     storeTitleCell->setText(titleBuffer);
     storeTitleCell->setColor(DoublePairStore::colorOfSeriesAtIndex(seriesNumber));
     return;
   }
-  if (i == 0) {
-    // Display a calculation title cell
-    I18n::Message titles[k_totalNumberOfRows] = {
-      I18n::Message::TotalFrequency,
-      I18n::Message::Minimum,
-      I18n::Message::Maximum,
-      I18n::Message::Range,
-      I18n::Message::Mean,
-      I18n::Message::StandardDeviationSigma,
-      I18n::Message::Deviation,
-      I18n::Message::FirstQuartile,
-      I18n::Message::ThirdQuartile,
-      I18n::Message::Median,
-      I18n::Message::InterquartileRange,
-      I18n::Message::SumValues,
-      I18n::Message::SumSquareValues,
-      I18n::Message::SampleStandardDeviationS};
+  if (type == k_calculationTitleCellType || type == k_calculationSymbolCellType) {
+    // Display a calculation title or symbol
+    I18n::Message titles[k_totalNumberOfRows][k_numberOfHeaderColumns] = {
+      { I18n::Message::TotalFrequency, I18n::Message::TotalFrequencySymbol },
+      { I18n::Message::Minimum, I18n::Message::MinimumSymbol },
+      { I18n::Message::Maximum, I18n::Message::MaximumSymbol },
+      { I18n::Message::Range, I18n::Message::RangeSymbol },
+      { I18n::Message::Mean, I18n::Message::MeanSymbol },
+      { I18n::Message::StandardDeviationSigma, I18n::Message::StandardDeviationSigmaSymbol },
+      { I18n::Message::Deviation, I18n::Message::DeviationSymbol },
+      { I18n::Message::FirstQuartile, I18n::Message::FirstQuartileSymbol },
+      { I18n::Message::ThirdQuartile, I18n::Message::ThirdQuartileSymbol },
+      { I18n::Message::Median, I18n::Message::MedianSymbol },
+      { I18n::Message::InterquartileRange, I18n::Message::InterquartileRangeSymbol },
+      { I18n::Message::SumValues, I18n::Message::SumValuesSymbol },
+      { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol },
+      { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol },
+    };
+    assert((i == 0 && type == k_calculationTitleCellType) || (i == 1 && type == k_calculationSymbolCellType));
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
-    calcTitleCell->setMessage(titles[j-1]);
+    KDColor color = i == 1 ? Palette::GrayDark : KDColorBlack;
+    calcTitleCell->setMessage(titles[j-1][i], color);
     return;
   }
-  // Display a calculation cell
-  CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
-    &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
-    &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
-  int seriesIndex = m_store->indexOfKthNonEmptySeries(i-1);
-  double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
-  EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
-  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
-  char buffer[bufferSize];
-  PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
-  calculationCell->setText(buffer);
+  if (type == k_calculationCellType) {
+    // Display a calculation cell
+    CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
+      &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
+      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
+    int seriesIndex = m_store->indexOfKthNonEmptySeries(i-2);
+    double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
+    EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
+    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+    char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
+    calculationCell->setText(buffer);
+  }
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {
-  return i == 0 ? k_calculationTitleCellWidth : k_calculationCellWidth;
+  if (i == 0) {
+    return k_calculationTitleCellWidth;
+  }
+  if (i == 1) {
+    return k_calculationSymbolCellWidth;
+  }
+  return k_calculationCellWidth;
 }
 
 KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
@@ -119,10 +135,13 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_hideableCellType) {
-    return &m_hideableCell;
+    return &m_hideableCell[index];
   }
   if (type == k_calculationTitleCellType) {
     return &m_calculationTitleCells[index];
+  }
+  if (type == k_calculationSymbolCellType) {
+    return &m_calculationSymbolCells[index];
   }
   if (type == k_seriesTitleCellType) {
     return &m_seriesTitleCells[index];
@@ -133,9 +152,12 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
 
 int CalculationController::reusableCellCount(int type) {
   if (type == k_hideableCellType) {
-    return 1;
+    return 2;
   }
   if (type == k_calculationTitleCellType) {
+    return k_numberOfCalculationTitleCells;
+  }
+  if (type == k_calculationSymbolCellType) {
     return k_numberOfCalculationTitleCells;
   }
   if (type == k_seriesTitleCellType) {
@@ -148,11 +170,14 @@ int CalculationController::reusableCellCount(int type) {
 int CalculationController::typeAtLocation(int i, int j) {
   assert(i >= 0 && i < numberOfColumns());
   assert(j >= 0 && j < numberOfRows());
-  if (i == 0 && j == 0) {
+  if (i <= 1 && j == 0) {
     return k_hideableCellType;
   }
   if (i == 0) {
     return k_calculationTitleCellType;
+  }
+  if (i == 1) {
+    return k_calculationSymbolCellType;
   }
   if (j == 0) {
     return k_seriesTitleCellType;
@@ -182,6 +207,24 @@ void CalculationController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
+}
+
+// MarginDelegate
+
+KDCoordinate CalculationController::prefaceMargin(Escher::TableView * preface) {
+  KDCoordinate prefaceRightSide = offset().x() + (preface->bounds().isEmpty() ? preface->minimalSizeForOptimalDisplay().width() : 0);
+
+  for (int i = 0; i < numberOfColumns(); i++) {
+    constexpr KDCoordinate maxMargin = Escher::Metric::TableSeparatorThickness;
+    KDCoordinate delta = prefaceRightSide - cumulatedWidthFromIndex(i);
+    if (delta < 0) {
+      return maxMargin;
+    } else if (delta <= maxMargin) {
+      return delta;
+    }
+  }
+  assert(false);
+  return 0;
 }
 
 // Private

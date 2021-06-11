@@ -409,14 +409,11 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
-  double domainMin = std::max<double>(tMin(), eDomainMin);
-  double domainMax = std::min<double>(tMax(), eDomainMax);
-  if (start < max) {
-    start = std::max(start, domainMin);
-    max = std::min(max, domainMax);
-  } else {
-    start = std::min(start, domainMax);
-    max = std::max(max, domainMin);
+  double tmin = std::max<double>(tMin(), eDomainMin), tmax = std::min<double>(tMax(), eDomainMax);
+  start = start < tmin ? tmin : start > tmax ? tmax : start;
+  max = max < tmin ? tmin : max > tmax ? tmax : max;
+  if (start == max) {
+    return NAN;
   }
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, max, context, e, relativePrecision, minimalStep, maximalStep);
 }

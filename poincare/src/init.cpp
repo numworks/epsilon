@@ -11,9 +11,4 @@ void Init() {
   TreePool::RegisterPool(&pool);
 }
 
-void Tidy() {
-  // Clean Expression (reset the SymbolReplacementsLock)
-  Expression::Tidy();
-}
-
 }

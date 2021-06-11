@@ -21,7 +21,9 @@ bool Equation::containsIComplex(Context * context, ExpressionNode::SymbolicCompu
 
 Expression Equation::Model::standardForm(const Storage::Record * record, Context * context, bool replaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget reductionTarget) const {
   Expression returnedExpression = Expression();
-  Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, replaceFunctionsButNotSymbols);
+  // In any case, undefined symbols must be preserved.
+  ExpressionNode::SymbolicComputation symbolicComputation = replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+  Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, symbolicComputation);
   if (expressionInputWithoutFunctions.isUninitialized()) {
     // The expression is circularly-defined
     expressionInputWithoutFunctions = Undefined::Builder();

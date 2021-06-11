@@ -21,7 +21,8 @@ size_t SymbolAbstractNode::size() const {
 
 ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
   SymbolAbstract s(this);
-  Expression e = SymbolAbstract::Expand(s, context, true);
+  // No need to preserve undefined symbols here.
+  Expression e = SymbolAbstract::Expand(s, context, true, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (e.isUninitialized()) {
     return Sign::Unknown;
   }
@@ -30,7 +31,7 @@ ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
 
 Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, ReductionContext reductionContext) {
   SymbolAbstract sa(this);
-  Expression e = SymbolAbstract::Expand(sa, reductionContext.context(), true);
+  Expression e = SymbolAbstract::Expand(sa, reductionContext.context(), true, reductionContext.symbolicComputation());
   assert(!e.isUninitialized());
   sa.replaceWithInPlace(e);
   return e.setSign(s, reductionContext);
@@ -63,16 +64,18 @@ size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t le
 }
 
 bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test, Context * context) {
-  Expression e = SymbolAbstract::Expand(symbol, context, false);
+  // Undefined symbols must be preserved.
+  Expression e = SymbolAbstract::Expand(symbol, context, false, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   return !e.isUninitialized() && e.recursivelyMatches(test, context, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 }
 
-Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, bool replaceFunctionsOnly) {
+Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
   assert(context);
   Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
-   * symbols are defined circularly. */
-  e = Expression::ExpressionWithoutSymbols(e, context, replaceFunctionsOnly);
+   * symbols are defined circularly. Symbols defined in a parametered function
+   * will be preserved as long as the function is defined within this symbol. */
+  e = Expression::ExpressionWithoutSymbols(e, context, symbolicComputation);
   if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
     Dependency d = Dependency::Builder(e);
     d.addDependency(symbol.childAtIndex(0));

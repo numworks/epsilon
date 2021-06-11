@@ -83,9 +83,14 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
      *  +--------------+    +--------------+    +--------------+
      *
      * */
+    Poincare::Layout inputLayout = cell->inputView()->layout();
+    /* Default value of 0 for the baseline is the same as the one given to the
+     * output baseline in
+     * AbstractScrollableMultipleExpressionsView::ContentCell::baseline. */
+    KDCoordinate inputBaseline = inputLayout.isUninitialized() ? 0 : inputLayout.baseline();
     contentOffsetY += std::min(
         dataSource()->rowHeight(j) - maxContentHeightDisplayableWithoutScrolling(),
-        std::max(0, (cell->inputView()->layout().baseline() - cell->outputView()->baseline()) * (subviewType == HistoryViewCellDataSource::SubviewType::Input ? -1 : 1)));
+        std::max(0, (inputBaseline - cell->outputView()->baseline()) * (subviewType == HistoryViewCellDataSource::SubviewType::Input ? -1 : 1)));
   } else if (subviewType != HistoryViewCellDataSource::SubviewType::Input) {
     contentOffsetY += dataSource()->rowHeight(j) - maxContentHeightDisplayableWithoutScrolling();
   }

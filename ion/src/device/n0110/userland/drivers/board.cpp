@@ -1,6 +1,10 @@
 #include <shared/drivers/board.h>
 #include <shared/drivers/config/board.h>
 
+extern "C" {
+extern char _external_apps_start;
+}
+
 namespace Ion {
 namespace Device {
 namespace Board {

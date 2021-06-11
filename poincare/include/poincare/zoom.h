@@ -59,6 +59,9 @@ private:
   static constexpr float k_breathingRoom = 0.3f;
   static constexpr float k_forceXAxisThreshold = 0.2f;
   static constexpr float k_maxRatioBetweenPointsOfInterest = 100.f;
+  /* Chosen so that the overflow of e^x around x=100 would not overshadow
+   * points in [-10,10]. */
+  static constexpr float k_maxRatioBetweenBoundsAndPointsOfInterest = 10.f;
 
   enum class PointOfInterest : uint8_t {
     None,

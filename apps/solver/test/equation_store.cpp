@@ -26,11 +26,12 @@ QUIZ_CASE(equation_solve) {
   );
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-√(2))(x-√(3))=0", {"x=√(2)", "x=√(3)", "delta=-2×√(6)+5"});
+  assert_solves_to("(x-π)(x-ln(2))=0", {"x=ln(2)", "x=π", "delta=ln(2)^2-2×π×ln(2)+π^2"});
 
-  /* TODO: Cubic
-   * x^3-4x^2+6x-24=0
-   * x^3+x^2+1=0
-   * x^3-3x-2=0 */
+   assert_solves_to("x^3-4x^2+6x-24=0", {"x=4", "x=-√(6)×𝐢", "x=√(6)×𝐢", "delta=-11616"});
+   assert_solves_to("x^3+x^2+1=0", {"x=-1.465571232", "x=0.2327856159-0.7925519925×𝐢", "x=0.2327856159+0.7925519925×𝐢", "delta=-31"});
+   assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"});
+   assert_solves_to("x^3+x+1=0", {"x=-0.6823278038", "x=0.3411639019-1.1615414×𝐢", "x=0.3411639019+1.1615414×𝐢", "delta=-31"});
 
   // Linear System
   assert_solves_to_infinite_solutions("x+y=0");
@@ -95,6 +96,7 @@ QUIZ_CASE(equation_solve) {
   Poincare::Preferences::sharedPreferences()->setAngleUnit(Degree);
   assert_solves_numerically_to("cos(x)=0", -100, 100, {-90.0, 90.0});
   assert_solves_numerically_to("cos(x)=0", -900, 1000, {-810.0, -630.0, -450.0, -270.0, -90.0, 90.0, 270.0, 450.0, 630.0, 810.0});
+  assert_solves_numerically_to("1/cos(x)=0", 0, 10000, {});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0}, "y");
   assert_solves_numerically_to("√(y+1)=0", -900, 1000, {-1}, "y");
   assert_solves_numerically_to("ℯ^x=0", -1000, 1000, {});
@@ -170,6 +172,23 @@ QUIZ_CASE(equation_solve_complex_polar) {
 }
 
 QUIZ_CASE(equation_and_symbolic_computation) {
+  set("a", "x");
+  // a is used
+  assert_solves_to({"a=0"}, {"x=0"});
+
+  set("x", "1");
+  // a is ignored
+  assert_solves_to({"a=0"}, {"a=0"});
+
+  set("a", "x+y");
+  // a and x are used
+  /* FIXME : a is displayed as the only used predefined variable despite having
+   *   x in its definition. */
+  assert_solves_to({"a=0"}, {"y=-1"});
+
+  unset("a");
+  unset("x");
+
   assert_solves_to_infinite_solutions("x+a=0");
 
   set("a", "-3");
@@ -239,8 +258,8 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   unset("b");
 
   set("x", "-1");
-  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   set("x", "1");
-  assert_solves_to_error("x^3+x^2+x+1=0", RequireApproximateSolution);
+  assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   unset("x");
 }

@@ -19,6 +19,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
   static constexpr int k_buttonCellType = 1;
+  static_assert(k_buttonCellType != SimpleFloatParameterController<T>::k_parameterCellType, "k_buttonCellType value already taken.");
 
   virtual void buttonAction();
   ButtonWithSeparator m_okButton;

@@ -57,7 +57,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
   {
-    // See comment in Arithmetic::resetPrimeFactorization()
+    // See comment in Arithmetic::resetLock()
     ExceptionCheckpoint tempEcp;
     if (ExceptionRun(tempEcp)) {
       Arithmetic arithmetic;
@@ -71,16 +71,16 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
         return m;
       }
       for (int index = 0; index < numberOfPrimeFactors; index++) {
-        Expression factor = Rational::Builder(*arithmetic.factorizationFactorAtIndex(index));
-        if (!arithmetic.factorizationCoefficientAtIndex(index)->isOne()) {
-          factor = Power::Builder(factor, Rational::Builder(*arithmetic.factorizationCoefficientAtIndex(index)));
+        Expression factor = Rational::Builder(*arithmetic.factorAtIndex(index));
+        if (!arithmetic.coefficientAtIndex(index)->isOne()) {
+          factor = Power::Builder(factor, Rational::Builder(*arithmetic.coefficientAtIndex(index)));
         }
         m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
       }
       return m;
     } else {
       // Reset factorization
-      Arithmetic::resetPrimeFactorization();
+      Arithmetic::resetLock();
     }
   }
   // As tempEcp has been destroyed, fall back on parent exception checkpoint

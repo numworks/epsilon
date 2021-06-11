@@ -23,7 +23,7 @@ public:
   Type type() const override { return Type::Symbol; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
   /* getUnit returns Undefined, because the symbol would have
    * already been replaced if it should have been.*/
@@ -33,7 +33,7 @@ public:
 
   /* Simplification */
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) override;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) override;
   LayoutShape leftLayoutShape() const override;
 
   /* Derivation */
@@ -73,8 +73,8 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };

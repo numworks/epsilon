@@ -28,7 +28,7 @@ public:
 
   /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override { return false; }  // View cannot be empty
-  I18n::Message emptyMessage() override { assert(false); }
+  I18n::Message emptyMessage() override { assert(false); return static_cast<I18n::Message>(0); }
   Escher::Responder * defaultController() override { return parentResponder()->parentResponder(); }
   /* TableViewDataSource */
   int numberOfRows() const override;
@@ -121,6 +121,7 @@ private:
   Escher::EvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];
   Escher::EvenOddExpressionCell m_deltaCell;
   Poincare::Layout m_delta2Layout;
+  Poincare::Layout m_delta3Layout;
   Shared::ScrollableTwoExpressionsCell m_exactValueCells[k_numberOfExactValueCells];
   Escher::EvenOddBufferTextCell m_approximateValueCells[k_numberOfApproximateValueCells];
   MessageCell m_messageCells[k_numberOfMessageCells];

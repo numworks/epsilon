@@ -45,14 +45,16 @@ bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event
 void FunctionZoomAndPanCurveViewController::adaptRangeForHeaders(bool viewWillAppear) {
   assert(!m_contentView.displayLegend());
   float yMin = m_interactiveRange->yMin(), yMax = m_interactiveRange->yMax();
-  float yOff = m_interactiveRange->offscreenYAxis();
-  float headersHeight = m_contentView.bounds().height() - k_standardViewHeight;
   if (viewWillAppear) {
-    float dY = headersHeight / static_cast<float>(k_standardViewHeight) * (yMax - yMin);
+    assert(m_interactiveRange->offscreenYAxis() == 0.f);
+    /* We want the new graph to have the exact same pixel height as the old
+     * one, to avoid seeing some grid lines move when entering navigation. */
+    float oldPixelHeight = (yMax - yMin) / (k_standardViewHeight - 1);
+    float newYMax = yMin + oldPixelHeight * (m_contentView.bounds().height() - 1);
+    float dY = newYMax - yMax;
     m_interactiveRange->setOffscreenYAxis(-dY);
     /* As we are adding space and the Y range that should not be taken into
      * account for computing the grid, we count it as negative offscreen. */
-    assert(yOff == 0.f);
   } else {
     m_interactiveRange->setOffscreenYAxis(0.f);
   }

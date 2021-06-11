@@ -1,6 +1,9 @@
 #include <ion/events.h>
 #include <ion/timing.h>
 #include <assert.h>
+#if ESCHER_LOG_EVENTS_NAME
+#include <ion/console.h>
+#endif
 
 namespace Ion {
 namespace Events {
@@ -119,8 +122,16 @@ Event getEvent(int * timeout) {
   if (sSourceJournal != nullptr) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
+#endif
+
     } else {
       res = sSourceJournal->popEvent();
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("(From state file) ", false);
+#endif
+
     }
   }
 

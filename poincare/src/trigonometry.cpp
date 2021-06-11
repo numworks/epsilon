@@ -1,6 +1,12 @@
 #include <poincare/trigonometry.h>
+#include <poincare/arc_cosine.h>
+#include <poincare/arc_sine.h>
+#include <poincare/arc_tangent.h>
 #include <poincare/addition.h>
 #include <poincare/constant.h>
+#include <poincare/cosecant.h>
+#include <poincare/cosine.h>
+#include <poincare/cotangent.h>
 #include <poincare/decimal.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
@@ -9,11 +15,14 @@
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
+#include <poincare/secant.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/sign_function.h>
+#include <poincare/sine.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
+#include <poincare/tangent.h>
 #include <poincare/trigonometry_cheat_table.h>
 #include <poincare/undefined.h>
 #include <poincare/opposite.h>
@@ -35,15 +44,15 @@ static constexpr int s_piDivisor[] {
 };
 
 
-static Expression piExpression(Preferences::AngleUnit angleUnit) {
+Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Radian) {
-    return static_cast<Expression>(Constant::Builder(UCodePointGreekSmallLetterPi));
+    return Constant::Builder(UCodePointGreekSmallLetterPi);
   }
   if (angleUnit == Preferences::AngleUnit::Degree) {
-    return static_cast<Expression>(Rational::Builder(180));
+    return Rational::Builder(180);
   }
   assert(angleUnit == Preferences::AngleUnit::Gradian);
-  return static_cast<Expression>(Rational::Builder(200));
+  return Rational::Builder(200);
 }
 
 double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
@@ -67,6 +76,18 @@ bool Trigonometry::isInverseTrigonometryFunction(const Expression & e) {
   return e.type() == ExpressionNode::Type::ArcCosine
     || e.type() == ExpressionNode::Type::ArcSine
     || e.type() == ExpressionNode::Type::ArcTangent;
+}
+
+bool Trigonometry::isAdvancedTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::Secant
+    || e.type() == ExpressionNode::Type::Cosecant
+    || e.type() == ExpressionNode::Type::Cotangent;
+}
+
+bool Trigonometry::isInverseAdvancedTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::ArcSecant
+    || e.type() == ExpressionNode::Type::ArcCosecant
+    || e.type() == ExpressionNode::Type::ArcCotangent;
 }
 
 bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction) {
@@ -94,7 +115,7 @@ Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit, P
     // Just an optimisation to gain some time at reduction
     return Rational::Builder(1);
   }
-  return Division::Builder(piExpression(toUnit), piExpression(fromUnit));
+  return Division::Builder(PiExpressionInAngleUnit(toUnit), PiExpressionInAngleUnit(fromUnit));
 }
 
 bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
@@ -303,11 +324,11 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
       float k = (e.type() == ExpressionNode::Type::ArcCosine) ? std::floor(x/pi) : std::floor((x+pi/2.0f)/pi);
       if (!std::isinf(k) && !std::isnan(k) && std::fabs(k) <= static_cast<float>(INT_MAX)) {
         int kInt = static_cast<int>(k);
-        Multiplication mult = Multiplication::Builder(Rational::Builder(-kInt), piExpression(reductionContext.angleUnit()));
+        Multiplication mult = Multiplication::Builder(Rational::Builder(-kInt), PiExpressionInAngleUnit(reductionContext.angleUnit()));
         result = Addition::Builder(result.clone(), mult);
         mult.shallowReduce(reductionContext);
         if ((e.type() == ExpressionNode::Type::ArcCosine) && ((int)k%2 == 1)) {
-          Expression sub = Subtraction::Builder(piExpression(reductionContext.angleUnit()), result);
+          Expression sub = Subtraction::Builder(PiExpressionInAngleUnit(reductionContext.angleUnit()), result);
           result.shallowReduce(reductionContext);
           result = sub;
         }
@@ -341,7 +362,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
      *   reduced to undef) */
     if (reductionContext.target() == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, piExpression(angleUnit));
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, PiExpressionInAngleUnit(angleUnit));
       sign.shallowReduce(reductionContext);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a = Addition::Builder(m0);
@@ -379,7 +400,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
       // The argument was made positive
       // acos(-x) = π-acos(x)
       if (e.type() == ExpressionNode::Type::ArcCosine) {
-        Expression pi = piExpression(angleUnit);
+        Expression pi = PiExpressionInAngleUnit(angleUnit);
         Subtraction s = Subtraction::Builder();
         e.replaceWithInPlace(s);
         s.replaceChildAtIndexInPlace(0, pi);
@@ -398,6 +419,79 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
   }
 
   return e;
+}
+
+Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+  assert(isAdvancedTrigonometryFunction(e));
+  // Step 0. Replace with inverse (^-1) of equivalent direct function.
+  Expression result;
+  switch (e.type()) {
+    case ExpressionNode::Type::Secant:
+      result = Cosine::Builder(e.childAtIndex(0));
+      break;
+    case ExpressionNode::Type::Cosecant:
+      result = Sine::Builder(e.childAtIndex(0));
+      break;
+    default:
+      assert(e.type() == ExpressionNode::Type::Cotangent);
+      // Use cot(x)=cos(x)/sin(x) definition to handle cot(pi/2)=0
+      Cosine c = Cosine::Builder(e.childAtIndex(0).clone());
+      Sine s = Sine::Builder(e.childAtIndex(0));
+      Division d = Division::Builder(c, s);
+      e.replaceWithInPlace(d);
+      c.shallowReduce(reductionContext);
+      s.shallowReduce(reductionContext);
+      return d.shallowReduce(reductionContext);
+      break;
+  }
+  Power p = Power::Builder(result, Rational::Builder(-1));
+  e.replaceWithInPlace(p);
+  result.shallowReduce(reductionContext);
+  return p.shallowReduce(reductionContext);
+}
+
+Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+  assert(isInverseAdvancedTrigonometryFunction(e));
+  // Step 0. Replace with equivalent inverse function on inverse (^-1) argument
+  Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
+  Expression result;
+  switch (e.type()) {
+    case ExpressionNode::Type::ArcSecant:
+      result = ArcCosine::Builder(p);
+      break;
+    case ExpressionNode::Type::ArcCosecant:
+      result = ArcSine::Builder(p);
+      break;
+    default:
+      assert(e.type() == ExpressionNode::Type::ArcCotangent);
+      result = ArcTangent::Builder(p);
+      break;
+  }
+  e.replaceWithInPlace(result);
+  p.shallowReduce(reductionContext);
+  return result.shallowReduce(reductionContext);
+}
+
+Expression Trigonometry::replaceWithAdvancedFunction(Expression & e, Expression & denominator) {
+  /* Replace direct trigonometric function with their advanced counterpart.
+   * This function must be called within a denominator. */
+  assert(e.type() == ExpressionNode::Type::Power && !denominator.isUninitialized());
+  assert(isDirectTrigonometryFunction(denominator));
+  Expression result;
+  switch (denominator.type()) {
+    case ExpressionNode::Type::Cosine:
+      result = Secant::Builder(denominator.childAtIndex(0));
+      break;
+    case ExpressionNode::Type::Sine:
+      result = Cosecant::Builder(denominator.childAtIndex(0));
+      break;
+    default:
+      assert(denominator.type() == ExpressionNode::Type::Tangent);
+      result = Cotangent::Builder(denominator.childAtIndex(0));
+      break;
+  }
+  e.replaceWithInPlace(result);
+  return result;
 }
 
 template <typename T>

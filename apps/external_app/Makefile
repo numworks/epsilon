@@ -17,12 +17,14 @@ objects += $(addprefix utils/,\
 
 objects += main.o icon.o
 
-address = $(shell echo $$(( 0x90350000 + $(APPLICATION_INDEX) * 0x10000 )))
+FLASH_ADDRESS_SLOT_A = $(shell printf '%x' $$(( 0x90350000 + $(APPLICATION_INDEX) * 0x10000 )))
+FLASH_ADDRESS_SLOT_B = $(shell printf '%x' $$(( 0x90750000 + $(APPLICATION_INDEX) * 0x10000 )))
+
 
 .PHONY: run
 run: external_application.bin
-#read where which slot is used?
-	python3 dfu/dfu.py -s $(address):leave -D external_application.bin
+	python3 dfu/dfu.py -s $(FLASH_ADDRESS_SLOT_A) -D external_application.bin
+	python3 dfu/dfu.py -s $(FLASH_ADDRESS_SLOT_B):leave -D external_application.bin
 
 external_application.bin: external_application.elf
 	arm-none-eabi-objcopy -O binary $^ $@

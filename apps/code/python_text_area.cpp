@@ -387,8 +387,9 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position,
 void PythonTextArea::didBecomeFirstResponder() {
   /* If we are coming from a Varbox opened while autocompleting, the text was
    * removed to preserve the ScriptNodes name pointers. */
-  if (!m_contentView.isAutocompleting()) {
+  if (!m_contentView.isAutocompleting() && m_wasAutocompleting) {
     addAutocompletion(m_autocompletionResultIndex);
+    m_wasAutocompleting = false;
   }
 }
 
@@ -416,16 +417,17 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     {
       cycleAutocompletion(event == Ion::Events::Down);
       return true;
-    } else {
+    } else if (event == Ion::Events::Var) {
       /* Remove the autocompletion text so that opening the Varbox does not
        * invalidate the ScriptNodes name pointers. */
+      m_wasAutocompleting = m_contentView.isAutocompleting();
       removeAutocompletion();
-      if (event != Ion::Events::Var) {
-        m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
-        if (event == Ion::Events::Back) {
-          // Do not process the event more
-          return true;
-        }
+    } else {
+      removeAutocompletion();
+      m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
+      if (event == Ion::Events::Back) {
+        // Do not process the event more
+        return true;
       }
     }
   }

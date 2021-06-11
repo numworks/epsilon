@@ -1,6 +1,10 @@
 #include <escher/run_loop.h>
 #include <kandinsky/font.h>
 #include <assert.h>
+#if ESCHER_LOG_EVENTS_NAME
+#include <ion/console.h>
+#include <layout_events.h>
+#endif
 
 namespace Escher {
 
@@ -60,10 +64,10 @@ bool RunLoop::step() {
 #endif
 #if ESCHER_LOG_EVENTS_NAME
   const char * name = event.name();
-  if (name == nullptr) {
-    name = "UNDEFINED";
+  if (name != nullptr) {
+    Ion::Console::writeLine("Event: ", false);
+    Ion::Console::writeLine(name);
   }
-  Ion::Console::writeLine(name);
 #endif
 
   if (event != Ion::Events::None) {

@@ -39,7 +39,7 @@ Expression SquareRootNode::shallowReduce(ReductionContext reductionContext) {
   return SquareRoot(this).shallowReduce(reductionContext);
 }
 
-static bool splitNestedRadical(Expression term, Expression * factor, Expression * underRoot) {
+bool SquareRoot::SplitRadical(Expression term, Expression * factor, Expression * underRoot) {
   /* We expect term to be a reduction of a√b, with a or b eventually equal to 1 */
   if (term.type() == ExpressionNode::Type::Rational) {
     *factor = term;
@@ -47,7 +47,7 @@ static bool splitNestedRadical(Expression term, Expression * factor, Expression 
     return true;
   }
   if (term.type() == ExpressionNode::Type::Power) {
-    return splitNestedRadical(Multiplication::Builder(Rational::Builder(1), term), factor, underRoot);
+    return SplitRadical(Multiplication::Builder(Rational::Builder(1), term), factor, underRoot);
   }
   if (term.type() == ExpressionNode::Type::Multiplication && term.numberOfChildren() == 2) {
     Expression factor1 = term.childAtIndex(0), factor2 = term.childAtIndex(1);
@@ -64,21 +64,9 @@ static bool splitNestedRadical(Expression term, Expression * factor, Expression 
   return false;
 }
 
-Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  assert(e.type() == ExpressionNode::Type::Power
-      && e.childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && e.childAtIndex(1).convert<Rational>().isHalf());
-  Expression addition = e.childAtIndex(0);
-  if (addition.type() != ExpressionNode::Type::Addition || addition.numberOfChildren() != 2) {
-    return e;
-  }
-  Expression term1 = addition.childAtIndex(0), term2 = addition.childAtIndex(1);
-  /* We are interested in expressions of the form : √(a√b + c√d)*/
-  Expression a, b, c, d;
-  if (!splitNestedRadical(term1.clone(), &a, &b) || !splitNestedRadical(term2.clone(), &c, &d)) {
-    return e;
-  }
+Expression SquareRoot::ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, ExpressionNode::ReductionContext reductionContext) {
   assert(a.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && c.type() == ExpressionNode::Type::Rational && d.type() == ExpressionNode::Type::Rational);
+  Expression result;
   /* We want to go from √(a√b + c√d) to root(w,4)×√x×√(y+√z), because √(y+√z)
    * is very easy to denest. */
   Rational rA = static_cast<Rational &>(a), rB = static_cast<Rational &>(b), rC = static_cast<Rational &>(c), rD = static_cast<Rational &>(d);
@@ -104,22 +92,21 @@ Expression SquareRoot::ReduceNestedRadicals(Expression e, ExpressionNode::Reduct
   y = Rational::Multiplication(y, Rational::IntegerPower(x, Integer(-1)));
   Rational y2 = Rational::IntegerPower(y, Integer(2));
   if (y2.numeratorOrDenominatorIsInfinity() || w.numeratorOrDenominatorIsInfinity() || x.numeratorOrDenominatorIsInfinity() || z.numeratorOrDenominatorIsInfinity()) {
-    return e;
+    return result;
   }
   /* √(y+√z) can be turned into √u+√v if √(y^2-z) is rational. Because of our
    * choice of w, x, y and z, we know that y^2 > z. */
   Expression delta = Power::Builder(Rational::Addition(y2, Rational::Multiplication(z, Rational::Builder(-1))), Rational::Builder(1, 2)).shallowReduce(reductionContext);
   if (delta.type() != ExpressionNode::Type::Rational) {
-    return e;
+    return result;
   }
   Rational rDelta = static_cast<Rational &>(delta);
   Expression left = Power::Builder(Rational::Multiplication(Rational::Addition(y, rDelta), Rational::Builder(1, 2)), Rational::Builder(1, 2));
   Expression right = Power::Builder(Rational::Multiplication(Rational::Addition(y, Rational::Multiplication(rDelta, Rational::Builder(-1))), Rational::Builder(1, 2)), Rational::Builder(1, 2));
-  Expression result = Multiplication::Builder({
+  result = Multiplication::Builder({
       Power::Builder(w, Rational::Builder(1, 4)),
       Power::Builder(x, Rational::Builder(1, 2)),
       Addition::Builder(left, subtract ? Opposite::Builder(right) : right)});
-  e.replaceWithInPlace(result);
   return result.deepReduce(reductionContext);
 }
 

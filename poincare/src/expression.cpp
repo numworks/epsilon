@@ -1,6 +1,7 @@
 #include <poincare/expression.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/expression_node.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/ghost.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
@@ -17,7 +18,6 @@
 
 namespace Poincare {
 
-bool Expression::sSymbolReplacementsCountLock = false;
 static bool sApproximationEncounteredComplex = false;
 
 /* Constructor & Destructor */
@@ -99,6 +99,9 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, Expr
 bool Expression::hasExpression(ExpressionTypeTest test, const void * context) const {
   if (test(*this, context)) {
     return true;
+  }
+  if (isUninitialized()) {
+    return false;
   }
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
@@ -348,12 +351,13 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
-    if (c.isUninitialized()) { // the expression is circularly defined, escape
-      return Expression();
+    childAtIndex(i).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+    if (*isCircular) {
+      // the expression is circularly defined, escape
+      return *this;
     }
   }
   return *this;
@@ -427,7 +431,7 @@ int Expression::defaultGetPolynomialCoefficients(Context * context, const char *
 }
 
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const {
-  int degree = getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
+  int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
   }
@@ -527,8 +531,41 @@ bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Con
 
 /* Layout Helper */
 
-Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return isUninitialized() ? Layout() : node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+static bool hasCodePointWithDisplayType(Layout l, CodePointLayoutNode::DisplayType type) {
+  if (l.type() == LayoutNode::Type::CodePointLayout) {
+    return static_cast<CodePointLayoutNode *>(l.node())->displayType() == type;
+  }
+  int n = l.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if (hasCodePointWithDisplayType(l.childAtIndex(i), type)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static void stripDisplayTypeFromCodePoints(Layout l) {
+  if (l.type() == LayoutNode::Type::CodePointLayout) {
+    static_cast<CodePointLayoutNode *>(l.node())->setDisplayType(CodePointLayoutNode::DisplayType::None);
+  } else {
+    int n = l.numberOfChildren();
+    for (int i = 0; i < n; i++) {
+      stripDisplayTypeFromCodePoints(l.childAtIndex(i));
+    }
+  }
+}
+
+Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripCodePointStyle, bool nested) const {
+  if (isUninitialized()) {
+    return Layout();
+  }
+  Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  assert(!l.isUninitialized());
+  if (stripCodePointStyle
+   || !(nested || hasCodePointWithDisplayType(l, CodePointLayoutNode::DisplayType::Thousand))) {
+    stripDisplayTypeFromCodePoints(l);
+  }
+  return l;
 }
 
 int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return isUninitialized() ? 0 : node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
@@ -683,40 +720,19 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   }
 }
 
-Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context, bool replaceFunctionsOnly) {
+Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context, ExpressionNode::SymbolicComputation symbolicComputation) {
   if (e.isUninitialized()) {
     return e;
   }
-  /* Replace all the symbols iteratively. If we make too many replacements, the
-   * symbols are likely to be defined circularly, in which case we return an
-   * uninitialized expression.
-   * We need a static "replacement count" to aggregate all calls to
-   * ExpressionWithoutSymbols, as this method might be called from
-   * hasReplaceableSymbols. */
-  static int replacementCount = 0;
-  bool unlock = false;
-  if (!sSymbolReplacementsCountLock) {
-    replacementCount = 0;
-    sSymbolReplacementsCountLock = true;
-    unlock = true;
+  // Replace all the symbols in depth.
+  bool isCircular = false;
+  e = e.deepReplaceReplaceableSymbols(context, &isCircular, k_maxSymbolReplacementsCount, 0, symbolicComputation);
+  if (!isCircular) {
+    return e;
   }
-  bool didReplace;
-  do {
-    replacementCount++;
-    if (replacementCount > k_maxSymbolReplacementsCount) {
-      e = Expression();
-      break;
-    }
-    didReplace = false;
-    e = e.deepReplaceReplaceableSymbols(context, &didReplace, replaceFunctionsOnly, 0);
-    if (e.isUninitialized()) { // the expression is circularly defined, escape
-      replacementCount = k_maxSymbolReplacementsCount;
-    }
-  } while (didReplace);
-  if (unlock) {
-    sSymbolReplacementsCountLock = false;
-  }
-  return e;
+  /* Symbols are defined circularly (or likely to be if we made too many
+   * replacements), in which case we return an uninitialized expression. */
+  return Expression();
 }
 
 Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext) {
@@ -982,12 +998,17 @@ double Expression::nextRoot(const char * symbol, double start, double max, Conte
     return start + std::copysign(maximalStep, max - start);
   }
   if (type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot || type() == ExpressionNode::Type::SquareRoot) {
+    if ((type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot) && childAtIndex(1).sign(context) == ExpressionNode::Sign::Negative) {
+      // Powers at negative index can't be null
+      return NAN;
+    }
     /* A power such as sqrt(x) can have a vertical derivative around its root,
      * making the tolerance used for finding zeroes ill-suited. As such, we
      * make use of the fact that the base of the power needs to be null for the
      * root to be null. */
     double result = childAtIndex(0).nextRoot(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
-    if (std::isnan(result)) {
+    if (std::isnan(result) || (result < start && max > result) || (result > start && max < result)) {
+      // result is Nan or out of bounds
       return NAN;
     }
     double exponent = type() == ExpressionNode::Type::SquareRoot ? 0.5 : childAtIndex(1).approximateWithValueForSymbol(symbol, result, context, complexFormat, angleUnit);
@@ -997,6 +1018,8 @@ double Expression::nextRoot(const char * symbol, double start, double max, Conte
         return result;
       }
     }
+    // result should be between max and start
+    assert((result >= start && max >= result) || (result <= start && max <= result));
     return nextRoot(symbol, result, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
   }
   const void * pack[] = { this, symbol, &complexFormat, &angleUnit };

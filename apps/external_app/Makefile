@@ -1,5 +1,4 @@
-INFO_API_LEVEL := 0
-APPLICATION_INDEX ?= 0
+include config.mak
 
 objects = $(addprefix numvaders/,\
   alien.o \
@@ -29,7 +28,12 @@ run: external_application.bin
 external_application.bin: external_application.elf
 	arm-none-eabi-objcopy -O binary $^ $@
 
-external_application.elf: $(objects) flash.ld
+config_flash.ld:
+	echo 'INFO_API_LEVEL = $(INFO_API_LEVEL);' > $@
+	echo 'NUMBER_OF_EXTERNAL_FLASH_SECTORS = $(NUMBER_OF_EXTERNAL_FLASH_SECTORS);' >> $@
+	echo 'SIZE_OF_EXTERNAL_FLASH_SECTOR = $(SIZE_OF_EXTERNAL_FLASH_SECTOR);' >> $@
+
+external_application.elf: $(objects) flash.ld config_flash.ld
 	arm-none-eabi-gcc -Wl,--gc-sections -Os -Ilib -I. -Wall -MD -MP -ggdb3 -fdata-sections -ffunction-sections -fpie -mthumb -mfloat-abi=hard -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -ffreestanding -nostdinc -nostdlib -lgcc -Wl,-T,flash.ld $(filter-out %.ld,$^) -o $@
 
 %.o: %.cpp icon.h
@@ -42,4 +46,4 @@ icon.h icon.cpp: icon.png
 .PHONY: clean
 clean:
 	@echo "CLEAN"
-	$(Q) rm -f *.d *.o **/*.d **/*.o icon.h icon.cpp *.elf *.bin
+	$(Q) rm -f *.d *.o **/*.d **/*.o icon.h icon.cpp *.elf *.bin config_flash.ld

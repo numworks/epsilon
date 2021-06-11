@@ -1,9 +1,9 @@
 /* Linker script */
 
-INFO_API_LEVEL = 0;
+INCLUDE config_flash.ld
 
 MEMORY {
-  FLASH (rx) : ORIGIN = 0, LENGTH = 11*64K
+  FLASH (rx) : ORIGIN = 0, LENGTH = NUMBER_OF_EXTERNAL_FLASH_SECTORS*SIZE_OF_EXTERNAL_FLASH_SECTOR
   /* External Apps have no allocated space for any bss or data. */
   SRAM_DATA_BSS (rw) : ORIGIN = 0x20000000, LENGTH = 0
 }

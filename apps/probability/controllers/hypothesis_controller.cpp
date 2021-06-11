@@ -94,7 +94,7 @@ void HypothesisController::loadHypothesisParam(bool h0Only) {
   Poincare::PrintFloat::ConvertFloatToText(p, buffer + written, bufferSize, k_maxInputLength, 5,
                                            Poincare::Preferences::PrintFloatMode::Decimal);
   m_ha.setAccessoryText(buffer);
-  if (h0Only) {
+  if (!h0Only) {
     m_h0.setAccessoryText(buffer + written);
   }
 }

@@ -46,16 +46,14 @@ const char * filePathForWriting(const char * extension) {
   return nullptr;
 }
 
-  // Warning: not sure that works
+  // Warning: never tested
 const char * filePathInTempDir(const char * filename) {
   static char path[64];
   int written = 0;
   written = GetTempPath(sizeof(path), path);
-  if(written > sizeof(path) || written == 0) {
+  if (snprintf(path + written, sizeof(path) - written, "\\%s", filename) < 0) {
     return nullptr;
   }
-  assert(written + strlen(filename) < sizeof(path));
-  strcpy(&path[written], filename);
   return path;
 }
 

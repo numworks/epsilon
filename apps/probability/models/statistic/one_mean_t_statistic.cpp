@@ -41,7 +41,7 @@ float OneMeanTStatistic::_degreesOfFreedom(int n) {
 }
 
 float OneMeanTStatistic::_t(float mean, float meanSample, float s, float n) {
-  return (meanSample - mean) / (s / sqrt(n));
+  return absIfNeeded((meanSample - mean) / (s / sqrt(n)));
 }
 
 float OneMeanTStatistic::_SE(float s, float n) {

@@ -5,14 +5,14 @@
 
 /* The application information is mapped at the very begining of the
  * application firmware. It should be 'packed' information representing:
- * - a magic code 0XBABECODE
+ * - a magic code 0XBABECODE named m_header
  * - the API level of the AppInfo layout
  * - the address of the app name
  * - the size of the compressed icon
  * - the address of the compressed icon data
  * - the address of the entry point
  * - the size of the external app including the AppInfo header
- * - the same magic code 0xBABECODE
+ * - the same magic code 0xBABECODE named m_footer
  */
 
 class __attribute__((packed)) AppInfo {

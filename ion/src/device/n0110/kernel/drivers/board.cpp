@@ -312,14 +312,6 @@ bool isRunningSlotA() {
   return reinterpret_cast<uint32_t>(&_kernel_start) < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
 }
 
-uint32_t slotAUserlandStart() {
-  return Config::KernelAStartAddress + Config::UserlandOffsetFromKernel;
-
-}
-uint32_t slotBUserlandStart() {
-  return Config::KernelBStartAddress + Config::UserlandOffsetFromKernel;
-}
-
 bool isInReflashableSector(uint32_t address) {
   if (isRunningSlotA()) {
     return address >= ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2 && address < ExternalFlash::Config::EndAddress;

@@ -13,11 +13,11 @@
 #include <kernel/drivers/backlight.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
-#include <kernel/drivers/usb.h>
 #include <kernel/warning_display.h>
 #include <ion/src/shared/platform_info.h>
 #include <regs/regs.h>
 #include <shared/drivers/config/board.h>
+#include <shared/drivers/usb.h>
 
 namespace Ion {
 namespace Device {
@@ -106,14 +106,6 @@ void setClockStandardFrequency() {
   // Change the systick frequency to compensate the KCLK frequency change
   RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
   Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKFrequency);
-}
-
-uint32_t userlandStart() {
-  return isRunningSlotA() ? slotAUserlandStart() : slotBUserlandStart();
-}
-
-uint32_t otherUserlandStart() {
-  return isRunningSlotA() ? slotBUserlandStart() : slotAUserlandStart();
 }
 
 void switchExecutableSlot(uint32_t leaveAddress) {

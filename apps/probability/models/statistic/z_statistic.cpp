@@ -7,7 +7,8 @@
 namespace Probability {
 
 float ZStatistic::_pVal(float z, char op) {
-  HypothesisParams::ComparisonOperator realOp = static_cast<HypothesisParams::ComparisonOperator>(op);
+  HypothesisParams::ComparisonOperator realOp =
+      static_cast<HypothesisParams::ComparisonOperator>(op);
   switch (realOp) {
     case HypothesisParams::ComparisonOperator::Lower:
       return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(z, 0, 1);
@@ -22,13 +23,12 @@ float ZStatistic::_pVal(float z, char op) {
   }
 }
 
-
 float ZStatistic::normedDensityFunction(float x) {
   return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, 0, 1);
 }
 
 float ZStatistic::_zAlpha(float alpha) {
-  return _zCritical(alpha);
+  return _zCritical(1 - alpha);
 }
 
 float ZStatistic::_zCritical(float confidenceLevel) {

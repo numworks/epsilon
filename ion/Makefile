@@ -57,6 +57,7 @@ ion_device_bootloader_src += $(addprefix ion/src/shared/, \
 ion_device_bootloader_src += ion/src/external/lz4/lz4.c
 
 ion_device_userland_src += $(addprefix ion/src/shared/, \
+  console_line.cpp \
   decompress.cpp:+consoledisplay \
   platform_info.cpp \
   stack_position.cpp \
@@ -65,6 +66,9 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   unicode/utf8_helper.cpp\
 )
 ion_device_kernel_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
+ifeq ($(ESCHER_LOG_EVENTS_NAME),1)
+ion_device_userland_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
+endif
 ion_device_userland_src += ion/src/external/lz4/lz4.c:+consoledisplay
 
 ion_src += ion/src/external/lz4/lz4.c

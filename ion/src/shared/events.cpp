@@ -106,9 +106,9 @@ Event sharedGetEvent(int * timeout) {
          * to resort to using a builtin function. */
         Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
         didPressNewKey(key);
-        bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
-        bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
-        Event event(key, shift, alpha, lock);
+        sLastEventShift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
+        sLastEventAlpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
+        Event event(key, sLastEventShift, sLastEventAlpha, lock);
         updateModifiersFromEvent(event);
         sLastEvent = event;
         sLastKeyboardState = state;

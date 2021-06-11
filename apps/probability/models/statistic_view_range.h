@@ -18,7 +18,7 @@ class StatisticViewRange : public Shared::CurveViewRange {
 public:
   StatisticViewRange(bool isLeftRange) : m_isLeftRange(isLeftRange) {}
   void setStatistic(Statistic * statistic) { m_statistic = statistic; }
-  float yMin() const override { return k_yMin; }
+  float yMin() const override;
   float yMax() const override;
   float xMin() const override;
   float xMax() const override;
@@ -29,9 +29,8 @@ private:
     float min;
     float max;
   };
-  Range computeRange() const;
-  constexpr static float k_yMin = -0.1;
-  constexpr static float k_yMax = 0.4;
+  Range computeXRange() const;
+  Range computeYRange() const;
   constexpr static int k_marginLeftOfMin = 30;
   constexpr static int k_areaWidth = 50;
   constexpr static int k_areaHeight = 65;

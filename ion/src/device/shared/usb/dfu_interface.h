@@ -38,7 +38,7 @@ public:
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
-    assert(interfaceAlternativeIndex == m_bInterfaceAlternateSetting);
+    m_bInterfaceAlternateSetting = interfaceAlternativeIndex;
   }
   uint8_t getActiveInterfaceAlternative() override {
     return m_bInterfaceAlternateSetting;

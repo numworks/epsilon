@@ -105,5 +105,5 @@ void HypothesisController::storeHypothesisParams() {
   HypothesisParams * params = App::app()->snapshot()->data()->hypothesisParams();
   params->setFirstParam(Shared::PoincareHelpers::ApproximateToScalar<float>(
       m_h0.textField()->text(), AppsContainer::sharedAppsContainer()->globalContext()));
-  params->setOp(HypothesisParams::ComparisonOperator::Higher);
+  // params->setOp(HypothesisParams::ComparisonOperator::Higher);
 }

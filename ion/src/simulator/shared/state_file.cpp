@@ -12,8 +12,19 @@ static constexpr const char * sHeader = "NWSF";
 static constexpr int sHeaderLength = 4;
 static constexpr int sVersionLength = 8;
 static constexpr const char * sWildcardVersion = "**.**.**";
+static constexpr int sFormatVersionLength = 1;
+static constexpr uint8_t sLatestFormatVersion = 1;
+static constexpr int sLanguageLength = Ion::Events::Journal::k_languageSize-1;
+static constexpr const char * sWildcardLanguage = "**";
 
-/* File format: * "NWSF" + "XXXXXXXX" (version) + EVENTS... */
+/* File format:
+ * Format version 0xFF (latest) :
+ *   "NWSF" : Header
+ * + "XXXXXXXX" : Software version
+ * + "0x01" : State file format version
+ * + "XX" : Language code (en, fr, nl, pt, it, de, or es)
+ * + EVENTS...
+ */
 
 static inline bool load(FILE * f) {
   char buffer[sVersionLength+1];
@@ -36,9 +47,28 @@ static inline bool load(FILE * f) {
     return false;
   }
 
-  // Events
+  // Journal
   Ion::Events::Journal * journal = Journal::replayJournal();
+
+  // Format version
   int c = 0;
+  static_assert(sFormatVersionLength == 1, "sFormatVersionLength is incorrect");
+  if ((c = getc(f)) == EOF || c != sLatestFormatVersion) {
+    // Only the latest version is handled for now.
+    return false;
+  }
+
+  // Language
+  static_assert(sVersionLength + 1 > sLanguageLength, "Buffer isn't long enough for language");
+  buffer[sLanguageLength] = 0;
+  if (fread(buffer, sLanguageLength, 1, f) != 1) {
+    return false;
+  }
+  if (strcmp(buffer, sWildcardLanguage) != 0) {
+    journal->setStartingLanguage(buffer);
+  }
+
+  // Events
   while ((c = getc(f)) != EOF) {
     Ion::Events::Event e = Ion::Events::Event(c);
     if (e.isDefined() && e.isKeyboardEvent()) {
@@ -74,8 +104,14 @@ static inline bool save(FILE * f) {
   if (fwrite(softwareVersion(), sVersionLength, 1, f) != 1) {
     return false;
   }
+  if (fwrite(&sLatestFormatVersion, sFormatVersionLength, 1, f) != 1) {
+    return false;
+  }
   Ion::Events::Journal * journal = Journal::logJournal();
-  Ion::Events::Event e;
+  const char * logJournalLanguage = journal->startingLanguage()[0] != 0 ? journal->startingLanguage() : sWildcardLanguage;
+  if (fwrite(logJournalLanguage, sLanguageLength, 1, f) != 1) {
+    return false;
+  }
   while (!journal->isEmpty()) {
     Ion::Events::Event e = journal->popEvent();
     uint8_t code = static_cast<uint8_t>(e);

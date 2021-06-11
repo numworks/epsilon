@@ -154,6 +154,7 @@ Event getPlatformEvent() {
 #if ION_SIMULATOR_FILES
     if (event.type == SDL_DROPFILE) {
       Simulator::StateFile::load(event.drop.file);
+      // State file's language is ignored
       break;
     }
 #endif

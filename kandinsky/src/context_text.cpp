@@ -66,8 +66,11 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull && (maxByteLength < 0 || codePointPointer < text + maxByteLength)) {
     codePointPointer = decoder.stringPosition();
-    assert(codePoint != UCodePointLineFeed);
-    if (codePoint == UCodePointTabulation) {
+    if (codePoint == UCodePointLineFeed) {
+      assert(position.y() < KDCOORDINATE_MAX - glyphSize.height());
+      position = KDPoint(0, position.y() + glyphSize.height());
+      codePoint = decoder.nextCodePoint();
+    } else if (codePoint == UCodePointTabulation) {
       position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
       codePoint = decoder.nextCodePoint();
     } else {

@@ -1,7 +1,7 @@
 INFO_API_LEVEL := 0
 APPLICATION_INDEX ?= 0
 
-objects = $(addprefix numwars/,\
+objects = $(addprefix numvaders/,\
   alien.o \
   life.o \
   rocket.o \

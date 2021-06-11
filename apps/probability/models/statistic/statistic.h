@@ -74,6 +74,7 @@ protected:
   virtual int numberOfStatisticParameters() const = 0;
   virtual const ParameterRepr * paramReprAtIndex(int i) const = 0;
   virtual float * paramArray() = 0;
+  float absIfNeeded(float f);
 
   /* Threshold is either the confidence level or the significance level */
   float m_threshold;

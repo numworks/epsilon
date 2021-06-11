@@ -48,7 +48,7 @@ float TwoMeansTStatistic::_xEstimate(float meanSample1, float meanSample2) {
 
 float TwoMeansTStatistic::_t(float deltaMean, float meanSample1, float n1, float s1,
                              float meanSample2, float n2, float s2) {
-  return ((meanSample1 - meanSample2) - (deltaMean)) / _SE(s1, n1, s2, n2);
+  return absIfNeeded(((meanSample1 - meanSample2) - (deltaMean)) / _SE(s1, n1, s2, n2));
 }
 
 float TwoMeansTStatistic::_degreeOfFreedom(float s1, int n1, float s2, int n2) {

@@ -35,7 +35,7 @@ const ParameterRepr * OneMeanZStatistic::paramReprAtIndex(int i) const {
 }
 
 float OneMeanZStatistic::_z(float mean, float meanSample, float n, float sigma) {
-  return (meanSample - mean) / (sigma / sqrt(n));
+  return absIfNeeded((meanSample - mean) / (sigma / sqrt(n)));
 }
 
 float OneMeanZStatistic::_SE(float sigma, int n) {

@@ -47,7 +47,7 @@ float TwoProportionsStatistic::_z(float deltaP0, float x1, int n1, float x2, int
   float p1 = x1 / n1;
   float p2 = x2 / n2;
   float p = (x1 + x2) / (n1 + n2);
-  return (p1 - p2 - deltaP0) / sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
+  return absIfNeeded((p1 - p2 - deltaP0) / sqrt(p * (1 - p) * (1. / n1 + 1. / n2)));
 }
 
 float TwoProportionsStatistic::_SE(float x1, int n1, float x2, int n2) {

@@ -32,7 +32,7 @@ void Statistic::initThreshold() {
 }
 
 float Statistic::absIfNeeded(float f) {
-  return m_hypothesisParams.op() == HypothesisParams::ComparisonOperator::Different ? std::abs(f)
+  return m_hypothesisParams.op() == HypothesisParams::ComparisonOperator::Different ? fabs(f)
                                                                                     : f;
 }
 

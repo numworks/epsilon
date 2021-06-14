@@ -10,6 +10,7 @@
 #include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
+#include <string.h>
 
 #include <new>
 
@@ -39,13 +40,28 @@ const char * Probability::HypothesisController::title() {
   return m_titleBuffer;
 }
 
-bool Probability::HypothesisController::textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) {
-    return (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
-      || (event == Ion::Events::Up && selectedRow() > 0)
-      || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+bool Probability::HypothesisController::textFieldShouldFinishEditing(Escher::TextField * textField,
+                                                                     Ion::Events::Event event) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    if (textField == m_h0.textField()) {
+      return true;
+    }
+    // Dummy parsing to check for operator in editable field
+    const char * txt = textField->text();
+    const char ops[3] = {'<', '=', '>'};
+    for (int i = 0; i < 3; i++) {
+      if (strchr(txt, ops[i]) != NULL) {
+        return true;
+      }
+    }
+    return false;
+  }
+  return false;
 }
 
-bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
+bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextField * textField,
+                                                                  const char * text,
+                                                                  Ion::Events::Event event) {
   if (textField == m_h0.textField()) {
     float h0;
     if (textFieldDelegateApp()->hasUndefinedValue(text, h0, false, false)) {
@@ -55,6 +71,16 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
     App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(h0);
     loadHypothesisParam(true);
     return true;
+  }
+  HypothesisParams::ComparisonOperator ops[3] = {HypothesisParams::ComparisonOperator::Lower,
+                                                 HypothesisParams::ComparisonOperator::Different,
+                                                 HypothesisParams::ComparisonOperator::Higher};
+  for (int i = 0; i < 3; i++) {
+    if (strchr(text, static_cast<char>(ops[i])) != NULL) {
+      App::app()->snapshot()->data()->hypothesisParams()->setOp(ops[i]);
+      m_ha.setAccessoryText(text);
+      return true;
+    }
   }
   return false;
 }

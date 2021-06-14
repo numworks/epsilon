@@ -50,9 +50,18 @@ void initMPU() {
   /* We will activate the default memory map as the background region which is
    * accessible from privileged software only (PM0253). */
 
+  /* 2.1. The bootloader sector 0x0200 0000 - 0x1FFF FFFF is read-only. The
+   * userland requires accesses to:
+   * - the trampoline section and all its dependencies within the internal flash
+   * - the electronic signature located at 0x1FF0 7A10
+   * A collateral effect is to give access to the Option bytes but that's not
+   * really an issue in Read-only mode. The region size is too large but
+   * overlapped by the next region.
+   * TODO: could we merge the section and the next one?
+   * */
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(Board::Config::BootloaderStartAddress);
-  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_64KB);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_512MB);
   MPU.RASR()->setSRD(0);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::RO);
   MPU.RASR()->setXN(false);
@@ -62,7 +71,7 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  /* 2.1 Enable unprivileged access to the SRAM - except the range dedicated to
+  /* 2.2 Enable unprivileged access to the SRAM - except the range dedicated to
    * the kernel */
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(Board::Config::UserlandSRAMAddress);
@@ -75,7 +84,7 @@ void initMPU() {
   MPU.RASR()->setB(1);
   MPU.RASR()->setENABLE(true);
 
-  // 2.2 Forbid unprivileged access to kernel RAM
+  // 2.3 Forbid unprivileged access to kernel RAM
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(Board::Config::KernelRAMAddress);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_16KB);
@@ -87,7 +96,7 @@ void initMPU() {
   MPU.RASR()->setB(1);
   MPU.RASR()->setENABLE(true);
 
-  // 2.3 Enable unprivileged access to the OTG registers
+  // 2.4 Enable unprivileged access to the OTG registers
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(OTG.Base());
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256KB);
@@ -99,7 +108,7 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  // 2.4 Configure a MPU region for the FMC memory area
+  // 2.5 Configure a MPU region for the FMC memory area
   /* This is needed for interfacing with the LCD
    * Actually, we only need to access the FMC command and data addresses (32
    * bits respectively at 0x60000000 and 0x60020000). However, we can only
@@ -117,7 +126,7 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  // 2.5 Configure MPU regions for the QUADSPI peripheral
+  // 2.6 Configure MPU regions for the QUADSPI peripheral
   /* L1 Cache can issue speculative reads to any memory address. But, when the
    * Quad-SPI is in memory-mapped mode, if an access is made to an address
    * outside of the range defined by FSIZE but still within the 256Mbytes range,

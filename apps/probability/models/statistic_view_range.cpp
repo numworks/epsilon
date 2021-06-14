@@ -31,14 +31,16 @@ StatisticViewRange::Range StatisticViewRange::computeXRange() const {
     float zAlpha = m_statistic->zAlpha();
     float z = m_statistic->testCriticalValue();
     if (m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different) {
-      zAlpha = std::abs(zAlpha);
-      z = std::abs(z);
+      zAlpha = fabs(zAlpha);
+      z = fabs(z);
       Range r = computeTestXRange(z, zAlpha);
       if (m_isLeftRange) {
         // Flip
         r = Range{-r.max, -r.min};
       }
       return r;
+    } else {
+      return computeTestXRange(z, zAlpha);
     }
   }
   // Confidence interval

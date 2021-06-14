@@ -177,9 +177,6 @@ bool handlePreemption(bool stalling) {
       return true;
     }
     Power::suspend(true);
-    /* Special case: Power::suspend waits for the release of the OnOff key. We
-     * update sKeysSeenUp accordingly. */
-    sKeysSeenUp = -1;
     if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
       /* If we were stalling (in the middle of processing an event), we load
        * the Home checkpoint to avoid resuming the execution in the middle of
@@ -452,7 +449,9 @@ void stall() {
   }
 }
 
-
+void resetKeyboardState() {
+  sKeysSeenUp = -1;
+}
 
 void resetPendingKeyboardState() {
   sPreemtiveState = Ion::Keyboard::State(0);

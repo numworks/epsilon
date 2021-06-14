@@ -14,6 +14,8 @@ app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
   two_parameter_distribution.cpp \
 )
 
+app_probability_test_src += apps/probability/models/student_law.cpp
+
 app_probability_src = $(addprefix apps/probability/,\
   app.cpp \
   text_helpers.cpp \
@@ -21,6 +23,7 @@ app_probability_src = $(addprefix apps/probability/,\
 
 app_probability_src += $(addprefix apps/probability/models/,\
 	statistic_view_range.cpp \
+	student_law.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/models/distribution/,\
@@ -98,6 +101,7 @@ tests_src += $(addprefix apps/probability/test/,\
   hypergeometric_function.cpp\
   distributions.cpp\
   regularized_gamma.cpp \
+  student_law.cpp \
 )
 
 # Allow #include "probability/..."

@@ -69,7 +69,7 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
     }
     // TODO could check validity
     App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(h0);
-    loadHypothesisParam(true);
+    loadHypothesisParam(false);
     return true;
   }
   HypothesisParams::ComparisonOperator ops[3] = {HypothesisParams::ComparisonOperator::Lower,

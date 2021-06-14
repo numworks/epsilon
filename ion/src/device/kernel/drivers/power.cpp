@@ -134,6 +134,9 @@ void waitUntilOnOffKeyReleased() {
   Ion::Timing::msleep(100); // Debouncing
   // Flush the keyboard queue to avoid handling artifacts state at wake-up
   Keyboard::Queue::sharedQueue()->flush();
+  /* Special case: Power::suspend waits for the release of the OnOff key. We
+   * update sKeysSeenUp accordingly. */
+  Events::resetKeyboardState();
 }
 
 void sleepConfiguration() {

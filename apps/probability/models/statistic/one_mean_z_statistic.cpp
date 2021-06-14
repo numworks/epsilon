@@ -21,7 +21,7 @@ void OneMeanZStatistic::computeTest() {
 
 void OneMeanZStatistic::computeInterval() {
   m_pEstimate = x();
-  m_zCritical = _zCritical(threshold());
+  m_zCritical = _zCritical(m_threshold);
   m_SE = _SE(sigma(), n());
   m_ME = _ME(m_zCritical, m_SE);
 }

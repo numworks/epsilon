@@ -28,12 +28,14 @@ float ZStatistic::normedDensityFunction(float x) {
 }
 
 float ZStatistic::_zAlpha(float alpha) {
-  return _zCritical(1 - alpha);
+  float x =
+      m_hypothesisParams.op() == HypothesisParams::ComparisonOperator::Lower ? alpha : 1 - alpha;
+  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(x, 0, 1);
 }
 
 float ZStatistic::_zCritical(float confidenceLevel) {
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(
-      confidenceLevel, 0, 1);
+      0.5 + confidenceLevel / 2, 0, 1);
 }
 
 }  // namespace Probability

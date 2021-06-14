@@ -25,8 +25,7 @@ void OneProportionStatistic::computeTest() {
 
 void OneProportionStatistic::computeInterval() {
   m_pEstimate = _pEstimate(x(), n());
-  m_zAlpha = _zAlpha(m_threshold);
-  m_zCritical = _zCritical(threshold());
+  m_zCritical = _zCritical(m_threshold);
   m_SE = _SE(m_pEstimate, n());
   m_ME = _ME(m_zCritical, m_SE);
 }

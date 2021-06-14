@@ -4,11 +4,11 @@ app_headers += apps/probability/app.h
 app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
   binomial_distribution.cpp \
   chi_squared_distribution.cpp \
+  distribution.cpp \
   fisher_distribution.cpp \
   geometric_distribution.cpp \
   helper.cpp \
   hypergeometric_function.cpp\
-  distribution.cpp \
   regularized_gamma.cpp \
   student_distribution.cpp \
   two_parameter_distribution.cpp \
@@ -101,7 +101,9 @@ tests_src += $(addprefix apps/probability/test/,\
 )
 
 # Allow #include "probability/..."
-$(call object_for,apps/apps_container.cpp apps/apps_container_storage.cpp apps/main.cpp) $(call object_for,$(app_probability_src)): SFLAGS += -Iapps
+$(call object_for,apps/apps_container.cpp apps/apps_container_storage.cpp apps/main.cpp) \
+$(call object_for,$(app_probability_src)) $(call object_for,$(app_probability_test_src)) \
+$(call object_for,$(tests_src)): SFLAGS += -Iapps
 
 # Image dependencies
 

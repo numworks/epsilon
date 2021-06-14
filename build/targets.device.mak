@@ -69,11 +69,13 @@ epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
 
 .PHONY: $(BUILD_DIR)/epsilon.dfu
 $(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/signer
+	$(MAKE) FIRMWARE_COMPONENT=bootloader bootloader.elf
 	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.A.elf
 	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.B.elf
 	$(MAKE) FIRMWARE_COMPONENT=userland userland.A.elf
 	$(MAKE) FIRMWARE_COMPONENT=userland userland.B.elf
 	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
+	  $(subst epsilon,bootloader,$(BUILD_DIR)/bootloader.elf) \
 	  $(subst epsilon,userland,$(BUILD_DIR)/userland.A.elf) \
 	  $(subst epsilon,kernel,$(BUILD_DIR)/kernel.A.elf) \
 	  $(subst epsilon,userland,$(BUILD_DIR)/userland.B.elf) \

@@ -1,6 +1,7 @@
 #include "graph_controller.h"
 
 #include "probability/app.h"
+#include "probability/text_helpers.h"
 
 namespace Probability {
 
@@ -9,6 +10,19 @@ GraphController::GraphController(StackViewController * stack) :
     m_rangeLeft(m_graphView.curveViewLeft(), true),
     m_rangeRight(m_graphView.curveViewRight(), false),
     m_graphView(&m_rangeLeft, &m_rangeRight) {
+}
+
+const char * GraphController::title() {
+  char zBuffer[10];
+  char pBuffer[10];
+  Statistic * statistic = App::app()->snapshot()->data()->statistic();
+  Poincare::PrintFloat::ConvertFloatToText(statistic->testCriticalValue(), zBuffer, sizeof(zBuffer),
+                                           5, 3, Poincare::Preferences::PrintFloatMode::Decimal);
+  Poincare::PrintFloat::ConvertFloatToText(statistic->pValue(), pBuffer, sizeof(pBuffer), 10, 3,
+                                           Poincare::Preferences::PrintFloatMode::Decimal);
+
+  sprintf(m_titleBuffer, "z=%s p-value=%s", zBuffer, pBuffer);
+  return m_titleBuffer;
 }
 
 void GraphController::didBecomeFirstResponder() {

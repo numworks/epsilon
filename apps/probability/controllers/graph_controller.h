@@ -14,10 +14,13 @@ class GraphController : public Page {
 public:
   GraphController(StackViewController * stack);
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastThreeTitles; }
+  const char * title() override;
   Escher::View * view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;
 
 private:
+  constexpr static int k_titleBufferSize = 30;
+  char m_titleBuffer[k_titleBufferSize];
   StatisticViewRange m_rangeLeft;
   StatisticViewRange m_rangeRight;
   GraphView m_graphView;

@@ -398,7 +398,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
   // Print exponent
   assert(numberOfCharsForMantissaWithSign < bufferSize);
   int currentNumberOfChar = numberOfCharsForMantissaWithSign;
-  currentNumberOfChar+= UTF8Decoder::CodePointToChars(UCodePointLatinLetterSmallCapitalE, buffer + currentNumberOfChar, bufferSize - currentNumberOfChar);
+  currentNumberOfChar+= UTF8Decoder::CodePointToChars(UCodePointLatinLetterSmallCapitalE, buffer + currentNumberOfChar, bufferSize - currentNumberOfChar - 1);
   dividend = Long(exponent); // reuse dividend as it is not needed anymore
   PrintLongWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, dividend, -1);
   buffer[currentNumberOfChar + numberOfCharExponent] = 0;

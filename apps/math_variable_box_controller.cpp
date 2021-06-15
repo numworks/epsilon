@@ -227,11 +227,9 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   if (m_currentPage == Page::Function || m_currentPage == Page::Sequence) {
     // Add parentheses to a function name
     assert(nameLength < nameToHandleMaxSize);
-    nameLength += UTF8Decoder::CodePointToChars('(', nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
-    assert(nameLength < nameToHandleMaxSize);
-    nameLength+= UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
-    assert(nameLength < nameToHandleMaxSize);
-    nameLength += UTF8Decoder::CodePointToChars(')', nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
+    nameLength += UTF8Decoder::CodePointToChars('(', nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    nameLength += UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    nameLength += UTF8Decoder::CodePointToChars(')', nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength] = 0;
   }

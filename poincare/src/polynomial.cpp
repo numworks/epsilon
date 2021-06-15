@@ -195,7 +195,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
             Addition::Builder({b.clone(), cz.clone(), Division::Builder(delta0, cz.clone())}),
             Multiplication::Builder(Rational::Builder(-3), a.clone()));
         if (approximate) {
-          if (deltaSign > 0) {
+          if (equationIsReal && deltaSign > 0) {
             /* delta > 0, the three solutions are real. We need to get rid of
              * the imaginary part that might have appeared. */
             roots[i]= RealPart::Builder(roots[i]);

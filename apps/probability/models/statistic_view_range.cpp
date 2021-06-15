@@ -58,8 +58,13 @@ StatisticViewRange::Range StatisticViewRange::computeTestXRange(float z, float z
   float min = fminf(zAlpha, z);
   float max = fmaxf(zAlpha, z);
   float pixelWidth = (max - min) / areaWidth;
-  return Range{min - marginSide * pixelWidth,
-               min + (m_statisticCurveView->bounds().width() - marginSide) * pixelWidth};
+  // Choose big side based on operator
+  float marginSmall = marginSide * pixelWidth;
+  float marginBig = (m_statisticCurveView->bounds().width() - marginSide) * pixelWidth;
+  if (m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Lower) {
+    return Range{max - marginBig, max + marginSmall};
+  }
+  return Range{min - marginSmall, min + marginBig};
 }
 
 StatisticViewRange::Range StatisticViewRange::computeYRange() const {

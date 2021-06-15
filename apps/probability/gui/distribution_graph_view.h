@@ -45,6 +45,7 @@ private:
   constexpr static int k_conclusionViewHeight = 40;
   constexpr static int k_separatorWidth = 14;
   constexpr static int k_legendMarginRight = 10;
+  constexpr static int k_legendMarginTop = 20;
   Escher::SolidColorView m_separatorView;
   StatisticCurveView m_curveViewLeft;
   StatisticCurveView m_curveViewRight;

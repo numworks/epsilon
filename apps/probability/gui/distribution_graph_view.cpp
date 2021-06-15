@@ -40,9 +40,12 @@ void GraphView::layoutSubviews(bool force) {
   conclusionView()->setFrame(
       KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)), force);
   KDSize k_legendSize = m_legend.minimalSizeForOptimalDisplay();
-  m_legend.setFrame(KDRect(KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight, 20),
-                           k_legendSize),
-                    force);
+  KDPoint legendOrigin =
+      App::app()->snapshot()->data()->hypothesisParams()->op() ==
+              HypothesisParams::ComparisonOperator::Lower
+          ? KDPoint(k_legendMarginRight, k_legendMarginTop)
+          : KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight, k_legendMarginTop);
+  m_legend.setFrame(KDRect(legendOrigin, k_legendSize), force);
 }
 
 Escher::View * GraphView::subviewAtIndex(int i) {

@@ -29,6 +29,11 @@ public:
   }
   void didBecomeFirstResponder() override;
   void buttonAction() override { openPage(m_graphController); }
+  void openPage(ViewController * nextPage, KDColor backgroundColor = Escher::Palette::GrayMiddle,
+                KDColor separatorColor = Escher::Palette::GrayMiddle,
+                KDColor textColor = KDColorWhite) {
+    Page::openPage(nextPage, backgroundColor, separatorColor, textColor);
+  }
   Escher::View * view() override { return &m_tableView; }
 
 protected:

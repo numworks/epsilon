@@ -396,7 +396,15 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
           Power::Builder(delta1.clone(), Rational::Builder(2)),
           Multiplication::Builder(Rational::Builder(4), Power::Builder(delta0.clone(), Rational::Builder(3)))
           ));
-    C = Division::Builder(Addition::Builder(delta1.clone(), rootDeltaDifference), Rational::Builder(2));
+    /* When delta0 is very small before delta1, we choose the sign to avoid
+     * subtracting two very close numbers, which could approximate to zero. */
+    Expression diff;
+    if (delta1.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+      diff = Subtraction::Builder(delta1.clone(), rootDeltaDifference);
+    } else {
+      diff = Addition::Builder(delta1.clone(), rootDeltaDifference);
+    }
+    C = Division::Builder(diff, Rational::Builder(2));
   }
   C = NthRoot::Builder(C, Rational::Builder(3)).simplify(reductionContext);
 

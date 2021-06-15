@@ -45,7 +45,6 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
                 SameType<decltype(&svcallhandler), void (*)(KDRect, KDColor *)>::value || \
                 SameType<decltype(&svcallhandler), void (*)(KDRect, const KDColor *)>::value || \
                 SameType<decltype(&svcallhandler), void (*)(KDRect, KDColor)>::value || \
-                SameType<decltype(&svcallhandler), int (*)(KDColor)>::value || \
                 SameType<decltype(&svcallhandler), Ion::Events::Event (*)(int *)>::value || \
                 SameType<decltype(&svcallhandler), size_t (*)(uint8_t, char *, size_t)>::value || \
                 SameType<decltype(&svcallhandler), bool (*)(uint8_t)>::value || \
@@ -72,10 +71,7 @@ void * svcallHandler(int svcNumber) {
   if (SVCallTable[0] == 0) {
     MAKE_SVCALL_HANDLER(SVC_AUTHENTICATION_TRUSTED_USERLAND, Ion::Device::Authentication::trustedUserland)
     MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_BRIGHTNESS, Ion::Device::Backlight::brightness)
-    MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_INIT, Ion::Device::Backlight::init)
-    MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_IS_INITIALIZED, Ion::Device::Backlight::isInitialized)
     MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_SET_BRIGHTNESS, Ion::Device::Backlight::setBrightness)
-    MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_SHUTDOWN, Ion::Device::Backlight::shutdown)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_IS_CHARGING, Ion::Device::Battery::isCharging)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_LEVEL, Ion::Device::Battery::level)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_VOLTAGE, Ion::Device::Battery::voltage)
@@ -88,12 +84,10 @@ void * svcallHandler(int svcNumber) {
     MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT, Ion::Device::CircuitBreaker::unsetCheckpoint)
     MAKE_SVCALL_HANDLER(SVC_CRC32_BYTE, Ion::Device::crc32Byte)
     MAKE_SVCALL_HANDLER(SVC_CRC32_WORD, Ion::Device::crc32Word)
-    MAKE_SVCALL_HANDLER(SVC_DISPLAY_COLORED_TILING_SIZE_10, Ion::Device::Display::displayColoredTilingSize10)
     MAKE_SVCALL_HANDLER(SVC_DISPLAY_POST_PUSH_MULTICOLOR, Ion::Device::Display::POSTPushMulticolor)
     MAKE_SVCALL_HANDLER(SVC_DISPLAY_PULL_RECT, Ion::Device::Display::pullRectSecure)
     MAKE_SVCALL_HANDLER(SVC_DISPLAY_PUSH_RECT, Ion::Device::Display::pushRect)
     MAKE_SVCALL_HANDLER(SVC_DISPLAY_PUSH_RECT_UNIFORM, Ion::Device::Display::pushRectUniform)
-    MAKE_SVCALL_HANDLER(SVC_DISPLAY_UNIFORM_TILING_SIZE_10, Ion::Device::Display::displayUniformTilingSize10)
     MAKE_SVCALL_HANDLER(SVC_DISPLAY_WAIT_FOR_V_BLANK, Ion::Device::Display::waitForVBlank)
     MAKE_SVCALL_HANDLER(SVC_EVENTS_COPY_TEXT, Ion::Device::Events::copyTextSecure)
     MAKE_SVCALL_HANDLER(SVC_EVENTS_GET_EVENT, Ion::Device::Events::getEvent)

@@ -25,7 +25,7 @@ public:
   KDCoordinate rowHeight(int j) override { return ExpressionModelListController::memoizedRowHeight(j); }
   KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
   int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
-  int numberOfColumns() const override { return 2; }
+  int numberOfColumns() const override { return 3; }
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
@@ -63,6 +63,8 @@ protected:
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
   static constexpr KDCoordinate k_functionTitleSumOfMargins = 25;
+  static constexpr KDCoordinate k_titlesColumnWidth  = FunctionTitleCell::k_colorIndicatorThickness;
+  static constexpr KDCoordinate k_parametersColumnWidth = Escher::Metric::EllipsisCellWidth;
   Escher::TabViewController * tabController() const;
   Escher::InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
@@ -78,9 +80,12 @@ private:
   virtual int maxNumberOfDisplayableRows() = 0;
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual Escher::HighlightCell * expressionCells(int index) = 0;
+  virtual Escher::HighlightCell * parameterCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j) = 0;
+  virtual void willDisplayParameterCellAtIndex(Escher::HighlightCell * cell, int j) = 0;
   KDCoordinate nameWidth(int nameLength) const;
   Escher::EvenOddCell m_emptyCell;
+  Escher::EvenOddCell m_emptyCell2;
   Escher::Button m_plotButton;
   Escher::Button m_valuesButton;
   KDCoordinate m_titlesColumnWidth;

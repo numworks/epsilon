@@ -8,6 +8,7 @@
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
 #include "../function_models_parameter_controller.h"
+#include <escher/even_odd_cell_with_ellipsis.h>
 
 namespace Graph {
 
@@ -31,12 +32,15 @@ private:
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
   Escher::HighlightCell * expressionCells(int index) override;
+  Escher::HighlightCell * parameterCells(int index) override;
   void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;
+  void willDisplayParameterCellAtIndex(Escher::HighlightCell * cell, int j) override;
   void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::ContinuousFunction> function, Escher::TextField * textField);
   ContinuousFunctionStore * modelStore() override;
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
+  Escher::EvenOddCellWithEllipsis m_expressionParameterCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;

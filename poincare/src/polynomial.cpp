@@ -86,7 +86,14 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   bool deltaIsApproximate = false;
   const bool equationIsReal = a.isReal(context) && b.isReal(context) && c.isReal(context) && d.isReal(context);
 
-  // b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
+  // Cube roots of unity.
+  Expression roots[3] = {
+    Rational::Builder(1),
+    Division::Builder(ComplexCartesian::Builder(Rational::Builder(-1), SquareRoot::Builder(Rational::Builder(3))), Rational::Builder(2)),
+    Division::Builder(ComplexCartesian::Builder(Rational::Builder(1), SquareRoot::Builder(Rational::Builder(3))), Rational::Builder(-2))
+  };
+
+  // b^2*c^2 + 18p abcd - 27a^2*d^2 - 4ac^3 - 4db^3
   *delta = Addition::Builder({
       Power::Builder(Multiplication::Builder(b.clone(), c.clone()), Rational::Builder(2)),
       Multiplication::Builder({Rational::Builder(18), a.clone(), b.clone(), c.clone(), d.clone()}),
@@ -110,6 +117,22 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   if (d.nullStatus(context) == ExpressionNode::NullStatus::Null || d.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
     *root1 = Rational::Builder(0);
   }
+  /* Polynoms of the form "ax^3+d=0" have a simple solutions : x1 = sqrt(-d/a,3)
+   * x2 = roots[1] * x1 and x3 = roots[2] * x1. */
+  if (root1->isUninitialized()
+    && (b.nullStatus(context) == ExpressionNode::NullStatus::Null || b.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)
+    && (c.nullStatus(context) == ExpressionNode::NullStatus::Null || c.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)) {
+    *root1 = NthRoot::Builder(Division::Builder(Opposite::Builder(d.clone()), a.clone()), Rational::Builder(3));
+    *root1 = root1->simplify(reductionContext);
+    /* Approximate roots if root1 is too big. Roots 2 and 3 might be twice
+     * root1's size. */
+    approximate = root1->numberOfDescendants(true) * 2 > k_maxNumberOfNodesBeforeApproximatingDelta;
+    /* We compute the three solutions here because they are quite simple, and
+     * to avoid generating very complex coefficients when creating the remaining
+     * quadratic equation. */
+    *root2 = Multiplication::Builder(root1->clone(), roots[1]);
+    *root3 = Multiplication::Builder(root1->clone(), roots[2]);
+  }
   /* Polynoms of the forms "kx^2(cx+d)+cx+d" and "kx(bx^2+d)+bx^2+d" have a
    * simple solution x1 = -d/c. */
   Expression r = Division::Builder(Opposite::Builder(d.clone()), c.clone());
@@ -130,15 +153,15 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root1 = SumRootSearch(coefficients, degree, 2, reductionContext);
   }
 
-  if (!root1->isUninitialized()) {
-    /* We have found a simple solution, we can factor and solve the quadratic
+  if (!root1->isUninitialized() && root2->isUninitialized()) {
+    /* We have found one simple solution, we can factor and solve the quadratic
      * equation. */
     Expression beta = Addition::Builder({b, Multiplication::Builder(a.clone(), root1->clone())}).simplify(reductionContext);
     Expression gamma = root1->nullStatus(context) == ExpressionNode::NullStatus::Null ? c : Opposite::Builder(Division::Builder(d, root1->clone())).simplify(reductionContext);
     Expression delta2;
     QuadraticPolynomialRoots(a, beta, gamma, root2, root3, &delta2, context, complexFormat, angleUnit);
     assert(!root2->isUninitialized() && !root3->isUninitialized());
-  } else {
+  } else if (root1->isUninitialized()) {
     /* We did not manage to find any simple root : we resort to using Cardano's
      * formula. */
     int deltaSign;
@@ -180,16 +203,11 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       Expression cardano = CardanoNumber(delta0, delta1, &approximate, complexContext);
       /* cardano is only null when there is a triple root. */
       assert(cardano.nullStatus(context) != ExpressionNode::NullStatus::Null);
-      /* The roots can be computed from Cardano's number using the cube roots of
-       * unity. */
-      Expression roots[3] = {
-        Rational::Builder(1),
-        Division::Builder(ComplexCartesian::Builder(Rational::Builder(-1), SquareRoot::Builder(Rational::Builder(3))), Rational::Builder(2)),
-        Division::Builder(ComplexCartesian::Builder(Rational::Builder(1), SquareRoot::Builder(Rational::Builder(3))), Rational::Builder(-2))
-      };
       int loneRealRootIndex = -1;
       float minimalImaginaryPart = static_cast<float>(INFINITY);
       for (int i = 0; i < 3; i++) {
+        /* The roots can be computed from Cardano's number using the cube roots
+         * of unity. */
         Expression cz = Multiplication::Builder(cardano.clone(), roots[i]);
         roots[i] = Division::Builder(
             Addition::Builder({b.clone(), cz.clone(), Division::Builder(delta0, cz.clone())}),

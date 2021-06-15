@@ -8,6 +8,7 @@
 #include <escher/text_field_delegate.h>
 
 #include "probability/app.h"
+#include "probability/helpers.h"
 #include "probability/models/data.h"
 
 using namespace Probability;
@@ -28,7 +29,7 @@ void ResultsController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
+    selectCellAtLocation(selectedColumn(), clipped(selectedRow(), m_resultsDataSource.numberOfRows() - 1));
   }
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
   m_resultsDataSource.resetMemoization();

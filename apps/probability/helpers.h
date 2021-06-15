@@ -26,6 +26,10 @@ inline float fminf(float x, float y) {
   return (x < y ? x : y);
 }
 
+inline int clipped(int a, int n) {
+  return a < n ? a : n;
+}
+
 }  // namespace Probability
 
 #endif /* APPS_PROBABILITY_HELPERS_H */

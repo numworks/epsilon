@@ -362,6 +362,7 @@ enum class SpinnerStatus : uint8_t {
 static SpinnerStatus s_spinnerStatus = SpinnerStatus::Disabled;
 static constexpr int k_numberOfSpinnerPositions = 16;
 static int s_spinnerPosition = 0;
+static KDColor s_hiddenBuffer[2*k_spinnerHalfHeight][2*k_spinnerHalfWidth];
 
 void setSpinner(bool activate) {
   s_spinnerStatus = activate ? SpinnerStatus::Hidden : SpinnerStatus::Disabled;
@@ -372,6 +373,7 @@ void spin() {
   if (s_spinnerStatus != SpinnerStatus::Spinning) {
     TIM2.ARR()->set(k_spinningDelay);
     s_spinnerStatus = SpinnerStatus::Spinning;
+    Ion::Device::Display::pullRect(KDRect(k_spinnerX, k_spinnerY, 2 * k_spinnerHalfWidth, 2 * k_spinnerHalfHeight), reinterpret_cast<KDColor *>(s_hiddenBuffer));
   }
   s_spinnerPosition = (s_spinnerPosition + 1) % k_numberOfSpinnerPositions;
 
@@ -407,7 +409,7 @@ void spin() {
 
 void hideSpinner() {
   TIM2.ARR()->set(k_stallingDelay);
-  Ion::Device::Display::pushRectUniform(KDRect(k_spinnerX, k_spinnerY, 2 * k_spinnerHalfWidth, 2 * k_spinnerHalfHeight), KDColor::RGB24(0xffb734));
+  Ion::Device::Display::pushRect(KDRect(k_spinnerX, k_spinnerY, 2 * k_spinnerHalfWidth, 2 * k_spinnerHalfHeight), reinterpret_cast<KDColor *>(s_hiddenBuffer));
   s_spinnerStatus = SpinnerStatus::Hidden;
 }
 

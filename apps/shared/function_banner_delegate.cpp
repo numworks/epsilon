@@ -11,7 +11,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
   int numberOfChar = 0;
-  numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, k_textBufferSize-numberOfChar);
+  numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, k_textBufferSize-numberOfChar-1);
   assert(numberOfChar <= k_textBufferSize);
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);

@@ -135,7 +135,7 @@ bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodeP
 void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate, const char * stoppingPosition) {
   constexpr int patternMaxSize = CodePoint::MaxCodePointCharLength + 1; // +1 for null terminating char
   char pattern[patternMaxSize];
-  int codePointCharSize = UTF8Decoder::CodePointToChars(c, pattern, patternMaxSize);
+  int codePointCharSize = UTF8Decoder::CodePointToChars(c, pattern, patternMaxSize - 1);
   assert(codePointCharSize < patternMaxSize);
   pattern[codePointCharSize] = '\0';
   TextPair pair(pattern, "");
@@ -201,7 +201,7 @@ void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, con
       size_t matchedStringLength = strlen(matchedString);
       char * replacingString = firstToSecond ? secondString : firstString;
       size_t replacingStringLength = strlen(replacingString);
-      assert(matchedStringLength + replacingStringLength > 0);
+      assert(matchedStringLength > 0);
 
       if (strncmp(&text[i], matchedString, matchedStringLength) == 0 && p.shouldReplace(text, textMaxLength, i)) {
         didReplace = replaceFirstCharsByPattern(&text[i], matchedStringLength, replacingString, textMaxLength - i);

@@ -219,14 +219,14 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
       return result;
     }
   }
-  int size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-  if (size < bufferSize) {
-    buffer[size] = 0;
+  size_t size = UTF8Decoder::CharSizeOfCodePoint(c);
+  if (size >= bufferSize) {
+    /* Code point doesn't fit, nullify the rest of the buffer to prevent
+     * truncated utf8 characters */
+    memset(buffer, 0, bufferSize);
   } else {
-    /* CodePoint didn't fit, nothing should have been inserted to prevent any
-     * invalid truncated UTF8 character. */
-    assert(size == bufferSize && buffer[0] == 0);
-    buffer[--size] = 0;
+    UTF8Decoder::CodePointToChars(c, buffer, bufferSize - 1);
+    buffer[size] = 0;
   }
   return size;
 }

@@ -30,7 +30,7 @@ StatisticViewRange::Range StatisticViewRange::computeXRange() const {
   if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
     float zAlpha = m_statistic->zAlpha();
     float z = m_statistic->testCriticalValue();
-    if (m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different) {
+    if (m_mode == GraphDisplayMode::TwoCurveViews) {
       zAlpha = fabs(zAlpha);
       z = fabs(z);
       Range r = computeTestXRange(z, zAlpha);
@@ -51,13 +51,15 @@ StatisticViewRange::Range StatisticViewRange::computeXRange() const {
 }
 
 StatisticViewRange::Range StatisticViewRange::computeTestXRange(float z, float zAlpha) const {
-  // |-----------------|-------------------|-------
-  // <-k_marginSide-> min <-k_areaWidth-> max
+  // |---------------|-----------------|-------
+  // <-marginSide-> min <-areaWidth-> max
+  int areaWidth = m_mode == GraphDisplayMode::OneCurveView ? k_areaWidth : k_areaWidth / 2;
+  int marginSide = m_mode == GraphDisplayMode::OneCurveView ? k_marginSide : k_marginSide / 2;
   float min = fminf(zAlpha, z);
   float max = fmaxf(zAlpha, z);
-  float pixelWidth = (max - min) / k_areaWidth;
-  return Range{min - k_marginSide * pixelWidth,
-               min + (m_statisticCurveView->bounds().width() - k_marginSide) * pixelWidth};
+  float pixelWidth = (max - min) / areaWidth;
+  return Range{min - marginSide * pixelWidth,
+               min + (m_statisticCurveView->bounds().width() - marginSide) * pixelWidth};
 }
 
 StatisticViewRange::Range StatisticViewRange::computeYRange() const {
@@ -66,10 +68,12 @@ StatisticViewRange::Range StatisticViewRange::computeYRange() const {
   }
   float zAlpha = m_statistic->zAlpha();
   float z = m_statistic->testCriticalValue();
-  float min =
-      fminf(m_statistic->normedDensityFunction(z), m_statistic->normedDensityFunction(zAlpha));
-  float pixelHeight = min / k_areaHeight;
-  return Range{-25 * pixelHeight, 100 * pixelHeight};  // TODO access or compute view height
+  float max =
+      fmaxf(m_statistic->normedDensityFunction(z), m_statistic->normedDensityFunction(zAlpha));
+  float pixelHeight = max / k_areaHeight;
+  int pixelsDown = m_statisticCurveView->bounds().height() * k_yMargin;
+  int pixelsUp = m_statisticCurveView->bounds().height() * (1 - k_yMargin);
+  return Range{-pixelsDown * pixelHeight, pixelsUp * pixelHeight};
 }
 
 }  // namespace Probability

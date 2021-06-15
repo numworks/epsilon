@@ -35,6 +35,7 @@ private:
   constexpr static int k_marginSide = 30;
   constexpr static int k_areaWidth = 50;
   constexpr static int k_areaHeight = 65;
+  constexpr static float k_yMargin = 0.2;
   Statistic * m_statistic;
   bool m_isLeftRange;
   GraphDisplayMode m_mode;

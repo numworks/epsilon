@@ -14,6 +14,7 @@ FunctionListController::FunctionListController(Responder * parentResponder, Butt
   ButtonRowDelegate(header, footer),
   m_selectableTableView(this, this, this, this),
   m_emptyCell(),
+  m_emptyCell2(),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
       FunctionListController * list = (FunctionListController *)context;
       TabViewController * tabController = list->tabController();
@@ -25,8 +26,7 @@ FunctionListController::FunctionListController(Responder * parentResponder, Butt
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(2);
       return true;
-    }, this), KDFont::SmallFont, Palette::PurpleBright),
-  m_titlesColumnWidth(k_minTitleColumnWidth)
+    }, this), KDFont::SmallFont, Palette::PurpleBright)
 {
   /* m_memoizedCellBaseline is not initialized by the call to
    * resetMemoizationForIndex in ExpressionModelListController's
@@ -48,9 +48,11 @@ void FunctionListController::viewWillAppear() {
 KDCoordinate FunctionListController::columnWidth(int i) {
   switch (i) {
     case 0:
-      return m_titlesColumnWidth;
+      return k_titlesColumnWidth;
     case 1:
-      return selectableTableView()->bounds().width()-m_titlesColumnWidth;
+      return selectableTableView()->bounds().width()-k_titlesColumnWidth;
+    case 2:
+      return k_parametersColumnWidth;
     default:
       assert(false);
       return 0;
@@ -62,8 +64,10 @@ KDCoordinate FunctionListController::cumulatedWidthFromIndex(int i) {
     case 0:
       return 0;
     case 1:
-      return m_titlesColumnWidth;
+      return k_titlesColumnWidth;
     case 2:
+      return selectableTableView()->bounds().width() - k_parametersColumnWidth;
+    case 3:
       return selectableTableView()->bounds().width();
     default:
       assert(false);
@@ -72,20 +76,22 @@ KDCoordinate FunctionListController::cumulatedWidthFromIndex(int i) {
 }
 
 int FunctionListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= m_titlesColumnWidth) {
+  if (offsetX <= k_titlesColumnWidth) {
     return 0;
   } else {
-    if (offsetX <= selectableTableView()->bounds().width())
+    if (offsetX <= selectableTableView()->bounds().width() - k_parametersColumnWidth) {
       return 1;
-    else {
+    } else if (offsetX <= selectableTableView()->bounds().width()) {
       return 2;
+    } else {
+      return 3;
     }
   }
 }
 
 int FunctionListController::typeAtLocation(int i, int j) {
-  if (isAddEmptyRow(j)){
-    return i + 2;
+  if (isAddEmptyRow(j)) {
+    return i == 1 ? 4 : 3;
   }
   return i;
 }
@@ -99,8 +105,10 @@ HighlightCell * FunctionListController::reusableCell(int index, int type) {
     case 1:
       return expressionCells(index);
     case 2:
-      return &m_emptyCell;
+      return parameterCells(index);
     case 3:
+      return index == 0 ? &m_emptyCell : &m_emptyCell2;
+    case 4:
       return &(m_addNewModel);
     default:
       assert(false);
@@ -109,7 +117,10 @@ HighlightCell * FunctionListController::reusableCell(int index, int type) {
 }
 
 int FunctionListController::reusableCellCount(int type) {
-  if (type > 1) {
+  if (type == 3) {
+    return 2;
+  }
+  if (type > 3) {
     return 1;
   }
   return maxNumberOfDisplayableRows();
@@ -119,8 +130,10 @@ void FunctionListController::willDisplayCellAtLocation(HighlightCell * cell, int
   if (!isAddEmptyRow(j)) {
     if (i == 0) {
       willDisplayTitleCellAtIndex(cell, j);
-    } else {
+    } else if (i == 1) {
       willDisplayExpressionCellAtIndex(cell, j);
+    } else {
+      willDisplayParameterCellAtIndex(cell, j);
     }
   }
   EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
@@ -189,7 +202,7 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
     return handleEventOnExpression(event);
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    assert(selectedColumn() == 0);
+    assert(selectedColumn() == 2);
     configureFunction(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
     return true;
   }
@@ -241,12 +254,7 @@ void FunctionListController::configureFunction(Ion::Storage::Record record) {
 }
 
 void FunctionListController::computeTitlesColumnWidth(bool forceMax) {
-  if (forceMax) {
-    m_titlesColumnWidth = nameWidth(Poincare::SymbolAbstract::k_maxNameSize + Function::k_parenthesedArgumentCodePointLength - 1)+k_functionTitleSumOfMargins;
-    return;
-  }
-  KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
-  m_titlesColumnWidth = std::max(maxTitleWidth, k_minTitleColumnWidth);
+
 }
 
 TabViewController * FunctionListController::tabController() const {

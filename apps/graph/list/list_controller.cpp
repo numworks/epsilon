@@ -161,6 +161,11 @@ HighlightCell * ListController::expressionCells(int index) {
   return &m_expressionCells[index];
 }
 
+HighlightCell * ListController::parameterCells(int index) {
+  assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
+  return &m_expressionParameterCells[index];
+}
+
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   assert(cell != nullptr);
   assert(j >= 0 && j < modelStore()->numberOfModels());
@@ -187,11 +192,12 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   myCell->setTextColor(textColor);
 }
 
+void ListController::willDisplayParameterCellAtIndex(HighlightCell * cell, int j) {
+  assert(cell != nullptr);
+  assert(j >= 0 && j < modelStore()->numberOfModels());
+}
+
 void ListController::setFunctionNameInTextField(ExpiringPointer<ContinuousFunction> function, TextField * textField) {
-  assert(textField != nullptr);
-  char bufferName[BufferTextView::k_maxNumberOfChar];
-  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar);
-  textField->setText(bufferName);
 }
 
 void ListController::addModel() {

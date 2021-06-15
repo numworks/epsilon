@@ -78,7 +78,8 @@ void * App::entryPoint() const {
    * instruction set, and the Cortex-M7 processor only supports Thumb
    * instructions.
    */
-  return reinterpret_cast<void *>(addressAtIndexInAppInfo(5) + 1);
+  assert(addressAtIndexInAppInfo(5) %2 == 1);
+  return reinterpret_cast<void *>(addressAtIndexInAppInfo(5));
 }
 
 bool App::appAtAddress(uint8_t * address) {

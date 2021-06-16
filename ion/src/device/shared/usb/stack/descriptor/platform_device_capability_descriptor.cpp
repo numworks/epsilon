@@ -12,10 +12,6 @@ void PlatformDeviceCapabilityDescriptor::push(Channel * c) const {
   }
 }
 
-uint8_t PlatformDeviceCapabilityDescriptor::bLength() const {
-  return DeviceCapabilityDescriptor::bLength() + sizeof(uint8_t) + k_platformCapabilityUUIDSize*sizeof(uint8_t);
-}
-
 }
 }
 }

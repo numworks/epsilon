@@ -13,10 +13,6 @@ void BOSDescriptor::push(Channel * c) const {
   }
 }
 
-uint8_t BOSDescriptor::bLength() const {
-  return Descriptor::bLength() + sizeof(uint16_t) + sizeof(uint8_t);
-}
-
 }
 }
 }

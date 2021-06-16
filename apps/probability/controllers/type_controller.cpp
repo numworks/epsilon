@@ -142,7 +142,6 @@ void Probability::TypeController::initializeStatistic(Data::Test test, Data::Tes
   } else if (test == Data::Test::TwoMeans) {
     if (type == Data::TestType::TTest) {
       new (App::app()->snapshot()->data()->statistic()) TwoMeansTStatistic();
-
     } else if (type == Data::TestType::ZTest) {
       new (App::app()->snapshot()->data()->statistic()) TwoMeansZStatistic();
     } else if (type == Data::TestType::PooledTTest) {

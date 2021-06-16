@@ -16,9 +16,12 @@ public:
     m_iLandingPage(iLandingPage)
   {
   }
+  constexpr static uint8_t BLength() {
+    return PlatformDeviceCapabilityDescriptor::BLength() + sizeof(uint16_t) + 2*sizeof(uint8_t);
+  }
 protected:
   void push(Channel * c) const override;
-  uint8_t bLength() const override;
+  uint8_t bLength() const override { return BLength(); }
 private:
   /* Little-endian encoding of {3408B638-09A9-47A0-8BFD-A0768815B665}.
    * See https://wicg.github.io/webusb/#webusb-platform-capability-descriptor */

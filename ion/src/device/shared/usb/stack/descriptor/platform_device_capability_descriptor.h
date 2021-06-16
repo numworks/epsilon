@@ -31,9 +31,12 @@ public:
       platformCapabilityUUID[15]}
   {
   }
+  constexpr static uint8_t BLength() {
+    return DeviceCapabilityDescriptor::BLength() + sizeof(uint8_t) + k_platformCapabilityUUIDSize*sizeof(uint8_t);
+  }
 protected:
   void push(Channel * c) const override;
-  uint8_t bLength() const override;
+  uint8_t bLength() const override { return BLength(); }
 private:
   constexpr static uint8_t k_platformCapabilityUUIDSize = 16;
   uint8_t m_bReserved;

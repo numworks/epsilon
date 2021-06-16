@@ -50,6 +50,10 @@ void App::Snapshot::tidy() {
   m_graphRange.setDelegate(nullptr);
 }
 
+bool App::isAcceptableExpression(const Poincare::Expression exp) {
+  return !(exp.isUninitialized() || exp.type() == Poincare::ExpressionNode::Type::Store);
+}
+
 App::App(Snapshot * snapshot) :
   FunctionApp(snapshot, &m_inputViewController),
   m_listController(&m_listFooter, &m_listHeader, &m_listFooter, this),
@@ -65,7 +69,7 @@ App::App(Snapshot * snapshot) :
   m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, &m_valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader),
   m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, this, this, this)
+  m_inputViewController(&m_modalViewController, &m_tabViewController, this, &m_listController, &m_listController)
 {
 }
 

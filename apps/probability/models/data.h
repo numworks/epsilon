@@ -7,6 +7,8 @@
  * The entrypoint is the Data class, which is meant to contain all the data,
  * and provide convenient methods to access it.
  */
+#include <new>
+
 #include "calculation/discrete_calculation.h"
 #include "calculation/finite_integral_calculation.h"
 #include "calculation/left_integral_calculation.h"
@@ -54,7 +56,7 @@ enum class Page {
   Graph
 };
 
-enum class SubApp { None, Probability, Tests, Intervals };
+enum class SubApp { Unset, Probability, Tests, Intervals };
 
 class AppNavigation {
 public:
@@ -99,7 +101,7 @@ typedef char StatisticBuffer[maxStatisticSize];
 
 // Test sub app
 
-enum class Test { None, OneProp, OneMean, TwoProps, TwoMeans, Categorical };
+enum class Test { Unset, OneProp, OneMean, TwoProps, TwoMeans, Categorical };
 
 inline bool isProportion(Test t) {
   return t == Test::OneProp || t == Test::TwoProps;
@@ -134,6 +136,36 @@ struct StatisticData {
     CategoricalData m_categorical;
   } m_data;
   Statistic * statistic() { return reinterpret_cast<Statistic *>(m_statisticBuffer); }
+  /* Instanciate correct Statistic bases on Test and TestType. */
+  void initializeStatistic(Test t, TestType type) {
+    switch (t) {
+      case Test::OneProp:
+        new (statistic()) OneProportionStatistic();
+        break;
+      case Test::TwoProps:
+        new (statistic()) TwoProportionsStatistic();
+        break;
+      case Test::OneMean:
+        if (type == TestType::TTest) {
+          new (statistic()) OneMeanTStatistic();
+        } else if (type == TestType::ZTest) {
+          new (statistic()) OneMeanZStatistic();
+        }
+        break;
+      case Test::TwoMeans:
+        if (type == TestType::TTest) {
+          new (statistic()) TwoMeansTStatistic();
+        } else if (type == TestType::ZTest) {
+          new (statistic()) TwoMeansZStatistic();
+        } else if (type == TestType::PooledTTest) {
+          new (statistic()) PooledTwoMeansStatistic();
+        }
+        break;
+      default:
+        assert(false);
+        break;
+    }
+  }
 };
 
 union DataBuffer {
@@ -168,6 +200,7 @@ public:
     return &(categoricalData()->m_data.m_homogeneity);
   }
   Statistic * statistic() { return statisticData()->statistic(); }
+  void initializeStatistic(Test t, TestType type) { statisticData()->initializeStatistic(t, type); }
   HypothesisParams * hypothesisParams() { return statistic()->hypothesisParams(); }
 
 private:

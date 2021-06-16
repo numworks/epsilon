@@ -18,10 +18,10 @@ using namespace Probability;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Escher::ViewController * distributionController,
-                               Escher::ViewController * testController)
-    : SelectableListViewPage(parentResponder),
-      m_distributionController(distributionController),
-      m_testController(testController) {
+                               Escher::ViewController * testController) :
+    SelectableListViewPage(parentResponder),
+    m_distributionController(distributionController),
+    m_testController(testController) {
   m_cells[k_indexOfDistribution].setMessage(I18n::Message::ProbaApp);
   m_cells[k_indexOfDistribution].setSubtitle(I18n::Message::ProbaDescr);
   m_cells[k_indexOfTest].setMessage(I18n::Message::SignificanceTest);
@@ -35,8 +35,6 @@ void MenuController::didBecomeFirstResponder() {
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
   }
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
@@ -68,7 +66,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     }
     assert(view != nullptr);
     if (App::app()->snapshot()->navigation()->subapp() != subapp) {
-      initializeData(subapp);
+      initializeProbaData();
     }
     App::app()->snapshot()->navigation()->setSubapp(subapp);
     openPage(view);
@@ -77,18 +75,8 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void MenuController::initializeData(Data::SubApp subapp) {
-  switch (subapp) {
-    case Data::SubApp::Probability:
-      new (App::app()->snapshot()->data()->distribution()) BinomialDistribution();
-      new (App::app()->snapshot()->data()->calculation())
-          LeftIntegralCalculation(App::app()->snapshot()->data()->distribution());
-      break;
-    case Data::SubApp::Tests:
-    case Data::SubApp::Intervals:
-      App::app()->snapshot()->data()->setTest(Data::Test::OneProp);
-      break;
-    default:
-      assert(false);
-  }
+void MenuController::initializeProbaData() {
+  new (App::app()->snapshot()->data()->distribution()) BinomialDistribution();
+  new (App::app()->snapshot()->data()->calculation())
+      LeftIntegralCalculation(App::app()->snapshot()->data()->distribution());
 }

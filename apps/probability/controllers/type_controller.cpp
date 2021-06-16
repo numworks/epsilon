@@ -32,7 +32,9 @@ TypeController::TypeController(StackViewController * parent,
 void TypeController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Type);
   m_description.setMessage(messageForTest(App::app()->snapshot()->data()->test()));
-  selectRowAccordingToType(App::app()->snapshot()->data()->testType());
+  if (selectedRow() == -1) {
+    selectRow(0);
+  }
   resetMemoization();
   m_selectableTableView.reloadData(true);
   m_contentView.layoutSubviews();
@@ -59,30 +61,14 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
       view = m_hypothesisController;
     }
     assert(view != nullptr);
-    initializeStatistic(App::app()->snapshot()->data()->test(), t);
+    if (t != App::app()->snapshot()->data()->testType()) {
+      App::app()->snapshot()->data()->initializeStatistic(App::app()->snapshot()->data()->test(), t);
+    }
     App::app()->snapshot()->data()->setTestType(t);
     openPage(view);
     return true;
   }
   return false;
-}
-
-void TypeController::selectRowAccordingToType(Data::TestType t) {
-  int row = -1;
-  switch (t) {
-    case Data::TestType::TTest:
-      row = k_indexOfTTest;
-      break;
-    case Data::TestType::PooledTTest:
-      row = k_indexOfPooledTest;
-      break;
-    case Data::TestType::ZTest:
-      row = k_indexOfZTest;
-      break;
-  }
-  row = listIndexFromIndex(row);
-  assert(row >= 0);
-  selectRow(row);
 }
 
 Escher::View * TypeView::subviewAtIndex(int i) {
@@ -132,24 +118,6 @@ void Probability::TypeController::willDisplayCellForIndex(Escher::HighlightCell 
   }
 }
 
-void Probability::TypeController::initializeStatistic(Data::Test test, Data::TestType type) {
-  if (test == Data::Test::OneMean) {
-    if (type == Data::TestType::TTest) {
-      new (App::app()->snapshot()->data()->statistic()) OneMeanTStatistic();
-    } else if (type == Data::TestType::ZTest) {
-      new (App::app()->snapshot()->data()->statistic()) OneMeanZStatistic();
-    }
-  } else if (test == Data::Test::TwoMeans) {
-    if (type == Data::TestType::TTest) {
-      new (App::app()->snapshot()->data()->statistic()) TwoMeansTStatistic();
-    } else if (type == Data::TestType::ZTest) {
-      new (App::app()->snapshot()->data()->statistic()) TwoMeansZStatistic();
-    } else if (type == Data::TestType::PooledTTest) {
-      new (App::app()->snapshot()->data()->statistic()) PooledTwoMeansStatistic();
-    }
-  }
-}
-
 int Probability::TypeController::indexFromListIndex(int i) const {
   // Offset if needed
   if (App::app()->snapshot()->data()->test() == Data::Test::OneMean && i >= k_indexOfPooledTest) {
@@ -158,7 +126,7 @@ int Probability::TypeController::indexFromListIndex(int i) const {
   return i;
 }
 
-int Probability::TypeController::listIndexFromIndex(int i) const  {
+int Probability::TypeController::listIndexFromIndex(int i) const {
   if (App::app()->snapshot()->data()->test() == Data::Test::OneMean && i >= k_indexOfPooledTest) {
     return i - 1;
   }

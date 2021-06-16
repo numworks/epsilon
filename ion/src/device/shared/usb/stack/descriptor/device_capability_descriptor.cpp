@@ -9,10 +9,6 @@ void DeviceCapabilityDescriptor::push(Channel * c) const {
   c->push(m_bDeviceCapabilityType);
 }
 
-uint8_t DeviceCapabilityDescriptor::bLength() const {
-  return Descriptor::bLength() + sizeof(uint8_t);
-}
-
 }
 }
 }

@@ -13,10 +13,6 @@ void WebUSBPlatformDescriptor::push(Channel * c) const {
   c->push(m_iLandingPage);
 }
 
-uint8_t WebUSBPlatformDescriptor::bLength() const {
-  return PlatformDeviceCapabilityDescriptor::bLength() + sizeof(uint16_t) + 2*sizeof(uint8_t);
-}
-
 }
 }
 }

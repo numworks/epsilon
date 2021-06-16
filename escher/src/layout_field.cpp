@@ -365,6 +365,12 @@ void LayoutField::putCursorRightOfLayout() {
   m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Right));
 }
 
+void LayoutField::putCursorLeftOfLayout() {
+  m_contentView.cursor()->layout().removeGraySquaresFromAllMatrixAncestors();
+  m_contentView.cursor()->showEmptyLayoutIfNeeded();
+  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Left));
+}
+
 void LayoutField::reload(KDSize previousSize) {
   layout().invalidAllSizesPositionsAndBaselines();
   KDSize newSize = minimalSizeForOptimalDisplay();

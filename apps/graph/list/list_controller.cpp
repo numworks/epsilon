@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <apps/apps_container.h>
+#include <poincare/code_point_layout.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -135,12 +136,42 @@ bool ListController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
   return event == Ion::Events::Up || event == Ion::Events::Down || Shared::TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
+bool layoutRepresentsAnEquality(Poincare::Layout l) {
+  Poincare::Layout match = l.recursivelyMatches(
+      [](Poincare::Layout layout) {
+      // TODO Add the other chars using new CodePoints
+      // TODO Accept each of these symbols as a valid syntax
+      char symbols[6] = { '=', '<', '>'}; // , '≤', '≥', '≠'};
+      for (size_t i = 0; i < sizeof(symbols); i++) {
+        if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == symbols[i]) {
+          return true;
+        }
+      }
+      return false;
+    });
+  return !match.isUninitialized();
+}
+
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   assert(textField != nullptr);
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     return false;
   }
   return Shared::TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+}
+
+bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
+    if (!layoutRepresentsAnEquality(layoutField->layout())) {
+      layoutField->putCursorLeftOfLayout();
+      layoutField->handleEventWithText("y=");
+    }
+  }
+  return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
+}
+
+bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
+  return true;
 }
 
 Shared::ListParameterController * ListController::parameterController() {

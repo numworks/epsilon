@@ -26,7 +26,6 @@ const char * GraphController::title() {
 }
 
 void GraphController::didBecomeFirstResponder() {
-  // TODO compute mode based on data
   Statistic * statistic = App::app()->snapshot()->data()->statistic();
   TestConclusionView::Type t = statistic->testPassed() ? TestConclusionView::Type::Success
                                                        : TestConclusionView::Type::Failure;

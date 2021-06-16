@@ -33,10 +33,6 @@ public:
       m_list(list), m_description(description) {}
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
-  void reload() {
-    markRectAsDirty(bounds());
-    layoutSubviews();
-  }
 
 private:
   SelectableTableView * m_list;

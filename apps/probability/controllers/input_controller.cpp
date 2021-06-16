@@ -81,9 +81,9 @@ void InputController::didBecomeFirstResponder() {
 
 void InputController::buttonAction() {
   if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
-    App::app()->snapshot()->data()->statistic()->computeTest();
+    m_statistic->computeTest();
   } else {
-    App::app()->snapshot()->data()->statistic()->computeInterval();
+    m_statistic->computeInterval();
   }
   openPage(m_resultsController);
 }

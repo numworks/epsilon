@@ -52,6 +52,7 @@ app_probability_src += $(addprefix apps/probability/models/statistic/,\
 	one_mean_t_statistic.cpp \
 	two_means_z_statistic.cpp \
 	two_means_t_statistic.cpp \
+	pooled_two_means_statistic.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\

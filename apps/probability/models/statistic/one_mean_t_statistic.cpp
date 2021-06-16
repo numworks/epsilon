@@ -15,7 +15,7 @@ OneMeanTStatistic::OneMeanTStatistic() {
 void OneMeanTStatistic::computeTest() {
   float mean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = _degreesOfFreedom(n());
-  m_zAlpha = _tAlpha(m_degreesOfFreedom, m_threshold);
+  m_zAlpha = absIfNeeded(_tAlpha(m_degreesOfFreedom, m_threshold));
   m_z = _t(mean, x(), s(), n());
   m_pValue = _pVal(m_degreesOfFreedom, m_z);
 }

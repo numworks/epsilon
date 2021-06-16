@@ -17,7 +17,7 @@ TwoMeansTStatistic::TwoMeansTStatistic() {
 
 void TwoMeansTStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
-  m_zAlpha = _tAlpha(m_degreesOfFreedom, m_threshold);
+  m_zAlpha = absIfNeeded(_tAlpha(m_degreesOfFreedom, m_threshold));
   m_z = _t(deltaMean, x1(), n1(), s1(), x2(), n2(), s2());
   char op = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, op);

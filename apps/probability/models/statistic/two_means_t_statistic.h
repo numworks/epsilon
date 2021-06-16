@@ -35,8 +35,8 @@ private:
   float _xEstimate(float meanSample1, float meanSample2);
   float _t(float deltaMean, float meanSample1, float n1, float sigma1, float meanSample2, float n2,
            float sigma2);
-  float _degreeOfFreedom(float s1, int n1, float s2, int n2);
-  float _SE(float s1, int n1, float s2, int n2);
+  virtual float _degreeOfFreedom(float s1, int n1, float s2, int n2);
+  virtual float _SE(float s1, int n1, float s2, int n2);
 
   float m_params[k_numberOfParams];
 };

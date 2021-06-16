@@ -56,8 +56,6 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
 
 private:
-  void selectRowAccordingToType(Data::TestType t);
-  void initializeStatistic(Data::Test test, Data::TestType type);
   int indexFromListIndex(int i) const;
   int listIndexFromIndex(int i) const;
   I18n::Message messageForTest(Data::Test t) const;

@@ -29,10 +29,6 @@ public:
   const char * title() override { return "Test"; }
 
 private:
-  void selectRowAccordingToTest(Data::Test t);
-  void initializeStatistic(Data::Test t);
-  void initializeHypothesisParams(Data::Test t);
-
   constexpr static int k_indexOfOneProp = 0;
   constexpr static int k_indexOfOneMean = 1;
   constexpr static int k_indexOfTwoProps = 2;

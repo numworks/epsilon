@@ -24,7 +24,7 @@ class MenuController : public SelectableListViewPage {
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
-  void initializeData(Data::SubApp subapp);
+  void initializeProbaData();
   ViewController * m_distributionController;
   ViewController * m_testController;
 

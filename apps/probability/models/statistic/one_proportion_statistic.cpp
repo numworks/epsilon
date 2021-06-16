@@ -11,6 +11,7 @@ namespace Probability {
 OneProportionStatistic::OneProportionStatistic() {
   m_params[ParamsOrder::X] = 20;
   m_params[ParamsOrder::N] = 50;
+  m_hypothesisParams.setFirstParam(0.5);
 }
 
 void OneProportionStatistic::computeTest() {

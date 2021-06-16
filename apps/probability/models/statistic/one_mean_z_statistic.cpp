@@ -10,6 +10,7 @@ OneMeanZStatistic::OneMeanZStatistic() {
   m_params[ParamsOrder::X] = 20;
   m_params[ParamsOrder::N] = 50;
   m_params[ParamsOrder::Sigma] = 2;
+  m_hypothesisParams.setFirstParam(128);
 }
 
 void OneMeanZStatistic::computeTest() {

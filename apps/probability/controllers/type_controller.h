@@ -16,9 +16,9 @@
 
 #include "hypothesis_controller.h"
 #include "input_controller.h"
-#include "probability/models/data.h"
-#include "probability/gui/page_controller.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
+#include "probability/gui/page_controller.h"
+#include "probability/models/data.h"
 
 using namespace Escher;
 
@@ -33,6 +33,10 @@ public:
       m_list(list), m_description(description) {}
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
+  void reload() {
+    markRectAsDirty(bounds());
+    layoutSubviews();
+  }
 
 private:
   SelectableTableView * m_list;
@@ -50,13 +54,17 @@ public:
   }
   void didBecomeFirstResponder() override;
   // ListViewDataSource
-  int numberOfRows() const override { return k_numberOfRows; };
+  int numberOfRows() const override;
   HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
   bool handleEvent(Ion::Events::Event event) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
 
 private:
   void selectRowAccordingToType(Data::TestType t);
   void initializeStatistic(Data::Test test, Data::TestType type);
+  int indexFromListIndex(int i) const;
+  int listIndexFromIndex(int i) const;
+  I18n::Message messageForTest(Data::Test t) const;
 
   constexpr static int k_numberOfRows = 3;
   constexpr static int k_indexOfTTest = 0;

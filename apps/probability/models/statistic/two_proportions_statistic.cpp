@@ -17,7 +17,7 @@ TwoProportionsStatistic::TwoProportionsStatistic() {
 
 void TwoProportionsStatistic::computeTest() {
   float deltaP0 = m_hypothesisParams.firstParam();
-  m_zAlpha = _zAlpha(m_threshold);
+  m_zAlpha = absIfNeeded(_zAlpha(m_threshold));
   m_z = _z(deltaP0, x1(), n1(), x2(), n2());
   char op = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, op);

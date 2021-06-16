@@ -10,7 +10,7 @@ public:
     Higher = '>',
     Different = '='  // TODO correct symbol
   };
-  HypothesisParams() : m_op(ComparisonOperator::Higher) {}
+  HypothesisParams() : m_op(ComparisonOperator::Higher), m_firstParam(0) {}
 
   float firstParam() const { return m_firstParam; }
   void setFirstParam(float firstParam) { m_firstParam = firstParam; }

@@ -10,6 +10,7 @@ OneMeanTStatistic::OneMeanTStatistic() {
   m_params[ParamsOrder::X] = 20;
   m_params[ParamsOrder::N] = 50;
   m_params[ParamsOrder::S] = 2;
+  m_hypothesisParams.setFirstParam(128);
 }
 
 void OneMeanTStatistic::computeTest() {

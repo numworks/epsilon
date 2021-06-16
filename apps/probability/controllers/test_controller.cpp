@@ -43,7 +43,9 @@ TestController::TestController(Escher::StackViewController * parentResponder,
 
 void TestController::didBecomeFirstResponder() {
   Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Test);
-  selectRowAccordingToTest(Probability::App::app()->snapshot()->data()->test());
+  if (selectedRow() == -1) {
+    selectRow(0);
+  }
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -83,78 +85,15 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    App::app()->snapshot()->data()->setTest(test);
-    Data::TestType testType =
-        Data::isProportion(test) ? Data::TestType::ZTest : Data::TestType::TTest;
-    App::app()->snapshot()->data()->setTestType(testType);
-
-    if (Data::isProportion(test)) {
-      initializeStatistic(test);
+    if (Data::isProportion(test) && (test != App::app()->snapshot()->data()->test())) {
+      App::app()->snapshot()->data()->initializeStatistic(test, Data::TestType::ZTest);
+      App::app()->snapshot()->data()->setTestType(Data::TestType::ZTest);
     }
-    initializeHypothesisParams(test);
+
+    App::app()->snapshot()->data()->setTest(test);
+
     openPage(view);
     return true;
   }
   return false;
-}
-
-void TestController::selectRowAccordingToTest(Data::Test t) {
-  // TODO this overrides the m_selectedRow behavior, is that needed ?
-  int row = -1;
-  switch (t) {
-    case Data::Test::OneProp:
-      row = k_indexOfOneProp;
-      break;
-    case Data::Test::TwoProps:
-      row = k_indexOfTwoProps;
-      break;
-    case Data::Test::OneMean:
-      row = k_indexOfOneMean;
-      break;
-    case Data::Test::TwoMeans:
-      row = k_indexOfTwoMeans;
-      break;
-    case Data::Test::Categorical:
-      row = k_indexOfCategorical;
-      break;
-    default:
-      assert(false);
-  }
-  assert(row >= 0);
-  selectRow(row);
-}
-
-void Probability::TestController::initializeStatistic(Data::Test t) {
-  switch (t) {
-    case Data::Test::OneProp:
-      new (App::app()->snapshot()->data()->statistic()) OneProportionStatistic();
-      break;
-    case Data::Test::TwoProps:
-      new (App::app()->snapshot()->data()->statistic()) TwoProportionsStatistic();
-      break;
-    default:
-      assert(false);
-      break;
-  }
-}
-
-void TestController::initializeHypothesisParams(Data::Test t) {
-  float firstParam;
-  switch (t) {
-    case Data::Test::OneProp:
-      firstParam = 0.5;
-      break;
-    case Data::Test::OneMean:
-      firstParam = 128;
-      break;
-    case Data::Test::TwoProps:
-    case Data::Test::TwoMeans:
-      firstParam = 0;
-      break;
-    default:
-      return;
-  }
-  App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(firstParam);
-  App::app()->snapshot()->data()->hypothesisParams()->setOp(
-      HypothesisParams::ComparisonOperator::Different);
 }

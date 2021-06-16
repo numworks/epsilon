@@ -17,7 +17,7 @@ void OneProportionStatistic::computeTest() {
   float p0 = m_hypothesisParams.firstParam();
   float prop = _pEstimate(x(), n());
 
-  m_zAlpha = _zAlpha(m_threshold);
+  m_zAlpha = absIfNeeded(_zAlpha(m_threshold));
   m_z = _z(p0, prop, n());
   char fakeOp = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_z, fakeOp);

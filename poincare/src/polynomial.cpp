@@ -93,7 +93,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     Division::Builder(ComplexCartesian::Builder(Rational::Builder(1), SquareRoot::Builder(Rational::Builder(3))), Rational::Builder(-2))
   };
 
-  // b^2*c^2 + 18p abcd - 27a^2*d^2 - 4ac^3 - 4db^3
+  // b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
   *delta = Addition::Builder({
       Power::Builder(Multiplication::Builder(b.clone(), c.clone()), Rational::Builder(2)),
       Multiplication::Builder({Rational::Builder(18), a.clone(), b.clone(), c.clone(), d.clone()}),

@@ -28,7 +28,7 @@ App::App(Snapshot * snapshot) :
     m_categoricalTypeController(&m_stackViewController, &m_inputGoodnessController,
                                 &m_inputHomogeneityController),
     m_hypothesisController(&m_stackViewController, &m_inputController, this,
-                           snapshot->data()->hypothesisParams()),
+                           snapshot->data()->statistic()),
     m_calculationController(&m_stackViewController, this, snapshot->data()->distribution(),
                             snapshot->data()->calculation()),
     m_parameterController(&m_stackViewController, this, snapshot->data()->distribution(),

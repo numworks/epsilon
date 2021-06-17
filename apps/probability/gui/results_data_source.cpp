@@ -5,6 +5,7 @@
 #include <kandinsky/color.h>
 
 #include "probability/app.h"
+#include "probability/text_helpers.h"
 
 namespace Probability {
 

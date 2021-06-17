@@ -37,15 +37,11 @@ const char * InputController::title() {
     const char * symbol = testToTextSymbol(App::app()->test());
     char op = static_cast<const char>(m_statistic->hypothesisParams()->op());
     char paramBuffer[10];
-    Poincare::PrintFloat::ConvertFloatToText(m_statistic->hypothesisParams()->firstParam(),
-                                             paramBuffer, sizeof(paramBuffer), 5, 5,
-                                             Poincare::Preferences::PrintFloatMode::Decimal);
-
+    defaultParseFloat(m_statistic->hypothesisParams()->firstParam(), paramBuffer, sizeof(paramBuffer));
     sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%c%s", symbol, paramBuffer, symbol, op, paramBuffer);
   } else {
     strlcpy(m_titleBuffer, "z-interval bla...", bufferSize);
   }
-
   return m_titleBuffer;
 }
 

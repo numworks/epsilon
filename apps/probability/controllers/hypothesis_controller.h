@@ -63,7 +63,6 @@ private:
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_indexOfNext = 2;
-  constexpr static int k_maxInputLength = 10;
   InputController * m_inputController;
 
   MessageTableCellWithEditableText m_h0;

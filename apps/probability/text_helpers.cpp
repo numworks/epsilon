@@ -80,4 +80,14 @@ const char * testTypeToText(Data::TestType t) {
   return nullptr;
 }
 
+template <typename T>
+int defaultParseFloat(T value, char buffer[], int bufferSize) {
+  return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+      value, buffer, bufferSize, Poincare::Preferences::ShortNumberOfSignificantDigits,
+      Poincare::Preferences::PrintFloatMode::Decimal);
+}
+
+template int defaultParseFloat(float value, char buffer[], int bufferSize);
+template int defaultParseFloat(double value, char buffer[], int bufferSize);
+
 }  // namespace Probability

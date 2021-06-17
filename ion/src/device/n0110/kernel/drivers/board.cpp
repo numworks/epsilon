@@ -29,21 +29,6 @@ void initMPU() {
   // 1.3 Disable the MPU and clear the control register
   MPU.CTRL()->setENABLE(false);
 
-  /* 1.4 Reset all MPU regions that might have been set by the bootloader.
-   * We use the first region settings to initialize all regions. */
-  for (int i = 0; i < 8; i++) {
-    MPU.RNR()->setREGION(i);
-    MPU.RBAR()->setADDR(Board::Config::UserlandSRAMAddress);
-    MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256KB);
-    MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
-    MPU.RASR()->setXN(false);
-    MPU.RASR()->setTEX(1);
-    MPU.RASR()->setS(1);
-    MPU.RASR()->setC(1);
-    MPU.RASR()->setB(1);
-    MPU.RASR()->setENABLE(true);
-  }
-
   // 2. MPU settings
   int sector = 0;
 
@@ -156,6 +141,17 @@ void initMPU() {
   MPU.RASR()->setC(1);
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
+
+  /* 2.7 Empty sector
+   * We have to override the sector configured by the bootloader. */
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0);
+  MPU.RASR()->setENABLE(0);
+
+  /* We assert that all sectors have been initialized. Otherwise, the bootloader
+   * configuration is still active on the last sectors when their configuration
+   * should be reset. */
+  assert(sector == 8);
 
   // 3. Enable default memory map
   MPU.CTRL()->setPRIVDEFENA(true);

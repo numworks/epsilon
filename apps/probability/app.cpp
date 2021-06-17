@@ -7,23 +7,28 @@
 
 namespace Probability {
 
-const Escher::Image * App::Descriptor::icon() const { return ImageStore::ProbabilityIcon; }
+const Escher::Image * App::Descriptor::icon() const {
+  return ImageStore::ProbabilityIcon;
+}
 
 App::App(Snapshot * snapshot) :
     TextFieldDelegateApp(snapshot, &m_stackViewController),
-    m_graphController(&m_stackViewController),
+    m_graphController(&m_stackViewController, snapshot->data()->statistic()),
     m_homogeneityResultsController(&m_stackViewController),
     m_inputHomogeneityController(&m_stackViewController, &m_homogeneityResultsController, this,
                                  this),
     m_inputGoodnessController(&m_stackViewController, &m_resultsController, this, this),
     m_resultsController(&m_stackViewController, snapshot->data()->statistic(), &m_graphController,
                         this, this),
-    m_inputController(&m_stackViewController, &m_resultsController,
-                      snapshot->data()->statistic(), this),
-    m_typeController(&m_stackViewController, &m_hypothesisController, &m_inputController),
+    m_inputController(&m_stackViewController, &m_resultsController, snapshot->data()->statistic(),
+                      this),
+    m_typeController(&m_stackViewController, &m_hypothesisController, &m_inputController,
+                     snapshot->data()->testPointer(), snapshot->data()->testTypePointer(),
+                     snapshot->data()->statistic()),
     m_categoricalTypeController(&m_stackViewController, &m_inputGoodnessController,
                                 &m_inputHomogeneityController),
-    m_hypothesisController(&m_stackViewController, &m_inputController, this),
+    m_hypothesisController(&m_stackViewController, &m_inputController, this,
+                           snapshot->data()->hypothesisParams()),
     m_calculationController(&m_stackViewController, this, snapshot->data()->distribution(),
                             snapshot->data()->calculation()),
     m_parameterController(&m_stackViewController, this, snapshot->data()->distribution(),
@@ -31,8 +36,12 @@ App::App(Snapshot * snapshot) :
     m_distributionController(&m_stackViewController, snapshot->data()->distribution(),
                              &m_parameterController),
     m_testController(&m_stackViewController, &m_hypothesisController, &m_typeController,
-                     &m_categoricalTypeController, &m_inputController),
-    m_menuController(&m_stackViewController, &m_distributionController, &m_testController),
+                     &m_categoricalTypeController, &m_inputController,
+                     snapshot->data()->testPointer(), snapshot->data()->testTypePointer(),
+                     snapshot->data()->statistic()),
+    m_menuController(&m_stackViewController, &m_distributionController, &m_testController,
+                     snapshot->navigation()->subappPointer(), snapshot->data()->distribution(),
+                     snapshot->data()->calculation()),
     m_stackViewController(&m_modalViewController, &m_menuController) {
   // Reopen correct page
   // TODO delegate decisions to controllers somehow

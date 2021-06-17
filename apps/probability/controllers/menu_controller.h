@@ -17,7 +17,7 @@ namespace Probability {
 class MenuController : public SelectableListViewPage {
  public:
   MenuController(Escher::StackViewController * parentResponder, Escher::ViewController * distributionController,
-                 Escher::ViewController * testController);
+                 Escher::ViewController * testController, Data::SubApp * globalSubapp, Distribution * globalDistribution, Calculation * globalCalculation);
   int numberOfRows() const override { return k_numberOfCells; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
@@ -33,6 +33,9 @@ class MenuController : public SelectableListViewPage {
   constexpr static int k_indexOfTest = 1;
   constexpr static int k_indexOfInterval = 2;
   Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfCells];
+  Data::SubApp * m_globalSubapp;
+  Distribution * m_globalDistribution;
+  Calculation * m_globalCalculation;
 };
 
 }  // namespace Probability

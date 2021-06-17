@@ -22,7 +22,7 @@ CategoricalTypeController::CategoricalTypeController(
 }
 
 void CategoricalTypeController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Categorical);
+  Probability::App::app()->setPage(Data::Page::Categorical);
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);

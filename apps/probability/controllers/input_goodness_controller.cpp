@@ -48,7 +48,7 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent, R
       m_dataTable(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
 
 void InputGoodnessController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::InputGoodness);
+  Probability::App::app()->setPage(Data::Page::InputGoodness);
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);
 }
 

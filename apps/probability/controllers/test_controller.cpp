@@ -22,12 +22,16 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                HypothesisController * hypothesisController,
                                TypeController * typeController,
                                CategoricalTypeController * categoricalController,
-                               InputController * inputController) :
+                               InputController * inputController, Data::Test * globalTest,
+                               Data::TestType * globalTestType, Statistic * statistic) :
     SelectableCellListPage(parentResponder),
     m_hypothesisController(hypothesisController),
     m_typeController(typeController),
     m_inputController(inputController),
-    m_categoricalController(categoricalController) {
+    m_categoricalController(categoricalController),
+    m_globalTest(globalTest),
+    m_globalTestType(globalTestType),
+    m_statistic(statistic) {
   // Create cells
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
   m_cells[k_indexOfOneProp].setSubtitle(I18n::Message::ZTest);
@@ -41,8 +45,12 @@ TestController::TestController(Escher::StackViewController * parentResponder,
   m_cells[k_indexOfCategorical].setSubtitle(I18n::Message::X2Test);
 }
 
+const char * TestController::title() {
+  return App::app()->subapp() == Data::SubApp::Tests ? "Test" : "Interval";
+}
+
 void TestController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Test);
+  Probability::App::app()->setPage(Data::Page::Test);
   if (selectedRow() == -1) {
     selectRow(0);
   }
@@ -51,7 +59,7 @@ void TestController::didBecomeFirstResponder() {
 
 bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Data::SubApp subapp = App::app()->snapshot()->navigation()->subapp();
+    Data::SubApp subapp = App::app()->subapp();
     Escher::ViewController * view = nullptr;
     Data::Test test;
     switch (selectedRow()) {
@@ -85,12 +93,12 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (Data::isProportion(test) && (test != App::app()->snapshot()->data()->test())) {
-      App::app()->snapshot()->data()->initializeStatistic(test, Data::TestType::ZTest);
-      App::app()->snapshot()->data()->setTestType(Data::TestType::ZTest);
+    if (Data::isProportion(test) && (test != App::app()->test())) {
+      Statistic::initializeStatistic(m_statistic, test, Data::TestType::ZTest);
+      *m_globalTestType = Data::TestType::ZTest;
     }
 
-    App::app()->snapshot()->data()->setTest(test);
+    *m_globalTest = test;
 
     openPage(view);
     return true;

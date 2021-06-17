@@ -85,7 +85,7 @@ void CalculationController::didEnterResponderChain(Responder * previousResponder
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::ProbaGraph);
+  Probability::App::app()->setPage(Data::Page::ProbaGraph);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 

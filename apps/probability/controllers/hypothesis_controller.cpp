@@ -23,19 +23,21 @@ using namespace Probability;
 
 HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputController * inputController,
-                                           InputEventHandlerDelegate * handler) :
+                                           InputEventHandlerDelegate * handler,
+                                           HypothesisParams * hypothesisParams) :
     SelectableListViewPage(parent),
     m_inputController(inputController),
     m_h0(&m_selectableTableView, handler, this),
     m_ha(&m_selectableTableView, handler, this),
-    m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()) {
+    m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
+    m_hypothesisParams(hypothesisParams) {
   m_h0.setMessage(I18n::Message::H0);
   m_ha.setMessage(I18n::Message::Ha);
 }
 
 const char * Probability::HypothesisController::title() {
-  const char * testType = testTypeToText(App::app()->snapshot()->data()->testType());
-  const char * test = testToText(App::app()->snapshot()->data()->test());
+  const char * testType = testTypeToText(App::app()->testType());
+  const char * test = testToText(App::app()->test());
   sprintf(m_titleBuffer, "%s on %s", testType, test);
   return m_titleBuffer;
 }
@@ -68,7 +70,7 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
       return false;
     }
     // TODO could check validity
-    App::app()->snapshot()->data()->hypothesisParams()->setFirstParam(h0);
+    m_hypothesisParams->setFirstParam(h0);
     loadHypothesisParam(false);
     return true;
   }
@@ -77,7 +79,7 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
                                                  HypothesisParams::ComparisonOperator::Higher};
   for (int i = 0; i < 3; i++) {
     if (strchr(text, static_cast<char>(ops[i])) != NULL) {
-      App::app()->snapshot()->data()->hypothesisParams()->setOp(ops[i]);
+      m_hypothesisParams->setOp(ops[i]);
       m_ha.setAccessoryText(text);
       return true;
     }
@@ -98,7 +100,7 @@ HighlightCell * HypothesisController::reusableCell(int i, int type) {
 }
 
 void HypothesisController::didBecomeFirstResponder() {
-  App::app()->snapshot()->navigation()->setPage(Data::Page::Hypothesis);
+  App::app()->setPage(Data::Page::Hypothesis);
   // TODO factor out
   selectCellAtLocation(0, 0);
   loadHypothesisParam();
@@ -113,10 +115,10 @@ void HypothesisController::buttonAction() {
 void HypothesisController::loadHypothesisParam(bool h0Only) {
   constexpr int bufferSize = 20;
   char buffer[bufferSize]{0};
-  const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
-  const char op = static_cast<const char>(App::app()->snapshot()->data()->hypothesisParams()->op());
+  const char * symbol = testToTextSymbol(App::app()->test());
+  const char op = static_cast<const char>(m_hypothesisParams->op());
   int written = sprintf(buffer, "%s%c", symbol, op);
-  float p = App::app()->snapshot()->data()->hypothesisParams()->firstParam();
+  float p = m_hypothesisParams->firstParam();
   Poincare::PrintFloat::ConvertFloatToText(p, buffer + written, bufferSize, k_maxInputLength, 5,
                                            Poincare::Preferences::PrintFloatMode::Decimal);
   m_ha.setAccessoryText(buffer);
@@ -128,8 +130,7 @@ void HypothesisController::loadHypothesisParam(bool h0Only) {
 void HypothesisController::storeHypothesisParams() {
   // TODO maybe parse at the same time as when checking validity
   // TODO use TextFieldDelegateApp
-  HypothesisParams * params = App::app()->snapshot()->data()->hypothesisParams();
-  params->setFirstParam(Shared::PoincareHelpers::ApproximateToScalar<float>(
+  m_hypothesisParams->setFirstParam(Shared::PoincareHelpers::ApproximateToScalar<float>(
       m_h0.textField()->text(), AppsContainer::sharedAppsContainer()->globalContext()));
   // params->setOp(HypothesisParams::ComparisonOperator::Higher);
 }

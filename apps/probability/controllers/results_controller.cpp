@@ -24,7 +24,7 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
     m_graphController(graphController) {}
 
 void ResultsController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Results);
+  Probability::App::app()->setPage(Data::Page::Results);
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);

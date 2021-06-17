@@ -12,8 +12,6 @@ GraphView::GraphView(StatisticViewRange * rangeLeft, StatisticViewRange * rangeR
 
 void GraphView::setMode(GraphDisplayMode m) {
   m_mode = m;
-  markRectAsDirty(bounds());
-  layoutSubviews();  // TODO have to call here for the second time to account for mode change
 }
 
 KDSize GraphView::minimalSizeForOptimalDisplay() const {
@@ -41,8 +39,7 @@ void GraphView::layoutSubviews(bool force) {
       KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)), force);
   KDSize k_legendSize = m_legend.minimalSizeForOptimalDisplay();
   KDPoint legendOrigin =
-      App::app()->snapshot()->data()->hypothesisParams()->op() ==
-              HypothesisParams::ComparisonOperator::Lower
+      m_legendPosition == LegendPosition::Left
           ? KDPoint(k_legendMarginRight, k_legendMarginTop)
           : KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight, k_legendMarginTop);
   m_legend.setFrame(KDRect(legendOrigin, k_legendSize), force);
@@ -56,7 +53,7 @@ Escher::View * GraphView::subviewAtIndex(int i) {
 }
 
 Escher::View * GraphView::conclusionView() {
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+  if (App::app()->subapp() == Data::SubApp::Tests) {
     return &m_testConclusionView;
   }
   return &m_intervalConclusionView;

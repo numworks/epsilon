@@ -26,7 +26,7 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
 
 
 int ResultsDataSource::numberOfRows() const {
-  Data::SubApp subapp = App::app()->snapshot()->navigation()->subapp();
+  Data::SubApp subapp = App::app()->subapp();
   int index = subapp == Data::SubApp::Tests ? 2 : 4;
   index += m_statistic->hasDegreeOfFreedom();
   return index + 1 /* button */;
@@ -38,7 +38,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
         static_cast<Escher::MessageTableCellWithBuffer *>(cell);
     I18n::Message message;
     float value;
-    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    if (App::app()->subapp() == Data::SubApp::Tests) {
       switch (i) {
         case TestCellOrder::Z:
           message = I18n::Message::Z;

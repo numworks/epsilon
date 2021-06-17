@@ -32,9 +32,9 @@ InputController::InputController(Escher::StackViewController * parent,
 
 const char * InputController::title() {
   size_t bufferSize = sizeof(m_titleBuffer);
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+  if (App::app()->subapp() == Data::SubApp::Tests) {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams>
-    const char * symbol = testToTextSymbol(App::app()->snapshot()->data()->test());
+    const char * symbol = testToTextSymbol(App::app()->test());
     char op = static_cast<const char>(m_statistic->hypothesisParams()->op());
     char paramBuffer[10];
     Poincare::PrintFloat::ConvertFloatToText(m_statistic->hypothesisParams()->firstParam(),
@@ -49,9 +49,8 @@ const char * InputController::title() {
   return m_titleBuffer;
 }
 
-
 ViewController::TitlesDisplay InputController::titlesDisplay() {
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+  if (App::app()->subapp() == Data::SubApp::Tests) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   return ViewController::TitlesDisplay::DisplayLastTitles;
@@ -69,7 +68,7 @@ void InputController::didBecomeFirstResponder() {
     m_statistic->initThreshold();
     m_selectableTableView.reloadCellAtLocation(0, m_statistic->indexOfThreshold());
   }
-  App::app()->snapshot()->navigation()->setPage(Data::Page::Input);
+  App::app()->setPage(Data::Page::Input);
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
@@ -80,7 +79,7 @@ void InputController::didBecomeFirstResponder() {
 }
 
 void InputController::buttonAction() {
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+  if (App::app()->subapp() == Data::SubApp::Tests) {
     m_statistic->computeTest();
   } else {
     m_statistic->computeInterval();
@@ -98,7 +97,7 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
     MessageTableCellWithEditableTextWithMessage * thresholdCell =
         static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
     I18n::Message name, description;
-    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+    if (App::app()->subapp() == Data::SubApp::Tests) {
       name = I18n::Message::Alpha;
       description = I18n::Message::SignificanceLevel;
     } else {

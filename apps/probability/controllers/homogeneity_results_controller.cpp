@@ -35,7 +35,7 @@ HomogeneityResultsController::HomogeneityResultsController(
     m_table(this, &m_tableData, &m_tableData) {}
 
 void HomogeneityResultsController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::ResultsHomogeneity);
+  Probability::App::app()->setPage(Data::Page::ResultsHomogeneity);
   Escher::Container::activeApp()->setFirstResponder(&m_table);
 }
 

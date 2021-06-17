@@ -42,7 +42,8 @@ private:
 class TypeController : public SelectableListViewPage {
 public:
   TypeController(StackViewController * parent, HypothesisController * hypothesisController,
-                 InputController * intervalInputController);
+                 InputController * intervalInputController, Data::Test * globalTest,
+                 Data::TestType * globalTestType, Statistic * statistic);
   View * view() override { return &m_contentView; }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
@@ -74,6 +75,10 @@ private:
   MessageTextView m_description;
 
   char m_titleBuffer[30];  // TODO count max
+
+  Data::Test * m_globalTest;
+  Data::TestType * m_globalTestType;
+  Statistic * m_statistic;
 };
 
 }  // namespace Probability

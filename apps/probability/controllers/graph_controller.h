@@ -12,7 +12,7 @@ namespace Probability {
 
 class GraphController : public Page {
 public:
-  GraphController(StackViewController * stack);
+  GraphController(StackViewController * stack, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastThreeTitles; }
   const char * title() override;
   Escher::View * view() override { return &m_graphView; }
@@ -24,6 +24,7 @@ private:
   StatisticViewRange m_rangeLeft;
   StatisticViewRange m_rangeRight;
   GraphView m_graphView;
+  Statistic * m_statistic;
 };
 }  // namespace Probability
 #endif /* APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H */

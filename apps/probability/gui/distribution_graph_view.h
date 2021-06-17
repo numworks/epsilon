@@ -17,6 +17,7 @@ namespace Probability {
  */
 class GraphView : public Escher::View {
 public:
+  enum LegendPosition {Left, Right};
   GraphView(StatisticViewRange * rangeLeft, StatisticViewRange * rangeRight);
   void setMode(GraphDisplayMode m);
   void setType(TestConclusionView::Type t) { m_testConclusionView.setType(t); }
@@ -26,6 +27,7 @@ public:
     m_curveViewRight.setStatistic(statistic);
   }
   void reload() {
+    layoutSubviews();
     m_curveViewLeft.reload();
     m_curveViewRight.reload();
   }
@@ -33,6 +35,8 @@ public:
 
   StatisticCurveView * curveViewLeft() { return &m_curveViewLeft; }
   StatisticCurveView * curveViewRight() { return &m_curveViewRight; }
+
+  void setLegendPosition(LegendPosition pos) { m_legendPosition = pos; }
 
 protected:
   int numberOfSubviews() const override { return 5; }  // TODO could change according to mode
@@ -53,6 +57,7 @@ private:
   TestConclusionView m_testConclusionView;
   IntervalConclusionView m_intervalConclusionView;
   GraphDisplayMode m_mode;
+  LegendPosition m_legendPosition;
 };
 
 }  // namespace Probability

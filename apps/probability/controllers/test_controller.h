@@ -23,10 +23,10 @@ public:
   TestController(Escher::StackViewController * parentResponder,
                  HypothesisController * hypothesisController, TypeController * typeController,
                  CategoricalTypeController * categoricalController,
-                 InputController * inputController);
+                 InputController * inputController, Data::Test * globalTest, Data::TestType * globalTestType, Statistic * statistic);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
-  const char * title() override { return "Test"; }
+  const char * title() override;
 
 private:
   constexpr static int k_indexOfOneProp = 0;
@@ -39,6 +39,9 @@ private:
   TypeController * m_typeController;
   InputController * m_inputController;
   CategoricalTypeController * m_categoricalController;
+  Data::Test * m_globalTest;
+  Data::TestType * m_globalTestType;
+  Statistic * m_statistic;
 };
 
 }  // namespace Probability

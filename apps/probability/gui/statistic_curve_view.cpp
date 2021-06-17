@@ -14,7 +14,7 @@ void StatisticCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxis(ctx, rect, Axis::Horizontal);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
 
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+  if (App::app()->subapp() == Data::SubApp::Tests) {
     drawTest(ctx, rect);
   } else {
     drawInterval(ctx, rect);

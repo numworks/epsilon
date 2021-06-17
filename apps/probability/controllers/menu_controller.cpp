@@ -18,10 +18,14 @@ using namespace Probability;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Escher::ViewController * distributionController,
-                               Escher::ViewController * testController) :
+                               Escher::ViewController * testController, Data::SubApp * globalSubapp,
+                               Distribution * globalDistribution, Calculation * globalCalculation) :
     SelectableListViewPage(parentResponder),
     m_distributionController(distributionController),
-    m_testController(testController) {
+    m_testController(testController),
+    m_globalSubapp(globalSubapp),
+    m_globalDistribution(globalDistribution),
+    m_globalCalculation(globalCalculation) {
   m_cells[k_indexOfDistribution].setMessage(I18n::Message::ProbaApp);
   m_cells[k_indexOfDistribution].setSubtitle(I18n::Message::ProbaDescr);
   m_cells[k_indexOfTest].setMessage(I18n::Message::SignificanceTest);
@@ -31,7 +35,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
 }
 
 void MenuController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Menu);
+  Probability::App::app()->setPage(Data::Page::Menu);
   // TODO factor out
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
@@ -65,10 +69,10 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (App::app()->snapshot()->navigation()->subapp() != subapp) {
+    if (App::app()->subapp() != subapp) {
       initializeProbaData();
     }
-    App::app()->snapshot()->navigation()->setSubapp(subapp);
+    *m_globalSubapp = subapp;
     openPage(view);
     return true;
   }
@@ -76,7 +80,6 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
 }
 
 void MenuController::initializeProbaData() {
-  new (App::app()->snapshot()->data()->distribution()) BinomialDistribution();
-  new (App::app()->snapshot()->data()->calculation())
-      LeftIntegralCalculation(App::app()->snapshot()->data()->distribution());
+  new (m_globalDistribution) BinomialDistribution();
+  new (m_globalCalculation) LeftIntegralCalculation(m_globalDistribution);
 }

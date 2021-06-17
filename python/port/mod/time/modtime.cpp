@@ -5,13 +5,16 @@ extern "C" {
 #include "../../helpers.h"
 #include <py/smallint.h>
 #include <py/runtime.h>
+#include <limits.h>
 
 mp_obj_t modtime_sleep(mp_obj_t seconds_o) {
 #if MICROPY_PY_BUILTINS_FLOAT
-  micropython_port_interruptible_msleep(1000 * mp_obj_get_float(seconds_o));
+  mp_float_t duration = mp_obj_get_float(seconds_o);
 #else
-  micropython_port_interruptible_msleep(1000 * mp_obj_get_int(seconds_o));
+  mp_int_t duration = mp_obj_get_int(seconds_o);
 #endif
+  int32_t duration32 = duration < 0 ? 0 : duration > INT_MAX / 1000 ? INT_MAX : 1000 * duration;
+  micropython_port_interruptible_msleep(duration32);
   return mp_const_none;
 }
 

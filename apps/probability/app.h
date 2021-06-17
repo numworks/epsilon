@@ -48,15 +48,23 @@ public:
     };
     void reset() override{};
     Data::AppNavigation * navigation() { return &m_navigation; }
-    Data::Data * data() { return &m_data; }
 
   private:
+    friend App;
+    Data::Data * data() { return &m_data; }
     Data::AppNavigation m_navigation;
     Data::Data m_data;
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
-  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
+
+  // Data access
+  Data::Page page() { return snapshot()->navigation()->page(); }
+  void setPage(Data::Page p) { snapshot()->navigation()->setPage(p); }
+  Data::SubApp subapp() { return snapshot()->navigation()->subapp(); }
+  Data::Test test() { return snapshot()->data()->test(); }
+  Data::TestType testType() { return snapshot()->data()->testType(); }
+
   TELEMETRY_ID("Probability");
   // TODO better handling
   bool textFieldDidFinishEditing(TextField * textField, const char * text,
@@ -67,6 +75,7 @@ public:
 
 private:
   App(Snapshot *);
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)

@@ -27,7 +27,7 @@ float StatisticViewRange::yMax() const {
 
 StatisticViewRange::Range StatisticViewRange::computeXRange() const {
   // TODO this is called +100 times, memoize ?
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests) {
+  if (App::app()->subapp() == Data::SubApp::Tests) {
     float zAlpha = m_statistic->zAlpha();
     float z = m_statistic->testCriticalValue();
     if (m_mode == GraphDisplayMode::TwoCurveViews) {
@@ -68,7 +68,7 @@ StatisticViewRange::Range StatisticViewRange::computeTestXRange(float z, float z
 }
 
 StatisticViewRange::Range StatisticViewRange::computeYRange() const {
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
+  if (App::app()->subapp() == Data::SubApp::Intervals) {
     return Range{-0.1, 0.5};
   }
   float zAlpha = m_statistic->zAlpha();

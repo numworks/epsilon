@@ -36,7 +36,7 @@ InputHomogeneityController::InputHomogeneityController(
       m_homogeneityResultsController(homogeneityResultsController) {}
 
 void InputHomogeneityController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::InputHomogeneity);
+  Probability::App::app()->setPage(Data::Page::InputHomogeneity);
   Container::activeApp()->setFirstResponder(&m_contentView);
 }
 

@@ -13,6 +13,7 @@
 #include "calculation/finite_integral_calculation.h"
 #include "calculation/left_integral_calculation.h"
 #include "calculation/right_integral_calculation.h"
+#include "data_enums.h"
 #include "distribution/binomial_distribution.h"
 #include "distribution/chi_squared_distribution.h"
 #include "distribution/exponential_distribution.h"
@@ -36,39 +37,6 @@
 
 namespace Probability {
 namespace Data {
-
-// Navigation
-
-enum class Page {
-  Menu,
-  Distribution,
-  Test,
-  Type,
-  Hypothesis,
-  Categorical,
-  Input,
-  IntervalInput,
-  InputGoodness,
-  InputHomogeneity,
-  Results,
-  ResultsHomogeneity,
-  ProbaGraph,
-  Graph
-};
-
-enum class SubApp { Unset, Probability, Tests, Intervals };
-
-class AppNavigation {
-public:
-  SubApp subapp() { return m_subApp; };
-  void setSubapp(SubApp app) { m_subApp = app; };
-  Page page() const { return m_page; }
-  void setPage(Page page) { m_page = page; }
-
-private:
-  SubApp m_subApp;
-  Page m_page;
-};
 
 // Buffers for dynamic allocation
 
@@ -99,18 +67,6 @@ static constexpr int statisticSizes[7] = {
 constexpr int maxStatisticSize = arrayMax(statisticSizes);
 typedef char StatisticBuffer[maxStatisticSize];
 
-// Test sub app
-
-enum class Test { Unset, OneProp, OneMean, TwoProps, TwoMeans, Categorical };
-
-inline bool isProportion(Test t) {
-  return t == Test::OneProp || t == Test::TwoProps;
-}
-
-enum class TestType { TTest, PooledTTest, ZTest };
-
-enum class CategoricalType { Goodness, Homogeneity };
-
 constexpr static int k_maxNumberOfGoodnessInputRows = 10;
 // TODO Store ?
 typedef float InputGoodnessData[k_maxNumberOfGoodnessInputRows * 2];
@@ -136,36 +92,6 @@ struct StatisticData {
     CategoricalData m_categorical;
   } m_data;
   Statistic * statistic() { return reinterpret_cast<Statistic *>(m_statisticBuffer); }
-  /* Instanciate correct Statistic bases on Test and TestType. */
-  void initializeStatistic(Test t, TestType type) {
-    switch (t) {
-      case Test::OneProp:
-        new (statistic()) OneProportionStatistic();
-        break;
-      case Test::TwoProps:
-        new (statistic()) TwoProportionsStatistic();
-        break;
-      case Test::OneMean:
-        if (type == TestType::TTest) {
-          new (statistic()) OneMeanTStatistic();
-        } else if (type == TestType::ZTest) {
-          new (statistic()) OneMeanZStatistic();
-        }
-        break;
-      case Test::TwoMeans:
-        if (type == TestType::TTest) {
-          new (statistic()) TwoMeansTStatistic();
-        } else if (type == TestType::ZTest) {
-          new (statistic()) TwoMeansZStatistic();
-        } else if (type == TestType::PooledTTest) {
-          new (statistic()) PooledTwoMeansStatistic();
-        }
-        break;
-      default:
-        assert(false);
-        break;
-    }
-  }
 };
 
 union DataBuffer {
@@ -189,9 +115,10 @@ public:
 
   // StatisticData
   Test test() { return statisticData()->m_test; }
-  void setTest(Test t) { statisticData()->m_test = t; }
+  Test * testPointer() { return &(statisticData()->m_test); }
   CategoricalData * categoricalData() { return &statisticData()->m_data.m_categorical; }
   TestType testType() { return statisticData()->m_data.m_testType; }
+  TestType * testTypePointer() { return &(statisticData()->m_data.m_testType); }
   void setTestType(TestType t) { statisticData()->m_data.m_testType = t; }
   CategoricalType categoricalType() { return categoricalData()->m_type; }
   void setCategoricalType(CategoricalType t) { categoricalData()->m_type = t; }
@@ -200,7 +127,6 @@ public:
     return &(categoricalData()->m_data.m_homogeneity);
   }
   Statistic * statistic() { return statisticData()->statistic(); }
-  void initializeStatistic(Test t, TestType type) { statisticData()->initializeStatistic(t, type); }
   HypothesisParams * hypothesisParams() { return statistic()->hypothesisParams(); }
 
 private:

@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 
+#include "probability/models/data_enums.h"
 #include "probability/models/hypothesis_params.h"
 
 namespace Probability {
@@ -69,6 +70,8 @@ public:
 
   int indexOfThreshold() { return numberOfStatisticParameters(); }
   void initThreshold();
+  /* Instanciate correct Statistic bases on Test and TestType. */
+  static void initializeStatistic(Statistic * statistic, Data::Test t, Data::TestType type);
 
 protected:
   virtual int numberOfStatisticParameters() const = 0;

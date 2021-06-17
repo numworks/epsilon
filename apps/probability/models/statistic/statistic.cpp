@@ -23,8 +23,8 @@ bool Statistic::testPassed() {
   return pValue() > std::fabs(m_threshold);
 }
 
-void Statistic::initThreshold() {
-  if (App::app()->subapp() == Data::SubApp::Tests) {
+void Statistic::initThreshold(Data::SubApp subapp) {
+  if (subapp == Data::SubApp::Tests) {
     m_threshold = 0.05;
   } else {
     m_threshold = 0.95;

@@ -35,35 +35,12 @@ using namespace Escher;
 
 namespace Probability {
 
-View * DistributionController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < numberOfSubviews());
-  switch (index) {
-  case 0:
-    return &m_titleView;
-  case 1:
-    return m_selectableTableView;
-  default:
-    return &m_borderView;
-  }
-}
-
-void DistributionController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height() + k_titleMargin;
-  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height() - titleHeight), force);
-  m_borderView.setFrame(KDRect(m_selectableTableView->leftMargin(), titleHeight + m_selectableTableView->topMargin(), bounds().width() - m_selectableTableView->leftMargin() - m_selectableTableView->rightMargin(), Metric::CellSeparatorThickness), force);
-}
-
 DistributionController::DistributionController(Responder * parentResponder, Distribution * distribution, ParametersController * parametersController) :
   SelectableListViewController(parentResponder),
-  m_contentView(&m_selectableTableView),
   m_distribution(distribution),
   m_parametersController(parametersController)
 {
   assert(m_distribution != nullptr);
-  m_selectableTableView.setTopMargin(0);
-  // Fit m_selectableTableView scroll to content size
-  m_selectableTableView.decorator()->setVerticalMargins(0, Metric::CommonBottomMargin);
 }
 
 void Probability::DistributionController::viewWillAppear() {

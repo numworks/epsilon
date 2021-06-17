@@ -65,7 +65,7 @@ int InputController::typeAtIndex(int i) {
 
 void InputController::didBecomeFirstResponder() {
   if (m_statistic->threshold() == -1) {
-    m_statistic->initThreshold();
+    m_statistic->initThreshold(App::app()->subapp());
     m_selectableTableView.reloadCellAtLocation(0, m_statistic->indexOfThreshold());
   }
   App::app()->setPage(Data::Page::Input);

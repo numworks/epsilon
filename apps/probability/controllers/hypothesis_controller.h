@@ -28,7 +28,7 @@ class HypothesisController : public SelectableListViewPage,
                              public Escher::TextFieldDelegate {
 public:
   HypothesisController(Escher::StackViewController * parent, InputController * inputController,
-                       InputEventHandlerDelegate * handler, HypothesisParams * hypothesisParams);
+                       InputEventHandlerDelegate * handler, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   };
@@ -45,9 +45,6 @@ public:
   }
 
   // TextFieldDelegate
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() const {
-    return static_cast<Shared::TextFieldDelegateApp *>(Escher::Container::activeApp());
-  }
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override {
     return false;
   };
@@ -57,8 +54,7 @@ public:
                                  Ion::Events::Event event) override;
 
 private:
-  void loadHypothesisParam(bool h0Only = false);
-  void storeHypothesisParams();
+  void loadHypothesisParam();
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
@@ -70,7 +66,7 @@ private:
   Shared::ButtonWithSeparator m_next;     // TODO real separator ?
 
   char m_titleBuffer[40];
-  HypothesisParams * m_hypothesisParams;
+  Statistic * m_statistic;
 };
 
 }  // namespace Probability

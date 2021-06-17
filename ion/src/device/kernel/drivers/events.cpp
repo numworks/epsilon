@@ -200,17 +200,17 @@ Ion::Events::Event nextEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
 
-  // Handle preemptive event before time is out
-  if (handlePreemption(false)) {
-    /* If handlePreemption returns true, it means a PendSV was generated. We
-     * return early to speed up the context switch (otherwise, PendSV will wait
-     * until the SVCall ends). */
-    return Ion::Events::None;
-  }
-
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   uint64_t startTime = Ion::Timing::millis();
   while (true) {
+    // Handle preemptive event before time is out
+    if (handlePreemption(false)) {
+      /* If handlePreemption returns true, it means a PendSV was generated. We
+       * return early to speed up the context switch (otherwise, PendSV will wait
+       * until the SVCall ends). */
+      return Ion::Events::None;
+    }
+
     /* NB: Currently, platform events are polled. They could be instead linked
      * to EXTI interruptions and their event could be pushed on the
      * Keyboard::Queue. However, the pins associated with platform events are
@@ -280,9 +280,6 @@ Ion::Events::Event nextEvent(int * timeout) {
       if (!Keyboard::Queue::sharedQueue()->isEmpty()) {
         keyboardInterruptionOccured = true;
         break;
-      }
-      if (sPreemtiveState != Ion::Keyboard::State(0)) {
-        return Ion::Events::None;
       }
       elapsedTime = static_cast<int>(Ion::Timing::millis() - startTime);
     }

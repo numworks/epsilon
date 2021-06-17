@@ -21,11 +21,13 @@ uint32_t addressOfFunction(int index) {
     return (*trampolineFunction)argsList; \
   } \
 
+// Work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=51205
+void * memset(void *, int, size_t) __attribute__((externally_visible));
+void * memcpy(void *, const void *, size_t) __attribute__((externally_visible));
+
 TRAMPOLINE_INTERFACE(TRAMPOLINE_MEMCMP, memcmp, (a,b,c), int, const void * a, const void * b, size_t c)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_MEMCPY, memcpy, (a,b,c), void *, void * a, const void * b, size_t c)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_MEMMOVE, memmove, (a,b,c), void *, void * a, const void * b, size_t c)
-// Work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=51205
-void * memset(void * b, int c, size_t len) __attribute__((externally_visible));
 TRAMPOLINE_INTERFACE(TRAMPOLINE_MEMSET, memset, (a,b,c), void *, void * a, int b, size_t c)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_STRCHR, strchr, (a,b), char *, const char * a, int b)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_STRCMP, strcmp, (a,b), int, const char * a, const char * b)

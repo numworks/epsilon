@@ -9,7 +9,6 @@
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
-#include <poincare/print_float.h>
 #include <string.h>
 
 #include <new>
@@ -119,8 +118,8 @@ void HypothesisController::loadHypothesisParam(bool h0Only) {
   const char op = static_cast<const char>(m_hypothesisParams->op());
   int written = sprintf(buffer, "%s%c", symbol, op);
   float p = m_hypothesisParams->firstParam();
-  Poincare::PrintFloat::ConvertFloatToText(p, buffer + written, bufferSize, k_maxInputLength, 5,
-                                           Poincare::Preferences::PrintFloatMode::Decimal);
+  defaultParseFloat(
+      p, buffer + written, bufferSize);
   m_ha.setAccessoryText(buffer);
   if (!h0Only) {
     m_h0.setAccessoryText(buffer + written);

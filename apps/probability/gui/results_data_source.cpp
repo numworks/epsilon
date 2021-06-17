@@ -8,8 +8,7 @@
 
 namespace Probability {
 
-ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
-                                     Statistic * statistic,
+ResultsDataSource::ResultsDataSource(Escher::Responder * parent, Statistic * statistic,
                                      ButtonDelegate * delegate) :
     MemoizedListViewDataSource(),
     m_statistic(statistic),
@@ -23,7 +22,6 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
     buffer->setTextColor(KDColorBlack);
   }
 }
-
 
 int ResultsDataSource::numberOfRows() const {
   Data::SubApp subapp = App::app()->subapp();
@@ -54,36 +52,33 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
           break;
       }
     } else {
-      switch (i)
-      {
-      case IntervalCellOrder::Estimate:
-        message = I18n::Message::P;
-        value = m_statistic->estimate();
-        break;
-      case IntervalCellOrder::Critical:
-        message = I18n::Message::Z; // TODO use m_statistic->intervalCriticalValueSymbol();
-        value = m_statistic->intervalCriticalValue();
-        break;
-      case IntervalCellOrder::SE:
-        message = I18n::Message::SE;
-        value = m_statistic->standardError();
-        break;
-      case IntervalCellOrder::ME:
-        message = I18n::Message::ME;
-        value = m_statistic->marginOfError();
-        break;
-      case IntervalCellOrder::IntervalDegree:
-        message = I18n::Message::DegreesOfFreedom;
-        value = m_statistic->degreeOfFreedom();
-        break;
+      switch (i) {
+        case IntervalCellOrder::Estimate:
+          message = I18n::Message::P;
+          value = m_statistic->estimate();
+          break;
+        case IntervalCellOrder::Critical:
+          message = I18n::Message::Z;  // TODO use m_statistic->intervalCriticalValueSymbol();
+          value = m_statistic->intervalCriticalValue();
+          break;
+        case IntervalCellOrder::SE:
+          message = I18n::Message::SE;
+          value = m_statistic->standardError();
+          break;
+        case IntervalCellOrder::ME:
+          message = I18n::Message::ME;
+          value = m_statistic->marginOfError();
+          break;
+        case IntervalCellOrder::IntervalDegree:
+          message = I18n::Message::DegreesOfFreedom;
+          value = m_statistic->degreeOfFreedom();
+          break;
       }
     }
-    // Parse float
-    // TODO do that better
     constexpr int bufferSize = 20;
     char buffer[bufferSize];
-    Poincare::PrintFloat::ConvertFloatToText(value, buffer, bufferSize, 10, 5,
-                                             Poincare::Preferences::PrintFloatMode::Decimal);
+    defaultParseFloat(value, buffer, bufferSize);
+
     messageCell->setMessage(message);
     messageCell->setSubLabelText(buffer);
   }

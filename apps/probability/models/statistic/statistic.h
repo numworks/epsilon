@@ -41,14 +41,16 @@ public:
 
   // Test statistic
   virtual const char * testCriticalValueSymbol() = 0;
-  /* Returns the critical value above which the probability
-   * of landing is inferior to a given significance level. */
+  /* Returns the abscissa on the normed density curve
+   * corresponding to the input sample. */
   virtual float testCriticalValue() = 0;
   /* The p-value is the probability of obtaining a results at least
    * as extreme as what was observed with the sample */
   virtual float pValue() = 0;
   virtual bool hasDegreeOfFreedom() = 0;
   virtual float degreeOfFreedom() { return -1; };
+  /* Returns the value above which the probability
+   * of landing is inferior to a given significance level. */
   virtual float zAlpha() = 0;
   bool testPassed();
 
@@ -69,7 +71,7 @@ public:
   virtual float marginOfError() = 0;
 
   int indexOfThreshold() { return numberOfStatisticParameters(); }
-  void initThreshold();
+  void initThreshold(Data::SubApp subapp);
   /* Instanciate correct Statistic bases on Test and TestType. */
   static void initializeStatistic(Statistic * statistic, Data::Test t, Data::TestType type);
 

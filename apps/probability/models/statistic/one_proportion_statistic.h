@@ -8,6 +8,8 @@ namespace Probability {
 class OneProportionStatistic : public ZStatistic {
 public:
   OneProportionStatistic();
+  bool isValidH0(float h0) override { return h0 >= 0 && h0 <= 1; }
+
   void computeTest() override;
   void computeInterval() override;
 

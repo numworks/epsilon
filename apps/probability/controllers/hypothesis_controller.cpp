@@ -9,6 +9,7 @@
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
+#include <shared/poincare_helpers.h>
 #include <string.h>
 
 #include <new>
@@ -23,13 +24,13 @@ using namespace Probability;
 HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputController * inputController,
                                            InputEventHandlerDelegate * handler,
-                                           HypothesisParams * hypothesisParams) :
+                                           Statistic * statistic) :
     SelectableListViewPage(parent),
     m_inputController(inputController),
     m_h0(&m_selectableTableView, handler, this),
     m_ha(&m_selectableTableView, handler, this),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
-    m_hypothesisParams(hypothesisParams) {
+    m_statistic(statistic) {
   m_h0.setMessage(I18n::Message::H0);
   m_ha.setMessage(I18n::Message::Ha);
 }
@@ -64,13 +65,16 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
                                                                   const char * text,
                                                                   Ion::Events::Event event) {
   if (textField == m_h0.textField()) {
-    float h0;
-    if (textFieldDelegateApp()->hasUndefinedValue(text, h0, false, false)) {
+    float h0 = Shared::PoincareHelpers::ApproximateToScalar<float>(
+        text, AppsContainer::sharedAppsContainer()->globalContext());
+    // Check
+    if (std::isnan(h0) || !m_statistic->isValidH0(h0)) {
+      App::app()->displayWarning(I18n::Message::UndefinedValue);
       return false;
     }
-    // TODO could check validity
-    m_hypothesisParams->setFirstParam(h0);
-    loadHypothesisParam(false);
+
+    m_statistic->hypothesisParams()->setFirstParam(h0);
+    loadHypothesisParam();
     return true;
   }
   HypothesisParams::ComparisonOperator ops[3] = {HypothesisParams::ComparisonOperator::Lower,
@@ -78,7 +82,7 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
                                                  HypothesisParams::ComparisonOperator::Higher};
   for (int i = 0; i < 3; i++) {
     if (strchr(text, static_cast<char>(ops[i])) != NULL) {
-      m_hypothesisParams->setOp(ops[i]);
+      m_statistic->hypothesisParams()->setOp(ops[i]);
       m_ha.setAccessoryText(text);
       return true;
     }
@@ -107,29 +111,17 @@ void HypothesisController::didBecomeFirstResponder() {
 }
 
 void HypothesisController::buttonAction() {
-  storeHypothesisParams();
   openPage(m_inputController);
 }
 
-void HypothesisController::loadHypothesisParam(bool h0Only) {
+void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = 20;
   char buffer[bufferSize]{0};
   const char * symbol = testToTextSymbol(App::app()->test());
-  const char op = static_cast<const char>(m_hypothesisParams->op());
+  const char op = static_cast<const char>(m_statistic->hypothesisParams()->op());
   int written = sprintf(buffer, "%s%c", symbol, op);
-  float p = m_hypothesisParams->firstParam();
-  defaultParseFloat(
-      p, buffer + written, bufferSize);
+  float p = m_statistic->hypothesisParams()->firstParam();
+  defaultParseFloat(p, buffer + written, bufferSize);
   m_ha.setAccessoryText(buffer);
-  if (!h0Only) {
-    m_h0.setAccessoryText(buffer + written);
-  }
-}
-
-void HypothesisController::storeHypothesisParams() {
-  // TODO maybe parse at the same time as when checking validity
-  // TODO use TextFieldDelegateApp
-  m_hypothesisParams->setFirstParam(Shared::PoincareHelpers::ApproximateToScalar<float>(
-      m_h0.textField()->text(), AppsContainer::sharedAppsContainer()->globalContext()));
-  // params->setOp(HypothesisParams::ComparisonOperator::Higher);
+  m_h0.setAccessoryText(buffer + written);
 }

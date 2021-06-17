@@ -112,7 +112,8 @@ int InfixPrefix(
     // Prefix: Copy the operator name
     numberOfChar = strlcpy(buffer, operatorName, bufferSize);
     if (numberOfChar >= bufferSize-1) {
-      assert(buffer[bufferSize - 1] == 0);
+      // Erase the inserted chars to prevent truncated operator names.
+      memset(buffer, 0, bufferSize);
       return bufferSize-1;
     }
     // Add the opening (system or user) parenthesis

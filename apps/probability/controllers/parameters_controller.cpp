@@ -40,8 +40,6 @@ void ParametersController::ContentView::layoutSubviews(bool force) {
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), m_selectableTableView->bounds().height()), force);
   KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight), force);
-  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-  KDCoordinate defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-textHeight)/2;
 }
 
 /* Parameters Controller */

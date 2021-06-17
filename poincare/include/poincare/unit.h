@@ -414,7 +414,7 @@ public:
   public:
     constexpr static VolumeRepresentative Default() { return VolumeRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 3, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
-    int numberOfRepresentatives() const override { return 8; }
+    int numberOfRepresentatives() const override { return 9; } // Edward modified from 8 to 9 for obtaining galUK
     const Representative * representativesOfSameDimension() const override;
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
     bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
@@ -610,7 +610,8 @@ public:
     VolumeRepresentative("cup", 8*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("pt", 16*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("qt", 32*0.0000295735295625, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("gal", 128*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("galUS", 128*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("galUK", 128*0.0000355163303281, Prefixable::None, Prefixable::None),
   };
   /* FIXME : Some ratio are too precise too be well approximated by double.
    * Maybe switch to a rationnal representation with two int. */
@@ -672,8 +673,10 @@ public:
   static_assert(strings_equal(k_volumeRepresentatives[k_pintRepresentativeIndex].m_rootSymbol, "pt"), "Index for the Pint Representative is incorrect.");
   static constexpr int k_quartRepresentativeIndex = 6;
   static_assert(strings_equal(k_volumeRepresentatives[k_quartRepresentativeIndex].m_rootSymbol, "qt"), "Index for the Quart Representative is incorrect.");
-  static constexpr int k_gallonRepresentativeIndex = 7;
-  static_assert(strings_equal(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbol, "gal"), "Index for the Gallon Representative is incorrect.");
+  static constexpr int k_gallonUsRepresentativeIndex = 7;
+  static_assert(strings_equal(k_volumeRepresentatives[k_gallonUsRepresentativeIndex].m_rootSymbol, "galUS"), "Index for the Gallon(US) Representative is incorrect.");
+  static constexpr int k_gallonUkRepresentativeIndex = 8;
+  static_assert(strings_equal(k_volumeRepresentatives[k_gallonUkRepresentativeIndex].m_rootSymbol, "galUK"), "Index for the Gallon(UK) Representative is incorrect.");
 
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Representative * representative, const Prefix * prefix);

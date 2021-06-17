@@ -203,6 +203,10 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
   for (int i = index1; i < index2; i++) {
     // Write the child
     numberOfChar+= currentChild->serialize(buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    if (numberOfChar >= bufferSize-1) {
+      assert(buffer[bufferSize - 1] == 0);
+      return bufferSize - 1;
+    }
     if (i != childrenCount - 1) {
       nextChild = childAtIndex(i+1);
       // Write the multiplication sign if needed
@@ -230,10 +234,6 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
       }
     }
     currentChild = nextChild;
-  }
-  if (numberOfChar >= bufferSize-1) {
-    assert(buffer[bufferSize - 1] == 0);
-    return bufferSize - 1;
   }
 
   assert(buffer[numberOfChar] == 0);

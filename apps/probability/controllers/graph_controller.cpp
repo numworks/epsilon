@@ -5,20 +5,21 @@
 
 namespace Probability {
 
-GraphController::GraphController(StackViewController * stack) :
+GraphController::GraphController(StackViewController * stack, Statistic * statistic) :
     Page(stack),
     m_rangeLeft(m_graphView.curveViewLeft(), true),
     m_rangeRight(m_graphView.curveViewRight(), false),
-    m_graphView(&m_rangeLeft, &m_rangeRight) {
+    m_graphView(&m_rangeLeft, &m_rangeRight),
+    m_statistic(statistic) {
 }
 
 const char * GraphController::title() {
   char zBuffer[10];
   char pBuffer[10];
-  Statistic * statistic = App::app()->snapshot()->data()->statistic();
-  Poincare::PrintFloat::ConvertFloatToText(statistic->testCriticalValue(), zBuffer, sizeof(zBuffer),
-                                           5, 3, Poincare::Preferences::PrintFloatMode::Decimal);
-  Poincare::PrintFloat::ConvertFloatToText(statistic->pValue(), pBuffer, sizeof(pBuffer), 10, 3,
+  Poincare::PrintFloat::ConvertFloatToText(m_statistic->testCriticalValue(), zBuffer,
+                                           sizeof(zBuffer), 5, 3,
+                                           Poincare::Preferences::PrintFloatMode::Decimal);
+  Poincare::PrintFloat::ConvertFloatToText(m_statistic->pValue(), pBuffer, sizeof(pBuffer), 10, 3,
                                            Poincare::Preferences::PrintFloatMode::Decimal);
 
   sprintf(m_titleBuffer, "z=%s p-value=%s", zBuffer, pBuffer);
@@ -26,24 +27,28 @@ const char * GraphController::title() {
 }
 
 void GraphController::didBecomeFirstResponder() {
-  Statistic * statistic = App::app()->snapshot()->data()->statistic();
-  TestConclusionView::Type t = statistic->testPassed() ? TestConclusionView::Type::Success
-                                                       : TestConclusionView::Type::Failure;
+  TestConclusionView::Type t = m_statistic->testPassed() ? TestConclusionView::Type::Success
+                                                         : TestConclusionView::Type::Failure;
   GraphDisplayMode m =
-      statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different &&
-              App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Tests
+      m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different &&
+              App::app()->subapp() == Data::SubApp::Tests
           ? GraphDisplayMode::TwoCurveViews
           : GraphDisplayMode::OneCurveView;
+  GraphView::LegendPosition pos =
+      m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Lower
+          ? GraphView::LegendPosition::Left
+          : GraphView::LegendPosition::Right;
   m_graphView.setMode(m);
+  m_graphView.setLegendPosition(pos);
   m_graphView.setType(t);
-  m_graphView.setStatistic(statistic);
+  m_graphView.setStatistic(m_statistic);
   m_rangeLeft.setMode(m);
   m_rangeRight.setMode(m);
-  m_rangeLeft.setStatistic(statistic);
-  m_rangeRight.setStatistic(statistic);
-  if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
-    m_graphView.intervalConclusionView()->setInterval(statistic->estimate(),
-                                                      statistic->marginOfError());
+  m_rangeLeft.setStatistic(m_statistic);
+  m_rangeRight.setStatistic(m_statistic);
+  if (App::app()->subapp() == Data::SubApp::Intervals) {
+    m_graphView.intervalConclusionView()->setInterval(m_statistic->estimate(),
+                                                      m_statistic->marginOfError());
   }
   m_graphView.reload();
 }

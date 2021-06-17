@@ -72,7 +72,7 @@ void Probability::DistributionController::viewWillAppear() {
 }
 
 void Probability::DistributionController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Distribution);
+  App::app()->setPage(Data::Page::Distribution);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {

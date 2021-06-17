@@ -18,11 +18,15 @@ using namespace Probability;
 
 TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
-                               InputController * inputController) :
+                               InputController * inputController, Data::Test * globalTest,
+                               Data::TestType * globalTestType, Statistic * statistic) :
     SelectableListViewPage(parent),
     m_hypothesisController(hypothesisController),
     m_inputController(inputController),
-    m_contentView(&m_selectableTableView, &m_description) {
+    m_contentView(&m_selectableTableView, &m_description),
+    m_globalTest(globalTest),
+    m_globalTestType(globalTestType),
+    m_statistic(statistic) {
   m_description.setBackgroundColor(Palette::WallScreen);
   m_description.setTextColor(Palette::GrayDark);
   m_description.setAlignment(0.5, 0);
@@ -30,8 +34,8 @@ TypeController::TypeController(StackViewController * parent,
 }
 
 void TypeController::didBecomeFirstResponder() {
-  Probability::App::app()->snapshot()->navigation()->setPage(Data::Page::Type);
-  m_description.setMessage(messageForTest(App::app()->snapshot()->data()->test()));
+  Probability::App::app()->setPage(Data::Page::Type);
+  m_description.setMessage(messageForTest(App::app()->test()));
   if (selectedRow() == -1) {
     selectRow(0);
   }
@@ -55,16 +59,16 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
         t = Data::TestType::ZTest;
         break;
     }
-    if (App::app()->snapshot()->navigation()->subapp() == Data::SubApp::Intervals) {
+    if (App::app()->subapp() == Data::SubApp::Intervals) {
       view = m_inputController;
     } else {
       view = m_hypothesisController;
     }
     assert(view != nullptr);
-    if (t != App::app()->snapshot()->data()->testType()) {
-      App::app()->snapshot()->data()->initializeStatistic(App::app()->snapshot()->data()->test(), t);
+    if (t != App::app()->testType()) {
+      Statistic::initializeStatistic(m_statistic, App::app()->test(), t);
     }
-    App::app()->snapshot()->data()->setTestType(t);
+    *m_globalTestType = t;
     openPage(view);
     return true;
   }
@@ -85,7 +89,7 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 
 const char * TypeController::title() {
   // TODO replace with messages
-  sprintf(m_titleBuffer, "Test on %s", testToText(App::app()->snapshot()->data()->test()));
+  sprintf(m_titleBuffer, "Test on %s", testToText(App::app()->test()));
   return m_titleBuffer;
 }
 
@@ -120,14 +124,14 @@ void Probability::TypeController::willDisplayCellForIndex(Escher::HighlightCell 
 
 int Probability::TypeController::indexFromListIndex(int i) const {
   // Offset if needed
-  if (App::app()->snapshot()->data()->test() == Data::Test::OneMean && i >= k_indexOfPooledTest) {
+  if (App::app()->test() == Data::Test::OneMean && i >= k_indexOfPooledTest) {
     return i + 1;
   }
   return i;
 }
 
 int Probability::TypeController::listIndexFromIndex(int i) const {
-  if (App::app()->snapshot()->data()->test() == Data::Test::OneMean && i >= k_indexOfPooledTest) {
+  if (App::app()->test() == Data::Test::OneMean && i >= k_indexOfPooledTest) {
     return i - 1;
   }
   return i;

@@ -74,6 +74,7 @@ void assert_best_cartesian_range_is(const char * definition, float targetXMin, f
 QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("undef", -10, 10, -5.66249943, 4.96249962);
   assert_best_cartesian_range_is("x!", -10, 10, -5.66249943, 4.96249962);
+  assert_best_cartesian_range_is("abs(x)", -10, 10, -1.8562, 8.768798);
 
   assert_best_cartesian_range_is("0", -10, 10, -5.66249943, 4.96249962);
   assert_best_cartesian_range_is("1", -10, 10, -4.66249943, 5.96249962);

@@ -41,7 +41,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
     if (App::app()->subapp() == Data::SubApp::Tests) {
       switch (i) {
         case TestCellOrder::Z:
-          message = I18n::Message::Z;
+          message = I18n::Message::Z;  // TODO use testCriticalValueSymbol
           value = m_statistic->testCriticalValue();
           break;
         case TestCellOrder::PValue:

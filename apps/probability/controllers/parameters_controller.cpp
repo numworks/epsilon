@@ -8,10 +8,7 @@ using namespace Escher;
 namespace Probability {
 
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_numberOfParameters(1),
   m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
-  m_firstParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_secondParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
   // Remove selectable table top margin to control margin between text and table
@@ -25,34 +22,13 @@ void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) c
   ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
 }
 
-MessageTextView * ParametersController::ContentView::parameterDefinitionAtIndex(int index) {
-  assert(index >= 0 && index < 2);
-  if (index == 0) {
-    return &m_firstParameterDefinition;
-  }
-  return &m_secondParameterDefinition;
-}
-
-void ParametersController::ContentView::setNumberOfParameters(int numberOfParameters) {
-  m_numberOfParameters = numberOfParameters;
-}
-
-int ParametersController::ContentView::numberOfSubviews() const {
-  return m_numberOfParameters+2;
-}
 
 View * ParametersController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 5);
   if (index == 0) {
     return &m_titleView;
   }
-  if (index == 1) {
-    return m_selectableTableView;
-  }
-  if (index == 2) {
-    return &m_firstParameterDefinition;
-  }
-  return &m_secondParameterDefinition;
+  return m_selectableTableView;
 }
 
 void ParametersController::ContentView::layoutSubviews(bool force) {
@@ -64,12 +40,6 @@ void ParametersController::ContentView::layoutSubviews(bool force) {
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight), force);
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   KDCoordinate defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-textHeight)/2;
-  m_secondParameterDefinition.setFrame(KDRectZero, force);
-  if (m_numberOfParameters == 2) {
-    defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-2*textHeight-k_textMargin)/2;
-    m_secondParameterDefinition.setFrame(KDRect(0, defOrigin+textHeight+k_textMargin, bounds().width(), textHeight), force);
-  }
-  m_firstParameterDefinition.setFrame(KDRect(0, defOrigin, bounds().width(), textHeight), force);
 }
 
 /* Parameters Controller */
@@ -111,10 +81,6 @@ void ParametersController::didBecomeFirstResponder() {
 
 void ParametersController::viewWillAppear() {
   resetMemoization();
-  m_contentView.setNumberOfParameters(m_distribution->numberOfParameter());
-  for (int i = 0; i < m_distribution->numberOfParameter(); i++) {
-    m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_distribution->parameterDefinitionAtIndex(i));
-  }
   m_contentView.layoutSubviews();
   FloatParameterController::viewWillAppear();
 }

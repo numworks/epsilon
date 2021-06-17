@@ -16,6 +16,7 @@
 #include "../images/focused_calcul3_icon.h"
 #include "../images/focused_calcul4_icon.h"
 #include "probability/app.h"
+#include "probability/text_helpers.h"
 #include "probability/models/calculation/discrete_calculation.h"
 #include "probability/models/calculation/finite_integral_calculation.h"
 #include "probability/models/calculation/left_integral_calculation.h"
@@ -177,9 +178,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     char buffer[bufferSize];
     // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using
     // scientific mode
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-        m_calculation->parameterAtIndex(i - 1), buffer, bufferSize, precision,
-        Preferences::PrintFloatMode::Decimal);
+    defaultParseFloat(m_calculation->parameterAtIndex(i - 1), buffer, bufferSize);
     field->setText(buffer);
   }
 }
@@ -283,8 +282,8 @@ void CalculationController::updateTitle() {
     constexpr int precision = Preferences::ShortNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(m_distribution->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-    currentChar += strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
+    defaultParseFloat(m_distribution->parameterValueAtIndex(index), buffer, bufferSize);
+    currentChar += strlcpy(m_titleBuffer + currentChar, buffer, k_titleBufferSize - currentChar);
     if (currentChar + 1 >= k_titleBufferSize) {
       break;
     }

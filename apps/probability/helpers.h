@@ -5,6 +5,7 @@
 #include <apps/shared/text_field_delegate_app.h>
 #include <assert.h>
 #include <escher/container.h>
+#include <shared/poincare_helpers.h>
 
 namespace Probability {
 

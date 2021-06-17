@@ -16,12 +16,8 @@ GraphController::GraphController(StackViewController * stack, Statistic * statis
 const char * GraphController::title() {
   char zBuffer[10];
   char pBuffer[10];
-  Poincare::PrintFloat::ConvertFloatToText(m_statistic->testCriticalValue(), zBuffer,
-                                           sizeof(zBuffer), 5, 3,
-                                           Poincare::Preferences::PrintFloatMode::Decimal);
-  Poincare::PrintFloat::ConvertFloatToText(m_statistic->pValue(), pBuffer, sizeof(pBuffer), 10, 3,
-                                           Poincare::Preferences::PrintFloatMode::Decimal);
-
+  defaultParseFloat(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
+  defaultParseFloat(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
   sprintf(m_titleBuffer, "z=%s p-value=%s", zBuffer, pBuffer);
   return m_titleBuffer;
 }

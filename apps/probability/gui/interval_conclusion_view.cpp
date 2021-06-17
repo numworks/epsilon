@@ -1,9 +1,9 @@
 #include "interval_conclusion_view.h"
 
 #include <apps/i18n.h>
+#include <kandinsky/font.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
-#include <kandinsky/font.h>
 
 #include "probability/text_helpers.h"
 
@@ -20,10 +20,9 @@ void IntervalConclusionView::setInterval(float center, float ME) {
   constexpr static int bufferSize = 20;
   char bufferCenter[bufferSize];
   char bufferME[bufferSize];
-  Poincare::PrintFloat::ConvertFloatToText(center, bufferCenter, bufferSize, 10, 3,
-                                           Poincare::Preferences::PrintFloatMode::Decimal);
-  Poincare::PrintFloat::ConvertFloatToText(ME, bufferME, bufferSize, 10, 3,
-                                           Poincare::Preferences::PrintFloatMode::Decimal);
+
+  defaultParseFloat(center, bufferCenter, bufferSize);
+  defaultParseFloat(ME, bufferME, bufferSize);
 
   char buffer[bufferSize];
   sprintf(buffer, "%s +/- %s", bufferCenter, bufferME);

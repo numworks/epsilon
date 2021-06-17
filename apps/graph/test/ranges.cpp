@@ -16,7 +16,7 @@ public:
   static constexpr float k_leftMargin = 0.04f;
   static constexpr float k_rightMargin = 0.04f;
 
-  static float Ratio() { return InteractiveCurveViewRange::NormalYXRatio() / (1.f + k_topMargin + k_bottomMargin); }
+  static float Ratio() { return InteractiveCurveViewRange::NormalYXRatio() * (1.f - k_topMargin - k_bottomMargin); }
 
   Context * context() { return &m_context; }
   ContinuousFunctionStore * functionStore() const { return &m_store; }
@@ -54,6 +54,7 @@ void assert_best_range_is(const char * const (&definitions)[N], ContinuousFuncti
   float xMax = graphRange.xMax();
   float yMin = graphRange.yMin();
   float yMax = graphRange.yMax();
+
   quiz_assert(float_equal(xMin, targetXMin) && float_equal(xMax, targetXMax) && float_equal(yMin, targetYMin) && float_equal(yMax, targetYMax));
 
   graphController.functionStore()->removeAll();
@@ -75,15 +76,14 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("0.01", -10, 10, -5.81249952, 4.81249952);
 
   assert_best_cartesian_range_is("x", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("x+1", -12, 10, -6.19374943, 5.49374962);
-  assert_best_cartesian_range_is("-x+5", -6, 17, -6.55937433, 5.65937471);
-  assert_best_cartesian_range_is("x/2+2", -15, 7, -6.19374943, 5.49374962);
+  assert_best_cartesian_range_is("x+1", -12, 10, -6.24374962, 5.44374943);
+  assert_best_cartesian_range_is("-x+5", -6, 17, -6.65937424, 5.55937481);
+  assert_best_cartesian_range_is("x/2+2", -15, 7, -6.14374971, 5.54374933);
 
-
-  assert_best_cartesian_range_is("x^2", -10, 10, -1.31249952, 9.3125);
-  assert_best_cartesian_range_is("x^3", -10, 10, -5.16249943, 5.46249962);
+  assert_best_cartesian_range_is("x^2", -10, 10, -1.66249943, 8.96249962);
+  assert_best_cartesian_range_is("x^3", -10, 10, -5.66249943, 4.96249962);
   assert_best_cartesian_range_is("-2x^6", -10, 10, -16000, 2000);
-  assert_best_cartesian_range_is("3x^2+x+10", -12, 11, 7.84062624, 20.0593758);
+  assert_best_cartesian_range_is("3x^2+x+10", -12, 11, 7.19062567, 19.4093742);
 
   assert_best_cartesian_range_is("1/x", -4.51764774, 4.51764774, -2.60000014, 2.20000005);
   assert_best_cartesian_range_is("1/(1-x)", -3.51176548, 5.71176529, -2.60000014, 2.29999995);
@@ -103,8 +103,10 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("log(x)", -0.900000036, 3.20000005, -1.23906231, 0.939062357);
 
   assert_best_cartesian_range_is("√(x)", -3, 10, -2.10312462, 4.80312443);
-  assert_best_cartesian_range_is("√(x^2+1)-x", -10, 10, -1.26249981, 9.36249924);
+  assert_best_cartesian_range_is("√(x^2+1)-x", -10, 10, -1.51249957, 9.11249924);
   assert_best_cartesian_range_is("root(x^3+1,3)-x", -2, 2.5, -0.445312381, 1.94531238);
+
+  assert_best_cartesian_range_is("abs(x)", -10, 10, -1.41249943, 9.21249962);
 }
 
 QUIZ_CASE(graph_ranges_several_functions) {

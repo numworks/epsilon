@@ -155,7 +155,7 @@ int FunctionGraphController::numberOfCurves() const {
 }
 
 void FunctionGraphController::interestingRanges(InteractiveCurveViewRange * range) {
-  float ratio = InteractiveCurveViewRange::NormalYXRatio() / (1 + cursorTopMarginRatio() + cursorBottomMarginRatio());
+  float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - cursorBottomMarginRatio());
   DefaultInterestingRanges(range, textFieldDelegateApp()->localContext(), functionStore(), ratio);
 }
 

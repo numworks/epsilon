@@ -126,7 +126,7 @@ void initMPU() {
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
   MPU.RASR()->setXN(true);
   MPU.RASR()->setTEX(0);
-  MPU.RASR()->setS(1);
+  MPU.RASR()->setS(0);
   MPU.RASR()->setC(0);
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
@@ -137,7 +137,7 @@ void initMPU() {
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
   MPU.RASR()->setXN(false);
   MPU.RASR()->setTEX(0);
-  MPU.RASR()->setS(1);
+  MPU.RASR()->setS(0);
   MPU.RASR()->setC(1);
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);

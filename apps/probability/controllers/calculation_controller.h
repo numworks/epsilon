@@ -28,6 +28,7 @@ class CalculationController : public Escher::ViewController,
   /* ViewController */
   Escher::View * view() override;
   const char * title() override;
+  TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Calculation");

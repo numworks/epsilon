@@ -12,6 +12,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
 public:
   ParametersController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
   Escher::View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
@@ -47,6 +48,7 @@ private:
   Escher::MessageTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;
   CalculationController * m_calculationController;
+  char m_titleBuffer[30];
 };
 
 }

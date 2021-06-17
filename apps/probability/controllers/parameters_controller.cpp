@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
+#include "probability/text_helpers.h"
+
 using namespace Escher;
 
 namespace Probability {

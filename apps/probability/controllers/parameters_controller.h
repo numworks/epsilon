@@ -27,23 +27,19 @@ private:
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  // TODO change to Vertical Layout
   class ContentView : public Escher::View {
   public:
     ContentView(Escher::SelectableTableView * selectableTableView);
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    Escher::MessageTextView * parameterDefinitionAtIndex(int index);
     void layoutSubviews(bool force = false) override;
-    void setNumberOfParameters(int numberOfParameters);
   private:
     constexpr static KDCoordinate k_textMargin = Escher::Metric::CommonSmallMargin;
     // Removing a pixel to skew title's baseline downward.
     constexpr static KDCoordinate k_titleMargin = Escher::Metric::CommonTopMargin - 1;
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return 2; };
     Escher::View * subviewAtIndex(int index) override;
-    int m_numberOfParameters;
     Escher::MessageTextView m_titleView;
-    Escher::MessageTextView m_firstParameterDefinition;
-    Escher::MessageTextView m_secondParameterDefinition;
     Escher::SelectableTableView * m_selectableTableView;
   };
   constexpr static int k_maxNumberOfCells = 2;

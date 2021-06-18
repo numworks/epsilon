@@ -610,7 +610,7 @@ public:
     VolumeRepresentative("cup", 8*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("pt", 16*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("qt", 32*0.0000295735295625, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("galUS", 128*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("gal", 128*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("galUK", 128*0.0000355163303281, Prefixable::None, Prefixable::None),
   };
   /* FIXME : Some ratio are too precise too be well approximated by double.
@@ -673,8 +673,8 @@ public:
   static_assert(strings_equal(k_volumeRepresentatives[k_pintRepresentativeIndex].m_rootSymbol, "pt"), "Index for the Pint Representative is incorrect.");
   static constexpr int k_quartRepresentativeIndex = 6;
   static_assert(strings_equal(k_volumeRepresentatives[k_quartRepresentativeIndex].m_rootSymbol, "qt"), "Index for the Quart Representative is incorrect.");
-  static constexpr int k_gallonUsRepresentativeIndex = 7;
-  static_assert(strings_equal(k_volumeRepresentatives[k_gallonUsRepresentativeIndex].m_rootSymbol, "galUS"), "Index for the Gallon(US) Representative is incorrect.");
+  static constexpr int k_gallonRepresentativeIndex = 7;
+  static_assert(strings_equal(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbol, "gal"), "Index for the Gallon Representative is incorrect.");
   static constexpr int k_gallonUkRepresentativeIndex = 8;
   static_assert(strings_equal(k_volumeRepresentatives[k_gallonUkRepresentativeIndex].m_rootSymbol, "galUK"), "Index for the Gallon(UK) Representative is incorrect.");
 

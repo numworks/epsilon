@@ -79,7 +79,7 @@ CalculationController::CalculationController(Responder * parentResponder,
 }
 
 void CalculationController::didEnterResponderChain(Responder * previousResponder) {
-  // App::app()->snapshot()->setActivePage(App::Snapshot::Page::Calculations);
+  App::app()->setPage(Data::Page::Calculations);
   updateTitle();
   reloadDistributionCurveView();
   m_selectableTableView.reloadData();

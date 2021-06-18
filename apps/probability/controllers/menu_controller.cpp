@@ -6,20 +6,19 @@
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell.h>
 #include <escher/responder.h>
-#include <escher/selectable_list_view_controller.h>
-#include <escher/stack_view_controller.h>
 
 #include <new>
 
 #include "probability/app.h"
-#include "probability/models/data.h"
 
 using namespace Probability;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Escher::ViewController * distributionController,
-                               Escher::ViewController * testController, Data::SubApp * globalSubapp,
-                               Distribution * globalDistribution, Calculation * globalCalculation) :
+                               Escher::ViewController * testController,
+                               Data::SubApp * globalSubapp,
+                               Distribution * globalDistribution,
+                               Calculation * globalCalculation) :
     SelectableListViewPage(parentResponder),
     m_distributionController(distributionController),
     m_testController(testController),

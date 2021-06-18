@@ -1,7 +1,6 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_MENU_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_MENU_CONTROLLER_H
 
-#include <apps/i18n.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -15,15 +14,19 @@ namespace Probability {
 
 // Controller
 class MenuController : public SelectableListViewPage {
- public:
-  MenuController(Escher::StackViewController * parentResponder, Escher::ViewController * distributionController,
-                 Escher::ViewController * testController, Data::SubApp * globalSubapp, Distribution * globalDistribution, Calculation * globalCalculation);
+public:
+  MenuController(Escher::StackViewController * parentResponder,
+                 Escher::ViewController * distributionController,
+                 Escher::ViewController * testController,
+                 Data::SubApp * globalSubapp,
+                 Distribution * globalDistribution,
+                 Calculation * globalCalculation);
   int numberOfRows() const override { return k_numberOfCells; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
- private:
+private:
   void initializeProbaData();
   ViewController * m_distributionController;
   ViewController * m_testController;

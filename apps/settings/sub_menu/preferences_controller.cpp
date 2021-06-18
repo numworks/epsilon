@@ -7,6 +7,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare/nth_root_layout.h>
 #include <algorithm>
 
 using namespace Poincare;
@@ -106,6 +107,60 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
         );
     }
 
+    // Exam mode modes
+    case I18n::Message::ExamModeModeStandard:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeNoSym:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeNoSymNoText:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeDutch:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+
+
+    // Symbol controller
+    case I18n::Message::SymbolMultiplicationCross: // × and · aren't single characters, so they cannot be constructed into codepoints..?
+    {
+      const char * text = "×";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::SymbolMultiplicationMiddleDot:
+    {
+      const char * text = "·";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::SymbolMultiplicationStar:
+      return CodePointLayout::Builder('*', k_layoutFont);
+    case I18n::Message::SymbolMultiplicationAutoSymbol:
+      return CodePointLayout::Builder(' ', k_layoutFont);
+
+
+    // Symbol function
+    case I18n::Message::SymbolDefaultFunction:
+    {
+      return NthRootLayout::Builder(CodePointLayout::Builder('x'));
+    }
+    case I18n::Message::SymbolArgDefaultFunction:
+    {
+      return NthRootLayout::Builder(CodePointLayout::Builder('x'), CodePointLayout::Builder('2'));
+    }
+    case I18n::Message::SymbolArgFunction:
+    {
+      return NthRootLayout::Builder(CodePointLayout::Builder('x'), CodePointLayout::Builder('y'));
+    }
+
     // Font size
     case I18n::Message::LargeFont:
     case I18n::Message::SmallFont:
@@ -150,10 +205,15 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+  } else if (message == I18n::Message::ExamModeMode) {
+    GlobalPreferences::sharedGlobalPreferences()->setTempExamMode((GlobalPreferences::ExamMode)((uint8_t)valueIndex + 1));
+  } else if (message == I18n::Message::SymbolMultiplication) {
+    preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
+  } else if (message == I18n::Message::SymbolFunction) {
+    preferences->setSymbolOfFunction((Preferences::SymbolFunction)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
   }
-
 }
 
 int PreferencesController::valueIndexForPreference(I18n::Message message) const {
@@ -169,6 +229,12 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
+  }
+  if (message == I18n::Message::SymbolMultiplication) {
+    return (int)preferences->symbolOfMultiplication();
+  }
+  if (message == I18n::Message::SymbolFunction) {
+    return (int)preferences->symbolOfFunction();
   }
   if (message == I18n::Message::FontSizes) {
     return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;

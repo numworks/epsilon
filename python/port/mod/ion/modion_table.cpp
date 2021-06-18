@@ -65,6 +65,8 @@ STATIC const mp_rom_map_elem_t modion_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_KEY_EE), MP_OBJ_NEW_SMALL_INT(Ion::Keyboard::Key::EE) },
   { MP_ROM_QSTR(MP_QSTR_KEY_ANS), MP_OBJ_NEW_SMALL_INT(Ion::Keyboard::Key::Ans) },
   { MP_ROM_QSTR(MP_QSTR_KEY_EXE), MP_OBJ_NEW_SMALL_INT(Ion::Keyboard::Key::EXE) },
+  
+  { MP_ROM_QSTR(MP_QSTR_file), (mp_obj_t)&file_type}
 };
 
 STATIC MP_DEFINE_CONST_DICT(modion_module_globals, modion_module_globals_table);

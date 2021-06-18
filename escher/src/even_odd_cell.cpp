@@ -16,8 +16,8 @@ void EvenOddCell::setEven(bool even) {
 
 KDColor EvenOddCell::backgroundColor() const {
    // Select the background color according to the even line and the cursor selection
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
-  background = isHighlighted() ? Palette::Select : background;
+  KDColor background = m_even ? Palette::BackgroundHard : Palette::BackgroundApps ;
+  background = isHighlighted() ? Palette::ListCellBackgroundSelected : background;
   return background;
 }
 

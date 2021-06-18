@@ -7,7 +7,7 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
-  jclass j_class = env->FindClass("com/numworks/calculator/EpsilonActivity");
+  jclass j_class = env->FindClass("io/github/omega/simulator/OmegaActivity");
   jmethodID j_methodId = env->GetMethodID(
     j_class,
     "retrieveBitmapAsset",

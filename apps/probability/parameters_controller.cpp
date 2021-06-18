@@ -8,16 +8,16 @@ namespace Probability {
 
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
-  m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
-  m_firstParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_secondParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::SecondaryText, Palette::BackgroundApps),
+  m_firstParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::PrimaryText, Palette::BackgroundApps),
+  m_secondParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::PrimaryText, Palette::BackgroundApps),
   m_selectableTableView(selectableTableView)
 {
 }
 
 void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   int tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
+  ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::BackgroundApps);
 }
 
 MessageTextView * ParametersController::ContentView::parameterDefinitionAtIndex(int index) {
@@ -161,7 +161,7 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField, cons
 
 void ParametersController::buttonAction() {
   StackViewController * stack = stackController();
-  stack->push(m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+  stack->push(m_calculationController, Palette::BannerSecondText, Palette::BannerSecondBackground, Palette::BannerSecondBorder);
 }
 
 }

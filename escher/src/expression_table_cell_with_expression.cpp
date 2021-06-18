@@ -5,7 +5,7 @@
 
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder) :
   ExpressionTableCell(parentResponder, Layout::HorizontalLeftOverlap),
-  m_accessoryExpressionView(this, k_horizontalMargin, 0, 1.0f, 0.5f, Palette::GrayDark, KDColorWhite)
+  m_accessoryExpressionView(this, k_horizontalMargin, 0, 1.0f, 0.5f, Palette::SecondaryText, Palette::ListCellBackground)
 {}
 
 View * ExpressionTableCellWithExpression::accessoryView() const {
@@ -14,7 +14,7 @@ View * ExpressionTableCellWithExpression::accessoryView() const {
 
 void ExpressionTableCellWithExpression::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_accessoryExpressionView.setBackgroundColor(backgroundColor);
 }
 

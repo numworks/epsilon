@@ -2,6 +2,7 @@
 #define SHARED_CURSOR_VIEW_H
 
 #include <escher/transparent_view.h>
+#include <escher/palette.h>
 
 namespace Shared {
 

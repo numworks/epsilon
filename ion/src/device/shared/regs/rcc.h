@@ -70,6 +70,7 @@ public:
     };
     void setPPRE1(APBPrescaler r) volatile { setBitRange(12, 10, (uint32_t)r); }
     void setPPRE2(APBPrescaler r) volatile { setBitRange(15, 13, (uint32_t)r); }
+    REGS_FIELD(RTCPRE, uint8_t, 20, 16);
   };
 
   class AHB3RSTR : Register32 {
@@ -111,6 +112,7 @@ public:
   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(TIM3EN, 1);
+    REGS_BOOL_FIELD(RTCAPB, 10);
     REGS_BOOL_FIELD(SPI3EN, 15);
     REGS_BOOL_FIELD(USART3EN, 18);
     REGS_BOOL_FIELD(PWREN, 28);
@@ -264,6 +266,19 @@ public:
     REGS_BOOL_FIELD(SSCGEN, 31);
   };
 
+  class BDCR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(BDRST, 16);
+    REGS_BOOL_FIELD(RTCEN, 15);
+    REGS_FIELD(RTCSEL, uint8_t, 9, 8);
+  };
+
+  class CSR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(LSION, 0);
+    REGS_BOOL_FIELD_R(LSIRDY, 1);
+  };
+
   class DCKCFGR2 : Register32 {
   public:
     REGS_BOOL_FIELD(CK48MSEL, 27);
@@ -285,6 +300,8 @@ public:
   REGS_REGISTER_AT(AHB3LPENR, 0x58);
   REGS_REGISTER_AT(APB1LPENR, 0x60);
   REGS_REGISTER_AT(APB2LPENR, 0x64);
+  REGS_REGISTER_AT(BDCR, 0x70);
+  REGS_REGISTER_AT(CSR, 0x74);
   REGS_REGISTER_AT(SSCGR, 0x80);
   REGS_REGISTER_AT(DCKCFGR2, 0x94);
 private:

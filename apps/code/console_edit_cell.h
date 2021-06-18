@@ -6,6 +6,7 @@
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 #include <escher/pointer_text_view.h>
+#include <poincare/preferences.h>
 
 namespace Code {
 

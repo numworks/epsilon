@@ -10,7 +10,7 @@ public:
   Hideable() :
     m_hide(false)
   {}
-  static KDColor hideColor() { return Palette::WallScreenDark; }
+  static KDColor hideColor() { return Palette::BackgroundAppsSecondary; }
   bool hidden() const { return m_hide; }
   virtual void setHide(bool hide) { m_hide = hide; }
   virtual void reinit() {}

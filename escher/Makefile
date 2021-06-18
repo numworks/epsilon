@@ -1,5 +1,24 @@
 SFLAGS += -Iescher/include
 
+ifeq ($(THEME_REPO),local)
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  $(addprefix themes/themes/local/, $(addsuffix .json, $(THEME_NAME))), \
+  $$(PYTHON) themes/themes_manager.py $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+))
+else
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  themes/themes/git/.empty-folder, \
+  $$(PYTHON) themes/themes_manager.py $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+))
+endif
+
+
 escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
   app.cpp \
@@ -111,7 +130,7 @@ INLINER := $(BUILD_DIR)/escher/image/inliner
 $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \
-  %.png $$(INLINER), \
+  $(BUILD_DIR)/%.png $$(INLINER), \
   $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp, \
   global \
 ))
@@ -126,4 +145,5 @@ define depends_on_image
 $(call object_for,$(1)): $(call object_for,$(2))
 $(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
 escher_src += $(2)
+image_list += $(2)
 endef

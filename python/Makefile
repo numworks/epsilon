@@ -1,6 +1,7 @@
 SFLAGS += -Ipython/src
 SFLAGS += -Ipython/port
 SFLAGS += -I$(BUILD_DIR)/python/port
+SFLAGS += -DEPSILON_VERSION="$(EPSILON_VERSION)" -DOMEGA_VERSION="$(OMEGA_VERSION)"
 
 # How to maintain this Makefile
 # - Copy PY_CORE_O_BASENAME from py.mk into py_src
@@ -136,6 +137,7 @@ port_src += $(addprefix python/port/,\
   helpers.c \
   mod/ion/modion.cpp \
   mod/ion/modion_table.cpp \
+  mod/ion/file.cpp \
   mod/kandinsky/modkandinsky.cpp \
   mod/kandinsky/modkandinsky_table.c \
   mod/matplotlib/modmatplotlib.cpp \
@@ -147,6 +149,8 @@ port_src += $(addprefix python/port/,\
   mod/matplotlib/pyplot/plot_view.cpp \
   mod/time/modtime.c \
   mod/time/modtime_table.c \
+  mod/os/modos.cpp \
+  mod/os/modos_table.c \
   mod/turtle/modturtle.cpp \
   mod/turtle/modturtle_table.c \
   mod/turtle/turtle.cpp \

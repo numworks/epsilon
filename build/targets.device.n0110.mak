@@ -13,35 +13,10 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 	@echo "        button on the back of your device."
 	$(Q) until $(PYTHON) build/device/dfu.py -l | grep -E "0483:a291|0483:df11" > /dev/null 2>&1; do sleep 2;done
 	$(eval DFU_SLAVE := $(shell $(PYTHON) build/device/dfu.py -l | grep -E "0483:a291|0483:df11"))
-	$(Q) if [[ "$(DFU_SLAVE)" == *"0483:df11"* ]]; \
+	$(Q) if expr "$(DFU_SLAVE)" : ".*0483:df11.*" > /dev/null; \
 	  then \
 	    $(PYTHON) build/device/dfu.py -u $(word 2,$^); \
 	    sleep 2; \
 	fi
 	$(Q) $(PYTHON) build/device/dfu.py -u $(word 1,$^)
 
-.PHONY: %.two_binaries
-%.two_binaries: %.elf
-	@echo "Building an internal and an external binary for     $<"
-	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external -j .exam_mode_buffer $(BUILD_DIR)/$< $(BUILD_DIR)/$(basename $<).external.bin
-	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external -R .exam_mode_buffer $(BUILD_DIR)/$< $(BUILD_DIR)/$(basename $<).internal.bin
-	@echo "Padding $(basename $<).external.bin and $(basename $<).internal.bin"
-	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(BUILD_DIR)/$(basename $<).external.bin
-	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(BUILD_DIR)/$(basename $<).internal.bin
-
-.PHONY: binpack
-binpack:
-	rm -rf output/binpack
-	mkdir -p output/binpack
-	$(MAKE) clean
-	$(MAKE) $(BUILD_DIR)/flasher.light.bin
-	cp $(BUILD_DIR)/flasher.light.bin output/binpack
-	$(MAKE) $(BUILD_DIR)/bench.flash.bin
-	$(MAKE) $(BUILD_DIR)/bench.ram.bin
-	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin output/binpack
-	$(MAKE) epsilon.official.onboarding.update.two_binaries
-	cp $(BUILD_DIR)/epsilon.official.onboarding.update.internal.bin $(BUILD_DIR)/epsilon.official.onboarding.update.external.bin output/binpack
-	$(MAKE) clean
-	cd output && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.official.onboarding.update.internal.bin epsilon.official.onboarding.update.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
-	cd output && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
-	rm -rf output/binpack

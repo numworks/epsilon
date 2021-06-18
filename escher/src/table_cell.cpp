@@ -165,7 +165,7 @@ void TableCell::layoutSubviews(bool force) {
 }
 
 void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Palette::Select : backgroundColor();
+  KDColor backColor = isHighlighted() ? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(), Palette::ListCellBorder);
 }

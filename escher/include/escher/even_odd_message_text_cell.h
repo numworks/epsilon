@@ -11,7 +11,7 @@ public:
   EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);
+  void setMessage(I18n::Message textContent, KDColor textColor = Palette::PrimaryText);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setMessageFont(const KDFont * font) { m_messageTextView.setFont(font); }
 protected:

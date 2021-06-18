@@ -15,6 +15,10 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::ProbaAppCapital;
 }
 
+App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
+  return App::Descriptor::ExaminationLevel::Strict;
+}
+
 const Image * App::Descriptor::icon() {
   return ImageStore::ProbabilityIcon;
 }
@@ -81,11 +85,11 @@ App::App(Snapshot * snapshot) :
 {
     switch (snapshot->activePage()) {
     case Snapshot::Page::Parameters:
-      m_stackViewController.push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      m_stackViewController.push(&m_parametersController, Palette::BannerFirstText, Palette::BannerFirstBackground, Palette::BannerFirstBorder);
       break;
     case Snapshot::Page::Calculations:
-      m_stackViewController.push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
-      m_stackViewController.push(&m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+      m_stackViewController.push(&m_parametersController, Palette::BannerFirstText, Palette::BannerFirstBackground, Palette::BannerFirstBorder);
+      m_stackViewController.push(&m_calculationController, Palette::BannerSecondText, Palette::BannerSecondBackground, Palette::BannerSecondBorder);
     default:
       break;
   }

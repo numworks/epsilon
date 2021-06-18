@@ -83,7 +83,7 @@ QUIZ_CASE(poincare_approximation_float) {
 }
 
 QUIZ_CASE(poincare_approximation_infinity) {
-  assert_expression_approximates_to<double>("10^1000", "inf");
+  assert_expression_approximates_to<double>("10^1000", "∞");
   assert_expression_approximates_to_scalar<double>("10^1000", INFINITY);
 }
 
@@ -215,7 +215,7 @@ QUIZ_CASE(poincare_approximation_logarithm) {
   assert_expression_approximates_to<float>("log(5+2×𝐢)", "0.731199+0.1652518×𝐢");
   assert_expression_approximates_to<double>("ln(5+2×𝐢)", "1.6836479149932+3.8050637711236ᴇ-1×𝐢");
   assert_expression_approximates_to<double>("log(0,0)", Undefined::Name());
-  assert_expression_approximates_to<double>("log(0)", "-inf");
+  assert_expression_approximates_to<double>("log(0)", "-∞");
   assert_expression_approximates_to<double>("log(2,0)", "0");
 
   // WARNING: evaluate on branch cut can be multivalued
@@ -679,8 +679,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Key values
   assert_expression_approximates_to<float>("atan(0)", "0", Degree);
   assert_expression_approximates_to<float>("atan(0)", "0", Gradian);
-  assert_expression_approximates_to<double>("atan(-𝐢)", "-inf×𝐢", Radian);
-  assert_expression_approximates_to<double>("atan(𝐢)", "inf×𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(-𝐢)", "-∞×𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(𝐢)", "∞×𝐢", Radian);
 
   /* cosh: R         -> R (even)
    *       R×𝐢       -> R (oscillator)
@@ -978,8 +978,8 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("1ᴇ155-1ᴇ155×𝐢", "1.41421356237ᴇ155×ℯ^\u0012-0.785398163397×𝐢\u0013", Radian, Metric, Polar,12);
   assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ100×𝐢", Undefined::Name());
   assert_expression_approximates_to<double>("-2ᴇ360+2ᴇ360×𝐢", Undefined::Name());
-  assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ10×𝐢", "-inf+2ᴇ10×𝐢");
-  assert_expression_approximates_to<double>("-2ᴇ360+2×𝐢", "-inf+2×𝐢");
+  assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ10×𝐢", "-∞+2ᴇ10×𝐢");
+  assert_expression_approximates_to<double>("-2ᴇ360+2×𝐢", "-∞+2×𝐢");
   assert_expression_approximates_to<float>("undef+2ᴇ100×𝐢", Undefined::Name());
   assert_expression_approximates_to<double>("-2ᴇ360+undef×𝐢", Undefined::Name());
 }

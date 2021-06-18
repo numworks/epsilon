@@ -37,7 +37,7 @@ endif
 
 SIMULATOR_ICONS = $(addprefix $(SIMULATOR_ICONSET)/,$(addsuffix .png,$(addprefix icon_, $(SIMULATOR_ICON_SIZES))))
 
-$(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logo.svg | $$(@D)/.
+$(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logoMacOS.png | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background "#FFB734" -resize $* $< $@
 

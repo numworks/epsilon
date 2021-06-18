@@ -5,11 +5,14 @@
 #include <ion.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
+#include <ion/backlight.h>
+#include <poincare/preferences.h>
 
 extern "C" {
 #include <assert.h>
 }
 
+using namespace Poincare;
 using namespace Shared;
 
 AppsContainer * AppsContainer::sharedAppsContainer() {
@@ -28,13 +31,14 @@ AppsContainer::AppsContainer() :
   m_batteryTimer(),
   m_suspendTimer(),
   m_backlightDimmingTimer(),
+  m_clockTimer(ClockTimer(this)),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
   m_hardwareTestSnapshot(),
   m_usbConnectedSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
-#if __EMSCRIPTEN__
+// #if __EMSCRIPTEN__
   /* AppsContainer::poincareCircuitBreaker uses Ion::Keyboard::scan(), which
    * calls emscripten_sleep. If we set the poincare circuit breaker, we would
    * need to whitelist all the methods that might be in the call stack when
@@ -44,9 +48,13 @@ AppsContainer::AppsContainer() :
    * quite painy to maintain).
    * We just remove the circuit breaker for now.
    * TODO: Put the Poincare circuit breaker back on epsilon's web emulator */
-#else
+
+  /*
+   * This can be run in Omega, since it uses WebASM.
+   */
+// #else
   Poincare::Expression::SetCircuitBreaker(AppsContainer::poincareCircuitBreaker);
-#endif
+// #endif
   Ion::Storage::sharedStorage()->setDelegate(this);
 }
 
@@ -162,6 +170,36 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
     }
   } else {
+    if (KDIonContext::sharedContext()->zoomEnabled) {
+      bool changedZoom = true;
+
+      if (event == Ion::Events::ShiftOne) {
+        KDIonContext::sharedContext()->zoomPosition = 0;
+      } else if (event == Ion::Events::ShiftTwo) {
+        KDIonContext::sharedContext()->zoomPosition = 1;
+      } else if (event == Ion::Events::ShiftThree) {
+        KDIonContext::sharedContext()->zoomPosition = 2;
+      } else if (event == Ion::Events::ShiftFour) {
+        KDIonContext::sharedContext()->zoomPosition = 3;
+      } else if (event == Ion::Events::ShiftFive) {
+        KDIonContext::sharedContext()->zoomPosition = 4;
+      } else if (event == Ion::Events::ShiftSix) {
+        KDIonContext::sharedContext()->zoomPosition = 5;
+      } else if (event == Ion::Events::ShiftSeven) {
+        KDIonContext::sharedContext()->zoomPosition = 6;
+      } else if (event == Ion::Events::ShiftEight) {
+        KDIonContext::sharedContext()->zoomPosition = 7;
+      } else if (event == Ion::Events::ShiftNine) {
+        KDIonContext::sharedContext()->zoomPosition = 8;
+      } else {
+        changedZoom = false;
+      }
+      if (changedZoom) {
+        KDIonContext::sharedContext()->updatePostProcessingEffects();
+        redrawWindow(true);
+        return true;
+      }
+    }
     didProcessEvent = Container::dispatchEvent(event);
   }
 
@@ -200,9 +238,18 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     switchTo(appSnapshotAtIndex(0));
     return true;
   }
+  if (event == Ion::Events::ShiftHome) {
+    switchTo(appSnapshotAtIndex(1));
+    return true;
+  }
   if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;
+  }
+  if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus) {
+      int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+      int direction = (event == Ion::Events::BrightnessPlus) ? Ion::Backlight::NumberOfStepsPerShortcut*delta : -delta*Ion::Backlight::NumberOfStepsPerShortcut;
+      GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
   }
   return false;
 }
@@ -273,6 +320,10 @@ void AppsContainer::run() {
   switchTo(nullptr);
 }
 
+bool AppsContainer::updateClock() {
+  return m_window.updateClock();
+}
+
 bool AppsContainer::updateBatteryState() {
   bool batteryLevelUpdated = m_window.updateBatteryLevel();
   bool pluggedStateUpdated = m_window.updatePluggedState();
@@ -336,14 +387,22 @@ OnBoarding::PromptController * AppsContainer::promptController() {
   return &m_promptController;
 }
 
-void AppsContainer::redrawWindow() {
-  m_window.redraw();
+void AppsContainer::redrawWindow(bool force) {
+  m_window.redraw(force);
 }
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
   reset();
-  Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
+  Ion::LED::setColor(KDColorRed);
+  /* The Dutch exam mode LED is supposed to be orange but we can only make
+   * blink "pure" colors: with RGB leds on or off (as the PWM is used for
+   * blinking). The closest "pure" color is Yellow. Moreover, Orange LED is
+   * already used when the battery is charging. Using yellow, we can assert
+   * that the yellow LED only means that Dutch exam mode is on and avoid
+   * confusing states when the battery is charging and states when the Dutch
+   * exam mode is on. */
+  // Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed);
   Ion::LED::setBlinking(1000, 0.1f);
 }
 
@@ -370,11 +429,11 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfContainerTimers() {
-  return 3;
+  return 4;
 }
 
 Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[3] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer};
+  Timer * timers[4] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_clockTimer};
   return timers[i];
 }
 

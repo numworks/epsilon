@@ -13,6 +13,6 @@ View * MessageTableCellWithGauge::accessoryView() const {
 
 void MessageTableCellWithGauge::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }

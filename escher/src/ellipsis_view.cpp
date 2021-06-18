@@ -1,4 +1,5 @@
 #include <escher/ellipsis_view.h>
+#include <escher/palette.h>
 #include <kandinsky/color.h>
 
 const uint8_t ellipsisMask[EllipsisView::k_ellipsisHeight][EllipsisView::k_ellipsisWidth] = {
@@ -17,7 +18,7 @@ void EllipsisView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate ellipsisHalfHeight = k_ellipsisHeight/2;
   KDRect frame(widthCenter - ellipsisHalfWidth, heightCenter - ellipsisHalfHeight, k_ellipsisWidth, k_ellipsisHeight);
   KDColor ellipsisWorkingBuffer[EllipsisView::k_ellipsisWidth*EllipsisView::k_ellipsisHeight];
-  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)ellipsisMask, ellipsisWorkingBuffer);
+  ctx->blendRectWithMask(frame, Palette::PrimaryText, (const uint8_t *)ellipsisMask, ellipsisWorkingBuffer);
 }
 
 KDSize EllipsisView::minimalSizeForOptimalDisplay() const {

@@ -9,7 +9,7 @@ namespace Code {
 
 SandboxController::SandboxController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_solidColorView(KDColorWhite)
+  m_solidColorView(Palette::CodeBackground)
 {
 }
 

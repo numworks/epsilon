@@ -206,6 +206,9 @@ Token Tokenizer::popToken() {
     }
     return Token(Token::Caret);
   }
+  if (c == '\'') {
+    return Token(Token::SingleQuote);
+  }
   if (c == '!') {
     return Token(Token::Bang);
   }
@@ -224,7 +227,7 @@ Token Tokenizer::popToken() {
   if (c == '}') {
     return Token(Token::RightBrace);
   }
-  if (c == UCodePointSquareRoot) {
+  if (c == UCodePointSquareRoot || c == UCodePointInfinity) {
     Token result(Token::Identifier);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;

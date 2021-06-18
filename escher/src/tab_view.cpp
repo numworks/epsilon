@@ -20,7 +20,7 @@ void TabView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   // Draw a separator with the content
-  ctx->fillRect(KDRect(0, height-k_activeTabHeight, width, k_activeTabHeight), KDColorWhite);
+  ctx->fillRect(KDRect(0, height-k_activeTabHeight, width, k_activeTabHeight), Palette::BackgroundHard);
 }
 
 void TabView::addTab(ViewController * controller) {

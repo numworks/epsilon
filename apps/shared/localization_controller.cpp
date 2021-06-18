@@ -11,7 +11,7 @@ LocalizationController::ContentView::ContentView(LocalizationController * contro
   m_controller(controller),
   m_selectableTableView(controller, controller, dataSource),
   m_countryTitleMessage(KDFont::LargeFont, I18n::Message::Country),
-  m_borderView(Palette::GrayBright)
+  m_borderView(Palette::BackgroundApps)
 {
   m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
   m_countryTitleMessage.setAlignment(0.5f, 0.5f);

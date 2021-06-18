@@ -2,6 +2,9 @@
 #include "apps_container.h"
 #include "exam_mode_configuration.h"
 #include <assert.h>
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
   PopUpController(

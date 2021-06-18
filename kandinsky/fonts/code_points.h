@@ -127,6 +127,7 @@ uint32_t CodePoints[] = {
   0x305, //  ̅ // COMBINING OVERLINE
   0x308, //  ̈ // COMBINING DIAERESIS
   0x30a, //  ̊ // COMBINING RING ABOVE
+  0x30b, //  ˝// COMBINING DOUBLE ACUTE ACCENT
   0x327, //  ̧ // COMBINING CEDILLA
 
   0x393,   // Γ // GREEK CAPITAL LETTER GAMMA
@@ -142,6 +143,7 @@ uint32_t CodePoints[] = {
   0x2192,  // → // RIGHTWARDS ARROW
   0x2211,  // ∑ // N-ARY SUMMATION
   0x221a,  // √ // SQUARE ROOT
+  0x221e,  // ∞ // INFINITY
   0x222b,  // ∫ // INTEGRAL
   0x2248,  // ≈ // ALMOST EQUAL TO
   0x2264,  // ≤ // LESS-THAN OR EQUAL TO

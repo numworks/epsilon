@@ -39,6 +39,7 @@ public:
        * the ImplicitTimes Token Type is defined here with the desired precedence,
        * in order to allow the Parser to insert such Tokens where needed. */
     Caret,
+    SingleQuote,
     Bang,
     CaretWithParenthesis,
     LeftBracket,

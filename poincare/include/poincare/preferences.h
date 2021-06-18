@@ -2,6 +2,7 @@
 #define POINCARE_PREFERENCES_H
 
 #include <stdint.h>
+#include <kandinsky.h>
 
 namespace Poincare {
 
@@ -36,6 +37,21 @@ public:
     Radian = 1,
     Gradian = 2
   };
+  enum class SymbolMultiplication : uint8_t {
+    Cross = 0,
+    MiddleDot = 1,
+    Star = 2,
+    Auto = 3
+  };
+  enum class SymbolFunction : uint8_t {
+    Default = 0,
+    ArgDefault = 1,
+    Arg = 2   
+  };
+  enum class PythonFont : uint8_t {
+    Large = 0,
+    Small = 1
+  };
   enum class UnitFormat : uint8_t {
     Metric = 0,
     Imperial = 1
@@ -52,12 +68,22 @@ public:
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
   uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
+  SymbolMultiplication symbolOfMultiplication() const { return m_symbolMultiplication; }
+  void setSymbolMultiplication(SymbolMultiplication symbolOfMultiplication) { m_symbolMultiplication = symbolOfMultiplication; }
+  SymbolFunction symbolOfFunction() const { return m_symbolFunction; }
+  void setSymbolOfFunction(SymbolFunction symbolOfFunction) { m_symbolFunction = symbolOfFunction; }
+  PythonFont pythonFont() const { return m_pythonFont; }
+  void setPythonFont(PythonFont pythonFont) { m_pythonFont = pythonFont; }
+  const KDFont * KDPythonFont() const { return (m_pythonFont == PythonFont::Small) ? KDFont::SmallFont : KDFont::LargeFont; }
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
+  SymbolMultiplication m_symbolMultiplication;
+  SymbolFunction m_symbolFunction;
+  PythonFont m_pythonFont;
 };
 
 }

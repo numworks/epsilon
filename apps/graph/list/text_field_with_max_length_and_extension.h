@@ -17,8 +17,8 @@ public:
       const KDFont * size = KDFont::LargeFont,
       float horizontalAlignment = 0.0f,
       float verticalAlignment = 0.5f,
-      KDColor textColor = KDColorBlack,
-      KDColor backgroundColor = KDColorWhite) :
+      KDColor textColor = Palette::PrimaryText,
+      KDColor backgroundColor = Palette::BackgroundHard) :
     TextFieldWithExtension(extensionLength, parentResponder, textBuffer, textBufferSize, draftTextBufferSize, inputEventHandlerDelegate, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor) {}
   void setDraftTextBufferSize(size_t size) { m_contentView.setDraftTextBufferSize(size); }
 };

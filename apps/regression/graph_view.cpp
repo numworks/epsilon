@@ -15,7 +15,7 @@ GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * banne
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
+  ctx->fillRect(rect, Palette::BackgroundHard);
   drawGrid(ctx, rect);
   drawAxes(ctx, rect);
   simpleDrawBothAxesLabels(ctx, rect);
@@ -35,7 +35,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         drawDot(ctx, rect, m_store->get(series, 0, index), m_store->get(series, 1, index), color);
       }
       drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), color, Size::Small);
-      drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), KDColorWhite);
+      drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), Palette::BackgroundHard);
     }
   }
 }

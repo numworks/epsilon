@@ -16,7 +16,7 @@ const uint8_t gaugeIndicatorMask[GaugeView::k_indicatorDiameter][GaugeView::k_in
 
 GaugeView::GaugeView() :
   m_level(1),
-  m_backgroundColor(KDColorWhite)
+  m_backgroundColor(Palette::ListCellBackground)
 {
 }
 
@@ -47,10 +47,10 @@ void GaugeView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height =  bounds().height();
   KDColor gaugeIndicatorWorkingBuffer[GaugeView::k_indicatorDiameter*GaugeView::k_indicatorDiameter];
 
-  ctx->fillRect(KDRect(k_indicatorDiameter/2, (height-k_thickness)/2, width*m_level, k_thickness), Palette::YellowDark);
-  ctx->fillRect(KDRect(k_indicatorDiameter/2+width*m_level, (height-k_thickness)/2, width*(1.0f-m_level), k_thickness), Palette::GrayDark);
+  ctx->fillRect(KDRect(k_indicatorDiameter/2, (height-k_thickness)/2, width*m_level, k_thickness), Palette::ControlEnabled);
+  ctx->fillRect(KDRect(k_indicatorDiameter/2+width*m_level, (height-k_thickness)/2, width*(1.0f-m_level), k_thickness), Palette::ControlDisabled);
   KDRect frame(width*m_level, (height-k_indicatorDiameter)/2, k_indicatorDiameter, k_indicatorDiameter);
-  ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)gaugeIndicatorMask, gaugeIndicatorWorkingBuffer);
+  ctx->blendRectWithMask(frame, Palette::Control, (const uint8_t *)gaugeIndicatorMask, gaugeIndicatorWorkingBuffer);
 }
 
 KDSize GaugeView::minimalSizeForOptimalDisplay() const {

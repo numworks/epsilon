@@ -15,6 +15,10 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::RegressionAppCapital;
 }
 
+App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
+  return App::Descriptor::ExaminationLevel::Strict;
+}
+
 const Image * App::Descriptor::icon() {
   return ImageStore::RegressionIcon;
 }

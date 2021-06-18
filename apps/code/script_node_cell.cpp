@@ -8,7 +8,7 @@ constexpr char ScriptNodeCell::k_parentheses[];
 constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
 
 void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) const {
-  const KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  const KDColor backgroundColor = isHighlighted()? Palette::CodeBackgroundSelected : Palette::CodeBackground;
 
   // If it exists, draw the description name.
   const char * descriptionName = m_scriptNode->description();
@@ -32,7 +32,7 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
   const char * sourceName = m_scriptNode->nodeSourceName();
   if (sourceName != nullptr) {
     KDSize sourceNameSize = k_font->stringSize(sourceName);
-    ctx->drawString(sourceName, KDPoint(m_frame.width() - sourceNameSize.width(), nodeNameY), k_font, Palette::GrayDark, backgroundColor);
+    ctx->drawString(sourceName, KDPoint(m_frame.width() - sourceNameSize.width(), nodeNameY), k_font, Palette::CodeText, backgroundColor);
   }
 }
 

@@ -15,7 +15,7 @@ public:
     EvenOddCell(),
     m_orientation(orientation),
     m_baseline(-1),
-    m_functionColor(KDColorBlack)
+    m_functionColor(Palette::PrimaryText)
   {}
   virtual void setOrientation(Orientation orientation);
   virtual void setColor(KDColor color);

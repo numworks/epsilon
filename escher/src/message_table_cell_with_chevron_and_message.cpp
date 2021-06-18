@@ -3,7 +3,7 @@
 
 MessageTableCellWithChevronAndMessage::MessageTableCellWithChevronAndMessage(const KDFont * labelFont, const KDFont * contentFont) :
   MessageTableCellWithChevron((I18n::Message)0, labelFont),
-  m_subtitleView(contentFont, (I18n::Message)0, 1.0f, 0.5f, Palette::GrayDark)
+  m_subtitleView(contentFont, (I18n::Message)0, 1.0f, 0.5f, Palette::SecondaryText)
 {
 }
 
@@ -13,7 +13,7 @@ View * MessageTableCellWithChevronAndMessage::subAccessoryView() const {
 
 void MessageTableCellWithChevronAndMessage::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 

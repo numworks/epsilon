@@ -1,0 +1,14 @@
+name: Unit tests
+on: [pull_request_target]
+
+jobs:
+  units:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - run: make -j2 PLATFORM=simulator test.headless.bin
+      - run: output/release/simulator/linux/test.headless.bin
+

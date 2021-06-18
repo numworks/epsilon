@@ -7,17 +7,16 @@ using namespace Shared;
 namespace Settings {
 
 constexpr SettingsMessageTree s_modelMenu[] =
-  {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
-    SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),
-    SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
-    SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
+  {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren),
     SettingsMessageTree(I18n::Message::Brightness),
+    SettingsMessageTree(I18n::Message::DateTime, s_modelDateTimeChildren),
     SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::Country),
     SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
     SettingsMessageTree(I18n::Message::BetaPopUp),
-    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
+    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren),
+    SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren)};
 
 constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu);
 

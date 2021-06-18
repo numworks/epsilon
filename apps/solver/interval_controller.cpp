@@ -7,14 +7,14 @@
 namespace Solver {
 
 IntervalController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_instructions0(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_instructions1(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_instructions0(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction0, 0.5f, 0.5f, Palette::PrimaryText, Palette::BackgroundApps),
+  m_instructions1(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction1, 0.5f, 0.5f, Palette::PrimaryText, Palette::BackgroundApps),
   m_selectableTableView(selectableTableView)
 {
 }
 
 void IntervalController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin), Palette::WallScreen);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin), Palette::BackgroundApps);
 }
 
 int IntervalController::ContentView::numberOfSubviews() const {
@@ -103,8 +103,8 @@ bool IntervalController::textFieldDidFinishEditing(TextField * textField, const 
 
 void IntervalController::buttonAction() {
   StackViewController * stack = stackController();
-  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext(),   m_shouldReplaceFunctionsButNotSymbols);
-  stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::SubTab, Palette::SubTab);
+  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext(), m_shouldReplaceFunctionsButNotSymbols);
+  stack->push(App::app()->solutionsControllerStack(), Palette::BannerSecondText, Palette::BannerSecondBackground, Palette::BannerSecondBorder);
 }
 
 }

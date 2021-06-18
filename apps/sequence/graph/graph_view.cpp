@@ -30,7 +30,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }
       drawDot(ctx, rect, x, y, s->color());
       if (x >= m_highlightedStart && x <= m_highlightedEnd && record == m_selectedRecord) {
-        KDColor color = m_shouldColorHighlighted ? s->color() : KDColorBlack;
+        KDColor color = m_shouldColorHighlighted ? s->color() : Palette::PrimaryText;
         if (y >= 0.0f) {
           drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);
         } else {

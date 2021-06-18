@@ -2,6 +2,7 @@
 #define ESCHER_TEXT_VIEW_H
 
 #include <escher/view.h>
+#include <escher/palette.h>
 #include <kandinsky/color.h>
 
 /* alignment = 0 -> align left or top
@@ -10,7 +11,7 @@
 
 class TextView : public View {
 public:
-  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) :
+  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f, KDColor textColor = Palette::PrimaryText, KDColor backgroundColor = Palette::BackgroundHard) :
     View(),
     m_font(font),
     m_horizontalAlignment(horizontalAlignment),

@@ -1,0 +1,7 @@
+USBConnected = "A SZÁMOLÓGÉP CSATLAKOZTATVA VAN"
+ConnectedMessage1 = ""
+ConnectedMessage2 = "Adat másolásához csatlakozzon"
+ConnectedMessage3 = "fel workshop.numworks.com ra."
+ConnectedMessage4 = "Nyomjon majd a VISSZA gombra"
+ConnectedMessage5 = "vagy huzza ki a kábelt azért"
+ConnectedMessage6 = "hogy a másolás véget érjen."

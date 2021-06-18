@@ -75,7 +75,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         // To represent the tangent, we draw segment from and to abscissas at the extremity of the drawn rect
         float minAbscissa = pixelToFloat(Axis::Horizontal, rect.left());
         float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());
-        drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GrayVeryDark, false);
+        drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GraphTangent, false);
       }
     } else if (type == Shared::ContinuousFunction::PlotType::Polar) {
       // Polar

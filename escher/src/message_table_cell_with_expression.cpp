@@ -3,7 +3,7 @@
 
 MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message, const KDFont * font) :
   MessageTableCell(message, font),
-  m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
+  m_subtitleView(1.0f, 0.5f, Palette::SecondaryText)
 {
 }
 
@@ -13,7 +13,7 @@ View * MessageTableCellWithExpression::accessoryView() const {
 
 void MessageTableCellWithExpression::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 

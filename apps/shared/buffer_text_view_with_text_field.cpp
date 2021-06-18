@@ -24,18 +24,18 @@ void BufferTextViewWithTextField::drawRect(KDContext * ctx, KDRect rect) const {
 
   // Fill margins with white
   // Left margin
-  ctx->fillRect(KDRect(0, 0, Metric::TitleBarExternHorizontalMargin, bounds().height()), KDColorWhite);
-  ctx->fillRect(KDRect(bounds().width() - Metric::TitleBarExternHorizontalMargin, 0, Metric::TitleBarExternHorizontalMargin, bounds().height()), KDColorWhite);
+  ctx->fillRect(KDRect(0, 0, Metric::TitleBarExternHorizontalMargin, bounds().height()), Palette::BackgroundHard);
+  ctx->fillRect(KDRect(bounds().width() - Metric::TitleBarExternHorizontalMargin, 0, Metric::TitleBarExternHorizontalMargin, bounds().height()), Palette::BackgroundHard);
   // Right margin
-  ctx->fillRect(KDRect(bounds().width() - Metric::TitleBarExternHorizontalMargin, 0, Metric::TitleBarExternHorizontalMargin, bounds().height()), KDColorWhite);
+  ctx->fillRect(KDRect(bounds().width() - Metric::TitleBarExternHorizontalMargin, 0, Metric::TitleBarExternHorizontalMargin, bounds().height()), Palette::BackgroundHard);
   // Above the text field
-  ctx->fillRect(KDRect(textFieldRect.x() - k_borderWidth, 0, textFieldRect.width() + 2*k_borderWidth, bounds().height()), KDColorWhite);
+  ctx->fillRect(KDRect(textFieldRect.x() - k_borderWidth, 0, textFieldRect.width() + 2*k_borderWidth, bounds().height()), Palette::BackgroundHard);
   // Under the text field
-  ctx->fillRect(KDRect(textFieldRect.x() - k_borderWidth, textFieldRect.bottom() + k_borderWidth, textFieldRect.width() + 2*k_borderWidth, bounds().height()), KDColorWhite);
+  ctx->fillRect(KDRect(textFieldRect.x() - k_borderWidth, textFieldRect.bottom() + k_borderWidth, textFieldRect.width() + 2*k_borderWidth, bounds().height()), Palette::BackgroundHard);
 
   // Draw the text field border
   KDRect borderRect = KDRect(textFieldRect.x()-k_borderWidth, textFieldRect.y()-k_borderWidth, textFieldRect.width()+2*k_borderWidth, textFieldRect.height()+2*k_borderWidth);
-  ctx->strokeRect(borderRect, Palette::GrayMiddle);
+  ctx->strokeRect(borderRect, Palette::ListCellBorder);
 }
 
 void BufferTextViewWithTextField::didBecomeFirstResponder() {

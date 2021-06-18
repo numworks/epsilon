@@ -53,12 +53,7 @@ public:
   virtual void viewDidDisappear() {}
   virtual DisplayParameter displayParameter() { return DisplayParameter::Default; }
 protected:
-#if EPSILON_TELEMETRY
-  virtual const char * telemetryId() const { return nullptr; }
-  void telemetryReportEvent(const char * action, const char * label) const;
-#else
   void telemetryReportEvent(const char * action, const char * label) const {}
-#endif
 };
 
 #endif

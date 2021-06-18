@@ -30,7 +30,7 @@ const uint8_t arrowDownMask[10][9] = {
 
 ArrowView::ArrowView() :
   m_directionIsUp(true),
-  m_color(KDColorBlack)
+  m_color(Palette::PrimaryText)
 {
 }
 
@@ -50,7 +50,7 @@ void ArrowView::setColor(KDColor color) {
 
 void ArrowView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor arrowWorkingBuffer[10*9];
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::BackgroundHard);
   KDCoordinate startLine = m_directionIsUp ? k_arrowHeight : 0;
   KDCoordinate startArrow = m_directionIsUp ? 0 : bounds().height()-k_arrowHeight;
   ctx->fillRect(KDRect((Ion::Display::Width-k_arrowThickness)/2, startLine, k_arrowThickness, bounds().height()-k_arrowHeight), m_color);

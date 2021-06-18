@@ -11,6 +11,7 @@
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
+#include <ion/rtc.h>
 #include <ion/storage.h>
 #include <ion/timing.h>
 #include <ion/usb.h>
@@ -31,7 +32,9 @@ void ion_main(int argc, const char * const argv[]);
 namespace Ion {
 
 const char * serialNumber();
+const char * username();
 const char * softwareVersion();
+const char * omegaVersion();
 const char * patchLevel();
 const char * fccId();
 

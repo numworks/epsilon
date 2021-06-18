@@ -4,9 +4,9 @@
 # file.
 # In practice, it enforces a NFKD normalization. Because Epsilon does not
 # properly draw upper case letters with accents, we remove them here.
-# Texts are grouped by languages, and compressed with LZ4 algorithm to save
-# memory. When another language is selected, it is uncompressed on the stack,
-# and the messages texts are updated.
+# If compression is activated, texts are grouped by languages, and compressed
+# with LZ4 algorithm to save memory. When another language is selected, it is
+# uncompressed into a huge buffer, where the messages texts are retrieved.
 # It works with Python 3 only
 
 import argparse
@@ -27,6 +27,7 @@ parser.add_argument('--codepoints', help='the code_points.h file')
 parser.add_argument('--countrypreferences', help='the country_preferences.csv file')
 parser.add_argument('--languagepreferences', help='the language_preferences.csv file')
 parser.add_argument('--files', nargs='+', help='an i18n file')
+parser.add_argument('--compress', action='store_true', help='if the texts should be compressed')\
 
 args = parser.parse_args()
 
@@ -41,6 +42,8 @@ def has_glyph(glyph):
 def source_definition(i18n_string):
     s = unicodedata.normalize("NFKD", i18n_string)
     result = u""
+    if not(args.compress):
+        result += u"\""
     i = 0
     length = len(s)
     checkForCombining = False
@@ -51,8 +54,8 @@ def source_definition(i18n_string):
             # (for the non-extended set)
             copyCodePoint = (ord(s[i]) < 0x300) or (ord(s[i]) > 0x36F)
             checkForCombining = False
-        # Combine "\n" into '\n'
-        if s[i] == '\\' and i+1 < length and s[i+1] == 'n':
+        if args.compress and s[i] == '\\' and i+1 < length and s[i+1] == 'n':
+            # Combine "\n" into '\n'
             result = result + '\n'
             i+=2
             continue
@@ -64,6 +67,8 @@ def source_definition(i18n_string):
             sys.stderr.write(s[i] + " (" + str(hex(ord(s[i]))) + ") is not a character present in " + args.codepoints + " . Exiting !\n")
             sys.exit(-1)
         i = i+1
+    if not(args.compress):
+        result += u"\""
     return result.encode("utf-8")
 
 def is_commented_line(line):
@@ -88,7 +93,11 @@ def message_exceeds_length_limit(definition, type):
         type = "default"
     length_limit = message_length_limit_for_type[type]
     # Handle multi-line messages
-    for definition_line in re.split(r"\n", definition.decode('utf-8')):
+    if args.compress:
+        iterator = re.split(r"\n", definition.decode('utf-8'))
+    else:
+        iterator = re.split(r"\\n", definition.decode('utf-8')[1:-1])
+    for definition_line in iterator:
         # Ignore combining characters
         if (len([c for c in definition_line if not unicodedata.combining(c)]) > length_limit):
             return True
@@ -211,7 +220,15 @@ def print_header(data, path, locales, countries):
     # Messages enumeration
     print_block_from_list(f,
             "enum class Message : uint16_t {\n",
-            ["Default = 0"] + data["universal_messages"] + data["messages"])
+            ["Default = 0"] + data["universal_messages"],
+            footer="\n")
+
+    if not(args.compress):
+        f.write("  LocalizedMessageMarker,\n")
+
+    print_block_from_list(f,
+            "\n",
+            data["messages"])
 
     # Languages enumeration
     print_block_from_list(f,
@@ -270,6 +287,73 @@ def print_header(data, path, locales, countries):
     f.close()
 
 def print_implementation(data, path, locales):
+    f = open(path, "w")
+    f.write("#include \"i18n.h\"\n")
+    f.write("#include <apps/global_preferences.h>\n")
+    f.write("#include <assert.h>\n\n")
+    f.write("namespace I18n {\n\n")
+
+    # Write the default message
+    f.write("constexpr static char universalDefault[] = {0};\n")
+
+    # Write the universal messages
+    for message in data["universal_messages"]:
+        f.write("constexpr static char universal" + message + "[] = ")
+        f = open(path, "ab") # Re-open the file as binary to output raw UTF-8 bytes
+        f.write(data["data"]["universal"][message])
+        f = open(path, "a") # Re-open the file as text
+        f.write(";\n")
+    f.write("\n")
+    print_block_from_list(f,
+            "constexpr static const char * universalMessages[%d] = {\n  universalDefault,\n" % (len(data["universal_messages"])+1),
+            data["universal_messages"],
+            prefix="  universal")
+
+    # Write the localized messages
+    for message in data["messages"]:
+        for locale in locales:
+            if not locale in data["data"]:
+                sys.stderr.write("Error: Undefined locale \"" + locale + "\"\n")
+                sys.exit(-1)
+            if not message in data["data"][locale]:
+                sys.stderr.write("Error: Undefined key \"" + message + "\" for locale \"" + locale + "\"\n")
+                sys.exit(-1)
+            f.write("constexpr static char " + locale + message + "[] = ")
+            f = open(path, "ab") # Re-open the file as binary to output raw UTF-8 bytes
+            f.write(data["data"][locale][message])
+            f = open(path, "a") # Re-open the file as text
+            f.write(";\n")
+    f.write("\n")
+    f.write("constexpr static const char * messages[%d][%d] = {\n" % (len(data["messages"]), len(locales)))
+    for message in data["messages"]:
+        f.write("  {")
+        for locale in locales:
+            f.write(locale + message + ", ")
+        f.write("},\n")
+    f.write("};\n\n")
+
+
+    # Write the translate method
+    code = """
+const char * translate(Message m) {
+  assert(m != Message::LocalizedMessageMarker);
+  int localizedMessageOffset = (int)Message::LocalizedMessageMarker+1;
+  if ((int)m < localizedMessageOffset) {
+    assert(universalMessages[(int)m] != nullptr);
+    return universalMessages[(int)m];
+  }
+  int languageIndex = (int)GlobalPreferences::sharedGlobalPreferences()->language();
+  int messageIndex = (int)m - localizedMessageOffset;
+  assert((messageIndex*NumberOfLanguages+languageIndex)*sizeof(char *) < sizeof(messages));
+  return messages[messageIndex][languageIndex];
+}
+
+}
+"""
+    f.write(code)
+    f.close()
+
+def print_compressed_implementation(data, path, locales):
     f = open(path, "w")
     f.write("#include \"i18n.h\"\n")
     f.write("#include <apps/global_preferences.h>\n")
@@ -407,4 +491,7 @@ data = parse_files(args.files)
 if args.header:
     print_header(data, args.header, args.locales, args.countries)
 if args.implementation:
-    print_implementation(data, args.implementation, args.locales)
+    if args.compress:
+        print_compressed_implementation(data, args.implementation, args.locales)
+    else:
+        print_implementation(data, args.implementation, args.locales)

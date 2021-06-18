@@ -57,7 +57,9 @@ void __attribute__((noinline)) start() {
 
   Ion::Device::Init::configureRAM();
 
-  // Copy isr_vector_table section to RAM
+  /* Copy isr_vector_table section to RAM
+   * The isr table must be within the memory mapped by the microcontroller (it
+   * can't live in the external flash). */
   size_t isrSectionLength = (&_isr_vector_table_end_ram - &_isr_vector_table_start_ram);
   memcpy(&_isr_vector_table_start_ram, &_isr_vector_table_start_flash, isrSectionLength);
 

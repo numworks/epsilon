@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "probability/text_helpers.h"
+#include "probability/app.h"
 
 using namespace Escher;
 
@@ -75,7 +76,7 @@ void ParametersController::reinitCalculation() {
 }
 
 void ParametersController::didBecomeFirstResponder() {
-  // App::app()->snapshot()->setActivePage(App::Snapshot::Page::Parameters);
+  App::app()->setPage(Data::Page::Parameters);
   FloatParameterController::didBecomeFirstResponder();
 }
 

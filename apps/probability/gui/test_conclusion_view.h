@@ -22,12 +22,17 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 
 private:
-  constexpr static int k_margin = 20;
+  constexpr static int k_marginBetween = 20;
+  constexpr static int k_marginLeft = 20;
   class Icon : public Escher::View {
   public:
-    constexpr static int k_size = 24;
+    constexpr static int k_size = 14;
     void setType(Type t) { m_type = t; }
     void drawRect(KDContext * ctx, KDRect rect) const override;
+    void drawCircle(KDContext * ctx, KDRect rect, KDPoint center, int radius, KDColor color,
+                    KDColor background = Escher::Palette::WallScreen) const;
+    static int posToIndex(int i, int j, int r);
+    static void setToAllSymetries(float buffer[], float alpha, int i, int j, int r);
     KDSize minimalSizeForOptimalDisplay() const override;
 
   private:

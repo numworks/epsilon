@@ -306,6 +306,7 @@ constexpr ToolboxMessageTree unitVolumeCup = ToolboxMessageTree::Leaf(I18n::Mess
 constexpr ToolboxMessageTree unitVolumePint = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumePintSymbol, I18n::Message::UnitVolumePint);
 constexpr ToolboxMessageTree unitVolumeQuart = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeQuartSymbol, I18n::Message::UnitVolumeQuart);
 constexpr ToolboxMessageTree unitVolumeGallon = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeGallonSymbol, I18n::Message::UnitVolumeGallon);
+constexpr ToolboxMessageTree unitVolumeGallonUk = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeGallonUkSymbol, I18n::Message::UnitVolumeGallonUk);
 
 const ToolboxMessageTree * unitVolumeLiterChildren[] = {&unitVolumeLiterMilli, &unitVolumeLiterCenti, &unitVolumeLiterDeci, &unitVolumeLiter};
 const ToolboxMessageTree unitVolumeLiterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitVolumeLiterChildren);
@@ -317,9 +318,10 @@ const ToolboxMessageTree * unitVolumeChildrenForImperialToolbox[] = {
   &unitVolumePint,
   &unitVolumeQuart,
   &unitVolumeGallon,
+  &unitVolumeGallonUk,
   &unitVolumeLiterNode
 };
-const ToolboxMessageTree * unitVolumeImperialChildren[] = {&unitVolumeTeaspoon, &unitVolumeTablespoon, &unitVolumeFluidOunce, &unitVolumeCup, &unitVolumePint, &unitVolumeQuart, &unitVolumeGallon};
+const ToolboxMessageTree * unitVolumeImperialChildren[] = {&unitVolumeTeaspoon, &unitVolumeTablespoon, &unitVolumeFluidOunce, &unitVolumeCup, &unitVolumePint, &unitVolumeQuart, &unitVolumeGallon,&unitVolumeGallonUk};
 const ToolboxMessageTree unitVolumeImperialNode = ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitVolumeImperialChildren);
 const ToolboxMessageTree * unitVolumeChildrenForMetricToolbox[] = {
   &unitVolumeLiterMilli,

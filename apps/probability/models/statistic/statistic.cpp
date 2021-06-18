@@ -20,7 +20,7 @@ void Statistic::setParamAtIndex(int i, float p) {
 }
 
 bool Statistic::testPassed() {
-  return pValue() > std::fabs(m_threshold);
+  return pValue() < std::fabs(m_threshold);
 }
 
 void Statistic::initThreshold(Data::SubApp subapp) {

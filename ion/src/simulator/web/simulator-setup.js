@@ -59,7 +59,10 @@ function screenshot() {
 
   var canvas = document.getElementById('canvas');
   var link = document.createElement('a');
+  link.setAttribute("type", "hidden");
   link.download = 'screenshot.png';
   link.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+  document.body.appendChild(link);
   link.click();
+  link.remove();
 }

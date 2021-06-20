@@ -11,6 +11,7 @@ public:
   void setTargetExamMode(GlobalPreferences::ExamMode mode);
   GlobalPreferences::ExamMode targetExamMode() const { return m_targetExamMode; }
   void viewDidDisappear() override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   constexpr static int k_numberOfLines = 3;
   GlobalPreferences::ExamMode m_targetExamMode;

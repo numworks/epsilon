@@ -35,6 +35,8 @@ typedef struct {
   int height;
 } image_t;
 
+typedef unsigned long codePoint;
+
 #ifdef GENERATE_PNG
 #define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
@@ -99,8 +101,8 @@ int main(int argc, char * argv[]) {
   int maxAboveBaseline = 0;
   int maxBelowBaseline = 0;
   for (int i=0; i < NumberOfCodePoints; i++) {
-    wchar_t codePoint = CodePoints[i];
-    ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%02x", codePoint);
+    codePoint code = CodePoints[i];
+    ENSURE(!FT_Load_Char(face, code, FT_LOAD_RENDER), "Loading character 0x%02x", code);
     int aboveBaseline = face->glyph->bitmap_top;
     int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
     int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
@@ -113,7 +115,7 @@ int main(int argc, char * argv[]) {
     if (belowBaseline > maxBelowBaseline) {
       maxBelowBaseline = belowBaseline;
     }
-    // printf("Codepoint %04x : %dx%d\n", codePoint, width, aboveBaseline+belowBaseline);
+    // printf("Codepoint %04x : %dx%d\n", code, width, aboveBaseline+belowBaseline);
   }
 
   int glyph_width = maxWidth-1;
@@ -150,11 +152,11 @@ int main(int argc, char * argv[]) {
   }
 
   for (int i=0; i<NumberOfCodePoints; i++) {
-    wchar_t codePoint = CodePoints[i];
+    codePoint code = CodePoints[i];
     int x = i%grid_width;
     int y = i/grid_width;
     // FT_LOAD_RENDER: Render the glyph upon load
-    ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%08x", codePoint);
+    ENSURE(!FT_Load_Char(face, code, FT_LOAD_RENDER), "Loading character 0x%08x", code);
     //printf("Advances = %dx%d\n", face->glyph->bitmap_left, face->glyph->bitmap_top);
     while (face->glyph->bitmap_left < 0) {
       // This is a workaround for combining glyphs.
@@ -187,7 +189,7 @@ int main(int argc, char * argv[]) {
 
   fprintf(sourceFile, "static constexpr KDFont::CodePointIndexPair table[] = {\n");
   for (int i=0; i<NumberOfCodePoints; i++) {
-    int currentCodePoint = CodePoints[i];
+    codePoint currentCodePoint = CodePoints[i];
     if (currentCodePoint != (previousCodePoint + (i-previousIndex))) {
       fprintf(sourceFile, "  KDFont::CodePointIndexPair(0x%x, %d),\n", currentCodePoint, i);
       previousCodePoint = currentCodePoint;

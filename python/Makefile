@@ -195,6 +195,7 @@ $(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.gener
 
 tests_src += $(addprefix python/test/,\
   basics.cpp \
+  color.cpp \
   execution_environment.cpp \
   ion.cpp \
   kandinsky.cpp \

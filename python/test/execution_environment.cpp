@@ -2,6 +2,9 @@
 #include <quiz.h>
 #include <assert.h>
 #include <string.h>
+extern "C" {
+  #include <py/objtuple.h>
+}
 
 char TestExecutionEnvironment::s_pythonHeap[TestExecutionEnvironment::s_pythonHeapSize];
 
@@ -84,4 +87,20 @@ void assert_command_execution_succeeds(TestExecutionEnvironment env, const char 
 
 void assert_command_execution_fails(TestExecutionEnvironment env, const char * line) {
   assert_command_execution_result(false, env, line);
+}
+
+void assert_color_from_mp_obj_t(mp_obj_t obj, KDColor color, MicroPython::ColorParser::ColorMode colorMode){
+  quiz_assert(MicroPython::ColorParser::ParseColor(obj, colorMode) == color);
+}
+
+void assert_color_from_str(const char * str, KDColor color, MicroPython::ColorParser::ColorMode colorMode){
+  assert_color_from_mp_obj_t(mp_obj_new_str(str, strlen(str)), color, colorMode);
+}
+
+mp_obj_t floatTuple(mp_obj_t r, mp_obj_t g, mp_obj_t b) {
+  mp_obj_tuple_t * t = static_cast<mp_obj_tuple_t *>(MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL)));
+  t->items[0] = r;
+  t->items[1] = g;
+  t->items[2] = b;
+  return MP_OBJ_FROM_PTR(t);
 }

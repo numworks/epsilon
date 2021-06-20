@@ -2,30 +2,22 @@
 #define ION_SIMULATOR_PLATFORM_H
 
 #include <SDL.h>
-#include <stdbool.h>
+#include <kandinsky/color.h>
 
-#ifdef __cplusplus
-extern "C" {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier);
+const char * languageCode();
+#if ION_SIMULATOR_FILES
+const char * filePathForReading(const char * extension);
+const char * filePathForWriting(const char * extension);
+void saveImage(const KDColor * pixels, int width, int height, const char * path);
 #endif
 
-/* Those functions should be implemented per-platform.
- * They are defined as C function for easier interop. */
-
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier);
-char * IonSimulatorGetLanguageCode();
-
-#if EPSILON_SDL_SCREEN_ONLY
-void IonSimulatorKeyboardKeyDown(int keyNumber);
-void IonSimulatorKeyboardKeyUp(int keyNumber);
-void IonSimulatorEventsPushEvent(int eventNumber);
-#endif
-
-bool IonSimulatorSDLKeyDetectedByScan(SDL_Scancode key);
-void IonSimulatorCallbackDidRefresh();
-void IonSimulatorCallbackDidScanKeyboard();
-
-#ifdef __cplusplus
 }
-#endif
+}
+}
 
 #endif

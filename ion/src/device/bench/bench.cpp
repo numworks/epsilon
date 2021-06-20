@@ -31,6 +31,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("STANDBY", Command::Standby),
   CommandHandler("USB_PLUGGED", Command::USBPlugged),
   CommandHandler("VBLANK", Command::VBlank),
+  CommandHandler("WRITE_PCB_VERSION", Command::WritePCBVersion),
   CommandHandler(nullptr, nullptr)
 };
 

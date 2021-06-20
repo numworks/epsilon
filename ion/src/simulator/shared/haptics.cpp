@@ -25,7 +25,7 @@ void shutdown() {
 }
 
 void rumble() {
-  if (isEnabled() && sSDLHaptic) {
+  if (sSDLHaptic && isEnabled()) {
     SDL_HapticRumblePlay(sSDLHaptic, 1.0, 40);
   }
 }

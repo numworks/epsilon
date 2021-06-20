@@ -1004,7 +1004,7 @@ typedef double mp_float_t;
 
 // Whether to provide the help function
 #ifndef MICROPY_PY_BUILTINS_HELP
-#define MICROPY_PY_BUILTINS_HELP (0)
+#define MICROPY_PY_BUILTINS_HELP (1)
 #endif
 
 // Use this to configure the help text shown for help().  It should be a

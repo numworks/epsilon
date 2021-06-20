@@ -25,11 +25,7 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-#if FUNCTION_COLOR_CHOICE
   constexpr static int k_totalNumberOfCell = 5;
-#else
-  constexpr static int k_totalNumberOfCell = 4;
-#endif
   int totalNumberOfCells() const override;
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
   bool hasInitialRankRow() const;

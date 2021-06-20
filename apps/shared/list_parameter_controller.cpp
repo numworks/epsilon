@@ -8,12 +8,12 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
   ViewController(parentResponder),
   m_selectableTableView(this, this, this, tableDelegate),
   m_record(),
-#if FUNCTION_COLOR_CHOICE
-  m_colorCell(functionColorMessage),
-#endif
+  m_colorCell(),
   m_enableCell(I18n::Message::ActivateDeactivate),
-  m_deleteCell(deleteFunctionMessage)
+  m_deleteCell(deleteFunctionMessage),
+  m_colorParameterController(parentResponder, functionColorMessage)
 {
+  m_colorCell.setMessage(functionColorMessage);
 }
 
 const char * ListParameterController::title() {
@@ -38,6 +38,16 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if (cell == &m_enableCell) {
     SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
     switchView->setState(function()->isActive());
+  } else if(cell == &m_colorCell) {
+    int index = -1;
+    KDColor color = function()->color();
+    for(int i = 0; i < Palette::numberOfDataColors(); i++) {
+      if(color == Palette::DataColor[i]) {
+        index = i;
+      }
+    }
+    assert(index >= 0);
+    m_colorCell.setSubtitle(MessageTableCellWithColor::k_textForIndex[index]);
   }
 }
 
@@ -64,11 +74,7 @@ int ListParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
   assert(index == 0);
   assert(index < totalNumberOfCells());
-#if FUNCTION_COLOR_CHOICE
   HighlightCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
-#else
-  HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};
-#endif
   return cells[type];
 }
 
@@ -78,22 +84,17 @@ int ListParameterController::typeAtLocation(int i, int j) {
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
   switch (rowIndex) {
-#if FUNCTION_COLOR_CHOICE
-    case 0:
-    /* TODO: implement function color choice */
+    case 0: {
+      StackViewController * stack = (StackViewController *)(parentResponder());
+      m_colorParameterController.setRecord(m_record);
+      stack->push(&m_colorParameterController);
       return true;
+    }
     case 1:
-#else
-    case 0:
-#endif
       function()->setActive(!function()->isActive());
       m_selectableTableView.reloadData();
       return true;
-#if FUNCTION_COLOR_CHOICE
-      case 2:
-#else
-      case 1:
-#endif
+    case 2:
       {
         assert(functionStore()->numberOfModels() > 0);
         functionStore()->removeModel(m_record);

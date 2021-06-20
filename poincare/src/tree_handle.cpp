@@ -280,9 +280,16 @@ void TreeHandle::release(uint16_t identifier) {
 template AbsoluteValue TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>(const Tuple &);
 template AbsoluteValueLayout TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(const Tuple &);
 template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(const Tuple &);
+template And TreeHandle::FixedArityBuilder<And, BinaryOperationNode<1> >(const Tuple &);
 template ArcCosine TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(const Tuple &);
 template ArcSine TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(const Tuple &);
 template ArcTangent TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(const Tuple &);
+template BitClear TreeHandle::FixedArityBuilder<BitClear, BinaryOperationNode<15> >(const Tuple &);
+template BitFlip TreeHandle::FixedArityBuilder<BitFlip, BinaryOperationNode<16> >(const Tuple &);
+template BitGet TreeHandle::FixedArityBuilder<BitGet, BinaryOperationNode<17> >(const Tuple &);
+template BitsClear TreeHandle::FixedArityBuilder<BitsClear, BinaryOperationNode<19> >(const Tuple &);
+template BitsClearExplicit TreeHandle::FixedArityBuilder<BitsClearExplicit, BinaryOperationNode<20> >(const Tuple &);
+template BitSet TreeHandle::FixedArityBuilder<BitSet, BinaryOperationNode<18> >(const Tuple &);
 template BinomCDF TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>(const Tuple &);
 template BinomialCoefficient TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>(const Tuple &);
 template BinomialCoefficientLayout TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(const Tuple &);
@@ -343,8 +350,11 @@ template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, Nape
 template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(const Tuple &);
 template NormCDF2 TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>(const Tuple &);
 template NormPDF TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(const Tuple &);
+template Not TreeHandle::FixedArityBuilder<Not, BinaryOperationNode<13> >(const Tuple &);
+template NotExplicit TreeHandle::FixedArityBuilder<NotExplicit, BinaryOperationNode<14> >(const Tuple &);
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(const Tuple &);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
+template Or TreeHandle::FixedArityBuilder<Or, BinaryOperationNode<5> >(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PermuteCoefficient TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(const Tuple &);
 template Power TreeHandle::FixedArityBuilder<Power, PowerNode>(const Tuple &);
@@ -356,7 +366,17 @@ template Random TreeHandle::FixedArityBuilder<Random, RandomNode>(const Tuple &)
 template RealPart TreeHandle::FixedArityBuilder<RealPart, RealPartNode>(const Tuple &);
 template RightParenthesisLayout TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(const Tuple &);
 template RightSquareBracketLayout TreeHandle::FixedArityBuilder<RightSquareBracketLayout, RightSquareBracketLayoutNode>(const Tuple &);
+template RotateLeft TreeHandle::FixedArityBuilder<RotateLeft, BinaryOperationNode<27> >(const Tuple &);
+template RotateLeftExplicit TreeHandle::FixedArityBuilder<RotateLeftExplicit, BinaryOperationNode<28> >(const Tuple &);
+template RotateRight TreeHandle::FixedArityBuilder<RotateRight, BinaryOperationNode<29> >(const Tuple &);
+template RotateRightExplicit TreeHandle::FixedArityBuilder<RotateRightExplicit, BinaryOperationNode<30> >(const Tuple &);
 template Round TreeHandle::FixedArityBuilder<Round, RoundNode>(const Tuple &);
+template ShiftArithmeticRight TreeHandle::FixedArityBuilder<ShiftArithmeticRight, BinaryOperationNode<25> >(const Tuple &);
+template ShiftArithmeticRightExplicit TreeHandle::FixedArityBuilder<ShiftArithmeticRightExplicit, BinaryOperationNode<26> >(const Tuple &);
+template ShiftLogicLeft TreeHandle::FixedArityBuilder<ShiftLogicLeft, BinaryOperationNode<21> >(const Tuple &);
+template ShiftLogicLeftExplicit TreeHandle::FixedArityBuilder<ShiftLogicLeftExplicit, BinaryOperationNode<22> >(const Tuple &);
+template ShiftLogicRight TreeHandle::FixedArityBuilder<ShiftLogicRight, BinaryOperationNode<23> >(const Tuple &);
+template ShiftLogicRightExplicit TreeHandle::FixedArityBuilder<ShiftLogicRightExplicit, BinaryOperationNode<24> >(const Tuple &);
 template SignFunction TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>(const Tuple &);
 template SimplePredictionInterval TreeHandle::FixedArityBuilder<SimplePredictionInterval, SimplePredictionIntervalNode>(const Tuple &);
 template Sine TreeHandle::FixedArityBuilder<Sine, SineNode>(const Tuple &);
@@ -374,5 +394,6 @@ template VectorDot TreeHandle::FixedArityBuilder<VectorDot, VectorDotNode>(const
 template VectorNorm TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>(const Tuple &);
 template VectorNormLayout TreeHandle::FixedArityBuilder<VectorNormLayout, VectorNormLayoutNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
-
+template TwosComplement TreeHandle::FixedArityBuilder<TwosComplement, BinaryOperationNode<31> >(const Tuple &);
+template Xor TreeHandle::FixedArityBuilder<Xor, BinaryOperationNode<9> >(const Tuple &);
 }

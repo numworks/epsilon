@@ -11,9 +11,10 @@
 class ExpressionField : public Responder, public View {
 public:
   ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ~ExpressionField();
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
-  bool isEditing() const;
+  bool isEditing();
   /* Warning: this function is VERY dangerous! Indeed: sometimes the
    * m_layoutField might overflow the m_textBuffer once serialized
    * and still have been accepted before because the model can hold a longer
@@ -21,7 +22,6 @@ public:
    * use text() there... TODO: change text() for fillTextInBuffer?*/
   const char * text();
   void setText(const char * text);
-  bool editionIsInTextField() const;
   bool isEmpty() const;
   bool inputViewHeightDidChange();
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
@@ -41,6 +41,20 @@ public:
   void didBecomeFirstResponder() override;
 
 private:
+  bool shouldUseTextField() const;
+  bool usingTextField() const {
+    assert(shouldUseTextField() == m_usingTextField);
+    return m_usingTextField;
+  }
+  template <class T> T * field() {
+    // A template is required because we may want to use several sub-types:
+    // View, EditableField, Responder, etc...
+    if (usingTextField()) {
+      return &m_textField;
+    } else {
+      return &m_layoutField;
+    }
+  }
   static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
   static constexpr KDCoordinate k_minimalHeight = 37;
   static constexpr KDCoordinate k_maximalHeight = 0.6*Ion::Display::Height;
@@ -49,8 +63,16 @@ private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
   KDCoordinate m_inputViewMemoizedHeight;
-  TextField m_textField;
-  LayoutField m_layoutField;
+  bool m_usingTextField;
+  union {
+    TextField m_textField;
+    struct {
+      LayoutField m_layoutField;
+      /* TODO: This secondary buffer will be made useless once we'll get rid
+       * of text() and replace it by fillTextInBuffer */
+      char m_textBuffer[k_textFieldBufferSize];
+    };
+  };
 };
 
 #endif

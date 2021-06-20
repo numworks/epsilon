@@ -37,6 +37,64 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
   quiz_assert(test);
 }
 
+void assert_and_dispplay_result_for_enum(const char * input, uint8_t result, uint8_t expectedResult, const char ** stringArrayForEnum, const char * type) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize] = "";
+  if(!(result == expectedResult)) {
+    char * position = buffer;
+    size_t remainingLength = bufferSize;
+    static constexpr size_t numberOfPieces = 8;
+    const char * piecesOfInformation[numberOfPieces] = {
+      "  ",
+      input,
+      "\n  has as ",
+      type,
+      "\n  ",
+      stringArrayForEnum[result],
+      "\n  instead of\n  ",
+      stringArrayForEnum[expectedResult],
+    };
+    for (size_t piece = 0; piece < numberOfPieces; piece++) {
+      const size_t length = strlcpy(position, piecesOfInformation[piece], remainingLength);
+      if (length > remainingLength) {
+        break;
+      }
+      remainingLength -= length;
+      position += length;
+    }
+  }
+  quiz_assert_print_if_failure(result == expectedResult, buffer);
+}
+
+void assert_compare_string(const char * input, const char * output, const char * expectedResult, const char * type) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize] = "";
+  if(!(strcmp(output, expectedResult) == 0)) {
+    char * position = buffer;
+    size_t remainingLength = bufferSize;
+    static constexpr size_t numberOfPieces = 8;
+    const char * piecesOfInformation[numberOfPieces] = {
+      "  ",
+      input,
+      "\n  has as ",
+      type,
+      "\n  ",
+      output,
+      "\n  instead of\n  ",
+      expectedResult,
+    };
+    for (size_t piece = 0; piece < numberOfPieces; piece++) {
+      const size_t length = strlcpy(position, piecesOfInformation[piece], remainingLength);
+      if (length > remainingLength) {
+        break;
+      }
+      remainingLength -= length;
+      position += length;
+    }
+  }
+  quiz_assert_print_if_failure(strcmp(output, expectedResult) == 0, buffer);
+}
+
 void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);

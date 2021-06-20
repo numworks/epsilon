@@ -26,7 +26,7 @@ FIRST_EXTERNAL_FLASH_SECTOR_SIZE = 4K;
 
 SECTIONS {
   .isr_vector_table ORIGIN(INTERNAL_FLASH) : {
-    /* When booting, the STM32F412 fetches the content of address 0x0, and
+    /* When booting, the STM32F730 fetches the content of address 0x0, and
      * extracts from it various key infos: the initial value of the PC register
      * (program counter), the initial value of the stack pointer, and various
      * entry points to interrupt service routines. This data is called the ISR

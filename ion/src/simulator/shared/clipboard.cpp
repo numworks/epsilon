@@ -25,6 +25,14 @@ const char * read() {
     return nullptr;
   }
 
+  char * cursor = &buffer[0];
+  while(*cursor) {
+    if(*cursor == '\r' && *(cursor + 1) == '\n') {
+      memmove(cursor, cursor + 1, strlen(cursor));
+    }
+    cursor++;
+  }
+
   /* If version has not changed, the user has not copied any text since the
    * last call to write. A copy of the text already exists in
    * Escher::Clipboard, and has been translated to best suit the current app :

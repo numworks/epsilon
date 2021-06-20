@@ -55,6 +55,10 @@ void Function::setActive(bool active) {
   }
 }
 
+void Function::setColor(KDColor color) {
+  recordData()->setColor(color);
+}
+
 int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }

@@ -29,22 +29,16 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
-  virtual bool handleEnterOnRow(int rowIndex);
+  virtual bool handleEventOnRow(int rowIndex, Ion::Events::Event event);
   virtual int totalNumberOfCells() const {
-#if FUNCTION_COLOR_CHOICE
     return 3;
-#else
-    return 2;
-#endif
   }
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-#if FUNCTION_COLOR_CHOICE
-  MessageTableCellWithChevron m_colorCell;
-#endif
+  MessageTableCellWithColor m_colorCell;
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;
 };

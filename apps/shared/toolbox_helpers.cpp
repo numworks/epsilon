@@ -59,11 +59,11 @@ void TextToInsertForCommandText(const char * command, int commandLength, char * 
       if (argumentAlreadyReplaced) {
         argumentAlreadyReplaced = false;
       }
-      index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
+      index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index - 1);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
         assert(index < bufferSize);
-        index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
+        index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index - 1);
         argumentAlreadyReplaced = true;
       }
     }

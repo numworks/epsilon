@@ -265,9 +265,6 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
-    if (currentChar >= k_titleBufferSize) {
-      break;
-    }
     /* strlcpy returns the size of src, not the size copied, but it is not a
      * problem here. */
     currentChar += strlcpy(m_titleBuffer+currentChar, I18n::translate(m_distribution->parameterNameAtIndex(index)), k_titleBufferSize - currentChar);
@@ -283,12 +280,12 @@ void CalculationController::updateTitle() {
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(m_distribution->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     currentChar += strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
-    if (currentChar >= k_titleBufferSize) {
+    if (currentChar + 1 >= k_titleBufferSize) {
       break;
     }
-    currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_titleBufferSize - currentChar);
+    m_titleBuffer[currentChar++] = ' ';
   }
-  m_titleBuffer[std::min(currentChar, k_titleBufferSize) - 1] = 0;
+  m_titleBuffer[std::min(currentChar, k_titleBufferSize - 1)] = 0;
 }
 
 }

@@ -7,6 +7,8 @@
 # Some minor changes were made by NumWorks team.
 #
 
+# This script has been modified by NumWorks contributors
+
 """This module implements enough functionality to program the STM32F4xx over
 DFU, without requiring dfu-util.
 See app note AN3156 for a description of the DFU protocol.

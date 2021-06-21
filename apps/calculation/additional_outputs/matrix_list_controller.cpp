@@ -10,6 +10,7 @@
 #include <poincare/matrix_trace.h>
 #include <string.h>
 
+
 using namespace Poincare;
 using namespace Shared;
 

@@ -285,7 +285,8 @@ void CalculationController::updateTitle() {
     }
     m_titleBuffer[currentChar++] = ' ';
   }
-  m_titleBuffer[std::min(currentChar, k_titleBufferSize - 1)] = 0;
+  // Nullify last inserted character (' ') or end of buffer if full
+  m_titleBuffer[std::min(currentChar, k_titleBufferSize) - 1] = 0;
 }
 
 }

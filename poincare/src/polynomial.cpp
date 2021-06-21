@@ -124,9 +124,16 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     && (c.nullStatus(context) == ExpressionNode::NullStatus::Null || c.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)) {
     *root1 = NthRoot::Builder(Division::Builder(Opposite::Builder(d.clone()), a.clone()), Rational::Builder(3));
     *root1 = root1->simplify(reductionContext);
-    /* Approximate roots if root1 is too big. Roots 2 and 3 might be twice
-     * root1's size. */
-    approximate = root1->numberOfDescendants(true) * 2 > k_maxNumberOfNodesBeforeApproximatingDelta;
+    if (root1->isUninitialized()
+      || root1->numberOfDescendants(true) * 2 > k_maxNumberOfNodesBeforeApproximatingDelta
+      || (complexFormat == Preferences::ComplexFormat::Polar && !equationIsReal)) {
+      /* Approximate roots if root1 is uninitialized, too big (roots 2 and 3
+       * might be twice root1's size), or if complex format is Polar, which can
+       * serverly complexify roots when beautifying.
+       * TODO : Improve simplification on Polar complex format. */
+      approximate = true;
+      *root1 = NthRoot::Builder(Division::Builder(Opposite::Builder(d.clone()), a.clone()), Rational::Builder(3));
+    }
     /* We compute the three solutions here because they are quite simple, and
      * to avoid generating very complex coefficients when creating the remaining
      * quadratic equation. */

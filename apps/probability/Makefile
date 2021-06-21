@@ -69,6 +69,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	interval_conclusion_view.cpp \
 	statistic_curve_view.cpp \
 	legend_view.cpp \
+	subapp_cell.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\
@@ -114,6 +115,10 @@ $(call object_for,$(tests_src)): SFLAGS += -Iapps
 # Image dependencies
 
 $(eval $(call depends_on_image,apps/probability/app.cpp,apps/probability/probability_icon.png))
+
+$(eval $(call depends_on_image,apps/probability/controllers/menu_controller.cpp,$(addprefix apps/probability/images/,\
+	binomial_icon.png \
+)))
 
 $(eval $(call depends_on_image,apps/probability/controllers/distribution_controller.cpp,$(addprefix apps/probability/images/,\
   binomial_icon.png \

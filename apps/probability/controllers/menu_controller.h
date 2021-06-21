@@ -8,6 +8,7 @@
 #include <escher/view_controller.h>
 
 #include "probability/gui/page_controller.h"
+#include "probability/gui/subapp_cell.h"
 #include "probability/models/data.h"
 
 namespace Probability {
@@ -25,8 +26,10 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override { return k_cellHeight; }
 
 private:
+  constexpr static int k_cellHeight = 65;
   void initializeProbaData();
   ViewController * m_distributionController;
   ViewController * m_testController;
@@ -35,7 +38,7 @@ private:
   constexpr static int k_indexOfDistribution = 0;
   constexpr static int k_indexOfTest = 1;
   constexpr static int k_indexOfInterval = 2;
-  Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfCells];
+  SubappCell m_cells[k_numberOfCells];
   Data::SubApp * m_globalSubapp;
   Distribution * m_globalDistribution;
   Calculation * m_globalCalculation;

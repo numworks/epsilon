@@ -9,6 +9,8 @@
 
 #include <new>
 
+#include "../images/binomial_icon.h"
+#include "../images/focused_binomial_icon.h"
 #include "probability/app.h"
 
 using namespace Probability;
@@ -25,12 +27,14 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
     m_globalSubapp(globalSubapp),
     m_globalDistribution(globalDistribution),
     m_globalCalculation(globalCalculation) {
-  m_cells[k_indexOfDistribution].setMessage(I18n::Message::ProbaApp);
-  m_cells[k_indexOfDistribution].setSubtitle(I18n::Message::ProbaDescr);
-  m_cells[k_indexOfTest].setMessage(I18n::Message::SignificanceTest);
-  m_cells[k_indexOfTest].setSubtitle(I18n::Message::TestDescr);
-  m_cells[k_indexOfInterval].setMessage(I18n::Message::ConfidenceInterval);
-  m_cells[k_indexOfInterval].setSubtitle(I18n::Message::IntervalDescr);
+  m_cells[k_indexOfDistribution].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
+  m_cells[k_indexOfDistribution].setImage(ImageStore::BinomialIcon,
+                                          ImageStore::FocusedBinomialIcon);
+  m_cells[k_indexOfTest].setImage(ImageStore::BinomialIcon, ImageStore::FocusedBinomialIcon);
+  m_cells[k_indexOfTest].setMessages(I18n::Message::SignificanceTest, I18n::Message::TestDescr);
+  m_cells[k_indexOfInterval].setMessages(I18n::Message::ConfidenceInterval,
+                                         I18n::Message::IntervalDescr);
+  m_cells[k_indexOfInterval].setImage(ImageStore::BinomialIcon, ImageStore::FocusedBinomialIcon);
 }
 
 void MenuController::didBecomeFirstResponder() {
@@ -39,7 +43,7 @@ void MenuController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   }
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  m_selectableTableView.reloadData(true);
 }
 
 Escher::HighlightCell * MenuController::reusableCell(int index, int type) {

@@ -3,6 +3,7 @@
 #include "framebuffer.h"
 #include "platform.h"
 #include "state_file.h"
+#include "screenshot.h"
 
 namespace Ion {
 namespace Simulator {
@@ -29,14 +30,8 @@ void loadState() {
 #endif
 
 void takeScreenshot() {
-  const char * path = Platform::filePathForWriting("png");
-  if (path != nullptr) {
-    Platform::saveImage(
-      Framebuffer::address(),
-      Display::Width, Display::Height,
-      path
-    );
-  }
+  Screenshot s(Platform::filePathForWriting("png"));
+  s.capture();
 }
 
 }

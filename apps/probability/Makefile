@@ -68,6 +68,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	test_conclusion_view.cpp \
 	interval_conclusion_view.cpp \
 	statistic_curve_view.cpp \
+	legend_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

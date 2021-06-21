@@ -247,8 +247,11 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX, bool canChan
   const float newYHalfRange = NormalizedYHalfRange(unit);
   float normalizedYXRatio = newYHalfRange/newXHalfRange;
 
-  /* We try to normalize by expanding instead of shrinking as much as possible, since shrinking can hide parts of the curve. If the axis we would like to expand cannot be changed, we shrink the other axis instead, if allowed.
-   * If the Y axis is too long, shrink Y if you cannot extend X ; but if the Y axis is too short, shrink X if you cannot extend X. */
+  /* We try to normalize by expanding instead of shrinking as much as possible,
+   * since shrinking can hide parts of the curve. If the axis we would like to
+   * expand cannot be changed, we shrink the other axis instead, if allowed.
+   * If the Y axis is too long, shrink Y if you cannot extend X ; but if the Y
+   * axis is too short, shrink X if you cannot extend X. */
   bool shrink = (newYMax - newYMin) / (newXMax - newXMin) > normalizedYXRatio ? !canChangeX : !canChangeY;
 
   if (!shrink || canShrink) {
@@ -360,6 +363,27 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
       bool shrink = m_delegate->canShrinkWhenNormalizing();
       bool canChangeX = computeX && (m_delegate->defaultRangeIsNormalized() || !shrink);
       protectedNormalize(canChangeX, computeY, shrink);
+      if (computeY && !intrinsicYRangeIsUnset() && m_yMinIntrinsic <= m_yMaxIntrinsic) {
+        /* Make sure the intrinsic Y values are on screen. */
+        float dy = yMax() - yMin();
+        float yMinIntrinsicWithMargin = m_delegate->addMargin(m_yMinIntrinsic, dy, true, true);
+        bool changedYMin = false;
+        if (yMinIntrinsicWithMargin < yMin()) {
+          float delta = yMin() - yMinIntrinsicWithMargin;
+          m_yRange.setMin(yMinIntrinsicWithMargin, k_lowerMaxFloat, k_upperMaxFloat);
+          m_yRange.setMax(yMax() - delta, k_lowerMaxFloat, k_upperMaxFloat);
+          changedYMin = true;
+        }
+        float yMaxIntrinsicWithMargin = m_delegate->addMargin(m_yMaxIntrinsic, dy, true, false);
+        if (yMaxIntrinsicWithMargin > yMax()) {
+          float delta = yMaxIntrinsicWithMargin - yMax();
+          m_yRange.setMax(yMaxIntrinsicWithMargin, k_lowerMaxFloat, k_upperMaxFloat);
+          if (!changedYMin && yMinIntrinsicWithMargin >= yMin() + delta) {
+            m_yRange.setMin(yMin() + delta, k_lowerMaxFloat, k_upperMaxFloat);
+          }
+        }
+        setZoomNormalize(isOrthonormal());
+      }
     }
   } else {
     m_delegate->tidyModels();

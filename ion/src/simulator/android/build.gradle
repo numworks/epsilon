@@ -16,8 +16,8 @@ buildscript {
     google()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.0'
-    classpath 'com.google.gms:google-services:4.2.0'
+    classpath 'com.android.tools.build:gradle:4.1.0'
+    classpath 'com.google.gms:google-services:4.3.5'
   }
 }
 
@@ -56,6 +56,9 @@ android {
       if (projectVariable('SIGNING_STORE_FILE')) {
         signingConfig signingConfigs.environment
       }
+      ndk {
+        debugSymbolLevel = 'FULL'
+      }
     }
   }
   sourceSets{
@@ -71,10 +74,11 @@ android {
     abortOnError false
     checkReleaseBuilds false
   }
+  ndkVersion System.getenv('NDK_BUNDLE_VERSION')
 }
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   implementation "androidx.appcompat:appcompat:1.0.2"
-  implementation "com.google.android.gms:play-services-analytics:16.0.7"
+  implementation "com.google.android.gms:play-services-analytics:17.0.0"
 }

@@ -26,7 +26,7 @@ void VerticalLayout::layoutSubviews(bool force) {
     proposedFrame = KDRect(0, proposedFrame.y() + proposedFrame.height(), frame.width(), height);
     subviewAtIndex(i)->setFrame(proposedFrame, false);
     availableHeight -= height;
-    assert(availableHeight > 0);
+    assert(availableHeight >= 0);
   }
 }
 
@@ -54,6 +54,6 @@ void HorizontalLayout::layoutSubviews(bool force) {
     proposedFrame = KDRect(proposedFrame.x() + proposedFrame.width(), 0, width, frame.height());
     subviewAtIndex(i)->setFrame(proposedFrame, false);
     availableWidth -= width;
-    assert(availableWidth > 0);
+    assert(availableWidth >= 0);
   }
 }

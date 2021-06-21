@@ -384,9 +384,10 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
   assert(approximate != nullptr);
 
   /* C = root((delta1 ± sqrt(delta1^2 - 4*delta0^3)) / 2, 3)
-   * The sign of ± must be chosen so that C is not null. In practice, we always
-   * chose +, unless delta0 is null, in which case we enforce
-   * C = root(delta1, 3). */
+   * The sign of ± must be chosen so that C is not null:
+   *   - if delta0 is null, we enforce C = root(delta1, 3).
+   *   - otherwise, ± takes the sign of delta1. This way, we do not run the
+   *     risk of subtracting two very close numbers when delta0 << delta1. */
 
   Expression C;
   if (delta0.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
@@ -396,7 +397,13 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
           Power::Builder(delta1.clone(), Rational::Builder(2)),
           Multiplication::Builder(Rational::Builder(4), Power::Builder(delta0.clone(), Rational::Builder(3)))
           ));
-    C = Division::Builder(Addition::Builder(delta1.clone(), rootDeltaDifference), Rational::Builder(2));
+    Expression diff;
+    if (delta1.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+      diff = Subtraction::Builder(delta1.clone(), rootDeltaDifference);
+    } else {
+      diff = Addition::Builder(delta1.clone(), rootDeltaDifference);
+    }
+    C = Division::Builder(diff, Rational::Builder(2));
   }
   C = NthRoot::Builder(C, Rational::Builder(3)).simplify(reductionContext);
 

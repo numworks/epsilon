@@ -4,6 +4,9 @@
 #if ESCHER_LOG_EVENTS_NAME
 #include <ion/console.h>
 #endif
+#if ION_SIMULATOR_FILES
+#include <ion/src/simulator/shared/screenshot.h>
+#endif
 
 namespace Ion {
 namespace Events {
@@ -126,6 +129,53 @@ Event getEvent(int * timeout) {
       Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
 #endif
 
+    } else {
+      res = sSourceJournal->popEvent();
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("(From state file) ", false);
+#endif
+
+    }
+  }
+
+  if (res == Events::None) {
+    res = innerGetEvent(timeout);
+  }
+  if (sDestinationJournal != nullptr) {
+    sDestinationJournal->pushEvent(res);
+  }
+  return res;
+}
+
+#else
+
+Event getEvent(int * timeout) {
+  return innerGetEvent(timeout);
+}
+
+#endif
+
+
+#if ION_EVENTS_JOURNAL
+
+static Journal * sSourceJournal = nullptr;
+static Journal * sDestinationJournal = nullptr;
+void replayFrom(Journal * l) { sSourceJournal = l; }
+void logTo(Journal * l) { sDestinationJournal = l; }
+
+Event getEvent(int * timeout) {
+  Event res = Events::None;
+  // Replay
+  if (sSourceJournal != nullptr) {
+    if (sSourceJournal->isEmpty()) {
+      sSourceJournal = nullptr;
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
+#endif
+#if ION_SIMULATOR_FILES
+      // Save screenshot
+      Simulator::Screenshot::commandlineScreenshot()-> capture();
+#endif
     } else {
       res = sSourceJournal->popEvent();
 #if ESCHER_LOG_EVENTS_NAME

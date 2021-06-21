@@ -6,11 +6,15 @@
 #include "telemetry.h"
 #include "window.h"
 #include <algorithm>
+#include <assert.h>
 #include <vector>
 #include <ion.h>
 #ifndef __WIN32__
 #include <signal.h>
 #include <sys/resource.h>
+#endif
+#if ION_SIMULATOR_FILES
+#include "screenshot.h"
 #endif
 
 /* The Args class allows parsing and editing command-line arguments
@@ -94,6 +98,7 @@ int main(int argc, char * argv[]) {
 #if ION_SIMULATOR_FILES
   const char * stateFile = args.pop("--load-state-file");
   if (stateFile) {
+    assert(Journal::replayJournal());
     StateFile::load(stateFile);
     const char * replayJournalLanguage = Journal::replayJournal()->startingLanguage();
     if (replayJournalLanguage[0] != 0) {
@@ -102,6 +107,12 @@ int main(int argc, char * argv[]) {
       args.push("--language", replayJournalLanguage);
     }
   }
+
+  const char * screenshotPath = args.pop("--take-screenshot");
+  if (screenshotPath) {
+    Ion::Simulator::Screenshot::commandlineScreenshot()->init(screenshotPath);
+  }
+
 #endif
 
   // Default language
@@ -114,7 +125,7 @@ int main(int argc, char * argv[]) {
   Random::init();
   if (!headless) {
     Journal::init();
-    if (args.has("--language")) {
+    if (args.has("--language") && Journal::logJournal()) {
       // Set log journal starting language
       Journal::logJournal()->setStartingLanguage(args.get("--language"));
     }

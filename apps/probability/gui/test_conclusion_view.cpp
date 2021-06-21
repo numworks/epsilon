@@ -13,7 +13,7 @@ void TestConclusionView::Icon::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Escher::Palette::WallScreen);
   // Draw circle
   int r = k_size / 2;
-  drawCircle(ctx, rect, KDPointZero, r, m_type == Type::Failure ? KDColorRed : KDColorOrange);
+  ctx->fillAntialiasedCircle(KDPointZero, r, m_type == Type::Failure ? KDColorRed : KDColorOrange, Palette::WallScreen);
 
   // Then either checkmark or cross
   if (m_type == Type::Failure) {
@@ -30,68 +30,6 @@ void TestConclusionView::Icon::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->drawLine(p1, p2, KDColorWhite);
     ctx->drawLine(p2, p3, KDColorWhite);
   }
-}
-
-void TestConclusionView::Icon::drawCircle(KDContext * ctx, KDRect rect, KDPoint center, int radius,
-                                          KDColor color, KDColor background) const {
-  constexpr static int maxD = 30;
-  assert(radius < maxD);
-  float buffer[maxD * maxD]{0};
-  KDColor colorBuffer[maxD * maxD];
-  int maxI = std::round((radius)*M_SQRT1_2);
-  int r2 = radius * radius;
-  float hi, hip1 = radius - 1e-5, alphaA, alphaB;
-  int qi;
-  for (int i = 0; i < maxI; i++) {
-    hi = hip1;
-    hip1 = std::sqrt(r2 - pow(i + 1, 2));
-    qi = std::floor(hi - 1e-5);
-    if (qi > hip1) {
-      alphaA = (hi - qi) / 2;
-      alphaB = (2 + hip1 - qi) / 2;
-      setToAllSymetries(buffer, alphaB, i, qi - 1, radius);
-      setToAllSymetries(buffer, alphaA, i, qi, radius);
-    } else {
-      // Only one pixel
-      alphaB = (hi + hip1 - 2 * qi) / 2;
-      setToAllSymetries(buffer, alphaB, i, qi, radius);
-    }
-
-    // Filled lines
-    for (int j = qi - 1; j > -qi - 1; j--) {
-      buffer[posToIndex(i, j, radius)] = 1;
-      buffer[posToIndex(-i - 1, j, radius)] = 1;
-    }
-    for (int j = i; j > -i - 2; j--) {
-      buffer[posToIndex(qi - 1, j, radius)] = 1;
-      buffer[posToIndex(-qi, j, radius)] = 1;
-    }
-  }
-  // Convert to KDColor array
-  uint8_t r = color.red(), g = color.green(), b = color.blue();
-  uint8_t br = background.red(), bg = background.green(), bb = background.blue();
-  for (int index = 0; index < (2 * radius) * (2 * radius); index++) {
-    float alpha = buffer[index];
-    colorBuffer[index] = KDColor::RGB888(r * alpha + br * (1 - alpha), g * alpha + bg * (1 - alpha),
-                                         b * alpha + bb * (1 - alpha));
-  }
-  KDRect circleRect = KDRect(rect.origin().translatedBy(center), KDSize(2 * radius, 2 * radius));
-  ctx->fillRectWithPixels(circleRect, colorBuffer, colorBuffer);
-}
-
-int TestConclusionView::Icon::posToIndex(int i, int j, int r) {
-  return r + i + (r - 1 - j) * 2 * r;
-}
-
-void TestConclusionView::Icon::setToAllSymetries(float buffer[], float alpha, int i, int j, int r) {
-  buffer[posToIndex(i, j, r)] = alpha;
-  buffer[posToIndex(i, -j - 1, r)] = alpha;
-  buffer[posToIndex(-i - 1, j, r)] = alpha;
-  buffer[posToIndex(-i - 1, -j - 1, r)] = alpha;
-  buffer[posToIndex(j, i, r)] = alpha;
-  buffer[posToIndex(-j - 1, i, r)] = alpha;
-  buffer[posToIndex(j, -i - 1, r)] = alpha;
-  buffer[posToIndex(-j - 1, -i - 1, r)] = alpha;
 }
 
 KDSize TestConclusionView::Icon::minimalSizeForOptimalDisplay() const {

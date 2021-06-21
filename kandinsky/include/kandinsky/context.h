@@ -34,6 +34,9 @@ public:
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
 
+  // Circle
+  void fillAntialiasedCircle(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background);
+
 protected:
   KDContext(KDPoint origin, KDRect clippingRect) : m_origin(origin), m_clippingRect(clippingRect) {}
   virtual void pushRect(KDRect, const KDColor * pixels) = 0;

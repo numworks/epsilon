@@ -13,6 +13,7 @@ kandinsky_src += $(addprefix kandinsky/src/,\
   context_pixel.cpp \
   context_rect.cpp \
   context_text.cpp \
+  context_circle.cpp \
   font.cpp \
   framebuffer.cpp \
   framebuffer_context.cpp \

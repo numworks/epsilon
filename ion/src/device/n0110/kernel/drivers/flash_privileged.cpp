@@ -25,14 +25,16 @@ bool ForbiddenSector(int i) {
     return !(i >= firstSectorSlotBAfterPersistingBytes && i < ExternalFlash::Config::NumberOfSectors);
   }
   /* Non-authenticated userland can write:
-   * - the external apps section of the running slot,
+   * - the external apps section of both slots,
    * - the persisting bytes section of the running slot. */
   if (Board::isRunningSlotA()) {
     return !((i >= firstSectorSlotA && i < firstSectorSlotAAfterPersistingBytes) ||
+        (i >= ExternalFlash::Config::NumberOfSectors - Board::Config::ExternalAppsNumberOfSector && i < ExternalFlash::Config::NumberOfSectors) ||
         (i >= firstSectorSlotB - Board::Config::ExternalAppsNumberOfSector && i < firstSectorSlotB));
   }
   return !((i >= firstSectorSlotB && i < firstSectorSlotBAfterPersistingBytes) ||
-    (i >= ExternalFlash::Config::NumberOfSectors - Board::Config::ExternalAppsNumberOfSector && i < ExternalFlash::Config::NumberOfSectors));
+      (i >= firstSectorSlotA && i < firstSectorSlotAAfterPersistingBytes) ||
+      (i >= ExternalFlash::Config::NumberOfSectors - Board::Config::ExternalAppsNumberOfSector && i < ExternalFlash::Config::NumberOfSectors));
 }
 
 

@@ -22,7 +22,7 @@ bool ForbiddenSector(int i) {
       return !((i >= firstSectorSlotA && i < firstSectorSlotAAfterPersistingBytes) ||
           (i >= firstSectorSlotB - Board::Config::ExternalAppsNumberOfSector && i < ExternalFlash::Config::NumberOfSectors));
     }
-    return !(i >= firstSectorSlotAAfterPersistingBytes && i < ExternalFlash::Config::NumberOfSectors);
+    return !(i >= firstSectorSlotBAfterPersistingBytes && i < ExternalFlash::Config::NumberOfSectors);
   }
   /* Non-authenticated userland can write:
    * - the external apps section of the running slot,

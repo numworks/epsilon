@@ -5,8 +5,11 @@ using namespace Probability;
 KDSize Probability::VerticalLayout::minimalSizeForOptimalDisplay() const {
   int requiredWidth = 0, requiredHeight = 0;
   KDSize requiredSize(0, 0);
+  KDRect proposedFrame = KDRect(0, 0, bounds().width(), 0);
   for (int i = 0; i < numberOfSubviews(); i++) {
     Escher::View * subview = const_cast<VerticalLayout *>(this)->subviewAtIndex(i);
+    subview->setFrame(KDRect(0, proposedFrame.y() + proposedFrame.height(), bounds().width(), 0),
+                      false);
     requiredSize = subview->minimalSizeForOptimalDisplay();
     requiredHeight += requiredSize.height();
     requiredWidth = fmaxf(requiredWidth, requiredSize.width());

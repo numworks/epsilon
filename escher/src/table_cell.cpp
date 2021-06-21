@@ -143,7 +143,7 @@ void TableCell::layoutSubviews(bool force) {
     /* Label is vertically centered. If available space is odd, the extra pixel
      * is given as extra height. */
     KDCoordinate availableSpace = maxHeight - labelHeight;
-    label->setFrame(KDRect(x, y + availableSpace/2, labelWidth, labelHeight + availableSpace%2), force);
+    label->setFrame(KDRect(x, y + availableSpace/2, labelWidth, labelHeight), force);
   }
 
   if (subLabel) {

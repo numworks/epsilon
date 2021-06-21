@@ -1,5 +1,6 @@
 ion_src += $(addprefix ion/src/shared/dummy/, \
   backlight.cpp \
+  board.cpp \
   battery.cpp \
   display.cpp \
   exam_mode.cpp \
@@ -40,6 +41,7 @@ ifeq ($(ION_SIMULATOR_FILES),1)
 ion_src += $(addprefix ion/src/simulator/shared/, \
   actions.cpp \
   state_file.cpp \
+  screenshot.cpp \
 )
 SFLAGS += -DION_SIMULATOR_FILES=1
 endif

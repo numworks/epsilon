@@ -1,17 +1,32 @@
-# Copyright (C) 2009-2017 Wander Lairson Costa
-# Copyright (C) 2017-2018 Robert Wlodarczyk
+# Copyright 2009-2017 Wander Lairson Costa
+# Copyright 2009-2021 PyUSB contributors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from ctypes import *
 import usb.util
@@ -22,14 +37,14 @@ import usb._interop as _interop
 import usb._objfinalizer as _objfinalizer
 import errno
 import math
-from usb.core import USBError
+from usb.core import USBError, USBTimeoutError
 import usb.libloader
 
 __author__ = 'Wander Lairson Costa'
 
 __all__ = [
             'get_backend',
-            'LIBUSB_SUCESS',
+            'LIBUSB_SUCCESS',
             'LIBUSB_ERROR_IO',
             'LIBUSB_ERROR_INVALID_PARAM',
             'LIBUSB_ERROR_ACCESS',
@@ -42,14 +57,14 @@ __all__ = [
             'LIBUSB_ERROR_INTERRUPTED',
             'LIBUSB_ERROR_NO_MEM',
             'LIBUSB_ERROR_NOT_SUPPORTED',
-            'LIBUSB_ERROR_OTHER'
+            'LIBUSB_ERROR_OTHER',
             'LIBUSB_TRANSFER_COMPLETED',
             'LIBUSB_TRANSFER_ERROR',
             'LIBUSB_TRANSFER_TIMED_OUT',
             'LIBUSB_TRANSFER_CANCELLED',
             'LIBUSB_TRANSFER_STALL',
             'LIBUSB_TRANSFER_NO_DEVICE',
-            'LIBUSB_TRANSFER_OVERFLOW'
+            'LIBUSB_TRANSFER_OVERFLOW',
         ]
 
 _logger = logging.getLogger('usb.backend.libusb1')
@@ -256,6 +271,7 @@ def _get_iso_packet_list(transfer):
     return list_type.from_address(addressof(transfer.iso_packet_desc))
 
 _lib = None
+_lib_object = None
 
 def _load_library(find_library=None):
     # Windows backend uses stdcall calling convention
@@ -582,6 +598,8 @@ def _check(ret):
     if ret < 0:
         if ret == LIBUSB_ERROR_NOT_SUPPORTED:
             raise NotImplementedError(_strerror(ret))
+        elif ret == LIBUSB_ERROR_TIMEOUT:
+            raise USBTimeoutError(_strerror(ret), ret, _libusb_errno[ret])
         else:
             raise USBError(_strerror(ret), ret, _libusb_errno[ret])
 
@@ -700,7 +718,8 @@ class _LibUSB(usb.backend.IBackend):
 
     @methodtrace(_logger)
     def _finalize_object(self):
-        self.lib.libusb_exit(self.ctx)
+        if self.ctx:
+            self.lib.libusb_exit(self.ctx)
 
 
     @methodtrace(_logger)
@@ -936,12 +955,13 @@ class _LibUSB(usb.backend.IBackend):
         return transferred.value
 
 def get_backend(find_library=None):
-    global _lib
+    global _lib, _lib_object
     try:
-        if _lib is None:
+        if _lib_object is None:
             _lib = _load_library(find_library=find_library)
             _setup_prototypes(_lib)
-        return _LibUSB(_lib)
+            _lib_object = _LibUSB(_lib)
+        return _lib_object
     except usb.libloader.LibraryException:
         # exception already logged (if any)
         _logger.error('Error loading libusb 1.0 backend', exc_info=False)

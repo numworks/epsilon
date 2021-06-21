@@ -22,13 +22,21 @@ public:
     View * subviews[] = {&m_icon, &m_labelView};
     return subviews[i];
   }
+  KDSize minimalSizeForOptimalDisplay() const override;
+  void layoutSubviews(bool force) override;
 
 private:
+  constexpr static int k_marginBetween = 5;
+  constexpr static int k_offsetTop = 3;
   constexpr static int k_diameter = 8;
-  class Icon : public Escher::SolidColorView {
+  class Icon : public Escher::View {
   public:
-    using Escher::SolidColorView::SolidColorView;
+    Icon(KDColor color) : m_color(color) {}
+    void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_diameter, k_diameter); }
+
+  private:
+    KDColor m_color;
   };
   Escher::BufferTextView m_labelView;
   Icon m_icon;

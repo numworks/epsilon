@@ -21,8 +21,12 @@ public:
   void setHighlighted(bool highlight) override;
   Responder * responder() override { return this; }
   const char * text() const override { return !m_textField.isEditing() ? m_textField.text() : nullptr; }
-  bool giveAccessoryAllWidth() const override { return true; }
   void setAccessoryText(const char * text);
+  bool isSublabelAlignedRight() const override { return false; }
+  bool  alignLabelAndAccessory() const override { return true; }
+  bool giveAccessoryAllWidth() const override { return true; }
+
+
 private:
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];

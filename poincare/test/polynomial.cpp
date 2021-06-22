@@ -52,6 +52,11 @@ QUIZ_CASE(poincare_polynomial_roots_cubic) {
   assert_roots_of_polynomial_are("1/9×(x+√(2))^3", {"-√(2)"}, "0", Real);
   assert_roots_of_polynomial_are("x^3+x^2-15/4×x-9/2", {"-3/2", "2"}, "0", Real);
   assert_roots_of_polynomial_are("4×x^3+3×x+𝐢", {"-𝐢/2", "𝐢"}, "0", Cartesian);
+  assert_roots_of_polynomial_are("x^3-8", {"2", "-1-√(3)×𝐢", "-1+√(3)×𝐢"}, "-1728", Cartesian);
+  assert_roots_of_polynomial_are("x^3-8𝐢", {"-2×𝐢", "-√(3)+𝐢", "√(3)+𝐢"}, "1728", Cartesian);
+  assert_roots_of_polynomial_are("x^3-13-𝐢", {"-1.124282-2.067764×𝐢", "2.352877+6.022476ᴇ-2×𝐢", "-1.228595+2.007539×𝐢"}, "-4.536ᴇ3-7.02ᴇ2×𝐢", Cartesian);
+  assert_roots_of_polynomial_are("x^3-ℯ^(2𝐢π/7)", {"1×ℯ^-1.795196×𝐢", "ℯ^2.991993ᴇ-1×𝐢", "ℯ^2.393594×𝐢"}, "2.7ᴇ1×ℯ^-1.346397×𝐢", Polar);
+  assert_roots_of_polynomial_are("x^3-ℯ^(2𝐢π/7)-1", {"1.216877×ℯ^-1.944795×𝐢", "1.216877×ℯ^1.495997ᴇ-1×𝐢", "1.216877×ℯ^2.243995×𝐢"}, "8.766845ᴇ1×ℯ^-2.243995×𝐢", Polar);
   assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2"}, "\u0012180×√(3)-465\u0013/16", Real);
   assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2", "1/2-√(5)/2×𝐢", "1/2+√(5)/2×𝐢"}, "\u0012180×√(3)-465\u0013/16", Cartesian);
   assert_roots_of_polynomial_are("(x-1)(x-2)(x-3)", {"1", "2", "3"}, "4", Real);

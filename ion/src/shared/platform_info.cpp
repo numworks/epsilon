@@ -25,10 +25,10 @@ constexpr void * storageAddress = &(Ion::staticStorageArea);
 constexpr PlatformInfo::PlatformInfo() :
   m_header(Magic),
   m_epsilonVersion{EPSILON_VERSION},
-  m_kernelVersion{KERNEL_VERSION},
   m_patchLevel{PATCH_LEVEL},
   m_storageAddress(storageAddress),
   m_storageSize(Ion::Storage::k_storageSize),
+  m_kernelVersion{KERNEL_VERSION},
   m_footer(Magic) { }
 
 constexpr PlatformInfo HEADER_SECTION platform_infos;

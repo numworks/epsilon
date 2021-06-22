@@ -100,10 +100,10 @@ private:
   constexpr static uint32_t k_kernelMaxVersion = 15*32*8; // NumberOfAvailableOTPBlocks * BytesPerBlock * BitsPerBytes
   uint32_t m_header;
   const char m_epsilonVersion[8];
-  const char m_kernelVersion[8];
   const char m_patchLevel[8];
   void * m_storageAddress;
   size_t m_storageSize;
+  const char m_kernelVersion[8];
   uint32_t m_footer;
 };
 

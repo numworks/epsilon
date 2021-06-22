@@ -124,7 +124,7 @@ Ion::Events::Event getPlatformEvent() {
   return Ion::Events::None;
 }
 
-void didPressNewKey(Keyboard::Key key) {}
+void didPressNewKey() {}
 
 Keyboard::State popKeyboardState() {
   return Ion::Device::Keyboard::popState();

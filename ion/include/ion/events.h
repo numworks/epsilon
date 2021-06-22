@@ -76,8 +76,6 @@ void setShiftAlphaStatus(ShiftAlphaStatus s);
 void setSpinner(bool spinner);
 int repetitionFactor();
 
-//void didPressNewKey(); // TODO EMILIE --> only for simulators
-
 // Plain
 
 constexpr Event Left  = Event::PlainKey(Keyboard::Key::Left);
@@ -87,7 +85,8 @@ constexpr Event Right = Event::PlainKey(Keyboard::Key::Right);
 constexpr Event OK    = Event::PlainKey(Keyboard::Key::OK);
 constexpr Event Back  = Event::PlainKey(Keyboard::Key::Back);
 
-//constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
+/* The Home event is only used on simulators, as they cannot handle preemption. */
+constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
 constexpr Event OnOff = Event::PlainKey(Keyboard::Key::OnOff);
 
 constexpr Event Shift = Event::PlainKey(Keyboard::Key::Shift);

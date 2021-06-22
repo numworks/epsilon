@@ -26,10 +26,8 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override { return k_cellHeight; }
 
 private:
-  constexpr static int k_cellHeight = 65;
   void initializeProbaData();
   ViewController * m_distributionController;
   ViewController * m_testController;

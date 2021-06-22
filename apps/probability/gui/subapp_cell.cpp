@@ -39,18 +39,6 @@ Escher::View * SubappCell::subviewAtIndex(int i) {
   }
 }
 
-KDSize SubappCell::minimalSizeForOptimalDisplay() const {
-  KDSize iconSize = m_icon.minimalSizeForOptimalDisplay();
-  KDSize chevronSize = m_chevron.minimalSizeForOptimalDisplay();
-  const_cast<TitleAndSubtitleView *>(&m_titleAndSubtitleView)
-      ->setFrame(
-          KDRect(KDPointZero, KDSize(bounds().width() - iconSize.width() - chevronSize.width(), 0)),
-          false);
-  KDSize textsSize = m_titleAndSubtitleView.minimalSizeForOptimalDisplay();
-  int height = fmaxf(fmaxf(iconSize.height(), textsSize.height()), chevronSize.height());
-  return KDSize(iconSize.width() + textsSize.width() + chevronSize.width(), height);
-}
-
 void SubappCell::setImage(const Escher::Image * image, const Escher::Image * focusedImage) {
   m_icon.setImage(image, focusedImage);
 }

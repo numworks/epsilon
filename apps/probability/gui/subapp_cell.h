@@ -51,9 +51,10 @@ public:
   void setHighlighted(bool highlighted) override;
   Escher::View * subviewAtIndex(int i) override;
   int numberOfSubviews() const override { return 3; }
-  const View * accessoryView() const override { return &m_icon; }
-  const View * labelView() const override { return &m_titleAndSubtitleView; }
-  const View * subLabelView() const override { return &m_chevron; }
+  const View * accessoryView() const override { return &m_chevron; }
+  const View * labelView() const override { return &m_icon; }
+  const View * subLabelView() const override { return &m_titleAndSubtitleView; }
+  bool isSublabelAlignedRight() const override { return false; }
 
   void setImage(const Escher::Image * image, const Escher::Image * focusedImage);
   void setMessages(I18n::Message title, I18n::Message subTitle);

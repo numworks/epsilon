@@ -28,11 +28,8 @@ bool handlePreemption(bool) {
 
 /* getPlatformEvent defined in ./events_platform.cpp */
 
-void didPressNewKey(Keyboard::Key key) {
+void didPressNewKey() {
   Simulator::Haptics::rumble();
-  if (key == Keyboard::Key::Home && CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::Home)) {
-    CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::Home);
-  }
 }
 
 Keyboard::State popKeyboardState() {

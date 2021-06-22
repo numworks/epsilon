@@ -119,7 +119,7 @@ void TableCell::layoutSubviews(bool force) {
     // Accessory must be vertically centered on the entire cell height.
     KDCoordinate availableSpace = height - accessorySize.height();
     // Set accessory frame
-    accessory->setFrame(KDRect(accessoryX, y + availableSpace/2, accessoryWidth, accessoryHeight + availableSpace%2), force);
+    accessory->setFrame(KDRect(accessoryX, y + availableSpace/2, accessoryWidth, accessoryHeight), force);
     // Update remaining space, add margin before accessory
     KDCoordinate horizontalOffset = accessoryWidth + Metric::CellHorizontalElementMargin;
     if (!isAccessoryAlignedRight()) {

@@ -17,6 +17,15 @@
 
 namespace Poincare {
 
+int Polynomial::LinearPolynomialRoots(Expression a, Expression b, Expression * root, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert(root);
+  assert(!(a.isUninitialized() || b.isUninitialized()));
+  ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
+
+  *root = Division::Builder(Opposite::Builder(b), a).simplify(reductionContext);
+  return !root->isUndefined();
+}
+
 int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression c, Expression * root1, Expression * root2, Expression * delta, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool approximateSolutions) {
   assert(root1 && root2 && delta);
   assert(!(a.isUninitialized() || b.isUninitialized() || c.isUninitialized()));

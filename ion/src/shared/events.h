@@ -14,7 +14,7 @@ bool sharedIsDefined(uint8_t eventId);
 /* Platform specific functions */
 bool handlePreemption(bool stalling);
 Event getPlatformEvent();
-void didPressNewKey(Keyboard::Key key);
+void didPressNewKey();
 Keyboard::State popKeyboardState();
 bool waitForInterruptingEvent(int maximumDelay, int * timeout);
 

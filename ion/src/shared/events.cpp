@@ -105,7 +105,7 @@ Event sharedGetEvent(int * timeout) {
          * Unfortunately there's no way to express this in standard C, so we have
          * to resort to using a builtin function. */
         Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-        didPressNewKey(key);
+        didPressNewKey();
         sLastEventShift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
         sLastEventAlpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
         Event event(key, sLastEventShift, sLastEventAlpha, lock);

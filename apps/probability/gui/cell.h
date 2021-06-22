@@ -12,9 +12,10 @@ namespace Probability {
 class Cell : public Escher::TableCell {
 public:
   Cell();
-  const View * labelView() const override { return &m_labelView; }
-  const View * accessoryView() const override { return &m_iconView; }
-  const View * subLabelView() const override { return &m_chevronView; }
+  const View * labelView() const override { return &m_iconView; }
+  const View * accessoryView() const override { return &m_chevronView; }
+  const View * subLabelView() const override { return &m_messageView; }
+  bool isSublabelAlignedRight() const override { return false; }
 
   void reloadCell() override;
   void setLabel(I18n::Message message);
@@ -25,7 +26,7 @@ private:
   constexpr static KDCoordinate k_iconMargin = 10;
   constexpr static KDCoordinate k_chevronWidth = 8;
   constexpr static KDCoordinate k_chevronMargin = 10;
-  Escher::MessageTextView m_labelView;
+  Escher::MessageTextView m_messageView;
   Escher::ImageView m_iconView;
   /* TODO: One day, we would rather store a mask (8bits/pixel) instead of two
    * images (16bits/pixels)*/

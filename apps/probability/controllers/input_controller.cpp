@@ -130,7 +130,7 @@ bool Probability::InputController::textFieldDidHandleEvent(TextField * textField
                                                            bool textSizeDidChange) {
   if (textField->isEditing()) {
     resetMemoization();
-    m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
+    m_selectableTableView.reloadData();
   }
   return FloatParameterPage::textFieldDidHandleEvent(textField, returnValue, textSizeDidChange);
 }

@@ -323,6 +323,7 @@ Q(zip)
   // Ion QSTR
 Q(ion)
 Q(keydown)
+Q(battery)
 Q(KEY_LEFT)
 Q(KEY_UP)
 Q(KEY_DOWN)

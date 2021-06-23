@@ -12,3 +12,7 @@ mp_obj_t modion_keyboard_keydown(mp_obj_t key_o) {
   micropython_port_interrupt_if_needed();
   return mp_obj_new_bool(state.keyDown(key));
 }
+
+mp_obj_t modion_battery() {
+  return mp_obj_new_float(Ion::Battery::voltage());
+}

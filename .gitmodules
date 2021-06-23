@@ -1,0 +1,3 @@
+[submodule "epsilon-secure"]
+	path = epsilon-secure
+	url = git@github.com:numworks/epsilon-secure.git

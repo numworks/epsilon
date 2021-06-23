@@ -12,7 +12,8 @@
 using namespace Probability;
 
 InputController::InputController(Escher::StackViewController * parent,
-                                 ResultsController * resultsController, Statistic * statistic,
+                                 ResultsController * resultsController,
+                                 Statistic * statistic,
                                  Escher::InputEventHandlerDelegate * handler) :
     FloatParameterPage(parent),
     m_statistic(statistic),
@@ -37,7 +38,8 @@ const char * InputController::title() {
     const char * symbol = testToTextSymbol(App::app()->test());
     char op = static_cast<const char>(m_statistic->hypothesisParams()->op());
     char paramBuffer[10];
-    defaultParseFloat(m_statistic->hypothesisParams()->firstParam(), paramBuffer, sizeof(paramBuffer));
+    defaultParseFloat(
+        m_statistic->hypothesisParams()->firstParam(), paramBuffer, sizeof(paramBuffer));
     sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%c%s", symbol, paramBuffer, symbol, op, paramBuffer);
   } else {
     strlcpy(m_titleBuffer, "z-interval bla...", bufferSize);
@@ -114,3 +116,27 @@ Escher::HighlightCell * InputController::reusableParameterCell(int index, int ty
   return &m_significanceCell;
 }
 
+bool Probability::InputController::textFieldDidFinishEditing(Escher::TextField * textField,
+                                                             const char * text,
+                                                             Ion::Events::Event event) {
+  bool res = FloatParameterPage::textFieldDidFinishEditing(textField, text, event);
+  resetMemoization();
+  m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
+  return res;
+}
+
+bool Probability::InputController::textFieldDidHandleEvent(TextField * textField,
+                                                           bool returnValue,
+                                                           bool textSizeDidChange) {
+  if (textField->isEditing()) {
+    resetMemoization();
+    m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
+  }
+  return FloatParameterPage::textFieldDidHandleEvent(textField, returnValue, textSizeDidChange);
+}
+
+bool Probability::InputController::textFieldDidAbortEditing(TextField * textField) {
+  resetMemoization();
+  m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
+  return FloatParameterPage::textFieldDidAbortEditing(textField);
+}

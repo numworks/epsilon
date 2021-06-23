@@ -61,6 +61,7 @@ protected:
   virtual bool alignLabelAndAccessory() const { return false; }
   virtual bool isSublabelAlignedRight() const { return true; }
   virtual KDCoordinate accessoryMinimalWidthOverridden() const { return -1; }
+  virtual bool hideSublabel() { return false; }
 
   bool singleRowMode() const;
 

@@ -13,6 +13,8 @@ public:
   const View * subLabelView() const override { return m_subLabelView.text()[0] == 0 ? nullptr : &m_subLabelView; }
   void setHighlighted(bool highlight) override;
   void setSubLabelMessage(I18n::Message textBody);
+  bool hideSublabel() override { return singleRowMode() && m_textField.isEditing(); }
+
 protected:
   MessageTextView m_subLabelView;
 };

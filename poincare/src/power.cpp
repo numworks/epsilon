@@ -59,6 +59,23 @@ Expression PowerNode::setSign(Sign s, ReductionContext reductionContext) {
   return Power(this).setSign(s, reductionContext);
 }
 
+ExpressionNode::NullStatus PowerNode::nullStatus(Context * context) const {
+  // In practice, calling nullStatus on a reduced power always returns Unknown.
+  ExpressionNode * base = childAtIndex(0);
+  ExpressionNode * index = childAtIndex(1);
+  ExpressionNode::NullStatus indexNullStatus = index->nullStatus(context);
+  if (indexNullStatus == ExpressionNode::NullStatus::Null && base->nullStatus(context) == ExpressionNode::NullStatus::NonNull) {
+    // x^0 is non null
+    return ExpressionNode::NullStatus::NonNull;
+  }
+  if (indexNullStatus == ExpressionNode::NullStatus::NonNull && base->nullStatus(context) == ExpressionNode::NullStatus::Null && index->sign(context) == Sign::Positive ) {
+    // 0^+x is null
+    return ExpressionNode::NullStatus::Null;
+  }
+  // Nothing else can be assumed because base could be infinite.
+  return ExpressionNode::NullStatus::Unknown;
+}
+
 int PowerNode::polynomialDegree(Context * context, const char * symbolName) const {
   int deg = ExpressionNode::polynomialDegree(context, symbolName);
   if (deg == 0) {

@@ -25,10 +25,14 @@ public:
   bool isSublabelAlignedRight() const override { return false; }
   bool  alignLabelAndAccessory() const override { return true; }
   bool giveAccessoryAllWidth() const override { return true; }
+  KDCoordinate accessoryMinimalWidthOverridden() const override {
+    return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
+               Poincare::Preferences::ShortNumberOfSignificantDigits + 1) *
+           m_textField.font()->glyphSize().width() + TextCursorView::k_width;
+  }
 
-
-private:
   TextField m_textField;
+private:
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };
 

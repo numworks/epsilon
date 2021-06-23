@@ -50,7 +50,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   virtual bool giveAccessoryAllWidth() const { return false; }
 
-  static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate width, bool giveAccessoryAllWidth);
+  static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate minAccessoryWidth, KDCoordinate width);
   static constexpr KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 18 + Metric::CellTopMargin; // KDFont::LargeFont->glyphSize().height() = 18
   static constexpr KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 14 + Metric::CellTopMargin; // KDFont::SmallFont->glyphSize().height() = 14
 protected:
@@ -60,12 +60,15 @@ protected:
   void layoutSubviews(bool force = false) override;
   virtual bool alignLabelAndAccessory() const { return false; }
   virtual bool isSublabelAlignedRight() const { return true; }
+  virtual KDCoordinate accessoryMinimalWidthOverridden() const { return -1; }
+
+  bool singleRowMode() const;
 
 private:
   static bool singleRowMode(KDCoordinate width,
                             const View * labelView,
                             const View * sublabelView,
-                            const View * accessoryView);
+                            KDCoordinate accessoryWidth);
   static void setFrameIfViewExists(View * v, KDRect rect, bool force);
 };
 }

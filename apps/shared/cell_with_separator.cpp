@@ -50,8 +50,8 @@ KDSize CellWithSeparator::minimalSizeForOptimalDisplay() const {
       constCell()->labelView(),
       constCell()->subLabelView(),
       constCell()->accessoryView(),
-      expectedWidth,
-      constCell()->giveAccessoryAllWidth()
+      constCell()->accessoryView()->minimalSizeForOptimalDisplay().width(),
+      expectedWidth
     ) + k_margin + Metric::CellSeparatorThickness
   );
 }

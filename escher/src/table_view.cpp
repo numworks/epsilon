@@ -100,7 +100,7 @@ KDCoordinate TableView::ContentView::width() const {
 void TableView::ContentView::reloadCellAtLocation(int i, int j) {
   HighlightCell * cell = cellAtLocation(i, j);
   if (cell) {
-    m_dataSource->willDisplayCellAtLocation(cellAtLocation(i, j), i, j);
+    m_dataSource->willDisplayCellAtLocation(cell, i, j);
   }
 }
 

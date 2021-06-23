@@ -179,10 +179,10 @@ bool TableCell::singleRowMode(KDCoordinate width,
   constexpr KDCoordinate leftOffset = k_separatorThickness + Metric::CellLeftMargin;
   width -= leftOffset + Metric::CellRightMargin + k_separatorThickness;
 
-  bool singleRow = !(labelView && sublabelView &&
-                     labelSize.width() + subLabelSize.width() + accessoryWidth +
-                             2 * Metric::CellHorizontalElementMargin >
-                         width);
+  bool singleRow = labelView && sublabelView &&
+                   labelSize.width() + subLabelSize.width() + accessoryWidth +
+                           2 * Metric::CellHorizontalElementMargin <
+                       width;
   return singleRow;
 }
 

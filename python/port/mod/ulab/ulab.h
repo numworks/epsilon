@@ -35,7 +35,11 @@
 // Determines, whether scipy is defined in ulab. The sub-modules and functions
 // of scipy have to be defined separately
 #ifndef ULAB_HAS_SCIPY
+#if defined(DEVICE_N0100)
 #define ULAB_HAS_SCIPY                      (0)
+#else
+#define ULAB_HAS_SCIPY                      (1)
+#endif
 #endif
 
 // The maximum number of dimensions the firmware should be able to support
@@ -82,7 +86,11 @@
 // 2 kB in the two-dimensional case, and around 4 kB in the four-dimensional case.
 
 #ifndef NDARRAY_BINARY_USES_FUN_POINTER
+#if defined(DEVICE_N0100)
+#define NDARRAY_BINARY_USES_FUN_POINTER     (1)
+#else
 #define NDARRAY_BINARY_USES_FUN_POINTER     (0)
+#endif
 #endif
 
 #ifndef NDARRAY_HAS_BINARY_OP_ADD

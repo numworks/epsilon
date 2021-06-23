@@ -548,34 +548,17 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     trivialResult = Rational::Builder(1);
   } else {
     ExpressionNode::NullStatus baseNull = base.nullStatus(context);
-    switch (indexNull) {
-      case ExpressionNode::NullStatus::Null:
-        if (baseNull == ExpressionNode::NullStatus::Null) {
-          // 0^0 -> undef
-          trivialResult = Undefined::Builder();
-          break;
-        } else if (baseNull == ExpressionNode::NullStatus::NonNull || reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-          // x^0 -> 1
-          trivialResult = Rational::Builder(1);
-          break;
-        }
-      case ExpressionNode::NullStatus::NonNull:
-        if (baseNull == ExpressionNode::NullStatus::Null) {
-          switch (indexSign) {
-            case ExpressionNode::Sign::Negative:
-              // 0^-x -> undef
-              trivialResult = Undefined::Builder();
-              break;
-            case ExpressionNode::Sign::Positive:
-              // 0^+x -> 0
-              trivialResult = Rational::Builder(0);
-              break;
-            default:
-              break;
-          }
-        }
-      default:
-        break;
+    if (baseNull == ExpressionNode::NullStatus::Null) {
+      if (indexSign == ExpressionNode::Sign::Negative || indexNull == ExpressionNode::NullStatus::Null) {
+        // 0^0 or 0^-x -> undef
+        trivialResult = Undefined::Builder();
+      } else if (indexSign == ExpressionNode::Sign::Positive && indexNull == ExpressionNode::NullStatus::NonNull) {
+        // 0^+x -> 0
+        trivialResult = Rational::Builder(0);
+      }
+    } else if (indexNull == ExpressionNode::NullStatus::Null && (baseNull == ExpressionNode::NullStatus::NonNull || reductionContext.target() == ExpressionNode::ReductionTarget::User)) {
+      // x^0 -> 1
+      trivialResult = Rational::Builder(1);
     }
   }
   if (!trivialResult.isUninitialized()) {

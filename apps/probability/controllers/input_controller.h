@@ -22,17 +22,24 @@ namespace Probability {
 
 class InputController : public FloatParameterPage {
 public:
-  InputController(Escher::StackViewController * parent, ResultsController * resultsController,
-                  Statistic * statistic, Escher::InputEventHandlerDelegate * handler);
-  int numberOfRows() const override {
-    return m_statistic->numberOfParameters() + 1 /* button */;
-  }
+  InputController(Escher::StackViewController * parent,
+                  ResultsController * resultsController,
+                  Statistic * statistic,
+                  Escher::InputEventHandlerDelegate * handler);
+  int numberOfRows() const override { return m_statistic->numberOfParameters() + 1 /* button */; }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override;
   int typeAtIndex(int i) override;
   void didBecomeFirstResponder() override;
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField,
+                                 const char * text,
+                                 Ion::Events::Event event) override;
+  bool textFieldDidHandleEvent(TextField * textField,
+                               bool returnValue,
+                               bool textSizeDidChange) override;
+  bool textFieldDidAbortEditing(TextField * textField) override;
 
 protected:
   float parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }

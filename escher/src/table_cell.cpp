@@ -95,7 +95,7 @@ void TableCell::layoutSubviews(bool force) {
   KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);
   KDCoordinate labelWidth = cropIfOverflow(labelSize.width(), width);
   KDCoordinate subLabelHeight = cropIfOverflow(subLabelSize.height(), height);
-  KDCoordinate subLabelWidth = cropIfOverflow(subLabelSize.width(), width);
+  KDCoordinate subLabelWidth = hideSublabel() ? 0 : cropIfOverflow(subLabelSize.width(), width);
   KDCoordinate accessoryHeight = cropIfOverflow(accessorySize.height(), height);
   KDCoordinate accessoryWidth =
       cropIfOverflow(std::max(accessorySize.width(), accessoryMinimalWidthOverridden()), width);
@@ -160,10 +160,13 @@ void TableCell::layoutSubviews(bool force) {
 }
 
 bool TableCell::singleRowMode() const {
-  return singleRowMode(bounds().width(),
-                       labelView(),
-                       subLabelView(),
-                       std::max(accessoryView()->minimalSizeForOptimalDisplay().width(), accessoryMinimalWidthOverridden()));
+  return singleRowMode(
+      m_frame.width(),
+      labelView(),
+      subLabelView(),
+      std::max(accessoryView() ? accessoryView()->minimalSizeForOptimalDisplay().width()
+                               : KDCoordinate(0),
+               accessoryMinimalWidthOverridden()));
 }
 
 bool TableCell::singleRowMode(KDCoordinate width,

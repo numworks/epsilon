@@ -92,7 +92,7 @@ void TableCell::layoutSubviews(bool force) {
   KDCoordinate accessoryHeight = cropIfOverflow(accessorySize.height(), height);
   KDCoordinate accessoryWidth = cropIfOverflow(accessorySize.width(), width);
 
-  bool singleRow = singleRowMode(width, label, subLabel, accessory);
+  bool singleRow = singleRowMode(bounds().width(), label, subLabel, accessory);
 
   if (singleRow) {  // Single row -> align vertically each view
     KDCoordinate maxHeight = std::max<KDCoordinate>(

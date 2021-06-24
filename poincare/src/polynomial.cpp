@@ -94,7 +94,6 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
 
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
   bool approximate = approximateSolutions ? *approximateSolutions : false;
-  bool deltaIsApproximate = false;
   const bool equationIsReal = a.isReal(context) && b.isReal(context) && c.isReal(context) && d.isReal(context);
 
   // Cube roots of unity.
@@ -111,12 +110,24 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       Multiplication::Builder(Rational::Builder(-27), Power::Builder(Multiplication::Builder(a.clone(), d.clone()), Rational::Builder(2))),
       Multiplication::Builder(Rational::Builder(-4), a.clone(), Power::Builder(c.clone(), Rational::Builder(3))),
       Multiplication::Builder(Rational::Builder(-4), d.clone(), Power::Builder(b.clone(), Rational::Builder(3)))});
-  *delta = delta->simplify(reductionContext);
-  if (delta->numberOfDescendants(true) > k_maxNumberOfNodesBeforeApproximatingDelta) {
-    // Delta is too big and cannot be reduced. Approximate it for display.
+  if (!approximate) {
+    *delta = delta->simplify(reductionContext);
+    if (delta->isUninitialized()) {
+      // Simplification has been interrupted, recompute approximated roots.
+      approximate = true;
+      if (approximateSolutions != nullptr) {
+        *approximateSolutions = approximate;
+      }
+      return CubicPolynomialRoots(a, b, c, d, root1, root2, root3, delta, context, complexFormat, angleUnit, &approximate);
+    }
+    if (delta->numberOfDescendants(true) > k_maxNumberOfNodesBeforeApproximatingDelta) {
+      // Delta is too complex anyway, approximate it.
+      *delta = delta->approximate<double>(context, complexFormat, angleUnit);
+    }
+  } else {
     *delta = delta->approximate<double>(context, complexFormat, angleUnit);
-    deltaIsApproximate = true;
   }
+  assert(!delta->isUninitialized());
 
   /* To avoid applying Cardano's formula right away, we use techniques to find
    * a simple solution, based on some particularly common forms of cubic
@@ -278,9 +289,6 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root1 = root1->approximate<double>(context, complexFormat, angleUnit);
     *root2 = root2->approximate<double>(context, complexFormat, angleUnit);
     *root3 = root3->approximate<double>(context, complexFormat, angleUnit);
-    if (!deltaIsApproximate) {
-      *delta = delta->approximate<double>(context, complexFormat, angleUnit);
-    }
   }
   assert(!(root1->isUninitialized() || root2->isUninitialized() || root3->isUninitialized()));
 
@@ -330,7 +338,9 @@ Expression Polynomial::ReducePolynomial(const Expression * coefficients, int deg
   for (int i = 1; i <= degree; i++) {
     polynomial.addChildAtIndexInPlace(Multiplication::Builder(coefficients[i].clone(), Power::Builder(parameter.clone(), Rational::Builder(i))), i, i);
   }
-  return polynomial.simplify(reductionContext);
+  // Try to simplify polynomial
+  Expression simplifiedReducedPolynomial = polynomial.clone().simplify(reductionContext);
+  return simplifiedReducedPolynomial.isUninitialized() ? polynomial : simplifiedReducedPolynomial;
 }
 
 Rational Polynomial::ReduceRationalPolynomial(const Rational * coefficients, int degree, Rational parameter) {

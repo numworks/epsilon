@@ -26,7 +26,7 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-
+  
 private:
   void initializeProbaData();
   ViewController * m_distributionController;

@@ -9,8 +9,12 @@
 
 #include <new>
 
-#include "../images/binomial_icon.h"
-#include "../images/focused_binomial_icon.h"
+#include "../images/confidence_interval.h"
+#include "../images/focused_confidence_interval.h"
+#include "../images/focused_probability.h"
+#include "../images/focused_significance_test.h"
+#include "../images/probability.h"
+#include "../images/significance_test.h"
 #include "probability/app.h"
 
 using namespace Probability;
@@ -28,13 +32,14 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
     m_globalDistribution(globalDistribution),
     m_globalCalculation(globalCalculation) {
   m_cells[k_indexOfDistribution].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
-  m_cells[k_indexOfDistribution].setImage(ImageStore::BinomialIcon,
-                                          ImageStore::FocusedBinomialIcon);
-  m_cells[k_indexOfTest].setImage(ImageStore::BinomialIcon, ImageStore::FocusedBinomialIcon);
+  m_cells[k_indexOfDistribution].setImage(ImageStore::Probability, ImageStore::FocusedProbability);
+  m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest,
+                                  ImageStore::FocusedSignificanceTest);
   m_cells[k_indexOfTest].setMessages(I18n::Message::SignificanceTest, I18n::Message::TestDescr);
   m_cells[k_indexOfInterval].setMessages(I18n::Message::ConfidenceInterval,
                                          I18n::Message::IntervalDescr);
-  m_cells[k_indexOfInterval].setImage(ImageStore::BinomialIcon, ImageStore::FocusedBinomialIcon);
+  m_cells[k_indexOfInterval].setImage(ImageStore::ConfidenceInterval,
+                                      ImageStore::FocusedConfidenceInterval);
 }
 
 void MenuController::didBecomeFirstResponder() {

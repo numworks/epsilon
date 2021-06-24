@@ -117,7 +117,12 @@ $(call object_for,$(tests_src)): SFLAGS += -Iapps
 $(eval $(call depends_on_image,apps/probability/app.cpp,apps/probability/probability_icon.png))
 
 $(eval $(call depends_on_image,apps/probability/controllers/menu_controller.cpp,$(addprefix apps/probability/images/,\
-	binomial_icon.png \
+	probability.png \
+	focused_probability.png \
+	confidence_interval.png \
+	focused_confidence_interval.png \
+	significance_test.png \
+	focused_significance_test.png \
 )))
 
 $(eval $(call depends_on_image,apps/probability/controllers/distribution_controller.cpp,$(addprefix apps/probability/images/,\

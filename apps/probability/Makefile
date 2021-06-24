@@ -70,6 +70,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	statistic_curve_view.cpp \
 	legend_view.cpp \
 	subapp_cell.cpp \
+	centering_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

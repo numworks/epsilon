@@ -9,6 +9,7 @@
 
 #include "probability/gui/page_controller.h"
 #include "probability/gui/subapp_cell.h"
+#include "probability/gui/centering_view.h"
 #include "probability/models/data.h"
 
 namespace Probability {
@@ -26,7 +27,8 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  
+  Escher::View * view() override { return &m_contentView; }
+
 private:
   void initializeProbaData();
   ViewController * m_distributionController;
@@ -40,6 +42,8 @@ private:
   Data::SubApp * m_globalSubapp;
   Distribution * m_globalDistribution;
   Calculation * m_globalCalculation;
+
+  CenteringView m_contentView;
 };
 
 }  // namespace Probability

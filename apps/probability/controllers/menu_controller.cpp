@@ -30,7 +30,8 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
     m_testController(testController),
     m_globalSubapp(globalSubapp),
     m_globalDistribution(globalDistribution),
-    m_globalCalculation(globalCalculation) {
+    m_globalCalculation(globalCalculation),
+    m_contentView(&m_selectableTableView) {
   m_cells[k_indexOfDistribution].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
   m_cells[k_indexOfDistribution].setImage(ImageStore::Probability, ImageStore::FocusedProbability);
   m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest,

@@ -45,6 +45,9 @@ QUIZ_CASE(poincare_polynomial_roots_quadratic) {
   assert_roots_of_polynomial_are("x^2+1", {""}, "-4", Real);
   assert_roots_of_polynomial_are("x^2+1", {"-𝐢", "𝐢"}, "-4", Cartesian);
   assert_roots_of_polynomial_are("2𝐢×(x-3𝐢)^2", {"3×𝐢"}, "0", Cartesian);
+
+  // Approximation required
+  assert_roots_of_polynomial_are("x^2+x+1-𝐢^(2/30)", {"-1.005197-1.034531ᴇ-1×𝐢", "5.197423ᴇ-3+1.034531ᴇ-1×𝐢"}, "4×cos(π/30)-3+4×sin(π/30)×𝐢", Cartesian);
 }
 
 QUIZ_CASE(poincare_polynomial_roots_cubic) {

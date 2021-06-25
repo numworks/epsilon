@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_CELL_H
-#define APPS_PROBABILITY_GUI_CELL_H
+#ifndef APPS_PROBABILITY_GUI_DISTRIBUTION_CELL_H
+#define APPS_PROBABILITY_GUI_DISTRIBUTION_CELL_H
 
 #include <escher/chevron_view.h>
 #include <escher/i18n.h>
@@ -7,11 +7,13 @@
 #include <escher/message_text_view.h>
 #include <escher/table_cell.h>
 
+#include "highlight_image_cell.h"
+
 namespace Probability {
 
-class Cell : public Escher::TableCell {
+class DistributionCell : public Escher::TableCell {
 public:
-  Cell();
+  DistributionCell();
   const View * labelView() const override { return &m_iconView; }
   const View * accessoryView() const override { return &m_chevronView; }
   const View * subLabelView() const override { return &m_messageView; }
@@ -19,7 +21,8 @@ public:
 
   void reloadCell() override;
   void setLabel(I18n::Message message);
-  void setImage(const Escher::Image * image, const Escher::Image * focusedImage);
+  void setImage(const Escher::Image * image);
+
 private:
   constexpr static KDCoordinate k_iconWidth = 35;
   constexpr static KDCoordinate k_iconHeight = 19;
@@ -27,14 +30,10 @@ private:
   constexpr static KDCoordinate k_chevronWidth = 8;
   constexpr static KDCoordinate k_chevronMargin = 10;
   Escher::MessageTextView m_messageView;
-  Escher::ImageView m_iconView;
-  /* TODO: One day, we would rather store a mask (8bits/pixel) instead of two
-   * images (16bits/pixels)*/
-  const Escher::Image * m_icon;
-  const Escher::Image * m_focusedIcon;
+  HighlightImageCell m_iconView;
   Escher::ChevronView m_chevronView;
 };
 
-}
+}  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_CELL_H */
+#endif /* APPS_PROBABILITY_GUI_DISTRIBUTION_CELL_H */

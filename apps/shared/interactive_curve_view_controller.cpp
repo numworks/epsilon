@@ -274,6 +274,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
 bool InteractiveCurveViewController::autoButtonAction() {
   m_interactiveRange->setZoomAuto(!m_interactiveRange->zoomAuto());
   m_interactiveRange->computeRanges();
+  refreshCursor();
   if (m_interactiveRange->zoomAuto()) {
     *m_rangeVersion = rangeVersion();
     setCurveViewAsMainView();

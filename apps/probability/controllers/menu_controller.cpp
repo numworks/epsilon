@@ -10,9 +10,6 @@
 #include <new>
 
 #include "../images/confidence_interval.h"
-#include "../images/focused_confidence_interval.h"
-#include "../images/focused_probability.h"
-#include "../images/focused_significance_test.h"
 #include "../images/probability.h"
 #include "../images/significance_test.h"
 #include "probability/app.h"
@@ -33,14 +30,12 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
     m_globalCalculation(globalCalculation),
     m_contentView(&m_selectableTableView) {
   m_cells[k_indexOfDistribution].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
-  m_cells[k_indexOfDistribution].setImage(ImageStore::Probability, ImageStore::FocusedProbability);
-  m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest,
-                                  ImageStore::FocusedSignificanceTest);
+  m_cells[k_indexOfDistribution].setImage(ImageStore::Probability);
+  m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest);
   m_cells[k_indexOfTest].setMessages(I18n::Message::SignificanceTest, I18n::Message::TestDescr);
   m_cells[k_indexOfInterval].setMessages(I18n::Message::ConfidenceInterval,
                                          I18n::Message::IntervalDescr);
-  m_cells[k_indexOfInterval].setImage(ImageStore::ConfidenceInterval,
-                                      ImageStore::FocusedConfidenceInterval);
+  m_cells[k_indexOfInterval].setImage(ImageStore::ConfidenceInterval);
 }
 
 void MenuController::didBecomeFirstResponder() {

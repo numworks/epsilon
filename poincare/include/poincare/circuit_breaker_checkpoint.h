@@ -38,6 +38,10 @@ private:
 
 class SystemCircuitBreakerCheckpoint final : public CircuitBreakerCheckpoint {
 public:
+#if __EMSCRIPTEN__
+  static bool HasBeenInterrupted();
+  static void ClearInterruption();
+#endif
   static void InterruptDueToReductionFailure();
   using CircuitBreakerCheckpoint::CircuitBreakerCheckpoint;
   ~SystemCircuitBreakerCheckpoint();

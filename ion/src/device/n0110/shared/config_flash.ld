@@ -16,20 +16,24 @@ BOOTLOADER_TRAMPOLINE_ORIGIN = INTERNAL_FLASH_ORIGIN + INTERNAL_FLASH_LENGTH - I
 BOOTLOADER_TRAMPOLINE_LENGTH = INTERNAL_FLASH_SECTOR_LENGTH;
 
 /*
- * |                                             EXTERNAL FLASH                           |
- * |     8*4K+32K     |   4*64K  |   48*64K   |   11*64k    ||       64K        |   4*64K  |   48*64K   |    11*64k     |
- * | PERSISTING BYTES | KERNEL A | USERLAND A | EXTERN APPS || PERSISTING BYTES | KERNEL B | USERLAND B | EXTERNAL APPS |
+ * |                                             EXTERNAL FLASH                                                                                 |
+ *  |   4*64K  |           59*64K         |        64K                                ||   4*64K  |            59*64K        |         64k      |
+ * ||                  SIGNED PAYLOAD                | EXTERN APPS | PERSISTING BYTES ||    SIGNED PAYLOAD     | EXTERN APPS | PERSISTING BYTES ||
+ * || SP* HEADER | KERNEL A | USERLAND A | SIGNATURE | EXTERN APPS | PERSISTING BYTES ||               ... Identical slot B ...                 ||
  *
- * Kernel structure: | NVIC | KERNEL CODE | 0x11..1111 |
- * Userland structure: | SIZE | USERLAND CODE |SIGNATURE | NOISE |
+ * SIGNED PAYLOAD structure:| SP HEADER |                           DATA                                       | SIGNATURE |
+ * KERNEL structure:                     | HEADER | INIT VECTOR | CODE | 0x11..1 |
+ * USERLAND structure:                                                           | HEADER | INIT VECTOR | CODE |
  *
- * The vector table has specific alignment requirements:
- * https://www.st.com/resource/en/programming_manual/dm00237416-stm32f7-series-and-stm32h7-series-cortexm7-processor-programming-manual-stmicroelectronics.pdf
- * We can't precede the kernel with the kernel+userland size because it would
- * create an unconvenient 4-byte offset that would spoil 124 bytes to realign
- * NVIC. Also, it's really convenient to jump from the bootloader to the kernel
- * by using the value kept in the first address of the NVIC which is pratically
- * the first address of the kernel binary.
+ * Kernel and Userland are prefixed by:
+ * - a header listing various information that have to be retrieved from DFU
+ * - a initialisation vector starting with the entry point and the stack initialization
+ *
+ * The kernel initialisation vector table has specific requirements regarding:
+ * - its memory space: it must be in the range 0x00000080 to 0x3FFFFF80
+ * - its alignement: you must align the offset to the number of exception entries in the vector table. The minimum alignment is 128 words.
+ * [https://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf]
+ * Therefore, its is also relocated in sRAM at booting.
  *
  */
 
@@ -37,13 +41,13 @@ EXTERNAL_FLASH_ORIGIN = 0x90000000;
 EXTERNAL_FLASH_LENGTH = 8M;
 STANDARD_EXTERNAL_FLASH_SECTOR_LENGTH = 64K;
 
-PERSITING_BYTES_VIRTUAL_ORIGIN = EXTERNAL_FLASH_ORIGIN;
+PERSITING_BYTES_VIRTUAL_ORIGIN = EXTERNAL_FLASH_ORIGIN + EXTERNAL_FLASH_LENGTH / 2 - STANDARD_EXTERNAL_FLASH_SECTOR_LENGTH;
 PERSITING_BYTES_LENGTH = STANDARD_EXTERNAL_FLASH_SECTOR_LENGTH;
 
-KERNEL_VIRTUAL_ORIGIN = PERSITING_BYTES_VIRTUAL_ORIGIN + PERSITING_BYTES_LENGTH;
-KERNEL_LENGTH = 4*64K; /* TODO EMILIE: try with less (Cf comment n0110/shared/drivers/config/board.h) */
+SIGNED_PAYLOAD_HEADER = 8;
 
-EXTERNAL_APPS_LENGTH = 11*64K; /* TODO? Change in n0110/shared/drivers/config/board.h)*/
-USERLAND_VIRTUAL_ORIGIN = KERNEL_VIRTUAL_ORIGIN + KERNEL_LENGTH + SIZE_LENGTH;
-USERLAND_LENGTH = EXTERNAL_FLASH_LENGTH / 2 - PERSITING_BYTES_LENGTH - KERNEL_LENGTH - SIZE_LENGTH - SIGNATURE_LENGTH - EXTERNAL_APPS_LENGTH;
-EXTERNAL_APPS_VIRTUAL_ORIGIN = EXTERNAL_FLASH_ORIGIN + EXTERNAL_FLASH_LENGTH / 2 - EXTERNAL_APPS_LENGTH;
+KERNEL_VIRTUAL_ORIGIN = EXTERNAL_FLASH_ORIGIN + SIGNED_PAYLOAD_HEADER;
+KERNEL_LENGTH = 4*64K - SIGNED_PAYLOAD_HEADER; /* TODO EMILIE: try with less (Cf comment n0110/shared/drivers/config/board.h) */
+
+USERLAND_VIRTUAL_ORIGIN = KERNEL_VIRTUAL_ORIGIN + KERNEL_LENGTH;
+USERLAND_AND_EXTERNAL_APPS_LENGTH = EXTERNAL_FLASH_LENGTH / 2 - SIGNED_PAYLOAD_HEADER - KERNEL_LENGTH - PERSITING_BYTES_LENGTH;

@@ -3,8 +3,8 @@
 #include <assert.h>
 
 extern "C" {
-  extern uint8_t _external_apps_start;
-  extern uint8_t _external_apps_end;
+  extern uint8_t _storage_flash_start;
+  extern uint8_t _storage_flash_end;
 }
 
 namespace Ion {
@@ -29,7 +29,7 @@ App::App(uint8_t * a) : m_startAddress(a) {
 }
 
 bool addressWithinExternalAppsSection(const uint8_t * address) {
-  return address >= &_external_apps_start && address < &_external_apps_end;
+  return address >= &_storage_flash_start && address < &_storage_flash_end;
 }
 
 uint8_t * App::addressAtIndexInAppInfo(int index) const {
@@ -85,13 +85,21 @@ bool App::appAtAddress(uint8_t * address) {
   return *reinterpret_cast<uint32_t *>(address) == k_magic;
 }
 
+uint8_t * nextSectorAlignedAddress(uint8_t * address) {
+  // Trick to return address if it was already aligned
+  address -= 1;
+  // Find previous aligned address
+  address = reinterpret_cast<uint8_t *>(reinterpret_cast<uint32_t>(address) & ~(Ion::Device::Board::Config::ExternalAppsSectorUnit - 1));
+  address += Ion::Device::Board::Config::ExternalAppsSectorUnit;
+  return address;
+}
+
 AppIterator & AppIterator::operator++() {
   uint32_t sizeOfCurrentApp = *reinterpret_cast<uint32_t *>(m_currentAddress + 6*sizeof(uint32_t));
-  m_currentAddress += sizeOfCurrentApp - 1;
+  m_currentAddress += sizeOfCurrentApp;
   // Find the next address aligned on external apps sector size
-  m_currentAddress = reinterpret_cast<uint8_t *>(reinterpret_cast<uint32_t>(m_currentAddress) & ~(Ion::Device::Board::Config::ExternalAppsSectorLength - 1));
-  m_currentAddress += Ion::Device::Board::Config::ExternalAppsSectorLength;
-  if (m_currentAddress < &_external_apps_start || m_currentAddress + k_minAppSize > &_external_apps_end || !App::appAtAddress(m_currentAddress)) {
+  m_currentAddress = nextSectorAlignedAddress(m_currentAddress);
+  if (m_currentAddress < &_storage_flash_start || m_currentAddress + k_minAppSize > &_storage_flash_end || !App::appAtAddress(m_currentAddress)) {
     m_currentAddress = nullptr;
   }
   return *this;
@@ -100,10 +108,11 @@ AppIterator & AppIterator::operator++() {
 bool s_externalAppsVisible = false;
 
 AppIterator Apps::begin() const {
-  if (!s_externalAppsVisible || !App::appAtAddress(&_external_apps_start)) {
+  uint8_t * storageStart = nextSectorAlignedAddress(&_storage_flash_start);
+  if (!s_externalAppsVisible || !App::appAtAddress(storageStart)) {
     return end();
   }
-  return AppIterator(&_external_apps_start);
+  return AppIterator(storageStart);
 }
 
 void setVisible(bool visible) {

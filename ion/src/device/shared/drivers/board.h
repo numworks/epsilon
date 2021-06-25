@@ -2,6 +2,8 @@
 #define ION_DEVICE_SHARED_DRIVERS_BOARD_H
 
 #include <drivers/board.h>
+#include <drivers/kernel_header.h>
+#include <drivers/userland_header.h>
 #include <stdint.h>
 
 namespace Ion {
@@ -33,7 +35,9 @@ bool isRunningSlotA();
 uint32_t slotAUserlandStart();
 uint32_t slotBUserlandStart();
 uint32_t userlandStart();
-uint32_t otherUserlandStart();
+KernelHeader * kernelHeader();
+UserlandHeader * userlandHeader();
+UserlandHeader * otherUserlandHeader();
 
 }
 }

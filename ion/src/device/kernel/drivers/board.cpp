@@ -115,17 +115,16 @@ void switchExecutableSlot(uint32_t leaveAddress) {
   }
   /* In N0100, the userland has been overriden, we have to extract the
    * platform information from the slot information kept in RAM. */
-  PlatformInfo * currentPlatformInfo = USB::slotInfo()->platformInfo();
-  PlatformInfo * otherPlatformInfo = reinterpret_cast<PlatformInfo *>(otherUserlandStart() + Ion::Device::Board::Config::UserlandHeaderOffset);
+  KernelHeader * currentInfo = USB::slotInfo()->kernelHeader();
+  UserlandHeader * otherInfo = otherUserlandHeader();
 
-  if (!otherPlatformInfo->isValid()) {
+  if (!otherInfo->isValid()) {
     // Can't get any information on the kernel version required
     return Reset::coreWhilePlugged();
   }
-  // Delta = newVersion - oldVersion
-  int deltaKernelVersion = currentPlatformInfo->kernelVersionValue() - otherPlatformInfo->kernelVersionValue();
-  if (deltaKernelVersion != 0) {
-    WarningDisplay::upgradeRequired(); // TODO: image instead of words
+  int deltaVersion = currentInfo->epsilonVersionComparedTo(otherInfo->expectedEpsilonVersion());
+  if (deltaVersion != 0) {
+    WarningDisplay::upgradeRequired();
     return Reset::coreWhilePlugged();
   } else {
     Authentication::updateTrust(false);

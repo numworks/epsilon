@@ -1,4 +1,14 @@
-SIZE_LENGTH = 4;
+/* Linker script
+ * The role of this script is to take all the object files built by the compiler
+ * and produce a single binary suitable for execution.
+ * Without an explicit linker script, the linker will produce a binary file that
+ * would not match some of our requirements (for example, we want the code to be
+ * written at a specific address (in Flash ROM) and the data at another. */
+
+/* Let's instruct the linker about our memory layout.
+ * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
+ * be stored in Flash. */
+
 SIGNATURE_LENGTH = 64;
 
 /* The few restrictions to layout the RAM memory are the following:

@@ -18,13 +18,6 @@ include ion/src/$(PLATFORM)/Makefile
 -include ion/test/$(PLATFORM)/Makefile
 include ion/src/shared/tools/Makefile
 
-# We need to work around a GCC bug (concerning versions < 5.1). It is valid in
-# C++11 to initialize a character array by providing a string litteral (e.g.
-# char test[4]= "ab"; is valid and should initialize test to 'a','b',0,0).
-# Older versions of GCC are not conformant so we resort to an initializer list.
-initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
-$(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))" -DKERNEL_VERSION="$(call initializer_list,$(KERNEL_VERSION))"
-
 ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   crc32_eat_byte.cpp \
@@ -59,7 +52,6 @@ ion_device_bootloader_src += ion/src/external/lz4/lz4.c
 ion_device_userland_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp:+consoledisplay \
-  platform_info.cpp \
   stack_position.cpp \
   storage.cpp \
   unicode/utf8_decoder.cpp\

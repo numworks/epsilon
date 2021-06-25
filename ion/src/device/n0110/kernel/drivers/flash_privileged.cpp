@@ -9,34 +9,25 @@ namespace Device {
 namespace Flash {
 
 bool ForbiddenSector(int i) {
-  int firstSectorSlotA = 0;
-  int firstSectorSlotAAfterPersistingBytes = ExternalFlash::Config::NumberOf4KSectors + ExternalFlash::Config::NumberOf32KSectors;
-  int firstSectorSlotB = SectorAtAddress(ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2);
-  int firstSectorSlotBAfterPersistingBytes = firstSectorSlotB + 1;
   if (Authentication::trustedUserland()) {
     /* Authenticated userland can write:
-     * - the persisting bytes of the current slot
+     * - the persisting bytes of both slots
      * - the external apps section of both slots
-     * - the whole other slot except its persisting bytes. */
-    if (Board::isRunningSlotA()) {
-      return !((i >= firstSectorSlotA && i < firstSectorSlotAAfterPersistingBytes) ||
-          (i >= firstSectorSlotB - Board::Config::ExternalAppsNumberOfSector && i < ExternalFlash::Config::NumberOfSectors));
-    }
-    return !(i >= firstSectorSlotBAfterPersistingBytes && i < ExternalFlash::Config::NumberOfSectors);
+     * - the whole other slot. */
+    int firstForbiddenSector = SectorAtAddress(reinterpret_cast<uint32_t>(Board::kernelHeader()));
+    int lastForbiddenSector = SectorAtAddress(reinterpret_cast<uint32_t>(Board::userlandHeader()->storageAddressFlash()));
+    return i >= firstForbiddenSector && i < lastForbiddenSector;
   }
   /* Non-authenticated userland can write:
-   * - the external apps section of both slots,
+   * - the external apps section of the running slot,
    * - the persisting bytes section of the running slot. */
-  if (Board::isRunningSlotA()) {
-    return !((i >= firstSectorSlotA && i < firstSectorSlotAAfterPersistingBytes) ||
-        (i >= ExternalFlash::Config::NumberOfSectors - Board::Config::ExternalAppsNumberOfSector && i < ExternalFlash::Config::NumberOfSectors) ||
-        (i >= firstSectorSlotB - Board::Config::ExternalAppsNumberOfSector && i < firstSectorSlotB));
-  }
-  return !((i >= firstSectorSlotB && i < firstSectorSlotBAfterPersistingBytes) ||
-      (i >= firstSectorSlotA && i < firstSectorSlotAAfterPersistingBytes) ||
-      (i >= ExternalFlash::Config::NumberOfSectors - Board::Config::ExternalAppsNumberOfSector && i < ExternalFlash::Config::NumberOfSectors));
+  uint32_t storageAddress = reinterpret_cast<uint32_t>(Board::userlandHeader()->storageAddressFlash());
+  int firstSectorExternalApps = SectorAtAddress(storageAddress);
+  int lastSectorExternalApps = SectorAtAddress(storageAddress + Board::userlandHeader()->storageSizeFlash());
+  // We add the persisting bytes sector
+  int lastAuthorizedSector = lastSectorExternalApps + 1;
+  return !(i >= firstSectorExternalApps && i <= lastAuthorizedSector);
 }
-
 
 bool MassEraseEnable() {
   return false;

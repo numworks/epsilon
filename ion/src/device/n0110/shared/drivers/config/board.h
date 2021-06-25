@@ -30,9 +30,11 @@ constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSi
 constexpr static uint32_t BootloaderTrampolineSize = 0x2000; // 8k
 constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
 
+// Slots
+constexpr static uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddress;
+constexpr static uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+
 // Kernel
-constexpr static uint32_t KernelAStartAddress = ExternalFlash::Config::StartAddress + PersistingBytes::Config::BufferSize;
-constexpr static uint32_t KernelBStartAddress = KernelAStartAddress + ExternalFlash::Config::TotalSize/2;
 constexpr static uint32_t KernelSize = 0x40000; // 256kB
 constexpr static uint32_t SRAMAddress = 0x20000000;
 constexpr static uint32_t SRAMLength = 0x40000; // 256kB
@@ -41,16 +43,12 @@ constexpr static uint32_t KernelStackLength = 0x2000; // 8K
 constexpr static uint32_t KernelRAMAddress = SRAMAddress + SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
 
 // Userland
-constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;
+constexpr static uint32_t UserlandOffset = KernelSize;
 constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
 constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
 
-// External Apps
-constexpr static int ExternalAppsAStartAddress = ExternalFlash::Config::StartAddress + 0x350000;
-constexpr static int ExternalAppsBStartAddress = ExternalAppsAStartAddress + ExternalFlash::Config::TotalSize/2;
-constexpr static int ExternalAppsNumberOfSector = 11;
-constexpr static int ExternalAppsSectorLength = 0x10000; // 64K
-constexpr static int ExternalAppsSectionLength = ExternalAppsNumberOfSector * ExternalAppsSectorLength;
+// External apps
+constexpr static uint32_t ExternalAppsSectorUnit = 0x10000;
 
 }
 }

@@ -22,6 +22,7 @@ ion_src += $(addprefix ion/src/simulator/web/, \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  dummy/circuit_breaker.cpp \
   dummy/language.cpp \
   dummy/haptics_enabled.cpp \
   haptics.cpp \

@@ -11,10 +11,6 @@
 #include "../images/calcul2_icon.h"
 #include "../images/calcul3_icon.h"
 #include "../images/calcul4_icon.h"
-#include "../images/focused_calcul1_icon.h"
-#include "../images/focused_calcul2_icon.h"
-#include "../images/focused_calcul3_icon.h"
-#include "../images/focused_calcul4_icon.h"
 #include "probability/app.h"
 #include "probability/text_helpers.h"
 #include "probability/models/calculation/discrete_calculation.h"
@@ -156,10 +152,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     const Image * images[CalculationTypeController::k_numberOfImages] = {
         ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon,
         ImageStore::Calcul4Icon};
-    const Image * focusedImages[CalculationTypeController::k_numberOfImages] = {
-        ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon,
-        ImageStore::FocusedCalcul3Icon, ImageStore::FocusedCalcul4Icon};
-    myCell->setImage(images[(int)m_calculation->type()], focusedImages[(int)m_calculation->type()]);
+    myCell->setImage(images[(int)m_calculation->type()]);
+    myCell->setHighlighted(myCell->isHighlighted());
   } else {
     CalculationCell * myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i - 1));

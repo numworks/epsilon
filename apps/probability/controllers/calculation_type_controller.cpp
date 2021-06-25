@@ -8,10 +8,6 @@
 #include "../images/calcul2_icon.h"
 #include "../images/calcul3_icon.h"
 #include "../images/calcul4_icon.h"
-#include "../images/focused_calcul1_icon.h"
-#include "../images/focused_calcul2_icon.h"
-#include "../images/focused_calcul3_icon.h"
-#include "../images/focused_calcul4_icon.h"
 #include "calculation_controller.h"
 
 using namespace Escher;
@@ -75,12 +71,10 @@ HighlightCell * CalculationTypeController::reusableCell(int index, int type) {
 }
 
 void CalculationTypeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  ImageCell * myCell = static_cast<ImageCell *>(cell);
+  HighlightImageCell * myCell = static_cast<HighlightImageCell *>(cell);
   const Image * images[k_numberOfImages] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon,
                                             ImageStore::Calcul4Icon};
-  const Image * focusedImages[k_numberOfImages] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon,
-                                                   ImageStore::FocusedCalcul3Icon, ImageStore::FocusedCalcul4Icon};
-  myCell->setImage(images[index], focusedImages[index]);
+  myCell->setImage(images[index]);
 }
 
 }  // namespace Probability

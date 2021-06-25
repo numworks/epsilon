@@ -128,15 +128,6 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/distribu
   chi_squared_icon.png \
   exponential_icon.png \
   fisher_icon.png \
-  focused_binomial_icon.png \
-  focused_chi_squared_icon.png \
-  focused_exponential_icon.png \
-  focused_fisher_icon.png \
-  focused_geometric_icon.png \
-  focused_normal_icon.png \
-  focused_poisson_icon.png \
-  focused_student_icon.png \
-  focused_uniform_icon.png \
   geometric_icon.png \
   normal_icon.png \
   poisson_icon.png \
@@ -144,13 +135,9 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/distribu
   uniform_icon.png \
 )))
 
-$(eval $(call depends_on_image,$(addprefix apps/probability/controllers/,calculation_type_controller.cpp calculation_controller.cpp),$(addprefix apps/probability/images/,\
+$(eval $(call depends_on_transparent_image,$(addprefix apps/probability/controllers/,calculation_type_controller.cpp calculation_controller.cpp),$(addprefix apps/probability/images/,\
   calcul1_icon.png \
   calcul2_icon.png \
   calcul3_icon.png \
   calcul4_icon.png \
-  focused_calcul1_icon.png \
-  focused_calcul2_icon.png \
-  focused_calcul3_icon.png \
-  focused_calcul4_icon.png \
 )))

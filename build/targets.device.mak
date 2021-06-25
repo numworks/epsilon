@@ -65,10 +65,10 @@ $(BUILD_DIR)/%.B.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_sl
 #epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
 #$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.A.elf $(BUILD_DIR)/kernel.A.elf $(BUILD_DIR)/userland.B.elf $(BUILD_DIR)/kernel.B.elf $(BUILD_DIR)/signer
 
-epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
+epsilon.dfu: DFUFLAGS += --custom
 
 .PHONY: $(BUILD_DIR)/epsilon.dfu
-$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/signer
+$(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
 	$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf
 	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.A.elf
 	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.B.elf

@@ -11,8 +11,6 @@ ImageView::ImageView() :
   m_image(nullptr)
 {
 }
-
-constexpr static int maxPixelBufferSize = 4000;
 // Icon file is 55 x 56 = 3080
 // Boot logo file is 188 x 21 = 3948
 

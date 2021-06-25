@@ -85,6 +85,7 @@ escher_src += $(addprefix escher/src/,\
   toggleable_dot_view.cpp \
   toggleable_view.cpp \
   toolbox.cpp \
+  transparent_image_view.cpp \
   transparent_view.cpp \
   unequal_view.cpp \
   view.cpp \
@@ -107,13 +108,14 @@ $(eval $(call rule_for, \
 ))
 
 INLINER := $(BUILD_DIR)/escher/image/inliner
+INLINER_ARGS ?=
 
 .PRECIOUS: $(BUILD_DIR)/%.h $(BUILD_DIR)/%.cpp
 $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \
   %.png $$(INLINER), \
-  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp, \
+  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp $$(INLINER_ARGS), \
   global \
 ))
 
@@ -127,4 +129,10 @@ define depends_on_image
 $(call object_for,$(1)): $(call object_for,$(2))
 $(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
 escher_src += $(2)
+endef
+
+define depends_on_transparent_image
+# Set INLINE_ARGS for Header and CPP files
+$(addsuffix .h,$(basename $(call object_for,$(2)))) $(addsuffix .cpp,$(basename $(call object_for,$(2)))): INLINER_ARGS += --transparent
+$(call depends_on_image,$(1),$(2))
 endef

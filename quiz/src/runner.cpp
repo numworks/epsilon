@@ -31,7 +31,6 @@ static inline void ion_main_inner() {
 
 
 void ion_main(int argc, const char * const argv[]) {
-  Ion::Backlight::init();
   Poincare::Init(); // Initialize Poincare::TreePool::sharedPool
 #if !PLATFORM_DEVICE
   /* s_stackStart must be defined as early as possible to ensure that there

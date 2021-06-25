@@ -38,10 +38,26 @@ SystemCircuitBreakerCheckpoint::~SystemCircuitBreakerCheckpoint() {
   reset();
 }
 
+#if __EMSCRIPTEN__
+bool sInterrupted = false;
+
+bool SystemCircuitBreakerCheckpoint::HasBeenInterrupted() {
+  return sInterrupted;
+}
+
+void SystemCircuitBreakerCheckpoint::ClearInterruption() {
+  sInterrupted = false;
+}
+
+void SystemCircuitBreakerCheckpoint::InterruptDueToReductionFailure() {
+  sInterrupted = true;
+}
+#else
 void SystemCircuitBreakerCheckpoint::InterruptDueToReductionFailure() {
   if (Ion::CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::System)) {
     Ion::CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::System);
   }
 }
+#endif
 
 }

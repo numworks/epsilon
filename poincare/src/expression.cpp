@@ -682,6 +682,14 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
    * again with ReductionTarget::SystemForApproximation. */
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
+#if __EMSCRIPTEN__
+  Expression e = clone().deepReduce(reductionContext);
+  if (SystemCircuitBreakerCheckpoint::HasBeenInterrupted()) {
+    SystemCircuitBreakerCheckpoint::ClearInterruption();
+    reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
+    e = clone().deepReduce(reductionContext);
+  }
+#else
   SystemCircuitBreakerCheckpoint systemCheckpoint;
   if (!CircuitBreakerRun(systemCheckpoint)) {
     // System interruption, try again with another ReductionTarget
@@ -689,6 +697,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
     systemCheckpoint.reset();
   }
   Expression e = clone().deepReduce(reductionContext);
+#endif
 
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to

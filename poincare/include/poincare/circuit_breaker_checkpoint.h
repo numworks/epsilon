@@ -41,7 +41,7 @@ public:
   static void InterruptDueToReductionFailure();
   using CircuitBreakerCheckpoint::CircuitBreakerCheckpoint;
   ~SystemCircuitBreakerCheckpoint();
-  Ion::CircuitBreaker::CheckpointType type() const { return Ion::CircuitBreaker::CheckpointType::System; }
+  Ion::CircuitBreaker::CheckpointType type() const override { return Ion::CircuitBreaker::CheckpointType::System; }
 private:
   void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint * checkpoint) override { s_currentSystemCircuitBreakerCheckpoint = checkpoint; }
   virtual bool isCurrentCircuitBreakerCheckpoint() const override { return s_currentSystemCircuitBreakerCheckpoint == this; }

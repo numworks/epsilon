@@ -302,7 +302,12 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     return;
   }
 
-  assert(offscreenYAxis() == 0.f);
+  if (offscreenYAxis() != 0.f) {
+    /* The Navigation window was exited without being cleaned up, probably
+     * because the User pressed the Home button.
+     * We reset the value here to prevent skewing the grid unit. */
+    setOffscreenYAxis(0.f);
+  }
 
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of
    * yGridUnit, even if the range were not truly normalized. We use

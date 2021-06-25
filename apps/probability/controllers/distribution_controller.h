@@ -5,7 +5,7 @@
 
 #include <new>
 
-#include "probability/gui/cell.h"
+#include "probability/gui/distribution_cell.h"
 #include "probability/models/distribution/distribution.h"
 #include "parameters_controller.h"
 
@@ -33,7 +33,7 @@ class DistributionController : public Escher::SelectableListViewController {
       (Ion::Display::Height - Escher::Metric::TitleBarHeight - 14) /
           Escher::TableCell::k_minimalLargeFontCellHeight +
       2;  // Remaining cell can be above and below so we add +2, 14 for the small font height
-  Cell m_cells[k_numberOfCells];
+  DistributionCell m_cells[k_numberOfCells];
   Distribution * m_distribution;
   ParametersController * m_parametersController;
 };

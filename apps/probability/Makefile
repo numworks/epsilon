@@ -57,7 +57,7 @@ app_probability_src += $(addprefix apps/probability/models/statistic/,\
 
 app_probability_src += $(addprefix apps/probability/gui/,\
   calculation_cell.cpp \
-  cell.cpp \
+  distribution_cell.cpp \
   distribution_curve_view.cpp \
 	image_cell.cpp \
   responder_image_cell.cpp \
@@ -123,7 +123,7 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/menu_con
 	significance_test.png \
 )))
 
-$(eval $(call depends_on_image,apps/probability/controllers/distribution_controller.cpp,$(addprefix apps/probability/images/,\
+$(eval $(call depends_on_transparent_image,apps/probability/controllers/distribution_controller.cpp,$(addprefix apps/probability/images/,\
   binomial_icon.png \
   chi_squared_icon.png \
   exponential_icon.png \

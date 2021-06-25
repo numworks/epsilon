@@ -21,15 +21,6 @@
 #include "../images/poisson_icon.h"
 #include "../images/student_icon.h"
 #include "../images/uniform_icon.h"
-#include "../images/focused_binomial_icon.h"
-#include "../images/focused_chi_squared_icon.h"
-#include "../images/focused_exponential_icon.h"
-#include "../images/focused_fisher_icon.h"
-#include "../images/focused_geometric_icon.h"
-#include "../images/focused_normal_icon.h"
-#include "../images/focused_poisson_icon.h"
-#include "../images/focused_student_icon.h"
-#include "../images/focused_uniform_icon.h"
 
 using namespace Escher;
 
@@ -69,7 +60,7 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
 }
 
 KDCoordinate Probability::DistributionController::nonMemoizedRowHeight(int j) {
-  Cell tempCell;
+  DistributionCell tempCell;
   return heightForCellAtIndex(&tempCell, j);
 }
 
@@ -92,7 +83,7 @@ constexpr I18n::Message sMessages[] = {
 };
 
 void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  Cell * myCell = static_cast<Cell *>(cell);
+  DistributionCell * myCell = static_cast<DistributionCell *>(cell);
   myCell->setLabel(sMessages[index]);
   const Image * images[k_totalNumberOfModels] = {
     ImageStore::BinomialIcon,
@@ -105,18 +96,7 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
     ImageStore::PoissonIcon,
     ImageStore::FisherIcon
   };
-  const Image * focusedImages[k_totalNumberOfModels] = {
-    ImageStore::FocusedBinomialIcon,
-    ImageStore::FocusedUniformIcon,
-    ImageStore::FocusedExponentialIcon,
-    ImageStore::FocusedNormalIcon,
-    ImageStore::FocusedChiSquaredIcon,
-    ImageStore::FocusedStudentIcon,
-    ImageStore::FocusedGeometricIcon,
-    ImageStore::FocusedPoissonIcon,
-    ImageStore::FocusedFisherIcon
-  };
-  myCell->setImage(images[index], focusedImages[index]);
+  myCell->setImage(images[index]);
   myCell->reloadCell();
 }
 

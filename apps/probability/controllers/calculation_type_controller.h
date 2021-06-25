@@ -6,9 +6,10 @@
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/view_controller.h>
 
+#include "probability/gui/highlight_image_cell.h"
+#include "probability/gui/image_cell.h"
 #include "probability/models/calculation/calculation.h"
 #include "probability/models/distribution/distribution.h"
-#include "probability/gui/image_cell.h"
 
 namespace Probability {
 
@@ -17,8 +18,10 @@ class CalculationController;
 class CalculationTypeController : public Escher::ViewController,
                                   public Escher::ListViewDataSource,
                                   public Escher::SelectableTableViewDataSource {
- public:
-  CalculationTypeController(Escher::Responder * parentResponder, Distribution * distribution, Calculation * calculation,
+public:
+  CalculationTypeController(Escher::Responder * parentResponder,
+                            Distribution * distribution,
+                            Calculation * calculation,
                             CalculationController * calculationController);
   Escher::View * view() override;
   void viewWillAppear() override;
@@ -33,8 +36,8 @@ class CalculationTypeController : public Escher::ViewController,
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   constexpr static int k_numberOfImages = 4;
 
- private:
-  ImageCell m_imageCells[k_numberOfImages];
+private:
+  HighlightImageCell m_imageCells[k_numberOfImages];
   Escher::SelectableTableView m_selectableTableView;
   Distribution * m_distribution;
   Calculation * m_calculation;

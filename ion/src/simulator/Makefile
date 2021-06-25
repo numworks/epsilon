@@ -17,7 +17,6 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  circuit_breaker.cpp \
   clipboard.cpp \
   console.cpp \
   crc32.cpp \

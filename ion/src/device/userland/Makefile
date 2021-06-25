@@ -33,5 +33,5 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/console_dummy.cpp:-consoledisplay \
   drivers/reset.cpp \
   drivers/stack.cpp \
+  drivers/userland_header.cpp \
 )
-

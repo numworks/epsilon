@@ -2,6 +2,7 @@
 #include <drivers/config/board.h>
 #include <drivers/config/clocks.h>
 #include <drivers/internal_flash_otp.h>
+#include <drivers/userland_header.h>
 #include <regs/regs.h>
 
 namespace Ion {
@@ -142,12 +143,16 @@ bool pcbVersionIsLocked() {
   return InternalFlash::isLockedOTPAtBlockIndex(k_pcbVersionOTPBlock);
 }
 
+KernelHeader * kernelHeader() {
+  return reinterpret_cast<KernelHeader *>((isRunningSlotA() ? Config::SlotAStartAddress : Config::SlotBStartAddress) +  Board::Config::SignedPayloadSize);
+}
+
 uint32_t slotAUserlandStart() {
-  return Config::KernelAStartAddress + Config::UserlandOffsetFromKernel;
+  return Config::SlotAStartAddress + Config::UserlandOffset + sizeof(UserlandHeader);
 
 }
 uint32_t slotBUserlandStart() {
-  return Config::KernelBStartAddress + Config::UserlandOffsetFromKernel;
+  return Config::SlotBStartAddress + Config::UserlandOffset+ sizeof(UserlandHeader);
 }
 
 }

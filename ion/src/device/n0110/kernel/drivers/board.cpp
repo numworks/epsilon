@@ -10,7 +10,7 @@ typedef void(*ISR)(void);
 extern ISR InitialisationVector[];
 
 extern "C" {
-  extern char _kernel_start;
+  extern char _isr_vector_table_start_flash;
 }
 
 // Private Ion::Device methods
@@ -315,7 +315,7 @@ void shutdownPeripheralsClocks(bool keepLEDAwake) {
 }
 
 bool isRunningSlotA() {
-  return reinterpret_cast<uint32_t>(&_kernel_start) < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+  return reinterpret_cast<uint32_t>(&_isr_vector_table_start_flash) < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
 }
 
 bool isInReflashableSector(uint32_t address) {

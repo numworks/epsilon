@@ -1,31 +1,18 @@
-/* Linker script
- * The role of this script is to take all the object files built by the compiler
- * and produce a single binary suitable for execution.
- * Without an explicit linker script, the linker will produce a binary file that
- * would not match some of our requirements (for example, we want the code to be
- * written at a specific address (in Flash ROM) and the data at another. */
-
-/* Let's instruct the linker about our memory layout.
- * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
- * be stored in Flash. */
-
 USERLAND_ORIGIN = USERLAND_VIRTUAL_ORIGIN + EPSILON_OFFSET;
-EXTERNAL_APPS_ORIGIN = EXTERNAL_APPS_VIRTUAL_ORIGIN + EPSILON_OFFSET;
 
 MEMORY {
-  FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = USERLAND_LENGTH
-  FLASH_EXTERNAL_APPS (rx) : ORIGIN = EXTERNAL_APPS_ORIGIN, LENGTH = EXTERNAL_APPS_LENGTH
+  FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = USERLAND_AND_EXTERNAL_APPS_LENGTH
   SRAM (rw) : ORIGIN = USERLAND_SRAM_ORIGIN, LENGTH = USERLAND_SRAM_LENGTH
 }
 
 
 SECTIONS {
-  .isr_vector_table ORIGIN(FLASH_USERLAND) : {
-    KEEP(*(.isr_vector_table))
+  .userland_header ORIGIN(FLASH_USERLAND) : {
+    KEEP(*(.userland_header))
   } >FLASH_USERLAND
 
-  .header : {
-    KEEP(*(.header))
+  .isr_vector_table : {
+    KEEP(*(.isr_vector_table))
   } >FLASH_USERLAND
 
   .text : {
@@ -46,12 +33,6 @@ SECTIONS {
     KEEP (*(.init_array*))
     _init_array_end = .;
   } >FLASH_USERLAND
-
-  .external_apps : {
-    _external_apps_start = .;
-    . += EXTERNAL_APPS_LENGTH;
-    _external_apps_end = .;
-  } >FLASH_EXTERNAL_APPS
 
   .data : {
     /* The data section is written to Flash but linked as if it were in RAM.
@@ -75,7 +56,15 @@ SECTIONS {
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
+    _userland_flash_end = LOADADDR(.data) + SIZEOF(.data);
   } >SRAM AT> FLASH_USERLAND
+
+  .storage_flash : {
+    . += SIGNATURE_LENGTH;
+    _storage_flash_start = .;
+    . = (ORIGIN(FLASH_USERLAND) + LENGTH(FLASH_USERLAND));
+    _storage_flash_end = .;
+  } >FLASH_USERLAND
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

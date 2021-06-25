@@ -17,6 +17,7 @@ void Calculator::PollAndReset() {
 
   // Configure the kernel to avoid interrupting DFU protocole except on Back key
   USB::willExecuteDFU();
+
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected() && !(USB::shouldInterruptDFU() && !c.isErasingAndWriting())) {
     c.poll();
   }

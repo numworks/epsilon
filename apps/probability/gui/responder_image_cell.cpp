@@ -36,8 +36,8 @@ void ResponderImageCell::setHighlighted(bool highlight) {
   m_imageCell.setHighlighted(highlight);
 }
 
-void ResponderImageCell::setImage(const Image * image, const Image * focusedImage) {
-  m_imageCell.setImage(image, focusedImage);
+void ResponderImageCell::setImage(const Image * image) {
+  m_imageCell.setImage(image);
 }
 
 int ResponderImageCell::numberOfSubviews() const {

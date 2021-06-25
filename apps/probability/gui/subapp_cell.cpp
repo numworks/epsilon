@@ -39,8 +39,8 @@ Escher::View * SubappCell::subviewAtIndex(int i) {
   }
 }
 
-void SubappCell::setImage(const Escher::Image * image, const Escher::Image * focusedImage) {
-  m_icon.setImage(image, focusedImage);
+void SubappCell::setImage(const Escher::Image * image) {
+  m_icon.setImage(image);
 }
 
 void SubappCell::setMessages(I18n::Message title, I18n::Message subTitle) {

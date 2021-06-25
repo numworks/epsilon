@@ -8,6 +8,7 @@
 
 #include "horizontal_or_vertical_layout.h"
 #include "image_cell.h"
+#include "highlight_image_cell.h"
 
 namespace Probability {
 
@@ -56,11 +57,11 @@ public:
   const View * subLabelView() const override { return &m_titleAndSubtitleView; }
   bool isSublabelAlignedRight() const override { return false; }
 
-  void setImage(const Escher::Image * image, const Escher::Image * focusedImage);
+  void setImage(const Escher::Image * image);
   void setMessages(I18n::Message title, I18n::Message subTitle);
 
 private:
-  ImageCell m_icon;
+  HighlightImageCell m_icon;
   TitleAndSubtitleView m_titleAndSubtitleView;
   ChevronView m_chevron;
 };

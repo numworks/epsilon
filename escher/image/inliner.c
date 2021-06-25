@@ -1,6 +1,6 @@
 /* The image inliner converts PNG images to C++ code.
  *
- * Usage: inliner snake_case_image.png
+ * Usage: inliner snake_case_image.png output.h output.cpp
  *
  * The inliner creates a .h and a .cpp file in the same directory as the input
  * file. The implementation file declares an Image in the ImageStore namespace,
@@ -19,8 +19,12 @@
 #define ERROR_IF(cond, message) if (cond) { printf(message "\n"); return -1; };
 #define MAX_FILENAME_LENGTH 255
 
+typedef uint8_t bool;
+#define TRUE 1
+#define FALSE 0
+
 void generateHeaderFromImage(FILE * file, const char * guardian, const char * variable);
-void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers);
+void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers, bool transparent);
 void fileNameToSnakeCaseName(const char * fileName, char * snakeCaseName, size_t maxLength);
 void snakeCaseNameToUpperSnakeName(const char * snakeCaseName, char * upperSnakeCaseName, size_t maxLength);
 void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * upperSnakeCaseName, char * camelCaseName, size_t maxLength);
@@ -29,9 +33,13 @@ void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * up
 // TODO: truncate the app image dimensions to 55x56 pixels
 
 int main(int argc, char * argv[]) {
-  ERROR_IF(argc != 4, "Usage: inliner source.png output.h output.cpp");
+  ERROR_IF(argc != 4 && argc != 5, "Usage: inliner source.png output.h output.cpp [--transparent]");
   const char * inputPath = argv[1];
-
+  bool transparent = FALSE;
+  if (argc == 5) {
+    ERROR_IF(strcmp(argv[4], "--transparent") != 0, "Argument must be '--transparent'");
+    transparent = TRUE;
+  }
   FILE * inputFile = fopen(inputPath, "rb");
   ERROR_IF(inputFile == NULL, "Error: could not open input file.");
 
@@ -79,21 +87,6 @@ int main(int argc, char * argv[]) {
   snakeCaseNameToUpperSnakeName(lowerSnakeCaseName, upperSnakeCaseName, MAX_FILENAME_LENGTH);
   camelCaseNameFromSnakeCaseNames(lowerSnakeCaseName, upperSnakeCaseName, camelCaseName, MAX_FILENAME_LENGTH);
 
-  /*
-  char headerPath[MAX_FILENAME_LENGTH];
-  size_t pathLength = strlen(inputPath);
-  strcpy(headerPath, inputPath);
-  // Replace the .png extension with a .h extension
-  headerPath[pathLength-3] = 'h';
-  headerPath[pathLength-2] = 0;
-
-  char implementationPath[MAX_FILENAME_LENGTH];
-  strcpy(implementationPath, inputPath);
-  // Replace the .png extension with a .cpp extension
-  implementationPath[pathLength-3] = 'c';
-  implementationPath[pathLength-2] = 'p';
-  implementationPath[pathLength-1] = 'p';
-  */
   char * headerPath = argv[2];
   char * implementationPath = argv[3];
 
@@ -102,7 +95,7 @@ int main(int argc, char * argv[]) {
   fclose(header);
 
   FILE * implementation = fopen(implementationPath, "w");
-  generateImplementationFromImage(implementation, lowerSnakeCaseName, camelCaseName, width, height, rowPointers);
+  generateImplementationFromImage(implementation, lowerSnakeCaseName, camelCaseName, width, height, rowPointers, transparent);
   fclose(implementation);
   
   for (int i=0; i<height; i++) {
@@ -157,9 +150,12 @@ void generateHeaderFromImage(FILE * file, const char * guardian, const char * va
   fprintf(file, "#endif\n");
 }
 
-void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers) {
+void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers, bool transparent) {
 
   int sizeOfPixelBuffer = width * height * sizeof(uint16_t);
+  if (transparent) {
+    sizeOfPixelBuffer += width * height * sizeof(uint8_t);
+  }
   uint16_t * pixelBuffer = (uint16_t *)malloc(sizeOfPixelBuffer);
 
   for (int j=0; j<height; j++) {
@@ -179,6 +175,11 @@ void generateImplementationFromImage(FILE * file, const char * header, const cha
       uint8_t intBlue = blendedBlue*0xFF;
       uint16_t rgb565value = (intRed>>3)<<11 | (intGreen>>2) << 5 | (intBlue>>3);
       pixelBuffer[j*width+i] = rgb565value;
+
+      if (transparent) {
+        uint8_t * transparentBuffer = (uint8_t *)(&pixelBuffer[width * height]);
+        transparentBuffer[j*width+i] = (uint8_t)(alpha * 0xFF);
+      }
     }
   }
 
@@ -210,6 +211,6 @@ void generateImplementationFromImage(FILE * file, const char * header, const cha
 
 
   fprintf(file, "\n};\n\n");
-  fprintf(file, "constexpr Escher::Image image = Escher::Image(%d, %d, compressedPixelData, %d);\n\n", width, height, sizeOfCompressedPixelBuffer);
+  fprintf(file, "constexpr Escher::Image image = Escher::Image(%d, %d, compressedPixelData, %d, %s);\n\n", width, height, sizeOfCompressedPixelBuffer, transparent ? "true" : "false");
   fprintf(file, "const Escher::Image * const ImageStore::%s = &image;\n", variable);
 }

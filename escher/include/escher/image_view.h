@@ -12,7 +12,9 @@ public:
   void setImage(const Image * image);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override { return KDSize(m_image->width(), m_image->height()); }
-private:
+
+protected:
+  constexpr static int maxPixelBufferSize = 4000;
   const Image * m_image;
 };
 

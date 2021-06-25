@@ -1,14 +1,3 @@
-/* Linker script
- * The role of this script is to take all the object files built by the compiler
- * and produce a single binary suitable for execution.
- * Without an explicit linker script, the linker will produce a binary file that
- * would not match some of our requirements (for example, we want the code to be
- * written at a specific address (in Flash ROM) and the data at another. */
-
-/* Let's instruct the linker about our memory layout.
- * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
- * be stored in Flash. */
-
 PERSITING_BYTES_ORIGIN = PERSITING_BYTES_VIRTUAL_ORIGIN + EPSILON_OFFSET;
 KERNEL_ORIGIN = KERNEL_VIRTUAL_ORIGIN + EPSILON_OFFSET;
 
@@ -21,23 +10,18 @@ MEMORY {
 }
 
 SECTIONS {
-  .persisting_bytes_buffer ORIGIN(PERSITING_BYTES) : {
-    _persisting_bytes_buffer_start = .;
-    KEEP(*(.persisting_bytes_buffer))
-    /* Note: We don't increment "." here, we set it. */
-    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
-    _persisting_bytes_buffer_end = .;
-  } >PERSITING_BYTES
+  .kernel_header  ORIGIN(KERNEL) : {
+    KEEP(*(.kernel_header))
+  } >KERNEL
 
-  .isr_vector_table : AT(ORIGIN(KERNEL)) {
-    _kernel_start = LOADADDR(.isr_vector_table);
+  .isr_vector_table : AT(ORIGIN(KERNEL) + SIZEOF(.kernel_header)) {
     _isr_vector_table_start_flash = LOADADDR(.isr_vector_table);
     _isr_vector_table_start_ram = .;
     KEEP(*(.isr_vector_table))
     _isr_vector_table_end_ram = .;
   } >SRAM_DATA_BSS
 
-  .text ORIGIN(KERNEL) + SIZEOF (.isr_vector_table) : {
+  .text ORIGIN(KERNEL) + SIZEOF(.kernel_header) + SIZEOF (.isr_vector_table) : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
@@ -82,6 +66,14 @@ SECTIONS {
     . = ORIGIN(KERNEL) + LENGTH(KERNEL) - 1;
     BYTE(0xFF)
   } > KERNEL
+
+  .persisting_bytes_buffer ORIGIN(PERSITING_BYTES) : {
+    _persisting_bytes_buffer_start = .;
+    KEEP(*(.persisting_bytes_buffer)) /* TODO: use fill*/
+    /* Note: We don't increment "." here, we set it. */
+    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
+    _persisting_bytes_buffer_end = .;
+  } >PERSITING_BYTES
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

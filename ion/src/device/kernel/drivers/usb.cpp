@@ -25,9 +25,6 @@ void willExecuteDFU() {
    * The interrupt service routines live in the Flash and could be overwritten
    * by garbage during a firmware upgrade opration, so we disable them. */
   Board::shutdownInterruptions();
-
-  /* 3- Keep usefull information about the currently running slot */
-  slotInfo()->update();
 }
 
 void didExecuteDFU() {

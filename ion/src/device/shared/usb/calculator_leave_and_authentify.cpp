@@ -4,15 +4,17 @@
 #include <userland/drivers/board.h>
 #include <userland/drivers/reset.h>
 
+extern "C" {
+extern char _storage_flash_start;
+extern char _storage_flash_end;
+}
+
 namespace Ion {
 namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
-  uint32_t externalAppsSectionA = Board::Config::ExternalAppsAStartAddress ;
-  uint32_t externalAppsSectionB = Board::Config::ExternalAppsBStartAddress ;
-  if ((leaveAddress >= externalAppsSectionA && leaveAddress < externalAppsSectionA + Board::Config::ExternalAppsSectionLength) ||
-     (leaveAddress >= externalAppsSectionB && leaveAddress < externalAppsSectionB + Board::Config::ExternalAppsSectionLength)) {
+  if (leaveAddress >= reinterpret_cast<uint32_t>(&_storage_flash_start) && leaveAddress < reinterpret_cast<uint32_t>(&_storage_flash_end)) {
     Ion::ExternalApps::setVisible(true);
     if (Ion::ExternalApps::numberOfApps() > 0) {
       Board::downgradeTrustLevel(true); // Display pop-up

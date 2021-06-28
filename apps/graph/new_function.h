@@ -2,6 +2,8 @@
 #define GRAPH_NEW_FUNCTION_H
 
 #include "../shared/expression_model_handle.h"
+#include "../shared/range_1d.h"
+#include <apps/i18n.h>
 
 // TODO Hugo : Emscripten things
 
@@ -53,20 +55,21 @@ public:
   bool drawAbove() const; // Greater, GreaterOrEqual, Inequal
   bool drawBelow() const; // Less, LessOrEqual, Inequal
   bool drawCurve() const; // GreaterOrEqual, LessOrEqual, Equal
-  int yDegree() const; // Handled y degree are 0, 1 or 2
-  int xDegree() const; // Any degree is handled
+  int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
+  int xDegree(Poincare::Context * context) const; // Any degree is handled
 
-  I18n::Message functionCategory() const override; // Line, polar, cartesian, ...
+  I18n::Message functionCategory() const; // Line, polar, cartesian, ...
   CodePoint symbol() const override; // x, theta, t, y
   // Expression clone is of the form (exp1) = (exp2)
   // expressionEquation returns (exp1) - (exp2) or (exp2) if isNamed() (reduced ?)
-  Poincare::Expression expressionEquation(Poincare::Context * context) const;
-  // expressionReduced returns equations solutions in y ( matrix if multiple solutions)
-  Poincare::Expression expressionReduced(Poincare::Context * context) const override;
+  Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionReduced(this, context); }
+  // expressionReduced returns equations solutions in y ( matrix if multiple solutions) // TODO Hugo :: parent implementation should be fine
+  // Poincare::Expression expressionReduced(Poincare::Context * context) const override;
   // expressionReduced returns expressionReduced derivative(s)
-  Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
-  EquationSymbol equationSymbol();
-  PlotType plotType() const;
+  // TODO Hugo : Implement
+  // Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
+  EquationSymbol equationSymbol() const { return recordData()->equationSymbol(); }
+  PlotType plotType() const { return recordData()->plotType(); }
   void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
   static I18n::Message ParameterMessageForPlotType(PlotType plotType);  // x, theta, t, y
 
@@ -74,10 +77,11 @@ public:
   Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const {
     return templatedApproximateAtParameter(t, context);
   }
-  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const override {
-    return (m_cache) ? m_cache->valueForParameter(this, context, t) : privateEvaluateXYAtParameter<float>(t, context);
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const {
+    // TODO Hugo : cache ?
+    return privateEvaluateXYAtParameter<float>(t, context);
   }
-  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const override {
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const {
     return privateEvaluateXYAtParameter<double>(t, context);
   }
 
@@ -87,23 +91,23 @@ public:
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context) const;
 
-  int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+  int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
 
   // Definition Interval ( signature to plot )
   void protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const;
 
   // tMin and tMax
-  bool shouldClipTRangeToXRange() const override;  // Returns true if the function will not be displayed if t is outside x range.
-  float tMin() const override;
-  float tMax() const override;
+  bool shouldClipTRangeToXRange() const;  // Returns true if the function will not be displayed if t is outside x range.
+  float tMin() const;
+  float tMax() const;
   void setTMin(float tMin);
   void setTMax(float tMax);
-  float rangeStep() const override;
+  float rangeStep() const;
 
   // Range
-  bool basedOnCostlyAlgorithms(Poincare::Context * context) const override;
-  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
-  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const override;
+  bool basedOnCostlyAlgorithms(Poincare::Context * context) const;
+  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const;
+  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const;
 
   // Extremum
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
@@ -112,26 +116,32 @@ public:
   Poincare::Coordinate2D<double> nextRootFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
   Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
   // Integral
-  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
+  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const;
   // TODO Hugo : Consider cache
 private:
+  // TODO Hugo : usefull ?
+  constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   NewFunction(Ion::Storage::Record record = Record()) : Shared::ExpressionModelHandle(record) {}
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
-  void didBecomeInactive() override { m_cache = nullptr; }
+  void didBecomeInactive() {} // m_cache = nullptr; }
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
 
-  class Model : public ExpressionModel {
+  class Model : public Shared::ExpressionModel {
     // TODO Hugo : Add derivative
   public:
     Model() : ExpressionModel() {}
     void tidy() const override;
-  private:
+    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
+  // private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
   };
+  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
+  const Shared::ExpressionModel * model() const override { return &m_model; }
 
   // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer {
@@ -146,7 +156,12 @@ private:
     void setEquationSymbol(EquationSymbol equationSymbol) { m_equationSymbol = equationSymbol; }
     bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
+    float tMin() const { return m_domain.min(); }
+    float tMax() const { return m_domain.max(); }
+    void setTMin(float tMin) { m_domain.setMin(tMin); }
+    void setTMax(float tMax) { m_domain.setMax(tMax); }
   private:
+    Shared::Range1D m_domain;
     uint16_t m_color;
     bool m_active;
     PlotType m_plotType;
@@ -154,83 +169,14 @@ private:
   };
 
   Model m_model;
-  RecordDataBuffer * recordData() const;
+  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context) const;
+  RecordDataBuffer * recordData() const {
+    assert(!isNull());
+    Ion::Storage::Record::Data d = value();
+    return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
+  }
 };
 
 }
 
 #endif
-
-
-  /* | x  | y  | Status
-   * | 0  | 0  | Undefined
-   * | 1  | 0  | Vertical Line
-   * | 2  | 0  | Unhandled (Multiple veritcal lines ? # TODO)
-   * | +  | 0  | Unhandled (Multiple veritcal lines ? # TODO)
-   * | 0  | 1  | Horizontal Line
-   * | 1  | 1  | Line
-   * | 2  | 1  | Cartesian
-   * | +  | 1  | Cartesian
-   * | 0  | 2  | Unhandled (Multiple horizontal lines ? # TODO)
-   * | 1  | 2  | Circle, Ellipsis, Hyperbola, Parabolla # TODO differentiate
-   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabolla # TODO differentiate
-   * | +  | 2  | Unhandled (But could be ? # TODO)
-   * | 0  | +  | Unhandled (Multiple horizontal lines ? # TODO)
-   * | 1  | +  | Unhandled (Swap x and y ? # TODO)
-   * | 2  | +  | Unhandled (Swap x and y ? # TODO)
-   * | +  | +  | Unhandled
-   *
-   *
-   * Conic type ?
-   * - Both x and y degree 2 ?
-   * - One degree 2, one degree 1 : Parabola
-   * So sign of x^2 vs sign of y^2 : same : ellipse, different : hyperbola
-   * circle : ellipse + same coefficient
-   *    No shared coefficient : x^2y or y^2x
-   * Parabola, one of them not coeff 2, + additional checks plz
-   *    No shared coefficient : xy x^2y or y^2x
-   * y^(2) x=-2 y+10 x+x^(2)
-   *
-   * Ax2+Bxy+Cy2+Dx+Ey+F=0 with A,B,C not all zero
-   * Discriminant B^2-4AC :
-   *  - Negative, A=C and B=0 : Circle
-   *  - Negative : Ellipse
-   *  - Null : Parabola
-   *  - Positive and A + C = 0 : Rectangular Hyperbola
-   *  - Positive : Hyperbola
-   *
-   * Eccentricity e formula :
-   *  1 if parabola, sqrt(...) otherwise
-   * Cercle :
-   *  r : Rayon :
-   *    sqrt(-F/A + (E^2+D^2)/((2A)^2))
-   *  (x,y) : Coordonnées du centre :
-   *     x = (2CD-BE)/(B^2-4AC)
-   *     y = (2AE-BD)/(B^2-4AC)
-   *
-   * Ellipse :
-   *  a : Demi grand axe
-   *  b : Demi petit axe
-   *  c : Distance centre-foyer
-   *  e : excentircité
-   *    sqrt(...)
-   *  (x,y) : Coordonnées du centre :
-   *     x = (2CD-BE)/(B^2-4AC)
-   *     y = (2AE-BD)/(B^2-4AC)
-   *
-   * Hyperbole :
-   *  a : Distance centre-sommet
-   *  b : Demi axe transverse
-   *  c : Distance centre-foyer
-   *  e : excentircité
-   *    sqrt(...)
-   *  (x,y) : Coordonnées du centre :
-   *     x = (2CD-BE)/(B^2-4AC)
-   *     y = (2AE-BD)/(B^2-4AC)
-   *
-   * Parabole :
-   *  p : Parametre
-   *  (x,y) : Coordonnées du sommet :
-   *
-   *
-   */

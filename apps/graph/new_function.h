@@ -1,24 +1,25 @@
-#ifndef GRAPH_FUNCTION_H
-#define GRAPH_FUNCTION_H
+#ifndef GRAPH_NEW_FUNCTION_H
+#define GRAPH_NEW_FUNCTION_H
 
-#include "expression_model_handle.h"
+#include "../shared/expression_model_handle.h"
 
-#if __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
+// TODO Hugo : Emscripten things
 
-namespace Shared {
+namespace Graph {
 
-class NewFunction : public ExpressionModelHandle {
+class NewFunction : public Shared::ExpressionModelHandle {
 public:
-enum class equationSymbol : uint8_t {
-    equal = 0,
-    inequal,
-    greater,
-    greaterOrEqual,
-    less,
-    lessOrEqual,
-    }
+  static constexpr size_t k_numberOfEquationSymbols = 6;
+  enum class EquationSymbol : uint8_t {
+    Equal = 0,
+    Inequal,
+    Greater,
+    GreaterOrEqual,
+    Less,
+    LessOrEqual,
+  };
+
+  static constexpr size_t k_numberOfPlotTypes = 20;
   enum class PlotType : uint8_t {
     Cartesian = 0,
     Polar,
@@ -37,48 +38,34 @@ enum class equationSymbol : uint8_t {
     GreaterOrEqual,
     Less,
     LessOrEqual,
+    Other,
     Undefined,
     Unhandled
   };
-  /* 2* means degree exactly 2 with no terms of degree 1. Otherwise, equivalent to +
-   * | x  | y  | Status
-   * | 0  | 0  | Polar, Parametric or Undefined
-   * | 1  | 0  | Veritcal Line
-   * | 2  | 0  | Unhandled (Multiple veritcal lines ? # TODO)
-   * | +  | 0  | Unhandled (Multiple veritcal lines ? # TODO)
-   * | 0  | 1  | Horizontal Line
-   * | 1  | 1  | Line
-   * | 2  | 1  | Cartesian
-   * | +  | 1  | Cartesian
-   * | 0  | 2* | Unhandled (Multiple horizontal lines ? # TODO)
-   * | 1  | 2* | Parabolla (1 or 1* only ? # TODO)
-   * | 2* | 2* | Circle, Ellipsis, Hyperbola
-   * | 2  | 2* | Unhandled (But could be ? # TODO)
-   * | +  | 2* | Unhandled (But could be ? # TODO)
-   * | 2* | 2  | Unhandled (Swap x and y ? # TODO)
-   * | 0  | +  | Unhandled (Multiple horizontal lines ? # TODO)
-   * | 1  | +  | Unhandled (Swap x and y ? # TODO)
-   * | 2* | +  | Unhandled (Swap x and y ? # TODO)
-   * | +  | +  | Unhandled
-   */
-  static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
-  NewFunction(Ion::Storage::Record record = Record()) : ExpressionModelHandle(record) {}
+
+  static NewFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
 
   // Properties
   bool isActive() const;
   KDColor color() const;
   void setActive(bool active);
-  bool drawAbove() const; // greater, greaterOrEqual, inequal
-  bool drawBelow() const; // less, lessOrEqual, inequal
-  bool drawCurve() const; // greaterOrEqual, lessOrEqual, equal
-  int yDegree() const; // Handled y degree are 0, 1 or (exactly) 2
-  int xDegree() const; //
-
+  bool isNamed() const; // y = or f(x) = ?
+  bool drawAbove() const; // Greater, GreaterOrEqual, Inequal
+  bool drawBelow() const; // Less, LessOrEqual, Inequal
+  bool drawCurve() const; // GreaterOrEqual, LessOrEqual, Equal
+  int yDegree() const; // Handled y degree are 0, 1 or 2
+  int xDegree() const; // Any degree is handled
 
   I18n::Message functionCategory() const override; // Line, polar, cartesian, ...
   CodePoint symbol() const override; // x, theta, t, y
+  // Expression clone is of the form (exp1) = (exp2)
+  // expressionEquation returns (exp1) - (exp2) or (exp2) if isNamed() (reduced ?)
+  Poincare::Expression expressionEquation(Poincare::Context * context) const;
+  // expressionReduced returns equations solutions in y ( matrix if multiple solutions)
   Poincare::Expression expressionReduced(Poincare::Context * context) const override;
+  // expressionReduced returns expressionReduced derivative(s)
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
+  EquationSymbol equationSymbol();
   PlotType plotType() const;
   void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
   static I18n::Message ParameterMessageForPlotType(PlotType plotType);  // x, theta, t, y
@@ -106,12 +93,12 @@ enum class equationSymbol : uint8_t {
   void protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const;
 
   // tMin and tMax
-  bool shouldClipTRangeToXRange() const override { return plotType() == PlotType::Cartesian; }  // Returns true if the function will not be displayed if t is outside x range.
+  bool shouldClipTRangeToXRange() const override;  // Returns true if the function will not be displayed if t is outside x range.
   float tMin() const override;
   float tMax() const override;
   void setTMin(float tMin);
   void setTMax(float tMax);
-  float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
+  float rangeStep() const override;
 
   // Range
   bool basedOnCostlyAlgorithms(Poincare::Context * context) const override;
@@ -126,13 +113,9 @@ enum class equationSymbol : uint8_t {
   Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
   // Integral
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
-
-  // Cache
-  ContinuousFunctionCache * cache() const { return m_cache; }
-  void setCache(ContinuousFunctionCache * v) { m_cache = v; }
-  Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
+  // TODO Hugo : Consider cache
 private:
-  constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
+  NewFunction(Ion::Storage::Record record = Record()) : Shared::ExpressionModelHandle(record) {}
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
@@ -140,46 +123,114 @@ private:
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
 
-  /* RecordDataBuffer is the layout of the data buffer of Record
-   * representing a Function. We want to avoid padding which would:
-   * - increase the size of the storage file
-   * - introduce junk memory zone which are then crc-ed in Storage::checksum
-   *   creating dependency on uninitialized values.
-   * - complicate getters, setters and record handling
-   * In addition, Record::value() is a pointer to an address inside
-   * Ion::Storage::sharedStorage(), and it might be unaligned. We use the packed
-   * keyword to warn the compiler that it members are potentially unaligned
-   * (otherwise, the compiler can emit instructions that work only on aligned
-   * objects). It also solves the padding issue mentioned above.
-   */
+  class Model : public ExpressionModel {
+    // TODO Hugo : Add derivative
+  public:
+    Model() : ExpressionModel() {}
+    void tidy() const override;
+  private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
+    size_t expressionSize(const Ion::Storage::Record * record) const override;
+  };
+
+  // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer {
   public:
     RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }
+    PlotType plotType() const { return m_plotType; }
+    void setPlotType(PlotType plotType) { m_plotType = plotType; }
+    EquationSymbol equationSymbol() const { return m_equationSymbol; }
+    void setEquationSymbol(EquationSymbol equationSymbol) { m_equationSymbol = equationSymbol; }
     bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
   private:
-#if __EMSCRIPTEN__
-    /* For emscripten memory representation, loads and stores must be aligned;
-     * performing a normal load or store on an unaligned address can fail
-     * silently. We thus use 'emscripten_align1_short' type, the unaligned
-     * version of uint16_t type to avoid producing an alignment error on the
-     * emscripten platform. */
-    static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_short m_color;
-#else
     uint16_t m_color;
-#endif
     bool m_active;
+    PlotType m_plotType;
+    EquationSymbol m_equationSymbol;
   };
 
-
-private:
+  Model m_model;
   RecordDataBuffer * recordData() const;
 };
 
 }
 
 #endif
+
+
+  /* | x  | y  | Status
+   * | 0  | 0  | Undefined
+   * | 1  | 0  | Vertical Line
+   * | 2  | 0  | Unhandled (Multiple veritcal lines ? # TODO)
+   * | +  | 0  | Unhandled (Multiple veritcal lines ? # TODO)
+   * | 0  | 1  | Horizontal Line
+   * | 1  | 1  | Line
+   * | 2  | 1  | Cartesian
+   * | +  | 1  | Cartesian
+   * | 0  | 2  | Unhandled (Multiple horizontal lines ? # TODO)
+   * | 1  | 2  | Circle, Ellipsis, Hyperbola, Parabolla # TODO differentiate
+   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabolla # TODO differentiate
+   * | +  | 2  | Unhandled (But could be ? # TODO)
+   * | 0  | +  | Unhandled (Multiple horizontal lines ? # TODO)
+   * | 1  | +  | Unhandled (Swap x and y ? # TODO)
+   * | 2  | +  | Unhandled (Swap x and y ? # TODO)
+   * | +  | +  | Unhandled
+   *
+   *
+   * Conic type ?
+   * - Both x and y degree 2 ?
+   * - One degree 2, one degree 1 : Parabola
+   * So sign of x^2 vs sign of y^2 : same : ellipse, different : hyperbola
+   * circle : ellipse + same coefficient
+   *    No shared coefficient : x^2y or y^2x
+   * Parabola, one of them not coeff 2, + additional checks plz
+   *    No shared coefficient : xy x^2y or y^2x
+   * y^(2) x=-2 y+10 x+x^(2)
+   *
+   * Ax2+Bxy+Cy2+Dx+Ey+F=0 with A,B,C not all zero
+   * Discriminant B^2-4AC :
+   *  - Negative, A=C and B=0 : Circle
+   *  - Negative : Ellipse
+   *  - Null : Parabola
+   *  - Positive and A + C = 0 : Rectangular Hyperbola
+   *  - Positive : Hyperbola
+   *
+   * Eccentricity e formula :
+   *  1 if parabola, sqrt(...) otherwise
+   * Cercle :
+   *  r : Rayon :
+   *    sqrt(-F/A + (E^2+D^2)/((2A)^2))
+   *  (x,y) : Coordonnées du centre :
+   *     x = (2CD-BE)/(B^2-4AC)
+   *     y = (2AE-BD)/(B^2-4AC)
+   *
+   * Ellipse :
+   *  a : Demi grand axe
+   *  b : Demi petit axe
+   *  c : Distance centre-foyer
+   *  e : excentircité
+   *    sqrt(...)
+   *  (x,y) : Coordonnées du centre :
+   *     x = (2CD-BE)/(B^2-4AC)
+   *     y = (2AE-BD)/(B^2-4AC)
+   *
+   * Hyperbole :
+   *  a : Distance centre-sommet
+   *  b : Demi axe transverse
+   *  c : Distance centre-foyer
+   *  e : excentircité
+   *    sqrt(...)
+   *  (x,y) : Coordonnées du centre :
+   *     x = (2CD-BE)/(B^2-4AC)
+   *     y = (2AE-BD)/(B^2-4AC)
+   *
+   * Parabole :
+   *  p : Parametre
+   *  (x,y) : Coordonnées du sommet :
+   *
+   *
+   */

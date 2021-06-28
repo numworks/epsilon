@@ -103,6 +103,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
             ExpressionNode::ReductionTarget::SystemForAnalysis,
             ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
             Poincare::ExpressionNode::UnitConversion::Default);
+          // Reduce the expression
           tempExpression = tempExpression.reduce(reductionContext);
           // Get expression degree on y
           int degree = tempExpression.polynomialDegree(context, "y");

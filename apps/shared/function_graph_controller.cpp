@@ -179,11 +179,7 @@ void FunctionGraphController::computeXRange(float xMinLimit, float xMaxLimit, fl
 }
 
 void FunctionGraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) {
-  /* Since the banner has not yet been computed, cursorBottomMarginRatio cannot
-   * be called. We compute it manually with an estimation of the banner size. */
-  constexpr int estimateNumberOfBannerLines = 1;
-  float bottomRatio = cursorBottomMarginRatioForBannerHeight(BannerView::HeightGivenNumberOfLines(estimateNumberOfBannerLines));
-  float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - bottomRatio);
+  float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - cursorBottomMarginRatio());
   DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore());
 }
 

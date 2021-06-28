@@ -1,11 +1,24 @@
 #include "new_function.h"
+#include <escher/palette.h>
+#include <poincare/subtraction.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
+#include <poincare/polynomial.h>
+#include <poincare/zoom.h>
+#include <poincare/integral.h>
+#include <poincare/float.h>
+#include <poincare/serialization_helper.h>
+#include "../shared/poincare_helpers.h"
+#include <algorithm>
+
+using namespace Poincare;
 
 namespace Graph {
 
 NewFunction NewFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
   // Create the record
-  RecordDataBuffer data(Palette::nextDataColor(&s_colorIndex));
+  RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
   if (baseName == nullptr) {
     // Return if error
     return NewFunction();
@@ -41,12 +54,12 @@ bool NewFunction::drawCurve() const {
   return eqSymbol == EquationSymbol::GreaterOrEqual || eqSymbol == EquationSymbol::LessOrEqual || eqSymbol == EquationSymbol::Equal;
 }
 
-int NewFunction::yDegree() const {
-  return expressionEquation().polynomialDegree(context, "y");
+int NewFunction::yDegree(Context * context) const {
+  return expressionEquation(context).polynomialDegree(context, "y");
 }
 
-int NewFunction::xDegree() const {
-  return expressionEquation().polynomialDegree(context, "x");
+int NewFunction::xDegree(Context * context) const {
+  return expressionEquation(context).polynomialDegree(context, "x");
 }
 
 I18n::Message NewFunction::functionCategory() const {
@@ -72,12 +85,12 @@ CodePoint NewFunction::symbol() const {
   }
 }
 
-Poincare::Expression NewFunction::expressionEquation(Poincare::Context * context) const {
+Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // TODO Hugo : Add todo expressionReduced on circularity ?
-  if (isNamed() && isCircularlyDefined(this, context)) {
+  if (record->fullName() != nullptr && isCircularlyDefined(record, context)) {
     return Undefined::Builder();
   }
-  Expression result = Expression::ExpressionFromAddress(expressionAddress(this), expressionSize(this));
+  Expression result = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
   // TODO Hugo : Handle function assignement from outside
   // TODO Hugo : Handle other than equal
   assert(result.type() == ExpressionNode::Type::Equal);
@@ -88,9 +101,9 @@ Poincare::Expression NewFunction::expressionEquation(Poincare::Context * context
     assert(isNamed());
   } else {
     result = Subtraction::Builder(result.childAtIndex(0), result.childAtIndex(1));
-    // Poincare::ExpressionNode::ReductionContext reductionContext = Poincare::ExpressionNode::ReductionContext(
-    //   context, Poincare::Preferences::sharedPreferences()->complexFormat(),
-    //   Poincare::Preferences::sharedPreferences()->angleUnit(),
+    // ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(
+    //   context, Preferences::sharedPreferences()->complexFormat(),
+    //   Preferences::sharedPreferences()->angleUnit(),
     //   GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
     //   ExpressionNode::ReductionTarget::SystemForAnalysis,
     //   ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
@@ -100,7 +113,7 @@ Poincare::Expression NewFunction::expressionEquation(Poincare::Context * context
     * same function. So we need to keep a valid result while executing
     * 'Simplify'. Thus, we use a temporary expression. */
   Expression tempExpression = result.clone();
-  PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+  Shared::PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   // simplify might return an uninitialized Expression if interrupted
   if (!tempExpression.isUninitialized()) {
     result = tempExpression;
@@ -109,13 +122,13 @@ Poincare::Expression NewFunction::expressionEquation(Poincare::Context * context
   return result;
 }
 
-Poincare::Expression NewFunction::expressionReduced(Poincare::Context * context) const {
+Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * record, Context * context) const {
   // TODO Hugo : Fix this
   // Get expression degree on y
   if (m_expression.isUninitialized()) {
     // Retrieve the expression from the equation
-    m_expression = expressionEquation(context);
-    if (!isNamed()) {
+    m_expression = expressionEquation(record, context);
+    if (record->fullName() != nullptr) {
       // Transform the solution by solving the equation in y
       int degree = m_expression.polynomialDegree(context, "y");
       if (degree <= 0 || degree >= 3) {
@@ -123,15 +136,15 @@ Poincare::Expression NewFunction::expressionReduced(Poincare::Context * context)
         m_expression = Undefined::Builder();
       } else {
         Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-        int d = m_expression.getPolynomialReducedCoefficients("y", coefficients, context, Preferences::ComplexFormat::Cartesian, Poincare::Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+        int d = m_expression.getPolynomialReducedCoefficients("y", coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
         assert(d == degree);
         if (d == 1) {
           Expression root;
-          Poincare::Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::sharedPreferences()->angleUnit());
+          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
           m_expression = root;
         } else {
           Expression root1, root2, delta;
-          int solutions = Poincare::Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::sharedPreferences()->angleUnit());
+          int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
           if (solutions <= 1) {
             m_expression = root1;
           } else {
@@ -141,20 +154,13 @@ Poincare::Expression NewFunction::expressionReduced(Poincare::Context * context)
             // m_expression = Addition::Builder(Multiplication::Builder(alternator, Subtraction::Builder(root1, root2.clone())), root2);
           }
         }
+      }
     }
   }
   return m_expression;
 }
 
-EquationSymbol NewFunction::equationSymbol() {
-  return recordData()->equationSymbol();
-}
-
-PlotType NewFunction::plotType() const {
-  return recordData()->plotType();
-}
-
-void NewFunction::updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context) {
+void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
   // Compute plot type from expressions
   /* If of format f(...) = ... , handle this -> Cartesian, Polar, Parametric or Undefined
    * | y  | x  | Status
@@ -175,27 +181,27 @@ void NewFunction::updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poi
    * | +  | 2  | Unhandled (Swap x and y ? # TODO)
    * | +  | +  | Unhandled
    */
-  PlotType plotType;
+  // TODO Hugo : proprify returns here
   if (isNamed()) {
     // TODO Hugo :retrieve symbol, -> Polar, Parametric or Cartsian
-    return PlotType::Cartesian;
+    return recordData()->setPlotType(PlotType::Cartesian);
   }
-  int yDeg = yDegree();
-  int xDeg = xDegree();
+  int yDeg = yDegree(context);
+  int xDeg = xDegree(context);
   if (yDeg == 0 && xDeg == 0) {
-    return PlotType::Undefined;
+    return recordData()->setPlotType(PlotType::Undefined);
   }
   if (yDeg == 0 && xDeg == 1) {
-    return PlotType::VerticalLine;
+    return recordData()->setPlotType(PlotType::VerticalLine);
   }
   if (yDeg == 0 && xDeg == 1) {
-    return PlotType::HorizontalLine;
+    return recordData()->setPlotType(PlotType::HorizontalLine);
   }
   if (yDeg == 1 && xDeg == 1) {
-    return PlotType::Line;
+    return recordData()->setPlotType(PlotType::Line);
   }
   if (yDeg == 1) {
-    return PlotType::Cartesian;
+    return recordData()->setPlotType(PlotType::Cartesian);
   }
   if (yDeg == 2 && xDeg == 1 || xDeg == 2) {
     // TODO Hugo : Compute delta ...
@@ -208,14 +214,12 @@ void NewFunction::updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poi
      *  - Positive and A + C = 0 : Rectangular Hyperbola
      *  - Positive : Hyperbola
      */
-    return PlotType::Conics;
+    return recordData()->setPlotType(PlotType::Conics);
   }
   if (yDeg == 2) {
-    return PlotType::Other;
+    return recordData()->setPlotType(PlotType::Other);
   }
-  return PlotType::Unhandled;
-
-  recordData()->setPlotType(plotType);
+  return recordData()->setPlotType(PlotType::Unhandled);
   /*
    * Eccentricity e formula :
    *  1 if parabola, sqrt(...) otherwise
@@ -276,27 +280,27 @@ int NewFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
   return 0;
 }
 
-double NewFunction::approximateDerivative(double x, Poincare::Context * context) const {
+double NewFunction::approximateDerivative(double x, Context * context) const {
   // TODO Hugo : Re-implement derivative
   return 0.0;
 }
 
-int NewFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+int NewFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
   // TODO Hugo : Re-check
   PlotType type = plotType();
   if (type == PlotType::Parametric) {
     int result = 0;
     result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
-    result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
+    result += Shared::PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
     result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
-    result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
+    result += Shared::PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
     result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
     return result;
   }
   if (type == PlotType::Polar) {
-    return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
+    return Shared::PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
   }
-  return Function::printValue(cursorT, cursorX, cursorY, buffer, bufferSize, precision, context);
+  return Shared::PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }
 
 bool NewFunction::shouldClipTRangeToXRange() const {
@@ -304,20 +308,20 @@ bool NewFunction::shouldClipTRangeToXRange() const {
   return plotType() != PlotType::Parametric && plotType() != PlotType::Polar;
 }
 
-void NewFunction::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const {
+void NewFunction::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Context * context, bool xRange) const {
   // TODO Hugo : Re-check
-  Poincare::Zoom::ValueAtAbscissa evaluation;
+  Zoom::ValueAtAbscissa evaluation;
   if (xRange) {
-    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
-      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x1();
+    evaluation = [](float x, Context * context, const void * auxiliary) {
+      return static_cast<const NewFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x1();
     };
   } else {
-    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
-      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    evaluation = [](float x, Context * context, const void * auxiliary) {
+      return static_cast<const NewFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
     };
   }
 
-  Poincare::Zoom::FullRange(evaluation, tMin, tMax, tStep, min, max, context, this);
+  Zoom::FullRange(evaluation, tMin, tMax, tStep, min, max, context, this);
 }
 
 float NewFunction::tMin() const {
@@ -349,12 +353,12 @@ float NewFunction::rangeStep() const {
   return !(plotType() == PlotType::Parametric || plotType() == PlotType::Polar) ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
 }
 
-bool NewFunction::basedOnCostlyAlgorithms(Poincare::Context * context) const {
+bool NewFunction::basedOnCostlyAlgorithms(Context * context) const {
   // TODO Hugo : Re-implement
   return true;
 }
 
-void NewFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const {
+void NewFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
   // TODO Hugo : Re-check
   if (plotType() == PlotType::Parametric || plotType() == PlotType::Polar) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
@@ -382,12 +386,12 @@ void NewFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMi
      * result of the evaluations. As we are not interested in precise results
      * but only in ordering, this approximation is sufficient. */
     constexpr float precision = 1e-5;
-    return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
+    return precision * std::round(static_cast<const NewFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
   };
   Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
 }
 
-void NewFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const {
+void NewFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context) const {
   // TODO Hugo : Re-check
   if (plotType() == PlotType::Parametric || plotType() == PlotType::Polar) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
@@ -405,7 +409,7 @@ void NewFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, flo
   }
 
   Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    return static_cast<const NewFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
   };
 
   if (yMaxForced - yMinForced <= ratio * (xMax - xMin)) {
@@ -431,22 +435,47 @@ size_t NewFunction::Model::expressionSize(const Ion::Storage::Record * record) c
   return record->value().size-sizeof(RecordDataBuffer);
 }
 
+template<typename T>
+Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * context) const {
+  if (t < tMin() || t > tMax()) {
+    return Coordinate2D<T>(plotType() == PlotType::Cartesian ? t : NAN, NAN);
+  }
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknown[bufferSize];
+  SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknown);
+  PlotType type = plotType();
+  Expression e = expressionReduced(context);
+  if (type != PlotType::Parametric) {
+    assert(type == PlotType::Cartesian || type == PlotType::Polar);
+    return Coordinate2D<T>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
+  }
+  if (e.type() == ExpressionNode::Type::Dependency) {
+    e = e.childAtIndex(0);
+  }
+  assert(e.type() == ExpressionNode::Type::Matrix);
+  assert(static_cast<Matrix&>(e).numberOfRows() == 2);
+  assert(static_cast<Matrix&>(e).numberOfColumns() == 1);
+  return Coordinate2D<T>(
+      Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context),
+      Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
+}
+
 Coordinate2D<double> NewFunction::nextMinimumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
   // TODO Hugo : Re-check
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Shared::PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> NewFunction::nextMaximumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
   // TODO Hugo : Re-check
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Shared::PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> NewFunction::nextRootFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
   // TODO Hugo : Re-check
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(Shared::PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> NewFunction::nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
+Coordinate2D<double> NewFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
   // TODO Hugo : Re-check
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
@@ -458,7 +487,7 @@ Coordinate2D<double> NewFunction::nextIntersectionFrom(double start, double max,
   if (start == max) {
     return NAN;
   }
-  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, max, context, e, relativePrecision, minimalStep, maximalStep);
+  return Shared::PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, max, context, e, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> NewFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
@@ -476,33 +505,26 @@ Coordinate2D<double> NewFunction::nextPointOfInterestFrom(double start, double m
   return compute(expressionReduced(context), unknownX, start, max, context, relativePrecision, minimalStep, maximalStep);
 }
 
-Poincare::Expression NewFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
+Expression NewFunction::sumBetweenBounds(double start, double end, Context * context) const {
   // TODO Hugo : Re-check
   assert(plotType() == PlotType::Cartesian);
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
-  return Poincare::Integral::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknown), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
+  return Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(start), Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
 }
 
-void NewFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const {
+void NewFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Context * context) const {
   // TODO Hugo : Re-implement
 }
 
-RecordDataBuffer * NewFunction::recordData() const {
-  assert(!isNull());
-  Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
-}
+template Coordinate2D<float> NewFunction::templatedApproximateAtParameter<float>(float, Context *) const;
+template Coordinate2D<double> NewFunction::templatedApproximateAtParameter<double>(double, Context *) const;
 
-
-template Coordinate2D<float> NewFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
-template Coordinate2D<double> NewFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;
-
-template Poincare::Coordinate2D<float> NewFunction::privateEvaluateXYAtParameter<float>(float, Poincare::Context *) const;
-template Poincare::Coordinate2D<double> NewFunction::privateEvaluateXYAtParameter<double>(double, Poincare::Context *) const;
+template Coordinate2D<float> NewFunction::privateEvaluateXYAtParameter<float>(float, Context *) const;
+template Coordinate2D<double> NewFunction::privateEvaluateXYAtParameter<double>(double, Context *) const;
 
 
 } // namespace Graph

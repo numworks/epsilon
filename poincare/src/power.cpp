@@ -1091,10 +1091,46 @@ Expression Power::denominator(ExpressionNode::ReductionContext reductionContext)
 }
 
 Expression Power::PowerRationalRational(Rational base, Rational index, ExpressionNode::ReductionContext reductionContext) {
+  assert(!base.numeratorOrDenominatorIsInfinity() && !index.numeratorOrDenominatorIsInfinity());
+  /* Handle this case right now to always reduce to Unreal if needed. */
+  if (base.isNegative()) {
+    Multiplication res = Multiplication::Builder();
+    /* Compute -1^(a/b) */
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      /* On real numbers (-1)^(a/b) =
+       * - 1 if a is even
+       * - -1 if a and b are odd
+       * - has no real solution otherwise */
+      if (!index.unsignedIntegerNumerator().isEven()) {
+        if (index.integerDenominator().isEven()) {
+          return Unreal::Builder();
+        } else {
+          res.addChildAtIndexInPlace(Rational::Builder(-1), 0, res.numberOfChildren());
+        }
+      }
+    } else {
+      /* On complex numbers, we pick the first root (-1)^(a/b) = e^(i*pi*a/b)
+       * We set the sign of index to positive to get the principal root. */
+      Rational indexClone = index.clone().convert<Rational>();
+      indexClone.setSign(ExpressionNode::Sign::Positive);
+      Expression exp = CreateComplexExponent(indexClone, reductionContext);
+      res.addChildAtIndexInPlace(exp, res.numberOfChildren(), res.numberOfChildren());
+      exp.shallowReduce(reductionContext);
+    }
+    base.setSign(ExpressionNode::Sign::Positive);
+    Expression res2 = PowerRationalRational(base, index, reductionContext);
+    if (res2.isUninitialized()) {
+      /* The expression could not be reduced. Restore the sign of the base. */
+      base.setSign(ExpressionNode::Sign::Negative);
+      return Expression();
+    } else {
+      res.addChildAtIndexInPlace(res2, res.numberOfChildren(), res.numberOfChildren());
+      return res.shallowReduce(reductionContext);
+    }
+  }
   if (RationalExponentShouldNotBeReduced(base, index)) {
     return Expression();
   }
-  assert(!base.numeratorOrDenominatorIsInfinity() && !index.numeratorOrDenominatorIsInfinity());
   if (base.isZero()) {
     if (index.isNegative() || index.isZero()) {
       return Undefined::Builder();
@@ -1201,27 +1237,6 @@ Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionN
   if (!i2.isOne()) {
     Integer one(1);
     m.addChildAtIndexInPlace(Power::Builder(Rational::Builder(i2), Rational::Builder(one, b2)), 1, 1);
-  }
-  if (base.isNegative()) {
-    /* Compute -1^(a/b) */
-    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-      /* On real numbers (-1)^(a/b) =
-       * - 1 if a is even
-       * - -1 if a and b are odd
-       * - has no real solution otherwise */
-      if (!a.isEven()) {
-        if (b.isEven()) {
-          return Unreal::Builder();
-        } else {
-          m.addChildAtIndexInPlace(Rational::Builder(-1), 0, m.numberOfChildren());
-        }
-      }
-    } else {
-      /* On complex numbers, we pick the first root (-1)^(a/b) = e^(i*pi*a/b) */
-      Expression exp = CreateComplexExponent(index, reductionContext);
-      m.addChildAtIndexInPlace(exp, m.numberOfChildren(), m.numberOfChildren());
-      exp.shallowReduce(reductionContext);
-    }
   }
   return m.shallowReduce(reductionContext);
 }

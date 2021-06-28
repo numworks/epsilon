@@ -16,7 +16,7 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
-  DisplayParameter displayParameter() override { return DisplayParameter::WantsMaximumSpace; }
+  DisplayParameter displayParameter() override { return DisplayParameter::DisplayNoTitle; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Zoom");

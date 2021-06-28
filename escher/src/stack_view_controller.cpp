@@ -12,10 +12,9 @@ StackViewController::ControllerView::ControllerView() :
     m_borderView(Palette::GrayBright),
     m_contentView(nullptr),
     m_numberOfStacks(0),
-    m_displayMask(~0),
+    m_headersDisplayMask(~0),
     m_headersOverlapHeaders(true),
     m_headersOverlapContent(false) {
-  static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less than 8 stacks");
 }
 
 void StackViewController::ControllerView::setContentView(View * view) {
@@ -25,7 +24,9 @@ void StackViewController::ControllerView::setContentView(View * view) {
 }
 
 void StackViewController::ControllerView::setupHeadersBorderOverlaping(
-    bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor) {
+    bool headersOverlapHeaders,
+    bool headersOverlapContent,
+    KDColor headersContentBorderColor) {
   m_headersOverlapHeaders = headersOverlapHeaders;
   m_headersOverlapContent = headersOverlapContent;
   m_borderView.setColor(headersContentBorderColor);
@@ -44,22 +45,26 @@ void StackViewController::ControllerView::popStack() {
   m_numberOfStacks--;
 }
 
-bool StackViewController::ControllerView::isHeaderDisplayed(int i) const {
+bool StackViewController::ControllerView::shouldDisplayHeaderAtIndex(int i) const {
   return maskBit(m_numberOfStacks - 1 - i);
 }
 
 void StackViewController::ControllerView::layoutSubviews(bool force) {
-  /* Layout represented horizontally :
-   *                  <-height-->
-   *  - Overlap :     | stack 1 | stack 2 | stack 3 |   [Content]
-   *  - No overlap :  | stack 1 || stack 2 || stack 3 |   [Content] */
+  /* Layout:    Overlap   |    No overlap
+
+            |  Header 1   |    Header 1  |
+            | ----------  |   ========== |
+            |  Header 2   |    Header 2  |
+            | ----------  |   ========== |
+            |  [content]  |    [content] |
+   */
   // Compute view frames
   KDCoordinate width = m_frame.width();
   int heightOffset = 0;
-  int heightDiff =
-      Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
+  int heightDiff = Metric::StackTitleHeight +
+                   (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   for (int i = 0; i < m_numberOfStacks; i++) {
-    if (isHeaderDisplayed(i)) {
+    if (shouldDisplayHeaderAtIndex(i)) {
       m_stackViews[i].setFrame(
           KDRect(0, heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
           force);
@@ -69,7 +74,8 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
   // Border frame
   if (m_contentView) {
     if (m_headersOverlapHeaders && numberOfDisplayedHeaders() > 0) {
-      heightOffset += Metric::CellSeparatorThickness;  // last separator
+      // Last separator is drawn by last header, so content needs to be offset a bit
+      heightOffset += Metric::CellSeparatorThickness;
     }
     if (borderShouldOverlapContent()) {
       // Shift content position up by the separator thickness
@@ -107,30 +113,21 @@ bool StackViewController::ControllerView::borderShouldOverlapContent() const {
 int StackViewController::ControllerView::numberOfDisplayedHeaders() const {
   unsigned int count = 0;
   for (int i = 0; i < m_numberOfStacks; i++) {
-    count += isHeaderDisplayed(i);
+    count += shouldDisplayHeaderAtIndex(i);
   }
   return count;
 }
 
-void StackViewController::ControllerView::setMaskBit(int i, bool b) {
-  assert(i >= 0 && i < k_MaxNumberOfStacks);
-  if (b) {
-    m_displayMask |= (1U << i);
-  } else {
-    m_displayMask &= ~(1U << i);
-  }
-}
-
 bool StackViewController::ControllerView::maskBit(int i) const {
   assert(i >= 0 && i < k_MaxNumberOfStacks);
-  return (m_displayMask >> i) & 1U;
+  return (m_headersDisplayMask >> i) & 1U;
 }
 
 int StackViewController::ControllerView::displayedIndex(int i) {
   assert(i < numberOfDisplayedHeaders());
   int counted = 0;
   for (int j = 0; j < m_numberOfStacks; j++) {
-    if (isHeaderDisplayed(j)) {
+    if (shouldDisplayHeaderAtIndex(j)) {
       if (counted == i) {
         return j;
       } else {
@@ -148,7 +145,7 @@ int StackViewController::ControllerView::numberOfSubviews() const {
 }
 
 View * StackViewController::ControllerView::subviewAtIndex(int index) {
-  if (m_displayMask == 0) {
+  if (m_headersDisplayMask == 0) {
     assert(index == 0);
     return m_contentView;
   }
@@ -159,11 +156,10 @@ View * StackViewController::ControllerView::subviewAtIndex(int index) {
   }
   if (index == numberOfHeaders) {
     return m_contentView;
-  } else {
-    // Border view must be last so that it is layouted on top of content subview
-    assert(index == numberOfHeaders + 1);
-    return &m_borderView;
   }
+  // Border view must be last so that it is layouted on top of content subview
+  assert(index == numberOfHeaders + 1);
+  return &m_borderView;
 }
 
 #if ESCHER_VIEW_LOGGING
@@ -173,8 +169,10 @@ const char * StackViewController::ControllerView::className() const {
 #endif
 
 StackViewController::StackViewController(Responder * parentResponder,
-                                         ViewController * rootViewController, KDColor textColor,
-                                         KDColor backgroundColor, KDColor separatorColor) :
+                                         ViewController * rootViewController,
+                                         KDColor textColor,
+                                         KDColor backgroundColor,
+                                         KDColor separatorColor) :
     ViewController(parentResponder), m_view(), m_numberOfChildren(0), m_isVisible(false) {
   pushModel(Frame(rootViewController, textColor, backgroundColor, separatorColor));
 }
@@ -191,7 +189,9 @@ ViewController * StackViewController::topViewController() {
   return m_childrenFrame[m_numberOfChildren - 1].viewController();
 }
 
-void StackViewController::push(ViewController * vc, KDColor textColor, KDColor backgroundColor,
+void StackViewController::push(ViewController * vc,
+                               KDColor textColor,
+                               KDColor backgroundColor,
                                KDColor separatorColor) {
   assert(m_numberOfChildren < k_MaxNumberOfStacks);
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
@@ -202,7 +202,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
     return;
   }
   /* Load stack view if the View Controller has a title. */
-  if (shouldStoreOnStack(vc)) {
+  if (shouldStoreHeaderOnStack(vc)) {
     m_view.pushStack(frame);
   }
   setupActiveViewController();
@@ -214,7 +214,9 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
 void StackViewController::pop() {
   assert(m_numberOfChildren > 0);
   ViewController * vc = topViewController();
-  if (shouldStoreOnStack(vc)) {
+  if (shouldStoreHeaderOnStack(vc)) {
+    /* Warning: this assumes that the DisplayParameter and title return the
+     * same as when they were pushed on the stack. */
     m_view.popStack();
   }
   m_numberOfChildren--;
@@ -236,7 +238,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
   ViewController * vc;
   for (int i = 0; i < numberOfFramesReleased; i++) {
     vc = topViewController();
-    if (shouldStoreOnStack(vc)) {
+    if (shouldStoreHeaderOnStack(vc)) {
       m_view.popStack();
     }
     m_numberOfChildren--;
@@ -250,15 +252,20 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
   }
 }
 
-void StackViewController::pushModel(Frame frame) { m_childrenFrame[m_numberOfChildren++] = frame; }
+void StackViewController::pushModel(Frame frame) {
+  m_childrenFrame[m_numberOfChildren++] = frame;
+}
 
 void StackViewController::setupActiveView() {
   ViewController * vc = topViewController();
   if (vc) {
-    ViewController::DisplayParameter d = vc->displayParameter();
-    m_view.setDisplayMode(d == ViewController::DisplayParameter::NeverShowOwnTitle
-                              ? ViewController::DisplayParameter::Default
-                              : d);
+    ViewController::DisplayParameter topHeaderDisplayParameter = vc->displayParameter();
+    // If NeverDisplayOwnTitle, we show all other headers -> DisplayAllTitles
+    ViewController::DisplayParameter displayMask =
+        topHeaderDisplayParameter == ViewController::DisplayParameter::NeverDisplayOwnTitle
+            ? ViewController::DisplayParameter::DisplayAllTitles
+            : topHeaderDisplayParameter;
+    m_view.setHeadersDisplayMask(displayMask);
     m_view.setContentView(vc->view());
     vc->viewWillAppear();
   }
@@ -286,13 +293,15 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void StackViewController::initView() { m_childrenFrame[0].viewController()->initView(); }
+void StackViewController::initView() {
+  m_childrenFrame[0].viewController()->initView();
+}
 
 void StackViewController::viewWillAppear() {
   /* Load the stack view */
   for (int i = 0; i < m_numberOfChildren; i++) {
     ViewController * childrenVC = m_childrenFrame[i].viewController();
-    if (shouldStoreOnStack(childrenVC)) {
+    if (shouldStoreHeaderOnStack(childrenVC)) {
       m_view.pushStack(m_childrenFrame[i]);
     }
   }
@@ -314,9 +323,13 @@ void StackViewController::viewDidDisappear() {
   assert(m_view.numberOfStacks() == 0);
 }
 
-bool StackViewController::shouldStoreOnStack(ViewController * vc) {
+bool StackViewController::shouldStoreHeaderOnStack(ViewController * vc) {
+  /* In general, the displayParameter controls how the stack is shown
+   * only while the controller is the last on the stack.
+   * However, with NeverDisplayOwnTitle, the title will never be pushed
+   * onto the stack and therefore never shown, even in sub-controllers. */
   return vc->title() != nullptr &&
-         vc->displayParameter() != ViewController::DisplayParameter::NeverShowOwnTitle;
+         vc->displayParameter() != ViewController::DisplayParameter::NeverDisplayOwnTitle;
 }
 
 }  // namespace Escher

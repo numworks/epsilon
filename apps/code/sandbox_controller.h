@@ -20,7 +20,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::ViewController::DisplayParameter displayParameter() override { return Escher::ViewController::DisplayParameter::WantsMaximumSpace; }
+  Escher::ViewController::DisplayParameter displayParameter() override { return Escher::ViewController::DisplayParameter::DisplayNoTitle; }
 
 private:
   void redrawWindow();

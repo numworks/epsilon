@@ -74,7 +74,6 @@ private:
     bool borderShouldOverlapContent() const;
 
     int numberOfDisplayedHeaders() const;
-    bool maskBit(int i) const;
     // Returns the index in m_stackViews for a given display index
     int displayedIndex(int i);
 

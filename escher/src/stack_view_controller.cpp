@@ -4,6 +4,7 @@ extern "C" {
 #include <escher/container.h>
 #include <escher/metric.h>
 #include <escher/stack_view_controller.h>
+#include <ion/bit_manipulation.h>
 
 namespace Escher {
 
@@ -46,7 +47,7 @@ void StackViewController::ControllerView::popStack() {
 }
 
 bool StackViewController::ControllerView::shouldDisplayHeaderAtIndex(int i) const {
-  return maskBit(m_numberOfStacks - 1 - i);
+  return Ion::BitHelper::bitInMaskAtIndex(m_headersDisplayMask, m_numberOfStacks - 1 - i);
 }
 
 void StackViewController::ControllerView::layoutSubviews(bool force) {
@@ -116,11 +117,6 @@ int StackViewController::ControllerView::numberOfDisplayedHeaders() const {
     count += shouldDisplayHeaderAtIndex(i);
   }
   return count;
-}
-
-bool StackViewController::ControllerView::maskBit(int i) const {
-  assert(i >= 0 && i < k_MaxNumberOfStacks);
-  return (m_headersDisplayMask >> i) & 1U;
 }
 
 int StackViewController::ControllerView::displayedIndex(int i) {

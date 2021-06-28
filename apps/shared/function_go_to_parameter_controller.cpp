@@ -17,7 +17,7 @@ FunctionGoToParameterController::FunctionGoToParameterController(Responder * par
 bool FunctionGoToParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   FunctionApp * myApp = FunctionApp::app();
-  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Graph::NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
   // If possible, round f so that we go to the evaluation of the displayed f
   double pixelWidth = (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
   f = FunctionBannerDelegate::getValueDisplayedOnBanner(f, myApp->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
@@ -38,7 +38,7 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(int parameterIndex
 void FunctionGoToParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   FunctionApp * myApp = FunctionApp::app();
-  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Graph::NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
   setParameterName(function->parameterMessageName());
 }
 

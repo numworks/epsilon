@@ -45,8 +45,8 @@ bool GraphController::defaultRangeIsNormalized() const {
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {
   GraphController * graphController = static_cast<GraphController *>(m_graphController);
   ContinuousFunctionStore * store = graphController->functionStore();
-  ExpiringPointer<ContinuousFunction> function = store->modelForRecord(store->activeRecordAtIndex(j));
-  constexpr size_t bufferSize = Shared::Function::k_maxNameWithArgumentSize;
+  ExpiringPointer<NewFunction> function = store->modelForRecord(store->activeRecordAtIndex(j));
+  constexpr size_t bufferSize = NewFunction::k_maxNameWithArgumentSize;
   char buffer[bufferSize];
   int size = function->nameWithArgument(buffer, bufferSize);
   return LayoutHelper::String(buffer, size);
@@ -54,14 +54,14 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) co
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
-  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
+  ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
 }
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   bool displayDerivative = m_displayDerivativeInBanner &&
-    functionStore()->modelForRecord(record)->plotType() == ContinuousFunction::PlotType::Cartesian;
+    functionStore()->modelForRecord(record)->plotType() == NewFunction::PlotType::Cartesian;
   m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
   FunctionGraphController::reloadBannerView();
   if (!displayDerivative) {
@@ -85,8 +85,8 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
 }
 
 double GraphController::defaultCursorT(Ion::Storage::Record record) {
-  ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-  if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
+  ExpiringPointer<NewFunction> function = functionStore()->modelForRecord(record);
+  if (function->plotType() == NewFunction::PlotType::Cartesian) {
     return FunctionGraphController::defaultCursorT(record);
   }
   return function->tMin();
@@ -105,8 +105,8 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
     if (currentRecord == record) {
       continue;
     }
-    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(currentRecord);
-    assert(f->plotType() == ContinuousFunction::PlotType::Cartesian);
+    ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(currentRecord);
+    assert(f->plotType() == NewFunction::PlotType::Cartesian);
     /* Select the closest horizontal curve, then the closest vertically, then
      * the lowest curve index. */
     double currentTMin = f->tMin();

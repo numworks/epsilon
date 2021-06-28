@@ -1,6 +1,7 @@
 #include "preimage_graph_controller.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare/serialization_helper.h>
+#include <poincare/float.h>
 
 using namespace Escher;
 

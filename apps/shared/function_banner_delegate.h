@@ -1,10 +1,11 @@
 #ifndef SHARED_FUNCTION_BANNER_DELEGATE_H
 #define SHARED_FUNCTION_BANNER_DELEGATE_H
 
-#include "function_store.h"
+#include "../graph/continuous_function_store.h"
 #include "xy_banner_view.h"
 #include "curve_view_cursor.h"
 #include <poincare/preferences.h>
+#include <apps/graph/continuous_function_store.h>
 
 namespace Shared {
 
@@ -22,7 +23,7 @@ public:
    * For instance, x displayed as 0.01 can at best be encoded to x=0.010...02 */
   static double getValueDisplayedOnBanner(double t, Poincare::Context * context, int significantDigits, double deltaThreshold, bool roundToZero = false);
 protected:
-  void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context);
+  void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, Graph::ContinuousFunctionStore * functionStore, Poincare::Context * context);
   virtual XYBannerView * bannerView() = 0;
   virtual int numberOfSignificantDigits() const { return Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(); }
 };

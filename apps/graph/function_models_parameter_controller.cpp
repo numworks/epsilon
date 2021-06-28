@@ -67,7 +67,7 @@ KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
   if (type == k_modelCellType) {
     reusableCellIndex -= reusableCellCount(k_emptyModelCellType);
   }
-  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), j, false);
+  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), j);
 }
 
 void FunctionModelsParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {

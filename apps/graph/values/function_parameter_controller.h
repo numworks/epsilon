@@ -3,7 +3,7 @@
 
 #include <escher/message_table_cell_with_switch.h>
 #include "../../shared/expiring_pointer.h"
-#include "../../shared/continuous_function.h"
+#include "../new_function.h"
 #include "../../shared/values_function_parameter_controller.h"
 
 namespace Graph {
@@ -19,7 +19,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function();
+  Shared::ExpiringPointer<NewFunction> function();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else

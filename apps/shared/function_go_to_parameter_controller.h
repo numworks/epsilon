@@ -2,7 +2,7 @@
 #define SHARED_FUNCTION_GO_TO_PARAMETER_CONTROLLER_H
 
 #include "go_to_parameter_controller.h"
-#include "function.h"
+#include "../graph/new_function.h"
 
 namespace Shared {
 

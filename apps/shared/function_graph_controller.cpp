@@ -68,13 +68,13 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
 
 KDCoordinate FunctionGraphController::FunctionSelectionController::rowHeight(int j) {
   assert(j < graphController()->functionStore()->numberOfActiveFunctions());
-  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
+  ExpiringPointer<Graph::NewFunction> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
   return std::max(function->layout().layoutSize().height(), nameLayoutAtIndex(j).layoutSize().height()) + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
 }
 
 void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index < graphController()->functionStore()->numberOfActiveFunctions());
-  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
+  ExpiringPointer<Graph::NewFunction> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
   static_cast<CurveSelectionCell *>(cell)->setLayout(HorizontalLayout::Builder({nameLayoutAtIndex(index), LayoutHelper::String("=", 2), function->layout().clone()}));
 }
 
@@ -86,7 +86,7 @@ void FunctionGraphController::reloadBannerView() {
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
+  ExpiringPointer<Graph::NewFunction> function = functionStore()->modelForRecord(record);
   float gridUnit = 2 * interactiveCurveViewRange()->xGridUnit();
 
   float yMin = interactiveCurveViewRange()->yMin(), yMax = interactiveCurveViewRange()->yMax();
@@ -101,7 +101,7 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
   return resRight;
 }
 
-FunctionStore * FunctionGraphController::functionStore() const {
+Graph::ContinuousFunctionStore * FunctionGraphController::functionStore() const {
   return FunctionApp::app()->functionStore();
 }
 
@@ -113,7 +113,7 @@ void FunctionGraphController::initCursorParameters() {
   double t;
   do {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
-    ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(record);
+    ExpiringPointer<Graph::NewFunction> firstFunction = functionStore()->modelForRecord(record);
     t = defaultCursorT(record);
     xy = firstFunction->evaluateXYAtParameter(t, context);
   } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && ++functionIndex < activeFunctionsCount);
@@ -132,7 +132,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
     return false;
   }
   // Clip the current t to the domain of the next function
-  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
+  ExpiringPointer<Graph::NewFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
   double clippedT = m_cursor->t();
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
@@ -149,7 +149,7 @@ bool FunctionGraphController::cursorMatchesModel() {
   if (indexFunctionSelectedByCursor() >= functionStore()->numberOfActiveFunctions()) {
     return false;
   }
-  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  ExpiringPointer<Graph::NewFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context);
   return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
 }
@@ -190,7 +190,7 @@ void FunctionGraphController::improveFullRange(float * xMin, float * xMax, float
 void FunctionGraphController::tidyModels() {
   int nbOfFunctions = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfFunctions; i++) {
-    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<Graph::NewFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     f->tidy();
   }
 }

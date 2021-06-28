@@ -5,10 +5,11 @@
 #include <escher/tab_view_data_source.h>
 #include "expression_field_delegate_app.h"
 #include "function_graph_controller.h"
-#include "function_store.h"
+#include "../graph/continuous_function_store.h"
 #include "curve_view_cursor.h"
 #include "values_controller.h"
 #include "shared_app.h"
+#include "../graph/continuous_function_store.h"
 
 namespace Shared {
 
@@ -19,7 +20,7 @@ public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
-    virtual FunctionStore * functionStore() = 0;
+    virtual Graph::ContinuousFunctionStore * functionStore() = 0;
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
     void storageDidChangeForRecord(const Ion::Storage::Record record) override;
@@ -36,7 +37,7 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
-  virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
+  virtual Graph::ContinuousFunctionStore * functionStore() { return snapshot()->functionStore(); }
   virtual ValuesController * valuesController() = 0;
   virtual Escher::InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;

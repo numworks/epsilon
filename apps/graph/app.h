@@ -3,6 +3,7 @@
 
 #include <escher/alternate_empty_view_controller.h>
 #include "continuous_function_store.h"
+#include "new_function.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
@@ -27,14 +28,14 @@ public:
     const Descriptor * descriptor() const override;
     ContinuousFunctionStore * functionStore() override { return &m_functionStore; }
     Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
-    Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
+    Shared::Interval * intervalForType(NewFunction::PlotType plotType) {
       return m_interval + static_cast<size_t>(plotType);
     }
   private:
     void tidy() override;
     ContinuousFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
-    Shared::Interval m_interval[Shared::ContinuousFunction::k_numberOfPlotTypes];
+    Shared::Interval m_interval[NewFunction::k_numberOfPlotTypes]; // TODO Hugo : Have 1 interval per symbol, so back to three
   };
   static App * app() {
     return static_cast<App *>(Escher::Container::activeApp());
@@ -46,7 +47,7 @@ public:
   CodePoint XNT() override;
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
-  Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
+  Shared::Interval * intervalForType(NewFunction::PlotType plotType) {
     return snapshot()->intervalForType(plotType);
   }
   ValuesController * valuesController() override {

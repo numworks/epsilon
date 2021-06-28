@@ -87,11 +87,11 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
   }
 }
 
-ExpiringPointer<Function> ListParameterController::function() {
+ExpiringPointer<Graph::NewFunction> ListParameterController::function() {
   return functionStore()->modelForRecord(m_record);
 }
 
-FunctionStore * ListParameterController::functionStore() {
+Graph::ContinuousFunctionStore * ListParameterController::functionStore() {
   return FunctionApp::app()->functionStore();
 }
 

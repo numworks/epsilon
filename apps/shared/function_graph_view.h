@@ -2,7 +2,7 @@
 #define SHARED_FUNCTION_GRAPH_VIEW_H
 
 #include "labeled_curve_view.h"
-#include "function.h"
+#include "../graph/new_function.h"
 #include "../constant.h"
 #include "interactive_curve_view_range.h"
 

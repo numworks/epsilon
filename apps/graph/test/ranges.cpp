@@ -43,7 +43,7 @@ bool float_equal(float a, float b, float tolerance = 10.f * FLT_EPSILON) {
 }
 
 template <size_t N>
-void assert_best_range_is(const char * const (&definitions)[N], ContinuousFunction::PlotType const (&plotTypes)[N], float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian) {
+void assert_best_range_is(const char * const (&definitions)[N], NewFunction::PlotType const (&plotTypes)[N], float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian) {
   assert(std::isfinite(targetXMin) && std::isfinite(targetXMax) && std::isfinite(targetYMin) && std::isfinite(targetYMax)
       && targetXMin < targetXMax && targetYMin < targetYMax);
 
@@ -66,9 +66,9 @@ void assert_best_range_is(const char * const (&definitions)[N], ContinuousFuncti
   graphController.functionStore()->removeAll();
 }
 
-void assert_best_cartesian_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian, ContinuousFunction::PlotType plotType = Cartesian) {
+void assert_best_cartesian_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian, NewFunction::PlotType plotType = Cartesian) {
   const char * definitionArray[1] = { definition };
-  ContinuousFunction::PlotType plotTypeArray[1] = { plotType };
+  NewFunction::PlotType plotTypeArray[1] = { plotType };
   assert_best_range_is(definitionArray, plotTypeArray, targetXMin, targetXMax, targetYMin, targetYMax, angleUnit);
 }
 
@@ -133,22 +133,22 @@ QUIZ_CASE(graph_ranges_single_function) {
 QUIZ_CASE(graph_ranges_several_functions) {
   {
     const char * definitions[] = {"ℯ^x", "ln(x)"};
-    ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
+    NewFunction::PlotType types[] = {Cartesian, Cartesian};
     assert_best_range_is(definitions, types, -1.9, 6.8, -9, 35);
   }
   {
     const char * definitions[] = {"x/2+2", "-x+5"};
-    ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
+    NewFunction::PlotType types[] = {Cartesian, Cartesian};
     assert_best_range_is(definitions, types, -16, 17, -5.76562405, 11.765624);
   }
   {
     const char * definitions[] = {"sin(θ)", "cos(θ)"};
-    ContinuousFunction::PlotType types[] = {Polar, Polar};
+    NewFunction::PlotType types[] = {Polar, Polar};
     assert_best_range_is(definitions, types, -1.63235319, 2.13235331, -0.800000011, 1.20000005);
   }
   {
     const char * definitions[] = {"ℯ^(𝐢×x)", "[[re(f(t))][im(f(t))]]"};
-    ContinuousFunction::PlotType types[] = {Cartesian, Parametric};
+    NewFunction::PlotType types[] = {Cartesian, Parametric};
     assert_best_range_is(definitions, types, -2.44705892, 2.44705892, -1.4, 1.2);
   }
 }

@@ -36,9 +36,9 @@ namespace Escher {
 
 class ViewController : public Responder {
 public:
-  /* DisplayParameter is only used within StackViewController for now. It
+  /* TitlesDisplay is only used within StackViewController for now. It
    * modifies the stack headers display. */
-  enum class DisplayParameter : uint8_t {
+  enum class TitlesDisplay : uint8_t {
     DisplayAllTitles = 0b11111111,
     /* NeverDisplayOwnHeader is a special value, which not only hides the current title,
      * but also does not add it to the stack headers. */
@@ -56,7 +56,7 @@ public:
   virtual void initView() {}
   virtual void viewWillAppear();
   virtual void viewDidDisappear() {}
-  virtual DisplayParameter displayParameter() { return DisplayParameter::DisplayAllTitles; }
+  virtual TitlesDisplay titlesDisplay() { return TitlesDisplay::DisplayAllTitles; }
 protected:
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }

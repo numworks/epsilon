@@ -215,7 +215,7 @@ void StackViewController::pop() {
   assert(m_numberOfChildren > 0);
   ViewController * vc = topViewController();
   if (shouldStoreHeaderOnStack(vc)) {
-    /* Warning: this assumes that the DisplayParameter and title return the
+    /* Warning: this assumes that the TitlesDisplay and title return the
      * same as when they were pushed on the stack. */
     m_view.popStack();
   }
@@ -259,11 +259,11 @@ void StackViewController::pushModel(Frame frame) {
 void StackViewController::setupActiveView() {
   ViewController * vc = topViewController();
   if (vc) {
-    ViewController::DisplayParameter topHeaderDisplayParameter = vc->displayParameter();
+    ViewController::TitlesDisplay topHeaderDisplayParameter = vc->titlesDisplay();
     // If NeverDisplayOwnTitle, we show all other headers -> DisplayAllTitles
-    ViewController::DisplayParameter displayMask =
-        topHeaderDisplayParameter == ViewController::DisplayParameter::NeverDisplayOwnTitle
-            ? ViewController::DisplayParameter::DisplayAllTitles
+    ViewController::TitlesDisplay displayMask =
+        topHeaderDisplayParameter == ViewController::TitlesDisplay::NeverDisplayOwnTitle
+            ? ViewController::TitlesDisplay::DisplayAllTitles
             : topHeaderDisplayParameter;
     m_view.setHeadersDisplayMask(displayMask);
     m_view.setContentView(vc->view());
@@ -324,12 +324,12 @@ void StackViewController::viewDidDisappear() {
 }
 
 bool StackViewController::shouldStoreHeaderOnStack(ViewController * vc) {
-  /* In general, the displayParameter controls how the stack is shown
+  /* In general, the titlesDisplay controls how the stack is shown
    * only while the controller is the last on the stack.
    * However, with NeverDisplayOwnTitle, the title will never be pushed
    * onto the stack and therefore never shown, even in sub-controllers. */
   return vc->title() != nullptr &&
-         vc->displayParameter() != ViewController::DisplayParameter::NeverDisplayOwnTitle;
+         vc->titlesDisplay() != ViewController::TitlesDisplay::NeverDisplayOwnTitle;
 }
 
 }  // namespace Escher

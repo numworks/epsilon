@@ -20,7 +20,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::ViewController::DisplayParameter displayParameter() override { return Escher::ViewController::DisplayParameter::DisplayNoTitle; }
+  Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayNoTitle; }
 
 private:
   void redrawWindow();

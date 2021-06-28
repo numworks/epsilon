@@ -25,7 +25,7 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  Escher::ViewController::DisplayParameter displayParameter() override { return Escher::ViewController::DisplayParameter::DisplayNoTitle; }
+  Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayNoTitle; }
   TELEMETRY_ID("Editor");
 
   /* TextAreaDelegate */

@@ -178,9 +178,9 @@ void FunctionGraphController::computeXRange(float xMinLimit, float xMaxLimit, fl
   DefaultComputeXRange(xMinLimit, xMaxLimit, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, textFieldDelegateApp()->localContext(), functionStore());
 }
 
-void FunctionGraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) {
+void FunctionGraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax, bool optimizeRange) {
   float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - cursorBottomMarginRatio());
-  DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore());
+  DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore(), optimizeRange);
 }
 
 void FunctionGraphController::improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) {

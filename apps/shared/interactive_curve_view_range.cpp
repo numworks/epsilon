@@ -347,7 +347,9 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
 
     if (computeY || (computeX && m_yAuto)) {
       assert(!intrinsicYRangeIsUnset());
-      m_delegate->computeYRange(xMin(), xMax(), m_yMinIntrinsic, m_yMaxIntrinsic, &newYMin, &newYMax);
+      /* If X and Y are computed automatically, we want the Y range to be
+       * fitted to the curve. Otherwise, we display the full Y range. */
+      m_delegate->computeYRange(xMin(), xMax(), m_yMinIntrinsic, m_yMaxIntrinsic, &newYMin, &newYMax, m_xAuto && m_yAuto);
       if (computeX) {
         newXMin = xMin();
         newXMax = xMax();

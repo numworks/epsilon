@@ -23,7 +23,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float xMinLimit, fl
   Poincare::Zoom::SanitizeRangeForDisplay(xMin, xMax);
 }
 
-void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float ratio, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore) {
+void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float ratio, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore, bool optimizeRange) {
   int length = functionStore->numberOfActiveFunctions();
 
   float yMinTemp, yMaxTemp;
@@ -32,7 +32,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
   *yMax = yMaxIntrinsic;
   for (int i = 0; i < length; i++) {
     ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
-    f->yRangeForDisplay(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, &yMinTemp, &yMaxTemp, context);
+    f->yRangeForDisplay(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, &yMinTemp, &yMaxTemp, context, optimizeRange);
     Poincare::Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMin, *yMax, yMin, yMax);
   }
 

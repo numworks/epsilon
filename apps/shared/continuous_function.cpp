@@ -299,7 +299,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
   Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
 }
 
-void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const {
+void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const {
   if (plotType() != PlotType::Cartesian) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
@@ -312,6 +312,11 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   if (basedOnCostlyAlgorithms(context)) {
     /* The function makes use of some costly algorithms, such as integration or
      * sequences, and cannot be computed in a timely manner. */
+    return;
+  }
+
+  if (!optimizeRange) {
+    protectedFullRangeForDisplay(xMin, xMax, (xMax - xMin) / (Ion::Display::Width / 4), yMin, yMax, context, false);
     return;
   }
 

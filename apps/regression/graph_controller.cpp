@@ -101,7 +101,7 @@ void GraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xM
   *yMaxIntrinsic = -FLT_MAX;
 }
 
-void GraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) {
+void GraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax, bool optimizeRange) {
   *yMin = yMinIntrinsic;
   *yMax = yMaxIntrinsic;
   for (int series = 0; series < Store::k_numberOfSeries; series++) {

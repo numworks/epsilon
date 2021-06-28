@@ -31,7 +31,7 @@ private:
 #else
   constexpr static int k_totalNumberOfCell = 1;
 #endif
-  constexpr static int k_maxNumberOfCharsInTitle = Shared::Function::k_maxNameWithArgumentSize + 1; // +1 for the ' of the derivative
+  constexpr static int k_maxNumberOfCharsInTitle = NewFunction::k_maxNameWithArgumentSize + 1; // +1 for the ' of the derivative
   char m_pageTitle[k_maxNumberOfCharsInTitle];
   Escher::MessageTableCell m_hideColumn;
 #if COPY_COLUMN

@@ -1,5 +1,5 @@
 #include "global_context.h"
-#include "continuous_function.h"
+#include "../graph/new_function.h"
 #include "sequence.h"
 #include "poincare_helpers.h"
 #include <poincare/rational.h>
@@ -27,7 +27,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
   } else if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
-    return ContinuousFunction(record).layout();
+    return Graph::NewFunction(record).layout();
   } else {
     assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::seqExtension, strlen(Ion::Storage::seqExtension)));
     return Sequence(record).layout();
@@ -108,7 +108,7 @@ const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & sym
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
-  Expression e = ContinuousFunction(r).expressionClone();
+  Expression e = Graph::NewFunction(r).expressionClone();
   if (!e.isUninitialized()) {
     e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), symbol.childAtIndex(0));
   }
@@ -165,13 +165,13 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const 
   if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     // The previous record was not a function. Destroy it and create the new record.
     previousRecord.destroy();
-    ContinuousFunction newModel = ContinuousFunction::NewModel(&error, symbol.name());
+    Graph::NewFunction newModel = Graph::NewFunction::NewModel(&error, symbol.name());
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     recordToSet = newModel;
   }
-  error = ContinuousFunction(recordToSet).setExpressionContent(expressionToStore);
+  error = Graph::NewFunction(recordToSet).setExpressionContent(expressionToStore);
   return error;
 }
 

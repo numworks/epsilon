@@ -7,6 +7,8 @@
 #include <poincare/zoom.h>
 #include <poincare/integral.h>
 #include <poincare/float.h>
+#include <poincare/matrix.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare/serialization_helper.h>
 #include "../shared/poincare_helpers.h"
 #include <algorithm>
@@ -20,6 +22,8 @@ NewFunction NewFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, con
   // Create the record
   RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
   if (baseName == nullptr) {
+    // TODO Hugo : Check this
+    assert(false);
     // Return if error
     return NewFunction();
   }
@@ -35,8 +39,23 @@ NewFunction NewFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, con
   return NewFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
+bool NewFunction::isActive() const {
+  return recordData()->isActive();
+}
+
+KDColor NewFunction::color() const {
+  return recordData()->color();
+}
+
+void NewFunction::setActive(bool active) {
+  recordData()->setActive(active);
+  if (!active) {
+    didBecomeInactive();
+  }
+}
+
 bool NewFunction::isNamed() const {
-  return fullName() != nullptr;
+  return fullName() != nullptr && fullName()[0] != '?';
 }
 
 bool NewFunction::drawAbove() const {
@@ -60,6 +79,27 @@ int NewFunction::yDegree(Context * context) const {
 
 int NewFunction::xDegree(Context * context) const {
   return expressionEquation(context).polynomialDegree(context, "x");
+}
+
+int NewFunction::nameWithArgument(char * buffer, size_t bufferSize) {
+  if (isNamed()) {
+    int funcNameSize = SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
+    assert(funcNameSize > 0);
+    size_t result = funcNameSize;
+    assert(result <= bufferSize);
+    buffer[result++] = '(';
+    assert(result <= bufferSize);
+    assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
+    result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
+    assert(result <= bufferSize);
+    result += strlcpy(buffer+result, ")", bufferSize-result);
+    return result;
+  }
+  return strlcpy(buffer, "y", bufferSize);
+}
+
+I18n::Message NewFunction::parameterMessageName() const {
+  return ParameterMessageForPlotType(plotType());
 }
 
 I18n::Message NewFunction::functionCategory() const {
@@ -87,7 +127,7 @@ CodePoint NewFunction::symbol() const {
 
 Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // TODO Hugo : Add todo expressionReduced on circularity ?
-  if (record->fullName() != nullptr && isCircularlyDefined(record, context)) {
+  if (record->fullName() != nullptr && record->fullName()[0] != '?' && isCircularlyDefined(record, context)) {
     return Undefined::Builder();
   }
   Expression result = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
@@ -98,7 +138,7 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
     // Named function
     result = result.childAtIndex(1);
     // TOCHECK Hugo
-    assert(isNamed());
+    assert(record->fullName() != nullptr && record->fullName()[0] != '?');
   } else {
     result = Subtraction::Builder(result.childAtIndex(0), result.childAtIndex(1));
     // ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(
@@ -128,7 +168,7 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
   if (m_expression.isUninitialized()) {
     // Retrieve the expression from the equation
     m_expression = expressionEquation(record, context);
-    if (record->fullName() != nullptr) {
+    if (record->fullName() == nullptr || record->fullName()[0] == '?') {
       // Transform the solution by solving the equation in y
       int degree = m_expression.polynomialDegree(context, "y");
       if (degree <= 0 || degree >= 3) {
@@ -158,6 +198,17 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
     }
   }
   return m_expression;
+}
+
+void NewFunction::Model::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
+  if (!expressionToStore.isUninitialized()) {
+    if (expressionToStore.type() == ExpressionNode::Type::Equal && expressionToStore.childAtIndex(0).type() == ExpressionNode::Type::Function && expressionToStore.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
+      Expression temp = expressionToStore.childAtIndex(0).clone();
+      SymbolAbstract * symbol = static_cast<SymbolAbstract *>(&temp);
+      record->setName(symbol->name());
+    }
+  }
+  ExpressionModel::updateNewDataWithExpression(record, expressionToStore, expressionAddress, expressionToStoreSize, previousExpressionSize);
 }
 
 void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
@@ -203,7 +254,7 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
   if (yDeg == 1) {
     return recordData()->setPlotType(PlotType::Cartesian);
   }
-  if (yDeg == 2 && xDeg == 1 || xDeg == 2) {
+  if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
     // TODO Hugo : Compute delta ...
     // + assert that no x^2 * y or y^2 * x !! -> Unhandled otherwise
     /* Ax2+Bxy+Cy2+Dx+Ey+F=0 with A,B,C not all zero
@@ -391,7 +442,7 @@ void NewFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMi
   Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
 }
 
-void NewFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context) const {
+void NewFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
   // TODO Hugo : Re-check
   if (plotType() == PlotType::Parametric || plotType() == PlotType::Polar) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
@@ -405,6 +456,11 @@ void NewFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, flo
   if (basedOnCostlyAlgorithms(context)) {
     /* The function makes use of some costly algorithms, such as integration or
      * sequences, and cannot be computed in a timely manner. */
+    return;
+  }
+
+  if (!optimizeRange) {
+    protectedFullRangeForDisplay(xMin, xMax, (xMax - xMin) / (Ion::Display::Width / 4), yMin, yMax, context, false);
     return;
   }
 
@@ -518,6 +574,27 @@ Expression NewFunction::sumBetweenBounds(double start, double end, Context * con
 
 void NewFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Context * context) const {
   // TODO Hugo : Re-implement
+}
+
+template <typename T>
+Poincare::Coordinate2D<T> NewFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context) const {
+  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context);
+  PlotType type = plotType();
+  if (type != PlotType::Polar) {
+    return x1x2;
+  }
+  assert(type == PlotType::Polar);
+  T factor = (T)1.0;
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    factor = (T) (M_PI/180.0);
+  } else if (angleUnit == Preferences::AngleUnit::Gradian) {
+    factor = (T) (M_PI/200.0);
+  } else {
+    assert(angleUnit == Preferences::AngleUnit::Radian);
+  }
+  const float angle = x1x2.x1()*factor;
+  return Coordinate2D<T>(x1x2.x2() * std::cos(angle), x1x2.x2() * std::sin(angle));
 }
 
 template Coordinate2D<float> NewFunction::templatedApproximateAtParameter<float>(float, Context *) const;

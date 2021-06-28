@@ -42,7 +42,7 @@ private:
   void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;
   void willDisplayParameterCellAtIndex(Escher::HighlightCell * cell, int j) override;
-  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::ContinuousFunction> function, Escher::TextField * textField);
+  void setFunctionNameInTextField(Shared::ExpiringPointer<NewFunction> function, Escher::TextField * textField);
   ContinuousFunctionStore * modelStore() override;
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];

@@ -1,5 +1,5 @@
 app_shared_test_src = $(addprefix apps/shared/,\
-  continuous_function.cpp\
+  ../graph/new_function.cpp\
   continuous_function_cache.cpp \
   curve_selection_controller.cpp \
   curve_view.cpp \
@@ -47,6 +47,7 @@ app_shared_src = $(addprefix apps/shared/,\
   function_graph_controller.cpp \
   function_graph_view.cpp \
   function_list_controller.cpp \
+  ../graph/continuous_function_store.cpp \
   function_store.cpp \
   function_title_cell.cpp \
   function_zoom_and_pan_curve_view_controller.cpp \
@@ -105,7 +106,6 @@ apps_src += $(app_shared_src)
 # The .cpp files could also be added to app_shared_test_src in their respective makefiles
 #     -> it would then be impossible to run the shared test alone
 app_shared_test_src += $(addprefix apps/graph/,\
-  continuous_function_store.cpp\
 )
 
 app_shared_test_src += $(addprefix apps/shared/,\

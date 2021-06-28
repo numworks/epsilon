@@ -175,6 +175,7 @@ StackViewController::StackViewController(Responder * parentResponder,
                                          KDColor separatorColor) :
     ViewController(parentResponder), m_view(), m_numberOfChildren(0), m_isVisible(false) {
   pushModel(Frame(rootViewController, textColor, backgroundColor, separatorColor));
+  rootViewController->setParentResponder(this);
 }
 
 const char * StackViewController::title() {

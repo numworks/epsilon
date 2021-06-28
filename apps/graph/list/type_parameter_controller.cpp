@@ -21,16 +21,17 @@ void TypeParameterController::didBecomeFirstResponder() {
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(!m_record.isNull());
-    Shared::ContinuousFunction::PlotType plotType = static_cast<Shared::ContinuousFunction::PlotType>(selectedRow());
-    App * myApp = App::app();
-    assert(!m_record.isNull());
-    Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
-    function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit(), myApp->localContext());
-    if (function->plotType() != plotType) {
-      /* Updating plot type failed due to full storage. Do not quit menu as
-       * there is a "full storage" warning pop-up as first responder. */
-      return true;
-    }
+    // TODO Hugo : Remove this menu all together
+    // NewFunction::PlotType plotType = static_cast<NewFunction::PlotType>(selectedRow());
+    // App * myApp = App::app();
+    // assert(!m_record.isNull());
+    // Shared::ExpiringPointer<NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
+    // function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit(), myApp->localContext());
+    // if (function->plotType() != plotType) {
+    //   /* Updating plot type failed due to full storage. Do not quit menu as
+    //    * there is a "full storage" warning pop-up as first responder. */
+    //   return true;
+    // }
     StackViewController * stack = stackController();
     stack->pop();
     stack->pop();
@@ -51,7 +52,7 @@ void TypeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   App * myApp = App::app();
   assert(!m_record.isNull());
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  Shared::ExpiringPointer<NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
   int row = static_cast<int>(function->plotType());
   selectCellAtLocation(0, row);
   resetMemoization();

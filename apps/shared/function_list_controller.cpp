@@ -275,7 +275,7 @@ KDCoordinate FunctionListController::maxFunctionNameWidth() {
     assert(dotPosition != nullptr);
     maxNameLength = std::max(maxNameLength, static_cast<int>(dotPosition-functionName));
   }
-  return nameWidth(maxNameLength + Function::k_parenthesedArgumentCodePointLength);
+  return nameWidth(maxNameLength +Graph::NewFunction::k_parenthesedArgumentCodePointLength);
 }
 
 void FunctionListController::didChangeModelsList() {

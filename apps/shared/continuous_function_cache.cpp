@@ -1,5 +1,5 @@
 #include "continuous_function_cache.h"
-#include "continuous_function.h"
+#include "../graph/new_function.h"
 #include <limits.h>
 
 namespace Shared {
@@ -10,35 +10,35 @@ constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
 
 // public
 void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
-  ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
+  // Graph::NewFunction * function = static_cast<Graph::NewFunction *>(fun);
 
-  if (!cache) {
-    /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
-     * of the function we are trying to draw is greater than the number of
-     * available caches, so we just tell the function to not lookup any cache. */
-    function->setCache(nullptr);
-    return;
-  }
+  // if (!cache) {
+  //   /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
+  //    * of the function we are trying to draw is greater than the number of
+  //    * available caches, so we just tell the function to not lookup any cache. */
+  //   function->setCache(nullptr);
+  //   return;
+  // }
 
-  if (tStep < 3 * k_cacheHitTolerance) {
-    /* If tStep is lower than twice the tolerance, we risk shifting the index
-     * by 1 for cache hits. As an added safety, we add another buffer of
-     * k_cacheHitTolerance, raising the threshold for caching to three times
-     * the tolerance. */
-    function->setCache(nullptr);
-    return;
-  }
-  if (function->cache() != cache) {
-    cache->clear();
-    function->setCache(cache);
-  } else if (tStep != 0.f && tStep != cache->step()) {
-    cache->clear();
-  }
+  // if (tStep < 3 * k_cacheHitTolerance) {
+  //   /* If tStep is lower than twice the tolerance, we risk shifting the index
+  //    * by 1 for cache hits. As an added safety, we add another buffer of
+  //    * k_cacheHitTolerance, raising the threshold for caching to three times
+  //    * the tolerance. */
+  //   function->setCache(nullptr);
+  //   return;
+  // }
+  // if (function->cache() != cache) {
+  //   cache->clear();
+  //   function->setCache(cache);
+  // } else if (tStep != 0.f && tStep != cache->step()) {
+  //   cache->clear();
+  // }
 
-  if (function->plotType() == ContinuousFunction::PlotType::Cartesian && tStep != 0) {
-    function->cache()->pan(function, tMin);
-  }
-  function->cache()->setRange(function, tMin, tStep);
+  // if (function->plotType() == Graph::NewFunction::PlotType::Cartesian && tStep != 0) {
+  //   function->cache()->pan(function, tMin);
+  // }
+  // function->cache()->setRange(function, tMin, tStep);
 }
 
 void ContinuousFunctionCache::clear() {
@@ -47,10 +47,11 @@ void ContinuousFunctionCache::clear() {
   invalidateBetween(0, k_sizeOfCache);
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t) {
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const Graph::NewFunction * function, Poincare::Context * context, float t) {
+  assert(false);
   int resIndex = indexForParameter(function, t);
   if (resIndex < 0) {
-    return function->privateEvaluateXYAtParameter(t, context);
+    // return function->privateEvaluateXYAtParameter(t, context);
   }
   return valuesAtIndex(function, context, t, resIndex);
 }
@@ -84,44 +85,45 @@ void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   }
 }
 
-void ContinuousFunctionCache::setRange(ContinuousFunction * function, float tMin, float tStep) {
+void ContinuousFunctionCache::setRange(Graph::NewFunction * function, float tMin, float tStep) {
   m_tMin = tMin;
   m_tStep = tStep;
 }
 
-int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * function, float t) const {
+int ContinuousFunctionCache::indexForParameter(const Graph::NewFunction * function, float t) const {
   float delta = (t - m_tMin) / m_tStep;
   if (delta < 0 || delta > INT_MAX) {
     return -1;
   }
   int res = std::round(delta);
   assert(res >= 0);
-  if ((res >= k_sizeOfCache && function->plotType() == ContinuousFunction::PlotType::Cartesian)
-   || (res >= k_sizeOfCache / 2 && function->plotType() != ContinuousFunction::PlotType::Cartesian)
+  if ((res >= k_sizeOfCache && function->plotType() == Graph::NewFunction::PlotType::Cartesian)
+   || (res >= k_sizeOfCache / 2 && function->plotType() != Graph::NewFunction::PlotType::Cartesian)
    || std::fabs(res - delta) > k_cacheHitTolerance) {
     return -1;
   }
-  assert(function->plotType() == ContinuousFunction::PlotType::Cartesian || m_startOfCache == 0);
+  assert(function->plotType() == Graph::NewFunction::PlotType::Cartesian || m_startOfCache == 0);
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i) {
-  if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const Graph::NewFunction * function, Poincare::Context * context, float t, int i) {
+  assert(false);
+  if (function->plotType() == Graph::NewFunction::PlotType::Cartesian) {
     if (std::isnan(m_cache[i])) {
-      m_cache[i] = function->privateEvaluateXYAtParameter(t, context).x2();
+      // m_cache[i] = function->privateEvaluateXYAtParameter(t, context).x2();
     }
     return Poincare::Coordinate2D<float>(t, m_cache[i]);
   }
   if (std::isnan(m_cache[2 * i]) || std::isnan(m_cache[2 * i + 1])) {
-    Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(t, context);
-    m_cache[2 * i] = res.x1();
-    m_cache[2 * i + 1] = res.x2();
+    // Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(t, context);
+    // m_cache[2 * i] = res.x1();
+    // m_cache[2 * i + 1] = res.x2();
   }
   return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
 }
 
-void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) {
-  assert(function->plotType() == ContinuousFunction::PlotType::Cartesian);
+void ContinuousFunctionCache::pan(Graph::NewFunction * function, float newTMin) {
+  assert(function->plotType() == Graph::NewFunction::PlotType::Cartesian);
   if (newTMin == m_tMin) {
     return;
   }

@@ -51,72 +51,74 @@ void ListController::renameSelectedFunction() {
 
 bool ListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   assert(textField != nullptr);
-  // Compute the new name
-  size_t textLength = strlen(text);
-  size_t argumentLength = UTF8Helper::HasCodePoint(text, UCodePointGreekSmallLetterTheta) ? Function::k_parenthesedThetaArgumentByteLength : Function::k_parenthesedXNTArgumentByteLength;
-  constexpr int maxBaseNameSize = Function::k_maxNameWithArgumentSize;
-  char baseName[maxBaseNameSize];
-  if (textLength <= argumentLength) {
-    // The user entered an empty name. Use a default function name.
-    ContinuousFunction::DefaultName(baseName, maxBaseNameSize);
-    /* We don't need to update the textfield edited text here because we are
-     * sure that the default name is compliant. It will thus lead to the end of
-     * edition and its content will be reloaded by willDisplayTitleCellAtIndex. */
-  } else {
-    assert(argumentLength <= textLength + 1);
-    strlcpy(baseName, text, textLength - argumentLength + 1);
-  }
+  assert(false); // TODO hugo check;
+  return true;
+  // // Compute the new name
+  // size_t textLength = strlen(text);
+  // size_t argumentLength = UTF8Helper::HasCodePoint(text, UCodePointGreekSmallLetterTheta) ? NewFunction::k_parenthesedThetaArgumentByteLength : NewFunction::k_parenthesedXNTArgumentByteLength;
+  // constexpr int maxBaseNameSize = NewFunction::k_maxNameWithArgumentSize;
+  // char baseName[maxBaseNameSize];
+  // if (textLength <= argumentLength) {
+  //   // The user entered an empty name. Use a default function name.
+  //   NewFunction::DefaultName(baseName, maxBaseNameSize);
+  //   /* We don't need to update the textfield edited text here because we are
+  //    * sure that the default name is compliant. It will thus lead to the end of
+  //    * edition and its content will be reloaded by willDisplayTitleCellAtIndex. */
+  // } else {
+  //   assert(argumentLength <= textLength + 1);
+  //   strlcpy(baseName, text, textLength - argumentLength + 1);
+  // }
 
-  // Delete any variable with the same name
-  GlobalContext::DestroyRecordsBaseNamedWithoutExtension(baseName, Ion::Storage::funcExtension);
+  // // Delete any variable with the same name
+  // GlobalContext::DestroyRecordsBaseNamedWithoutExtension(baseName, Ion::Storage::funcExtension);
 
-  // Set the name
-  Function::NameNotCompliantError nameError = Function::BaseNameCompliant(baseName);
-  Ion::Storage::Record::ErrorStatus error = nameError == Function::NameNotCompliantError::None ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, Ion::Storage::funcExtension) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
+  // // Set the name
+  // NewFunction::NameNotCompliantError nameError = NewFunction::BaseNameCompliant(baseName);
+  // Ion::Storage::Record::ErrorStatus error = nameError == NewFunction::NameNotCompliantError::None ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, Ion::Storage::funcExtension) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
 
-  // Handle any error
-  if (error == Ion::Storage::Record::ErrorStatus::None) {
-    bool selectTab = false;
-    textField->setEditing(false);
-    computeTitlesColumnWidth();
-    int currentRow = m_selectableTableView.selectedRow();
-    if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
-      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);
-    } else if (event == Ion::Events::Up) {
-      if (currentRow > 0) {
-        m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
-      } else {
-        selectTab = true;
-      }
-    }
-    m_selectableTableView.selectedCell()->setHighlighted(true);
-    m_selectableTableView.reloadData();
-    Container::activeApp()->setFirstResponder(&m_selectableTableView);
-    if (selectTab) {
-      m_selectableTableView.parentResponder()->handleEvent(event);
-    }
-    AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
-    return true;
-  } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
-    Container::activeApp()->displayWarning(I18n::Message::NameTaken);
-  } else if (error == Ion::Storage::Record::ErrorStatus::NonCompliantName) {
-    assert(nameError != Function::NameNotCompliantError::None);
-    if (nameError == Function::NameNotCompliantError::CharacterNotAllowed) {
-      Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
-    } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithNumber) {
-      Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithNumber);
-    } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithUnderscore) {
-      Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithUnderscore);
-    } else {
-      assert(nameError == Function::NameNotCompliantError::ReservedName);
-      Container::activeApp()->displayWarning(I18n::Message::ReservedName);
-    }
-  } else {
-    assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
-    Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
-  }
-  textField->setEditing(true);
-  return false;
+  // // Handle any error
+  // if (error == Ion::Storage::Record::ErrorStatus::None) {
+  //   bool selectTab = false;
+  //   textField->setEditing(false);
+  //   computeTitlesColumnWidth();
+  //   int currentRow = m_selectableTableView.selectedRow();
+  //   if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
+  //     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);
+  //   } else if (event == Ion::Events::Up) {
+  //     if (currentRow > 0) {
+  //       m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
+  //     } else {
+  //       selectTab = true;
+  //     }
+  //   }
+  //   m_selectableTableView.selectedCell()->setHighlighted(true);
+  //   m_selectableTableView.reloadData();
+  //   Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  //   if (selectTab) {
+  //     m_selectableTableView.parentResponder()->handleEvent(event);
+  //   }
+  //   AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  //   return true;
+  // } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
+  //   Container::activeApp()->displayWarning(I18n::Message::NameTaken);
+  // } else if (error == Ion::Storage::Record::ErrorStatus::NonCompliantName) {
+  //   assert(nameError != NewFunction::NameNotCompliantError::None);
+  //   if (nameError == NewFunction::NameNotCompliantError::CharacterNotAllowed) {
+  //     Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
+  //   } else if (nameError == NewFunction::NameNotCompliantError::NameCannotStartWithNumber) {
+  //     Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithNumber);
+  //   } else if (nameError == NewFunction::NameNotCompliantError::NameCannotStartWithUnderscore) {
+  //     Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithUnderscore);
+  //   } else {
+  //     assert(nameError == NewFunction::NameNotCompliantError::ReservedName);
+  //     Container::activeApp()->displayWarning(I18n::Message::ReservedName);
+  //   }
+  // } else {
+  //   assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
+  //   Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
+  // }
+  // textField->setEditing(true);
+  // return false;
 }
 
 bool ListController::textFieldDidAbortEditing(TextField * textField) {
@@ -124,7 +126,7 @@ bool ListController::textFieldDidAbortEditing(TextField * textField) {
   // Put the name column back to normal size
   computeTitlesColumnWidth();
   selectableTableView()->reloadData();
-  ExpiringPointer<ContinuousFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  ExpiringPointer<NewFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -206,7 +208,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
     // Set name and color if the name is not being edited
-    ExpiringPointer<ContinuousFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+    ExpiringPointer<NewFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
     KDColor functionNameColor = function->isActive() ? function->color() : Palette::GrayDark;
     titleCell->setColor(functionNameColor);
@@ -218,7 +220,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   assert(j >= 0 && j < modelStore()->numberOfModels());
   Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = static_cast<FunctionExpressionCell *>(cell);
-  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<NewFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);
 }
@@ -228,7 +230,7 @@ void ListController::willDisplayParameterCellAtIndex(HighlightCell * cell, int j
   assert(j >= 0 && j < modelStore()->numberOfModels());
 }
 
-void ListController::setFunctionNameInTextField(ExpiringPointer<ContinuousFunction> function, TextField * textField) {
+void ListController::setFunctionNameInTextField(ExpiringPointer<NewFunction> function, TextField * textField) {
 }
 
 void ListController::addModel() {

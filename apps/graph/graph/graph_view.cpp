@@ -43,14 +43,15 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       continue;
     }
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
+    ExpiringPointer<NewFunction> f = functionStore->modelForRecord(record);
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
-      ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
-      Shared::ContinuousFunction::PlotType type = f->plotType();
+      // TODO Hugo : Restore cache
+      // ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
+      NewFunction::PlotType type = f->plotType();
       Poincare::Expression e = f->expressionReduced(context());
       if (e.isUndefined() || (
-            type == Shared::ContinuousFunction::PlotType::Parametric &&
+            type == NewFunction::PlotType::Parametric &&
             e.childAtIndex(0).isUndefined() &&
             e.childAtIndex(1).isUndefined())) {
         continue;
@@ -59,7 +60,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       float tmax = f->tMax();
 
       float tCacheMin, tCacheStep, tStepNonCartesian;
-      if (type == ContinuousFunction::PlotType::Cartesian) {
+      if (type == NewFunction::PlotType::Cartesian) {
         float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
          * because cache can be panned for cartesian curves, instead of being
@@ -69,19 +70,19 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       } else {
         tCacheMin = tmin;
         // Compute tCacheStep and tStepNonCartesian
-        ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
+        // ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
       }
-      ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
+      // ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 
-      if (type == Shared::ContinuousFunction::PlotType::Cartesian) {
+      if (type == NewFunction::PlotType::Cartesian) {
         // Cartesian
         drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
-            ContinuousFunction * f = (ContinuousFunction *)model;
+            NewFunction * f = (NewFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
             }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd,
             [](double t, void * model, void * context) {
-            ContinuousFunction * f = (ContinuousFunction *)model;
+            NewFunction * f = (NewFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
             });
@@ -94,18 +95,18 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());
           drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GrayVeryDark, false);
         }
-      } else if (type == Shared::ContinuousFunction::PlotType::Polar) {
+      } else if (type == NewFunction::PlotType::Polar) {
         // Polar
         drawPolarCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
-            ContinuousFunction * f = (ContinuousFunction *)model;
+            NewFunction * f = (NewFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
             }, f.operator->(), context(), false, f->color());
       } else {
         // Parametric
-        assert(type == Shared::ContinuousFunction::PlotType::Parametric);
+        assert(type == NewFunction::PlotType::Parametric);
         drawCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
-            ContinuousFunction * f = (ContinuousFunction *)model;
+            NewFunction * f = (NewFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
             }, f.operator->(), context(), false, f->color());

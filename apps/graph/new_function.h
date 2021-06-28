@@ -2,8 +2,9 @@
 #define GRAPH_NEW_FUNCTION_H
 
 #include "../shared/expression_model_handle.h"
-#include "../shared/range_1d.h"
+#include "../shared/range_1D.h"
 #include <apps/i18n.h>
+#include <poincare/symbol_abstract.h>
 
 // TODO Hugo : Emscripten things
 
@@ -11,6 +12,13 @@ namespace Graph {
 
 class NewFunction : public Shared::ExpressionModelHandle {
 public:
+  /* Possible arguments: n, x, t, θ
+   * The CodePoint θ is two char long. */
+  constexpr static int k_parenthesedArgumentCodePointLength = 3;
+  constexpr static int k_parenthesedThetaArgumentByteLength = 4;
+  constexpr static int k_parenthesedXNTArgumentByteLength = 3;
+  constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
+
   static constexpr size_t k_numberOfEquationSymbols = 6;
   enum class EquationSymbol : uint8_t {
     Equal = 0,
@@ -46,6 +54,7 @@ public:
   };
 
   static NewFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
+  NewFunction(Ion::Storage::Record record = Record()) : Shared::ExpressionModelHandle(record) {}
 
   // Properties
   bool isActive() const;
@@ -57,6 +66,9 @@ public:
   bool drawCurve() const; // GreaterOrEqual, LessOrEqual, Equal
   int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
   int xDegree(Poincare::Context * context) const; // Any degree is handled
+
+  int nameWithArgument(char * buffer, size_t bufferSize);
+  I18n::Message parameterMessageName() const;
 
   I18n::Message functionCategory() const; // Line, polar, cartesian, ...
   CodePoint symbol() const override; // x, theta, t, y
@@ -107,7 +119,7 @@ public:
   // Range
   bool basedOnCostlyAlgorithms(Poincare::Context * context) const;
   void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const;
-  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context) const;
+  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const;
 
   // Extremum
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
@@ -121,7 +133,6 @@ public:
 private:
   // TODO Hugo : usefull ?
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
-  NewFunction(Ion::Storage::Record record = Record()) : Shared::ExpressionModelHandle(record) {}
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
@@ -133,12 +144,12 @@ private:
     // TODO Hugo : Add derivative
   public:
     Model() : ExpressionModel() {}
-    void tidy() const override;
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
   // private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
+    void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) override;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_model; }

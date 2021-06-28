@@ -4,7 +4,7 @@
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <ion/storage.h>
-#include "../../shared/continuous_function.h"
+#include "../new_function.h"
 #include "../../shared/expiring_pointer.h"
 #include "../../shared/float_parameter_controller.h"
 #include "../../shared/range_1D.h"
@@ -35,7 +35,7 @@ private:
   float parameterAtIndex(int index) override;
   void buttonAction() override;
   InfinityTolerance infinityAllowanceForRow(int row) const override;
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  Shared::ExpiringPointer<NewFunction> function() const;
   // Applies temporary parameters to function.
   void confirmParameters();
   // Extracts parameters from function, setting m_tempDomain parameters.

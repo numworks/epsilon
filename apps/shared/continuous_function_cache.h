@@ -8,7 +8,7 @@
 
 namespace Shared {
 
-class ContinuousFunction;
+class Function;
 
 class ContinuousFunctionCache {
 public:
@@ -20,7 +20,7 @@ public:
 
   float step() const { return m_tStep; }
   void clear();
-  Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t);
+  Poincare::Coordinate2D<float> valueForParameter(const Graph::NewFunction * function, Poincare::Context * context, float t);
   // Sets step parameters for non-cartesian curves
   static void ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin);
 private:
@@ -38,10 +38,10 @@ private:
   static constexpr float k_cacheHitTolerance = 128.0f * FLT_EPSILON;
 
   void invalidateBetween(int iInf, int iSup);
-  void setRange(ContinuousFunction * function, float tMin, float tStep);
-  int indexForParameter(const ContinuousFunction * function, float t) const;
-  Poincare::Coordinate2D<float> valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i);
-  void pan(ContinuousFunction * function, float newTMin);
+  void setRange(Graph::NewFunction * function, float tMin, float tStep);
+  int indexForParameter(const Graph::NewFunction * function, float t) const;
+  Poincare::Coordinate2D<float> valuesAtIndex(const Graph::NewFunction * function, Poincare::Context * context, float t, int i);
+  void pan(Graph::NewFunction * function, float newTMin);
 
   float m_tMin, m_tStep;
   float m_cache[k_sizeOfCache];

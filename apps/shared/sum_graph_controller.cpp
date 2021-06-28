@@ -67,7 +67,7 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   }
   FunctionApp * myApp = FunctionApp::app();
   assert(!m_record.isNull());
-  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Graph::NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
 
   /* TODO We would like to assert that the function is not a parametered
    * function, so we can indeed evaluate the function for parameter x. */
@@ -141,7 +141,7 @@ void SumGraphController::reloadBannerView() {
     endSum = m_cursor->x();
     FunctionApp * myApp = FunctionApp::app();
     assert(!m_record.isNull());
-    ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+    ExpiringPointer<Graph::NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
     Poincare::Context * context = myApp->localContext();
     Poincare::Expression sum = function->sumBetweenBounds(m_startSum, endSum, context);
     result = PoincareHelpers::ApproximateToScalar<double>(sum, context);

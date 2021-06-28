@@ -124,7 +124,11 @@ void RangeParameterController::viewDidDisappear() {
 }
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back && m_interactiveRange->rangeChecksum() != m_tempInteractiveRange.rangeChecksum()) {
+  if (event == Ion::Events::Back
+   && (m_interactiveRange->rangeChecksum() != m_tempInteractiveRange.rangeChecksum()
+    || m_interactiveRange->xAuto() != m_tempInteractiveRange.xAuto()
+    || m_interactiveRange->yAuto() != m_tempInteractiveRange.yAuto()))
+  {
     // Open pop-up to confirm discarding values
     Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;

@@ -39,16 +39,15 @@ public:
   /* DisplayParameter is only used within StackViewController for now. It
    * modifies the stack headers display. */
   enum class DisplayParameter : uint8_t {
-    Default = 0b11111111,
-    /* With NeverShowOwnTitle, the title of the ViewController is not added to
-     * the stack headers. */
-    NeverShowOwnTitle = 0b11111110,
+    DisplayAllTitles = 0b11111111,
+    /* NeverDisplayOwnHeader is a special value, which not only hides the current title,
+     * but also does not add it to the stack headers. */
+    NeverDisplayOwnTitle = 0b11111110,
     /* Hide all previous headers but the last one. */
-    OnlyShowLastTitle = 0b00000001,
-    OnlyShowLastTwoTitles = 0b00000011,
-    OnlyShowLastThreeTitles = 0b00000111,
-    /* With WantsMaximumSpace, no stack headers are displayed. */
-    WantsMaximumSpace = 0b00000000
+    DisplayLastTitles = 0b00000001,
+    DisplayLastTwoTitles = 0b00000011,
+    DisplayLastThreeTitles = 0b00000111,
+    DisplayNoTitle = 0b00000000
   };
 
   ViewController(Responder * parentResponder) : Responder(parentResponder) {}
@@ -57,7 +56,7 @@ public:
   virtual void initView() {}
   virtual void viewWillAppear();
   virtual void viewDidDisappear() {}
-  virtual DisplayParameter displayParameter() { return DisplayParameter::Default; }
+  virtual DisplayParameter displayParameter() { return DisplayParameter::DisplayAllTitles; }
 protected:
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }

@@ -10,6 +10,7 @@
 namespace Escher {
 
 constexpr uint8_t k_MaxNumberOfStacks = 7;
+static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less than 8 stacks (uint8_t).");
 
 class StackViewController : public ViewController {
 public:
@@ -55,13 +56,13 @@ private:
   class ControllerView : public View {
   public:
     ControllerView();
-    void setDisplayMode(ViewController::DisplayParameter mode) { m_displayMask = static_cast<uint8_t>(mode); }
+    void setHeadersDisplayMask(ViewController::DisplayParameter mode) { m_headersDisplayMask = static_cast<uint8_t>(mode); }
     int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(Frame frame);
     void popStack();
-    bool isHeaderDisplayed(int i) const;
+    bool shouldDisplayHeaderAtIndex(int i) const;
   protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -73,7 +74,6 @@ private:
     bool borderShouldOverlapContent() const;
 
     int numberOfDisplayedHeaders() const;
-    void setMaskBit(int i, bool b);
     bool maskBit(int i) const;
     // Returns the index in m_stackViews for a given display index
     int displayedIndex(int i);
@@ -83,8 +83,8 @@ private:
     View * m_contentView;
     int8_t m_numberOfStacks;
     /* Represents the stacks to display, _starting from the end_.
-     * m_displayMask = 0b11111011   ->  shoudln't display m_stackViews[m_numberOfStacks - 1 - 2]. */
-    uint8_t m_displayMask;
+     * m_headersDisplayMask = 0b11111011   ->  shoudln't display m_stackViews[m_numberOfStacks - 1 - 2]. */
+    uint8_t m_headersDisplayMask;
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;
   };
@@ -92,7 +92,7 @@ private:
   void pushModel(Frame frame);
   void setupActiveView();
   void setupActiveViewController();
-  bool shouldStoreOnStack(ViewController * vc);
+  bool shouldStoreHeaderOnStack(ViewController * vc);
   Frame m_childrenFrame[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;

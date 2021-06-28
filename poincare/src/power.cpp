@@ -62,17 +62,18 @@ Expression PowerNode::setSign(Sign s, ReductionContext reductionContext) {
 ExpressionNode::NullStatus PowerNode::nullStatus(Context * context) const {
   // In practice, calling nullStatus on a reduced power always returns Unknown.
   ExpressionNode * base = childAtIndex(0);
+  ExpressionNode::NullStatus baseNullStatus = base->nullStatus(context);
   ExpressionNode * index = childAtIndex(1);
   ExpressionNode::NullStatus indexNullStatus = index->nullStatus(context);
-  if (indexNullStatus == ExpressionNode::NullStatus::Null && base->nullStatus(context) == ExpressionNode::NullStatus::NonNull) {
+  if (indexNullStatus == ExpressionNode::NullStatus::Null && baseNullStatus == ExpressionNode::NullStatus::NonNull) {
     // x^0 is non null
     return ExpressionNode::NullStatus::NonNull;
   }
-  if (indexNullStatus == ExpressionNode::NullStatus::NonNull && base->nullStatus(context) == ExpressionNode::NullStatus::Null && index->sign(context) == Sign::Positive ) {
+  if (indexNullStatus == ExpressionNode::NullStatus::NonNull && baseNullStatus == ExpressionNode::NullStatus::Null && index->sign(context) == Sign::Positive ) {
     // 0^+x is null
     return ExpressionNode::NullStatus::Null;
   }
-  // Nothing else can be assumed because base could be infinite.
+  // Nothing else can be assumed because base and index could be infinite.
   return ExpressionNode::NullStatus::Unknown;
 }
 

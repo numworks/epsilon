@@ -151,7 +151,7 @@ void TableCell::layoutSubviews(bool force) {
           leftOffset + Metric::CellVerticalElementMargin +
           (alignLabelAndAccessory() ? labelWidth : std::max(labelWidth, subLabelWidth));
       setFrameIfViewExists(
-          accessory, KDRect(maxX, accessoryY, width - maxX, accessoryHeight), force);
+          accessory, KDRect(maxX, accessoryY, xEnd - maxX, accessoryHeight), force);
     } else {
       setFrameIfViewExists(
           accessory,

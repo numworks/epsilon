@@ -420,7 +420,7 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     } else if (event == Ion::Events::Var) {
       /* Remove the autocompletion text so that opening the Varbox does not
        * invalidate the ScriptNodes name pointers. */
-      m_wasAutocompleting = m_contentView.isAutocompleting();
+      m_wasAutocompleting = true;
       removeAutocompletion();
     } else {
       removeAutocompletion();
@@ -438,6 +438,9 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
      * the event is backspace, as autocompletion has already been added if the
      * event added text, in handleEventWithText. */
     addAutocompletion();
+  } else if (event == Ion::Events::ShiftRight && m_contentView.isAutocompleting()) {
+    // Prevent further autocompletion after a ShiftRight event
+    removeAutocompletion();
   }
   return result;
 }

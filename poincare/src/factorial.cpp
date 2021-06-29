@@ -15,11 +15,6 @@ namespace Poincare {
 
 // Property
 
-Expression FactorialNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == sign(reductionContext.context()));
-  return Factorial(this);
-}
-
 bool FactorialNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
   if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;

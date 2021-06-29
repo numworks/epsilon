@@ -10,11 +10,6 @@ constexpr Expression::FunctionHelper BinomPDF::s_functionHelper;
 
 int BinomPDFNode::numberOfChildren() const { return BinomPDF::s_functionHelper.numberOfChildren(); }
 
-Expression BinomPDFNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == sign(reductionContext.context()));
-  return BinomPDF(this);
-}
-
 Layout BinomPDFNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(BinomPDF(this), floatDisplayMode, numberOfSignificantDigits, BinomPDF::s_functionHelper.name());
 }

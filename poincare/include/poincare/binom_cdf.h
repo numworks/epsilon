@@ -21,7 +21,6 @@ public:
   // Properties
   Type type() const override { return Type::BinomCDF; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
 
 private:
   // Layout

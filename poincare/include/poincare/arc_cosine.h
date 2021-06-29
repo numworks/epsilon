@@ -23,7 +23,6 @@ public:
 
   // Properties
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context) == Sign::Unknown ? Sign::Unknown : Sign::Positive; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   Type type() const override { return Type::ArcCosine; }
 
 private:

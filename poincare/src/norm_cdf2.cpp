@@ -10,11 +10,6 @@ constexpr Expression::FunctionHelper NormCDF2::s_functionHelper;
 
 int NormCDF2Node::numberOfChildren() const { return NormCDF2::s_functionHelper.numberOfChildren(); }
 
-Expression NormCDF2Node::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == sign(reductionContext.context()));
-  return NormCDF2(this);
-}
-
 Layout NormCDF2Node::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(NormCDF2(this), floatDisplayMode, numberOfSignificantDigits, NormCDF2::s_functionHelper.name());
 }

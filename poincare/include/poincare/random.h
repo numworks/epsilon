@@ -23,7 +23,6 @@ public:
   // Properties
   Type type() const override { return Type::Random; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
 private:
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };

@@ -21,7 +21,6 @@ public:
   // Properties
   Type type() const override { return Type::NormCDF2; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   int muIndex() const override { return 2; }
   int varIndex() const override { return 3; }
 

@@ -119,12 +119,12 @@ int StackViewController::ControllerView::numberOfDisplayedHeaders() const {
   return count;
 }
 
-int StackViewController::ControllerView::displayedIndex(int i) {
-  assert(i < numberOfDisplayedHeaders());
+int StackViewController::ControllerView::stackHeaderIndex(int displayIndex) {
+  assert(displayIndex < numberOfDisplayedHeaders());
   int counted = 0;
   for (int j = 0; j < m_numberOfStacks; j++) {
     if (shouldDisplayHeaderAtIndex(j)) {
-      if (counted == i) {
+      if (counted == displayIndex) {
         return j;
       } else {
         counted++;
@@ -148,7 +148,7 @@ View * StackViewController::ControllerView::subviewAtIndex(int index) {
   int numberOfHeaders = numberOfDisplayedHeaders();
   if (index < numberOfHeaders) {
     assert(index >= 0);
-    return &m_stackViews[displayedIndex(index)];
+    return &m_stackViews[stackHeaderIndex(index)];
   }
   if (index == numberOfHeaders) {
     return m_contentView;

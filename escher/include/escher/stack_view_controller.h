@@ -75,7 +75,7 @@ private:
 
     int numberOfDisplayedHeaders() const;
     // Returns the index in m_stackViews for a given display index
-    int displayedIndex(int i);
+    int stackHeaderIndex(int displayIndex);
 
     StackView m_stackViews[k_MaxNumberOfStacks];
     SolidColorView m_borderView;

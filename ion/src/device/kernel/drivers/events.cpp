@@ -206,6 +206,7 @@ Ion::Events::Event nextEvent(int * timeout) {
   uint64_t startTime = Ion::Timing::millis();
   while (true) {
     // Handle preemptive event before time is out
+    assert(!sStalling);
     if (handlePreemption()) {
       /* If handlePreemption returns true, it means a PendSV was generated. We
        * return early to speed up the context switch (otherwise, PendSV will wait

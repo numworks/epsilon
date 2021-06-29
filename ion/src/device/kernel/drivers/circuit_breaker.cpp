@@ -122,7 +122,16 @@ Ion::CircuitBreaker::Status status() {
 }
 
 bool hasCheckpoint(CheckpointType type) {
-  return sProcessStackSnapshotAddress[static_cast<int>(type)] != nullptr;
+  uint8_t * stackPointerForType = sProcessStackSnapshotAddress[static_cast<int>(type)];
+  if (stackPointerForType == nullptr) {
+    return false;
+  }
+  /* Make sure the snapshot is valid. Since Epsilon's stack is descending, if
+   * the frame address is lower than the current stack pointer, it means the
+   * frame has been unwound by a jump and the checkpoint is no longer valid. */
+  uint8_t * processStackPointer;
+  asm volatile ("mrs %[stackPointer], psp" : [stackPointer] "=r" (processStackPointer) :);
+  return processStackPointer - stackPointerForType < 0;
 }
 
 void unsetCheckpoint(CheckpointType type) {

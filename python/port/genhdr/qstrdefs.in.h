@@ -537,11 +537,13 @@ Q(SEEK_END)
 // os QSTRs
 Q(os)
 Q(uname)
+Q(getlogin)
 Q(sysname)
 Q(nodename)
 Q(release)
 Q(version)
 Q(machine)
+Q(username)
 Q(rename)
 Q(listdir)
 

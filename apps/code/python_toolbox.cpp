@@ -217,6 +217,7 @@ const ToolboxMessageTree OsModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportOs, I18n::Message::PythonImportOs, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromOs, I18n::Message::PythonImportOs, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandUname, I18n::Message::PythonOsUname, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandGetlogin, I18n::Message::PythonOsGetlogin, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandRemove, I18n::Message::PythonOsRemove, false, I18n::Message::PythonOsCommandRemoveWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandRename, I18n::Message::PythonOsRename, false, I18n::Message::PythonOsCommandRenameWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandListdir, I18n::Message::PythonOsListdir, false)

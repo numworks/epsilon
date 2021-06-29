@@ -54,6 +54,7 @@ private:
   StatisticCurveView m_curveViewLeft;
   StatisticCurveView m_curveViewRight;
   LegendView m_legend;
+  // TODO union of the two?
   TestConclusionView m_testConclusionView;
   IntervalConclusionView m_intervalConclusionView;
   GraphDisplayMode m_mode;

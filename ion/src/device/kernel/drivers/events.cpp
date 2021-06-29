@@ -441,6 +441,10 @@ void stall() {
     return;
   }
 
+  // Flush keyboard state to avoid delayed reaction
+  Keyboard::Queue::sharedQueue()->flush();
+  Keyboard::Queue::sharedQueue()->push(Ion::Keyboard::State(0));
+
   if (s_spinnerStatus != SpinnerStatus::Disabled) {
     spin();
     // TODO: stalling when no User/System checkpoint is set could lead to checkout the home

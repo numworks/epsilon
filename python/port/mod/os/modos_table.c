@@ -10,11 +10,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(modos_remove_obj, modos_remove);
 MP_DEFINE_CONST_FUN_OBJ_2(modos_rename_obj, modos_rename);
 MP_DEFINE_CONST_FUN_OBJ_0(modos_listdir_obj, modos_listdir);
 
-#ifdef OMEGA_VERSION
 STATIC const MP_DEFINE_STR_OBJ(modos_sysname_obj, "Omega");
-#else
-STATIC const MP_DEFINE_STR_OBJ(modos_sysname_obj, "Epsilon");
-#endif
 
 STATIC const mp_rom_map_elem_t modos_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_os) },

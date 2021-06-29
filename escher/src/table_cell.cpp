@@ -112,17 +112,20 @@ void TableCell::layoutSubviews(bool force) {
     // Label on the left, aligned vertically
     setFrameIfViewExists(
         label, KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight), force);
-
     x += labelWidth + Metric::CellHorizontalElementMargin;
+
     if (isSublabelAlignedRight() & !giveAccessoryAllWidth()) {
       // Align SubLabel right
       x = xEnd - accessoryWidth - Metric::CellHorizontalElementMargin - subLabelWidth;
     }
-    setFrameIfViewExists(
-        subLabel,
-        KDRect(x, y + (height - subLabelHeight) / 2, subLabelWidth, subLabelHeight),
-        force);
-    x += subLabelWidth + Metric::CellHorizontalElementMargin;
+
+    if (!hideSublabel()) {
+      setFrameIfViewExists(
+          subLabel,
+          KDRect(x, y + (height - subLabelHeight) / 2, subLabelWidth, subLabelHeight),
+          force);
+      x += subLabelWidth + Metric::CellHorizontalElementMargin;
+    }
 
     KDCoordinate accessoryY = y + (height - accessoryHeight) / 2;
     if (giveAccessoryAllWidth()) {
@@ -139,6 +142,9 @@ void TableCell::layoutSubviews(bool force) {
 
   } else {  // Two rows
     setFrameIfViewExists(label, KDRect(x, y, labelWidth, labelHeight), force);
+    if (isSublabelAlignedRight()) {
+      x = xEnd - subLabelWidth;
+    }
     setFrameIfViewExists(
         subLabel,
         KDRect(

@@ -141,3 +141,8 @@ $(eval $(call depends_on_transparent_image,$(addprefix apps/probability/controll
   calcul3_icon.png \
   calcul4_icon.png \
 )))
+
+$(eval $(call depends_on_transparent_image,apps/probability/gui/test_conclusion_view.cpp,$(addprefix apps/probability/images/,\
+  test_success.png \
+  test_failure.png \
+)))

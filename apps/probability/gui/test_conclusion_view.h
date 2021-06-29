@@ -3,18 +3,18 @@
 
 #include <escher/message_text_view.h>
 #include <escher/palette.h>
-#include <escher/view.h>
 
 #include "probability/gui/horizontal_or_vertical_layout.h"
+#include "probability/gui/highlight_image_cell.h"
 
 namespace Probability {
 
 /* This view displays a message "test has been rejected / can't be rejected"
- * and a little checkmark or cross */
+ * and a matching icon. */
 class TestConclusionView : public HorizontalLayout {
 public:
   enum class Type { Success, Failure };
-  TestConclusionView() { m_textView.setBackgroundColor(Escher::Palette::WallScreen); }
+  TestConclusionView();
   void setType(Type t);
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
@@ -24,18 +24,9 @@ public:
 private:
   constexpr static int k_marginBetween = 20;
   constexpr static int k_marginLeft = 20;
-  class Icon : public Escher::View {
-  public:
-    constexpr static int k_size = 14;
-    void setType(Type t) { m_type = t; }
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    KDSize minimalSizeForOptimalDisplay() const override;
+  constexpr static int k_iconSize = 14;
 
-  private:
-    Type m_type;
-  };
-
-  Icon m_icon;
+  HighlightImageCell m_icon;
   Escher::MessageTextView m_textView;
 };
 

@@ -7,6 +7,7 @@ extern "C" {
 #include <py/objtuple.h>
 }
 
+#include <ion.h>
 #include <ion/storage.h>
 
 #ifndef OMEGA_VERSION
@@ -32,19 +33,12 @@ STATIC const MP_DEFINE_STR_OBJ(modos_uname_info_machine_obj, "NumWorks N0100");
 STATIC const MP_DEFINE_STR_OBJ(modos_uname_info_machine_obj, "NumWorks Simulator");
 #endif
 
-#if defined(OMEGA_USERNAME)
-STATIC const MP_DEFINE_STR_OBJ(modos_uname_info_username_obj, MP_STRINGIFY(OMEGA_USERNAME));
-#else
-STATIC const MP_DEFINE_STR_OBJ(modos_uname_info_username_obj, "");
-#endif
-
 STATIC const mp_rom_map_elem_t modos_uname_info_table[] = {
   { MP_ROM_QSTR(MP_QSTR_sysname), &modos_uname_info_sysname_obj },
   { MP_ROM_QSTR(MP_QSTR_nodename), &modos_uname_info_nodename_obj },
   { MP_ROM_QSTR(MP_QSTR_release), &modos_uname_info_release_obj },
   { MP_ROM_QSTR(MP_QSTR_version), &modos_uname_info_version_obj },
   { MP_ROM_QSTR(MP_QSTR_machine), &modos_uname_info_machine_obj },
-  { MP_ROM_QSTR(MP_QSTR_username), &modos_uname_info_username_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(modos_uname_info_obj, modos_uname_info_table);
@@ -54,7 +48,7 @@ mp_obj_t modos_uname(void) {
 }
 
 mp_obj_t modos_getlogin(void) {
-  return (mp_obj_t)&modos_uname_info_username_obj;
+  return mp_obj_new_str((const char *)Ion::username(), MIN(strlen((const char *)Ion::username()), 16));
 }
 
 mp_obj_t modos_remove(mp_obj_t o_file_name) {

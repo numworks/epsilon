@@ -17,11 +17,6 @@ constexpr Expression::FunctionHelper AbsoluteValue::s_functionHelper;
 
 int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::s_functionHelper.numberOfChildren(); }
 
-Expression AbsoluteValueNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == sign(reductionContext.context()));
-  return AbsoluteValue(this);
-}
-
 Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return AbsoluteValueLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

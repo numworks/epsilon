@@ -12,11 +12,6 @@ constexpr Expression::FunctionHelper Random::s_functionHelper;
 
 int RandomNode::numberOfChildren() const { return Random::s_functionHelper.numberOfChildren(); }
 
-Expression RandomNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == sign(reductionContext.context()));
-  return Random(this);
-}
-
 Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, Random::s_functionHelper.name());
 }

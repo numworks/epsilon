@@ -22,7 +22,6 @@ public:
   NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
   Type type() const override { return Type::Factorial; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
 private:

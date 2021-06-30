@@ -1,6 +1,6 @@
-USBConnected = "DER TASCHENRECHNER IST ANGESCHLOSSEN"
+USBConnected = "TASCHENRECHNER IST ANGESCHLOSSEN"
 ConnectedMessage1 = "Um Daten zu übertragen, verbinden"
 ConnectedMessage2 = "Sie sich von Ihrem Computer aus mit"
 ConnectedMessage3 = "Drücken Sie die Zurück-Taste am"
-ConnectedMessage4 = "Taschenrechner oder ziehen Sie das Kabel,"
+ConnectedMessage4 = "Taschenrechner oder Kabel abziehen,"
 ConnectedMessage5 = "um die Verbindung zu trennen."

@@ -37,7 +37,7 @@ openocd:
 
 # The flasher target is defined here because otherwise $(%_src) has not been
 # fully filled
-flasher_src = $(ion_device_flasher_src) $(liba_src) $(kandinsky_src)
+flasher_src = $(ion_device_flasher_src) $(liba_src) $(liba_flasher_src) $(kandinsky_src)
 $(BUILD_DIR)/flasher.$(EXE): $(call flavored_object_for,$(flasher_src), usbxip)
 $(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/flasher
 $(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/flasher/ram.ld

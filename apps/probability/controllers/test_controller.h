@@ -27,6 +27,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
+  int numberOfRows() const override;
 
 private:
   constexpr static int k_indexOfOneProp = 0;

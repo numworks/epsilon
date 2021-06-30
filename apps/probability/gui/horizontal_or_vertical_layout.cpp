@@ -5,11 +5,9 @@ using namespace Probability;
 KDSize Probability::VerticalLayout::minimalSizeForOptimalDisplay() const {
   int requiredWidth = 0, requiredHeight = 0;
   KDSize requiredSize(0, 0);
-  KDRect proposedFrame = KDRect(0, 0, bounds().width(), 0);
   for (int i = 0; i < numberOfSubviews(); i++) {
     Escher::View * subview = const_cast<VerticalLayout *>(this)->subviewAtIndex(i);
-    subview->setFrame(KDRect(0, proposedFrame.y() + proposedFrame.height(), bounds().width(), 0),
-                      false);
+    subview->setSize(KDSize(bounds().width(), subview->bounds().height()));
     requiredSize = subview->minimalSizeForOptimalDisplay();
     requiredHeight += requiredSize.height();
     requiredWidth = fmaxf(requiredWidth, requiredSize.width());
@@ -22,9 +20,7 @@ void VerticalLayout::layoutSubviews(bool force) {
   KDCoordinate availableHeight = frame.height();
   KDRect proposedFrame = KDRect(0, 0, frame.width(), 0);
   for (int i = 0; i < numberOfSubviews(); i++) {
-    subviewAtIndex(i)->setFrame(
-        KDRect(0, proposedFrame.y() + proposedFrame.height(), frame.width(), availableHeight),
-        false);
+    subviewAtIndex(i)->setSize(KDSize(frame.width(), availableHeight));
     int height = subviewAtIndex(i)->minimalSizeForOptimalDisplay().height();
     proposedFrame = KDRect(0, proposedFrame.y() + proposedFrame.height(), frame.width(), height);
     subviewAtIndex(i)->setFrame(proposedFrame, false);
@@ -36,8 +32,10 @@ void VerticalLayout::layoutSubviews(bool force) {
 KDSize Probability::HorizontalLayout::minimalSizeForOptimalDisplay() const {
   int requiredWidth = 0, requiredHeight = 0;
   KDSize requiredSize(0, 0);
+  KDRect proposedFrame = KDRect(0, 0, 0, bounds().height());
   for (int i = 0; i < numberOfSubviews(); i++) {
     Escher::View * subview = const_cast<HorizontalLayout *>(this)->subviewAtIndex(i);
+    subview->setSize(KDSize(subview->bounds().width(), bounds().height()));
     requiredSize = subview->minimalSizeForOptimalDisplay();
     requiredWidth += requiredSize.width();
     requiredHeight = fmax(requiredHeight, requiredSize.height());
@@ -50,9 +48,7 @@ void HorizontalLayout::layoutSubviews(bool force) {
   KDCoordinate availableWidth = frame.width();
   KDRect proposedFrame = KDRect(0, 0, 0, frame.height());
   for (int i = 0; i < numberOfSubviews(); i++) {
-    subviewAtIndex(i)->setFrame(
-        KDRect(proposedFrame.x() + proposedFrame.width(), 0, availableWidth, frame.height()),
-        false);
+    subviewAtIndex(i)->setSize(KDSize(availableWidth, frame.height()));
     int width = subviewAtIndex(i)->minimalSizeForOptimalDisplay().width();
     proposedFrame = KDRect(proposedFrame.x() + proposedFrame.width(), 0, width, frame.height());
     subviewAtIndex(i)->setFrame(proposedFrame, false);

@@ -2,7 +2,6 @@
 #include <boot/isr.h>
 #include <boot/rt0.h>
 #include <flasher/drivers/board.h>
-#include <drivers/led.h>
 #include <drivers/reset.h>
 
 extern "C" {

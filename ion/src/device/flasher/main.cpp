@@ -3,7 +3,7 @@
 #include "drivers/backlight.h"
 #include <drivers/display.h>
 
-void flasher_main(int argc, const char * const argv[]) {
+void flasher_main() {
   // Initialize the backlight
   Ion::Device::Backlight::init();
   // Initialize Flasher display

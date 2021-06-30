@@ -48,7 +48,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
           value = m_statistic->pValue();
           break;
         case TestCellOrder::TestDegree:
-          message = I18n::Message::DegreesOfFreedomDefinition;
+          message = I18n::Message::DegreesOfFreedom;
           value = m_statistic->degreeOfFreedom();
           break;
       }

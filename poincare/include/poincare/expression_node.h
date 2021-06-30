@@ -243,7 +243,8 @@ public:
    * Nodes that appear in reduced expressions and override sign must also
    * override setSign.
    * FIXME: sign and setSign depends too much on future programmers reading the
-   * above comment. This constraint should be enforced in the design. */
+   * above comment. This constraint should be enforced in the design. Also,
+   * setSign is not always overriden and only handle obvious cases by default.*/
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }

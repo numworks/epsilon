@@ -20,11 +20,12 @@ uint8_t brightness() {
 
 using namespace Regs;
 
-static uint8_t sLevel;
+constexpr uint8_t k_initialLevel = 0xF;
+static uint8_t sLevel = k_initialLevel;
 
 void init() {
   initGPIO();
-  sLevel = 0xF;
+  sLevel = k_initialLevel;
   setLevel(sLevel);
 }
 

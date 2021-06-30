@@ -21,6 +21,8 @@ void shutdownPeripheralsClocks();
 
 void setDefaultGPIO();
 
+void initInterruptions();
+
 }
 }
 }

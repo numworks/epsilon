@@ -17,7 +17,7 @@ constexpr KernelHeader::KernelHeader() :
   m_patchLevel{PATCH_LEVEL},
   m_footer(Magic) { }
 
-constexpr KernelHeader __attribute__((section(".kernel_header"))) k_kernelHeader;
+constexpr KernelHeader __attribute__((section(".kernel_header"),used)) k_kernelHeader;
 
 }
 

@@ -14,7 +14,6 @@
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
-#include <ion/src/shared/platform_info.h>
 #include <regs/regs.h>
 #include <shared/drivers/config/board.h>
 #include <shared/drivers/usb.h>

@@ -1,5 +1,7 @@
 #include "../shared/usb/calculator.h"
 #include <ion.h>
+#include "drivers/backlight.h"
+#include <drivers/display.h>
 
 void flasher_main(int argc, const char * const argv[]) {
   // Initialize the backlight

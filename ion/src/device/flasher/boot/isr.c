@@ -1,25 +1,24 @@
-#include "isr.h"
+#include <boot/isr.h>
+
 extern const void * _stack_start;
 
 /* Interrupt Service Routines are void->void functions */
-typedef void * ISR;
+typedef void (*ISR)(void);
 
-/* Notice: The Cortex-M4 expects all jumps to be made at an odd address when
+/* Notice: The Cortex-M4/7 expects all jumps to be made at an odd address when
  * jumping to Thumb code. For example, if you want to execute Thumb code at
  * address 0x100, you'll have to jump to 0x101. Luckily, this idiosyncrasy is
  * properly handled by the C compiler that will generate proper addresses when
  * using function pointers. */
 
-#define INITIALISATION_VECTOR_SIZE 0x71
-
 ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   __attribute__((used))
   = {
-  &_stack_start, // Stack start
-  (ISR)start, // Reset service routine,
+  (ISR)&_stack_start, // Stack start
+  start, // Reset service routine,
   0, // NMI service routine,
-  (ISR)abort, // HardFault service routine,
+  abort, // HardFault service routine,
   0, // MemManage service routine,
   0, // BusFault service routine,
   0, // UsageFault service routine,
@@ -28,7 +27,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // DebugMonitor service routine,
   0, // Reserved
   0, // PendSV service routine,
-  (ISR)isr_systick, // SysTick service routine
+  0, // SysTick service routine
   0, // WWDG service routine
   0, // PVD service routine
   0, // TampStamp service routine

@@ -4,7 +4,6 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 16.0.0
-KERNEL_VERSION ?= 0
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
 EPSILON_I18N ?= en fr nl pt it de es
 EPSILON_COUNTRIES ?= WW CA DE ES FR GB IT NL PT US

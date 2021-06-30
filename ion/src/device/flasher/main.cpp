@@ -12,6 +12,6 @@ void flasher_main(int argc, const char * const argv[]) {
     Ion::USB::enable();
     while (!Ion::USB::isEnumerated()) {
     }
-    Ion::USB::DFU(false);
+    Ion::USB::DFU();
   }
 }

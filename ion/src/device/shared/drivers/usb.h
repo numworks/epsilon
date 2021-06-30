@@ -1,7 +1,6 @@
 #ifndef ION_DEVICE_SHARED_USB_H
 #define ION_DEVICE_SHARED_USB_H
 
-#include <ion/src/shared/platform_info.h>
 #include <shared/drivers/board.h>
 #include <shared/drivers/kernel_header.h>
 #include <shared/drivers/usb.h>

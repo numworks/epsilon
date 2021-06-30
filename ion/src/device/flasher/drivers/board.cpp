@@ -231,6 +231,8 @@ void setDefaultGPIO() {
   }
 }
 
+void initInterruptions() {}
+
 }
 }
 }

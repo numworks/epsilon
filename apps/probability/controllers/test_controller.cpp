@@ -51,7 +51,7 @@ const char * TestController::title() {
 
 void TestController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::Test);
-  if (selectedRow() == -1) {
+  if (selectedRow() == -1 || selectedRow() >= numberOfRows()) {
     selectRow(0);
   }
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);

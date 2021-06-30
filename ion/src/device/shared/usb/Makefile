@@ -106,4 +106,5 @@ endif
 ion_device_dfu_src += ion/src/device/shared/usb/dfu_relocated.cpp:-usbxip
 
 ion_device_bootloader_src += $(ion_device_dfu_src)
+ion_device_flasher_src += $(ion_device_dfu_src)
 ion_device_userland_src += $(ion_device_dfu_src)

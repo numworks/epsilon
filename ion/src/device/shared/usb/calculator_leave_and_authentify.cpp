@@ -1,6 +1,7 @@
 #include "calculator.h"
 #include <ion/external_apps.h>
 #include <shared/drivers/config/board.h>
+#include <shared/drivers/userland_header.h>
 #include <userland/drivers/board.h>
 #include <userland/drivers/reset.h>
 
@@ -26,7 +27,7 @@ void Calculator::leave(uint32_t leaveAddress) {
   Board::switchExecutableSlot(leaveAddress);
   /* The jump can't be done from switchExecutableSlot since we need to
    * terminate the interruption procedure before jumping. */
-  Reset::jump(leaveAddress);
+  Reset::jump(leaveAddress + sizeof(UserlandHeader));
 }
 
 }

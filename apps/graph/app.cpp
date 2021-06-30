@@ -70,8 +70,9 @@ App::App(Snapshot * snapshot) :
 }
 
 CodePoint App::XNT() {
-  if (m_inputViewController.isEditing()) {
-    int selectedFunctionIndex = m_listController.selectedRow();
+  int selectedFunctionIndex = m_listController.selectedRow();
+  if (selectedFunctionIndex >= 0) {
+    assert(selectedFunctionIndex < functionStore()->numberOfModels());
     Ion::Storage::Record record = functionStore()->recordAtIndex(selectedFunctionIndex);
     return functionStore()->modelForRecord(record)->symbol();
   }

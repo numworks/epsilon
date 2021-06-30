@@ -115,7 +115,7 @@ void switchExecutableSlot(uint32_t leaveAddress) {
   /* In N0100, the userland has been overriden, we have to extract the
    * platform information from the slot information kept in RAM. */
   KernelHeader * currentInfo = USB::slotInfo()->kernelHeader();
-  UserlandHeader * otherInfo = otherUserlandHeader();
+  UserlandHeader * otherInfo = reinterpret_cast<UserlandHeader *>(leaveAddress);
 
   if (!otherInfo->isValid()) {
     // Can't get any information on the kernel version required

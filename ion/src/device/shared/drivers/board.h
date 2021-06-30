@@ -37,7 +37,6 @@ uint32_t slotBUserlandStart();
 uint32_t userlandStart();
 KernelHeader * kernelHeader();
 UserlandHeader * userlandHeader();
-UserlandHeader * otherUserlandHeader();
 
 }
 }

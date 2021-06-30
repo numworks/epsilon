@@ -1,7 +1,7 @@
 #include "../shared/usb/calculator.h"
 #include <ion.h>
 
-void ion_main(int argc, const char * const argv[]) {
+void flasher_main(int argc, const char * const argv[]) {
   // Initialize the backlight
   Ion::Backlight::init();
   // Initialize Flasher display

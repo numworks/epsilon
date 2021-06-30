@@ -55,6 +55,8 @@ void TestController::didBecomeFirstResponder() {
     selectRow(0);
   }
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  resetMemoization();
+  m_selectableTableView.reloadData();
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {
@@ -104,4 +106,9 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+int TestController::numberOfRows() const {
+  // Don't show Categorical cell for Interval
+  return k_numberOfTestCells - (App::app()->subapp() == Data::SubApp::Intervals);
 }

@@ -13,14 +13,6 @@ UserlandHeader * userlandHeader() {
   return reinterpret_cast<UserlandHeader *>(userlandStart() - sizeof(UserlandHeader));
 }
 
-uint32_t otherUserlandStart() {
-  return isRunningSlotA() ? slotBUserlandStart() : slotAUserlandStart();
-}
-
-UserlandHeader * otherUserlandHeader() {
-  return reinterpret_cast<UserlandHeader *>(otherUserlandStart() - sizeof(UserlandHeader));
-}
-
 }
 }
 }

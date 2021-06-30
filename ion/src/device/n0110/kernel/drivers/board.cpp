@@ -104,7 +104,7 @@ void initMPU() {
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x60000000);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
-  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::PrivilegedRW);
   MPU.RASR()->setXN(true);
   MPU.RASR()->setTEX(2);
   MPU.RASR()->setS(0);

@@ -88,7 +88,7 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	input_goodness_controller.cpp \
 	input_homogeneity_controller.cpp \
 	homogeneity_results_controller.cpp \
-	graph_controller.cpp \
+	statistic_graph_controller.cpp \
 )
 
 app_probability_src +=  $(addprefix apps/probability/abstract/,\

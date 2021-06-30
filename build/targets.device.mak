@@ -70,14 +70,14 @@ epsilon.dfu: DFUFLAGS += --custom
 .PHONY: $(BUILD_DIR)/epsilon.dfu
 $(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
 	$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf
-	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.A.elf
-	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.B.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.A.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.B.elf
 	$(MAKE) FIRMWARE_COMPONENT=userland userland.A.elf
 	$(MAKE) FIRMWARE_COMPONENT=userland userland.B.elf
 	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
 	  $(subst epsilon,bootloader,$(subst debug,release,$(BUILD_DIR)/bootloader.elf)) \
 	  $(subst epsilon,userland,$(BUILD_DIR)/userland.A.elf) \
-	  $(subst epsilon,kernel,$(BUILD_DIR)/kernel.A.elf) \
+	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.A.elf)) \
 	  $(subst epsilon,userland,$(BUILD_DIR)/userland.B.elf) \
-	  $(subst epsilon,kernel,$(BUILD_DIR)/kernel.B.elf) \
+	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.B.elf)) \
 	  -o $@

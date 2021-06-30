@@ -108,7 +108,8 @@ AppIterator & AppIterator::operator++() {
 bool s_externalAppsVisible = false;
 
 AppIterator Apps::begin() const {
-  uint8_t * storageStart = nextSectorAlignedAddress(&_storage_flash_start);
+  uint8_t * storageStart = &_storage_flash_start;
+  assert(nextSectorAlignedAddress(storageStart) == storageStart);
   if (!s_externalAppsVisible || !App::appAtAddress(storageStart)) {
     return end();
   }

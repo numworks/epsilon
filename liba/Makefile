@@ -14,6 +14,12 @@ liba_bootloader_src += $(addprefix liba/src/, \
   strlen.c \
 )
 
+liba_flasher_src += $(addprefix liba/src/, \
+  memcpy.c \
+  memset.c \
+  strlen.c \
+)
+
 liba_kernel_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \

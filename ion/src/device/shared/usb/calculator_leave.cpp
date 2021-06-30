@@ -1,5 +1,5 @@
 #include "calculator.h"
-#include <drivers/board.h>
+#include <flasher/drivers/board.h>
 #include <drivers/reset.h>
 
 namespace Ion {
@@ -11,7 +11,7 @@ void Calculator::leave(uint32_t leaveAddress) {
     Reset::coreWhilePlugged();
   } else {
     Board::initInterruptions();
-    Reset::jump(leaveAddress);
+    Reset::jump(leaveAddress, true);
   }
 }
 

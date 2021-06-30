@@ -26,6 +26,7 @@ ExpressionNode::Sign ConstantNode::sign(Context * context) const {
 }
 
 Expression ConstantNode::setSign(Sign s, ReductionContext reductionContext) {
+  // Override SymbolAbstract's setSign method to use the default implementation.
   return ExpressionNode::setSign(s, reductionContext);
 }
 

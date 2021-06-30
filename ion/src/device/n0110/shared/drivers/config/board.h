@@ -35,7 +35,7 @@ constexpr static uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddres
 constexpr static uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
 
 // Kernel
-constexpr static uint32_t KernelSize = 0x40000; // 256kB
+constexpr static uint32_t KernelSize = 0x10000; // 64kB
 constexpr static uint32_t SRAMAddress = 0x20000000;
 constexpr static uint32_t SRAMLength = 0x40000; // 256kB
 constexpr static uint32_t KernelSRAMDataBSSLength = 0x2000; // 8k

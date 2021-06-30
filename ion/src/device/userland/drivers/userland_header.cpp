@@ -28,7 +28,7 @@ constexpr UserlandHeader::UserlandHeader() :
   m_storageAddressFlashEnd(&_storage_flash_end),
   m_footer(Magic) { }
 
-constexpr UserlandHeader __attribute__((section(".userland_header"))) k_userlandHeader;
+constexpr UserlandHeader __attribute__((section(".userland_header"),used)) k_userlandHeader;
 
 }
 

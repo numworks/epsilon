@@ -13,12 +13,12 @@ const Escher::Image * App::Descriptor::icon() const {
 
 App::App(Snapshot * snapshot) :
     TextFieldDelegateApp(snapshot, &m_stackViewController),
-    m_graphController(&m_stackViewController, snapshot->data()->statistic()),
+    m_statisticGraphController(&m_stackViewController, snapshot->data()->statistic()),
     m_homogeneityResultsController(&m_stackViewController),
     m_inputHomogeneityController(&m_stackViewController, &m_homogeneityResultsController, this,
                                  this),
     m_inputGoodnessController(&m_stackViewController, &m_resultsController, this, this),
-    m_resultsController(&m_stackViewController, snapshot->data()->statistic(), &m_graphController,
+    m_resultsController(&m_stackViewController, snapshot->data()->statistic(), &m_statisticGraphController,
                         this, this),
     m_inputController(&m_stackViewController, &m_resultsController, snapshot->data()->statistic(),
                       this),
@@ -144,7 +144,7 @@ App::App(Snapshot * snapshot) :
       m_testController.openPage(&m_hypothesisController);
       m_hypothesisController.openPage(&m_inputController);
       m_inputController.openPage(&m_resultsController);
-      m_resultsController.openPage(&m_graphController);
+      m_resultsController.openPage(&m_statisticGraphController);
       break;
   }
 }

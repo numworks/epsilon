@@ -9,7 +9,7 @@
 
 #include "controllers/categorical_type_controller.h"
 #include "controllers/distribution_controller.h"
-#include "controllers/graph_controller.h"
+#include "controllers/statistic_graph_controller.h"
 #include "controllers/homogeneity_results_controller.h"
 #include "controllers/hypothesis_controller.h"
 #include "controllers/input_controller.h"
@@ -79,7 +79,7 @@ private:
 
   // Controllers
   // TODO store only memory for one controller (as a union ?)
-  GraphController m_graphController;
+  StatisticGraphController m_statisticGraphController;
   HomogeneityResultsController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
   InputGoodnessController m_inputGoodnessController;

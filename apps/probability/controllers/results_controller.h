@@ -11,7 +11,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
-#include "graph_controller.h"
+#include "statistic_graph_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/results_data_source.h"
@@ -22,13 +22,13 @@ namespace Probability {
 class ResultsController : public Page, public ButtonDelegate, public SelectableTableViewDataSource {
 public:
   ResultsController(Escher::StackViewController * parent, Statistic * results,
-                    GraphController * graphController, Escher::InputEventHandlerDelegate * handler,
+                    StatisticGraphController * statisticGraphController, Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   void didBecomeFirstResponder() override;
-  void buttonAction() override { openPage(m_graphController); }
+  void buttonAction() override { openPage(m_statisticGraphController); }
   void openPage(ViewController * nextPage, KDColor backgroundColor = Escher::Palette::GrayMiddle,
                 KDColor separatorColor = Escher::Palette::GrayMiddle,
                 KDColor textColor = KDColorWhite) {
@@ -41,7 +41,7 @@ protected:
 
   ResultsDataSource m_resultsDataSource;
 
-  GraphController * m_graphController;
+  StatisticGraphController * m_statisticGraphController;
 };
 
 }  // namespace Probability

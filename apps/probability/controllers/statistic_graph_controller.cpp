@@ -1,11 +1,12 @@
-#include "graph_controller.h"
+#include "statistic_graph_controller.h"
 
 #include "probability/app.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
 
-GraphController::GraphController(StackViewController * stack, Statistic * statistic) :
+StatisticGraphController::StatisticGraphController(StackViewController * stack,
+                                                   Statistic * statistic) :
     Page(stack),
     m_rangeLeft(m_graphView.curveViewLeft(), true),
     m_rangeRight(m_graphView.curveViewRight(), false),
@@ -13,7 +14,7 @@ GraphController::GraphController(StackViewController * stack, Statistic * statis
     m_statistic(statistic) {
 }
 
-const char * GraphController::title() {
+const char * StatisticGraphController::title() {
   char zBuffer[10];
   char pBuffer[10];
   defaultParseFloat(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
@@ -22,18 +23,18 @@ const char * GraphController::title() {
   return m_titleBuffer;
 }
 
-void GraphController::didBecomeFirstResponder() {
+void StatisticGraphController::didBecomeFirstResponder() {
   TestConclusionView::Type t = m_statistic->testPassed() ? TestConclusionView::Type::Success
                                                          : TestConclusionView::Type::Failure;
-  GraphDisplayMode m =
-      m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Different &&
-              App::app()->subapp() == Data::SubApp::Tests
-          ? GraphDisplayMode::TwoCurveViews
-          : GraphDisplayMode::OneCurveView;
-  GraphView::LegendPosition pos =
-      m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Lower
-          ? GraphView::LegendPosition::Left
-          : GraphView::LegendPosition::Right;
+  GraphDisplayMode m = m_statistic->hypothesisParams()->op() ==
+                                   HypothesisParams::ComparisonOperator::Different &&
+                               App::app()->subapp() == Data::SubApp::Tests
+                           ? GraphDisplayMode::TwoCurveViews
+                           : GraphDisplayMode::OneCurveView;
+  GraphView::LegendPosition pos = m_statistic->hypothesisParams()->op() ==
+                                          HypothesisParams::ComparisonOperator::Lower
+                                      ? GraphView::LegendPosition::Left
+                                      : GraphView::LegendPosition::Right;
   m_graphView.setMode(m);
   m_graphView.setLegendPosition(pos);
   m_graphView.setType(t);

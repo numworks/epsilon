@@ -15,13 +15,13 @@ using namespace Probability;
 
 ResultsController::ResultsController(Escher::StackViewController * parent,
                                      Statistic * results,
-                                     GraphController * graphController,
+                                     StatisticGraphController * statisticGraphController,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :
     Page(parent),
     m_tableView(this, &m_resultsDataSource, this, nullptr),
     m_resultsDataSource(&m_tableView, results, this),
-    m_graphController(graphController) {}
+    m_statisticGraphController(statisticGraphController) {}
 
 void ResultsController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::Results);

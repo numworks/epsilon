@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H
-#define APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_STATISTIC_GRAPH_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_STATISTIC_GRAPH_CONTROLLER_H
 
 #include <escher/buffer_table_cell.h>
 #include <escher/stack_view_controller.h>
@@ -10,9 +10,9 @@
 
 namespace Probability {
 
-class GraphController : public Page {
+class StatisticGraphController : public Page {
 public:
-  GraphController(StackViewController * stack, Statistic * statistic);
+  StatisticGraphController(StackViewController * stack, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastThreeTitles; }
   const char * title() override;
   Escher::View * view() override { return &m_graphView; }
@@ -27,4 +27,4 @@ private:
   Statistic * m_statistic;
 };
 }  // namespace Probability
-#endif /* APPS_PROBABILITY_CONTROLLERS_GRAPH_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_STATISTIC_GRAPH_CONTROLLER_H */

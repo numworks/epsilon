@@ -46,7 +46,7 @@ class LegendView : public VerticalLayout {
 public:
   LegendView() :
       m_pValue(I18n::translate(I18n::Message::PValue), KDColorOrange),
-      m_alpha(I18n::translate(I18n::Message::Alpha), Palette::GrayMiddle) {}
+      m_alpha(I18n::translate(I18n::Message::GreekAlpha), Palette::GrayMiddle) {}
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override { return i == 0 ? &m_pValue : &m_alpha; }
 

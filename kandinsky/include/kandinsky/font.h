@@ -61,7 +61,7 @@ public:
     CodePoint m_codePoint;
     GlyphIndex m_glyphIndex;
   };
-  static constexpr GlyphIndex IndexForReplacementCharacterCodePoint = 133;
+  static constexpr GlyphIndex IndexForReplacementCharacterCodePoint = 135;
   GlyphIndex indexForCodePoint(CodePoint c) const;
 
   void setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
@@ -82,7 +82,7 @@ private:
   void fetchGrayscaleGlyphAtIndex(GlyphIndex index, uint8_t * grayscaleBuffer) const;
 
   const uint8_t * compressedGlyphData(GlyphIndex index) const {
-    return m_data + m_glyphDataOffset[index];
+    return &m_data[m_glyphDataOffset[index]];
   }
 
   uint16_t compressedGlyphDataSize(GlyphIndex index) const {

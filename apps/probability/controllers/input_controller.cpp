@@ -96,7 +96,7 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
         static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
     I18n::Message name, description;
     if (App::app()->subapp() == Data::SubApp::Tests) {
-      name = I18n::Message::Alpha;
+      name = I18n::Message::GreekAlpha;
       description = I18n::Message::SignificanceLevel;
     } else {
       name = I18n::Message::ConfidenceLevel;

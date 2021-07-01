@@ -22,7 +22,8 @@ public:
     m_footer(Magic)
   {
   }
-  void update();
+  void updateKernelHeader();
+  void updateUserlandHeader();
   KernelHeader * kernelHeader() const { return m_kernelHeaderAddress; }
 private:
   constexpr static uint32_t Magic = 0xEFEEDBBA;

@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_FLASHER_BOARD_H
 #define ION_DEVICE_FLASHER_BOARD_H
 
-#include <drivers/board.h>
+#include <shared/drivers/board.h>
 
 namespace Ion {
 namespace Device {

@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_KERNEL_BOOT_ISR_H
 #define ION_DEVICE_KERNEL_BOOT_ISR_H
 
-#include <boot/isr.h>
+#include <shared/boot/isr.h>
 #include <stdint.h>
 
 #ifdef __cplusplus

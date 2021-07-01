@@ -1,4 +1,5 @@
-ion_device_bootloader_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
+# Shared
+ion_device_n0110_bootloader_kernel_src = $(addprefix ion/src/device/n0110/shared/drivers/, \
   board.cpp \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
@@ -6,6 +7,9 @@ ion_device_bootloader_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   reset.cpp \
   usb.cpp \
 )
+
+# Target specific
+ion_device_bootloader_src += $(ion_device_n0110_bootloader_kernel_src)
 
 ion_device_flasher_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   board.cpp \
@@ -13,14 +17,7 @@ ion_device_flasher_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   usb.cpp \
 )
 
-ion_device_kernel_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
-  board.cpp \
-  flash_privileged.cpp \
-  flash_unprivileged.cpp \
-  power.cpp \
-  reset.cpp \
-  usb.cpp \
-)
+ion_device_kernel_src += $(ion_device_n0110_bootloader_kernel_src)
 ion_device_kernel_src += $(addprefix ion/src/device/n0110/kernel/drivers/, \
   board.cpp \
   cache.cpp \

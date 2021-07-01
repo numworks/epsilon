@@ -1,4 +1,4 @@
-ion_device_userland_svc_src += $(addprefix ion/src/device/userland/, \
+ion_device_userland_svc_src = $(addprefix ion/src/device/userland/, \
   drivers/authentication.cpp \
   drivers/backlight.cpp \
   drivers/battery.cpp \
@@ -23,7 +23,7 @@ ion_device_userland_svc_src += $(addprefix ion/src/device/userland/, \
 
 $(call object_for,$(ion_device_userland_svc_src)): SFLAGS += -fno-lto
 
-ion_device_userland_src += $(ion_device_userland_svc_src)
+ion_device_userland_src = $(ion_device_userland_svc_src)
 
 ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   boot/isr.c \
@@ -35,3 +35,8 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
   drivers/stack.cpp \
   drivers/userland_header.cpp \
 )
+
+ion_device_userland_src += ion/src/shared/collect_registers.cpp
+
+ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL)/userland -Iion/src/device/userland
+

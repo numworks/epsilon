@@ -71,6 +71,9 @@ tests_src += $(addprefix ion/test/,\
   utf8_helper.cpp\
 )
 
+# Export version and patch level
+$(call object_for,ion/src/shared/dummy/platform_info.cpp): SFLAGS += -DPATCH_LEVEL=\"$(PATCH_LEVEL)\" -DEPSILON_VERSION=\"$(EPSILON_VERSION)\"
+
 ifdef ION_STORAGE_LOG
 SFLAGS += -DION_STORAGE_LOG=1
 endif

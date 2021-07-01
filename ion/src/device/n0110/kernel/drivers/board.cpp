@@ -73,7 +73,7 @@ void initMPU() {
   // 2.3 Forbid unprivileged access to kernel RAM
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(Board::Config::KernelRAMAddress);
-  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_16KB);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_4KB);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::PrivilegedRW);
   MPU.RASR()->setXN(false);
   MPU.RASR()->setTEX(1);

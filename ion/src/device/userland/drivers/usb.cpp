@@ -21,7 +21,7 @@ void SVC_ATTRIBUTES willExecuteDFU() {
   SVC_RETURNING_VOID(SVC_USB_WILL_EXECUTE_DFU)
 
   // Keep usefull information about the currently running slot
-  slotInfo()->update();
+  slotInfo()->updateUserlandHeader();
 }
 
 void SVC_ATTRIBUTES didExecuteDFU() {
@@ -37,9 +37,8 @@ SlotInfo * slotInfo() {
   return &slotInformation;
 }
 
-void SlotInfo::update() {
-  m_kernelHeaderAddress =  Board::kernelHeader();
-  m_userlandHeaderAddress =  Board::userlandHeader();
+void SlotInfo::updateUserlandHeader() {
+  m_userlandHeaderAddress = Board::userlandHeader();
 }
 
 }

@@ -24,9 +24,10 @@ constexpr uint8_t k_initialLevel = 0xF;
 static uint8_t sLevel = k_initialLevel;
 
 void init() {
+  int previousLevel = sLevel;
   initGPIO();
   sLevel = k_initialLevel;
-  setLevel(sLevel);
+  setLevel(previousLevel);
 }
 
 bool isInitialized() {

@@ -7,11 +7,10 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
   external_apps.cpp \
   fcc_id.cpp \
   led.cpp \
-  pcb_version.cpp \
+  platform_info.cpp \
   post_and_hardware_tests.cpp \
   power.cpp \
   reset.h \
-  serial_number.cpp \
   stack.cpp \
   usb.cpp \
 )

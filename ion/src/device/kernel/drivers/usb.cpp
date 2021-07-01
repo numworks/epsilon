@@ -25,6 +25,9 @@ void willExecuteDFU() {
    * The interrupt service routines live in the Flash and could be overwritten
    * by garbage during a firmware upgrade opration, so we disable them. */
   Board::shutdownInterruptions();
+
+  //3- Keep usefull information about the currently running slot
+  slotInfo()->updateKernelHeader();
 }
 
 void didExecuteDFU() {
@@ -33,6 +36,10 @@ void didExecuteDFU() {
 
 bool shouldInterruptDFU() {
   return Keyboard::columnIsActive(Keyboard::columnForKey(Ion::Keyboard::Key::Back));
+}
+
+void SlotInfo::updateKernelHeader() {
+  m_kernelHeaderAddress = Board::kernelHeader();
 }
 
 }

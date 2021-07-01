@@ -1,5 +1,4 @@
 #include <shared/drivers/flash_privileged.h>
-#include <bootloader/drivers/external_flash.h>
 #include <drivers/config/external_flash.h>
 #include "external_flash.h"
 

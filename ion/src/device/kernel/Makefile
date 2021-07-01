@@ -1,4 +1,4 @@
-ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
+ion_device_kernel_src = $(addprefix ion/src/device/kernel/, \
   boot/isr.c \
   boot/rt0.cpp \
   drivers/authentication.cpp \
@@ -26,3 +26,6 @@ ion_device_kernel_src += $(addprefix ion/src/device/kernel/, \
   main.cpp \
   warning_display.cpp \
 )
+
+ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL)/kernel -Iion/src/device/kernel
+

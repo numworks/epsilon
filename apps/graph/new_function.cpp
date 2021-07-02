@@ -153,7 +153,8 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
     * same function. So we need to keep a valid result while executing
     * 'Simplify'. Thus, we use a temporary expression. */
   Expression tempExpression = result.clone();
-  Shared::PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+  Shared::PoincareHelpers::Reduce(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+  // Shared::PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   // simplify might return an uninitialized Expression if interrupted
   if (!tempExpression.isUninitialized()) {
     result = tempExpression;
@@ -168,6 +169,7 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
   if (m_expression.isUninitialized()) {
     // Retrieve the expression from the equation
     m_expression = expressionEquation(record, context);
+    m_hasTwoCurves = false;
     if (record->fullName() == nullptr || record->fullName()[0] == '?') {
       // Transform the solution by solving the equation in y
       int degree = m_expression.polynomialDegree(context, "y");
@@ -188,8 +190,13 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
           if (solutions <= 1) {
             m_expression = root1;
           } else {
-            // TODO HUgo : Plot two curves instead
-            m_expression = root1;
+            m_hasTwoCurves = true;
+            Matrix newExpr = Matrix::Builder();
+            newExpr.addChildAtIndexInPlace(root1, 0, 0);
+            newExpr.addChildAtIndexInPlace(root2, 1, 1);
+            newExpr.setDimensions(2, 1);
+            // TODO HUgo : Plot two curves
+            m_expression = newExpr;
             // Expression alternator = DivisionRemainder::Builder(Floor::Builder(Multiplication::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(10))), Rational::Builder(2));
             // m_expression = Addition::Builder(Multiplication::Builder(alternator, Subtraction::Builder(root1, root2.clone())), root2);
           }
@@ -492,7 +499,7 @@ size_t NewFunction::Model::expressionSize(const Ion::Storage::Record * record) c
 }
 
 template<typename T>
-Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * context) const {
+Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * context, int i) const {
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(plotType() == PlotType::Cartesian ? t : NAN, NAN);
   }
@@ -502,7 +509,12 @@ Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * cont
   PlotType type = plotType();
   Expression e = expressionReduced(context);
   if (type != PlotType::Parametric) {
-    assert(type == PlotType::Cartesian || type == PlotType::Polar);
+    if (hasTwoCurves()) {
+      assert(e.numberOfChildren() > i);
+      return Coordinate2D<T>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(i), unknown, t, context));
+    } else {
+      assert(i == 0);
+    }
     return Coordinate2D<T>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
   }
   if (e.type() == ExpressionNode::Type::Dependency) {
@@ -577,8 +589,8 @@ void NewFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * 
 }
 
 template <typename T>
-Poincare::Coordinate2D<T> NewFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context) const {
-  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context);
+Poincare::Coordinate2D<T> NewFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i) const {
+  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context, i);
   PlotType type = plotType();
   if (type != PlotType::Polar) {
     return x1x2;
@@ -597,11 +609,11 @@ Poincare::Coordinate2D<T> NewFunction::privateEvaluateXYAtParameter(T t, Poincar
   return Coordinate2D<T>(x1x2.x2() * std::cos(angle), x1x2.x2() * std::sin(angle));
 }
 
-template Coordinate2D<float> NewFunction::templatedApproximateAtParameter<float>(float, Context *) const;
-template Coordinate2D<double> NewFunction::templatedApproximateAtParameter<double>(double, Context *) const;
+template Coordinate2D<float> NewFunction::templatedApproximateAtParameter<float>(float, Context *, int) const;
+template Coordinate2D<double> NewFunction::templatedApproximateAtParameter<double>(double, Context *, int) const;
 
-template Coordinate2D<float> NewFunction::privateEvaluateXYAtParameter<float>(float, Context *) const;
-template Coordinate2D<double> NewFunction::privateEvaluateXYAtParameter<double>(double, Context *) const;
+template Coordinate2D<float> NewFunction::privateEvaluateXYAtParameter<float>(float, Context *, int) const;
+template Coordinate2D<double> NewFunction::privateEvaluateXYAtParameter<double>(double, Context *, int) const;
 
 
 } // namespace Graph

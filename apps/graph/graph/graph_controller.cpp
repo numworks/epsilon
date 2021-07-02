@@ -72,7 +72,7 @@ void GraphController::reloadBannerView() {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, scrollSpeed);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, scrollSpeed, m_indexFunctionSelectedByCursor2);
 }
 
 int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
@@ -124,7 +124,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
         double potentialNextTMin = f->tMin();
         double potentialNextTMax = f->tMax();
         double potentialNextT = std::max(potentialNextTMin, std::min(potentialNextTMax, t));
-        Coordinate2D<double> xy = f->evaluateXYAtParameter(potentialNextT, App::app()->localContext());
+        Coordinate2D<double> xy = f->evaluateXYAtParameter(potentialNextT, App::app()->localContext(), 0);
         if (currentXDelta < xDelta || std::abs(xy.x2() - m_cursor->y()) < std::abs(nextY - m_cursor->y())) {
           nextCurveIndex = i;
           xDelta = currentXDelta;
@@ -138,6 +138,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
     return;
   }
   m_cursor->moveTo(nextT, nextT, nextY);
+  m_indexFunctionSelectedByCursor2 = 0;
   selectFunctionWithCursor(nextCurveIndex);
   return;
 }

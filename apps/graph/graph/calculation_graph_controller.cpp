@@ -78,7 +78,7 @@ bool CalculationGraphController::moveCursorHorizontally(int direction, int scrol
   if (std::isnan(newPointOfInterest.x1())) {
     return false;
   }
-  assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == NewFunction::PlotType::Cartesian);
+  assert(App::app()->functionStore()->modelForRecord(m_record)->isAlongX());
   m_cursor->moveTo(newPointOfInterest.x1(), newPointOfInterest.x1(), newPointOfInterest.x2());
   return true;
 }

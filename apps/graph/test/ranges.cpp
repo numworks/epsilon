@@ -24,7 +24,7 @@ public:
   // InteractiveCurveViewRangeDelegate
   bool defaultRangeIsNormalized() const override { return functionStore()->displaysNonCartesianFunctions(); }
   void computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) override { DefaultComputeXRange(xMinLimit, xMaxLimit, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, context(), functionStore()); }
-  void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax) override { DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, Ratio(), yMin, yMax, context(), functionStore()); }
+  void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax, bool optimizeRange) override { DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, Ratio(), yMin, yMax, context(), functionStore(), optimizeRange); }
   void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) override { DefaultImproveFullRange(xMin, xMax, yMin, yMax, context(), functionStore()); }
   bool canShrinkWhenNormalizing() const override { return true; }
 

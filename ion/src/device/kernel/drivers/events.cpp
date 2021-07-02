@@ -428,13 +428,17 @@ void stall() {
   // Clear update interrupt flag
   TIM2.SR()->setUIF(false);
 
+  /* Flush keyboard state to avoid delayed reaction
+   * While we are stalling, if back is pressed but no User checkpoint is set
+   * (for instance when running a Python script), handlePreemption will queue
+   * the keyboard state. This is why we need to flush the queue BEFORE calling
+   * handlePreemption. */
+  Keyboard::Queue::sharedQueue()->flush(false);
+  Keyboard::Queue::sharedQueue()->push(Ion::Keyboard::State(0));
+
   if (handlePreemption(true)) {
     return;
   }
-
-  // Flush keyboard state to avoid delayed reaction
-  Keyboard::Queue::sharedQueue()->flush();
-  Keyboard::Queue::sharedQueue()->push(Ion::Keyboard::State(0));
 
   if (s_spinnerStatus != SpinnerStatus::Disabled) {
     spin();

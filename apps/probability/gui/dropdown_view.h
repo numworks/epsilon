@@ -57,6 +57,9 @@ private:
   PopupView m_popupViews[k_maxNumberOfPopupItems];
 };
 
+
+class DropdownCallback;
+
 /* List of PopupViews shown in a modal view. */
 class DropdownPopup : public Escher::ViewController {
 public:
@@ -64,21 +67,32 @@ public:
   Escher::View * view() override { return &m_borderingView; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
+  void registerCallback(DropdownCallback * callback) { m_callback = callback; }
 
 private:
   PopupListViewDataSource m_listDataSource;
   Escher::SelectableTableView m_selectableTableView;
   Escher::SelectableTableViewDataSource m_selectionDataSource;
   BorderingView m_borderingView;
+  DropdownCallback * m_callback;
+};
+
+
+class DropdownCallback {
+public:
+  virtual void onDropdownSelected(int selectedRow) = 0;
 };
 
 /* A Dropdown is a view that, when clicked on, displays a list of views to choose from
  * It requires a DropdownDataSource to provide a list of views */
 class Dropdown : public PopupView, public Escher::Responder {
 public:
-  Dropdown(Escher::Responder * parentResponder, Escher::ListViewDataSource * listDataSource);
+  Dropdown(Escher::Responder * parentResponder,
+           Escher::ListViewDataSource * listDataSource,
+           DropdownCallback * callback = nullptr);
   bool handleEvent(Ion::Events::Event e) override;
   void setHighlighted(bool highlighted) override;
+  void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
 
 private:
   DropdownPopup m_popup;

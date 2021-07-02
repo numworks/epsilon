@@ -11,7 +11,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed) {
+bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed, int indexFunctionSelectedByCursor2) {
   ExpiringPointer<NewFunction> function = App::app()->functionStore()->modelForRecord(record);
   double tCursorPosition = cursor->t();
   double t = tCursorPosition;
@@ -34,7 +34,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
 
   t = std::max(tMin, std::min(tMax, t));
-  Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());
+  Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), indexFunctionSelectedByCursor2);
   cursor->moveTo(t, xy.x1(), xy.x2());
   return true;
 }

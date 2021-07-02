@@ -18,7 +18,8 @@ class ResponderImageCell;
 class CalculationController : public Escher::ViewController,
                               public Escher::TableViewDataSource,
                               public Escher::SelectableTableViewDataSource,
-                              public Shared::ParameterTextFieldDelegate {
+                              public Shared::ParameterTextFieldDelegate,
+                              public DropdownCallback {
  public:
   CalculationController(Escher::Responder * parentResponder,
                         Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution,
@@ -55,6 +56,9 @@ class CalculationController : public Escher::ViewController,
   void reloadDistributionCurveView();
   void reload();
   void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
+
+  // Dropdown
+  void onDropdownSelected(int selectedRow) override;
 
  private:
   constexpr static int k_numberOfCalculationCells = 3;

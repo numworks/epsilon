@@ -105,14 +105,19 @@ void DropdownPopup::didBecomeFirstResponder() {
 bool DropdownPopup::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     Escher::Container::activeApp()->dismissModalViewController();
+    if (m_callback) {
+      m_callback->onDropdownSelected(m_selectionDataSource.selectedRow());
+    }
     return true;
   }
   return false;
 }
 
 Dropdown::Dropdown(Escher::Responder * parentResponder,
-                   Escher::ListViewDataSource * listDataSource) :
+                   Escher::ListViewDataSource * listDataSource,
+                   DropdownCallback * callback) :
     Responder(parentResponder), m_popup(this, listDataSource) {
+  registerCallback(callback);
 }
 
 bool Dropdown::handleEvent(Ion::Events::Event e) {

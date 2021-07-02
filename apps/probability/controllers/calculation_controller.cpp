@@ -59,7 +59,7 @@ CalculationController::CalculationController(Responder * parentResponder,
       m_selectableTableView(this),
       m_imageCell(&m_selectableTableView, distribution, calculation, this),
       m_calculation(calculation),
-      m_distribution(distribution), m_dropdown(&m_selectableTableView, &m_imagesDataSource) {
+      m_distribution(distribution), m_dropdown(&m_selectableTableView, &m_imagesDataSource, this) {
   assert(distribution != nullptr);
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);
@@ -261,6 +261,11 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
     default:
       return;
   }
+}
+
+void CalculationController::onDropdownSelected(int selectedRow) {
+    setCalculationAccordingToIndex(selectedRow);
+    reload();
 }
 
 void CalculationController::updateTitle() {

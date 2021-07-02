@@ -13,6 +13,7 @@ public:
   void setHighlighted(bool highlighted) override {
     m_contentView.setBackgroundColor(highlighted ? Escher::Palette::Select : KDColorWhite);
     markRectAsDirty(bounds());
+    HighlightCell::setHighlighted(highlighted);
   };
 
   // Wrap TransparentImageView

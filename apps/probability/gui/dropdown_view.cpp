@@ -100,6 +100,10 @@ DropdownPopup::DropdownPopup(Escher::Responder * parentResponder,
 
 void DropdownPopup::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  if (m_selectionDataSource.selectedRow() < 0) {
+    m_selectionDataSource.selectRow(0);
+    m_selectableTableView.reloadData();
+  }
 }
 
 bool DropdownPopup::handleEvent(Ion::Events::Event e) {
@@ -113,6 +117,14 @@ bool DropdownPopup::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
+KDPoint DropdownPopup::topLeftCornerForSelection(Escher::View * originView) {
+  KDCoordinate heightOffset = m_listDataSource.cumulatedHeightFromIndex(
+      m_selectionDataSource.selectedRow());
+  KDPoint topLeft = Escher::Container::activeApp()->modalView()->pointFromPointInView(originView,
+                                                                                      KDPointZero);
+  return KDPoint(topLeft.x(), topLeft.y() - heightOffset);
+}
+
 Dropdown::Dropdown(Escher::Responder * parentResponder,
                    Escher::ListViewDataSource * listDataSource,
                    DropdownCallback * callback) :
@@ -121,10 +133,9 @@ Dropdown::Dropdown(Escher::Responder * parentResponder,
 }
 
 bool Dropdown::handleEvent(Ion::Events::Event e) {
-  if (e == Ion::Events::OK || e == Ion::Events::EXE) {
-    KDPoint topLeftAngle = Escher::Container::activeApp()->modalView()->pointFromPointInView(
-        this,
-        KDPointZero);
+  if (e == Ion::Events::OK || e == Ion::Events::EXE || e == Ion::Events::Up ||
+      e == Ion::Events::Down) {
+    KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
     Escher::Container::activeApp()->displayModalViewController(&m_popup,
                                                                0.f,
                                                                0.f,

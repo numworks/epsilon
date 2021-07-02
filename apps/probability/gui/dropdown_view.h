@@ -68,8 +68,10 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   void registerCallback(DropdownCallback * callback) { m_callback = callback; }
+  KDPoint topLeftCornerForSelection(Escher::View * originView);
 
 private:
+
   PopupListViewDataSource m_listDataSource;
   Escher::SelectableTableView m_selectableTableView;
   Escher::SelectableTableViewDataSource m_selectionDataSource;

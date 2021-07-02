@@ -3,7 +3,7 @@
 namespace Probability {
 
 void BorderingView::drawRect(KDContext * ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), Escher::Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(), Escher::Palette::Select);
 }
 
 KDSize BorderingView::minimalSizeForOptimalDisplay() const {

@@ -53,7 +53,7 @@ Escher::View * PopupView::subviewAtIndex(int i) {
 void PopupView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backColor = isHighlighted() ? Escher::Palette::Select : KDColorWhite;
   drawInnerRect(ctx, bounds(), backColor);
-  KDColor borderColor = m_isPoppingUp ? backColor : Escher::Palette::GrayBright;
+  KDColor borderColor = m_isPoppingUp ? backColor : Escher::Palette::Select;
   drawBorderOfRect(ctx, bounds(), borderColor);
 }
 

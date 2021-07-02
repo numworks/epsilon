@@ -14,6 +14,8 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override { return KDSize(m_image->width(), m_image->height()); }
 
 protected:
+  // Icon file is 55 x 56 = 3080
+  // Boot logo file is 188 x 21 = 3948
   constexpr static int maxPixelBufferSize = 4000;
   const Image * m_image;
 };

@@ -11,8 +11,6 @@ ImageView::ImageView() :
   m_image(nullptr)
 {
 }
-// Icon file is 55 x 56 = 3080
-// Boot logo file is 188 x 21 = 3948
 
 void ImageView::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_image == nullptr) {

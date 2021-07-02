@@ -71,6 +71,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	legend_view.cpp \
 	subapp_cell.cpp \
 	centering_view.cpp \
+	bordering_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

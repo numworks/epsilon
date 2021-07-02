@@ -3,6 +3,8 @@
 
 #include "exam_mode_configuration.h"
 
+using namespace Poincare;
+
 constexpr Shared::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[2] = {Shared::SettingsMessageTree(I18n::Message::ActivateExamMode), Shared::SettingsMessageTree(I18n::Message::ActivateDutchExamMode)};
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
@@ -52,12 +54,23 @@ bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, Glob
   return appName == I18n::Message::CodeApp && mode == GlobalPreferences::ExamMode::Dutch;
 }
 
-bool ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Poincare::Expression e) {
+static bool isPrimeFactorization(Expression expression) {
+  /* A prime factorization can only be built with integers, powers of integers, and a multiplication. */
+  return !expression.hasExpression([](const Expression e, const void *) {
+    return !(e.type() == ExpressionNode::Type::BasedInteger
+          || e.type() == ExpressionNode::Type::Multiplication
+          || (e.type() == ExpressionNode::Type::Power
+           && e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger
+           && e.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger));
+  }, nullptr);
+}
+
+bool ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Expression e) {
   if (mode != GlobalPreferences::ExamMode::Dutch) {
     return false;
   }
-  bool isFraction = e.type() == Poincare::ExpressionNode::Type::Division && e.childAtIndex(0).isNumber() && e.childAtIndex(1).isNumber();
-  return !(e.isNumber() || isFraction);
+  bool isFraction = e.type() == ExpressionNode::Type::Division && e.childAtIndex(0).isNumber() && e.childAtIndex(1).isNumber();
+  return !(e.isNumber() || isFraction || isPrimeFactorization(e));
 }
 
 bool ExamModeConfiguration::additionalResultsAreForbidden(GlobalPreferences::ExamMode mode) {

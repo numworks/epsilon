@@ -59,7 +59,7 @@ CalculationController::CalculationController(Responder * parentResponder,
       m_selectableTableView(this),
       m_imageCell(&m_selectableTableView, distribution, calculation, this),
       m_calculation(calculation),
-      m_distribution(distribution) {
+      m_distribution(distribution), m_dropdown(&m_selectableTableView, &m_imagesDataSource) {
   assert(distribution != nullptr);
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);
@@ -72,6 +72,10 @@ CalculationController::CalculationController(Responder * parentResponder,
     m_calculationCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
                                                                         this);
   }
+
+  HighlightImageCell * iv = static_cast<HighlightImageCell *>(m_imagesDataSource.reusableCell(0, 0));
+  m_dropdown.setInnerCell(iv);
+  iv->setImage(ImageStore::Calcul1Icon);
 }
 
 void CalculationController::didEnterResponderChain(Responder * previousResponder) {
@@ -114,13 +118,13 @@ int CalculationController::numberOfColumns() const {
 
 KDCoordinate CalculationController::columnWidth(int i) {
   if (i == 0) {
-    return m_imageCell.minimalSizeForOptimalDisplay().width();
+    return m_dropdown.minimalSizeForOptimalDisplay().width();
   }
   // WARNING: that is possible only because we know which view cell corresponds to which cell
   return m_calculationCells[i - 1].minimalSizeForOptimalDisplay().width();
 }
 
-KDCoordinate CalculationController::rowHeight(int j) { return ResponderImageCell::k_oneCellHeight; }
+KDCoordinate CalculationController::rowHeight(int j) { return 27; /* TODO query minimalSizeForOptimaDisplay */}
 
 KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) { return rowHeight(0) * j; }
 
@@ -136,7 +140,7 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index == 0);
   switch (type) {
     case 0:
-      return &m_imageCell;
+      return &m_dropdown;
     default:
       return &m_calculationCells[type - 1];
   }
@@ -148,11 +152,12 @@ int CalculationController::typeAtLocation(int i, int j) { return i; }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (i == 0) {
-    ResponderImageCell * myCell = static_cast<ResponderImageCell *>(cell);
+    Dropdown * myCell = static_cast<Dropdown *>(cell);
+    HighlightImageCell * innerImageView = static_cast<HighlightImageCell *>(myCell->innerCell());
     const Image * images[CalculationTypeController::k_numberOfImages] = {
         ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon,
         ImageStore::Calcul4Icon};
-    myCell->setImage(images[(int)m_calculation->type()]);
+    innerImageView->setImage(images[(int)m_calculation->type()]);
     myCell->setHighlighted(myCell->isHighlighted());
   } else {
     CalculationCell * myCell = static_cast<CalculationCell *>(cell);

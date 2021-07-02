@@ -8,6 +8,8 @@
 #include "probability/gui/calculation_cell.h"
 #include "probability/gui/distribution_curve_view.h"
 #include "probability/gui/responder_image_cell.h"
+#include "probability/gui/dropdown_view.h"
+#include "probability/gui/calculation_view_data_source.h"
 
 namespace Probability {
 
@@ -28,7 +30,7 @@ class CalculationController : public Escher::ViewController,
   /* ViewController */
   Escher::View * view() override;
   const char * title() override;
-  TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Calculation");
@@ -74,6 +76,8 @@ class CalculationController : public Escher::ViewController,
   ContentView m_contentView;
   Escher::SelectableTableView m_selectableTableView;
   ResponderImageCell m_imageCell;
+  Dropdown m_dropdown;
+  CalculationViewDataSource m_imagesDataSource;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   Calculation * m_calculation;
   Distribution * m_distribution;

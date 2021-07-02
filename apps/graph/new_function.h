@@ -61,6 +61,8 @@ public:
   KDColor color() const;
   void setActive(bool active);
   bool isNamed() const; // y = or f(x) = ?
+  bool isAlongX() const { return symbol() == 'x'; }
+  bool hasTwoCurves() const { return m_model.hasTwoCurves(); }
   bool drawAbove() const; // Greater, GreaterOrEqual, Inequal
   bool drawBelow() const; // Less, LessOrEqual, Inequal
   bool drawCurve() const; // GreaterOrEqual, LessOrEqual, Equal
@@ -86,15 +88,15 @@ public:
   static I18n::Message ParameterMessageForPlotType(PlotType plotType);  // x, theta, t, y
 
   // Evaluation
-  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const {
-    return templatedApproximateAtParameter(t, context);
+  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context, int i = 0) const {
+    return templatedApproximateAtParameter(t, context, i);
   }
-  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const {
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context, int i = 0) const {
     // TODO Hugo : cache ?
-    return privateEvaluateXYAtParameter<float>(t, context);
+    return privateEvaluateXYAtParameter<float>(t, context, i);
   }
-  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const {
-    return privateEvaluateXYAtParameter<double>(t, context);
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int i = 0) const {
+    return privateEvaluateXYAtParameter<double>(t, context, i);
   }
 
   // Derivative
@@ -135,7 +137,7 @@ private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
-  template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
+  template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i = 0) const;
   void didBecomeInactive() {} // m_cache = nullptr; }
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
@@ -143,13 +145,15 @@ private:
   class Model : public Shared::ExpressionModel {
     // TODO Hugo : Add derivative
   public:
-    Model() : ExpressionModel() {}
+    Model() : ExpressionModel(), m_hasTwoCurves(false) {}
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
+    bool hasTwoCurves() const { return m_hasTwoCurves; }
   // private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) override;
+    mutable bool m_hasTwoCurves;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_model; }
@@ -180,7 +184,7 @@ private:
   };
 
   Model m_model;
-  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context) const;
+  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context, int i = 0) const;
   RecordDataBuffer * recordData() const {
     assert(!isNull());
     Ion::Storage::Record::Data d = value();

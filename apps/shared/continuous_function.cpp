@@ -134,8 +134,8 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
   m_model.tidy();
 
   // Recompute the definition domain
-  double tMin = newPlotType == PlotType::Cartesian ? -INFINITY : 0.0;
-  double tMax = newPlotType == PlotType::Cartesian ? INFINITY : 2.0*Trigonometry::PiInAngleUnit(angleUnit);
+  double tMin = (newPlotType == PlotType::Parametric || newPlotType == PlotType::Polar) ? 0.0 : -INFINITY;
+  double tMax = (newPlotType == PlotType::Parametric || newPlotType == PlotType::Polar) ? 2.0*Trigonometry::PiInAngleUnit(angleUnit) : INFINITY;
   setTMin(tMin);
   setTMax(tMax);
 

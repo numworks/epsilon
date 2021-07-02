@@ -57,6 +57,7 @@ protected:
   CurveView * curveView() override;
 
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
+  int m_indexFunctionSelectedByCursor2;
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;

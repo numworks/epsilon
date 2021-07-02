@@ -50,8 +50,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       // ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
       NewFunction::PlotType type = f->plotType();
       Poincare::Expression e = f->expressionReduced(context());
+      // TODO Hugo ::fix it
       if (e.isUndefined() || (
-            type == NewFunction::PlotType::Parametric &&
+            (type == NewFunction::PlotType::Parametric || f->hasTwoCurves()) &&
             e.childAtIndex(0).isUndefined() &&
             e.childAtIndex(1).isUndefined())) {
         continue;
@@ -74,7 +75,21 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }
       // ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 
-      if (type == NewFunction::PlotType::Cartesian) {
+      if (type == NewFunction::PlotType::Polar) {
+        // Polar
+        drawPolarCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
+            NewFunction * f = (NewFunction *)model;
+            Poincare::Context * c = (Poincare::Context *)context;
+            return f->evaluateXYAtParameter(t, c);
+          }, f.operator->(), context(), false, f->color());
+      } else if (type == NewFunction::PlotType::Parametric) {
+        // Parametric
+        drawCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
+            NewFunction * f = (NewFunction *)model;
+            Poincare::Context * c = (Poincare::Context *)context;
+            return f->evaluateXYAtParameter(t, c);
+          }, f.operator->(), context(), false, f->color());
+      } else {
         // Cartesian
         drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
             NewFunction * f = (NewFunction *)model;
@@ -86,8 +101,22 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
             });
+        if (f->hasTwoCurves()) {
+          drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
+                NewFunction * f = (NewFunction *)model;
+                Poincare::Context * c = (Poincare::Context *)context;
+                return f->evaluateXYAtParameter(t, c, 1);
+              }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd,
+              [](double t, void * model, void * context) {
+                NewFunction * f = (NewFunction *)model;
+                Poincare::Context * c = (Poincare::Context *)context;
+                return f->evaluateXYAtParameter(t, c, 1);
+              });
+        }
+        // TODO Hugo : Draw vertical line with drawSegment ?
         /* Draw tangent */
         if (m_tangent && record == m_selectedRecord) {
+          // TODO Hugo : Use right cursor
           float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
           float tangentParameterB = -tangentParameterA*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
           // To represent the tangent, we draw segment from and to abscissas at the extremity of the drawn rect
@@ -95,21 +124,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());
           drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GrayVeryDark, false);
         }
-      } else if (type == NewFunction::PlotType::Polar) {
-        // Polar
-        drawPolarCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
-            NewFunction * f = (NewFunction *)model;
-            Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateXYAtParameter(t, c);
-            }, f.operator->(), context(), false, f->color());
-      } else {
-        // Parametric
-        assert(type == NewFunction::PlotType::Parametric);
-        drawCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
-            NewFunction * f = (NewFunction *)model;
-            Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateXYAtParameter(t, c);
-            }, f.operator->(), context(), false, f->color());
       }
     } else {
       setFunctionInterrupted(i);

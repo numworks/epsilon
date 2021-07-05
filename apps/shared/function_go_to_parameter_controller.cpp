@@ -20,7 +20,7 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(int parameterIndex
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   // If possible, round f so that we go to the evaluation of the displayed f
   double pixelWidth = (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
-  f = FunctionBannerDelegate::getValueDisplayedOnBanner(f, myApp->localContext(), pixelWidth, false);
+  f = FunctionBannerDelegate::getValueDisplayedOnBanner(f, myApp->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
 
   Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(f, myApp->localContext());
   m_cursor->moveTo(f, xy.x1(), xy.x2());

@@ -30,7 +30,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   t += dir * step * scrollSpeed;
 
   // If possible, round t so that f(x) matches f evaluated at displayed x
-  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), 0.05 * step, true);
+  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
 
   t = std::max(tMin, std::min(tMax, t));
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());

@@ -15,10 +15,10 @@
 
 namespace Probability {
 
-/* Wraps a HighlightCell to add margin and an optional caret. */
-class PopupView : public Escher::HighlightCell, public Escher::Bordered {
+/* Wraps a HighlightCell to add margins and an optional caret. */
+class PopupItemView : public Escher::HighlightCell, public Escher::Bordered {
 public:
-  PopupView(Escher::HighlightCell * cell = nullptr);
+  PopupItemView(Escher::HighlightCell * cell = nullptr);
   void setHighlighted(bool highlighted) override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force) override;
@@ -47,47 +47,50 @@ public:
   int typeAtIndex(int index) override { return m_listViewDataSource->typeAtIndex(index); }
   KDCoordinate rowHeight(int j) override;
   int reusableCellCount(int type) override { return m_listViewDataSource->reusableCellCount(type); }
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  PopupItemView * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   constexpr static int k_maxNumberOfPopupItems = 4;
 
 private:
   Escher::ListViewDataSource * m_listViewDataSource;
-  PopupView m_popupViews[k_maxNumberOfPopupItems];
+  PopupItemView m_popupViews[k_maxNumberOfPopupItems];
 };
-
-
-class DropdownCallback;
-
-/* List of PopupViews shown in a modal view. */
-class DropdownPopup : public Escher::ViewController {
-public:
-  DropdownPopup(Escher::Responder * parentResponder, Escher::ListViewDataSource * listDataSource);
-  Escher::View * view() override { return &m_borderingView; }
-  void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event e) override;
-  void registerCallback(DropdownCallback * callback) { m_callback = callback; }
-  KDPoint topLeftCornerForSelection(Escher::View * originView);
-
-private:
-
-  PopupListViewDataSource m_listDataSource;
-  Escher::SelectableTableView m_selectableTableView;
-  Escher::SelectableTableViewDataSource m_selectionDataSource;
-  BorderingView m_borderingView;
-  DropdownCallback * m_callback;
-};
-
 
 class DropdownCallback {
 public:
   virtual void onDropdownSelected(int selectedRow) = 0;
 };
 
+class Dropdown;
+
+/* List of PopupViews shown in a modal view. */
+class DropdownPopupController : public Escher::ViewController {
+public:
+  friend Dropdown;
+  DropdownPopupController(Escher::Responder * parentResponder,
+                          Escher::ListViewDataSource * listDataSource,
+                          DropdownCallback * callback = nullptr);
+  Escher::View * view() override { return &m_borderingView; }
+  void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event e) override;
+  void registerCallback(DropdownCallback * callback) { m_callback = callback; }
+
+private:
+  Escher::SelectableTableViewDataSource * selectionDataSource() { return &m_selectionDataSource; }
+  PopupListViewDataSource * popupListViewDataSource() { return &m_popupListDataSource; }
+  KDPoint topLeftCornerForSelection(Escher::View * originView);
+
+  PopupListViewDataSource m_popupListDataSource;
+  Escher::SelectableTableView m_selectableTableView;
+  Escher::SelectableTableViewDataSource m_selectionDataSource;
+  BorderingView m_borderingView;
+  DropdownCallback * m_callback;
+};
+
 /* A Dropdown is a view that, when clicked on, displays a list of views to choose from
  * It requires a DropdownDataSource to provide a list of views */
-class Dropdown : public PopupView, public Escher::Responder {
+class Dropdown : public PopupItemView, public Escher::Responder {
 public:
   Dropdown(Escher::Responder * parentResponder,
            Escher::ListViewDataSource * listDataSource,
@@ -97,7 +100,7 @@ public:
   void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
 
 private:
-  DropdownPopup m_popup;
+  DropdownPopupController m_popup;
 };
 
 }  // namespace Probability

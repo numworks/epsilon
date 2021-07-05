@@ -24,11 +24,14 @@ InputGoodnessDataSource::InputGoodnessDataSource(
   m_header[1].setMessage(I18n::Message::Expected);
   m_header[0].setEven(true);
   m_header[1].setEven(true);
+  m_header[0].setMessageFont(KDFont::SmallFont);
+  m_header[1].setMessageFont(KDFont::SmallFont);
 
   for (int i = 0; i < k_numberOfColumns * k_initialNumberOfRows; i++) {
     m_cells[i].setParentResponder(tableView);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, delegate);
     m_cells[i].setEven((i / 2) % 2 == 0);
+    m_cells[i].setFont(KDFont::SmallFont);
   }
 }
 

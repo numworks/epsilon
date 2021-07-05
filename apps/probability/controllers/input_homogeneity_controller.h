@@ -50,8 +50,8 @@ class InputHomogeneityController : public Page, public ButtonDelegate {
  private:
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;
-  InputTableView m_contentView;
   SelectableTableView m_table;
+  InputTableView m_contentView;
 
   HomogeneityResultsController * m_homogeneityResultsController;
 };

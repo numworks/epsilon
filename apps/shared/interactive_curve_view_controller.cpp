@@ -176,7 +176,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   }
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
-  floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), curveView()->pixelWidth(), false);
+  floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
 
   Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), floatBody, textFieldDelegateApp()->localContext());
   m_cursor->moveTo(floatBody, xy.x1(), xy.x2());

@@ -7,13 +7,10 @@
 #include "probability/models/distribution/distribution.h"
 #include "probability/gui/calculation_cell.h"
 #include "probability/gui/distribution_curve_view.h"
-#include "probability/gui/responder_image_cell.h"
 #include "probability/gui/dropdown_view.h"
 #include "probability/gui/calculation_popup_data_source.h"
 
 namespace Probability {
-
-class ResponderImageCell;
 
 class CalculationController : public Escher::ViewController,
                               public Escher::TableViewDataSource,
@@ -71,7 +68,7 @@ class CalculationController : public Escher::ViewController,
     DistributionCurveView * distributionCurveView() { return &m_distributionCurveView; }
 
    private:
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return 2; };
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     Escher::SelectableTableView * m_selectableTableView;
@@ -79,8 +76,7 @@ class CalculationController : public Escher::ViewController,
   };
   ContentView m_contentView;
   Escher::SelectableTableView m_selectableTableView;
-  ResponderImageCell m_imageCell;
-  Dropdown m_dropdown;
+  Dropdown m_dropdown;  // TODO select CalculationCell when event Right and popup is showing
   CalculationPopupDataSource m_imagesDataSource;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   Calculation * m_calculation;

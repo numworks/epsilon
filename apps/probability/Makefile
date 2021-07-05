@@ -60,7 +60,6 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   distribution_cell.cpp \
   distribution_curve_view.cpp \
 	image_cell.cpp \
-  responder_image_cell.cpp \
 	input_table_view.cpp \
 	horizontal_or_vertical_layout.cpp \
 	results_data_source.cpp \
@@ -80,7 +79,6 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	calculation_controller.cpp \
   distribution_controller.cpp \
   parameters_controller.cpp \
-	calculation_type_controller.cpp \
 	menu_controller.cpp \
 	test_controller.cpp \
 	hypothesis_controller.cpp \
@@ -138,7 +136,7 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/distribu
   uniform_icon.png \
 )))
 
-$(eval $(call depends_on_transparent_image,$(addprefix apps/probability/controllers/,calculation_type_controller.cpp calculation_controller.cpp)\
+$(eval $(call depends_on_transparent_image,apps/probability/controllers/calculation_controller.cpp \
  apps/probability/gui/calculation_popup_data_source.cpp,$(addprefix apps/probability/images/,\
   calcul1_icon.png \
   calcul2_icon.png \

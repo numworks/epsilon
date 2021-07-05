@@ -31,8 +31,8 @@ InputHomogeneityController::InputHomogeneityController(
     : Page(parent),
       m_innerTableData(&m_table, inputEventHandlerDelegate, delegate),
       m_tableData(&m_innerTableData),
-      m_contentView(this, this, &m_table, inputEventHandlerDelegate, delegate),
       m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource()),
+      m_contentView(this, this, &m_table, inputEventHandlerDelegate, delegate),
       m_homogeneityResultsController(homogeneityResultsController) {}
 
 void InputHomogeneityController::didBecomeFirstResponder() {

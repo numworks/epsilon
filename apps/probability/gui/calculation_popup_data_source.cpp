@@ -1,4 +1,4 @@
-#include "calculation_view_data_source.h"
+#include "calculation_popup_data_source.h"
 
 #include <escher/image.h>
 
@@ -9,7 +9,7 @@
 
 namespace Probability {
 
-void CalculationViewDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+void CalculationPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   HighlightImageCell * myCell = static_cast<HighlightImageCell *>(cell);
   const Escher::Image * images[k_numberOfImages] = {ImageStore::Calcul1Icon,
                                                     ImageStore::Calcul2Icon,

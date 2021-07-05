@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_CALCULATION_VIEW_DATA_SOURCE_H
-#define APPS_PROBABILITY_GUI_CALCULATION_VIEW_DATA_SOURCE_H
+#ifndef APPS_PROBABILITY_GUI_CALCULATION_POPUP_DATA_SOURCE_H
+#define APPS_PROBABILITY_GUI_CALCULATION_POPUP_DATA_SOURCE_H
 
 #include <escher/image.h>
 #include <escher/list_view_data_source.h>
@@ -8,7 +8,8 @@
 
 namespace Probability {
 
-class CalculationViewDataSource : public Escher::ListViewDataSource {
+/* Provides the views shown to select the desired calculation. */
+class CalculationPopupDataSource : public Escher::ListViewDataSource {
 public:
   int numberOfRows() const override { return k_numberOfImages; }
   KDCoordinate rowHeight(int r) override { return 20; }
@@ -23,4 +24,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_CALCULATION_VIEW_DATA_SOURCE_H */
+#endif /* APPS_PROBABILITY_GUI_CALCULATION_POPUP_DATA_SOURCE_H */

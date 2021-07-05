@@ -9,7 +9,7 @@
 #include "probability/gui/distribution_curve_view.h"
 #include "probability/gui/responder_image_cell.h"
 #include "probability/gui/dropdown_view.h"
-#include "probability/gui/calculation_view_data_source.h"
+#include "probability/gui/calculation_popup_data_source.h"
 
 namespace Probability {
 
@@ -81,7 +81,7 @@ class CalculationController : public Escher::ViewController,
   Escher::SelectableTableView m_selectableTableView;
   ResponderImageCell m_imageCell;
   Dropdown m_dropdown;
-  CalculationViewDataSource m_imagesDataSource;
+  CalculationPopupDataSource m_imagesDataSource;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   Calculation * m_calculation;
   Distribution * m_distribution;

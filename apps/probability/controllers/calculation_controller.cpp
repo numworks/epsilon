@@ -18,7 +18,6 @@
 #include "probability/models/calculation/left_integral_calculation.h"
 #include "probability/models/calculation/right_integral_calculation.h"
 #include "probability/models/data.h"
-#include "probability/gui/responder_image_cell.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -34,8 +33,6 @@ CalculationController::ContentView::ContentView(SelectableTableView * selectable
     : m_selectableTableView(selectableTableView),
       m_distributionCurveView(distribution, calculation) {}
 
-int CalculationController::ContentView::numberOfSubviews() const { return 2; }
-
 View * CalculationController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -45,10 +42,10 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 }
 
 void CalculationController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight + 2 * k_tableMargin;
-  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), calculationHeight), force);
+  KDSize tableSize = m_selectableTableView->minimalSizeForOptimalDisplay();
+  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), tableSize.height()), force);
   m_distributionCurveView.setFrame(
-      KDRect(0, calculationHeight, bounds().width(), bounds().height() - calculationHeight), force);
+      KDRect(0, tableSize.height(), bounds().width(), bounds().height() - tableSize.height()), force);
 }
 
 CalculationController::CalculationController(Responder * parentResponder,
@@ -57,7 +54,6 @@ CalculationController::CalculationController(Responder * parentResponder,
     : ViewController(parentResponder),
       m_contentView(&m_selectableTableView, distribution, calculation),
       m_selectableTableView(this),
-      m_imageCell(&m_selectableTableView, distribution, calculation, this),
       m_calculation(calculation),
       m_distribution(distribution), m_dropdown(&m_selectableTableView, &m_imagesDataSource, this) {
   assert(distribution != nullptr);
@@ -154,7 +150,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i == 0) {
     Dropdown * myCell = static_cast<Dropdown *>(cell);
     HighlightImageCell * innerImageView = static_cast<HighlightImageCell *>(myCell->innerCell());
-    const Image * images[CalculationTypeController::k_numberOfImages] = {
+    const Image * images[CalculationPopupDataSource::k_numberOfImages] = {
         ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon,
         ImageStore::Calcul4Icon};
     innerImageView->setImage(images[(int)m_calculation->type()]);

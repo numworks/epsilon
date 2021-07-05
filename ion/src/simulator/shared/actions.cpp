@@ -49,6 +49,7 @@ void handleUSR1Sig(int s) {
   if (s == SIGUSR1) {
     saveStateForReload();
     Window::shutdown();
+    SDL_Quit();
     exit(0);
   }
 #endif

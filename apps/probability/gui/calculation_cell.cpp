@@ -1,7 +1,9 @@
 #include "calculation_cell.h"
-#include "responder_image_cell.h"
+
 #include <apps/i18n.h>
 #include <assert.h>
+#include <escher/metric.h>
+
 #include <algorithm>
 
 using namespace Escher;
@@ -34,7 +36,7 @@ void CalculationCell::setHighlighted(bool highlight) {
 KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
   return KDSize(
-    2 * k_margin + textSize.width() + calculationCellWidth() + 2 * ResponderImageCell::k_outline,
+    2 * k_margin + textSize.width() + calculationCellWidth() + 2 * Escher::Metric::CellSeparatorThickness,
     KDFont::LargeFont->glyphSize().height()
   );
 }
@@ -43,7 +45,11 @@ void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   if (m_isResponder) {
     KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-    ctx->strokeRect(KDRect(2*k_margin+textSize.width(), 0, calculationCellWidth()+2*ResponderImageCell::k_outline, ImageCell::k_height+2*ResponderImageCell::k_outline), Palette::GrayMiddle);
+    ctx->strokeRect(KDRect(2 * k_margin + textSize.width(),
+                           0,
+                           calculationCellWidth() + 2 * Escher::Metric::CellSeparatorThickness,
+                           bounds().height()),
+                    Palette::GrayMiddle);
   }
 }
 
@@ -70,8 +76,14 @@ View * CalculationCell::subviewAtIndex(int index) {
 void CalculationCell::layoutSubviews(bool force) {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
   // A 1px offset is needed to vertically center text on calculation
-  m_text.setFrame(KDRect(k_margin, 0, textSize.width(), bounds().height() - k_textBottomOffset), force);
-  m_calculation.setFrame(KDRect(2*k_margin+textSize.width()+ResponderImageCell::k_outline, ResponderImageCell::k_outline, calculationCellWidth(), ImageCell::k_height), force);
+  m_text.setFrame(KDRect(k_margin, 0, textSize.width(), bounds().height() - k_textBottomOffset),
+                  force);
+  m_calculation.setFrame(
+      KDRect(2 * k_margin + textSize.width() + Escher::Metric::CellSeparatorThickness,
+             Escher::Metric::CellSeparatorThickness,
+             calculationCellWidth(),
+             bounds().height() - 2 * Escher::Metric::CellSeparatorThickness),
+      force);
 }
 
 KDCoordinate CalculationCell::calculationCellWidth() const {

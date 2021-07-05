@@ -50,12 +50,15 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
 
 CalculationController::CalculationController(Responder * parentResponder,
                                              InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                             Distribution * distribution, Calculation * calculation)
-    : ViewController(parentResponder),
-      m_contentView(&m_selectableTableView, distribution, calculation),
-      m_selectableTableView(this),
-      m_calculation(calculation),
-      m_distribution(distribution), m_dropdown(&m_selectableTableView, &m_imagesDataSource, this) {
+                                             Distribution * distribution,
+                                             Calculation * calculation) :
+    ViewController(parentResponder),
+    m_contentView(&m_selectableTableView, distribution, calculation),
+    m_selectableTableView(this),
+    m_calculation(calculation),
+    m_distribution(distribution),
+    m_dropdown(&m_selectableTableView, &m_imagesDataSource, this),
+    m_imagesDataSource(distribution) {
   assert(distribution != nullptr);
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);

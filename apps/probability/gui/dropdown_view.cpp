@@ -123,11 +123,8 @@ bool DropdownPopupController::handleEvent(Ion::Events::Event e) {
 }
 
 KDPoint DropdownPopupController::topLeftCornerForSelection(Escher::View * originView) {
-  KDCoordinate heightOffset = m_popupListDataSource.cumulatedHeightFromIndex(
-      m_selectionDataSource.selectedRow());
-  KDPoint topLeft = Escher::Container::activeApp()->modalView()->pointFromPointInView(originView,
+  return Escher::Container::activeApp()->modalView()->pointFromPointInView(originView,
                                                                                       KDPointZero);
-  return KDPoint(topLeft.x(), topLeft.y() - heightOffset);
 }
 
 Dropdown::Dropdown(Escher::Responder * parentResponder,

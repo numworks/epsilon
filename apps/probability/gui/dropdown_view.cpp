@@ -104,6 +104,7 @@ DropdownPopupController::DropdownPopupController(Escher::Responder * parentRespo
 
 void DropdownPopupController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  m_popupListDataSource.resetMemoization();
   if (m_selectionDataSource.selectedRow() < 0) {
     m_selectionDataSource.selectRow(0);
     m_selectableTableView.reloadData();

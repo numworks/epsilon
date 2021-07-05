@@ -5,13 +5,15 @@
 #include <escher/list_view_data_source.h>
 
 #include "highlight_image_cell.h"
+#include "probability/models/distribution/distribution.h"
 
 namespace Probability {
 
 /* Provides the views shown to select the desired calculation. */
 class CalculationPopupDataSource : public Escher::ListViewDataSource {
 public:
-  int numberOfRows() const override { return k_numberOfImages; }  /* TODO hide only three when continuous */
+  CalculationPopupDataSource(Distribution * distribution) : m_distribution(distribution) {}
+  int numberOfRows() const override;
   KDCoordinate rowHeight(int r) override { return 20; }
   int reusableCellCount(int type) override { return k_numberOfImages; }
   Escher::HighlightCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
@@ -21,6 +23,7 @@ public:
 
 private:
   HighlightImageCell m_imageCells[k_numberOfImages];
+  Distribution * m_distribution;
 };
 
 }  // namespace Probability

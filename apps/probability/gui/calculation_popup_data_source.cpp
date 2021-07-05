@@ -9,6 +9,10 @@
 
 namespace Probability {
 
+int CalculationPopupDataSource::numberOfRows() const {
+  return k_numberOfImages - m_distribution->isContinuous();
+}
+
 void CalculationPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   HighlightImageCell * myCell = static_cast<HighlightImageCell *>(cell);
   const Escher::Image * images[k_numberOfImages] = {ImageStore::Calcul1Icon,

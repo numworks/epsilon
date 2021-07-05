@@ -10,10 +10,11 @@ InputTableView::InputTableView(Responder * parentResponder, ButtonDelegate * but
       m_dataInputTableView(table),
       m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
       m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation()) {
-  // TODO
-  // m_significanceCell.setMessage(I18n::Message::A);
-  // m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
-  // m_significanceCell.setAccessoryText("0.05");
+  setMargins(Metric::CommonRightMargin, 0);
+  m_dataInputTableView->setMargins(Metric::CommonTopMargin, 0, Metric::CommonBottomMargin, 0);
+  m_significanceCell.setMessage(I18n::Message::GreekAlpha);
+  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+  m_significanceCell.textField()->setText("0.05");  // TODO kinda ugly?
 }
 
 void InputTableView::didBecomeFirstResponder() {

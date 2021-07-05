@@ -18,11 +18,18 @@ namespace Probability {
 /* View that lays out its subviews vertically.*/
 class VerticalLayout : public Escher::SolidColorView {
 public:
-  VerticalLayout(KDColor color = Palette::WallScreen) : Escher::SolidColorView(color) {}
+  VerticalLayout(KDColor color = Palette::WallScreen) : Escher::SolidColorView(color), m_marginX(0), m_marginY(0) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
-};
+  void setMargins(KDCoordinate marginX, KDCoordinate marginY) {
+    m_marginX = marginX;
+    m_marginY = marginY;
+  }
 
+private:
+  KDCoordinate m_marginX;
+  KDCoordinate m_marginY;
+};
 
 /* View that lays out its subviews horizontally.*/
 class HorizontalLayout : public Escher::SolidColorView {
@@ -31,7 +38,6 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
 };
-
 
 }  // namespace Probability
 

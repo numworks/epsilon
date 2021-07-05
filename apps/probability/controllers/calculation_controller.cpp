@@ -53,10 +53,10 @@ CalculationController::CalculationController(Responder * parentResponder,
                                              Distribution * distribution,
                                              Calculation * calculation) :
     ViewController(parentResponder),
-    m_contentView(&m_selectableTableView, distribution, calculation),
-    m_selectableTableView(this),
     m_calculation(calculation),
     m_distribution(distribution),
+    m_contentView(&m_selectableTableView, distribution, calculation),
+    m_selectableTableView(this),
     m_dropdown(&m_selectableTableView, &m_imagesDataSource, this),
     m_imagesDataSource(distribution) {
   assert(distribution != nullptr);

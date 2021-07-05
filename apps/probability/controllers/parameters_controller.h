@@ -48,7 +48,6 @@ private:
   Escher::MessageTableCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;
   CalculationController * m_calculationController;
-  char m_titleBuffer[30];
 };
 
 }

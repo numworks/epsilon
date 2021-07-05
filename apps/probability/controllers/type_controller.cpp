@@ -24,7 +24,6 @@ TypeController::TypeController(StackViewController * parent,
     m_hypothesisController(hypothesisController),
     m_inputController(inputController),
     m_contentView(&m_selectableTableView, &m_description),
-    m_globalTest(globalTest),
     m_globalTestType(globalTestType),
     m_statistic(statistic) {
   m_description.setBackgroundColor(Palette::WallScreen);

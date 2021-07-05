@@ -76,7 +76,6 @@ private:
 
   char m_titleBuffer[30];  // TODO count max
 
-  Data::Test * m_globalTest;
   Data::TestType * m_globalTestType;
   Statistic * m_statistic;
 };

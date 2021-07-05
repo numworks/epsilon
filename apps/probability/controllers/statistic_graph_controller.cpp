@@ -8,9 +8,9 @@ namespace Probability {
 StatisticGraphController::StatisticGraphController(StackViewController * stack,
                                                    Statistic * statistic) :
     Page(stack),
+    m_graphView(&m_rangeLeft, &m_rangeRight),
     m_rangeLeft(m_graphView.curveViewLeft(), true),
     m_rangeRight(m_graphView.curveViewRight(), false),
-    m_graphView(&m_rangeLeft, &m_rangeRight),
     m_statistic(statistic) {
 }
 

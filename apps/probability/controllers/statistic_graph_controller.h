@@ -21,9 +21,9 @@ public:
 private:
   constexpr static int k_titleBufferSize = 30;
   char m_titleBuffer[k_titleBufferSize];
+  GraphView m_graphView;
   StatisticViewRange m_rangeLeft;
   StatisticViewRange m_rangeRight;
-  GraphView m_graphView;
   Statistic * m_statistic;
 };
 }  // namespace Probability

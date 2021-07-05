@@ -15,9 +15,11 @@
 
 using namespace Probability;
 
-InputGoodnessDataSource::InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
-                                                 InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                                 TextFieldDelegate * delegate) {
+InputGoodnessDataSource::InputGoodnessDataSource(
+    Responder * parent,
+    SelectableTableView * tableView,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * delegate) {
   m_header[0].setMessage(I18n::Message::Observed);
   m_header[1].setMessage(I18n::Message::Expected);
   m_header[0].setEven(true);
@@ -38,14 +40,17 @@ HighlightCell * InputGoodnessDataSource::reusableCell(int i, int type) {
   return &m_cells[i];
 }
 
-InputGoodnessController::InputGoodnessController(StackViewController * parent, ResultsController * resultsController,
-                                                 InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                                 TextFieldDelegate * textFieldDelegate)
-    : Page(parent),
-      m_resultsController(resultsController),
-      m_data(parent, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate),
-      m_contentView(this, this, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate),
-      m_dataTable(&m_contentView, &m_data, m_contentView.selectionDataSource()) {}
+InputGoodnessController::InputGoodnessController(
+    StackViewController * parent,
+    ResultsController * resultsController,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * textFieldDelegate) :
+    Page(parent),
+    m_resultsController(resultsController),
+    m_data(parent, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate),
+    m_dataTable(&m_contentView, &m_data, m_contentView.selectionDataSource()),
+    m_contentView(this, this, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate) {
+}
 
 void InputGoodnessController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::InputGoodness);

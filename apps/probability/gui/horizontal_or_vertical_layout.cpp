@@ -17,12 +17,15 @@ KDSize Probability::VerticalLayout::minimalSizeForOptimalDisplay() const {
 
 void VerticalLayout::layoutSubviews(bool force) {
   KDRect frame = bounds();
-  KDCoordinate availableHeight = frame.height();
-  KDRect proposedFrame = KDRect(0, 0, frame.width(), 0);
+  KDCoordinate availableHeight = frame.height() - 2 * m_marginY;
+  KDRect proposedFrame = KDRect(m_marginX, m_marginY, frame.width() - 2 * m_marginX, 0);
   for (int i = 0; i < numberOfSubviews(); i++) {
     subviewAtIndex(i)->setSize(KDSize(frame.width(), availableHeight));
     int height = subviewAtIndex(i)->minimalSizeForOptimalDisplay().height();
-    proposedFrame = KDRect(0, proposedFrame.y() + proposedFrame.height(), frame.width(), height);
+    proposedFrame = KDRect(proposedFrame.x(),
+                           proposedFrame.y() + proposedFrame.height(),
+                           proposedFrame.width(),
+                           height);
     subviewAtIndex(i)->setFrame(proposedFrame, false);
     availableHeight -= height;
     assert(availableHeight >= 0);

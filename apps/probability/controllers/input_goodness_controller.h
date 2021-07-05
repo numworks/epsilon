@@ -43,8 +43,7 @@ public:
 private:
   constexpr static int k_initialNumberOfRows = 4;
   constexpr static int k_numberOfColumns = 2;
-  // TODO needed ?
-  constexpr static int k_columnWidth = 150;
+  constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Metric::CommonLeftMargin) / 2;
   constexpr static int k_rowHeight = 20;
 
   // TODO actually store input here
@@ -69,8 +68,8 @@ private:
   ResultsController * m_resultsController;
 
   InputGoodnessDataSource m_data;
-  InputTableView m_contentView;
   SelectableTableView m_dataTable;
+  InputTableView m_contentView;
 };
 
 }  // namespace Probability

@@ -90,7 +90,7 @@ void TableCell::layoutSubviews(bool force) {
   KDCoordinate xEnd = width + leftOffset;
   constexpr KDCoordinate topOffset = k_separatorThickness + Metric::CellTopMargin;
   y += topOffset;
-  height -= topOffset + Metric::CellBottomMargin + k_separatorThickness;
+  height -= topOffset + Metric::CellBottomMargin;
 
   assert(width > 0 && height > 0);
   KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);

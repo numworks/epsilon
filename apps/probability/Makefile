@@ -72,7 +72,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	subapp_cell.cpp \
 	centering_view.cpp \
 	dropdown_view.cpp \
-	calculation_view_data_source.cpp \
+	calculation_popup_data_source.cpp \
 	bordering_view.cpp \
 )
 
@@ -139,7 +139,7 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/distribu
 )))
 
 $(eval $(call depends_on_transparent_image,$(addprefix apps/probability/controllers/,calculation_type_controller.cpp calculation_controller.cpp)\
- apps/probability/gui/calculation_view_data_source.cpp,$(addprefix apps/probability/images/,\
+ apps/probability/gui/calculation_popup_data_source.cpp,$(addprefix apps/probability/images/,\
   calcul1_icon.png \
   calcul2_icon.png \
   calcul3_icon.png \

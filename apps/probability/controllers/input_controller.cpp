@@ -34,13 +34,27 @@ InputController::InputController(Escher::StackViewController * parent,
 const char * InputController::title() {
   size_t bufferSize = sizeof(m_titleBuffer);
   if (App::app()->subapp() == Data::SubApp::Tests) {
-    // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams>
+    // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
     const char * symbol = testToTextSymbol(App::app()->test());
     char op = static_cast<const char>(m_statistic->hypothesisParams()->op());
     char paramBuffer[10];
-    defaultParseFloat(
-        m_statistic->hypothesisParams()->firstParam(), paramBuffer, sizeof(paramBuffer));
-    sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%c%s", symbol, paramBuffer, symbol, op, paramBuffer);
+    defaultParseFloat(m_statistic->hypothesisParams()->firstParam(),
+                      paramBuffer,
+                      sizeof(paramBuffer));
+    if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
+      char alphaBuffer[10];
+      defaultParseFloat(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
+      sprintf(m_titleBuffer,
+              "H0:%s=%s Ha:%s%c%s α=%s",
+              symbol,
+              paramBuffer,
+              symbol,
+              op,
+              paramBuffer,
+              alphaBuffer);
+    } else {
+      sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%c%s", symbol, paramBuffer, symbol, op, paramBuffer);
+    }
   } else {
     strlcpy(m_titleBuffer, "z-interval bla...", bufferSize);
   }

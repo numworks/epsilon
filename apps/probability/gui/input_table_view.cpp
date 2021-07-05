@@ -24,6 +24,9 @@ InputTableView::InputTableView(Responder * parentResponder,
 
 void InputTableView::didBecomeFirstResponder() {
   // Pass focus to subview
+  if (m_dataInputTableView->selectedRow() < 0) {
+    m_dataInputTableView->selectRow(1);
+  }
   if (m_viewSelection.selectedRow() < 0) {
     m_viewSelection.selectRow(0);
   }

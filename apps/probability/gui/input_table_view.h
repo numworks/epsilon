@@ -31,7 +31,7 @@ public:
   MessageTableCellWithEditableTextWithMessage * significanceLevelView() {
     return &m_significanceCell;
   }
-  void drawRect(KDContext * ctx, KDRect rect) const {
+  void drawRect(KDContext * ctx, KDRect rect) const override {
     ctx->fillRect(rect, Palette::WallScreenDark);
   }
   // VerticalLayout

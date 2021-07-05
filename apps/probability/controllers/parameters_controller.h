@@ -1,7 +1,7 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H
 
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <apps/shared/float_parameter_controller.h>
 #include "probability/models/distribution/distribution.h"
 #include "calculation_controller.h"
@@ -45,7 +45,7 @@ private:
   };
   constexpr static int k_maxNumberOfCells = 2;
   ContentView m_contentView;
-  Escher::MessageTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
+  Escher::MessageTableCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;
   CalculationController * m_calculationController;
   char m_titleBuffer[30];

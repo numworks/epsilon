@@ -11,14 +11,15 @@ namespace Probability {
 /* Provides the views shown to select the desired calculation. */
 class CalculationPopupDataSource : public Escher::ListViewDataSource {
 public:
-  int numberOfRows() const override { return k_numberOfImages; }
+  int numberOfRows() const override { return k_numberOfImages; }  /* TODO hide only three when continuous */
   KDCoordinate rowHeight(int r) override { return 20; }
   int reusableCellCount(int type) override { return k_numberOfImages; }
   Escher::HighlightCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
-private:
   constexpr static int k_numberOfImages = 4;
+
+private:
   HighlightImageCell m_imageCells[k_numberOfImages];
 };
 

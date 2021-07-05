@@ -60,18 +60,19 @@ void PopupItemView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 PopupListViewDataSource::PopupListViewDataSource(Escher::ListViewDataSource * listViewDataSource) :
-    m_listViewDataSource(listViewDataSource) {
+    m_listViewDataSource(listViewDataSource), m_memoizedCellWidth(-1) {
 }
 
 KDCoordinate PopupListViewDataSource::cellWidth() {
-  // TODO memoize
-  Escher::HighlightCell * cell = reusableCell(0, 0);
-  willDisplayCellForIndex(cell, 0);
-  return cell->minimalSizeForOptimalDisplay().width();
+  if (m_memoizedCellWidth < 0) {
+    Escher::HighlightCell * cell = reusableCell(0, 0);
+    willDisplayCellForIndex(cell, 0);
+    m_memoizedCellWidth = cell->minimalSizeForOptimalDisplay().width();
+  }
+  return m_memoizedCellWidth;
 }
 
-KDCoordinate PopupListViewDataSource::rowHeight(int j) {
-  // TODO memoize
+KDCoordinate PopupListViewDataSource::nonMemoizedRowHeight(int j) {
   Escher::HighlightCell * cell = reusableCell(0, 0);
   willDisplayCellForIndex(cell, 0);
   return cell->minimalSizeForOptimalDisplay().height();
@@ -84,7 +85,7 @@ PopupItemView * PopupListViewDataSource::reusableCell(int index, int type) {
 
 void PopupListViewDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   PopupItemView * popupView = static_cast<PopupItemView *>(cell);
-  popupView->setInnerCell(m_listViewDataSource->reusableCell(index, 0));  // TODO hoping no type?
+  popupView->setInnerCell(m_listViewDataSource->reusableCell(index, typeAtIndex(index)));
   popupView->setHighlighted(popupView->isHighlighted());
   popupView->setPopping(true);
   m_listViewDataSource->willDisplayCellForIndex(popupView->innerCell(), index);

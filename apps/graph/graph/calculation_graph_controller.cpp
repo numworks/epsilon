@@ -38,6 +38,19 @@ void CalculationGraphController::viewWillAppear() {
   m_graphView->reload();
 }
 
+void CalculationGraphController::viewDidDisappear() {
+  /* When leaving calculation, the displayed precision might get better than the
+   * calculation one, highlighting precision errors. To prevent that, cursor is
+   * moved to the value displayed on the banner. */
+  double t = m_cursor->t();
+  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), numberOfSignificantDigits(), curveView()->pixelWidth());
+  Coordinate2D<double> xy = App::app()->functionStore()->modelForRecord(m_record)->evaluateXYAtParameter(t, App::app()->localContext());
+  m_cursor->moveTo(t, xy.x1(), xy.x2());
+  // Reload banner view to update cursor values
+  reloadBannerView();
+  return Shared::SimpleInteractiveCurveViewController::viewDidDisappear();
+}
+
 void CalculationGraphController::setRecord(Ion::Storage::Record record) {
   m_graphView->selectRecord(record);
   m_record = record;

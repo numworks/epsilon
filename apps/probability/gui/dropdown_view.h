@@ -4,6 +4,7 @@
 #include <escher/bordered.h>
 #include <escher/image_view.h>
 #include <escher/list_view_data_source.h>
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
@@ -39,13 +40,13 @@ private:
 };
 
 /* Wraps a ListViewDataSource to return PopupViews. */
-class PopupListViewDataSource : public Escher::ListViewDataSource {
+class PopupListViewDataSource : public Escher::MemoizedListViewDataSource {
 public:
   PopupListViewDataSource(Escher::ListViewDataSource * listViewDataSource);
   int numberOfRows() const override { return m_listViewDataSource->numberOfRows(); }
   KDCoordinate cellWidth() override;
   int typeAtIndex(int index) override { return m_listViewDataSource->typeAtIndex(index); }
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   int reusableCellCount(int type) override { return m_listViewDataSource->reusableCellCount(type); }
   PopupItemView * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
@@ -55,6 +56,7 @@ public:
 private:
   Escher::ListViewDataSource * m_listViewDataSource;
   PopupItemView m_popupViews[k_maxNumberOfPopupItems];
+  KDCoordinate m_memoizedCellWidth;
 };
 
 class DropdownCallback {

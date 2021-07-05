@@ -18,9 +18,9 @@ I18n::Message UniformDistribution::parameterNameAtIndex(int index) {
 I18n::Message UniformDistribution::parameterDefinitionAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return I18n::Message::IntervalDefinition;
+    return I18n::Message::IntervalADescr;
   } else {
-    return I18n::Message::Default;
+    return I18n::Message::IntervalBDescr;
   }
 }
 

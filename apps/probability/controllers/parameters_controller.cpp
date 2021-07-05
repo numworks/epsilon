@@ -97,8 +97,9 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
     }
     return;
   }
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
+  MessageTableCellWithEditableTextWithMessage * myCell = (MessageTableCellWithEditableTextWithMessage *) cell;
   myCell->setMessage(m_distribution->parameterNameAtIndex(index));
+  myCell->setSubLabelMessage(m_distribution->parameterDefinitionAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 

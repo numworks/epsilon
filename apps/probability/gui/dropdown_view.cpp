@@ -21,7 +21,7 @@ void PopupItemView::setHighlighted(bool highlighted) {
 }
 
 KDSize PopupItemView::minimalSizeForOptimalDisplay() const {
-  KDSize cellSize = m_cell->minimalSizeForOptimalDisplay();
+  KDSize cellSize = m_cell ? m_cell->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize caretSize = m_caret.minimalSizeForOptimalDisplay();
   return KDSize(
       cellSize.width() + caretSize.width() + 2 * k_marginImageHorizontal + k_marginCaretRight,
@@ -29,10 +29,12 @@ KDSize PopupItemView::minimalSizeForOptimalDisplay() const {
 }
 
 void PopupItemView::layoutSubviews(bool force) {
-  KDSize cellSize = m_cell->minimalSizeForOptimalDisplay();
+  KDSize cellSize = m_cell ? m_cell->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize caretSize = m_caret.minimalSizeForOptimalDisplay();
-  m_cell->setFrame(KDRect(KDPoint(k_marginImageHorizontal, k_marginImageVertical), cellSize),
-                   force);
+  if (m_cell) {
+    m_cell->setFrame(KDRect(KDPoint(k_marginImageHorizontal, k_marginImageVertical), cellSize),
+                     force);
+  }
   KDCoordinate yCaret = (cellSize.height() - caretSize.height()) / 2 + k_marginImageVertical;
   m_caret.setFrame(
       KDRect(KDPoint(2 * k_marginImageHorizontal + cellSize.width(), yCaret), caretSize),
@@ -123,8 +125,7 @@ bool DropdownPopupController::handleEvent(Ion::Events::Event e) {
 }
 
 KDPoint DropdownPopupController::topLeftCornerForSelection(Escher::View * originView) {
-  return Escher::Container::activeApp()->modalView()->pointFromPointInView(originView,
-                                                                                      KDPointZero);
+  return Escher::Container::activeApp()->modalView()->pointFromPointInView(originView, KDPointZero);
 }
 
 Dropdown::Dropdown(Escher::Responder * parentResponder,
@@ -134,8 +135,7 @@ Dropdown::Dropdown(Escher::Responder * parentResponder,
 }
 
 bool Dropdown::handleEvent(Ion::Events::Event e) {
-  if (e == Ion::Events::OK || e == Ion::Events::EXE || e == Ion::Events::Up ||
-      e == Ion::Events::Down) {
+  if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
     Escher::Container::activeApp()->displayModalViewController(&m_popup,
                                                                0.f,

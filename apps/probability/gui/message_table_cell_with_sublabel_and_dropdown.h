@@ -24,7 +24,7 @@ public:
   }
   bool isSublabelAlignedRight() const override { return false; }
   void reload() {
-    m_dropdown.reload();
+    m_dropdown.reloadAllCells();
     Escher::MessageTableCellWithMessage::reloadCell();
     layoutSubviews();
   }

@@ -158,11 +158,10 @@ void Dropdown::setHighlighted(bool highlighted) {
   PopupItemView::setHighlighted(highlighted);
 }
 
-void Dropdown::reload() {
+void Dropdown::reloadAllCells() {
   // Reload popup list
-  m_popup.m_popupListDataSource.resetMemoization();
-  m_popup.m_selectableTableView.reloadData(false);
-  innerCell()->setHighlighted(innerCell()->isHighlighted());
+  m_popup.m_popupListDataSource.resetMemoization();  // Reset computed width
+  m_popup.m_selectableTableView.reloadData(false);   // Re layout cells
   PopupItemView::reloadCell();
 }
 

@@ -6,7 +6,7 @@
 #include <string.h>
 
 void kernel_main() {
-  assert(Ion::Device::Authentication::trustedUserland());
+  assert(Ion::Device::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks);
 
   /* Lock OTP on older devices to prevent garbage being written where the PCB
    * version is read. */

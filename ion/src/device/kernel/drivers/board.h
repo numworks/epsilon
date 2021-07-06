@@ -29,7 +29,7 @@ void setStandardFrequency(Frequency f);
 
 bool isInReflashableSector(uint32_t address);
 void switchExecutableSlot(uint32_t address);
-void downgradeTrustLevel(bool displayPopup);
+void enableExternalApps();
 
 bool addressInUserlandRAM(void * address);
 

@@ -125,5 +125,6 @@ void HypothesisController::loadHypothesisParam() {
   m_h0.setAccessoryText(buffer + written);
   m_ha.dropdown()->setInnerCell(m_operatorDataSource.reusableCell(0, 0));
   m_operatorDataSource.willDisplayCellForIndex(m_operatorDataSource.reusableCell(0, 0), 0);
-  m_ha.reloadCell();
+  resetMemoization();
+  m_selectableTableView.reloadData();
 }

@@ -1,11 +1,14 @@
 #include "app.h"
 #include "../apps_container.h"
+#include <ion/events.h>
 
 using namespace Escher;
 
 namespace HardwareTest {
 
 App * App::Snapshot::unpack(Container * container) {
+  // Spinner may break LCD data test
+  Ion::Events::setSpinner(false);
   return new (container->currentAppBuffer()) App(this);
 }
 

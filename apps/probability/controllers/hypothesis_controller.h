@@ -16,6 +16,8 @@
 #include "input_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/page_controller.h"
+#include "probability/gui/comparison_operator_popup_data_source.h"
+#include "probability/gui/message_table_cell_with_sublabel_and_dropdown.h"
 
 using namespace Escher;
 
@@ -61,9 +63,11 @@ private:
   constexpr static int k_indexOfNext = 2;
   InputController * m_inputController;
 
+  ComparisonOperatorPopupDataSource m_operatorDataSource;
+
   MessageTableCellWithEditableText m_h0;
-  MessageTableCellWithEditableText m_ha;  // TODO change to dropdown
-  Shared::ButtonWithSeparator m_next;     // TODO real separator ?
+  MessageTableCellWithSublabelAndDropdown m_ha;
+  Shared::ButtonWithSeparator m_next;
 
   char m_titleBuffer[40];
   Statistic * m_statistic;

@@ -15,7 +15,9 @@ PopupItemView::PopupItemView(Escher::HighlightCell * cell) : m_cell(cell) {
 }
 
 void PopupItemView::setHighlighted(bool highlighted) {
-  m_cell->setHighlighted(highlighted);
+  if (m_cell) {
+    m_cell->setHighlighted(highlighted);
+  }
   m_caret.setHighlighted(highlighted);
   Escher::HighlightCell::setHighlighted(highlighted);
 }
@@ -100,14 +102,20 @@ void PopupListViewDataSource::resetMemoization(bool force) {
   Escher::MemoizedListViewDataSource::resetMemoization(force);
 }
 
+Escher::HighlightCell * PopupListViewDataSource::innerCellAtIndex(int index) {
+  return m_listViewDataSource->reusableCell(index, m_listViewDataSource->typeAtIndex(index));
+}
+
 DropdownPopupController::DropdownPopupController(Escher::Responder * parentResponder,
                                                  Escher::ListViewDataSource * listDataSource,
+                                                 Dropdown * dropdown,
                                                  DropdownCallback * callback) :
     ViewController(parentResponder),
     m_popupListDataSource(listDataSource),
     m_selectableTableView(this, &m_popupListDataSource, &m_selectionDataSource),
     m_borderingView(&m_selectableTableView),
-    m_callback(callback) {
+    m_callback(callback),
+    m_dropdown(dropdown) {
   m_selectableTableView.setMargins(0);
 }
 
@@ -122,6 +130,10 @@ void DropdownPopupController::didBecomeFirstResponder() {
 
 bool DropdownPopupController::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
+    // Set correct inner cell
+    int row = m_selectionDataSource.selectedRow();
+    m_dropdown->setInnerCell(m_popupListDataSource.innerCellAtIndex(row));
+
     Escher::Container::activeApp()->dismissModalViewController();
     if (m_callback) {
       m_callback->onDropdownSelected(m_selectionDataSource.selectedRow());
@@ -138,11 +150,15 @@ KDPoint DropdownPopupController::topLeftCornerForSelection(Escher::View * origin
 Dropdown::Dropdown(Escher::Responder * parentResponder,
                    Escher::ListViewDataSource * listDataSource,
                    DropdownCallback * callback) :
-    Responder(parentResponder), m_popup(this, listDataSource, callback) {
+    Responder(parentResponder), m_popup(this, listDataSource, this, callback) {
 }
 
 bool Dropdown::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
+    // Reload popup list
+    m_popup.m_popupListDataSource.resetMemoization();
+    m_popup.m_selectableTableView.reloadData(false);
+
     KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
     Escher::Container::activeApp()->displayModalViewController(&m_popup,
                                                                0.f,
@@ -162,6 +178,9 @@ void Dropdown::reloadAllCells() {
   // Reload popup list
   m_popup.m_popupListDataSource.resetMemoization();  // Reset computed width
   m_popup.m_selectableTableView.reloadData(false);   // Re layout cells
+
+  // Highlight state was corrupted by m_selectableTableView
+  innerCell()->setHighlighted(isHighlighted());
   PopupItemView::reloadCell();
 }
 

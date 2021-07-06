@@ -51,6 +51,7 @@ public:
   PopupItemView * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void resetMemoization(bool force = true) override;
+  Escher::HighlightCell * innerCellAtIndex(int index);
 
   constexpr static int k_maxNumberOfPopupItems = 4;
 
@@ -73,6 +74,7 @@ public:
   friend Dropdown;
   DropdownPopupController(Escher::Responder * parentResponder,
                           Escher::ListViewDataSource * listDataSource,
+                          Dropdown * dropdown,
                           DropdownCallback * callback = nullptr);
   Escher::View * view() override { return &m_borderingView; }
   void didBecomeFirstResponder() override;
@@ -89,6 +91,7 @@ private:
   Escher::SelectableTableViewDataSource m_selectionDataSource;
   BorderingView m_borderingView;
   DropdownCallback * m_callback;
+  Dropdown * m_dropdown;
 };
 
 /* A Dropdown is a view that, when clicked on, displays a list of views to choose from

@@ -16,10 +16,10 @@ public:
   }
   bool belongsToTestedKeysSubset(Ion::Keyboard::Key key) const;
 
-  static constexpr int NumberOfTestedKeys = 20;
+  static constexpr int NumberOfTestedKeys = 19;
   static constexpr Ion::Keyboard::Key TestedKeys[KeyboardModel::NumberOfTestedKeys] = {
     Ion::Keyboard::Key::Left, Ion::Keyboard::Key::Up, Ion::Keyboard::Key::Down, Ion::Keyboard::Key::Right, Ion::Keyboard::Key::OK, Ion::Keyboard::Key::Back,
-    Ion::Keyboard::Key::Home, Ion::Keyboard::Key::OnOff,
+    Ion::Keyboard::Key::Home,
     Ion::Keyboard::Key::Shift, Ion::Keyboard::Key::Alpha, Ion::Keyboard::Key::XNT, Ion::Keyboard::Key::Var, Ion::Keyboard::Key::Toolbox, Ion::Keyboard::Key::Backspace,
     Ion::Keyboard::Key::Power,
     Ion::Keyboard::Key::Square,

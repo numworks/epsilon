@@ -106,6 +106,7 @@ public:
   void setHighlighted(bool highlighted) override;
   void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
   void reloadAllCells();
+  void init();
 
 private:
   DropdownPopupController m_popup;

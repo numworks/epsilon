@@ -89,6 +89,7 @@ void CalculationController::didEnterResponderChain(Responder * previousResponder
 void CalculationController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::ProbaGraph);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  m_dropdown.init();
 }
 
 View * CalculationController::view() {
@@ -166,16 +167,7 @@ int CalculationController::typeAtLocation(int i, int j) {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  if (i == 0) {
-    Dropdown * myCell = static_cast<Dropdown *>(cell);
-    HighlightImageCell * innerImageView = static_cast<HighlightImageCell *>(myCell->innerCell());
-    const Image * images[CalculationPopupDataSource::k_numberOfImages] = {ImageStore::Calcul1Icon,
-                                                                          ImageStore::Calcul2Icon,
-                                                                          ImageStore::Calcul3Icon,
-                                                                          ImageStore::Calcul4Icon};
-    innerImageView->setImage(images[(int)m_calculation->type()]);
-    myCell->setHighlighted(myCell->isHighlighted());
-  } else {
+   if (i > 0) {
     CalculationCell * myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i - 1));
     bool calculationCellIsResponder = true;

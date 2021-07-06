@@ -114,8 +114,9 @@ void initPeripheralsClocks() {
   // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
   RCC.APB1ENR()->setPWREN(true);
-  // We're using TIM4 for the keyboard
+  // We're using TIM4 and TIM5 for the keyboard
   RCC.APB1ENR()->setTIM4EN(true);
+  RCC.APB1ENR()->setTIM5EN(true);
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0x00008000); // Reset value

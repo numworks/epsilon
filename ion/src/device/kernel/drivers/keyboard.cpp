@@ -17,23 +17,37 @@ State popState() {
 using namespace Regs;
 
 static constexpr int k_debouncingDelay = 10;
+static constexpr int k_pollDelay = 200;
+
+static void stopPollTimer() {
+  TIM5.SR()->setUIF(false);
+  TIM5.CR1()->setCEN(false);
+}
 
 void initTimer() {
   TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency-1);
   TIM4.DIER()->setUIE(true);
   TIM4.ARR()->set(k_debouncingDelay);
+
+  TIM5.PSC()->set(Clocks::Config::APB1TimerFrequency-1);
+  TIM5.DIER()->setUIE(true);
+  TIM5.ARR()->set(k_pollDelay);
+  stopPollTimer(); // only poll while a key is pressed
 }
 
 void shutdownTimer() {
+  TIM5.DIER()->setUIE(false);
+  TIM5.CR1()->setCEN(false);
+
   TIM4.DIER()->setUIE(false);
   TIM4.CR1()->setCEN(false);
 }
 
-static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30};
+static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30, 50};
 
 void initInterruptions() {
   /* Init EXTI interrupts (corresponding to keyboard column pins) and TIM4
-   * interrupt. */
+   * and TIM5 interrupts . */
   for (size_t i = 0; i < sizeof(interruptionISRIndex)/sizeof(int); i++) {
       // Flush pending interruptions
     while (NVIC.NVIC_ICPR()->getBit(interruptionISRIndex[i])) { // Read to force writing

@@ -29,7 +29,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
     m_inputController(inputController),
     m_operatorDataSource(statistic->hypothesisParams()),
     m_h0(&m_selectableTableView, handler, this),
-    m_ha(&m_selectableTableView, &m_operatorDataSource),
+    m_ha(&m_selectableTableView, &m_operatorDataSource, this),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
     m_statistic(statistic) {
   m_h0.setMessage(I18n::Message::H0);
@@ -79,6 +79,23 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
   m_statistic->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
   return true;
+}
+
+void Probability::HypothesisController::onDropdownSelected(int selectedRow) {
+  HypothesisParams::ComparisonOperator op;
+  switch (selectedRow) {
+    case 0:
+      op = HypothesisParams::ComparisonOperator::Lower;
+      break;
+    case 1:
+      op = HypothesisParams::ComparisonOperator::Different;
+      break;
+    case 2:
+      op = HypothesisParams::ComparisonOperator::Higher;
+      break;
+  }
+  m_statistic->hypothesisParams()->setOp(op);
+  // loadHypothesisParam();
 }
 
 HighlightCell * HypothesisController::reusableCell(int i, int type) {

@@ -17,6 +17,10 @@ KDColor getColor() {
 }
 
 void setColor(KDColor c) {
+  if (Authentication::clearanceLevel() != Ion::Authentication::ClearanceLevel::NumWorks) {
+    sLedColor = KDColorBlack;
+    return;
+  }
   sLedColor = c;
 
   /* Active all RGB colors */

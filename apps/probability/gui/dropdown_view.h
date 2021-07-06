@@ -50,6 +50,7 @@ public:
   int reusableCellCount(int type) override { return m_listViewDataSource->reusableCellCount(type); }
   PopupItemView * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  void resetMemoization(bool force = true) override;
 
   constexpr static int k_maxNumberOfPopupItems = 4;
 
@@ -100,6 +101,7 @@ public:
   bool handleEvent(Ion::Events::Event e) override;
   void setHighlighted(bool highlighted) override;
   void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
+  void reload();
 
 private:
   DropdownPopupController m_popup;

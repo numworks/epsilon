@@ -30,6 +30,7 @@ Ion::Keyboard::State Queue::pop() {
 void Queue::flush(bool resetPending) {
   m_begin = 0;
   m_end = 0;
+  Events::resetKeyboardState();
   if (resetPending) {
     Events::resetPendingKeyboardState();
   }

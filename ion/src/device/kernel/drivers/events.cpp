@@ -434,7 +434,6 @@ void stall() {
    * the keyboard state. This is why we need to flush the queue BEFORE calling
    * handlePreemption. */
   Keyboard::Queue::sharedQueue()->flush(false);
-  Keyboard::Queue::sharedQueue()->push(Ion::Keyboard::State(0));
 
   if (handlePreemption(true)) {
     return;
@@ -450,6 +449,8 @@ void stall() {
 
 void resetKeyboardState() {
   sKeysSeenUp = -1;
+  /* Set the keyboard state of reference to -1 to prevent event repetition. */
+  sLastKeyboardState = -1;
 }
 
 void resetPendingKeyboardState() {

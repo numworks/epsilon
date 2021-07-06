@@ -162,6 +162,7 @@ void Dropdown::reload() {
   // Reload popup list
   m_popup.m_popupListDataSource.resetMemoization();
   m_popup.m_selectableTableView.reloadData(false);
+  innerCell()->setHighlighted(innerCell()->isHighlighted());
   PopupItemView::reloadCell();
 }
 

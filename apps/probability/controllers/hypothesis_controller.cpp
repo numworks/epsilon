@@ -33,7 +33,9 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
     m_statistic(statistic) {
   m_h0.setMessage(I18n::Message::H0);
+  m_h0.setSubLabelMessage(I18n::Message::H0Sub);
   m_ha.setMessage(I18n::Message::Ha);
+  m_ha.setSubLabelMessage(I18n::Message::HaSub);
 }
 
 const char * Probability::HypothesisController::title() {

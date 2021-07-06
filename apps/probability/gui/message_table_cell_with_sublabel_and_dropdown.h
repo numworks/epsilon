@@ -19,6 +19,7 @@ public:
   Dropdown * dropdown() { return &m_dropdown; }
   Escher::Responder * responder() override { return this; }
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(&m_dropdown); }
+  bool isSublabelAlignedRight() const override { return false; }
   void reloadCell() override {
     layoutSubviews();
     Escher::MessageTableCellWithMessage::reloadCell();

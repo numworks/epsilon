@@ -9,12 +9,12 @@ extern "C" {
 ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
   m_contentView(contentView),
+  m_innerView(this),
   m_dataSource(dataSource),
   m_topMargin(0),
   m_rightMargin(0),
   m_bottomMargin(0),
   m_leftMargin(0),
-  m_innerView(this),
   m_decorators(),
   m_backgroundColor(Palette::BackgroundApps)
 {
@@ -24,12 +24,12 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
 
 ScrollView::ScrollView(ScrollView&& other) :
   m_contentView(other.m_contentView),
+  m_innerView(this),
   m_dataSource(other.m_dataSource),
   m_topMargin(other.m_topMargin),
   m_rightMargin(other.m_rightMargin),
   m_bottomMargin(other.m_bottomMargin),
   m_leftMargin(other.m_leftMargin),
-  m_innerView(this),
   m_backgroundColor(other.m_backgroundColor)
 {
   setDecoratorType(other.m_decoratorType);
@@ -144,7 +144,7 @@ void ScrollView::layoutSubviews(bool force) {
   if (!r2.isEmpty()) {
     markRectAsDirty(r2);
   }
-  m_innerView.setFrame(innerFrame, force);
+  getInnerView()->setFrame(innerFrame, force);
   KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin - innerFrame.x(), m_topMargin - innerFrame.y()));
   KDRect contentFrame = KDRect(absoluteOffset, contentSize());
   m_contentView->setFrame(contentFrame, force);

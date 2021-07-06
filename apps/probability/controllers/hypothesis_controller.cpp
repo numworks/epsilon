@@ -27,8 +27,9 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            Statistic * statistic) :
     SelectableListViewPage(parent),
     m_inputController(inputController),
+    m_operatorDataSource(statistic->hypothesisParams()),
     m_h0(&m_selectableTableView, handler, this),
-    m_ha(&m_selectableTableView, handler, this),
+    m_ha(&m_selectableTableView, &m_operatorDataSource),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
     m_statistic(statistic) {
   m_h0.setMessage(I18n::Message::H0);
@@ -83,7 +84,6 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
   for (int i = 0; i < 3; i++) {
     if (strchr(text, static_cast<char>(ops[i])) != NULL) {
       m_statistic->hypothesisParams()->setOp(ops[i]);
-      m_ha.setAccessoryText(text);
       return true;
     }
   }
@@ -122,6 +122,8 @@ void HypothesisController::loadHypothesisParam() {
   int written = sprintf(buffer, "%s%c", symbol, op);
   float p = m_statistic->hypothesisParams()->firstParam();
   defaultParseFloat(p, buffer + written, bufferSize);
-  m_ha.setAccessoryText(buffer);
   m_h0.setAccessoryText(buffer + written);
+  m_ha.dropdown()->setInnerCell(m_operatorDataSource.reusableCell(0, 0));
+  m_operatorDataSource.willDisplayCellForIndex(m_operatorDataSource.reusableCell(0, 0), 0);
+  m_ha.reloadCell();
 }

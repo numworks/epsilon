@@ -73,6 +73,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	dropdown_view.cpp \
 	calculation_popup_data_source.cpp \
 	bordering_view.cpp \
+	comparison_operator_popup_data_source.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

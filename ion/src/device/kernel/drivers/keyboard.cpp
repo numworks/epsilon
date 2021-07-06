@@ -17,7 +17,7 @@ State popState() {
 using namespace Regs;
 
 static constexpr int k_debouncingDelay = 10;
-static constexpr int k_pollDelay = 200;
+static constexpr int k_pollDelay = 100;
 
 static void stopPollTimer() {
   TIM5.SR()->setUIF(false);
@@ -103,12 +103,47 @@ void launchDebounceTimer() {
   TIM4.CR1()->setCEN(true);
 }
 
+static void launchPollTimer() {
+  TIM5.CNT()->set(0);
+  TIM5.CR1()->setCEN(true);
+}
+
 static bool sBouncing = false;
 
 void debounce() {
   sBouncing = false;
   TIM4.SR()->setUIF(false);
   TIM4.CR1()->setCEN(false);
+}
+
+State sState(0);
+
+/* Keystroke detection uses the EXTI line, which interrupts the execution
+ * whenever a rising edge appears on a column. However, if a key is held down,
+ * pressing another key in the same column will not produce an edge and the
+ * keyboard state is not queued.
+ * Therefore, as long as a key is held down, we need to periodically poll the
+ * keyboard to detect all key presses. To keep the timer running as little as
+ * possible, we only activate it when Shift or Alpha are pressed, as those are
+ * the only "combining" keys we really need to support. */
+
+void poll() {
+  stopPollTimer();
+  State state = Keyboard::scan();
+  if (state.keyDown(Key::Shift) || state.keyDown(Key::Alpha) ) {
+    launchPollTimer();
+  }
+  /* OnOff, Home and Back are the only keyboard keys which are preemptive.
+   * The states which doesn't involve one of these keys down are pushed on a
+   * queue and depile one at a time.
+   * If the device is stalling, we do not queue the event to avoid a delayed
+   * reaction.
+   * */
+  if (state != sState) {
+    Events::setPendingKeyboardStateIfPreemtive(state);
+    Queue::sharedQueue()->push(state);
+    sState = state;
+  }
 }
 
 void handleInterruption() {
@@ -120,11 +155,7 @@ void handleInterruption() {
   }
   if (!sBouncing) {
     sBouncing = true;
-    State state = Keyboard::scan();
-    /* OnOff, Home and Back are the only keyboard keys which are preemptive.
-     * The states are pushed on a queue and handled one at a time. */
-    Events::setPendingKeyboardStateIfPreemtive(state);
-    Queue::sharedQueue()->push(state);
+    poll();
     launchDebounceTimer();
   }
 }

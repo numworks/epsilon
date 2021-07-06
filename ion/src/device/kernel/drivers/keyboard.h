@@ -14,6 +14,7 @@ void shutdown();
 void initInterruptions();
 void shutdownInterruptions();
 void debounce();
+void poll();
 void handleInterruption();
 
 State popState();

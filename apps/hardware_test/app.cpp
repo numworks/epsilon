@@ -1,5 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
+#include <ion/circuit_breaker.h>
 #include <ion/events.h>
 
 using namespace Escher;
@@ -9,6 +10,8 @@ namespace HardwareTest {
 App * App::Snapshot::unpack(Container * container) {
   // Spinner may break LCD data test
   Ion::Events::setSpinner(false);
+  // Disable Home button, so that the Home key can be tested
+  Ion::CircuitBreaker::unsetCheckpoint(Ion::CircuitBreaker::CheckpointType::Home);
   return new (container->currentAppBuffer()) App(this);
 }
 

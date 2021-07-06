@@ -27,7 +27,8 @@ class NormalInputController;
 
 class HypothesisController : public SelectableListViewPage,
                              public ButtonDelegate,
-                             public Escher::TextFieldDelegate {
+                             public Escher::TextFieldDelegate,
+                             public DropdownCallback {
 public:
   HypothesisController(Escher::StackViewController * parent, InputController * inputController,
                        InputEventHandlerDelegate * handler, Statistic * statistic);
@@ -54,6 +55,9 @@ public:
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text,
                                  Ion::Events::Event event) override;
+
+  // DropdownCallback
+  void onDropdownSelected(int selectedRow) override;
 
 private:
   void loadHypothesisParam();

@@ -13,8 +13,9 @@ class MessageTableCellWithSublabelAndDropdown : public Escher::MessageTableCellW
                                                 public Escher::Responder {
 public:
   MessageTableCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
-                                          Escher::ListViewDataSource * listDataSource) :
-      Responder(parentResponder), m_dropdown(this, listDataSource) {}
+                                          Escher::ListViewDataSource * listDataSource,
+                                          DropdownCallback * callback = nullptr) :
+      Responder(parentResponder), m_dropdown(this, listDataSource, callback) {}
   const Escher::View * accessoryView() const override { return &m_dropdown; }
   Dropdown * dropdown() { return &m_dropdown; }
   Escher::Responder * responder() override { return this; }

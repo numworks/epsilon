@@ -29,35 +29,6 @@ void shutdownTimer() {
   TIM4.CR1()->setCEN(false);
 }
 
-void initExtendedInterruptions() {
-  // Init interruption
-  /*
-   * GPIO Pin Number|EXTICR1|EXTICR2|EXTICR3| Interruption on
-   * ---------------+-------+-------+-------+-------------------------
-   *        0       |   C   | ***** | ***** | Both edges GPIO C pin 0
-   *        1       |   C   | ***** | ***** | Both edge GPIO C pin 1
-   *        2       |   C   | ***** | ***** | Both edge GPIO C pin 2
-   *        3       |   C   | ***** | ***** | Both edge GPIO C pin 3
-   *        4       | ***** |   C   | ***** | Both edge GPIO C pin 4
-   *        5       | ***** |   C   | ***** | Both edge GPIO C pin 5
-   *
-   */
-  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
-    uint8_t pin = Config::ColumnPins[i];
-    SYSCFG.EXTICR()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
-    EXTI.IMR()->set(pin, true);
-    EXTI.FTSR()->set(pin, true);
-    EXTI.RTSR()->set(pin, true);
-  }
-}
-
-void shutdownExtendedInterruptions() {
-  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
-    uint8_t pin = Config::ColumnPins[i];
-    EXTI.IMR()->set(pin, false);
-  }
-}
-
 static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30};
 
 void initInterruptions() {

@@ -48,12 +48,14 @@ namespace Device {
 namespace Keyboard {
 
 State scan() {
+  // Shutdown registers for the EXTI controller as it alters keyboard scanning
+  shutdownExtendedInterruptions();
   uint64_t state = 0;
 
   for (uint8_t i=0; i<Config::numberOfRows; i++) {
     activateRow(Config::numberOfRows-1-i);
 
-    // TODO: Assert pin numbers are sequentials and dynamically find 8 and 0
+    // TODO: Assert pin numbers are sequential and dynamically find 8 and 0
     uint8_t columns = Config::ColumnGPIO.IDR()->getBitRange(5,0);
 
     /* The key is down if the input is brought low by the output. In other
@@ -66,6 +68,8 @@ State scan() {
 
   // Make sure undefined key bits are forced to zero in the return value
   state = Config::ValidKeys(state);
+  // Restore registers for the EXTI controller
+  initExtendedInterruptions();
 
   return State(state);
 }
@@ -97,6 +101,35 @@ void shutdownGPIO() {
     uint8_t pin = Config::ColumnPins[i];
     Config::ColumnGPIO.MODER()->setMode(pin, GPIO::MODER::Mode::Analog);
     Config::ColumnGPIO.PUPDR()->setPull(pin, GPIO::PUPDR::Pull::None);
+  }
+}
+
+void initExtendedInterruptions() {
+  // Init interruption
+  /*
+   * GPIO Pin Number|EXTICR1|EXTICR2|EXTICR3| Interruption on
+   * ---------------+-------+-------+-------+-------------------------
+   *        0       |   C   | ***** | ***** | Both edges GPIO C pin 0
+   *        1       |   C   | ***** | ***** | Both edge GPIO C pin 1
+   *        2       |   C   | ***** | ***** | Both edge GPIO C pin 2
+   *        3       |   C   | ***** | ***** | Both edge GPIO C pin 3
+   *        4       | ***** |   C   | ***** | Both edge GPIO C pin 4
+   *        5       | ***** |   C   | ***** | Both edge GPIO C pin 5
+   *
+   */
+  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
+    uint8_t pin = Config::ColumnPins[i];
+    SYSCFG.EXTICR()->setEXTI(pin, Keyboard::Config::ColumnGPIO);
+    EXTI.IMR()->set(pin, true);
+    EXTI.FTSR()->set(pin, true);
+    EXTI.RTSR()->set(pin, true);
+  }
+}
+
+void shutdownExtendedInterruptions() {
+  for (uint8_t i=0; i<Config::numberOfColumns; i++) {
+    uint8_t pin = Config::ColumnPins[i];
+    EXTI.IMR()->set(pin, false);
   }
 }
 

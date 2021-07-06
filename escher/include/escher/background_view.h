@@ -2,7 +2,6 @@
 #define ESCHER_BACKGROUND_VIEW_H
 
 #include <escher/view.h>
-#include <archive.h>
 
 class BackgroundView : public View {
 public:

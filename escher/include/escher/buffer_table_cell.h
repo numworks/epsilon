@@ -7,6 +7,7 @@
 #include <ion/display.h>
 
 namespace Escher {
+// TODO this is probably too specific to belong in Escher
 /* BufferTableCell is here optimized for its use in code VariableBoxController.
  * It cannot be selected and has smaller vertical margins than other TableCell.
  */

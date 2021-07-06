@@ -142,7 +142,7 @@ void handleInterruption() {
      * If the device is stalling, we do not queue the event to avoid a delayed
      * reaction.
      * */
-    if (!(Events::setPendingKeyboardStateIfPreemtive(state) || Events::isStalling())) {
+    if (!(Events::setPendingKeyboardStateIfPreemtive(state))) {
       Queue::sharedQueue()->push(state);
     }
     launchDebounceTimer();

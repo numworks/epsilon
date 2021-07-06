@@ -25,7 +25,6 @@ Ion::Events::Event getPlatformEvent();
 size_t copyTextSecure(uint8_t eventId, char * buffer, size_t bufferSize);
 bool isDefinedSecure(uint8_t eventId);
 
-bool isStalling();
 void resetStallingTimer();
 void stall();
 constexpr int k_spinnerHalfHeight = 4;

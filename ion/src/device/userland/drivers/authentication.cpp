@@ -4,8 +4,8 @@
 namespace Ion {
 namespace Authentication {
 
-bool SVC_ATTRIBUTES trustedUserland() {
-  SVC_RETURNING_R0(SVC_AUTHENTICATION_TRUSTED_USERLAND, bool)
+ClearanceLevel SVC_ATTRIBUTES clearanceLevel() {
+  SVC_RETURNING_R0(SVC_AUTHENTICATION_CLEARANCE_LEVEL, ClearanceLevel)
 }
 
 }

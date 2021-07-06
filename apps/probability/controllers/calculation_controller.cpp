@@ -12,12 +12,12 @@
 #include "../images/calcul3_icon.h"
 #include "../images/calcul4_icon.h"
 #include "probability/app.h"
-#include "probability/text_helpers.h"
 #include "probability/models/calculation/discrete_calculation.h"
 #include "probability/models/calculation/finite_integral_calculation.h"
 #include "probability/models/calculation/left_integral_calculation.h"
 #include "probability/models/calculation/right_integral_calculation.h"
 #include "probability/models/data.h"
+#include "probability/text_helpers.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -29,9 +29,9 @@ constexpr int CalculationController::k_titleBufferSize;
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView,
                                                 Distribution * distribution,
-                                                Calculation * calculation)
-    : m_selectableTableView(selectableTableView),
-      m_distributionCurveView(distribution, calculation) {}
+                                                Calculation * calculation) :
+    m_selectableTableView(selectableTableView), m_distributionCurveView(distribution, calculation) {
+}
 
 View * CalculationController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
@@ -45,7 +45,8 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
   KDSize tableSize = m_selectableTableView->minimalSizeForOptimalDisplay();
   m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), tableSize.height()), force);
   m_distributionCurveView.setFrame(
-      KDRect(0, tableSize.height(), bounds().width(), bounds().height() - tableSize.height()), force);
+      KDRect(0, tableSize.height(), bounds().width(), bounds().height() - tableSize.height()),
+      force);
 }
 
 CalculationController::CalculationController(Responder * parentResponder,
@@ -57,8 +58,8 @@ CalculationController::CalculationController(Responder * parentResponder,
     m_distribution(distribution),
     m_contentView(&m_selectableTableView, distribution, calculation),
     m_selectableTableView(this),
-    m_dropdown(&m_selectableTableView, &m_imagesDataSource, this),
-    m_imagesDataSource(distribution) {
+    m_imagesDataSource(distribution),
+    m_dropdown(&m_selectableTableView, &m_imagesDataSource, this) {
   assert(distribution != nullptr);
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);
@@ -72,7 +73,8 @@ CalculationController::CalculationController(Responder * parentResponder,
                                                                         this);
   }
 
-  HighlightImageCell * iv = static_cast<HighlightImageCell *>(m_imagesDataSource.reusableCell(0, 0));
+  HighlightImageCell * iv = static_cast<HighlightImageCell *>(
+      m_imagesDataSource.reusableCell(0, 0));
   m_dropdown.setInnerCell(iv);
   iv->setImage(ImageStore::Calcul1Icon);
 }
@@ -89,9 +91,13 @@ void CalculationController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-View * CalculationController::view() { return &m_contentView; }
+View * CalculationController::view() {
+  return &m_contentView;
+}
 
-const char * CalculationController::title() { return m_titleBuffer; }
+const char * CalculationController::title() {
+  return m_titleBuffer;
+}
 
 void CalculationController::viewWillAppear() {
   ViewController::viewWillAppear();
@@ -103,7 +109,9 @@ void CalculationController::viewDidDisappear() {
   ViewController::viewDidDisappear();
 }
 
-int CalculationController::numberOfRows() const { return 1; }
+int CalculationController::numberOfRows() const {
+  return 1;
+}
 
 int CalculationController::numberOfColumns() const {
   return m_calculation->numberOfParameters() + 1;
@@ -123,9 +131,13 @@ KDCoordinate CalculationController::columnWidth(int i) {
   return m_calculationCells[i - 1].minimalSizeForOptimalDisplay().width();
 }
 
-KDCoordinate CalculationController::rowHeight(int j) { return 27; /* TODO query minimalSizeForOptimaDisplay */}
+KDCoordinate CalculationController::rowHeight(int j) {
+  return 27; /* TODO query minimalSizeForOptimaDisplay */
+}
 
-KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) { return rowHeight(0) * j; }
+KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
+  return rowHeight(0) * j;
+}
 
 int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   KDCoordinate height = rowHeight(0);
@@ -145,17 +157,22 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
   }
 }
 
-int CalculationController::reusableCellCount(int type) { return 1; }
+int CalculationController::reusableCellCount(int type) {
+  return 1;
+}
 
-int CalculationController::typeAtLocation(int i, int j) { return i; }
+int CalculationController::typeAtLocation(int i, int j) {
+  return i;
+}
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (i == 0) {
     Dropdown * myCell = static_cast<Dropdown *>(cell);
     HighlightImageCell * innerImageView = static_cast<HighlightImageCell *>(myCell->innerCell());
-    const Image * images[CalculationPopupDataSource::k_numberOfImages] = {
-        ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon,
-        ImageStore::Calcul4Icon};
+    const Image * images[CalculationPopupDataSource::k_numberOfImages] = {ImageStore::Calcul1Icon,
+                                                                          ImageStore::Calcul2Icon,
+                                                                          ImageStore::Calcul3Icon,
+                                                                          ImageStore::Calcul4Icon};
     innerImageView->setImage(images[(int)m_calculation->type()]);
     myCell->setHighlighted(myCell->isHighlighted());
   } else {
@@ -181,7 +198,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 }
 
-bool CalculationController::textFieldDidHandleEvent(::TextField * textField, bool returnValue,
+bool CalculationController::textFieldDidHandleEvent(::TextField * textField,
+                                                    bool returnValue,
                                                     bool textSizeDidChange) {
   if (returnValue && textSizeDidChange) {
     /* We do not reload the responder because the first responder might be the
@@ -204,7 +222,8 @@ bool CalculationController::textFieldShouldFinishEditing(TextField * textField,
          (event == Ion::Events::Left && textField->cursorLocation() == textField->text());
 }
 
-bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text,
+bool CalculationController::textFieldDidFinishEditing(TextField * textField,
+                                                      const char * text,
                                                       Ion::Events::Event event) {
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
@@ -263,8 +282,8 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
 }
 
 void CalculationController::onDropdownSelected(int selectedRow) {
-    setCalculationAccordingToIndex(selectedRow);
-    reload();
+  setCalculationAccordingToIndex(selectedRow);
+  reload();
 }
 
 void CalculationController::updateTitle() {

@@ -13,6 +13,8 @@ using namespace Ion::Keyboard;
 
 void initGPIO();
 void shutdownGPIO();
+void initExtendedInterruptions();
+void shutdownExtendedInterruptions();
 
 State scan();
 

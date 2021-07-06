@@ -57,7 +57,9 @@ void PopupItemView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backgroundColor = isHighlighted() ? Escher::Palette::Select : KDColorWhite;
   drawInnerRect(ctx, bounds(), backgroundColor);
   // When popping, the cell has no borders
-  KDColor borderColor = m_isPoppingUp ? backgroundColor : Escher::Palette::Select;
+  KDColor borderColor = m_isPoppingUp     ? backgroundColor
+                        : isHighlighted() ? Escher::Palette::GrayDark
+                                          : Escher::Palette::Select;
   drawBorderOfRect(ctx, bounds(), borderColor);
 }
 

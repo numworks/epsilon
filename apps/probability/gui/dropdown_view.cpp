@@ -95,6 +95,11 @@ void PopupListViewDataSource::willDisplayCellForIndex(Escher::HighlightCell * ce
   m_listViewDataSource->willDisplayCellForIndex(popupView->innerCell(), index);
 }
 
+void PopupListViewDataSource::resetMemoization(bool force) {
+  m_memoizedCellWidth = -1;
+  Escher::MemoizedListViewDataSource::resetMemoization(force);
+}
+
 DropdownPopupController::DropdownPopupController(Escher::Responder * parentResponder,
                                                  Escher::ListViewDataSource * listDataSource,
                                                  DropdownCallback * callback) :
@@ -107,12 +112,12 @@ DropdownPopupController::DropdownPopupController(Escher::Responder * parentRespo
 }
 
 void DropdownPopupController::didBecomeFirstResponder() {
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
   m_popupListDataSource.resetMemoization();
   if (m_selectionDataSource.selectedRow() < 0) {
     m_selectionDataSource.selectRow(0);
-    m_selectableTableView.reloadData();
+    m_selectableTableView.reloadData(false);
   }
+  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool DropdownPopupController::handleEvent(Ion::Events::Event e) {
@@ -151,7 +156,13 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::setHighlighted(bool highlighted) {
   PopupItemView::setHighlighted(highlighted);
-  if (highlighted) Escher::Container::activeApp()->setFirstResponder(this);
+}
+
+void Dropdown::reload() {
+  // Reload popup list
+  m_popup.m_popupListDataSource.resetMemoization();
+  m_popup.m_selectableTableView.reloadData(false);
+  PopupItemView::reloadCell();
 }
 
 }  // namespace Probability

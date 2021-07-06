@@ -67,29 +67,18 @@ bool Probability::HypothesisController::textFieldShouldFinishEditing(Escher::Tex
 bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextField * textField,
                                                                   const char * text,
                                                                   Ion::Events::Event event) {
-  if (textField == m_h0.textField()) {
-    float h0 = Shared::PoincareHelpers::ApproximateToScalar<float>(
-        text, AppsContainer::sharedAppsContainer()->globalContext());
-    // Check
-    if (std::isnan(h0) || !m_statistic->isValidH0(h0)) {
-      App::app()->displayWarning(I18n::Message::UndefinedValue);
-      return false;
-    }
+  float h0 = Shared::PoincareHelpers::ApproximateToScalar<float>(
+      text,
+      AppsContainer::sharedAppsContainer()->globalContext());
+  // Check
+  if (std::isnan(h0) || !m_statistic->isValidH0(h0)) {
+    App::app()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
 
-    m_statistic->hypothesisParams()->setFirstParam(h0);
-    loadHypothesisParam();
-    return true;
-  }
-  HypothesisParams::ComparisonOperator ops[3] = {HypothesisParams::ComparisonOperator::Lower,
-                                                 HypothesisParams::ComparisonOperator::Different,
-                                                 HypothesisParams::ComparisonOperator::Higher};
-  for (int i = 0; i < 3; i++) {
-    if (strchr(text, static_cast<char>(ops[i])) != NULL) {
-      m_statistic->hypothesisParams()->setOp(ops[i]);
-      return true;
-    }
-  }
-  return false;
+  m_statistic->hypothesisParams()->setFirstParam(h0);
+  loadHypothesisParam();
+  return true;
 }
 
 HighlightCell * HypothesisController::reusableCell(int i, int type) {
@@ -108,8 +97,11 @@ void HypothesisController::didBecomeFirstResponder() {
   App::app()->setPage(Data::Page::Hypothesis);
   // TODO factor out
   selectCellAtLocation(0, 0);
+  m_ha.dropdown()->setInnerCell(m_operatorDataSource.reusableCell(0, 0));
+  m_operatorDataSource.willDisplayCellForIndex(m_operatorDataSource.reusableCell(0, 0), 0);
   loadHypothesisParam();
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  resetMemoization();
+  m_selectableTableView.reloadData(true);
 }
 
 void HypothesisController::buttonAction() {
@@ -125,8 +117,5 @@ void HypothesisController::loadHypothesisParam() {
   float p = m_statistic->hypothesisParams()->firstParam();
   defaultParseFloat(p, buffer + written, bufferSize);
   m_h0.setAccessoryText(buffer + written);
-  m_ha.dropdown()->setInnerCell(m_operatorDataSource.reusableCell(0, 0));
-  m_operatorDataSource.willDisplayCellForIndex(m_operatorDataSource.reusableCell(0, 0), 0);
-  resetMemoization();
-  m_selectableTableView.reloadData();
+  m_ha.reload();
 }

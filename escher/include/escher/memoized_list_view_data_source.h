@@ -19,7 +19,7 @@ public:
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
 
   KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
-  void resetMemoization(bool force = true);
+  virtual void resetMemoization(bool force = true);
 
   // Non memoized.
   virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) { return ListViewDataSource::cumulatedHeightFromIndex(index); }

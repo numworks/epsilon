@@ -152,9 +152,7 @@ bool canRepeatEventWithState() {
     && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Ion::Keyboard::Key::Alpha) || Ion::Events::isLockActive());
 }
 
-bool sStalling = false;
-
-bool handlePreemption() {
+bool handlePreemption(bool stalling) {
   Ion::Keyboard::State currentPreemptiveState = sPreemtiveState;
   sPreemtiveState = Ion::Keyboard::State(0);
 
@@ -166,7 +164,7 @@ bool handlePreemption() {
     return false;
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::OnOff)) {
-    if (sStalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::User)) {
+    if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::User)) {
       /* If we are still processing an event (stalling) and in a middle of a
        * "hard-might-be-long computation" (custom checkpoint is set), we
        * checkout the Custom checkpoint and try again to wait for the event to
@@ -176,7 +174,7 @@ bool handlePreemption() {
       return true;
     }
     Power::suspend(true);
-    if (sStalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
+    if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::Home)) {
       /* If we were stalling (in the middle of processing an event), we load
        * the Home checkpoint to avoid resuming the execution in the middle of
        * redrawing the display for instance. */
@@ -186,7 +184,7 @@ bool handlePreemption() {
     return false;
   }
   if (currentPreemptiveState.keyDown(Ion::Keyboard::Key::Back)) {
-    if (sStalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::User)) {
+    if (stalling && CircuitBreaker::hasCheckpoint(Ion::CircuitBreaker::CheckpointType::User)) {
       CircuitBreaker::loadCheckpoint(Ion::CircuitBreaker::CheckpointType::User);
       return true;
     } else {
@@ -206,8 +204,7 @@ Ion::Events::Event nextEvent(int * timeout) {
   uint64_t startTime = Ion::Timing::millis();
   while (true) {
     // Handle preemptive event before time is out
-    assert(!sStalling);
-    if (handlePreemption()) {
+    if (handlePreemption(false)) {
       /* If handlePreemption returns true, it means a PendSV was generated. We
        * return early to speed up the context switch (otherwise, PendSV will wait
        * until the SVCall ends). */
@@ -413,12 +410,7 @@ void hideSpinner() {
   s_spinnerStatus = SpinnerStatus::Hidden;
 }
 
-bool isStalling() {
-  return sStalling;
-}
-
 void resetStallingTimer() {
-  sStalling = false;
   // Init timer on the first call to getEvent
   if (!TIM2.CR1()->getCEN()) {
     TIM2.CR1()->setCEN(true);
@@ -433,12 +425,10 @@ void resetStallingTimer() {
 }
 
 void stall() {
-  sStalling = true;
   // Clear update interrupt flag
   TIM2.SR()->setUIF(false);
 
-  if (handlePreemption()) {
-    sStalling = false;
+  if (handlePreemption(true)) {
     return;
   }
 

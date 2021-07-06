@@ -78,8 +78,8 @@ class CalculationController : public Escher::ViewController,
   Distribution * m_distribution;
   ContentView m_contentView;
   Escher::SelectableTableView m_selectableTableView;
-  Dropdown m_dropdown;  // TODO select CalculationCell when event Right and popup is showing
   CalculationPopupDataSource m_imagesDataSource;
+  Dropdown m_dropdown;  // TODO select CalculationCell when event Right and popup is showing
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   constexpr static int k_titleBufferSize = 30;
   char m_titleBuffer[k_titleBufferSize];

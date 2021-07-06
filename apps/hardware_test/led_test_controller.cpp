@@ -21,6 +21,10 @@ View * LEDTestController::view() {
 }
 
 bool LEDTestController::handleEvent(Ion::Events::Event event) {
+  // Do not handle OnOff event to let the apps container redraw the screen
+  if (event == Ion::Events::OnOff) {
+    return false;
+  }
   if (event == Ion::Events::OK) {
     setLEDColor(LEDColorAtIndex(m_LEDColorIndex++));
     if (m_LEDColorIndex == k_numberOfColors) {

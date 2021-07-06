@@ -25,6 +25,10 @@ View * BatteryTestController::view() {
 }
 
 bool BatteryTestController::handleEvent(Ion::Events::Event event) {
+  // Do not handle OnOff event to let the apps container redraw the screen
+  if (event == Ion::Events::OnOff) {
+    return false;
+  }
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.batteryStateTextView()->text(), k_batteryOKText) == 0) {
       // Handled in WizardViewController

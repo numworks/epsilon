@@ -39,6 +39,9 @@ bool handlePreemption(bool stalling) {
       Device::CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::Home);
       return true;
     }
+    /* Add Home Event to the queue if there are no Home checkpoints. It is used
+     * during hardware testing. */
+    Device::Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
     return false;
   }
   if (currentPreemptiveState.keyDown(Keyboard::Key::OnOff)) {

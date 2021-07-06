@@ -18,15 +18,17 @@ public:
   const Escher::View * accessoryView() const override { return &m_dropdown; }
   Dropdown * dropdown() { return &m_dropdown; }
   Escher::Responder * responder() override { return this; }
-  void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(&m_dropdown); }
+  void didBecomeFirstResponder() override {
+    Escher::Container::activeApp()->setFirstResponder(&m_dropdown);
+  }
   bool isSublabelAlignedRight() const override { return false; }
-  void reloadCell() override {
-    layoutSubviews();
+  void reload() {
+    m_dropdown.reload();
     Escher::MessageTableCellWithMessage::reloadCell();
+    layoutSubviews();
   }
   void setHighlighted(bool highlight) override {
     m_dropdown.setHighlighted(highlight);
-
     Escher::MessageTableCellWithMessage::setHighlighted(highlight);
   }
 

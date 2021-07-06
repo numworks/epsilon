@@ -113,8 +113,7 @@ void HypothesisController::didBecomeFirstResponder() {
   App::app()->setPage(Data::Page::Hypothesis);
   // TODO factor out
   selectCellAtLocation(0, 0);
-  m_ha.dropdown()->setInnerCell(m_operatorDataSource.reusableCell(0, 0));
-  m_operatorDataSource.willDisplayCellForIndex(m_operatorDataSource.reusableCell(0, 0), 0);
+  m_ha.dropdown()->init();
   loadHypothesisParam();
   resetMemoization();
   m_selectableTableView.reloadData(true);

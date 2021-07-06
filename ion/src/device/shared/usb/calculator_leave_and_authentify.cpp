@@ -18,7 +18,7 @@ void Calculator::leave(uint32_t leaveAddress) {
   if (leaveAddress >= reinterpret_cast<uint32_t>(&_storage_flash_start) && leaveAddress < reinterpret_cast<uint32_t>(&_storage_flash_end)) {
     Ion::ExternalApps::setVisible(true);
     if (Ion::ExternalApps::numberOfApps() > 0) {
-      Board::downgradeTrustLevel(true); // Display pop-up
+      Board::enableExternalApps(); // Display pop-up
     } else {
       Ion::ExternalApps::setVisible(false);
     }

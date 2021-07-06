@@ -115,7 +115,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
     Ion::USB::disable();
   }
 
-  if (!Authentication::trustedUserland()) {
+  if (Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::ThirdParty) {
     WarningDisplay::unauthenticatedUserland();
   }
 

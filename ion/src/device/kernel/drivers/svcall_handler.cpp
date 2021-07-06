@@ -61,6 +61,7 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
                 SameType<decltype(&svcallhandler), void (*)(char *)>::value || \
                 SameType<decltype(&svcallhandler), void (*)(uint32_t)>::value || \
                 SameType<decltype(&svcallhandler), uint64_t (*)()>::value || \
+                SameType<decltype(&svcallhandler), Ion::Authentication::ClearanceLevel (*)()>::value || \
                 SameType<decltype(&svcallhandler), uint8_t (*)()>::value \
       );
 
@@ -69,13 +70,13 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
 void * svcallHandler(int svcNumber) {
   static void * SVCallTable[SVC_NUMBER_OF_CALLS] = {0};
   if (SVCallTable[0] == 0) {
-    MAKE_SVCALL_HANDLER(SVC_AUTHENTICATION_TRUSTED_USERLAND, Ion::Device::Authentication::trustedUserland)
+    MAKE_SVCALL_HANDLER(SVC_AUTHENTICATION_CLEARANCE_LEVEL, Ion::Device::Authentication::clearanceLevel)
     MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_BRIGHTNESS, Ion::Device::Backlight::brightness)
     MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_SET_BRIGHTNESS, Ion::Device::Backlight::setBrightness)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_IS_CHARGING, Ion::Device::Battery::isCharging)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_LEVEL, Ion::Device::Battery::level)
     MAKE_SVCALL_HANDLER(SVC_BATTERY_VOLTAGE, Ion::Device::Battery::voltage)
-    MAKE_SVCALL_HANDLER(SVC_BOARD_DOWNGRADE_TRUST_LEVEL, Ion::Device::Board::downgradeTrustLevel)
+    MAKE_SVCALL_HANDLER(SVC_BOARD_ENABLE_EXTERNAL_APPS, Ion::Device::Board::enableExternalApps)
     MAKE_SVCALL_HANDLER(SVC_BOARD_SWITCH_EXECUTABLE_SLOT, Ion::Device::Board::switchExecutableSlot)
     MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT, Ion::Device::CircuitBreaker::hasCheckpoint)
     MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT, Ion::Device::CircuitBreaker::loadCheckpoint)
@@ -168,7 +169,7 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
   // Step 2: some svc calls require authentication
   constexpr unsigned authentificationRequired[] = {SVC_BOARD_SWITCH_EXECUTABLE_SLOT, SVC_LED_SET_COLOR, SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE, SVC_LED_SET_BLINKING};
   for (size_t i = 0; i < sizeof(authentificationRequired)/sizeof(unsigned); i++) {
-    if (svcNumber == authentificationRequired[i] && !Ion::Device::Authentication::trustedUserland()) {
+    if (svcNumber == authentificationRequired[i] && Ion::Device::Authentication::clearanceLevel() != Ion::Authentication::ClearanceLevel::NumWorks) {
       return;
     }
   }

@@ -8,18 +8,18 @@ namespace Ion {
 namespace Device {
 namespace Authentication {
 
-static bool s_trustedUserland = true;
+static Ion::Authentication::ClearanceLevel s_clearanceLevel = Ion::Authentication::ClearanceLevel::NumWorks;
 
-bool trustedUserland() {
-  return s_trustedUserland;
+Ion::Authentication::ClearanceLevel clearanceLevel() {
+  return s_clearanceLevel;
 }
 
-void updateTrust(bool trust) {
-  s_trustedUserland = trust;
-  if (!s_trustedUserland) {
-    LED::setColor(KDColorBlack);
-    // Bloquer les options bytes? Mettre tout le running SLOT en RDP WRP sauf exam mode?
-  }
+void downgradeClearanceLevelTo(Ion::Authentication::ClearanceLevel level) {
+  assert(static_cast<int>(level) > static_cast<int>(s_clearanceLevel));
+  LED::setColor(KDColorBlack);
+  s_clearanceLevel = level;
+  assert(s_clearanceLevel != Ion::Authentication::ClearanceLevel::NumWorks);
+  // Bloquer les options bytes? Mettre tout le running SLOT en RDP WRP sauf exam mode?
 }
 
 }

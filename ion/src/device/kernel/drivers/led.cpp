@@ -1,4 +1,5 @@
 #include <kernel/drivers/led.h>
+#include <kernel/drivers/authentication.h>
 #include <drivers/config/led.h>
 #include <drivers/config/clocks.h>
 

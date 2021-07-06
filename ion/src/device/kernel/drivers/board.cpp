@@ -108,7 +108,7 @@ void setClockStandardFrequency() {
 }
 
 void switchExecutableSlot(uint32_t leaveAddress) {
-  assert(Authentication::trustedUserland());
+  assert(Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks);
   if (!isInReflashableSector(leaveAddress)) {
     return Reset::coreWhilePlugged();
   }
@@ -126,16 +126,14 @@ void switchExecutableSlot(uint32_t leaveAddress) {
     WarningDisplay::upgradeRequired();
     return Reset::coreWhilePlugged();
   } else {
-    Authentication::updateTrust(false);
+    Authentication::downgradeClearanceLevelTo(Ion::Authentication::ClearanceLevel::ThirdParty);
     WarningDisplay::unauthenticatedUserland(); // UNOFFICIAL SOFTWARE
   }
 }
 
-void downgradeTrustLevel(bool displayPopup) {
-  if (displayPopup) {
-    WarningDisplay::externalAppsAvailable();
-  }
-  Authentication::updateTrust(false);
+void enableExternalApps() {
+  WarningDisplay::externalAppsAvailable();
+  Authentication::downgradeClearanceLevelTo(Ion::Authentication::ClearanceLevel::NumWorksAndThirdPartyApps);
 }
 
 bool addressInUserlandRAM(void * address) {

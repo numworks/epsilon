@@ -78,7 +78,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // DMA1 global interrupt Channel 7
   0, // FSMC global interrupt
   0, // SDIO global interrupt
-  0, // TIM5 global interrupt
+  tim5_handler, // TIM5 global interrupt
   0, // SPI3 global interrupt
   0, // ?
   0, // ?

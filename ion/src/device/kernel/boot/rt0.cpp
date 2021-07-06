@@ -79,3 +79,7 @@ void __attribute__((interrupt, noinline)) tim2_handler() {
 void __attribute__((interrupt, noinline)) tim4_handler() {
   Ion::Device::Keyboard::debounce();
 }
+
+void __attribute__((interrupt, noinline)) tim5_handler() {
+  Ion::Device::Keyboard::poll();
+}

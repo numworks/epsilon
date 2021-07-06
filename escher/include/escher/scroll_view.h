@@ -96,25 +96,6 @@ public:
   void scrollToContentPoint(KDPoint p, bool allowOverscroll = false);
   void scrollToContentRect(KDRect rect, bool allowOverscroll = false); // Minimal scrolling to make this rect visible
 protected:
-  KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
-    return m_frame.width() - m_leftMargin - m_rightMargin;
-  }
-  KDCoordinate maxContentHeightDisplayableWithoutScrolling() const {
-    return m_frame.height() - m_topMargin - m_bottomMargin;
-  }
-  KDRect visibleContentRect();
-  void layoutSubviews(bool force = false) override;
-  virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
-#if ESCHER_VIEW_LOGGING
-  const char * className() const override;
-  void logAttributes(std::ostream &os) const override;
-#endif
-  View * m_contentView;
-private:
-  ScrollViewDataSource * m_dataSource;
-  int numberOfSubviews() const override { return 1 + const_cast<ScrollView *>(this)->decorator()->numberOfIndicators(); }
-  View * subviewAtIndex(int index) override { return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index); }
-
   class InnerView : public View {
   public:
     InnerView(ScrollView * scrollView) : View(), m_scrollView(scrollView) {}
@@ -127,13 +108,33 @@ private:
     }
     const ScrollView * m_scrollView;
   };
+  
+  KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
+    return m_frame.width() - m_leftMargin - m_rightMargin;
+  }
+  KDCoordinate maxContentHeightDisplayableWithoutScrolling() const {
+    return m_frame.height() - m_topMargin - m_bottomMargin;
+  }
+  KDRect visibleContentRect();
+  void layoutSubviews(bool force = false) override;
+  virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
+  virtual InnerView * getInnerView() { return &m_innerView; }
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+  void logAttributes(std::ostream &os) const override;
+#endif
+  View * m_contentView;
+  InnerView m_innerView;
+private:
+  ScrollViewDataSource * m_dataSource;
+  int numberOfSubviews() const override { return 1 + const_cast<ScrollView *>(this)->decorator()->numberOfIndicators(); }
+  View * subviewAtIndex(int index) override { return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index); }
 
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
 
-  InnerView m_innerView;
   Decorator::Type m_decoratorType;
   union Decorators {
   public:

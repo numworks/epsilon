@@ -22,6 +22,7 @@ endif
 escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
   app.cpp \
+  background_view.cpp \
   bank_view_controller.cpp \
   bordered.cpp \
   buffer_text_view.cpp \
@@ -46,6 +47,7 @@ escher_src += $(addprefix escher/src/,\
   expression_view.cpp \
   highlight_cell.cpp \
   gauge_view.cpp \
+  icon_view.cpp \
   image_view.cpp \
   input_event_handler.cpp \
   invocation.cpp \

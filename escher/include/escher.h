@@ -3,6 +3,7 @@
 
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/alternate_empty_view_delegate.h>
+#include <escher/background_view.h>
 #include <escher/bank_view_controller.h>
 #include <escher/buffer_text_view.h>
 #include <escher/button.h>
@@ -26,6 +27,7 @@
 #include <escher/expression_view.h>
 #include <escher/gauge_view.h>
 #include <escher/highlight_cell.h>
+#include <escher/icon_view.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
 #include <escher/input_event_handler.h>

@@ -95,7 +95,6 @@ void Probability::HypothesisController::onDropdownSelected(int selectedRow) {
       break;
   }
   m_statistic->hypothesisParams()->setOp(op);
-  // loadHypothesisParam();
 }
 
 HighlightCell * HypothesisController::reusableCell(int i, int type) {

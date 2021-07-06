@@ -6,7 +6,13 @@
 namespace Ion {
 namespace Authentication {
 
-bool trustedUserland();
+enum class ClearanceLevel {
+  NumWorks = 0,
+  NumWorksAndThirdPartyApps,
+  ThirdParty
+};
+
+ClearanceLevel clearanceLevel();
 
 }
 }

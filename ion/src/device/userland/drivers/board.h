@@ -9,7 +9,7 @@ namespace Device {
 namespace Board {
 
 void switchExecutableSlot(uint32_t leaveAddress);
-void downgradeTrustLevel(bool displayPopup);
+void enableExternalApps();
 
 }
 }

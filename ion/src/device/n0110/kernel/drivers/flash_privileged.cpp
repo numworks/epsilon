@@ -9,7 +9,8 @@ namespace Device {
 namespace Flash {
 
 bool ForbiddenSector(int i) {
-  if (Authentication::trustedUserland()) {
+  if (Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks
+   || Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorksAndThirdPartyApps) {
     /* Authenticated userland can write:
      * - the persisting bytes of both slots
      * - the external apps section of both slots

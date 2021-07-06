@@ -332,7 +332,7 @@ void AppsContainer::redrawWindow() {
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
-  if (Ion::Authentication::trustedUserland()) {
+  if (Ion::Authentication::clearanceLevel() != Ion::Authentication::ClearanceLevel::NumWorks) {
     reset();
     Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
     Ion::LED::setBlinking(1000, 0.1f);

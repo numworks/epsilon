@@ -184,4 +184,8 @@ void Dropdown::reloadAllCells() {
   PopupItemView::reloadCell();
 }
 
+void Dropdown::init() {
+  setInnerCell(m_popup.m_popupListDataSource.innerCellAtIndex(0));
+}
+
 }  // namespace Probability

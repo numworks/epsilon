@@ -119,8 +119,9 @@ void suspend(bool checkIfOnOffKeyReleased) {
     WarningDisplay::unauthenticatedUserland();
   }
 
-  /* Power::suspend has flushed the Keyboard queue, the very next event is the
-   * the OnOffEvent (to notify the userland that a switchOnOff has happened). */
+  /* waitUntilOnOffKeyReleased has flushed the Keyboard queue. The very next
+   * event is the OnOffEvent (to notify the userland that a switchOnOff has
+   * happened). */
   Keyboard::Queue::sharedQueue()->push(Ion::Keyboard::State(Ion::Keyboard::Key::OnOff));
 }
 

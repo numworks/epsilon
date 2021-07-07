@@ -39,12 +39,7 @@ bool handlePreemption(bool stalling) {
       Device::CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::Home);
       return true;
     }
-    /* Add Home Event to the queue if there are no Home checkpoints. It is used
-     * during hardware testing. */
-    Device::Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
-    return false;
-  }
-  if (currentPreemptiveState.keyDown(Keyboard::Key::OnOff)) {
+  } else if (currentPreemptiveState.keyDown(Keyboard::Key::OnOff)) {
     Device::Power::suspend(true);
     if (stalling && Device::CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::Home)) {
       /* If we were stalling (in the middle of processing an event), we load
@@ -53,18 +48,14 @@ bool handlePreemption(bool stalling) {
       Device::CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::Home);
       return true;
     }
-    return false;
-  }
-  if (currentPreemptiveState.keyDown(Keyboard::Key::Back)) {
+  } else if (currentPreemptiveState.keyDown(Keyboard::Key::Back)) {
     if (stalling && Device::CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::User)) {
       Device::CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::User);
       return true;
-    } else {
-      Device::Keyboard::Queue::sharedQueue()->push(currentPreemptiveState);
-      return false;
     }
+  } else {
+    assert(currentPreemptiveState == Ion::Keyboard::State(0));
   }
-  assert(currentPreemptiveState == Ion::Keyboard::State(0));
   return false;
 }
 
@@ -335,12 +326,10 @@ void stall() {
   // Clear update interrupt flag
   TIM2.SR()->setUIF(false);
 
-  /* Flush keyboard state to avoid delayed reaction
-   * While we are stalling, if back is pressed but no User checkpoint is set
-   * (for instance when running a Python script), handlePreemption will queue
-   * the keyboard state. This is why we need to flush the queue BEFORE calling
-   * handlePreemption. */
+  /* Flush keyboard state to push preemptive state only, to avoid delayed
+   * reaction. HandlePreemption will flush it again if necessary. */
   Keyboard::Queue::sharedQueue()->flush(false);
+  Keyboard::Queue::sharedQueue()->push(Ion::Events::sPreemtiveState);
 
   if (Ion::Events::handlePreemption(true)) {
     return;
@@ -364,12 +353,10 @@ void resetPendingKeyboardState() {
   Ion::Events::sPreemtiveState = Ion::Keyboard::State(0);
 }
 
-bool setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State state) {
+void setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State state) {
   if (state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::OnOff)) {
     Ion::Events::sPreemtiveState = state;
-    return true;
   }
-  return false;
 }
 
 }

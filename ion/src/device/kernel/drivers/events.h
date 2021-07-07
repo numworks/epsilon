@@ -38,7 +38,7 @@ void hideSpinner();
 
 void resetKeyboardState();
 void resetPendingKeyboardState();
-bool setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State keyboardState);
+void setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State keyboardState);
 
 }
 }

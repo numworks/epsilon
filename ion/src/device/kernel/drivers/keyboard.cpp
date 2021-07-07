@@ -108,14 +108,9 @@ void handleInterruption() {
     sBouncing = true;
     State state = Keyboard::scan();
     /* OnOff, Home and Back are the only keyboard keys which are preemptive.
-     * The states which doesn't involve one of these keys down are pushed on a
-     * queue and depile one at a time.
-     * If the device is stalling, we do not queue the event to avoid a delayed
-     * reaction.
-     * */
-    if (!(Events::setPendingKeyboardStateIfPreemtive(state))) {
-      Queue::sharedQueue()->push(state);
-    }
+     * The states are pushed on a queue and handled one at a time. */
+    Events::setPendingKeyboardStateIfPreemtive(state);
+    Queue::sharedQueue()->push(state);
     launchDebounceTimer();
   }
 }

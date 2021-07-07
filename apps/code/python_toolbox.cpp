@@ -403,6 +403,18 @@ const ToolboxMessageTree OsModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandListdir, I18n::Message::PythonOsListdir, false)
 };
 
+const ToolboxMessageTree SysModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportSys, I18n::Message::PythonImportSys, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromSys, I18n::Message::PythonImportSys, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonSysCommandExit, I18n::Message::PythonSysExit, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonSysCommandPrintexception, I18n::Message::PythonSysPrintexception, false, I18n::Message::PythonSysCommandPrintexceptionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonSysCommandByteorder, I18n::Message::PythonSysByteorder, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonSysCommandImplementation, I18n::Message::PythonSysImplementation, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonSysCommandModules, I18n::Message::PythonSysModules, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonSysCommandVersion, I18n::Message::PythonSysVersion, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonSysCommandVersioninfo, I18n::Message::PythonSysVersioninfo, false)
+};
+
 const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::MathModule, MathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::CmathModule, CMathModuleChildren),
@@ -415,6 +427,7 @@ const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::IonModule, IonModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::OsModule, OsModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::SysModule, SysModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::TimeModule, TimeModuleChildren)
 };
 

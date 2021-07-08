@@ -2,12 +2,15 @@
 
 using namespace Probability;
 
+// TODO this can be HEAVILLY factorized
+
 KDSize Probability::VerticalLayout::minimalSizeForOptimalDisplay() const {
   int requiredWidth = 0, requiredHeight = 0;
   KDSize requiredSize(0, 0);
+  KDCoordinate proposedWidth = bounds().width() - 2 * m_marginX;
   for (int i = 0; i < numberOfSubviews(); i++) {
     Escher::View * subview = const_cast<VerticalLayout *>(this)->subviewAtIndex(i);
-    subview->setSize(KDSize(bounds().width(), subview->bounds().height()));
+    subview->setSize(KDSize(proposedWidth, subview->bounds().height()));
     requiredSize = subview->minimalSizeForOptimalDisplay();
     requiredHeight += requiredSize.height();
     requiredWidth = fmaxf(requiredWidth, requiredSize.width());
@@ -20,7 +23,7 @@ void VerticalLayout::layoutSubviews(bool force) {
   KDCoordinate availableHeight = frame.height() - 2 * m_marginY;
   KDRect proposedFrame = KDRect(m_marginX, m_marginY, frame.width() - 2 * m_marginX, 0);
   for (int i = 0; i < numberOfSubviews(); i++) {
-    subviewAtIndex(i)->setSize(KDSize(frame.width(), availableHeight));
+    subviewAtIndex(i)->setSize(KDSize(proposedFrame.width(), availableHeight));
     int height = subviewAtIndex(i)->minimalSizeForOptimalDisplay().height();
     proposedFrame = KDRect(proposedFrame.x(),
                            proposedFrame.y() + proposedFrame.height(),

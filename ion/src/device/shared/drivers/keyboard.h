@@ -14,7 +14,7 @@ using namespace Ion::Keyboard;
 void initGPIO();
 void shutdownGPIO();
 void initExtendedInterruptions();
-void shutdownExtendedInterruptions();
+bool shutdownExtendedInterruptions();
 
 State scan();
 

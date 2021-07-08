@@ -180,8 +180,8 @@ public:
   static bool IsMatrix(const Expression e, Context * context);
   static bool IsInfinity(const Expression e, Context * context);
   /* polynomialDegree returns:
-   * - (-1) if the expression is not a polynome
-   * - the degree of the polynome otherwise */
+   * - (-1) if the expression is not a polynomial
+   * - the degree of the polynomial otherwise */
   int polynomialDegree(Context * context, const char * symbolName) const { return this->node()->polynomialDegree(context, symbolName); }
   /* getVariables fills the matrix variables with the symbols in the expression
    * that pass the test isVariable. It returns the number of entries filled in
@@ -343,8 +343,8 @@ protected:
      * Expression, but this does not prevent Expression types mismatches (cast
      * Float to Symbol for instance).
      *
-     * We could have overriden the operator T(). However, even with the
-     * 'explicit' keyword (which prevents implicit casts), direct initilization
+     * We could have overridden the operator T(). However, even with the
+     * 'explicit' keyword (which prevents implicit casts), direct initialization
      * are enable which can lead to weird code:
      * ie, you can write: 'Rational a(2); AbsoluteValue b(a);'
      * */

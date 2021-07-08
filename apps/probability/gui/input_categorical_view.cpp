@@ -1,8 +1,10 @@
-#include "input_table_view.h"
+#include "input_categorical_view.h"
+
+#include "probability/text_helpers.h"
 
 using namespace Probability;
 
-InputTableView::InputTableView(Responder * parentResponder,
+InputCategoricalView::InputCategoricalView(Responder * parentResponder,
                                ButtonDelegate * buttonDelegate,
                                SelectableTableView * table,
                                InputEventHandlerDelegate * inputEventHandlerDelegate,
@@ -22,7 +24,7 @@ InputTableView::InputTableView(Responder * parentResponder,
   m_significanceCell.textField()->setText("0.05");  // TODO kinda ugly?
 }
 
-void InputTableView::didBecomeFirstResponder() {
+void InputCategoricalView::didBecomeFirstResponder() {
   // Pass focus to subview
   if (m_dataInputTableView->selectedRow() < 0) {
     m_dataInputTableView->selectRow(1);
@@ -34,7 +36,7 @@ void InputTableView::didBecomeFirstResponder() {
   selectCorrectView();
 }
 
-bool InputTableView::handleEvent(Ion::Events::Event event) {
+bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
       m_viewSelection.selectRow(m_viewSelection.selectedRow() - 2);
@@ -49,7 +51,7 @@ bool InputTableView::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-Responder * InputTableView::responderForRow(int row) {
+Responder * InputCategoricalView::responderForRow(int row) {
   switch (m_viewSelection.selectedRow()) {
     case k_indexOfTable:
       return m_dataInputTableView;
@@ -61,11 +63,11 @@ Responder * InputTableView::responderForRow(int row) {
   assert(false);
 }
 
-void InputTableView::setResponderForSelectedRow() {
+void InputCategoricalView::setResponderForSelectedRow() {
   Escher::Container::activeApp()->setFirstResponder(responderForRow(m_viewSelection.selectedRow()));
 }
 
-void InputTableView::selectCorrectView() {
+void InputCategoricalView::selectCorrectView() {
   // TODO set behavior in didBecomeFirstResponder?
   m_significanceCell.setHighlighted(false);
   m_next.setHighlighted(false);
@@ -85,7 +87,7 @@ void InputTableView::selectCorrectView() {
   }
 }
 
-Escher::View * InputTableView::subviewAtIndex(int i) {
+Escher::View * InputCategoricalView::subviewAtIndex(int i) {
   switch (i) {
     case k_indexOfTable:
       return m_dataInputTableView;

@@ -12,47 +12,22 @@
 
 #include "probability/app.h"
 #include "probability/models/data.h"
+#include "probability/text_helpers.h"
 
 using namespace Probability;
-
-InputGoodnessDataSource::InputGoodnessDataSource(
-    Responder * parent,
-    SelectableTableView * tableView,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
-    TextFieldDelegate * delegate) {
-  m_header[0].setMessage(I18n::Message::Observed);
-  m_header[1].setMessage(I18n::Message::Expected);
-  m_header[0].setEven(true);
-  m_header[1].setEven(true);
-  m_header[0].setMessageFont(KDFont::SmallFont);
-  m_header[1].setMessageFont(KDFont::SmallFont);
-
-  for (int i = 0; i < k_numberOfColumns * k_initialNumberOfRows; i++) {
-    m_cells[i].setParentResponder(tableView);
-    m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, delegate);
-    m_cells[i].setEven((i / 2) % 2 == 0);
-    m_cells[i].setFont(KDFont::SmallFont);
-  }
-}
-
-HighlightCell * InputGoodnessDataSource::reusableCell(int i, int type) {
-  assert(i < reusableCellCount(0));
-  if (i < 2) {
-    return &m_header[i];
-  }
-  return &m_cells[i];
-}
 
 InputGoodnessController::InputGoodnessController(
     StackViewController * parent,
     ResultsController * resultsController,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
-    TextFieldDelegate * textFieldDelegate) :
+    Statistic * statistic,
+    InputEventHandlerDelegate * inputEventHandlerDelegate) :
     Page(parent),
     m_resultsController(resultsController),
-    m_data(parent, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate),
-    m_dataTable(&m_contentView, &m_data, m_contentView.selectionDataSource()),
-    m_contentView(this, this, &m_dataTable, inputEventHandlerDelegate, textFieldDelegate) {
+    m_inputTableView(&m_contentView,
+                     inputEventHandlerDelegate,
+                     static_cast<Chi2Statistic *>(statistic)),
+    m_contentView(this, this, &m_inputTableView, inputEventHandlerDelegate, this),
+    m_statistic(static_cast<Chi2Statistic *>(statistic)) {
 }
 
 void InputGoodnessController::didBecomeFirstResponder() {
@@ -62,4 +37,25 @@ void InputGoodnessController::didBecomeFirstResponder() {
 
 void InputGoodnessController::buttonAction() {
   openPage(m_resultsController);
+}
+
+bool Probability::InputGoodnessController::textFieldShouldFinishEditing(TextField * textField,
+                                                                        Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE;  // TODO up and down too
+}
+
+bool Probability::InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
+                                                                     const char * text,
+                                                                     Ion::Events::Event event) {
+  float p;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
+    return false;
+  }
+  m_statistic->setThreshold(p);
+  // Reparse text
+  constexpr int bufferSize = 20;
+  char buffer[bufferSize];
+  defaultParseFloat(p, buffer, bufferSize);
+  textField->setText(buffer);
+  return true;
 }

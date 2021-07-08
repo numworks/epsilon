@@ -142,10 +142,6 @@ bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
     if (!Device::Keyboard::Queue::sharedQueue()->isEmpty()) {
       return true;
     }
-    if (sPreemtiveState != Ion::Keyboard::State(0)) {
-      *timeout = 0;
-      return false;
-    }
     elapsedTime = static_cast<int>(Ion::Timing::millis() - startTime);
   }
   Device::Board::setClockStandardFrequency();

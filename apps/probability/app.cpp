@@ -17,7 +17,7 @@ App::App(Snapshot * snapshot) :
     m_homogeneityResultsController(&m_stackViewController),
     m_inputHomogeneityController(&m_stackViewController, &m_homogeneityResultsController, this,
                                  this),
-    m_inputGoodnessController(&m_stackViewController, &m_resultsController, this, this),
+    m_inputGoodnessController(&m_stackViewController, &m_resultsController, snapshot->data()->statistic(), this),
     m_resultsController(&m_stackViewController, snapshot->data()->statistic(), &m_statisticGraphController,
                         this, this),
     m_inputController(&m_stackViewController, &m_resultsController, snapshot->data()->statistic(),

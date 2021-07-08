@@ -2,6 +2,8 @@
 #define APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H
 
 #include <apps/shared/button_with_separator.h>
+#include <escher/even_odd_editable_text_cell.h>
+#include <escher/even_odd_message_text_cell.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
@@ -16,13 +18,14 @@
 
 namespace Probability {
 
+
 /* This view contains  pointer to a TableView, an EditableCell and a Button,
  * layed out vertically, and is able to move selection between them.
  * Meant for InputGoodnessController and InputHomogeneityController.
  */
-class InputTableView : public VerticalLayout, public Responder {
+class InputCategoricalView : public VerticalLayout, public Responder {
 public:
-  InputTableView(Responder * parentResponder,
+  InputCategoricalView(Responder * parentResponder,
                  ButtonDelegate * buttonDelegate,
                  SelectableTableView * table,
                  InputEventHandlerDelegate * inputEventHandlerDelegate,
@@ -35,7 +38,7 @@ public:
     ctx->fillRect(rect, Palette::WallScreenDark);
   }
   // VerticalLayout
-  int numberOfSubviews() const override { return 5; }
+  int numberOfSubviews() const override { return 5 /* Table + Cell + Button + 2 Spacers */; }
   Escher::View * subviewAtIndex(int i) override;
 
   // Responder

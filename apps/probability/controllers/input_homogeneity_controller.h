@@ -13,7 +13,7 @@
 #include "homogeneity_results_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/homogeneity_data_source.h"
-#include "probability/gui/input_table_view.h"
+#include "probability/gui/input_categorical_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/solid_color_cell.h"
 
@@ -21,11 +21,14 @@ namespace Probability {
 
 // TODO create template
 class InputHomogeneityDataSource : public TableViewDataSource {
- public:
-  InputHomogeneityDataSource(SelectableTableView * tableView, InputEventHandlerDelegate * inputEventHandlerDelegate,
+public:
+  InputHomogeneityDataSource(SelectableTableView * tableView,
+                             InputEventHandlerDelegate * inputEventHandlerDelegate,
                              TextFieldDelegate * delegate);
   int numberOfRows() const override { return HomogeneityTableDataSource::k_initialNumberOfRows; }
-  int numberOfColumns() const override { return HomogeneityTableDataSource::k_initialNumberOfColumns; }
+  int numberOfColumns() const override {
+    return HomogeneityTableDataSource::k_initialNumberOfColumns;
+  }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
   int typeAtLocation(int i, int j) override { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
@@ -38,20 +41,24 @@ class InputHomogeneityDataSource : public TableViewDataSource {
 };
 
 class InputHomogeneityController : public Page, public ButtonDelegate {
- public:
-  InputHomogeneityController(StackViewController * parent, HomogeneityResultsController * homogeneityResultsController,
-                             InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+public:
+  InputHomogeneityController(StackViewController * parent,
+                             HomogeneityResultsController * homogeneityResultsController,
+                             InputEventHandlerDelegate * inputEventHandlerDelegate,
+                             TextFieldDelegate * delegate);
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTitles;
+  }
   const char * title() override { return "x2-test: Homogeneity/Independence"; }
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   void buttonAction() override;
 
- private:
+private:
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;
   SelectableTableView m_table;
-  InputTableView m_contentView;
+  InputCategoricalView m_contentView;
 
   HomogeneityResultsController * m_homogeneityResultsController;
 };

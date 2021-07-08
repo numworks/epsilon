@@ -62,7 +62,6 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   distribution_cell.cpp \
   distribution_curve_view.cpp \
 	image_cell.cpp \
-	input_table_view.cpp \
 	horizontal_or_vertical_layout.cpp \
 	results_data_source.cpp \
 	distribution_graph_view.cpp \
@@ -76,6 +75,8 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	calculation_popup_data_source.cpp \
 	bordering_view.cpp \
 	comparison_operator_popup_data_source.cpp \
+	input_goodness_table_view.cpp \
+	input_categorical_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

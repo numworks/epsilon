@@ -1,10 +1,8 @@
 #include <kernel/drivers/crc32.h>
+#include <ion/src/shared/crc32_eat_byte.h>
 #include <regs/regs.h>
 
 namespace Ion {
-
-uint32_t crc32EatByte(uint32_t crc, uint8_t data);
-
 namespace Device {
 
 using namespace Device::Regs;

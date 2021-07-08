@@ -59,8 +59,15 @@ SECTIONS {
     _userland_flash_end = LOADADDR(.data) + SIZEOF(.data);
   } >SRAM AT> FLASH_USERLAND
 
+  .signature : {
+    FILL(0xFF);
+    /* We write the last byte of the signature with a default value to make
+     * sure the userland size takes into account the signature. */
+    . += SIGNATURE_LENGTH - 1;
+    BYTE(0xFF)
+  } >FLASH_USERLAND
+
   .storage_flash : {
-    . += SIGNATURE_LENGTH;
     . = ALIGN(64K);
     _storage_flash_start = .;
     . = (ORIGIN(FLASH_USERLAND) + LENGTH(FLASH_USERLAND));

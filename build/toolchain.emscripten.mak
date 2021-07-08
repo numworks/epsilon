@@ -30,7 +30,9 @@ __ZN3Ion6Events13isShiftActiveEv \
 __ZN3Ion6Events5EventC2Ei \
 __ZN3Ion6Events5EventC2ENS_8Keyboard3KeyEbb \
 __ZN3Ion6Events8getEventEPi \
-__ZN3Ion6EventsL13innerGetEventEPi \
+__ZN3Ion6Events14sharedGetEventEPi \
+__ZN3Ion6Events16popKeyboardStateEv \
+__ZN3Ion8Keyboard8popStateEv \
 __ZN3Ion6EventsL16sleepWithTimeoutEiPi \
 __ZN3Ion6Timing6msleepEj \
 __ZN3Ion8Keyboard4scanEv \

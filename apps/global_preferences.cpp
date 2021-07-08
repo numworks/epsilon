@@ -8,7 +8,9 @@ GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
 
 GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
   if (m_examMode == ExamMode::Unknown) {
-    uint8_t mode = Ion::PersistingBytes::read();
+    /* Persisting bytes are initialized at 0xFF so we use an ~operator the bits
+     * to ensure the exam mode in off position after flashing. */
+    uint8_t mode = ~Ion::PersistingBytes::read();
     assert(mode >= 0 && mode < 3); // mode can be cast in ExamMode (Off, Standard or Dutch)
     m_examMode = static_cast<ExamMode>(mode);
   }
@@ -21,7 +23,8 @@ void GlobalPreferences::setExamMode(ExamMode mode) {
     return;
   }
   assert(mode != ExamMode::Unknown);
-  Ion::PersistingBytes::write(static_cast<uint8_t>(mode));
+  // Cf comment above
+  Ion::PersistingBytes::write(~static_cast<uint8_t>(mode));
   m_examMode = mode;
 }
 

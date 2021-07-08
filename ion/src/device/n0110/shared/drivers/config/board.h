@@ -6,7 +6,6 @@
 #include <ion/src/device/shared/drivers/config/board.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <shared/drivers/config/persisting_bytes.h>
 
 namespace Ion {
 namespace Device {

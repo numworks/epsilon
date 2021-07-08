@@ -55,6 +55,9 @@ void Statistic::initializeStatistic(Statistic * statistic, Data::Test t, Data::T
         new (statistic) PooledTwoMeansStatistic();
       }
       break;
+    case Data::Test::Categorical:
+      new (statistic) Chi2Statistic();
+      break;
     default:
       assert(false);
       break;

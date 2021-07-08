@@ -7,8 +7,11 @@ namespace Probability {
 
 class Chi2Statistic : public CachedStatistic {
 public:
+  Chi2Statistic() : m_numberOfParameters(k_maxNumberOfParameters) {}
   void computeTest() override;
   const char * testCriticalValueSymbol() override { return "X2"; }
+  const char * estimateSymbol() override { return  ""; }
+  I18n::Message estimateDescription() override { return I18n::Message::Default; }
   bool hasDegreeOfFreedom() override { return true; }
   float degreeOfFreedom() override { return m_degreesOfFreedom; }
 
@@ -32,7 +35,7 @@ protected:
 private:
   static float _zAlpha(float degreesOfFreedom, float significanceLevel);
   static float _pVal(float degreesOfFreedom, float z);
-  constexpr static int k_maxNumberOfParameters = 10;
+  constexpr static int k_maxNumberOfParameters = 20;
   float m_input[k_maxNumberOfParameters];
   float m_degreesOfFreedom;
   int m_numberOfParameters;

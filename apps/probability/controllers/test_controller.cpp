@@ -95,7 +95,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (Data::isProportion(test) && (test != App::app()->test())) {
+    if ((Data::isProportion(test) || test == Data::Test::Categorical) && (test != App::app()->test())) {
       Statistic::initializeStatistic(m_statistic, test, Data::TestType::ZTest);
       *m_globalTestType = Data::TestType::ZTest;
     }

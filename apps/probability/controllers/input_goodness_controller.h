@@ -4,8 +4,6 @@
 #include <apps/probability/gui/horizontal_or_vertical_layout.h>
 #include <apps/shared/button_with_separator.h>
 #include <escher/buffer_table_cell.h>
-#include <escher/even_odd_editable_text_cell.h>
-#include <escher/even_odd_message_text_cell.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
@@ -16,46 +14,27 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 #include <kandinsky/coordinate.h>
+#include <shared/parameter_text_field_delegate.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "probability/gui/input_table_view.h"
+#include "probability/gui/input_categorical_view.h"
+#include "probability/gui/input_goodness_table_view.h"
 #include "probability/gui/page_controller.h"
+#include "probability/models/statistic/chi2_statistic.h"
 #include "results_controller.h"
 
 using namespace Escher;
 
 namespace Probability {
 
-class InputGoodnessDataSource : public TableViewDataSource {
+class InputGoodnessController : public Page,
+                                public ButtonDelegate,
+                                public Shared::ParameterTextFieldDelegate {
 public:
-  InputGoodnessDataSource(Responder * parent, SelectableTableView * tableView,
-                          InputEventHandlerDelegate * inputEventHandlerDelegate,
-                          TextFieldDelegate * delegate);
-  int numberOfRows() const override { return k_initialNumberOfRows; };
-  int numberOfColumns() const override { return k_numberOfColumns; }
-  int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
-  HighlightCell * reusableCell(int i, int type) override;
-  int typeAtLocation(int i, int j) override { return 0; }
-
-  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
-  KDCoordinate rowHeight(int j) override { return k_rowHeight; }
-
-private:
-  constexpr static int k_initialNumberOfRows = 4;
-  constexpr static int k_numberOfColumns = 2;
-  constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Metric::CommonLeftMargin) / 2;
-  constexpr static int k_rowHeight = 20;
-
-  // TODO actually store input here
-  EvenOddMessageTextCell m_header[k_numberOfColumns];
-  EvenOddEditableTextCell m_cells[8];  // TODO should it contain views?
-};
-
-class InputGoodnessController : public Page, public ButtonDelegate {
-public:
-  InputGoodnessController(StackViewController * parent, ResultsController * resultsController,
-                          InputEventHandlerDelegate * inputEventHandlerDelegate,
-                          TextFieldDelegate * textFieldDelegate);
+  InputGoodnessController(StackViewController * parent,
+                          ResultsController * resultsController,
+                          Statistic * statistic,
+                          InputEventHandlerDelegate * inputEventHandlerDelegate);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   }
@@ -64,12 +43,18 @@ public:
   void didBecomeFirstResponder() override;
   void buttonAction() override;
 
+  // TextFieldDelegate
+  // TODO factor with InputController
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField,
+                                 const char * text,
+                                 Ion::Events::Event event) override;
+
 private:
   ResultsController * m_resultsController;
-
-  InputGoodnessDataSource m_data;
-  SelectableTableView m_dataTable;
-  InputTableView m_contentView;
+  Chi2Statistic * m_statistic;
+  InputGoodnessTableView m_inputTableView;
+  InputCategoricalView m_contentView;
 };
 
 }  // namespace Probability

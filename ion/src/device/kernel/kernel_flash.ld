@@ -69,9 +69,10 @@ SECTIONS {
 
   .persisting_bytes_buffer ORIGIN(PERSITING_BYTES) : {
     _persisting_bytes_buffer_start = .;
-    KEEP(*(.persisting_bytes_buffer)) /* TODO: use fill*/
+    FILL(0xFF);
     /* Note: We don't increment "." here, we set it. */
-    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
+    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES) - 1;
+    BYTE(0xFF)
     _persisting_bytes_buffer_end = .;
   } >PERSITING_BYTES
 

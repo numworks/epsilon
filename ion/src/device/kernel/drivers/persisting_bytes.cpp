@@ -1,6 +1,5 @@
 #include "persisting_bytes.h"
 #include <drivers/cache.h>
-#include <drivers/config/persisting_bytes.h>
 #include <drivers/flash_privileged.h>
 #include <assert.h>
 
@@ -16,11 +15,6 @@ namespace PersistingBytes {
 //TODO LEA add tests
 //
 //TODO LEA Do we want to persist 1 byte only?
-
-char ones[PersistingBytes::Config::BufferSize]
-__attribute__((section(".persisting_bytes_buffer")))
-__attribute__((used))
-= {PERSISTING_BYTES_BUFFER_CONTENT};
 
 /*
  *  Erased Memory  -> 11111111|11111111|11111111|

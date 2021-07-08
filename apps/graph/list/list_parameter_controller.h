@@ -19,15 +19,13 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   // Shared cells + m_typeCell, m_functionDomain, and m_renameCell
-  int numberOfRows() const override { return Shared::ListParameterController::numberOfRows() + 3; }
+  int numberOfRows() const override { return Shared::ListParameterController::numberOfRows() + 2; }
 protected:
   bool handleEnterOnRow(int rowIndex) override;
 private:
-  void renameFunction();
   ListController * m_listController;
   Escher::MessageTableCellWithChevronAndMessage m_typeCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;
-  Escher::MessageTableCell m_renameCell;
   TypeParameterController m_typeParameterController;
   DomainParameterController m_domainParameterController;
 };

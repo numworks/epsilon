@@ -7,8 +7,6 @@
 namespace Ion {
 namespace Events {
 
-void didPressNewKey();
-
 static constexpr size_t sharedExternalTextBufferSize = sizeof(SDL_TextInputEvent::text);
 char * sharedExternalTextBuffer();
 

@@ -1,5 +1,10 @@
-#include <ion/events.h>
+#include "events.h"
+#include "events_modifier.h"
+#include <ion/keyboard.h>
+#include <ion/timing.h>
 #include <layout_events.h>
+#include <limits.h>
+#include <algorithm>
 
 extern "C" {
 #include <assert.h>
@@ -55,6 +60,92 @@ const char * Event::defaultText() const {
     return nullptr;
   }
   return s_dataForEvent[m_id].text();
+}
+
+Event sLastEvent = Events::None;
+Keyboard::State sLastKeyboardState(0);
+Keyboard::State sCurrentKeyboardState(0);
+uint64_t sKeysSeenUp = -1;
+bool sLastEventShift = false;
+bool sLastEventAlpha = false;
+bool sEventIsRepeating = false;
+
+Event sharedGetEvent(int * timeout) {
+  constexpr int delayBeforeRepeat = 200;
+  constexpr int delayBetweenRepeat = 50;
+  assert(*timeout > delayBeforeRepeat);
+  assert(*timeout > delayBetweenRepeat);
+
+  if (handlePreemption(false)) {
+    return None;
+  }
+
+  int startTime = Ion::Timing::millis();
+  while (true) {
+    Event platformEvent = getPlatformEvent();
+    if (platformEvent != None) {
+      return platformEvent;
+    }
+
+    bool lock = isLockActive();
+    uint64_t keysSeenTransitionningFromUpToDown;
+    Keyboard::State state;
+    while ((state = popKeyboardState()) != Keyboard::State(-1)) {
+      sCurrentKeyboardState = state;
+      keysSeenTransitionningFromUpToDown = state & sKeysSeenUp;
+      sKeysSeenUp = ~state;
+
+      if (keysSeenTransitionningFromUpToDown != 0) {
+        sEventIsRepeating = false;
+        resetLongRepetition();
+        /* The key that triggered the event corresponds to the first non-zero bit
+         * in "match". This is a rather simple logic operation for the which many
+         * processors have an instruction (ARM thumb uses CLZ).
+         * Unfortunately there's no way to express this in standard C, so we have
+         * to resort to using a builtin function. */
+        Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
+        didPressNewKey(key);
+        bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
+        bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
+        Event event(key, shift, alpha, lock);
+        updateModifiersFromEvent(event);
+        sLastEvent = event;
+        sLastKeyboardState = state;
+        return event;
+      }
+    }
+
+    int maximumDelay = *timeout;
+    int delayForRepeat = INT_MAX;
+    bool isRepeatableEvent = canRepeatEvent(sLastEvent)
+                          && sLastKeyboardState == sCurrentKeyboardState
+                          && sLastEventShift == sCurrentKeyboardState.keyDown(Keyboard::Key::Shift)
+                          && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Keyboard::Key::Alpha) || lock);
+    if (isRepeatableEvent) {
+      delayForRepeat = sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat;
+      maximumDelay = std::min(maximumDelay, delayForRepeat);
+    }
+
+    if (waitForInterruptingEvent(maximumDelay, timeout)) {
+      continue;
+    }
+
+    if (*timeout == 0) {
+      resetLongRepetition();
+      return None;
+    }
+
+    int elapsedTime = Ion::Timing::millis() - startTime;
+
+    /* At this point, we know that keysSeenTransitionningFromUpToDown has
+     * always been zero. In other words, no new key has been pressed. */
+    if (elapsedTime >= delayForRepeat) {
+      assert(isRepeatableEvent);
+      sEventIsRepeating = true;
+      Ion::Events::incrementRepetitionFactor();
+      return sLastEvent;
+    }
+  }
 }
 
 }

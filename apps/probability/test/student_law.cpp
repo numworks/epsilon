@@ -9,35 +9,9 @@
 #include <algorithm>
 #include <cmath>
 
-template <typename T>
-bool roughlyEqual(T a, T b, T threshold, bool absolute) {
-  if (absolute) {
-    return std::fabs(a - b) < threshold;
-  }
-  T max = std::max(std::fabs(a), std::fabs(b));
-  if (max == INFINITY) {
-    return a == b;
-  }
-  T relerr = std::fabs(a - b) / max;
-  return max == 0 || relerr < threshold;
-}
+#include "test_helper.h"
 
-template <typename T>
-void assertRoughlyEqual(T a, T b, T threshold = FLT_EPSILON, bool absolute = false) {
-  quiz_assert(roughlyEqual<T>(a, b, threshold, absolute));
-}
-
-struct TestCase {
-  TestCase(double K, double X, double d, double p, float precision = 1e-7) :
-      k(K), x(X), density(d), probability(p), precision(precision) {}
-  double k;
-  double x;
-  double density;
-  double probability;
-  double precision;  // Lower precision for extreme case (x or k "big")
-};
-
-TestCase tests[]{
+TestCase studentTests[]{
     TestCase(0.28, -10, 0.0051917760715735, 0.1857118516896359),
     TestCase(1, -10, 0.0031515830315226806, 0.03172551743055356),
     TestCase(2.57, -10, 0.0005030925333730742, 0.001996706792893251),
@@ -120,24 +94,32 @@ TestCase tests[]{
 };
 
 QUIZ_CASE(student_law) {
-  for (int i = 0; i < sizeof(tests) / sizeof(TestCase); i++) {
-    TestCase t = tests[i];
-    assertRoughlyEqual(Probability::StudentLaw::EvaluateAtAbscissa(t.x, t.k), t.density,
+  for (int i = 0; i < sizeof(studentTests) / sizeof(TestCase); i++) {
+    TestCase t = studentTests[i];
+    // double
+    assertRoughlyEqual(Probability::StudentLaw::EvaluateAtAbscissa(t.x, t.k),
+                       t.density,
                        t.precision);
     assertRoughlyEqual(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa(t.x, t.k),
-                       t.probability, t.precision);
+                       t.probability,
+                       t.precision);
     assertRoughlyEqual(
         Probability::StudentLaw::CumulativeDistributiveInverseForProbability(t.probability, t.k),
-        t.x, t.precision / 10);
+        t.x,
+        t.precision / 10);
+
     // floats
     assertRoughlyEqual<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(t.x, t.k),
-                              t.density, sqrt(t.precision));
+                              t.density,
+                              sqrt(t.precision));
     assertRoughlyEqual<float>(
         Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(t.x, t.k),
-        t.probability, sqrt(t.precision));
+        t.probability,
+        sqrt(t.precision));
     assertRoughlyEqual<float>(
         Probability::StudentLaw::CumulativeDistributiveInverseForProbability<float>(t.probability,
                                                                                     t.k),
-        t.x, sqrt(t.precision));
+        t.x,
+        sqrt(t.precision));
   }
 }

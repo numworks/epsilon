@@ -1,10 +1,11 @@
 #include "chi2_law.h"
 
+#include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 
 #include <cmath>
 
-#include "regularized_gamma.h"
+#include "probability/models/distribution/regularized_gamma.h"
 
 namespace Probability {
 
@@ -12,6 +13,9 @@ template <typename T>
 T Chi2Law::EvaluateAtAbscissa(T x, T k) {
   if (x < 0.0f) {
     return NAN;
+  }
+  if (x == 0) {
+    return 0;
   }
   const float halfk = k / 2.0;
   const float halfX = x / 2.0f;
@@ -46,7 +50,7 @@ T Chi2Law::CumulativeDistributiveInverseForProbability(T probability, T k) {
   double xmin = DBL_EPSILON;
   double xmax = 10;
 
-  while (CumulativeDistributiveFunctionAtAbscissa(xmax, k) < 0) {
+  while (Chi2Law::CumulativeDistributiveFunctionAtAbscissa<T>(xmax, k) < probability) {
     xmin = xmax;
     xmax *= 10;
   }

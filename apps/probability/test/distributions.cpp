@@ -9,6 +9,8 @@
 #include "probability/models/distribution/student_distribution.h"
 #include "probability/models/distribution/fisher_distribution.h"
 
+// TODO evaluateAtAbscissa is never tested
+
 void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::Distribution * distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);
   quiz_assert(!std::isnan(r));
@@ -71,6 +73,7 @@ QUIZ_CASE(chi_squared_distribution) {
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.3, 0.047059684573231390369851823152202996425330638885498046875);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 2.9874567, 0.250530060451470470983537097708904184401035308837890625);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 4.987, 0.53051693435084168459781039928202517330646514892578125);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 20, 0.9982594816610862);
 
   // Chi Squared distribution with 6 degrees of freedom
   distribution.setParameterAtIndex(6.0, 0);

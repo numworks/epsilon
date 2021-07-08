@@ -77,12 +77,12 @@ Event sharedGetEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
 
-  if (handlePreemption(false)) {
-    return None;
-  }
-
   int startTime = Ion::Timing::millis();
   while (true) {
+    if (handlePreemption(false)) {
+      return None;
+    }
+
     Event platformEvent = getPlatformEvent();
     if (platformEvent != None) {
       return platformEvent;

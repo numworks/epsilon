@@ -7,6 +7,7 @@
 #include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
+#include <escher/scrollable_view.h>
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
 #include <escher/text_field_delegate.h>
@@ -18,28 +19,31 @@
 
 namespace Probability {
 
-
 /* This view contains  pointer to a TableView, an EditableCell and a Button,
  * layed out vertically, and is able to move selection between them.
  * Meant for InputGoodnessController and InputHomogeneityController.
  */
-class InputCategoricalView : public VerticalLayout, public Responder {
+class InputCategoricalView : public Escher::ScrollableView {
 public:
   InputCategoricalView(Responder * parentResponder,
-                 ButtonDelegate * buttonDelegate,
-                 SelectableTableView * table,
-                 InputEventHandlerDelegate * inputEventHandlerDelegate,
-                 TextFieldDelegate * textFieldDelegate);
+                       ButtonDelegate * buttonDelegate,
+                       SelectableTableView * table,
+                       InputEventHandlerDelegate * inputEventHandlerDelegate,
+                       TextFieldDelegate * textFieldDelegate);
 
   MessageTableCellWithEditableTextWithMessage * significanceLevelView() {
     return &m_significanceCell;
   }
+  KDSize minimalSizeForOptimalDisplay() const override {
+    // Pass expected size to VerticalLayout to propagate to TableCells
+    ContentView * contentView = const_cast<ContentView *>(&m_contentView);
+    contentView->setSize(bounds().size());
+    return Escher::ScrollableView::minimalSizeForOptimalDisplay();
+  }
+
   void drawRect(KDContext * ctx, KDRect rect) const override {
     ctx->fillRect(rect, Palette::WallScreenDark);
   }
-  // VerticalLayout
-  int numberOfSubviews() const override { return 5 /* Table + Cell + Button + 2 Spacers */; }
-  Escher::View * subviewAtIndex(int i) override;
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -48,25 +52,42 @@ public:
   SelectableTableViewDataSource * selectionDataSource() { return &m_tableSelection; }
 
 private:
+  class ContentView : public VerticalLayout {
+  public:
+    ContentView(SelectableTableView * dataInputTableView,
+                MessageTableCellWithEditableTextWithMessage * significanceCell,
+                Escher::Button * next);
+    int numberOfSubviews() const override { return 5 /* Table + Cell + Button + 2 Spacers */; }
+    Escher::View * subviewAtIndex(int i) override;
+
+    constexpr static int k_indexOfTable = 0;
+    constexpr static int k_indexOfSpacer1 = 1;
+    constexpr static int k_indexOfSignificance = 2;
+    constexpr static int k_indexOfSpacer2 = 3;
+    constexpr static int k_indexOfNext = 4;
+
+  private:
+    SelectableTableView * m_dataInputTableView;
+    MessageTableCellWithEditableTextWithMessage * m_significanceCell;
+    Escher::Button * m_next;
+
+    SpacerView m_spacer1;
+    SpacerView m_spacer2;
+  };
+
   constexpr static int k_marginVertical = 5;
   Responder * responderForRow(int row);
   void setResponderForSelectedRow();
   void selectCorrectView();
 
-  constexpr static int k_indexOfTable = 0;
-  constexpr static int k_indexOfSpacer1 = 1;
-  constexpr static int k_indexOfSignificance = 2;
-  constexpr static int k_indexOfSpacer2 = 3;
-  constexpr static int k_indexOfNext = 4;
-
   SelectableTableView * m_dataInputTableView;
   MessageTableCellWithEditableTextWithMessage m_significanceCell;
   Escher::Button m_next;
-  SpacerView m_spacer1;
-  SpacerView m_spacer2;
+  ContentView m_contentView;
 
   SelectableTableViewDataSource m_tableSelection;
   SelectableTableViewDataSource m_viewSelection;
+  Escher::ScrollViewDataSource m_scrollDataSource;
 };
 
 }  // namespace Probability

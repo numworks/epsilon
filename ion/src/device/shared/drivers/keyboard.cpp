@@ -49,7 +49,7 @@ namespace Keyboard {
 
 State scan() {
   // Shutdown registers for the EXTI controller as it alters keyboard scanning
-  shutdownExtendedInterruptions();
+  bool shouldRestoreExtendedInterruptions = shutdownExtendedInterruptions();
   uint64_t state = 0;
 
   for (uint8_t i=0; i<Config::numberOfRows; i++) {
@@ -68,8 +68,10 @@ State scan() {
 
   // Make sure undefined key bits are forced to zero in the return value
   state = Config::ValidKeys(state);
-  // Restore registers for the EXTI controller
-  initExtendedInterruptions();
+  // Restore registers for the EXTI controller if it wasn't shutdown before scan
+  if (shouldRestoreExtendedInterruptions) {
+    initExtendedInterruptions();
+  }
 
   return State(state);
 }
@@ -126,11 +128,16 @@ void initExtendedInterruptions() {
   }
 }
 
-void shutdownExtendedInterruptions() {
+bool shutdownExtendedInterruptions() {
+  bool pinHasChanged = false;
   for (uint8_t i=0; i<Config::numberOfColumns; i++) {
     uint8_t pin = Config::ColumnPins[i];
-    EXTI.IMR()->set(pin, false);
+    if (EXTI.IMR()->get(pin)) {
+      pinHasChanged = true;
+      EXTI.IMR()->set(pin, false);
+    }
   }
+  return pinHasChanged;
 }
 
 }

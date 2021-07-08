@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "crc32_eat_byte.h"
 
 namespace Ion {
 

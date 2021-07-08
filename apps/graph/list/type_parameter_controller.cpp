@@ -1,9 +1,9 @@
 #include "type_parameter_controller.h"
-#include "type_helper.h"
+#include <poincare/layout_helper.h>
 #include <apps/i18n.h>
 #include "../app.h"
 #include <assert.h>
-
+// TODO Hugo : Delete type_helper
 using namespace Escher;
 
 namespace Graph {
@@ -20,24 +20,10 @@ void TypeParameterController::didBecomeFirstResponder() {
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    assert(!m_record.isNull());
-    // TODO Hugo : Remove this menu all together
-    // NewFunction::PlotType plotType = static_cast<NewFunction::PlotType>(selectedRow());
-    // App * myApp = App::app();
-    // assert(!m_record.isNull());
-    // Shared::ExpiringPointer<NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
-    // function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit(), myApp->localContext());
-    // if (function->plotType() != plotType) {
-    //   /* Updating plot type failed due to full storage. Do not quit menu as
-    //    * there is a "full storage" warning pop-up as first responder. */
-    //   return true;
-    // }
-    StackViewController * stack = stackController();
-    stack->pop();
-    stack->pop();
+    // TODO Hugo : Copy paste relevant content
     return true;
   }
-  if (event == Ion::Events::Left && !m_record.isNull()) {
+  if (event == Ion::Events::Left) {
     stackController()->pop();
     return true;
   }
@@ -50,11 +36,8 @@ const char * TypeParameterController::title() {
 
 void TypeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  App * myApp = App::app();
   assert(!m_record.isNull());
-  Shared::ExpiringPointer<NewFunction> function = myApp->functionStore()->modelForRecord(m_record);
-  int row = static_cast<int>(function->plotType());
-  selectCellAtLocation(0, row);
+  selectCellAtLocation(0, 0);
   resetMemoization();
   m_selectableTableView.reloadData();
 }
@@ -65,10 +48,11 @@ KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
 }
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(0 <= index && index < k_numberOfTypes);
+  assert(0 <= index && index < k_numberOfDataPoints);
   MessageTableCellWithExpression * myCell = static_cast<MessageTableCellWithExpression *>(cell);
-  myCell->setMessage(PlotTypeHelper::Message(index));
-  myCell->setLayout(PlotTypeHelper::Layout(index));
+  // TODO Hugo : Create and retrive the correct messages
+  myCell->setMessage(I18n::Message::CartesianType);
+  myCell->setLayout(Poincare::LayoutHelper::String("3.1415", strlen("3.1415")));
 }
 
 MessageTableCellWithExpression * TypeParameterController::reusableCell(int index, int type) {

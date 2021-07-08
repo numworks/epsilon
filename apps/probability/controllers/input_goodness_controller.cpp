@@ -47,6 +47,7 @@ bool Probability::InputGoodnessController::textFieldShouldFinishEditing(TextFiel
 bool Probability::InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
                                                                      const char * text,
                                                                      Ion::Events::Event event) {
+  // Parse significance level
   float p;
   if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
     return false;

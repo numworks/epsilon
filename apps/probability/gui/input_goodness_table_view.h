@@ -22,11 +22,11 @@ public:
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                          Chi2Statistic * statistic);
   // DataSource
-  int numberOfRows() const override { return k_initialNumberOfRows; };
+  int numberOfRows() const override { return m_numberOfRows; };
   int numberOfColumns() const override { return k_numberOfColumns; }
-  int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
+  int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
-  int typeAtLocation(int i, int j) override { return 0; }
+  int typeAtLocation(int i, int j) override { return j == 0 ? k_typeOfHeader : 0; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
@@ -38,22 +38,23 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidHandleEvent(Escher::TextField * textField,
-                               bool returnValue,
-                               bool textSizeDidChange) override;
 
 private:
+  constexpr static int k_typeOfHeader = 1;
   constexpr static int k_initialNumberOfRows = 4;
+  constexpr static int k_maxNumberOfRows = Chi2Statistic::k_maxNumberOfParameters / 2 + 1;
   constexpr static int k_numberOfColumns = 2;
   constexpr static int k_columnWidth = (Ion::Display::Width -
                                         2 * Escher::Metric::CommonLeftMargin) /
                                        2;
   constexpr static int k_rowHeight = 20;
 
+  int m_numberOfRows;
+
   Chi2Statistic * m_statistic;
 
   Escher::EvenOddMessageTextCell m_header[k_numberOfColumns];
-  Escher::EvenOddEditableTextCell m_cells[8];
+  Escher::EvenOddEditableTextCell m_cells[k_numberOfColumns * (k_maxNumberOfRows - 1)];
 
   Escher::SelectableTableViewDataSource m_tableSelection;
 };

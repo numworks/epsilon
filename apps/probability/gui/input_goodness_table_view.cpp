@@ -8,7 +8,9 @@ InputGoodnessTableView::InputGoodnessTableView(
     Escher::Responder * parentResponder,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Chi2Statistic * statistic) :
-    SelectableTableView(parentResponder, this, &m_tableSelection), m_statistic(statistic) {
+    SelectableTableView(parentResponder, this, &m_tableSelection),
+    m_numberOfRows(k_initialNumberOfRows),
+    m_statistic(statistic) {
   m_header[0].setMessage(I18n::Message::Observed);
   m_header[1].setMessage(I18n::Message::Expected);
   m_header[0].setEven(true);
@@ -16,7 +18,7 @@ InputGoodnessTableView::InputGoodnessTableView(
   m_header[0].setMessageFont(KDFont::SmallFont);
   m_header[1].setMessageFont(KDFont::SmallFont);
 
-  for (int i = 0; i < k_numberOfColumns * k_initialNumberOfRows; i++) {
+  for (int i = 0; i < sizeof(m_cells) / sizeof(Escher::EvenOddEditableTextCell); i++) {
     m_cells[i].setParentResponder(this);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_cells[i].setEven((i / 2) % 2 == 0);
@@ -24,18 +26,20 @@ InputGoodnessTableView::InputGoodnessTableView(
   }
 }
 
+int InputGoodnessTableView::reusableCellCount(int type) {
+  if (type == k_typeOfHeader) {
+    return k_numberOfColumns;
+  }
+   return k_maxNumberOfRows * k_numberOfColumns;
+}
+
 Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
-  assert(i < reusableCellCount(0));
-  if (i < 2) {
+  assert(i < reusableCellCount(type));
+  if (type == k_typeOfHeader) {
+    assert(i < 2);
     return &m_header[i];
   }
   return &m_cells[i];
-}
-
-bool InputGoodnessTableView::textFieldDidHandleEvent(Escher::TextField * textField,
-                                                     bool returnValue,
-                                                     bool textSizeDidChange) {
-  return returnValue;
 }
 
 void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::HighlightCell * cell,
@@ -47,10 +51,14 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
   int index = 2 * (j - 1) + i;
   float p = m_statistic->paramAtIndex(index);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
-  constexpr int bufferSize = 20;
-  char buffer[bufferSize];
-  defaultParseFloat(p, buffer, bufferSize);
-  myCell->editableTextCell()->textField()->setText(buffer);
+  if (isnan(p)) {
+    myCell->editableTextCell()->textField()->setText("");
+  } else {
+    constexpr int bufferSize = 20;
+    char buffer[bufferSize];
+    defaultParseFloat(p, buffer, bufferSize);
+    myCell->editableTextCell()->textField()->setText(buffer);
+  }
 }
 
 bool Probability::InputGoodnessTableView::textFieldShouldFinishEditing(
@@ -69,6 +77,10 @@ bool Probability::InputGoodnessTableView::textFieldDidFinishEditing(Escher::Text
 
   int index = 2 * (selectedRow() - 1) + selectedColumn();
   m_statistic->setParamAtIndex(index, p);
+  if (selectedRow() == numberOfRows() - 1 && numberOfRows() < k_maxNumberOfRows) {
+    m_numberOfRows++;
+  }
+  selectCellAtLocation(selectedColumn(), selectedRow() + 1);
   reloadData(false);
   return true;
 }

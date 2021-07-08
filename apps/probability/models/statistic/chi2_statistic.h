@@ -3,11 +3,13 @@
 
 #include "statistic.h"
 
+#include <cmath>
+
 namespace Probability {
 
 class Chi2Statistic : public CachedStatistic {
 public:
-  Chi2Statistic() : m_numberOfParameters(k_maxNumberOfParameters) {}
+  Chi2Statistic();
   void computeTest() override;
   const char * testCriticalValueSymbol() override { return "X2"; }
   const char * estimateSymbol() override { return  ""; }
@@ -20,9 +22,10 @@ public:
   void computeInterval() override {}
   const char * intervalCriticalValueSymbol() override { return ""; }
 
-  // The input number of parameters should be provided by the controller
-  void setNumberOfParams(int n) { m_numberOfParameters = n;}
-  int numberOfStatisticParameters() const override { return m_numberOfParameters; }
+  int numberOfStatisticParameters() const override { return k_maxNumberOfParameters; };
+
+  constexpr static float k_undefinedValue = NAN;
+  constexpr static int k_maxNumberOfParameters = 20;
 
 protected:
   const ParameterRepr * paramReprAtIndex(int i) const override { return nullptr; }
@@ -33,12 +36,12 @@ protected:
   virtual float observedValue(int index);
 
 private:
+  int _numberOfInputRows();
   static float _zAlpha(float degreesOfFreedom, float significanceLevel);
   static float _pVal(float degreesOfFreedom, float z);
-  constexpr static int k_maxNumberOfParameters = 20;
+
   float m_input[k_maxNumberOfParameters];
   float m_degreesOfFreedom;
-  int m_numberOfParameters;
 };
 
 }  // namespace Probability

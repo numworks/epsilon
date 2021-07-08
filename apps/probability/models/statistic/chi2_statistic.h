@@ -17,6 +17,10 @@ public:
   void computeInterval() override {}
   const char * intervalCriticalValueSymbol() override { return ""; }
 
+  // The input number of parameters should be provided by the controller
+  void setNumberOfParams(int n) { m_numberOfParameters = n;}
+  int numberOfStatisticParameters() const override { return m_numberOfParameters; }
+
 protected:
   const ParameterRepr * paramReprAtIndex(int i) const override { return nullptr; }
   float * paramArray() override { return m_input; }
@@ -26,13 +30,14 @@ protected:
   virtual float observedValue(int index);
 
 private:
-  float _zAlpha(float degreesOfFreedom, float significanceLevel);
-  float _pVal(float degreesOfFreedom, float z);
+  static float _zAlpha(float degreesOfFreedom, float significanceLevel);
+  static float _pVal(float degreesOfFreedom, float z);
   constexpr static int k_maxNumberOfParameters = 10;
   float m_input[k_maxNumberOfParameters];
   float m_degreesOfFreedom;
+  int m_numberOfParameters;
 };
 
-} // namespace Probability
+}  // namespace Probability
 
 #endif /* APPS_PROBABILITY_MODELS_STATISTIC_CHI2_STATISTIC_H */

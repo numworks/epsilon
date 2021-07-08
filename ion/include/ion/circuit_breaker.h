@@ -25,12 +25,12 @@ bool hasCheckpoint(CheckpointType type);
 void unsetCheckpoint(CheckpointType type);
 void loadCheckpoint(CheckpointType type);
 
-#if EPSILON_GETOPT
+#if PLATFORM_DEVICE
+Status setCheckpoint(CheckpointType type);
+#else
 #define setCheckpoint(type) statusAfterSetjmp(setjmp(*jmpbufForType(type)), (type))
 Status statusAfterSetjmp(int jmpStatus, CheckpointType type);
 jmp_buf * jmpbufForType(CheckpointType type);
-#else
-Status setCheckpoint(CheckpointType type);
 #endif
 
 }

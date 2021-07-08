@@ -3,8 +3,8 @@
 namespace Ion {
 namespace Authentication {
 
-bool trustedUserland() {
-  return true;
+ClearanceLevel clearanceLevel() {
+  return ClearanceLevel::NumWorks;
 }
 
 }

@@ -157,6 +157,13 @@ bool setCheckpoint(CheckpointType type) {
 void loadCheckpoint(CheckpointType type) {
   assert(Device::CircuitBreaker::hasCheckpoint(type));
   Keyboard::Queue::sharedQueue()->flush();
+  /* Unset lower checkpoints to avoid keeping references to an unwound stack. */
+  if (type == CheckpointType::User) {
+    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
+  } else if (type == CheckpointType::Home) {
+    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
+    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::User);
+  }
   setPendingAction(type, InternalStatus::PendingLoadCheckpoint);
 }
 

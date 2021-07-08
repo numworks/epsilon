@@ -34,6 +34,7 @@
 #include "probability/models/statistic/two_means_t_statistic.h"
 #include "probability/models/statistic/two_means_z_statistic.h"
 #include "probability/models/statistic/two_proportions_statistic.h"
+#include "probability/models/statistic/chi2_statistic.h"
 
 namespace Probability {
 namespace Data {
@@ -59,10 +60,10 @@ struct ProbaData {
   CalculationBuffer m_calculationBuffer;
 };
 
-static constexpr int statisticSizes[7] = {
+static constexpr int statisticSizes[8] = {
     sizeof(OneProportionStatistic),  sizeof(OneMeanZStatistic),  sizeof(OneMeanTStatistic),
     sizeof(TwoProportionsStatistic), sizeof(TwoMeansZStatistic), sizeof(TwoMeansTStatistic),
-    sizeof(PooledTwoMeansStatistic)};
+    sizeof(PooledTwoMeansStatistic), sizeof(Chi2Statistic)};
 
 constexpr int maxStatisticSize = arrayMax(statisticSizes);
 typedef char StatisticBuffer[maxStatisticSize];

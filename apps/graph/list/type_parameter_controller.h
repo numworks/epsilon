@@ -23,18 +23,18 @@ public:
   TELEMETRY_ID("TypeParameter");
 
   // MemoizedListViewDataSource
-  int numberOfRows() const override { return k_numberOfTypes; }
+  int numberOfRows() const override { return k_numberOfDataPoints; }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::MessageTableCellWithExpression * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override { return k_numberOfTypes; }
+  int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtIndex(int index) override { return 0; }
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 private:
-  constexpr static int k_numberOfTypes = 3;
+  constexpr static int k_numberOfDataPoints = 3;
   Escher::StackViewController * stackController() const;
-  Escher::MessageTableCellWithExpression m_cells[k_numberOfTypes];
+  Escher::MessageTableCellWithExpression m_cells[k_numberOfDataPoints];
   Ion::Storage::Record m_record;
 };
 

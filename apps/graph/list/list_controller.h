@@ -28,8 +28,10 @@ public:
   // Make methods public
   void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
-  // Cannot select firs column (TODO Hugo)
-  void selectColumn(int j) override { if (j != 0) { SelectableTableViewDataSource::selectColumn(j); } }
+  // Cannot select first column (TODO Hugo) nor last column of last row
+  void selectColumn(int j) override { if (j != 0 && !(j == 2 && selectedRow() + 1 == numberOfRows())) { SelectableTableViewDataSource::selectColumn(j); } }
+  void selectRow(int i) override { if ( selectedColumn() != 0 && !(selectedColumn() == 2 && i + 1 == numberOfRows())) { SelectableTableViewDataSource::selectRow(i); } }
+
 private:
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   void addModel() override;

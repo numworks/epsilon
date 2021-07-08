@@ -25,6 +25,12 @@ void unsetCheckpoint(CheckpointType type) {
 void loadCheckpoint(CheckpointType type) {
   assert(hasCheckpoint(type));
   sStatus = Status::Interrupted;
+  if (type == CheckpointType::User) {
+    unsetCheckpoint(CheckpointType::System);
+  } else if (type == CheckpointType::Home) {
+    unsetCheckpoint(CheckpointType::System);
+    unsetCheckpoint(CheckpointType::User);
+  }
   longjmp(sBuffers[static_cast<uint8_t>(type)], 1);
 }
 

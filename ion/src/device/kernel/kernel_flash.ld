@@ -10,18 +10,28 @@ MEMORY {
 }
 
 SECTIONS {
-  .kernel_header  ORIGIN(KERNEL) : {
+  .signed_payload_prefix ORIGIN(KERNEL) : {
+    /* We keep two 4-byte words to store:
+     * - the signed payload size
+     * - the security level
+     * These are completed at the signature time since we don't know the whole
+     * payload sign at linking time. */
+    LONG(0xFFFFFFFF)
+    LONG(0xFFFFFFFF)
+  } >KERNEL
+
+  .kernel_header : {
     KEEP(*(.kernel_header))
   } >KERNEL
 
-  .isr_vector_table : AT(ORIGIN(KERNEL) + SIZEOF(.kernel_header)) {
+  .isr_vector_table : AT(ORIGIN(KERNEL) + SIZEOF(.signed_payload_prefix) + SIZEOF(.kernel_header)) {
     _isr_vector_table_start_flash = LOADADDR(.isr_vector_table);
     _isr_vector_table_start_ram = .;
     KEEP(*(.isr_vector_table))
     _isr_vector_table_end_ram = .;
   } >SRAM_DATA_BSS
 
-  .text ORIGIN(KERNEL) + SIZEOF(.kernel_header) + SIZEOF (.isr_vector_table) : {
+  .text ORIGIN(KERNEL) + SIZEOF(.signed_payload_prefix) + SIZEOF(.kernel_header) + SIZEOF(.isr_vector_table): {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
@@ -70,7 +80,9 @@ SECTIONS {
   .persisting_bytes_buffer ORIGIN(PERSITING_BYTES) : {
     _persisting_bytes_buffer_start = .;
     FILL(0xFF);
-    /* Note: We don't increment "." here, we set it. */
+    /* FILL instruction requires at least one element in the section to fill
+     * it. We write the last byte of the persisting bytes to make sure the
+     * section is not empty. */
     . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES) - 1;
     BYTE(0xFF)
     _persisting_bytes_buffer_end = .;

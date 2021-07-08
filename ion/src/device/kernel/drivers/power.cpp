@@ -14,6 +14,7 @@
 #include <regs/config/rcc.h>
 #include <shared/drivers/trampoline.h>
 #include <shared/drivers/usb_privileged.h>
+#include <ion/src/shared/events.h>
 
 namespace Ion {
 namespace Device {
@@ -98,7 +99,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
       /* The wake up event can be an unplug event or a battery charging event.
        * In both cases, we want to update static observed states like
        * sLastUSBPlugged or sLastBatteryCharging. */
-      Events::getPlatformEvent();
+      Ion::Events::getPlatformEvent();
     }
     plugged = Ion::USB::isPlugged();
   }

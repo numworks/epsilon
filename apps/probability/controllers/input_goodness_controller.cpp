@@ -36,6 +36,7 @@ void InputGoodnessController::didBecomeFirstResponder() {
 }
 
 void InputGoodnessController::buttonAction() {
+  m_statistic->computeTest();
   openPage(m_resultsController);
 }
 

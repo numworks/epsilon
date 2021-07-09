@@ -62,3 +62,24 @@ bool Probability::InputGoodnessController::textFieldDidFinishEditing(TextField *
   textField->setText(buffer);
   return true;
 }
+
+// ScrollViewDelegate
+void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScroll(
+    SelectableTableView * t,
+    int previousSelectedCellX,
+    int previousSelectedCellY,
+    bool withinTemporarySelection) {
+  int row = m_inputTableView.selectedRow();
+  int col = m_inputTableView.selectedColumn();
+  if (!withinTemporarySelection && previousSelectedCellY != row) {
+    // Make m_contentView to cell
+    KDRect cellFrame = KDRect(m_inputTableView.cumulatedWidthFromIndex(col),
+                              m_inputTableView.cumulatedHeightFromIndex(row),
+                              m_inputTableView.columnWidth(col),
+                              m_inputTableView.rowHeight(row));
+
+    m_contentView.scrollToContentRect(cellFrame);
+
+    m_contentView.layoutSubviews(true);
+  }
+}

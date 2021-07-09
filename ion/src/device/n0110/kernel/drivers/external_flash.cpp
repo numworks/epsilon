@@ -1,4 +1,4 @@
-#include <shared/drivers/external_flash.h>
+#include <shared/drivers/external_flash_write.h>
 #include <shared/drivers/trampoline.h>
 #include <assert.h>
 

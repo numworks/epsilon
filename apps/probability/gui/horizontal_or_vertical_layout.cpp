@@ -15,7 +15,7 @@ KDSize Probability::VerticalLayout::minimalSizeForOptimalDisplay() const {
     requiredHeight += requiredSize.height();
     requiredWidth = fmaxf(requiredWidth, requiredSize.width());
   }
-  return KDSize(requiredWidth, requiredHeight);
+  return KDSize(requiredWidth, requiredHeight + 2 * m_marginY);
 }
 
 void VerticalLayout::layoutSubviews(bool force) {

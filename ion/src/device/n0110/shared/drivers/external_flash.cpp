@@ -1,7 +1,7 @@
-#include "external_flash.h"
 #include "external_flash_command.h"
 #include <drivers/config/clocks.h>
 #include <drivers/config/external_flash.h>
+#include <drivers/external_flash.h>
 #include <ion/timing.h>
 
 namespace Ion {

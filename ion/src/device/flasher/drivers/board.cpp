@@ -7,7 +7,7 @@
 #include <drivers/internal_flash.h>
 #include <drivers/internal_flash_otp.h>
 #include <drivers/usb_privileged.h>
-#include <flasher/drivers/external_flash.h>
+#include <drivers/external_flash.h>
 #include <regs/regs.h>
 
 typedef void(*ISR)(void);

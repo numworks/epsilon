@@ -8,14 +8,20 @@ ion_device_n0110_bootloader_kernel_src = $(addprefix ion/src/device/n0110/shared
   usb.cpp \
 )
 
+ion_device_n0110_bootloader_flasher_src = $(addprefix ion/src/device/n0110/shared/drivers/, \
+  external_flash.cpp \
+  external_flash_command.cpp \
+)
+
 # Target specific
-ion_device_bootloader_src += $(ion_device_n0110_bootloader_kernel_src)
+ion_device_bootloader_src += $(ion_device_n0110_bootloader_kernel_src) $(ion_device_n0110_bootloader_flasher_src)
 
 ion_device_flasher_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   board.cpp \
   reset.cpp \
   usb.cpp \
 )
+ion_device_flasher_src += $(ion_device_n0110_bootloader_flasher_src)
 
 ion_device_kernel_src += $(ion_device_n0110_bootloader_kernel_src)
 ion_device_kernel_src += $(addprefix ion/src/device/n0110/kernel/drivers/, \

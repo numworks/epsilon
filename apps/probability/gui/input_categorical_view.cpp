@@ -78,7 +78,6 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
     }
     setResponderForSelectedRow();
     selectCorrectView();
-    reloadScroll();
     return true;
   }
   return false;
@@ -112,10 +111,20 @@ void InputCategoricalView::selectCorrectView() {
       break;
     case ContentView::k_indexOfSignificance:
       m_significanceCell.setHighlighted(true);
+      scrollToContentPoint(m_significanceCell.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));
       break;
     default:
       assert(m_viewSelection.selectedRow() == ContentView::k_indexOfNext);
       m_next.setHighlighted(true);
+      scrollToContentPoint(m_next.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));
       break;
   }
+  // reloadScroll(true);
+}
+
+KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
+  // Pass expected size to VerticalLayout to propagate to TableCells
+  ContentView * contentView = const_cast<ContentView *>(&m_contentView);
+  contentView->setSize(KDSize(bounds().width(), 10000));
+  return contentView->minimalSizeForOptimalDisplay();
 }

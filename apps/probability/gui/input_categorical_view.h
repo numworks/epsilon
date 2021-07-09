@@ -34,12 +34,8 @@ public:
   MessageTableCellWithEditableTextWithMessage * significanceLevelView() {
     return &m_significanceCell;
   }
-  KDSize minimalSizeForOptimalDisplay() const override {
-    // Pass expected size to VerticalLayout to propagate to TableCells
-    ContentView * contentView = const_cast<ContentView *>(&m_contentView);
-    contentView->setSize(bounds().size());
-    return Escher::ScrollableView::minimalSizeForOptimalDisplay();
-  }
+  KDSize minimalSizeForOptimalDisplay() const override;
+  void layoutSubviews(bool force) override { Escher::ScrollableView::layoutSubviews(force); };  // Made public
 
   void drawRect(KDContext * ctx, KDRect rect) const override {
     ctx->fillRect(rect, Palette::WallScreenDark);

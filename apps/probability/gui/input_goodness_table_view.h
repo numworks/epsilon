@@ -20,7 +20,7 @@ class InputGoodnessTableView : public Escher::SelectableTableView,
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                         Chi2Statistic * statistic);
+                         Chi2Statistic * statistic, Escher::SelectableTableViewDelegate * delegate = nullptr);
   // DataSource
   int numberOfRows() const override { return m_numberOfRows; };
   int numberOfColumns() const override { return k_numberOfColumns; }

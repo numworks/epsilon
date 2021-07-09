@@ -52,19 +52,10 @@ public:
                                  const char * text,
                                  Ion::Events::Event event) override;
 
-  // ScrollViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
                                                int previousSelectedCellX,
                                                int previousSelectedCellY,
-                                               bool withinTemporarySelection = false) override {
-    if (!withinTemporarySelection) {
-      m_contentView.reloadScroll(true);
-      // Scroll to correct location
-      m_contentView.scrollToContentPoint(
-          KDPoint(0, m_inputTableView.cumulatedHeightFromIndex(m_inputTableView.selectedRow()) + 90));
-      m_contentView.layoutSubviews(true);
-    }
-  }
+                                               bool withinTemporarySelection = false) override;
 
 private:
   ResultsController * m_resultsController;

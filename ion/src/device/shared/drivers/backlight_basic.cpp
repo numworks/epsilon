@@ -6,7 +6,6 @@ namespace Backlight {
 
 void init() {
   initGPIO();
-  sendPulses(16);
 }
 
 }

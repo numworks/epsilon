@@ -1,6 +1,7 @@
 #include "board.h"
 #include <drivers/config/clocks.h>
 #include <drivers/config/internal_flash.h>
+#include <drivers/backlight.h>
 #include <drivers/cache.h>
 #include <drivers/display.h>
 #include <drivers/internal_flash.h>
@@ -159,6 +160,7 @@ void initCompensationCell() {
 
 void initPeripherals() {
   initCompensationCell();
+  Backlight::init();
   USB::init();
   Display::init();
   ExternalFlash::init();
@@ -168,6 +170,7 @@ void shutdownPeripherals() {
   ExternalFlash::shutdown();
   Display::shutdown();
   USB::shutdown();
+  Backlight::shutdown();
   shutdownCompensationCell();
 }
 

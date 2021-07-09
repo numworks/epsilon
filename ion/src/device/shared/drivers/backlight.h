@@ -7,6 +7,7 @@ namespace Ion {
 namespace Device {
 namespace Backlight {
 
+void init();
 void initGPIO();
 void shutdown();
 void sendPulses(int n);

@@ -25,7 +25,8 @@ InputGoodnessController::InputGoodnessController(
     m_resultsController(resultsController),
     m_inputTableView(&m_contentView,
                      inputEventHandlerDelegate,
-                     static_cast<Chi2Statistic *>(statistic)),
+                     static_cast<Chi2Statistic *>(statistic),
+                     this),
     m_contentView(this, this, &m_inputTableView, inputEventHandlerDelegate, this),
     m_statistic(static_cast<Chi2Statistic *>(statistic)) {
 }

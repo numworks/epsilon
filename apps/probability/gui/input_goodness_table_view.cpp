@@ -4,11 +4,10 @@
 
 namespace Probability {
 
-InputGoodnessTableView::InputGoodnessTableView(
-    Escher::Responder * parentResponder,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Chi2Statistic * statistic) :
-    SelectableTableView(parentResponder, this, &m_tableSelection),
+InputGoodnessTableView::InputGoodnessTableView(Escher::Responder * parentResponder,
+                                               Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+                                               Chi2Statistic * statistic, Escher::SelectableTableViewDelegate * delegate) :
+    SelectableTableView(parentResponder, this, &m_tableSelection, delegate),
     m_numberOfRows(k_initialNumberOfRows),
     m_statistic(statistic) {
   m_header[0].setMessage(I18n::Message::Observed);
@@ -51,7 +50,7 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
   int index = 2 * (j - 1) + i;
   float p = m_statistic->paramAtIndex(index);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
-  if (isnan(p)) {
+  if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");
   } else {
     constexpr int bufferSize = 20;

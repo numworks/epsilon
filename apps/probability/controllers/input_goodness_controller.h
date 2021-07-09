@@ -7,6 +7,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
+#include <escher/scroll_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
@@ -29,7 +30,8 @@ namespace Probability {
 
 class InputGoodnessController : public Page,
                                 public ButtonDelegate,
-                                public Shared::ParameterTextFieldDelegate {
+                                public Shared::ParameterTextFieldDelegate,
+                                public Escher::SelectableTableViewDelegate {
 public:
   InputGoodnessController(StackViewController * parent,
                           ResultsController * resultsController,
@@ -49,6 +51,20 @@ public:
   bool textFieldDidFinishEditing(TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
+
+  // ScrollViewDelegate
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
+                                               int previousSelectedCellX,
+                                               int previousSelectedCellY,
+                                               bool withinTemporarySelection = false) override {
+    if (!withinTemporarySelection) {
+      m_contentView.reloadScroll(true);
+      // Scroll to correct location
+      m_contentView.scrollToContentPoint(
+          KDPoint(0, m_inputTableView.cumulatedHeightFromIndex(m_inputTableView.selectedRow()) + 90));
+      m_contentView.layoutSubviews(true);
+    }
+  }
 
 private:
   ResultsController * m_resultsController;

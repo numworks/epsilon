@@ -135,6 +135,11 @@ bool hasCheckpoint(CheckpointType type) {
 }
 
 void unsetCheckpoint(CheckpointType type) {
+  if (type == CheckpointType::Home) {
+    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::User);
+  } else if (type == CheckpointType::User) {
+    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
+  }
   sProcessStackSnapshotAddress[static_cast<int>(type)] = nullptr;
 }
 
@@ -158,11 +163,10 @@ void loadCheckpoint(CheckpointType type) {
   assert(Device::CircuitBreaker::hasCheckpoint(type));
   Keyboard::Queue::sharedQueue()->flush();
   /* Unset lower checkpoints to avoid keeping references to an unwound stack. */
-  if (type == CheckpointType::User) {
-    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
-  } else if (type == CheckpointType::Home) {
-    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
+  if (type == CheckpointType::Home) {
     Device::CircuitBreaker::unsetCheckpoint(CheckpointType::User);
+  } else if (type == CheckpointType::User) {
+    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
   }
   setPendingAction(type, InternalStatus::PendingLoadCheckpoint);
 }

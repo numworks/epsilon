@@ -17,9 +17,9 @@ Chi2Statistic::Chi2Statistic() {
 void Chi2Statistic::computeTest() {
   int n = _numberOfInputRows();
   assert(n > 0);
-  m_degreesOfFreedom = 2 * n - 1;
+  m_degreesOfFreedom = n - 1;
   for (int i = 0; i < n; i++) {
-    m_z += std::powf(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
+    m_z += std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
   }
   m_zAlpha = absIfNeeded(_zAlpha(m_degreesOfFreedom, m_threshold));
   m_pValue = _pVal(m_degreesOfFreedom, m_z);
@@ -40,14 +40,14 @@ float Chi2Statistic::observedValue(int index) {
 int Chi2Statistic::_numberOfInputRows() {
     // Compute number of rows based on undefined flag
   int i = k_maxNumberOfParameters / 2 - 1;
-  while (i > 0 && (expectedValue(i) != k_undefinedValue || observedValue(i) != k_undefinedValue)) {
+  while (i >= 0 && std::isnan(expectedValue(i)) && std::isnan(observedValue(i))) {
     i--;
   }
-  return i;
+  return i + 1;
 }
 
 float Chi2Statistic::_zAlpha(float degreesOfFreedom, float significanceLevel) {
-  return Chi2Law::CumulativeDistributiveInverseForProbability(significanceLevel, degreesOfFreedom);
+  return Chi2Law::CumulativeDistributiveInverseForProbability(1 - significanceLevel, degreesOfFreedom);
 }
 
 float Chi2Statistic::_pVal(float degreesOfFreedom, float z) {

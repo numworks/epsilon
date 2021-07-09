@@ -12,10 +12,11 @@ public:
     Parabola,
     Ellipse,
     Circle,
-    Unknown
+    Undefined,
+    Unknown,
   };
   // Extract A,B,C,D,E,F parameters
-  Conic(Expression e);
+  Conic(Expression e, Context * context);
   // Return conic type from parameters
   Type getConicType();
   // Conic Eccentricity
@@ -26,12 +27,15 @@ public:
   double getSemiMajorAxis();
   // Ellipse or Hyperbola's linear eccentricity
   double getLinearEccentricity();
-  // Ellipse's semi major axis
+  // Ellipse or Hyperbola's semi minor axis
   double getSemiMinorAxis();
+  // Parabola's parameter
+  double getParameter();
   // Coordinates of Parabola's summit (relative to parameters' center)
   void getSummit(double * sx, double * sy);
   // Circle's radius
   double getRadius();
+
 private:
   // Remove rotation from the parameters (B = 0)
   void rotateConic();
@@ -54,6 +58,6 @@ private:
   Type m_type;
 };
 
-}
+}  // namespace Poincare
 
 #endif

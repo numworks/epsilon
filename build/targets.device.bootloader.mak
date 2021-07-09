@@ -4,7 +4,7 @@ HANDY_TARGETS += bootloader
 SFLAGS += -fstack-protector-strong
 
 bootloader_src = $(ion_device_bootloader_src) $(liba_bootloader_src) $(kandinsky_minimal_src)
-bootloader_obj = $(call flavored_object_for,$(bootloader_src),usbxip leavereset)
+bootloader_obj = $(call flavored_object_for,$(bootloader_src),usbxip leavebootloader)
 $(BUILD_DIR)/bootloader.$(EXE): $(bootloader_obj)
 
 $(BUILD_DIR)/bootloader.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared

@@ -48,7 +48,8 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
                                            SelectableTableView * table,
                                            InputEventHandlerDelegate * inputEventHandlerDelegate,
                                            TextFieldDelegate * textFieldDelegate) :
-    ScrollableView(parentResponder, &m_contentView, &m_scrollDataSource),
+    Escher::ScrollView(&m_contentView, &m_scrollDataSource),
+    Responder(parentResponder),
     m_dataInputTableView(table),
     m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
     m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), KDFont::LargeFont),
@@ -111,12 +112,16 @@ void InputCategoricalView::selectCorrectView() {
       break;
     case ContentView::k_indexOfSignificance:
       m_significanceCell.setHighlighted(true);
-      scrollToContentPoint(m_significanceCell.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));
+      // TODO compute position of cell and scrollToContentRect
+      scrollToContentPoint(m_significanceCell.pointFromPointInView(this, KDPointZero)
+                               .opposite()
+                               .translatedBy(KDPoint(0, 100)));
       break;
     default:
       assert(m_viewSelection.selectedRow() == ContentView::k_indexOfNext);
       m_next.setHighlighted(true);
-      scrollToContentPoint(m_next.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));
+      scrollToContentPoint(
+          m_next.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));
       break;
   }
   // reloadScroll(true);

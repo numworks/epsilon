@@ -23,7 +23,7 @@ namespace Probability {
  * layed out vertically, and is able to move selection between them.
  * Meant for InputGoodnessController and InputHomogeneityController.
  */
-class InputCategoricalView : public Escher::ScrollableView {
+class InputCategoricalView : public Escher::ScrollView, public Escher::Responder {
 public:
   InputCategoricalView(Responder * parentResponder,
                        ButtonDelegate * buttonDelegate,
@@ -35,7 +35,10 @@ public:
     return &m_significanceCell;
   }
   KDSize minimalSizeForOptimalDisplay() const override;
-  void layoutSubviews(bool force) override { Escher::ScrollableView::layoutSubviews(force); };  // Made public
+  KDSize contentSize() const override { return KDSize(bounds().width(), 10000); };
+  void layoutSubviews(bool force) override {
+    Escher::ScrollView::layoutSubviews(force);
+  };  // Made public
 
   void drawRect(KDContext * ctx, KDRect rect) const override {
     ctx->fillRect(rect, Palette::WallScreenDark);

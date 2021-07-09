@@ -64,6 +64,7 @@ poincare_src += $(addprefix poincare/src/,\
   complex_argument.cpp \
   complex_cartesian.cpp \
   confidence_interval.cpp \
+  conic.cpp \
   conjugate.cpp \
   constant.cpp \
   cosecant.cpp \
@@ -183,6 +184,7 @@ tests_src += $(addprefix poincare/test/,\
   tree/helpers.cpp\
   approximation.cpp\
   arithmetic.cpp\
+  conics.cpp\
   context.cpp\
   erf_inv.cpp \
   dependency.cpp\

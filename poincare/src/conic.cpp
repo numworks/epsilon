@@ -1,30 +1,104 @@
-#include "conic.h"
+#include <poincare/conic.h>
+#include <poincare/polynomial.h>
+#include <poincare/preferences.h>
 
 namespace Poincare {
 
-// Ax^2+Bxy+Cy^2+Dx+Ey+F=0
+Conic::Conic(Expression e, Context * context) :
+    m_a(0.0),
+    m_b(0.0),
+    m_c(0.0),
+    m_d(0.0),
+    m_e(0.0),
+    m_f(0.0),
+    m_cx(0.0),
+    m_cy(0.0),
+    m_r(0.0),
+    m_type(Type::Unknown) {
+  // m_a*x^2 + m_b*x*y + m_c*y^2 + m_d*x + m_e*y + m_f = 0
+  // TODO Hugo : Double check these parameters
+  Preferences::ComplexFormat complexFormat =
+      Preferences::ComplexFormat::Cartesian;
+  Preferences::AngleUnit angleUnit =
+      Preferences::sharedPreferences()->angleUnit();
+  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
+  ExpressionNode::SymbolicComputation symbolicComputation =
+      ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
 
-// Extract A,B,C,D,E,F parameters
-Conic::Conic(Expression e) :
-  m_a(0.0), m_b(0.0), m_c(0.0), m_d(0.0), m_e(0.0), m_f(0.0), m_cx(0.0), m_cy(0.0), m_r(0.0), m_type(Type::Unknown) {
-  // TODO : Extract coefficients from expression
-  assert(m_a != 0.0 || m_c != 0.0);
+  Expression coefficientsY[Expression::k_maxNumberOfPolynomialCoefficients];
+  int dy = e.getPolynomialReducedCoefficients("y", coefficientsY, context,
+                                              complexFormat, angleUnit,
+                                              unitFormat, symbolicComputation);
+  if (dy > 2 || dy < 1) {
+    m_type = Type::Undefined;
+    return;
+  }
+  Expression coefficientsX[Expression::k_maxNumberOfPolynomialCoefficients];
+  // C term
+  if (dy == 2) {
+    int dx = coefficientsY[2].getPolynomialReducedCoefficients(
+        "x", coefficientsX, context, complexFormat, angleUnit, unitFormat,
+        symbolicComputation);
+    if (dx != 0) {
+      m_type = Type::Undefined;
+      return;
+    }
+    m_c = coefficientsY[2].approximateToScalar<double>(context, complexFormat,
+                                                       angleUnit);
+  }
+  // B and E terms
+  int dx = coefficientsY[1].getPolynomialReducedCoefficients(
+      "x", coefficientsX, context, complexFormat, angleUnit, unitFormat,
+      symbolicComputation);
+  if (dx > 1 || dx < 0) {
+    m_type = Type::Undefined;
+    return;
+  }
+  if (dx == 1) {
+    m_b = coefficientsX[1].approximateToScalar<double>(context, complexFormat,
+                                                       angleUnit);
+  }
+  m_e = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
+                                                     angleUnit);
+  // A, D and F terms
+  dx = coefficientsY[0].getPolynomialReducedCoefficients(
+      "x", coefficientsX, context, complexFormat, angleUnit, unitFormat,
+      symbolicComputation);
+  if (dx > 2 || dx < 1 || (dx == 1 && dy == 1)) {
+    m_type = Type::Undefined;
+    return;
+  }
+  if (dx == 2) {
+    m_a = coefficientsX[2].approximateToScalar<double>(context, complexFormat,
+                                                       angleUnit);
+  }
+  m_d = coefficientsX[1].approximateToScalar<double>(context, complexFormat,
+                                                     angleUnit);
+  m_f = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
+                                                     angleUnit);
+  assert(std::isfinite(m_a) && std::isfinite(m_b) && std::isfinite(m_c) &&
+         std::isfinite(m_d) && std::isfinite(m_e) && std::isfinite(m_f));
 }
 
-// Return conic type from parameters
 Conic::Type Conic::getConicType() {
   if (m_type == Type::Unknown) {
-    double determinant = getDeterminant();
-    if (determinant < 0.0) {
-      m_type = (m_b == 0.0 && m_a == m_c) ? Type::Circle : Type::Ellipse;
+    if ((m_a == 0.0 && m_c == 0.0) ||
+        (m_b == 0.0 &&
+         ((m_a == 0.0 && m_d == 0.0) || (m_c == 0.0 && m_e == 0.0)))) {
+      // A conic must have at least 1 squared term, 1 x term and 1 y term.
+      m_type = Type::Undefined;
     } else {
-      m_type = (determinant == 0.0) ? Type::Parabola : Type::Hyperbola;
+      double determinant = getDeterminant();
+      if (determinant < 0.0) {
+        m_type = (m_b == 0.0 && m_a == m_c) ? Type::Circle : Type::Ellipse;
+      } else {
+        m_type = (determinant == 0.0) ? Type::Parabola : Type::Hyperbola;
+      }
     }
   }
   return m_type;
 }
 
-// Remove rotation from the parameters (B = 0)
 void Conic::rotateConic() {
   if (m_b == 0.0) {
     return;
@@ -32,23 +106,29 @@ void Conic::rotateConic() {
   double a = m_a;
   double b = m_b;
   double c = m_c;
+  double d = m_d;
+  double e = m_e;
   // If b is non null and a = c, there is a pi/2 rotation.
-  m_r = (a == c) ? M_PI/2 : std::atan(b/(a-c))/2.0;
-  double cr = std::cos(m_r);
-  double sr = std::sin(m_r);
+  double r = (a == c) ? M_PI / 2 : std::atan(b / (a - c)) / 2.0;
+  double cr = std::cos(r);
+  double sr = std::sin(r);
+  m_r = -r;
   // replacing x with cr*x+sr*y and y with sr*x-cr*y to cancel B
-  m_a = a*cr*cr + b*cr*sr + c*sr*sr;
-  m_b = 2*a*cr*sr - b*cr*cr + b*sr*sr - 2*c*sr*cr;
-  m_c = a*sr*sr - b*cr*sr + c*cr*cr;
+  m_a = a * cr * cr + b * cr * sr + c * sr * sr;
+  m_b = 0.0;  // 2*a*cr*sr - b*cr*cr + b*sr*sr - 2*c*sr*cr; // TODO Hugo : Add a
+              // tolerance here
+  m_c = a * sr * sr - b * cr * sr + c * cr * cr;
+  m_d = d * cr + e * sr;
+  m_e = d * sr - e * cr;
   assert(m_b == 0.0);
 }
 
-// Remove both rotation and off-centering from the parameters
 void Conic::centerConic() {
   rotateConic();
   // There should remain only one term in x and one term in y
   // If A or C is null, F should be null
-  if (m_a*m_d == 0.0 && m_c*m_e == 0.0 && ((m_a*m_d == 0.0) == (m_f == 0.0))) {
+  if (m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
+      ((m_a * m_c == 0.0) == (m_f == 0.0))) {
     return;
   }
   double a = m_a;
@@ -64,27 +144,27 @@ void Conic::centerConic() {
   // - D and E otherwise    : Ax^2 + Cy^2 = F
   assert(a != 0.0 || c != 0);
   if (a != 0.0) {
-    h = d / (2*a);
+    h = d / (2 * a);
   }
   if (c != 0) {
-    k = e / (2*c);
+    k = e / (2 * c);
   } else {
-    k = (f - a*h*h - d*h)/e;
+    k = (f - a * h * h - d * h) / e;
   }
   if (a == 0) {
-    h = (f - c*k*k - e*k)/d;
+    h = (f - c * k * k - e * k) / d;
   }
   // Update center
-  m_cx = h;
-  m_cy = k;
+  m_cx = -h;
+  m_cy = -k;
   // A and C remain unchanged
-  m_d = d - 2*a*h;
-  m_e = e - 2*c*k;
-  m_f = f + a*h*h + c*k*k - d*h - e*k;
-  assert(m_a*m_d == 0.0 && m_c*m_e == 0.0 && ((m_a*m_d == 0.0) == (m_f == 0.0)));
+  m_d = d - 2 * a * h;
+  m_e = (c != 0) ? 0.0 : e - 2 * c * k;  // TODO Hugo : Add a tolerance here
+  m_f = f + a * h * h + c * k * k - d * h - e * k;
+  assert(m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
+         ((m_a * m_c == 0.0) == (m_f == 0.0)));
 }
 
-// Make it so that F parameter is -1 or 0
 void Conic::canonize() {
   centerConic();
   double factor;
@@ -103,23 +183,43 @@ void Conic::canonize() {
   assert(m_f == -1.0 || m_a + m_c == 1.0);
 }
 
-// Conic determinant, allow identification of the type
 double Conic::getDeterminant() const {
   return m_b * m_b - 4.0 * m_a * m_c;
 }
 
-// Conic Center
 void Conic::getCenter(double * cx, double * cy) {
   centerConic();
   *cx = m_cx;
   *cy = m_cy;
 }
 
-// Conic Eccentricity
+double smallestPositive(double a, double b) {
+  /* Return smallest positive number between a and b, assuming at least one is
+   * positive */
+  if (a > b) {
+    return smallestPositive(b, a);
+  }
+  // We have a <= b
+  assert(b >= 0.0);
+  return a >= 0.0 ? a : b;
+}
+
+double nonSmallestPositive(double a, double b) {
+  /* Same as smallestPositive, returning the other value. */
+  if (a > b) {
+    return nonSmallestPositive(b, a);
+  }
+  // We have a <= b
+  assert(b >= 0.0);
+  return a >= 0.0 ? b : a;
+}
+
 double Conic::getEccentricity() {
+  assert(getConicType() != Type::Undefined);
   canonize();
   Type type = getConicType();
-  double e = std::sqrt(1 - std::min(m_a,m_c) / std::max(m_a,m_c));
+  double e =
+      std::sqrt(1 - smallestPositive(m_a, m_c) / nonSmallestPositive(m_a, m_c));
   if (type == Type::Circle) {
     assert(e == 0.0);
   } else if (type == Type::Parabola) {
@@ -128,47 +228,41 @@ double Conic::getEccentricity() {
   return e;
 }
 
-// Ellipse or Hyperbola's semi major axis
 double Conic::getSemiMajorAxis() {
   assert(getConicType() == Type::Ellipse || getConicType() == Type::Hyperbola);
   canonize();
-  if (getConicType() == Type::Ellipse) {
-    return std::sqrt(1/std::min(m_a,m_c));
-  } else {
-    return std::sqrt(1/std::max(m_a,m_c));
-  }
+  return std::sqrt(1 / smallestPositive(m_a, m_c));
 }
 
-// Ellipse or Hyperbola's semi major axis
 double Conic::getSemiMinorAxis() {
-  assert(getConicType() == Type::Ellipse);
+  assert(getConicType() == Type::Ellipse || getConicType() == Type::Hyperbola);
   canonize();
-  if (getConicType() == Type::Ellipse) {
-    return std::sqrt(1/std::max(m_a,m_c));
-  } else {
-    return std::sqrt(1/std::min(m_a,m_c));
-  }
+  return std::sqrt(1 / std::abs(nonSmallestPositive(m_a, m_c)));
 }
 
-// Ellipse or Hyperbola's linear eccentricity
 double Conic::getLinearEccentricity() {
   assert(getConicType() == Type::Ellipse || getConicType() == Type::Hyperbola);
   canonize();
-  return std::sqrt(1/std::max(m_a,m_c) - 1/std::min(m_a,m_c));
+  return std::sqrt(std::abs(1 / m_a - 1 / m_c));
 }
 
-// Coordinates of Parabola's summit
-void Conic::getSummit( double * sx, double * sy) {
+double Conic::getParameter() {
   assert(getConicType() == Type::Parabola);
-  getCenter(sx,sy);
+  canonize();
+  return std::abs(m_d == 0.0 ? m_e : m_d) / 2;
+}
+
+void Conic::getSummit(double * sx, double * sy) {
+  assert(getConicType() == Type::Parabola);
   // Parabola's summit is also it's center
+  getCenter(sx, sy);
   assert(m_f == 0.0 && m_b == 0.0 && m_a * m_c == 0.0 && m_d * m_e == 0.0);
 }
 
-// Circle's radius
 double Conic::getRadius() {
   assert(getConicType() == Type::Circle);
-  return std::sqrt(std::abs(m_f/m_a));
+  canonize();
+  return std::sqrt(1 / m_a);
 }
 
-} // namespace Poincare
+}  // namespace Poincare

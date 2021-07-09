@@ -25,9 +25,9 @@ ion_device_shared_bootloader_kernel_src += $(ion_device_shared_bootloader_flashe
 
 # Target specific
 
-ion_device_bootloader_src += ion/src/device/shared/post_and_hardware_tests.cpp $(ion_device_shared_bootloader_kernel_src) $(ion_device_dfu_src)
+ion_device_bootloader_src += ion/src/device/shared/post_and_hardware_tests.cpp ion/src/device/shared/drivers/backlight_basic.cpp $(ion_device_shared_bootloader_kernel_src) $(ion_device_dfu_src)
 
-ion_device_flasher_src += $(ion_device_shared_bootloader_flasher_kernel_src) $(ion_device_dfu_src)
+ion_device_flasher_src += ion/src/device/shared/drivers/backlight_basic.cpp $(ion_device_shared_bootloader_flasher_kernel_src) $(ion_device_dfu_src)
 
 ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   board.cpp \

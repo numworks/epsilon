@@ -3,7 +3,7 @@
  *  - Flash faster. Flashing using ST's ROMed DFU bootloader is reliable but
  *  very slow. To make flashing faster, we can leverage ST's bootloader to copy
  *  a small "flasher" in RAM, and run it from there.
- *  - Run the bench software from the RAM. */
+ * TODO : Eventually, this may also be used to run the bench software from the RAM */
 
 INCLUDE config/ram.ld
 

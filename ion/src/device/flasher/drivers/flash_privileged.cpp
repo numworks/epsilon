@@ -3,6 +3,7 @@
 #include <shared/drivers/config/internal_flash.h>
 #include <shared/drivers/external_flash.h>
 #include <shared/drivers/internal_flash.h>
+#include <drivers/external_flash_write.h>
 
 namespace Ion {
 namespace Device {

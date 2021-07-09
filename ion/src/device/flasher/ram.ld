@@ -51,8 +51,11 @@ SECTIONS {
 
   .data : {
     . = ALIGN(4);
+    _data_section_start_ram = .;
     *(.data)
     *(.data.*)
+    _data_section_end_ram = .;
+    ASSERT ((_bss_section_start_ram == _bss_section_end_ram), "Bootloader bss section is not empty");
   } >RAM_BUFFER
 
   .bss : {
@@ -62,6 +65,7 @@ SECTIONS {
     *(.bss.*)
     *(COMMON)
     _bss_section_end_ram = .;
+    ASSERT ((_data_section_start_ram == _data_section_end_ram), "Bootloader data section is not empty");
   } >RAM_BUFFER
 
   .stack : {
@@ -70,15 +74,5 @@ SECTIONS {
     . += (STACK_SIZE - 8);
     . = ALIGN(8);
     _stack_start = .;
-  } >RAM_BUFFER
-
-  .phony : {
-    /* We won't do dynamic memory allocation */
-    _heap_start = .;
-    _heap_end = .;
-    /* Effectively bypass copying .data to RAM */
-    _data_section_start_flash = .;
-    _data_section_start_ram = .;
-    _data_section_end_ram = .;
   } >RAM_BUFFER
 }

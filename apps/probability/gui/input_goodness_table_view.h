@@ -52,6 +52,7 @@ private:
                                         k_borderBetweenColumns) /
                                        2;
   constexpr static int k_rowHeight = 20;
+  constexpr static int k_innerCellRightMargin = 5;
 
   int m_numberOfRows;
 

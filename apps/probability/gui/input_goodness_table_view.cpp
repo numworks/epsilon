@@ -20,6 +20,7 @@ InputGoodnessTableView::InputGoodnessTableView(Escher::Responder * parentRespond
   for (int i = 0; i < sizeof(m_cells) / sizeof(Escher::EvenOddEditableTextCell); i++) {
     m_cells[i].setParentResponder(this);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
+    m_cells[i].editableTextCell()->setMargins(0, k_innerCellRightMargin, 0, 0);
     m_cells[i].setEven((i / 2) % 2 == 1);
     m_cells[i].setFont(KDFont::SmallFont);
   }

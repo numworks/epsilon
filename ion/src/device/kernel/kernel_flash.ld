@@ -81,10 +81,12 @@ SECTIONS {
     _persisting_bytes_buffer_start = .;
     FILL(0xFF);
     /* FILL instruction requires at least one element in the section to fill
-     * it. We write the last byte of the persisting bytes to make sure the
-     * section is not empty. */
-    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES) - 1;
-    BYTE(0xFF)
+     * it. We write the first byte of the persisting bytes to make sure the
+     * section is not empty. Also, 0xFF is a forbidden value for the persisting
+     * byte (since it is not distinguishable from unused persisting bytes. So
+     * we init the first persisting byte to be the current significant address. */
+    BYTE(0x0)
+    . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
     _persisting_bytes_buffer_end = .;
   } >PERSITING_BYTES
 

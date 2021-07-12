@@ -113,7 +113,7 @@ INLINER_ARGS ?=
 .PRECIOUS: $(BUILD_DIR)/%.h $(BUILD_DIR)/%.cpp
 $(eval $(call rule_for, \
   INLINER, \
-  %.h %.cpp, \
+  %.cpp, \
   %.png $$(INLINER), \
   $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp $$(INLINER_ARGS), \
   global \
@@ -133,6 +133,6 @@ endef
 
 define depends_on_transparent_image
 # Set INLINE_ARGS for Header and CPP files
-$(addsuffix .h,$(basename $(call object_for,$(2)))) $(addsuffix .cpp,$(basename $(call object_for,$(2)))): INLINER_ARGS += --transparent
+$(call object_for,$(2)): INLINER_ARGS += --transparent
 $(call depends_on_image,$(1),$(2))
 endef

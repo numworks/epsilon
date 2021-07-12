@@ -9,18 +9,20 @@
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
 
+#include "bordered_table_view_data_source.h"
 #include "probability/models/statistic/chi2_statistic.h"
 
 namespace Probability {
 
 /* This is the table used to input Expected and Observed results. */
 class InputGoodnessTableView : public Escher::SelectableTableView,
-                               public Escher::TableViewDataSource,
+                               public BorderedTableViewDataSource,
                                public Shared::ParameterTextFieldDelegate {
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                         Chi2Statistic * statistic, Escher::SelectableTableViewDelegate * delegate = nullptr);
+                         Chi2Statistic * statistic,
+                         Escher::SelectableTableViewDelegate * delegate = nullptr);
   // DataSource
   int numberOfRows() const override { return m_numberOfRows; };
   int numberOfColumns() const override { return k_numberOfColumns; }
@@ -30,6 +32,7 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
+  KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
   // TextFieldDelegate
@@ -44,8 +47,9 @@ private:
   constexpr static int k_initialNumberOfRows = 4;
   constexpr static int k_maxNumberOfRows = Chi2Statistic::k_maxNumberOfParameters / 2 + 1;
   constexpr static int k_numberOfColumns = 2;
-  constexpr static int k_columnWidth = (Ion::Display::Width -
-                                        2 * Escher::Metric::CommonLeftMargin) /
+  constexpr static int k_borderBetweenColumns = 1;
+  constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
+                                        k_borderBetweenColumns) /
                                        2;
   constexpr static int k_rowHeight = 20;
 

@@ -7,7 +7,9 @@
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
 #include <escher/text_field_delegate.h>
-#include <probability/gui/solid_color_cell.h>
+
+#include "probability/gui/bordered_table_view_data_source.h"
+#include "probability/gui/solid_color_cell.h"
 
 using namespace Escher;
 
@@ -16,9 +18,11 @@ namespace Probability {
 /* This class wraps a TableViewDataSource by adding a Row & Column header around it.
  * Specifically meant for InputHomogeneity and HomogeneityResults. */
 // TODO memoize
-class HomogeneityTableDataSource : public TableViewDataSource, public SelectableTableViewDataSource {
- public:
-  HomogeneityTableDataSource(TableViewDataSource * contentTable, I18n::Message headerPrefix = I18n::Message::Group);
+class HomogeneityTableDataSource : public BorderedTableViewDataSource,
+                                   public SelectableTableViewDataSource {
+public:
+  HomogeneityTableDataSource(TableViewDataSource * contentTable,
+                             I18n::Message headerPrefix = I18n::Message::Group);
   int numberOfRows() const override { return m_contentTable->numberOfRows() + 1; }
   int numberOfColumns() const override { return m_contentTable->numberOfColumns() + 1; }
   int reusableCellCount(int type) override {
@@ -29,18 +33,21 @@ class HomogeneityTableDataSource : public TableViewDataSource, public Selectable
   HighlightCell * reusableCell(int i, int type) override;
 
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
+  KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
   constexpr static int k_columnWidth = 80;
+  constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_rowHeight = 20;
 
   constexpr static int k_initialNumberOfRows = 3;
   constexpr static int k_initialNumberOfColumns = 3;
   constexpr static int k_maxNumberOfColumns = 6;
   constexpr static int k_maxNumberOfRows = 6;
-  constexpr static int k_maxNumberOfInnerCells = (k_maxNumberOfColumns - 1) * (k_maxNumberOfRows - 1);
+  constexpr static int k_maxNumberOfInnerCells = (k_maxNumberOfColumns - 1) *
+                                                 (k_maxNumberOfRows - 1);
 
- private:
+private:
   int indexForEditableCell(int i);
 
   TableViewDataSource * m_contentTable;

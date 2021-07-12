@@ -41,6 +41,14 @@ void InputGoodnessController::buttonAction() {
   openPage(m_resultsController);
 }
 
+const char * Probability::InputGoodnessController::title() {
+  const char * category = App::app()->categoricalType() == Data::CategoricalType::Goodness
+                        ? "goodness of fit"
+                        : "Homogeneity/Independence";
+  sprintf(m_titleBuffer, "X2-test: %s", category);
+  return m_titleBuffer;
+}
+
 bool Probability::InputGoodnessController::textFieldShouldFinishEditing(TextField * textField,
                                                                         Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;  // TODO up and down too

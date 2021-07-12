@@ -40,7 +40,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   }
-  const char * title() override { return "x2-test: Homogeneity/Independence"; }
+  const char * title() override;
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   void buttonAction() override;
@@ -58,6 +58,8 @@ public:
                                                bool withinTemporarySelection = false) override;
 
 private:
+  constexpr static int k_titleBufferSize = 30;
+  char m_titleBuffer[k_titleBufferSize];
   ResultsController * m_resultsController;
   Chi2Statistic * m_statistic;
   InputGoodnessTableView m_inputTableView;

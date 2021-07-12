@@ -18,6 +18,7 @@ void Chi2Statistic::computeTest() {
   int n = _numberOfInputRows();
   assert(n > 0);
   m_degreesOfFreedom = n - 1;
+  m_z = 0;
   for (int i = 0; i < n; i++) {
     m_z += std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
   }

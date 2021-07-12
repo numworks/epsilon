@@ -133,6 +133,7 @@ Keyboard::State popKeyboardState() {
 bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
   int startTime = Timing::millis();
   int elapsedTime = 0;
+  Device::Board::setClockLowFrequency();
   while (elapsedTime < maximumDelay) {
     // Stop until either systick or a keyboard/platform interruption happens
     /* TODO: - optimization - we could maybe shutdown systick interrution and

@@ -15,6 +15,7 @@ namespace Probability {
 
 /* This class wraps a TableViewDataSource by adding a Row & Column header around it.
  * Specifically meant for InputHomogeneity and HomogeneityResults. */
+// TODO memoize
 class HomogeneityTableDataSource : public TableViewDataSource, public SelectableTableViewDataSource {
  public:
   HomogeneityTableDataSource(TableViewDataSource * contentTable, I18n::Message headerPrefix = I18n::Message::Group);
@@ -30,7 +31,6 @@ class HomogeneityTableDataSource : public TableViewDataSource, public Selectable
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
-  // TODO needed ?
   constexpr static int k_columnWidth = 80;
   constexpr static int k_rowHeight = 20;
 

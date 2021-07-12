@@ -6,26 +6,26 @@
 using namespace Probability;
 
 HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * contentTable, I18n::Message headerPrefix)
-    : m_contentTable(contentTable), m_topLeftCell(Escher::Palette::GrayMiddle) {
+    : m_contentTable(contentTable), m_topLeftCell(Escher::Palette::WallScreenDark) {
   // Headers
   constexpr int bufferSize = 20;
   char txt[bufferSize];
-  char alphabet[] = "ABCDEFGHIJ";
-  char numbers[] = "123456789";
   const char * groupTxt = I18n::translate(headerPrefix);
   int offset = strlcpy(txt, groupTxt, bufferSize);
   offset += strlcpy(txt + offset, " ", bufferSize - offset);
   // First row
   for (int i = 0; i < k_initialNumberOfColumns; i++) {
-    memcpy(txt + offset, &numbers[i], 1);
+    *(txt + offset) = '1' + i;
     m_colHeader[i].setText(txt);
+    m_colHeader[i].setAlignment(.5f, .5f);
     m_colHeader[i].setFont(KDFont::SmallFont);
   }
   // First column
   for (int i = 0; i < k_initialNumberOfRows; i++) {
-    memcpy(txt + offset, &alphabet[i], 1);
+    *(txt + offset) = 'A' + i;
     m_rowHeader[i].setText(txt);
     m_rowHeader[i].setFont(KDFont::SmallFont);
+    m_rowHeader[i].setEven(i % 2 == 0);
   }
 }
 

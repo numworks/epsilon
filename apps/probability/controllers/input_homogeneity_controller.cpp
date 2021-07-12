@@ -18,8 +18,9 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
   int numberOfCols = numberOfColumns();
   for (int i = 0; i < HomogeneityTableDataSource::k_maxNumberOfInnerCells; i++) {
     m_cells[i].setParentResponder(tableView);
-    m_cells[i].setEven(((i + 2) / (numberOfCols - 1)) % 2 == 0);
+    m_cells[i].setEven(((i + 2) / numberOfCols) % 2 == 1);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, delegate);
+    m_cells[i].setFont(KDFont::SmallFont);
   }
 }
 

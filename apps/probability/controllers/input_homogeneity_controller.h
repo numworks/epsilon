@@ -19,7 +19,6 @@
 
 namespace Probability {
 
-// TODO create template
 class InputHomogeneityDataSource : public TableViewDataSource {
 public:
   InputHomogeneityDataSource(SelectableTableView * tableView,
@@ -36,7 +35,7 @@ public:
   KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
 
-  // TODO is it worth reusing cells ?
+  // TODO reusable
   EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
 };
 

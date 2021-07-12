@@ -9,7 +9,6 @@
 
 #include "controllers/categorical_type_controller.h"
 #include "controllers/distribution_controller.h"
-#include "controllers/statistic_graph_controller.h"
 #include "controllers/homogeneity_results_controller.h"
 #include "controllers/hypothesis_controller.h"
 #include "controllers/input_controller.h"
@@ -18,6 +17,7 @@
 #include "controllers/menu_controller.h"
 #include "controllers/parameters_controller.h"
 #include "controllers/results_controller.h"
+#include "controllers/statistic_graph_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
 #include "models/calculation/discrete_calculation.h"
@@ -64,10 +64,13 @@ public:
   Data::SubApp subapp() { return snapshot()->navigation()->subapp(); }
   Data::Test test() { return snapshot()->data()->test(); }
   Data::TestType testType() { return snapshot()->data()->testType(); }
+  Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }
+  void setCategoricalType(Data::CategoricalType type) { snapshot()->data()->setCategoricalType(type); }
 
   TELEMETRY_ID("Probability");
   // TODO better handling
-  bool textFieldDidFinishEditing(TextField * textField, const char * text,
+  bool textFieldDidFinishEditing(TextField * textField,
+                                 const char * text,
                                  Ion::Events::Event event) {
     textField->setText(text);
     return true;

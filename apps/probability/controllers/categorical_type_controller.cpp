@@ -35,15 +35,19 @@ void CategoricalTypeController::didBecomeFirstResponder() {
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Escher::ViewController * view;
+    Data::CategoricalType type;
     switch (selectedRow()) {
       case k_indexOfGoodnessCell:
         view = m_inputGoodnessController;
+        type = Data::CategoricalType::Goodness;
         break;
       case k_indexOfHomogeneityCell:
         view = m_inputHomogeneityController;
+        type = Data::CategoricalType::Homogeneity;
         break;
     }
     assert(view != nullptr);
+    App::app()->setCategoricalType(type);
     openPage(view);
     return true;
   }

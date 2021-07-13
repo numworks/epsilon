@@ -22,8 +22,10 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                HypothesisController * hypothesisController,
                                TypeController * typeController,
                                CategoricalTypeController * categoricalController,
-                               InputController * inputController, Data::Test * globalTest,
-                               Data::TestType * globalTestType, Statistic * statistic) :
+                               InputController * inputController,
+                               Data::Test * globalTest,
+                               Data::TestType * globalTestType,
+                               Statistic * statistic) :
     SelectableCellListPage(parentResponder),
     m_hypothesisController(hypothesisController),
     m_typeController(typeController),
@@ -95,8 +97,11 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if ((Data::isProportion(test) || test == Data::Test::Categorical) && (test != App::app()->test())) {
-      Statistic::initializeStatistic(m_statistic, test, Data::TestType::ZTest);
+    if (Data::isProportion(test) && (test != App::app()->test())) {
+      Statistic::initializeStatistic(m_statistic,
+                                     test,
+                                     Data::TestType::ZTest,
+                                     Data::CategoricalType::None);
       *m_globalTestType = Data::TestType::ZTest;
     }
 

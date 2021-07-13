@@ -2,6 +2,7 @@
 #define APPS_PROBABILITY_ABSTRACT_HOMOGENEITY_DATA_SOURCE_H
 
 #include <apps/i18n.h>
+#include <apps/shared/parameter_text_field_delegate.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/selectable_table_view.h>
@@ -10,6 +11,7 @@
 
 #include "probability/gui/bordered_table_view_data_source.h"
 #include "probability/gui/solid_color_cell.h"
+#include "probability/models/statistic/homogeneity_statistic.h"
 
 using namespace Escher;
 
@@ -20,9 +22,10 @@ namespace Probability {
 // TODO memoize
 class HomogeneityTableDataSource : public BorderedTableViewDataSource,
                                    public SelectableTableViewDataSource,
-                                   public SelectableTableViewDelegate {
+                                   public SelectableTableViewDelegate,
+                                   public Shared::ParameterTextFieldDelegate {
 public:
-  HomogeneityTableDataSource(TableViewDataSource * contentTable,
+  HomogeneityTableDataSource(TableViewDataSource * contentTable, HomogeneityStatistic * statistic,
                              I18n::Message headerPrefix = I18n::Message::Group);
   int numberOfRows() const override { return m_contentTable->numberOfRows() + 1; }
   int numberOfColumns() const override { return m_contentTable->numberOfColumns() + 1; }
@@ -36,6 +39,13 @@ public:
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
+
+  // TextFieldDelegate
+  bool textFieldShouldFinishEditing(Escher::TextField * textField,
+                                    Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField,
+                                 const char * text,
+                                 Ion::Events::Event event) override;
 
   void tableViewDidChangeSelection(SelectableTableView * t,
                                    int previousSelectedCellX,
@@ -62,6 +72,7 @@ private:
   int indexForEditableCell(int i);
 
   TableViewDataSource * m_contentTable;
+  HomogeneityStatistic * m_statistic;
 
   SolidColorCell m_topLeftCell;
   EvenOddBufferTextCell m_rowHeader[k_maxNumberOfRows];

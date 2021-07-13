@@ -134,7 +134,8 @@ KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
   // Pass expected size to VerticalLayout to propagate to TableCells
   ContentView * contentView = const_cast<ContentView *>(&m_contentView);
   contentView->setSize(KDSize(bounds().width(), 10000));
-  return contentView->minimalSizeForOptimalDisplay();
+  KDSize requiredSize = contentView->minimalSizeForOptimalDisplay();
+  return KDSize(bounds().width(), requiredSize.height());
 }
 
 void Probability::InputCategoricalView::setSignificanceCellText(const char * text) {

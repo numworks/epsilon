@@ -26,7 +26,12 @@ float HomogeneityStatistic::observedValue(int index) {
 float HomogeneityStatistic::expectedValue(int index) {
 }
 
-int HomogeneityStatistic::_numberOfInputParams() {
+int HomogeneityStatistic::_degreesOfFreedom() {
+  Index2D max = _numberOfInputParams();
+  m_numberOfInputParams = (max.row - 1) * (max.col - 1);
+}
+
+HomogeneityStatistic::Index2D HomogeneityStatistic::_numberOfInputParams() {
   int maxCol, maxRow;
   for (int row = 0; row < k_maxNumberOfRows; row++) {
     for (int col = 0; col < k_maxNumberOfColumns; col++) {
@@ -42,11 +47,12 @@ int HomogeneityStatistic::_numberOfInputParams() {
     }
   }
   assert(maxCol > 0 && maxRow > 0);
-  return maxRow * maxCol;
+  return Index2D{.row = maxRow, .col = maxCol};
 }
 
 void HomogeneityStatistic::computeNumberOfParameters() {
-  m_numberOfInputParams = _numberOfInputParams();
+  Index2D max = _numberOfInputParams();
+  m_numberOfInputParams = max.row * max.col;
 }
 
 HomogeneityStatistic::Index2D HomogeneityStatistic::indexToTableIndex(int index) {

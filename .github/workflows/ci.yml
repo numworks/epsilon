@@ -100,7 +100,6 @@ jobs:
           name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
   macos:
-    if: github.event.inputs.triggerMacos == 'yes'
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk
@@ -114,7 +113,6 @@ jobs:
           name: epsilon-macos.zip
           path: output/release/simulator/macos/epsilon.app
   ios:
-    if: github.event.inputs.triggerIos == 'yes'
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk

@@ -1,5 +1,5 @@
 ifeq ($(FIRMWARE_COMPONENT),bootloader)
-include epsilon-bootloader/device/Makefile
+include epsilon-bootloader/device/$(MODEL)/Makefile
 else
 -include ion/src/device/$(FIRMWARE_COMPONENT)/Makefile
 endif

@@ -16,6 +16,7 @@
 #include "probability/gui/input_categorical_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/solid_color_cell.h"
+#include "probability/gui/selectable_table_view_with_background.h"
 
 namespace Probability {
 
@@ -56,7 +57,7 @@ public:
 private:
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;
-  SelectableTableView m_table;
+  SelectableTableViewWithBackground m_table;
   InputCategoricalView m_contentView;
 
   HomogeneityResultsController * m_homogeneityResultsController;

@@ -9,7 +9,6 @@ namespace Probability {
 
 class Chi2Statistic : public CachedStatistic {
 public:
-  Chi2Statistic();
   void computeTest() override;
   const char * testCriticalValueSymbol() override { return "X2"; }
   const char * estimateSymbol() override { return  ""; }
@@ -22,25 +21,21 @@ public:
   void computeInterval() override {}
   const char * intervalCriticalValueSymbol() override { return ""; }
 
-  int numberOfStatisticParameters() const override { return k_maxNumberOfParameters; };
 
   constexpr static float k_undefinedValue = NAN;
-  constexpr static int k_maxNumberOfParameters = 20;
 
 protected:
   const ParameterRepr * paramReprAtIndex(int i) const override { return nullptr; }
-  float * paramArray() override { return m_input; }
 
   // Chi2 specific
   virtual float expectedValue(int index);
   virtual float observedValue(int index);
+  virtual int _degreesOfFreedom() = 0;
+  virtual void computeNumberOfParameters() = 0;
 
 private:
-  int _numberOfInputRows();
   static float _zAlpha(float degreesOfFreedom, float significanceLevel);
   static float _pVal(float degreesOfFreedom, float z);
-
-  float m_input[k_maxNumberOfParameters];
   float m_degreesOfFreedom;
 };
 

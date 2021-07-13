@@ -27,6 +27,7 @@
 #include "probability/helpers.h"
 #include "probability/models/hypothesis_params.h"
 #include "probability/models/statistic/chi2_statistic.h"
+#include "probability/models/statistic/goodness_statistic.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 #include "probability/models/statistic/one_mean_t_statistic.h"
 #include "probability/models/statistic/one_mean_z_statistic.h"
@@ -67,7 +68,7 @@ struct ProbaData {
   CalculationBuffer m_calculationBuffer;
 };
 
-static constexpr int statisticSizes[9] = {sizeof(OneProportionStatistic),
+static constexpr int statisticSizes[10] = {sizeof(OneProportionStatistic),
                                           sizeof(OneMeanZStatistic),
                                           sizeof(OneMeanTStatistic),
                                           sizeof(TwoProportionsStatistic),
@@ -75,6 +76,7 @@ static constexpr int statisticSizes[9] = {sizeof(OneProportionStatistic),
                                           sizeof(TwoMeansTStatistic),
                                           sizeof(PooledTwoMeansStatistic),
                                           sizeof(Chi2Statistic),
+                                          sizeof(GoodnessStatistic),
                                           sizeof(HomogeneityStatistic)};
 
 constexpr int maxStatisticSize = arrayMax(statisticSizes);

@@ -5,6 +5,34 @@ test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(kandinsky_src) 
 $(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_read_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_read_src))
 $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
 
+
+$(BUILD_DIR)/%.A.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_slot_a.ld
+$(BUILD_DIR)/%.B.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_slot_b.ld
+
+# TODO: clean the BUILD_DIR definition in targets.device.mak to avoid requiring FIRMWARE_COMPONENT to:
+# - find the right subfolder 'bootloader', 'kernel' or 'userland'
+# - be able to rely on the usual rule for dfu
+# - avoid requiring a standalone Makefile
+#epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
+#$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.A.elf $(BUILD_DIR)/kernel.A.elf $(BUILD_DIR)/userland.B.elf $(BUILD_DIR)/kernel.B.elf $(BUILD_DIR)/signer
+
+epsilon.dfu: DFUFLAGS += --custom
+
+.PHONY: $(BUILD_DIR)/epsilon.dfu
+$(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
+	$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.A.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.B.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland.A.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland.B.elf
+	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
+	  $(subst epsilon,bootloader,$(subst debug,release,$(BUILD_DIR)/bootloader.elf)) \
+	  $(subst epsilon,userland,$(BUILD_DIR)/userland.A.elf) \
+	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.A.elf)) \
+	  $(subst epsilon,userland,$(BUILD_DIR)/userland.B.elf) \
+	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.B.elf)) \
+	  -o $@
+
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu flasher.dfu
 	@echo "DFU     $@"

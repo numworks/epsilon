@@ -2,6 +2,7 @@ ifeq ($(FIRMWARE_COMPONENT),bootloader)
 include epsilon-bootloader/device/$(MODEL)/Makefile
 else
 -include ion/src/device/$(FIRMWARE_COMPONENT)/Makefile
+-include ion/src/device/$(MODEL)/$(FIRMWARE_COMPONENT)/Makefile
 endif
 
 include ion/src/device/shared/Makefile

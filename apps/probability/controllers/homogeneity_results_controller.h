@@ -13,9 +13,10 @@
 
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/homogeneity_data_source.h"
-#include "probability/gui/page_controller.h"
-#include "probability/gui/solid_color_cell.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
+#include "probability/gui/page_controller.h"
+#include "probability/gui/selectable_table_view_with_background.h"
+#include "probability/gui/solid_color_cell.h"
 
 using namespace Escher;
 
@@ -59,7 +60,9 @@ private:
 class HomogeneityResultsController : public Page {
 public:
   HomogeneityResultsController(StackViewController * stackViewController);
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTitles;
+  }
   const char * title() override { return "x2-test: Homogeneity/Independence"; }
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
@@ -69,7 +72,7 @@ private:
   HomogeneityTableDataSource m_tableData;
   HomogeneityResultsDataSource m_innerTableData;
 
-  SelectableTableView m_table;
+  SelectableTableViewWithBackground m_table;
 };
 
 }  // namespace Probability

@@ -28,4 +28,3 @@ ion_device_kernel_src = $(addprefix ion/src/device/kernel/, \
 )
 
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL)/kernel -Iion/src/device/kernel
-

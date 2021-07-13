@@ -1,12 +1,10 @@
 ifeq ($(FIRMWARE_COMPONENT),bootloader)
 include epsilon-bootloader/device/$(MODEL)/Makefile
 else
--include ion/src/device/$(FIRMWARE_COMPONENT)/Makefile
 -include ion/src/device/$(MODEL)/$(FIRMWARE_COMPONENT)/Makefile
 endif
 
-include ion/src/device/shared/Makefile
-include ion/src/device/$(MODEL)/Makefile
+include ion/src/device/$(MODEL)/shared/Makefile
 
 # We need to work around a GCC bug (concerning versions < 5.1). It is valid in
 # C++11 to initialize a character array by providing a string litteral (e.g.

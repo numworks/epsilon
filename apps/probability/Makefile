@@ -55,6 +55,7 @@ app_probability_src += $(addprefix apps/probability/models/statistic/,\
 	two_means_t_statistic.cpp \
 	pooled_two_means_statistic.cpp \
 	chi2_statistic.cpp \
+	homogeneity_statistic.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\

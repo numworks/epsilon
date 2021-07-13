@@ -26,6 +26,8 @@
 #include "distribution/uniform_distribution.h"
 #include "probability/helpers.h"
 #include "probability/models/hypothesis_params.h"
+#include "probability/models/statistic/chi2_statistic.h"
+#include "probability/models/statistic/homogeneity_statistic.h"
 #include "probability/models/statistic/one_mean_t_statistic.h"
 #include "probability/models/statistic/one_mean_z_statistic.h"
 #include "probability/models/statistic/one_proportion_statistic.h"
@@ -34,24 +36,29 @@
 #include "probability/models/statistic/two_means_t_statistic.h"
 #include "probability/models/statistic/two_means_z_statistic.h"
 #include "probability/models/statistic/two_proportions_statistic.h"
-#include "probability/models/statistic/chi2_statistic.h"
 
 namespace Probability {
 namespace Data {
 
 // Buffers for dynamic allocation
 
-static constexpr int distributionSizes[9] = {
-    sizeof(ChiSquaredDistribution), sizeof(ExponentialDistribution), sizeof(GeometricDistribution),
-    sizeof(PoissonDistribution),    sizeof(StudentDistribution),     sizeof(BinomialDistribution),
-    sizeof(FisherDistribution),     sizeof(NormalDistribution),      sizeof(UniformDistribution)};
+static constexpr int distributionSizes[9] = {sizeof(ChiSquaredDistribution),
+                                             sizeof(ExponentialDistribution),
+                                             sizeof(GeometricDistribution),
+                                             sizeof(PoissonDistribution),
+                                             sizeof(StudentDistribution),
+                                             sizeof(BinomialDistribution),
+                                             sizeof(FisherDistribution),
+                                             sizeof(NormalDistribution),
+                                             sizeof(UniformDistribution)};
 
 static constexpr int maxDistributionSize = arrayMax(distributionSizes);
 typedef char DistributionBuffer[maxDistributionSize];
 
-static constexpr int calculationSizes[4] = {
-    sizeof(DiscreteCalculation), sizeof(FiniteIntegralCalculation), sizeof(LeftIntegralCalculation),
-    sizeof(RightIntegralCalculation)};
+static constexpr int calculationSizes[4] = {sizeof(DiscreteCalculation),
+                                            sizeof(FiniteIntegralCalculation),
+                                            sizeof(LeftIntegralCalculation),
+                                            sizeof(RightIntegralCalculation)};
 static constexpr int maxCalculationSize = arrayMax(calculationSizes);
 typedef char CalculationBuffer[maxCalculationSize];
 
@@ -60,10 +67,15 @@ struct ProbaData {
   CalculationBuffer m_calculationBuffer;
 };
 
-static constexpr int statisticSizes[8] = {
-    sizeof(OneProportionStatistic),  sizeof(OneMeanZStatistic),  sizeof(OneMeanTStatistic),
-    sizeof(TwoProportionsStatistic), sizeof(TwoMeansZStatistic), sizeof(TwoMeansTStatistic),
-    sizeof(PooledTwoMeansStatistic), sizeof(Chi2Statistic)};
+static constexpr int statisticSizes[9] = {sizeof(OneProportionStatistic),
+                                          sizeof(OneMeanZStatistic),
+                                          sizeof(OneMeanTStatistic),
+                                          sizeof(TwoProportionsStatistic),
+                                          sizeof(TwoMeansZStatistic),
+                                          sizeof(TwoMeansTStatistic),
+                                          sizeof(PooledTwoMeansStatistic),
+                                          sizeof(Chi2Statistic),
+                                          sizeof(HomogeneityStatistic)};
 
 constexpr int maxStatisticSize = arrayMax(statisticSizes);
 typedef char StatisticBuffer[maxStatisticSize];

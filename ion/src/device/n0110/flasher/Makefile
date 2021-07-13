@@ -1,4 +1,4 @@
-ion_device_flasher_src = $(addprefix ion/src/device/flasher/, \
+ion_device_flasher_src = $(addprefix ion/src/device/n0110/flasher/, \
   boot/isr.c \
   boot/rt0.cpp \
   drivers/board.cpp \
@@ -8,5 +8,5 @@ ion_device_flasher_src = $(addprefix ion/src/device/flasher/, \
   main.cpp \
 )
 
-ION_DEVICE_SFLAGS = -Iion/src/device/flasher
+ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL)/flasher
 

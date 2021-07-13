@@ -3,7 +3,7 @@
 namespace Probability {
 
 GoodnessStatistic::GoodnessStatistic() : m_numberOfInputRows(k_maxNumberOfRows) {
-  for (int i = 0; i < numberOfParameters(); i++) {
+  for (int i = 0; i < k_maxNumberOfRows * 2; i++) {
     m_input[i] = k_undefinedValue;
   }
 }

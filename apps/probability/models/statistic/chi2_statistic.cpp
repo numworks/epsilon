@@ -12,7 +12,7 @@ void Chi2Statistic::computeTest() {
   computeNumberOfParameters();
   m_degreesOfFreedom = _degreesOfFreedom();
   m_z = 0;
-  for (int i = 0; i < numberOfParameters(); i++) {
+  for (int i = 0; i < numberOfStatisticParameters(); i++) {
     m_z += std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
   }
   m_zAlpha = absIfNeeded(_zAlpha(m_degreesOfFreedom, m_threshold));

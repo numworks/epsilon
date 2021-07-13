@@ -19,13 +19,13 @@ protected:
   float observedValue(int index) override;
   float expectedValue(int index) override;
   int _degreesOfFreedom() override;
-  int _numberOfInputParams();
+  struct Index2D { int row; int col; };
+  Index2D _numberOfInputParams();
   void computeNumberOfParameters() override;
 
 private:
   float * paramArray() override { return m_input; }
 
-  struct Index2D { int row; int col; };
   Index2D indexToTableIndex(int index);
   int index2DToIndex(Index2D indexes);
   int index2DToIndex(int row, int column);

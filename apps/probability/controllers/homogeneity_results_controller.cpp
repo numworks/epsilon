@@ -32,10 +32,11 @@ HighlightCell * HomogeneityResultsDataSource::reusableCell(int i, int type) {
 }
 
 HomogeneityResultsController::HomogeneityResultsController(
-    StackViewController * stackViewController) :
+    StackViewController * stackViewController,
+    HomogeneityStatistic * statistic) :
     Page(stackViewController),
     m_contentView(this, &m_table),
-    m_tableData(&m_innerTableData),
+    m_tableData(&m_innerTableData, statistic),
     m_table(this, &m_tableData, &m_tableData, &m_tableData) {
 }
 

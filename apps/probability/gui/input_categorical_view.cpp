@@ -4,22 +4,31 @@
 
 using namespace Probability;
 
+Escher::View * InputCategoricalView::ContentView::InnerVerticalLayout::subviewAtIndex(int i) {
+  switch (i) {
+    case 0:
+      return m_significanceCell;
+      break;
+    case 1:
+      return m_spacer;
+    case 2:
+      return m_next;
+  }
+}
+
 Probability::InputCategoricalView::ContentView::ContentView(
     SelectableTableView * dataInputTableView,
     MessageTableCellWithEditableTextWithMessage * significanceCell,
     Escher::Button * next) :
     VerticalLayout(Palette::WallScreenDark),
     m_dataInputTableView(dataInputTableView),
-    m_significanceCell(significanceCell),
-    m_next(next),
-    m_spacer1(Palette::WallScreenDark, 0, k_marginVertical),
-    m_spacer2(Palette::WallScreenDark, 0, k_marginVertical) {
-  setMargins(Metric::CommonRightMargin, 0);
-  m_dataInputTableView->setMargins(Metric::CommonTopMargin, 0, 0, 0);
+    m_innerView(significanceCell, &m_spacer, next),
+    m_spacer(Palette::WallScreenDark, 0, k_marginVertical) {
+  m_dataInputTableView->setMargins(Metric::CommonTopMargin, Metric::CommonRightMargin, k_marginVertical, Metric::CommonLeftMargin);
   m_dataInputTableView->setBackgroundColor(Palette::WallScreenDark);
-  m_significanceCell->setMessage(I18n::Message::GreekAlpha);
-  m_significanceCell->setSubLabelMessage(I18n::Message::SignificanceLevel);
-  m_significanceCell->textField()->setText("0.05");  // TODO kinda ugly?
+  significanceCell->setMessage(I18n::Message::GreekAlpha);
+  significanceCell->setSubLabelMessage(I18n::Message::SignificanceLevel);
+  significanceCell->textField()->setText("0.05");  // TODO kinda ugly?
 }
 
 Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {
@@ -27,17 +36,8 @@ Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {
     case k_indexOfTable:
       return m_dataInputTableView;
       break;
-    case k_indexOfSpacer1:
-      return &m_spacer1;
-      break;
-    case k_indexOfSignificance:
-      return m_significanceCell;
-      break;
-    case k_indexOfSpacer2:
-      return &m_spacer2;
-      break;
-    case k_indexOfNext:
-      return m_next;
+    case k_indexOfInnerLayout:
+      return &m_innerView;
       break;
   }
   assert(false);
@@ -72,14 +72,16 @@ void InputCategoricalView::didBecomeFirstResponder() {
 bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
-      m_viewSelection.selectRow(m_viewSelection.selectedRow() - 2);
+      int jump = 1 + (m_viewSelection.selectedRow() == ContentView::k_indexOfSpacer + 1);
+      m_viewSelection.selectRow(m_viewSelection.selectedRow() - jump);
     }
     if (event == Ion::Events::Down &&
-        m_viewSelection.selectedRow() < m_contentView.numberOfSubviews() - 1) {
-      m_viewSelection.selectRow(m_viewSelection.selectedRow() + 2);
+        m_viewSelection.selectedRow() < ContentView::k_indexOfNext) {
+      int jump = 1 + (m_viewSelection.selectedRow() == ContentView::k_indexOfSpacer - 1);
+      m_viewSelection.selectRow(m_viewSelection.selectedRow() + jump);
     }
-    setResponderForSelectedRow();
     selectCorrectView();
+    setResponderForSelectedRow();
     return true;
   }
   return false;

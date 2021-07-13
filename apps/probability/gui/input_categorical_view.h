@@ -58,22 +58,40 @@ private:
     ContentView(SelectableTableView * dataInputTableView,
                 MessageTableCellWithEditableTextWithMessage * significanceCell,
                 Escher::Button * next);
-    int numberOfSubviews() const override { return 5 /* Table + Cell + Button + 2 Spacers */; }
+    int numberOfSubviews() const override { return 2 /* Table + InnerVerticalLayout */; }
     Escher::View * subviewAtIndex(int i) override;
 
     constexpr static int k_indexOfTable = 0;
-    constexpr static int k_indexOfSpacer1 = 1;
-    constexpr static int k_indexOfSignificance = 2;
-    constexpr static int k_indexOfSpacer2 = 3;
-    constexpr static int k_indexOfNext = 4;
+    constexpr static int k_indexOfInnerLayout = 1;
+    constexpr static int k_indexOfSignificance = 1;
+    constexpr static int k_indexOfSpacer = 2;
+    constexpr static int k_indexOfNext = 3;
 
   private:
-    SelectableTableView * m_dataInputTableView;
-    MessageTableCellWithEditableTextWithMessage * m_significanceCell;
-    Escher::Button * m_next;
+    /* Layout cell, a spacer and button with side margins */
+    class InnerVerticalLayout : public VerticalLayout {
+    public:
+      InnerVerticalLayout(MessageTableCellWithEditableTextWithMessage * significanceCell,
+                          SpacerView * spacer,
+                          Escher::Button * next) :
+          VerticalLayout(Palette::WallScreenDark),
+          m_significanceCell(significanceCell),
+          m_next(next),
+          m_spacer(spacer) {
+        setMargins(Metric::CommonRightMargin, 0);
+      };
+      Escher::View * subviewAtIndex(int i) override;
+      int numberOfSubviews() const override { return 3; }
 
-    SpacerView m_spacer1;
-    SpacerView m_spacer2;
+    private:
+      MessageTableCellWithEditableTextWithMessage * m_significanceCell;
+      SpacerView * m_spacer;
+      Escher::Button * m_next;
+    };
+
+    SelectableTableView * m_dataInputTableView;
+    InnerVerticalLayout m_innerView;
+    SpacerView m_spacer;
   };
 
   constexpr static int k_marginVertical = 5;

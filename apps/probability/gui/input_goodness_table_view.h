@@ -10,7 +10,7 @@
 #include <escher/table_view_data_source.h>
 
 #include "bordered_table_view_data_source.h"
-#include "probability/models/statistic/chi2_statistic.h"
+#include "probability/models/statistic/goodness_statistic.h"
 
 namespace Probability {
 
@@ -45,8 +45,8 @@ public:
 private:
   constexpr static int k_typeOfHeader = 1;
   constexpr static int k_initialNumberOfRows = 4;
-  constexpr static int k_maxNumberOfRows = Chi2Statistic::k_maxNumberOfParameters / 2 + 1;
   constexpr static int k_numberOfColumns = 2;
+  constexpr static int k_maxNumberOfReusableRows = 8; // TODO compute
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
                                         k_borderBetweenColumns) /
@@ -59,7 +59,7 @@ private:
   Chi2Statistic * m_statistic;
 
   Escher::EvenOddMessageTextCell m_header[k_numberOfColumns];
-  Escher::EvenOddEditableTextCell m_cells[k_numberOfColumns * (k_maxNumberOfRows - 1)];
+  Escher::EvenOddEditableTextCell m_cells[k_numberOfColumns * k_maxNumberOfReusableRows];
 
   Escher::SelectableTableViewDataSource m_tableSelection;
 };

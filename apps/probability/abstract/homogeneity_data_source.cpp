@@ -24,6 +24,7 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * con
   for (int i = 0; i < k_initialNumberOfRows; i++) {
     *(txt + offset) = 'A' + i;
     m_rowHeader[i].setText(txt);
+    m_rowHeader[i].setAlignment(.5f, .5f);
     m_rowHeader[i].setFont(KDFont::SmallFont);
     m_rowHeader[i].setEven(i % 2 == 0);
   }

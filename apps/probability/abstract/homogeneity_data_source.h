@@ -34,11 +34,7 @@ public:
   }
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int i, int type) override;
-  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override {
-    if (row > 0 && column > 0) {
-      m_contentTable->willDisplayCellAtLocation(cell, column - 1, row - 1);
-    }
-  }
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
@@ -47,18 +43,13 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t,
                                    int previousSelectedCellX,
                                    int previousSelectedCellY,
-                                   bool withinTemporarySelection = false) override {
-    if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
-      t->selectRow(previousSelectedCellY);
-      t->selectColumn(previousSelectedCellX);
-    }
-  }
+                                   bool withinTemporarySelection = false) override;
 
   constexpr static int k_columnWidth = 80;
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_rowHeight = 20;
 
-  constexpr static int k_initialNumberOfRows = 3;
+  constexpr static int k_initialNumberOfRows = 6;
   constexpr static int k_initialNumberOfColumns = 3;
   constexpr static int k_maxNumberOfColumns = 6;
   constexpr static int k_maxNumberOfRows = 6;
@@ -68,6 +59,7 @@ public:
 private:
   int indexForEditableCell(int i);
 
+  I18n::Message m_headerPrefix;
   TableViewDataSource * m_contentTable;
 
   SolidColorCell m_topLeftCell;

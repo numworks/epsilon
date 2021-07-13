@@ -22,10 +22,9 @@ namespace Probability {
 // TODO memoize
 class HomogeneityTableDataSource : public BorderedTableViewDataSource,
                                    public SelectableTableViewDataSource,
-                                   public SelectableTableViewDelegate,
-                                   public Shared::ParameterTextFieldDelegate {
+                                   public SelectableTableViewDelegate{
 public:
-  HomogeneityTableDataSource(TableViewDataSource * contentTable, HomogeneityStatistic * statistic,
+  HomogeneityTableDataSource(TableViewDataSource * contentTable,
                              I18n::Message headerPrefix = I18n::Message::Group);
   int numberOfRows() const override { return m_contentTable->numberOfRows() + 1; }
   int numberOfColumns() const override { return m_contentTable->numberOfColumns() + 1; }
@@ -40,12 +39,6 @@ public:
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
-  // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::TextField * textField,
-                                    Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
 
   void tableViewDidChangeSelection(SelectableTableView * t,
                                    int previousSelectedCellX,
@@ -72,7 +65,6 @@ private:
   int indexForEditableCell(int i);
 
   TableViewDataSource * m_contentTable;
-  HomogeneityStatistic * m_statistic;
 
   SolidColorCell m_topLeftCell;
   EvenOddBufferTextCell m_rowHeader[k_maxNumberOfRows];

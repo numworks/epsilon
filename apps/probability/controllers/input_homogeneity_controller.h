@@ -22,11 +22,13 @@
 
 namespace Probability {
 
-class InputHomogeneityDataSource : public TableViewDataSource {
+class InputHomogeneityDataSource : public TableViewDataSource,
+                                   public Shared::ParameterTextFieldDelegate {
 public:
-  InputHomogeneityDataSource(SelectableTableView * tableView,
-                             InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             TextFieldDelegate * delegate);
+  InputHomogeneityDataSource(
+    SelectableTableView * tableView,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    HomogeneityStatistic * statistic);
   int numberOfRows() const override { return HomogeneityTableDataSource::k_initialNumberOfRows; }
   int numberOfColumns() const override {
     return HomogeneityTableDataSource::k_initialNumberOfColumns;
@@ -38,8 +40,19 @@ public:
   KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
 
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
+  // TextFieldDelegate
+  bool textFieldShouldFinishEditing(Escher::TextField * textField,
+                                    Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField,
+                                 const char * text,
+                                 Ion::Events::Event event) override;
+
+private:
   // TODO reusable
   EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
+  HomogeneityStatistic * m_statistic;
+  SelectableTableView * m_table;
 };
 
 class InputHomogeneityController : public Page,

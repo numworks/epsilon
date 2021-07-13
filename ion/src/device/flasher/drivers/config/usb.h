@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_N0110_CONFIG_USB_H
-#define ION_DEVICE_N0110_CONFIG_USB_H
+#ifndef ION_DEVICE_FLASHER_CONFIG_USB_H
+#define ION_DEVICE_FLASHER_CONFIG_USB_H
 
 #include <drivers/config/usb_pins.h>
 

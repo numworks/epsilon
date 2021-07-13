@@ -1,7 +1,7 @@
 include build/targets.device.$(MODEL).mak
 -include build/targets.device.$(FIRMWARE_COMPONENT).mak
 
-HANDY_TARGETS += flasher bench.ram bench.flash bootloader kernel.A kernel.B userland.A userland.B
+HANDY_TARGETS += bench.ram bench.flash
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 $(eval $(call rule_for, \
@@ -35,12 +35,6 @@ $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 openocd:
 	openocd -f build/$(PLATFORM)/openocd.$(MODEL).cfg
 
-# The flasher target is defined here because otherwise $(%_src) has not been
-# fully filled
-flasher_src = $(ion_device_flasher_src) $(liba_src) $(liba_flasher_src) $(kandinsky_src)
-$(BUILD_DIR)/flasher.$(EXE): $(call flavored_object_for,$(flasher_src), usbxip)
-$(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)/flasher
-$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/flasher/ram.ld
 
 #TODO Do not build all apps... Put elsewhere?
 bench_src = $(ion_src) $(liba_src) $(kandinsky_src) $(poincare_src) $(libaxx_src) $(app_shared_src) $(ion_device_bench_src)
@@ -51,30 +45,3 @@ $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),console
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 
 $(BUILD_DIR)/%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/$(MODEL)/shared/config_flash.ld ion/src/$(PLATFORM)/shared/shared_config_flash.ld
-
-$(BUILD_DIR)/%.A.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_slot_a.ld
-$(BUILD_DIR)/%.B.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_slot_b.ld
-
-# TODO: clean the BUILD_DIR definition in targets.device.mak to avoid requiring FIRMWARE_COMPONENT to:
-# - find the right subfolder 'bootloader', 'kernel' or 'userland'
-# - be able to rely on the usual rule for dfu
-# - avoid requiring a standalone Makefile
-#epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
-#$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.A.elf $(BUILD_DIR)/kernel.A.elf $(BUILD_DIR)/userland.B.elf $(BUILD_DIR)/kernel.B.elf $(BUILD_DIR)/signer
-
-epsilon.dfu: DFUFLAGS += --custom
-
-.PHONY: $(BUILD_DIR)/epsilon.dfu
-$(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
-	$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf
-	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.A.elf
-	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.B.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland.A.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland.B.elf
-	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
-	  $(subst epsilon,bootloader,$(subst debug,release,$(BUILD_DIR)/bootloader.elf)) \
-	  $(subst epsilon,userland,$(BUILD_DIR)/userland.A.elf) \
-	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.A.elf)) \
-	  $(subst epsilon,userland,$(BUILD_DIR)/userland.B.elf) \
-	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.B.elf)) \
-	  -o $@

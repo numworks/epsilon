@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include <drivers/cache.h>
-#include <shared/drivers/board.h>
+#include <shared/drivers/board_unprivileged.h>
 
 #define DEBUG_FOR_DEVICE 0
 #if DEBUG_FOR_DEVICE

@@ -1,9 +1,6 @@
-#ifndef ION_DEVICE_SHARED_DRIVERS_BOARD_H
-#define ION_DEVICE_SHARED_DRIVERS_BOARD_H
+#ifndef ION_DEVICE_SHARED_DRIVERS_BOARD_PRIVILEGED_H
+#define ION_DEVICE_SHARED_DRIVERS_BOARD_PRIVILEGED_H
 
-#include <drivers/board.h>
-#include <drivers/kernel_header.h>
-#include <drivers/userland_header.h>
 #include <stdint.h>
 
 namespace Ion {
@@ -12,6 +9,10 @@ namespace Board {
 
 void init();
 void shutdown();
+void initFPU();
+void initCompensationCell();
+void shutdownCompensationCell();
+void setDefaultGPIO();
 
 void setClockLowFrequency();
 void setClockStandardFrequency();
@@ -30,13 +31,6 @@ void writePCBVersion(PCBVersion version);
 void lockPCBVersion();
 bool pcbVersionIsLocked();
 void lockUnlockedPCBVersion();
-
-bool isRunningSlotA();
-uint32_t slotAUserlandStart();
-uint32_t slotBUserlandStart();
-uint32_t userlandStart();
-KernelHeader * kernelHeader();
-UserlandHeader * userlandHeader();
 
 }
 }

@@ -29,10 +29,6 @@ void shutdown() {
   shutdownPeripheralsClocks();
 }
 
-void shutdownCompensationCell() {
-  SYSCFG.CMPCR()->setCMP_PD(false);
-}
-
 void initPeripherals(bool fromBootloader) {
   if (!fromBootloader) {
     Display::init();

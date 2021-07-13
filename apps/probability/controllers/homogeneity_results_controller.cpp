@@ -36,7 +36,7 @@ HomogeneityResultsController::HomogeneityResultsController(
     Page(stackViewController),
     m_contentView(this, &m_table),
     m_tableData(&m_innerTableData),
-    m_table(this, &m_tableData, &m_tableData) {
+    m_table(this, &m_tableData, &m_tableData, &m_tableData) {
 }
 
 void HomogeneityResultsController::didBecomeFirstResponder() {

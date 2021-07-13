@@ -19,7 +19,8 @@ namespace Probability {
  * Specifically meant for InputHomogeneity and HomogeneityResults. */
 // TODO memoize
 class HomogeneityTableDataSource : public BorderedTableViewDataSource,
-                                   public SelectableTableViewDataSource {
+                                   public SelectableTableViewDataSource,
+                                   public SelectableTableViewDelegate {
 public:
   HomogeneityTableDataSource(TableViewDataSource * contentTable,
                              I18n::Message headerPrefix = I18n::Message::Group);
@@ -35,6 +36,16 @@ public:
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
+
+  void tableViewDidChangeSelection(SelectableTableView * t,
+                                   int previousSelectedCellX,
+                                   int previousSelectedCellY,
+                                   bool withinTemporarySelection = false) override {
+    if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
+      t->selectRow(previousSelectedCellY);
+      t->selectColumn(previousSelectedCellX);
+    }
+  }
 
   constexpr static int k_columnWidth = 80;
   constexpr static int k_borderBetweenColumns = 1;

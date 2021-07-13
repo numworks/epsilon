@@ -33,6 +33,14 @@ InputGoodnessController::InputGoodnessController(
 
 void InputGoodnessController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::InputGoodness);
+  if (m_statistic->threshold() == -1) {
+    m_statistic->initThreshold(App::app()->subapp());
+    // TODO can definitely be factored out
+    constexpr int bufferSize = 20;
+    char buffer[bufferSize];
+    defaultParseFloat(m_statistic->threshold(), buffer, bufferSize);
+    m_contentView.setSignificanceCellText(buffer);
+  }
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);
 }
 

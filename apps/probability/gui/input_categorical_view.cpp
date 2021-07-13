@@ -54,6 +54,7 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
     m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
     m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), KDFont::LargeFont),
     m_contentView(table, &m_significanceCell, &m_next) {
+  table->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
 }
 
 void InputCategoricalView::didBecomeFirstResponder() {

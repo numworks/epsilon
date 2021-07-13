@@ -6,11 +6,8 @@
 using namespace Probability;
 
 HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * contentTable,
-                                                       HomogeneityStatistic * statistic,
                                                        I18n::Message headerPrefix) :
-    m_contentTable(contentTable),
-    m_topLeftCell(Escher::Palette::WallScreenDark),
-    m_statistic(statistic) {
+    m_contentTable(contentTable), m_topLeftCell(Escher::Palette::WallScreenDark) {
   // Headers
   constexpr int bufferSize = 20;
   char txt[bufferSize];
@@ -59,27 +56,4 @@ int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
     return 0;
   }
   return m_contentTable->typeAtLocation(i - 1, j - 1);
-}
-
-bool Probability::HomogeneityTableDataSource::textFieldShouldFinishEditing(
-    Escher::TextField * textField,
-    Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
-bool Probability::HomogeneityTableDataSource::textFieldDidFinishEditing(
-    Escher::TextField * textField,
-    const char * text,
-    Ion::Events::Event event) {
-  float p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
-    return false;
-  }
-
-  m_statistic->setParameterAtPosition(selectedRow() - 1, selectedColumn() - 1, p);
-  if (selectedRow() == numberOfRows() - 1 && numberOfRows() < k_maxNumberOfRows) {
-    // TODO add row
-  }
-  selectCellAtLocation(selectedColumn(), selectedRow() + 1);
-  return true;
 }

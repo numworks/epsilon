@@ -133,3 +133,7 @@ KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
   contentView->setSize(KDSize(bounds().width(), 10000));
   return contentView->minimalSizeForOptimalDisplay();
 }
+
+void Probability::InputCategoricalView::setSignificanceCellText(const char * text) {
+  m_significanceCell.textField()->setText(text);
+}

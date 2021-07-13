@@ -9,6 +9,7 @@
 #include <ion/events.h>
 
 #include "probability/gui/selectable_cell_list_controller.h"
+#include "probability/models/statistic/chi2_statistic.h"
 
 namespace Probability {
 
@@ -21,9 +22,12 @@ class CategoricalTypeController : public SelectableCellListPage<Escher::MessageT
                                                                 k_numberOfCategoricalCells> {
 public:
   CategoricalTypeController(Escher::StackViewController * parent,
+                            Chi2Statistic * statistic,
                             InputGoodnessController * inputGoodnessController,
                             InputHomogeneityController * inputHomogeneityController);
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTitles;
+  }
   const char * title() override { return "x2-test"; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -31,7 +35,8 @@ public:
 private:
   constexpr static int k_indexOfGoodnessCell = 0;
   constexpr static int k_indexOfHomogeneityCell = 1;
-
+  
+  Chi2Statistic * m_statistic;
   InputGoodnessController * m_inputGoodnessController;
   InputHomogeneityController * m_inputHomogeneityController;
 };

@@ -74,7 +74,10 @@ public:
   int indexOfThreshold() { return numberOfStatisticParameters(); }
   void initThreshold(Data::SubApp subapp);
   /* Instanciate correct Statistic bases on Test and TestType. */
-  static void initializeStatistic(Statistic * statistic, Data::Test t, Data::TestType type);
+  static void initializeStatistic(Statistic * statistic,
+                                  Data::Test t,
+                                  Data::TestType type,
+                                  Data::CategoricalType categoricalType);
 
 protected:
   virtual int numberOfStatisticParameters() const = 0;

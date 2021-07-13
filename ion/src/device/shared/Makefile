@@ -5,6 +5,7 @@ ion_device_shared_bootloader_flasher_kernel_src = $(addprefix ion/src/device/sha
   boot/rt0.cpp \
   drivers/backlight.cpp \
   drivers/base64.cpp \
+  drivers/board_privileged.cpp \
   drivers/display.cpp \
   drivers/internal_flash.cpp \
   drivers/internal_flash_otp.cpp \
@@ -30,14 +31,14 @@ ion_device_bootloader_src += ion/src/device/shared/post_and_hardware_tests.cpp i
 ion_device_flasher_src += ion/src/device/shared/drivers/backlight_basic.cpp $(ion_device_shared_bootloader_flasher_kernel_src) $(ion_device_dfu_src)
 
 ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
-  board.cpp \
+  board_unprivileged.cpp \
   trampoline.cpp \
 )
 ion_device_kernel_src += $(ion_device_shared_bootloader_kernel_src) $(ion_device_dfu_src)
 
 ion_device_userland_src += $(addprefix ion/src/device/shared/, \
   boot/rt0.cpp \
-  drivers/board.cpp \
+  drivers/board_unprivileged.cpp \
   drivers/trampoline.cpp \
   drivers/usb.cpp \
   drivers/usb_unprivileged.cpp \

@@ -1,4 +1,4 @@
-#include <shared/drivers/board.h>
+#include <shared/drivers/board_unprivileged.h>
 #include <shared/drivers/config/board.h>
 
 extern "C" {

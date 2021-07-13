@@ -8,18 +8,11 @@
 
 namespace Probability {
 
-Chi2Statistic::Chi2Statistic() {
-  for (int i = 0; i < k_maxNumberOfParameters; i++) {
-    m_input[i] = k_undefinedValue;
-  }
-}
-
 void Chi2Statistic::computeTest() {
-  int n = _numberOfInputRows();
-  assert(n > 0);
-  m_degreesOfFreedom = n - 1;
+  computeNumberOfParameters();
+  m_degreesOfFreedom = _degreesOfFreedom();
   m_z = 0;
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < numberOfParameters(); i++) {
     m_z += std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
   }
   m_zAlpha = absIfNeeded(_zAlpha(m_degreesOfFreedom, m_threshold));
@@ -36,15 +29,6 @@ float Chi2Statistic::expectedValue(int index) {
 
 float Chi2Statistic::observedValue(int index) {
   return paramArray()[2 * index];
-}
-
-int Chi2Statistic::_numberOfInputRows() {
-    // Compute number of rows based on undefined flag
-  int i = k_maxNumberOfParameters / 2 - 1;
-  while (i >= 0 && std::isnan(expectedValue(i)) && std::isnan(observedValue(i))) {
-    i--;
-  }
-  return i + 1;
 }
 
 float Chi2Statistic::_zAlpha(float degreesOfFreedom, float significanceLevel) {

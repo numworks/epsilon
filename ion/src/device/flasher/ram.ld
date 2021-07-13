@@ -50,23 +50,17 @@ SECTIONS {
   } >RAM_BUFFER
 
   .data : {
-    . = ALIGN(4);
-    _data_section_start_ram = .;
     *(.data)
     *(.data.*)
-    _data_section_end_ram = .;
-    ASSERT ((_bss_section_start_ram == _bss_section_end_ram), "Bootloader bss section is not empty");
   } >RAM_BUFFER
+  ASSERT(SIZEOF(.data) == 0, "Flasher .data section is not empty")
 
   .bss : {
-    . = ALIGN(4);
-    _bss_section_start_ram = .;
     *(.bss)
     *(.bss.*)
     *(COMMON)
-    _bss_section_end_ram = .;
-    ASSERT ((_data_section_start_ram == _data_section_end_ram), "Bootloader data section is not empty");
   } >RAM_BUFFER
+  ASSERT(SIZEOF(.bss) == 0, "Flasher .bss section is not empty")
 
   .stack : {
     . = ALIGN(8);

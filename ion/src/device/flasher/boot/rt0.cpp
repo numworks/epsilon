@@ -10,7 +10,7 @@ extern "C" {
 
 void __attribute__((noinline)) abort() {
 #ifdef NDEBUG
-  abort();
+  waitInDFU();
 #else
   while (1) {
   }

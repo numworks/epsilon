@@ -30,7 +30,7 @@ int InputGoodnessTableView::reusableCellCount(int type) {
   if (type == k_typeOfHeader) {
     return k_numberOfColumns;
   }
-   return k_maxNumberOfRows * k_numberOfColumns;
+   return k_maxNumberOfReusableRows * k_numberOfColumns;
 }
 
 Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
@@ -77,7 +77,7 @@ bool Probability::InputGoodnessTableView::textFieldDidFinishEditing(Escher::Text
 
   int index = 2 * (selectedRow() - 1) + selectedColumn();
   m_statistic->setParamAtIndex(index, p);
-  if (selectedRow() == numberOfRows() - 1 && numberOfRows() < k_maxNumberOfRows) {
+  if (selectedRow() == numberOfRows() - 1 && numberOfRows() < k_maxNumberOfReusableRows) {
     m_numberOfRows++;
   }
   selectCellAtLocation(selectedColumn(), selectedRow() + 1);

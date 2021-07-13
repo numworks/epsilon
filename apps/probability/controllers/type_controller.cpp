@@ -65,7 +65,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     }
     assert(view != nullptr);
     if (t != App::app()->testType()) {
-      Statistic::initializeStatistic(m_statistic, App::app()->test(), t);
+      Statistic::initializeStatistic(m_statistic, App::app()->test(), t, Data::CategoricalType::None);
     }
     *m_globalTestType = t;
     openPage(view);

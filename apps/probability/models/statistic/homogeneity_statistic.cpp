@@ -6,4 +6,8 @@ void HomogeneityStatistic::setParameterAtPosition(int row, int column, float val
   setParamAtIndex(column + row * k_maxNumberOfColumns, value);
 }
 
+float HomogeneityStatistic::parameterAtPosition(int row, int column) {
+  return paramAtIndex(column + row * k_maxNumberOfColumns);
+}
+
 } // namespace Probability

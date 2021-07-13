@@ -22,7 +22,7 @@ namespace Probability {
 // TODO memoize
 class HomogeneityTableDataSource : public BorderedTableViewDataSource,
                                    public SelectableTableViewDataSource,
-                                   public SelectableTableViewDelegate{
+                                   public SelectableTableViewDelegate {
 public:
   HomogeneityTableDataSource(TableViewDataSource * contentTable,
                              I18n::Message headerPrefix = I18n::Message::Group);
@@ -34,11 +34,15 @@ public:
   }
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int i, int type) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override {
+    if (row > 0 && column > 0) {
+      m_contentTable->willDisplayCellAtLocation(cell, column - 1, row - 1);
+    }
+  }
 
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
-
 
   void tableViewDidChangeSelection(SelectableTableView * t,
                                    int previousSelectedCellX,

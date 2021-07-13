@@ -8,6 +8,7 @@ namespace Probability {
 class HomogeneityStatistic : public Chi2Statistic {
 public:
   void setParameterAtPosition(int row, int column, float value);
+  float parameterAtPosition(int row, int column);
 
   constexpr static int k_maxNumberOfColumns = 4;
   constexpr static int k_maxNumberOfRows = k_maxNumberOfParameters / k_maxNumberOfColumns;

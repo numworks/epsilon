@@ -108,7 +108,7 @@ void InputCategoricalView::selectCorrectView() {
   switch (m_viewSelection.selectedRow()) {
     case ContentView::k_indexOfTable:
       if (m_dataInputTableView->selectedRow() < 0) {
-        m_dataInputTableView->selectCellAtLocation(0, 0);  // TODO or last ?
+        m_dataInputTableView->selectCellAtLocation(0, 0);
       }
       break;
     case ContentView::k_indexOfSignificance:

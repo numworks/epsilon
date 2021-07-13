@@ -17,6 +17,7 @@
 #include "probability/gui/page_controller.h"
 #include "probability/gui/selectable_table_view_with_background.h"
 #include "probability/gui/solid_color_cell.h"
+#include "probability/models/statistic/homogeneity_statistic.h"
 
 using namespace Escher;
 
@@ -59,7 +60,7 @@ private:
 
 class HomogeneityResultsController : public Page {
 public:
-  HomogeneityResultsController(StackViewController * stackViewController);
+  HomogeneityResultsController(StackViewController * stackViewController, HomogeneityStatistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   }

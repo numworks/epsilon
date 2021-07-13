@@ -1,6 +1,7 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_INPUT_HOMOGENEITY_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_INPUT_HOMOGENEITY_CONTROLLER_H
 
+#include <apps/shared/parameter_text_field_delegate.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/highlight_cell.h>
@@ -15,8 +16,9 @@
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/gui/input_categorical_view.h"
 #include "probability/gui/page_controller.h"
-#include "probability/gui/solid_color_cell.h"
 #include "probability/gui/selectable_table_view_with_background.h"
+#include "probability/gui/solid_color_cell.h"
+#include "probability/models/statistic/homogeneity_statistic.h"
 
 namespace Probability {
 
@@ -40,12 +42,14 @@ public:
   EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
 };
 
-class InputHomogeneityController : public Page, public ButtonDelegate {
+class InputHomogeneityController : public Page,
+                                   public ButtonDelegate,
+                                   public Shared::ParameterTextFieldDelegate {
 public:
   InputHomogeneityController(StackViewController * parent,
                              HomogeneityResultsController * homogeneityResultsController,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             TextFieldDelegate * delegate);
+                             HomogeneityStatistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   }
@@ -54,12 +58,20 @@ public:
   void didBecomeFirstResponder() override;
   void buttonAction() override;
 
+  // TextFieldDelegate
+  // TODO factor with InputController
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(TextField * textField,
+                                 const char * text,
+                                 Ion::Events::Event event) override;
+
 private:
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;
   SelectableTableViewWithBackground m_table;
   InputCategoricalView m_contentView;
 
+  HomogeneityStatistic * m_statistic;
   HomogeneityResultsController * m_homogeneityResultsController;
 };
 

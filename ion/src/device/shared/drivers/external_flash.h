@@ -1,7 +1,7 @@
-#ifndef ION_DEVICE_BOOTLOADER_EXTERNAL_FLASH_H
-#define ION_DEVICE_BOOTLOADER_EXTERNAL_FLASH_H
+#ifndef ION_DEVICE_SHARED_EXTERNAL_FLASH_H
+#define ION_DEVICE_SHARED_EXTERNAL_FLASH_H
 
-#include <shared/drivers/external_flash.h>
+#include <stdint.h>
 
 namespace Ion {
 namespace Device {

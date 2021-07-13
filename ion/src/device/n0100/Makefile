@@ -20,5 +20,5 @@ ion_device_kernel_src += $(addprefix ion/src/device/n0100/kernel/drivers/, \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/n0100/shared/drivers/, \
-  flash_unprivileged \
+  flash_unprivileged.cpp \
 )

@@ -9,6 +9,7 @@
 
 #include "probability/app.h"
 #include "probability/models/data.h"
+#include "probability/text_helpers.h"
 
 using namespace Probability;
 
@@ -59,6 +60,16 @@ void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
     Escher::HighlightCell * cell,
     int column,
     int row) {
+  float p = m_statistic->parameterAtPosition(row, column);
+  Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
+  if (std::isnan(p)) {
+    myCell->editableTextCell()->textField()->setText("");
+  } else {
+    constexpr int bufferSize = 20;
+    char buffer[bufferSize];
+    defaultParseFloat(p, buffer, bufferSize);
+    myCell->editableTextCell()->textField()->setText(buffer);
+  }
 }
 
 InputHomogeneityController::InputHomogeneityController(

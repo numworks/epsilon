@@ -49,8 +49,10 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   SelectableTableViewDataSource * selectionDataSource() { return &m_tableSelection; }
+  void setSignificanceCellText(const char * text);
 
 private:
+  /* Layout a Table, a cell and a button separated by spacers. */
   class ContentView : public VerticalLayout {
   public:
     ContentView(SelectableTableView * dataInputTableView,

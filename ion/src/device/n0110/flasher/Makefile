@@ -9,4 +9,3 @@ ion_device_flasher_src = $(addprefix ion/src/device/n0110/flasher/, \
 )
 
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL)/flasher
-

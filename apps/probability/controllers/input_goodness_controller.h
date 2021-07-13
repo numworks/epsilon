@@ -21,7 +21,7 @@
 #include "probability/gui/input_categorical_view.h"
 #include "probability/gui/input_goodness_table_view.h"
 #include "probability/gui/page_controller.h"
-#include "probability/models/statistic/chi2_statistic.h"
+#include "probability/models/statistic/goodness_statistic.h"
 #include "results_controller.h"
 
 using namespace Escher;
@@ -35,7 +35,7 @@ class InputGoodnessController : public Page,
 public:
   InputGoodnessController(StackViewController * parent,
                           ResultsController * resultsController,
-                          Statistic * statistic,
+                          GoodnessStatistic * statistic,
                           InputEventHandlerDelegate * inputEventHandlerDelegate);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
@@ -61,7 +61,7 @@ private:
   constexpr static int k_titleBufferSize = 30;
   char m_titleBuffer[k_titleBufferSize];
   ResultsController * m_resultsController;
-  Chi2Statistic * m_statistic;
+  GoodnessStatistic * m_statistic;
   InputGoodnessTableView m_inputTableView;
   InputCategoricalView m_contentView;
 };

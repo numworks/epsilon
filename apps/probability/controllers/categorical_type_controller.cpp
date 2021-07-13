@@ -3,20 +3,27 @@
 #include <apps/i18n.h>
 #include <escher/stack_view_controller.h>
 
+#include <new>
+
 #include "input_goodness_controller.h"
 #include "input_homogeneity_controller.h"
 #include "probability/app.h"
-#include "probability/models/data.h"
 #include "probability/gui/selectable_cell_list_controller.h"
+#include "probability/models/data.h"
+#include "probability/models/statistic/goodness_statistic.h"
+#include "probability/models/statistic/homogeneity_statistic.h"
 
 using namespace Probability;
 
 CategoricalTypeController::CategoricalTypeController(
-    Escher::StackViewController * parent, InputGoodnessController * inputGoodnessController,
-    InputHomogeneityController * inputHomogeneityController)
-    : SelectableCellListPage(parent),
-      m_inputGoodnessController(inputGoodnessController),
-      m_inputHomogeneityController(inputHomogeneityController) {
+    Escher::StackViewController * parent,
+    Chi2Statistic * statistic,
+    InputGoodnessController * inputGoodnessController,
+    InputHomogeneityController * inputHomogeneityController) :
+    SelectableCellListPage(parent),
+    m_inputGoodnessController(inputGoodnessController),
+    m_inputHomogeneityController(inputHomogeneityController),
+    m_statistic(statistic) {
   m_cells[k_indexOfGoodnessCell].setMessage(I18n::Message::GoodnessOfFit);
   m_cells[k_indexOfHomogeneityCell].setMessage(I18n::Message::Homogeneity);
 }
@@ -48,6 +55,10 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
     }
     assert(view != nullptr);
     App::app()->setCategoricalType(type);
+    Statistic::initializeStatistic(m_statistic,
+                                   App::app()->test(),
+                                   App::app()->testType(),
+                                   App::app()->categoricalType());
     openPage(view);
     return true;
   }

@@ -19,16 +19,13 @@ using namespace Probability;
 InputGoodnessController::InputGoodnessController(
     StackViewController * parent,
     ResultsController * resultsController,
-    Statistic * statistic,
+    GoodnessStatistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
     Page(parent),
     m_resultsController(resultsController),
-    m_inputTableView(&m_contentView,
-                     inputEventHandlerDelegate,
-                     static_cast<Chi2Statistic *>(statistic),
-                     this),
+    m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, this),
     m_contentView(this, this, &m_inputTableView, inputEventHandlerDelegate, this),
-    m_statistic(static_cast<Chi2Statistic *>(statistic)) {
+    m_statistic(statistic) {
 }
 
 void InputGoodnessController::didBecomeFirstResponder() {
@@ -51,8 +48,8 @@ void InputGoodnessController::buttonAction() {
 
 const char * Probability::InputGoodnessController::title() {
   const char * category = App::app()->categoricalType() == Data::CategoricalType::Goodness
-                        ? "goodness of fit"
-                        : "Homogeneity/Independence";
+                              ? "goodness of fit"
+                              : "Homogeneity/Independence";
   sprintf(m_titleBuffer, "X2-test: %s", category);
   return m_titleBuffer;
 }

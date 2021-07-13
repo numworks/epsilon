@@ -31,7 +31,10 @@ void Statistic::initThreshold(Data::SubApp subapp) {
   }
 }
 
-void Statistic::initializeStatistic(Statistic * statistic, Data::Test t, Data::TestType type) {
+void Statistic::initializeStatistic(Statistic * statistic,
+                                    Data::Test t,
+                                    Data::TestType type,
+                                    Data::CategoricalType categoricalType) {
   switch (t) {
     case Data::Test::OneProp:
       new (statistic) OneProportionStatistic();
@@ -56,7 +59,11 @@ void Statistic::initializeStatistic(Statistic * statistic, Data::Test t, Data::T
       }
       break;
     case Data::Test::Categorical:
-      new (statistic) Chi2Statistic();
+      if (categoricalType == Data::CategoricalType::Goodness) {
+        new (statistic) GoodnessStatistic();
+      } else {
+        new (statistic) HomogeneityStatistic();
+      }
       break;
     default:
       assert(false);

@@ -48,7 +48,7 @@ inline bool isProportion(Test t) {
 
 enum class TestType { TTest, PooledTTest, ZTest };
 
-enum class CategoricalType { Goodness, Homogeneity };
+enum class CategoricalType { None, Goodness, Homogeneity };
 
 }  // namespace Data
 

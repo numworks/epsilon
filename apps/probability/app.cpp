@@ -15,7 +15,9 @@ const Escher::Image * App::Descriptor::icon() const {
 App::App(Snapshot * snapshot) :
     TextFieldDelegateApp(snapshot, &m_stackViewController),
     m_statisticGraphController(&m_stackViewController, snapshot->data()->statistic()),
-    m_homogeneityResultsController(&m_stackViewController, static_cast<HomogeneityStatistic *>(snapshot->data()->statistic())),
+    m_homogeneityResultsController(
+        &m_stackViewController,
+        static_cast<HomogeneityStatistic *>(snapshot->data()->statistic())),
     m_inputHomogeneityController(
         &m_stackViewController,
         &m_homogeneityResultsController,
@@ -23,7 +25,7 @@ App::App(Snapshot * snapshot) :
         static_cast<HomogeneityStatistic *>(snapshot->data()->statistic())),
     m_inputGoodnessController(&m_stackViewController,
                               &m_resultsController,
-                              snapshot->data()->statistic(),
+                              static_cast<GoodnessStatistic *>(snapshot->data()->statistic()),
                               this),
     m_resultsController(&m_stackViewController,
                         snapshot->data()->statistic(),
@@ -41,6 +43,7 @@ App::App(Snapshot * snapshot) :
                      snapshot->data()->testTypePointer(),
                      snapshot->data()->statistic()),
     m_categoricalTypeController(&m_stackViewController,
+                                static_cast<Chi2Statistic *>(snapshot->data()->statistic()),
                                 &m_inputGoodnessController,
                                 &m_inputHomogeneityController),
     m_hypothesisController(&m_stackViewController,

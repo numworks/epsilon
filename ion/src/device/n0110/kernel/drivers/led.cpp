@@ -15,7 +15,7 @@ KDColor updateColorWithPlugAndCharge() {
     } else {
       ledColor = KDColorBlack;
     }
-    setColor(ledColor);
+    setColorSecure(ledColor);
   }
   return ledColor;
 }

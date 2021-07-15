@@ -36,6 +36,8 @@ void __attribute__((noinline)) jump_to_main() {
  * (just in case 'start' was to be called from the external flash). */
 
 void __attribute__((noinline)) start() {
+  Ion::Device::Init::prologue();
+
   /* This is where execution starts after reset.
    * Many things are not initialized yet so the code here has to pay attention. */
 

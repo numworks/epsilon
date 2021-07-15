@@ -14,6 +14,7 @@ Escher::View * InputCategoricalView::ContentView::InnerVerticalLayout::subviewAt
     case 2:
       return m_next;
   }
+  return nullptr;
 }
 
 Probability::InputCategoricalView::ContentView::ContentView(
@@ -24,8 +25,6 @@ Probability::InputCategoricalView::ContentView::ContentView(
     m_dataInputTableView(dataInputTableView),
     m_innerView(significanceCell, &m_spacer, next),
     m_spacer(Palette::WallScreenDark, 0, k_marginVertical) {
-  m_dataInputTableView->setMargins(Metric::CommonTopMargin, Metric::CommonRightMargin, k_marginVertical, Metric::CommonLeftMargin);
-  m_dataInputTableView->setBackgroundColor(Palette::WallScreenDark);
   significanceCell->setMessage(I18n::Message::GreekAlpha);
   significanceCell->setSubLabelMessage(I18n::Message::SignificanceLevel);
   significanceCell->textField()->setText("0.05");  // TODO kinda ugly?
@@ -54,7 +53,6 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
     m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
     m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), KDFont::LargeFont),
     m_contentView(table, &m_significanceCell, &m_next) {
-  table->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
 }
 
 void InputCategoricalView::didBecomeFirstResponder() {
@@ -75,8 +73,7 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
       int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer + 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() - jump);
     }
-    if (event == Ion::Events::Down &&
-        m_viewSelection.selectedRow() < k_indexOfNext) {
+    if (event == Ion::Events::Down && m_viewSelection.selectedRow() < k_indexOfNext) {
       int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer - 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() + jump);
     }
@@ -139,4 +136,15 @@ KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
 
 void Probability::InputCategoricalView::setSignificanceCellText(const char * text) {
   m_significanceCell.textField()->setText(text);
+}
+
+void Probability::InputCategoricalView::setTableView(SelectableTableView * tableView) {
+  m_dataInputTableView = tableView;
+  m_contentView.setTableView(tableView);
+  tableView->setMargins(Metric::CommonTopMargin,
+                        Metric::CommonRightMargin,
+                        k_marginVertical,
+                        Metric::CommonLeftMargin);
+  tableView->setBackgroundColor(Palette::WallScreenDark);
+  tableView->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
 }

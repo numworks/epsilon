@@ -48,9 +48,12 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  SelectableTableViewDataSource * selectionDataSource() { return &m_tableSelection; }  // TODO remove
+  SelectableTableViewDataSource * selectionDataSource() {
+    return &m_tableSelection;
+  }  // TODO remove
   int selectedView() { return m_viewSelection.selectedRow(); }
   void setSignificanceCellText(const char * text);
+  void setTableView(SelectableTableView * tableView);
 
   constexpr static int k_indexOfTable = 0;
   constexpr static int k_indexOfInnerLayout = 1;
@@ -67,6 +70,7 @@ private:
                 Escher::Button * next);
     int numberOfSubviews() const override { return 2 /* Table + InnerVerticalLayout */; }
     Escher::View * subviewAtIndex(int i) override;
+    void setTableView(SelectableTableView * tableView) { m_dataInputTableView = tableView; }
 
   private:
     /* Layout cell, a spacer and button with side margins */

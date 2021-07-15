@@ -83,36 +83,15 @@ InputHomogeneityController::InputHomogeneityController(
     HomogeneityResultsController * homogeneityResultsController,
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     HomogeneityStatistic * statistic) :
-    Page(parent),
+    InputCategoricalController(parent,
+                               homogeneityResultsController,
+                               statistic,
+                               inputEventHandlerDelegate),
     ChainedSelectableTableViewDelegate(&m_tableData),
     m_innerTableData(&m_table, inputEventHandlerDelegate, statistic),
     m_tableData(&m_innerTableData),
-    m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource(), this),
-    m_contentView(this, this, &m_table, inputEventHandlerDelegate, this),
-    m_statistic(statistic),
-    m_homogeneityResultsController(homogeneityResultsController) {
-}
-
-void InputHomogeneityController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::InputHomogeneity);
-  Container::activeApp()->setFirstResponder(&m_contentView);
-}
-
-void InputHomogeneityController::buttonAction() {
-  openPage(m_homogeneityResultsController);
-}
-
-bool Probability::InputHomogeneityController::textFieldShouldFinishEditing(
-    TextField * textField,
-    Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;  // TODO up and down too
-}
-
-bool Probability::InputHomogeneityController::textFieldDidFinishEditing(TextField * textField,
-                                                                        const char * text,
-                                                                        Ion::Events::Event event) {
-  // TODO parse significance cell
-  return false;
+    m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource(), this) {
+  m_contentView.setTableView(&m_table);
 }
 
 void Probability::InputHomogeneityController::tableViewDidChangeSelectionAndDidScroll(

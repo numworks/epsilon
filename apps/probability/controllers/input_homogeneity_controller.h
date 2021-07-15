@@ -13,8 +13,9 @@
 
 #include "homogeneity_results_controller.h"
 #include "probability/abstract/button_delegate.h"
-#include "probability/abstract/homogeneity_data_source.h"
 #include "probability/abstract/chained_selectable_table_view_delegate.h"
+#include "probability/abstract/homogeneity_data_source.h"
+#include "probability/abstract/input_categorical_controller.h"
 #include "probability/gui/input_categorical_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/selectable_table_view_with_background.h"
@@ -23,8 +24,7 @@
 
 namespace Probability {
 
-class InputHomogeneityDataSource : public TableViewDataSource,
-                                   public Shared::TextFieldDelegate {
+class InputHomogeneityDataSource : public TableViewDataSource, public Shared::TextFieldDelegate {
 public:
   InputHomogeneityDataSource(SelectableTableView * tableView,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
@@ -55,29 +55,15 @@ private:
   SelectableTableView * m_table;
 };
 
-class InputHomogeneityController : public Page,
-                                   public ButtonDelegate,
-                                   public Shared::ParameterTextFieldDelegate,
+class InputHomogeneityController : public InputCategoricalController,
                                    public ChainedSelectableTableViewDelegate {
 public:
   InputHomogeneityController(StackViewController * parent,
                              HomogeneityResultsController * homogeneityResultsController,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                              HomogeneityStatistic * statistic);
-  ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitles;
-  }
-  const char * title() override { return "x2-test: Homogeneity/Independence"; }
-  View * view() override { return &m_contentView; }
-  void didBecomeFirstResponder() override;
-  void buttonAction() override;
 
-  // TextFieldDelegate
-  // TODO factor with InputController
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
+  const char * title() override { return "x2-test: Homogeneity/Independence"; }
 
   void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
                                                int previousSelectedCellX,
@@ -88,10 +74,6 @@ private:
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;
   SelectableTableViewWithBackground m_table;
-  InputCategoricalView m_contentView;
-
-  HomogeneityStatistic * m_statistic;
-  HomogeneityResultsController * m_homogeneityResultsController;
 };
 
 }  // namespace Probability

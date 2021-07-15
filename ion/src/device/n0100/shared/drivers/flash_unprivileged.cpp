@@ -7,7 +7,7 @@ namespace Device {
 namespace Flash {
 
 int TotalNumberOfSectors() {
-  InternalFlash::Config::NumberOfSectors;
+  return InternalFlash::Config::NumberOfSectors;
 }
 
 int SectorAtAddress(uint32_t address) {

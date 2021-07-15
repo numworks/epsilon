@@ -100,6 +100,7 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 
 app_probability_src +=  $(addprefix apps/probability/abstract/,\
   homogeneity_data_source.cpp \
+  input_categorical_controller.cpp \
 )
 
 

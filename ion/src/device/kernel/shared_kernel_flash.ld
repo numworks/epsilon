@@ -11,13 +11,9 @@ MEMORY {
 
 SECTIONS {
   .signed_payload_prefix ORIGIN(KERNEL) : {
-    /* We keep two 4-byte words to store:
-     * - the signed payload size
-     * - the security level
-     * These are completed at the signature time since we don't know the whole
-     * payload sign at linking time. */
-    LONG(0xFFFFFFFF)
-    LONG(0xFFFFFFFF)
+    FILL(0xFF);
+    BYTE(0xFF)
+    . = ORIGIN(KERNEL) + SIGNED_PAYLOAD_LENGTH;
   } >KERNEL
 
   .kernel_header : {
@@ -113,7 +109,7 @@ SECTIONS {
     _canary_section_start_ram = .;
     KEEP(*(.canary))
     _canary_section_end_ram = .;
-    ASSERT ((_canary_section_start_ram + CANARY_LENGTH == _canary_section_end_ram), "Bootloader canary section should only contain the canary");
+    ASSERT ((_canary_section_start_ram + CANARY_LENGTH == _canary_section_end_ram), "Kernel canary section should only contain the canary");
   } >SRAM_DATA_BSS
 
   .process_stack : {
@@ -140,3 +136,4 @@ SECTIONS {
     *(.ARM.extab*)
   }
 }
+

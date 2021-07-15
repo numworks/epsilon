@@ -45,3 +45,4 @@ $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),console
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 
 $(BUILD_DIR)/%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/$(MODEL)/shared/config_flash.ld ion/src/$(PLATFORM)/shared/shared_config_flash.ld
+$(BUILD_DIR)/%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared -Lion/src/$(PLATFORM)/$(MODEL)/shared

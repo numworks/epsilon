@@ -1,7 +1,6 @@
 #include "command.h"
-#include <ion.h>
 #include <poincare/print_int.h>
-#include <ion/src/device/shared/drivers/external_flash.h>
+#include <drivers/external_flash.h>
 
 namespace Ion {
 namespace Device {
@@ -22,7 +21,7 @@ void ExternalFlashId(const char * input) {
   uint8_t manufacturerID = 0;
   uint8_t memoryType = 0;
   uint8_t capacityType = 0;
-  Ion::Device::ExternalFlash::JDECid(&manufacturerID, &memoryType, &capacityType);
+  ExternalFlash::JDECid(&manufacturerID, &memoryType, &capacityType);
   Poincare::PrintInt::Right(manufacturerID, response + firstNumberIndex, numberLength);
   Poincare::PrintInt::Right(memoryType, response + firstNumberIndex + numberLength, numberLength);
   Poincare::PrintInt::Right(capacityType, response + firstNumberIndex + 2*numberLength, numberLength);

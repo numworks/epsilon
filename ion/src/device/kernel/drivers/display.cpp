@@ -1,3 +1,4 @@
+#include <kernel/drivers/board.h>
 #include <shared/drivers/display.h>
 #include <drivers/config/display.h>
 #include <ion/timing.h>
@@ -46,6 +47,12 @@ bool waitForVBlank() {
     currentTime = Timing::millis();
   }
   return false;
+}
+
+void pullRectSecure(KDRect r, KDColor * pixels) {
+  if (Board::addressInUserlandRAM(pixels)) {
+    pullRect(r, pixels);
+  }
 }
 
 }

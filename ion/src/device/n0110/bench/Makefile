@@ -5,6 +5,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/command/, \
   command.cpp \
   crc.cpp \
   display.cpp \
+  exit.cpp \
   external_flash_id.cpp \
 )
 

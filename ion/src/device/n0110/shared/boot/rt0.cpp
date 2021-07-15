@@ -1,7 +1,7 @@
-#include <main.h>
+#include "main.h"
 #include <boot/isr.h>
 #include <boot/rt0.h>
-#include <flasher/drivers/board.h>
+#include <drivers/board.h>
 #include <drivers/reset.h>
 
 extern "C" {
@@ -10,7 +10,7 @@ extern "C" {
 
 void __attribute__((noinline)) abort() {
 #ifdef NDEBUG
-  waitInDFU();
+  waitForInstruction();
 #else
   while (1) {
   }
@@ -25,7 +25,7 @@ void __attribute__((noinline)) abort() {
  */
 
 static void __attribute__((noinline)) jump_to_main() {
-  flasher_main();
+  ion_main();
 }
 
 /* When 'start' is executed, the external flash is supposed to be shutdown. We

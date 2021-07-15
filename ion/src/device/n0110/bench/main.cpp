@@ -1,4 +1,4 @@
-#include "bench.h"
+#include <boot/main.h>
 #include <ion.h>
 #include <kandinsky/ion_context.h>
 #include <poincare/init.h>
@@ -40,11 +40,6 @@ constexpr const CommandList sCommandList = CommandList(handles);
 constexpr int kMaxCommandLength = 255;
 
 void run() {
-  // Init the pool! Used in printFloatToText
-  Poincare::Init();
-  KDContext * ctx = KDIonContext::sharedContext();
-  ctx->fillRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
-  ctx->drawString("BENCH", KDPoint((320-50)/2, (240-18)/2));
   char command[kMaxCommandLength];
   while (true) {
     Ion::Console::readLine(command, kMaxCommandLength);
@@ -58,3 +53,17 @@ void run() {
 }
 }
 }
+
+void ion_main() {
+    // Init the pool! Used in printFloatToText
+  Poincare::Init();
+  KDContext * ctx = KDIonContext::sharedContext();
+  ctx->fillRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
+  ctx->drawString("BENCH", KDPoint((320-50)/2, (240-18)/2));
+  waitForInstruction();
+}
+
+void waitForInstruction() {
+  Ion::Device::Bench::run();
+}
+

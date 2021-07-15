@@ -1,15 +1,15 @@
-#include "main.h"
+#include <boot/main.h>
 #include "../shared/usb/calculator.h"
 #include <ion.h>
 #include <drivers/display.h>
 
-void flasher_main() {
+void ion_main() {
   // Initialize Flasher display
   Ion::Device::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorYellow);
-  waitInDFU();
+  waitForInstruction();
 }
 
-void waitInDFU() {
+void waitForInstruction() {
   while (true) {
     Ion::USB::enable();
     while (!Ion::USB::isEnumerated()) {

@@ -1,5 +1,6 @@
 #include <drivers/power.h>
 #include <drivers/keyboard.h>
+#include <drivers/trampoline.h>
 #include <regs/regs.h>
 
 namespace Ion {
@@ -30,6 +31,8 @@ void standbyConfiguration() {
 
   CORTEX.SCR()->setSLEEPDEEP(true); // Allow Cortex-M7 deepsleep state
 }
+
+TRAMPOLINE_INTERFACE(TRAMPOLINE_SUSPEND, bootloaderSuspend, (), void, void)
 
 }
 }

@@ -10,9 +10,7 @@ namespace Device {
 namespace USB {
 namespace Config {
 
-static_assert(InternalFlash::Config::StartAddress + Board::Config::BootloaderSize == 0x08004000, "Bootloader's memory area should not be accessible via DFU");
-
-constexpr static const char * InterfaceFlashStringDescriptor = "@Internal Flash/0x08004000/03*016Kg,01*064Kg,07*128Kg";
+constexpr static const char * InterfaceFlashStringDescriptor = "@Internal Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg";
 constexpr static int BCDDevice = 0x0100;
 
 }

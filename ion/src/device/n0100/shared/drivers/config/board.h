@@ -12,30 +12,22 @@ namespace Board {
 namespace Config {
 
 /* The kernel and userland starts should be aligned to the begining of a sector
- *(to flash them easily).
+ * (to flash them easily).
  * The internal memory layout is the following:
  * 4*16k + 64k + 7*128k with the division:
- * +---------------------+-------------------+-----------+--------------|
- * |         16k         +         16k       + 2*16k+64k +  64k+7*128k  |
- * +---------------------+-------------------+-----------+--------------|
- * | Standard bootloader |  Persisting bytes |  Kernel   |   Userland   |
- * +---------------------+-------------------+-----------+--------------|
+ * +------------------+-------------+------------+
+ * |         16k      +  3*16k+64k  | 64k+7*128k |
+ * +------------------+-------------+------------+
+ * | Persisting bytes |    Kernel   |  Userland  |
+ * +------------------+-------------+------------+
  * Hence the kernel total size.
  *
- * NB: Total size includes signature footer (unlike length)
  */
 
-constexpr static uint32_t BootloaderSize = 0x4000; // 64kB
-constexpr static uint32_t STBootloaderAddress = 0x1FFF0000;
-constexpr static uint32_t BootloaderStartAddress = InternalFlash::Config::StartAddress;
-
-constexpr static uint32_t KernelSize = 2*0x4000 + 0x10000; // 2*16k + 64
-constexpr static uint32_t UserlandOffsetFromKernel = KernelSize + SizeSize;
-constexpr static uint32_t BootloaderTrampolineAddress = //TODO;
-constexpr static uint32_t KernelAStartAddress = InternalFlash::Config::StartAddress + BootloaderTotalSize + PersistingBytes::Config::BufferSize;
-// N0100 kernel has no duplicate
-constexpr static uint32_t KernelBStartAddress = KernelAStartAddress;
-constexpr static uint32_t KernelLength = KernelSize - Board::Config::SignatureSize;
+constexpr static uint32_t PersistingBytesSize = 0x4000; // 16k
+constexpr static uint32_t KernelStartAddress = InternalFlash::Config::StartAddress + PersistingBytesSize;
+constexpr static uint32_t KernelSize = 3*0x4000 + 0x10000; // 3*16k + 64
+constexpr static uint32_t UserlandStartAddress = KernelStartAddress + KernelSize;
 
 }
 }

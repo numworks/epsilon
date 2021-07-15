@@ -81,7 +81,7 @@ bool Probability::InputGoodnessTableView::textFieldDidFinishEditing(Escher::Text
     m_numberOfRows++;
   }
   selectCellAtLocation(selectedColumn(), selectedRow() + 1);
-  reloadData(false);
+  reloadData(false);  // TODO why needed ?
   return true;
 }
 

@@ -4,9 +4,11 @@
 
 namespace Probability {
 
-InputGoodnessTableView::InputGoodnessTableView(Escher::Responder * parentResponder,
-                                               Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                               Chi2Statistic * statistic, Escher::SelectableTableViewDelegate * delegate) :
+InputGoodnessTableView::InputGoodnessTableView(
+    Escher::Responder * parentResponder,
+    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+    Chi2Statistic * statistic,
+    Escher::SelectableTableViewDelegate * delegate) :
     SelectableTableView(parentResponder, this, &m_tableSelection, delegate),
     m_numberOfRows(k_initialNumberOfRows),
     m_statistic(statistic) {
@@ -30,7 +32,7 @@ int InputGoodnessTableView::reusableCellCount(int type) {
   if (type == k_typeOfHeader) {
     return k_numberOfColumns;
   }
-   return k_maxNumberOfReusableRows * k_numberOfColumns;
+  return k_maxNumberOfReusableRows * k_numberOfColumns;
 }
 
 Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
@@ -40,6 +42,23 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
     return &m_header[i];
   }
   return &m_cells[i];
+}
+
+bool InputGoodnessTableView::handleEvent(Ion::Events::Event e) {
+  if (e == Ion::Events::Backspace) {
+    // Remove value
+    m_statistic->setParamAtIndex(2 * (selectedRow() - 1) + selectedColumn(),
+                                 GoodnessStatistic::k_undefinedValue);
+    if (selectedRow() == m_numberOfRows - 2 && m_numberOfRows > k_initialNumberOfRows &&
+        std::isnan(m_statistic->paramAtIndex(2 * (selectedRow() - 1) + (1 - selectedColumn())))) {
+      m_numberOfRows--;
+      reloadData();
+      m_delegate->tableViewDidChangeSelectionAndDidScroll(this, -1, -1);  // TODO find a better way to call reload scroll
+    }
+    reloadCellAtLocation(selectedColumn(), selectedRow());
+    return true;
+  }
+  return SelectableTableView::handleEvent(e);
 }
 
 void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::HighlightCell * cell,
@@ -77,7 +96,8 @@ bool Probability::InputGoodnessTableView::textFieldDidFinishEditing(Escher::Text
 
   int index = 2 * (selectedRow() - 1) + selectedColumn();
   m_statistic->setParamAtIndex(index, p);
-  if (selectedRow() == numberOfRows() - 1 && numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
+  if (selectedRow() == numberOfRows() - 1 &&
+      numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
     m_numberOfRows++;
   }
   selectCellAtLocation(selectedColumn(), selectedRow() + 1);

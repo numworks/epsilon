@@ -1,6 +1,6 @@
 #include "command.h"
-#include <ion.h>
 #include <drivers/config/display.h>
+#include <string.h>
 
 namespace Ion {
 namespace Device {

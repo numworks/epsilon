@@ -1,22 +1,29 @@
-/* The bench uses methods from Kandinsky to draw text on the screen, which
- * call methods defined as svcalls in the userland. Since the bench does not
- * run with a kernel, we simply forward the low level methods here. */
-
 #include <shared/drivers/display.h>
 
 namespace Ion {
 namespace Display {
 
-void pushRect(KDRect r, const KDColor * pixels) {
-  Device::Display::pushRect(r, pixels);
+/* For the bootloader, we shortcut the SVC made by POSTAndHardwareTests to
+ * direct calls to the right drivers. */
+
+bool waitForVBlank() {
+  return Device::Display::waitForVBlank();
 }
 
-void pushRectUniform(KDRect r, KDColor c) {
-  Device::Display::pushRectUniform(r, c);
+void POSTPushMulticolor(int rootNumberTiles, int tileSize) {
+  Device::Display::POSTPushMulticolor(rootNumberTiles, tileSize);
 }
 
 void pullRect(KDRect r, KDColor * pixels) {
   Device::Display::pullRect(r, pixels);
+}
+
+void pushRect(KDRect r, const KDColor * pixels) {
+  Device::Display::pushRect(r, pixels);
+}
+
+void pushRectUniform(KDRect r, KDColor color) {
+  Device::Display::pushRectUniform(r, color);
 }
 
 }

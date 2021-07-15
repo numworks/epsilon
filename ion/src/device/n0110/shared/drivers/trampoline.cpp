@@ -14,13 +14,6 @@ uint32_t addressOfFunction(int index) {
 }
 }
 
-#define TRAMPOLINE_INTERFACE(index, function, argsList, returnType, args...) \
-  typedef returnType (*FunctionType##_##function)(args); \
-  returnType function(args) { \
-    FunctionType##_##function * trampolineFunction = reinterpret_cast<FunctionType##_##function *>(Ion::Device::Trampoline::addressOfFunction(index)); \
-    return (*trampolineFunction)argsList; \
-  } \
-
 // Work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=51205
 void * memset(void *, int, size_t) __attribute__((externally_visible));
 void * memcpy(void *, const void *, size_t) __attribute__((externally_visible));

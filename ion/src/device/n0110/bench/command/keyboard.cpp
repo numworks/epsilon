@@ -1,5 +1,5 @@
 #include "command.h"
-#include <ion.h>
+#include <drivers/keyboard.h>
 
 namespace Ion {
 namespace Device {
@@ -12,7 +12,7 @@ void Keyboard(const char * input) {
     return;
   }
   char result[9+Ion::Keyboard::NumberOfKeys+1] = { 'K', 'E', 'Y', 'B', 'O', 'A', 'R', 'D', '=' };
-  Ion::Keyboard::State state = Ion::Keyboard::scan();
+  Ion::Keyboard::State state = Keyboard::scan();
   for (uint8_t i=0; i<Ion::Keyboard::NumberOfKeys; i++) {
     result[9+i] = state.keyDown((Ion::Keyboard::Key)i) ? '1' : '0';
   }

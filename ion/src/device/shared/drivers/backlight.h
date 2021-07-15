@@ -12,6 +12,13 @@ void initGPIO();
 void shutdown();
 void sendPulses(int n);
 
+void setBrightness(uint8_t b);
+uint8_t brightness();
+
+bool isInitialized();
+uint8_t level();
+void setLevel(uint8_t level);
+
 }
 }
 }

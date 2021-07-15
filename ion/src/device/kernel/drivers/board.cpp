@@ -1,6 +1,7 @@
 #include "board.h"
 #include <boot/isr.h>
 #include <drivers/config/clocks.h>
+#include <drivers/backlight.h>
 #include <drivers/battery.h>
 #include <drivers/display.h>
 #include <drivers/events.h>
@@ -10,7 +11,6 @@
 #include <drivers/timing.h>
 #include <drivers/usb_privileged.h>
 #include <kernel/drivers/authentication.h>
-#include <kernel/drivers/backlight.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>

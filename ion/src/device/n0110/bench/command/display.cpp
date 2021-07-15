@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/display.h>
+#include <drivers/display.h>
 #include <poincare/integer.h>
 
 namespace Ion {
@@ -12,12 +12,12 @@ namespace Command {
 void Display(const char * input) {
 
   if (strcmp(input, sON) == 0) {
-    Ion::Device::Display::init();
+    Display::init();
     reply(sOK);
     return;
   }
   if (strcmp(input, sOFF) == 0) {
-    Ion::Device::Display::shutdown();
+    Display::shutdown();
     reply(sOK);
     return;
   }
@@ -30,7 +30,7 @@ void Display(const char * input) {
 
   KDColor c = KDColor::RGB24(hexNumber(input));
 
-  int numberOfInvalidPixels = Ion::Display::displayUniformTilingSize10(c);
+  int numberOfInvalidPixels = Display::displayUniformTilingSize10(c);
 
   char response[16] = {'D', 'E', 'L', 'T', 'A', '='};
   Poincare::Integer(numberOfInvalidPixels).serialize(response+6, sizeof(response)-6);

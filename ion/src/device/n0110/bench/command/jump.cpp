@@ -1,5 +1,5 @@
 #include "command.h"
-#include <ion/src/device/shared/drivers/reset.h>
+#include <drivers/reset.h>
 
 namespace Ion {
 namespace Device {
@@ -21,7 +21,7 @@ void Jump(const char * input) {
   }
   uint32_t address = hexNumber(input+addressOffset, 8);
   reply(sOK);
-  Ion::Device::Reset::jump(address);
+  Reset::jump(address, false);
 }
 
 }

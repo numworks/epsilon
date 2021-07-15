@@ -85,6 +85,7 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   battery.cpp \
   board_privileged.cpp \
   display.cpp \
+  reset.cpp \
   timing.cpp \
 )
 

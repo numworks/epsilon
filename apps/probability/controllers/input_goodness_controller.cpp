@@ -22,10 +22,10 @@ InputGoodnessController::InputGoodnessController(
     GoodnessStatistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
     Page(parent),
+    m_statistic(statistic),
     m_resultsController(resultsController),
     m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, this),
-    m_contentView(this, this, &m_inputTableView, inputEventHandlerDelegate, this),
-    m_statistic(statistic) {
+    m_contentView(this, this, &m_inputTableView, inputEventHandlerDelegate, this) {
 }
 
 void InputGoodnessController::didBecomeFirstResponder() {
@@ -45,7 +45,6 @@ void InputGoodnessController::buttonAction() {
   m_statistic->computeTest();
   openPage(m_resultsController);
 }
-
 
 const char * Probability::InputGoodnessController::title() {
   const char * category = App::app()->categoricalType() == Data::CategoricalType::Goodness

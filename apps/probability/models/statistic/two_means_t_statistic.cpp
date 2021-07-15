@@ -20,7 +20,6 @@ void TwoMeansTStatistic::computeTest() {
   m_degreesOfFreedom = _degreeOfFreedom(s1(), n1(), s2(), n2());
   m_zAlpha = absIfNeeded(_tAlpha(m_degreesOfFreedom, m_threshold));
   m_z = _t(deltaMean, x1(), n1(), s1(), x2(), n2(), s2());
-  char op = static_cast<char>(m_hypothesisParams.op());
   m_pValue = _pVal(m_degreesOfFreedom, m_z);
 }
 

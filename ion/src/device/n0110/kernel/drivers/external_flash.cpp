@@ -11,19 +11,8 @@ void MassErase() {
   assert(false);
 }
 
-typedef void (*EraseSectorFunction)(int);
-
-void TRAMPOLINE_ATTRIBUTES EraseSector(int i) {
-   EraseSectorFunction * trampolineFunction = reinterpret_cast<EraseSectorFunction *>(Trampoline::addressOfFunction(TRAMPOLINE_EXTERNAL_FLASH_ERASE_SECTOR));
-  (*trampolineFunction)(i);
-}
-
-typedef void (*WriteMemoryFunction)(uint8_t *, const uint8_t *, size_t);
-
-void TRAMPOLINE_ATTRIBUTES WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
-   WriteMemoryFunction * trampolineFunction = reinterpret_cast<WriteMemoryFunction *>(Trampoline::addressOfFunction(TRAMPOLINE_EXTERNAL_FLASH_WRITE_MEMORY));
-  (*trampolineFunction)(destination, source, length);
-}
+TRAMPOLINE_INTERFACE(TRAMPOLINE_EXTERNAL_FLASH_ERASE_SECTOR, EraseSector, (i), void, int i)
+TRAMPOLINE_INTERFACE(TRAMPOLINE_EXTERNAL_FLASH_WRITE_MEMORY, WriteMemory, (destination, source, length), void, uint8_t * destination, const uint8_t * source, size_t length)
 
 }
 }

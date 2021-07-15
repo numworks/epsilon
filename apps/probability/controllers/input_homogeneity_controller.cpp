@@ -17,11 +17,10 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
     SelectableTableView * tableView,
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     HomogeneityStatistic * statistic) :
-    m_statistic(statistic),
-    m_table(tableView),
     m_numberOfRows(HomogeneityTableDataSource::k_initialNumberOfRows),
-    m_numberOfColumns(HomogeneityTableDataSource::k_initialNumberOfColumns) {
-  int numberOfCols = numberOfColumns();
+    m_numberOfColumns(HomogeneityTableDataSource::k_initialNumberOfColumns),
+    m_statistic(statistic),
+    m_table(tableView) {
   for (int i = 0; i < HomogeneityTableDataSource::k_maxNumberOfInnerCells; i++) {
     m_cells[i].setParentResponder(tableView);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
@@ -90,8 +89,8 @@ InputHomogeneityController::InputHomogeneityController(
     m_tableData(&m_innerTableData),
     m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource(), this),
     m_contentView(this, this, &m_table, inputEventHandlerDelegate, this),
-    m_homogeneityResultsController(homogeneityResultsController),
-    m_statistic(statistic) {
+    m_statistic(statistic),
+    m_homogeneityResultsController(homogeneityResultsController) {
 }
 
 void InputHomogeneityController::didBecomeFirstResponder() {
@@ -113,6 +112,7 @@ bool Probability::InputHomogeneityController::textFieldDidFinishEditing(TextFiel
                                                                         const char * text,
                                                                         Ion::Events::Event event) {
   // TODO parse significance cell
+  return false;
 }
 
 void Probability::InputHomogeneityController::tableViewDidChangeSelectionAndDidScroll(

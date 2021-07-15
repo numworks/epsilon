@@ -21,29 +21,9 @@ InputGoodnessController::InputGoodnessController(
     ResultsController * resultsController,
     GoodnessStatistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
-    Page(parent),
-    m_statistic(statistic),
-    m_resultsController(resultsController),
-    m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, this),
-    m_contentView(this, this, &m_inputTableView, inputEventHandlerDelegate, this) {
-}
-
-void InputGoodnessController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::InputGoodness);
-  if (m_statistic->threshold() == -1) {
-    m_statistic->initThreshold(App::app()->subapp());
-    // TODO can definitely be factored out
-    constexpr int bufferSize = 20;
-    char buffer[bufferSize];
-    defaultParseFloat(m_statistic->threshold(), buffer, bufferSize);
-    m_contentView.setSignificanceCellText(buffer);
-  }
-  Escher::Container::activeApp()->setFirstResponder(&m_contentView);
-}
-
-void InputGoodnessController::buttonAction() {
-  m_statistic->computeTest();
-  openPage(m_resultsController);
+    InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
+    m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, this) {
+  m_contentView.setTableView(&m_inputTableView);
 }
 
 const char * Probability::InputGoodnessController::title() {
@@ -52,28 +32,6 @@ const char * Probability::InputGoodnessController::title() {
                               : "Homogeneity/Independence";
   sprintf(m_titleBuffer, "X2-test: %s", category);
   return m_titleBuffer;
-}
-
-bool Probability::InputGoodnessController::textFieldShouldFinishEditing(TextField * textField,
-                                                                        Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;  // TODO up and down too
-}
-
-bool Probability::InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
-                                                                     const char * text,
-                                                                     Ion::Events::Event event) {
-  // Parse significance level
-  float p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
-    return false;
-  }
-  m_statistic->setThreshold(p);
-  // Reparse text
-  constexpr int bufferSize = 20;
-  char buffer[bufferSize];
-  defaultParseFloat(p, buffer, bufferSize);
-  textField->setText(buffer);
-  return true;
 }
 
 // ScrollViewDelegate

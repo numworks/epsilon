@@ -1,5 +1,5 @@
 include build/targets.device.$(MODEL).mak
--include build/targets.device.$(FIRMWARE_COMPONENT).mak
+-include build/targets.device.$(MODEL).$(FIRMWARE_COMPONENT).mak
 
 HANDY_TARGETS += bench.ram bench.flash
 HANDY_TARGETS_EXTENSIONS += dfu hex bin

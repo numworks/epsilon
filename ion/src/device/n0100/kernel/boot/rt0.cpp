@@ -1,9 +1,9 @@
 #include <boot/rt0.h>
-#include <kernel/drivers/display.h>
-#include <kernel/drivers/display_image.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/timing.h>
 #include <main.h>
+#include <shared/drivers/display.h>
+#include <shared/drivers/display_image.h>
 
 namespace Ion {
 namespace Device {
@@ -23,6 +23,6 @@ void __attribute__((noinline)) jump_to_main() {
   Ion::Device::Board::initPeripherals(false);
   Ion::Device::DisplayImage::logo();
   Ion::Device::Display::waitForVBlank();
-  Ion::Device::Timing::msleep(4000);
+  Ion::Timing::msleep(4000);
   return kernel_main();
 }

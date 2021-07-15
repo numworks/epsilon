@@ -82,6 +82,7 @@ App::App(Snapshot * snapshot) :
   Data::SubApp subapp = snapshot->navigation()->subapp();
   Data::Test test = snapshot->data()->test();
 
+  // TODO open Parameters and Calculation too
   switch (page) {
     case Data::Page::Menu:
       break;

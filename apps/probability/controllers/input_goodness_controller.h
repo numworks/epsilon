@@ -60,8 +60,8 @@ public:
 private:
   constexpr static int k_titleBufferSize = 30;
   char m_titleBuffer[k_titleBufferSize];
-  ResultsController * m_resultsController;
   GoodnessStatistic * m_statistic;
+  ResultsController * m_resultsController;
   InputGoodnessTableView m_inputTableView;
   InputCategoricalView m_contentView;
 };

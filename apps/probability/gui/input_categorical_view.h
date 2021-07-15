@@ -77,8 +77,8 @@ private:
                           Escher::Button * next) :
           VerticalLayout(Palette::WallScreenDark),
           m_significanceCell(significanceCell),
-          m_next(next),
-          m_spacer(spacer) {
+          m_spacer(spacer),
+          m_next(next) {
         setMargins(Metric::CommonRightMargin, 0);
       };
       Escher::View * subviewAtIndex(int i) override;

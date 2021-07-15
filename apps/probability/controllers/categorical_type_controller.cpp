@@ -21,9 +21,9 @@ CategoricalTypeController::CategoricalTypeController(
     InputGoodnessController * inputGoodnessController,
     InputHomogeneityController * inputHomogeneityController) :
     SelectableCellListPage(parent),
+    m_statistic(statistic),
     m_inputGoodnessController(inputGoodnessController),
-    m_inputHomogeneityController(inputHomogeneityController),
-    m_statistic(statistic) {
+    m_inputHomogeneityController(inputHomogeneityController) {
   m_cells[k_indexOfGoodnessCell].setMessage(I18n::Message::GoodnessOfFit);
   m_cells[k_indexOfHomogeneityCell].setMessage(I18n::Message::Homogeneity);
 }

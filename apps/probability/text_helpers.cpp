@@ -46,8 +46,9 @@ const char * testToText(Data::Test t) {
     case Data::Test::TwoMeans:
       txt = "two means";
       break;
+    default:
+      assert(false);
   }
-  assert(txt != nullptr);
   return txt;
 }
 

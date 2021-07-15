@@ -1,6 +1,9 @@
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/command/, \
   adc.cpp \
   backlight.cpp \
+  charge.cpp \
+  command.cpp \
+  crc.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/drivers/, \

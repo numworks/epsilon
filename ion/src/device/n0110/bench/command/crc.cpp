@@ -2,6 +2,7 @@
 #include <ion.h>
 #include <poincare/print_int.h>
 #include <drivers/cache.h>
+#include <drivers/crc32.h>
 #include <cmath>
 
 namespace Ion {
@@ -45,11 +46,11 @@ void CRC(const char * input) {
   uint32_t length = numberBase10(input + lengthStart, lengthEnd - lengthStart);
 
   // Disable the cache to make many cache accesses
-  Ion::Device::Cache::disable();
+  Cache::disable();
 
-  uint32_t crc = Ion::crc32Byte(reinterpret_cast<const uint8_t *>(internal ? 0x08000000 : 0x90000000), length);
+  uint32_t crc = crc32Byte(reinterpret_cast<const uint8_t *>(internal ? 0x08000000 : 0x90000000), length);
 
-  Ion::Device::Cache::enable();
+  Cache::enable();
 
   constexpr int bufferSize = 4+10+1; // crc is a uint32_t so 10 digits long.
   char buffer[bufferSize] = {'C', 'R', 'C', '='};

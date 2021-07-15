@@ -1,7 +1,7 @@
 #include <drivers/led.h>
 #include <ion/usb.h>
-#include <kernel/drivers/battery.h>
 #include <kernel/drivers/persisting_bytes.h>
+#include <drivers/battery.h>
 
 namespace Ion {
 namespace Device {

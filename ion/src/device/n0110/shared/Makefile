@@ -25,6 +25,18 @@ ion_device_bench_flasher = $(addprefix ion/src/device/n0110/shared/boot/, \
   rt0.cpp \
 )
 
+## bench/kernel
+
+ion_device_bench_kernel = $(addprefix ion/src/device/shared/drivers/, \
+  backlight_advanced.cpp \
+  battery_charge.cpp \
+  crc32.cpp \
+)
+
+ion_device_bench_kernel += $(addprefix ion/src/device/n0110/shared/drivers/, \
+  cache.cpp \
+)
+
 ## bootloader/kernel
 
 ion_device_bootloader_kernel_src = $(addprefix ion/src/device/shared/drivers/, \
@@ -70,7 +82,6 @@ ion_device_bench_src += ion/src/device/shared/boot/rt0.cpp
 
 ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
-  backlight_advanced.cpp \
   battery.cpp \
   board_privileged.cpp \
   display.cpp \
@@ -81,7 +92,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   board_privileged.cpp \
 )
 
-ion_device_bench_src += $(ion_device_bench_flasher)
+ion_device_bench_src += $(ion_device_bench_flasher) $(ion_device_bench_kernel)
 
 # Bootloader
 
@@ -96,11 +107,10 @@ ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bo
 # Kernel
 
 ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
-  backlight_advanced.cpp \
   led.cpp \
 )
 
-ion_device_kernel_src += $(ion_device_bootloader_kernel_src) $(ion_device_kernel_userland_src)
+ion_device_kernel_src += $(ion_device_bench_kernel) $(ion_device_bootloader_kernel_src) $(ion_device_kernel_userland_src)
 
 # Flasher
 

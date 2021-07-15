@@ -1,5 +1,5 @@
 #include "command.h"
-#include <ion.h>
+#include <drivers/battery.h>
 
 namespace Ion {
 namespace Device {
@@ -11,7 +11,7 @@ void Charge(const char * input) {
     reply(sSyntaxError);
     return;
   }
-  if (Ion::Battery::isCharging()) {
+  if (Battery::isCharging()) {
     reply("CHARGE=ON");
   } else {
     reply("CHARGE=OFF");

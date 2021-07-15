@@ -26,23 +26,7 @@ void __attribute__((noinline)) abort() {
 #endif
 }
 
-/* By default, the compiler is free to inline any function call he wants. If
- * the compiler decides to inline some functions that make use of VFP registers,
- * it will need to push VFP them onto the stack in calling function's prologue.
- * Problem: in start()'s prologue, we would never had a chance to enable the
- * FPU since this function is the first thing called after reset.
- * We can safely assume that neither memcpy, memset, nor any Ion::Device::init*
- * method will use floating-point numbers, but bootloader_main very well can.
- * To make sure ion_main's potential usage of VFP registers doesn't bubble-up to
- * start(), we isolate it in its very own non-inlined function call
- */
-
-static void __attribute__((noinline)) jump_to_main() {
-  /* Init the peripherals. We do not initialize the backlight in case there is
-   * an on boarding app: indeed, we don't want the user to see the LCD tests
-   * happening during the on boarding app. The backlight will be initialized
-   * after the Power-On Self-Test if there is one or before switching to the
-   * home app otherwise. */
+void __attribute__((noinline)) jump_to_main() {
   Ion::Device::Board::initPeripherals(true);
   return kernel_main();
 }
@@ -63,10 +47,19 @@ void __attribute__((noinline)) start() {
   size_t isrSectionLength = (&_isr_vector_table_end_ram - &_isr_vector_table_start_ram);
   memcpy(&_isr_vector_table_start_ram, &_isr_vector_table_start_flash, isrSectionLength);
 
+
   Ion::Device::Board::init();
 
-  /* At this point, we initialized clocks and the external flash but no other
-   * peripherals. */
+  /* By default, the compiler is free to inline any function call he wants. If
+   * the compiler decides to inline some functions that make use of VFP registers,
+   * it will need to push VFP them onto the stack in calling function's prologue.
+   * Problem: in start()'s prologue, we would never had a chance to enable the
+   * FPU since this function is the first thing called after reset.
+   * We can safely assume that neither memcpy, memset, nor any Ion::Device::init*
+   * method will use floating-point numbers, but bootloader_main very well can.
+   * To make sure ion_main's potential usage of VFP registers doesn't bubble-up to
+   * start(), we isolate it in its very own non-inlined function call
+   */
 
   jump_to_main();
 

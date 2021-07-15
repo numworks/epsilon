@@ -1,10 +1,8 @@
 #include <kernel/boot/isr.h>
 #include <ion.h>
 #include <kernel/drivers/authentication.h>
-#include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>
-#include <kernel/drivers/crc32.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/fcc_id.h>
 #include <kernel/drivers/keyboard.h>
@@ -12,6 +10,8 @@
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
 #include <shared/drivers/backlight.h>
+#include <shared/drivers/battery.h>
+#include <shared/drivers/crc32.h>
 #include <shared/drivers/display.h>
 #include <shared/drivers/flash_privileged.h>
 #include <shared/drivers/led.h>

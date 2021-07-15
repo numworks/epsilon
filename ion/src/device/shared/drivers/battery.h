@@ -24,6 +24,8 @@ void init();
 void shutdown();
 void initGPIO();
 
+bool isCharging();
+
 }
 }
 }

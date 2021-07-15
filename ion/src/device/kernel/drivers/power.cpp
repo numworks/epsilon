@@ -2,7 +2,6 @@
 #include <drivers/reset.h>
 #include <ion/usb.h>
 #include <kernel/drivers/authentication.h>
-#include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
@@ -11,6 +10,7 @@
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
+#include <shared/drivers/battery.h>
 #include <shared/drivers/led.h>
 #include <shared/drivers/usb_privileged.h>
 #include <ion/src/shared/events.h>

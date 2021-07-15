@@ -3,9 +3,9 @@
 #include <assert.h>
 #include <drivers/config/clocks.h>
 #include <drivers/config/keyboard.h>
+#include <drivers/battery.h>
 #include <drivers/display.h>
 #include <drivers/usb_privileged.h>
-#include <kernel/drivers/battery.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/keyboard.h>

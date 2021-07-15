@@ -1,4 +1,4 @@
-#include "battery.h"
+#include <drivers/battery.h>
 #include <drivers/config/battery.h>
 
 namespace Ion {
@@ -6,10 +6,6 @@ namespace Device {
 namespace Battery {
 
 using namespace Regs;
-
-bool isCharging() {
-  return !Config::ChargingPin.group().IDR()->get(Config::ChargingPin.pin());
-}
 
 Ion::Battery::Charge level() {
   static Ion::Battery::Charge previousLevel = Ion::Battery::Charge::FULL;

@@ -69,9 +69,12 @@ ion_device_kernel_userland_src += $(addprefix ion/src/device/n0110/shared/driver
 ion_device_bench_src += ion/src/device/shared/boot/rt0.cpp
 
 ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
+  backlight.cpp \
+  backlight_advanced.cpp \
   battery.cpp \
   board_privileged.cpp \
   display.cpp \
+  timing.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
@@ -93,6 +96,7 @@ ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bo
 # Kernel
 
 ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
+  backlight_advanced.cpp \
   led.cpp \
 )
 

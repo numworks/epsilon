@@ -48,8 +48,15 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  SelectableTableViewDataSource * selectionDataSource() { return &m_tableSelection; }
+  SelectableTableViewDataSource * selectionDataSource() { return &m_tableSelection; }  // TODO remove
+  int selectedView() { return m_viewSelection.selectedRow(); }
   void setSignificanceCellText(const char * text);
+
+  constexpr static int k_indexOfTable = 0;
+  constexpr static int k_indexOfInnerLayout = 1;
+  constexpr static int k_indexOfSignificance = 1;
+  constexpr static int k_indexOfSpacer = 2;
+  constexpr static int k_indexOfNext = 3;
 
 private:
   /* Layout a Table, a cell and a button separated by spacers. */
@@ -60,12 +67,6 @@ private:
                 Escher::Button * next);
     int numberOfSubviews() const override { return 2 /* Table + InnerVerticalLayout */; }
     Escher::View * subviewAtIndex(int i) override;
-
-    constexpr static int k_indexOfTable = 0;
-    constexpr static int k_indexOfInnerLayout = 1;
-    constexpr static int k_indexOfSignificance = 1;
-    constexpr static int k_indexOfSpacer = 2;
-    constexpr static int k_indexOfNext = 3;
 
   private:
     /* Layout cell, a spacer and button with side margins */

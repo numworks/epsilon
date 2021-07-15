@@ -72,12 +72,12 @@ void InputCategoricalView::didBecomeFirstResponder() {
 bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
-      int jump = 1 + (m_viewSelection.selectedRow() == ContentView::k_indexOfSpacer + 1);
+      int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer + 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() - jump);
     }
     if (event == Ion::Events::Down &&
-        m_viewSelection.selectedRow() < ContentView::k_indexOfNext) {
-      int jump = 1 + (m_viewSelection.selectedRow() == ContentView::k_indexOfSpacer - 1);
+        m_viewSelection.selectedRow() < k_indexOfNext) {
+      int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer - 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() + jump);
     }
     selectCorrectView();
@@ -89,11 +89,11 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
 
 Responder * InputCategoricalView::responderForRow(int row) {
   switch (m_viewSelection.selectedRow()) {
-    case ContentView::k_indexOfTable:
+    case k_indexOfTable:
       return m_dataInputTableView;
-    case ContentView::k_indexOfSignificance:
+    case k_indexOfSignificance:
       return &m_significanceCell;
-    case ContentView::k_indexOfNext:
+    case k_indexOfNext:
       return &m_next;
   }
   assert(false);
@@ -108,12 +108,12 @@ void InputCategoricalView::selectCorrectView() {
   m_significanceCell.setHighlighted(false);
   m_next.setHighlighted(false);
   switch (m_viewSelection.selectedRow()) {
-    case ContentView::k_indexOfTable:
+    case k_indexOfTable:
       if (m_dataInputTableView->selectedRow() < 0) {
         m_dataInputTableView->selectCellAtLocation(0, 0);
       }
       break;
-    case ContentView::k_indexOfSignificance:
+    case k_indexOfSignificance:
       m_significanceCell.setHighlighted(true);
       // TODO compute position of cell and scrollToContentRect
       scrollToContentPoint(m_significanceCell.pointFromPointInView(this, KDPointZero)
@@ -121,7 +121,7 @@ void InputCategoricalView::selectCorrectView() {
                                .translatedBy(KDPoint(0, 100)));
       break;
     default:
-      assert(m_viewSelection.selectedRow() == ContentView::k_indexOfNext);
+      assert(m_viewSelection.selectedRow() == k_indexOfNext);
       m_next.setHighlighted(true);
       scrollToContentPoint(
           m_next.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));

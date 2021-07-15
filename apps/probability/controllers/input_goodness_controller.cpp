@@ -46,6 +46,7 @@ void InputGoodnessController::buttonAction() {
   openPage(m_resultsController);
 }
 
+
 const char * Probability::InputGoodnessController::title() {
   const char * category = App::app()->categoricalType() == Data::CategoricalType::Goodness
                               ? "goodness of fit"
@@ -86,10 +87,11 @@ void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScro
   int col = m_inputTableView.selectedColumn();
   if (!withinTemporarySelection && previousSelectedCellY != row) {
     // Make m_contentView to cell
-    KDRect cellFrame = KDRect(m_inputTableView.cumulatedWidthFromIndex(col),
-                              m_inputTableView.cumulatedHeightFromIndex(row),
-                              m_inputTableView.columnWidth(col),
-                              m_inputTableView.rowHeight(row));  // TODO query m_inputTableView::cellFrame
+    KDRect cellFrame = KDRect(
+        m_inputTableView.cumulatedWidthFromIndex(col),
+        m_inputTableView.cumulatedHeightFromIndex(row),
+        m_inputTableView.columnWidth(col),
+        m_inputTableView.rowHeight(row));  // TODO query m_inputTableView::cellFrame
 
     m_contentView.scrollToContentRect(cellFrame);
 

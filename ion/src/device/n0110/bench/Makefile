@@ -1,6 +1,7 @@
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/drivers/, \
   board.cpp \
   console.cpp \
+  display.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/, \

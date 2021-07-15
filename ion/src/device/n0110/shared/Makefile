@@ -18,6 +18,13 @@ ion_device_bootloader_flasher_kernel_src = $(addprefix ion/src/device/shared/, \
   drivers/usb_unprivileged.cpp \
 )
 
+## bench/flasher
+
+ion_device_bench_flasher = $(addprefix ion/src/device/n0110/shared/boot/, \
+  isr.c \
+  rt0.cpp \
+)
+
 ## bootloader/kernel
 
 ion_device_bootloader_kernel_src = $(addprefix ion/src/device/shared/drivers/, \
@@ -57,6 +64,10 @@ ion_device_kernel_userland_src += $(addprefix ion/src/device/n0110/shared/driver
   trampoline.cpp \
 )
 
+# Bench
+
+ion_device_bench_src += $(ion_device_bench_flasher)
+
 # Bootloader
 
 ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
@@ -87,7 +98,7 @@ ion_device_flasher_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   usb.cpp \
 )
 
-ion_device_flasher_src += $(ion_device_bootloader_flasher_src) $(ion_device_dfu_src)
+ion_device_flasher_src += $(ion_device_bench_flasher) $(ion_device_bootloader_flasher_src) $(ion_device_dfu_src)
 
 # Userland
 

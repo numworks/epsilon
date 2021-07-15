@@ -20,6 +20,19 @@ namespace Config {
 constexpr static size_t SignedPayloadSize = 8;
 constexpr static size_t SignatureSize = 64;
 
+// RAM
+constexpr static uint32_t SRAMAddress = 0x20000000;
+constexpr static uint32_t SRAMLength = 0x40000; // 256kB
+
+// Kernal RAM
+constexpr static uint32_t KernelSRAMDataBSSLength = 0xC00; // 3k
+constexpr static uint32_t KernelStackLength = 0x400; // 1K
+constexpr static uint32_t KernelRAMAddress = SRAMAddress + SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
+
+// Userland RAm
+constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
+constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
+
 }
 }
 }

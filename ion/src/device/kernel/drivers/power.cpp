@@ -12,7 +12,6 @@
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
-#include <shared/drivers/trampoline.h>
 #include <shared/drivers/usb_privileged.h>
 #include <ion/src/shared/events.h>
 

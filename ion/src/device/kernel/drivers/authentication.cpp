@@ -15,7 +15,7 @@ Ion::Authentication::ClearanceLevel clearanceLevel() {
 
 void downgradeClearanceLevelTo(Ion::Authentication::ClearanceLevel level) {
   assert(static_cast<int>(level) > static_cast<int>(s_clearanceLevel));
-  LED::setColor(KDColorBlack);
+  LED::setColorSecure(KDColorBlack);
   s_clearanceLevel = level;
   assert(s_clearanceLevel != Ion::Authentication::ClearanceLevel::NumWorks);
   // Bloquer les options bytes? Mettre tout le running SLOT en RDP WRP sauf exam mode?

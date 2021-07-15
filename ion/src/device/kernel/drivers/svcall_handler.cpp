@@ -6,6 +6,7 @@
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/fcc_id.h>
 #include <kernel/drivers/keyboard.h>
+#include <kernel/drivers/led.h>
 #include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
@@ -14,7 +15,6 @@
 #include <shared/drivers/crc32.h>
 #include <shared/drivers/display.h>
 #include <shared/drivers/flash_privileged.h>
-#include <shared/drivers/led.h>
 #include <shared/drivers/random.h>
 #include <shared/drivers/reset.h>
 #include <shared/drivers/serial_number.h>
@@ -62,7 +62,7 @@ void * const k_SVCallTable[SVC_NUMBER_OF_CALLS] = {
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Keyboard::scan),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::getColor),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::setBlinking),
-  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::setColor),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::setColorSecure),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::updateColorWithPlugAndCharge),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Board::pcbVersion),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::PersistingBytes::read),
@@ -160,7 +160,7 @@ void * svcallHandler(int svcNumber) {
   ENSURE_SVC_TYPE(SVC_KEYBOARD_SCAN, Ion::Device::Keyboard::scan)
   ENSURE_SVC_TYPE(SVC_LED_GET_COLOR, Ion::Device::LED::getColor)
   ENSURE_SVC_TYPE(SVC_LED_SET_BLINKING, Ion::Device::LED::setBlinking)
-  ENSURE_SVC_TYPE(SVC_LED_SET_COLOR, Ion::Device::LED::setColor)
+  ENSURE_SVC_TYPE(SVC_LED_SET_COLOR, Ion::Device::LED::setColorSecure)
   ENSURE_SVC_TYPE(SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE, Ion::Device::LED::updateColorWithPlugAndCharge)
   ENSURE_SVC_TYPE(SVC_PCB_VERSION, Ion::Device::Board::pcbVersion)
   ENSURE_SVC_TYPE(SVC_PERSISTING_BYTES_READ, Ion::Device::PersistingBytes::read)

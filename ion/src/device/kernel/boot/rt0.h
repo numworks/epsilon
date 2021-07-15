@@ -12,5 +12,8 @@ void prologue();
 }
 }
 }
+
+void jump_to_main();
+
 #endif
 

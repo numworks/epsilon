@@ -8,7 +8,6 @@
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
-#include <main.h>
 #include <regs/regs.h>
 
 extern "C" {
@@ -24,11 +23,6 @@ void __attribute__((noinline)) abort() {
   while (1) {
   }
 #endif
-}
-
-void __attribute__((noinline)) jump_to_main() {
-  Ion::Device::Board::initPeripherals(true);
-  return kernel_main();
 }
 
 /* When 'start' is executed, the external flash is supposed to be shutdown. We

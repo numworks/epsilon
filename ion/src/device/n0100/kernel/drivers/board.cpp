@@ -13,12 +13,15 @@ namespace Board {
 using namespace Regs;
 
 void init() {
+  initSystemClocks();
   initPeripheralsClocks();
   initInterruptionPriorities();
-  // Ensure right location of interrupt vectors
   // The bootloader leaves its own after flashing
   SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
+  // Ensure right location of interrupt vectors
   CORTEX.VTOR()->setVTOR((void*)&_isr_vector_table_start_ram);
+  // GPIO default states before initializing External flash
+  setDefaultGPIO();
 }
 
 void initPeripheralsClocks() {

@@ -75,6 +75,11 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
     txt[length] = digit;
     txt[length + 1] = 0;
     myCell->setText(txt);
+    KDColor textColor = KDColorBlack;
+    if ((row == 0 && column == numberOfColumns() - 1) || (column == 0 && row == numberOfRows()-1)) {
+      textColor = Palette::GrayDark;
+    }
+    myCell->setTextColor(textColor);
   }
 
   else {

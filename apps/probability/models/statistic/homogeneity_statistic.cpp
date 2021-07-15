@@ -4,8 +4,7 @@
 
 namespace Probability {
 
-HomogeneityStatistic::HomogeneityStatistic() :
-    m_numberOfInputParams(k_maxNumberOfColumns * k_maxNumberOfRows) {
+HomogeneityStatistic::HomogeneityStatistic() {
   for (int i = 0; i < numberOfParameters(); i++) {
     m_input[i] = k_undefinedValue;
   }
@@ -28,7 +27,7 @@ float HomogeneityStatistic::expectedValue(int index) {
 
 int HomogeneityStatistic::_degreesOfFreedom() {
   Index2D max = _numberOfInputParams();
-  m_numberOfInputParams = (max.row - 1) * (max.col - 1);
+  return (max.row - 1) * (max.col - 1);
 }
 
 HomogeneityStatistic::Index2D HomogeneityStatistic::_numberOfInputParams() {
@@ -50,9 +49,9 @@ HomogeneityStatistic::Index2D HomogeneityStatistic::_numberOfInputParams() {
   return Index2D{.row = maxRow, .col = maxCol};
 }
 
-void HomogeneityStatistic::computeNumberOfParameters() {
+int HomogeneityStatistic::numberOfValuePairs() {
   Index2D max = _numberOfInputParams();
-  m_numberOfInputParams = max.row * max.col;
+  return max.row * max.col;
 }
 
 HomogeneityStatistic::Index2D HomogeneityStatistic::indexToTableIndex(int index) {

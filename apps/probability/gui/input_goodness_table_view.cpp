@@ -77,7 +77,7 @@ bool Probability::InputGoodnessTableView::textFieldDidFinishEditing(Escher::Text
 
   int index = 2 * (selectedRow() - 1) + selectedColumn();
   m_statistic->setParamAtIndex(index, p);
-  if (selectedRow() == numberOfRows() - 1 && numberOfRows() < k_maxNumberOfReusableRows) {
+  if (selectedRow() == numberOfRows() - 1 && numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
     m_numberOfRows++;
   }
   selectCellAtLocation(selectedColumn(), selectedRow() + 1);

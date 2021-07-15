@@ -9,10 +9,9 @@
 namespace Probability {
 
 void Chi2Statistic::computeTest() {
-  computeNumberOfParameters();
   m_degreesOfFreedom = _degreesOfFreedom();
   m_z = 0;
-  for (int i = 0; i < numberOfStatisticParameters(); i++) {
+  for (int i = 0; i < numberOfValuePairs(); i++) {
     m_z += std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
   }
   m_zAlpha = absIfNeeded(_zAlpha(m_degreesOfFreedom, m_threshold));
@@ -21,14 +20,6 @@ void Chi2Statistic::computeTest() {
 
 float Chi2Statistic::normedDensityFunction(float x) {
   return Chi2Law::EvaluateAtAbscissa(x, m_degreesOfFreedom);
-}
-
-float Chi2Statistic::expectedValue(int index) {
-  return paramArray()[2 * index + 1];
-}
-
-float Chi2Statistic::observedValue(int index) {
-  return paramArray()[2 * index];
 }
 
 float Chi2Statistic::_zAlpha(float degreesOfFreedom, float significanceLevel) {

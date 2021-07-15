@@ -127,7 +127,6 @@ void InputCategoricalView::selectCorrectView() {
           m_next.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));
       break;
   }
-  // reloadScroll(true);
 }
 
 KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {

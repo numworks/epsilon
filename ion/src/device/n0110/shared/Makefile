@@ -31,6 +31,7 @@ ion_device_bench_kernel = $(addprefix ion/src/device/shared/drivers/, \
   backlight_advanced.cpp \
   battery_charge.cpp \
   crc32.cpp \
+  led.cpp \
 )
 
 ion_device_bench_kernel += $(addprefix ion/src/device/n0110/shared/drivers/, \
@@ -109,10 +110,6 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
 ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bootloader_flasher_src) $(ion_device_dfu_src)
 
 # Kernel
-
-ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
-  led.cpp \
-)
 
 ion_device_kernel_src += $(ion_device_bench_kernel) $(ion_device_bootloader_kernel_src) $(ion_device_kernel_userland_src)
 

@@ -16,6 +16,19 @@ KDColor getColor() {
   return sLedColor;
 }
 
+void setColor(KDColor c) {
+  sLedColor = c;
+
+  /* Active all RGB colors */
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::RedChannel, TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::GreenChannel, TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::BlueChannel, TIM<Register16>::CCMR::OCM::PWM1);
+
+  /* Set the PWM duty cycles to display the right color */
+  constexpr float maxColorValue = (float)((1 << 8) -1);
+  setPeriodAndDutyCycles(Mode::PWM, c.red()/maxColorValue, c.green()/maxColorValue, c.blue()/maxColorValue);
+}
+
 void setBlinking(uint16_t period, float dutyCycle) {
   /* We want to use the PWM at a slow rate to display a seeable blink.
    * Consequently, we do not use PWM to display the right color anymore but to

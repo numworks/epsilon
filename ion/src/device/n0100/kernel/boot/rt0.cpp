@@ -3,6 +3,7 @@
 #include <kernel/drivers/display_image.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/timing.h>
+#include <main.h>
 
 namespace Ion {
 namespace Device {

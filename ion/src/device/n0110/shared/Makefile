@@ -90,6 +90,8 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   board_privileged.cpp \
+  external_flash.cpp \
+  external_flash_command.cpp \
 )
 
 ion_device_bench_src += $(ion_device_bench_flasher) $(ion_device_bench_kernel)

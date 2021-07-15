@@ -11,9 +11,7 @@ MEMORY {
 
 SECTIONS {
   .signed_payload_prefix ORIGIN(KERNEL) : {
-    FILL(0xFF);
-    BYTE(0xFF)
-    . = ORIGIN(KERNEL) + SIGNED_PAYLOAD_LENGTH;
+    INCLUDE flash/signed_payload_prefix.ld
   } >KERNEL
 
   .kernel_header : {
@@ -104,12 +102,7 @@ SECTIONS {
   } >SRAM_DATA_BSS
 
   .canary (NOLOAD): {
-    . = (ORIGIN(SRAM_DATA_BSS) + LENGTH(SRAM_DATA_BSS) - CANARY_LENGTH);
-    . = ALIGN(4);
-    _canary_section_start_ram = .;
-    KEEP(*(.canary))
-    _canary_section_end_ram = .;
-    ASSERT ((_canary_section_start_ram + CANARY_LENGTH == _canary_section_end_ram), "Kernel canary section should only contain the canary");
+    INCLUDE flash/canary.ld
   } >SRAM_DATA_BSS
 
   .process_stack : {

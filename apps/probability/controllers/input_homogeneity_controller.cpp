@@ -24,7 +24,6 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
   int numberOfCols = numberOfColumns();
   for (int i = 0; i < HomogeneityTableDataSource::k_maxNumberOfInnerCells; i++) {
     m_cells[i].setParentResponder(tableView);
-    m_cells[i].setEven(((i + 2) / numberOfCols) % 2 == 1);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_cells[i].setFont(KDFont::SmallFont);
   }
@@ -51,11 +50,11 @@ bool Probability::InputHomogeneityDataSource::textFieldDidFinishEditing(
 
   m_statistic->setParameterAtPosition(m_table->selectedRow() - 1, m_table->selectedColumn() - 1, p);
   if (m_table->selectedRow() == numberOfRows() &&
-      numberOfRows() <= HomogeneityTableDataSource::k_maxNumberOfRows) {
+      numberOfRows() < HomogeneityTableDataSource::k_maxNumberOfRows) {
     m_numberOfRows++;
   }
   if (m_table->selectedColumn() == numberOfColumns() &&
-      numberOfColumns() <= HomogeneityTableDataSource::k_maxNumberOfColumns) {
+      numberOfColumns() < HomogeneityTableDataSource::k_maxNumberOfColumns) {
     m_numberOfColumns++;
   }
   m_table->selectCellAtLocation(m_table->selectedColumn(), m_table->selectedRow() + 1);
@@ -77,6 +76,7 @@ void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
     defaultParseFloat(p, buffer, bufferSize);
     myCell->editableTextCell()->textField()->setText(buffer);
   }
+  myCell->setEven(row % 2 == 0);
 }
 
 InputHomogeneityController::InputHomogeneityController(

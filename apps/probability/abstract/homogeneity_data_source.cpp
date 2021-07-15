@@ -14,6 +14,7 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * con
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     m_colHeader[i].setAlignment(.5f, .5f);
     m_colHeader[i].setFont(KDFont::SmallFont);
+    m_colHeader[i].setEven(true);
   }
   // First column
   for (int i = 0; i < k_maxNumberOfRows; i++) {
@@ -24,28 +25,27 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * con
 }
 
 HighlightCell * HomogeneityTableDataSource::reusableCell(int i, int type) {
-  if (i == 0) {
+  if (type == k_typeOfTopLeftCell) {
     return &m_topLeftCell;
   }
-  if (i < numberOfColumns()) {
-    return &m_colHeader[i - 1];
+  if (type == k_typeOfColumnHeader) {
+    return &m_colHeader[i];
   }
-  if (i % numberOfColumns() == 0) {
-    return &m_rowHeader[i / numberOfColumns() - 1];
+  if (type == k_typeOfRowHeader) {
+    return &m_rowHeader[i];
   }
-  int index = indexForEditableCell(i);
-  return m_contentTable->reusableCell(index, type);
-}
-
-int HomogeneityTableDataSource::indexForEditableCell(int i) {
-  // Substracts the number of cells in top and left header before this index
-  int row = i / numberOfColumns();
-  return i - row - numberOfColumns() + 1;
+  return m_contentTable->reusableCell(i, type);
 }
 
 int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
-  if (i == 0 || j == 0) {
-    return 0;
+  if (i == 0 && j == 0) {
+    return k_typeOfTopLeftCell;
+  }
+  if (j == 0) {
+    return k_typeOfColumnHeader;
+  }
+  if (i == 0) {
+    return k_typeOfRowHeader;
   }
   return m_contentTable->typeAtLocation(i - 1, j - 1);
 }

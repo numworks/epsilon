@@ -51,13 +51,15 @@ public:
 
   constexpr static int k_initialNumberOfRows = 3;
   constexpr static int k_initialNumberOfColumns = 3;
-  constexpr static int k_maxNumberOfColumns = 6;
-  constexpr static int k_maxNumberOfRows = 6;
+  constexpr static int k_maxNumberOfColumns = HomogeneityStatistic::k_maxNumberOfColumns;
+  constexpr static int k_maxNumberOfRows = HomogeneityStatistic::k_maxNumberOfRows;
   constexpr static int k_maxNumberOfInnerCells = (k_maxNumberOfColumns - 1) *
                                                  (k_maxNumberOfRows - 1);
 
 private:
-  int indexForEditableCell(int i);
+  constexpr static int k_typeOfRowHeader = 17;
+  constexpr static int k_typeOfColumnHeader = 18;
+  constexpr static int k_typeOfTopLeftCell = 19;
 
   I18n::Message m_headerPrefix;
   TableViewDataSource * m_contentTable;

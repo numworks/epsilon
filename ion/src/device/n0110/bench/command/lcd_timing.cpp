@@ -1,5 +1,5 @@
 #include "command.h"
-#include <apps/shared/post_and_hardware_tests.h>
+#include <ion/post_and_hardware_tests.h>
 #include <poincare/print_int.h>
 
 namespace Ion {
@@ -20,7 +20,7 @@ void LCDTiming(const char * input) {
   for (int i  = 6; i < bufferSize; i++) {
     buffer[i] = 0;
   }
-  Poincare::PrintInt::Left(Shared::POSTAndHardwareTests::LCDTimingGlyphFailures(), buffer+6, bufferSize - 6 - 1);
+  Poincare::PrintInt::Left(POSTAndHardwareTests::LCDTimingGlyphFailures(), buffer+6, bufferSize - 6 - 1);
   reply(buffer);
 }
 

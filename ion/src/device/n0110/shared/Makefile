@@ -96,7 +96,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   external_flash_command.cpp \
 )
 
-ion_device_bench_src += $(ion_device_bench_flasher) $(ion_device_bench_kernel)
+ion_device_bench_src += ion/src/device/shared/post_and_hardware_tests $(ion_device_bench_flasher) $(ion_device_bench_kernel)
 
 # Bootloader
 

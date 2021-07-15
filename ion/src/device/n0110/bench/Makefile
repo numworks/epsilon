@@ -9,6 +9,9 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/command/, \
   external_flash_id.cpp \
   jump.cpp \
   keyboard.cpp \
+  lcd_data.cpp \
+  lcd_pins.cpp \
+  lcd_timing.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/drivers/, \

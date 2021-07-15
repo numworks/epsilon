@@ -25,14 +25,11 @@ namespace Probability {
 class InputHomogeneityDataSource : public TableViewDataSource,
                                    public Shared::ParameterTextFieldDelegate {
 public:
-  InputHomogeneityDataSource(
-    SelectableTableView * tableView,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
-    HomogeneityStatistic * statistic);
-  int numberOfRows() const override { return HomogeneityTableDataSource::k_initialNumberOfRows; }
-  int numberOfColumns() const override {
-    return HomogeneityTableDataSource::k_initialNumberOfColumns;
-  }
+  InputHomogeneityDataSource(SelectableTableView * tableView,
+                             InputEventHandlerDelegate * inputEventHandlerDelegate,
+                             HomogeneityStatistic * statistic);
+  int numberOfRows() const override { return m_numberOfRows; }
+  int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
   int typeAtLocation(int i, int j) override { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
@@ -49,6 +46,8 @@ public:
                                  Ion::Events::Event event) override;
 
 private:
+  int m_numberOfRows;
+  int m_numberOfColumns;
   // TODO reusable
   EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
   HomogeneityStatistic * m_statistic;

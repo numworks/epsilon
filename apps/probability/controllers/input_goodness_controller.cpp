@@ -89,7 +89,7 @@ void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScro
     KDRect cellFrame = KDRect(m_inputTableView.cumulatedWidthFromIndex(col),
                               m_inputTableView.cumulatedHeightFromIndex(row),
                               m_inputTableView.columnWidth(col),
-                              m_inputTableView.rowHeight(row));
+                              m_inputTableView.rowHeight(row));  // TODO query m_inputTableView::cellFrame
 
     m_contentView.scrollToContentRect(cellFrame);
 

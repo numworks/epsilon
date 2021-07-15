@@ -17,7 +17,10 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
     SelectableTableView * tableView,
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     HomogeneityStatistic * statistic) :
-    m_statistic(statistic), m_table(tableView) {
+    m_statistic(statistic),
+    m_table(tableView),
+    m_numberOfRows(HomogeneityTableDataSource::k_initialNumberOfRows),
+    m_numberOfColumns(HomogeneityTableDataSource::k_initialNumberOfColumns) {
   int numberOfCols = numberOfColumns();
   for (int i = 0; i < HomogeneityTableDataSource::k_maxNumberOfInnerCells; i++) {
     m_cells[i].setParentResponder(tableView);
@@ -49,7 +52,11 @@ bool Probability::InputHomogeneityDataSource::textFieldDidFinishEditing(
   m_statistic->setParameterAtPosition(m_table->selectedRow() - 1, m_table->selectedColumn() - 1, p);
   if (m_table->selectedRow() == numberOfRows() - 1 &&
       numberOfRows() < HomogeneityTableDataSource::k_maxNumberOfRows) {
-    // TODO add row
+    m_numberOfRows++;
+  }
+  if (m_table->selectedColumn() == numberOfColumns() - 1 &&
+      numberOfColumns() < HomogeneityTableDataSource::k_maxNumberOfColumns) {
+    m_numberOfColumns++;
   }
   m_table->selectCellAtLocation(m_table->selectedColumn(), m_table->selectedRow() + 1);
   m_table->reloadData(false);

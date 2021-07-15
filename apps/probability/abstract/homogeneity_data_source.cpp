@@ -11,12 +11,12 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * con
     m_topLeftCell(Escher::Palette::WallScreenDark),
     m_headerPrefix(headerPrefix) {
   // First row
-  for (int i = 0; i < k_initialNumberOfColumns; i++) {
+  for (int i = 0; i < k_maxNumberOfColumns; i++) {
     m_colHeader[i].setAlignment(.5f, .5f);
     m_colHeader[i].setFont(KDFont::SmallFont);
   }
   // First column
-  for (int i = 0; i < k_initialNumberOfRows; i++) {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_rowHeader[i].setAlignment(.5f, .5f);
     m_rowHeader[i].setFont(KDFont::SmallFont);
     m_rowHeader[i].setEven(i % 2 == 0);

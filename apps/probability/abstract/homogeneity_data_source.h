@@ -49,7 +49,7 @@ public:
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_rowHeight = 20;
 
-  constexpr static int k_initialNumberOfRows = 6;
+  constexpr static int k_initialNumberOfRows = 3;
   constexpr static int k_initialNumberOfColumns = 3;
   constexpr static int k_maxNumberOfColumns = 6;
   constexpr static int k_maxNumberOfRows = 6;

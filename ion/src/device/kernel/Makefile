@@ -2,7 +2,6 @@ ion_device_kernel_src = $(addprefix ion/src/device/kernel/, \
   boot/isr.c \
   boot/rt0.cpp \
   drivers/authentication.cpp \
-  drivers/backlight.cpp \
   drivers/battery.cpp \
   drivers/board.cpp \
   drivers/circuit_breaker.cpp \

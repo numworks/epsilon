@@ -48,13 +48,13 @@ ion_device_bootloader_flasher_src += $(ion_device_bootloader_flasher_kernel_src)
 
 # kernel/userland
 
-ion_device_kernel_userland_src = $(addprefix ion/src/device/shared/, \
-  drivers/board_unprivileged.cpp \
-  drivers/trampoline.cpp \
+ion_device_kernel_userland_src = $(addprefix ion/src/device/shared/drivers/, \
+  board_unprivileged.cpp \
 )
 
 ion_device_kernel_userland_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   board_unprivileged.cpp \
+  trampoline.cpp \
 )
 
 # Bootloader
@@ -68,11 +68,6 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
 ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bootloader_flasher_src) $(ion_device_dfu_src)
 
 # Kernel
-
-ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
-  board_unprivileged.cpp \
-  trampoline.cpp \
-)
 
 ion_device_kernel_src += $(ion_device_bootloader_kernel_src) $(ion_device_kernel_userland_src)
 

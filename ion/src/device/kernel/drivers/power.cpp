@@ -164,8 +164,6 @@ void stopConfiguration() {
   CORTEX.SCR()->setSLEEPDEEP(true);
 }
 
-TRAMPOLINE_INTERFACE(TRAMPOLINE_SUSPEND, bootloaderSuspend, (), void, void)
-
 }
 }
 }

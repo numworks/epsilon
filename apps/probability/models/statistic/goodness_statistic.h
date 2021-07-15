@@ -8,20 +8,20 @@ namespace Probability {
 class GoodnessStatistic : public Chi2Statistic {
 public:
   GoodnessStatistic();
-  int numberOfStatisticParameters() const override { return m_numberOfInputRows; }
+  int numberOfStatisticParameters() const override { return k_maxNumberOfRows * 2; }
 
   constexpr static int k_maxNumberOfRows = 10;
 
 protected:
   float * paramArray() override { return m_input; }
-  int _degreesOfFreedom() override { return _numberOfInputRows() - 1; }
+  int _degreesOfFreedom() override { return numberOfValuePairs() - 1; }
+  float expectedValue(int index) override;
+  float observedValue(int index) override;
 
 private:
-  int _numberOfInputRows();
-  void computeNumberOfParameters() override;
+  int numberOfValuePairs() override;
 
   float m_input[k_maxNumberOfRows * 2];
-  int m_numberOfInputRows;
 };
 
 }  // namespace Probability

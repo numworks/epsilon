@@ -1,6 +1,6 @@
 SFLAGS += -Iliba/include
 
-liba_bootloader_src += $(addprefix liba/src/, \
+liba_internal_flash_src += $(addprefix liba/src/, \
   assert.c \
   memcmp.c \
   memcpy.c \

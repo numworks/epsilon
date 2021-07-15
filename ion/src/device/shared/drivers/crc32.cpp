@@ -1,4 +1,4 @@
-#include <kernel/drivers/crc32.h>
+#include <drivers/crc32.h>
 #include <ion/src/shared/crc32_eat_byte.h>
 #include <regs/regs.h>
 

@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_KERNEL_DRIVERS_CRC32_H
-#define ION_DEVICE_KERNEL_DRIVERS_CRC32_H
+#ifndef ION_DEVICE_SHARED_DRIVERS_CRC32_H
+#define ION_DEVICE_SHARED_DRIVERS_CRC32_H
 
 #include <stdint.h>
 #include <stddef.h>

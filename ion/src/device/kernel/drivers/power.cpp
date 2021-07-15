@@ -164,12 +164,7 @@ void stopConfiguration() {
   CORTEX.SCR()->setSLEEPDEEP(true);
 }
 
-typedef void (*SuspendFunction)(void);
-
-void bootloaderSuspend() {
-  SuspendFunction * trampolineFunction = reinterpret_cast<SuspendFunction *>(Trampoline::addressOfFunction(TRAMPOLINE_SUSPEND));
-  (*trampolineFunction)();
-}
+TRAMPOLINE_INTERFACE(TRAMPOLINE_SUSPEND, bootloaderSuspend, (), void, void)
 
 }
 }

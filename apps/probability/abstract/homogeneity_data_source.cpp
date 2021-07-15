@@ -63,7 +63,7 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
     Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
     constexpr int bufferSize = 20;
     char txt[bufferSize];
-    strcpy(txt, I18n::translate(m_headerPrefix));
+    strlcpy(txt, I18n::translate(m_headerPrefix), bufferSize);
     int length = strlen(txt);
     char digit;
     if (row == 0) {

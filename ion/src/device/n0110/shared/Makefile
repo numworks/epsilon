@@ -69,6 +69,10 @@ ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bo
 
 # Kernel
 
+ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
+  led.cpp \
+)
+
 ion_device_kernel_src += $(ion_device_bootloader_kernel_src) $(ion_device_kernel_userland_src)
 
 # Flasher

@@ -9,12 +9,12 @@
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/fcc_id.h>
 #include <kernel/drivers/keyboard.h>
-#include <kernel/drivers/led.h>
 #include <kernel/drivers/persisting_bytes.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
 #include <shared/drivers/display.h>
 #include <shared/drivers/flash_privileged.h>
+#include <shared/drivers/led.h>
 #include <shared/drivers/random.h>
 #include <shared/drivers/reset.h>
 #include <shared/drivers/serial_number.h>

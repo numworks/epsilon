@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_KERNEL_DRIVERS_LED_H
-#define ION_DEVICE_KERNEL_DRIVERS_LED_H
+#ifndef ION_DEVICE_SHARED_DRIVERS_LED_H
+#define ION_DEVICE_SHARED_DRIVERS_LED_H
 
 #include <stdint.h>
 #include <kandinsky/color.h>

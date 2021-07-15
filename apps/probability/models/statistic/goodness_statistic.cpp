@@ -2,14 +2,13 @@
 
 namespace Probability {
 
-GoodnessStatistic::GoodnessStatistic() : m_numberOfInputRows(k_maxNumberOfRows) {
+GoodnessStatistic::GoodnessStatistic() {
   for (int i = 0; i < k_maxNumberOfRows * 2; i++) {
     m_input[i] = k_undefinedValue;
   }
 }
 
-
-int GoodnessStatistic::_numberOfInputRows() {
+int GoodnessStatistic::numberOfValuePairs() {
   // Compute number of rows based on undefined flag
   int i = k_maxNumberOfRows - 1;
   while (i >= 0 && std::isnan(expectedValue(i)) && std::isnan(observedValue(i))) {
@@ -18,8 +17,12 @@ int GoodnessStatistic::_numberOfInputRows() {
   return i + 1;
 }
 
-void GoodnessStatistic::computeNumberOfParameters() {
-  m_numberOfInputRows = _numberOfInputRows();
+float GoodnessStatistic::expectedValue(int index) {
+  return paramArray()[2 * index + 1];
+}
+
+float GoodnessStatistic::observedValue(int index) {
+  return paramArray()[2 * index];
 }
 
 }  // namespace Probability

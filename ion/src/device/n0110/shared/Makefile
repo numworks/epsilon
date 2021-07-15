@@ -66,6 +66,17 @@ ion_device_kernel_userland_src += $(addprefix ion/src/device/n0110/shared/driver
 
 # Bench
 
+ion_device_bench_src += ion/src/device/shared/boot/rt0.cpp
+
+ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
+  board_privileged.cpp \
+  display.cpp \
+)
+
+ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
+  board_privileged.cpp \
+)
+
 ion_device_bench_src += $(ion_device_bench_flasher)
 
 # Bootloader

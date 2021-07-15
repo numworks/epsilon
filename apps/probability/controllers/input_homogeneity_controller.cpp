@@ -129,9 +129,9 @@ void Probability::InputHomogeneityController::tableViewDidChangeSelectionAndDidS
   int row = m_table.selectedRow();
   int col = m_table.selectedColumn();
   if (!withinTemporarySelection && previousSelectedCellY != row) {
-    // Make m_contentView to cell
+    // Scroll to cell
     KDRect cellFrame = KDRect(
-        m_tableData.cumulatedWidthFromIndex(col),
+        0,
         m_tableData.cumulatedHeightFromIndex(row),
         m_tableData.columnWidth(col),
         m_tableData.rowHeight(row));  // TODO query m_inputTableView::cellFrame

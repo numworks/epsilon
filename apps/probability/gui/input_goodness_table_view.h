@@ -17,7 +17,7 @@ namespace Probability {
 /* This is the table used to input Expected and Observed results. */
 class InputGoodnessTableView : public Escher::SelectableTableView,
                                public BorderedTableViewDataSource,
-                               public Shared::ParameterTextFieldDelegate {
+                               public Shared::TextFieldDelegate {
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
@@ -42,11 +42,14 @@ public:
                                  const char * text,
                                  Ion::Events::Event event) override;
 
+  // Responder
+  bool handleEvent(Ion::Events::Event e) override;
+
 private:
   constexpr static int k_typeOfHeader = 1;
   constexpr static int k_initialNumberOfRows = 4;
   constexpr static int k_numberOfColumns = 2;
-  constexpr static int k_maxNumberOfReusableRows = 8; // TODO compute
+  constexpr static int k_maxNumberOfReusableRows = 8;  // TODO compute
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
                                         k_borderBetweenColumns) /

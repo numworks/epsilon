@@ -24,7 +24,7 @@
 namespace Probability {
 
 class InputHomogeneityDataSource : public TableViewDataSource,
-                                   public Shared::ParameterTextFieldDelegate {
+                                   public Shared::TextFieldDelegate {
 public:
   InputHomogeneityDataSource(SelectableTableView * tableView,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,

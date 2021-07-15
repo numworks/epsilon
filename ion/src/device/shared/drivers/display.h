@@ -86,6 +86,7 @@ static volatile uint16_t * const DataAddress = (uint16_t *)(FSMCBankAddress | (1
 
 // For Power On Self tests
 void pushColorAndContraryPixels(uint16_t color, int count);
+int displayUniformTilingSize10(KDColor c);
 
 }
 }

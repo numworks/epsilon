@@ -35,7 +35,6 @@ SIGNATURE_LENGTH = 64;
 SRAM_ORIGIN = 0x20000000;
 SRAM_LENGTH = 256K;
 USERLAND_STACK_LENGTH = 32K;
-CANARY_LENGTH = 4;
 /* WARNING: when choosing the kernel RAM length, keep in mind that the MPU
  * region address should be aligned on the MPU region size!
  * Experimentally:

@@ -69,6 +69,7 @@ ion_device_kernel_userland_src += $(addprefix ion/src/device/n0110/shared/driver
 ion_device_bench_src += ion/src/device/shared/boot/rt0.cpp
 
 ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
+  battery.cpp \
   board_privileged.cpp \
   display.cpp \
 )

@@ -14,6 +14,7 @@
 #include "homogeneity_results_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/homogeneity_data_source.h"
+#include "probability/abstract/chained_selectable_table_view_delegate.h"
 #include "probability/gui/input_categorical_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/selectable_table_view_with_background.h"
@@ -56,7 +57,8 @@ private:
 
 class InputHomogeneityController : public Page,
                                    public ButtonDelegate,
-                                   public Shared::ParameterTextFieldDelegate {
+                                   public Shared::ParameterTextFieldDelegate,
+                                   public ChainedSelectableTableViewDelegate {
 public:
   InputHomogeneityController(StackViewController * parent,
                              HomogeneityResultsController * homogeneityResultsController,
@@ -76,6 +78,11 @@ public:
   bool textFieldDidFinishEditing(TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
+
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
+                                               int previousSelectedCellX,
+                                               int previousSelectedCellY,
+                                               bool withinTemporarySelection = false) override;
 
 private:
   InputHomogeneityDataSource m_innerTableData;

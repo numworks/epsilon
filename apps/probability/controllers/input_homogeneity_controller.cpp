@@ -50,12 +50,12 @@ bool Probability::InputHomogeneityDataSource::textFieldDidFinishEditing(
   }
 
   m_statistic->setParameterAtPosition(m_table->selectedRow() - 1, m_table->selectedColumn() - 1, p);
-  if (m_table->selectedRow() == numberOfRows() - 1 &&
-      numberOfRows() < HomogeneityTableDataSource::k_maxNumberOfRows) {
+  if (m_table->selectedRow() == numberOfRows() &&
+      numberOfRows() <= HomogeneityTableDataSource::k_maxNumberOfRows) {
     m_numberOfRows++;
   }
-  if (m_table->selectedColumn() == numberOfColumns() - 1 &&
-      numberOfColumns() < HomogeneityTableDataSource::k_maxNumberOfColumns) {
+  if (m_table->selectedColumn() == numberOfColumns() &&
+      numberOfColumns() <= HomogeneityTableDataSource::k_maxNumberOfColumns) {
     m_numberOfColumns++;
   }
   m_table->selectCellAtLocation(m_table->selectedColumn(), m_table->selectedRow() + 1);
@@ -85,9 +85,10 @@ InputHomogeneityController::InputHomogeneityController(
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     HomogeneityStatistic * statistic) :
     Page(parent),
+    ChainedSelectableTableViewDelegate(&m_tableData),
     m_innerTableData(&m_table, inputEventHandlerDelegate, statistic),
     m_tableData(&m_innerTableData),
-    m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource(), &m_tableData),
+    m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource(), this),
     m_contentView(this, this, &m_table, inputEventHandlerDelegate, this),
     m_homogeneityResultsController(homogeneityResultsController),
     m_statistic(statistic) {
@@ -112,4 +113,31 @@ bool Probability::InputHomogeneityController::textFieldDidFinishEditing(TextFiel
                                                                         const char * text,
                                                                         Ion::Events::Event event) {
   // TODO parse significance cell
+}
+
+void Probability::InputHomogeneityController::tableViewDidChangeSelectionAndDidScroll(
+    SelectableTableView * t,
+    int previousSelectedCellX,
+    int previousSelectedCellY,
+    bool withinTemporarySelection) {
+  ChainedSelectableTableViewDelegate::tableViewDidChangeSelectionAndDidScroll(
+      t,
+      previousSelectedCellX,
+      previousSelectedCellY,
+      withinTemporarySelection);
+  // TODO factor with InputGoodnessController
+  int row = m_table.selectedRow();
+  int col = m_table.selectedColumn();
+  if (!withinTemporarySelection && previousSelectedCellY != row) {
+    // Make m_contentView to cell
+    KDRect cellFrame = KDRect(
+        m_tableData.cumulatedWidthFromIndex(col),
+        m_tableData.cumulatedHeightFromIndex(row),
+        m_tableData.columnWidth(col),
+        m_tableData.rowHeight(row));  // TODO query m_inputTableView::cellFrame
+
+    m_contentView.scrollToContentRect(cellFrame);
+
+    m_contentView.layoutSubviews(true);
+  }
 }

@@ -36,20 +36,10 @@ ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
 
 # DFU code
 
-#TODO: move in kernel/Makefile?
-#ion_device_dfu_deps_src += liba/src/abs.c
-#ion_device_dfu_deps_src += liba/src/assert.c
 ion_device_dfu_deps_src += liba/src/strlen.c
-#ion_device_dfu_deps_src += liba/src/strlcpy.c
 ion_device_dfu_deps_src += liba/src/memset.c
 ion_device_dfu_deps_src += liba/src/memcpy.c
-#ion_device_dfu_deps_src += libaxx/src/cxxabi/pure_virtual.cpp
-#ion_device_dfu_deps_src += ion/src/device/shared/usb/boot.cpp
-#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/board.cpp
-#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/cache.cpp
-#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/external_flash.cpp
-#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/reset.cpp
-#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/usb.cpp
+ion_device_dfu_deps_src += libaxx/src/cxxabi/pure_virtual.cpp
 ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \
   flash.cpp \
   reset.cpp \
@@ -59,22 +49,6 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \
 )
 ion_device_dfu_deps_src += $(addprefix ion/src/device/$(MODEL)/shared/drivers/, \
   flash_unprivileged.cpp \
-)
-#ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
-  base64.cpp \
-  internal_flash.cpp \
-)
-#ion_device_dfu_deps_src += $(addprefix ion/src/device/kernel/drivers/, \
-  backlight.cpp \
-  battery.cpp \
-  board.cpp \
-  crc32.cpp \
-  display.cpp \
-  events.cpp \
-  keyboard.cpp \
-  led.cpp \
-  swd.cpp \
-  timing.cpp \
 )
 
 # Sources required to execute DFU in place

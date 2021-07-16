@@ -15,7 +15,7 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
     m_numberOfColumns(HomogeneityTableDataSource::k_initialNumberOfColumns),
     m_statistic(statistic),
     m_table(tableView) {
-  for (int i = 0; i < HomogeneityTableDataSource::k_maxNumberOfInnerCells; i++) {
+  for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
     m_cells[i].setParentResponder(tableView);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
                                                              textFieldDelegate);

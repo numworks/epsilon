@@ -23,7 +23,9 @@ public:
                              DynamicTableViewDataSourceDelegate * dataSourceDelegate);
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }
-  int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
+  int reusableCellCount(int type) override {
+    return HomogeneityTableDataSource::k_numberOfReusableCells;
+  }
   int typeAtLocation(int i, int j) override { return 0; }
   HighlightCell * reusableCell(int i, int type) override;
 
@@ -41,8 +43,8 @@ public:
 private:
   int m_numberOfRows;
   int m_numberOfColumns;
-  // TODO reusable
-  EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
+
+  EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_numberOfReusableCells];
   HomogeneityStatistic * m_statistic;
   SelectableTableView * m_table;
 };

@@ -36,10 +36,10 @@ void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScro
   int row = m_inputTableView.selectedRow();
   int col = m_inputTableView.selectedColumn();
   if (!withinTemporarySelection && previousSelectedCellY != row) {
-    // Make m_contentView to cell
+    // Make m_contentView scroll to cell
     KDRect cellFrame = KDRect(
         m_inputTableView.cumulatedWidthFromIndex(col),
-        m_inputTableView.cumulatedHeightFromIndex(row),
+        m_inputTableView.cumulatedHeightFromIndex(row) + m_inputTableView.topMargin(),
         m_inputTableView.columnWidth(col),
         m_inputTableView.rowHeight(row));  // TODO query m_inputTableView::cellFrame
 

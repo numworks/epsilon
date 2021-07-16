@@ -45,6 +45,6 @@ void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScro
 
     m_contentView.scrollToContentRect(cellFrame);
 
-    m_contentView.layoutSubviews(true);
+    m_contentView.layoutSubviews(false);
   }
 }

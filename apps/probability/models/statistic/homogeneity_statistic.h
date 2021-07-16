@@ -17,14 +17,16 @@ public:
   constexpr static int k_maxNumberOfColumns = 8;
   constexpr static int k_maxNumberOfRows = 8;
 
-protected:
-  float observedValue(int index) override;
-  float expectedValue(int index) override;
-  int _degreesOfFreedom() override;
   struct Index2D {
     int row;
     int col;
   };
+protected:
+  float observedValue(int index) override;
+  float expectedValue(int index) override;
+  float observedValueAtPosition(Index2D index);
+  float expectedValueAtPosition(Index2D index);
+  int _degreesOfFreedom() override;
   Index2D _numberOfInputParams();
   int numberOfValuePairs() override;
 

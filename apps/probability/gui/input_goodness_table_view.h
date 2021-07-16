@@ -24,7 +24,8 @@ public:
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                          Chi2Statistic * statistic,
                          Escher::TextFieldDelegate * textFieldDelegate,
-                         DynamicTableViewDataSourceDelegate * delegate = nullptr);
+                         DynamicTableViewDataSourceDelegate * delegate = nullptr,
+                         Escher::SelectableTableViewDelegate * scrollDelegate = nullptr);
   // DataSource
   int numberOfRows() const override { return m_numberOfRows; };
   int numberOfColumns() const override { return k_numberOfColumns; }

@@ -8,8 +8,9 @@ InputGoodnessTableView::InputGoodnessTableView(Escher::Responder * parentRespond
                                                Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                                                Chi2Statistic * statistic,
                                                Escher::TextFieldDelegate * textFieldDelegate,
-                                               DynamicTableViewDataSourceDelegate * delegate) :
-    SelectableTableView(parentResponder, this, &m_tableSelection),
+                                               DynamicTableViewDataSourceDelegate * delegate,
+                                               Escher::SelectableTableViewDelegate * scrollDelegate) :
+    SelectableTableView(parentResponder, this, &m_tableSelection, scrollDelegate),
     DynamicTableViewDataSource(delegate),
     m_numberOfRows(k_initialNumberOfRows),
     m_statistic(statistic) {

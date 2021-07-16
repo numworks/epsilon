@@ -37,29 +37,34 @@ ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
 # DFU code
 
 #TODO: move in kernel/Makefile?
-ion_device_dfu_deps_src += liba/src/abs.c
-ion_device_dfu_deps_src += liba/src/assert.c
+#ion_device_dfu_deps_src += liba/src/abs.c
+#ion_device_dfu_deps_src += liba/src/assert.c
 ion_device_dfu_deps_src += liba/src/strlen.c
-ion_device_dfu_deps_src += liba/src/strlcpy.c
+#ion_device_dfu_deps_src += liba/src/strlcpy.c
 ion_device_dfu_deps_src += liba/src/memset.c
 ion_device_dfu_deps_src += liba/src/memcpy.c
-ion_device_dfu_deps_src += libaxx/src/cxxabi/pure_virtual.cpp
-ion_device_dfu_deps_src += ion/src/device/shared/usb/boot.cpp
-ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/board.cpp
-ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/cache.cpp
-ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/external_flash.cpp
-ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/reset.cpp
-ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/usb.cpp
-ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
-  base64.cpp \
+#ion_device_dfu_deps_src += libaxx/src/cxxabi/pure_virtual.cpp
+#ion_device_dfu_deps_src += ion/src/device/shared/usb/boot.cpp
+#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/board.cpp
+#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/cache.cpp
+#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/kernel/drivers/external_flash.cpp
+#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/reset.cpp
+#ion_device_dfu_deps_src += ion/src/device/$(MODEL)/shared/drivers/usb.cpp
+ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \
   flash.cpp \
-  internal_flash.cpp \
   reset.cpp \
   serial_number.cpp \
   timing.cpp \
   usb.cpp \
 )
-ion_device_dfu_deps_src += $(addprefix ion/src/device/kernel/drivers/, \
+ion_device_dfu_deps_src += $(addprefix ion/src/device/$(MODEL)/shared/drivers/, \
+  flash_unprivileged.cpp \
+)
+#ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
+  base64.cpp \
+  internal_flash.cpp \
+)
+#ion_device_dfu_deps_src += $(addprefix ion/src/device/kernel/drivers/, \
   backlight.cpp \
   battery.cpp \
   board.cpp \
@@ -77,9 +82,9 @@ ion_device_dfu_src += ion/src/device/shared/usb/dfu_xip.cpp:+usbxip
 ion_device_dfu_src += $(addsuffix :+usbxip,$(ion_device_usb_src))
 
 # Sources required to execute DFU in RAM
-
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(ion_device_usb_src) $(ion_device_dfu_deps_src))
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT += ion/src/device/shared/usb/dfu.ld
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDDEPS += $(LDSCRIPT)
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call flavored_object_for,$(ion_device_usb_src) $(ion_device_dfu_deps_src),)
 
 # In order to link the dfu bootloader inside the epsilon firmware, we need to
 # turn the dfu binary (dfu.bin) into an elf object.
@@ -90,17 +95,9 @@ $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(ion_device_u
 # For our purpose, dfu.o can go in rodata section and we rename the start and
 # end of binary symbols: _dfu_bootloader_flash_[start/end]
 
-ifeq ($(DEBUG),1)
-output/release/$(PLATFORM)/$(MODEL)/ion/src/device/shared/usb/dfu.bin:
-	$(MAKE) DEBUG=0 MODEL=$(MODEL) $@
-endif
-
-# Always build dfu.o in DEBUG=0 to avoid overflowing the SRAM
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: output/release/$(PLATFORM)/$(MODEL)/ion/src/device/shared/usb/dfu.bin
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared/usb/dfu.bin
 	$(call rule_label,OBJCOPY)
 	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata.dfu_bootloader --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)
-ifeq ($(DEBUG),1)
-	$(Q) mkdir -p $(dir $@) && cp output/release/$(PLATFORM)/$(MODEL)/ion/src/device/shared/usb/dfu.o $@
-endif
 
+ion_device_dfu_src += ion/src/device/shared/usb/dfu.cpp:-usbxip
 ion_device_dfu_src += ion/src/device/shared/usb/dfu_relocated.cpp:-usbxip

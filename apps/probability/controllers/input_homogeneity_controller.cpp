@@ -15,7 +15,7 @@ using namespace Probability;
 
 InputHomogeneityController::InputHomogeneityController(
     StackViewController * parent,
-    HomogeneityResultsController * homogeneityResultsController,
+    ResultsHomogeneityController * homogeneityResultsController,
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     HomogeneityStatistic * statistic) :
     InputCategoricalController(parent,

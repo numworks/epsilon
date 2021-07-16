@@ -1,4 +1,4 @@
-#include "homogeneity_results_controller.h"
+#include "results_homogeneity_controller.h"
 
 #include <apps/i18n.h>
 #include <escher/container.h>
@@ -12,7 +12,8 @@ using namespace Probability;
 
 HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
                                                Escher::SelectableTableView * table) :
-    m_title(KDFont::SmallFont, I18n::Message::HomogeneityResultsTitle),
+    VerticalLayout(Escher::Palette::WallScreenDark),
+    m_title(KDFont::SmallFont, I18n::Message::HomogeneityResultsTitle, 0.5f, 0.5f),
     m_table(table),
     m_next(parent, I18n::Message::Next, buttonActionInvocation()) {
 }
@@ -20,18 +21,7 @@ HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
 void HomogeneityResultsView::buttonAction() {
 }
 
-HomogeneityResultsDataSource::HomogeneityResultsDataSource() {
-  for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
-    m_cells[i].setFont(KDFont::SmallFont);
-    m_cells[i].setText("1");
-  }
-}
-
-HighlightCell * HomogeneityResultsDataSource::reusableCell(int i, int type) {
-  return &m_cells[i];
-}
-
-HomogeneityResultsController::HomogeneityResultsController(
+ResultsHomogeneityController::ResultsHomogeneityController(
     StackViewController * stackViewController,
     HomogeneityStatistic * statistic) :
     Page(stackViewController),
@@ -40,7 +30,7 @@ HomogeneityResultsController::HomogeneityResultsController(
     m_table(this, &m_tableData, &m_tableData, &m_tableData) {
 }
 
-void HomogeneityResultsController::didBecomeFirstResponder() {
+void ResultsHomogeneityController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::ResultsHomogeneity);
   Escher::Container::activeApp()->setFirstResponder(&m_table);
 }

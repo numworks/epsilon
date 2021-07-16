@@ -20,6 +20,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/command/, \
   sleep.cpp \
   standby.cpp \
   stop.cpp \
+  usb_plugged.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/drivers/, \

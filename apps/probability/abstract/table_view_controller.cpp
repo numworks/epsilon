@@ -6,7 +6,7 @@ namespace Probability {
 
 void TableViewController::didBecomeFirstResponder() {
   if (m_seletableTableView->selectedRow() < 0) {
-    m_seletableTableView->selectRow(0);
+    m_seletableTableView->selectRow(1);
   }
   Escher::Container::activeApp()->setFirstResponder(m_seletableTableView);
 }

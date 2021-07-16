@@ -83,11 +83,13 @@ ion_device_bench_src += ion/src/device/shared/boot/rt0.cpp
 
 ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
+  base64.cpp \
   battery.cpp \
   board_privileged.cpp \
   display.cpp \
   keyboard.cpp \
   reset.cpp \
+  serial_number.cpp \
   timing.cpp \
 )
 

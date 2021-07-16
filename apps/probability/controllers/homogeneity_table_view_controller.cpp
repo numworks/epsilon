@@ -48,12 +48,12 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
                                       m_seletableTableView->selectedColumn() - 1,
                                       p);
   // Add row
-  if (m_seletableTableView->selectedRow() == m_dataSource->numberOfRows() - 1 &&
+  if (m_seletableTableView->selectedRow() == m_dataSource->numberOfRows() &&
       m_dataSource->numberOfRows() < HomogeneityStatistic::k_maxNumberOfRows) {
     m_dataSource->addRow();
   }
   // Add column
-  if (m_seletableTableView->selectedColumn() == m_dataSource->numberOfColumns() - 1 &&
+  if (m_seletableTableView->selectedColumn() == m_dataSource->numberOfColumns() &&
       m_dataSource->numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns) {
     m_dataSource->addColumn();
   }

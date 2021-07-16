@@ -23,7 +23,11 @@ InputHomogeneityController::InputHomogeneityController(
                                statistic,
                                inputEventHandlerDelegate),
     ChainedSelectableTableViewDelegate(&m_tableData),
-    m_innerTableData(&m_table, inputEventHandlerDelegate, statistic, &m_tableController),
+    m_innerTableData(&m_table,
+                     inputEventHandlerDelegate,
+                     statistic,
+                     &m_tableController,
+                     &m_contentView),
     m_tableData(&m_innerTableData),
     m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource()),
     m_tableController(this, &m_table, &m_innerTableData, statistic) {

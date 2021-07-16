@@ -9,9 +9,6 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-bool isRunningSlotA();
-uint32_t slotAUserlandStart();
-uint32_t slotBUserlandStart();
 uint32_t userlandStart();
 KernelHeader * kernelHeader();
 UserlandHeader * userlandHeader();

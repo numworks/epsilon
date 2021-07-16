@@ -38,9 +38,6 @@ public:
   }
 
 protected:
-  constexpr static int k_titleBufferSize = 30;
-  char m_titleBuffer[k_titleBufferSize];
-
   Chi2Statistic * m_statistic;
   Page * m_resultsController;
   InputCategoricalView m_contentView;

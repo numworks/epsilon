@@ -38,7 +38,6 @@ public:
   void addColumn() override;
   void deleteLastColumn() override;
 
-
 private:
   int m_numberOfRows;
   int m_numberOfColumns;

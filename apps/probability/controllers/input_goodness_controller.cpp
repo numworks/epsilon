@@ -27,14 +27,6 @@ InputGoodnessController::InputGoodnessController(
   m_contentView.setTableView(&m_tableController);
 }
 
-const char * Probability::InputGoodnessController::title() {
-  const char * category = App::app()->categoricalType() == Data::CategoricalType::Goodness
-                              ? "goodness of fit"
-                              : "Homogeneity/Independence";
-  sprintf(m_titleBuffer, "X2-test: %s", category);
-  return m_titleBuffer;
-}
-
 // ScrollViewDelegate
 void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView * t,

@@ -76,10 +76,10 @@ def elf2target_single_block(elf_file, verbose):
   subprocess.call(["rm", bin_file(single_block)])
   return target
 
-def standard_elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
-  elf_file = elf_file[0]
+def standard_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
   targets = []
-  targets.append(elf2target_single_block(elf_file, verbose))
+  for elf_file in elf_files:
+    targets.append(elf2target_single_block(elf_file, verbose))
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
 
 def customized_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):

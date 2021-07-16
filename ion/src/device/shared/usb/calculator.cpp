@@ -1,8 +1,8 @@
 #include "calculator.h"
 #include <shared/drivers/serial_number.h>
-#include <shared/drivers/usb.h>
 #include <ion.h>
 #include <ion/usb.h>
+#include <shared/drivers/usb.h>
 
 namespace Ion {
 namespace Device {
@@ -15,13 +15,9 @@ void Calculator::PollAndReset() {
   SerialNumber::copy(serialNumber);
   Calculator c(serialNumber);
 
-  // Configure the kernel to avoid interrupting DFU protocole except on Back key
-  USB::willExecuteDFU();
-
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected() && !(USB::shouldInterruptDFU() && !c.isErasingAndWriting())) {
     c.poll();
   }
-  USB::didExecuteDFU();
 
   if (!c.isSoftDisconnected()) {
     c.detach();

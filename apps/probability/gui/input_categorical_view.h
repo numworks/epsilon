@@ -15,6 +15,7 @@
 
 #include "horizontal_or_vertical_layout.h"
 #include "probability/abstract/button_delegate.h"
+#include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "spacer_view.h"
 
@@ -24,7 +25,9 @@ namespace Probability {
  * layed out vertically, and is able to move selection between them.
  * Meant for InputGoodnessController and InputHomogeneityController.
  */
-class InputCategoricalView : public Escher::ScrollView, public Escher::Responder {
+class InputCategoricalView : public Escher::ScrollView,
+                             public Escher::Responder,
+                             public DynamicTableViewDataSourceDelegate {
 public:
   InputCategoricalView(Responder * parentResponder,
                        ButtonDelegate * buttonDelegate,
@@ -53,6 +56,9 @@ public:
   int selectedView() { return m_viewSelection.selectedRow(); }
   void setSignificanceCellText(const char * text);
   void setTableView(TableViewController * tableViewController);
+
+  // DynamicTableViewDataSourceDelegate
+  void tableViewDataSourceDidChangeSize() override;
 
   constexpr static int k_indexOfTable = 0;
   constexpr static int k_indexOfInnerLayout = 1;

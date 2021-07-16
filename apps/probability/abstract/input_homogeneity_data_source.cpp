@@ -8,7 +8,9 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
     SelectableTableView * tableView,
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     HomogeneityStatistic * statistic,
-    TextFieldDelegate * textFieldDelegate) :
+    TextFieldDelegate * textFieldDelegate,
+    DynamicTableViewDataSourceDelegate * dataSourceDelegate) :
+    DynamicTableViewDataSource(dataSourceDelegate),
     m_numberOfRows(HomogeneityTableDataSource::k_initialNumberOfRows),
     m_numberOfColumns(HomogeneityTableDataSource::k_initialNumberOfColumns),
     m_statistic(statistic),
@@ -25,6 +27,25 @@ HighlightCell * InputHomogeneityDataSource::reusableCell(int i, int type) {
   return &m_cells[i];
 }
 
+void InputHomogeneityDataSource::addRow() {
+  m_numberOfRows++;
+  notify();
+}
+
+void InputHomogeneityDataSource::deleteLastRow() {
+  m_numberOfRows--;
+  notify();
+}
+
+void InputHomogeneityDataSource::addColumn() {
+  m_numberOfColumns++;
+  notify();
+}
+
+void InputHomogeneityDataSource::deleteLastColumn() {
+  m_numberOfColumns--;
+  notify();
+}
 void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
     Escher::HighlightCell * cell,
     int column,

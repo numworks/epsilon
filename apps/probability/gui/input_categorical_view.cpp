@@ -147,3 +147,8 @@ void Probability::InputCategoricalView::setTableView(TableViewController * table
   tableView->setBackgroundColor(Palette::WallScreenDark);
   tableView->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
 }
+
+void Probability::InputCategoricalView::tableViewDataSourceDidChangeSize() {
+  // Relayout when inner table changes size
+  layoutSubviews(true);
+}

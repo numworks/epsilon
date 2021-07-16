@@ -4,13 +4,13 @@
 
 namespace Probability {
 
-InputGoodnessTableView::InputGoodnessTableView(
-    Escher::Responder * parentResponder,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Chi2Statistic * statistic,
-    Escher::TextFieldDelegate * textFieldDelegate,
-    Escher::SelectableTableViewDelegate * delegate) :
-    SelectableTableView(parentResponder, this, &m_tableSelection, delegate),
+InputGoodnessTableView::InputGoodnessTableView(Escher::Responder * parentResponder,
+                                               Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+                                               Chi2Statistic * statistic,
+                                               Escher::TextFieldDelegate * textFieldDelegate,
+                                               DynamicTableViewDataSourceDelegate * delegate) :
+    SelectableTableView(parentResponder, this, &m_tableSelection),
+    DynamicTableViewDataSource(delegate),
     m_numberOfRows(k_initialNumberOfRows),
     m_statistic(statistic) {
   m_header[0].setMessage(I18n::Message::Observed);

@@ -22,7 +22,7 @@ InputGoodnessController::InputGoodnessController(
     GoodnessStatistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
     InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
-    m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, &m_tableController),
+    m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, &m_tableController, &m_contentView),
     m_tableController(this, statistic, &m_inputTableView) {
   m_contentView.setTableView(&m_tableController);
 }

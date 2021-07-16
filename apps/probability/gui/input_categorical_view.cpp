@@ -40,6 +40,7 @@ Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {
       break;
   }
   assert(false);
+  return nullptr;
 }
 
 InputCategoricalView::InputCategoricalView(Responder * parentResponder,
@@ -95,6 +96,7 @@ Responder * InputCategoricalView::responderForRow(int row) {
       return &m_next;
   }
   assert(false);
+  return nullptr;
 }
 
 void InputCategoricalView::setResponderForSelectedRow() {

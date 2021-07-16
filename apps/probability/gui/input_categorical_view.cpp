@@ -55,6 +55,7 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
     m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
                   &m_significanceCell,
                   &m_next) {
+  m_tableSelection.selectColumn(-1);
 }
 
 void InputCategoricalView::didBecomeFirstResponder() {

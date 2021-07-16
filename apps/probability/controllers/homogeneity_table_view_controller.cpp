@@ -15,6 +15,13 @@ HomogeneityTableViewController::HomogeneityTableViewController(
     m_statistic(statistic) {
 }
 
+void HomogeneityTableViewController::didBecomeFirstResponder() {
+  if (m_seletableTableView->selectedColumn() < 0) {
+    m_seletableTableView->selectColumn(1);
+  }
+  TableViewController::didBecomeFirstResponder();
+}
+
 bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     // Delete last row / column

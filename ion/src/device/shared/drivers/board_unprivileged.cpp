@@ -6,11 +6,7 @@ namespace Device {
 namespace Board {
 
 uint32_t userlandStart() {
-  return isRunningSlotA() ? slotAUserlandStart() : slotBUserlandStart();
-}
-
-UserlandHeader * userlandHeader() {
-  return reinterpret_cast<UserlandHeader *>(userlandStart() - sizeof(UserlandHeader));
+  return reinterpret_cast<uint32_t>(userlandHeader()) + sizeof(UserlandHeader);
 }
 
 }

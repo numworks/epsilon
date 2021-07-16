@@ -1,7 +1,6 @@
 #include "app.h"
 
 #include <apps/shared/text_field_delegate_app.h>
-#include <escher/app.h>
 
 #include "models/statistic/homogeneity_statistic.h"
 #include "probability_icon.h"

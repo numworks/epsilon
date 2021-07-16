@@ -3,7 +3,6 @@
 #include <math.h>
 
 #include "probability/app.h"
-#include "probability/helpers.h"
 
 namespace Probability {
 

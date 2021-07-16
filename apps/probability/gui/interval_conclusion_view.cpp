@@ -2,8 +2,6 @@
 
 #include <apps/i18n.h>
 #include <kandinsky/font.h>
-#include <poincare/preferences.h>
-#include <poincare/print_float.h>
 
 #include "probability/text_helpers.h"
 

@@ -1,10 +1,6 @@
 #include "two_proportions_statistic.h"
 
-#include <poincare/normal_distribution.h>
-
 #include <cmath>
-
-#include "probability/app.h"
 
 namespace Probability {
 

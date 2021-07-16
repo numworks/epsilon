@@ -1,7 +1,5 @@
 #include "calculation_popup_data_source.h"
 
-#include <escher/image.h>
-
 #include "../images/calcul1_icon.h"
 #include "../images/calcul2_icon.h"
 #include "../images/calcul3_icon.h"

@@ -1,7 +1,5 @@
 #include "distribution_graph_view.h"
 
-#include <kandinsky/color.h>
-
 #include "probability/app.h"
 
 namespace Probability {

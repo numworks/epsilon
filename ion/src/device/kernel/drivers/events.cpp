@@ -126,6 +126,7 @@ bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
      * optimize the interval of time the execution is stopped. */
     asm("wfi");
     if (!Device::Keyboard::Queue::sharedQueue()->isEmpty()) {
+      Device::Board::setClockStandardFrequency();
       return true;
     }
     elapsedTime = static_cast<int>(Ion::Timing::millis() - startTime);

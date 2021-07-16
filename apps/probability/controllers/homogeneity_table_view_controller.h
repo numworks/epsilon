@@ -13,6 +13,8 @@ public:
                                  Escher::SelectableTableView * tableView,
                                  InputHomogeneityDataSource * dataSource,
                                  HomogeneityStatistic * statistic);
+  
+  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,

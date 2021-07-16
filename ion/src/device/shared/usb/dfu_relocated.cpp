@@ -58,7 +58,7 @@ void DFU() {
   // Device::Cache::cleanDCache();
 
   // Configure the kernel to avoid interrupting DFU protocole except on Back key
-  Ion::Device::USB::willExecuteDFU();
+  Device::USB::willExecuteDFU();
 
   /* 4- Jump to DFU bootloader code. We made sure in the linker script that the
    * first function we want to call is at the beginning of the DFU code. */
@@ -76,7 +76,7 @@ void DFU() {
 
   dfu_bootloader_entry();
 
-  Ion::Device::USB::didExecuteDFU();
+  Device::USB::didExecuteDFU();
 
   /* 5- That's all. The DFU bootloader on the stack is now dead code that will
    * be overwritten when the stack grows. */

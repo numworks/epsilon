@@ -55,10 +55,11 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/$(MODEL)/shared/drivers/, 
 ion_device_dfu_src += ion/src/device/shared/usb/dfu_xip.cpp:+usbxip
 ion_device_dfu_src += $(addsuffix :+usbxip,$(ion_device_usb_src))
 
+# TODO: this a workaround an uresolved bug: dfu_temp should be renamed dfu.temp and the "Workaround rule" should not be necessary.
 # Sources required to execute DFU in RAM
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT += ion/src/device/shared/usb/dfu.ld
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDDEPS += $(LDSCRIPT)
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call flavored_object_for,$(ion_device_usb_src) $(ion_device_dfu_deps_src),)
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf: LDSCRIPT += ion/src/device/shared/usb/dfu.ld
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf: LDDEPS += $(LDSCRIPT)
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf: $(call flavored_object_for,$(ion_device_usb_src) $(ion_device_dfu_deps_src),)
 
 # In order to link the dfu bootloader inside the epsilon firmware, we need to
 # turn the dfu binary (dfu.bin) into an elf object.
@@ -68,6 +69,11 @@ $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call flavored_object_for,$(ion
 # - '_binary_[file name]_[file extension]_end'.
 # For our purpose, dfu.o can go in rodata section and we rename the start and
 # end of binary symbols: _dfu_bootloader_flash_[start/end]
+
+# Workaround rule
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf:
+	$(MAKE) DEBUG=$(DEBUG) MODEL=$(MODEL) FIRMWARE_COMPONENT=$(FIRMWARE_COMPONENT) $(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf
+	cp $(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf $@
 
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared/usb/dfu.bin
 	$(call rule_label,OBJCOPY)

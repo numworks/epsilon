@@ -15,17 +15,16 @@ namespace Config {
  * (to flash them easily).
  * The internal memory layout is the following:
  * 4*16k + 64k + 7*128k with the division:
- * +------------------+-------------+------------+
- * |         16k      +    3*16k    | 64k+7*128k |
- * +------------------+-------------+------------+
- * | Persisting bytes |    Kernel   |  Userland  |
- * +------------------+-------------+------------+
+ * +-------------+------------------+------------+
+ * |    3*16k    |        16k       +  64k+7*128k |
+ * +-------------+------------------+------------+
+ * |    Kernel   | Persisting bytes |  Userland  |
+ * +-------------+------------------+------------+
  * Hence the kernel total size.
  *
  */
 
-constexpr static uint32_t PersistingBytesSize = 0x4000; // 16k
-constexpr static uint32_t KernelStartAddress = InternalFlash::Config::StartAddress + PersistingBytesSize;
+constexpr static uint32_t KernelStartAddress = InternalFlash::Config::StartAddress;
 constexpr static uint32_t KernelSize = 3*0x4000; // 3*16k
 constexpr static uint32_t UserlandStartAddress = KernelStartAddress + KernelSize;
 

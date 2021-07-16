@@ -1,5 +1,5 @@
 #include "command.h"
-#include <apps/shared/post_and_hardware_tests.h>
+#include <ion/post_and_hardware_tests.h>
 
 namespace Ion {
 namespace Device {
@@ -11,7 +11,7 @@ void VBlank(const char * input) {
     reply(sSyntaxError);
     return;
   }
-  reply(Shared::POSTAndHardwareTests::VBlankOK() ? sOK : sKO);
+  reply(POSTAndHardwareTests::VBlankOK() ? sOK : sKO);
 }
 
 }

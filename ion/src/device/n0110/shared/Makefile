@@ -101,6 +101,7 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   board_privileged.cpp \
+  display_vblank.cpp \
   external_flash.cpp \
   external_flash_command.cpp \
   power_configuration.cpp \
@@ -115,7 +116,11 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
   drivers/backlight_basic.cpp \
   drivers/display_image.cpp \
   post_and_hardware_tests.cpp \
- )
+)
+
+ion_device_bootloader_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
+  display_vblank.cpp \
+)
 
 ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bootloader_flasher_src) $(ion_device_dfu_src)
 

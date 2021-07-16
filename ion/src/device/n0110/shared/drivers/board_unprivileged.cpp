@@ -10,12 +10,9 @@ KernelHeader * kernelHeader() {
   return reinterpret_cast<KernelHeader *>((isRunningSlotA() ? Config::SlotAStartAddress : Config::SlotBStartAddress) +  Board::Config::SignedPayloadSize);
 }
 
-uint32_t slotAUserlandStart() {
-  return Config::SlotAStartAddress + Config::UserlandOffset + sizeof(UserlandHeader);
-
-}
-uint32_t slotBUserlandStart() {
-  return Config::SlotBStartAddress + Config::UserlandOffset+ sizeof(UserlandHeader);
+UserlandHeader * userlandHeader() {
+  uint32_t slotStart = isRunningSlotA() ?  Config::SlotAStartAddress : Config::SlotBStartAddress;
+  return reinterpret_cast<UserlandHeader *>(slotStart + Config::UserlandOffset);
 }
 
 }

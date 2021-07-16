@@ -1,15 +1,17 @@
 #include "input_goodness_table_view.h"
 
+#include "probability/models/statistic/goodness_statistic.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
 
-InputGoodnessTableView::InputGoodnessTableView(Escher::Responder * parentResponder,
-                                               Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                               Chi2Statistic * statistic,
-                                               Escher::TextFieldDelegate * textFieldDelegate,
-                                               DynamicTableViewDataSourceDelegate * delegate,
-                                               Escher::SelectableTableViewDelegate * scrollDelegate) :
+InputGoodnessTableView::InputGoodnessTableView(
+    Escher::Responder * parentResponder,
+    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+    Chi2Statistic * statistic,
+    Escher::TextFieldDelegate * textFieldDelegate,
+    DynamicTableViewDataSourceDelegate * delegate,
+    Escher::SelectableTableViewDelegate * scrollDelegate) :
     SelectableTableView(parentResponder, this, &m_tableSelection, scrollDelegate),
     DynamicTableViewDataSource(delegate),
     m_numberOfRows(k_initialNumberOfRows),

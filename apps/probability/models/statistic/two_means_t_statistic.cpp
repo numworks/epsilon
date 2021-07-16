@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include "probability/app.h"
-
 namespace Probability {
 
 TwoMeansTStatistic::TwoMeansTStatistic() {

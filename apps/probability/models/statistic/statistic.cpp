@@ -1,8 +1,19 @@
 #include "statistic.h"
 
+#include <assert.h>
 #include <math.h>
 
-#include "probability/app.h"
+#include <new>
+
+#include "goodness_statistic.h"
+#include "homogeneity_statistic.h"
+#include "one_mean_t_statistic.h"
+#include "one_mean_z_statistic.h"
+#include "one_proportion_statistic.h"
+#include "pooled_two_means_statistic.h"
+#include "two_means_t_statistic.h"
+#include "two_means_z_statistic.h"
+#include "two_proportions_statistic.h"
 
 namespace Probability {
 

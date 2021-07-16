@@ -29,7 +29,7 @@ InputHomogeneityController::InputHomogeneityController(
                      &m_tableController,
                      &m_contentView),
     m_tableData(&m_innerTableData),
-    m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource()),
+    m_table(&m_contentView, &m_tableData, m_contentView.selectionDataSource(), this),
     m_tableController(this, &m_table, &m_innerTableData, statistic) {
   m_contentView.setTableView(&m_tableController);
 }

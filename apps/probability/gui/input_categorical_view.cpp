@@ -57,6 +57,9 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
                   &m_significanceCell,
                   &m_next) {
   m_tableSelection.selectColumn(-1);
+  setTopMargin(Metric::CommonTopMargin);
+  setBottomMargin(Metric::CommonBottomMargin);
+  setBackgroundColor(Palette::WallScreenDark);
 }
 
 void InputCategoricalView::didBecomeFirstResponder() {
@@ -107,22 +110,17 @@ void InputCategoricalView::selectCorrectView() {
   // TODO set behavior in didBecomeFirstResponder?
   m_significanceCell.setHighlighted(false);
   m_next.setHighlighted(false);
-  switch (m_viewSelection.selectedRow()) {
-    case k_indexOfTable:
-      break;
-    case k_indexOfSignificance:
-      m_significanceCell.setHighlighted(true);
-      // TODO compute position of cell and scrollToContentRect
-      scrollToContentPoint(
-          m_contentView.pointFromPointInView(&m_significanceCell,
-                                             m_significanceCell.bounds().bottomRight()));
-      break;
-    default:
-      assert(m_viewSelection.selectedRow() == k_indexOfNext);
-      m_next.setHighlighted(true);
-      scrollToContentPoint(
-          m_contentView.pointFromPointInView(&m_next, m_next.bounds().bottomRight()));
-      break;
+  if (m_viewSelection.selectedRow() != k_indexOfTable) {
+    Escher::HighlightCell * view;
+    if (m_viewSelection.selectedRow() == k_indexOfSignificance) {
+      view = &m_significanceCell;
+    } else {
+      view = &m_next;
+    }
+    view->setHighlighted(true);
+    // compute position of cell and scrollToContentRect
+    KDPoint offset = m_contentView.pointFromPointInView(view, view->bounds().bottomRight());
+    scrollToContentPoint(offset);
   }
 }
 
@@ -130,7 +128,7 @@ KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
   // Pass expected size to VerticalLayout to propagate to TableCells
   ContentView * contentView = const_cast<ContentView *>(&m_contentView);
   contentView->setSize(KDSize(bounds().width(), 10000));
-  KDSize requiredSize = contentView->minimalSizeForOptimalDisplay();
+  KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
   return KDSize(bounds().width(), requiredSize.height());
 }
 
@@ -142,10 +140,7 @@ void Probability::InputCategoricalView::setTableView(TableViewController * table
   m_tableViewController = tableViewController;
   SelectableTableView * tableView = tableViewController->selectableTableView();
   m_contentView.setTableView(tableView);
-  tableView->setMargins(Metric::CommonTopMargin,
-                        Metric::CommonRightMargin,
-                        k_marginVertical,
-                        Metric::CommonLeftMargin);
+  tableView->setMargins(0, Metric::CommonRightMargin, k_marginVertical, Metric::CommonLeftMargin);
   tableView->setBackgroundColor(Palette::WallScreenDark);
   tableView->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
 }

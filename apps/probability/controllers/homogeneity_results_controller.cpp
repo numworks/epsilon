@@ -21,7 +21,7 @@ void HomogeneityResultsView::buttonAction() {
 }
 
 HomogeneityResultsDataSource::HomogeneityResultsDataSource() {
-  for (int i = 0; i < HomogeneityTableDataSource::k_maxNumberOfInnerCells; i++) {
+  for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
     m_cells[i].setFont(KDFont::SmallFont);
     m_cells[i].setText("1");
   }

@@ -53,8 +53,15 @@ public:
   constexpr static int k_initialNumberOfColumns = 3;
   constexpr static int k_maxNumberOfColumns = HomogeneityStatistic::k_maxNumberOfColumns;
   constexpr static int k_maxNumberOfRows = HomogeneityStatistic::k_maxNumberOfRows;
-  constexpr static int k_maxNumberOfInnerCells = (k_maxNumberOfColumns - 1) *
-                                                 (k_maxNumberOfRows - 1);
+  constexpr static int k_numberOfReusableRows = (Ion::Display::Height -
+                                                 Escher::Metric::TitleBarHeight -
+                                                 Escher::Metric::StackTitleHeight) /
+                                                    HomogeneityTableDataSource::k_rowHeight +
+                                                1;
+  constexpr static int k_numberOfReusableColumns = Ion::Display::Width /
+                                                       HomogeneityTableDataSource::k_columnWidth +
+                                                   1;
+  constexpr static int k_numberOfReusableCells = k_numberOfReusableRows * k_numberOfReusableColumns;
 
 private:
   constexpr static int k_typeOfRowHeader = 17;

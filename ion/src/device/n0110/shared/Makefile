@@ -32,10 +32,14 @@ ion_device_bench_kernel = $(addprefix ion/src/device/shared/drivers/, \
   battery_charge.cpp \
   crc32.cpp \
   led.cpp \
+  power.cpp \
+  wakeup.cpp \
 )
 
 ion_device_bench_kernel += $(addprefix ion/src/device/n0110/shared/drivers/, \
   cache.cpp \
+  power.cpp \
+  trampoline.cpp \
 )
 
 ## bootloader/kernel
@@ -50,7 +54,7 @@ ion_device_bootloader_kernel_src += $(addprefix ion/src/device/n0110/shared/driv
   board_privileged.cpp \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
-  power.cpp \
+  power_configuration.cpp \
   reset.cpp \
   usb.cpp \
 )
@@ -87,16 +91,20 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   battery.cpp \
   board_privileged.cpp \
   display.cpp \
+  internal_flash_otp.cpp \
   keyboard.cpp \
   reset.cpp \
   serial_number.cpp \
   timing.cpp \
+  usb_privileged.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   board_privileged.cpp \
   external_flash.cpp \
   external_flash_command.cpp \
+  power_configuration.cpp \
+  usb.cpp \
 )
 
 ion_device_bench_src += ion/src/device/shared/post_and_hardware_tests $(ion_device_bench_flasher) $(ion_device_bench_kernel)

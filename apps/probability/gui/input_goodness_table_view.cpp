@@ -21,7 +21,7 @@ InputGoodnessTableView::InputGoodnessTableView(Escher::Responder * parentRespond
   m_header[0].setMessageFont(KDFont::SmallFont);
   m_header[1].setMessageFont(KDFont::SmallFont);
 
-  for (int i = 0; i < sizeof(m_cells) / sizeof(Escher::EvenOddEditableTextCell); i++) {
+  for (unsigned int i = 0; i < sizeof(m_cells) / sizeof(Escher::EvenOddEditableTextCell); i++) {
     m_cells[i].setParentResponder(this);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
                                                              textFieldDelegate);

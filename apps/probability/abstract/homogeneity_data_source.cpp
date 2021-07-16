@@ -7,9 +7,9 @@ using namespace Probability;
 
 HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * contentTable,
                                                        I18n::Message headerPrefix) :
+    m_headerPrefix(headerPrefix),
     m_contentTable(contentTable),
-    m_topLeftCell(Escher::Palette::WallScreenDark),
-    m_headerPrefix(headerPrefix) {
+    m_topLeftCell(Escher::Palette::WallScreenDark) {
   // First row
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     m_colHeader[i].setAlignment(.5f, .5f);
@@ -76,7 +76,8 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
     txt[length + 1] = 0;
     myCell->setText(txt);
     KDColor textColor = KDColorBlack;
-    if ((row == 0 && column == numberOfColumns() - 1) || (column == 0 && row == numberOfRows()-1)) {
+    if ((row == 0 && column == numberOfColumns() - 1) ||
+        (column == 0 && row == numberOfRows() - 1)) {
       textColor = Palette::GrayDark;
     }
     myCell->setTextColor(textColor);

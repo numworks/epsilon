@@ -22,8 +22,9 @@ InputGoodnessController::InputGoodnessController(
     GoodnessStatistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
     InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
-    m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, this) {
-  m_contentView.setTableView(&m_inputTableView);
+    m_inputTableView(&m_contentView, inputEventHandlerDelegate, statistic, this),
+    m_tableController(this, statistic, &m_inputTableView) {
+  m_contentView.setTableView(&m_tableController);
 }
 
 const char * Probability::InputGoodnessController::title() {

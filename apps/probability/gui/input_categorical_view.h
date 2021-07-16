@@ -15,11 +15,12 @@
 
 #include "horizontal_or_vertical_layout.h"
 #include "probability/abstract/button_delegate.h"
+#include "probability/abstract/table_view_controller.h"
 #include "spacer_view.h"
 
 namespace Probability {
 
-/* This view contains  pointer to a TableView, an EditableCell and a Button,
+/* This view contains a pointer to a TableView, an EditableCell and a Button,
  * layed out vertically, and is able to move selection between them.
  * Meant for InputGoodnessController and InputHomogeneityController.
  */
@@ -27,13 +28,11 @@ class InputCategoricalView : public Escher::ScrollView, public Escher::Responder
 public:
   InputCategoricalView(Responder * parentResponder,
                        ButtonDelegate * buttonDelegate,
-                       SelectableTableView * table,
+                       TableViewController * tableViewController,
                        InputEventHandlerDelegate * inputEventHandlerDelegate,
                        TextFieldDelegate * textFieldDelegate);
 
-  MessageTableCellWithEditableTextWithMessage * significanceLevelView() {
-    return &m_significanceCell;
-  }
+  // View
   KDSize minimalSizeForOptimalDisplay() const override;
   KDSize contentSize() const override { return KDSize(bounds().width(), 10000); };
   void layoutSubviews(bool force) override {
@@ -53,7 +52,7 @@ public:
   }  // TODO remove
   int selectedView() { return m_viewSelection.selectedRow(); }
   void setSignificanceCellText(const char * text);
-  void setTableView(SelectableTableView * tableView);
+  void setTableView(TableViewController * tableViewController);
 
   constexpr static int k_indexOfTable = 0;
   constexpr static int k_indexOfInnerLayout = 1;
@@ -104,7 +103,7 @@ private:
   void setResponderForSelectedRow();
   void selectCorrectView();
 
-  SelectableTableView * m_dataInputTableView;
+  TableViewController * m_tableViewController;
   MessageTableCellWithEditableTextWithMessage m_significanceCell;
   Escher::Button m_next;
   ContentView m_contentView;

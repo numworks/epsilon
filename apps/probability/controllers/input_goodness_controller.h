@@ -17,6 +17,7 @@
 #include <kandinsky/coordinate.h>
 #include <shared/parameter_text_field_delegate.h>
 
+#include "goodness_table_view_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/input_categorical_controller.h"
 #include "probability/gui/input_categorical_view.h"
@@ -45,6 +46,7 @@ public:
 
 private:
   InputGoodnessTableView m_inputTableView;
+  GoodnessTableViewController m_tableController;
 };
 
 }  // namespace Probability

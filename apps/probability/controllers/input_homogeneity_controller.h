@@ -12,8 +12,10 @@
 #include <kandinsky/coordinate.h>
 
 #include "homogeneity_results_controller.h"
+#include "homogeneity_table_view_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/chained_selectable_table_view_delegate.h"
+#include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/abstract/input_categorical_controller.h"
 #include "probability/gui/input_categorical_view.h"
@@ -24,36 +26,6 @@
 
 namespace Probability {
 
-class InputHomogeneityDataSource : public TableViewDataSource, public Shared::TextFieldDelegate {
-public:
-  InputHomogeneityDataSource(SelectableTableView * tableView,
-                             InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             HomogeneityStatistic * statistic);
-  int numberOfRows() const override { return m_numberOfRows; }
-  int numberOfColumns() const override { return m_numberOfColumns; }
-  int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
-  int typeAtLocation(int i, int j) override { return 0; }
-  HighlightCell * reusableCell(int i, int type) override;
-
-  KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
-  KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
-
-  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
-  // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::TextField * textField,
-                                    Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
-
-private:
-  int m_numberOfRows;
-  int m_numberOfColumns;
-  // TODO reusable
-  EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
-  HomogeneityStatistic * m_statistic;
-  SelectableTableView * m_table;
-};
 
 class InputHomogeneityController : public InputCategoricalController,
                                    public ChainedSelectableTableViewDelegate {
@@ -74,6 +46,7 @@ private:
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;
   SelectableTableViewWithBackground m_table;
+  HomogeneityTableViewController m_tableController;
 };
 
 }  // namespace Probability

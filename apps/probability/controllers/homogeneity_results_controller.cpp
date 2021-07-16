@@ -55,4 +55,5 @@ Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
       return &m_next;
   }
   assert(false);
+  return nullptr;
 }

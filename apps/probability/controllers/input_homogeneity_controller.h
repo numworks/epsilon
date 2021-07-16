@@ -11,7 +11,6 @@
 #include <kandinsky/color.h>
 #include <kandinsky/coordinate.h>
 
-#include "homogeneity_results_controller.h"
 #include "homogeneity_table_view_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/chained_selectable_table_view_delegate.h"
@@ -23,15 +22,15 @@
 #include "probability/gui/selectable_table_view_with_background.h"
 #include "probability/gui/solid_color_cell.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
+#include "results_homogeneity_controller.h"
 
 namespace Probability {
-
 
 class InputHomogeneityController : public InputCategoricalController,
                                    public ChainedSelectableTableViewDelegate {
 public:
   InputHomogeneityController(StackViewController * parent,
-                             HomogeneityResultsController * homogeneityResultsController,
+                             ResultsHomogeneityController * homogeneityResultsController,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                              HomogeneityStatistic * statistic);
 

@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_CONTROLLERS_HOMOGENEITY_RESULTS_CONTROLLER_H
-#define APPS_PROBABILITY_CONTROLLERS_HOMOGENEITY_RESULTS_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_RESULTS_HOMOGENEITY_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_RESULTS_HOMOGENEITY_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/even_odd_buffer_text_cell.h>
@@ -13,6 +13,7 @@
 
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/homogeneity_data_source.h"
+#include "probability/abstract/results_homogeneity_data_source.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/selectable_table_view_with_background.h"
@@ -41,26 +42,10 @@ private:
   Shared::ButtonWithSeparator m_next;
 };
 
-class HomogeneityResultsDataSource : public TableViewDataSource {
+class ResultsHomogeneityController : public Page {
 public:
-  HomogeneityResultsDataSource();
-  int numberOfRows() const override { return HomogeneityTableDataSource::k_initialNumberOfRows; }
-  int numberOfColumns() const override {
-    return HomogeneityTableDataSource::k_initialNumberOfColumns;
-  }
-  KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
-  KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
-  int typeAtLocation(int i, int j) override { return 0; }
-  HighlightCell * reusableCell(int i, int type) override;
-  int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
-
-private:
-  EvenOddBufferTextCell m_cells[HomogeneityTableDataSource::k_numberOfReusableCells];
-};
-
-class HomogeneityResultsController : public Page {
-public:
-  HomogeneityResultsController(StackViewController * stackViewController, HomogeneityStatistic * statistic);
+  ResultsHomogeneityController(StackViewController * stackViewController,
+                               HomogeneityStatistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   }
@@ -71,11 +56,11 @@ public:
 private:
   HomogeneityResultsView m_contentView;
   HomogeneityTableDataSource m_tableData;
-  HomogeneityResultsDataSource m_innerTableData;
+  ResultsHomogeneityDataSource m_innerTableData;
 
   SelectableTableViewWithBackground m_table;
 };
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_CONTROLLERS_HOMOGENEITY_RESULTS_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_CONTROLLERS_RESULTS_HOMOGENEITY_CONTROLLER_H */

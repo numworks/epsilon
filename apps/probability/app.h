@@ -9,7 +9,6 @@
 
 #include "controllers/categorical_type_controller.h"
 #include "controllers/distribution_controller.h"
-#include "controllers/homogeneity_results_controller.h"
 #include "controllers/hypothesis_controller.h"
 #include "controllers/input_controller.h"
 #include "controllers/input_goodness_controller.h"
@@ -17,6 +16,7 @@
 #include "controllers/menu_controller.h"
 #include "controllers/parameters_controller.h"
 #include "controllers/results_controller.h"
+#include "controllers/results_homogeneity_controller.h"
 #include "controllers/statistic_graph_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
@@ -63,7 +63,9 @@ public:
   Data::Test test() { return snapshot()->data()->test(); }
   Data::TestType testType() { return snapshot()->data()->testType(); }
   Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }
-  void setCategoricalType(Data::CategoricalType type) { snapshot()->data()->setCategoricalType(type); }
+  void setCategoricalType(Data::CategoricalType type) {
+    snapshot()->data()->setCategoricalType(type);
+  }
 
   TELEMETRY_ID("Probability");
   // TODO better handling

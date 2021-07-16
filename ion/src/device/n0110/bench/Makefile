@@ -22,6 +22,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/command/, \
   stop.cpp \
   usb_plugged.cpp \
   vblank.cpp \
+  write_pcb_version.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/drivers/, \

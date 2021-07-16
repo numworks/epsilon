@@ -1,18 +1,15 @@
 #ifndef APPS_PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H
 #define APPS_PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H
 
-#include <apps/shared/parameter_text_field_delegate.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
 #include <escher/selectable_table_view.h>
-#include <escher/table_view_data_source.h>
 
 #include "bordered_table_view_data_source.h"
 #include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
-#include "probability/models/statistic/goodness_statistic.h"
 
 namespace Probability {
 

@@ -1,7 +1,6 @@
 #ifndef APPS_PROBABILITY_GUI_INPUT_HOMOGENEITY_DATA_SOURCE_H
 #define APPS_PROBABILITY_GUI_INPUT_HOMOGENEITY_DATA_SOURCE_H
 
-#include <apps/shared/text_field_delegate.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>

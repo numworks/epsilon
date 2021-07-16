@@ -2,10 +2,8 @@
 #define APPS_PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H
 
 #include <apps/shared/button_with_separator.h>
-#include <escher/list_view_data_source.h>
 #include <escher/memoized_list_view_data_source.h>
 #include <escher/message_table_cell_with_buffer.h>
-#include <escher/responder.h>
 
 #include "probability/abstract/button_delegate.h"
 #include "probability/models/statistic/statistic.h"

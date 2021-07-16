@@ -1,7 +1,6 @@
 #ifndef APPS_PROBABILITY_GUI_CALCULATION_POPUP_DATA_SOURCE_H
 #define APPS_PROBABILITY_GUI_CALCULATION_POPUP_DATA_SOURCE_H
 
-#include <escher/image.h>
 #include <escher/list_view_data_source.h>
 
 #include "highlight_image_cell.h"

@@ -1,9 +1,11 @@
 #include "text_helpers.h"
 
+#include <assert.h>
 #include <stdarg.h>
 #include <string.h>
 
-#include "app.h"
+#include "poincare/preferences.h"
+#include "shared/poincare_helpers.h"
 
 namespace Probability {
 
@@ -84,7 +86,10 @@ const char * testTypeToText(Data::TestType t) {
 template <typename T>
 int defaultParseFloat(T value, char buffer[], int bufferSize) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-      value, buffer, bufferSize, Poincare::Preferences::ShortNumberOfSignificantDigits,
+      value,
+      buffer,
+      bufferSize,
+      Poincare::Preferences::ShortNumberOfSignificantDigits,
       Poincare::Preferences::PrintFloatMode::Decimal);
 }
 

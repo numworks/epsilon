@@ -1,5 +1,10 @@
 #include "input_categorical_view.h"
 
+#include "probability/abstract/button_delegate.h"
+#include "probability/abstract/table_view_controller.h"
+#include "probability/gui/horizontal_or_vertical_layout.h"
+#include "probability/gui/page_controller.h"
+#include "probability/gui/spacer_view.h"
 #include "probability/text_helpers.h"
 
 using namespace Probability;

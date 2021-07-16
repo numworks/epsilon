@@ -20,9 +20,7 @@
 #include "controllers/statistic_graph_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
-#include "models/calculation/discrete_calculation.h"
 #include "models/data.h"
-#include "models/distribution/binomial_distribution.h"
 
 namespace Probability {
 

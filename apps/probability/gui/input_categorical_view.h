@@ -1,16 +1,8 @@
 #ifndef APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H
 #define APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H
 
-#include <apps/shared/button_with_separator.h>
-#include <escher/even_odd_editable_text_cell.h>
-#include <escher/even_odd_message_text_cell.h>
-#include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
-#include <escher/scrollable_view.h>
-#include <escher/selectable_table_view.h>
-#include <escher/table_view_data_source.h>
-#include <escher/text_field_delegate.h>
 #include <ion/events.h>
 
 #include "horizontal_or_vertical_layout.h"

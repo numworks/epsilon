@@ -1,11 +1,9 @@
 #include "statistic_view_range.h"
 
-#include <ion/display.h>
 #include <math.h>
 
 #include "probability/app.h"
 #include "probability/gui/statistic_curve_view.h"
-#include "probability/helpers.h"
 
 namespace Probability {
 

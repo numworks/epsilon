@@ -14,12 +14,12 @@ void Sleep(const char * input) {
     return;
   }
   reply(sOK);
-  Device::Power::sleepConfiguration();
-  Device::Board::shutdownPeripherals();
-  Device::WakeUp::onUSBPlugging();
-  Device::Power::internalFlashSuspend();
-  Device::Board::setStandardFrequency(Device::Board::Frequency::High);
-  Device::Board::initPeripherals(false);
+  Power::sleepConfiguration();
+  Board::shutdownPeripherals();
+  WakeUp::onUSBPlugging();
+  Power::bootloaderSuspend();
+  Board::setStandardFrequency(Device::Board::Frequency::High);
+  Board::initPeripherals();
 }
 
 }

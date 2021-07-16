@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_KERNEL_DRIVERS_WAKE_UP_H
 #define ION_DEVICE_KERNEL_DRIVERS_WAKE_UP_H
 
-#include "regs/regs.h"
+#include <shared/drivers/wakeup.h>
 
 namespace Ion {
 namespace Device {
@@ -31,7 +31,6 @@ namespace WakeUp {
  */
 
 void onChargingEvent();
-void onUSBPlugging();
 void onOnOffKeyDown();
 
 }

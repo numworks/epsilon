@@ -14,11 +14,11 @@ void Stop(const char * input) {
     return;
   }
   reply(sOK);
-  Device::Power::stopConfiguration();
-  Device::Board::shutdownPeripherals();
-  Device::WakeUp::onUSBPlugging();
-  Device::Power::internalFlashSuspend();
-  Device::Board::initPeripherals(false);
+  Power::stopConfiguration();
+  Board::shutdownPeripherals();
+  WakeUp::onUSBPlugging();
+  Power::bootloaderSuspend();
+  Board::initPeripherals();
 }
 
 }

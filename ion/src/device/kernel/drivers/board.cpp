@@ -78,12 +78,7 @@ void shutdownInterruptions() {
   Keyboard::shutdownInterruptions();
 }
 
-static Frequency sStandardFrequency = Frequency::High;
-
-void setStandardFrequency(Frequency f) {
-  sStandardFrequency = f;
-  setClockStandardFrequency();
-}
+extern Frequency sStandardFrequency;
 
 void setClockLowFrequency() {
   // TODO: Update TIM3 prescaler or ARR to avoid irregular LED blinking

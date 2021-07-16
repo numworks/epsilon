@@ -251,10 +251,6 @@ bool isInReflashableSector(uint32_t address) {
   return address >= InternalFlash::Config::StartAddress && address < InternalFlash::Config::EndAddress;
 }
 
-KernelHeader * kernelHeader() {
-  return reinterpret_cast<KernelHeader *>(Config::KernelStartAddress);
-}
-
 uint32_t slotAUserlandStart() {
   return Config::UserlandStartAddress;
 }

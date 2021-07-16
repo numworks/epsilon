@@ -3,11 +3,10 @@ ion_device_userland_svc_src = $(addprefix ion/src/device/userland/, \
   drivers/backlight.cpp \
   drivers/battery.cpp \
   drivers/board.cpp \
-  drivers/crc32.cpp \
   drivers/circuit_breaker.cpp \
+  drivers/crc32.cpp \
   drivers/display.cpp \
   drivers/events.cpp \
-  drivers/external_apps.cpp \
   drivers/fcc_id.cpp \
   drivers/flash.cpp \
   drivers/keyboard.cpp \

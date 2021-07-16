@@ -23,6 +23,24 @@ float HomogeneityStatistic::observedValue(int index) {
 }
 
 float HomogeneityStatistic::expectedValue(int index) {
+  // res = sum of row * sum of column / total
+  // TODO can be super memoized
+  Index2D pos = indexToTableIndex(index);
+  Index2D max = _numberOfInputParams();
+  float total = 0, rowTotal = 0, colTotal = 0;
+  for (int row = 0; row < max.row; row++) {
+    for (int col = 0; col < max.col; col++) {
+      float p = parameterAtPosition(row, col);
+      if (col == pos.col) {
+        colTotal += p;
+      }
+      if (row == pos.row) {
+        rowTotal += p;
+      }
+      total += p;
+    }
+  }
+  return rowTotal * colTotal / total;
 }
 
 int HomogeneityStatistic::_degreesOfFreedom() {
@@ -31,7 +49,7 @@ int HomogeneityStatistic::_degreesOfFreedom() {
 }
 
 HomogeneityStatistic::Index2D HomogeneityStatistic::_numberOfInputParams() {
-  int maxCol, maxRow;
+  int maxCol = -1, maxRow = -1;
   for (int row = 0; row < k_maxNumberOfRows; row++) {
     for (int col = 0; col < k_maxNumberOfColumns; col++) {
       float p = parameterAtPosition(row, col);
@@ -45,8 +63,8 @@ HomogeneityStatistic::Index2D HomogeneityStatistic::_numberOfInputParams() {
       }
     }
   }
-  assert(maxCol > 0 && maxRow > 0);
-  return Index2D{.row = maxRow, .col = maxCol};
+  assert(maxCol >= 0 && maxRow >= 0);
+  return Index2D{.row = maxRow + 1, .col = maxCol + 1};
 }
 
 int HomogeneityStatistic::numberOfValuePairs() {

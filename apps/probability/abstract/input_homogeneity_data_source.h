@@ -6,20 +6,21 @@
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
 
-#include "probability/abstract/homogeneity_data_source.h"
 #include "probability/abstract/dynamic_data_source.h"
+#include "probability/abstract/homogeneity_data_source.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 
 namespace Probability {
 
 using namespace Escher;
 
-class InputHomogeneityDataSource : public TableViewDataSource,
-                                   public DynamicTableViewDataSource {
+class InputHomogeneityDataSource : public TableViewDataSource, public DynamicTableViewDataSource {
 public:
   InputHomogeneityDataSource(SelectableTableView * tableView,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             HomogeneityStatistic * statistic, TextFieldDelegate * textFieldDelegate);
+                             HomogeneityStatistic * statistic,
+                             TextFieldDelegate * textFieldDelegate,
+                             DynamicTableViewDataSourceDelegate * dataSourceDelegate);
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
@@ -30,6 +31,13 @@ public:
   KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
 
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
+
+  // DynamicTableViewDataSource
+  void addRow() override;
+  void deleteLastRow() override;
+  void addColumn() override;
+  void deleteLastColumn() override;
+
 
 private:
   int m_numberOfRows;

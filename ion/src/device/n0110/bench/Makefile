@@ -13,6 +13,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/command/, \
   lcd_pins.cpp \
   lcd_timing.cpp \
   led.cpp \
+  mcu_serial.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/drivers/, \

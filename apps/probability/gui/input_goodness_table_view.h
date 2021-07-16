@@ -10,6 +10,7 @@
 #include <escher/table_view_data_source.h>
 
 #include "bordered_table_view_data_source.h"
+#include "probability/abstract/dynamic_data_source.h"
 #include "probability/models/statistic/goodness_statistic.h"
 
 namespace Probability {
@@ -17,11 +18,12 @@ namespace Probability {
 /* This is the table used to input Expected and Observed results. */
 class InputGoodnessTableView : public Escher::SelectableTableView,
                                public BorderedTableViewDataSource,
-                               public Shared::TextFieldDelegate {
+                               public DynamicTableViewDataSource {
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                          Chi2Statistic * statistic,
+                         Escher::TextFieldDelegate * textFieldDelegate,
                          Escher::SelectableTableViewDelegate * delegate = nullptr);
   // DataSource
   int numberOfRows() const override { return m_numberOfRows; };
@@ -35,15 +37,12 @@ public:
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
-  // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::TextField * textField,
-                                    Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
-
   // Responder
   bool handleEvent(Ion::Events::Event e) override;
+
+  // DynamicTableViewDataSource
+  void addRow() override;
+  void deleteLastRow() override;
 
 private:
   constexpr static int k_typeOfHeader = 1;

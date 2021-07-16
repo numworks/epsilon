@@ -44,22 +44,21 @@ Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {
 
 InputCategoricalView::InputCategoricalView(Responder * parentResponder,
                                            ButtonDelegate * buttonDelegate,
-                                           SelectableTableView * table,
+                                           TableViewController * tableViewController,
                                            InputEventHandlerDelegate * inputEventHandlerDelegate,
                                            TextFieldDelegate * textFieldDelegate) :
     Escher::ScrollView(&m_contentView, &m_scrollDataSource),
     Responder(parentResponder),
-    m_dataInputTableView(table),
+    m_tableViewController(tableViewController),
     m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
     m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), KDFont::LargeFont),
-    m_contentView(table, &m_significanceCell, &m_next) {
+    m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
+                  &m_significanceCell,
+                  &m_next) {
 }
 
 void InputCategoricalView::didBecomeFirstResponder() {
   // Pass focus to subview
-  if (m_dataInputTableView->selectedRow() < 0) {
-    m_dataInputTableView->selectRow(1);
-  }
   if (m_viewSelection.selectedRow() < 0) {
     m_viewSelection.selectRow(0);
   }
@@ -68,6 +67,7 @@ void InputCategoricalView::didBecomeFirstResponder() {
 }
 
 bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
+  // Move selection between views
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
       int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer + 1);
@@ -87,7 +87,7 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
 Responder * InputCategoricalView::responderForRow(int row) {
   switch (m_viewSelection.selectedRow()) {
     case k_indexOfTable:
-      return m_dataInputTableView;
+      return m_tableViewController;
     case k_indexOfSignificance:
       return &m_significanceCell;
     case k_indexOfNext:
@@ -106,9 +106,6 @@ void InputCategoricalView::selectCorrectView() {
   m_next.setHighlighted(false);
   switch (m_viewSelection.selectedRow()) {
     case k_indexOfTable:
-      if (m_dataInputTableView->selectedRow() < 0) {
-        m_dataInputTableView->selectCellAtLocation(0, 0);
-      }
       break;
     case k_indexOfSignificance:
       m_significanceCell.setHighlighted(true);
@@ -138,8 +135,9 @@ void Probability::InputCategoricalView::setSignificanceCellText(const char * tex
   m_significanceCell.textField()->setText(text);
 }
 
-void Probability::InputCategoricalView::setTableView(SelectableTableView * tableView) {
-  m_dataInputTableView = tableView;
+void Probability::InputCategoricalView::setTableView(TableViewController * tableViewController) {
+  m_tableViewController = tableViewController;
+  SelectableTableView * tableView = tableViewController->selectableTableView();
   m_contentView.setTableView(tableView);
   tableView->setMargins(Metric::CommonTopMargin,
                         Metric::CommonRightMargin,

@@ -8,6 +8,7 @@ InputGoodnessTableView::InputGoodnessTableView(
     Escher::Responder * parentResponder,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Chi2Statistic * statistic,
+    Escher::TextFieldDelegate * textFieldDelegate,
     Escher::SelectableTableViewDelegate * delegate) :
     SelectableTableView(parentResponder, this, &m_tableSelection, delegate),
     m_numberOfRows(k_initialNumberOfRows),
@@ -21,7 +22,8 @@ InputGoodnessTableView::InputGoodnessTableView(
 
   for (int i = 0; i < sizeof(m_cells) / sizeof(Escher::EvenOddEditableTextCell); i++) {
     m_cells[i].setParentResponder(this);
-    m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
+    m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
+                                                             textFieldDelegate);
     m_cells[i].editableTextCell()->setMargins(0, k_innerCellRightMargin, 0, 0);
     m_cells[i].setEven((i / 2) % 2 == 1);
     m_cells[i].setFont(KDFont::SmallFont);
@@ -51,14 +53,23 @@ bool InputGoodnessTableView::handleEvent(Ion::Events::Event e) {
                                  GoodnessStatistic::k_undefinedValue);
     if (selectedRow() == m_numberOfRows - 2 && m_numberOfRows > k_initialNumberOfRows &&
         std::isnan(m_statistic->paramAtIndex(2 * (selectedRow() - 1) + (1 - selectedColumn())))) {
-      m_numberOfRows--;
+      deleteLastRow();
       reloadData();
-      m_delegate->tableViewDidChangeSelectionAndDidScroll(this, -1, -1);  // TODO find a better way to call reload scroll
     }
     reloadCellAtLocation(selectedColumn(), selectedRow());
     return true;
   }
   return SelectableTableView::handleEvent(e);
+}
+
+void InputGoodnessTableView::addRow() {
+  m_numberOfRows++;
+  DynamicTableViewDataSource::notify();
+}
+
+void InputGoodnessTableView::deleteLastRow() {
+  m_numberOfRows--;
+  DynamicTableViewDataSource::notify();
 }
 
 void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::HighlightCell * cell,
@@ -78,31 +89,6 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
     defaultParseFloat(p, buffer, bufferSize);
     myCell->editableTextCell()->textField()->setText(buffer);
   }
-}
-
-bool Probability::InputGoodnessTableView::textFieldShouldFinishEditing(
-    Escher::TextField * textField,
-    Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;  // TODO up and down too
-}
-
-bool Probability::InputGoodnessTableView::textFieldDidFinishEditing(Escher::TextField * textField,
-                                                                    const char * text,
-                                                                    Ion::Events::Event event) {
-  float p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
-    return false;
-  }
-
-  int index = 2 * (selectedRow() - 1) + selectedColumn();
-  m_statistic->setParamAtIndex(index, p);
-  if (selectedRow() == numberOfRows() - 1 &&
-      numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
-    m_numberOfRows++;
-  }
-  selectCellAtLocation(selectedColumn(), selectedRow() + 1);
-  reloadData(false);  // TODO why needed ?
-  return true;
 }
 
 }  // namespace Probability

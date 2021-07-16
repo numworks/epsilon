@@ -96,11 +96,15 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	input_homogeneity_controller.cpp \
 	homogeneity_results_controller.cpp \
 	statistic_graph_controller.cpp \
+	goodness_table_view_controller.cpp \
+	homogeneity_table_view_controller.cpp \
 )
 
 app_probability_src +=  $(addprefix apps/probability/abstract/,\
   homogeneity_data_source.cpp \
   input_categorical_controller.cpp \
+  table_view_controller.cpp \
+	input_homogeneity_data_source.cpp \
 )
 
 

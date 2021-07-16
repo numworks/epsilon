@@ -113,15 +113,15 @@ void InputCategoricalView::selectCorrectView() {
     case k_indexOfSignificance:
       m_significanceCell.setHighlighted(true);
       // TODO compute position of cell and scrollToContentRect
-      scrollToContentPoint(m_significanceCell.pointFromPointInView(this, KDPointZero)
-                               .opposite()
-                               .translatedBy(KDPoint(0, 100)));
+      scrollToContentPoint(
+          m_contentView.pointFromPointInView(&m_significanceCell,
+                                             m_significanceCell.bounds().bottomRight()));
       break;
     default:
       assert(m_viewSelection.selectedRow() == k_indexOfNext);
       m_next.setHighlighted(true);
       scrollToContentPoint(
-          m_next.pointFromPointInView(this, KDPointZero).opposite().translatedBy(KDPoint(0, 100)));
+          m_contentView.pointFromPointInView(&m_next, m_next.bounds().bottomRight()));
       break;
   }
 }

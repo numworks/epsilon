@@ -42,15 +42,6 @@ bool handlePreemption(bool stalling) {
     return false;
   }
   if (currentPreemptiveState.keyDown(Keyboard::Key::OnOff)) {
-    if (stalling && Device::CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::User)) {
-      /* If we are still processing an event (stalling) and in a middle of a
-       * "hard-might-be-long computation" (custom checkpoint is set), we
-       * checkout the Custom checkpoint and try again to wait for the event to
-       * be processed in case we can avoid preemptively switching off. */
-      sPreemtiveState = currentPreemptiveState;
-      Device::CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::User);
-      return true;
-    }
     Device::Power::suspend(true);
     if (stalling && Device::CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::Home)) {
       /* If we were stalling (in the middle of processing an event), we load

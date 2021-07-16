@@ -11,7 +11,7 @@ void USBPlugged(const char * input) {
     reply(sSyntaxError);
     return;
   }
-  if (Ion::USB::isPlugged()) {
+  if (USB::isPlugged()) {
     reply(sON);
   } else {
     reply(sOFF);

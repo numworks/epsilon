@@ -8,8 +8,12 @@ namespace Board {
 
 KernelHeader * kernelHeader() {
   return reinterpret_cast<KernelHeader *>(Config::KernelStartAddress);
-
 }
+
+UserlandHeader * userlandHeader() {
+  return reinterpret_cast<UserlandHeader *>(Config::UserlandStartAddress);
+}
+
 }
 }
 }

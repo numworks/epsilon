@@ -243,20 +243,9 @@ void lockPCBVersion() {}
 
 bool pcbVersionIsLocked() { return true; }
 
-bool isRunningSlotA() {
-  return true;
-}
 
 bool isInReflashableSector(uint32_t address) {
   return address >= InternalFlash::Config::StartAddress && address < InternalFlash::Config::EndAddress;
-}
-
-uint32_t slotAUserlandStart() {
-  return Config::UserlandStartAddress;
-}
-
-uint32_t slotBUserlandStart() {
-  return Config::UserlandStartAddress;
 }
 
 }

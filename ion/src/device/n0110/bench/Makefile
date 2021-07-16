@@ -17,12 +17,16 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/command/, \
   ping.cpp \
   print.cpp \
   screen_id.cpp \
+  sleep.cpp \
+  standby.cpp \
+  stop.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/drivers/, \
   board.cpp \
   console.cpp \
   display.cpp \
+  power.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/n0110/bench/, \

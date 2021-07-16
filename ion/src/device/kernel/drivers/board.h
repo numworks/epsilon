@@ -22,12 +22,6 @@ void shutdownPeripherals(bool keepLEDAwake = false);
 void initInterruptionPriorities();
 void setDefaultGPIO();
 
-enum class Frequency {
-  Low = 0,
-  High = 1
-};
-void setStandardFrequency(Frequency f);
-
 bool isInReflashableSector(uint32_t address);
 void switchExecutableSlot(uint32_t address);
 void enableExternalApps();

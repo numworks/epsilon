@@ -1,9 +1,7 @@
 #include "wakeup.h"
 #include <drivers/battery.h>
-#include <drivers/usb_privileged.h>
 #include <drivers/config/battery.h>
 #include <drivers/config/keyboard.h>
-#include <drivers/config/usb.h>
 #include <kernel/drivers/keyboard.h>
 #include <regs/regs.h>
 
@@ -30,18 +28,6 @@ void onChargingEvent() {
    * wake up event on the rising edge. */
   EXTI.RTSR()->set(Battery::Config::ChargingPin.pin(), true);
 }
-
-void onUSBPlugging() {
-  USB::initGPIO();
-  /* Here, EXTICR3 register is filled between position 4-7 (Vbus pin = 9) with
-   * 0000 (Vbus GPIO = group A). */
-  SYSCFG.EXTICR()->setEXTI(USB::Config::VbusPin.pin(), USB::Config::VbusPin.group());
-
-  EXTI.EMR()->set(USB::Config::VbusPin.pin(), true);
-  EXTI.FTSR()->set(USB::Config::VbusPin.pin(), true);
-  EXTI.RTSR()->set(USB::Config::VbusPin.pin(), true);
-}
-
 
 void onOnOffKeyDown() {
   Keyboard::Key key = Keyboard::Key::OnOff;

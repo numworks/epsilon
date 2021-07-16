@@ -11,6 +11,7 @@
 
 #include "bordered_table_view_data_source.h"
 #include "probability/abstract/dynamic_data_source.h"
+#include "probability/abstract/homogeneity_data_source.h"
 #include "probability/models/statistic/goodness_statistic.h"
 
 namespace Probability {
@@ -46,15 +47,18 @@ public:
   void deleteLastRow() override;
 
 private:
+  constexpr static int k_rowHeight = 20;
   constexpr static int k_typeOfHeader = 1;
   constexpr static int k_initialNumberOfRows = 4;
   constexpr static int k_numberOfColumns = 2;
-  constexpr static int k_maxNumberOfReusableRows = 8;  // TODO compute
+  constexpr static int k_maxNumberOfReusableRows = (Ion::Display::Height -
+                                                    Escher::Metric::TitleBarHeight -
+                                                    Escher::Metric::StackTitleHeight) /
+                                                   HomogeneityTableDataSource::k_rowHeight;
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
                                         k_borderBetweenColumns) /
                                        2;
-  constexpr static int k_rowHeight = 20;
   constexpr static int k_innerCellRightMargin = 5;
 
   int m_numberOfRows;

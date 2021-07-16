@@ -55,7 +55,7 @@ public:
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
 
 private:
-  EvenOddBufferTextCell m_cells[HomogeneityTableDataSource::k_maxNumberOfInnerCells];
+  EvenOddBufferTextCell m_cells[HomogeneityTableDataSource::k_numberOfReusableCells];
 };
 
 class HomogeneityResultsController : public Page {

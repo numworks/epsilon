@@ -15,12 +15,11 @@ namespace Probability {
 using namespace Escher;
 
 class InputHomogeneityDataSource : public TableViewDataSource,
-                                   public Shared::TextFieldDelegate,
                                    public DynamicTableViewDataSource {
 public:
   InputHomogeneityDataSource(SelectableTableView * tableView,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             HomogeneityStatistic * statistic);
+                             HomogeneityStatistic * statistic, TextFieldDelegate * textFieldDelegate);
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); }
@@ -31,12 +30,6 @@ public:
   KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
 
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
-  // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::TextField * textField,
-                                    Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
 
 private:
   int m_numberOfRows;

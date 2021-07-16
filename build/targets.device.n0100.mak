@@ -1,3 +1,12 @@
+.PHONY: $(BUILD_DIR)/epsilon.dfu
+$(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
+	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland.elf
+	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
+	  $(subst epsilon,kernel,$(BUILD_DIR)/kernel.elf) \
+	  $(subst epsilon,userland,$(BUILD_DIR)/userland.elf) \
+	  -o $@
+
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu
 	@echo "DFU     $@"

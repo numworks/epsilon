@@ -9,9 +9,9 @@ namespace USB {
 
 void DFU() {
   // Configure the kernel to avoid interrupting DFU protocole except on Back key
-  USB::willExecuteDFU();
+  Device::USB::willExecuteDFU();
   Device::USB::Calculator::PollAndReset();
-  USB::didExecuteDFU();
+  Device::USB::didExecuteDFU();
 }
 
 }

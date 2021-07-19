@@ -310,6 +310,11 @@ void hideSpinner() {
   s_spinnerStatus = SpinnerStatus::Hidden;
 }
 
+void pauseStallingTimer() {
+  TIM2.SR()->setUIF(false);
+  TIM2.CR1()->setCEN(false);
+}
+
 void resetStallingTimer() {
   // Init timer on the first call to getEvent
   if (!TIM2.CR1()->getCEN()) {

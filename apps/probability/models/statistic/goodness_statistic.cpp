@@ -8,6 +8,13 @@ GoodnessStatistic::GoodnessStatistic() {
   }
 }
 
+void GoodnessStatistic::computeTest() {
+  m_degreesOfFreedom = _degreesOfFreedom();
+  m_z = _z();
+  m_zAlpha = absIfNeeded(_zAlpha(m_degreesOfFreedom, m_threshold));
+  m_pValue = _pVal(m_degreesOfFreedom, m_z);
+}
+
 int GoodnessStatistic::numberOfValuePairs() {
   // Compute number of rows based on undefined flag
   int i = k_maxNumberOfRows - 1;

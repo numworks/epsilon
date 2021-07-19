@@ -8,14 +8,6 @@
 
 namespace Probability {
 
-void Chi2Statistic::computeTest() {
-  // TODO move to goodness only ?
-  m_degreesOfFreedom = _degreesOfFreedom();
-  m_z = _z();
-  m_zAlpha = absIfNeeded(_zAlpha(m_degreesOfFreedom, m_threshold));
-  m_pValue = _pVal(m_degreesOfFreedom, m_z);
-}
-
 float Chi2Statistic::normedDensityFunction(float x) {
   return Chi2Law::EvaluateAtAbscissa(x, m_degreesOfFreedom);
 }
@@ -30,7 +22,8 @@ float Chi2Statistic::_z() {
 }
 
 float Chi2Statistic::_zAlpha(float degreesOfFreedom, float significanceLevel) {
-  return Chi2Law::CumulativeDistributiveInverseForProbability(1 - significanceLevel, degreesOfFreedom);
+  return Chi2Law::CumulativeDistributiveInverseForProbability(1 - significanceLevel,
+                                                              degreesOfFreedom);
 }
 
 float Chi2Statistic::_pVal(float degreesOfFreedom, float z) {

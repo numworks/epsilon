@@ -5,7 +5,7 @@
 namespace Probability {
 
 HomogeneityStatistic::HomogeneityStatistic() {
-  for (int i = 0; i < numberOfParameters(); i++) {
+  for (int i = 0; i < numberOfStatisticParameters(); i++) {
     m_input[i] = k_undefinedValue;
     m_expectedValues[i] = k_undefinedValue;
   }
@@ -30,16 +30,16 @@ void HomogeneityStatistic::computeTest() {
   m_pValue = _pVal(m_degreesOfFreedom, m_z);
 }
 
-int HomogeneityStatistic::expectedValueAtLocation(int row, int column) {
+float HomogeneityStatistic::expectedValueAtLocation(int row, int column) {
   return m_expectedValues[index2DToIndex(row, column)];
 }
 
-float HomogeneityStatistic::observedValue(int index) {
-  return paramAtIndex(index);
+float HomogeneityStatistic::observedValue(int resultsIndex) {
+  return paramAtIndex(resultsIndexToArrayIndex(resultsIndex));
 }
 
-float HomogeneityStatistic::expectedValue(int index) {
-  return m_expectedValues[index];
+float HomogeneityStatistic::expectedValue(int resultsIndex) {
+  return m_expectedValues[resultsIndexToArrayIndex(resultsIndex)];
 }
 
 int HomogeneityStatistic::_degreesOfFreedom(Index2D max) {
@@ -83,15 +83,32 @@ int HomogeneityStatistic::index2DToIndex(int row, int column) {
   return column + row * k_maxNumberOfColumns;
 }
 
+HomogeneityStatistic::Index2D HomogeneityStatistic::resultsIndexToIndex2D(int resultsIndex) {
+  assert(m_numberOfResultColumns > 0);
+  return HomogeneityStatistic::Index2D{.row = resultsIndex / m_numberOfResultColumns,
+                                       .col = resultsIndex % m_numberOfResultColumns};
+}
+
+int HomogeneityStatistic::resultsIndexToArrayIndex(int resultsIndex) {
+  return index2DToIndex(resultsIndexToIndex2D(resultsIndex));
+}
+
 void HomogeneityStatistic::computeExpectedValues() {
   // Compute row, column and overall sums
   m_total = 0;
   Index2D max = numberOfInputParams();
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
+      // int index = index2DToIndex(row, col);
+      if (row == 0) {
+        m_columnTotals[col] = 0;
+      }
+      if (col == 0) {
+        m_rowTotals[row] = 0;
+      }
       float p = parameterAtPosition(row, col);
-      m_columnTotals[index2DToIndex(row, col)] += p;
-      m_rowTotals[index2DToIndex(row, col)] += p;
+      m_columnTotals[col] += p;
+      m_rowTotals[row] += p;
       m_total += p;
     }
   }
@@ -99,7 +116,7 @@ void HomogeneityStatistic::computeExpectedValues() {
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
       int index = index2DToIndex(row, col);
-      m_expectedValues[index] = m_rowTotals[index] * m_columnTotals[index] / m_total;
+      m_expectedValues[index] = m_rowTotals[row] * m_columnTotals[col] / m_total;
     }
   }
 }

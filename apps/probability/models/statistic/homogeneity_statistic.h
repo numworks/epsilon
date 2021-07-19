@@ -17,7 +17,7 @@ public:
 
   int numberOfResultRows() { return m_numberOfResultRows; }
   int numberOfResultColumns() { return m_numberOfResultColumns; }
-  int expectedValueAtLocation(int row, int column);
+  float expectedValueAtLocation(int row, int column);
 
   constexpr static int k_maxNumberOfColumns = 8;
   constexpr static int k_maxNumberOfRows = 8;
@@ -28,8 +28,8 @@ public:
   };
 
 protected:
-  float observedValue(int index) override;
-  float expectedValue(int index) override;
+  float observedValue(int resultsIndex) override;
+  float expectedValue(int resultsIndex) override;
   float observedValueAtPosition(Index2D index);
   float expectedValueAtPosition(Index2D index);
   int _degreesOfFreedom(Index2D max);
@@ -42,6 +42,8 @@ private:
   Index2D indexToIndex2D(int index);
   int index2DToIndex(Index2D indexes);
   int index2DToIndex(int row, int column);
+  Index2D resultsIndexToIndex2D(int resultsIndex);
+  int resultsIndexToArrayIndex(int resultsIndex);
   void computeExpectedValues();
 
   float m_input[k_maxNumberOfColumns * k_maxNumberOfRows];

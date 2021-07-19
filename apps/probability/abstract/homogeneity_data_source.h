@@ -63,13 +63,15 @@ public:
                                                    1;
   constexpr static int k_numberOfReusableCells = k_numberOfReusableRows * k_numberOfReusableColumns;
 
+protected:
+  TableViewDataSource * m_contentTable;
+
 private:
   constexpr static int k_typeOfRowHeader = 17;
   constexpr static int k_typeOfColumnHeader = 18;
   constexpr static int k_typeOfTopLeftCell = 19;
 
   I18n::Message m_headerPrefix;
-  TableViewDataSource * m_contentTable;
 
   SolidColorCell m_topLeftCell;
   EvenOddBufferTextCell m_rowHeader[k_maxNumberOfRows];

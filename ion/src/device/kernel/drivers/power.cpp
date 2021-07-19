@@ -34,6 +34,12 @@ void suspend(bool checkIfOnOffKeyReleased) {
   bool isLEDActive = LED::getColor() != KDColorBlack;
   bool plugged = Ion::USB::isPlugged();
 
+  /* Pause the stalling timer to avoid having the spinner activate during the
+   * shutdown sequence.
+   * The timer will resume during the next call to getEvent, when the OnOff
+   * event is processed. */
+  Events::pauseStallingTimer();
+
   if (checkIfOnOffKeyReleased) {
     waitUntilOnOffKeyReleased();
   }

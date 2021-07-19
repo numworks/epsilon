@@ -23,8 +23,8 @@ public:
   float rowTotal(int row) { return m_rowTotals[row]; }
   float columnTotal(int column) { return m_columnTotals[column]; }
 
-  constexpr static int k_maxNumberOfColumns = 8;
-  constexpr static int k_maxNumberOfRows = 8;
+  constexpr static int k_maxNumberOfColumns = 10;
+  constexpr static int k_maxNumberOfRows = 10;
 
   struct Index2D {
     int row;

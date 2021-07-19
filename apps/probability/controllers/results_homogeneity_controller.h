@@ -35,6 +35,17 @@ public:
   constexpr static int k_topMargin = 5;
 
 private:
+  class ButtonWithHorizontalMargins : public VerticalLayout {
+  public:
+    ButtonWithHorizontalMargins(Escher::Button * button,
+                                KDCoordinate margin = k_defaultHorizontalMargin);
+    int numberOfSubviews() const override { return 1; }
+    Escher::View * subviewAtIndex(int i) override { return m_button; };
+
+  private:
+    constexpr static KDCoordinate k_defaultHorizontalMargin = Metric::CommonLeftMargin;
+    Escher::Button * m_button;
+  };
   constexpr static int k_indexOfTopSpacer = 0;
   constexpr static int k_indexOfTitle = 1;
   constexpr static int k_indexOfTable = 2;
@@ -44,6 +55,7 @@ private:
   MessageTextView m_title;
   SelectableTableView * m_table;
   Escher::Button m_next;
+  ButtonWithHorizontalMargins m_buttonWrapper;
 };
 
 class ResultsHomogeneityController : public Page {

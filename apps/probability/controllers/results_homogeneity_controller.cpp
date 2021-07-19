@@ -21,7 +21,8 @@ HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
             Palette::GrayVeryDark,
             Escher::Palette::WallScreenDark),
     m_table(table),
-    m_next(parent, I18n::Message::Next, buttonActionInvocation(), KDFont::LargeFont) {
+    m_next(parent, I18n::Message::Next, buttonActionInvocation(), KDFont::LargeFont),
+    m_buttonWrapper(&m_next) {
 }
 
 void HomogeneityResultsView::buttonAction() {
@@ -48,6 +49,13 @@ void ResultsHomogeneityController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_table);
 }
 
+Probability::HomogeneityResultsView::ButtonWithHorizontalMargins::ButtonWithHorizontalMargins(
+    Escher::Button * button,
+    KDCoordinate margin) :
+    VerticalLayout(Palette::WallScreenDark), m_button(button) {
+  setMargins(margin, KDCoordinate(0));
+}
+
 Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
   switch (i) {
     case k_indexOfTopSpacer:
@@ -57,7 +65,7 @@ Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
     case k_indexOfTable:
       return m_table;
     case k_indexOfButton:
-      return &m_next;
+      return &m_buttonWrapper;
   }
   assert(false);
   return nullptr;

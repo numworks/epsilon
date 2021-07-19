@@ -19,6 +19,10 @@ public:
   int numberOfResultColumns() { return m_numberOfResultColumns; }
   float expectedValueAtLocation(int row, int column);
 
+  float total() { return m_total;}
+  float rowTotal(int row) { return m_rowTotals[row]; }
+  float columnTotal(int column) { return m_columnTotals[column]; }
+
   constexpr static int k_maxNumberOfColumns = 8;
   constexpr static int k_maxNumberOfRows = 8;
 

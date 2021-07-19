@@ -59,7 +59,7 @@ public:
 
 private:
   HomogeneityResultsView m_contentView;
-  HomogeneityTableDataSource m_tableData;
+  HomogeneityTableDataSourceWithTotals m_tableData;
   ResultsHomogeneityDataSource m_innerTableData;
 
   SelectableTableViewWithBackground m_table;

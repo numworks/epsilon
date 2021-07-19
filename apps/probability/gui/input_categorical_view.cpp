@@ -123,7 +123,6 @@ void InputCategoricalView::selectCorrectView() {
       view = &m_next;
     }
     view->setHighlighted(true);
-    // compute position of cell and scrollToContentRect
     KDPoint offset = m_contentView.pointFromPointInView(view, view->bounds().bottomRight());
     scrollToContentPoint(offset);
   }

@@ -14,12 +14,12 @@ HomogeneityResultsView::ContentView::ContentView(Responder * parent,
                                                  SelectableTableView * table,
                                                  ButtonDelegate * buttonDelegate) :
     VerticalLayout(Escher::Palette::WallScreenDark),
-    m_topSpacer(Palette::WallScreenDark, 0, k_topMargin),
+    m_topSpacer(Escher::Palette::WallScreenDark, 0, k_topMargin),
     m_title(KDFont::SmallFont,
             I18n::Message::HomogeneityResultsTitle,
             0.5f,
             0.5f,
-            Palette::GrayVeryDark,
+            Escher::Palette::GrayVeryDark,
             Escher::Palette::WallScreenDark),
     m_table(table),
     m_next(parent,
@@ -50,11 +50,20 @@ Escher::View * Probability::HomogeneityResultsView::ContentView::subviewAtIndex(
   return nullptr;
 }
 
+KDPoint Probability::HomogeneityResultsView::ContentView::tableOrigin() {
+  return KDPoint(0, m_title.minimalSizeForOptimalDisplay().height() + k_topMargin);
+}
+
+KDPoint Probability::HomogeneityResultsView::ContentView::buttonOrigin() {
+  return KDPoint(0, tableOrigin().y() + m_table->minimalSizeForOptimalDisplay().height());
+}
+
 Probability::HomogeneityResultsView::HomogeneityResultsView(Responder * parent,
                                                             SelectableTableView * table,
                                                             ButtonDelegate * buttonDelegate) :
     ScrollView(&m_contentView, &m_scrollDataSource), m_contentView(parent, table, buttonDelegate) {
-  setDecoratorType(Escher::ScrollView::Decorator::Type::None);
+  setMargins(Metric::CellTopMargin, 0, Metric::CommonBottomMargin, 0);
+  setBackgroundColor(Palette::WallScreenDark);
 }
 
 KDSize Probability::HomogeneityResultsView::minimalSizeForOptimalDisplay() const {
@@ -65,16 +74,21 @@ KDSize Probability::HomogeneityResultsView::minimalSizeForOptimalDisplay() const
   return KDSize(bounds().width(), requiredSize.height());
 }
 
+void Probability::HomogeneityResultsView::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(rect, KDColorOrange);
+}
+
 ResultsHomogeneityController::ResultsHomogeneityController(
     StackViewController * stackViewController,
     HomogeneityStatistic * statistic,
     ResultsController * resultsController) :
     Page(stackViewController),
+    ChainedSelectableTableViewDelegate(&m_tableData),
     m_resultsController(resultsController),
     m_contentView(this, &m_table, this),
     m_tableData(&m_innerTableData),
     m_innerTableData(statistic),
-    m_table(this, &m_tableData, &m_tableData, &m_tableData),
+    m_table(this, &m_tableData, &m_tableData, this),
     m_isTableSelected(true) {
   m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_table.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
@@ -90,6 +104,7 @@ void ResultsHomogeneityController::didBecomeFirstResponder() {
   if (m_table.selectedRow() < 0) {
     m_table.selectCellAtLocation(1, 1);
   }
+  m_table.reloadData(false);
   selectCorrectView();
 }
 
@@ -108,6 +123,14 @@ void Probability::ResultsHomogeneityController::buttonAction() {
   openPage(m_resultsController);
 }
 
+void Probability::ResultsHomogeneityController::tableViewDidChangeSelectionAndDidScroll(
+    SelectableTableView * t,
+    int previousSelectedCellX,
+    int previousSelectedCellY,
+    bool withinTemporarySelection) {
+  scrollToCorrectLocation();
+}
+
 void Probability::ResultsHomogeneityController::selectCorrectView() {
   m_contentView.button()->setHighlighted(!m_isTableSelected);
   Escher::Responder * responder;
@@ -117,4 +140,21 @@ void Probability::ResultsHomogeneityController::selectCorrectView() {
     responder = m_contentView.button();
   }
   Container::activeApp()->setFirstResponder(responder);
+  scrollToCorrectLocation();
+}
+
+void Probability::ResultsHomogeneityController::scrollToCorrectLocation() {
+  if (m_isTableSelected) {
+    // Scroll to cell
+    int row = m_table.selectedRow(), column = m_table.selectedColumn();
+    KDRect cellOffset = KDRect(0,
+                               m_tableData.cumulatedHeightFromIndex(row) + m_table.topMargin(),
+                               m_tableData.columnWidth(column),
+                               m_tableData.rowHeight(row));
+    m_contentView.scrollToContentRect(cellOffset.translatedBy(m_contentView.tableOrigin()));
+  } else {
+    // Scroll to button
+    m_contentView.scrollToContentRect(
+        KDRect(m_contentView.buttonOrigin(), m_contentView.button()->bounds().size()));
+  }
 }

@@ -12,6 +12,7 @@
 #include <kandinsky/coordinate.h>
 
 #include "probability/abstract/button_delegate.h"
+#include "probability/abstract/chained_selectable_table_view_delegate.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/abstract/results_homogeneity_data_source.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
@@ -35,7 +36,11 @@ public:
   Escher::Button * button() { return m_contentView.button(); }
   // ScrollView
   KDSize minimalSizeForOptimalDisplay() const override;
-  KDSize contentSize() const override { return KDSize(bounds().width(), 10000); };
+  KDSize contentSize() const override { return KDSize(bounds().width(), 10000); }
+  KDPoint tableOrigin() { return m_contentView.tableOrigin(); }
+  KDPoint buttonOrigin() { return m_contentView.buttonOrigin(); }
+
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 
   constexpr static int k_topMargin = 5;
 
@@ -47,6 +52,8 @@ private:
     Escher::View * subviewAtIndex(int i) override;
     // TODO add selection behavior
     Escher::Button * button() { return &m_next; }
+    KDPoint tableOrigin();
+    KDPoint buttonOrigin();
 
   private:
     class ButtonWithHorizontalMargins : public VerticalLayout {
@@ -76,7 +83,9 @@ private:
   ScrollViewDataSource m_scrollDataSource;
 };
 
-class ResultsHomogeneityController : public Page, public ButtonDelegate {
+class ResultsHomogeneityController : public Page,
+                                     public ButtonDelegate,
+                                     public ChainedSelectableTableViewDelegate {
 public:
   ResultsHomogeneityController(StackViewController * stackViewController,
                                HomogeneityStatistic * statistic,
@@ -91,8 +100,14 @@ public:
 
   void buttonAction() override;
 
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
+                                               int previousSelectedCellX,
+                                               int previousSelectedCellY,
+                                               bool withinTemporarySelection = false) override;
+
 private:
   void selectCorrectView();
+  void scrollToCorrectLocation();
 
   ResultsController * m_resultsController;
   HomogeneityResultsView m_contentView;

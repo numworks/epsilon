@@ -72,6 +72,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
+  void selectCorrectView();
   HomogeneityResultsView m_contentView;
   HomogeneityTableDataSourceWithTotals m_tableData;
   ResultsHomogeneityDataSource m_innerTableData;

@@ -94,7 +94,7 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 	results_controller.cpp \
 	input_goodness_controller.cpp \
 	input_homogeneity_controller.cpp \
-	homogeneity_results_controller.cpp \
+	results_homogeneity_controller.cpp \
 	statistic_graph_controller.cpp \
 	goodness_table_view_controller.cpp \
 	homogeneity_table_view_controller.cpp \
@@ -105,6 +105,7 @@ app_probability_src +=  $(addprefix apps/probability/abstract/,\
   input_categorical_controller.cpp \
   table_view_controller.cpp \
 	input_homogeneity_data_source.cpp \
+	results_homogeneity_data_source.cpp \
 )
 
 

@@ -83,7 +83,7 @@ private:
   // Controllers
   // TODO store only memory for one controller (as a union ?)
   StatisticGraphController m_statisticGraphController;
-  HomogeneityResultsController m_homogeneityResultsController;
+  ResultsHomogeneityController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
   InputGoodnessController m_inputGoodnessController;
   ResultsController m_resultsController;

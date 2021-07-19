@@ -13,7 +13,13 @@ using namespace Probability;
 HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
                                                Escher::SelectableTableView * table) :
     VerticalLayout(Escher::Palette::WallScreenDark),
-    m_title(KDFont::SmallFont, I18n::Message::HomogeneityResultsTitle, 0.5f, 0.5f),
+    m_topSpacer(Palette::WallScreenDark, 0, k_topMargin),
+    m_title(KDFont::SmallFont,
+            I18n::Message::HomogeneityResultsTitle,
+            0.5f,
+            0.5f,
+            Palette::GrayVeryDark,
+            Escher::Palette::WallScreenDark),
     m_table(table),
     m_next(parent, I18n::Message::Next, buttonActionInvocation()) {
 }
@@ -27,7 +33,14 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     Page(stackViewController),
     m_contentView(this, &m_table),
     m_tableData(&m_innerTableData),
+    m_innerTableData(statistic),
     m_table(this, &m_tableData, &m_tableData, &m_tableData) {
+  m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
+  m_table.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
+  m_table.setMargins(HomogeneityResultsView::k_topMargin,
+                     Metric::CommonLeftMargin,
+                     Metric::CommonRightMargin,
+                     0);
 }
 
 void ResultsHomogeneityController::didBecomeFirstResponder() {
@@ -37,6 +50,8 @@ void ResultsHomogeneityController::didBecomeFirstResponder() {
 
 Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
   switch (i) {
+    case k_indexOfSpacer:
+      return &m_topSpacer;
     case k_indexOfTitle:
       return &m_title;
     case k_indexOfTable:

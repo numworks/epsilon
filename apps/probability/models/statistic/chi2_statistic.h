@@ -24,6 +24,8 @@ public:
   constexpr static float k_undefinedValue = NAN;
 
 protected:
+  float m_degreesOfFreedom;
+
   const ParameterRepr * paramReprAtIndex(int i) const override { return nullptr; }
 
   // Chi2 specific
@@ -32,10 +34,9 @@ protected:
   virtual int _degreesOfFreedom() = 0;
   virtual int numberOfValuePairs() = 0;
 
-private:
+  float _z();
   static float _zAlpha(float degreesOfFreedom, float significanceLevel);
   static float _pVal(float degreesOfFreedom, float z);
-  float m_degreesOfFreedom;
 };
 
 }  // namespace Probability

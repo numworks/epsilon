@@ -115,7 +115,7 @@ app_shared_test_src += $(addprefix apps/shared/,\
   sequence_store.cpp \
 )
 
-tests_src += $(addprefix apps/shared/test/,\
-  function_alignement.cpp \
-  interval.cpp \
-)
+# tests_src += $(addprefix apps/shared/test/,\
+#   function_alignement.cpp \
+#   interval.cpp \
+# )

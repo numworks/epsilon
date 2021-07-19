@@ -118,6 +118,7 @@ Keyboard::State popKeyboardState() {
 bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
   int startTime = Timing::millis();
   int elapsedTime = 0;
+  bool eventOccurred = false;
   Device::Board::setClockLowFrequency();
   while (elapsedTime < maximumDelay) {
     // Stop until either systick or a keyboard/platform interruption happens
@@ -125,15 +126,15 @@ bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
      * set a longer interrupt timer which would udpate systick millis and
      * optimize the interval of time the execution is stopped. */
     asm("wfi");
-    if (!Device::Keyboard::Queue::sharedQueue()->isEmpty()) {
-      Device::Board::setClockStandardFrequency();
-      return true;
-    }
     elapsedTime = static_cast<int>(Ion::Timing::millis() - startTime);
+    if (!Device::Keyboard::Queue::sharedQueue()->isEmpty()) {
+      eventOccurred = true;
+      break;
+    }
   }
   Device::Board::setClockStandardFrequency();
   *timeout = std::max(0, *timeout - elapsedTime);
-  return false;
+  return eventOccurred;
 }
 
 // ion/include/ion/events.h

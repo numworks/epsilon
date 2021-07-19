@@ -1,8 +1,30 @@
+#include <float.h>
 #include <poincare/conic.h>
 #include <poincare/polynomial.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
+
+double smallestPositive(double a, double b, bool strictly = true) {
+  /* Return smallest positive number between a and b, assuming at least one is
+   * positive */
+  if (a > b) {
+    return smallestPositive(b, a, strictly);
+  }
+  // We have a <= b
+  assert(b > 0.0 || (!strictly && b == 0.0));
+  return (a > 0.0 || (!strictly && a == 0.0)) ? a : b;
+}
+
+double nonSmallestPositive(double a, double b, bool strictly = true) {
+  /* Same as smallestPositive, returning the other value. */
+  if (a > b) {
+    return nonSmallestPositive(b, a, strictly);
+  }
+  // We have a <= b
+  assert(b > 0.0 || (!strictly && b == 0.0));
+  return (a > 0.0 || (!strictly && a == 0.0)) ? b : a;
+}
 
 Conic::Conic(Expression e, Context * context) :
     m_a(0.0),
@@ -100,7 +122,8 @@ Conic::Type Conic::getConicType() {
 }
 
 void Conic::rotateConic() {
-  if (m_b == 0.0) {
+  if (m_b == 0.0 && (m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c) &&
+                     m_a == smallestPositive(m_a, m_c))) {
     return;
   }
   double a = m_a;
@@ -110,14 +133,39 @@ void Conic::rotateConic() {
   double e = m_e;
   // If b is non null and a = c, there is a pi/2 rotation.
   double r = (a == c) ? M_PI / 2 : std::atan(b / (a - c)) / 2.0;
-  double cr = std::cos(r);
-  double sr = std::sin(r);
+  double cr, sr;
+  for (int i = 0; i < 4; i++) {
+    cr = std::cos(r);
+    sr = std::sin(r);
+    // replacing x with cr*x+sr*y and y with sr*x-cr*y to cancel B
+    m_a = a * cr * cr + b * cr * sr + c * sr * sr;
+    // TODO Hugo : Add a tolerance here
+    m_b = 2 * a * cr * sr - b * cr * cr + b * sr * sr - 2 * c * sr * cr;
+    m_c = a * sr * sr - b * cr * sr + c * cr * cr;
+    if (std::abs(m_a) < 100 * DBL_EPSILON) {
+      m_a = 0.0;
+    }
+    if (std::abs(m_b) < 100 * DBL_EPSILON) {
+      m_b = 0.0;
+    }
+    assert(m_b == 0);
+    if (std::abs(m_c) < 100 * DBL_EPSILON) {
+      m_c = 0.0;
+    }
+    if (m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c) &&
+        m_a == smallestPositive(m_a, m_c)) {
+      break;
+    }
+    assert(i < 3);
+    r += M_PI / 2;
+  }
   m_r = -r;
-  // replacing x with cr*x+sr*y and y with sr*x-cr*y to cancel B
-  m_a = a * cr * cr + b * cr * sr + c * sr * sr;
-  m_b = 0.0;  // 2*a*cr*sr - b*cr*cr + b*sr*sr - 2*c*sr*cr; // TODO Hugo : Add a
-              // tolerance here
-  m_c = a * sr * sr - b * cr * sr + c * cr * cr;
+  // Conic shall be rotated such that a is positive, non-null and smaller than c
+  // if c is positive
+  assert(m_a > 0.0);
+  assert(m_c <= 0.0 || m_a <= m_c);
+  assert(m_a == smallestPositive(m_a, m_c));
+
   m_d = d * cr + e * sr;
   m_e = d * sr - e * cr;
   assert(m_b == 0.0);
@@ -159,8 +207,17 @@ void Conic::centerConic() {
   m_cy = -k;
   // A and C remain unchanged
   m_d = d - 2 * a * h;
+  if (std::abs(m_d) < 100 * DBL_EPSILON) {
+    m_d = 0.0;
+  }
   m_e = (c != 0) ? 0.0 : e - 2 * c * k;  // TODO Hugo : Add a tolerance here
+  if (std::abs(m_e) < 100 * DBL_EPSILON) {
+    m_e = 0.0;
+  }
   m_f = f + a * h * h + c * k * k - d * h - e * k;
+  if (std::abs(m_f) < 100 * DBL_EPSILON) {
+    m_f = 0.0;
+  }
   assert(m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
          ((m_a * m_c == 0.0) == (m_f == 0.0)));
 }
@@ -193,33 +250,12 @@ void Conic::getCenter(double * cx, double * cy) {
   *cy = m_cy;
 }
 
-double smallestPositive(double a, double b) {
-  /* Return smallest positive number between a and b, assuming at least one is
-   * positive */
-  if (a > b) {
-    return smallestPositive(b, a);
-  }
-  // We have a <= b
-  assert(b >= 0.0);
-  return a >= 0.0 ? a : b;
-}
-
-double nonSmallestPositive(double a, double b) {
-  /* Same as smallestPositive, returning the other value. */
-  if (a > b) {
-    return nonSmallestPositive(b, a);
-  }
-  // We have a <= b
-  assert(b >= 0.0);
-  return a >= 0.0 ? b : a;
-}
-
 double Conic::getEccentricity() {
   assert(getConicType() != Type::Undefined);
   canonize();
   Type type = getConicType();
-  double e =
-      std::sqrt(1 - smallestPositive(m_a, m_c) / nonSmallestPositive(m_a, m_c));
+  double e = std::sqrt(1 - smallestPositive(m_a, m_c, false) /
+                               nonSmallestPositive(m_a, m_c, false));
   if (type == Type::Circle) {
     assert(e == 0.0);
   } else if (type == Type::Parabola) {

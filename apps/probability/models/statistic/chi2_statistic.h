@@ -9,7 +9,6 @@ namespace Probability {
 
 class Chi2Statistic : public CachedStatistic {
 public:
-  void computeTest() override;
   const char * testCriticalValueSymbol() override { return "X2"; }
   const char * estimateSymbol() override { return ""; }
   I18n::Message estimateDescription() override { return I18n::Message::Default; }
@@ -31,7 +30,6 @@ protected:
   // Chi2 specific
   virtual float expectedValue(int index) = 0;
   virtual float observedValue(int index) = 0;
-  virtual int _degreesOfFreedom() = 0;
   virtual int numberOfValuePairs() = 0;
 
   float _z();

@@ -104,6 +104,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   display_vblank.cpp \
   external_flash.cpp \
   external_flash_command.cpp \
+  keyboard_init.cpp \
   power_configuration.cpp \
   usb.cpp \
 )
@@ -120,6 +121,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
 
 ion_device_bootloader_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   display_vblank.cpp \
+  keyboard_init.cpp \
 )
 
 ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bootloader_flasher_src) $(ion_device_dfu_src)

@@ -9,7 +9,7 @@
 #include <drivers/display.h>
 #include <drivers/internal_flash.h>
 #include <drivers/internal_flash_otp.h>
-#include <drivers/keyboard.h>
+#include <drivers/keyboard_init.h>
 #include <drivers/led.h>
 #include <drivers/usb_privileged.h>
 #include <drivers/external_flash.h>
@@ -146,12 +146,27 @@ void initMPU() {
 }
 
 void initPeripherals() {
-  // The other peripherals have been initialized by the bootloader.
+  initCompensationCell();
+  LED::init();
+  USB::init();
+  Battery::init();
+  Display::init();
+  Keyboard::init();
+  ExternalFlash::init();
+  Backlight::init();
   Console::init();
 }
 
 void shutdownPeripherals() {
   Console::shutdown();
+  Backlight::shutdown();
+  ExternalFlash::shutdown();
+  Keyboard::shutdown();
+  Display::shutdown();
+  Battery::shutdown();
+  USB::shutdown();
+  LED::shutdown();
+  shutdownCompensationCell();
 }
 
 void initPeripheralsClocks() {

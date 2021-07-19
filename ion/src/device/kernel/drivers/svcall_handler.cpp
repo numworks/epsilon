@@ -24,10 +24,68 @@
 
 //https://developer.arm.com/documentation/dui0471/m/handling-processor-exceptions/svc-handlers-in-c-and-assembly-language
 
+#define MAKE_SVCALL_HANDLER_ENTRY(svcallhandler) reinterpret_cast<void *>(svcallhandler)
+
+void * const k_SVCallTable[SVC_NUMBER_OF_CALLS] = {
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Authentication::clearanceLevel),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Backlight::brightness),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Backlight::setBrightness),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Battery::isCharging),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Battery::level),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Battery::voltage),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Board::enableExternalApps),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Board::switchExecutableSlot),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::CircuitBreaker::hasCheckpoint),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::CircuitBreaker::loadCheckpoint),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::CircuitBreaker::setCheckpoint),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::CircuitBreaker::status),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::CircuitBreaker::unsetCheckpoint),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::crc32Byte),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::crc32Word),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Display::POSTPushMulticolor),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Display::pullRectSecure),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Display::pushRect),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Display::pushRectUniform),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Display::waitForVBlank),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Events::copyTextSecure),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Events::getEvent),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Events::isDefinedSecure),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Events::repetitionFactor),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Events::setShiftAlphaStatus),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Events::setSpinner),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Events::shiftAlphaStatus),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::fccId),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Flash::EraseSector),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Flash::MassErase),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Flash::WriteMemory),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Keyboard::popState),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Keyboard::scan),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::getColor),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::setBlinking),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::setColor),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::updateColorWithPlugAndCharge),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Board::pcbVersion),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::PersistingBytes::read),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::PersistingBytes::write),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Power::selectStandbyMode),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Power::standby),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Power::suspend),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::random),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Reset::coreWhilePlugged),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::SerialNumber::copy),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Timing::millis),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Timing::msleep),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Timing::usleep),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::USB::didExecuteDFU),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::USB::isPlugged),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::USB::shouldInterruptDFU),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::USB::willExecuteDFU)
+};
+
 template <class T1, class T2> struct SameType { enum{value = false}; };
 template <class T> struct SameType<T,T> { enum{value = true}; };
 
-#define ENSURE_SVC_TYPE(svcallhandler) \
+#define ENSURE_SVC_TYPE(svcallindex, svcallhandler) \
   static_assert(SameType<decltype(&svcallhandler), void (*)()>::value || \
                 SameType<decltype(&svcallhandler), void (*)(uint8_t)>::value || \
                 SameType<decltype(&svcallhandler), bool (*)()>::value || \
@@ -63,68 +121,64 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
                 SameType<decltype(&svcallhandler), uint64_t (*)()>::value || \
                 SameType<decltype(&svcallhandler), Ion::Authentication::ClearanceLevel (*)()>::value || \
                 SameType<decltype(&svcallhandler), uint8_t (*)()>::value \
-      );
-
-#define MAKE_SVCALL_HANDLER(svcallindex, svcallhandler) ENSURE_SVC_TYPE(svcallhandler) SVCallTable[svcallindex] = reinterpret_cast<void *>(svcallhandler);
+      ); \
+  assert(k_SVCallTable[svcallindex] == MAKE_SVCALL_HANDLER_ENTRY(svcallhandler));
 
 void * svcallHandler(int svcNumber) {
-  static void * SVCallTable[SVC_NUMBER_OF_CALLS] = {0};
-  if (SVCallTable[0] == 0) {
-    MAKE_SVCALL_HANDLER(SVC_AUTHENTICATION_CLEARANCE_LEVEL, Ion::Device::Authentication::clearanceLevel)
-    MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_BRIGHTNESS, Ion::Device::Backlight::brightness)
-    MAKE_SVCALL_HANDLER(SVC_BACKLIGHT_SET_BRIGHTNESS, Ion::Device::Backlight::setBrightness)
-    MAKE_SVCALL_HANDLER(SVC_BATTERY_IS_CHARGING, Ion::Device::Battery::isCharging)
-    MAKE_SVCALL_HANDLER(SVC_BATTERY_LEVEL, Ion::Device::Battery::level)
-    MAKE_SVCALL_HANDLER(SVC_BATTERY_VOLTAGE, Ion::Device::Battery::voltage)
-    MAKE_SVCALL_HANDLER(SVC_BOARD_ENABLE_EXTERNAL_APPS, Ion::Device::Board::enableExternalApps)
-    MAKE_SVCALL_HANDLER(SVC_BOARD_SWITCH_EXECUTABLE_SLOT, Ion::Device::Board::switchExecutableSlot)
-    MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT, Ion::Device::CircuitBreaker::hasCheckpoint)
-    MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT, Ion::Device::CircuitBreaker::loadCheckpoint)
-    MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT, Ion::Device::CircuitBreaker::setCheckpoint)
-    MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_STATUS, Ion::Device::CircuitBreaker::status)
-    MAKE_SVCALL_HANDLER(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT, Ion::Device::CircuitBreaker::unsetCheckpoint)
-    MAKE_SVCALL_HANDLER(SVC_CRC32_BYTE, Ion::Device::crc32Byte)
-    MAKE_SVCALL_HANDLER(SVC_CRC32_WORD, Ion::Device::crc32Word)
-    MAKE_SVCALL_HANDLER(SVC_DISPLAY_POST_PUSH_MULTICOLOR, Ion::Device::Display::POSTPushMulticolor)
-    MAKE_SVCALL_HANDLER(SVC_DISPLAY_PULL_RECT, Ion::Device::Display::pullRectSecure)
-    MAKE_SVCALL_HANDLER(SVC_DISPLAY_PUSH_RECT, Ion::Device::Display::pushRect)
-    MAKE_SVCALL_HANDLER(SVC_DISPLAY_PUSH_RECT_UNIFORM, Ion::Device::Display::pushRectUniform)
-    MAKE_SVCALL_HANDLER(SVC_DISPLAY_WAIT_FOR_V_BLANK, Ion::Device::Display::waitForVBlank)
-    MAKE_SVCALL_HANDLER(SVC_EVENTS_COPY_TEXT, Ion::Device::Events::copyTextSecure)
-    MAKE_SVCALL_HANDLER(SVC_EVENTS_GET_EVENT, Ion::Device::Events::getEvent)
-    MAKE_SVCALL_HANDLER(SVC_EVENTS_IS_DEFINED, Ion::Device::Events::isDefinedSecure)
-    MAKE_SVCALL_HANDLER(SVC_EVENTS_REPETITION_FACTOR, Ion::Events::repetitionFactor)
-    MAKE_SVCALL_HANDLER(SVC_EVENTS_SET_SHIFT_ALPHA_STATUS, Ion::Events::setShiftAlphaStatus)
-    MAKE_SVCALL_HANDLER(SVC_EVENTS_SET_SPINNER, Ion::Device::Events::setSpinner)
-    MAKE_SVCALL_HANDLER(SVC_EVENTS_SHIFT_ALPHA_STATUS, Ion::Events::shiftAlphaStatus)
-    MAKE_SVCALL_HANDLER(SVC_FCC_ID, Ion::Device::fccId)
-    MAKE_SVCALL_HANDLER(SVC_FLASH_ERASE_SECTOR, Ion::Device::Flash::EraseSector)
-    MAKE_SVCALL_HANDLER(SVC_FLASH_MASS_ERASE, Ion::Device::Flash::MassErase)
-    MAKE_SVCALL_HANDLER(SVC_FLASH_WRITE_MEMORY, Ion::Device::Flash::WriteMemory)
-    MAKE_SVCALL_HANDLER(SVC_KEYBOARD_POP_STATE, Ion::Device::Keyboard::popState)
-    MAKE_SVCALL_HANDLER(SVC_KEYBOARD_SCAN, Ion::Device::Keyboard::scan)
-    MAKE_SVCALL_HANDLER(SVC_LED_GET_COLOR, Ion::Device::LED::getColor)
-    MAKE_SVCALL_HANDLER(SVC_LED_SET_BLINKING, Ion::Device::LED::setBlinking)
-    MAKE_SVCALL_HANDLER(SVC_LED_SET_COLOR, Ion::Device::LED::setColor)
-    MAKE_SVCALL_HANDLER(SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE, Ion::Device::LED::updateColorWithPlugAndCharge)
-    MAKE_SVCALL_HANDLER(SVC_PCB_VERSION, Ion::Device::Board::pcbVersion)
-    MAKE_SVCALL_HANDLER(SVC_PERSISTING_BYTES_READ, Ion::Device::PersistingBytes::read)
-    MAKE_SVCALL_HANDLER(SVC_PERSISTING_BYTES_WRITE, Ion::Device::PersistingBytes::write)
-    MAKE_SVCALL_HANDLER(SVC_POWER_SELECT_STANDBY_MODE, Ion::Device::Power::selectStandbyMode)
-    MAKE_SVCALL_HANDLER(SVC_POWER_STANDBY, Ion::Device::Power::standby)
-    MAKE_SVCALL_HANDLER(SVC_POWER_SUSPEND, Ion::Device::Power::suspend)
-    MAKE_SVCALL_HANDLER(SVC_RANDOM, Ion::Device::random)
-    MAKE_SVCALL_HANDLER(SVC_RESET_CORE, Ion::Device::Reset::coreWhilePlugged)
-    MAKE_SVCALL_HANDLER(SVC_SERIAL_NUMBER_COPY, Ion::Device::SerialNumber::copy)
-    MAKE_SVCALL_HANDLER(SVC_TIMING_MILLIS, Ion::Timing::millis)
-    MAKE_SVCALL_HANDLER(SVC_TIMING_MSLEEP, Ion::Timing::msleep)
-    MAKE_SVCALL_HANDLER(SVC_TIMING_USLEEP, Ion::Timing::usleep)
-    MAKE_SVCALL_HANDLER(SVC_USB_DID_EXECUTE_DFU, Ion::Device::USB::didExecuteDFU)
-    MAKE_SVCALL_HANDLER(SVC_USB_IS_PLUGGED, Ion::USB::isPlugged)
-    MAKE_SVCALL_HANDLER(SVC_USB_SHOULD_INTERRUPT, Ion::Device::USB::shouldInterruptDFU)
-    MAKE_SVCALL_HANDLER(SVC_USB_WILL_EXECUTE_DFU, Ion::Device::USB::willExecuteDFU)
-  }
-  return SVCallTable[svcNumber];
+  ENSURE_SVC_TYPE(SVC_AUTHENTICATION_CLEARANCE_LEVEL, Ion::Device::Authentication::clearanceLevel)
+  ENSURE_SVC_TYPE(SVC_BACKLIGHT_BRIGHTNESS, Ion::Device::Backlight::brightness)
+  ENSURE_SVC_TYPE(SVC_BACKLIGHT_SET_BRIGHTNESS, Ion::Device::Backlight::setBrightness)
+  ENSURE_SVC_TYPE(SVC_BATTERY_IS_CHARGING, Ion::Device::Battery::isCharging)
+  ENSURE_SVC_TYPE(SVC_BATTERY_LEVEL, Ion::Device::Battery::level)
+  ENSURE_SVC_TYPE(SVC_BATTERY_VOLTAGE, Ion::Device::Battery::voltage)
+  ENSURE_SVC_TYPE(SVC_BOARD_ENABLE_EXTERNAL_APPS, Ion::Device::Board::enableExternalApps)
+  ENSURE_SVC_TYPE(SVC_BOARD_SWITCH_EXECUTABLE_SLOT, Ion::Device::Board::switchExecutableSlot)
+  ENSURE_SVC_TYPE(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT, Ion::Device::CircuitBreaker::hasCheckpoint)
+  ENSURE_SVC_TYPE(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT, Ion::Device::CircuitBreaker::loadCheckpoint)
+  ENSURE_SVC_TYPE(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT, Ion::Device::CircuitBreaker::setCheckpoint)
+  ENSURE_SVC_TYPE(SVC_CIRCUIT_BREAKER_STATUS, Ion::Device::CircuitBreaker::status)
+  ENSURE_SVC_TYPE(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT, Ion::Device::CircuitBreaker::unsetCheckpoint)
+  ENSURE_SVC_TYPE(SVC_CRC32_BYTE, Ion::Device::crc32Byte)
+  ENSURE_SVC_TYPE(SVC_CRC32_WORD, Ion::Device::crc32Word)
+  ENSURE_SVC_TYPE(SVC_DISPLAY_POST_PUSH_MULTICOLOR, Ion::Device::Display::POSTPushMulticolor)
+  ENSURE_SVC_TYPE(SVC_DISPLAY_PULL_RECT, Ion::Device::Display::pullRectSecure)
+  ENSURE_SVC_TYPE(SVC_DISPLAY_PUSH_RECT, Ion::Device::Display::pushRect)
+  ENSURE_SVC_TYPE(SVC_DISPLAY_PUSH_RECT_UNIFORM, Ion::Device::Display::pushRectUniform)
+  ENSURE_SVC_TYPE(SVC_DISPLAY_WAIT_FOR_V_BLANK, Ion::Device::Display::waitForVBlank)
+  ENSURE_SVC_TYPE(SVC_EVENTS_COPY_TEXT, Ion::Device::Events::copyTextSecure)
+  ENSURE_SVC_TYPE(SVC_EVENTS_GET_EVENT, Ion::Device::Events::getEvent)
+  ENSURE_SVC_TYPE(SVC_EVENTS_IS_DEFINED, Ion::Device::Events::isDefinedSecure)
+  ENSURE_SVC_TYPE(SVC_EVENTS_REPETITION_FACTOR, Ion::Events::repetitionFactor)
+  ENSURE_SVC_TYPE(SVC_EVENTS_SET_SHIFT_ALPHA_STATUS, Ion::Events::setShiftAlphaStatus)
+  ENSURE_SVC_TYPE(SVC_EVENTS_SET_SPINNER, Ion::Device::Events::setSpinner)
+  ENSURE_SVC_TYPE(SVC_EVENTS_SHIFT_ALPHA_STATUS, Ion::Events::shiftAlphaStatus)
+  ENSURE_SVC_TYPE(SVC_FCC_ID, Ion::Device::fccId)
+  ENSURE_SVC_TYPE(SVC_FLASH_ERASE_SECTOR, Ion::Device::Flash::EraseSector)
+  ENSURE_SVC_TYPE(SVC_FLASH_MASS_ERASE, Ion::Device::Flash::MassErase)
+  ENSURE_SVC_TYPE(SVC_FLASH_WRITE_MEMORY, Ion::Device::Flash::WriteMemory)
+  ENSURE_SVC_TYPE(SVC_KEYBOARD_POP_STATE, Ion::Device::Keyboard::popState)
+  ENSURE_SVC_TYPE(SVC_KEYBOARD_SCAN, Ion::Device::Keyboard::scan)
+  ENSURE_SVC_TYPE(SVC_LED_GET_COLOR, Ion::Device::LED::getColor)
+  ENSURE_SVC_TYPE(SVC_LED_SET_BLINKING, Ion::Device::LED::setBlinking)
+  ENSURE_SVC_TYPE(SVC_LED_SET_COLOR, Ion::Device::LED::setColor)
+  ENSURE_SVC_TYPE(SVC_LED_UPDATE_COLOR_WITH_PLUG_AND_CHARGE, Ion::Device::LED::updateColorWithPlugAndCharge)
+  ENSURE_SVC_TYPE(SVC_PCB_VERSION, Ion::Device::Board::pcbVersion)
+  ENSURE_SVC_TYPE(SVC_PERSISTING_BYTES_READ, Ion::Device::PersistingBytes::read)
+  ENSURE_SVC_TYPE(SVC_PERSISTING_BYTES_WRITE, Ion::Device::PersistingBytes::write)
+  ENSURE_SVC_TYPE(SVC_POWER_SELECT_STANDBY_MODE, Ion::Device::Power::selectStandbyMode)
+  ENSURE_SVC_TYPE(SVC_POWER_STANDBY, Ion::Device::Power::standby)
+  ENSURE_SVC_TYPE(SVC_POWER_SUSPEND, Ion::Device::Power::suspend)
+  ENSURE_SVC_TYPE(SVC_RANDOM, Ion::Device::random)
+  ENSURE_SVC_TYPE(SVC_RESET_CORE, Ion::Device::Reset::coreWhilePlugged)
+  ENSURE_SVC_TYPE(SVC_SERIAL_NUMBER_COPY, Ion::Device::SerialNumber::copy)
+  ENSURE_SVC_TYPE(SVC_TIMING_MILLIS, Ion::Timing::millis)
+  ENSURE_SVC_TYPE(SVC_TIMING_MSLEEP, Ion::Timing::msleep)
+  ENSURE_SVC_TYPE(SVC_TIMING_USLEEP, Ion::Timing::usleep)
+  ENSURE_SVC_TYPE(SVC_USB_DID_EXECUTE_DFU, Ion::Device::USB::didExecuteDFU)
+  ENSURE_SVC_TYPE(SVC_USB_IS_PLUGGED, Ion::USB::isPlugged)
+  ENSURE_SVC_TYPE(SVC_USB_SHOULD_INTERRUPT, Ion::Device::USB::shouldInterruptDFU)
+  ENSURE_SVC_TYPE(SVC_USB_WILL_EXECUTE_DFU, Ion::Device::USB::willExecuteDFU)
+  return k_SVCallTable[svcNumber];
 }
 
 constexpr static uint32_t k_frameSize = 32;

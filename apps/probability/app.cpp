@@ -16,7 +16,8 @@ App::App(Snapshot * snapshot) :
     m_statisticGraphController(&m_stackViewController, snapshot->data()->statistic()),
     m_homogeneityResultsController(
         &m_stackViewController,
-        static_cast<HomogeneityStatistic *>(snapshot->data()->statistic())),
+        static_cast<HomogeneityStatistic *>(snapshot->data()->statistic()),
+        &m_resultsController),
     m_inputHomogeneityController(
         &m_stackViewController,
         &m_homogeneityResultsController,

@@ -20,15 +20,17 @@
 #include "probability/gui/solid_color_cell.h"
 #include "probability/gui/spacer_view.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
+#include "results_controller.h"
 
 using namespace Escher;
 
 namespace Probability {
 
-class HomogeneityResultsView : public VerticalLayout, public ButtonDelegate {
+class HomogeneityResultsView : public VerticalLayout {
 public:
-  HomogeneityResultsView(Responder * parent, SelectableTableView * table);
-  void buttonAction() override;
+  HomogeneityResultsView(Responder * parent,
+                         SelectableTableView * table,
+                         ButtonDelegate * buttonDelegate);
   int numberOfSubviews() const override { return 4; }
   Escher::View * subviewAtIndex(int i) override;
   // TODO add selection behavior
@@ -59,20 +61,25 @@ private:
   ButtonWithHorizontalMargins m_buttonWrapper;
 };
 
-class ResultsHomogeneityController : public Page {
+class ResultsHomogeneityController : public Page, public ButtonDelegate {
 public:
   ResultsHomogeneityController(StackViewController * stackViewController,
-                               HomogeneityStatistic * statistic);
+                               HomogeneityStatistic * statistic,
+                               ResultsController * resultsController);
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitles;
+    return ViewController::TitlesDisplay::DisplayNoTitle;
   }
-  const char * title() override { return "x2-test: Homogeneity/Independence"; }
+  const char * title() override { return nullptr; }
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
+  void buttonAction() override;
+
 private:
   void selectCorrectView();
+
+  ResultsController * m_resultsController;
   HomogeneityResultsView m_contentView;
   HomogeneityTableDataSourceWithTotals m_tableData;
   ResultsHomogeneityDataSource m_innerTableData;

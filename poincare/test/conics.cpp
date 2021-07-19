@@ -104,6 +104,7 @@ QUIZ_CASE(poincare_conics_invalid) {
 
 QUIZ_CASE(poincare_conics_general) {
   quiz_assert_circle("x^2+y^2-x+y", 0.707107, 0.5, -0.5);  // 1/sqrt(2)
+  quiz_assert_ellipse("x^2+0.25*y^2-1", 0.866025, 0.866025 * 2.0, 2.0, 1.0);
   quiz_assert_hyperbola("x^2+2*x*y-4y^2+2x+y-16", 1.13334, 1.13334 * 3.76999,
                         3.76999, 2.01069, -0.9, -0.1);  // 0.946213
   quiz_assert_ellipse("3x^2-2x*y+4y^2+x-y-7", 0.695847, 0.695847 * 1.72814,

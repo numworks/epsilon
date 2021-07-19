@@ -35,7 +35,8 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     m_contentView(this, &m_table),
     m_tableData(&m_innerTableData),
     m_innerTableData(statistic),
-    m_table(this, &m_tableData, &m_tableData, &m_tableData) {
+    m_table(this, &m_tableData, &m_tableData, &m_tableData),
+    m_isTableSelected(true) {
   m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_table.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
   m_table.setMargins(HomogeneityResultsView::k_topMargin,
@@ -47,6 +48,9 @@ ResultsHomogeneityController::ResultsHomogeneityController(
 void ResultsHomogeneityController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::ResultsHomogeneity);
   Escher::Container::activeApp()->setFirstResponder(&m_table);
+  if (m_table.selectedRow() < 0) {
+    m_table.selectCellAtLocation(1, 1);
+  }
 }
 
 Probability::HomogeneityResultsView::ButtonWithHorizontalMargins::ButtonWithHorizontalMargins(
@@ -69,4 +73,27 @@ Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
   }
   assert(false);
   return nullptr;
+}
+
+bool Probability::ResultsHomogeneityController::handleEvent(Ion::Events::Event event) {
+  // Handle selection between table and button
+  if (event == Ion::Events::Up || event == Ion::Events::Down) {
+    Escher::Responder * responder = nullptr;
+    if (event == Ion::Events::Up && !m_isTableSelected) {
+      // select table
+      m_isTableSelected = true;
+      responder = &m_table;
+      m_contentView.button()->setHighlighted(false);
+    } else if (event == Ion::Events::Down && m_isTableSelected) {
+      // select button
+      m_isTableSelected = false;
+      responder = m_contentView.button();
+      m_contentView.button()->setHighlighted(true);
+    }
+    if (responder) {
+      Container::activeApp()->setFirstResponder(responder);
+    }
+    return true;
+  }
+  return false;
 }

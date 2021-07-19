@@ -51,6 +51,7 @@ void ResultsHomogeneityController::didBecomeFirstResponder() {
   if (m_table.selectedRow() < 0) {
     m_table.selectCellAtLocation(1, 1);
   }
+  selectCorrectView();
 }
 
 Probability::HomogeneityResultsView::ButtonWithHorizontalMargins::ButtonWithHorizontalMargins(
@@ -77,23 +78,26 @@ Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
 
 bool Probability::ResultsHomogeneityController::handleEvent(Ion::Events::Event event) {
   // Handle selection between table and button
-  if (event == Ion::Events::Up || event == Ion::Events::Down) {
-    Escher::Responder * responder = nullptr;
-    if (event == Ion::Events::Up && !m_isTableSelected) {
-      // select table
-      m_isTableSelected = true;
-      responder = &m_table;
-      m_contentView.button()->setHighlighted(false);
-    } else if (event == Ion::Events::Down && m_isTableSelected) {
-      // select button
-      m_isTableSelected = false;
-      responder = m_contentView.button();
-      m_contentView.button()->setHighlighted(true);
-    }
-    if (responder) {
-      Container::activeApp()->setFirstResponder(responder);
-    }
+  if ((event == Ion::Events::Up && !m_isTableSelected) ||
+      (event == Ion::Events::Down && m_isTableSelected)) {
+    m_isTableSelected = event == Ion::Events::Up;
+    selectCorrectView();
     return true;
   }
   return false;
+}
+
+void Probability::ResultsHomogeneityController::buttonAction() {
+  openPage(m_resultsController);
+}
+
+void Probability::ResultsHomogeneityController::selectCorrectView() {
+  m_contentView.button()->setHighlighted(!m_isTableSelected);
+  Escher::Responder * responder;
+  if (m_isTableSelected) {
+    responder = &m_table;
+  } else {
+    responder = m_contentView.button();
+  }
+  Container::activeApp()->setFirstResponder(responder);
 }

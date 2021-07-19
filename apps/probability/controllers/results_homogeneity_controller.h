@@ -26,39 +26,54 @@ using namespace Escher;
 
 namespace Probability {
 
-class HomogeneityResultsView : public VerticalLayout {
+class HomogeneityResultsView : public Escher::ScrollView {
 public:
   HomogeneityResultsView(Responder * parent,
                          SelectableTableView * table,
                          ButtonDelegate * buttonDelegate);
-  int numberOfSubviews() const override { return 4; }
-  Escher::View * subviewAtIndex(int i) override;
-  // TODO add selection behavior
+
+  Escher::Button * button() { return m_contentView.button(); }
+  // ScrollView
+  KDSize minimalSizeForOptimalDisplay() const override;
+  KDSize contentSize() const override { return KDSize(bounds().width(), 10000); };
+
   constexpr static int k_topMargin = 5;
-  Escher::Button * button() { return &m_next; }
 
 private:
-  class ButtonWithHorizontalMargins : public VerticalLayout {
+  class ContentView : public VerticalLayout {
   public:
-    ButtonWithHorizontalMargins(Escher::Button * button,
-                                KDCoordinate margin = k_defaultHorizontalMargin);
-    int numberOfSubviews() const override { return 1; }
-    Escher::View * subviewAtIndex(int i) override { return m_button; };
+    ContentView(Responder * parent, SelectableTableView * table, ButtonDelegate * buttonDelegate);
+    int numberOfSubviews() const override { return 4; }
+    Escher::View * subviewAtIndex(int i) override;
+    // TODO add selection behavior
+    Escher::Button * button() { return &m_next; }
 
   private:
-    constexpr static KDCoordinate k_defaultHorizontalMargin = Metric::CommonLeftMargin;
-    Escher::Button * m_button;
-  };
-  constexpr static int k_indexOfTopSpacer = 0;
-  constexpr static int k_indexOfTitle = 1;
-  constexpr static int k_indexOfTable = 2;
-  constexpr static int k_indexOfButton = 3;
+    class ButtonWithHorizontalMargins : public VerticalLayout {
+    public:
+      ButtonWithHorizontalMargins(Escher::Button * button,
+                                  KDCoordinate margin = k_defaultHorizontalMargin);
+      int numberOfSubviews() const override { return 1; }
+      Escher::View * subviewAtIndex(int i) override { return m_button; };
 
-  SpacerView m_topSpacer;
-  MessageTextView m_title;
-  SelectableTableView * m_table;
-  Escher::Button m_next;
-  ButtonWithHorizontalMargins m_buttonWrapper;
+    private:
+      constexpr static KDCoordinate k_defaultHorizontalMargin = Metric::CommonLeftMargin;
+      Escher::Button * m_button;
+    };
+    constexpr static int k_indexOfTopSpacer = 0;
+    constexpr static int k_indexOfTitle = 1;
+    constexpr static int k_indexOfTable = 2;
+    constexpr static int k_indexOfButton = 3;
+
+    SpacerView m_topSpacer;
+    MessageTextView m_title;
+    SelectableTableView * m_table;
+    Escher::Button m_next;
+    ButtonWithHorizontalMargins m_buttonWrapper;
+  };
+
+  ContentView m_contentView;
+  ScrollViewDataSource m_scrollDataSource;
 };
 
 class ResultsHomogeneityController : public Page, public ButtonDelegate {

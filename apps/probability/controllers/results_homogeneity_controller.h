@@ -18,6 +18,7 @@
 #include "probability/gui/page_controller.h"
 #include "probability/gui/selectable_table_view_with_background.h"
 #include "probability/gui/solid_color_cell.h"
+#include "probability/gui/spacer_view.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 
 using namespace Escher;
@@ -28,15 +29,18 @@ class HomogeneityResultsView : public VerticalLayout, public ButtonDelegate {
 public:
   HomogeneityResultsView(Responder * parent, SelectableTableView * table);
   void buttonAction() override;
-  int numberOfSubviews() const override { return 3; }
+  int numberOfSubviews() const override { return 4; }
   Escher::View * subviewAtIndex(int i) override;
   // TODO add selection behavior
+  constexpr static int k_topMargin = 5;
 
 private:
-  constexpr static int k_indexOfTitle = 0;
-  constexpr static int k_indexOfTable = 1;
-  constexpr static int k_indexOfButton = 2;
+  constexpr static int k_indexOfSpacer = 0;
+  constexpr static int k_indexOfTitle = 1;
+  constexpr static int k_indexOfTable = 2;
+  constexpr static int k_indexOfButton = 3;
 
+  SpacerView m_topSpacer;
   MessageTextView m_title;
   SelectableTableView * m_table;
   Shared::ButtonWithSeparator m_next;

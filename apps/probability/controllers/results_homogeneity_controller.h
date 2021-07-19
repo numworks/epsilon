@@ -33,6 +33,7 @@ public:
   Escher::View * subviewAtIndex(int i) override;
   // TODO add selection behavior
   constexpr static int k_topMargin = 5;
+  Escher::Button * button() { return &m_next; }
 
 private:
   class ButtonWithHorizontalMargins : public VerticalLayout {
@@ -68,6 +69,7 @@ public:
   const char * title() override { return "x2-test: Homogeneity/Independence"; }
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
 
 private:
   HomogeneityResultsView m_contentView;
@@ -75,6 +77,7 @@ private:
   ResultsHomogeneityDataSource m_innerTableData;
 
   SelectableTableViewWithBackground m_table;
+  bool m_isTableSelected;
 };
 
 }  // namespace Probability

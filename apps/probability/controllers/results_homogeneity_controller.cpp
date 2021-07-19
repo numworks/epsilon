@@ -14,7 +14,6 @@ HomogeneityResultsView::ContentView::ContentView(Responder * parent,
                                                  SelectableTableView * table,
                                                  ButtonDelegate * buttonDelegate) :
     VerticalLayout(Escher::Palette::WallScreenDark),
-    m_topSpacer(Escher::Palette::WallScreenDark, 0, k_topMargin),
     m_title(KDFont::SmallFont,
             I18n::Message::HomogeneityResultsTitle,
             0.5f,
@@ -37,8 +36,6 @@ Probability::HomogeneityResultsView::ContentView::ButtonWithHorizontalMargins::
 
 Escher::View * Probability::HomogeneityResultsView::ContentView::subviewAtIndex(int i) {
   switch (i) {
-    case k_indexOfTopSpacer:
-      return &m_topSpacer;
     case k_indexOfTitle:
       return &m_title;
     case k_indexOfTable:
@@ -51,7 +48,7 @@ Escher::View * Probability::HomogeneityResultsView::ContentView::subviewAtIndex(
 }
 
 KDPoint Probability::HomogeneityResultsView::ContentView::tableOrigin() {
-  return KDPoint(0, m_title.minimalSizeForOptimalDisplay().height() + k_topMargin);
+  return KDPoint(0, m_title.minimalSizeForOptimalDisplay().height());
 }
 
 KDPoint Probability::HomogeneityResultsView::ContentView::buttonOrigin() {

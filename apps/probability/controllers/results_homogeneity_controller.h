@@ -48,7 +48,7 @@ private:
   class ContentView : public VerticalLayout {
   public:
     ContentView(Responder * parent, SelectableTableView * table, ButtonDelegate * buttonDelegate);
-    int numberOfSubviews() const override { return 4; }
+    int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int i) override;
     // TODO add selection behavior
     Escher::Button * button() { return &m_next; }
@@ -67,12 +67,10 @@ private:
       constexpr static KDCoordinate k_defaultHorizontalMargin = Metric::CommonLeftMargin;
       Escher::Button * m_button;
     };
-    constexpr static int k_indexOfTopSpacer = 0;
-    constexpr static int k_indexOfTitle = 1;
-    constexpr static int k_indexOfTable = 2;
-    constexpr static int k_indexOfButton = 3;
+    constexpr static int k_indexOfTitle = 0;
+    constexpr static int k_indexOfTable = 1;
+    constexpr static int k_indexOfButton = 2;
 
-    SpacerView m_topSpacer;
     MessageTextView m_title;
     SelectableTableView * m_table;
     Escher::Button m_next;

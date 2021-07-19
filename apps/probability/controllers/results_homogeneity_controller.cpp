@@ -21,7 +21,7 @@ HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
             Palette::GrayVeryDark,
             Escher::Palette::WallScreenDark),
     m_table(table),
-    m_next(parent, I18n::Message::Next, buttonActionInvocation()) {
+    m_next(parent, I18n::Message::Next, buttonActionInvocation(), KDFont::LargeFont) {
 }
 
 void HomogeneityResultsView::buttonAction() {
@@ -38,9 +38,9 @@ ResultsHomogeneityController::ResultsHomogeneityController(
   m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_table.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
   m_table.setMargins(HomogeneityResultsView::k_topMargin,
-                     Metric::CommonLeftMargin,
                      Metric::CommonRightMargin,
-                     0);
+                     HomogeneityResultsView::k_topMargin,
+                     Metric::CommonLeftMargin);
 }
 
 void ResultsHomogeneityController::didBecomeFirstResponder() {
@@ -50,7 +50,7 @@ void ResultsHomogeneityController::didBecomeFirstResponder() {
 
 Escher::View * Probability::HomogeneityResultsView::subviewAtIndex(int i) {
   switch (i) {
-    case k_indexOfSpacer:
+    case k_indexOfTopSpacer:
       return &m_topSpacer;
     case k_indexOfTitle:
       return &m_title;

@@ -35,7 +35,7 @@ public:
   constexpr static int k_topMargin = 5;
 
 private:
-  constexpr static int k_indexOfSpacer = 0;
+  constexpr static int k_indexOfTopSpacer = 0;
   constexpr static int k_indexOfTitle = 1;
   constexpr static int k_indexOfTable = 2;
   constexpr static int k_indexOfButton = 3;
@@ -43,7 +43,7 @@ private:
   SpacerView m_topSpacer;
   MessageTextView m_title;
   SelectableTableView * m_table;
-  Shared::ButtonWithSeparator m_next;
+  Escher::Button m_next;
 };
 
 class ResultsHomogeneityController : public Page {

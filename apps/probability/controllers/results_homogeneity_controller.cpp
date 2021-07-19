@@ -10,8 +10,9 @@
 
 using namespace Probability;
 
-HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
-                                               Escher::SelectableTableView * table) :
+HomogeneityResultsView::HomogeneityResultsView(Responder * parent,
+                                               SelectableTableView * table,
+                                               ButtonDelegate * buttonDelegate) :
     VerticalLayout(Escher::Palette::WallScreenDark),
     m_topSpacer(Palette::WallScreenDark, 0, k_topMargin),
     m_title(KDFont::SmallFont,
@@ -21,18 +22,20 @@ HomogeneityResultsView::HomogeneityResultsView(Escher::Responder * parent,
             Palette::GrayVeryDark,
             Escher::Palette::WallScreenDark),
     m_table(table),
-    m_next(parent, I18n::Message::Next, buttonActionInvocation(), KDFont::LargeFont),
+    m_next(parent,
+           I18n::Message::Next,
+           buttonDelegate->buttonActionInvocation(),
+           KDFont::LargeFont),
     m_buttonWrapper(&m_next) {
-}
-
-void HomogeneityResultsView::buttonAction() {
 }
 
 ResultsHomogeneityController::ResultsHomogeneityController(
     StackViewController * stackViewController,
-    HomogeneityStatistic * statistic) :
+    HomogeneityStatistic * statistic,
+    ResultsController * resultsController) :
     Page(stackViewController),
-    m_contentView(this, &m_table),
+    m_resultsController(resultsController),
+    m_contentView(this, &m_table, this),
     m_tableData(&m_innerTableData),
     m_innerTableData(statistic),
     m_table(this, &m_tableData, &m_tableData, &m_tableData),

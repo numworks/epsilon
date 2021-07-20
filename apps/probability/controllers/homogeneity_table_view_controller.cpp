@@ -19,6 +19,7 @@ void HomogeneityTableViewController::didBecomeFirstResponder() {
   if (m_seletableTableView->selectedColumn() < 0) {
     m_seletableTableView->selectColumn(1);
   }
+  m_dataSource->recomputeDimensions();
   TableViewController::didBecomeFirstResponder();
 }
 
@@ -53,7 +54,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
   }
   int row = m_seletableTableView->selectedRow(), column = m_seletableTableView->selectedColumn();
   m_statistic->setParameterAtPosition(row - 1, column - 1, p);
-  
+
   m_seletableTableView->deselectTable();
   // Add row
   if (row == m_dataSource->numberOfRows() &&

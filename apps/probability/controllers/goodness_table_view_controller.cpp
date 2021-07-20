@@ -10,6 +10,11 @@ GoodnessTableViewController::GoodnessTableViewController(Escher::Responder * par
     TableViewController(parent, dataSource), m_statistic(statistic), m_dataSource(dataSource) {
 }
 
+void GoodnessTableViewController::didBecomeFirstResponder() {
+  m_dataSource->recomputeNumberOfRows();
+  TableViewController::didBecomeFirstResponder();
+}
+
 bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     // Remove value

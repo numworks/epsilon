@@ -27,6 +27,11 @@ InputGoodnessController::InputGoodnessController(
   m_contentView.setTableView(&m_tableController);
 }
 
+void Probability::InputGoodnessController::didBecomeFirstResponder() {
+  Probability::App::app()->setPage(Data::Page::InputGoodness);
+  InputCategoricalController::didBecomeFirstResponder();
+}
+
 // ScrollViewDelegate
 void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView * t,

@@ -34,6 +34,11 @@ InputHomogeneityController::InputHomogeneityController(
   m_contentView.setTableView(&m_tableController);
 }
 
+void Probability::InputHomogeneityController::didBecomeFirstResponder() {
+  App::app()->setPage(Data::Page::InputHomogeneity);
+  InputCategoricalController::didBecomeFirstResponder();
+}
+
 void Probability::InputHomogeneityController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView * t,
     int previousSelectedCellX,

@@ -1,6 +1,6 @@
-#include <shared/drivers/flash_privileged.h>
-#include <drivers/config/external_flash.h>
 #include "external_flash_write.h"
+#include <drivers/config/external_flash.h>
+#include <shared/drivers/flash_privileged.h>
 
 namespace Ion {
 namespace Device {

@@ -1,8 +1,8 @@
-#include <shared/drivers/power_configuration.h>
-#include <kernel/drivers/power.h>
 #include <drivers/wakeup.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/keyboard.h>
+#include <kernel/drivers/power.h>
+#include <shared/drivers/power_configuration.h>
 
 namespace Ion {
 namespace Device {

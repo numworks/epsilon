@@ -1,6 +1,6 @@
+#include "base64.h"
 #include "serial_number.h"
 #include <drivers/config/serial_number.h>
-#include "base64.h"
 #include <ion.h>
 
 namespace Ion {

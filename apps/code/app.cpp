@@ -96,7 +96,7 @@ App::~App() {
 }
 
 bool App::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::USBEnumeration && m_consoleController.inputRunLoopActive()) {
+  if ((event == Ion::Events::USBEnumeration || event == Ion::Events::Home) && m_consoleController.inputRunLoopActive()) {
     /* We need to return true here because we want to actually exit from the
      * input run loop, which requires ending a dispatchEvent cycle. */
     m_consoleController.terminateInputLoop();

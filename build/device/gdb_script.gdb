@@ -43,14 +43,14 @@ define use_dfu_symbol_file
 # Discard previous symbol file
   symbol-file
 # Load new symbol file
-  add-symbol-file output/debug/device/ion/src/device/shared/usb/dfu.elf
-end 0x20038000
+  add-symbol-file output/debug/device/ion/src/device/shared/usb/dfu.elf 0x20038000
+end
 
-define use_application_symbol_file
+define use_external_app_symbol_file
 # Discard previous symbol file
   symbol-file
 # Load new symbol file
-  symbol-file -o 0x90350000 apps/third_party_app/custom_application.elf
+  symbol-file -o $arg1 $arg0
 end
 
 document armex

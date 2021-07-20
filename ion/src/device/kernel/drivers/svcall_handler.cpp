@@ -1,5 +1,5 @@
-#include <kernel/boot/isr.h>
 #include <ion.h>
+#include <kernel/boot/isr.h>
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/circuit_breaker.h>

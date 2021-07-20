@@ -1,6 +1,6 @@
-#include <kernel/drivers/keyboard.h>
 #include <drivers/config/clocks.h>
 #include <kernel/drivers/events.h>
+#include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/keyboard_queue.h>
 
 namespace Ion {

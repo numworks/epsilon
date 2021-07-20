@@ -1,8 +1,8 @@
-#include <shared/drivers/internal_flash.h>
 #include <drivers/cache.h>
 #include <drivers/config/internal_flash.h>
-#include <assert.h>
+#include <shared/drivers/internal_flash.h>
 #include <algorithm>
+#include <assert.h>
 
 namespace Ion {
 namespace Device {

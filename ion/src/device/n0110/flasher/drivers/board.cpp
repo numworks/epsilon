@@ -1,13 +1,13 @@
 #include "board.h"
-#include <drivers/config/clocks.h>
-#include <drivers/config/internal_flash.h>
 #include <drivers/backlight.h>
 #include <drivers/cache.h>
+#include <drivers/config/clocks.h>
+#include <drivers/config/internal_flash.h>
 #include <drivers/display.h>
+#include <drivers/external_flash.h>
 #include <drivers/internal_flash.h>
 #include <drivers/internal_flash_otp.h>
 #include <drivers/usb_privileged.h>
-#include <drivers/external_flash.h>
 #include <regs/regs.h>
 
 typedef void(*ISR)(void);

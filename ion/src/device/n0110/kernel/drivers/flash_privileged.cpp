@@ -1,8 +1,8 @@
-#include <shared/drivers/flash_privileged.h>
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/board.h>
 #include <shared/drivers/config/board.h>
 #include <shared/drivers/config/external_flash.h>
+#include <shared/drivers/flash_privileged.h>
 
 namespace Ion {
 namespace Device {

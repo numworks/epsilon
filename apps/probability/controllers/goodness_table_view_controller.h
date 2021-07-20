@@ -14,6 +14,7 @@ public:
   GoodnessTableViewController(Escher::Responder * parent,
                               GoodnessStatistic * statistic,
                               InputGoodnessTableView * dataSource);
+  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,

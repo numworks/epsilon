@@ -56,7 +56,6 @@ private:
   constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
                                         k_borderBetweenColumns) /
                                        2;
-  constexpr static int k_innerCellRightMargin = 5;
 
   int m_numberOfRows;
 

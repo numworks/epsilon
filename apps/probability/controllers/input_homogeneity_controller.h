@@ -36,6 +36,8 @@ public:
 
   const char * title() override { return "x2-test: Homogeneity/Independence"; }
 
+  void didBecomeFirstResponder() override;
+
   void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
                                                int previousSelectedCellX,
                                                int previousSelectedCellY,

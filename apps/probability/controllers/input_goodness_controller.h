@@ -39,6 +39,8 @@ public:
                           InputEventHandlerDelegate * inputEventHandlerDelegate);
   const char * title() override { return "X2-test: goodness of fit"; }
 
+  void didBecomeFirstResponder() override;
+
   void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
                                                int previousSelectedCellX,
                                                int previousSelectedCellY,

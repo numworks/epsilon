@@ -38,7 +38,6 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
 }
 
 void InputCategoricalController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::InputGoodness);
   if (m_statistic->threshold() == -1) {
     // Init significance cell
     m_statistic->initThreshold(App::app()->subapp());

@@ -54,11 +54,13 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    App::app()->setCategoricalType(type);
-    Statistic::initializeStatistic(m_statistic,
-                                   App::app()->test(),
-                                   App::app()->testType(),
-                                   App::app()->categoricalType());
+    if (type != App::app()->categoricalType()) {
+      App::app()->setCategoricalType(type);
+      Statistic::initializeStatistic(m_statistic,
+                                     App::app()->test(),
+                                     App::app()->testType(),
+                                     App::app()->categoricalType());
+    }
     openPage(view);
     return true;
   }

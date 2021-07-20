@@ -25,7 +25,7 @@ $(call object_for,$(ion_device_userland_svc_src)): SFLAGS += -fno-lto
 ion_device_userland_src = $(ion_device_userland_svc_src)
 
 ion_device_userland_src += $(addprefix ion/src/device/userland/, \
-  boot/isr.c \
+  boot/isr.cpp \
   boot/rt0.cpp \
   drivers/clipboard.cpp \
   drivers/console_display.cpp:+consoledisplay \

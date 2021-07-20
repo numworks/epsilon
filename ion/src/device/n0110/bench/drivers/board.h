@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_BENCH_BOARD_H
 #define ION_DEVICE_BENCH_BOARD_H
 
+#include <shared/drivers/board_frequency.h>
 #include <shared/drivers/board_privileged.h>
 
 namespace Ion {

@@ -14,14 +14,8 @@ void initCompensationCell();
 void shutdownCompensationCell();
 void setDefaultGPIO();
 
-enum class Frequency {
-  Low = 0,
-  High = 1
-};
-
 void setClockLowFrequency();
 void setClockStandardFrequency();
-void setStandardFrequency(Frequency f);
 
 typedef uint32_t PCBVersion;
 /* On N0110 released before the PCB revision, OTP0 is supposed to be blank and

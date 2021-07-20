@@ -1,6 +1,5 @@
 #include "power.h"
 #include <drivers/board.h>
-#include <drivers/trampoline.h>
 #include <regs/regs.h>
 
 namespace Ion {
@@ -32,8 +31,6 @@ void stopConfiguration() {
 
   CORTEX.SCR()->setSLEEPDEEP(true);
 }
-
-typedef void (*SuspendFunction)(void);
 
 }
 }

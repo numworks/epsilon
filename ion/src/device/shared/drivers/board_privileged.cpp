@@ -1,4 +1,3 @@
-#include <shared/drivers/board_privileged.h>
 #include <shared/drivers/board_unprivileged.h>
 #include <regs/regs.h>
 
@@ -38,13 +37,6 @@ void initCompensationCell() {
 
 void shutdownCompensationCell() {
   SYSCFG.CMPCR()->setCMP_PD(false);
-}
-
-Frequency sStandardFrequency = Frequency::High;
-
-void setStandardFrequency(Frequency f) {
-  sStandardFrequency = f;
-  setClockStandardFrequency();
 }
 
 }

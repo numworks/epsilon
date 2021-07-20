@@ -30,6 +30,7 @@ ion_device_bench_flasher = $(addprefix ion/src/device/n0110/shared/boot/, \
 ion_device_bench_kernel = $(addprefix ion/src/device/shared/drivers/, \
   backlight_advanced.cpp \
   battery_charge.cpp \
+  board_frequency.cpp \
   crc32.cpp \
   led.cpp \
   power.cpp \
@@ -38,8 +39,6 @@ ion_device_bench_kernel = $(addprefix ion/src/device/shared/drivers/, \
 
 ion_device_bench_kernel += $(addprefix ion/src/device/n0110/shared/drivers/, \
   cache.cpp \
-  power.cpp \
-  trampoline.cpp \
 )
 
 ## bootloader/kernel
@@ -106,6 +105,7 @@ ion_device_bench_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   external_flash_command.cpp \
   keyboard_init.cpp \
   power_configuration.cpp \
+  power_suspend.cpp \
   usb.cpp \
 )
 
@@ -122,6 +122,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/, \
 ion_device_bootloader_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   display_vblank.cpp \
   keyboard_init.cpp \
+  power_suspend.cpp \
 )
 
 ion_device_bootloader_src += $(ion_device_bootloader_kernel_src) $(ion_device_bootloader_flasher_src) $(ion_device_dfu_src)

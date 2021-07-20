@@ -15,7 +15,6 @@
 #include <shared/drivers/crc32.h>
 #include <shared/drivers/display.h>
 #include <shared/drivers/flash_privileged.h>
-#include <shared/drivers/power.h>
 #include <shared/drivers/random.h>
 #include <shared/drivers/reset.h>
 #include <shared/drivers/serial_number.h>

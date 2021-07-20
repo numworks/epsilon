@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_SHARED_DRIVERS_WAKE_UP_H
-#define ION_DEVICE_SHARED_DRIVERS_WAKE_UP_H
+#ifndef ION_DEVICE_SHARED_DRIVERS_WAKEUP_H
+#define ION_DEVICE_SHARED_DRIVERS_WAKEUP_H
 
 #include "regs/regs.h"
 
@@ -12,6 +12,5 @@ void onUSBPlugging();
 }
 }
 }
-
 
 #endif

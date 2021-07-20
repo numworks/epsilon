@@ -31,7 +31,7 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
 }
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back || event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::OK || event == Ion::Events::EXE) {
     setLegendVisible(false);
     adaptRangeForHeaders(false);
     return ZoomAndPanCurveViewController::handleEvent(event);

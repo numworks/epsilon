@@ -83,15 +83,14 @@ void upgradeRequired() {
   waitUntilKeyPress();
 }
 
-constexpr static int sExternalAppsAvailableNumberOfMessages = 7;
+constexpr static int sExternalAppsAvailableNumberOfMessages = 6;
 constexpr static const char * sExternalAppsAvailableMessages[sExternalAppsAvailableNumberOfMessages] = {
-  "EXTERNAL APPS",
-  "You installed external applications",
-  "to the official sofware.",
-  "Some features may be therefore",
-  "unavailable.",
-  "Every permission will be restored",
-  "when resetting the calculator.",
+  "THIRD PARTY APPLICATIONS",
+  "You have installed external",
+  "applications. For security reasons,",
+  "the use of the LED has been disabled.",
+  "To erase installed apps, press",
+  "reset on the back of the device."
 };
 
 void externalAppsAvailable() {

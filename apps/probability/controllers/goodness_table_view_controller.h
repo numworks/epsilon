@@ -8,6 +8,7 @@
 
 namespace Probability {
 
+/* Controls the InputGoodnessTableView */
 class GoodnessTableViewController : public TableViewController {
 public:
   GoodnessTableViewController(Escher::Responder * parent,

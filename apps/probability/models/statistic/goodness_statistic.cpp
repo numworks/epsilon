@@ -15,13 +15,17 @@ void GoodnessStatistic::computeTest() {
   m_pValue = _pVal(m_degreesOfFreedom, m_z);
 }
 
-int GoodnessStatistic::numberOfValuePairs() {
+int GoodnessStatistic::computeNumberOfRows() {
   // Compute number of rows based on undefined flag
   int i = k_maxNumberOfRows - 1;
   while (i >= 0 && std::isnan(expectedValue(i)) && std::isnan(observedValue(i))) {
     i--;
   }
   return i + 1;
+}
+
+int GoodnessStatistic::numberOfValuePairs() {
+  return computeNumberOfRows();
 }
 
 float GoodnessStatistic::expectedValue(int index) {

@@ -1,20 +1,24 @@
 #include "input_goodness_table_view.h"
 
+#include <algorithm>
+
 #include "probability/models/statistic/goodness_statistic.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
 
+constexpr int InputGoodnessTableView::k_minimumNumberOfRows;
+
 InputGoodnessTableView::InputGoodnessTableView(
     Escher::Responder * parentResponder,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Chi2Statistic * statistic,
+    GoodnessStatistic * statistic,
     Escher::TextFieldDelegate * textFieldDelegate,
     DynamicTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
     SelectableTableView(parentResponder, this, &m_tableSelection, scrollDelegate),
     DynamicTableViewDataSource(delegate),
-    m_numberOfRows(k_initialNumberOfRows),
+    m_numberOfRows(k_minimumNumberOfRows),
     m_statistic(statistic) {
   m_header[0].setMessage(I18n::Message::Observed);
   m_header[1].setMessage(I18n::Message::Expected);
@@ -48,29 +52,8 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
   return &m_cells[i];
 }
 
-bool InputGoodnessTableView::handleEvent(Ion::Events::Event e) {
-  if (e == Ion::Events::Backspace) {
-    // Remove value
-    m_statistic->setParamAtIndex(2 * (selectedRow() - 1) + selectedColumn(),
-                                 GoodnessStatistic::k_undefinedValue);
-    if (selectedRow() == m_numberOfRows - 2 && m_numberOfRows > k_initialNumberOfRows &&
-        std::isnan(m_statistic->paramAtIndex(2 * (selectedRow() - 1) + (1 - selectedColumn())))) {
-      deleteLastRow();
-      reloadData();
-    }
-    reloadCellAtLocation(selectedColumn(), selectedRow());
-    return true;
-  }
-  return SelectableTableView::handleEvent(e);
-}
-
-void InputGoodnessTableView::addRow() {
-  m_numberOfRows++;
-  DynamicTableViewDataSource::notify();
-}
-
-void InputGoodnessTableView::deleteLastRow() {
-  m_numberOfRows--;
+void InputGoodnessTableView::recomputeNumberOfRows() {
+  m_numberOfRows = std::max(m_statistic->computeNumberOfRows() + 2, k_minimumNumberOfRows);
   DynamicTableViewDataSource::notify();
 }
 

@@ -1,5 +1,7 @@
 #include "input_homogeneity_data_source.h"
 
+#include <algorithm>
+
 #include "probability/text_helpers.h"
 
 namespace Probability {
@@ -27,25 +29,14 @@ HighlightCell * InputHomogeneityDataSource::reusableCell(int i, int type) {
   return &m_cells[i];
 }
 
-void InputHomogeneityDataSource::addRow() {
-  m_numberOfRows++;
-  notify();
+void InputHomogeneityDataSource::recomputeDimensions() {
+  HomogeneityStatistic::Index2D dimensions = m_statistic->computeDimensions();
+  m_numberOfRows = std::max(HomogeneityTableDataSource::k_initialNumberOfRows, dimensions.row + 1);
+  m_numberOfColumns = std::max(HomogeneityTableDataSource::k_initialNumberOfColumns,
+                               dimensions.col + 1);
+  DynamicTableViewDataSource::notify();
 }
 
-void InputHomogeneityDataSource::deleteLastRow() {
-  m_numberOfRows--;
-  notify();
-}
-
-void InputHomogeneityDataSource::addColumn() {
-  m_numberOfColumns++;
-  notify();
-}
-
-void InputHomogeneityDataSource::deleteLastColumn() {
-  m_numberOfColumns--;
-  notify();
-}
 void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
     Escher::HighlightCell * cell,
     int column,

@@ -15,10 +15,6 @@ public:
   DynamicTableViewDataSource(DynamicTableViewDataSourceDelegate * delegate = nullptr) :
       m_dydnamicDatSourceDelegate(delegate) {}
   void registerDelegate(DynamicTableViewDataSourceDelegate * delegate) { m_dydnamicDatSourceDelegate = delegate; }
-  virtual void addRow() {}
-  virtual void deleteLastRow() {}
-  virtual void addColumn() {}
-  virtual void deleteLastColumn() {}
 
 protected:
   void notify() {

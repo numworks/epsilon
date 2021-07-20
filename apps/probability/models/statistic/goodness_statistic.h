@@ -13,6 +13,8 @@ public:
   constexpr static int k_maxNumberOfRows = 10;
   void computeTest() override;
 
+  int computeNumberOfRows();
+
 protected:
   float * paramArray() override { return m_input; }
   int _degreesOfFreedom() { return numberOfValuePairs() - 1; }

@@ -10,6 +10,7 @@
 #include "bordered_table_view_data_source.h"
 #include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
+#include "probability/models/statistic/goodness_statistic.h"
 
 namespace Probability {
 
@@ -20,7 +21,7 @@ class InputGoodnessTableView : public Escher::SelectableTableView,
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                         Chi2Statistic * statistic,
+                         GoodnessStatistic * statistic,
                          Escher::TextFieldDelegate * textFieldDelegate,
                          DynamicTableViewDataSourceDelegate * delegate = nullptr,
                          Escher::SelectableTableViewDelegate * scrollDelegate = nullptr);
@@ -36,17 +37,15 @@ public:
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
-  // Responder
-  bool handleEvent(Ion::Events::Event e) override;
+  void recomputeNumberOfRows();
 
-  // DynamicTableViewDataSource
-  void addRow() override;
-  void deleteLastRow() override;
+  constexpr static int k_minimumNumberOfRows = 4;
+
+  using Escher::SelectableTableView::unhighlightSelectedCell;  // Made public
 
 private:
   constexpr static int k_rowHeight = 20;
   constexpr static int k_typeOfHeader = 1;
-  constexpr static int k_initialNumberOfRows = 4;
   constexpr static int k_numberOfColumns = 2;
   constexpr static int k_maxNumberOfReusableRows = (Ion::Display::Height -
                                                     Escher::Metric::TitleBarHeight -
@@ -59,7 +58,7 @@ private:
 
   int m_numberOfRows;
 
-  Chi2Statistic * m_statistic;
+  GoodnessStatistic * m_statistic;
 
   Escher::EvenOddMessageTextCell m_header[k_numberOfColumns];
   Escher::EvenOddEditableTextCell m_cells[k_numberOfColumns * k_maxNumberOfReusableRows];

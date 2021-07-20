@@ -61,7 +61,6 @@ HomogeneityStatistic::Index2D HomogeneityStatistic::computeDimensions() {
       }
     }
   }
-  assert(maxCol >= 0 && maxRow >= 0);
   return Index2D{.row = maxRow + 1, .col = maxCol + 1};
 }
 

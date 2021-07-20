@@ -1,5 +1,5 @@
 #include "command.h"
-#include <drivers/power.h>
+#include <drivers/power_suspend.h>
 #include <assert.h>
 
 namespace Ion {

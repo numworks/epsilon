@@ -3,8 +3,8 @@
 namespace Ion {
 namespace Display {
 
-/* For the bootloader, we shortcut the SVC made by POSTAndHardwareTests to
- * direct calls to the right drivers. */
+/* We shortcut the SVC made by POSTAndHardwareTests to direct calls to the
+ * right drivers. */
 
 bool waitForVBlank() {
   return Device::Display::waitForVBlank();

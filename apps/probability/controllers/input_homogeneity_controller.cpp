@@ -56,7 +56,5 @@ void Probability::InputHomogeneityController::tableViewDidChangeSelectionAndDidS
         m_tableData.rowHeight(row));  // TODO query m_inputTableView::cellFrame
 
     m_contentView.scrollToContentRect(cellFrame);
-
-    m_contentView.layoutSubviews(false);
   }
 }

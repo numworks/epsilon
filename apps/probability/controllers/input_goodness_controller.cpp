@@ -44,7 +44,5 @@ void Probability::InputGoodnessController::tableViewDidChangeSelectionAndDidScro
         m_inputTableView.rowHeight(row));  // TODO query m_inputTableView::cellFrame
 
     m_contentView.scrollToContentRect(cellFrame);
-
-    m_contentView.layoutSubviews(false);
   }
 }

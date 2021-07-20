@@ -5,6 +5,9 @@
 
 using namespace Probability;
 
+constexpr int HomogeneityTableDataSource::k_initialNumberOfRows;
+constexpr int HomogeneityTableDataSource::k_initialNumberOfColumns;
+
 HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * contentTable,
                                                        I18n::Message headerPrefix) :
     m_headerPrefix(headerPrefix),

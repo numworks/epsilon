@@ -34,10 +34,7 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
   // DynamicTableViewDataSource
-  void addRow() override;
-  void deleteLastRow() override;
-  void addColumn() override;
-  void deleteLastColumn() override;
+  void recomputeDimensions();
 
 private:
   int m_numberOfRows;

@@ -23,13 +23,14 @@ public:
   float rowTotal(int row) { return m_rowTotals[row]; }
   float columnTotal(int column) { return m_columnTotals[column]; }
 
-  constexpr static int k_maxNumberOfColumns = 10;
-  constexpr static int k_maxNumberOfRows = 10;
-
   struct Index2D {
     int row;
     int col;
   };
+  Index2D computeDimensions();
+
+  constexpr static int k_maxNumberOfColumns = 10;
+  constexpr static int k_maxNumberOfRows = 10;
 
 protected:
   float observedValue(int resultsIndex) override;
@@ -37,7 +38,6 @@ protected:
   float observedValueAtPosition(Index2D index);
   float expectedValueAtPosition(Index2D index);
   int _degreesOfFreedom(Index2D max);
-  Index2D numberOfInputParams();
   int numberOfValuePairs() override;
 
 private:

@@ -24,13 +24,21 @@ void HomogeneityTableViewController::didBecomeFirstResponder() {
 
 bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
+    // Delete value
+    int row = m_seletableTableView->selectedRow() - 1,
+        col = m_seletableTableView->selectedColumn() - 1;
+    m_statistic->setParameterAtPosition(row, col, HomogeneityStatistic::k_undefinedValue);
+
     // Delete last row / column
-    if (m_seletableTableView->selectedRow() == m_dataSource->numberOfRows() - 1) {
-      m_dataSource->deleteLastRow();
+    m_seletableTableView->deselectTable();
+    if (row == m_dataSource->numberOfRows() - 2) {
+      m_dataSource->recomputeDimensions();
     }
-    if (m_seletableTableView->selectedColumn() == m_dataSource->numberOfColumns() - 1) {
-      m_dataSource->deleteLastColumn();
+    if (col == m_dataSource->numberOfColumns() - 2) {
+      m_dataSource->recomputeDimensions();
     }
+    m_seletableTableView->selectCellAtClippedLocation(col + 1, row + 1, false);
+    m_seletableTableView->reloadCellAtLocation(col + 1, row + 1);
     return true;
   }
   return false;
@@ -43,23 +51,22 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
   if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
     return false;
   }
-
-  m_statistic->setParameterAtPosition(m_seletableTableView->selectedRow() - 1,
-                                      m_seletableTableView->selectedColumn() - 1,
-                                      p);
+  int row = m_seletableTableView->selectedRow(), column = m_seletableTableView->selectedColumn();
+  m_statistic->setParameterAtPosition(row - 1, column - 1, p);
+  
+  m_seletableTableView->deselectTable();
   // Add row
-  if (m_seletableTableView->selectedRow() == m_dataSource->numberOfRows() &&
+  if (row == m_dataSource->numberOfRows() &&
       m_dataSource->numberOfRows() < HomogeneityStatistic::k_maxNumberOfRows) {
-    m_dataSource->addRow();
+    m_dataSource->recomputeDimensions();
   }
   // Add column
-  if (m_seletableTableView->selectedColumn() == m_dataSource->numberOfColumns() &&
+  if (column == m_dataSource->numberOfColumns() &&
       m_dataSource->numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns) {
-    m_dataSource->addColumn();
+    m_dataSource->recomputeDimensions();
   }
 
-  m_seletableTableView->selectCellAtLocation(m_seletableTableView->selectedColumn(),
-                                             m_seletableTableView->selectedRow() + 1);
+  m_seletableTableView->selectCellAtLocation(column, row + 1);
   m_seletableTableView->reloadData(false);  // TODO why needed ?
   return true;
 }

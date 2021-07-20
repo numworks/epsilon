@@ -1,5 +1,5 @@
-#include <drivers/power.h>
 #include <drivers/keyboard.h>
+#include <drivers/power.h>
 #include <drivers/trampoline.h>
 #include <regs/regs.h>
 

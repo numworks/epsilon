@@ -1,8 +1,8 @@
 #include "command.h"
-#include <ion.h>
-#include <poincare/print_int.h>
 #include <drivers/cache.h>
 #include <drivers/crc32.h>
+#include <ion.h>
+#include <poincare/print_int.h>
 #include <cmath>
 
 namespace Ion {

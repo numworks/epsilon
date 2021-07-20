@@ -1,7 +1,7 @@
-#include <kernel/drivers/board.h>
 #include <drivers/cache.h>
-#include <drivers/internal_flash.h>
 #include <drivers/config/clocks.h>
+#include <drivers/internal_flash.h>
+#include <kernel/drivers/board.h>
 #include <regs/regs.h>
 #include <shared/drivers/config/board.h>
 #include <shared/drivers/config/external_flash.h>

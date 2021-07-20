@@ -1,6 +1,6 @@
 #include "command.h"
-#include <poincare/print_int.h>
 #include <drivers/external_flash.h>
+#include <poincare/print_int.h>
 
 namespace Ion {
 namespace Device {

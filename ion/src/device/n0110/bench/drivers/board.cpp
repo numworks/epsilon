@@ -1,18 +1,18 @@
 #include "board.h"
-#include <ion.h>
-#include <drivers/config/clocks.h>
-#include <drivers/config/internal_flash.h>
 #include <drivers/backlight.h>
 #include <drivers/battery.h>
 #include <drivers/cache.h>
+#include <drivers/config/clocks.h>
+#include <drivers/config/internal_flash.h>
 #include <drivers/console.h>
 #include <drivers/display.h>
+#include <drivers/external_flash.h>
 #include <drivers/internal_flash.h>
 #include <drivers/internal_flash_otp.h>
 #include <drivers/keyboard_init.h>
 #include <drivers/led.h>
 #include <drivers/usb_privileged.h>
-#include <drivers/external_flash.h>
+#include <ion.h>
 #include <regs/regs.h>
 
 typedef void(*ISR)(void);

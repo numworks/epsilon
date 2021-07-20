@@ -1,8 +1,8 @@
 #include "board.h"
 #include <boot/isr.h>
-#include <drivers/config/clocks.h>
 #include <drivers/backlight.h>
 #include <drivers/battery.h>
+#include <drivers/config/clocks.h>
 #include <drivers/display.h>
 #include <drivers/events.h>
 #include <drivers/led.h>

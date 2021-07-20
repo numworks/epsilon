@@ -1,7 +1,7 @@
-#include <kernel/drivers/board.h>
-#include <shared/drivers/display.h>
 #include <drivers/config/display.h>
 #include <ion/timing.h>
+#include <kernel/drivers/board.h>
+#include <shared/drivers/display.h>
 
 namespace Ion {
 namespace Device {

@@ -1,7 +1,7 @@
-#include <shared/drivers/display.h>
 #include <drivers/config/display.h>
 #include <ion/display.h>
 #include <ion/timing.h>
+#include <shared/drivers/display.h>
 #include <assert.h>
 
 #define USE_DMA_FOR_PUSH_PIXELS 0

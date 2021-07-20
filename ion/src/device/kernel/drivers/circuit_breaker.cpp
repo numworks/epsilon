@@ -1,5 +1,5 @@
-#include <drivers/circuit_breaker.h>
 #include <drivers/cache.h>
+#include <drivers/circuit_breaker.h>
 #include <drivers/keyboard_queue.h>
 #include <kernel/boot/isr.h>
 #include <regs/regs.h>

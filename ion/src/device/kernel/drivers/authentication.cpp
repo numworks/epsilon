@@ -1,5 +1,5 @@
-#include <kernel/drivers/authentication.h>
 #include <drivers/led.h>
+#include <kernel/drivers/authentication.h>
 #include <kernel/drivers/board.h>
 #include <shared/drivers/config/board.h>
 

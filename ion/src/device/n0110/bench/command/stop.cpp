@@ -1,6 +1,7 @@
 #include "command.h"
 #include <drivers/board.h>
 #include <drivers/power.h>
+#include <drivers/power_suspend.h>
 #include <drivers/wakeup.h>
 
 namespace Ion {
@@ -17,7 +18,7 @@ void Stop(const char * input) {
   Power::stopConfiguration();
   Board::shutdownPeripherals();
   WakeUp::onUSBPlugging();
-  Power::bootloaderSuspend();
+  Power::suspend();
   Board::initPeripherals();
 }
 

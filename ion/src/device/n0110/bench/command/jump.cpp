@@ -21,7 +21,7 @@ void Jump(const char * input) {
   }
   uint32_t address = hexNumber(input+addressOffset, 8);
   reply(sOK);
-  Reset::jump(address, false);
+  Reset::jump(address, true);
 }
 
 }

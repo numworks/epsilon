@@ -25,15 +25,17 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
     return false;
   }
 
-  int index = 2 * (m_seletableTableView->selectedRow() - 1) +
-              m_seletableTableView->selectedColumn();
+  int selectedColumn = m_seletableTableView->selectedColumn();
+  int index = 2 * (m_seletableTableView->selectedRow() - 1) + selectedColumn;
   m_statistic->setParamAtIndex(index, p);
   if (m_seletableTableView->selectedRow() == m_dataSource->numberOfRows() - 1 &&
       m_dataSource->numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
     m_dataSource->addRow();
   }
-  m_seletableTableView->selectCellAtLocation(m_seletableTableView->selectedColumn(),
-                                             m_seletableTableView->selectedRow() + 1);
+  // Select new column or jump to new row
+  m_seletableTableView->selectCellAtLocation(
+      1 - selectedColumn,
+      m_seletableTableView->selectedRow() + (selectedColumn == 1));
   m_seletableTableView->reloadData(false);  // TODO why needed ?
   return true;
 }

@@ -1,4 +1,6 @@
 #include <ion/display.h>
+#include <kandinsky/ion_context.h>
+#include <userland/drivers/display.h>
 #include <userland/drivers/svcall.h>
 
 namespace Ion {
@@ -22,6 +24,13 @@ bool SVC_ATTRIBUTES waitForVBlank() {
 
 void SVC_ATTRIBUTES POSTPushMulticolor(int rootNumberTiles, int tileSize) {
   SVC_RETURNING_VOID(SVC_DISPLAY_POST_PUSH_MULTICOLOR)
+}
+
+void drawString(const char * text, KDPoint point, bool largeFont, KDColor textColor, KDColor backgroundColor) {
+  KDContext * ctx = KDIonContext::sharedContext();
+  ctx->setOrigin(KDPointZero);
+  ctx->setClippingRect(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  ctx->drawString(text, point, largeFont ? KDFont::LargeFont : KDFont::SmallFont, textColor, backgroundColor, 255);
 }
 
 }

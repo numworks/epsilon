@@ -19,8 +19,8 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :
     Page(parent),
-    m_tableView(this, &m_resultsDataSource, this, nullptr),
-    m_contentView(&m_tableView),
+    m_tableView(this, &m_resultsDataSource, this, &m_contentView),
+    m_contentView(&m_tableView, &m_resultsDataSource),
     m_resultsDataSource(&m_tableView, results, this),
     m_statisticGraphController(statisticGraphController) {
 }
@@ -36,8 +36,7 @@ void ResultsController::didBecomeFirstResponder() {
   }
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
   m_resultsDataSource.resetMemoization();
-  m_tableView.reloadData();
-  m_contentView.relayout();
+  m_contentView.reload();
 }
 
 ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
@@ -47,15 +46,15 @@ ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
   return ViewController::TitlesDisplay::DisplayLastTitle;
 }
 
-Probability::ResultsController::ContentView::ContentView(Escher::SelectableTableView * table,
-                                                         I18n::Message titleMessage) :
+Probability::ResultsView::ContentView::ContentView(Escher::SelectableTableView * table,
+                                                   I18n::Message titleMessage) :
     m_spacer(Palette::WallScreen, 0, k_spacerHeight),
     m_title(KDFont::SmallFont, titleMessage, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
     m_table(table) {
-      m_table->setMargins(k_spacerHeight, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
+  m_table->setMargins(k_spacerHeight, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
-Escher::View * Probability::ResultsController::ContentView::subviewAtIndex(int i) {
+Escher::View * Probability::ResultsView::ContentView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   if (i == 0) {
     return &m_spacer;
@@ -65,6 +64,40 @@ Escher::View * Probability::ResultsController::ContentView::subviewAtIndex(int i
   return m_table;
 }
 
-void Probability::ResultsController::ContentView::relayout() {
+void Probability::ResultsView::ContentView::relayout() {
+  layoutSubviews();
+}
+
+Probability::ResultsView::ResultsView(Escher::SelectableTableView * table,
+                                      Escher::TableViewDataSource * tableDataSource,
+                                      I18n::Message titleMessage) :
+    ScrollView(&m_contentView, &m_scrollDataSource),
+    m_tableDataSource(tableDataSource),
+    m_contentView(table, titleMessage) {
+  setMargins(ContentView::k_spacerHeight, 0, Metric::CommonBottomMargin, 0);
+}
+
+KDPoint Probability::ResultsView::tableOrigin() {
+  return KDPoint(0, 2 * ContentView::k_spacerHeight + 14);
+}
+
+void Probability::ResultsView::tableViewDidChangeSelectionAndDidScroll(
+    SelectableTableView * t,
+    int previousSelectedCellX,
+    int previousSelectedCellY,
+    bool withinTemporarySelection) {
+  // Scroll to correct location
+  int row = m_contentView.m_table->selectedRow(), col = m_contentView.m_table->selectedColumn();
+  if (row >= 0 && col >= 0) {
+    KDRect cellFrame = KDRect(m_tableDataSource->cumulatedWidthFromIndex(col),
+                              m_tableDataSource->cumulatedHeightFromIndex(row),
+                              m_tableDataSource->columnWidth(col),
+                              m_tableDataSource->rowHeight(row));
+    scrollToContentRect(cellFrame.translatedBy(tableOrigin()));
+  }
+}
+
+void Probability::ResultsView::reload() {
+  m_contentView.m_table->reloadData();
   layoutSubviews();
 }

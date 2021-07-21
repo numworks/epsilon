@@ -25,8 +25,6 @@ void configWakeUp() {
 }
 
 void bootloaderSuspend() {
-  Board::shutdownPeripheralsClocks();
-
   /* To enter sleep, we need to issue a WFE instruction, which waits for the
    * event flag to be set and then clears it. However, the event flag might
    * already be on. So the safest way to make sure we actually wait for a new
@@ -36,8 +34,6 @@ void bootloaderSuspend() {
   asm("wfe");
   asm("nop");
   asm("wfe");
-
-  Board::initPeripheralsClocks();
 }
 
 }

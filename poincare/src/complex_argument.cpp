@@ -1,10 +1,11 @@
 #include <poincare/complex_argument.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/constant.h>
 #include <poincare/layout_helper.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
-#include <poincare/rational.h>
-#include <poincare/constant.h>
+#include <poincare/undefined.h>
 extern "C" {
 #include <assert.h>
 }
@@ -33,7 +34,6 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>::Builder(std::arg(c));
 }
 
-
 Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
@@ -48,28 +48,37 @@ Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reduc
   if (c.deepIsMatrix(reductionContext.context())) {
     return *this;
   }
-  bool real = c.isReal(reductionContext.context());
-  if (real) {
-    float app = c.node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
-    if (!std::isnan(app) && app >= Expression::Epsilon<float>()) {
-      // arg(x) = 0 if x > 0
-      Expression result = Rational::Builder(0);
-      replaceWithInPlace(result);
-      return result;
-    } else if (!std::isnan(app) && app <= -Expression::Epsilon<float>()) {
-      // arg(x) = Pi if x < 0
-      Expression result = Constant::Builder(UCodePointGreekSmallLetterPi);
-      replaceWithInPlace(result);
-      return result;
-    }
-  }
-  if (real || c.type() == ExpressionNode::Type::ComplexCartesian) {
-    ComplexCartesian complexChild = real ? ComplexCartesian::Builder(c, Rational::Builder(0)) : static_cast<ComplexCartesian &>(c);
+
+  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+    ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Expression childArg = complexChild.argument(reductionContext);
     replaceWithInPlace(childArg);
     return childArg.shallowReduce(reductionContext);
   }
-  return *this;
+  Context * context = reductionContext.context();
+  Expression res;
+  if (c.nullStatus(context) == ExpressionNode::NullStatus::Null) {
+    res = Undefined::Builder();
+  } else if (c.sign(context) == ExpressionNode::Sign::Positive) {
+    res = Rational::Builder(0);
+  } else if (c.sign(context) == ExpressionNode::Sign::Negative) {
+    res = Constant::Builder(UCodePointGreekSmallLetterPi);
+  } else {
+    double approximation = c.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+    if (approximation < 0.0) {
+      res = Constant::Builder(UCodePointGreekSmallLetterPi);
+    } else if (approximation > 0.0) {
+      res = Rational::Builder(0);
+    } else if (approximation == 0.0) {
+      res = Undefined::Builder();
+    } // else, approximation is NaN
+  }
+  if (res.isUninitialized()) {
+    return *this;
+  } else {
+    replaceWithInPlace(res);
+    return res;
+  }
 }
 
 }

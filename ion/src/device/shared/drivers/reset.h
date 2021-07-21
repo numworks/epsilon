@@ -8,7 +8,6 @@ namespace Device {
 namespace Reset {
 
 void core();
-void coreWhilePlugged();
 void jump(uint32_t jumpIsrVectorAddress, bool useMainStack = true);
 
 }

@@ -8,6 +8,5 @@ ion_device_kernel_src += $(addprefix ion/src/device/n0100/kernel/, \
   drivers/fcc_id.cpp \
   drivers/led.cpp \
   drivers/power.cpp \
-  drivers/reset.cpp \
   drivers/usb.cpp \
 )

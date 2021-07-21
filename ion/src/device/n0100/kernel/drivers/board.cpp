@@ -249,6 +249,10 @@ bool isInReflashableSector(uint32_t address) {
   return address >= InternalFlash::Config::StartAddress && address < InternalFlash::Config::EndAddress;
 }
 
+void switchExecutableSlot(uint32_t leaveAddress) {
+  assert(false);
+}
+
 }
 }
 }

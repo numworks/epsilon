@@ -56,7 +56,9 @@ const char * InputController::title() {
       sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%c%s", symbol, paramBuffer, symbol, op, paramBuffer);
     }
   } else {
-    strlcpy(m_titleBuffer, "z-interval bla...", bufferSize);
+    const char * symbol = testTypeToText(App::app()->testType());
+    const char * text = testToText(App::app()->test());
+    sprintf(m_titleBuffer, "%s-interval on %s", symbol, text);
   }
   return m_titleBuffer;
 }

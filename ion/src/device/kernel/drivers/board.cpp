@@ -6,7 +6,6 @@
 #include <drivers/display.h>
 #include <drivers/events.h>
 #include <drivers/led.h>
-#include <drivers/reset.h>
 #include <drivers/swd.h>
 #include <drivers/timing.h>
 #include <drivers/usb_privileged.h>

@@ -18,6 +18,7 @@ const char * IntersectionGraphController::title() {
 }
 
 void IntersectionGraphController::reloadBannerView() {
+  assert(!m_intersectedRecord.isNull());
   CalculationGraphController::reloadBannerView();
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];

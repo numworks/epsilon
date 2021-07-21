@@ -81,6 +81,7 @@ App::App(Snapshot * snapshot) :
   Data::Page page = snapshot->navigation()->page();
   Data::SubApp subapp = snapshot->navigation()->subapp();
   Data::Test test = snapshot->data()->test();
+  Data::CategoricalType categoricalType = snapshot->data()->categoricalType();
 
   // TODO open Parameters and Calculation too
   switch (page) {
@@ -142,7 +143,7 @@ App::App(Snapshot * snapshot) :
       m_menuController.openPage(&m_testController);
       if (test == Data::Test::Categorical) {
         m_testController.openPage(&m_categoricalTypeController);
-        if (snapshot->data()->categoricalData()->m_type == Data::CategoricalType::Goodness) {
+        if (categoricalType == Data::CategoricalType::Goodness) {
           m_categoricalTypeController.openPage(&m_inputGoodnessController);
           m_inputGoodnessController.openPage(&m_resultsController);
         } else {

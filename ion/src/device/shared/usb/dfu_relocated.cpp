@@ -2,6 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include <drivers/cache.h>
+#include <shared/drivers/config/board.h>
 #include <shared/drivers/board_unprivileged.h>
 #include <shared/drivers/usb.h>
 
@@ -34,7 +35,7 @@ void DFU() {
 
   size_t dfu_bootloader_size = &_dfu_bootloader_flash_end - &_dfu_bootloader_flash_start;
   char * dfu_bootloader_ram_start = reinterpret_cast<char *>(&_process_stack_end);
-  assert(&_process_stack_end == (void *)(0x20000000 + 256*1024 - 32*1024));
+  assert(&_process_stack_end == (void *)(Device::Board::Config::UserlandSRAMAddress + Device::Board::Config::UserlandSRAMLength - Device::Board::Config::UserlandStackLength));
 
   /* 2- Verify there is enough free space on the stack to copy the DFU code. */
 

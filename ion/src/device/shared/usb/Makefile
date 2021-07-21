@@ -58,6 +58,7 @@ ion_device_dfu_src += $(addsuffix :+usbxip,$(ion_device_usb_src))
 # TODO: this a workaround an uresolved bug: dfu_temp should be renamed dfu.temp and the "Workaround rule" should not be necessary.
 # Sources required to execute DFU in RAM
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf: LDSCRIPT += ion/src/device/shared/usb/dfu.ld
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf: LDFLAGS += -Lion/src/device/shared
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf: LDDEPS += $(LDSCRIPT)
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu_temp.elf: $(call flavored_object_for,$(ion_device_usb_src) $(ion_device_dfu_deps_src),)
 

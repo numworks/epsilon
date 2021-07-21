@@ -33,7 +33,7 @@ public:
   HypothesisController(Escher::StackViewController * parent, InputController * inputController,
                        InputEventHandlerDelegate * handler, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitles;
+    return ViewController::TitlesDisplay::DisplayLastTitle;
   };
   const char * title() override;
   HighlightCell * reusableCell(int i, int type) override;

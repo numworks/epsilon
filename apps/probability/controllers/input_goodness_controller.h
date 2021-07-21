@@ -20,7 +20,7 @@
 #include "goodness_table_view_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/input_categorical_controller.h"
-#include "probability/gui/input_categorical_view.h"
+#include "probability/abstract/input_categorical_view.h"
 #include "probability/gui/input_goodness_table_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/statistic/goodness_statistic.h"

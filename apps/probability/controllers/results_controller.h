@@ -8,6 +8,7 @@
 #include <escher/input_event_handler_delegate.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
+#include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
@@ -21,6 +22,42 @@
 #include "statistic_graph_controller.h"
 
 namespace Probability {
+
+class ResultsView : public ScrollView, public Escher::SelectableTableViewDelegate {
+public:
+  ResultsView(Escher::SelectableTableView * table,
+              Escher::TableViewDataSource * tableDataSource,
+              I18n::Message titleMessage = I18n::Message::CalculatedValues);
+
+  KDPoint tableOrigin();
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
+                                               int previousSelectedCellX,
+                                               int previousSelectedCellY,
+                                               bool withinTemporarySelection = false) override;
+
+  void reload();
+
+private:
+  /* Lays out a SpacerView, a title and a table */
+  class ContentView : public VerticalLayout {
+  public:
+    ContentView(Escher::SelectableTableView * table, I18n::Message titleMessage);
+    int numberOfSubviews() const override { return 3; }
+    Escher::View * subviewAtIndex(int i) override;
+    void relayout();
+
+  private:
+    friend ResultsView;
+    constexpr static int k_spacerHeight = 5;
+    SpacerView m_spacer;
+    Escher::MessageTextView m_title;
+    Escher::SelectableTableView * m_table;
+  };
+
+  ContentView m_contentView;
+  ScrollViewDataSource m_scrollDataSource;
+  Escher::TableViewDataSource * m_tableDataSource;
+};
 
 class ResultsController : public Page, public ButtonDelegate, public SelectableTableViewDataSource {
 public:
@@ -41,23 +78,8 @@ public:
   Escher::View * view() override { return &m_contentView; }
 
 protected:
-  class ContentView : public VerticalLayout {
-  public:
-    ContentView(Escher::SelectableTableView * table,
-                I18n::Message titleMessage = I18n::Message::CalculatedValues);
-    int numberOfSubviews() const override { return 3; }
-    Escher::View * subviewAtIndex(int i) override;
-    void relayout();
-
-  private:
-    constexpr static int k_spacerHeight = 5;
-    SpacerView m_spacer;
-    Escher::MessageTextView m_title;
-    Escher::SelectableTableView * m_table;
-  };
-
   Escher::SelectableTableView m_tableView;
-  ContentView m_contentView;
+  ResultsView m_contentView;
 
   ResultsDataSource m_resultsDataSource;
 

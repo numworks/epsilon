@@ -25,7 +25,7 @@ public:
 
 private:
   enum TestCellOrder { Z, PValue, TestDegree };
-  enum IntervalCellOrder { Estimate, Critical, SE, ME, IntervalDegree };
+  enum IntervalCellOrder { Critical, SE, ME, IntervalDegree };
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
   Statistic * m_statistic;

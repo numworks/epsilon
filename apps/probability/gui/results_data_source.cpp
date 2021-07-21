@@ -26,7 +26,7 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent, Statistic * sta
 
 int ResultsDataSource::numberOfRows() const {
   Data::SubApp subapp = App::app()->subapp();
-  int index = subapp == Data::SubApp::Tests ? 2 : 4;
+  int index = subapp == Data::SubApp::Tests ? 2 : 3;
   index += m_statistic->hasDegreeOfFreedom();
   return index + 1 /* button */;
 }
@@ -54,10 +54,6 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
       }
     } else {
       switch (i) {
-        case IntervalCellOrder::Estimate:
-          message = I18n::Message::P;
-          value = m_statistic->estimate();
-          break;
         case IntervalCellOrder::Critical:
           message = I18n::Message::Z;  // TODO use m_statistic->intervalCriticalValueSymbol();
           value = m_statistic->intervalCriticalValue();

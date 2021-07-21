@@ -47,6 +47,7 @@ protected:
                 I18n::Message titleMessage = I18n::Message::CalculatedValues);
     int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int i) override;
+    void relayout();
 
   private:
     constexpr static int k_spacerHeight = 5;

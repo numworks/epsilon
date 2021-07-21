@@ -37,6 +37,7 @@ void ResultsController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
   m_resultsDataSource.resetMemoization();
   m_tableView.reloadData();
+  m_contentView.relayout();
 }
 
 ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
@@ -62,4 +63,8 @@ Escher::View * Probability::ResultsController::ContentView::subviewAtIndex(int i
     return &m_title;
   }
   return m_table;
+}
+
+void Probability::ResultsController::ContentView::relayout() {
+  layoutSubviews();
 }

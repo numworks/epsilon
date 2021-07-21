@@ -71,7 +71,7 @@ void * const k_SVCallTable[SVC_NUMBER_OF_CALLS] = {
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Power::standby),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Power::suspend),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::random),
-  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Reset::coreWhilePlugged),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Reset::core),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::SerialNumber::copy),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Timing::millis),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Timing::msleep),
@@ -169,7 +169,7 @@ void * svcallHandler(int svcNumber) {
   ENSURE_SVC_TYPE(SVC_POWER_STANDBY, Ion::Device::Power::standby)
   ENSURE_SVC_TYPE(SVC_POWER_SUSPEND, Ion::Device::Power::suspend)
   ENSURE_SVC_TYPE(SVC_RANDOM, Ion::Device::random)
-  ENSURE_SVC_TYPE(SVC_RESET_CORE, Ion::Device::Reset::coreWhilePlugged)
+  ENSURE_SVC_TYPE(SVC_RESET_CORE, Ion::Device::Reset::core)
   ENSURE_SVC_TYPE(SVC_SERIAL_NUMBER_COPY, Ion::Device::SerialNumber::copy)
   ENSURE_SVC_TYPE(SVC_TIMING_MILLIS, Ion::Timing::millis)
   ENSURE_SVC_TYPE(SVC_TIMING_MSLEEP, Ion::Timing::msleep)

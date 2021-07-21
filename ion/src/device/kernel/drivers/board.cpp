@@ -98,30 +98,6 @@ void setClockStandardFrequency() {
   Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKFrequency);
 }
 
-void switchExecutableSlot(uint32_t leaveAddress) {
-  assert(Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks);
-  if (!isInReflashableSector(leaveAddress)) {
-    return Reset::coreWhilePlugged();
-  }
-  /* In N0100, the userland has been overriden, we have to extract the
-   * platform information from the slot information kept in RAM. */
-  KernelHeader * currentInfo = USB::slotInfo()->kernelHeader();
-  UserlandHeader * otherInfo = reinterpret_cast<UserlandHeader *>(leaveAddress);
-
-  if (!otherInfo->isValid()) {
-    // Can't get any information on the kernel version required
-    return Reset::coreWhilePlugged();
-  }
-  int deltaVersion = currentInfo->epsilonVersionComparedTo(otherInfo->expectedEpsilonVersion());
-  if (deltaVersion != 0) {
-    WarningDisplay::upgradeRequired();
-    return Reset::coreWhilePlugged();
-  } else {
-    Authentication::downgradeClearanceLevelTo(Ion::Authentication::ClearanceLevel::ThirdParty);
-    WarningDisplay::unauthenticatedUserland(); // UNOFFICIAL SOFTWARE
-  }
-}
-
 void enableExternalApps() {
   WarningDisplay::externalAppsAvailable();
   Authentication::downgradeClearanceLevelTo(Ion::Authentication::ClearanceLevel::NumWorksAndThirdPartyApps);

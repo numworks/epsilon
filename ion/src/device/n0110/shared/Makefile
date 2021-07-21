@@ -112,7 +112,6 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
 ion_device_bootloader_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
-  reset.cpp \
 )
 
 # Flasher
@@ -122,10 +121,6 @@ ion_device_flasher_src += $(ion_device_bench_bootloader_flasher_kernel_src) $(io
 ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight_basic.cpp \
   internal_flash.cpp \
-)
-
-ion_device_flasher_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
-  reset.cpp \
 )
 
 # Kernel
@@ -140,7 +135,6 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
 ion_device_kernel_src += $(addprefix ion/src/device/n0110/shared/drivers/, \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
-  reset.cpp \
 )
 
 # Userland

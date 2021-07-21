@@ -61,7 +61,6 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
     m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
                   &m_significanceCell,
                   &m_next) {
-  m_tableSelection.selectColumn(-1);
   setTopMargin(Metric::CommonTopMargin);
   setBottomMargin(Metric::CommonBottomMargin);
   setBackgroundColor(Palette::WallScreenDark);

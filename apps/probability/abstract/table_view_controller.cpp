@@ -5,10 +5,13 @@
 namespace Probability {
 
 void TableViewController::didBecomeFirstResponder() {
-  if (m_seletableTableView->selectedRow() < 0) {
-    m_seletableTableView->selectRow(1);
+  if (selectableTableView()->selectedRow() < 0) {
+    selectableTableView()->selectRow(1);
   }
-  Escher::Container::activeApp()->setFirstResponder(m_seletableTableView);
+  if (selectableTableView()->selectedColumn() < 0) {
+    selectableTableView()->selectColumn(1);
+  }
+  Escher::Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
 bool Probability::TableViewController::textFieldShouldFinishEditing(

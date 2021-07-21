@@ -42,9 +42,11 @@ void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCe
 
 HomogeneityTableDataSourceWithTotals::HomogeneityTableDataSourceWithTotals(
     TableViewDataSource * contentTable,
+    Escher::SelectableTableViewDelegate * tableDelegate,
     I18n::Message headerPrefix,
     I18n::Message totalMessage) :
-    HomogeneityTableDataSource(contentTable, headerPrefix), m_totalMessage(totalMessage) {
+    HomogeneityTableDataSource(contentTable, tableDelegate, headerPrefix),
+    m_totalMessage(totalMessage) {
 }
 
 void HomogeneityTableDataSourceWithTotals::willDisplayCellAtLocation(Escher::HighlightCell * cell,

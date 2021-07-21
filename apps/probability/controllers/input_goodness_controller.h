@@ -30,8 +30,7 @@ using namespace Escher;
 
 namespace Probability {
 
-class InputGoodnessController : public InputCategoricalController,
-                                public Escher::SelectableTableViewDelegate {
+class InputGoodnessController : public InputCategoricalController {
 public:
   InputGoodnessController(StackViewController * parent,
                           ResultsController * resultsController,
@@ -41,13 +40,9 @@ public:
 
   void didBecomeFirstResponder() override;
 
-  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
-                                               int previousSelectedCellX,
-                                               int previousSelectedCellY,
-                                               bool withinTemporarySelection) override;
+  TableViewController * tableViewController() override { return &m_tableController; }
 
 private:
-  InputGoodnessTableView m_inputTableView;
   GoodnessTableViewController m_tableController;
 };
 

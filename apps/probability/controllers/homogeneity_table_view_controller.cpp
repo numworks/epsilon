@@ -6,40 +6,42 @@ namespace Probability {
 
 HomogeneityTableViewController::HomogeneityTableViewController(
     Escher::Responder * parent,
-    Escher::SelectableTableView * tableView,
-    InputHomogeneityDataSource * dataSource,
-    HomogeneityStatistic * statistic) :
-    TableViewController(parent, tableView),
-    m_contentView(tableView),
-    m_dataSource(dataSource),
+    HomogeneityStatistic * statistic,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    DynamicTableViewDataSourceDelegate * dataSourceDelegate,
+    Escher::SelectableTableViewDelegate * tableDelegate) :
+    TableViewController(parent),
+    m_innerTableData(&m_table, inputEventHandlerDelegate, statistic, this, dataSourceDelegate),
+    m_tableData(&m_innerTableData, tableDelegate),
+    m_table(this, &m_tableData, &m_selectionDataSource, &m_tableData),
     m_statistic(statistic) {
+  m_selectionDataSource.selectColumn(-1);
 }
 
 void HomogeneityTableViewController::didBecomeFirstResponder() {
-  if (m_seletableTableView->selectedColumn() < 0) {
-    m_seletableTableView->selectColumn(1);
+  if (m_table.selectedColumn() < 0) {
+    m_table.selectColumn(1);
   }
-  m_dataSource->recomputeDimensions();
+  m_innerTableData.recomputeDimensions();
   TableViewController::didBecomeFirstResponder();
 }
 
 bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     // Delete value
-    int row = m_seletableTableView->selectedRow() - 1,
-        col = m_seletableTableView->selectedColumn() - 1;
+    int row = m_table.selectedRow() - 1, col = m_table.selectedColumn() - 1;
     m_statistic->setParameterAtPosition(row, col, HomogeneityStatistic::k_undefinedValue);
 
     // Delete last row / column
-    m_seletableTableView->deselectTable();
-    if (row == m_dataSource->numberOfRows() - 2) {
-      m_dataSource->recomputeDimensions();
+    m_table.deselectTable();
+    if (row == m_innerTableData.numberOfRows() - 2) {
+      m_innerTableData.recomputeDimensions();
     }
-    if (col == m_dataSource->numberOfColumns() - 2) {
-      m_dataSource->recomputeDimensions();
+    if (col == m_innerTableData.numberOfColumns() - 2) {
+      m_innerTableData.recomputeDimensions();
     }
-    m_seletableTableView->selectCellAtClippedLocation(col + 1, row + 1, false);
-    m_seletableTableView->reloadCellAtLocation(col + 1, row + 1);
+    m_table.selectCellAtClippedLocation(col + 1, row + 1, false);
+    m_table.reloadCellAtLocation(col + 1, row + 1);
     return true;
   }
   return false;
@@ -52,23 +54,23 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
   if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
     return false;
   }
-  int row = m_seletableTableView->selectedRow(), column = m_seletableTableView->selectedColumn();
+  int row = m_table.selectedRow(), column = m_table.selectedColumn();
   m_statistic->setParameterAtPosition(row - 1, column - 1, p);
 
-  m_seletableTableView->deselectTable();
+  m_table.deselectTable();
   // Add row
-  if (row == m_dataSource->numberOfRows() &&
-      m_dataSource->numberOfRows() < HomogeneityStatistic::k_maxNumberOfRows) {
-    m_dataSource->recomputeDimensions();
+  if (row == m_innerTableData.numberOfRows() &&
+      m_innerTableData.numberOfRows() < HomogeneityStatistic::k_maxNumberOfRows) {
+    m_innerTableData.recomputeDimensions();
   }
   // Add column
-  if (column == m_dataSource->numberOfColumns() &&
-      m_dataSource->numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns) {
-    m_dataSource->recomputeDimensions();
+  if (column == m_innerTableData.numberOfColumns() &&
+      m_innerTableData.numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns) {
+    m_innerTableData.recomputeDimensions();
   }
 
-  m_seletableTableView->selectCellAtLocation(column, row + 1);
-  m_seletableTableView->reloadData(false);  // TODO why needed ?
+  m_table.selectCellAtLocation(column, row + 1);
+  m_table.reloadData(false);  // TODO why needed ?
   return true;
 }
 

@@ -80,10 +80,9 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     HomogeneityStatistic * statistic,
     ResultsController * resultsController) :
     Page(stackViewController),
-    ChainedSelectableTableViewDelegate(&m_tableData),
     m_resultsController(resultsController),
     m_contentView(this, &m_table, this),
-    m_tableData(&m_innerTableData),
+    m_tableData(&m_innerTableData, this),
     m_innerTableData(statistic),
     m_table(this, &m_tableData, &m_tableData, this),
     m_isTableSelected(true) {

@@ -9,6 +9,7 @@
 #include <escher/table_view_data_source.h>
 #include <escher/text_field_delegate.h>
 
+#include "probability/abstract/chained_selectable_table_view_delegate.h"
 #include "probability/gui/bordered_table_view_data_source.h"
 #include "probability/gui/solid_color_cell.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
@@ -22,9 +23,10 @@ namespace Probability {
 // TODO memoize
 class HomogeneityTableDataSource : public BorderedTableViewDataSource,
                                    public SelectableTableViewDataSource,
-                                   public SelectableTableViewDelegate {
+                                   public ChainedSelectableTableViewDelegate {
 public:
   HomogeneityTableDataSource(TableViewDataSource * contentTable,
+                             Escher::SelectableTableViewDelegate * tableDelegate,
                              I18n::Message headerPrefix = I18n::Message::Group);
   int numberOfRows() const override { return m_contentTable->numberOfRows() + 1; }
   int numberOfColumns() const override { return m_contentTable->numberOfColumns() + 1; }

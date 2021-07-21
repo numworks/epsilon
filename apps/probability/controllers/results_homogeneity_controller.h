@@ -83,7 +83,7 @@ private:
 
 class ResultsHomogeneityController : public Page,
                                      public ButtonDelegate,
-                                     public ChainedSelectableTableViewDelegate {
+                                     public Escher::SelectableTableViewDelegate {
 public:
   ResultsHomogeneityController(StackViewController * stackViewController,
                                HomogeneityStatistic * statistic,

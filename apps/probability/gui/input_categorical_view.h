@@ -42,9 +42,6 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  SelectableTableViewDataSource * selectionDataSource() {
-    return &m_tableSelection;
-  }  // TODO remove
   int selectedView() { return m_viewSelection.selectedRow(); }
   void setSignificanceCellText(const char * text);
   void setTableView(TableViewController * tableViewController);
@@ -106,7 +103,6 @@ private:
   Escher::Button m_next;
   ContentView m_contentView;
 
-  SelectableTableViewDataSource m_tableSelection;
   SelectableTableViewDataSource m_viewSelection;
   Escher::ScrollViewDataSource m_scrollDataSource;
 };

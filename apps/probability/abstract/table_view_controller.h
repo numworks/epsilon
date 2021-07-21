@@ -9,21 +9,16 @@ namespace Probability {
 
 class TableViewController : public Escher::Responder, public Shared::TextFieldDelegate {
 public:
-  TableViewController(Escher::Responder * parent, Escher::SelectableTableView * tableView) :
-      Escher::Responder(parent), m_seletableTableView(tableView) {}
+  using Escher::Responder::Responder;
+
   void didBecomeFirstResponder() override;
 
-  Escher::SelectableTableView * selectableTableView() { return m_seletableTableView; }
-  void setSeletableTableView(Escher::SelectableTableView * selectableTableView) {
-    m_seletableTableView = selectableTableView;
-  }
+  virtual Escher::SelectableTableView * selectableTableView() = 0;
+  virtual Escher::TableViewDataSource * tableViewDataSource() = 0;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField,
                                     Ion::Events::Event event) override;
-
-protected:
-  Escher::SelectableTableView * m_seletableTableView;
 };
 
 }  // namespace Probability

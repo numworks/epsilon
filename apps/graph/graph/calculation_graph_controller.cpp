@@ -46,8 +46,8 @@ void CalculationGraphController::viewDidDisappear() {
   t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), numberOfSignificantDigits(), curveView()->pixelWidth());
   Coordinate2D<double> xy = App::app()->functionStore()->modelForRecord(m_record)->evaluateXYAtParameter(t, App::app()->localContext());
   m_cursor->moveTo(t, xy.x1(), xy.x2());
-  // Reload banner view to update cursor values
-  reloadBannerView();
+  // Reload default banner view to update displayed cursor values
+  CalculationGraphController::reloadBannerView();
   return Shared::SimpleInteractiveCurveViewController::viewDidDisappear();
 }
 

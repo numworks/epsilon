@@ -1,15 +1,15 @@
-#ifndef APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H
-#define APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H
+#ifndef APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_VIEW_H
+#define APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_VIEW_H
 
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
 #include <ion/events.h>
 
-#include "horizontal_or_vertical_layout.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/table_view_controller.h"
-#include "spacer_view.h"
+#include "probability/gui/horizontal_or_vertical_layout.h"
+#include "probability/gui/spacer_view.h"
 
 namespace Probability {
 
@@ -109,4 +109,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_INPUT_TABLE_VIEW_H */
+#endif /* APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_VIEW_H */

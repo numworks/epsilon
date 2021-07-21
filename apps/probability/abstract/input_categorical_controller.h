@@ -1,11 +1,11 @@
-#ifndef APPS_PROBABILITY_CONTROLLERS_INPUT_CATEGORICAL_CONTROLLER_H
-#define APPS_PROBABILITY_CONTROLLERS_INPUT_CATEGORICAL_CONTROLLER_H
+#ifndef APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_CONTROLLER_H
+#define APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_CONTROLLER_H
 
 #include <escher/selectable_table_view.h>
 
 #include "button_delegate.h"
+#include "input_categorical_view.h"
 #include "probability/controllers/results_controller.h"
-#include "probability/gui/input_categorical_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/statistic/chi2_statistic.h"
 
@@ -56,4 +56,4 @@ protected:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_CONTROLLERS_INPUT_CATEGORICAL_CONTROLLER_H */
+#endif /* APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_CONTROLLER_H */

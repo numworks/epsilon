@@ -10,18 +10,20 @@
 #include "probability/app.h"
 #include "probability/helpers.h"
 #include "probability/models/data.h"
+#include "probability/text_helpers.h"
 
 using namespace Probability;
 
 ResultsController::ResultsController(Escher::StackViewController * parent,
-                                     Statistic * results,
+                                     Statistic * statistic,
                                      StatisticGraphController * statisticGraphController,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :
     Page(parent),
     m_tableView(this, &m_resultsDataSource, this, &m_contentView),
     m_contentView(&m_tableView, &m_resultsDataSource),
-    m_resultsDataSource(&m_tableView, results, this),
+    m_resultsDataSource(&m_tableView, statistic, this),
+    m_statistic(statistic),
     m_statisticGraphController(statisticGraphController) {
 }
 
@@ -44,6 +46,16 @@ ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   return ViewController::TitlesDisplay::DisplayLastTitle;
+}
+
+const char * Probability::ResultsController::title() {
+  if (App::app()->subapp() == Data::SubApp::Intervals) {
+    char buffer[k_titleBufferSize];
+    defaultParseFloat(m_statistic->threshold(), buffer, k_titleBufferSize);
+    sprintf(m_titleBuffer, "Confidence=%s", buffer);
+    return m_titleBuffer;
+  }
+  return nullptr;
 }
 
 Probability::ResultsView::ContentView::ContentView(Escher::SelectableTableView * table,

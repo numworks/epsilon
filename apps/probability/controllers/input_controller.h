@@ -41,6 +41,13 @@ public:
                                bool textSizeDidChange) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
 
+  void openPage(ViewController * nextPage,
+                KDColor backgroundColor = Palette::GrayDark,
+                KDColor separatorColor = Palette::GrayDark,
+                KDColor textColor = KDColorWhite) {
+    FloatParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
+  }
+
 protected:
   float parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
 

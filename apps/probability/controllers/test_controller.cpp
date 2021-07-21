@@ -98,6 +98,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     }
     assert(view != nullptr);
     if (Data::isProportion(test) && (test != App::app()->test())) {
+      App::app()->setCategoricalType(Data::CategoricalType::None);
       Statistic::initializeStatistic(m_statistic,
                                      test,
                                      Data::TestType::ZTest,

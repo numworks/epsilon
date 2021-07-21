@@ -90,22 +90,13 @@ constexpr static int k_maxNumberOfHomogeneityInputColumns = 10;
 typedef float InputHomogeneityData[k_maxNumberOfHomogeneityInputRows]
                                   [k_maxNumberOfHomogeneityInputColumns];
 
-// TODO store in Statistic too ?
-struct CategoricalData {
-  CategoricalType m_type;
-  union {
-    InputGoodnessData m_goodness;
-    InputHomogeneityData m_homogeneity;
-  } m_data;
-};
 
 struct StatisticData {
   Test m_test;
+  CategoricalType m_categoricalType;
+  TestType m_testType;
   StatisticBuffer m_statisticBuffer;
-  union {
-    TestType m_testType;
-    CategoricalData m_categorical;
-  } m_data;
+
   Statistic * statistic() { return reinterpret_cast<Statistic *>(m_statisticBuffer); }
 };
 
@@ -131,16 +122,11 @@ public:
   // StatisticData
   Test test() { return statisticData()->m_test; }
   Test * testPointer() { return &(statisticData()->m_test); }
-  CategoricalData * categoricalData() { return &statisticData()->m_data.m_categorical; }
-  TestType testType() { return statisticData()->m_data.m_testType; }
-  TestType * testTypePointer() { return &(statisticData()->m_data.m_testType); }
-  void setTestType(TestType t) { statisticData()->m_data.m_testType = t; }
-  CategoricalType categoricalType() { return categoricalData()->m_type; }
-  void setCategoricalType(CategoricalType t) { categoricalData()->m_type = t; }
-  InputGoodnessData * inputGoodnessData() { return &(categoricalData()->m_data.m_goodness); }
-  InputHomogeneityData * inputHomogeneityData() {
-    return &(categoricalData()->m_data.m_homogeneity);
-  }
+  TestType testType() { return statisticData()->m_testType; }
+  TestType * testTypePointer() { return &(statisticData()->m_testType); }
+  void setTestType(TestType t) { statisticData()->m_testType = t; }
+  CategoricalType categoricalType() { return statisticData()->m_categoricalType; }
+  void setCategoricalType(CategoricalType t) { statisticData()->m_categoricalType = t; }
   Statistic * statistic() { return statisticData()->statistic(); }
   HypothesisParams * hypothesisParams() { return statistic()->hypothesisParams(); }
 

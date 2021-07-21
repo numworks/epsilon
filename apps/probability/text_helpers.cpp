@@ -73,11 +73,11 @@ const char * testToTextSymbol(Data::Test t) {
 const char * testTypeToText(Data::TestType t) {
   switch (t) {
     case Data::TestType::TTest:
-      return "t-test";
+      return "t";
     case Data::TestType::PooledTTest:
-      return "Pooled t-test";
+      return "Pooled t";
     case Data::TestType::ZTest:
-      return "z-test";
+      return "z";
   }
   assert(false);
   return nullptr;

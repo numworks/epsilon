@@ -73,7 +73,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (App::app()->subapp() != subapp) {
+    if (subapp == Data::SubApp::Probability && App::app()->subapp() != Data::SubApp::Probability) {
       initializeProbaData();
     }
     *m_globalSubapp = subapp;

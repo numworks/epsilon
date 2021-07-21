@@ -78,7 +78,6 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	bordering_view.cpp \
 	comparison_operator_popup_data_source.cpp \
 	input_goodness_table_view.cpp \
-	input_categorical_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\
@@ -105,6 +104,7 @@ app_probability_src +=  $(addprefix apps/probability/abstract/,\
   input_categorical_controller.cpp \
   table_view_controller.cpp \
 	input_homogeneity_data_source.cpp \
+	input_categorical_view.cpp \
 	results_homogeneity_data_source.cpp \
 )
 

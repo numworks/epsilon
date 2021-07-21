@@ -16,7 +16,7 @@
 #include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/abstract/input_categorical_controller.h"
-#include "probability/gui/input_categorical_view.h"
+#include "probability/abstract/input_categorical_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/selectable_table_view_with_background.h"
 #include "probability/gui/solid_color_cell.h"

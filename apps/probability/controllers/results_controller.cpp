@@ -21,7 +21,8 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
     Page(parent),
     m_tableView(this, &m_resultsDataSource, this, nullptr),
     m_resultsDataSource(&m_tableView, results, this),
-    m_statisticGraphController(statisticGraphController) {}
+    m_statisticGraphController(statisticGraphController) {
+}
 
 void ResultsController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::Results);
@@ -29,9 +30,16 @@ void ResultsController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selectCellAtLocation(selectedColumn(), clipped(selectedRow(), m_resultsDataSource.numberOfRows() - 1));
+    selectCellAtLocation(selectedColumn(),
+                         clipped(selectedRow(), m_resultsDataSource.numberOfRows() - 1));
   }
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
   m_resultsDataSource.resetMemoization();
   m_tableView.reloadData();
+}
+ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
+  if (App::app()->categoricalType() == Data::CategoricalType::None) {
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  }
+  return ViewController::TitlesDisplay::DisplayLastTitle;
 }

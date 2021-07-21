@@ -24,9 +24,7 @@ public:
   ResultsController(Escher::StackViewController * parent, Statistic * results,
                     StatisticGraphController * statisticGraphController, Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
-  ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
-  }
+  ViewController::TitlesDisplay titlesDisplay() override;
   void didBecomeFirstResponder() override;
   void buttonAction() override { openPage(m_statisticGraphController); }
   void openPage(ViewController * nextPage, KDColor backgroundColor = Escher::Palette::GrayMiddle,

@@ -26,7 +26,7 @@ public:
                             InputGoodnessController * inputGoodnessController,
                             InputHomogeneityController * inputHomogeneityController);
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitles;
+    return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   const char * title() override { return "x2-test"; }
   void didBecomeFirstResponder() override;

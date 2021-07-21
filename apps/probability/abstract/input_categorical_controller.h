@@ -39,7 +39,7 @@ public:
   // ViewController
   View * view() override { return &m_contentView; }
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitles;
+    return ViewController::TitlesDisplay::DisplayLastTitle;
   }
 
   // SelectableTableViewDelegate

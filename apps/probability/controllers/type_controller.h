@@ -47,7 +47,7 @@ public:
   View * view() override { return &m_contentView; }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitles;
+    return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   void didBecomeFirstResponder() override;
   // ListViewDataSource

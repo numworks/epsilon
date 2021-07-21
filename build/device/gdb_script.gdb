@@ -43,7 +43,7 @@ define use_dfu_symbol_file
 # Discard previous symbol file
   symbol-file
 # Load new symbol file
-  add-symbol-file output/debug/device/ion/src/device/shared/usb/dfu.elf 0x20038000
+  add-symbol-file output/release/device/n0100/userland/ion/src/device/shared/usb/dfu.elf 0x20038000
 end
 
 define use_external_app_symbol_file

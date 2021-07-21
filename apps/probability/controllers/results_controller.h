@@ -62,11 +62,12 @@ private:
 class ResultsController : public Page, public ButtonDelegate, public SelectableTableViewDataSource {
 public:
   ResultsController(Escher::StackViewController * parent,
-                    Statistic * results,
+                    Statistic * statistic,
                     StatisticGraphController * statisticGraphController,
                     Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
   ViewController::TitlesDisplay titlesDisplay() override;
+  const char * title() override;
   void didBecomeFirstResponder() override;
   void buttonAction() override { openPage(m_statisticGraphController); }
   void openPage(ViewController * nextPage,
@@ -82,8 +83,11 @@ protected:
   ResultsView m_contentView;
 
   ResultsDataSource m_resultsDataSource;
+  Statistic * m_statistic;
 
   StatisticGraphController * m_statisticGraphController;
+  constexpr static int k_titleBufferSize = 20;
+  char m_titleBuffer[k_titleBufferSize];
 };
 
 }  // namespace Probability

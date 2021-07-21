@@ -8,6 +8,7 @@
 
 #define bring_in(prefix, value) static const prefix value = prefix::value;
 
+bring_in(Solver::EquationStore::Error, EquationUndefined);
 bring_in(Solver::EquationStore::Error, EquationUnreal);
 bring_in(Solver::EquationStore::Error, NoError);
 bring_in(Solver::EquationStore::Error, NonLinearSystem);

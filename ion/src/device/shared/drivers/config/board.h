@@ -32,6 +32,7 @@ constexpr static uint32_t KernelRAMAddress = SRAMAddress + SRAMLength - KernelSR
 // Userland RAm
 constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
 constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
+constexpr static uint32_t UserlandStackLength = 0x8000; // 32K
 
 }
 }

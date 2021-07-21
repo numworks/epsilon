@@ -15,11 +15,17 @@ StatisticGraphController::StatisticGraphController(StackViewController * stack,
 }
 
 const char * StatisticGraphController::title() {
-  char zBuffer[10];
-  char pBuffer[10];
-  defaultParseFloat(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
-  defaultParseFloat(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
-  sprintf(m_titleBuffer, "z=%s p-value=%s", zBuffer, pBuffer);
+  if (App::app()->subapp() == Data::SubApp::Tests) {
+    char zBuffer[10];
+    char pBuffer[10];
+    defaultParseFloat(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
+    defaultParseFloat(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
+    sprintf(m_titleBuffer, "z=%s p-value=%s", zBuffer, pBuffer);
+  } else {
+    char MEBuffer[30];
+    defaultParseFloat(m_statistic->marginOfError(), MEBuffer, sizeof(MEBuffer));
+    sprintf(m_titleBuffer, "ME=%s", MEBuffer);
+  }
   return m_titleBuffer;
 }
 

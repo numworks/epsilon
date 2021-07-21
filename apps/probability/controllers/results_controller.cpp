@@ -50,9 +50,13 @@ ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
 
 const char * Probability::ResultsController::title() {
   if (App::app()->subapp() == Data::SubApp::Intervals) {
-    char buffer[k_titleBufferSize];
-    defaultParseFloat(m_statistic->threshold(), buffer, k_titleBufferSize);
-    sprintf(m_titleBuffer, "Confidence=%s", buffer);
+    char confidenceBuffer[k_titleBufferSize];
+    defaultParseFloat(m_statistic->threshold(), confidenceBuffer, k_titleBufferSize);
+    const char * estimateSymbol = m_statistic->estimateSymbol();
+    char estimateBuffer[k_titleBufferSize];
+    defaultParseFloat(m_statistic->estimate(), estimateBuffer, k_titleBufferSize);
+
+    sprintf(m_titleBuffer, "%s=%s Confidence=%s", estimateSymbol, estimateBuffer, confidenceBuffer);
     return m_titleBuffer;
   }
   return nullptr;

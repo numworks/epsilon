@@ -8,8 +8,11 @@ using namespace Probability;
 constexpr int HomogeneityTableDataSource::k_initialNumberOfRows;
 constexpr int HomogeneityTableDataSource::k_initialNumberOfColumns;
 
-HomogeneityTableDataSource::HomogeneityTableDataSource(TableViewDataSource * contentTable,
-                                                       I18n::Message headerPrefix) :
+HomogeneityTableDataSource::HomogeneityTableDataSource(
+    TableViewDataSource * contentTable,
+    Escher::SelectableTableViewDelegate * tableDelegate,
+    I18n::Message headerPrefix) :
+    ChainedSelectableTableViewDelegate(tableDelegate),
     m_headerPrefix(headerPrefix),
     m_contentTable(contentTable),
     m_topLeftCell(Escher::Palette::WallScreenDark) {

@@ -11,14 +11,19 @@
 
 namespace Probability {
 
+/* This is the common Controller between Homogeneity and Goodness input controllers. It parses
+ * significance level input and own the content view. */
 class InputCategoricalController : public Page,
                                    public Shared::ParameterTextFieldDelegate,
-                                   public ButtonDelegate {
+                                   public ButtonDelegate,
+                                   public Escher::SelectableTableViewDelegate {
 public:
   InputCategoricalController(StackViewController * parent,
                              Page * resultsController,
                              Chi2Statistic * statistic,
                              InputEventHandlerDelegate * inputEventHandlerDelegate);
+
+  virtual TableViewController * tableViewController() = 0;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
@@ -36,6 +41,12 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitles;
   }
+
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
+                                               int previousSelectedCellX,
+                                               int previousSelectedCellY,
+                                               bool withinTemporarySelection) override;
 
 protected:
   Chi2Statistic * m_statistic;

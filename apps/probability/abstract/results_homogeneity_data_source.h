@@ -30,6 +30,7 @@ private:
 class HomogeneityTableDataSourceWithTotals : public HomogeneityTableDataSource {
 public:
   HomogeneityTableDataSourceWithTotals(TableViewDataSource * contentTable,
+                                       Escher::SelectableTableViewDelegate * tableDelegate,
                                        I18n::Message headerPrefix = I18n::Message::Group,
                                        I18n::Message totalMessage = I18n::Message::Total);
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;

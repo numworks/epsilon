@@ -13,16 +13,23 @@ class GoodnessTableViewController : public TableViewController {
 public:
   GoodnessTableViewController(Escher::Responder * parent,
                               GoodnessStatistic * statistic,
-                              InputGoodnessTableView * dataSource);
+                              Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+                              DynamicTableViewDataSourceDelegate * delegate,  // TODO make them the same delegate ?
+                              Escher::SelectableTableViewDelegate * scrollDelegate);
+
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
 
+  // TableViewController
+  Escher::SelectableTableView * selectableTableView() override { return &m_inputTableView; }
+  Escher::TableViewDataSource * tableViewDataSource() override { return &m_inputTableView; }
+
 private:
   GoodnessStatistic * m_statistic;
-  InputGoodnessTableView * m_dataSource;
+  InputGoodnessTableView m_inputTableView;
 };
 
 }  // namespace Probability

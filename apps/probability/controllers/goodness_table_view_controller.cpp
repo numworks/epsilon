@@ -4,33 +4,39 @@
 
 namespace Probability {
 
-GoodnessTableViewController::GoodnessTableViewController(Escher::Responder * parent,
-                                                         GoodnessStatistic * statistic,
-                                                         InputGoodnessTableView * dataSource) :
-    TableViewController(parent, dataSource), m_statistic(statistic), m_dataSource(dataSource) {
+GoodnessTableViewController::GoodnessTableViewController(
+    Escher::Responder * parent,
+    GoodnessStatistic * statistic,
+    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+    DynamicTableViewDataSourceDelegate * delegate,
+    Escher::SelectableTableViewDelegate * scrollDelegate) :
+    TableViewController(parent),
+    m_statistic(statistic),
+    m_inputTableView(this, inputEventHandlerDelegate, statistic, this, delegate, scrollDelegate) {
 }
 
 void GoodnessTableViewController::didBecomeFirstResponder() {
-  m_dataSource->recomputeNumberOfRows();
+  m_inputTableView.recomputeNumberOfRows();
   TableViewController::didBecomeFirstResponder();
 }
 
 bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     // Remove value
-    int row = m_dataSource->selectedRow(), col = m_dataSource->selectedColumn();
+    int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();
     m_statistic->setParamAtIndex(2 * (row - 1) + col, GoodnessStatistic::k_undefinedValue);
 
     // Delete last row if needed
-    if (row == m_dataSource->numberOfRows() - 2 &&
-        m_dataSource->numberOfRows() > InputGoodnessTableView::k_minimumNumberOfRows &&
+    if (row == m_inputTableView.numberOfRows() - 2 &&
+        m_inputTableView.numberOfRows() > InputGoodnessTableView::k_minimumNumberOfRows &&
         std::isnan(m_statistic->paramAtIndex(2 * (row - 1) + (1 - col)))) {
       // Unhighlight selected cell in case it disappears after the row is removed
-      m_dataSource->unhighlightSelectedCell();
-      m_dataSource->recomputeNumberOfRows();
-      m_dataSource->selectCellAtLocation(col, std::min(row, m_dataSource->numberOfRows() - 1));
+      m_inputTableView.unhighlightSelectedCell();
+      m_inputTableView.recomputeNumberOfRows();
+      m_inputTableView.selectCellAtLocation(col,
+                                            std::min(row, m_inputTableView.numberOfRows() - 1));
     }
-    m_dataSource->reloadCellAtLocation(col, row);
+    m_inputTableView.reloadCellAtLocation(col, row);
     return true;
   }
   return false;
@@ -44,18 +50,17 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
     return false;
   }
 
-  int selectedColumn = m_seletableTableView->selectedColumn();
-  int index = 2 * (m_seletableTableView->selectedRow() - 1) + selectedColumn;
+  int selectedColumn = m_inputTableView.selectedColumn();
+  int index = 2 * (m_inputTableView.selectedRow() - 1) + selectedColumn;
   m_statistic->setParamAtIndex(index, p);
-  if (m_seletableTableView->selectedRow() == m_dataSource->numberOfRows() - 1 &&
-      m_dataSource->numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
-    m_dataSource->recomputeNumberOfRows();
+  if (m_inputTableView.selectedRow() == m_inputTableView.numberOfRows() - 1 &&
+      m_inputTableView.numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
+    m_inputTableView.recomputeNumberOfRows();
   }
   // Select new column or jump to new row
-  m_seletableTableView->selectCellAtLocation(
-      1 - selectedColumn,
-      m_seletableTableView->selectedRow() + (selectedColumn == 1));
-  m_seletableTableView->reloadData(false);  // TODO why needed ?
+  m_inputTableView.selectCellAtLocation(1 - selectedColumn,
+                                        m_inputTableView.selectedRow() + (selectedColumn == 1));
+  m_inputTableView.reloadData(false);  // TODO why needed ?
   return true;
 }
 

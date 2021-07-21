@@ -93,7 +93,11 @@ T SolverHelper<T>::Step(T x, T growthSpeed, T minimalStep, T maximalStep) {
   T acceleration = std::fmax(
       std::fabs(std::log10(std::fabs(x)) - static_cast<T>(1.f)) - static_cast<T>(2.f),
       static_cast<T>(0.f));
-  T step = x * growthSpeed * (static_cast<T>(1.f) + acceleration);
+  /* For growthSpeed < 0 and x large enough, step < -x. The new value of x
+   * would change sign, which is prohibited. We thus bound the step so that x
+   * cannot lose more than one order of magnitude. */
+  constexpr T maxLossOfMagnitude = static_cast<T>(-0.9f);
+  T step = x * std::fmax(growthSpeed * (static_cast<T>(1.f) + acceleration), maxLossOfMagnitude);
   if (!std::isfinite(step) || std::fabs(minimalStep) > std::fabs(step)) {
     step = minimalStep;
   } else if (std::fabs(maximalStep) < std::fabs(step)) {

@@ -5,10 +5,11 @@
 
 namespace Probability {
 
-InputCategoricalController::InputCategoricalController(StackViewController * parent,
-                                                       Page * resultsController,
-                                                       Chi2Statistic * statistic,
-                                                       InputEventHandlerDelegate * inputEventHandlerDelegate) :
+InputCategoricalController::InputCategoricalController(
+    StackViewController * parent,
+    Page * resultsController,
+    Chi2Statistic * statistic,
+    InputEventHandlerDelegate * inputEventHandlerDelegate) :
     Page(parent),
     m_statistic(statistic),
     m_resultsController(resultsController),
@@ -52,6 +53,27 @@ void InputCategoricalController::didBecomeFirstResponder() {
 void InputCategoricalController::buttonAction() {
   m_statistic->computeTest();
   openPage(m_resultsController);
+}
+
+void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
+    SelectableTableView * t,
+    int previousSelectedCellX,
+    int previousSelectedCellY,
+    bool withinTemporarySelection) {
+  int row = tableViewController()->selectableTableView()->selectedRow();
+  int col = tableViewController()->selectableTableView()->selectedColumn();
+  if (!withinTemporarySelection && previousSelectedCellY != row) {
+    // Make m_contentView scroll to cell
+    KDRect cellFrame = KDRect(
+        tableViewController()->tableViewDataSource()->cumulatedWidthFromIndex(col),
+        tableViewController()->tableViewDataSource()->cumulatedHeightFromIndex(row) +
+            tableViewController()->selectableTableView()->topMargin(),
+        tableViewController()->selectableTableView()->columnWidth(col),
+        tableViewController()->tableViewDataSource()->rowHeight(
+            row));  // TODO query tableViewController()->selectableTableView()::cellFrame
+
+    m_contentView.scrollToContentRect(cellFrame);
+  }
 }
 
 }  // namespace Probability

@@ -22,44 +22,11 @@ InputHomogeneityController::InputHomogeneityController(
                                homogeneityResultsController,
                                statistic,
                                inputEventHandlerDelegate),
-    ChainedSelectableTableViewDelegate(&m_tableData),
-    m_innerTableData(&m_table,
-                     inputEventHandlerDelegate,
-                     statistic,
-                     &m_tableController,
-                     &m_contentView),
-    m_tableData(&m_innerTableData),
-    m_table(&m_tableController, &m_tableData, m_contentView.selectionDataSource(), this),
-    m_tableController(&m_contentView, &m_table, &m_innerTableData, statistic) {
+    m_tableController(&m_contentView, statistic, inputEventHandlerDelegate, &m_contentView, this) {
   m_contentView.setTableView(&m_tableController);
 }
 
 void Probability::InputHomogeneityController::didBecomeFirstResponder() {
   App::app()->setPage(Data::Page::InputHomogeneity);
   InputCategoricalController::didBecomeFirstResponder();
-}
-
-void Probability::InputHomogeneityController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView * t,
-    int previousSelectedCellX,
-    int previousSelectedCellY,
-    bool withinTemporarySelection) {
-  ChainedSelectableTableViewDelegate::tableViewDidChangeSelectionAndDidScroll(
-      t,
-      previousSelectedCellX,
-      previousSelectedCellY,
-      withinTemporarySelection);
-  // TODO factor with InputGoodnessController
-  int row = m_table.selectedRow();
-  int col = m_table.selectedColumn();
-  if (!withinTemporarySelection && previousSelectedCellY != row) {
-    // Scroll to cell
-    KDRect cellFrame = KDRect(
-        0,
-        m_tableData.cumulatedHeightFromIndex(row),
-        m_tableData.columnWidth(col),
-        m_tableData.rowHeight(row));  // TODO query m_inputTableView::cellFrame
-
-    m_contentView.scrollToContentRect(cellFrame);
-  }
 }

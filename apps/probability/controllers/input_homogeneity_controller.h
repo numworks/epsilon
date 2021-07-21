@@ -13,7 +13,6 @@
 
 #include "homogeneity_table_view_controller.h"
 #include "probability/abstract/button_delegate.h"
-#include "probability/abstract/chained_selectable_table_view_delegate.h"
 #include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/abstract/input_categorical_controller.h"
@@ -26,8 +25,7 @@
 
 namespace Probability {
 
-class InputHomogeneityController : public InputCategoricalController,
-                                   public ChainedSelectableTableViewDelegate {
+class InputHomogeneityController : public InputCategoricalController {
 public:
   InputHomogeneityController(StackViewController * parent,
                              ResultsHomogeneityController * homogeneityResultsController,
@@ -38,15 +36,9 @@ public:
 
   void didBecomeFirstResponder() override;
 
-  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
-                                               int previousSelectedCellX,
-                                               int previousSelectedCellY,
-                                               bool withinTemporarySelection = false) override;
+  TableViewController * tableViewController() override { return &m_tableController; }
 
 private:
-  InputHomogeneityDataSource m_innerTableData;
-  HomogeneityTableDataSource m_tableData;
-  SelectableTableViewWithBackground m_table;
   HomogeneityTableViewController m_tableController;
 };
 

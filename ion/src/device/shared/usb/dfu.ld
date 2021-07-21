@@ -19,10 +19,12 @@
  * the DFU code (namely, Ion::USB::Device::Calculator::Poll). We're simply
  * making sure this is the first symbol output. */
 
-EPSILON_STACK_END = 0x20000000 + 256K - 32K;
+INCLUDE shared_config_flash.ld
+
+PROCESS_STACK_END = USERLAND_SRAM_ORIGIN + USERLAND_SRAM_LENGTH - USERLAND_STACK_LENGTH;
 
 MEMORY {
-  RAM_BUFFER (rw) : ORIGIN = EPSILON_STACK_END, LENGTH = 9K
+  RAM_BUFFER (rw) : ORIGIN = PROCESS_STACK_END, LENGTH = 9K
 }
 
 SECTIONS {
@@ -38,20 +40,20 @@ SECTIONS {
     *(.rodata.*)
   } >RAM_BUFFER
 
+  /* For now, we do not need .bss and .data sections. This allows us to simply
+   * skip any rt0-style initialization and jump straight into the PollAndReset
+   * routine. */
   .data : {
-    /* We need to keep these symbols. */
-    *(.data._ZN3Ion6Device13ExternalFlashL14sOperatingModeE)
-    *(.data._ZN3Ion6Device5BoardL18sStandardFrequencyE)
-  } >RAM_BUFFER
-
-  /DISCARD/ : {
-    /* For now, we do not need .bss and .data sections. This allows us to simply
-     * skip any rt0-style initialization and jump straight into the PollAndReset
-     * routine. */
-    *(.bss)
-    *(.bss.*)
     *(.data)
     *(.data.*)
-  }
+  } >RAM_BUFFER
+  ASSERT(SIZEOF(.data) == 0, "Flasher .data section is not empty")
+
+  .bss : {
+    *(.bss)
+    *(.bss.*)
+    *(COMMON)
+  } >RAM_BUFFER
+  ASSERT(SIZEOF(.bss) == 0, "Flasher .bss section is not empty")
 }
 

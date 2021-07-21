@@ -5,6 +5,10 @@ namespace ExternalApps {
 
 App::App(uint8_t *) {}
 
+const uint32_t App::APILevel() const {
+  return 0;
+}
+
 const char * App::name() const {
   return "";
 }

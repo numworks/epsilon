@@ -2,6 +2,10 @@
 #include <shared/drivers/config/board.h>
 #include <assert.h>
 
+#ifndef EXTERNAL_APPS_API_LEVEL
+#error This file expects EXTERNAL_APPS_API_LEVEL to be defined
+#endif
+
 extern "C" {
   extern uint8_t _storage_flash_start;
   extern uint8_t _storage_flash_end;
@@ -42,6 +46,10 @@ uint8_t * App::addressAtIndexInAppInfo(int index) const {
   return address;
 }
 
+const uint32_t App::APILevel() const {
+  return *reinterpret_cast<const uint32_t *>(m_startAddress + sizeof(uint32_t));
+}
+
 const char * App::name() const {
  const char * n = reinterpret_cast<const char *>(addressAtIndexInAppInfo(2));
  if (n == nullptr) {
@@ -72,6 +80,9 @@ const uint8_t * App::iconData() const {
 }
 
 void * App::entryPoint() const {
+  if (APILevel() != EXTERNAL_APPS_API_LEVEL) {
+    return nullptr;
+  }
   /* As stated in ARM Cortex guide generic user guide: Bit[0] of any address
    * you write to the PC with a BX, BLX, LDM, LDR, or POP instruction must be
    * 1 for correct execution, because this bit indicates the required

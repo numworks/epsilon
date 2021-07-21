@@ -7,7 +7,7 @@ namespace Device {
 namespace Board {
 
 KernelHeader * kernelHeader() {
-  return reinterpret_cast<KernelHeader *>(Config::KernelStartAddress);
+  return reinterpret_cast<KernelHeader *>(Config::KernelHeaderAddress);
 }
 
 UserlandHeader * userlandHeader() {

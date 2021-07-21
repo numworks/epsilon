@@ -201,7 +201,12 @@ void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   reloadTitleBarView();
   Ion::Events::setSpinner(false);
   ExternalAppMain appStart = reinterpret_cast<ExternalAppMain>(app.entryPoint());
-  appStart();
+  if (appStart) {
+    appStart();
+  } else {
+    assert(s_activeApp);
+    s_activeApp->displayWarning(I18n::Message::ExternalAppIncompatible1, I18n::Message::ExternalAppIncompatible2, true);
+  }
 }
 
 void AppsContainer::handleRunException(bool resetSnapshot) {

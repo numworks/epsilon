@@ -9,6 +9,7 @@ namespace ExternalApps {
 class App {
 public:
   App(uint8_t * a);
+  const uint32_t APILevel() const;
   const char * name() const;
   uint32_t iconSize() const;
   const uint8_t * iconData() const;

@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_N0100_SHARED_DRIVERS_CONFIG_BOARD_H
 #define ION_DEVICE_N0100_SHARED_DRIVERS_CONFIG_BOARD_H
 
+#include <shared/boot/isr.h>
 #include <drivers/config/internal_flash.h>
 #include <ion/src/device/shared/drivers/config/board.h>
 #include <stdint.h>
@@ -25,6 +26,7 @@ namespace Config {
  */
 
 constexpr static uint32_t KernelStartAddress = InternalFlash::Config::StartAddress;
+constexpr static uint32_t KernelHeaderAddress = KernelStartAddress + INITIALISATION_VECTOR_SIZE * sizeof(uint32_t);
 constexpr static uint32_t KernelSize = 3*0x4000; // 3*16k
 constexpr static uint32_t PersistingBytesSize = 0x4000; // 16k
 constexpr static uint32_t UserlandStartAddress = KernelStartAddress + KernelSize + PersistingBytesSize;

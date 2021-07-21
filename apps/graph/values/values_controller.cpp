@@ -364,7 +364,7 @@ bool ValuesController::ValuesSelectableTableView::handleEvent(Ion::Events::Event
     HighlightCell * cell = selectedCell();
     if (cell) {
       const char * text = cell->text();
-      if (text[0] == '(') {
+      if (text && text[0] == '(') {
         constexpr int bufferSize = 2*PrintFloat::k_maxFloatCharSize + 6; // "[[a][b]]" gives 6 characters in addition to the 2 floats
         char buffer[bufferSize];
         int currentChar = 0;

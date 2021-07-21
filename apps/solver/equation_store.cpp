@@ -302,6 +302,12 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
         // Discard unreal solutions.
         m_numberOfSolutions--;
         continue;
+      } else if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Undefined) {
+        /* The solution is undefined, which means that the equation contained
+         * unreduced undefined terms, such as a sequence or an integral. */
+        m_numberOfSolutions--;
+        error = Error::EquationUndefined;
+        continue;
       }
       m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i]);
       m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i]);

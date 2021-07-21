@@ -5,6 +5,8 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to_error("x+y+z+a+b+c+d=0", TooManyVariables);
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution);
+  assert_solves_to_error("x^2+1=u(0)", EquationUndefined);
+  assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
 
   assert_solves_to_no_solution("2=0");
   assert_solves_to_no_solution("x-x+2=0");

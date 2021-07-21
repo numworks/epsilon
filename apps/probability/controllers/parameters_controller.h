@@ -12,7 +12,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
 public:
   ParametersController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitles; }
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();

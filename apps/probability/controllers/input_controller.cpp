@@ -65,7 +65,7 @@ ViewController::TitlesDisplay InputController::titlesDisplay() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  return ViewController::TitlesDisplay::DisplayLastTitles;
+  return ViewController::TitlesDisplay::DisplayLastTitle;
 }
 
 int InputController::typeAtIndex(int i) {

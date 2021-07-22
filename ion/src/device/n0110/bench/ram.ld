@@ -1,5 +1,9 @@
+INCLUDE config_flash.ld
+
+CONFIG_OFFSET = BENCH_OFFSET;
+CONFIG_LENGTH = BENCH_LENGTH;
+
 INCLUDE config_ram.ld
-INCLUDE shared_config_flash.ld
 
 SECTIONS {
   .signed_payload_prefix ORIGIN(RAM_BUFFER) : {

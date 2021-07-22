@@ -160,11 +160,17 @@ const short primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 
 // we can go to 7907*7907 = 62 520 649
 int Arithmetic::PrimeFactorization(const Integer & n) {
   assert(!n.isOverflow());
-  // Check no other Arithmetic instance is under lock
+
+  /* Check no other Arithmetic instance is under lock.
+   * Because of preemption events, prime factorization can be entirely
+   * interrupted. Lock is therefore ignored and previous artefacts are cleaned.
+   * We still assert the lock is free to debug any implementation errors.
+   * It is then possible, but quite unlikely, to trigger this assert. */
   if (s_lock) {
+    resetLock();
     assert(false);
-    return k_errorAlreadyInUse;
   }
+
   // Lock Prime factorization
   s_lock = true;
 

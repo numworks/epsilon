@@ -1,5 +1,12 @@
 name: Continuous Integration
-on: [pull_request, push]
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
 env:
   MAKEFLAGS: '-j2'
   ACCEPT_OFFICIAL_TOS: 1

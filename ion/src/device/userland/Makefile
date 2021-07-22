@@ -14,22 +14,18 @@ ion_device_userland_svc_src = $(addprefix ion/src/device/userland/, \
   drivers/persisting_bytes.cpp \
   drivers/power.cpp \
   drivers/random.cpp \
-  drivers/serial_number.cpp \
   drivers/timing.cpp \
   drivers/usb.cpp \
 )
 
-$(call object_for,$(ion_device_userland_svc_src)): SFLAGS += -fno-lto
-
-ion_device_userland_src = $(ion_device_userland_svc_src)
-
-ion_device_userland_src += $(addprefix ion/src/device/userland/, \
+ion_device_userland_src = $(addprefix ion/src/device/userland/, \
   boot/isr.cpp \
   boot/rt0.cpp \
   drivers/clipboard.cpp \
   drivers/console_display.cpp:+consoledisplay \
   drivers/console_dummy.cpp:-consoledisplay \
   drivers/reset.cpp \
+  drivers/serial_number.cpp \
   drivers/stack.cpp \
   drivers/userland_header.cpp \
 )

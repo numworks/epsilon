@@ -66,7 +66,7 @@ private:
   bool pushSerializedExpression(Poincare::Expression e, char ** start, char * end, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context, HeightComputer heightComputer);
   size_t deleteOldestCalculation();
-  char * addressOfPointerToCalculationOfIndex(int i) {return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}
+  char * addressOfPointerToCalculationOfIndex(int i) { assert(i <= m_numberOfCalculations); return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}
 
   // Memoization
   char * beginingOfMemoizationArea() {return addressOfPointerToCalculationOfIndex(0);};

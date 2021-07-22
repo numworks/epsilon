@@ -1,5 +1,4 @@
 #include "reset.h"
-#include <userland/drivers/svcall.h>
 
 namespace Ion {
 namespace Device {

@@ -20,7 +20,9 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \
 )
 
 ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
+  base64.cpp \
   internal_flash.cpp \
+  serial_number.cpp \
 )
 
 ion_device_dfu_deps_src += $(addprefix ion/src/device/n0100/shared/drivers/, \

@@ -8,7 +8,6 @@ ion_device_userland_svc_src = $(addprefix ion/src/device/userland/, \
   drivers/display.cpp \
   drivers/events.cpp \
   drivers/fcc_id.cpp \
-  drivers/flash.cpp \
   drivers/keyboard.cpp \
   drivers/led.cpp \
   drivers/pcb_version.cpp \

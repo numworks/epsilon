@@ -10,7 +10,7 @@ ion_device_kernel_userland_src += $(addprefix ion/src/device/shared/, \
 
 ion_device_kernel_userland_src += $(addprefix ion/src/device/n0100/shared/drivers/, \
   board_unprivileged.cpp \
-  flash_unprivileged.cpp \
+  flash.cpp \
 )
 
 # Kernel

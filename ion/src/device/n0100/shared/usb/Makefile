@@ -15,6 +15,7 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/n0100/shared/usb/, \
 
 ion_device_dfu_deps_src += $(addprefix ion/src/device/n0100/userland/drivers/, \
   reset.cpp \
+  usb.cpp \
 )
 
 ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \

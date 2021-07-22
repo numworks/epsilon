@@ -69,8 +69,6 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
 
     // Getting the adresses of the limits of the free space
     char * beginingOfFreeSpace = (char *)m_calculationAreaEnd;
-    char * endOfFreeSpace = beginingOfMemoizationArea();
-    char * previousCalc = beginingOfFreeSpace;
 
     // Add the beginning of the calculation
     {
@@ -80,7 +78,14 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       size_t calcSize = sizeof(newCalc);
       memcpy(beginingOfFreeSpace, &newCalc, calcSize);
       beginingOfFreeSpace += calcSize;
+      // Storing the pointer of the end of the new calculation
+      memcpy(beginingOfMemoizationArea()-sizeof(Calculation*), &beginingOfFreeSpace, sizeof(beginingOfFreeSpace));
     }
+    // The new calculation is now stored
+    m_numberOfCalculations++;
+
+    // Getting the addresses of the end of the free space
+    char * endOfFreeSpace = beginingOfMemoizationArea();
 
     /* Add the input expression.
      * We do not store directly the text entered by the user because we do not
@@ -133,15 +138,15 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         }
       }
     }
-    // Storing the pointer of the end of the new calculation
-    memcpy(endOfFreeSpace-sizeof(Calculation*),&beginingOfFreeSpace,sizeof(beginingOfFreeSpace));
+    // Update the pointer of the end of the new calculation
+    memcpy(beginingOfMemoizationArea(), &beginingOfFreeSpace, sizeof(beginingOfFreeSpace));
 
-    // The new calculation is now stored
-    m_numberOfCalculations++;
+    // Retrieve pointer to inserted Calculation.
+    Calculation * calculationPointer = (m_numberOfCalculations == 1) ? reinterpret_cast<Calculation *>(m_buffer) : *reinterpret_cast<Calculation**>(addressOfPointerToCalculationOfIndex(1));
+    ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(calculationPointer);
 
     // The end of the calculation storage area is updated
-    m_calculationAreaEnd += beginingOfFreeSpace - previousCalc;
-    ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(previousCalc));
+    m_calculationAreaEnd = beginingOfFreeSpace;
     /* Heights are computed now to make sure that the display output is decided
      * accordingly to the remaining size in the Poincare pool. Once it is, it
      * can't change anymore: the calculation heights are fixed which ensures that

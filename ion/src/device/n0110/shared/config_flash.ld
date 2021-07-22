@@ -52,3 +52,19 @@ USERLAND_AND_EXTERNAL_APPS_LENGTH = EXTERNAL_FLASH_LENGTH / 2 - KERNEL_LENGTH - 
 
 SIGNED_PAYLOAD_LENGTH = 8;
 CANARY_LENGTH = 4;
+
+/* Caution: ST's bootloader uses some RAM, so we want to stay off of that memory
+ * region. Per AN2606, sections 31.1 and 36.1, it's using 16Kbytes form address
+ * 0x20000000. We'll try to play safe and avoid the first 32KB of RAM. */
+ST_BOOTLOADER_STACK = 32K;
+
+/* The flasher is linked in RAM from address 0x20030000 to the end. */
+FLASHER_LENGTH = 64K;
+FLASHER_OFFSET = SRAM_LENGTH - FLASHER_LENGTH;
+ASSERT(ST_BOOTLOADER_STACK < FLASHER_OFFSET, "The Flasher overlaps ST bootloader stack")
+
+/* The bench is linked in RAM from address 0x20000000 to 0x2002000.
+ * Since it is written by either the flasher of the bootloader, there is no
+ * need to keep space for ST bootloader. */
+BENCH_LENGTH = 128K;
+BENCH_OFFSET = 0;

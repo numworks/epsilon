@@ -25,7 +25,7 @@ CalculationStore::CalculationStore(char * buffer, int size) :
 // Returns an expiring pointer to the calculation of index i
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
   assert(i >= 0 && i < m_numberOfCalculations);
-  // m_buffer is the adress of the oldest calculation in calculation store
+  // m_buffer is the address of the oldest calculation in calculation store
   Calculation * c = (Calculation *) m_buffer;
   if (i != m_numberOfCalculations-1) {
     // The calculation we want is not the oldest one so we get its pointer
@@ -60,14 +60,15 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     constexpr int minimalSize = Calculation::k_minimalSize + sizeof(Calculation *);
     assert(m_bufferSize > minimalSize);
     while (remainingBufferSize() < minimalSize) {
-      // If there is no more space to store a calculation, we delete the oldest one
+      /* If there is no more space to store a calculation, we delete the oldest
+       * one. */
       deleteOldestCalculation();
       // Update the calculation buffer state
       calculationAreaEnd = m_calculationAreaEnd;
       numberOfCalculations = m_numberOfCalculations;
     }
 
-    // Getting the adresses of the limits of the free space
+    // Getting the addresses of the begining of the free space
     char * beginingOfFreeSpace = (char *)m_calculationAreaEnd;
 
     // Add the beginning of the calculation
@@ -98,8 +99,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         calculationAreaEnd = m_buffer;
         numberOfCalculations = 0;
         /* If the input does not fit in the store (event if the current
-         * calculation is the only calculation), just replace the calculation with
-         * undef. */
+         * calculation is the only calculation), just replace the calculation
+         * with undef. */
         return emptyStoreAndPushUndef(context, heightComputer);
       }
     }
@@ -108,14 +109,16 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     /* The serialized outputs are:
      * - the exact ouput
      * - the approximate output with the maximal number of significant digits
-     * - the approximate output with the displayed number of significant digits */
+     * - the approximate output with the displayed number of significant digits
+     */
     {
       // Outputs hold exact output, approximate output and its duplicate
       constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
       Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
       PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
       if (ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode(), outputs[1]) && outputs[1].hasUnit()) {
-        // Hide results with units on units if required by the exam mode configuration
+        /* Hide results with units on units if required by the exam mode
+         * configuration. */
         outputs[1] = Undefined::Builder();
       }
       outputs[2] = outputs[1];
@@ -125,8 +128,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
           numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
         }
         if (!pushSerializedExpression(outputs[i], &beginingOfFreeSpace, endOfFreeSpace, numberOfSignificantDigits)) {
-          /* If the exact/approximate output does not fit in the store (even if the
-           * current calculation is the only one), replace the output with
+          /* If the exact/approximate output does not fit in the store (even if
+           * the current calculation is the only one), replace the output with
            * undef if it fits, else replace the whole calculation with undef. */
           Expression undef = Undefined::Builder();
           if (!pushSerializedExpression(undef, &beginingOfFreeSpace, endOfFreeSpace)) {
@@ -214,8 +217,8 @@ Expression CalculationStore::ansExpression(Context * context) {
    * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
    * parsed), ans is replaced by the approximation output when any Store or
    * Equal expression appears. */
-  bool exactOuptutInvolvesStoreEqual = exactOutput.type() == ExpressionNode::Type::Store || exactOutput.type() == ExpressionNode::Type::Equal;
-  if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
+  bool exactOutputInvolvesStoreEqual = exactOutput.type() == ExpressionNode::Type::Store || exactOutput.type() == ExpressionNode::Type::Equal;
+  if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOutputInvolvesStoreEqual) {
     Expression approximate = mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
     if (approximate.isUninitialized()) {
       return defaultAns;

@@ -1,7 +1,7 @@
-#include "calculator.h"
 #include <ion/external_apps.h>
 #include <shared/drivers/config/board.h>
 #include <shared/drivers/userland_header.h>
+#include <shared/usb/calculator.h>
 #include <userland/drivers/board.h>
 #include <userland/drivers/reset.h>
 

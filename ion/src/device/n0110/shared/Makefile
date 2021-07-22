@@ -1,4 +1,4 @@
-include ion/src/device/shared/usb/Makefile
+include ion/src/device/n0110/shared/usb/Makefile
 
 # Shared
 

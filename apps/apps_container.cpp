@@ -216,7 +216,7 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
      * (in App::willBecomeInactive for instance), we tidy them early on. */
     s_activeApp->snapshot()->tidy();
     if (resetSnapshot) {
-      /* When an app encoutered an exception due to a full pool, the next time
+      /* When an app encountered an exception due to a full pool, the next time
        * the user enters the app, the same exception could happen again which
        * would prevent from reopening the app. To avoid being stuck outside the
        * app causing the issue, we reset its snapshot when leaving it due to
@@ -240,8 +240,9 @@ void AppsContainer::run() {
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
   Ion::Display::pushRectUniform(screenRect, KDColorWhite);
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  if (globalPreferences->isInExamMode()) {
+    activateExamMode(globalPreferences->examMode());
   }
   refreshPreferences();
 
@@ -261,6 +262,11 @@ void AppsContainer::run() {
       s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
     }
   } else {
+    /* Reset backlight and suspend timers here, because a keyboard event has
+     * loaded the checkpoint and did not call AppsContainer::dispatchEvent */
+    m_backlightDimmingTimer.reset();
+    m_suspendTimer.reset();
+    Ion::Backlight::setBrightness(globalPreferences->brightnessLevel());
     Ion::Events::setSpinner(true);
     handleRunException(false);
   }

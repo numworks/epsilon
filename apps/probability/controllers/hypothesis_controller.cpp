@@ -125,12 +125,9 @@ void HypothesisController::buttonAction() {
 
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = 20;
-  char buffer[bufferSize]{0};
-  const char * symbol = testToTextSymbol(App::app()->test());
-  const char op = static_cast<const char>(m_statistic->hypothesisParams()->op());
-  int written = sprintf(buffer, "%s%c", symbol, op);
+  char buffer[bufferSize];
   float p = m_statistic->hypothesisParams()->firstParam();
-  defaultParseFloat(p, buffer + written, bufferSize);
-  m_h0.setAccessoryText(buffer + written);
+  defaultParseFloat(p, buffer, bufferSize);
+  m_h0.setAccessoryText(buffer);
   m_ha.reload();
 }

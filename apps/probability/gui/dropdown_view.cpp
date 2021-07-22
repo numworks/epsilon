@@ -179,13 +179,19 @@ void Dropdown::reloadAllCells() {
   m_popup.m_popupListDataSource.resetMemoization();  // Reset computed width
   m_popup.m_selectableTableView.reloadData(false);   // Re layout cells
 
-  // Highlight state was corrupted by m_selectableTableView
-  innerCell()->setHighlighted(isHighlighted());
+  if (innerCell()) {
+    // Highlight state was corrupted by m_selectableTableView
+    innerCell()->setHighlighted(isHighlighted());
+    innerCell()->reloadCell();
+  }
   PopupItemView::reloadCell();
 }
 
 void Dropdown::init() {
-  setInnerCell(m_popup.m_popupListDataSource.innerCellAtIndex(0));
+  if (m_popup.m_selectionDataSource.selectedRow() < 0) {
+    m_popup.m_selectionDataSource.selectRow(0);
+  }
+  setInnerCell(m_popup.m_popupListDataSource.innerCellAtIndex(m_popup.m_selectionDataSource.selectedRow()));
 }
 
 }  // namespace Probability

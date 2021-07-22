@@ -80,9 +80,9 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   void registerCallback(DropdownCallback * callback) { m_callback = callback; }
+  int selectedRow() { return m_selectionDataSource.selectedRow(); }
 
 private:
-  Escher::SelectableTableViewDataSource * selectionDataSource() { return &m_selectionDataSource; }
   PopupListViewDataSource * popupListViewDataSource() { return &m_popupListDataSource; }
   KDPoint topLeftCornerForSelection(Escher::View * originView);
 
@@ -107,6 +107,7 @@ public:
   void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
   void reloadAllCells();
   void init();
+  int selectedRow() { return m_popup.selectedRow(); }
 
 private:
   DropdownPopupController m_popup;

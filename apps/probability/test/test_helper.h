@@ -5,7 +5,7 @@
 #include <cmath>
 
 template <typename T>
-bool inline roughlyEqual(T a, T b, T threshold, bool absolute) {
+bool inline roughlyEqual(T a, T b, T threshold = 1e-9, bool absolute = false) {
   if (absolute) {
     return std::fabs(a - b) < threshold;
   }

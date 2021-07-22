@@ -43,7 +43,7 @@ app_probability_src += $(addprefix apps/probability/models/calculation/,\
   finite_integral_calculation.cpp \
 )
 
-app_probability_src += $(addprefix apps/probability/models/statistic/,\
+statistic_src += $(addprefix apps/probability/models/statistic/,\
 	statistic.cpp \
 	z_statistic.cpp \
 	t_statistic.cpp \
@@ -58,6 +58,9 @@ app_probability_src += $(addprefix apps/probability/models/statistic/,\
 	goodness_statistic.cpp \
 	homogeneity_statistic.cpp \
 )
+
+app_probability_src += $(statistic_src)
+app_probability_test_src += $(statistic_src)
 
 app_probability_src += $(addprefix apps/probability/gui/,\
   calculation_cell.cpp \
@@ -120,6 +123,7 @@ tests_src += $(addprefix apps/probability/test/,\
   regularized_gamma.cpp \
   student_law.cpp \
   chi2_law.cpp \
+  statistic.cpp \
 )
 
 # Allow #include "probability/..."

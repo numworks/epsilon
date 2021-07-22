@@ -7,11 +7,13 @@ HANDY_TARGETS_EXTENSIONS ?=
 
 # Epsilon base target
 
+# TODO: handle flavors on device (onboarding, update, beta...)
+
 base_src = $(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src)
 
 epsilon_src = $(base_src) $(apps_src)
 
-$(BUILD_DIR)/epsilon.$(EXE): $(call flavored_object_for,$(epsilon_src),usbxip unprivileged)
+$(BUILD_DIR)/epsilon.$(EXE): $(call flavored_object_for,$(epsilon_src),)
 
 HANDY_TARGETS += epsilon
 
@@ -22,10 +24,9 @@ epsilon_flavors = \
   onboarding.update \
   onboarding.beta
 
-# TODO: do we want to add the flavor 'unprivileged' on N0100? In that case, it needs to have the 'svcallhandler' as well.
 # Clean the targets.*.mak to
 define rule_for_epsilon_flavor
-$$(BUILD_DIR)/epsilon.$(1).$$(EXE): $$(call flavored_object_for,$$(epsilon_src),$(1) usbxip unprivileged)
+$$(BUILD_DIR)/epsilon.$(1).$$(EXE): $$(call flavored_object_for,$$(epsilon_src),$(1))
 endef
 
 $(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor,$(flavor))))
@@ -62,8 +63,7 @@ HANDY_TARGETS += $(foreach flavor,$(epsilon_official_flavors),epsilon.$(flavor))
 
 test_runner_src = $(base_src) $(apps_tests_src) $(runner_src) $(tests_src)
 
-# TODO: do we want to add the flavor 'unprivileged' on N0100?
-$(BUILD_DIR)/test.$(EXE): $(call flavored_object_for,$(test_runner_src),consoledisplay unprivileged)
+$(BUILD_DIR)/test.$(EXE): $(call flavored_object_for,$(test_runner_src),consoledisplay)
 
 HANDY_TARGETS += test
 

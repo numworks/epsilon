@@ -53,7 +53,6 @@ TestCase chi2Tests[] = {TestCase(0.28, 0, 0, 0.0),
 QUIZ_CASE(chi2_law) {
   for (int i = 0; i < sizeof(chi2Tests) / sizeof(TestCase); i++) {
     TestCase t = chi2Tests[i];
-    printf("Test(k=%f, x=%f, p=%f, d=%f)\n", t.k, t.x, t.probability, t.density);
     // double
     assertRoughlyEqual(Probability::Chi2Law::EvaluateAtAbscissa(t.x, t.k), t.density, t.precision);
     assertRoughlyEqual(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa(t.x, t.k),

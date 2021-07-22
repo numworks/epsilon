@@ -9,14 +9,19 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
                                                                 int index) {
   /* TODO factor with HypothesisController */
   TextHighlightView * bufferCell = static_cast<TextHighlightView *>(cell);
-  char ops[]{'<', '=', '>'};
+
   constexpr int firstParamBufferSize = 10;
   char firstParamBuffer[firstParamBufferSize];
   defaultParseFloat(m_hypothesisParams->firstParam(), firstParamBuffer, firstParamBufferSize);
   const char * symbol = testToTextSymbol(App::app()->test());
   constexpr int bufferSize = 20;
   char buffer[bufferSize];
-  sprintf(buffer, "%s%c%s", symbol, ops[index], firstParamBuffer);
+  sprintf(buffer,
+          "%s%c%s",
+          symbol,
+          HypothesisParams::charForComparisonOp(
+              static_cast<HypothesisParams::ComparisonOperator>(index)),
+          firstParamBuffer);
   bufferCell->setText(buffer);
 }
 

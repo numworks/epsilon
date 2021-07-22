@@ -5,18 +5,25 @@ namespace Probability {
 
 struct HypothesisParams {
 public:
-  enum class ComparisonOperator : char {
-    Lower = '<',
-    Higher = '>',
-    Different = '='  // TODO correct symbol
-  };
-  HypothesisParams() : m_firstParam(0), m_op(ComparisonOperator::Higher) {}
+  enum class ComparisonOperator : char { Lower, Different, Higher };
+  HypothesisParams() : m_firstParam(0) {}
 
   float firstParam() const { return m_firstParam; }
   void setFirstParam(float firstParam) { m_firstParam = firstParam; }
 
   ComparisonOperator op() const { return m_op; }
   void setOp(const ComparisonOperator op) { m_op = op; }
+
+  static char charForComparisonOp(ComparisonOperator op) {
+    switch (op) {
+      case ComparisonOperator::Lower:
+        return '<';
+      case ComparisonOperator::Higher:
+        return '>';
+      case ComparisonOperator::Different:
+        return '=';  // TODO correct glyph
+    }
+  }
 
 private:
   float m_firstParam;

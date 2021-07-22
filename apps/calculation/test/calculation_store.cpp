@@ -47,29 +47,75 @@ QUIZ_CASE(calculation_store) {
   assert_store_is(&store, result2);
 
   store.deleteAll();
-
-  // Checking if the store handles correctly the delete of the oldest calculation when full
-  constexpr int calculationSize = 200;
-  assert(calculationSize < store.remainingBufferSize());
-  char text[calculationSize];
-  constexpr const char * pattern = "123456789+";
-  int patternSize = strlen(pattern);
-  for (int i = 0; i < calculationSize; i += patternSize) {
-    memcpy(text + i, pattern, patternSize);
-  }
-  text[calculationSize - 1] = '\0';
-
+  /* Checking if the store handles correctly the delete of older calculations
+   * when full. */
   constexpr int minimalSize = ::Calculation::Calculation::k_minimalSize + sizeof(::Calculation::Calculation *);
-  while (store.remainingBufferSize() > minimalSize) {
-    store.push(text, &globalContext, dummyHeight);
+  constexpr const char * pattern = "123456789+";
+  constexpr int patternSize = 10;
+  assert(strlen(pattern) == patternSize);
+
+  // Case 1 : Remaining space < minimalSize
+  {
+    constexpr int calculationSize = 200;
+    assert(calculationSize < store.remainingBufferSize());
+    assert(calculationSize % patternSize == 0);
+    char text[calculationSize];
+    for (int i = 0; i < calculationSize; i += patternSize) {
+      memcpy(text + i, pattern, patternSize);
+    }
+    text[calculationSize - 1] = '\0';
+
+    while (store.remainingBufferSize() > minimalSize) {
+      store.push(text, &globalContext, dummyHeight);
+    }
+    int numberOfCalculations1 = store.numberOfCalculations();
+    /* The buffer is now too full to push a new calculation.
+     * Trying to push a new one should delete the oldest one. Alter new text to
+     * distinguish it from previously pushed ones. */
+    text[0] = '9';
+    Shared::ExpiringPointer<::Calculation::Calculation> pushedCalculation = store.push(text, &globalContext, dummyHeight);
+    // Assert pushed text is correct
+    quiz_assert(strcmp(store.calculationAtIndex(0)->inputText(), text) == 0);
+    quiz_assert(strcmp(pushedCalculation->inputText(), text) == 0);
+    int numberOfCalculations2 = store.numberOfCalculations();
+    // The numberOfCalculations should be the same
+    quiz_assert(numberOfCalculations1 == numberOfCalculations2);
   }
-  int numberOfCalculations1 = store.numberOfCalculations();
-  /* The buffer is now to  full to push a new calculation.
-   * Trying to push a new one should delete the oldest one*/
-  store.push(text, &globalContext, dummyHeight);
-  int numberOfCalculations2 = store.numberOfCalculations();
-  // The numberOfCalculations should be the same
-  quiz_assert(numberOfCalculations1 == numberOfCalculations2);
+  store.deleteAll();
+
+  // Case 2 : Remaining space > minimalSize but pushed calculation doesn't fit
+  {
+    constexpr int calculationSize = 2*minimalSize - (2*minimalSize)%patternSize;
+    assert(calculationSize % patternSize == 0);
+    assert(calculationSize < store.remainingBufferSize());
+    char text[calculationSize];
+    for (int i = 0; i < calculationSize; i += patternSize) {
+      memcpy(text + i, pattern, patternSize);
+    }
+    text[calculationSize - 1] = '\0';
+
+    // Push big calculations until approaching the limit
+    while (store.remainingBufferSize() > 2 * minimalSize) {
+      store.push(text, &globalContext, dummyHeight);
+    }
+    /* Push small calculations so that remainingBufferSize remain bigger, but gets
+     * closer to minimalSize */
+    while (store.remainingBufferSize() > minimalSize + minimalSize/2) {
+      store.push("1", &globalContext, dummyHeight);
+    }
+    assert(store.remainingBufferSize() > minimalSize);
+    int numberOfCalculations1 = store.numberOfCalculations();
+    /* The buffer is now too full to push a new calculation.
+     * Trying to push a new one should delete older ones. Alter new text to
+     * distinguish it from previously pushed ones. */
+    text[0] = '9';
+    Shared::ExpiringPointer<::Calculation::Calculation> pushedCalculation = store.push(text, &globalContext, dummyHeight);
+    quiz_assert(strcmp(store.calculationAtIndex(0)->inputText(), text) == 0);
+    quiz_assert(strcmp(pushedCalculation->inputText(), text) == 0);
+    int numberOfCalculations2 = store.numberOfCalculations();
+    // The numberOfCalculations should be the equal or smaller
+    quiz_assert(numberOfCalculations1 >= numberOfCalculations2);
+  }
   store.deleteAll();
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }

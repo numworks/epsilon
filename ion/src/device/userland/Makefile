@@ -37,6 +37,3 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/, \
 ion_device_userland_src += ion/src/shared/collect_registers.cpp
 
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL)/userland -Iion/src/device/userland
-
-
-

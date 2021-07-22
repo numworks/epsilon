@@ -8,13 +8,17 @@ ion_device_dfu_deps_src += liba/src/strlen.c
 ion_device_dfu_deps_src += liba/src/memset.c
 ion_device_dfu_deps_src += liba/src/memcpy.c
 ion_device_dfu_deps_src += libaxx/src/cxxabi/pure_virtual.cpp
+
+ion_device_dfu_deps_src += $(addprefix ion/src/device/n0100/shared/usb/, \
+  timing.cpp \
+)
+
 ion_device_dfu_deps_src += $(addprefix ion/src/device/n0100/userland/drivers/, \
   reset.cpp \
 )
 
 ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \
   serial_number.cpp \
-  timing.cpp \
   usb.cpp \
   reset.cpp \
 )

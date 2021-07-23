@@ -5,7 +5,6 @@ ion_device_kernel_src = $(addprefix ion/src/device/kernel/, \
   drivers/battery.cpp \
   drivers/board.cpp \
   drivers/circuit_breaker.cpp \
-  drivers/cortex_control.s \
   drivers/display.cpp \
   drivers/events.cpp \
   drivers/kernel_header.cpp \

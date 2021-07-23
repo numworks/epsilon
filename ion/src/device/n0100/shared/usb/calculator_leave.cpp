@@ -8,17 +8,13 @@ namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
-  // Reset the privileged mode
-  //Board::switchExecutableSlot(leaveAddress);
-  // Reinit the main stack pointer
-  // Switch to privileged mode/main stack
+  // Switch back to the main stack
   asm volatile ("mrs r0, control");
-  /* The first bit defined the privileged mode, the second bit indicates to
-   * use the Process Stack Pointer */
-  asm volatile ("bic r0, #0x3");
+  asm volatile ("bic r0, #0x2");
   asm volatile ("msr control, r0");
   asm volatile ("isb 0xF");
 
+  // Jump
   uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(leaveAddress);
   uint32_t * resetHandlerAddress = stackPointerAddress + 1;
   asm volatile (

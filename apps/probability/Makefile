@@ -123,7 +123,7 @@ tests_src += $(addprefix apps/probability/test/,\
   regularized_gamma.cpp \
   student_law.cpp \
   chi2_law.cpp \
-  statistic.cpp \
+  statistics.cpp \
 )
 
 # Allow #include "probability/..."

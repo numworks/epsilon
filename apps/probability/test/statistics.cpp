@@ -1,5 +1,3 @@
-#include "probability/models/statistic/statistic.h"
-
 #include <math.h>
 #include <quiz.h>
 
@@ -12,8 +10,10 @@
 #include "probability/models/statistic/one_mean_z_statistic.h"
 #include "probability/models/statistic/one_proportion_statistic.h"
 #include "probability/models/statistic/pooled_two_means_statistic.h"
+#include "probability/models/statistic/statistic.h"
 #include "probability/models/statistic/two_means_t_statistic.h"
 #include "probability/models/statistic/two_means_z_statistic.h"
+#include "probability/models/statistic/two_proportions_statistic.h"
 #include "test_helper.h"
 
 using namespace Probability;
@@ -156,7 +156,6 @@ QUIZ_CASE(one_mean_t_statistic) {
   }
 }
 
-
 QUIZ_CASE(one_mean_z_statistic) {
   StatisticTestCase tests[] = {StatisticTestCase{128,
                                                  HypothesisParams::ComparisonOperator::Lower,
@@ -191,6 +190,45 @@ QUIZ_CASE(one_mean_z_statistic) {
                                                  10,
                                                  25.7582950592}};
   OneMeanZStatistic stat;
+  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    testStatistic(&stat, tests[i]);
+  }
+}
+
+QUIZ_CASE(two_proportions_statistic) {
+  StatisticTestCase tests[] = {StatisticTestCase{0,
+                                                 HypothesisParams::ComparisonOperator::Higher,
+                                                 4,
+                                                 {20, 50, 32, 103},
+                                                 0.05,
+                                                 0.95,
+                                                 5,
+                                                 false,
+                                                 false,
+                                                 1.6448534727,
+                                                 1.0940510035,
+                                                 0.1369662881,
+                                                 20. / 50. - 32. / 103.,
+                                                 1.9599643946,
+                                                 0.0829409584,
+                                                 0.1625613272},
+                               StatisticTestCase{0.3,
+                                                 HypothesisParams::ComparisonOperator::Lower,
+                                                 4,
+                                                 {60, 100, 44.1, 90},
+                                                 0.01,
+                                                 0.99,
+                                                 5,
+                                                 false,
+                                                 true,
+                                                 -2.3263483047,
+                                                 -2.6274206638,
+                                                 0.0043017864,
+                                                 60.f / 100.f - 44.1f / 90.f,
+                                                 2.5758295059,
+                                                 0.0719490498,
+                                                 0.1853284836}};
+  TwoProportionsStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }

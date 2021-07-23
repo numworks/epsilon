@@ -1,6 +1,7 @@
 #include "statistic_curve_view.h"
 
 #include <math.h>
+#include <poincare/print_float.h>
 
 #include "probability/app.h"
 
@@ -27,6 +28,15 @@ char * StatisticCurveView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
+bool StatisticCurveView::shouldDrawLabelAtPosition(float labelValue) const {
+  if (App::app()->subapp() == Data::SubApp::Intervals) {
+    return true;
+  }
+  float margin = k_marginsAroundZLabel / static_cast<float>(bounds().width()) * (curveViewRange()->xMax() - curveViewRange()->xMin());
+  float z = m_statistic->testCriticalValue();
+  return labelValue >= z + margin || labelValue <= z - margin;
+}
+
 void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
   float z = m_statistic->testCriticalValue();
   float zAlpha = m_statistic->zAlpha();
@@ -35,6 +45,7 @@ void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
   colorUnderCurve(ctx, rect, m_statistic->hypothesisParams()->op(), z, zAlpha);
   drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateTestAtAbsissa, m_statistic, nullptr,
                      Escher::Palette::GrayVeryDark);
+  drawZLabelAndGraduation(ctx, z);
 }
 
 void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
@@ -72,6 +83,29 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx, KDRect rect,
   }
   drawCartesianCurve(ctx, rect, xmin, xmax, evaluateTestAtAbsissa, m_statistic, nullptr,
                      externColor, true, true, xmin, xmax);
+}
+
+void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float x) const {
+  float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
+  float z = m_statistic->testCriticalValue();
+  KDCoordinate labelPosition = std::round(floatToPixel(Axis::Horizontal, z));
+
+  // Graduation
+  KDRect graduation = KDRect(labelPosition,
+                             verticalOrigin - (k_labelGraduationLength - 2) / 2,
+                             1,
+                             k_labelGraduationLength);
+  ctx->fillRect(graduation, KDColorBlack);
+
+  // Label
+  const char * zText = "z";
+
+  KDPoint position = positionLabel(labelPosition,
+                                   verticalOrigin,
+                                   KDFont::SmallFont->stringSize(zText),
+                                   RelativePosition::None,
+                                   RelativePosition::Before);
+  ctx->drawString(zText, position, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
 }
 
 }  // namespace Probability

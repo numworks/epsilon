@@ -25,7 +25,6 @@ void IntervalConclusionView::setInterval(float center, float ME) {
   char buffer[bufferSize];
   sprintf(buffer, "%s ± %s", bufferCenter, bufferME);
   m_intervalView.setText(buffer);
-  layoutSubviews();
 }
 
 Escher::View * IntervalConclusionView::subviewAtIndex(int i) {

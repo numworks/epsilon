@@ -88,8 +88,8 @@ Probability::ResultsView::ResultsView(Escher::SelectableTableView * table,
                                       Escher::TableViewDataSource * tableDataSource,
                                       I18n::Message titleMessage) :
     ScrollView(&m_contentView, &m_scrollDataSource),
-    m_tableDataSource(tableDataSource),
-    m_contentView(table, titleMessage) {
+    m_contentView(table, titleMessage),
+    m_tableDataSource(tableDataSource) {
   setMargins(ContentView::k_spacerHeight, 0, Metric::CommonBottomMargin, 0);
 }
 

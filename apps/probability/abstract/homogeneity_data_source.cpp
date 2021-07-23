@@ -13,8 +13,8 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(
     Escher::SelectableTableViewDelegate * tableDelegate,
     I18n::Message headerPrefix) :
     ChainedSelectableTableViewDelegate(tableDelegate),
-    m_headerPrefix(headerPrefix),
     m_contentTable(contentTable),
+    m_headerPrefix(headerPrefix),
     m_topLeftCell(Escher::Palette::WallScreenDark) {
   // First row
   for (int i = 0; i < k_maxNumberOfColumns; i++) {

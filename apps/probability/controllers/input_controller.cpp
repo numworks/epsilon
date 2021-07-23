@@ -32,7 +32,6 @@ InputController::InputController(Escher::StackViewController * parent,
 }
 
 const char * InputController::title() {
-  size_t bufferSize = sizeof(m_titleBuffer);
   if (App::app()->subapp() == Data::SubApp::Tests) {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
     const char * symbol = testToTextSymbol(App::app()->test());

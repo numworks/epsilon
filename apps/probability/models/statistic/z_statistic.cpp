@@ -18,7 +18,7 @@ float ZStatistic::_pVal(float z, char op) {
                      z, 0, 1);
     case HypothesisParams::ComparisonOperator::Different:
       return 2 * Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-                     -z / 2, 0, 1);
+                     -z, 0, 1);
       ;
   }
 }

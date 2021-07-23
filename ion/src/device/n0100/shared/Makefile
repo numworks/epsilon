@@ -19,17 +19,24 @@ ion_device_kernel_userland_src += $(addprefix ion/src/device/n0100/shared/driver
 
 ion_device_kernel_src += $(addprefix ion/src/device/shared/, \
   drivers/backlight.cpp \
+  drivers/backlight_advanced.cpp \
   drivers/battery.cpp \
+  drivers/battery_charge.cpp \
+  drivers/board_frequency.cpp \
   drivers/board_privileged.cpp \
+  drivers/crc32.cpp \
   drivers/display.cpp \
   drivers/display_image.cpp \
-  drivers/keyboard.cpp \
   drivers/internal_flash.cpp \
+  drivers/keyboard.cpp \
+  drivers/led.cpp \
+  drivers/power.cpp \
   drivers/random.cpp \
   drivers/reset.cpp \
   drivers/timing.cpp \
   drivers/usb.cpp \
   drivers/usb_privileged.cpp \
+  drivers/wakeup.cpp \
 )
 
 ion_device_kernel_src += $(ion_device_kernel_userland_src)

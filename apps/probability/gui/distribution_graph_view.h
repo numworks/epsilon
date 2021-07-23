@@ -39,7 +39,7 @@ public:
   void setLegendPosition(LegendPosition pos) { m_legendPosition = pos; }
 
 protected:
-  int numberOfSubviews() const override { return 5; }  // TODO could change according to mode
+  int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;
   Escher::View * subviewAtIndex(int i) override;
 

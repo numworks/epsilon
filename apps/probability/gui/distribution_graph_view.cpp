@@ -16,6 +16,10 @@ KDSize GraphView::minimalSizeForOptimalDisplay() const {
   return KDSize(10000, 10000);  // TODO compute pixel perfect
 }
 
+int GraphView::numberOfSubviews() const {
+   return 5 - (App::app()->subapp() == Data::SubApp::Intervals);
+}
+
 void GraphView::layoutSubviews(bool force) {
   int availableHeight = m_frame.height();
   int availableWidth = m_frame.width();

@@ -119,12 +119,12 @@ protected:
   // Draw the label at the above/below and to the left/right of the given position
   void drawLabel(KDContext * ctx, KDRect rect, float xPosition, float yPosition, const char * label, KDColor color, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
   void drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
+  // returns the coordinates where should be drawn the label knowing the coordinates of its graduation and its relative position
+  KDPoint positionLabel(KDCoordinate xPosition, KDCoordinate yPosition, KDSize labelSize, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
   Escher::View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
-  // returns the coordinates where should be drawn the label knowing the coordinates of its graduation and its relative position
-   KDPoint positionLabel(KDCoordinate xPosition, KDCoordinate yPosition, KDSize labelSize, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
@@ -133,6 +133,7 @@ private:
   float gridUnit(Axis axis) const;
   virtual char * label(Axis axis, int index) const { return nullptr; }
   virtual size_t labelMaxGlyphLengthSize() const { return k_labelBufferMaxGlyphLength; }
+  virtual bool shouldDrawLabelAtPosition(float labelValue) const { return true; }
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */

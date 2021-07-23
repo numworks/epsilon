@@ -49,4 +49,4 @@ ion_device_userland_src += $(addprefix ion/src/device/shared/, \
   post_and_hardware_tests.cpp \
 )
 
-ion_device_userland_src += $(ion_device_kernel_userland_src) $(ion_device_dfu_bin_src)
+ion_device_userland_src += $(ion_device_kernel_userland_src) $(ion_device_dfu_src)

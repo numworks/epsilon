@@ -5,6 +5,7 @@ include ion/src/device/shared/usb/Makefile
 ion_device_usb_src += $(addprefix ion/src/device/n0110/shared/usb/, \
   calculator_leave_bootloader.cpp:+leavebootloader \
   calculator_leave_userland.cpp:+leaveuserland \
+  calculator_leave.cpp:-leavebootloader,-leaveuserland \
 )
 
 # DFU code

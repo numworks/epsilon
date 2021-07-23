@@ -14,14 +14,14 @@ public:
   ComparisonOperator op() const { return m_op; }
   void setOp(const ComparisonOperator op) { m_op = op; }
 
-  static char charForComparisonOp(ComparisonOperator op) {
+  static const char * charForComparisonOp(ComparisonOperator op) {
     switch (op) {
       case ComparisonOperator::Lower:
-        return '<';
+        return "<";
       case ComparisonOperator::Higher:
-        return '>';
+        return ">";
       case ComparisonOperator::Different:
-        return '=';  // TODO correct glyph
+        return "≠";  // The character is NFKD normalized
     }
     return 0;
   }

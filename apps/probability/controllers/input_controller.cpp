@@ -35,7 +35,7 @@ const char * InputController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
     const char * symbol = testToTextSymbol(App::app()->test());
-    char op = HypothesisParams::charForComparisonOp(m_statistic->hypothesisParams()->op());
+    const char * op = HypothesisParams::charForComparisonOp(m_statistic->hypothesisParams()->op());
     char paramBuffer[10];
     defaultParseFloat(m_statistic->hypothesisParams()->firstParam(),
                       paramBuffer,
@@ -44,7 +44,7 @@ const char * InputController::title() {
       char alphaBuffer[10];
       defaultParseFloat(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
       sprintf(m_titleBuffer,
-              "H0:%s=%s Ha:%s%c%s α=%s",
+              "H0:%s=%s Ha:%s%s%s α=%s",
               symbol,
               paramBuffer,
               symbol,

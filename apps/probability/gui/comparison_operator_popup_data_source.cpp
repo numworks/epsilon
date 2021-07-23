@@ -17,7 +17,7 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
   constexpr int bufferSize = 20;
   char buffer[bufferSize];
   sprintf(buffer,
-          "%s%c%s",
+          "%s%s%s",
           symbol,
           HypothesisParams::charForComparisonOp(
               static_cast<HypothesisParams::ComparisonOperator>(index)),

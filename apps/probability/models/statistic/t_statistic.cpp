@@ -25,8 +25,8 @@ float TStatistic::_pVal(float degreesOfFreedom, float t) {
       return StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(t, degreesOfFreedom);
     case HypothesisParams::ComparisonOperator::Different:
       assert(t > 0);
-      return StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(-t / 2, degreesOfFreedom) + 1 -
-             StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(t / 2, degreesOfFreedom);
+      return StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(-t, degreesOfFreedom) + 1 -
+             StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(t, degreesOfFreedom);
   }
 }
 

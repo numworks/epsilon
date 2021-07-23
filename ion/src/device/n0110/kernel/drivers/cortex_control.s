@@ -12,8 +12,8 @@ switch_to_unpriviledged:
   msr msp, r0
   // Reset the main sp
   mrs r0, control
-  /* The first bit defined the unprivileged mode, the second bit indicates to
-   * use the Process Stack Pointer */
+  /* The least significant bit defined the unprivileged mode, the next bit
+   * indicates to use the Process Stack Pointer */
   orrs r0, r0, #0x3
   msr control, r0
   isb 0xF

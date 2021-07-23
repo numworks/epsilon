@@ -42,7 +42,6 @@ private:
 
   EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_numberOfReusableCells];
   HomogeneityStatistic * m_statistic;
-  SelectableTableView * m_table;
 };
 
 }  // namespace Probability

@@ -23,6 +23,7 @@ public:
       case ComparisonOperator::Different:
         return '=';  // TODO correct glyph
     }
+    return 0;
   }
 
 private:

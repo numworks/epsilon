@@ -130,4 +130,6 @@ void HypothesisController::loadHypothesisParam() {
   defaultParseFloat(p, buffer, bufferSize);
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
+  resetMemoization();  // TODO only when m_ha changes size ?
+  m_selectableTableView.reloadData();
 }

@@ -54,11 +54,21 @@ def source_definition(i18n_string):
             # (for the non-extended set)
             copyCodePoint = (ord(s[i]) < 0x300) or (ord(s[i]) > 0x36F)
             checkForCombining = False
-        if args.compress and s[i] == '\\' and i+1 < length and s[i+1] == 'n':
-            # Combine "\n" into '\n'
-            result = result + '\n'
-            i+=2
-            continue
+        if args.compress and s[i] == '\\' and i+1 < length:
+            combinedChar = ''
+            if s[i+1] == '\\':
+                # Combine "\\" into '\'
+                combinedChar = '\\'
+            if s[i+1] == 'n':
+                # Combine "\n" into '\n'
+                combinedChar = '\n'
+            if s[i+1] == '"':
+                # Combine "\"" into '"'
+                combinedChar = '"'
+            if combinedChar != '':
+                result = result + combinedChar
+                i+=2
+                continue
         if copyCodePoint:
             # Remove the uppercase characters with combining chars
             checkForCombining = s[i].isupper()

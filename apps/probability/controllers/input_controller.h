@@ -59,7 +59,7 @@ private:
     return true;
   }
 
-  char m_titleBuffer[30];
+  char m_titleBuffer[40];
   Statistic * m_statistic;
   ResultsController * m_resultsController;
 

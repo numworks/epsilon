@@ -52,7 +52,7 @@ const char * InputController::title() {
               paramBuffer,
               alphaBuffer);
     } else {
-      sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%c%s", symbol, paramBuffer, symbol, op, paramBuffer);
+      sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%s%s", symbol, paramBuffer, symbol, op, paramBuffer);
     }
   } else {
     const char * symbol = testTypeToText(App::app()->testType());

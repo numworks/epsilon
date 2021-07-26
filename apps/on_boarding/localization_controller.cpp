@@ -24,7 +24,7 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
       if (appsContainer->promptController()) {
         Container::activeApp()->displayModalViewController(appsContainer->promptController(), 0.5f, 0.5f);
       } else {
-        appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
+        appsContainer->switchToBuiltinApp(appsContainer->appSnapshotAtIndex(0));
       }
     }
     return true;

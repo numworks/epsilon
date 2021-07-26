@@ -17,7 +17,7 @@ Container::~Container() {
   }
 }
 
-void Container::switchTo(App::Snapshot * snapshot) {
+void Container::switchToBuiltinApp(App::Snapshot * snapshot) {
   if (s_activeApp && snapshot == s_activeApp->snapshot()) {
     return;
   }

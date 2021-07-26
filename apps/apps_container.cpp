@@ -140,11 +140,11 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
          * We do it before switching to USB application to redraw the battery
          * pictogram. */
         updateBatteryState();
-        switchTo(usbConnectedAppSnapshot());
+        switchToBuiltinApp(usbConnectedAppSnapshot());
         Ion::USB::DFU();
         // Update LED when exiting DFU mode
         Ion::LED::updateColorWithPlugAndCharge();
-        switchTo(activeSnapshot);
+        switchToBuiltinApp(activeSnapshot);
       }
       m_firstUSBEnumeration = false;
       return true;
@@ -169,7 +169,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
-    switchTo(appSnapshotAtIndex(0));
+    switchToBuiltinApp(appSnapshotAtIndex(0));
     return true;
   }
   if (event == Ion::Events::OnOff) {
@@ -179,7 +179,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   return false;
 }
 
-void AppsContainer::switchTo(App::Snapshot * snapshot) {
+void AppsContainer::switchToBuiltinApp(App::Snapshot * snapshot) {
   if (s_activeApp && snapshot != s_activeApp->snapshot()) {
     resetShiftAlphaStatus();
   }
@@ -191,7 +191,7 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
   if (snapshot) {
     m_window.setTitle(snapshot->descriptor()->upperName());
   }
-  return Container::switchTo(snapshot);
+  return Container::switchToBuiltinApp(snapshot);
 }
 
 typedef void (*ExternalAppMain)();
@@ -230,7 +230,7 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
     // Reset home selection if already selected
     dispatchEvent(Ion::Events::Back);
   }
-  switchTo(appSnapshotAtIndex(0));
+  switchToBuiltinApp(appSnapshotAtIndex(0));
 }
 
 void AppsContainer::run() {
@@ -256,7 +256,7 @@ void AppsContainer::run() {
       /* Normal execution. The exception checkpoint must be created before
        * switching to the first app, because the first app might create nodes on
        * the pool. */
-      switchTo(initialAppSnapshot());
+      switchToBuiltinApp(initialAppSnapshot());
     } else {
       handleRunException(true);
       s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
@@ -272,7 +272,7 @@ void AppsContainer::run() {
   }
 
   Container::run();
-  switchTo(nullptr);
+  switchToBuiltinApp(nullptr);
 }
 
 bool AppsContainer::updateBatteryState() {

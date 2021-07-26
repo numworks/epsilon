@@ -12,7 +12,7 @@ public:
   GlobalPreferences::ExamMode targetExamMode() const { return m_targetExamMode; }
   void viewDidDisappear() override;
 private:
-  constexpr static int k_numberOfLines = 3;
+  constexpr static int k_numberOfLines = 4;
   GlobalPreferences::ExamMode m_targetExamMode;
   ExamPopUpControllerDelegate * m_delegate;
 };

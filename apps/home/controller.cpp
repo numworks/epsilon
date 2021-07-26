@@ -147,7 +147,7 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
     appCell->setVisible(true);
     if (appIndex < container->numberOfBuiltinApps()) {
       const ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
-      appCell->setAppDescriptor(descriptor);
+      appCell->setBuiltinAppDescriptor(descriptor);
     } else {
       Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
       appCell->setExternalApp(a);

@@ -60,6 +60,9 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
       assert(position.y() < KDCOORDINATE_MAX - glyphSize.height());
       position = KDPoint(0, position.y() + glyphSize.height());
       codePoint = decoder.nextCodePoint();
+    } else if (codePoint == UCodePointCarriageReturn) {
+      // Ignore '\r' that are added for compatibility
+      codePoint = decoder.nextCodePoint();
     } else if (codePoint == UCodePointTabulation) {
       position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
       codePoint = decoder.nextCodePoint();

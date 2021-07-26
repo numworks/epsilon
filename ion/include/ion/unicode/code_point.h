@@ -47,6 +47,7 @@ static constexpr CodePoint UCodePointUnknown                  = 0x1;
 
 static constexpr CodePoint UCodePointTabulation               = 0x9;
 static constexpr CodePoint UCodePointLineFeed                 = 0xa;
+static constexpr CodePoint UCodePointCarriageReturn           = 0xd;
 
 // 0x11 to 0x15 are not used, so we can use them for another purpose
 static constexpr CodePoint UCodePointEmpty                    = 0x11; // Used to be parsed into EmptyExpression

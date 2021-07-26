@@ -32,6 +32,7 @@ void willExecuteDFU() {
 
 void didExecuteDFU() {
   Board::initInterruptions();
+  Keyboard::activateAllRows();
 }
 
 bool shouldInterruptDFU() {

@@ -8,6 +8,7 @@ namespace Home {
 AppCell::AppCell() :
   HighlightCell(),
   m_messageNameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, KDColorWhite),
+  m_image(0, 0, nullptr, 0),
   m_pointerNameView(KDFont::SmallFont, nullptr, 0.5f, 0.5f, KDColorBlack, KDColorWhite),
   m_visible(true)
 {
@@ -44,9 +45,8 @@ void AppCell::setBuiltinAppDescriptor(const ::App::Descriptor * descriptor) {
 void AppCell::setExternalApp(Ion::ExternalApps::App app) {
   m_pointerNameView.setText(app.name());
   m_messageNameView.setMessage((I18n::Message)0);
-  static Image image(0, 0, nullptr, 0);
-  image = Image(k_iconWidth, k_iconHeight, app.iconData(), app.iconSize());
-  m_iconView.setImage(&image);
+  m_image = Image(k_iconWidth, k_iconHeight, app.iconData(), app.iconSize());
+  m_iconView.setImage(&m_image);
   layoutSubviews();
 }
 

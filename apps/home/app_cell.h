@@ -31,6 +31,7 @@ private:
   const Escher::TextView * textView() const;
   Escher::ImageView m_iconView;
   Escher::MessageTextView m_messageNameView;
+  Escher::Image m_image;
   Escher::PointerTextView m_pointerNameView;
   bool m_visible;
 };

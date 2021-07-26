@@ -10,7 +10,7 @@ PopUpController::PopUpController() :
     Escher::Invocation(
       [](void * context, void * sender) {
         AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
-        appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
+        appsContainer->switchToBuiltinApp(appsContainer->hardwareTestAppSnapshot());
         return true;
       }, this),
     I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel

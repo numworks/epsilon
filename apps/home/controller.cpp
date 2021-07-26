@@ -74,7 +74,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
       if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
         App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
       } else {
-        container->switchTo(selectedSnapshot);
+        container->switchToBuiltinApp(selectedSnapshot);
       }
     } else {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() != GlobalPreferences::ExamMode::Off) {

@@ -21,6 +21,8 @@ public:
                  Escher::ViewController * distributionController,
                  Escher::ViewController * testController,
                  Data::SubApp * globalSubapp,
+                 Data::Test * globalTest,
+                 Data::TestType * globalTestType,
                  Distribution * globalDistribution,
                  Calculation * globalCalculation);
   int numberOfRows() const override { return k_numberOfCells; }
@@ -30,6 +32,7 @@ public:
   Escher::View * view() override { return &m_contentView; }
 
 private:
+  void resetData(Data::SubApp subapp);
   void initializeProbaData();
   ViewController * m_distributionController;
   ViewController * m_testController;
@@ -40,6 +43,8 @@ private:
   constexpr static int k_indexOfInterval = 2;
   SubappCell m_cells[k_numberOfCells];
   Data::SubApp * m_globalSubapp;
+  Data::Test * m_globalTest;
+  Data::TestType * m_globalTestType;
   Distribution * m_globalDistribution;
   Calculation * m_globalCalculation;
 

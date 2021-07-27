@@ -54,10 +54,7 @@ protected:
 private:
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override {
-    m_statistic->setParamAtIndex(parameterIndex, f);
-    return true;
-  }
+  bool setParameterAtIndex(int parameterIndex, float f) override;
 
   char m_titleBuffer[50];
   Statistic * m_statistic;

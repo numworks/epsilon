@@ -11,6 +11,17 @@ OneMeanZStatistic::OneMeanZStatistic() {
   m_hypothesisParams.setFirstParam(128);
 }
 
+bool OneMeanZStatistic::isValidParamAtIndex(int i, float p) {
+  switch (i) {
+    case ParamsOrder::N:
+      return p > 0;
+    case ParamsOrder::X:
+    case ParamsOrder::Sigma:
+      return p >= 0;
+  }
+  return ZStatistic::isValidParamAtIndex(i, p);
+}
+
 void OneMeanZStatistic::computeTest() {
   m_z = _z(m_hypothesisParams.firstParam(), x(), n(), sigma());
   m_zAlpha = absIfNeeded(_zAlpha(m_threshold));

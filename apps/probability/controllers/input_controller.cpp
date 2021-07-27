@@ -151,10 +151,6 @@ bool Probability::InputController::textFieldDidFinishEditing(Escher::TextField *
 bool Probability::InputController::textFieldDidHandleEvent(TextField * textField,
                                                            bool returnValue,
                                                            bool textSizeDidChange) {
-  if (textField->isEditing()) {
-    resetMemoization();
-    m_selectableTableView.reloadData();
-  }
   return FloatParameterPage::textFieldDidHandleEvent(textField, returnValue, textSizeDidChange);
 }
 
@@ -162,4 +158,13 @@ bool Probability::InputController::textFieldDidAbortEditing(TextField * textFiel
   resetMemoization();
   m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
   return FloatParameterPage::textFieldDidAbortEditing(textField);
+}
+
+bool Probability::InputController::setParameterAtIndex(int parameterIndex, float f) {
+  if (!m_statistic->isValidParamAtIndex(parameterIndex, f)) {
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
+  m_statistic->setParamAtIndex(parameterIndex, f);
+  return true;
 }

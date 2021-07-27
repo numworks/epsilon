@@ -11,6 +11,18 @@ OneMeanTStatistic::OneMeanTStatistic() {
   m_hypothesisParams.setFirstParam(128);
 }
 
+bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
+  switch (i) {
+    case ParamsOrder::N:
+      return p > 0;
+    case ParamsOrder::X:
+    case ParamsOrder::S:
+      return p >= 0;
+      break;
+  }
+  return TStatistic::isValidParamAtIndex(i, p);
+}
+
 void OneMeanTStatistic::computeTest() {
   float mean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = _degreesOfFreedom(n());

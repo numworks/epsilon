@@ -4,6 +4,18 @@
 
 namespace Probability {
 
+bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {
+  switch (i) {
+    case ParamsOrder::N1:
+    case ParamsOrder::N2:
+      return p > 0;
+    case ParamsOrder::Sigma1:
+    case ParamsOrder::Sigma2:
+      return p >= 0;
+  }
+  return ZStatistic::isValidParamAtIndex(i, p);
+}
+
 void TwoMeansZStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
   m_zAlpha = absIfNeeded(_zAlpha(m_threshold));

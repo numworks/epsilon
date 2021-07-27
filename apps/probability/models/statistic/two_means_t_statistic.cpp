@@ -13,6 +13,18 @@ TwoMeansTStatistic::TwoMeansTStatistic() {
   m_params[ParamsOrder::S2] = 2;
 }
 
+bool TwoMeansTStatistic::isValidParamAtIndex(int i, float p) {
+  switch (i) {
+    case ParamsOrder::N1:
+    case ParamsOrder::N2:
+      return p > 0;
+    case ParamsOrder::S1:
+    case ParamsOrder::S2:
+      return p >= 0;
+  }
+  return TStatistic::isValidParamAtIndex(i, p);
+}
+
 void TwoMeansTStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = _degreeOfFreedom(s1(), n1(), s2(), n2());
@@ -44,8 +56,13 @@ float TwoMeansTStatistic::_xEstimate(float meanSample1, float meanSample2) {
   return meanSample1 - meanSample2;
 }
 
-float TwoMeansTStatistic::_t(float deltaMean, float meanSample1, float n1, float s1,
-                             float meanSample2, float n2, float s2) {
+float TwoMeansTStatistic::_t(float deltaMean,
+                             float meanSample1,
+                             float n1,
+                             float s1,
+                             float meanSample2,
+                             float n2,
+                             float s2) {
   return absIfNeeded(((meanSample1 - meanSample2) - (deltaMean)) / _SE(s1, n1, s2, n2));
 }
 

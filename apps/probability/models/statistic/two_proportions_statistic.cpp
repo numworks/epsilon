@@ -11,6 +11,22 @@ TwoProportionsStatistic::TwoProportionsStatistic() {
   m_params[ParamsOrder::N2] = 60;
 }
 
+bool TwoProportionsStatistic::isValidH0(float p) {
+  return p <= 1 && p >= -1;
+}
+
+bool TwoProportionsStatistic::isValidParamAtIndex(int i, float p) {
+  switch (i) {
+    case ParamsOrder::X1:
+    case ParamsOrder::X2:
+    case ParamsOrder::N1:
+    case ParamsOrder::N2:
+      return p >= 0;
+      break;
+  }
+  return ZStatistic::isValidParamAtIndex(i, p);
+}
+
 void TwoProportionsStatistic::computeTest() {
   float deltaP0 = m_hypothesisParams.firstParam();
   m_zAlpha = absIfNeeded(_zAlpha(m_threshold));

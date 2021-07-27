@@ -10,6 +10,16 @@ OneProportionStatistic::OneProportionStatistic() {
   m_hypothesisParams.setFirstParam(0.5);
 }
 
+bool OneProportionStatistic::isValidParamAtIndex(int i, float p) {
+  switch (i) {
+    case ParamsOrder::X:
+      return p >= 0;
+    case ParamsOrder::N:
+      return p > 0;
+  }
+  return ZStatistic::isValidParamAtIndex(i, p);
+}
+
 void OneProportionStatistic::computeTest() {
   float p0 = m_hypothesisParams.firstParam();
   float prop = _pEstimate(x(), n());

@@ -8,6 +8,7 @@ namespace Probability {
 class OneMeanZStatistic : public ZStatistic {
 public:
   OneMeanZStatistic();
+  bool isValidParamAtIndex(int i, float p) override;
   void computeTest() override;
   void computeInterval() override;
 

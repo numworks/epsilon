@@ -15,17 +15,17 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
           path: base
       - name: Build base
-        run: make -C base epsilon.elf
+        run: make -C base kernel.A.elf && make -C base userland.A.elf
       - name: Checkout PR head
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
       - name: Build head
-        run: make -C head epsilon.elf
+        run: make -C head kernel.A.elf && make -C head userland.A.elf
       - name: Retrieve binary size analysis
         id: binary_size
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --escape)"
+        run: echo "::set-output name=kernel::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/kernel/kernel.A.elf --labels Base Head --sections .text .rodata .bss .data --escape)" && echo "::set-output name=userland::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/userland/userland.A.elf head/output/release/device/n0110/userland/userland.A.elf --labels Base Head --sections .text .rodata .bss .data --escape)"
       - name: Add comment
         uses: actions/github-script@v3.0.0
         with:
@@ -35,5 +35,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `${{ steps.binary_size.outputs.table }}`,
+              body: `### Kernel\n${{ steps.binary_size.outputs.kernel }}\n### Userland\n${{ steps.binary_size.outputs.userland }}`,
             });

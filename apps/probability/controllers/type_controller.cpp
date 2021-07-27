@@ -18,8 +18,10 @@ using namespace Probability;
 
 TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
-                               InputController * inputController, Data::Test * globalTest,
-                               Data::TestType * globalTestType, Statistic * statistic) :
+                               InputController * inputController,
+                               Data::Test * globalTest,
+                               Data::TestType * globalTestType,
+                               Statistic * statistic) :
     SelectableListViewPage(parent),
     m_hypothesisController(hypothesisController),
     m_inputController(inputController),
@@ -64,9 +66,13 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
       view = m_hypothesisController;
     }
     assert(view != nullptr);
-    if (t != App::app()->testType() || App::app()->categoricalType() != Data::CategoricalType::None) {
+    if (t != App::app()->testType() ||
+        App::app()->categoricalType() != Data::CategoricalType::None) {
       App::app()->setCategoricalType(Data::CategoricalType::None);
-      Statistic::initializeStatistic(m_statistic, App::app()->test(), t, Data::CategoricalType::None);
+      Statistic::initializeStatistic(m_statistic,
+                                     App::app()->test(),
+                                     t,
+                                     Data::CategoricalType::None);
     }
     *m_globalTestType = t;
     openPage(view);
@@ -89,7 +95,7 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 
 const char * TypeController::title() {
   // TODO replace with messages
-  sprintf(m_titleBuffer, "Test on %s", testToText(App::app()->test()));
+  snprintf(m_titleBuffer, sizeof(m_titleBuffer), "Test on %s", testToText(App::app()->test()));
   return m_titleBuffer;
 }
 

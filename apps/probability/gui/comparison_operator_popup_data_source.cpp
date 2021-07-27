@@ -16,12 +16,13 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
   const char * symbol = testToTextSymbol(App::app()->test());
   constexpr int bufferSize = 20;
   char buffer[bufferSize];
-  sprintf(buffer,
-          "%s%s%s",
-          symbol,
-          HypothesisParams::charForComparisonOp(
-              static_cast<HypothesisParams::ComparisonOperator>(index)),
-          firstParamBuffer);
+  snprintf(buffer,
+           bufferSize,
+           "%s%s%s",
+           symbol,
+           HypothesisParams::charForComparisonOp(
+               static_cast<HypothesisParams::ComparisonOperator>(index)),
+           firstParamBuffer);
   bufferCell->setText(buffer);
 }
 

@@ -13,7 +13,9 @@ float TStatistic::normedDensityFunction(float x) {
 }
 
 float TStatistic::_tAlpha(float degreesOfFreedom, float alpha) {
-  return StudentLaw::CumulativeDistributiveInverseForProbability<float>(alpha, degreesOfFreedom);
+  float x =
+      m_hypothesisParams.op() == HypothesisParams::ComparisonOperator::Lower ? alpha : 1 - alpha;
+  return StudentLaw::CumulativeDistributiveInverseForProbability<float>(x, degreesOfFreedom);
   ;
 }
 

@@ -143,7 +143,7 @@ QUIZ_CASE(one_mean_t_statistic) {
                                                  4,
                                                  true,
                                                  true,
-                                                 2.8214378357,
+                                                 2.8214385509,
                                                  3.4152598381,
                                                  0.0076853633,
                                                  1.4f,
@@ -229,6 +229,46 @@ QUIZ_CASE(two_proportions_statistic) {
                                                  0.0719490498,
                                                  0.1853284836}};
   TwoProportionsStatistic stat;
+  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    testStatistic(&stat, tests[i]);
+  }
+}
+
+QUIZ_CASE(two_means_t_statistic) {
+  // TODO check test cases
+  StatisticTestCase tests[] = {StatisticTestCase{0,
+                                                 HypothesisParams::ComparisonOperator::Higher,
+                                                 6,
+                                                 {20, 2, 50, 24, 18, 60},
+                                                 0.05,
+                                                 0.95,
+                                                 7,
+                                                 true,
+                                                 false,
+                                                 1.6703274250,
+                                                 -1.7087153196,
+                                                 0.9536954761,
+                                                 20. - 24.,
+                                                 1.9997937679,
+                                                 2.3409399986,
+                                                 4.6813974380},
+                               StatisticTestCase{-12.345,
+                                                 HypothesisParams::ComparisonOperator::Different,
+                                                 6,
+                                                 {4.2, 46, 1000, 18.3, 18, 60},
+                                                 0.01,
+                                                 0.99,
+                                                 7,
+                                                 true,
+                                                 false,
+                                                 2.3597204685,
+                                                 0.6401526332,
+                                                 0.5233662128,
+                                                 4.2f - 18.3f,
+                                                 2.6199319363,
+                                                 2.7415323257,
+                                                 7.1826281548}};
+  TwoMeansTStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }

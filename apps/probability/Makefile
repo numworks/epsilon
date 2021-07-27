@@ -81,6 +81,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
 	bordering_view.cpp \
 	comparison_operator_popup_data_source.cpp \
 	input_goodness_table_view.cpp \
+	layout_cell_with_editable_text_with_message.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

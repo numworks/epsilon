@@ -8,7 +8,10 @@
 #include <escher/invocation.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
 #include <poincare/preferences.h>
+#include <poincare/vertical_offset_layout.h>
 #include <shared/poincare_helpers.h>
 #include <string.h>
 
@@ -32,7 +35,12 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
     m_ha(&m_selectableTableView, &m_operatorDataSource, this),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
     m_statistic(statistic) {
-  m_h0.setMessage(I18n::Message::H0);
+  Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
+      Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),
+      Poincare::VerticalOffsetLayout::Builder(
+          Poincare::CodePointLayout::Builder('0', KDFont::SmallFont),
+          Poincare::VerticalOffsetLayoutNode::Position::Subscript));
+  m_h0.setLayout(h0);
   m_h0.setSubLabelMessage(I18n::Message::H0Sub);
   m_ha.setMessage(I18n::Message::Ha);
   m_ha.setSubLabelMessage(I18n::Message::HaSub);

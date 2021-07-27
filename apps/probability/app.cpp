@@ -73,6 +73,8 @@ App::App(Snapshot * snapshot) :
                      &m_distributionController,
                      &m_testController,
                      snapshot->navigation()->subappPointer(),
+                     snapshot->data()->testPointer(),
+                     snapshot->data()->testTypePointer(),
                      snapshot->data()->distribution(),
                      snapshot->data()->calculation()),
     m_stackViewController(&m_modalViewController, &m_menuController) {

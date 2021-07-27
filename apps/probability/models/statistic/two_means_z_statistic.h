@@ -7,6 +7,7 @@ namespace Probability {
 
 class TwoMeansZStatistic : public ZStatistic {
 public:
+  bool isValidParamAtIndex(int i, float p) override;
   void computeTest() override;
   void computeInterval() override;
 

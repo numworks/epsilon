@@ -40,9 +40,14 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       Poincare::VerticalOffsetLayout::Builder(
           Poincare::CodePointLayout::Builder('0', KDFont::SmallFont),
           Poincare::VerticalOffsetLayoutNode::Position::Subscript));
+  Poincare::Layout ha = Poincare::HorizontalLayout::Builder(
+      Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),
+      Poincare::VerticalOffsetLayout::Builder(
+          Poincare::CodePointLayout::Builder('a', KDFont::SmallFont),
+          Poincare::VerticalOffsetLayoutNode::Position::Subscript));
   m_h0.setLayout(h0);
   m_h0.setSubLabelMessage(I18n::Message::H0Sub);
-  m_ha.setMessage(I18n::Message::Ha);
+  m_ha.setLayout(ha);
   m_ha.setSubLabelMessage(I18n::Message::HaSub);
 }
 

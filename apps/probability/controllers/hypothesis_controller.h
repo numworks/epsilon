@@ -76,7 +76,7 @@ private:
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 
   LayoutCellWithEditableTextWithMessage m_h0;
-  MessageTableCellWithSublabelAndDropdown m_ha;
+  LayoutCellWithSublabelAndDropdown m_ha;
   Shared::ButtonWithSeparator m_next;
 
   char m_titleBuffer[40];

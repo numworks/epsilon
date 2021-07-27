@@ -102,6 +102,8 @@ CheckpointType sCheckpointType = CheckpointType::Home;
 
 constexpr static int k_numberOfCheckpointTypes = 3;
 
+static bool s_lock = false;
+
 // Process snapshots
 uint8_t sProcessStackSnapshot[k_numberOfCheckpointTypes][k_processStackSnapshotMaxSize];
 uint8_t * sProcessStackSnapshotAddress[k_numberOfCheckpointTypes] = {nullptr, nullptr, nullptr};
@@ -161,6 +163,10 @@ bool setCheckpoint(CheckpointType type) {
 
 void loadCheckpoint(CheckpointType type) {
   assert(Device::CircuitBreaker::hasCheckpoint(type));
+  if (s_lock) {
+    // TODO: use timer to time out!
+    return;
+  }
   Keyboard::Queue::sharedQueue()->flush();
   /* Unset lower checkpoints to avoid keeping references to an unwound stack. */
   if (type == CheckpointType::Home) {
@@ -169,6 +175,14 @@ void loadCheckpoint(CheckpointType type) {
     Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
   }
   setPendingAction(type, InternalStatus::PendingLoadCheckpoint);
+}
+
+void lock() {
+  s_lock = true;
+}
+
+void unlock() {
+  s_lock = false;
 }
 
 }

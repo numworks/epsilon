@@ -30,6 +30,8 @@ jobs:
       - uses: numworks/setup-arm-toolchain@2020-q2
       - uses: actions/checkout@v2
       - run: make MODEL=n0100 epsilon.dfu
+      - run: make MODEL=n0100 epsilon.official.onboarding.beta.dfu
+      - run: make MODEL=n0100 epsilon.official.onboarding.update.dfu
       - run: make MODEL=n0100 test.dfu
       - uses: actions/upload-artifact@master
         with:
@@ -41,15 +43,16 @@ jobs:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: numworks/setup-arm-toolchain@2020-q2
       - uses: actions/checkout@v2
-      - run: make kernel.A.elf
-      - run: make kernel.B.elf
-      - run: make userland.A.elf
-      - run: make userland.B.elf
-      - run: make userland.test.A.elf
-      - run: make userland.test.B.elf
-      - run: make flasher.dfu
-      - run: make bench.ram.dfu
-      - run: make test.elf
+      - run: make MODEL=n0110 kernel.A.elf
+      - run: make MODEL=n0110 kernel.B.elf
+      - run: make MODEL=n0110 userland.A.elf
+      - run: make MODEL=n0110 userland.official.onboarding.beta.A.elf
+      - run: make MODEL=n0110 userland.official.onboarding.update.A.elf
+      - run: make MODEL=n0110 userland.B.elf
+      - run: make MODEL=n0110 userland.test.A.elf
+      - run: make MODEL=n0110 userland.test.B.elf
+      - run: make MODEL=n0110 flasher.dfu
+      - run: make MODEL=n0110 bench.ram.dfu
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-n0110.dfu

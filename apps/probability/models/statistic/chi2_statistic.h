@@ -9,6 +9,7 @@ namespace Probability {
 
 class Chi2Statistic : public CachedStatistic {
 public:
+  Chi2Statistic();
   const char * testCriticalValueSymbol() override { return "X2"; }
   const char * estimateSymbol() override { return ""; }
   I18n::Message estimateDescription() override { return I18n::Message::Default; }

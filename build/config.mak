@@ -3,7 +3,7 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-EPSILON_VERSION ?= 16.1.0
+EPSILON_VERSION ?= 16.2.0
 EXTERNAL_APPS_API_LEVEL ?= 0
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
 EPSILON_I18N ?= en fr nl pt it de es

@@ -16,7 +16,7 @@ $(BUILD_DIR)/%.B.$(EXE): LDDEPS += ion/src/$(PLATFORM)/$(MODEL)/shared/config_sl
 #epsilon.dfu: DFUFLAGS += --signer $(BUILD_DIR)/signer --custom
 #$(BUILD_DIR)/epsilon.dfu: $(BUILD_DIR)/userland.A.elf $(BUILD_DIR)/kernel.A.elf $(BUILD_DIR)/userland.B.elf $(BUILD_DIR)/kernel.B.elf $(BUILD_DIR)/signer
 
-epsilon.dfu: DFUFLAGS += --custom
+epsilon.dfu test.dfu: DFUFLAGS += --custom
 
 .PHONY: $(BUILD_DIR)/epsilon.dfu
 $(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
@@ -31,6 +31,21 @@ $(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
 	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.A.elf)) \
 	  $(subst epsilon,userland,$(BUILD_DIR)/userland.B.elf) \
 	  $(subst epsilon,kernel,$(subst debug,release,$(BUILD_DIR)/kernel.B.elf)) \
+	  -o $@
+
+.PHONY: $(BUILD_DIR)/test.dfu
+$(BUILD_DIR)/test.dfu: | $(BUILD_DIR)/.
+	$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.A.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.B.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland.test.A.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland.test.B.elf
+	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
+	  $(subst test,bootloader,$(subst debug,release,$(BUILD_DIR)))/bootloader.elf \
+	  $(subst test,userland,$(BUILD_DIR))/userland.test.A.elf \
+	  $(subst test,kernel,$(subst debug,release,$(BUILD_DIR)))/kernel.A.elf \
+	  $(subst test,userland,$(BUILD_DIR))/userland.test.B.elf \
+	  $(subst test,kernel,$(subst debug,release,$(BUILD_DIR)))/kernel.B.elf \
 	  -o $@
 
 .PHONY: %_flash

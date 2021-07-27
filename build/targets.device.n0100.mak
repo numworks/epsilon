@@ -7,6 +7,15 @@ $(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
 	  $(subst epsilon,userland,$(BUILD_DIR)/userland.elf) \
 	  -o $@
 
+.PHONY: $(BUILD_DIR)/test.dfu
+$(BUILD_DIR)/test.dfu: | $(BUILD_DIR)/.
+	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland.test.elf
+	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
+	  $(subst test,kernel,$(BUILD_DIR))/kernel.elf \
+	  $(subst test,userland,$(BUILD_DIR))/userland.test.elf \
+	  -o $@
+
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu
 	@echo "DFU     $@"

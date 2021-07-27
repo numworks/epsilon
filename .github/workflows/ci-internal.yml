@@ -14,13 +14,21 @@ jobs:
     steps:
       - uses: numworks/setup-arm-toolchain@2020-q4
       - uses: actions/checkout@v2
-      - run: make MODEL=n0100 epsilon.dfu test.elf
+      - run: make MODEL=n0100 epsilon.dfu
+      - run: make MODEL=n0100 test.dfu
   n0110:
     runs-on: self-hosted
     steps:
       - uses: numworks/setup-arm-toolchain@2020-q4
       - uses: actions/checkout@v2
-      - run: make epsilon.dfu test.elf
+      - run: make MODEL=n0110 kernel.A.elf
+      - run: make MODEL=n0110 kernel.B.elf
+      - run: make MODEL=n0110 userland.A.elf
+      - run: make MODEL=n0110 userland.B.elf
+      - run: make MODEL=n0110 userland.test.A.elf
+      - run: make MODEL=n0110 userland.test.B.elf
+      - run: make MODEL=n0110 flasher.dfu
+      - run: make MODEL=n0110 bench.ram.dfu
   linux:
     runs-on: self-hosted
     steps:

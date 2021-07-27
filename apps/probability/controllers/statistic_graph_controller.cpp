@@ -14,6 +14,13 @@ StatisticGraphController::StatisticGraphController(StackViewController * stack,
     m_statistic(statistic) {
 }
 
+ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
+  bool isCategoricalGraph = App::app()->subapp() == Data::SubApp::Tests &&
+                            App::app()->test() == Data::Test::Categorical;
+  return isCategoricalGraph ? ViewController::TitlesDisplay::DisplayLastTwoTitles
+                            : ViewController::TitlesDisplay::DisplayLastThreeTitles;
+}
+
 const char * StatisticGraphController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     char zBuffer[10];

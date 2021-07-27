@@ -36,7 +36,7 @@ public:
                           ResultsController * resultsController,
                           GoodnessStatistic * statistic,
                           InputEventHandlerDelegate * inputEventHandlerDelegate);
-  const char * title() override { return "X2-test: goodness of fit"; }
+  const char * title() override { return "χ2-test: goodness of fit"; }
 
   void didBecomeFirstResponder() override;
 

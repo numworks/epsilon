@@ -32,7 +32,7 @@ public:
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                              HomogeneityStatistic * statistic);
 
-  const char * title() override { return "x2-test: Homogeneity/Independence"; }
+  const char * title() override { return "χ2-test: Homogeneity/Independence"; }
 
   void didBecomeFirstResponder() override;
 

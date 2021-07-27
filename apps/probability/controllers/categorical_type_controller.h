@@ -28,14 +28,14 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
-  const char * title() override { return "x2-test"; }
+  const char * title() override { return "χ2-test"; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
   constexpr static int k_indexOfGoodnessCell = 0;
   constexpr static int k_indexOfHomogeneityCell = 1;
-  
+
   Chi2Statistic * m_statistic;
   InputGoodnessController * m_inputGoodnessController;
   InputHomogeneityController * m_inputHomogeneityController;

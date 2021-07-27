@@ -8,6 +8,10 @@
 
 namespace Probability {
 
+Chi2Statistic::Chi2Statistic() : m_degreesOfFreedom(-1) {
+  m_hypothesisParams.setOp(HypothesisParams::ComparisonOperator::Higher);  // Always higher
+}
+
 float Chi2Statistic::normedDensityFunction(float x) {
   return Chi2Law::EvaluateAtAbscissa(x, m_degreesOfFreedom);
 }

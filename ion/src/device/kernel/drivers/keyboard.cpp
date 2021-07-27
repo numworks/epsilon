@@ -53,6 +53,7 @@ void initInterruptions() {
     while (NVIC.NVIC_ICPR()->getBit(interruptionISRIndex[i])) { // Read to force writing
       NVIC.NVIC_ICPR()->setBit(interruptionISRIndex[i], true);
     }
+    NVIC.NVIC_IPR()->setPriority(interruptionISRIndex[i], NVIC::NVIC_IPR::InterruptionPriority::High);
     // Enable interruptions
     NVIC.NVIC_ISER()->setBit(interruptionISRIndex[i], true);
   }

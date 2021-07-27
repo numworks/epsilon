@@ -32,6 +32,7 @@ public:
   // Input
   int numberOfParameters() { return numberOfStatisticParameters() + 1 /* threshold */; }
   float paramAtIndex(int i);
+  virtual bool isValidParamAtIndex(int i, float p);
   void setParamAtIndex(int i, float p);
   I18n::Message paramSymbolAtIndex(int i) const { return paramReprAtIndex(i)->m_symbol; }
   I18n::Message paramDescriptionAtIndex(int i) const { return paramReprAtIndex(i)->m_description; }

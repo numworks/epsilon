@@ -8,6 +8,7 @@ namespace Probability {
 class TwoMeansTStatistic : public TStatistic {
 public:
   TwoMeansTStatistic();
+  bool isValidParamAtIndex(int i, float p) override;
   void computeTest() override;
   void computeInterval() override;
 

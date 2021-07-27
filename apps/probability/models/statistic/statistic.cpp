@@ -21,6 +21,13 @@ float Statistic::paramAtIndex(int i) {
   return i == indexOfThreshold() ? m_threshold : paramArray()[i];
 }
 
+bool Statistic::isValidParamAtIndex(int i, float p) {
+  if (i == indexOfThreshold()) {
+    return p >= 0 && p <= 1;
+  }
+  return true;
+}
+
 void Statistic::setParamAtIndex(int i, float p) {
   if (i == indexOfThreshold()) {
     m_threshold = p;

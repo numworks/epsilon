@@ -1,7 +1,11 @@
+epsilon_target_variants = test epsilon $(addprefix epsilon.,$(epsilon_flavors) $(epsilon_official_flavors))
+dfu_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .dfu,$(epsilon_target_variants)))
+.PHONY: $(dfu_targets)
+$(dfu_targets): USERLAND_STEM = $(subst .epsilon,,$(patsubst $(BUILD_DIR)/%.dfu,.%,$@))
+
 include build/targets.device.$(MODEL).mak
 -include build/targets.device.$(MODEL).$(FIRMWARE_COMPONENT).mak
 
-HANDY_TARGETS += bench.ram bench.flash
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 $(eval $(call rule_for, \

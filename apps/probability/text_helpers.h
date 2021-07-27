@@ -1,12 +1,14 @@
 #ifndef APPS_PROBABILITY_TEXT_HELPERS_H
 #define APPS_PROBABILITY_TEXT_HELPERS_H
 
+#include <stddef.h>
+
 #include "models/data_enums.h"
 
 namespace Probability {
 
-/* Fake sprintf, only supports %s or %c */
-int sprintf(char * buffer, const char * format, ...);
+/* Fake snprintf, only supports %s or %c */
+int snprintf(char * buffer, size_t bufferSize, const char * format, ...);
 
 const char * testToText(Data::Test t);
 const char * testToTextSymbol(Data::Test t);

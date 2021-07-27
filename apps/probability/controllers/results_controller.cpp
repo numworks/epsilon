@@ -56,7 +56,12 @@ const char * Probability::ResultsController::title() {
     char estimateBuffer[k_titleBufferSize];
     defaultParseFloat(m_statistic->estimate(), estimateBuffer, k_titleBufferSize);
 
-    sprintf(m_titleBuffer, "%s=%s Confidence=%s", estimateSymbol, estimateBuffer, confidenceBuffer);
+    snprintf(m_titleBuffer,
+             sizeof(m_titleBuffer),
+             "%s=%s Confidence=%s",
+             estimateSymbol,
+             estimateBuffer,
+             confidenceBuffer);
     return m_titleBuffer;
   }
   return nullptr;

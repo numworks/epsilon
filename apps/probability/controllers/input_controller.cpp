@@ -43,21 +43,29 @@ const char * InputController::title() {
     if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
       char alphaBuffer[10];
       defaultParseFloat(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
-      sprintf(m_titleBuffer,
-              "H0:%s=%s Ha:%s%s%s α=%s",
-              symbol,
-              paramBuffer,
-              symbol,
-              op,
-              paramBuffer,
-              alphaBuffer);
+      snprintf(m_titleBuffer,
+               sizeof(m_titleBuffer),
+               "H0:%s=%s Ha:%s%s%s α=%s",
+               symbol,
+               paramBuffer,
+               symbol,
+               op,
+               paramBuffer,
+               alphaBuffer);
     } else {
-      sprintf(m_titleBuffer, "H0:%s=%s Ha:%s%s%s", symbol, paramBuffer, symbol, op, paramBuffer);
+      snprintf(m_titleBuffer,
+               sizeof(m_titleBuffer),
+               "H0:%s=%s Ha:%s%s%s",
+               symbol,
+               paramBuffer,
+               symbol,
+               op,
+               paramBuffer);
     }
   } else {
     const char * symbol = testTypeToText(App::app()->testType());
     const char * text = testToText(App::app()->test());
-    sprintf(m_titleBuffer, "%s-interval on %s", symbol, text);
+    snprintf(m_titleBuffer, sizeof(m_titleBuffer), "%s-interval on %s", symbol, text);
   }
   return m_titleBuffer;
 }

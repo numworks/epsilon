@@ -15,6 +15,8 @@ jobs:
       - uses: numworks/setup-arm-toolchain@2020-q4
       - uses: actions/checkout@v2
       - run: make MODEL=n0100 epsilon.dfu
+      - run: make MODEL=n0100 epsilon.official.onboarding.beta.dfu
+      - run: make MODEL=n0100 epsilon.official.onboarding.update.dfu
       - run: make MODEL=n0100 test.dfu
   n0110:
     runs-on: self-hosted
@@ -24,6 +26,8 @@ jobs:
       - run: make MODEL=n0110 kernel.A.elf
       - run: make MODEL=n0110 kernel.B.elf
       - run: make MODEL=n0110 userland.A.elf
+      - run: make MODEL=n0110 userland.official.onboarding.beta.A.elf
+      - run: make MODEL=n0110 userland.official.onboarding.update.A.elf
       - run: make MODEL=n0110 userland.B.elf
       - run: make MODEL=n0110 userland.test.A.elf
       - run: make MODEL=n0110 userland.test.B.elf

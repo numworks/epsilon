@@ -89,7 +89,7 @@ public:
                                HomogeneityStatistic * statistic,
                                ResultsController * resultsController);
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayNoTitle;
+    return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   const char * title() override { return nullptr; }
   View * view() override { return &m_contentView; }

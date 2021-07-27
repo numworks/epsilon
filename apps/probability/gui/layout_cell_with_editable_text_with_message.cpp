@@ -16,10 +16,8 @@ LayoutCellWithEditableTextWithMessage::LayoutCellWithEditableTextWithMessage(
                 inputEventHandlerDelegate,
                 textFieldDelegate,
                 KDFont::LargeFont,
-                1.),
-    m_messageTextView(KDFont::SmallFont) {
+                1.) {
   m_textBody[0] = '\0';
-  m_messageTextView.setTextColor(Escher::Palette::GrayDark);
 }
 
 void LayoutCellWithEditableTextWithMessage::didBecomeFirstResponder() {
@@ -31,19 +29,9 @@ void LayoutCellWithEditableTextWithMessage::setAccessoryText(const char * text) 
   layoutSubviews();
 }
 
-void LayoutCellWithEditableTextWithMessage::setLayout(Poincare::Layout layout) {
-  m_expressionView.setLayout(layout);
-}
-
-void LayoutCellWithEditableTextWithMessage::setSubLabelMessage(I18n::Message message) {
-  m_messageTextView.setMessage(message);
-}
-
 void LayoutCellWithEditableTextWithMessage::setHighlighted(bool highlight) {
-  Escher::TableCell::setHighlighted(highlight);
+  LayoutCellWithSubMessage::setHighlighted(highlight);
   KDColor color = highlight ? Escher::Palette::Select : backgroundColor();
-  m_expressionView.setBackgroundColor(color);
-  m_messageTextView.setBackgroundColor(color);
   m_textField.setBackgroundColor(color);
 }
 

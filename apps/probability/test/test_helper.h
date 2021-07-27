@@ -2,7 +2,9 @@
 #define APPS_PROBABILITY_TEST_TEST_HELPER_H
 
 #include <quiz.h>
+
 #include <cmath>
+#include <stdio.h>
 
 template <typename T>
 bool inline roughlyEqual(T a, T b, T threshold = 1e-9, bool absolute = false) {
@@ -14,7 +16,11 @@ bool inline roughlyEqual(T a, T b, T threshold = 1e-9, bool absolute = false) {
     return a == b;
   }
   T relerr = std::fabs(a - b) / max;
-  return max == 0 || relerr < threshold;
+  bool res = max == 0 || relerr < threshold;
+  if (!res) {
+    printf("Roughly equal : %.10f vs %.10f ", a, b);
+  }
+  return res;
 }
 
 template <typename T>

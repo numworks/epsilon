@@ -9,7 +9,7 @@
 
 namespace Probability {
 
-int sprintf(char * buffer, const char * format, ...) {
+int snprintf(char * buffer, size_t bufferSize, const char * format, ...) {
   char * origin = buffer;
   va_list args;
   va_start(args, format);
@@ -26,6 +26,10 @@ int sprintf(char * buffer, const char * format, ...) {
       format += 2;
     } else {
       *(buffer++) = *(format++);
+    }
+    if (buffer - origin >= bufferSize - 1) {
+      assert(false);
+      break;
     }
   }
   *buffer = '\0';

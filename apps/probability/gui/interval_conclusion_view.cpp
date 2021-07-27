@@ -25,7 +25,7 @@ void IntervalConclusionView::setInterval(float center, float ME) {
   defaultParseFloat(ME, bufferME, bufferSize);
 
   char buffer[bufferSize];
-  sprintf(buffer, "%s ± %s", bufferCenter, bufferME);
+  snprintf(buffer, bufferSize, "%s ± %s", bufferCenter, bufferME);
   m_intervalView.setText(buffer);
 }
 

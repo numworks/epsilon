@@ -20,12 +20,16 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Escher::ViewController * distributionController,
                                Escher::ViewController * testController,
                                Data::SubApp * globalSubapp,
+                               Data::Test * globalTest,
+                               Data::TestType * globalTestType,
                                Distribution * globalDistribution,
                                Calculation * globalCalculation) :
     SelectableListViewPage(parentResponder),
     m_distributionController(distributionController),
     m_testController(testController),
     m_globalSubapp(globalSubapp),
+    m_globalTest(globalTest),
+    m_globalTestType(globalTestType),
     m_globalDistribution(globalDistribution),
     m_globalCalculation(globalCalculation),
     m_contentView(&m_selectableTableView) {
@@ -73,8 +77,8 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (subapp == Data::SubApp::Probability && App::app()->subapp() != Data::SubApp::Probability) {
-      initializeProbaData();
+    if (subapp != App::app()->subapp()) {
+      resetData(subapp);
     }
     *m_globalSubapp = subapp;
     openPage(view);
@@ -86,4 +90,12 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
 void MenuController::initializeProbaData() {
   new (m_globalDistribution) BinomialDistribution();
   new (m_globalCalculation) LeftIntegralCalculation(m_globalDistribution);
+}
+
+void Probability::MenuController::resetData(Data::SubApp subapp) {
+  if (subapp == Data::SubApp::Probability) {
+    initializeProbaData();
+  }
+  *m_globalTest = Data::Test::Unset;
+  *m_globalTestType = Data::TestType::None;
 }

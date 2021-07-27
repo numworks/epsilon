@@ -161,7 +161,7 @@ CheckpointType sCheckpointType = CheckpointType::Home;
 
 constexpr static int k_numberOfCheckpointTypes = 3;
 
-static bool s_lock = false;
+static int s_numberOfLocks = 0;
 
 // Process snapshots
 uint8_t sProcessStackSnapshot[k_numberOfCheckpointTypes][k_processStackSnapshotMaxSize];
@@ -224,7 +224,7 @@ CheckpointType s_lockedCheckpointType;
 
 void loadCheckpoint(CheckpointType type) {
   assert(Device::CircuitBreaker::hasCheckpoint(type));
-  if (s_lock) {
+  if (s_numberOfLocks > 0) {
     if (!timerOn()) {
       s_lockedCheckpointType = type;
       launchLockTimer();
@@ -242,12 +242,12 @@ void loadCheckpoint(CheckpointType type) {
 }
 
 void lock() {
-  s_lock = true;
+  s_numberOfLocks++;
 }
 
 void unlock() {
-  s_lock = false;
-  if (TIM6.CR1()->getCEN()) {
+  s_numberOfLocks--;
+  if (s_numberOfLocks == 0 && TIM6.CR1()->getCEN()) {
     stopLockTimer();
     Device::CircuitBreaker::loadCheckpoint(s_lockedCheckpointType);
   }

@@ -1,19 +1,9 @@
-.PHONY: $(BUILD_DIR)/epsilon.dfu
-$(BUILD_DIR)/epsilon.dfu: | $(BUILD_DIR)/.
+$(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland$(USERLAND_STEM).elf
 	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
-	  $(subst epsilon,kernel,$(BUILD_DIR)/kernel.elf) \
-	  $(subst epsilon,userland,$(BUILD_DIR)/userland.elf) \
-	  -o $@
-
-.PHONY: $(BUILD_DIR)/test.dfu
-$(BUILD_DIR)/test.dfu: | $(BUILD_DIR)/.
-	$(MAKE) FIRMWARE_COMPONENT=kernel kernel.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland.test.elf
-	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
-	  $(subst test,kernel,$(BUILD_DIR))/kernel.elf \
-	  $(subst test,userland,$(BUILD_DIR))/userland.test.elf \
+	  $(subst $(FIRMWARE_COMPONENT),kernel,$(BUILD_DIR))/kernel.elf \
+	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(USERLAND_STEM).elf \
 	  -o $@
 
 .PHONY: %_flash

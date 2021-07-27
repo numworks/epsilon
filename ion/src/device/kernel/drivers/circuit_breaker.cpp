@@ -1,5 +1,6 @@
 #include <drivers/cache.h>
 #include <drivers/circuit_breaker.h>
+#include <drivers/config/clocks.h>
 #include <drivers/keyboard_queue.h>
 #include <kernel/boot/isr.h>
 #include <regs/regs.h>
@@ -19,6 +20,64 @@ namespace CircuitBreaker {
 
 using namespace Regs;
 using namespace Ion::CircuitBreaker;
+
+static constexpr int tim6interruptionISRIndex = 54;
+
+static bool timerOn() {
+  return TIM6.CR1()->getCEN();
+}
+
+static void launchLockTimer() {
+  TIM6.CNT()->set(0);
+  TIM6.CR1()->setCEN(true);
+}
+
+static void stopLockTimer() {
+  TIM6.SR()->setUIF(false);
+  TIM6.CR1()->setCEN(false);
+}
+
+static constexpr int k_lockDelay = 100;
+
+void initTimer() {
+  TIM6.PSC()->set(Clocks::Config::APB1TimerFrequency-1);
+  TIM6.DIER()->setUIE(true);
+  TIM6.ARR()->set(k_lockDelay);
+  stopLockTimer();
+}
+
+void initInterruptions() {
+  // Flush pending interruptions
+  while (NVIC.NVIC_ICPR()->getBit(tim6interruptionISRIndex)) { // Read to force writing
+    NVIC.NVIC_ICPR()->setBit(tim6interruptionISRIndex, true);
+  }
+  /* Configure the priority: interrupting locked checkpoint is prioritary
+   * compared to SVC (Display::pushRect etc...) */
+  NVIC.NVIC_IPR()->setPriority(tim6interruptionISRIndex, NVIC::NVIC_IPR::InterruptionPriority::High);
+  // Enable interruptions
+  NVIC.NVIC_ISER()->setBit(tim6interruptionISRIndex, true);
+
+  initTimer();
+}
+
+void shutdownTimer() {
+  TIM6.DIER()->setUIE(false);
+  TIM6.CR1()->setCEN(false);
+}
+
+void shutdownInterruptions() {
+  shutdownTimer();
+  // Disable interruptions
+  NVIC.NVIC_ICER()->setBit(tim6interruptionISRIndex, true);
+}
+
+void init() {
+  initInterruptions();
+}
+
+void shutdown() {
+  shutdownInterruptions();
+}
 
 /* Context switching has to be done within a pendSV interrupt. Indeed, if the
  * interruption handling the context switching is nested within another
@@ -161,10 +220,15 @@ bool setCheckpoint(CheckpointType type) {
   return true;
 }
 
+CheckpointType s_lockedCheckpointType;
+
 void loadCheckpoint(CheckpointType type) {
   assert(Device::CircuitBreaker::hasCheckpoint(type));
   if (s_lock) {
-    // TODO: use timer to time out!
+    if (!timerOn()) {
+      s_lockedCheckpointType = type;
+      launchLockTimer();
+    }
     return;
   }
   Keyboard::Queue::sharedQueue()->flush();
@@ -183,6 +247,14 @@ void lock() {
 
 void unlock() {
   s_lock = false;
+  if (TIM6.CR1()->getCEN()) {
+    stopLockTimer();
+    Device::CircuitBreaker::loadCheckpoint(s_lockedCheckpointType);
+  }
+}
+
+void forceUnlock() {
+  unlock();
 }
 
 }

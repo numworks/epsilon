@@ -57,7 +57,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // TIM1 Trigger & Commutation interrupts and TIM11 global interrupt
   0, // TIM1 Capture Compare interrupt
   tim2_handler, // TIM2 global interrupt
-  0, // TIM3 global interrupt
+  0, // TIM3 global interrupt - TIM3 used by LED
   tim4_handler, // TIM4 global interrupt
   0, // I2C1 global event interrupt
   0, // I2C1 global error interrupt
@@ -82,7 +82,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // SPI3 global interrupt
   0, // ?
   0, // ?
-  0, // TIM6 global interrupt
+  tim6_handler, // TIM6 global interrupt
   0, // TIM7 global interrupt
   0, // DMA2 Stream0 global interrupt
   0, // DMA2 Stream1 global interrupt

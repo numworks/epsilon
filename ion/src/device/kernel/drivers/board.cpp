@@ -10,6 +10,7 @@
 #include <drivers/timing.h>
 #include <drivers/usb_privileged.h>
 #include <kernel/drivers/authentication.h>
+#include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/timing.h>
 #include <kernel/warning_display.h>
@@ -40,9 +41,11 @@ void initPeripherals(bool fromBootloader) {
   SWD::init();
   Timing::init();
   Events::init();
+  CircuitBreaker::init();
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {
+  CircuitBreaker::shutdown();
   Events::shutdown();
   Timing::shutdown();
   SWD::shutdown();
@@ -69,9 +72,11 @@ void initInterruptions() {
   Keyboard::initInterruptions();
   Events::initInterruptions();
   Timing::initInterruptions();
+  CircuitBreaker::initInterruptions();
 }
 
 void shutdownInterruptions() {
+  CircuitBreaker::shutdownInterruptions();
   Timing::shutdownInterruptions();
   Events::shutdownInterruptions();
   Keyboard::shutdownInterruptions();

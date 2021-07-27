@@ -6,13 +6,14 @@
 #include <escher/responder.h>
 
 #include "dropdown_view.h"
+#include "layout_cell_with_sub_message.h"
 
 namespace Probability {
 
-class MessageTableCellWithSublabelAndDropdown : public Escher::MessageTableCellWithMessage,
+class LayoutCellWithSublabelAndDropdown : public LayoutCellWithSubMessage,
                                                 public Escher::Responder {
 public:
-  MessageTableCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
+  LayoutCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
                                           Escher::ListViewDataSource * listDataSource,
                                           DropdownCallback * callback = nullptr) :
       Responder(parentResponder), m_dropdown(this, listDataSource, callback) {}
@@ -25,12 +26,12 @@ public:
   bool isSublabelAlignedRight() const override { return false; }
   void reload() {
     m_dropdown.reloadAllCells();
-    Escher::MessageTableCellWithMessage::reloadCell();
+    markRectAsDirty(bounds());
     layoutSubviews();
   }
   void setHighlighted(bool highlight) override {
     m_dropdown.setHighlighted(highlight);
-    Escher::MessageTableCellWithMessage::setHighlighted(highlight);
+    LayoutCellWithSubMessage::setHighlighted(highlight);
   }
 
 private:

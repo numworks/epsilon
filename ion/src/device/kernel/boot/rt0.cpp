@@ -4,6 +4,7 @@
 #include <boot/rt0.h>
 #include <drivers/reset.h>
 #include <kernel/drivers/authentication.h>
+#include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
@@ -82,4 +83,8 @@ void __attribute__((interrupt, noinline)) tim4_handler() {
 
 void __attribute__((interrupt, noinline)) tim5_handler() {
   Ion::Device::Keyboard::poll();
+}
+
+void __attribute__((interrupt, noinline)) tim6_handler() {
+  Ion::Device::CircuitBreaker::forceUnlock();
 }

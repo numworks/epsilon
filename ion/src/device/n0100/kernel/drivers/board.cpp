@@ -117,6 +117,8 @@ void initPeripheralsClocks() {
   // We're using TIM4 and TIM5 for the keyboard
   RCC.APB1ENR()->setTIM4EN(true);
   RCC.APB1ENR()->setTIM5EN(true);
+  // We're using TIM6 for the circuit breaker
+  RCC.APB1ENR()->setTIM6EN(true);
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0x00008000); // Reset value

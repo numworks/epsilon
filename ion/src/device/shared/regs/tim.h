@@ -168,6 +168,7 @@ constexpr TIM<Register32> TIM2(2);
 constexpr TIM<Register16> TIM3(3);
 constexpr TIM<Register16> TIM4(4);
 constexpr TIM<Register32> TIM5(5);
+constexpr TIM<Register16> TIM6(6);
 constexpr TIM<Register16> TIM12(12);
 
 }

@@ -12,6 +12,8 @@ void shutdown() {
   shutdownGPIO();
 }
 
+void keyboardWasScanned(State) {}
+
 }
 }
 }

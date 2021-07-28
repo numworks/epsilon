@@ -5,11 +5,14 @@ namespace Ion {
 namespace CircuitBreaker {
 
 Status sStatus = Status::Interrupted;
-bool sLock = false;
 constexpr static int k_numberOfCheckpointTypes = 3;
 bool sCheckpointsSet[k_numberOfCheckpointTypes] = {false, false, false};
 jmp_buf sBuffers[k_numberOfCheckpointTypes];
 jmp_buf sDummyBuffer;
+
+int sNumberOfLocks = false;
+bool sLoadCheckpointInterrupted = false;
+CheckpointType sLockedCheckpointType;
 
 Status status() {
   return sStatus;
@@ -25,9 +28,14 @@ void unsetCheckpoint(CheckpointType type) {
 
 void loadCheckpoint(CheckpointType type) {
   assert(hasCheckpoint(type));
-  if (sLock) {
+  if (sNumberOfLocks > 0) {
+    if (!sLoadCheckpointInterrupted) {
+      sLoadCheckpointInterrupted = true;
+      sLockedCheckpointType = type;
+    }
     return;
   }
+  sLoadCheckpointInterrupted = false;
   sStatus = Status::Interrupted;
   if (type == CheckpointType::User) {
     unsetCheckpoint(CheckpointType::System);
@@ -39,11 +47,16 @@ void loadCheckpoint(CheckpointType type) {
 }
 
 void lock() {
-  sLock = true;
+  sNumberOfLocks++;
+
 }
 
 void unlock() {
-  sLock = false;
+  assert(sNumberOfLocks > 0);
+  sNumberOfLocks--;
+  if (sNumberOfLocks == 0 && sLoadCheckpointInterrupted) {
+    CircuitBreaker::loadCheckpoint(sLockedCheckpointType);
+  }
 }
 
 Status statusAfterSetjmp(int jmpStatus, CheckpointType type) {

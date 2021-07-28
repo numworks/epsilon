@@ -44,7 +44,7 @@ public:
   virtual bool isValidH0(float h0) { return true; };
 
   // Test statistic
-  virtual const char * testCriticalValueSymbol() = 0;
+  virtual Poincare::Layout testCriticalValueSymbol() = 0;
   /* Returns the abscissa on the normed density curve
    * corresponding to the input sample. */
   virtual float testCriticalValue() = 0;
@@ -64,7 +64,7 @@ public:
   /* The estimate is the center of the confidence interval,
    * and estimates the parameter of interest. */
   virtual float estimate() = 0;
-  virtual const char * intervalCriticalValueSymbol() = 0;
+  Poincare::Layout intervalCriticalValueSymbol();
   /* Returns the critical value above which the probability
    * of landing is inferior to a given confidence level,
    *  for the normed distribution. */

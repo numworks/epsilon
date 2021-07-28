@@ -1,6 +1,7 @@
 #ifndef APPS_PROBABILITY_MODELS_STATISTIC_T_STATISTIC_H
 #define APPS_PROBABILITY_MODELS_STATISTIC_T_STATISTIC_H
 
+#include "probability/helpers.h"
 #include "statistic.h"
 
 namespace Probability {
@@ -8,8 +9,7 @@ namespace Probability {
 /* A t-Statistic is a Statistic whose distribution is a Student law. */
 class TStatistic : public CachedStatistic {
 public:
-  const char * testCriticalValueSymbol() override { return "t"; };
-  const char * intervalCriticalValueSymbol() override { return "t*"; };
+  Poincare::Layout testCriticalValueSymbol() override { return layoutFromText("t"); }
   bool hasDegreeOfFreedom() override { return true; }
   float degreeOfFreedom() override { return m_degreesOfFreedom; }
   float normedDensityFunction(float x) override;

@@ -3,8 +3,8 @@
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/memoized_list_view_data_source.h>
-#include <escher/message_table_cell_with_buffer.h>
 
+#include "layout_cell_with_buffer_with_message.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/models/statistic/statistic.h"
 
@@ -29,7 +29,7 @@ private:
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
   Statistic * m_statistic;
-  Escher::MessageTableCellWithBuffer m_resultCells[5];
+  LayoutCellWithBufferWithMessage m_resultCells[5];
   Shared::ButtonWithSeparator m_next;
 };
 

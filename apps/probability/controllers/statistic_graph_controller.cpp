@@ -42,8 +42,8 @@ void StatisticGraphController::didBecomeFirstResponder() {
   GraphDisplayMode m = m_statistic->hypothesisParams()->op() ==
                                    HypothesisParams::ComparisonOperator::Different &&
                                App::app()->subapp() == Data::SubApp::Tests
-                           ? GraphDisplayMode::TwoCurveViews
-                           : GraphDisplayMode::OneCurveView;
+                           ? GraphDisplayMode::TwoCurve
+                           : GraphDisplayMode::OneCurve;
   StatisticGraphView::LegendPosition pos = m_statistic->hypothesisParams()->op() ==
                                           HypothesisParams::ComparisonOperator::Lower
                                       ? StatisticGraphView::LegendPosition::Left

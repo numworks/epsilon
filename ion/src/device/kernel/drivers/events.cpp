@@ -303,17 +303,11 @@ void hideSpinner() {
 }
 
 void pauseStallingTimer() {
-  TIM2.SR()->setUIF(false);
-  TIM2.CR1()->setCEN(false);
+  TIM2.stop();
 }
 
 void resetStallingTimer() {
-  // Init timer on the first call to getEvent
-  if (!TIM2.CR1()->getCEN()) {
-    TIM2.CR1()->setCEN(true);
-  }
-  // Reset the counter
-  TIM2.CNT()->set(0);
+  TIM2.launch();
   if (s_spinnerStatus == SpinnerStatus::Spinning) {
     /* Hide the spinner and reset the delay if the spinner was previously
      * displayed. */

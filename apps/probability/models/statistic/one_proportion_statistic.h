@@ -25,7 +25,7 @@ private:
   // Parameters
   constexpr static int k_numberOfParams = 2;
   enum ParamsOrder { X, N };
-  const ParameterRepr * paramReprAtIndex(int i) const override;
+  ParameterRepr paramReprAtIndex(int i) const override;
   float * paramArray() override { return m_params; }
   float m_params[k_numberOfParams];
   float x() { return m_params[ParamsOrder::X]; }

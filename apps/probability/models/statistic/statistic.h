@@ -3,13 +3,15 @@
 
 #include <apps/i18n.h>
 
+#include <poincare/layout.h>
+
 #include "probability/models/data_enums.h"
 #include "probability/models/hypothesis_params.h"
 
 namespace Probability {
 
 struct ParameterRepr {
-  I18n::Message m_symbol;
+  Poincare::Layout m_symbol;
   I18n::Message m_description;
 };
 
@@ -34,8 +36,8 @@ public:
   float paramAtIndex(int i);
   virtual bool isValidParamAtIndex(int i, float p);
   void setParamAtIndex(int i, float p);
-  I18n::Message paramSymbolAtIndex(int i) const { return paramReprAtIndex(i)->m_symbol; }
-  I18n::Message paramDescriptionAtIndex(int i) const { return paramReprAtIndex(i)->m_description; }
+  Poincare::Layout paramSymbolAtIndex(int i) const { return paramReprAtIndex(i).m_symbol; }
+  I18n::Message paramDescriptionAtIndex(int i) const { return paramReprAtIndex(i).m_description; }
   float threshold() const { return m_threshold; }
   void setThreshold(float s) { m_threshold = s; }
   HypothesisParams * hypothesisParams() { return &m_hypothesisParams; }
@@ -82,7 +84,7 @@ public:
 
 protected:
   virtual int numberOfStatisticParameters() const = 0;
-  virtual const ParameterRepr * paramReprAtIndex(int i) const = 0;
+  virtual ParameterRepr paramReprAtIndex(int i) const = 0;
   virtual float * paramArray() = 0;
   float absIfNeeded(float f);
 

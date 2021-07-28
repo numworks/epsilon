@@ -62,15 +62,14 @@ bool SimpleFloatParameterController<T>::handleEvent(Ion::Events::Event event) {
 
 template<typename T>
 void SimpleFloatParameterController<T>::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
-  if (myCell->isEditing()) {
+  if (isCellEditing(cell, index)) {
     return;
   }
   constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-  myCell->setAccessoryText(buffer);
+  setTextInCell(cell, buffer, index);
 }
 
 template<typename T>
@@ -101,6 +100,18 @@ bool SimpleFloatParameterController<T>::textFieldDidFinishEditing(TextField * te
   }
   return true;
 }
+
+
+template<typename T>
+bool SimpleFloatParameterController<T>::isCellEditing(Escher::HighlightCell * cell, int index) {
+  return static_cast<MessageTableCellWithEditableText *>(cell)->isEditing();
+}
+
+template<typename T>
+void SimpleFloatParameterController<T>::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
+  static_cast<MessageTableCellWithEditableText *>(cell)->setAccessoryText(text);
+}
+
 
 template class SimpleFloatParameterController<float>;
 template class SimpleFloatParameterController<double>;

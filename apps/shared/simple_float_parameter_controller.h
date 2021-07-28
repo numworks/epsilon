@@ -25,6 +25,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+
 protected:
   static constexpr int k_parameterCellType = 0;
 
@@ -36,6 +37,9 @@ protected:
   int activeCell() { return selectedRow(); }
   Escher::StackViewController * stackController() { return static_cast<Escher::StackViewController *>(parentResponder()); }
   virtual T parameterAtIndex(int index) = 0;
+  virtual bool isCellEditing(Escher::HighlightCell * cell, int index);
+  virtual void setTextInCell(Escher::HighlightCell * cell, const char * text, int index);
+
 private:
   virtual InfinityTolerance infinityAllowanceForRow(int row) const { return InfinityTolerance::None; }
   virtual int reusableParameterCellCount(int type) = 0;

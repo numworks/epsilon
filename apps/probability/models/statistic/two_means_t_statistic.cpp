@@ -1,6 +1,13 @@
 #include "two_means_t_statistic.h"
 
+#include <poincare/code_point_layout.h>
+#include <poincare/conjugate_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
+
 #include <cmath>
+
+using namespace Poincare;
 
 namespace Probability {
 
@@ -41,15 +48,51 @@ void TwoMeansTStatistic::computeInterval() {
   m_ME = _ME(m_SE, m_zCritical);
 }
 
-const ParameterRepr * TwoMeansTStatistic::paramReprAtIndex(int i) const {
-  constexpr static ParameterRepr params[k_numberOfParams] = {
-      {I18n::Message::Mean1Symbol, I18n::Message::Sample1Mean},
-      {I18n::Message::s1, I18n::Message::STD1},
-      {I18n::Message::N1, I18n::Message::Sample1Size},
-      {I18n::Message::Mean2Symbol, I18n::Message::Sample2Mean},
-      {I18n::Message::s2, I18n::Message::STD2},
-      {I18n::Message::N2, I18n::Message::Sample1Size}};
-  return &params[i];
+ParameterRepr TwoMeansTStatistic::paramReprAtIndex(int i) const {
+  switch (i) {
+    case ParamsOrder::X1: {
+      HorizontalLayout x1 = HorizontalLayout::Builder(
+          ConjugateLayout::Builder(CodePointLayout::Builder('x')),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{x1, I18n::Message::Sample1Mean};
+    }
+    case ParamsOrder::S1: {
+      HorizontalLayout s1 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('s'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{s1, I18n::Message::Sample1Std};
+    }
+    case ParamsOrder::N1: {
+      HorizontalLayout n1 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('n'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{n1, I18n::Message::Sample1Size};
+    }
+    case ParamsOrder::X2: {
+      HorizontalLayout x2 = HorizontalLayout::Builder(
+          ConjugateLayout::Builder(CodePointLayout::Builder('x')),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{x2, I18n::Message::Sample2Mean};
+    }
+    case ParamsOrder::S2: {
+      HorizontalLayout s1 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('s'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{s1, I18n::Message::Sample2Std};
+    }
+    case ParamsOrder::N2: {
+      HorizontalLayout n2 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('n'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{n2, I18n::Message::Sample2Size};
+    }
+  }
 }
 
 float TwoMeansTStatistic::_xEstimate(float meanSample1, float meanSample2) {

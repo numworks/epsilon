@@ -1,6 +1,12 @@
 #include "one_proportion_statistic.h"
 
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
+
 #include <cmath>
+
+using namespace Poincare;
 
 namespace Probability {
 
@@ -37,11 +43,17 @@ void OneProportionStatistic::computeInterval() {
   m_ME = _ME(m_zCritical, m_SE);
 }
 
-const ParameterRepr * OneProportionStatistic::paramReprAtIndex(int i) const {
-  constexpr static ParameterRepr s_paramReprs[k_numberOfParams] = {
-      {I18n::Message::X, I18n::Message::NumberOfSuccesses},
-      {I18n::Message::N, I18n::Message::SampleSize}};
-  return &s_paramReprs[i];
+ParameterRepr OneProportionStatistic::paramReprAtIndex(int i) const {
+  switch (i) {
+    case ParamsOrder::X: {
+      Layout x = CodePointLayout::Builder('x');
+      return ParameterRepr{x, I18n::Message::NumberOfSuccesses};
+    }
+    case ParamsOrder::N: {
+      Layout n = CodePointLayout::Builder('n');
+      return ParameterRepr{n, I18n::Message::SampleSize};
+    }
+  }
 }
 
 float OneProportionStatistic::_pEstimate(float x, float n) {

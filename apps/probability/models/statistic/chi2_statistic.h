@@ -1,6 +1,8 @@
 #ifndef APPS_PROBABILITY_MODELS_STATISTIC_CHI2_STATISTIC_H
 #define APPS_PROBABILITY_MODELS_STATISTIC_CHI2_STATISTIC_H
 
+#include <poincare/horizontal_layout.h>
+
 #include <cmath>
 
 #include "statistic.h"
@@ -26,7 +28,9 @@ public:
 protected:
   float m_degreesOfFreedom;
 
-  const ParameterRepr * paramReprAtIndex(int i) const override { return nullptr; }
+  ParameterRepr paramReprAtIndex(int i) const override {
+    return ParameterRepr{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
+  }
 
   // Chi2 specific
   virtual float expectedValue(int index) = 0;

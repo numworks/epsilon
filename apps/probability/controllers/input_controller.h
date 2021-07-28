@@ -13,6 +13,7 @@
 #include <escher/text_field_delegate.h>
 
 #include "probability/abstract/button_delegate.h"
+#include "probability/gui/layout_cell_with_editable_text_with_message.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/data.h"
 #include "probability/models/statistic/statistic.h"
@@ -50,6 +51,8 @@ public:
 
 protected:
   float parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
+  bool isCellEditing(Escher::HighlightCell * cell, int index) override;
+  void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
 private:
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
@@ -63,7 +66,7 @@ private:
   constexpr static int k_numberOfReusableCells = 8;  // TODO count
   constexpr static int k_significanceCellType = 2;
 
-  Escher::MessageTableCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];
+  LayoutCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];
   Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
 };
 

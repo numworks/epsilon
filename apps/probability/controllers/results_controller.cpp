@@ -67,6 +67,11 @@ const char * Probability::ResultsController::title() {
   return nullptr;
 }
 
+bool Probability::ResultsController::buttonAction() {
+  openPage(m_statisticGraphController);
+  return true;
+}
+
 Probability::ResultsView::ContentView::ContentView(Escher::SelectableTableView * table,
                                                    I18n::Message titleMessage) :
     m_spacer(Palette::WallScreen, 0, k_spacerHeight),

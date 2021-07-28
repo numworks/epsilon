@@ -7,14 +7,14 @@ namespace Probability {
 
 /* Simple Delegate interface to use a button
  * Just need to define buttonAction() */
+// TODO use everywhere
 class ButtonDelegate {
- public:
-  virtual void buttonAction() = 0;
+public:
+  virtual bool buttonAction() = 0;
   Escher::Invocation buttonActionInvocation() {
     return Escher::Invocation(
         [](void * c, void * s) {
-          static_cast<ButtonDelegate *>(c)->buttonAction();
-          return true;
+          return static_cast<ButtonDelegate *>(c)->buttonAction();
         },
         this);
   }

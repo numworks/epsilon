@@ -115,8 +115,9 @@ bool Probability::ResultsHomogeneityController::handleEvent(Ion::Events::Event e
   return false;
 }
 
-void Probability::ResultsHomogeneityController::buttonAction() {
+bool Probability::ResultsHomogeneityController::buttonAction() {
   openPage(m_resultsController);
+  return true;
 }
 
 void Probability::ResultsHomogeneityController::tableViewDidChangeSelectionAndDidScroll(

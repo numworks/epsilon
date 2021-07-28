@@ -46,9 +46,9 @@ public:
 
   private:
     friend App;
-    Data::Data * data() { return &m_data; }
+    Data::DataProxy * data() { return &m_data; }
     Data::AppNavigation m_navigation;
-    Data::Data m_data;
+    Data::DataProxy m_data;
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }

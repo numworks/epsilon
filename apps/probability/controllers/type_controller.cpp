@@ -67,12 +67,12 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     }
     assert(view != nullptr);
     if (t != App::app()->testType() ||
-        App::app()->categoricalType() != Data::CategoricalType::None) {
-      App::app()->setCategoricalType(Data::CategoricalType::None);
+        App::app()->categoricalType() != Data::CategoricalType::Unset) {
+      App::app()->setCategoricalType(Data::CategoricalType::Unset);
       Statistic::initializeStatistic(m_statistic,
                                      App::app()->test(),
                                      t,
-                                     Data::CategoricalType::None);
+                                     Data::CategoricalType::Unset);
     }
     *m_globalTestType = t;
     openPage(view);

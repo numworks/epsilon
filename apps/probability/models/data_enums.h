@@ -46,9 +46,9 @@ inline bool isProportion(Test t) {
   return t == Test::OneProp || t == Test::TwoProps;
 }
 
-enum class TestType { None, TTest, PooledTTest, ZTest };
+enum class TestType { Unset, TTest, PooledTTest, ZTest };
 
-enum class CategoricalType { None, Goodness, Homogeneity };
+enum class CategoricalType { Unset, Goodness, Homogeneity };
 
 }  // namespace Data
 

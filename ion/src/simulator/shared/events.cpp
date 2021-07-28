@@ -9,6 +9,14 @@
 #include <algorithm>
 #include <layout_events.h>
 
+#if ESCHER_LOG_EVENTS_NAME
+#include <ion/console.h>
+#endif
+
+#if ION_SIMULATOR_FILES
+#include "screenshot.h"
+#endif
+
 
 namespace Ion {
 namespace Events {
@@ -73,8 +81,18 @@ Event getEvent(int * timeout) {
   if (sSourceJournal != nullptr) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
+#endif
+#if ION_SIMULATOR_FILES
+      // Save screenshot
+      Simulator::Screenshot::commandlineScreenshot()->capture();
+#endif
     } else {
       res = sSourceJournal->popEvent();
+#if ESCHER_LOG_EVENTS_NAME
+      Ion::Console::writeLine("(From state file) ", false);
+#endif
     }
   }
 

@@ -15,6 +15,7 @@ void initGPIO();
 void shutdownGPIO();
 void initExtendedInterruptions();
 bool shutdownExtendedInterruptions();
+void stopPollTimer();
 
 State scan();
 void keyboardWasScanned(State state);

@@ -33,6 +33,10 @@ void shutdownTimer() {
   k_debounceTimer.shutdown();
 }
 
+void stopPollTimer() {
+  k_pollTimer.stop();
+}
+
 static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30, 50};
 
 void initInterruptions() {
@@ -108,7 +112,7 @@ State sState(0);
  * the only "combining" keys we really need to support. */
 
 void poll() {
-  k_pollTimer.stop();
+  /* Scan will stop the poll timer TIM5. */
   State state = Keyboard::scan();
   if (state.keyDown(Key::Shift) || state.keyDown(Key::Alpha) ) {
     k_pollTimer.launch();

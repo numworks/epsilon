@@ -69,7 +69,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override;
   const char * title() override;
   void didBecomeFirstResponder() override;
-  void buttonAction() override { openPage(m_statisticGraphController); }
+  bool buttonAction() override;
   void openPage(ViewController * nextPage,
                 KDColor backgroundColor = Escher::Palette::GrayMiddle,
                 KDColor separatorColor = Escher::Palette::GrayMiddle,

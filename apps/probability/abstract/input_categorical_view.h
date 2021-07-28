@@ -14,7 +14,7 @@
 namespace Probability {
 
 /* This view contains a pointer to a TableView, an EditableCell and a Button,
- * layed out vertically, and is able to move selection between them.
+ * laid out vertically, and is able to move selection between them.
  * Meant for InputGoodnessController and InputHomogeneityController.
  */
 class InputCategoricalView : public Escher::ScrollView,

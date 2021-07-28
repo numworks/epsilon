@@ -103,7 +103,6 @@ public:
            DropdownCallback * callback = nullptr);
   Escher::Responder * responder() override { return this; }
   bool handleEvent(Ion::Events::Event e) override;
-  void setHighlighted(bool highlighted) override;
   void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
   void reloadAllCells();
   void init();

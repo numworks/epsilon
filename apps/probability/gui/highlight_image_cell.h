@@ -12,7 +12,6 @@ public:
   HighlightImageCell() : Escher::HighlightCell() { m_contentView.setBackgroundColor(KDColorWhite); }
   void setHighlighted(bool highlighted) override {
     m_contentView.setBackgroundColor(highlighted ? Escher::Palette::Select : KDColorWhite);
-    markRectAsDirty(bounds());
     HighlightCell::setHighlighted(highlighted);
   };
 

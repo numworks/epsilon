@@ -27,7 +27,7 @@ KDSize PopupItemView::minimalSizeForOptimalDisplay() const {
   KDSize caretSize = m_caret.minimalSizeForOptimalDisplay();
   return KDSize(
       cellSize.width() + caretSize.width() + 2 * k_marginImageHorizontal + k_marginCaretRight,
-      fmaxf(cellSize.height(), caretSize.height()) + 2 * k_marginImageVertical);
+      std::fmax(cellSize.height(), caretSize.height()) + 2 * k_marginImageVertical);
 }
 
 void PopupItemView::layoutSubviews(bool force) {
@@ -44,7 +44,7 @@ void PopupItemView::layoutSubviews(bool force) {
 }
 
 int PopupItemView::numberOfSubviews() const {
-  return 2 - m_isPoppingUp /* Hide caret when not popping */;
+  return 1 + !m_isPoppingUp; // Hide caret when popping
 }
 
 Escher::View * PopupItemView::subviewAtIndex(int i) {
@@ -168,10 +168,6 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
     return true;
   }
   return false;
-}
-
-void Dropdown::setHighlighted(bool highlighted) {
-  PopupItemView::setHighlighted(highlighted);
 }
 
 void Dropdown::reloadAllCells() {

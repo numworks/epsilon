@@ -72,9 +72,9 @@ private:
   char * beginingOfMemoizationArea() {return addressOfPointerToCalculationOfIndex(0);};
   void recomputeMemoizedPointersAfterCalculationIndex(int index);
 
-  char * m_buffer;
-  int m_bufferSize;
-  const char * m_calculationAreaEnd;
+  char * const m_buffer;
+  const int m_bufferSize;
+  char * m_calculationAreaEnd;
   int m_numberOfCalculations;
 };
 

@@ -12,7 +12,7 @@ namespace Probability {
 class Chi2Statistic : public CachedStatistic {
 public:
   Chi2Statistic();
-  const char * testCriticalValueSymbol() override { return "X2"; }
+  Poincare::Layout testCriticalValueSymbol() override;
   const char * estimateSymbol() override { return ""; }
   I18n::Message estimateDescription() override { return I18n::Message::Default; }
   bool hasDegreeOfFreedom() override { return true; }
@@ -21,7 +21,6 @@ public:
   float normedDensityFunction(float x) override;
 
   void computeInterval() override {}
-  const char * intervalCriticalValueSymbol() override { return ""; }
 
   constexpr static float k_undefinedValue = NAN;
 

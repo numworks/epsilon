@@ -5,6 +5,8 @@
 #include <apps/shared/text_field_delegate_app.h>
 #include <assert.h>
 #include <escher/container.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
 #include <shared/poincare_helpers.h>
 
 namespace Probability {
@@ -29,6 +31,15 @@ inline float fminf(float x, float y) {
 
 inline int clipped(int a, int n) {
   return a < n ? a : n;
+}
+
+inline Poincare::Layout layoutFromText(const char * text) {
+  Poincare::HorizontalLayout layout = Poincare::HorizontalLayout::Builder();
+  for (int i = 0; i < strlen(text); i++) {
+    Poincare::CodePointLayout l = Poincare::CodePointLayout::Builder(CodePoint(text[i]));
+    layout.addChildAtIndex(l, i, i, nullptr);
+  }
+  return layout;
 }
 
 }  // namespace Probability

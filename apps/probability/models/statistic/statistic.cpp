@@ -2,6 +2,9 @@
 
 #include <assert.h>
 #include <math.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
 
 #include <new>
 
@@ -39,6 +42,14 @@ void Statistic::setParamAtIndex(int i, float p) {
 
 bool Statistic::testPassed() {
   return pValue() < std::fabs(m_threshold);
+}
+
+Poincare::Layout Statistic::intervalCriticalValueSymbol() {
+  return Poincare::HorizontalLayout::Builder(
+      testCriticalValueSymbol(),
+      Poincare::VerticalOffsetLayout::Builder(
+          Poincare::CodePointLayout::Builder('*'),
+          Poincare::VerticalOffsetLayoutNode::Position::Superscript));
 }
 
 void Statistic::initThreshold(Data::SubApp subapp) {

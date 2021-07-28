@@ -42,7 +42,7 @@ void ResultsController::didBecomeFirstResponder() {
 }
 
 ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
-  if (App::app()->categoricalType() == Data::CategoricalType::None) {
+  if (App::app()->categoricalType() == Data::CategoricalType::Unset) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   return ViewController::TitlesDisplay::DisplayLastTitle;

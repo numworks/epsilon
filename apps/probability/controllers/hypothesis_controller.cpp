@@ -90,6 +90,7 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
 
   m_statistic->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
+  m_selectableTableView.selectCellAtLocation(0, k_indexOfHa);
   return true;
 }
 

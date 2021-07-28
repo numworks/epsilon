@@ -186,4 +186,9 @@ App::App(Snapshot * snapshot) :
   }
 }
 
+const App::Descriptor * App::Snapshot::descriptor() const {
+  static App::Descriptor s_descriptor;
+  return &s_descriptor;
+};
+
 }  // namespace Probability

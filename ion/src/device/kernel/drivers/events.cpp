@@ -167,17 +167,6 @@ static constexpr int k_prescalerFactor = 4;
 static constexpr int k_stallingDelay = 500*k_prescalerFactor; // TODO: calibrate
 static constexpr int k_spinningDelay = 100*k_prescalerFactor; // TODO: calibrate
 
-void initTimer() {
-  TIM2.PSC()->set(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1);
-  TIM2.DIER()->setUIE(true);
-  TIM2.ARR()->set(k_stallingDelay);
-}
-
-void shutdownTimer() {
-  TIM2.DIER()->setUIE(false);
-  TIM2.CR1()->setCEN(false);
-}
-
 static constexpr int tim2interruptionISRIndex = 28;
 
 void initInterruptions() {
@@ -192,11 +181,14 @@ void initInterruptions() {
   // Enable interruptions
   NVIC.NVIC_ISER()->setBit(tim2interruptionISRIndex, true);
 
-  initTimer();
+  // Init timer
+  TIM2.init(Clocks::Config::APB1TimerFrequency*1000/k_prescalerFactor-1, k_stallingDelay);
 }
 
 void shutdownInterruptions() {
-  shutdownTimer();
+  // Shutdown timer
+  TIM2.shutdown();
+
   // Disable interruptions
   NVIC.NVIC_ICER()->setBit(tim2interruptionISRIndex, true);
 }

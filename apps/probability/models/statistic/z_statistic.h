@@ -1,6 +1,7 @@
 #ifndef APPS_PROBABILITY_MODELS_STATISTIC_Z_STATISTIC_H
 #define APPS_PROBABILITY_MODELS_STATISTIC_Z_STATISTIC_H
 
+#include "probability/helpers.h"
 #include "statistic.h"
 
 namespace Probability {
@@ -8,8 +9,7 @@ namespace Probability {
 /* A t-Statistic is a Statistic whose distribution is a normal law. */
 class ZStatistic : public CachedStatistic {
 public:
-  const char * testCriticalValueSymbol() override { return "z"; };
-  const char * intervalCriticalValueSymbol() override { return "z*"; };
+  Poincare::Layout testCriticalValueSymbol() override { return layoutFromText("z"); }
   bool hasDegreeOfFreedom() override { return false; }
   float normedDensityFunction(float x) override;
 

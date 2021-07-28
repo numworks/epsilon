@@ -1,6 +1,12 @@
 #include "two_proportions_statistic.h"
 
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
+
 #include <cmath>
+
+using namespace Poincare;
 
 namespace Probability {
 
@@ -42,13 +48,37 @@ void TwoProportionsStatistic::computeInterval() {
   m_ME = _ME(m_zCritical, m_SE);
 }
 
-const ParameterRepr * TwoProportionsStatistic::paramReprAtIndex(int i) const {
-  constexpr static ParameterRepr params[k_numberOfParams] = {
-      {I18n::Message::X1, I18n::Message::SuccessSample1},
-      {I18n::Message::N1, I18n::Message::Sample1Size},
-      {I18n::Message::X2, I18n::Message::SuccessSample2},
-      {I18n::Message::N2, I18n::Message::Sample2Size}};
-  return &(params[i]);
+ParameterRepr TwoProportionsStatistic::paramReprAtIndex(int i) const {
+  switch (i) {
+    case ParamsOrder::X1: {
+      HorizontalLayout x1 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('x'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{x1, I18n::Message::SuccessSample1};
+    }
+    case ParamsOrder::N1: {
+      HorizontalLayout n1 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('n'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{n1, I18n::Message::Sample1Size};
+    }
+    case ParamsOrder::X2: {
+      HorizontalLayout x2 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('x'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{x2, I18n::Message::SuccessSample2};
+    }
+    case ParamsOrder::N2: {
+      HorizontalLayout n2 = HorizontalLayout::Builder(
+          CodePointLayout::Builder('n'),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+                                        VerticalOffsetLayoutNode::Position::Subscript));
+      return ParameterRepr{n2, I18n::Message::Sample2Size};
+    }
+  }
 }
 
 float TwoProportionsStatistic::_pEstimate(float x1, float n1, float x2, float n2) {

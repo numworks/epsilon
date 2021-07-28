@@ -15,11 +15,7 @@ InputController::InputController(Escher::StackViewController * parent,
                                  ResultsController * resultsController,
                                  Statistic * statistic,
                                  Escher::InputEventHandlerDelegate * handler) :
-    FloatParameterPage(parent),
-    m_statistic(statistic),
-    m_resultsController(resultsController),
-    m_parameterCells{{&m_selectableTableView, handler, this},
-                     {&m_selectableTableView, handler, this}} {
+    FloatParameterPage(parent), m_statistic(statistic), m_resultsController(resultsController) {
   // Initialize cells
   for (int i = 0; i < k_numberOfReusableCells; i++) {
     m_parameterCells[i].setParentResponder(&m_selectableTableView);
@@ -110,9 +106,9 @@ void InputController::buttonAction() {
 
 void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index < m_statistic->indexOfThreshold()) {
-    MessageTableCellWithEditableTextWithMessage * mCell =
-        static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
-    mCell->setMessage(m_statistic->paramSymbolAtIndex(index));
+    LayoutCellWithEditableTextWithMessage * mCell =
+        static_cast<LayoutCellWithEditableTextWithMessage *>(cell);
+    mCell->setLayout(m_statistic->paramSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_statistic->paramDescriptionAtIndex(index));
   } else if (index == m_statistic->indexOfThreshold()) {
     MessageTableCellWithEditableTextWithMessage * thresholdCell =
@@ -158,6 +154,23 @@ bool Probability::InputController::textFieldDidAbortEditing(TextField * textFiel
   resetMemoization();
   m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
   return FloatParameterPage::textFieldDidAbortEditing(textField);
+}
+
+bool Probability::InputController::isCellEditing(Escher::HighlightCell * cell, int index) {
+  if (index == m_statistic->indexOfThreshold()) {
+    return FloatParameterPage::isCellEditing(cell, index);
+  }
+  return static_cast<LayoutCellWithEditableTextWithMessage *>(cell)->textField()->isEditing();
+}
+
+void Probability::InputController::setTextInCell(Escher::HighlightCell * cell,
+                                                 const char * text,
+                                                 int index) {
+  if (index == m_statistic->indexOfThreshold()) {
+    FloatParameterPage::setTextInCell(cell, text, index);
+  } else {
+    static_cast<LayoutCellWithEditableTextWithMessage *>(cell)->textField()->setText(text);
+  }
 }
 
 bool Probability::InputController::setParameterAtIndex(int parameterIndex, float f) {

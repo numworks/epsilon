@@ -48,7 +48,12 @@ namespace Device {
 namespace Keyboard {
 
 State scan() {
-  // Shutdown registers for the EXTI controller as it alters keyboard scanning
+  /* We do not want the scan function to be interrupted by another scan, which
+   * would activate all rows before returning and could thus leave the keyboard
+   * in an invalid state in the middle of reading it.
+   * EXTI lines also cause electrical interference between the keys of the same
+   * column. */
+  stopPollTimer();
   bool shouldRestoreExtendedInterruptions = shutdownExtendedInterruptions();
   uint64_t state = 0;
 

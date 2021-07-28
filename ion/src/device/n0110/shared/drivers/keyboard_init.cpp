@@ -14,6 +14,8 @@ void shutdown() {
 
 void keyboardWasScanned(State) {}
 
+void stopPollTimer() {}
+
 }
 }
 }

@@ -223,6 +223,7 @@ void lock() {
 }
 
 void unlock() {
+  assert(s_numberOfLocks > 0);
   s_numberOfLocks--;
   if (s_numberOfLocks == 0 && TIM6.running()) {
     TIM6.stop();

@@ -254,6 +254,7 @@ void unlock() {
 }
 
 void forceUnlock() {
+  s_numberOfLocks = 1;
   unlock();
 }
 

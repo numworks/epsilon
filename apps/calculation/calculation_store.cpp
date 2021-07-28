@@ -6,6 +6,7 @@
 #include <poincare/undefined.h>
 #include "../exam_mode_configuration.h"
 #include <assert.h>
+#include <ion/circuit_breaker.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -43,6 +44,10 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
    * approximative to avoid long computation to determine it.
    */
 
+  // Store a safe state to get back on in case of interruption.
+  char * addressOfCalculation = m_calculationAreaEnd;
+  int totalOlderCalculations = m_numberOfCalculations;
+
   UserCircuitBreakerCheckpoint checkpoint;
   if (CircuitBreakerRun(checkpoint)) {
     /* Compute ans now, before the buffer is updated and before the calculation
@@ -57,15 +62,20 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     while (remainingBufferSize() < minimalSize) {
       /* If there is no more space to store a calculation, we delete the oldest
        * one. */
+      Ion::CircuitBreaker::lock();
       deleteOldestCalculation();
+      addressOfCalculation = m_calculationAreaEnd;
+      totalOlderCalculations = m_numberOfCalculations;
+      Ion::CircuitBreaker::unlock();
     }
 
+    size_t calcSize;
     // Add the beginning of the calculation
     {
       /* Copy the begining of the calculation. The calculation minimal size is
        * available, so this memmove will not overide anything. */
       Calculation newCalc = Calculation();
-      size_t calcSize = sizeof(newCalc);
+      calcSize = sizeof(newCalc);
       memcpy(m_calculationAreaEnd, &newCalc, calcSize);
       // Update the end of the calculation storage area
       m_calculationAreaEnd += calcSize;
@@ -80,21 +90,30 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     char * endOfFreeSpace = beginingOfMemoizationArea();
 
     // Add the input expression
-    char * inputSerialization;
     {
       /* We do not store directly the text entered by the user because we do not
        * want to keep Ans symbol in the calculation store. */
       Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
+      Ion::CircuitBreaker::lock();
+      char * previousAreaEnd = m_calculationAreaEnd;
       if (!pushSerializedExpression(input, &beginingOfFreeSpace, endOfFreeSpace)) {
         assert(m_numberOfCalculations == 1);
+        addressOfCalculation = m_buffer;
+        totalOlderCalculations = 0;
+        Ion::CircuitBreaker::unlock();
         /* If the input does not fit in the store (event if the current
          * calculation is the only calculation), just replace the calculation
          * with undef. */
         return emptyStoreAndPushUndef(context, heightComputer);
       }
-      /* m_calculationAreaEnd is where the input expression has been inserted,
-       * taking movements due to deletion of old calculations into account. */
-      inputSerialization = m_calculationAreaEnd;
+      if (m_calculationAreaEnd != previousAreaEnd) {
+        // Calculations have been deleted
+        assert(m_calculationAreaEnd < previousAreaEnd);
+        addressOfCalculation -= previousAreaEnd - m_calculationAreaEnd;
+        totalOlderCalculations = m_numberOfCalculations;
+      }
+      Ion::CircuitBreaker::unlock();
+
       // Update the end of the calculation storage area
       m_calculationAreaEnd = beginingOfFreeSpace;
       // Update the pointer of the end of the new calculation
@@ -111,7 +130,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       // Outputs hold exact output, approximate output and its duplicate
       constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
       Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-      PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      PoincareHelpers::ParseAndSimplifyAndApproximate(addressOfCalculation + calcSize, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
       if (ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode(), outputs[1]) && outputs[1].hasUnit()) {
         /* Hide results with units on units if required by the exam mode
          * configuration. */
@@ -123,8 +142,13 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         if (i == numberOfOutputs - 1) {
           numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
         }
+        char * previousAreaEnd = m_calculationAreaEnd;
+        Ion::CircuitBreaker::lock();
         if (!pushSerializedExpression(outputs[i], &beginingOfFreeSpace, endOfFreeSpace, numberOfSignificantDigits)) {
           assert(m_numberOfCalculations == 1);
+          addressOfCalculation = m_buffer;
+          totalOlderCalculations = 0;
+          Ion::CircuitBreaker::unlock();
           /* If the exact/approximate output does not fit in the store (even if
            * the current calculation is the only one), replace the output with
            * undef if it fits, else replace the whole calculation with undef. */
@@ -135,16 +159,23 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
             return emptyStoreAndPushUndef(context, heightComputer);
           }
         }
-      // Update the end of the calculation storage area
-      m_calculationAreaEnd = beginingOfFreeSpace;
-      // Update the pointer of the end of the new calculation
-      memcpy(beginingOfMemoizationArea(), &m_calculationAreaEnd, sizeof(m_calculationAreaEnd));
+        if (m_calculationAreaEnd != previousAreaEnd) {
+          // Calculations have been deleted
+          assert(m_calculationAreaEnd < previousAreaEnd);
+          addressOfCalculation -= previousAreaEnd - m_calculationAreaEnd;
+          totalOlderCalculations = m_numberOfCalculations;
+        }
+        Ion::CircuitBreaker::unlock();
+        // Update the end of the calculation storage area
+        m_calculationAreaEnd = beginingOfFreeSpace;
+        // Update the pointer of the end of the new calculation
+        memcpy(beginingOfMemoizationArea(), &m_calculationAreaEnd, sizeof(m_calculationAreaEnd));
       }
     }
 
     // Retrieve pointer to inserted Calculation.
-    Calculation * calculationPointer = (m_numberOfCalculations == 1) ? reinterpret_cast<Calculation *>(m_buffer) : *reinterpret_cast<Calculation**>(addressOfPointerToCalculationOfIndex(1));
-    ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(calculationPointer);
+    assert(addressOfCalculation == ((m_numberOfCalculations == 1) ? m_buffer : *(char **)addressOfPointerToCalculationOfIndex(1)));
+    ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(addressOfCalculation));
 
     /* Heights are computed now to make sure that the display output is decided
      * accordingly to the remaining size in the Poincare pool. Once it is, it
@@ -155,8 +186,9 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         heightComputer(calculation.pointer(), context, true));
     return calculation;
   } else {
-    // TODO : Use locks to prevent issues
-    assert(false);
+    // Restore Calculation store in a safe state.
+    m_calculationAreaEnd = addressOfCalculation;
+    m_numberOfCalculations = totalOlderCalculations;
     return nullptr;
   }
 }

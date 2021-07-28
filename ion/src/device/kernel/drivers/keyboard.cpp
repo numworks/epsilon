@@ -19,28 +19,18 @@ using namespace Regs;
 static constexpr int k_debouncingDelay = 10;
 static constexpr int k_pollDelay = 100;
 
-static void stopPollTimer() {
-  TIM5.SR()->setUIF(false);
-  TIM5.CR1()->setCEN(false);
-}
+constexpr TIM<Register32> k_pollTimer = TIM5;
+constexpr TIM<Register16> k_debounceTimer = TIM4;
 
 void initTimer() {
-  TIM4.PSC()->set(Clocks::Config::APB1TimerFrequency-1);
-  TIM4.DIER()->setUIE(true);
-  TIM4.ARR()->set(k_debouncingDelay);
-
-  TIM5.PSC()->set(Clocks::Config::APB1TimerFrequency-1);
-  TIM5.DIER()->setUIE(true);
-  TIM5.ARR()->set(k_pollDelay);
-  stopPollTimer(); // only poll while a key is pressed
+  k_debounceTimer.init(Clocks::Config::APB1TimerFrequency-1, k_debouncingDelay);
+  k_pollTimer.init(Clocks::Config::APB1TimerFrequency-1, k_pollDelay);
+  k_pollTimer.stop(); // only poll while a key is pressed
 }
 
 void shutdownTimer() {
-  TIM5.DIER()->setUIE(false);
-  TIM5.CR1()->setCEN(false);
-
-  TIM4.DIER()->setUIE(false);
-  TIM4.CR1()->setCEN(false);
+  k_pollTimer.shutdown();
+  k_debounceTimer.shutdown();
 }
 
 static constexpr int interruptionISRIndex[] = {6, 7, 8, 9, 10, 23, 30, 50};
@@ -99,22 +89,11 @@ void shutdown() {
   shutdownGPIO();
 }
 
-void launchDebounceTimer() {
-  TIM4.CNT()->set(0);
-  TIM4.CR1()->setCEN(true);
-}
-
-static void launchPollTimer() {
-  TIM5.CNT()->set(0);
-  TIM5.CR1()->setCEN(true);
-}
-
 static bool sBouncing = false;
 
 void debounce() {
   sBouncing = false;
-  TIM4.SR()->setUIF(false);
-  TIM4.CR1()->setCEN(false);
+  k_debounceTimer.stop();
 }
 
 State sState(0);
@@ -129,10 +108,10 @@ State sState(0);
  * the only "combining" keys we really need to support. */
 
 void poll() {
-  stopPollTimer();
+  k_pollTimer.stop();
   State state = Keyboard::scan();
   if (state.keyDown(Key::Shift) || state.keyDown(Key::Alpha) ) {
-    launchPollTimer();
+    k_pollTimer.launch();
   }
   /* OnOff, Home and Back are the only keyboard keys which are preemptive.
    * The states which doesn't involve one of these keys down are pushed on a
@@ -157,7 +136,7 @@ void handleInterruption() {
   if (!sBouncing) {
     sBouncing = true;
     poll();
-    launchDebounceTimer();
+    k_debounceTimer.launch();
   }
 }
 

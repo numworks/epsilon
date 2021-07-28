@@ -10,6 +10,27 @@ namespace Regs {
 template <typename RegisterWidth>
 class TIM {
 public:
+  void init(uint16_t prescaler, RegisterWidth autoReloadValue) const {
+    PSC()->set(prescaler);
+    DIER()->setUIE(true);
+    ARR()->set(autoReloadValue);
+  }
+  void shutdown() const {
+    DIER()->setUIE(false);
+    CR1()->setCEN(false);
+  }
+  bool running() const {
+    return CR1()->getCEN();
+  }
+  void launch() const {
+    CNT()->set(0);
+    CR1()->setCEN(true);
+  }
+  void stop() const {
+    SR()->setUIF(false);
+    CR1()->setCEN(false);
+  }
+
   class CR1 : Register16 {
   public:
     REGS_BOOL_FIELD(CEN, 0);

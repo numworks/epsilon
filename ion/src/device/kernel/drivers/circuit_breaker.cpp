@@ -23,28 +23,7 @@ using namespace Ion::CircuitBreaker;
 
 static constexpr int tim6interruptionISRIndex = 54;
 
-static bool timerOn() {
-  return TIM6.CR1()->getCEN();
-}
-
-static void launchLockTimer() {
-  TIM6.CNT()->set(0);
-  TIM6.CR1()->setCEN(true);
-}
-
-static void stopLockTimer() {
-  TIM6.SR()->setUIF(false);
-  TIM6.CR1()->setCEN(false);
-}
-
 static constexpr int k_lockDelay = 100;
-
-void initTimer() {
-  TIM6.PSC()->set(Clocks::Config::APB1TimerFrequency-1);
-  TIM6.DIER()->setUIE(true);
-  TIM6.ARR()->set(k_lockDelay);
-  stopLockTimer();
-}
 
 void initInterruptions() {
   // Flush pending interruptions
@@ -57,16 +36,14 @@ void initInterruptions() {
   // Enable interruptions
   NVIC.NVIC_ISER()->setBit(tim6interruptionISRIndex, true);
 
-  initTimer();
-}
-
-void shutdownTimer() {
-  TIM6.DIER()->setUIE(false);
-  TIM6.CR1()->setCEN(false);
+  // Init timer
+  TIM6.init(Clocks::Config::APB1TimerFrequency-1, k_lockDelay);
+  TIM6.stop();
 }
 
 void shutdownInterruptions() {
-  shutdownTimer();
+  // Shutdown timer
+  TIM6.shutdown();
   // Disable interruptions
   NVIC.NVIC_ICER()->setBit(tim6interruptionISRIndex, true);
 }
@@ -225,9 +202,9 @@ CheckpointType s_lockedCheckpointType;
 void loadCheckpoint(CheckpointType type) {
   assert(Device::CircuitBreaker::hasCheckpoint(type));
   if (s_numberOfLocks > 0) {
-    if (!timerOn()) {
+    if (!TIM6.running()) {
       s_lockedCheckpointType = type;
-      launchLockTimer();
+      TIM6.launch();
     }
     return;
   }
@@ -247,8 +224,8 @@ void lock() {
 
 void unlock() {
   s_numberOfLocks--;
-  if (s_numberOfLocks == 0 && TIM6.CR1()->getCEN()) {
-    stopLockTimer();
+  if (s_numberOfLocks == 0 && TIM6.running()) {
+    TIM6.stop();
     Device::CircuitBreaker::loadCheckpoint(s_lockedCheckpointType);
   }
 }

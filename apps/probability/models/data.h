@@ -101,8 +101,8 @@ struct StatisticData {
 };
 
 union DataBuffer {
-  StatisticData m_statisticData;
   ProbaData m_probaData;
+  StatisticData m_statisticData;
 };
 
 class Data {

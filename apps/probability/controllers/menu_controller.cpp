@@ -95,7 +95,8 @@ void MenuController::initializeProbaData() {
 void Probability::MenuController::resetData(Data::SubApp subapp) {
   if (subapp == Data::SubApp::Probability) {
     initializeProbaData();
+  } else {
+    *m_globalTest = Data::Test::Unset;
+    *m_globalTestType = Data::TestType::None;
   }
-  *m_globalTest = Data::Test::Unset;
-  *m_globalTestType = Data::TestType::None;
 }

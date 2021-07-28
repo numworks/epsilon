@@ -4,7 +4,7 @@
 #include <escher/buffer_table_cell.h>
 #include <escher/stack_view_controller.h>
 
-#include "probability/gui/distribution_graph_view.h"
+#include "probability/gui/statistic_graph_view.h"
 #include "probability/gui/selectable_cell_list_controller.h"
 #include "probability/models/statistic_view_range.h"
 
@@ -21,7 +21,7 @@ public:
 private:
   constexpr static int k_titleBufferSize = 30;
   char m_titleBuffer[k_titleBufferSize];
-  GraphView m_graphView;
+  StatisticGraphView m_graphView;
   StatisticViewRange m_rangeLeft;
   StatisticViewRange m_rangeRight;
   Statistic * m_statistic;

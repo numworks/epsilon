@@ -15,10 +15,10 @@ namespace Probability {
 /* This is the common view for Significance Tests and Confidence Intervals.
  * It displays either 1 or 2 CurveViews separated by a Separator, a legend, and a ConclusionView.
  */
-class GraphView : public Escher::View { // TODO VerticalLayout ?
+class StatisticGraphView : public Escher::View { // TODO VerticalLayout ?
 public:
   enum LegendPosition {Left, Right};
-  GraphView(StatisticViewRange * rangeLeft, StatisticViewRange * rangeRight);
+  StatisticGraphView(StatisticViewRange * rangeLeft, StatisticViewRange * rangeRight);
   void setMode(GraphDisplayMode m);
   void setType(TestConclusionView::Type t) { m_testConclusionView.setType(t); }
   KDSize minimalSizeForOptimalDisplay() const override;

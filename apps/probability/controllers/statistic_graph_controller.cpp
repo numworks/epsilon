@@ -44,10 +44,10 @@ void StatisticGraphController::didBecomeFirstResponder() {
                                App::app()->subapp() == Data::SubApp::Tests
                            ? GraphDisplayMode::TwoCurveViews
                            : GraphDisplayMode::OneCurveView;
-  GraphView::LegendPosition pos = m_statistic->hypothesisParams()->op() ==
+  StatisticGraphView::LegendPosition pos = m_statistic->hypothesisParams()->op() ==
                                           HypothesisParams::ComparisonOperator::Lower
-                                      ? GraphView::LegendPosition::Left
-                                      : GraphView::LegendPosition::Right;
+                                      ? StatisticGraphView::LegendPosition::Left
+                                      : StatisticGraphView::LegendPosition::Right;
   m_graphView.setMode(m);
   m_graphView.setLegendPosition(pos);
   m_graphView.setType(t);

@@ -1,19 +1,20 @@
-#ifndef PROBABILITY_DISTRIBUTION_CONTROLLER_H
-#define PROBABILITY_DISTRIBUTION_CONTROLLER_H
+#ifndef APPS_PROBABILITY_CONTROLLERS_DISTRIBUTION_CONTROLLER_H
+#define APPS_PROBABILITY_CONTROLLERS_DISTRIBUTION_CONTROLLER_H
 
 #include <escher/selectable_list_view_controller.h>
 
 #include <new>
 
+#include "parameters_controller.h"
 #include "probability/gui/distribution_cell.h"
 #include "probability/models/distribution/distribution.h"
-#include "parameters_controller.h"
 
 namespace Probability {
 
 class DistributionController : public Escher::SelectableListViewController {
- public:
-  DistributionController(Escher::Responder * parentResponder, Distribution * m_distribution,
+public:
+  DistributionController(Escher::Responder * parentResponder,
+                         Distribution * m_distribution,
                          ParametersController * parametersController);
   const char * title() override { return "Probability distributions"; }
   bool handleEvent(Ion::Events::Event event) override;
@@ -24,9 +25,12 @@ class DistributionController : public Escher::SelectableListViewController {
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override { return k_numberOfCells; }
+  int reusableCellCount(int type) override {
+    assert(type == 0);
+    return k_numberOfCells;
+  }
 
- private:
+private:
   void setDistributionAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 9;
   constexpr static int k_numberOfCells =
@@ -40,4 +44,4 @@ class DistributionController : public Escher::SelectableListViewController {
 
 }  // namespace Probability
 
-#endif
+#endif /* APPS_PROBABILITY_CONTROLLERS_DISTRIBUTION_CONTROLLER_H */

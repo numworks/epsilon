@@ -43,7 +43,7 @@ public:
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
   void didBecomeFirstResponder() override;
-  void buttonAction() override;
+  bool buttonAction() override;
 
   void openPage(ViewController * nextPage,
                 KDColor backgroundColor = Escher::Palette::GrayDark,

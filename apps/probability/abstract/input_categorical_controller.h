@@ -34,7 +34,7 @@ public:
   // Responder
   void didBecomeFirstResponder() override;
   // ButtonDelegate
-  void buttonAction() override;
+  bool buttonAction() override;
 
   // ViewController
   View * view() override { return &m_contentView; }

@@ -145,8 +145,9 @@ void HypothesisController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(true);
 }
 
-void HypothesisController::buttonAction() {
+bool HypothesisController::buttonAction() {
   openPage(m_inputController);
+  return true;
 }
 
 void HypothesisController::loadHypothesisParam() {

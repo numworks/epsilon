@@ -51,9 +51,10 @@ void InputCategoricalController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);
 }
 
-void InputCategoricalController::buttonAction() {
+bool InputCategoricalController::buttonAction() {
   m_statistic->computeTest();
   openPage(m_resultsController);
+  return true;
 }
 
 void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(

@@ -11,7 +11,7 @@ class LayoutCellWithBufferWithMessage : public LayoutCellWithSubMessage {
 public:
   const View * accessoryView() const override { return &m_labelView; }
   void setSubLabelText(const char * textBody) { m_labelView.setText(textBody); }
-  void setHighlighted(bool highlight) {
+  void setHighlighted(bool highlight) override {
     LayoutCellWithSubMessage::setHighlighted(highlight);
     m_labelView.setBackgroundColor(highlight ? Escher::Palette::Select : backgroundColor());
   }

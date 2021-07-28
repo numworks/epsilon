@@ -96,7 +96,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  void buttonAction() override;
+  bool buttonAction() override;
 
   void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
                                                int previousSelectedCellX,

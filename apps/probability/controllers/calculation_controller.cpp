@@ -7,10 +7,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "../images/calcul1_icon.h"
-#include "../images/calcul2_icon.h"
-#include "../images/calcul3_icon.h"
-#include "../images/calcul4_icon.h"
+#include "../images/calculation1_icon.h"
 #include "probability/app.h"
 #include "probability/models/calculation/discrete_calculation.h"
 #include "probability/models/calculation/finite_integral_calculation.h"

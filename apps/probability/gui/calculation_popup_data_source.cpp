@@ -13,10 +13,10 @@ int CalculationPopupDataSource::numberOfRows() const {
 
 void CalculationPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   HighlightImageCell * myCell = static_cast<HighlightImageCell *>(cell);
-  const Escher::Image * images[k_numberOfImages] = {ImageStore::Calcul1Icon,
-                                                    ImageStore::Calcul2Icon,
-                                                    ImageStore::Calcul3Icon,
-                                                    ImageStore::Calcul4Icon};
+  const Escher::Image * images[k_numberOfImages] = {ImageStore::Calculation1Icon,
+                                                    ImageStore::Calculation2Icon,
+                                                    ImageStore::Calculation3Icon,
+                                                    ImageStore::Calculation4Icon};
   myCell->setImage(images[index]);
   myCell->setHighlighted(myCell->isHighlighted());
 }

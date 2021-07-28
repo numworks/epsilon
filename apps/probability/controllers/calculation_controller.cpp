@@ -73,10 +73,9 @@ CalculationController::CalculationController(Responder * parentResponder,
                                                                         this);
   }
 
-  HighlightImageCell * iv = static_cast<HighlightImageCell *>(
-      m_imagesDataSource.reusableCell(0, 0));
-  m_dropdown.setInnerCell(iv);
-  iv->setImage(ImageStore::Calcul1Icon);
+  HighlightImageCell * firstImageCell = m_imagesDataSource.reusableCell(0, 0);
+  m_dropdown.setInnerCell(firstImageCell);
+  firstImageCell->setImage(ImageStore::Calculation1Icon);
 }
 
 void CalculationController::didEnterResponderChain(Responder * previousResponder) {
@@ -90,14 +89,6 @@ void CalculationController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::ProbaGraph);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
   m_dropdown.init();
-}
-
-View * CalculationController::view() {
-  return &m_contentView;
-}
-
-const char * CalculationController::title() {
-  return m_titleBuffer;
 }
 
 void CalculationController::viewWillAppear() {
@@ -167,7 +158,7 @@ int CalculationController::typeAtLocation(int i, int j) {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-   if (i > 0) {
+  if (i > 0) {
     CalculationCell * myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i - 1));
     bool calculationCellIsResponder = true;
@@ -207,11 +198,12 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField,
 
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField,
                                                          Ion::Events::Event event) {
-  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
-         (event == Ion::Events::Right &&
-          textField->cursorLocation() == textField->text() + textField->draftTextLength() &&
-          selectedColumn() < m_calculation->numberOfParameters()) ||
-         (event == Ion::Events::Left && textField->cursorLocation() == textField->text());
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
+          || (event == Ion::Events::Right
+              && textField->cursorLocation() == textField->text() + textField->draftTextLength()
+              && selectedColumn() < m_calculation->numberOfParameters())
+          || (event == Ion::Events::Left
+              && textField->cursorLocation() == textField->text());
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField,

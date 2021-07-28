@@ -35,6 +35,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   char buffer[bufferSize];
   defaultParseFloat(p, buffer, bufferSize);
   textField->setText(buffer);
+  m_contentView.selectView(InputCategoricalView::k_indexOfNext);
   return true;
 }
 

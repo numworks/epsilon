@@ -52,10 +52,7 @@ public:
     SelectableListViewPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }
 
-  // TextFieldDelegate
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override {
-    return false;
-  };
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,
@@ -67,6 +64,7 @@ public:
 
 private:
   void loadHypothesisParam();
+  const char * symbolPrefix();
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;

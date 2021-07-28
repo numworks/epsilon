@@ -27,6 +27,7 @@ public:
 
   void setAccessoryText(const char * text);
   void setHighlighted(bool highlight) override;
+  bool hideSublabel() override { return singleRowMode() && m_textField.isEditing(); }
 
 private:
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];

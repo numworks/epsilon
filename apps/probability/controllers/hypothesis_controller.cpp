@@ -63,7 +63,7 @@ bool Probability::HypothesisController::textFieldDidReceiveEvent(Escher::TextFie
                                                                  Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
     // Remove prefix to edit text
-    textField->setText(textField->text() + strlen(symbolPrefix()) + 1 /* = symbol */ );
+    textField->setText(textField->text() + strlen(symbolPrefix()) + 1 /* = symbol */);
   }
   return false;
 };
@@ -91,6 +91,15 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
   m_statistic->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
   return true;
+}
+
+bool Probability::HypothesisController::textFieldDidHandleEvent(TextField * textField,
+                                                                bool returnValue,
+                                                                bool textSizeDidChange) {
+  if (returnValue && textField->isEditing()) {
+    m_selectableTableView.reloadData(false);  // To hide sublabel
+  }
+  return returnValue;
 }
 
 void Probability::HypothesisController::onDropdownSelected(int selectedRow) {

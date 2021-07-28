@@ -147,6 +147,10 @@ bool Probability::InputController::textFieldDidFinishEditing(Escher::TextField *
 bool Probability::InputController::textFieldDidHandleEvent(TextField * textField,
                                                            bool returnValue,
                                                            bool textSizeDidChange) {
+  if (returnValue) {
+    // Relayout to hide label
+    m_selectableTableView.reloadData(false);
+  }
   return FloatParameterPage::textFieldDidHandleEvent(textField, returnValue, textSizeDidChange);
 }
 

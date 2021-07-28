@@ -10,7 +10,7 @@ bool sCheckpointsSet[k_numberOfCheckpointTypes] = {false, false, false};
 jmp_buf sBuffers[k_numberOfCheckpointTypes];
 jmp_buf sDummyBuffer;
 
-int sNumberOfLocks = false;
+int sNumberOfLocks = 0;
 bool sLoadCheckpointInterrupted = false;
 CheckpointType sLockedCheckpointType;
 
@@ -48,7 +48,6 @@ void loadCheckpoint(CheckpointType type) {
 
 void lock() {
   sNumberOfLocks++;
-
 }
 
 void unlock() {

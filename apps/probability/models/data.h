@@ -105,7 +105,7 @@ union DataBuffer {
   StatisticData m_statisticData;
 };
 
-class Data {
+class DataProxy {
 public:
   // naive getter / setters
   ProbaData * probaData() { return &(m_dataBuffer.m_probaData); }

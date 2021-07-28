@@ -110,7 +110,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         // Calculations have been deleted
         assert(m_calculationAreaEnd < previousAreaEnd);
         addressOfCalculation -= previousAreaEnd - m_calculationAreaEnd;
-        totalOlderCalculations = m_numberOfCalculations;
+        totalOlderCalculations = m_numberOfCalculations - 1;
       }
       Ion::CircuitBreaker::unlock();
 
@@ -163,7 +163,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
           // Calculations have been deleted
           assert(m_calculationAreaEnd < previousAreaEnd);
           addressOfCalculation -= previousAreaEnd - m_calculationAreaEnd;
-          totalOlderCalculations = m_numberOfCalculations;
+          totalOlderCalculations = m_numberOfCalculations - 1;
         }
         Ion::CircuitBreaker::unlock();
         // Update the end of the calculation storage area
@@ -187,8 +187,10 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     return calculation;
   } else {
     // Restore Calculation store in a safe state.
+    Ion::CircuitBreaker::lock();
     m_calculationAreaEnd = addressOfCalculation;
     m_numberOfCalculations = totalOlderCalculations;
+    Ion::CircuitBreaker::unlock();
     return nullptr;
   }
 }
@@ -198,20 +200,24 @@ void CalculationStore::deleteCalculationAtIndex(int i) {
   assert(i >= 0 && i < m_numberOfCalculations);
   if (i == 0) {
     ExpiringPointer<Calculation> lastCalculationPointer = calculationAtIndex(0);
+    Ion::CircuitBreaker::lock();
     m_calculationAreaEnd = (char *)(lastCalculationPointer.pointer());
     m_numberOfCalculations--;
+    Ion::CircuitBreaker::unlock();
     return;
   }
   char * calcI = (char *)calculationAtIndex(i).pointer();
   char * nextCalc = (char *) calculationAtIndex(i-1).pointer();
   assert(m_calculationAreaEnd >= nextCalc);
   size_t slidingSize = m_calculationAreaEnd - nextCalc;
+  Ion::CircuitBreaker::lock();
   // Slide the i-1 most recent calculations right after the i+1'th
   memmove(calcI, nextCalc, slidingSize);
   m_calculationAreaEnd -= nextCalc - calcI;
   // Recompute pointer to calculations after the i'th
   recomputeMemoizedPointersAfterCalculationIndex(i);
   m_numberOfCalculations--;
+  Ion::CircuitBreaker::unlock();
 }
 
 // Delete the oldest calculation in the store and returns the amount of space freed by the operation
@@ -224,8 +230,10 @@ size_t CalculationStore::deleteOldestCalculation() {
 
 // Delete all calculations
 void CalculationStore::deleteAll() {
+  Ion::CircuitBreaker::lock();
   m_calculationAreaEnd = m_buffer;
   m_numberOfCalculations = 0;
+  Ion::CircuitBreaker::unlock();
 }
 
 // Replace "Ans" by its expression

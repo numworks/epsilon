@@ -15,7 +15,7 @@ public:
   int numberOfRows() const override;
   KDCoordinate rowHeight(int r) override { return 1; /* TODO useless? */ }
   int reusableCellCount(int type) override { return k_numberOfImages; }
-  Escher::HighlightCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
+  HighlightImageCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   constexpr static int k_numberOfImages = 4;

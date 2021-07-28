@@ -40,10 +40,7 @@ public:
     App * unpack(Escher::Container * container) override {
       return new (container->currentAppBuffer()) App(this);
     };
-    const Descriptor * descriptor() const override {
-      static Descriptor s_descriptor;
-      return &s_descriptor;
-    };
+    const Descriptor * descriptor() const override;
     void reset() override{};
     Data::AppNavigation * navigation() { return &m_navigation; }
 

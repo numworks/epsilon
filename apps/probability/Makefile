@@ -69,7 +69,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   image_cell.cpp \
   horizontal_or_vertical_layout.cpp \
   results_data_source.cpp \
-  distribution_graph_view.cpp \
+  statistic_graph_view.cpp \
   test_conclusion_view.cpp \
   interval_conclusion_view.cpp \
   statistic_curve_view.cpp \
@@ -157,10 +157,10 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/distribu
 
 $(eval $(call depends_on_transparent_image,apps/probability/controllers/calculation_controller.cpp \
  apps/probability/gui/calculation_popup_data_source.cpp,$(addprefix apps/probability/images/,\
-  calcul1_icon.png \
-  calcul2_icon.png \
-  calcul3_icon.png \
-  calcul4_icon.png \
+  calculation1_icon.png \
+  calculation2_icon.png \
+  calculation3_icon.png \
+  calculation4_icon.png \
 )))
 
 $(eval $(call depends_on_transparent_image,apps/probability/gui/test_conclusion_view.cpp,$(addprefix apps/probability/images/,\

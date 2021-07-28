@@ -35,6 +35,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
     m_globalTestType(globalTestType),
     m_statistic(statistic) {
   // Create cells
+  static_assert(k_numberOfRows < 8, "If more than 8 cells they should be reused");
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
   m_cells[k_indexOfOneProp].setSubtitle(I18n::Message::ZTest);
   m_cells[k_indexOfOneMean].setMessage(I18n::Message::TestOneMean);

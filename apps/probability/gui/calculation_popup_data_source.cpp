@@ -1,9 +1,9 @@
 #include "calculation_popup_data_source.h"
 
-#include "../images/calcul1_icon.h"
-#include "../images/calcul2_icon.h"
-#include "../images/calcul3_icon.h"
-#include "../images/calcul4_icon.h"
+#include "../images/calculation1_icon.h"
+#include "../images/calculation2_icon.h"
+#include "../images/calculation3_icon.h"
+#include "../images/calculation4_icon.h"
 
 namespace Probability {
 

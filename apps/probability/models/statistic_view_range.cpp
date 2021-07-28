@@ -1,6 +1,6 @@
 #include "statistic_view_range.h"
 
-#include <math.h>
+#include <cmath>
 
 #include "probability/app.h"
 #include "probability/gui/statistic_curve_view.h"
@@ -28,7 +28,7 @@ StatisticViewRange::Range StatisticViewRange::computeXRange() const {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     float zAlpha = m_statistic->zAlpha();
     float z = m_statistic->testCriticalValue();
-    if (m_mode == GraphDisplayMode::TwoCurveViews) {
+    if (m_mode == GraphDisplayMode::TwoCurve) {
       zAlpha = fabs(zAlpha);
       z = fabs(z);
       Range r = computeTestXRange(z, zAlpha);
@@ -51,10 +51,10 @@ StatisticViewRange::Range StatisticViewRange::computeXRange() const {
 StatisticViewRange::Range StatisticViewRange::computeTestXRange(float z, float zAlpha) const {
   // |---------------|-----------------|-------
   // <-marginSide-> min <-areaWidth-> max
-  int areaWidth = m_mode == GraphDisplayMode::OneCurveView ? k_areaWidth : k_areaWidth / 2;
-  int marginSide = m_mode == GraphDisplayMode::OneCurveView ? k_marginSide : k_marginSide / 2;
-  float min = fminf(zAlpha, z);
-  float max = fmaxf(zAlpha, z);
+  int areaWidth = m_mode == GraphDisplayMode::OneCurve ? k_areaWidth : k_areaWidth / 2;
+  int marginSide = m_mode == GraphDisplayMode::OneCurve ? k_marginSide : k_marginSide / 2;
+  float min = std::fmin(zAlpha, z);
+  float max = std::fmax(zAlpha, z);
   float pixelWidth = (max - min) / areaWidth;
   // Choose big side based on operator
   float marginSmall = marginSide * pixelWidth;

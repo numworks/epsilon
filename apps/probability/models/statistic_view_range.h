@@ -8,7 +8,7 @@
 namespace Probability {
 
 class StatisticCurveView;
-enum class GraphDisplayMode { OneCurveView, TwoCurveViews };
+enum class GraphDisplayMode { OneCurve, TwoCurve };
 
 /* This class is in charge of computing the range to display for a given statistic.
  * In case two ranges are needed (the graph is split), the StatisticViewRange has a m_isLeftRange.

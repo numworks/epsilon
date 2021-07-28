@@ -12,9 +12,9 @@ namespace Probability {
 class LayoutCellWithEditableTextWithMessage : public LayoutCellWithSubMessage, public Escher::Responder {
 public:
   LayoutCellWithEditableTextWithMessage(
-      Escher::Responder * parent,
-      Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-      Escher::TextFieldDelegate * textFieldDelegate);
+      Escher::Responder * parent = nullptr,
+      Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
+      Escher::TextFieldDelegate * textFieldDelegate = nullptr);
 
   void didBecomeFirstResponder() override;
   Responder * responder() override { return this; }

@@ -1,6 +1,13 @@
 #include "one_mean_t_statistic.h"
 
+#include <poincare/code_point_layout.h>
+#include <poincare/conjugate_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
+
 #include <cmath>
+
+using namespace Poincare;
 
 namespace Probability {
 
@@ -39,12 +46,22 @@ void OneMeanTStatistic::computeInterval() {
   m_ME = _ME(m_zCritical, m_SE);
 }
 
-const ParameterRepr * OneMeanTStatistic::paramReprAtIndex(int i) const {
-  constexpr static ParameterRepr params[k_numberOfParams] = {
-      {I18n::Message::MeanSymbol, I18n::Message::SampleMean},
-      {I18n::Message::s, I18n::Message::StandardDeviation},
-      {I18n::Message::N, I18n::Message::SampleSize}};
-  return &(params[i]);
+ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {
+  switch (i) {
+    case ParamsOrder::X: {
+      HorizontalLayout x = HorizontalLayout::Builder(
+          ConjugateLayout::Builder(CodePointLayout::Builder('x')));
+      return ParameterRepr{x, I18n::Message::SampleMean};
+    }
+    case ParamsOrder::S: {
+      HorizontalLayout n1 = HorizontalLayout::Builder(CodePointLayout::Builder('s'));
+      return ParameterRepr{n1, I18n::Message::StandardDeviation};
+    }
+    case ParamsOrder::N: {
+      HorizontalLayout n = HorizontalLayout::Builder(CodePointLayout::Builder('n'));
+      return ParameterRepr{n, I18n::Message::SampleSize};
+    }
+  }
 }
 
 float OneMeanTStatistic::_degreesOfFreedom(int n) {

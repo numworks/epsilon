@@ -59,6 +59,7 @@ static constexpr CodePoint UCodePointMiddleDot                = 0xb7;    // ·
 static constexpr CodePoint UCodePointMultiplicationSign       = 0xd7;    // ×
 static constexpr CodePoint UCodePointGreekSmallLetterTheta    = 0x3b8;   // θ
 static constexpr CodePoint UCodePointGreekSmallLetterPi       = 0x3c0;   // π
+static constexpr CodePoint UCodePointGreekSmallLetterSigma    = 0x3c3;   // σ
 static constexpr CodePoint UCodePointLatinLetterSmallCapitalE = 0x1d07;  // ᴇ
 static constexpr CodePoint UCodePointScriptSmallE             = 0x212f;  // ℯ
 static constexpr CodePoint UCodePointRightwardsArrow          = 0x2192;  // →

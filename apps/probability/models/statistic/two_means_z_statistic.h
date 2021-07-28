@@ -20,7 +20,7 @@ protected:
   constexpr static int k_numberOfParams = 6;
   int numberOfStatisticParameters() const override { return k_numberOfParams; }
   enum ParamsOrder { X1, N1, Sigma1, X2, N2, Sigma2 };
-  const ParameterRepr * paramReprAtIndex(int i) const override;
+  ParameterRepr paramReprAtIndex(int i) const override;
   float * paramArray() override { return m_params; }
 
 private:

@@ -58,21 +58,20 @@ const char * Probability::HypothesisController::title() {
   return m_titleBuffer;
 }
 
+// TextFieldDelegate
+bool Probability::HypothesisController::textFieldDidReceiveEvent(Escher::TextField * textField,
+                                                                 Ion::Events::Event event) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
+    // Remove prefix to edit text
+    textField->setText(textField->text() + strlen(symbolPrefix()) + 1 /* = symbol */ );
+  }
+  return false;
+};
+
 bool Probability::HypothesisController::textFieldShouldFinishEditing(Escher::TextField * textField,
                                                                      Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (textField == m_h0.textField()) {
-      return true;
-    }
-    // Dummy parsing to check for operator in editable field
-    const char * txt = textField->text();
-    const char ops[3] = {'<', '=', '>'};
-    for (int i = 0; i < 3; i++) {
-      if (strchr(txt, ops[i]) != NULL) {
-        return true;
-      }
-    }
-    return false;
+    return true;
   }
   return false;
 }
@@ -110,6 +109,10 @@ void Probability::HypothesisController::onDropdownSelected(int selectedRow) {
   m_statistic->hypothesisParams()->setOp(op);
 }
 
+const char * Probability::HypothesisController::symbolPrefix() {
+  return testToTextSymbol(App::app()->test());
+}
+
 HighlightCell * HypothesisController::reusableCell(int i, int type) {
   switch (i) {
     case k_indexOfH0:
@@ -137,10 +140,14 @@ void HypothesisController::buttonAction() {
 }
 
 void HypothesisController::loadHypothesisParam() {
-  constexpr int bufferSize = 20;
+  constexpr int bufferSize = 50;
   char buffer[bufferSize];
+  strcpy(buffer, symbolPrefix());
+  int offset = strlen(symbolPrefix());
+  buffer[offset++] = '=';
   float p = m_statistic->hypothesisParams()->firstParam();
-  defaultParseFloat(p, buffer, bufferSize);
+  defaultParseFloat(p, buffer + offset, bufferSize);
+
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
   resetMemoization();  // TODO only when m_ha changes size ?

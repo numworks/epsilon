@@ -11,11 +11,11 @@
 namespace Probability {
 
 class LayoutCellWithSublabelAndDropdown : public LayoutCellWithSubMessage,
-                                                public Escher::Responder {
+                                          public Escher::Responder {
 public:
   LayoutCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
-                                          Escher::ListViewDataSource * listDataSource,
-                                          DropdownCallback * callback = nullptr) :
+                                    Escher::ListViewDataSource * listDataSource,
+                                    DropdownCallback * callback = nullptr) :
       Responder(parentResponder), m_dropdown(this, listDataSource, callback) {}
   const Escher::View * accessoryView() const override { return &m_dropdown; }
   Dropdown * dropdown() { return &m_dropdown; }
@@ -33,6 +33,7 @@ public:
     m_dropdown.setHighlighted(highlight);
     LayoutCellWithSubMessage::setHighlighted(highlight);
   }
+  bool alignLabelAndAccessory() const override { return true; }
 
 private:
   Dropdown m_dropdown;

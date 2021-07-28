@@ -73,6 +73,7 @@ State scan() {
     initExtendedInterruptions();
   }
 
+  keyboardWasScanned(state);
   return State(state);
 }
 

@@ -113,12 +113,13 @@ void poll() {
   if (state.keyDown(Key::Shift) || state.keyDown(Key::Alpha) ) {
     k_pollTimer.launch();
   }
+}
+
+void keyboardWasScanned(State state) {
   /* OnOff, Home and Back are the only keyboard keys which are preemptive.
-   * The states which doesn't involve one of these keys down are pushed on a
-   * queue and depile one at a time.
+   * The states are pushed on a queue and popped one at a time.
    * If the device is stalling, we do not queue the event to avoid a delayed
-   * reaction.
-   * */
+   * reaction. */
   if (state != sState) {
     Events::setPendingKeyboardStateIfPreemtive(state);
     Queue::sharedQueue()->push(state);

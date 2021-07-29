@@ -60,9 +60,6 @@ public:
   Data::Test test() { return snapshot()->data()->test(); }
   Data::TestType testType() { return snapshot()->data()->testType(); }
   Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }
-  void setCategoricalType(Data::CategoricalType type) {
-    snapshot()->data()->setCategoricalType(type);
-  }
 
   TELEMETRY_ID("Probability");
   // TODO better handling

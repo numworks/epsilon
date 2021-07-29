@@ -66,9 +66,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
       view = m_hypothesisController;
     }
     assert(view != nullptr);
-    if (t != App::app()->testType() ||
-        App::app()->categoricalType() != Data::CategoricalType::Unset) {
-      App::app()->setCategoricalType(Data::CategoricalType::Unset);
+    if (t != App::app()->testType()) {
       Statistic::initializeStatistic(m_statistic,
                                      App::app()->test(),
                                      t,

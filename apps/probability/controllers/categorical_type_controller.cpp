@@ -18,10 +18,12 @@ using namespace Probability;
 CategoricalTypeController::CategoricalTypeController(
     Escher::StackViewController * parent,
     Chi2Statistic * statistic,
+    Data::CategoricalType * globalCategoricalType,
     InputGoodnessController * inputGoodnessController,
     InputHomogeneityController * inputHomogeneityController) :
     SelectableCellListPage(parent),
     m_statistic(statistic),
+    m_globalCategoricalType(globalCategoricalType),
     m_inputGoodnessController(inputGoodnessController),
     m_inputHomogeneityController(inputHomogeneityController) {
   m_cells[k_indexOfGoodnessCell].setMessage(I18n::Message::GoodnessOfFit);
@@ -55,7 +57,7 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
     }
     assert(view != nullptr);
     if (type != App::app()->categoricalType()) {
-      App::app()->setCategoricalType(type);
+      *m_globalCategoricalType = type;
       Statistic::initializeStatistic(m_statistic,
                                      App::app()->test(),
                                      App::app()->testType(),

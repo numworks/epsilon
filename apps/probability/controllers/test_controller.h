@@ -21,9 +21,14 @@ class TestController : public SelectableCellListPage<Escher::MessageTableCellWit
                                                      k_numberOfTestCells> {
 public:
   TestController(Escher::StackViewController * parentResponder,
-                 HypothesisController * hypothesisController, TypeController * typeController,
+                 HypothesisController * hypothesisController,
+                 TypeController * typeController,
                  CategoricalTypeController * categoricalController,
-                 InputController * inputController, Data::Test * globalTest, Data::TestType * globalTestType, Statistic * statistic);
+                 InputController * inputController,
+                 Data::Test * globalTest,
+                 Data::TestType * globalTestType,
+                 Data::CategoricalType * globalCategoricalType,
+                 Statistic * statistic);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
@@ -42,6 +47,7 @@ private:
   CategoricalTypeController * m_categoricalController;
   Data::Test * m_globalTest;
   Data::TestType * m_globalTestType;
+  Data::CategoricalType * m_globalCategoricalType;
   Statistic * m_statistic;
 };
 

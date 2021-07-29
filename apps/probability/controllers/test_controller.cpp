@@ -25,6 +25,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                InputController * inputController,
                                Data::Test * globalTest,
                                Data::TestType * globalTestType,
+                               Data::CategoricalType * globalCategoricalType,
                                Statistic * statistic) :
     SelectableCellListPage(parentResponder),
     m_hypothesisController(hypothesisController),
@@ -33,6 +34,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
     m_categoricalController(categoricalController),
     m_globalTest(globalTest),
     m_globalTestType(globalTestType),
+    m_globalCategoricalType(globalCategoricalType),
     m_statistic(statistic) {
   // Create cells
   static_assert(k_numberOfRows < 8, "If more than 8 cells they should be reused");
@@ -98,13 +100,17 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(view != nullptr);
-    if (Data::isProportion(test) && (test != App::app()->test())) {
-      App::app()->setCategoricalType(Data::CategoricalType::Unset);
-      Statistic::initializeStatistic(m_statistic,
-                                     test,
-                                     Data::TestType::ZTest,
-                                     Data::CategoricalType::Unset);
-      *m_globalTestType = Data::TestType::ZTest;
+    if (test != App::app()->test()) {
+      if (Data::isProportion(test)) {
+        *m_globalTestType = Data::TestType::ZTest;
+        *m_globalCategoricalType = Data::CategoricalType::Unset;
+        Statistic::initializeStatistic(m_statistic,
+                                       test,
+                                       Data::TestType::ZTest,
+                                       Data::CategoricalType::Unset);
+      } else {
+        *m_globalTestType = Data::TestType::Unset;
+      }
     }
 
     *m_globalTest = test;

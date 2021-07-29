@@ -82,15 +82,6 @@ static constexpr int statisticSizes[10] = {sizeof(OneProportionStatistic),
 constexpr int maxStatisticSize = arrayMax(statisticSizes);
 typedef char StatisticBuffer[maxStatisticSize];
 
-constexpr static int k_maxNumberOfGoodnessInputRows = 10;
-// TODO Store ?
-typedef float InputGoodnessData[k_maxNumberOfGoodnessInputRows * 2];
-constexpr static int k_maxNumberOfHomogeneityInputRows = 10;
-constexpr static int k_maxNumberOfHomogeneityInputColumns = 10;
-typedef float InputHomogeneityData[k_maxNumberOfHomogeneityInputRows]
-                                  [k_maxNumberOfHomogeneityInputColumns];
-
-
 struct StatisticData {
   Test m_test;
   CategoricalType m_categoricalType;

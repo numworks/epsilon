@@ -126,7 +126,7 @@ public:
   TestType * testTypePointer() { return &(statisticData()->m_testType); }
   void setTestType(TestType t) { statisticData()->m_testType = t; }
   CategoricalType categoricalType() { return statisticData()->m_categoricalType; }
-  void setCategoricalType(CategoricalType t) { statisticData()->m_categoricalType = t; }
+  CategoricalType * categoricalTypePointer() { return &statisticData()->m_categoricalType; }
   Statistic * statistic() { return statisticData()->statistic(); }
   HypothesisParams * hypothesisParams() { return statistic()->hypothesisParams(); }
 

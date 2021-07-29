@@ -23,6 +23,7 @@ class CategoricalTypeController : public SelectableCellListPage<Escher::MessageT
 public:
   CategoricalTypeController(Escher::StackViewController * parent,
                             Chi2Statistic * statistic,
+                            Data::CategoricalType * globalCategoricalType,
                             InputGoodnessController * inputGoodnessController,
                             InputHomogeneityController * inputHomogeneityController);
   ViewController::TitlesDisplay titlesDisplay() override {
@@ -39,6 +40,7 @@ private:
   Chi2Statistic * m_statistic;
   InputGoodnessController * m_inputGoodnessController;
   InputHomogeneityController * m_inputHomogeneityController;
+  Data::CategoricalType * m_globalCategoricalType;
 };
 
 }  // namespace Probability

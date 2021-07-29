@@ -7,7 +7,6 @@ namespace Probability {
 
 void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell,
                                                                 int index) {
-  /* TODO factor with HypothesisController */
   TextHighlightView * bufferCell = static_cast<TextHighlightView *>(cell);
 
   constexpr int firstParamBufferSize = 10;

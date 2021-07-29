@@ -1,5 +1,7 @@
 #include "horizontal_or_vertical_layout.h"
 
+#include <algorithm>
+
 using namespace Probability;
 
 KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
@@ -11,7 +13,7 @@ KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
     subview->setSize(reorderedSize(proposedFirst, secondLength(subview->bounds().size())));
     KDSize subviewSize = subview->minimalSizeForOptimalDisplay();
     requiredSecond += secondLength(subviewSize);
-    requiredFirst = std::fmax(requiredFirst, firstLength(subviewSize));
+    requiredFirst = std::max<int>(requiredFirst, firstLength(subviewSize));
   }
   return reorderedSize(requiredFirst, requiredSecond);
 }

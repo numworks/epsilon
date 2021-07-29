@@ -1,7 +1,9 @@
 #include "statistic_curve_view.h"
 
-#include <cmath>
 #include <poincare/print_float.h>
+
+#include <algorithm>
+#include <cmath>
 
 #include "probability/app.h"
 
@@ -66,8 +68,8 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx, KDRect rect,
     return;
   }
 
-  float min = std::fmin(z, zAlpha);
-  float max = std::fmax(z, zAlpha);
+  float min = std::min(z, zAlpha);
+  float max = std::max(z, zAlpha);
   bool zMoreExtreme = op == HypothesisParams::ComparisonOperator::Higher ? z > zAlpha : z < zAlpha;
   KDColor middleColor = !zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   KDColor externColor = zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;

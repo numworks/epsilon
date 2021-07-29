@@ -37,6 +37,7 @@ Escher::View * SubappCell::subviewAtIndex(int i) {
     case 2:
       return &m_chevron;
   }
+  return nullptr;
 }
 
 void SubappCell::setImage(const Escher::Image * image) {

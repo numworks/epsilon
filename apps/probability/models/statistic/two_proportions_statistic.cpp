@@ -79,6 +79,8 @@ ParameterRepr TwoProportionsStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{n2, I18n::Message::Sample2Size};
     }
   }
+  assert(false);
+  return ParameterRepr{};
 }
 
 float TwoProportionsStatistic::_pEstimate(float x1, float n1, float x2, float n2) {

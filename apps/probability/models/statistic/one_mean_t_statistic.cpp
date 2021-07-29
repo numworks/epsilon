@@ -62,6 +62,8 @@ ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{n, I18n::Message::SampleSize};
     }
   }
+  assert(false);
+  return ParameterRepr{};
 }
 
 float OneMeanTStatistic::_degreesOfFreedom(int n) {

@@ -106,9 +106,6 @@ void TableCell::layoutSubviews(bool force) {
   bool singleRow = singleRowMode(bounds().width(), label, subLabel, accessoryWidth);
 
   if (singleRow) {  // Single row -> align vertically each view
-    KDCoordinate maxHeight = std::max<KDCoordinate>(
-        labelHeight, std::max<KDCoordinate>(subLabelHeight, accessoryHeight));
-
     // Label on the left, aligned vertically
     setFrameIfViewExists(
         label, KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight), force);

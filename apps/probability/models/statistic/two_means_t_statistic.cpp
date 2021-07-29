@@ -93,6 +93,8 @@ ParameterRepr TwoMeansTStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{n2, I18n::Message::Sample2Size};
     }
   }
+  assert(false);
+  return ParameterRepr{};
 }
 
 float TwoMeansTStatistic::_xEstimate(float meanSample1, float meanSample2) {

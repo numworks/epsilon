@@ -83,6 +83,8 @@ ParameterRepr TwoMeansZStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{sigma2, I18n::Message::Sample2Std};
     }
   }
+  assert(false);
+  return ParameterRepr{};
 }
 
 float TwoMeansZStatistic::_xEstimate(float meanSample1, float meanSample2) {

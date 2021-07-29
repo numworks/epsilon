@@ -54,6 +54,8 @@ ParameterRepr OneProportionStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{n, I18n::Message::SampleSize};
     }
   }
+  assert(false);
+  return ParameterRepr{};
 }
 
 float OneProportionStatistic::_pEstimate(float x, float n) {

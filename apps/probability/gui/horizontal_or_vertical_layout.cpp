@@ -2,67 +2,51 @@
 
 using namespace Probability;
 
-// TODO this can be HEAVILLY factorized
-
-KDSize Probability::VerticalLayout::minimalSizeForOptimalDisplay() const {
-  int requiredWidth = 0, requiredHeight = 0;
-  KDSize requiredSize(0, 0);
-  KDCoordinate proposedWidth = bounds().width() - 2 * m_marginX;
+KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
+  int requiredFirst = 0, requiredSecond = 2 * secondMargin();
+  KDCoordinate proposedFirst = firstLength(bounds().size()) - 2 * firstMargin();
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
-    Escher::View * subview = const_cast<VerticalLayout *>(this)->subviewAtIndex(i);
-    subview->setSize(KDSize(proposedWidth, subview->bounds().height()));
-    requiredSize = subview->minimalSizeForOptimalDisplay();
-    requiredHeight += requiredSize.height();
-    requiredWidth = std::fmax(requiredWidth, requiredSize.width());
+    Escher::View * subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
+    subview->setSize(reorderedSize(proposedFirst, secondLength(subview->bounds().size())));
+    KDSize subviewSize = subview->minimalSizeForOptimalDisplay();
+    requiredSecond += secondLength(subviewSize);
+    requiredFirst = std::fmax(requiredFirst, firstLength(subviewSize));
   }
-  return KDSize(requiredWidth, requiredHeight + 2 * m_marginY);
+  return reorderedSize(requiredFirst, requiredSecond);
 }
 
-void VerticalLayout::layoutSubviews(bool force) {
-  KDRect frame = bounds();
-  KDCoordinate availableHeight = frame.height() - 2 * m_marginY;
-  KDRect proposedFrame = KDRect(m_marginX, m_marginY, frame.width() - 2 * m_marginX, 0);
+void OrientedLayout::layoutSubviews(bool force) {
+  KDSize boundsSize = bounds().size();
+  KDCoordinate availableFirst = firstLength(boundsSize) - 2 * firstMargin();
+  KDCoordinate availableSecond = secondLength(boundsSize) - 2 * secondMargin();
+  KDCoordinate offsetSecond = secondMargin();
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
-    subviewAtIndex(i)->setSize(KDSize(proposedFrame.width(), availableHeight));
-    int height = subviewAtIndex(i)->minimalSizeForOptimalDisplay().height();
-    proposedFrame = KDRect(proposedFrame.x(),
-                           proposedFrame.y() + proposedFrame.height(),
-                           proposedFrame.width(),
-                           height);
+    subviewAtIndex(i)->setSize(reorderedSize(availableFirst, availableSecond));
+    KDCoordinate requiredSecond = secondLength(subviewAtIndex(i)->minimalSizeForOptimalDisplay());
+    KDRect proposedFrame = reorderedRect(
+        KDRect(KDPoint(firstMargin(), offsetSecond), availableFirst, requiredSecond));
     subviewAtIndex(i)->setFrame(proposedFrame, false);
-    availableHeight -= height;
-    assert(availableHeight >= 0);
+    availableSecond -= requiredSecond;
+    offsetSecond += requiredSecond;
+    assert(availableSecond >= 0);
   }
 }
 
-KDSize Probability::HorizontalLayout::minimalSizeForOptimalDisplay() const {
-  int requiredWidth = 0, requiredHeight = 0;
-  KDSize requiredSize(0, 0);
-  KDRect proposedFrame = KDRect(0, 0, 0, bounds().height());
-  int n = numberOfSubviews();
-  for (int i = 0; i < n; i++) {
-    Escher::View * subview = const_cast<HorizontalLayout *>(this)->subviewAtIndex(i);
-    subview->setSize(KDSize(subview->bounds().width(), bounds().height()));
-    requiredSize = subview->minimalSizeForOptimalDisplay();
-    requiredWidth += requiredSize.width();
-    requiredHeight = fmax(requiredHeight, requiredSize.height());
-  }
-  return KDSize(requiredWidth, requiredHeight);
+KDCoordinate Probability::OrientedLayout::firstMargin() const {
+  return reorderedPoint(m_marginX, m_marginY).x();
 }
 
-void HorizontalLayout::layoutSubviews(bool force) {
-  KDRect frame = bounds();
-  KDCoordinate availableWidth = frame.width();
-  KDRect proposedFrame = KDRect(0, 0, 0, frame.height());
-  int n = numberOfSubviews();
-  for (int i = 0; i < n; i++) {
-    subviewAtIndex(i)->setSize(KDSize(availableWidth, frame.height()));
-    int width = subviewAtIndex(i)->minimalSizeForOptimalDisplay().width();
-    proposedFrame = KDRect(proposedFrame.x() + proposedFrame.width(), 0, width, frame.height());
-    subviewAtIndex(i)->setFrame(proposedFrame, false);
-    availableWidth -= width;
-    assert(availableWidth >= 0);
-  }
+KDCoordinate Probability::OrientedLayout::secondMargin() const {
+  return reorderedPoint(m_marginX, m_marginY).y();
+}
+
+KDPoint Probability::OrientedLayout::reorderedPoint(KDCoordinate first, KDCoordinate second) const {
+  KDSize s = reorderedSize(first, second);
+  return KDPoint(s.width(), s.height());
+}
+
+KDRect Probability::OrientedLayout::reorderedRect(KDRect rect) const {
+  return KDRect(reorderedPoint(rect.x(), rect.y()), reorderedSize(rect.width(), rect.height()));
 }

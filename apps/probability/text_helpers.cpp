@@ -82,9 +82,10 @@ const char * testTypeToText(Data::TestType t) {
       return "Pooled t";
     case Data::TestType::ZTest:
       return "z";
+    default:
+      assert(false);
+      return nullptr;
   }
-  assert(false);
-  return nullptr;
 }
 
 template <typename T>

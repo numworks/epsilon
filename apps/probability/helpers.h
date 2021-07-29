@@ -39,7 +39,7 @@ inline Poincare::Layout layoutFromText(const char * text) {
     Poincare::CodePointLayout l = Poincare::CodePointLayout::Builder(CodePoint(text[i]));
     layout.addChildAtIndex(l, i, i, nullptr);
   }
-  return layout;
+  return std::move(layout);
 }
 
 }  // namespace Probability

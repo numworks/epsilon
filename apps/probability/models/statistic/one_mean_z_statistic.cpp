@@ -58,6 +58,8 @@ ParameterRepr OneMeanZStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{sigma, I18n::Message::StandardDeviation};
     }
   }
+  assert(false);
+  return ParameterRepr{};
 }
 
 float OneMeanZStatistic::_z(float mean, float meanSample, float n, float sigma) {

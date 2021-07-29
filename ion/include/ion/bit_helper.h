@@ -18,7 +18,6 @@ size_t numberOfBitsInType() {
 
 template <typename T>
 bool bitAtIndex(T mask, int i) {
-  int t = sizeof(T);
   assert(i >= 0 && i < numberOfBitsInType<T>());
   return (mask >> i) & 1U;
 }

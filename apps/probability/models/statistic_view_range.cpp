@@ -1,5 +1,6 @@
 #include "statistic_view_range.h"
 
+#include <algorithm>
 #include <cmath>
 
 #include "probability/app.h"
@@ -53,8 +54,8 @@ StatisticViewRange::Range StatisticViewRange::computeTestXRange(float z, float z
   // <-marginSide-> min <-areaWidth-> max
   int areaWidth = m_mode == GraphDisplayMode::OneCurve ? k_areaWidth : k_areaWidth / 2;
   int marginSide = m_mode == GraphDisplayMode::OneCurve ? k_marginSide : k_marginSide / 2;
-  float min = std::fmin(zAlpha, z);
-  float max = std::fmax(zAlpha, z);
+  float min = std::min(zAlpha, z);
+  float max = std::max(zAlpha, z);
   float pixelWidth = (max - min) / areaWidth;
   // Choose big side based on operator
   float marginSmall = marginSide * pixelWidth;
@@ -71,8 +72,8 @@ StatisticViewRange::Range StatisticViewRange::computeYRange() const {
   }
   float zAlpha = m_statistic->zAlpha();
   float z = m_statistic->testCriticalValue();
-  float max =
-      fmaxf(m_statistic->normedDensityFunction(z), m_statistic->normedDensityFunction(zAlpha));
+  float max = fmaxf(m_statistic->normedDensityFunction(z),
+                    m_statistic->normedDensityFunction(zAlpha));
   float pixelHeight = max / k_areaHeight;
   int pixelsDown = m_statisticCurveView->bounds().height() * k_yMargin;
   int pixelsUp = m_statisticCurveView->bounds().height() * (1 - k_yMargin);

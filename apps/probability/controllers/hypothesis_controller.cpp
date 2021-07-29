@@ -153,7 +153,7 @@ bool HypothesisController::buttonAction() {
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = 50;
   char buffer[bufferSize];
-  strcpy(buffer, symbolPrefix());
+  strlcpy(buffer, symbolPrefix(), bufferSize);
   int offset = strlen(symbolPrefix());
   buffer[offset++] = '=';
   float p = m_statistic->hypothesisParams()->firstParam();

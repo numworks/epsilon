@@ -4,6 +4,7 @@
 #include <escher/container.h>
 #include <escher/palette.h>
 
+#include <algorithm>
 #include <cmath>
 
 #include "../images/caret.h"
@@ -27,7 +28,7 @@ KDSize PopupItemView::minimalSizeForOptimalDisplay() const {
   KDSize caretSize = m_caret.minimalSizeForOptimalDisplay();
   return KDSize(
       cellSize.width() + caretSize.width() + 2 * k_marginImageHorizontal + k_marginCaretRight,
-      std::fmax(cellSize.height(), caretSize.height()) + 2 * k_marginImageVertical);
+      std::max(cellSize.height(), caretSize.height()) + 2 * k_marginImageVertical);
 }
 
 void PopupItemView::layoutSubviews(bool force) {
@@ -44,7 +45,7 @@ void PopupItemView::layoutSubviews(bool force) {
 }
 
 int PopupItemView::numberOfSubviews() const {
-  return 1 + !m_isPoppingUp; // Hide caret when popping
+  return 1 + !m_isPoppingUp;  // Hide caret when popping
 }
 
 Escher::View * PopupItemView::subviewAtIndex(int i) {
@@ -187,7 +188,8 @@ void Dropdown::init() {
   if (m_popup.m_selectionDataSource.selectedRow() < 0) {
     m_popup.m_selectionDataSource.selectRow(0);
   }
-  setInnerCell(m_popup.m_popupListDataSource.innerCellAtIndex(m_popup.m_selectionDataSource.selectedRow()));
+  setInnerCell(
+      m_popup.m_popupListDataSource.innerCellAtIndex(m_popup.m_selectionDataSource.selectedRow()));
 }
 
 }  // namespace Probability

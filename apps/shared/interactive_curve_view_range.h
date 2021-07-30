@@ -58,7 +58,7 @@ public:
   void computeRanges() { privateComputeRanges(m_xAuto, m_yAuto); }
   void normalize();
   void centerAxisAround(Axis axis, float position);
-  void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
+  bool panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
 
 protected:
   constexpr static float k_upperMaxFloat = 1E+8f;

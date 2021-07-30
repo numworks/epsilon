@@ -111,8 +111,8 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
     mCell->setLayout(m_statistic->paramSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_statistic->paramDescriptionAtIndex(index));
   } else if (index == m_statistic->indexOfThreshold()) {
-    MessageTableCellWithSeparator * thresholdCell =
-        static_cast<MessageTableCellWithSeparator *>(cell);
+    MessageTableCellWithSeparator * thresholdCell = static_cast<MessageTableCellWithSeparator *>(
+        cell);
     I18n::Message name, description;
     if (App::app()->subapp() == Data::SubApp::Tests) {
       name = I18n::Message::GreekAlpha;
@@ -162,7 +162,10 @@ bool Probability::InputController::textFieldDidAbortEditing(TextField * textFiel
 
 bool Probability::InputController::isCellEditing(Escher::HighlightCell * cell, int index) {
   if (index == m_statistic->indexOfThreshold()) {
-    return FloatParameterPage::isCellEditing(cell, index);
+    return static_cast<MessageTableCellWithSeparator *>(cell)
+        ->innerCell()
+        ->textField()
+        ->isEditing();
   }
   return static_cast<LayoutCellWithEditableTextWithMessage *>(cell)->textField()->isEditing();
 }

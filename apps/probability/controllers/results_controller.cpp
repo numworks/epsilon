@@ -34,7 +34,7 @@ void ResultsController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   } else {
     selectCellAtLocation(selectedColumn(),
-                         clipped(selectedRow(), m_resultsDataSource.numberOfRows() - 1));
+                         std::min(selectedRow(), m_resultsDataSource.numberOfRows() - 1));
   }
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
   m_resultsDataSource.resetMemoization();

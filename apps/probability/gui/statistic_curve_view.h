@@ -31,16 +31,10 @@ private:
   void drawZLabelAndGraduation(KDContext * ctx, float x) const;
   static Poincare::Coordinate2D<float> evaluateTestAtAbsissa(float x,
                                                              void * model,
-                                                             void * context) {
-    Statistic * statistic = static_cast<Statistic *>(model);
-    return Poincare::Coordinate2D<float>(x, statistic->normedDensityFunction(x));
-  }
+                                                             void * context);
   static Poincare::Coordinate2D<float> evaluateIntervalAtAbsissa(float x,
                                                                  void * model,
-                                                                 void * context) {
-    Statistic * statistic = static_cast<Statistic *>(model);
-    return Poincare::Coordinate2D<float>(x, statistic->densityFunction(x));
-  }
+                                                                 void * context);
   static constexpr KDColor k_backgroundColor = Escher::Palette::WallScreen;
   char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   Statistic * m_statistic;

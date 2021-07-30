@@ -10,7 +10,6 @@ using namespace Escher;
 
 namespace Probability {
 
-// TODO anything better?
 /* Simple HighlightCell with a solid color. */
 class SolidColorCell : public HighlightCell {
  public:

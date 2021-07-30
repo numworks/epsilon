@@ -12,11 +12,7 @@ namespace Probability {
 
 class LegendLabel : public HorizontalLayout {
 public:
-  LegendLabel(const char * label, KDColor color) : m_icon(color) {
-    m_labelView.setText(label);
-    m_labelView.setBackgroundColor(Escher::Palette::WallScreen);
-    m_labelView.setFont(KDFont::SmallFont);
-  }
+  LegendLabel(const char * label, KDColor color);
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override {
     View * subviews[] = {&m_icon, &m_labelView};

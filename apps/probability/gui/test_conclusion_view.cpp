@@ -4,7 +4,9 @@
 #include <apps/shared/dots.h>
 #include <float.h>
 #include <kandinsky/font.h>
-#include <math.h>
+
+#include <algorithm>
+#include <cmath>
 
 #include "../images/test_failure.h"
 #include "../images/test_success.h"
@@ -17,8 +19,8 @@ TestConclusionView::TestConclusionView() {
 }
 
 void TestConclusionView::setType(Type t) {
-  I18n::Message m =
-      t == Type::Success ? I18n::Message::ConclusionSuccess : I18n::Message::ConclusionFailure;
+  I18n::Message m = t == Type::Success ? I18n::Message::ConclusionSuccess
+                                       : I18n::Message::ConclusionFailure;
   m_textView.setMessage(m);
   if (t == Type::Success) {
     m_icon.setImage(ImageStore::TestSuccess);
@@ -47,7 +49,8 @@ void TestConclusionView::layoutSubviews(bool force) {
 KDSize TestConclusionView::minimalSizeForOptimalDisplay() const {
   KDSize iconSize = m_icon.minimalSizeForOptimalDisplay();
   KDSize textSize = m_textView.minimalSizeForOptimalDisplay();
-  return KDSize(iconSize.width() + textSize.width(), fmax(iconSize.height(), textSize.height()));
+  return KDSize(iconSize.width() + textSize.width(),
+                std::max(iconSize.height(), textSize.height()));
 }
 
 }  // namespace Probability

@@ -2,16 +2,17 @@
 #define APPS_PROBABILITY_TEST_TEST_HELPER_H
 
 #include <quiz.h>
-
-#include <cmath>
 #include <stdio.h>
+
+#include <algorithm>
+#include <cmath>
 
 template <typename T>
 bool inline roughlyEqual(T a, T b, T threshold = 1e-9, bool absolute = false) {
   if (absolute) {
     return std::fabs(a - b) < threshold;
   }
-  T max = fmax(std::fabs(a), std::fabs(b));
+  T max = std::max(std::fabs(a), std::fabs(b));
   if (max == INFINITY) {
     return a == b;
   }

@@ -12,6 +12,7 @@
 
 namespace Probability {
 
+/* Highlightable view with a message */
 class HighlightMessageView : public HighlightCell {
 public:
   void setHighlighted(bool highlighted) override {

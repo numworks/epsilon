@@ -20,7 +20,7 @@ bool ZoomCurveViewController::handleEvent(Ion::Events::Event event) {
 bool ZoomCurveViewController::handleZoom(Ion::Events::Event event) {
   float ratio = event == Ion::Events::Plus ? 1.f / k_zoomOutRatio : k_zoomOutRatio;
   interactiveCurveViewRange()->zoom(ratio, xFocus(), yFocus());
-  curveView()->reload();
+  curveView()->reload(true);
   return true;
 }
 

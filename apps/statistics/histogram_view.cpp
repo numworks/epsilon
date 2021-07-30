@@ -21,8 +21,8 @@ HistogramView::HistogramView(HistogramController * controller, Store * store, in
 {
 }
 
-void HistogramView::reload() {
-  CurveView::reload();
+void HistogramView::reload(bool resetInterrupted, bool force) {
+  CurveView::reload(resetInterrupted, force);
   markRectAsDirty(bounds());
 }
 

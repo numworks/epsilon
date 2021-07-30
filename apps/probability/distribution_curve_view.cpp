@@ -9,8 +9,8 @@ namespace Probability {
 
 constexpr KDColor DistributionCurveView::k_backgroundColor;
 
-void DistributionCurveView::reload() {
-  CurveView::reload();
+void DistributionCurveView::reload(bool resetInterrupted, bool force) {
+  CurveView::reload(resetInterrupted, force);
   markRectAsDirty(bounds());
 }
 

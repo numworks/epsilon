@@ -23,7 +23,8 @@ void FunctionZoomAndPanCurveViewController::viewWillAppear() {
    * view. */
   adaptRangeForHeaders(true);
   setLegendVisible(true);
-  m_contentView.curveView()->reload();
+  /* Force a reload in case some curves were interrupted. */
+  m_contentView.curveView()->reload(true);
 }
 
 void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {

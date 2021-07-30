@@ -31,6 +31,11 @@ public:
    * of the graph where the area under the curve is colored. */
   void setAreaHighlightColor(bool highlightColor) override {};
 private:
+  bool allFunctionsInterrupted(int numberOfFunctions) const { return numberOfFunctions > 0 && m_functionsInterrupted == static_cast<uint32_t>((1 << numberOfFunctions) - 1); }
+  bool functionWasInterrupted(int index) const { return (1 << index) & m_functionsInterrupted; }
+  void setFunctionInterrupted(int index) const { m_functionsInterrupted |= 1 << index; }
+
+  mutable uint32_t m_functionsInterrupted;
   bool m_tangent;
 };
 

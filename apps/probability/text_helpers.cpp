@@ -1,5 +1,6 @@
 #include "text_helpers.h"
 
+#include <apps/i18n.h>
 #include <assert.h>
 #include <stdarg.h>
 #include <string.h>
@@ -37,25 +38,25 @@ int snprintf(char * buffer, size_t bufferSize, const char * format, ...) {
 }
 
 const char * testToText(Data::Test t) {
-  // TODO replace with messages
-  const char * txt;
+  I18n::Message msg;
   switch (t) {
     case Data::Test::OneProp:
-      txt = "one proportion";
+      msg = I18n::Message::OneProportion;  // TODO these are very similar to
+                                           // I18n::Message::TestOneProp
       break;
     case Data::Test::OneMean:
-      txt = "one mean";
+      msg = I18n::Message::OneMean;
       break;
     case Data::Test::TwoProps:
-      txt = "two proportions";
+      msg = I18n::Message::TwoProportions;
       break;
     case Data::Test::TwoMeans:
-      txt = "two means";
+      msg = I18n::Message::TwoMeans;
       break;
     default:
       assert(false);
   }
-  return txt;
+  return I18n::translate(msg);
 }
 
 const char * testToTextSymbol(Data::Test t) {
@@ -79,7 +80,7 @@ const char * testTypeToText(Data::TestType t) {
     case Data::TestType::TTest:
       return "t";
     case Data::TestType::PooledTTest:
-      return "Pooled t";
+      return I18n::translate(I18n::Message::PooledT);
     case Data::TestType::ZTest:
       return "z";
     default:

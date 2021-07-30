@@ -55,10 +55,10 @@ const char * Probability::ResultsController::title() {
     const char * estimateSymbol = m_statistic->estimateSymbol();
     char estimateBuffer[k_titleBufferSize];
     defaultParseFloat(m_statistic->estimate(), estimateBuffer, k_titleBufferSize);
-
+    const char * format = I18n::translate(I18n::Message::ResultsControllerIntervalTitle);
     snprintf(m_titleBuffer,
              sizeof(m_titleBuffer),
-             "%s=%s Confidence=%s",
+             format,
              estimateSymbol,
              estimateBuffer,
              confidenceBuffer);

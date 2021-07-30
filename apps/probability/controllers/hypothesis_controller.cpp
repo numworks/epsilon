@@ -54,7 +54,8 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
 const char * Probability::HypothesisController::title() {
   const char * testType = testTypeToText(App::app()->testType());
   const char * test = testToText(App::app()->test());
-  snprintf(m_titleBuffer, sizeof(m_titleBuffer), "%s-test on %s", testType, test);
+  const char * format = I18n::translate(I18n::Message::HypothesisControllerTitleFormat);
+  snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, testType, test);
   return m_titleBuffer;
 }
 

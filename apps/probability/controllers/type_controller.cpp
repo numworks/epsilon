@@ -93,7 +93,8 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 
 const char * TypeController::title() {
   // TODO replace with messages
-  snprintf(m_titleBuffer, sizeof(m_titleBuffer), "Test on %s", testToText(App::app()->test()));
+  const char * format = I18n::translate(I18n::Message::TypeControllerTitleFormat);
+  snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, testToText(App::app()->test()));
   return m_titleBuffer;
 }
 

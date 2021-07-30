@@ -110,4 +110,18 @@ void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float x) const
   ctx->drawString(zText, position, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
 }
 
+Poincare::Coordinate2D<float> StatisticCurveView::evaluateTestAtAbsissa(float x,
+                                                                        void * model,
+                                                                        void * context) {
+  Statistic * statistic = static_cast<Statistic *>(model);
+  return Poincare::Coordinate2D<float>(x, statistic->normedDensityFunction(x));
+}
+
+Poincare::Coordinate2D<float> StatisticCurveView::evaluateIntervalAtAbsissa(float x,
+                                                                            void * model,
+                                                                            void * context) {
+  Statistic * statistic = static_cast<Statistic *>(model);
+  return Poincare::Coordinate2D<float>(x, statistic->densityFunction(x));
+}
+
 }  // namespace Probability

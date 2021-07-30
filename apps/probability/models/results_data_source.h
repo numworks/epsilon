@@ -28,8 +28,9 @@ private:
   enum IntervalCellOrder { Critical, SE, ME, IntervalDegree };
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
+  constexpr static int k_numberOfReusableCells = 5;
   Statistic * m_statistic;
-  LayoutCellWithBufferWithMessage m_resultCells[5];
+  LayoutCellWithBufferWithMessage m_resultCells[k_numberOfReusableCells];
   Shared::ButtonWithSeparator m_next;
 };
 

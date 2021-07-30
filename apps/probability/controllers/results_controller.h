@@ -16,7 +16,7 @@
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
 #include "probability/gui/page_controller.h"
-#include "probability/gui/results_data_source.h"
+#include "probability/models/results_data_source.h"
 #include "probability/gui/spacer_view.h"
 #include "probability/models/statistic/statistic.h"
 #include "statistic_graph_controller.h"

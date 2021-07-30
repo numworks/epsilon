@@ -25,6 +25,7 @@ app_probability_src += $(addprefix apps/probability/models/,\
   statistic_view_range.cpp \
   student_law.cpp \
   chi2_law.cpp \
+  results_data_source.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/models/distribution/,\
@@ -68,7 +69,6 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   distribution_curve_view.cpp \
   image_cell.cpp \
   horizontal_or_vertical_layout.cpp \
-  results_data_source.cpp \
   statistic_graph_view.cpp \
   test_conclusion_view.cpp \
   interval_conclusion_view.cpp \

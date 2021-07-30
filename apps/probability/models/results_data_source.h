@@ -4,8 +4,8 @@
 #include <apps/shared/button_with_separator.h>
 #include <escher/memoized_list_view_data_source.h>
 
-#include "layout_cell_with_buffer_with_message.h"
 #include "probability/abstract/button_delegate.h"
+#include "probability/gui/layout_cell_with_buffer_with_message.h"
 #include "probability/models/statistic/statistic.h"
 
 namespace Probability {

@@ -2,6 +2,7 @@
 #define POINCARE_CONIC_H
 
 #include <poincare/expression.h>
+#include <float.h>
 
 namespace Poincare {
 
@@ -15,8 +16,10 @@ public:
     Undefined,
     Unknown,
   };
+  // Default constructor
+  Conic();
   // Extract A,B,C,D,E,F parameters
-  Conic(Expression e, Context * context);
+  Conic(Expression e, Context * context, char * x = "x", char * y = "y");
   // Return conic type from parameters
   Type getConicType();
   // Conic Eccentricity
@@ -37,6 +40,12 @@ public:
   double getRadius();
 
 private:
+  // Thereshold under which a parameter is considered null
+  static constexpr double k_tolerance = DBL_EPSILON * 10.0;
+  // Return 0.0 if value should be considered null
+  static double ApproximateForParameter(double value) {
+    return std::abs(value) < k_tolerance ? 0.0 : value;
+  }
   // Remove rotation from the parameters (B = 0)
   void rotateConic();
   // Remove both rotation and off-centering from the parameters

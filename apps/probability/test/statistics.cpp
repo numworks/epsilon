@@ -30,6 +30,7 @@ struct StatisticTestCase {
   // Results
   int m_numberOfParameters;
   bool m_hasDegreeOfFreedom;
+  float m_degreeOfFreedom;
   bool m_testPassed;
   float m_zAlpha;
   float m_testCriticalValue;
@@ -40,14 +41,11 @@ struct StatisticTestCase {
   float m_marginOfError;
 };
 
-void testStatistic(Statistic * stat, StatisticTestCase & test) {
-  quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
+void inputValues(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(stat->hasDegreeOfFreedom() == test.m_hasDegreeOfFreedom);
 
-  // Test
   stat->initThreshold(Data::SubApp::Tests);
-  quiz_assert(
-      roughlyEqual<float>(stat->threshold(), 0.05f));  // Significance level
+  quiz_assert(roughlyEqual<float>(stat->threshold(), 0.05f));  // Significance level
   stat->setThreshold(test.m_significanceLevel);
   quiz_assert(roughlyEqual<float>(stat->threshold(), test.m_significanceLevel));
 
@@ -56,28 +54,39 @@ void testStatistic(Statistic * stat, StatisticTestCase & test) {
 
   for (int i = 0; i < test.m_numberOfInputs; i++) {
     stat->setParamAtIndex(i, test.m_inputs[i]);
+    quiz_assert(stat->paramAtIndex(i) == test.m_inputs[i]);
   }
+}
 
+void runTest(Statistic * stat, StatisticTestCase & test) {
   stat->computeTest();
 
+  quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
   quiz_assert(stat->testPassed() == test.m_testPassed);
   quiz_assert(roughlyEqual<float>(stat->zAlpha(), test.m_zAlpha));
-  quiz_assert(
-      roughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue));
+  quiz_assert(roughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue));
   quiz_assert(roughlyEqual<float>(stat->pValue(), test.m_pValue));
+  if (stat->hasDegreeOfFreedom()) {
+    quiz_assert(roughlyEqual(stat->degreeOfFreedom(), test.m_degreeOfFreedom));
+  }
+}
+
+void testStatistic(Statistic * stat, StatisticTestCase & test) {
+  inputValues(stat, test);
+
+  // Test
+  runTest(stat, test);
 
   // Confidence interval
   stat->initThreshold(Data::SubApp::Intervals);
-  quiz_assert(
-      roughlyEqual<float>(stat->threshold(), 0.95f));  // Confidence level
+  quiz_assert(roughlyEqual<float>(stat->threshold(), 0.95f));  // Confidence level
   stat->setThreshold(test.m_confidenceLevel);
   quiz_assert(roughlyEqual<float>(stat->threshold(), test.m_confidenceLevel));
 
   stat->computeInterval();
 
   quiz_assert(roughlyEqual<float>(stat->estimate(), test.m_estimate));
-  quiz_assert(roughlyEqual<float>(stat->intervalCriticalValue(),
-                                  test.m_intervalCriticalValue));
+  quiz_assert(roughlyEqual<float>(stat->intervalCriticalValue(), test.m_intervalCriticalValue));
   quiz_assert(roughlyEqual<float>(stat->standardError(), test.m_standardError));
   quiz_assert(roughlyEqual<float>(stat->marginOfError(), test.m_marginOfError));
 }
@@ -132,6 +141,7 @@ QUIZ_CASE(one_mean_t_statistic) {
                         .m_confidenceLevel = 0.95,
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = true,
+                        .m_degreeOfFreedom = 50 - 1,
                         .m_testPassed = false,
                         .m_zAlpha = -1.6765508652,
                         .m_testCriticalValue = -0.4419349730,
@@ -148,6 +158,7 @@ QUIZ_CASE(one_mean_t_statistic) {
                         .m_confidenceLevel = 0.99,
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = true,
+                        .m_degreeOfFreedom = 10 - 1,
                         .m_testPassed = true,
                         .m_zAlpha = 2.8214385509,
                         .m_testCriticalValue = 3.4152598381,
@@ -253,6 +264,7 @@ QUIZ_CASE(two_means_t_statistic) {
                         .m_confidenceLevel = 0.95,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
+                        .m_degreeOfFreedom = 60.7450408936,
                         .m_testPassed = false,
                         .m_zAlpha = 1.6703274250,
                         .m_testCriticalValue = -1.7087153196,
@@ -269,6 +281,7 @@ QUIZ_CASE(two_means_t_statistic) {
                         .m_confidenceLevel = 0.99,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
+                        .m_degreeOfFreedom = 113.2706527710,
                         .m_testPassed = false,
                         .m_zAlpha = 2.3597204685,
                         .m_testCriticalValue = 0.6401526332,
@@ -293,6 +306,7 @@ QUIZ_CASE(pooled_t_test) {
                         .m_confidenceLevel = 0.876,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
+                        .m_degreeOfFreedom = 140,
                         .m_testPassed = false,
                         .m_zAlpha = 2.0628392696,
                         .m_testCriticalValue = -0.0111625144,
@@ -309,6 +323,7 @@ QUIZ_CASE(pooled_t_test) {
                         .m_confidenceLevel = 0.9,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
+                        .m_degreeOfFreedom = 12,
                         .m_testPassed = true,
                         .m_zAlpha = 1.3212366104,
                         .m_testCriticalValue = 2.887125562,
@@ -321,5 +336,66 @@ QUIZ_CASE(pooled_t_test) {
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     printf("Pooled t test n°%d\n", i);
     testStatistic(&stat, tests[i]);
+  }
+}
+
+QUIZ_CASE(two_means_z_statistic) {
+  TwoMeansZStatistic stat;
+  StatisticTestCase tests[] = {
+      StatisticTestCase{.m_firstHypothesisParam = 0.,
+                        .m_op = HypothesisParams::ComparisonOperator::Higher,
+                        .m_numberOfInputs = 6,
+                        .m_inputs = {3.14, 119, 2, 2.07, 402, 5},
+                        .m_significanceLevel = 0.1,
+                        .m_confidenceLevel = 0.9,
+                        .m_numberOfParameters = 7,
+                        .m_hasDegreeOfFreedom = false,
+                        .m_testPassed = true,
+                        .m_zAlpha = 1.2815513611,
+                        .m_testCriticalValue = 3.4569685459,
+                        .m_pValue = 0.00027310848236,
+                        .m_estimate = 3.14f - 2.07f,
+                        .m_intervalCriticalValue = 1.6448534727,
+                        .m_standardError = 0.3095197976,
+                        .m_marginOfError = 0.5091147423},
+      StatisticTestCase{.m_firstHypothesisParam = 0.,
+                        .m_op = HypothesisParams::ComparisonOperator::Different,
+                        .m_numberOfInputs = 6,
+                        .m_inputs = {1542, 2, 140, 1345.8, 7, .1},
+                        .m_significanceLevel = 0.01,
+                        .m_confidenceLevel = 0.99,
+                        .m_numberOfParameters = 7,
+                        .m_hasDegreeOfFreedom = false,
+                        .m_testPassed = false,
+                        .m_zAlpha = 2.3263483047,
+                        .m_testCriticalValue = 1.9819186926,
+                        .m_pValue = 0.0474883318,
+                        .m_estimate = 1542 - 1345.8f,
+                        .m_intervalCriticalValue = 2.5758295059,
+                        .m_standardError = 98.9949569702,
+                        .m_marginOfError = 254.9941253662}};
+  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    testStatistic(&stat, tests[i]);
+  }
+}
+
+QUIZ_CASE(goodness_statistic) {
+  StatisticTestCase tests[] = {
+      StatisticTestCase{.m_numberOfInputs = 8,
+                        .m_inputs = {1, 2, 2, 1, 3, 4, 4, 3},
+                        .m_significanceLevel = 0.03,
+                        .m_confidenceLevel = 0.9,
+                        .m_numberOfParameters = GoodnessStatistic::k_maxNumberOfRows * 2 + 1,
+                        .m_hasDegreeOfFreedom = true,
+                        .m_degreeOfFreedom = 3,
+                        .m_testPassed = false,
+                        .m_zAlpha = 8.9472894669,
+                        .m_testCriticalValue = 2.0833332539,
+                        .m_pValue = 0.5552918911}};
+  GoodnessStatistic stat;
+  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&stat, tests[i]);
+    stat.computeNumberOfRows();
+    runTest(&stat, tests[i]);
   }
 }

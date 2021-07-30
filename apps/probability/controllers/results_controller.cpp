@@ -7,6 +7,8 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
+#include <algorithm>
+
 #include "probability/app.h"
 #include "probability/helpers.h"
 #include "probability/models/data.h"

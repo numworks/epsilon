@@ -94,6 +94,11 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
   return true;
 }
 
+bool Probability::HypothesisController::textFieldDidAbortEditing(TextField * textField) {
+  loadHypothesisParam();
+  return true;
+}
+
 bool Probability::HypothesisController::textFieldDidHandleEvent(TextField * textField,
                                                                 bool returnValue,
                                                                 bool textSizeDidChange) {

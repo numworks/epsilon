@@ -16,7 +16,9 @@ public:
   DistributionController(Escher::Responder * parentResponder,
                          Distribution * m_distribution,
                          ParametersController * parametersController);
-  const char * title() override { return "Probability distributions"; }
+  const char * title() override {
+    return I18n::translate(I18n::Message::DistributionControllerTitle);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;

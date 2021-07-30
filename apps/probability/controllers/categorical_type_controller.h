@@ -1,6 +1,7 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_CATEGORICAL_TYPE_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_CATEGORICAL_TYPE_CONTROLLER_H
 
+#include <apps/i18n.h>
 #include <escher/container.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
@@ -29,7 +30,9 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
-  const char * title() override { return "χ2-test"; }
+  const char * title() override {
+    return I18n::translate(I18n::Message::CategoricalTypeControllerTitle);
+  }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 

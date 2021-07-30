@@ -58,7 +58,10 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
+  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldDidHandleEvent(TextField * textField,
+                               bool returnValue,
+                               bool textSizeDidChange) override;
 
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;

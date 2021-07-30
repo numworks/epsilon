@@ -8,6 +8,22 @@
 extern "C" {
 #endif
 
+/*
+ *  +-------------------------------------+----------------------------------+
+ *  |  Interruptions                      + Priority   | Timer               |
+ *  +-------------------------------------+----------------------------------+
+ *  | Systick                             | High       | Systick             |
+ *  | Keyboard columns detection          | High       | EXTI 0-5            |
+ *  | Keyboard debouncer                  | High       | TIM4                |
+ *  | Keyboard poller                     | High       | TIM5                |
+ *  | CircuitBreaker timer (lock time out)| High       | TIM6                |
+ *  | SVC                                 | Medium     | SVC                 |
+ *  | Events staller/spinner              | MediumLow  | TIM2                |
+ *  | PendingSV                           | Low        | PendSV              |
+ *  +-------------------------------------+----------------------------------+
+ *
+ */
+
 void isr_systick();
 void keyboard_handler();
 void tim2_handler(); // Event spinner/breaker

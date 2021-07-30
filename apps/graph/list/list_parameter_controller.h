@@ -18,11 +18,12 @@ public:
   // MemoizedListViewDataSource
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  // Shared cells + m_typeCell, m_functionDomain, and m_renameCell
-  int numberOfRows() const override { return Shared::ListParameterController::numberOfRows() + 2; }
+  // Shared cells + m_typeCell + m_functionDomain
+  int numberOfRows() const override { return displayDetails() + 1 + Shared::ListParameterController::numberOfRows(); }
 protected:
   bool handleEnterOnRow(int rowIndex) override;
 private:
+  bool displayDetails() const { return ((NewFunction)m_record).detailsTotal() > 0; }
   ListController * m_listController;
   Escher::MessageTableCellWithChevronAndMessage m_typeCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;

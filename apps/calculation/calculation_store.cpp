@@ -85,7 +85,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     // The new calculation is now stored
     m_numberOfCalculations++;
     // Getting the addresses of the begining of the free space
-    char * beginingOfFreeSpace = (char *)m_calculationAreaEnd;
+    char * beginingOfFreeSpace = m_calculationAreaEnd;
     // Getting the addresses of the end of the free space
     char * endOfFreeSpace = beginingOfMemoizationArea();
 
@@ -174,7 +174,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     }
 
     // Retrieve pointer to inserted Calculation.
-    assert(addressOfCalculation == ((m_numberOfCalculations == 1) ? m_buffer : *(char **)addressOfPointerToCalculationOfIndex(1)));
+    assert(addressOfCalculation == ((m_numberOfCalculations == 1) ? m_buffer : *reinterpret_cast<char **>(addressOfPointerToCalculationOfIndex(1))));
     ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(addressOfCalculation));
 
     /* Heights are computed now to make sure that the display output is decided
@@ -222,9 +222,9 @@ void CalculationStore::deleteCalculationAtIndex(int i) {
 
 // Delete the oldest calculation in the store and returns the amount of space freed by the operation
 size_t CalculationStore::deleteOldestCalculation() {
-  char * oldBufferEnd = (char *) m_calculationAreaEnd;
+  char * oldBufferEnd = m_calculationAreaEnd;
   deleteCalculationAtIndex(numberOfCalculations()-1);
-  char * newBufferEnd = (char *) m_calculationAreaEnd;
+  char * newBufferEnd = m_calculationAreaEnd;
   return oldBufferEnd - newBufferEnd;
 }
 

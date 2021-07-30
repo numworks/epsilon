@@ -16,6 +16,6 @@ If you run into an issue, we would be very happy if you would file a bug on the 
 
 We welcome contributions. For smaller changes just open a pull request straight away. For larger changes we recommend you open an issue first for discussion.
 
-## License
+## Copyright
 
-NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode). NumWorks is a registered trademark.
+All rights reserved. NumWorks is a registered trademark.

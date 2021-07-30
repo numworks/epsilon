@@ -63,11 +63,11 @@ const char * testToTextSymbol(Data::Test t) {
     case Data::Test::OneProp:
       return "p";
     case Data::Test::OneMean:
-      return "u";  // TODO mu
+      return "μ";
     case Data::Test::TwoProps:
       return "p1-p2";  // TODO subscript
     case Data::Test::TwoMeans:
-      return "u1-u2";
+      return "μ1-μ2";
     default:
       assert(false);
       return nullptr;

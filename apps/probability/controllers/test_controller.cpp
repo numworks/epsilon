@@ -103,7 +103,6 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     if (test != App::app()->test()) {
       if (Data::isProportion(test)) {
         *m_globalTestType = Data::TestType::ZTest;
-        *m_globalCategoricalType = Data::CategoricalType::Unset;
         Statistic::initializeStatistic(m_statistic,
                                        test,
                                        Data::TestType::ZTest,
@@ -111,6 +110,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       } else {
         *m_globalTestType = Data::TestType::Unset;
       }
+      *m_globalCategoricalType = Data::CategoricalType::Unset;
     }
 
     *m_globalTest = test;

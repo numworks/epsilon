@@ -11,12 +11,13 @@
 
 namespace Probability {
 
-constexpr static int max(int a, int b) {
-  return a > b ? a : b;
+template <class T>
+constexpr T constexpr_max(T a, T b) {
+  return a < b ? b : a;
 }
 
 constexpr static int max_between(const int * begin, const int * end) {
-  return begin + 1 == end ? *begin : max_between(begin + 1, end);
+  return begin + 1 == end ? *begin : constexpr_max(*begin, max_between(begin + 1, end));
 }
 
 template <int N>

@@ -35,8 +35,8 @@ void quiz_assert_circle(const char * expression, double radius, double cx = 0.0,
   double x, y;
   conic.getCenter(&x, &y);
   // TODO Hugo : Improve precision for center
-  // quiz_assert_conic_parameter_is(x, cx);
-  // quiz_assert_conic_parameter_is(y, cy);
+  quiz_assert_conic_parameter_is(x, cx);
+  quiz_assert_conic_parameter_is(y, cy);
   quiz_assert_conic_parameter_is(conic.getEccentricity(), 0.0);
   quiz_assert_conic_parameter_is(conic.getRadius(), radius);
 }
@@ -49,8 +49,8 @@ void quiz_assert_ellipse(const char * expression, double eccentricity,
   quiz_assert(conic.getConicType() == Conic::Type::Ellipse);
   double x, y;
   conic.getCenter(&x, &y);
-  // quiz_assert_conic_parameter_is(x, cx);
-  // quiz_assert_conic_parameter_is(y, cy);
+  quiz_assert_conic_parameter_is(x, cx);
+  quiz_assert_conic_parameter_is(y, cy);
   quiz_assert_conic_parameter_is(conic.getEccentricity(), eccentricity);
   quiz_assert_conic_parameter_is(conic.getLinearEccentricity(),
                                  linearEccentricity);
@@ -66,8 +66,8 @@ void quiz_assert_hyperbola(const char * expression, double eccentricity,
   quiz_assert(conic.getConicType() == Conic::Type::Hyperbola);
   double x, y;
   conic.getCenter(&x, &y);
-  // quiz_assert_conic_parameter_is(x, cx);
-  // quiz_assert_conic_parameter_is(y, cy);
+  quiz_assert_conic_parameter_is(x, cx);
+  quiz_assert_conic_parameter_is(y, cy);
   quiz_assert_conic_parameter_is(conic.getEccentricity(), eccentricity);
   quiz_assert_conic_parameter_is(conic.getLinearEccentricity(),
                                  linearEccentricity);
@@ -81,8 +81,8 @@ void quiz_assert_parabola(const char * expression, double parameter,
   quiz_assert(conic.getConicType() == Conic::Type::Parabola);
   double x, y;
   conic.getSummit(&x, &y);
-  // quiz_assert_conic_parameter_is(x, sx);
-  // quiz_assert_conic_parameter_is(y, sy);
+  quiz_assert_conic_parameter_is(x, sx);
+  quiz_assert_conic_parameter_is(y, sy);
   quiz_assert_conic_parameter_is(conic.getEccentricity(), 1.0);
   quiz_assert_conic_parameter_is(conic.getParameter(), parameter);
 }
@@ -104,6 +104,7 @@ QUIZ_CASE(poincare_conics_invalid) {
 
 QUIZ_CASE(poincare_conics_general) {
   quiz_assert_circle("x^2+y^2-x+y", 0.707107, 0.5, -0.5);  // 1/sqrt(2)
+  quiz_assert_ellipse("x^2+y^2+x*y+x+y", 0.816497, 0.816497 * 0.816497, 0.816497, 0.471405, -0.333333, -0.333333);
   quiz_assert_ellipse("x^2+0.25*y^2-1", 0.866025, 0.866025 * 2.0, 2.0, 1.0);
   quiz_assert_hyperbola("x^2+2*x*y-4y^2+2x+y-16", 1.13334, 1.13334 * 3.76999,
                         3.76999, 2.01069, -0.9, -0.1);  // 0.946213

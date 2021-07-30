@@ -1,4 +1,3 @@
-#include <float.h>
 #include <poincare/conic.h>
 #include <poincare/polynomial.h>
 #include <poincare/preferences.h>
@@ -18,15 +17,23 @@ double smallestPositive(double a, double b, bool strictly = true) {
 
 double nonSmallestPositive(double a, double b, bool strictly = true) {
   /* Same as smallestPositive, returning the other value. */
-  if (a > b) {
-    return nonSmallestPositive(b, a, strictly);
-  }
-  // We have a <= b
-  assert(b > 0.0 || (!strictly && b == 0.0));
-  return (a > 0.0 || (!strictly && a == 0.0)) ? b : a;
+  return smallestPositive(a, b, strictly) == a ? b : a;
 }
 
-Conic::Conic(Expression e, Context * context) :
+Conic::Conic() :
+    m_a(NAN),
+    m_b(NAN),
+    m_c(NAN),
+    m_d(NAN),
+    m_e(NAN),
+    m_f(NAN),
+    m_cx(NAN),
+    m_cy(NAN),
+    m_r(NAN),
+    m_type(Type::Undefined) {
+}
+
+Conic::Conic(Expression e, Context * context, char * x, char * y) :
     m_a(0.0),
     m_b(0.0),
     m_c(0.0),
@@ -48,7 +55,7 @@ Conic::Conic(Expression e, Context * context) :
       ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
 
   Expression coefficientsY[Expression::k_maxNumberOfPolynomialCoefficients];
-  int dy = e.getPolynomialReducedCoefficients("y", coefficientsY, context,
+  int dy = e.getPolynomialReducedCoefficients(y, coefficientsY, context,
                                               complexFormat, angleUnit,
                                               unitFormat, symbolicComputation);
   if (dy > 2 || dy < 1) {
@@ -59,7 +66,7 @@ Conic::Conic(Expression e, Context * context) :
   // C term
   if (dy == 2) {
     int dx = coefficientsY[2].getPolynomialReducedCoefficients(
-        "x", coefficientsX, context, complexFormat, angleUnit, unitFormat,
+        x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
         symbolicComputation);
     if (dx != 0) {
       m_type = Type::Undefined;
@@ -70,7 +77,7 @@ Conic::Conic(Expression e, Context * context) :
   }
   // B and E terms
   int dx = coefficientsY[1].getPolynomialReducedCoefficients(
-      "x", coefficientsX, context, complexFormat, angleUnit, unitFormat,
+      x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
       symbolicComputation);
   if (dx > 1 || dx < 0) {
     m_type = Type::Undefined;
@@ -84,7 +91,7 @@ Conic::Conic(Expression e, Context * context) :
                                                      angleUnit);
   // A, D and F terms
   dx = coefficientsY[0].getPolynomialReducedCoefficients(
-      "x", coefficientsX, context, complexFormat, angleUnit, unitFormat,
+      x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
       symbolicComputation);
   if (dx > 2 || dx < 1 || (dx == 1 && dy == 1)) {
     m_type = Type::Undefined;
@@ -124,50 +131,52 @@ Conic::Type Conic::getConicType() {
 void Conic::rotateConic() {
   if (m_b == 0.0 && (m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c) &&
                      m_a == smallestPositive(m_a, m_c))) {
+    // Conic is already rotated.
     return;
   }
+  assert(m_r == 0.0);
   double a = m_a;
   double b = m_b;
   double c = m_c;
   double d = m_d;
   double e = m_e;
-  // If b is non null and a = c, there is a pi/2 rotation.
-  double r = (a == c) ? M_PI / 2 : std::atan(b / (a - c)) / 2.0;
+  // If b is non null and a = c, there is a pi/4 rotation.
+  double r = -((a == c) ? M_PI / 4 : std::atan(b / (a - c)) / 2.0);
   double cr, sr;
   for (int i = 0; i < 4; i++) {
     cr = std::cos(r);
     sr = std::sin(r);
-    // replacing x with cr*x+sr*y and y with sr*x-cr*y to cancel B
-    m_a = a * cr * cr + b * cr * sr + c * sr * sr;
-    // TODO Hugo : Add a tolerance here
-    m_b = 2 * a * cr * sr - b * cr * cr + b * sr * sr - 2 * c * sr * cr;
-    m_c = a * sr * sr - b * cr * sr + c * cr * cr;
-    if (std::abs(m_a) < 100 * DBL_EPSILON) {
-      m_a = 0.0;
-    }
-    if (std::abs(m_b) < 100 * DBL_EPSILON) {
-      m_b = 0.0;
-    }
-    assert(m_b == 0);
-    if (std::abs(m_c) < 100 * DBL_EPSILON) {
-      m_c = 0.0;
-    }
-    if (m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c) &&
-        m_a == smallestPositive(m_a, m_c)) {
+    // replacing x with cr*x+sr*y and y with -sr*x+cr*y to cancel B
+    m_a = ApproximateForParameter(a * cr * cr - b * cr * sr + c * sr * sr);
+    m_b = ApproximateForParameter(2 * a * cr * sr + b * cr * cr - b * sr * sr -
+                                  2 * c * sr * cr);
+    m_c = ApproximateForParameter(a * sr * sr + b * cr * sr + c * cr * cr);
+    assert(m_b == 0.0);
+    /* Looking at each pi/2 rotations to find the most canonic form :
+     * - A is strictly positive (y is the axis of symmetry)
+     * - C is either :
+     *     - null (Parabola)
+     *     - negative (Hyperbola),
+     *     - equal (Circle)
+     *     - greater than A (Elipsis, major axis along x)
+     */
+    if (m_a == smallestPositive(m_a, m_c, true)) {
+      // TODO Hugo : Remove this assert
+      assert(m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c));
       break;
     }
     assert(i < 3);
     r += M_PI / 2;
   }
-  m_r = -r;
+  m_r = r;
   // Conic shall be rotated such that a is positive, non-null and smaller than c
   // if c is positive
   assert(m_a > 0.0);
   assert(m_c <= 0.0 || m_a <= m_c);
   assert(m_a == smallestPositive(m_a, m_c));
 
-  m_d = d * cr + e * sr;
-  m_e = d * sr - e * cr;
+  m_d = ApproximateForParameter(d * cr - e * sr);
+  m_e = ApproximateForParameter(d * sr + e * cr);
   assert(m_b == 0.0);
 }
 
@@ -179,6 +188,7 @@ void Conic::centerConic() {
       ((m_a * m_c == 0.0) == (m_f == 0.0))) {
     return;
   }
+  assert(m_cx == 0.0 && m_cy == 0.0);
   double a = m_a;
   double c = m_c;
   double d = m_d;
@@ -186,45 +196,44 @@ void Conic::centerConic() {
   double f = m_f;
   double h;
   double k;
-  // Replacing x with x-h and y with y-k to cancel :
+  // Replacing x with x-h and y with y-k in order to cancel :
   // - F and E if A is null : Cy^2 + Dx = 0
   // - D and F if C is null : Ax^2 + Ey = 0
   // - D and E otherwise    : Ax^2 + Cy^2 = F
-  assert(a != 0.0 || c != 0);
+  assert(a != 0.0 || c != 0.0);
   if (a != 0.0) {
     h = d / (2 * a);
   }
-  if (c != 0) {
+  if (c != 0.0) {
     k = e / (2 * c);
   } else {
     k = (f - a * h * h - d * h) / e;
   }
-  if (a == 0) {
+  if (a == 0.0) {
     h = (f - c * k * k - e * k) / d;
   }
-  // Update center
-  m_cx = -h;
-  m_cy = -k;
   // A and C remain unchanged
-  m_d = d - 2 * a * h;
-  if (std::abs(m_d) < 100 * DBL_EPSILON) {
-    m_d = 0.0;
-  }
-  m_e = (c != 0) ? 0.0 : e - 2 * c * k;  // TODO Hugo : Add a tolerance here
-  if (std::abs(m_e) < 100 * DBL_EPSILON) {
-    m_e = 0.0;
-  }
-  m_f = f + a * h * h + c * k * k - d * h - e * k;
-  if (std::abs(m_f) < 100 * DBL_EPSILON) {
-    m_f = 0.0;
-  }
+  m_d = ApproximateForParameter(d - 2 * a * h);
+  m_e = ApproximateForParameter(e - 2 * c * k);
+  m_f = ApproximateForParameter(f + a * h * h + c * k * k - d * h - e * k);
+  // Update center (taking previous rotation into account)
+  double cr = std::cos(m_r);
+  double sr = std::sin(m_r);
+  m_cx = -(h * cr + k * sr);
+  m_cy = -(h * (-sr) + k * cr);
   assert(m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
          ((m_a * m_c == 0.0) == (m_f == 0.0)));
 }
 
 void Conic::canonize() {
+  // Canonize the equation by rotating and centering it
   centerConic();
+  /* Equation should be in either of these canonic forms :
+   * - Circle, Ellipse, Hyperbola : Ax^2 + Cy^2 = 1, A > 0 and 0 < C or C >= A
+   * - Parabola                   : x^2 + Ey = 0
+   */
   double factor;
+  // TODO Hugo : A positive m_f may threaten the canonic form for Hyperbolas
   if (m_f != 0.0) {
     factor = -m_f;
   } else {
@@ -238,6 +247,9 @@ void Conic::canonize() {
   m_e /= factor;
   m_f /= factor;
   assert(m_f == -1.0 || m_a + m_c == 1.0);
+  // TODO Hugo : Remove these asserts
+  assert(m_f == -1.0 || m_a == 1.0);
+  assert(m_a == smallestPositive(m_a, m_c, true));
 }
 
 double Conic::getDeterminant() const {

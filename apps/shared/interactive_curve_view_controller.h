@@ -81,7 +81,7 @@ private:
   void updateZoomButtons() override;
   void updateBottomMargin() override { refreshCursor(); }
 
-  void setCurveViewAsMainView();
+  void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
 
   void navigationButtonAction();
   /* This method returns the new status for the button,

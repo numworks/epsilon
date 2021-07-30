@@ -27,7 +27,8 @@ bool ZoomAndPanCurveViewController::handlePan(Ion::Events::Event event) {
     xMove = interactiveCurveViewRange()->xGridUnit();
   }
   interactiveCurveViewRange()->panWithVector(xMove, yMove);
-  curveView()->reload();
+  /* Restart drawing interrupted curves when the window pans. */
+  curveView()->reload(true);
   return true;
 }
 

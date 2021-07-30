@@ -27,11 +27,13 @@ const char * StatisticGraphController::title() {
     char pBuffer[10];
     defaultParseFloat(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
     defaultParseFloat(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), "z=%s p-value=%s", zBuffer, pBuffer);
+    const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormat);
+    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, zBuffer, pBuffer);
   } else {
+    const char * format = I18n::translate(I18n::Message::StatisticGraphControllerIntervalTitleFormat);
     char MEBuffer[30];
     defaultParseFloat(m_statistic->marginOfError(), MEBuffer, sizeof(MEBuffer));
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), "ME=%s", MEBuffer);
+    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, MEBuffer);
   }
   return m_titleBuffer;
 }

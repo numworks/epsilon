@@ -61,7 +61,8 @@ const char * InputController::title() {
   } else {
     const char * symbol = testTypeToText(App::app()->testType());
     const char * text = testToText(App::app()->test());
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), "%s-interval on %s", symbol, text);
+    const char * format = I18n::translate(I18n::Message::InputControllerIntervalTitleFormat);
+    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, symbol, text);
   }
   return m_titleBuffer;
 }

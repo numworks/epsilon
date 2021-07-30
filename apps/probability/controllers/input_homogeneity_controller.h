@@ -32,7 +32,7 @@ public:
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                              HomogeneityStatistic * statistic);
 
-  const char * title() override { return "χ2-test: Homogeneity/Independence"; }
+  const char * title() override { return I18n::translate(I18n::Message::InputHomogeneityControllerTitle); }
 
   void didBecomeFirstResponder() override;
 

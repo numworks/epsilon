@@ -22,9 +22,9 @@ InputController::InputController(Escher::StackViewController * parent,
     m_parameterCells[i].textField()->setDelegates(handler, this);
   }
   m_significanceCell.setParentResponder(&m_selectableTableView);
-  m_significanceCell.textField()->setDelegates(handler, this);
-  m_significanceCell.setMessage(I18n::Message::Alpha);
-  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+  m_significanceCell.innerCell()->textField()->setDelegates(handler, this);
+  m_significanceCell.innerCell()->setMessage(I18n::Message::Alpha);
+  m_significanceCell.innerCell()->setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
 
 const char * InputController::title() {
@@ -111,8 +111,8 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
     mCell->setLayout(m_statistic->paramSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_statistic->paramDescriptionAtIndex(index));
   } else if (index == m_statistic->indexOfThreshold()) {
-    MessageTableCellWithEditableTextWithMessage * thresholdCell =
-        static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
+    MessageTableCellWithSeparator * thresholdCell =
+        static_cast<MessageTableCellWithSeparator *>(cell);
     I18n::Message name, description;
     if (App::app()->subapp() == Data::SubApp::Tests) {
       name = I18n::Message::GreekAlpha;
@@ -121,8 +121,8 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
       name = I18n::Message::ConfidenceLevel;
       description = I18n::Message::Default;
     }
-    thresholdCell->setMessage(name);
-    thresholdCell->setSubLabelMessage(description);
+    thresholdCell->innerCell()->setMessage(name);
+    thresholdCell->innerCell()->setSubLabelMessage(description);
   }
   FloatParameterPage::willDisplayCellForIndex(cell, index);
 }
@@ -171,7 +171,7 @@ void Probability::InputController::setTextInCell(Escher::HighlightCell * cell,
                                                  const char * text,
                                                  int index) {
   if (index == m_statistic->indexOfThreshold()) {
-    FloatParameterPage::setTextInCell(cell, text, index);
+    static_cast<MessageTableCellWithSeparator *>(cell)->innerCell()->textField()->setText(text);
   } else {
     static_cast<LayoutCellWithEditableTextWithMessage *>(cell)->textField()->setText(text);
   }

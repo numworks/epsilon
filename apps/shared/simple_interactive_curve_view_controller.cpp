@@ -31,7 +31,8 @@ bool SimpleInteractiveCurveViewController::handleLeftRightEvent(Ion::Events::Eve
       cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(),
       curveView()->pixelWidth()
     );
-    curveView()->reload();
+    /* Restart drawing of interrupted curves when the window pans. */
+    curveView()->reload(true);
     return true;
   }
   return false;

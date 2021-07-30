@@ -42,8 +42,8 @@ void BoxView::reloadQuantile() {
   markRectAsDirty(dirtyRect);
 }
 
-void BoxView::reload() {
-  CurveView::reload();
+void BoxView::reload(bool resetInterrupted, bool force) {
+  CurveView::reload(resetInterrupted, force);
   KDCoordinate minY = boxLowerBoundPixel();
   KDCoordinate maxY = boxUpperBoundPixel();
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series)));

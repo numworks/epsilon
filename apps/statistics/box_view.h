@@ -27,7 +27,7 @@ public:
   void reloadQuantile();
 
   // CurveView
-  void reload() override;
+  void reload(bool resetInterrupted = false, bool force = false) override;
 
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;

@@ -17,12 +17,15 @@ GraphView::GraphView(InteractiveCurveViewRange * graphRange,
 {
 }
 
-void GraphView::reload() {
+void GraphView::reload(bool resetInterrupted, bool force) {
   if (m_tangent) {
     KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height()-m_bannerView->bounds().height()));
     markRectAsDirty(dirtyZone);
   }
-  return FunctionGraphView::reload();
+  if (force || resetInterrupted) {
+    m_functionsInterrupted = 0;
+  }
+  return FunctionGraphView::reload(resetInterrupted, force);
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {

@@ -27,9 +27,9 @@ CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveVie
 {
 }
 
-void CurveView::reload() {
+void CurveView::reload(bool resetInterrupted, bool force) {
   uint32_t rangeVersion = m_curveViewRange->rangeChecksum();
-  if (m_drawnRangeVersion != rangeVersion) {
+  if (force || m_drawnRangeVersion != rangeVersion) {
     // FIXME: This should also be called if the *curve* changed
     m_drawnRangeVersion = rangeVersion;
     KDCoordinate bannerHeight = (m_bannerView != nullptr) ? m_bannerView->bounds().height() : 0;

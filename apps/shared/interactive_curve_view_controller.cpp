@@ -53,18 +53,18 @@ const char * InteractiveCurveViewController::title() {
   return I18n::translate(I18n::Message::GraphTab);
 }
 
-void InteractiveCurveViewController::setCurveViewAsMainView() {
+void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupted, bool forceReload) {
   header()->setSelectedButton(-1);
   curveView()->selectMainView(true);
   Container::activeApp()->setFirstResponder(this);
   reloadBannerView();
-  curveView()->reload();
+  curveView()->reload(resetInterrupted, forceReload);
 }
 
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->isMainViewSelected()) {
     if (event == Ion::Events::Down) {
-      setCurveViewAsMainView();
+      setCurveViewAsMainView(false, false);
       return true;
     }
     if (event == Ion::Events::Up) {
@@ -144,7 +144,7 @@ void InteractiveCurveViewController::viewWillAppear() {
     header()->setSelectedButton(-1);
   }
 
-  curveView()->reload();
+  curveView()->reload(true);
 }
 
 void InteractiveCurveViewController::refreshCursor() {
@@ -277,7 +277,7 @@ bool InteractiveCurveViewController::autoButtonAction() {
   refreshCursor();
   if (m_interactiveRange->zoomAuto()) {
     *m_rangeVersion = rangeVersion();
-    setCurveViewAsMainView();
+    setCurveViewAsMainView(true, true);
   }
   return m_interactiveRange->zoomAuto();
 }

@@ -84,6 +84,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   layout_cell.cpp \
   layout_cell_with_sub_message.cpp \
   layout_cell_with_editable_text_with_message.cpp \
+  message_table_cell_with_separator.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\

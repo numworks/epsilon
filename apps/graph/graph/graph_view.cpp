@@ -12,6 +12,7 @@ namespace Graph {
 GraphView::GraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
+  m_functionsInterrupted(0),
   m_tangent(false)
 {
 }
@@ -25,10 +26,19 @@ void GraphView::reload() {
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  FunctionGraphView::drawRect(ctx, rect);
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
+  if (allFunctionsInterrupted(activeFunctionsCount)) {
+    // All functions were interrupted, do not draw anything.
+    return;
+  }
+
+  FunctionGraphView::drawRect(ctx, rect);
+
   for (int i = 0; i < activeFunctionsCount ; i++) {
+    if (functionWasInterrupted(i)) {
+      continue;
+    }
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
@@ -98,6 +108,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             }, f.operator->(), context(), false, f->color());
       }
     } else {
+      setFunctionInterrupted(i);
       f->tidy();
     }
   }

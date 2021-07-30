@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_DATA_H
-#define APPS_PROBABILITY_DATA_H
+#ifndef APPS_PROBABILITY_MODELS_DATA_H
+#define APPS_PROBABILITY_MODELS_DATA_H
 
 /*
  * This header defines the structures (enums/structs/typedefs/classes)
@@ -128,4 +128,4 @@ private:
 }  // namespace Data
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_DATA_H */
+#endif /* APPS_PROBABILITY_MODELS_DATA_H */

@@ -15,8 +15,8 @@ public:
   void computeInterval() override;
 
   // Confidence interval
-  const char * estimateSymbol() override { return "x"; };
-  I18n::Message estimateDescription() override { return I18n::Message::Default; };
+  const char * estimateSymbol() override { return "x"; }
+  I18n::Message estimateDescription() override { return I18n::Message::Default; }
 
 protected:
   // Parameters

@@ -5,6 +5,7 @@
 #include "../shared/range_1D.h"
 #include <apps/i18n.h>
 #include <poincare/symbol_abstract.h>
+#include <poincare/conic.h>
 
 // TODO Hugo : Emscripten things
 
@@ -73,10 +74,16 @@ public:
   I18n::Message parameterMessageName() const;
 
   I18n::Message functionCategory() const; // Line, polar, cartesian, ...
+
+  int detailsTotal() const;
+  I18n::Message detailsTitle(int i) const;
+  I18n::Message detailsDescription(int i) const;
+  double detailsValue(int i) const;
+
   CodePoint symbol() const override; // x, theta, t, y
   // Expression clone is of the form (exp1) = (exp2)
   // expressionEquation returns (exp1) - (exp2) or (exp2) if isNamed() (reduced ?)
-  Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionReduced(this, context); }
+  Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionEquation(this, context); }
   // expressionReduced returns equations solutions in y ( matrix if multiple solutions) // TODO Hugo :: parent implementation should be fine
   // Poincare::Expression expressionReduced(Poincare::Context * context) const override;
   // expressionReduced returns expressionReduced derivative(s)
@@ -133,6 +140,8 @@ public:
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const;
   // TODO Hugo : Consider cache
 private:
+  // TODO Hugo : Improve that
+  static Poincare::Conic s_tempConic;
   // TODO Hugo : usefull ?
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);

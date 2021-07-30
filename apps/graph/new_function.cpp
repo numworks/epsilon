@@ -17,6 +17,8 @@ using namespace Poincare;
 
 namespace Graph {
 
+Conic NewFunction::s_tempConic;
+
 NewFunction NewFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
   // Create the record
@@ -78,7 +80,9 @@ int NewFunction::yDegree(Context * context) const {
 }
 
 int NewFunction::xDegree(Context * context) const {
-  return expressionEquation(context).polynomialDegree(context, "x");
+  char str[2] = "x";
+  str[0] = UCodePointUnknown;
+  return expressionEquation(context).polynomialDegree(context, str);
 }
 
 int NewFunction::nameWithArgument(char * buffer, size_t bufferSize) {
@@ -105,12 +109,140 @@ I18n::Message NewFunction::parameterMessageName() const {
 I18n::Message NewFunction::functionCategory() const {
   assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
   static const I18n::Message category[k_numberOfPlotTypes] = {
-    I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::ParametricType, I18n::Message::ParametricType,
-    I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::ParametricType, I18n::Message::ParametricType,
-    I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::ParametricType, I18n::Message::ParametricType,
-    I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::ParametricType, I18n::Message::ParametricType,
+    I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::LineType, I18n::Message::VerticalLineType,
+    I18n::Message::HorizontalLineType, I18n::Message::InequationType, I18n::Message::ConicsType, I18n::Message::CircleType, I18n::Message::EllipseType,
+    I18n::Message::ParabolaType, I18n::Message::HyperbolaType, I18n::Message::InequationType, I18n::Message::InequationType, I18n::Message::InequationType,
+    I18n::Message::InequationType, I18n::Message::InequationType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
   };
   return category[static_cast<size_t>(plotType())];
+}
+
+int NewFunction::detailsTotal() const {
+  assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
+  static const int total[k_numberOfPlotTypes] = {
+    0, 0, 0, 3, 0,
+    0, 0, 0, 3, 6,
+    3, 6, 0, 0, 0,
+    0, 0, 0, 0, 0,
+  };
+  return total[static_cast<size_t>(plotType())];
+}
+
+I18n::Message NewFunction::detailsTitle(int i) const {
+  PlotType type = plotType();
+  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
+  assert(i < detailsTotal());
+  if (type == PlotType::Line) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::LineEquationTitle, I18n::Message::LineSlopeTitle, I18n::Message::LineYInterceptTitle,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Circle) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::CircleRadiusTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Ellipse) {
+    static const I18n::Message titles[6] = {
+      I18n::Message::EllipseSemiMajorAxisTitle, I18n::Message::EllipseSemiMinorAxisTitle, I18n::Message::LinearEccentricityTitle,
+      I18n::Message::EccentricityTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Parabola) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::ParabolaParameterTitle, I18n::Message::ParabolaVertexAbscissaTitle, I18n::Message::ParabolaVertexOrdinateTitle,
+    };
+    return titles[i];
+  }
+  assert(type == PlotType::Hyperbola);
+  static const I18n::Message titles[6] = {
+    I18n::Message::HyperbolaSemiMajorAxisTitle, I18n::Message::HyperbolaSemiMinorAxisTitle, I18n::Message::LinearEccentricityTitle,
+    I18n::Message::EccentricityTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
+  };
+  return titles[i];
+}
+
+I18n::Message NewFunction::detailsDescription(int i) const {
+  PlotType type = plotType();
+  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
+  assert(i < detailsTotal());
+  if (type == PlotType::Line) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::LineEquationDescription, I18n::Message::LineSlopeDescription, I18n::Message::LineYInterceptDescription,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Circle) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::CircleRadiusDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Ellipse) {
+    static const I18n::Message titles[6] = {
+      I18n::Message::EllipseSemiMajorAxisDescription, I18n::Message::EllipseSemiMinorAxisDescription, I18n::Message::LinearEccentricityDescription,
+      I18n::Message::EccentricityDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Parabola) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::ParabolaParameterDescription, I18n::Message::ParabolaVertexAbscissaDescription, I18n::Message::ParabolaVertexOrdinateDescription,
+    };
+    return titles[i];
+  }
+  assert(type == PlotType::Hyperbola);
+  static const I18n::Message titles[6] = {
+    I18n::Message::HyperbolaSemiMajorAxisDescription, I18n::Message::HyperbolaSemiMinorAxisDescription, I18n::Message::LinearEccentricityDescription,
+    I18n::Message::EccentricityDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
+  };
+  return titles[i];
+}
+
+double NewFunction::detailsValue(int i) const {
+  PlotType type = plotType();
+  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
+  assert(i < detailsTotal());
+  if (type == PlotType::Line) {
+    static const double titles[3] = {
+      NAN, 3.14, 3.14,
+    };
+    return titles[i];
+  }
+  double cx, cy;
+  if (type == PlotType::Parabola) {
+    s_tempConic.getSummit(&cx, &cy);
+  } else {
+    s_tempConic.getCenter(&cx, &cy);
+  }
+  if (type == PlotType::Circle) {
+    double titles[3] = {
+      s_tempConic.getRadius(), cx, cy,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Ellipse) {
+    double titles[6] = {
+      s_tempConic.getSemiMajorAxis(), s_tempConic.getSemiMinorAxis(), s_tempConic.getLinearEccentricity(),
+      s_tempConic.getEccentricity(), cx, cy,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Parabola) {
+    double titles[3] = {
+      s_tempConic.getParameter(), cx, cy,
+    };
+    return titles[i];
+  }
+  assert(type == PlotType::Hyperbola);
+  double titles[6] = {
+    s_tempConic.getSemiMajorAxis(), s_tempConic.getSemiMinorAxis(), s_tempConic.getLinearEccentricity(),
+    s_tempConic.getEccentricity(), cx, cy,
+  };
+  return titles[i];
 }
 
 CodePoint NewFunction::symbol() const {
@@ -131,7 +263,7 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
     return Undefined::Builder();
   }
   Expression result = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
-  // TODO Hugo : Handle function assignement from outside
+  // TODO Hugo : Handle function assignment from outside
   // TODO Hugo : Handle other than equal
   assert(result.type() == ExpressionNode::Type::Equal);
   if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
@@ -231,8 +363,8 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
    * | 1  | 2  | Cartesian
    * | 1  | +  | Cartesian
    * | 2  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
-   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabolla # TODO differentiate
-   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabolla # TODO differentiate
+   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola # TODO differentiate
+   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola # TODO differentiate
    * | 2  | +  | Other
    * | +  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
    * | +  | 1  | Unhandled (Swap x and y ? # TODO)
@@ -262,56 +394,27 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
     return recordData()->setPlotType(PlotType::Cartesian);
   }
   if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
-    // TODO Hugo : Compute delta ...
-    // + assert that no x^2 * y or y^2 * x !! -> Unhandled otherwise
-    /* Ax2+Bxy+Cy2+Dx+Ey+F=0 with A,B,C not all zero
-     * Discriminant B^2-4AC :
-     *  - Negative, A=C and B=0 : Circle
-     *  - Negative : Ellipse
-     *  - Null : Parabola
-     *  - Positive and A + C = 0 : Rectangular Hyperbola
-     *  - Positive : Hyperbola
-     */
-    return recordData()->setPlotType(PlotType::Conics);
+    char str[2] = "x";
+    str[0] = UCodePointUnknown;
+    s_tempConic = Conic(expressionEquation(context), context, str);
+    Conic::Type ctype = s_tempConic.getConicType();
+    if (ctype == Conic::Type::Hyperbola) {
+      return recordData()->setPlotType(PlotType::Hyperbola);
+    } else if (ctype == Conic::Type::Parabola) {
+      return recordData()->setPlotType(PlotType::Parabola);
+    } else if (ctype == Conic::Type::Ellipse) {
+      return recordData()->setPlotType(PlotType::Ellipse);
+    } else if (ctype == Conic::Type::Circle) {
+      return recordData()->setPlotType(PlotType::Circle);
+    } else if (ctype == Conic::Type::Undefined) {
+      return recordData()->setPlotType(PlotType::Conics);
+    }
+    assert(ctype != Conic::Type::Unknown);
   }
   if (yDeg == 2) {
     return recordData()->setPlotType(PlotType::Other);
   }
   return recordData()->setPlotType(PlotType::Unhandled);
-  /*
-   * Eccentricity e formula :
-   *  1 if parabola, sqrt(...) otherwise
-   * Cercle :
-   *  r : Rayon :
-   *    sqrt(-F/A + (E^2+D^2)/((2A)^2))
-   *  (x,y) : Coordonnées du centre :
-   *     x = (2CD-BE)/(B^2-4AC)
-   *     y = (2AE-BD)/(B^2-4AC)
-   *
-   * Ellipse :
-   *  a : Demi grand axe
-   *  b : Demi petit axe
-   *  c : Distance centre-foyer
-   *  e : excentircité
-   *    sqrt(...)
-   *  (x,y) : Coordonnées du centre :
-   *     x = (2CD-BE)/(B^2-4AC)
-   *     y = (2AE-BD)/(B^2-4AC)
-   *
-   * Hyperbole :
-   *  a : Distance centre-sommet
-   *  b : Demi axe transverse
-   *  c : Distance centre-foyer
-   *  e : excentircité
-   *    sqrt(...)
-   *  (x,y) : Coordonnées du centre :
-   *     x = (2CD-BE)/(B^2-4AC)
-   *     y = (2AE-BD)/(B^2-4AC)
-   *
-   * Parabole :
-   *  p : Parametre
-   *  (x,y) : Coordonnées du sommet :
-   */
 }
 
 I18n::Message NewFunction::ParameterMessageForPlotType(PlotType plotType) {
@@ -345,6 +448,8 @@ double NewFunction::approximateDerivative(double x, Context * context) const {
 
 int NewFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
   // TODO Hugo : Re-check
+  // TODO Hugo : Find a much better place for this update
+  updatePlotType(Preferences::AngleUnit::Radian, context);
   PlotType type = plotType();
   if (type == PlotType::Parametric) {
     int result = 0;

@@ -22,12 +22,18 @@ ListParameterController::ListParameterController(ListController * listController
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
+  if (!displayDetails()) {
+    index += 1;
+  }
   switch (index) {
   case 0:
     return &m_typeCell;
   case 1:
     return &m_functionDomain;
   default:
+    if (!displayDetails()) {
+      index -= 1;
+    }
     return Shared::ListParameterController::reusableCell(index, type);
   }
 }
@@ -83,6 +89,9 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
   StackViewController * stack = (StackViewController *)(parentResponder());
+  if (!displayDetails()) {
+    rowIndex += 1;
+  }
   switch (rowIndex) {
   case 0:
     m_typeParameterController.setRecord(m_record);
@@ -93,6 +102,9 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
     stack->push(&m_domainParameterController);
     return true;
   default:
+    if (!displayDetails()) {
+      rowIndex -= 1;
+    }
     return Shared::ListParameterController::handleEnterOnRow(rowIndex);
   }
 }

@@ -3,6 +3,8 @@
 #include <apps/i18n.h>
 #include "../app.h"
 #include <assert.h>
+#include "../../shared/poincare_helpers.h"
+
 // TODO Hugo : Delete type_helper
 using namespace Escher;
 
@@ -43,19 +45,36 @@ void TypeParameterController::viewWillAppear() {
 }
 
 KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
-  MessageTableCellWithExpression tempCell;
+  MessageTableCellWithMessageWithBuffer tempCell;
   return heightForCellAtIndex(&tempCell, j);
 }
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < k_numberOfDataPoints);
-  MessageTableCellWithExpression * myCell = static_cast<MessageTableCellWithExpression *>(cell);
-  // TODO Hugo : Create and retrive the correct messages
-  myCell->setMessage(I18n::Message::CartesianType);
-  myCell->setLayout(Poincare::LayoutHelper::String("3.1415", strlen("3.1415")));
+  NewFunction function = (NewFunction)m_record;
+  MessageTableCellWithMessageWithBuffer * myCell = static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
+  // TODO Hugo : Add descriptions
+  if (index == 0) {
+    myCell->setMessage(I18n::Message::CurveType);
+    // myCell->setSubLabelMessage(function.functionCategory());
+    myCell->setAccessoryText(I18n::translate(function.functionCategory()));
+  } else {
+    myCell->setMessage(function.detailsTitle(index - 1));
+    myCell->setSubLabelMessage(function.detailsDescription(index - 1));
+    constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
+    constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+    char buffer[bufferSize];
+    double value = function.detailsValue(index - 1);
+    if (std::isnan(value)) {
+      buffer[0] = 0;
+    } else {
+      Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
+    }
+    myCell->setAccessoryText(buffer);
+  }
 }
 
-MessageTableCellWithExpression * TypeParameterController::reusableCell(int index, int type) {
+MessageTableCellWithMessageWithBuffer * TypeParameterController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   return &m_cells[index];
 }

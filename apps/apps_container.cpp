@@ -353,6 +353,10 @@ void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {
+  if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    Ion::ExternalApps::setVisible();
+    m_window.redraw(true);
+  }
   Ion::USB::clearEnumerationInterrupt();
 }
 

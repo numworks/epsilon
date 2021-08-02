@@ -42,9 +42,13 @@ void showMessage(const char * const * messages, int numberOfMessages) {
 }
 
 void waitUntilKeyPress() {
+  Ion::Keyboard::State s0 = Keyboard::scan();
   while (1) {
     Ion::Keyboard::State s = Keyboard::scan();
-    if (s != 0) {
+    if (s == 0) {
+      s0 = 0;
+    }
+    if (s != s0) {
       break;
     }
   }

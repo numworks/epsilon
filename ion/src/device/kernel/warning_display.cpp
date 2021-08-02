@@ -1,4 +1,5 @@
 #include "warning_display.h"
+#include <drivers/events.h>
 #include <drivers/keyboard.h>
 #include <drivers/display.h>
 #include <ion/display.h>
@@ -42,6 +43,7 @@ void showMessage(const char * const * messages, int numberOfMessages) {
 }
 
 void waitUntilKeyPress() {
+  Events::pauseStallingTimer();
   Ion::Keyboard::State s0 = Keyboard::scan();
   while (1) {
     Ion::Keyboard::State s = Keyboard::scan();

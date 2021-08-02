@@ -1,4 +1,5 @@
 #include <ion/external_apps.h>
+#include <drivers/board.h>
 #include <shared/drivers/config/board.h>
 #include <assert.h>
 
@@ -127,8 +128,11 @@ AppIterator Apps::begin() const {
   return AppIterator(storageStart);
 }
 
-void setVisible(bool visible) {
-  s_externalAppsVisible = visible;
+void setVisible() {
+  s_externalAppsVisible = true;
+  if (numberOfApps() > 0) {
+    Device::Board::enableExternalApps(); // Display pop-up
+  }
 }
 
 int numberOfApps() {

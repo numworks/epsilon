@@ -33,12 +33,14 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
     return 0;
   }
 
+  bool multipleRoot = false;
   ExpressionNode::NullStatus deltaNull = delta->nullStatus(context);
   if (deltaNull == ExpressionNode::NullStatus::Null
    || (deltaNull == ExpressionNode::NullStatus::Unknown && delta->approximateToScalar<double>(context, complexFormat, angleUnit) == 0.))
   {
     *root1 = Division::Builder(Opposite::Builder(b.clone()), Multiplication::Builder(Rational::Builder(2), a.clone()));
     *root2 = Undefined::Builder();
+    multipleRoot = true;
   } else {
     *root1 = Division::Builder(
         Subtraction::Builder(Opposite::Builder(b.clone()), SquareRoot::Builder(delta->clone())),
@@ -51,7 +53,11 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   if (!approximateSolutions) {
     *root1 = root1->simplify(reductionContext);
     *root2 = root2->simplify(reductionContext);
-    if (root1->isUninitialized() || root2->isUninitialized()) {
+    if (root1->isUninitialized()
+     || root2->isUninitialized()
+     || root1->type() == ExpressionNode::Type::Undefined
+     || (!multipleRoot && root2->type() == ExpressionNode::Type::Undefined))
+    {
       // Simplification has been interrupted, recompute approximated roots.
       return QuadraticPolynomialRoots(a, b, c, root1, root2, delta, context, complexFormat, angleUnit, true);
     }
@@ -112,7 +118,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       Multiplication::Builder(Rational::Builder(-4), d.clone(), Power::Builder(b.clone(), Rational::Builder(3)))});
   if (!approximate) {
     *delta = delta->simplify(reductionContext);
-    if (delta->isUninitialized()) {
+    if (delta->isUninitialized() || delta->type() == ExpressionNode::Type::Undefined) {
       // Simplification has been interrupted, recompute approximated roots.
       approximate = true;
       if (approximateSolutions != nullptr) {
@@ -275,9 +281,16 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   /* Simplify the results with the correct complexFormat */
   if (!approximate) {
     *root1 = root1->simplify(reductionContext);
-    *root2 = root2->simplify(reductionContext);
-    *root3 = root3->simplify(reductionContext);
-    if (root1->isUninitialized() || root2->isUninitialized() || root3->isUninitialized()) {
+    bool simplificationInterrupted = root1->isUninitialized() || root1->type() == ExpressionNode::Type::Undefined;
+    if (root2->isUninitialized() || root2->type() != ExpressionNode::Type::Undefined) {
+      *root2 = root2->simplify(reductionContext);
+      simplificationInterrupted |= root2->isUninitialized() || root2->type() == ExpressionNode::Type::Undefined;
+    }
+    if (root3->isUninitialized() || root3->type() != ExpressionNode::Type::Undefined) {
+      *root3 = root3->simplify(reductionContext);
+      simplificationInterrupted |= root3->isUninitialized() || root3->type() == ExpressionNode::Type::Undefined;
+    }
+    if (simplificationInterrupted) {
       // Simplification has been interrupted, recompute approximated roots.
       approximate = true;
       if (approximateSolutions != nullptr) {

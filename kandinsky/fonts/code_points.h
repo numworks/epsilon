@@ -6,7 +6,8 @@
 
 
 /* This array lists the code points that are rasterized by rasterizer.c. We put
- * most characters from the LATIN charset, and some mathematical characters. */
+ * most characters from the LATIN charset, and some mathematical characters.
+ * WARNING: the array has to be sorted. */
 
 uint32_t CodePoints[] = {
   0x20, //   // SPACE

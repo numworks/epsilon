@@ -120,7 +120,7 @@ Event sharedGetEvent(int * timeout) {
     int delayForRepeat = INT_MAX;
     bool isRepeatableEvent = canRepeatEvent(sLastEvent)
                           && sLastKeyboardState == sCurrentKeyboardState
-                          && sLastEventShift == sCurrentKeyboardState.keyDown(Keyboard::Key::Shift)
+                          && sLastEventShift == (sCurrentKeyboardState.keyDown(Keyboard::Key::Shift) || (sLastEventShift && lock))
                           && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Keyboard::Key::Alpha) || lock);
     if (isRepeatableEvent) {
       delayForRepeat = sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat;

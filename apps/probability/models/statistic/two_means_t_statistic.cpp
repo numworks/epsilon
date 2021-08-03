@@ -15,8 +15,8 @@ TwoMeansTStatistic::TwoMeansTStatistic() {
   m_params[ParamsOrder::X1] = 20;
   m_params[ParamsOrder::N1] = 50;
   m_params[ParamsOrder::S1] = 2;
-  m_params[ParamsOrder::X2] = 40;
-  m_params[ParamsOrder::N2] = 60;
+  m_params[ParamsOrder::X2] = 19;
+  m_params[ParamsOrder::N2] = 50;
   m_params[ParamsOrder::S2] = 2;
 }
 

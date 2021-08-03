@@ -702,6 +702,30 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* Step 9
+   * Depending on the target, the constant 𝐢 is not always reduced to a
+   * cartesian, but its rational power can be simplified nonetheless. */
+  if (baseType == ExpressionNode::Type::Constant && static_cast<Constant &>(base).isIComplex()) {
+    Expression result;
+    Integer numerator = rationalIndex.signedIntegerNumerator();
+    Integer four(4);
+    Integer rem = Integer::Division(numerator, four).remainder;
+    if (rem.isZero()) {
+      result = Rational::Builder(1);
+    } else if (rem.isOne()) {
+      result = base;
+    } else if (rem.isTwo()) {
+      result = Rational::Builder(-1);
+    } else if (rem.isThree()) {
+      result = Multiplication::Builder({ Rational::Builder(-1), base });
+    }
+    Integer one(1);
+    Integer denominator = rationalIndex.integerDenominator();
+    Power p = Power::Builder(result, Rational::Builder(one, denominator));
+    replaceWithInPlace(p);
+    return std::move(p);
+  }
+
+  /* Step 10
    * Distribute power over the multiplication */
   int baseChildren = base.numberOfChildren();
   if (baseType == ExpressionNode::Type::Multiplication) {
@@ -740,7 +764,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
-  /* Step 10
+  /* Step 11
    * Merge with the base if it is a power: (a^b)^c -> a^(b*c)
    * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
    * This rule is true if:
@@ -791,10 +815,10 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
-  /* Step 11
+  /* Step 12
    * Handle the case where base is an addition. */
   if (baseType == ExpressionNode::Type::Addition) {
-    /* Step 11.1
+    /* Step 12.1
      * Develop the multinome if index is an integer, unless the target is
      * SystemForApproximation, as developping would increase the number of
      * operations and thus reduce precision. */
@@ -855,14 +879,14 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
     }
 
-    /* Step 11.2
+    /* Step 12.2
      * Special simplifications available on sums of two square roots. */
     Expression a, b, c, d;
     if (baseChildren == 2
      && SquareRoot::SplitRadical(base.childAtIndex(0).clone(), &a, &b)
      && SquareRoot::SplitRadical(base.childAtIndex(1).clone(), &c, &d))
     {
-      /* Step 11.2.1
+      /* Step 12.2.1
        * √(a√b + c√d) */
       if (rationalIndex.isHalf() || rationalIndex.isMinusHalf()) {
         Expression e = SquareRoot::ReduceNestedRadicals(a, b, c, d, reductionContext);
@@ -877,7 +901,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
           }
         }
       }
-      /* Step 11.2.2
+      /* Step 12.2.2
        * 1/(a√b + c√d) */
       if (rationalIndex.isMinusOne()) {
         /* We're considering a term of the form
@@ -947,7 +971,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
     }
 
-    /* Step 11.3
+    /* Step 12.3
      * Try to reduce √(a^2±2ab+b^2) */
     if (baseChildren == 3 && (rationalIndex.isHalf() || rationalIndex.isMinusHalf())) {
       int squareIndex = indexOfChildWithSquare(base);

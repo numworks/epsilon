@@ -39,7 +39,7 @@ public:
 
   void recomputeNumberOfRows();
 
-  constexpr static int k_minimumNumberOfRows = 4;
+  constexpr static int k_minimumNumberOfRows = 2;
 
   using Escher::SelectableTableView::unhighlightSelectedCell;  // Made public
 

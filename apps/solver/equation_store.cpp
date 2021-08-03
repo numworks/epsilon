@@ -177,8 +177,6 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool
  * between the bounds provided by the user. */
 
 EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
-  tidySolution();
-
   m_userVariablesUsed = !replaceFunctionsButNotSymbols;
 
   // Step 1. Get unknown and user-defined variables
@@ -326,6 +324,11 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
       solutionIndex++;
     }
   }
+  // Assert the remaining layouts had been properly tidied.
+  assert(error != Error::NoError
+     || solutionIndex >= k_maxNumberOfExactSolutions
+     || (m_exactSolutionExactLayouts[solutionIndex].isUninitialized()
+      && m_exactSolutionApproximateLayouts[solutionIndex].isUninitialized()));
   return error;
 }
 

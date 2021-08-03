@@ -1,6 +1,7 @@
 #include <poincare/division_quotient.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -54,8 +55,9 @@ Expression DivisionQuotient::setSign(ExpressionNode::Sign s, ExpressionNode::Red
   ExpressionNode::Sign selfSign = sign(reductionContext.context());
   assert(selfSign == ExpressionNode::Sign::Positive || selfSign == ExpressionNode::Sign::Negative);
   if (selfSign != s) {
-    ExpressionNode::Sign newDivisorChild = childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Positive ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
-    replaceChildAtIndexInPlace(1, childAtIndex(1).setSign(newDivisorChild, reductionContext));
+    Multiplication m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
+    replaceChildAtIndexInPlace(1, m);
+    m.shallowReduce(reductionContext);
   }
   return *this;
 }

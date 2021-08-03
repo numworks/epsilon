@@ -19,7 +19,7 @@ Poincare::Layout Chi2Statistic::testCriticalValueSymbol() {
   return Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder(UCodePointGreekSmallLetterChi),
       Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('2', KDFont::SmallFont),
+          Poincare::CodePointLayout::Builder('2', KDFont::LargeFont),
           Poincare::VerticalOffsetLayoutNode::Position::Superscript));
 }
 

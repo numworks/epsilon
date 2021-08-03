@@ -52,42 +52,42 @@ ParameterRepr TwoMeansZStatistic::paramReprAtIndex(int i) const {
     case ParamsOrder::X1: {
       HorizontalLayout x1 = HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepr{x1, I18n::Message::Sample1Mean};
     }
     case ParamsOrder::N1: {
       HorizontalLayout n1 = HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepr{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma1: {
       HorizontalLayout sigma1 = HorizontalLayout::Builder(
           CodePointLayout::Builder(CodePoint(UCodePointGreekSmallLetterSigma)),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::SmallFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepr{sigma1, I18n::Message::Sample1Std};
     }
     case ParamsOrder::X2: {
       HorizontalLayout x2 = HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepr{x2, I18n::Message::Sample2Mean};
     }
     case ParamsOrder::N2: {
       HorizontalLayout n2 = HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepr{n2, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma2: {
       HorizontalLayout sigma2 = HorizontalLayout::Builder(
           CodePointLayout::Builder(CodePoint(UCodePointGreekSmallLetterSigma)),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepr{sigma2, I18n::Message::Sample2Std};
     }

@@ -51,8 +51,6 @@ public:
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_rowHeight = 20;
 
-  constexpr static int k_initialNumberOfRows = 4;
-  constexpr static int k_initialNumberOfColumns = 3;
   constexpr static int k_maxNumberOfColumns = HomogeneityStatistic::k_maxNumberOfColumns;
   constexpr static int k_maxNumberOfRows = HomogeneityStatistic::k_maxNumberOfRows;
   constexpr static int k_numberOfReusableRows = (Ion::Display::Height -

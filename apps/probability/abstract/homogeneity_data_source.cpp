@@ -5,9 +5,6 @@
 
 using namespace Probability;
 
-constexpr int HomogeneityTableDataSource::k_initialNumberOfRows;
-constexpr int HomogeneityTableDataSource::k_initialNumberOfColumns;
-
 HomogeneityTableDataSource::HomogeneityTableDataSource(
     TableViewDataSource * contentTable,
     Escher::SelectableTableViewDelegate * tableDelegate,

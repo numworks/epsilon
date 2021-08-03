@@ -1,5 +1,6 @@
 #include "list_controller.h"
 #include "app.h"
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/variable_context.h>
 #include <assert.h>
@@ -170,34 +171,41 @@ void ListController::resolveEquations() {
     Container::activeApp()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  bool resultWithoutUserDefinedSymbols = false;
-  EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext(), &resultWithoutUserDefinedSymbols);
-  switch (e) {
-    case EquationStore::Error::EquationUndefined:
-      Container::activeApp()->displayWarning(I18n::Message::UndefinedEquation);
-      return;
-    case EquationStore::Error::EquationUnreal:
-      Container::activeApp()->displayWarning(I18n::Message::UnrealEquation);
-      return;
-    case EquationStore::Error::TooManyVariables:
-      Container::activeApp()->displayWarning(I18n::Message::TooManyVariables);
-      return;
-    case EquationStore::Error::NonLinearSystem:
-      Container::activeApp()->displayWarning(I18n::Message::NonLinearSystem);
-      return;
-    case EquationStore::Error::RequireApproximateSolution:
-    {
-      reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
-      stackController()->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
-      return;
+  // Tidy model before checkpoint, during which older TreeNodes can't be altered
+  modelStore()->tidy();
+  Poincare::UserCircuitBreakerCheckpoint checkpoint;
+  if (CircuitBreakerRun(checkpoint)) {
+    bool resultWithoutUserDefinedSymbols = false;
+    EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext(), &resultWithoutUserDefinedSymbols);
+    switch (e) {
+      case EquationStore::Error::EquationUndefined:
+        Container::activeApp()->displayWarning(I18n::Message::UndefinedEquation);
+        return;
+      case EquationStore::Error::EquationUnreal:
+        Container::activeApp()->displayWarning(I18n::Message::UnrealEquation);
+        return;
+      case EquationStore::Error::TooManyVariables:
+        Container::activeApp()->displayWarning(I18n::Message::TooManyVariables);
+        return;
+      case EquationStore::Error::NonLinearSystem:
+        Container::activeApp()->displayWarning(I18n::Message::NonLinearSystem);
+        return;
+      case EquationStore::Error::RequireApproximateSolution:
+      {
+        reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
+        stackController()->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+        return;
+      }
+      default:
+      {
+        assert(e == EquationStore::Error::NoError);
+        StackViewController * stack = stackController();
+        reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
+        stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      }
     }
-    default:
-    {
-      assert(e == EquationStore::Error::NoError);
-      StackViewController * stack = stackController();
-      reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
-      stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
-    }
+  } else {
+    modelStore()->tidy();
   }
 }
 

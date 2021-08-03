@@ -22,7 +22,7 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
-  void viewDidDisappear() override { selectCellAtLocation(-1, -1); }
+  void viewDidDisappear() override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   TELEMETRY_ID("Solutions");
 

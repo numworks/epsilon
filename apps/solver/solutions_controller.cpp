@@ -159,6 +159,14 @@ void SolutionsController::viewWillAppear() {
   selectCellAtLocation(0, 0);
 }
 
+void SolutionsController::viewDidDisappear() {
+  selectCellAtLocation(-1, -1);
+  // Destroy exact cell's layouts
+  for (size_t i = 0; i < k_numberOfExactValueCells; i++) {
+    m_exactValueCells[i].setLayouts(Poincare::Layout(), Poincare::Layout());
+  }
+}
+
 void SolutionsController::didEnterResponderChain(Responder * previousFirstResponder) {
   // Select the most left present subview on all cells and reinitialize scroll
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {

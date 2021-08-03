@@ -26,6 +26,7 @@ void solve_and_process_error(std::initializer_list<const char *> equations, T &&
     model->setContent(equation, &globalContext);
   }
   bool replaceFunctionsButNotSymbols = false;
+  equationStore.tidy();
   EquationStore::Error err = equationStore.exactSolve(&globalContext, &replaceFunctionsButNotSymbols);
   lambda(&equationStore, err);
   equationStore.removeAll();

@@ -6,15 +6,16 @@
 
 namespace Probability {
 
+constexpr int InputHomogeneityDataSource::k_initialNumberOfRows;
+constexpr int InputHomogeneityDataSource::k_initialNumberOfColumns;
+
 InputHomogeneityDataSource::InputHomogeneityDataSource(
-    SelectableTableView * tableView,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
-    HomogeneityStatistic * statistic,
-    TextFieldDelegate * textFieldDelegate,
+    SelectableTableView * tableView, InputEventHandlerDelegate * inputEventHandlerDelegate,
+    HomogeneityStatistic * statistic, TextFieldDelegate * textFieldDelegate,
     DynamicTableViewDataSourceDelegate * dataSourceDelegate) :
     DynamicTableViewDataSource(dataSourceDelegate),
-    m_numberOfRows(HomogeneityTableDataSource::k_initialNumberOfRows),
-    m_numberOfColumns(HomogeneityTableDataSource::k_initialNumberOfColumns),
+    m_numberOfRows(k_initialNumberOfRows),
+    m_numberOfColumns(k_initialNumberOfColumns),
     m_statistic(statistic) {
   for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
     m_cells[i].setParentResponder(tableView);
@@ -30,16 +31,13 @@ HighlightCell * InputHomogeneityDataSource::reusableCell(int i, int type) {
 
 void InputHomogeneityDataSource::recomputeDimensions() {
   HomogeneityStatistic::Index2D dimensions = m_statistic->computeDimensions();
-  m_numberOfRows = std::max(HomogeneityTableDataSource::k_initialNumberOfRows, dimensions.row + 1);
-  m_numberOfColumns = std::max(HomogeneityTableDataSource::k_initialNumberOfColumns,
-                               dimensions.col + 1);
+  m_numberOfRows = std::max(k_initialNumberOfRows, dimensions.row + 1);
+  m_numberOfColumns = std::max(k_initialNumberOfColumns, dimensions.col + 1);
   DynamicTableViewDataSource::notify();
 }
 
 void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
-    Escher::HighlightCell * cell,
-    int column,
-    int row) {
+    Escher::HighlightCell * cell, int column, int row) {
   float p = m_statistic->parameterAtPosition(row, column);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   if (std::isnan(p)) {

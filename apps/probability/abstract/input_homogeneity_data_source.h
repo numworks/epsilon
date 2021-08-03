@@ -37,6 +37,9 @@ public:
   void recomputeDimensions();
 
 private:
+  constexpr static int k_initialNumberOfRows = 2;
+  constexpr static int k_initialNumberOfColumns = 2;
+
   int m_numberOfRows;
   int m_numberOfColumns;
 

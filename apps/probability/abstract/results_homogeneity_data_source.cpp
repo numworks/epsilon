@@ -9,7 +9,7 @@ ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic 
   for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
     m_cells[i].setFont(KDFont::SmallFont);
     m_cells[i].setText("1");
-    m_cells[i].setEven(i % HomogeneityTableDataSource::k_initialNumberOfRows == 0);
+    m_cells[i].setEven(i % 4 /* TODO */ == 0);
   }
 }
 

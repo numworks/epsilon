@@ -32,6 +32,8 @@ double NumberNode::doubleApproximation() const {
       return static_cast<const RationalNode *>(this)->templatedApproximate<double>();
     case Type::BasedInteger:
       return static_cast<const BasedIntegerNode *>(this)->templatedApproximate<double>();
+    case Type::Decimal:
+      return static_cast<const DecimalNode *>(this)->templatedApproximate<double>();
     default:
       assert(false);
       return 0.0;

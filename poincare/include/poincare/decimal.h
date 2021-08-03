@@ -17,6 +17,7 @@ class Decimal;
 
 class DecimalNode final : public NumberNode {
   friend class Decimal;
+  friend class NumberNode;
 public:
   DecimalNode(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative);
 

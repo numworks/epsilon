@@ -11,6 +11,15 @@ using namespace Poincare;
 
 namespace Probability {
 
+TwoMeansZStatistic::TwoMeansZStatistic() {
+  m_params[ParamsOrder::X1] = 20;
+  m_params[ParamsOrder::Sigma1] = 2;
+  m_params[ParamsOrder::N1] = 50;
+  m_params[ParamsOrder::X2] = 19;
+  m_params[ParamsOrder::Sigma2] = 2;
+  m_params[ParamsOrder::N2] = 50;
+}
+
 bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {
   switch (i) {
     case ParamsOrder::N1:
@@ -91,13 +100,8 @@ float TwoMeansZStatistic::_xEstimate(float meanSample1, float meanSample2) {
   return meanSample1 - meanSample2;
 }
 
-float TwoMeansZStatistic::_z(float deltaMean,
-                             float meanSample1,
-                             float n1,
-                             float sigma1,
-                             float meanSample2,
-                             float n2,
-                             float sigma2) {
+float TwoMeansZStatistic::_z(float deltaMean, float meanSample1, float n1, float sigma1,
+                             float meanSample2, float n2, float sigma2) {
   return absIfNeeded(((meanSample1 - meanSample2) - (deltaMean)) / _SE(sigma1, n1, sigma2, n2));
 }
 

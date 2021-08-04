@@ -44,8 +44,8 @@ public:
   bool textFieldDidAbortEditing(TextField * textField) override;
 
   void openPage(ViewController * nextPage,
-                KDColor backgroundColor = Palette::GrayDark,
-                KDColor separatorColor = Palette::GrayDark,
+                KDColor backgroundColor = s_titleColor,
+                KDColor separatorColor = s_titleColor,
                 KDColor textColor = KDColorWhite) {
     FloatParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }
@@ -56,6 +56,8 @@ protected:
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
 private:
+  static KDColor s_titleColor;
+
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;

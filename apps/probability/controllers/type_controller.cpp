@@ -75,6 +75,9 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     *m_globalTestType = t;
     openPage(view);
     return true;
+  } else if (event == Ion::Events::Left) {
+    stackViewController()->pop();
+    return true;
   }
   return false;
 }

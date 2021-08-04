@@ -59,6 +59,14 @@ const char * Probability::HypothesisController::title() {
   return m_titleBuffer;
 }
 
+bool Probability::HypothesisController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    stackViewController()->pop();
+    return true;
+  }
+  return false;
+}
+
 // TextFieldDelegate
 bool Probability::HypothesisController::textFieldDidReceiveEvent(Escher::TextField * textField,
                                                                  Ion::Events::Event event) {

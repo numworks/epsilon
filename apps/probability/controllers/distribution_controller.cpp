@@ -50,10 +50,13 @@ void Probability::DistributionController::didBecomeFirstResponder() {
 }
 
 bool Probability::DistributionController::handleEvent(Ion::Events::Event event) {
+  StackViewController * stack = (StackViewController *)parentResponder();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    StackViewController * stack = (StackViewController *)parentResponder();
     setDistributionAccordingToIndex(selectedRow());
     stack->push(m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+    return true;
+  } else if (event == Ion::Events::Left) {
+    stack->pop();
     return true;
   }
   return false;

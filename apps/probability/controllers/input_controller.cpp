@@ -136,6 +136,14 @@ Escher::HighlightCell * InputController::reusableParameterCell(int index, int ty
   return &m_significanceCell;
 }
 
+bool Probability::InputController::handleEvent(Ion::Events::Event event) {
+  if ((App::app()->subapp() == Data::SubApp::Intervals) && (event == Ion::Events::Left)) {
+    stackViewController()->pop();
+    return true;
+  }
+  return false;
+}
+
 bool Probability::InputController::textFieldDidFinishEditing(Escher::TextField * textField,
                                                              const char * text,
                                                              Ion::Events::Event event) {

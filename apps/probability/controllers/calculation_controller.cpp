@@ -88,6 +88,14 @@ void CalculationController::didBecomeFirstResponder() {
   m_dropdown.init();
 }
 
+bool CalculationController::handleEvent(Ion::Events::Event event) {
+  if (m_selectableTableView.selectedColumn() == 0 && event == Ion::Events::Down) {
+    m_dropdown.open();
+    return true;
+  }
+  return false;
+}
+
 void CalculationController::viewWillAppear() {
   ViewController::viewWillAppear();
   selectCellAtLocation(1, 0);

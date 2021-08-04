@@ -24,6 +24,7 @@ class CalculationController : public Escher::ViewController,
   /* Responder */
   void didEnterResponderChain(Escher::Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
   Escher::View * view() override { return &m_contentView; }

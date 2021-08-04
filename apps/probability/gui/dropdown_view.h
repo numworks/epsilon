@@ -108,6 +108,8 @@ public:
   void init();
   int selectedRow() { return m_popup.selectedRow(); }
 
+  void open();
+
 private:
   DropdownPopupController m_popup;
 };

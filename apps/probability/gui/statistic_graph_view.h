@@ -39,7 +39,7 @@ protected:
 private:
   Escher::View * conclusionView();
 
-  constexpr static int k_conclusionViewHeight = 40;
+  constexpr static int k_conclusionViewHeight = 50;
   constexpr static int k_separatorWidth = 14;
   constexpr static int k_legendMarginRight = 10;
   constexpr static int k_legendMarginTop = 10;

@@ -1,7 +1,7 @@
 #ifndef APPS_PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
 #define APPS_PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
 
-#include <escher/message_text_view.h>
+#include <escher/expression_view.h>
 #include <escher/palette.h>
 
 #include "probability/gui/horizontal_or_vertical_layout.h"
@@ -16,18 +16,19 @@ public:
   enum class Type { Success, Failure };
   TestConclusionView();
   void setType(Type t);
-  int numberOfSubviews() const override { return 2; }
+  int numberOfSubviews() const override { return 3; }
   Escher::View * subviewAtIndex(int i) override;
   void layoutSubviews(bool force) override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
 private:
-  constexpr static int k_marginBetween = 20;
+  constexpr static int k_marginBetween = 0;
   constexpr static int k_marginLeft = 20;
   constexpr static int k_iconSize = 14;
 
   HighlightImageCell m_icon;
-  Escher::MessageTextView m_textView;
+  Escher::ExpressionView m_textView1;
+  Escher::MessageTextView m_textView2;
 };
 
 }  // namespace Probability

@@ -156,16 +156,7 @@ Dropdown::Dropdown(Escher::Responder * parentResponder,
 
 bool Dropdown::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
-    // Reload popup list
-    m_popup.m_popupListDataSource.resetMemoization();
-    m_popup.m_selectableTableView.reloadData(false);
-
-    KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
-    Escher::Container::activeApp()->displayModalViewController(&m_popup,
-                                                               0.f,
-                                                               0.f,
-                                                               topLeftAngle.y(),
-                                                               topLeftAngle.x());
+    open();
     return true;
   }
   return false;
@@ -190,6 +181,19 @@ void Dropdown::init() {
   }
   setInnerCell(
       m_popup.m_popupListDataSource.innerCellAtIndex(m_popup.m_selectionDataSource.selectedRow()));
+}
+
+void Dropdown::open() {
+  // Reload popup list
+  m_popup.m_popupListDataSource.resetMemoization();
+  m_popup.m_selectableTableView.reloadData(false);
+
+  KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
+  Escher::Container::activeApp()->displayModalViewController(&m_popup,
+                                                             0.f,
+                                                             0.f,
+                                                             topLeftAngle.y(),
+                                                             topLeftAngle.x());
 }
 
 }  // namespace Probability

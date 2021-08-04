@@ -47,7 +47,7 @@ void StatisticGraphView::layoutSubviews(bool force) {
   }
   conclusionView()->setFrame(
       KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)),
-      force);
+      true);
   KDSize k_legendSize = m_legend.minimalSizeForOptimalDisplay();
   KDPoint legendOrigin = m_legendPosition == LegendPosition::Left
                              ? KDPoint(k_legendMarginRight, k_legendMarginTop)

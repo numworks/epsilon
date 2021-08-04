@@ -714,7 +714,9 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       e.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, &approximateChild, userReductionContext, context, complexFormat, angleUnit);
       static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
       if (approximateExpression) {
-        static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild, i, i);
+        /* Clone the child in case it was set to the same node as simplified
+         * child. This can happen when beautifying an unreduced matrix. */
+        static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild.clone(), i, i);
       }
     }
     static_cast<Matrix *>(simplifiedExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());

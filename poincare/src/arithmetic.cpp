@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-bool Arithmetic::s_lock = false;
+Arithmetic * Arithmetic::s_lock = nullptr;
 
 Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
   if (a.isOverflow() || b.isOverflow()) {
@@ -160,19 +160,12 @@ const short primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 
 // we can go to 7907*7907 = 62 520 649
 int Arithmetic::PrimeFactorization(const Integer & n) {
   assert(!n.isOverflow());
-
-  /* Check no other Arithmetic instance is under lock.
-   * Because of preemption events, prime factorization can be entirely
-   * interrupted. Lock is therefore ignored and previous artefacts are cleaned.
-   * We still assert the lock is free to debug any implementation errors.
-   * It is then possible, but quite unlikely, to trigger this assert. */
+  // Reset static arrays if they were used by another instance of Arithmetic
   if (s_lock) {
     resetLock();
-    assert(false);
   }
-
   // Lock Prime factorization
-  s_lock = true;
+  s_lock = this;
 
   // Compute the absolute value of n
   Integer m = n;
@@ -229,11 +222,14 @@ int Arithmetic::PrimeFactorization(const Integer & n) {
 }
 
 int Arithmetic::PositiveDivisors(const Integer & i) {
-  // Check no other Arithmetic instance is under lock
+  assert(!i.isOverflow());
+  // Reset static arrays if they were used by another instance of Arithmetic
   if (s_lock) {
-    assert(false);
-    return k_errorAlreadyInUse;
+    resetLock();
   }
+  // Lock divisors
+  s_lock = this;
+
   if (i.isZero()) {
     return k_errorTooManyFactors;
   }
@@ -243,8 +239,6 @@ int Arithmetic::PositiveDivisors(const Integer & i) {
     return k_errorFactorTooLarge;
   }
   int iInt = iClone.extractedInt();
-  // Lock Prime factorization
-  s_lock = true;
   int numberOfDivisors = 0;
   // Except himself, all divisors of i are under i/2
   int kEnd = iInt/2;
@@ -267,11 +261,11 @@ int Arithmetic::PositiveDivisors(const Integer & i) {
 void Arithmetic::resetLock() {
   // Clean Factors and coefficients arrays
   for (int i = 0; i < k_maxNumberOfFactors; ++i) {
-    *factorAtIndex(i) = Integer();
-    *coefficientAtIndex(i) = Integer();
+    factors()[i] = Integer();
+    coefficients()[i] = Integer();
   }
   // Unlock Prime Factorization
-  s_lock = false;
+  s_lock = nullptr;
 }
 
 template Evaluation<double> Arithmetic::GCD<double>(const ExpressionNode & expressionNode, ExpressionNode::ApproximationContext approximationContext);

@@ -75,14 +75,10 @@ CalculationController::CalculationController(Responder * parentResponder,
   firstImageCell->setImage(ImageStore::Calculation1Icon);
 }
 
-void CalculationController::didEnterResponderChain(Responder * previousResponder) {
-  App::app()->setPage(Data::Page::Calculations);
+void CalculationController::didBecomeFirstResponder() {
   updateTitle();
   reloadDistributionCurveView();
   m_selectableTableView.reloadData();
-}
-
-void CalculationController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::ProbaGraph);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
   m_dropdown.init();
@@ -203,12 +199,11 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField,
 
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField,
                                                          Ion::Events::Event event) {
-  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
-          || (event == Ion::Events::Right
-              && textField->cursorLocation() == textField->text() + textField->draftTextLength()
-              && selectedColumn() < m_calculation->numberOfParameters())
-          || (event == Ion::Events::Left
-              && textField->cursorLocation() == textField->text());
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
+         (event == Ion::Events::Right &&
+          textField->cursorLocation() == textField->text() + textField->draftTextLength() &&
+          selectedColumn() < m_calculation->numberOfParameters()) ||
+         (event == Ion::Events::Left && textField->cursorLocation() == textField->text());
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField,
@@ -276,6 +271,7 @@ void CalculationController::onDropdownSelected(int selectedRow) {
 }
 
 void CalculationController::updateTitle() {
+  // TODO use sprintf
   int currentChar = 0;
   for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
     /* strlcpy returns the size of src, not the size copied, but it is not a

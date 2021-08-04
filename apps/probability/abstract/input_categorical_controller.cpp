@@ -51,6 +51,14 @@ void InputCategoricalController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);
 }
 
+bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    stackViewController()->pop();
+    return true;
+  }
+  return false;
+}
+
 bool InputCategoricalController::buttonAction() {
   m_statistic->computeTest();
   openPage(m_resultsController);

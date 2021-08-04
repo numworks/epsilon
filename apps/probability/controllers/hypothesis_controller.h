@@ -40,6 +40,7 @@ public:
     return ViewController::TitlesDisplay::DisplayLastTitle;
   };
   const char * title() override;
+  bool handleEvent(Ion::Events::Event event) override;
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
   void didBecomeFirstResponder() override;

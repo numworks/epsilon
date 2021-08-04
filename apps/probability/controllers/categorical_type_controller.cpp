@@ -65,6 +65,9 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
     }
     openPage(view);
     return true;
+  } else if (event == Ion::Events::Left) {
+    stackViewController()->pop();
+    return true;
   }
   return false;
 }

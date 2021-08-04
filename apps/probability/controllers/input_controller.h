@@ -32,6 +32,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override;
   int typeAtIndex(int i) override;
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,

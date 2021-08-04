@@ -33,6 +33,7 @@ public:
 
   // Responder
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
   // ButtonDelegate
   bool buttonAction() override;
 

@@ -55,7 +55,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
     *root2 = root2->simplify(reductionContext);
     if (root1->isUninitialized()
      || root2->isUninitialized()
-     || root1->type() == ExpressionNode::Type::Undefined
+     || root1->type() == ExpressionNode::Type::Undefined
      || (!multipleRoot && root2->type() == ExpressionNode::Type::Undefined))
     {
       // Simplification has been interrupted, recompute approximated roots.

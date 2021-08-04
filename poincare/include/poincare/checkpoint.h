@@ -10,6 +10,8 @@
  * to forget the Checkpoint once the interruptable code is executed. Indeed,
  * the scope calls the checkpoint destructor, which invalidate the current
  * checkpoint.
+ * Also, any node stored under TopmostEndOfPoolBeforeCheckpoint should not be
+ * altered.
 
 void interruptableCode() {
   Poincare::Checkpoint cp;
@@ -29,10 +31,12 @@ namespace Poincare {
 class Checkpoint {
 public:
   Checkpoint() : m_endOfPoolBeforeCheckpoint(TreePool::sharedPool()->last()) {}
+  static TreeNode * TopmostEndOfPoolBeforeCheckpoint();
+  TreeNode * getEndOfPoolBeforeCheckpoint() const { return m_endOfPoolBeforeCheckpoint; }
 protected:
   virtual void rollback() { Poincare::TreePool::sharedPool()->freePoolFromNode(m_endOfPoolBeforeCheckpoint); }
 private:
-  TreeNode * m_endOfPoolBeforeCheckpoint;
+  TreeNode * const m_endOfPoolBeforeCheckpoint;
 };
 
 }

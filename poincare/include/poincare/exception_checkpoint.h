@@ -26,10 +26,12 @@ public:
 
   bool setActive(bool interruption);
   jmp_buf * jumpBuffer() { return &m_jumpBuffer; }
+  static TreeNode * TopmostEndOfPoolBeforeCheckpoint() {
+    return s_topmostExceptionCheckpoint ? s_topmostExceptionCheckpoint->getEndOfPoolBeforeCheckpoint() : nullptr;
+  }
+  static ExceptionCheckpoint * s_topmostExceptionCheckpoint;
 private:
   void rollback() override;
-
-  static ExceptionCheckpoint * s_topmostExceptionCheckpoint;
 
   jmp_buf m_jumpBuffer;
   ExceptionCheckpoint * m_parent;

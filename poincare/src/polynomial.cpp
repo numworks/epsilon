@@ -4,7 +4,6 @@
 #include <poincare/complex_argument.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/division.h>
-#include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
 #include <poincare/imaginary_part.h>
 #include <poincare/least_common_multiple.h>
@@ -382,50 +381,36 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
 
   Integer a0Divisors[Arithmetic::k_maxNumberOfDivisors];
   int a0NumberOfDivisors, aNNumberOfDivisors;
-  {
-    ExceptionCheckpoint ecp;
-    if (ExceptionRun(ecp)) {
-      Arithmetic arithmetic;
-      /* We need to compare two lists of divisors, but Arithmetic only allows
-       * access to one list of factors. We thus need to store the first list in
-       * its own buffer. */
-      a0NumberOfDivisors = arithmetic.PositiveDivisors(a0Int);
-      for (int i = 0; i < a0NumberOfDivisors; i++) {
-        a0Divisors[i] = *arithmetic.divisorAtIndex(i);
-      }
-    } else {
-      Arithmetic::resetLock();
-      return Expression();
-    }
+
+  Arithmetic arithmetic;
+  /* We need to compare two lists of divisors, but Arithmetic only allows
+    * access to one list of factors. We thus need to store the first list in
+    * its own buffer. */
+  a0NumberOfDivisors = arithmetic.PositiveDivisors(a0Int);
+  for (int i = 0; i < a0NumberOfDivisors; i++) {
+    a0Divisors[i] = *arithmetic.divisorAtIndex(i);
   }
 
-  {
-    ExceptionCheckpoint ecp;
-    if (ExceptionRun(ecp)) {
-      Arithmetic arithmetic;
-      aNNumberOfDivisors = arithmetic.PositiveDivisors(aNInt);
-      for (int i = 0; i < a0NumberOfDivisors; i++) {
-        for (int j = 0; j < aNNumberOfDivisors; j++) {
-          /* If i and j are not coprime, i/j has already been tested. */
-          Integer p = a0Divisors[i], q = *arithmetic.divisorAtIndex(j);
-          if (Arithmetic::GCD(p, q).isOne()) {
-            Rational r = Rational::Builder(p, q);
-            if (ReduceRationalPolynomial(rationalCoefficients, degree, r).isZero()) {
-              return std::move(r);
-            }
-            r = Rational::Multiplication(Rational::Builder(-1), r);
-            if (ReduceRationalPolynomial(rationalCoefficients, degree, r).isZero()) {
-              return std::move(r);
-            }
-          }
+  // Reset Arithmetic lock before computing aNInt divisors
+  Arithmetic::resetLock();
+
+  aNNumberOfDivisors = arithmetic.PositiveDivisors(aNInt);
+  for (int i = 0; i < a0NumberOfDivisors; i++) {
+    for (int j = 0; j < aNNumberOfDivisors; j++) {
+      /* If i and j are not coprime, i/j has already been tested. */
+      Integer p = a0Divisors[i], q = *arithmetic.divisorAtIndex(j);
+      if (Arithmetic::GCD(p, q).isOne()) {
+        Rational r = Rational::Builder(p, q);
+        if (ReduceRationalPolynomial(rationalCoefficients, degree, r).isZero()) {
+          return std::move(r);
+        }
+        r = Rational::Multiplication(Rational::Builder(-1), r);
+        if (ReduceRationalPolynomial(rationalCoefficients, degree, r).isZero()) {
+          return std::move(r);
         }
       }
-    } else {
-      Arithmetic::resetLock();
-      return Expression();
     }
   }
-
   return Expression();
 }
 

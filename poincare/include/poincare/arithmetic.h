@@ -24,44 +24,40 @@ public:
   constexpr static int k_maxNumberOfDivisors = 2 * k_maxNumberOfFactors;
   constexpr static int k_errorTooManyFactors = -1;
   constexpr static int k_errorFactorTooLarge = -2;
-  constexpr static int k_errorAlreadyInUse = -3;
 
   /* To save memory on stack, arrays of factor and coefficients for prime
-   * factorization are static and shared.
-   * An error is returned if a second non-destructed instance of Arithmetic
-   * calls PrimeFactorization. This situation must be prevented. */
+   * factorization are static and shared. When calling PrimeFactorization or
+   * PositiveDivisors from an Arithmetic instance, statics elements are locked
+   * and only accessible from this instance. */
   Arithmetic() {}
   ~Arithmetic() { resetLock(); }
 
   /* When output is negative that indicates a special case:
    *  - -1 : too many factors.
    *  - -2 : a prime factor is too big.
-   *  - -3 : an other instance is using prime factorization
    * Before calling PrimeFactorization, we instantiate an Arithmetic object.
-   * Outputs are retrieved using getFactorization_(index) methods. */
+   * Outputs are retrieved using (factor|coefficient|divisor)AtIndex(index)
+   * methods. */
   int PrimeFactorization(const Integer & i);
   /* Method PositiveDivisors follows the same API as PrimeFactorization, as it
    * uses the same array. */
   int PositiveDivisors(const Integer & i);
 
-  /* Factorization's lock can be compromised if an exception is raised while it
-   * is locked. To prevent that, any prime factorization must be enclosed within
-   * an intermediary ExceptionCheckpoint. resetPrimeFactorization() shall be
-   * called in the associated ErrorHandler and, once the intermediary
-   * ExceptionCheckpoint has been destroyed, another exception shall be manually
-   * raised to fall back on the intended checkpoint. */
   static void resetLock();
 
-  static Integer * factorAtIndex(int index) {
+  Integer * factorAtIndex(int index) {
     assert(index < k_maxNumberOfFactors);
+    assert(this == s_lock);
     return factors() + index;
   }
-  static Integer * coefficientAtIndex(int index) {
+  Integer * coefficientAtIndex(int index) {
     assert(index < k_maxNumberOfFactors);
+    assert(this == s_lock);
     return coefficients() + index;
   }
-  static Integer * divisorAtIndex(int index) {
+  Integer * divisorAtIndex(int index) {
     assert(index < k_maxNumberOfDivisors);
+    assert(this == s_lock);
     return index < k_maxNumberOfFactors ? factorAtIndex(index) : coefficientAtIndex(index - k_maxNumberOfFactors);
   }
 
@@ -69,7 +65,7 @@ private:
   /* When decomposing an integer into primes factors, we look for its prime
    * factors among integer from 2 to 10000. */
   constexpr static int k_biggestPrimeFactor = 10000;
-  static bool s_lock;
+  static Arithmetic * s_lock;
   /* The following methods are equivalent to a simple static array declaration
    * in the header and an initialization in the source file. However, as Integer
    * itself rely on static objects, such a declaration could cause a static

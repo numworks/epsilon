@@ -1,5 +1,4 @@
 #include <poincare/arithmetic.h>
-#include <poincare/exception_checkpoint.h>
 #include <utility>
 #include "helper.h"
 #include "limits.h"
@@ -55,58 +54,40 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
-  {
-    // See comment in Arithmetic::resetLock()
-    Poincare::ExceptionCheckpoint tempEcp;
-    if (ExceptionRun(tempEcp)) {
-      Arithmetic arithmetic;
-      int tempAValue = a.isExtractable() ? a.extractedInt() : INT_MAX;
-      int n = arithmetic.PrimeFactorization(a);
-      // a should remain unchanged
-      quiz_assert_print_if_failure(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX), failInformationBuffer);
-      quiz_assert_print_if_failure(n == length, failInformationBuffer);
-      for (int index = 0; index < length; index++) {
-        /* Cheat: instead of comparing to integers, we compare their
-         * approximations (the relation between integers and their approximation
-         * is a surjection, however different integers are really likely to have
-         * different approximations... */
-        quiz_assert_print_if_failure(arithmetic.factorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
-        quiz_assert_print_if_failure(arithmetic.coefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
-      }
-      return;
-    } else {
-      // Reset factorization
-      Arithmetic::resetLock();
-    }
+  Arithmetic arithmetic;
+  int tempAValue = a.isExtractable() ? a.extractedInt() : INT_MAX;
+  int n = arithmetic.PrimeFactorization(a);
+  // a should remain unchanged
+  quiz_assert_print_if_failure(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX), failInformationBuffer);
+  quiz_assert_print_if_failure(n == length, failInformationBuffer);
+  for (int index = 0; index < length; index++) {
+    /* Cheat: instead of comparing to integers, we compare their
+      * approximations (the relation between integers and their approximation
+      * is a surjection, however different integers are really likely to have
+      * different approximations... */
+    quiz_assert_print_if_failure(arithmetic.factorAtIndex(index)->approximate<float>() == Integer(factors[index]).approximate<float>(), failInformationBuffer);
+    quiz_assert_print_if_failure(arithmetic.coefficientAtIndex(index)->approximate<float>() == Integer(coefficients[index]).approximate<float>(), failInformationBuffer);
   }
-  // Factorization failed, test failed
-  quiz_assert_print_if_failure(false, failInformationBuffer);
 }
 
 template <int N>
 void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
-  ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp)) {
-    Arithmetic arithmetic;
-    int tempAValue = a.isExtractable() ? a.extractedInt() : INT_MAX;
-    int numberOfDivisors = arithmetic.PositiveDivisors(a);
-    if (numberOfDivisors == Arithmetic::k_errorTooManyFactors) {
-      numberOfDivisors = Arithmetic::k_maxNumberOfDivisors;
-    } else {
-      assert(numberOfDivisors >= 0);
-    }
-    constexpr size_t bufferSize = 100;
-    char failInformationBuffer[bufferSize];
-    fill_buffer_with(failInformationBuffer, bufferSize, "divisors(", &a, 1);
-    // a should remain unchanged
-    quiz_assert_print_if_failure(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX), failInformationBuffer);
-    quiz_assert_print_if_failure(numberOfDivisors == N, failInformationBuffer);
-    for (int i = 0; i < N; i++) {
-      quiz_assert_print_if_failure(arithmetic.divisorAtIndex(i)->approximate<float>() == Integer(divisors[i]).approximate<float>(), failInformationBuffer);
-    }
+  Arithmetic arithmetic;
+  int tempAValue = a.isExtractable() ? a.extractedInt() : INT_MAX;
+  int numberOfDivisors = arithmetic.PositiveDivisors(a);
+  if (numberOfDivisors == Arithmetic::k_errorTooManyFactors) {
+    numberOfDivisors = Arithmetic::k_maxNumberOfDivisors;
   } else {
-    Arithmetic::resetLock();
-    quiz_assert_print_if_failure(false, "Poincare exception");
+    assert(numberOfDivisors >= 0);
+  }
+  constexpr size_t bufferSize = 100;
+  char failInformationBuffer[bufferSize];
+  fill_buffer_with(failInformationBuffer, bufferSize, "divisors(", &a, 1);
+  // a should remain unchanged
+  quiz_assert_print_if_failure(tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX), failInformationBuffer);
+  quiz_assert_print_if_failure(numberOfDivisors == N, failInformationBuffer);
+  for (int i = 0; i < N; i++) {
+    quiz_assert_print_if_failure(arithmetic.divisorAtIndex(i)->approximate<float>() == Integer(divisors[i]).approximate<float>(), failInformationBuffer);
   }
 }
 

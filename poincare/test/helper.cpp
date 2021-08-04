@@ -90,16 +90,16 @@ void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Pr
 
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
   assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
-      Expression copy = e.clone();
+      Expression simplifiedExpression;
       if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-        copy.simplifyAndApproximate(&copy, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
+        e.simplifyAndApproximate(&simplifiedExpression, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
       } else {
-        copy = copy.simplify(reductionContext);
+        simplifiedExpression = e.clone().simplify(reductionContext);
       }
-      if (copy.isUninitialized()) {
+      if (simplifiedExpression.isUninitialized()) {
         return e;
       }
-      return copy;
+      return simplifiedExpression;
     });
 }
 

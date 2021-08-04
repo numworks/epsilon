@@ -3,8 +3,6 @@ userland_target_variants = $(subst .epsilon,,$(addprefix userland.,$(epsilon_tar
 userland_src += $(liba_internal_flash_src)
 userland_test_src += $(liba_internal_flash_src)
 
-USERLAND_LDSCRIPT += ion/src/$(PLATFORM)/$(MODEL)/userland/userland_flash.ld
-
 include build/targets.$(PLATFORM).userland.mak
 
 $(userland_targets): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/userland/userland_flash.ld

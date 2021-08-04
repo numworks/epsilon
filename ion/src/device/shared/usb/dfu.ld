@@ -42,6 +42,7 @@ SECTIONS {
     /* We need to keep these symbols. */
     *(.data._ZN3Ion6Device13ExternalFlashL14sOperatingModeE)
     *(.data._ZN3Ion6Device5BoardL18sStandardFrequencyE)
+    *(.bss._ZN3Ion6Device6Timing13MillisElapsedE)
   } >RAM_BUFFER
 
   /DISCARD/ : {

@@ -1,4 +1,5 @@
 #include <poincare/tree_pool.h>
+#include <poincare/checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/helpers.h>
 #include <poincare/tree_handle.h>
@@ -62,6 +63,8 @@ void TreePool::removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumber
 }
 
 void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveSize) {
+  assert(isAfterTopmostCheckpoint(destination));
+  assert(isAfterTopmostCheckpoint(source));
   assert(moveSize % 4 == 0);
   assert((((uintptr_t)source) % 4) == 0);
   assert((((uintptr_t)destination) % 4) == 0);
@@ -109,6 +112,7 @@ int TreePool::numberOfNodes() const {
 }
 
 void * TreePool::alloc(size_t size) {
+  assert(isAfterTopmostCheckpoint(last()));
   size = Helpers::AlignedSize(size, ByteAlignment);
   if (m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
@@ -119,6 +123,7 @@ void * TreePool::alloc(size_t size) {
 }
 
 void TreePool::dealloc(TreeNode * node, size_t size) {
+  assert(isAfterTopmostCheckpoint(node));
   size = Helpers::AlignedSize(size, ByteAlignment);
   char * ptr = reinterpret_cast<char *>(node);
   assert(ptr >= buffer() && ptr < m_cursor);
@@ -155,6 +160,10 @@ void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
   for (TreeNode * n : Nodes(node)) {
     registerNode(n);
   }
+}
+
+bool TreePool::isAfterTopmostCheckpoint(TreeNode * node) {
+  return node >= Checkpoint::TopmostEndOfPoolBeforeCheckpoint();
 }
 
 void TreePool::freePoolFromNode(TreeNode * firstNodeToDiscard) {

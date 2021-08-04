@@ -132,6 +132,8 @@ void setVisible() {
   s_externalAppsVisible = true;
   if (numberOfApps() > 0) {
     Device::Board::enableExternalApps(); // Display pop-up
+  } else {
+    s_externalAppsVisible = false;
   }
 }
 

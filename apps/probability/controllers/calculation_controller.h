@@ -22,7 +22,6 @@ class CalculationController : public Escher::ViewController,
                         Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution,
                         Calculation * calculation);
   /* Responder */
-  void didEnterResponderChain(Escher::Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 

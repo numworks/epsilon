@@ -10,7 +10,6 @@ enum class Page {
   Menu,
   Distribution,
   Parameters,
-  Calculations,
   Test,
   Type,
   Hypothesis,

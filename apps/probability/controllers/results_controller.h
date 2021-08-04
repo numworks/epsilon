@@ -71,8 +71,8 @@ public:
   void didBecomeFirstResponder() override;
   bool buttonAction() override;
   void openPage(ViewController * nextPage,
-                KDColor backgroundColor = Escher::Palette::GrayMiddle,
-                KDColor separatorColor = Escher::Palette::GrayMiddle,
+                KDColor backgroundColor = s_titleColor,
+                KDColor separatorColor = s_titleColor,
                 KDColor textColor = KDColorWhite) {
     Page::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }
@@ -88,6 +88,9 @@ protected:
   StatisticGraphController * m_statisticGraphController;
   constexpr static int k_titleBufferSize = 40;
   char m_titleBuffer[k_titleBufferSize];
+
+private:
+  static KDColor s_titleColor;
 };
 
 }  // namespace Probability

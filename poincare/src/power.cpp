@@ -6,7 +6,6 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
-#include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/infinity.h>
@@ -1218,41 +1217,30 @@ Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionN
   /* This methods reduces base^(a/b) to the form i1*i2^(a*g/b), where i1 and i2
    * are integers, and g is an integer that divides b.
    * I.e. We get the largest factor possible out of the root. */
+
+  Arithmetic arithmetic;
+  int numberOfPrimeFactors = arithmetic.PrimeFactorization(base);
+  if (numberOfPrimeFactors < 0) {
+    /* Prime factorization failed. */
+    return Power::Builder(Rational::Builder(base), index);
+  }
   Integer i1(1), i2(1), g(b);
-  bool shouldRaiseParentException = false;
-  {
-    // See comment in Arithmetic::resetLock()
-    ExceptionCheckpoint tempEcp;
-    if (ExceptionRun(tempEcp)) {
-      Arithmetic arithmetic;
-      int numberOfPrimeFactors = arithmetic.PrimeFactorization(base);
-      if (numberOfPrimeFactors < 0) {
-        /* Prime factorization failed. */
-        return Power::Builder(Rational::Builder(base), index);
-      }
-      /* g is defined as gcd(b, a*k_1, a*k_2, ...) where the k_i are the
-       * coefficients in the prime factorization of base. As such, we need to
-       * iterate over the coefficients twice: once to compute g, and once to
-       * compute i1 and i2. */
-      for (int j = 0; j < numberOfPrimeFactors; j++) {
-        IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.coefficientAtIndex(j), a), b);
-        g = Arithmetic::GCD(g, div.remainder);
-      }
-      for (int j = 0; j < numberOfPrimeFactors; j++) {
-        IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.coefficientAtIndex(j), a), b);
-        IntegerDivision div2 = Integer::Division(div.remainder, g);
-        assert(div2.remainder.isZero());
-        i1 = Integer::Multiplication(i1, Integer::Power(*arithmetic.factorAtIndex(j), div.quotient));
-        i2 = Integer::Multiplication(i2, Integer::Power(*arithmetic.factorAtIndex(j), div2.quotient));
-      }
-    } else {
-      shouldRaiseParentException = true;
-      Arithmetic::resetLock();
-    }
+  /* g is defined as gcd(b, a*k_1, a*k_2, ...) where the k_i are the
+    * coefficients in the prime factorization of base. As such, we need to
+    * iterate over the coefficients twice: once to compute g, and once to
+    * compute i1 and i2. */
+  for (int j = 0; j < numberOfPrimeFactors; j++) {
+    IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.coefficientAtIndex(j), a), b);
+    g = Arithmetic::GCD(g, div.remainder);
   }
-  if (shouldRaiseParentException) {
-    ExceptionCheckpoint::Raise();
+  for (int j = 0; j < numberOfPrimeFactors; j++) {
+    IntegerDivision div = Integer::Division(Integer::Multiplication(*arithmetic.coefficientAtIndex(j), a), b);
+    IntegerDivision div2 = Integer::Division(div.remainder, g);
+    assert(div2.remainder.isZero());
+    i1 = Integer::Multiplication(i1, Integer::Power(*arithmetic.factorAtIndex(j), div.quotient));
+    i2 = Integer::Multiplication(i2, Integer::Power(*arithmetic.factorAtIndex(j), div2.quotient));
   }
+
   if (i2.isOverflow() || i1.isOverflow()) {
     return Power::Builder(Rational::Builder(base), index);
   }

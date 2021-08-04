@@ -176,7 +176,8 @@ void Dropdown::reloadAllCells() {
 }
 
 void Dropdown::init() {
-  if (m_popup.m_selectionDataSource.selectedRow() < 0) {
+  if (m_popup.m_selectionDataSource.selectedRow() < 0 ||
+      m_popup.m_selectionDataSource.selectedRow() >= m_popup.m_popupListDataSource.numberOfRows()) {
     m_popup.m_selectionDataSource.selectRow(0);
   }
   setInnerCell(

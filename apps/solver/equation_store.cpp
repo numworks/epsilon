@@ -377,8 +377,8 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
       // Otherwise, the system has n solutions which correspond to the last column
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
-        exactSolutions[i] = Ab.matrixChild(i,n);
-        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), angleUnit, unitFormat);
+        exactSolutions[i] = Expression();
+        Ab.matrixChild(i,n).simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), angleUnit, unitFormat);
       }
     }
   }
@@ -397,10 +397,12 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions++] = delta;
   for (int i = 0; i < m_numberOfSolutions; i++) {
+    Expression exactSolutionClone = exactSolutions[i].clone();
     if (solutionsAreApproximated) {
-      exactSolutionsApproximations[i] = exactSolutions[i].clone();
+      exactSolutionsApproximations[i] = exactSolutionClone;
     } else {
-      exactSolutions[i].simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+      exactSolutions[i] = Expression();
+      exactSolutionClone.simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
     }
   }
   return Error::NoError;

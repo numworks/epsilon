@@ -1,9 +1,11 @@
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/expression.h>
 #include <ion.h>
 
 namespace Poincare {
 
+Checkpoint * CircuitBreakerCheckpoint::s_topmostExceptionCheckpoint;
 CircuitBreakerCheckpoint * UserCircuitBreakerCheckpoint::s_currentUserCircuitBreakerCheckpoint;
 CircuitBreakerCheckpoint * SystemCircuitBreakerCheckpoint::s_currentSystemCircuitBreakerCheckpoint;
 
@@ -13,8 +15,11 @@ bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
       return true;
     case Ion::CircuitBreaker::Status::Set:
       setCurrentCircuitBreakerCheckpoint(this);
+      s_topmostExceptionCheckpoint = static_cast<Checkpoint *>(ExceptionCheckpoint::s_topmostExceptionCheckpoint);
       return true;
     case Ion::CircuitBreaker::Status::Interrupted:
+      // Restore the topmost exception checkpoint
+      ExceptionCheckpoint::s_topmostExceptionCheckpoint = static_cast<ExceptionCheckpoint *>(s_topmostExceptionCheckpoint);
       rollback();
       return false;
     default:
@@ -28,6 +33,21 @@ void CircuitBreakerCheckpoint::reset() {
     Ion::CircuitBreaker::unsetCheckpoint(type());
     setCurrentCircuitBreakerCheckpoint(nullptr);
   }
+}
+
+// Return the topmost end of pool before current circuit breaker checkpoints
+TreeNode * CircuitBreakerCheckpoint::TopmostEndOfPoolBeforeCheckpoint() {
+  TreeNode * userCircuitBreakerCheckpointEnd = UserCircuitBreakerCheckpoint::TopmostEndOfPoolBeforeCheckpoint();
+  TreeNode * systemCircuitBreakerCheckpointEnd = SystemCircuitBreakerCheckpoint::TopmostEndOfPoolBeforeCheckpoint();
+  return systemCircuitBreakerCheckpointEnd > userCircuitBreakerCheckpointEnd ? systemCircuitBreakerCheckpointEnd : userCircuitBreakerCheckpointEnd;
+}
+
+/* Remove current circuit breaker checkpoints having their topmost end of pool
+ * more recent in the stack. */
+void CircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(TreeNode * node) {
+  assert(node);
+  UserCircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(node);
+  SystemCircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(node);
 }
 
 UserCircuitBreakerCheckpoint::~UserCircuitBreakerCheckpoint() {

@@ -1,4 +1,5 @@
 #include <poincare/exception_checkpoint.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 
 namespace Poincare {
 
@@ -23,6 +24,8 @@ bool ExceptionCheckpoint::setActive(bool interruption) {
 
 void ExceptionCheckpoint::rollback() {
   Checkpoint::rollback();
+  // Reset CircuitBreakerCheckpoints depending on a later point in the pool.
+  CircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(getEndOfPoolBeforeCheckpoint());
   longjmp(m_jumpBuffer, 1);
 }
 

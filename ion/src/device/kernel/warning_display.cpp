@@ -43,17 +43,16 @@ void showMessage(const char * const * messages, int numberOfMessages) {
 }
 
 void waitUntilKeyPress() {
-  Events::pauseStallingTimer();
-  Ion::Keyboard::State s0 = Keyboard::scan();
-  while (1) {
-    Ion::Keyboard::State s = Keyboard::scan();
-    if (s == 0) {
-      s0 = 0;
-    }
-    if (s != s0) {
-      break;
-    }
+  /* Shutdown events interruptions to prevent the spinner form going off and
+   * the queue from being filled with garbage. */
+  Events::shutdownInterruptions();
+  while (Keyboard::scan() != 0) {
+    Ion::Timing::msleep(100);
   }
+  while (Keyboard::scan() == 0) {
+    Ion::Timing::msleep(100);
+  }
+  Events::initInterruptions();
 }
 
 constexpr static int sUnauthenticatedUserlandNumberOfMessages = 6;

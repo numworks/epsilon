@@ -10,14 +10,15 @@ namespace Timing {
 
 using namespace Device::Timing;
 
-/* TODO: The delay methods 'msleep' and 'usleep' are currently dependent on the
+/* TODO: The delay method 'usleep' is currently dependent on the
  * optimizations chosen by the compiler. To prevent that and to gain in
  * precision, we could use the controller cycle counter (Systick). */
 
 void msleep(uint32_t ms) {
   // We decrease the AHB clock frequency to save power while sleeping.
+  uint64_t endTime = millis() + ms;
   Device::Board::setClockFrequency(Device::Board::Frequency::Low);
-  for (volatile uint32_t i=0; i<Config::LoopsPerMillisecond*ms; i++) {
+  while (millis() < endTime) {
     __asm volatile("nop");
   }
   Device::Board::setClockFrequency(Device::Board::standardFrequency());

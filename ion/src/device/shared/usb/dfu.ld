@@ -43,7 +43,11 @@ SECTIONS {
     *(.data._ZN3Ion6Device13ExternalFlashL14sOperatingModeE)
     *(.data._ZN3Ion6Device5BoardL18sStandardFrequencyE)
   } >RAM_BUFFER
-
+  
+  .bss : {
+    *(.bss._ZN3Ion6Device6Timing13MillisElapsedE)
+  } >RAM_BUFFER
+  
   /DISCARD/ : {
     /* For now, we do not need .bss and .data sections. This allows us to simply
      * skip any rt0-style initialization and jump straight into the PollAndReset

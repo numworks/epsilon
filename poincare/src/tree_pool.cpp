@@ -166,22 +166,67 @@ bool TreePool::isAfterTopmostCheckpoint(TreeNode * node) {
   return node >= Checkpoint::TopmostEndOfPoolBeforeCheckpoint();
 }
 
+// Reset IdentifierStack, make all identifiers available
+void TreePool::IdentifierStack::reset() {
+  for (uint16_t i = 0; i < MaxNumberOfNodes; i++) {
+    m_availableIdentifiers[i] = i;
+  }
+  m_currentIndex = MaxNumberOfNodes;
+  isSorted = true;
+}
+
+void TreePool::IdentifierStack::push(uint16_t i) {
+  assert(TreeNode::IsValidIdentifier(m_currentIndex) && m_currentIndex < MaxNumberOfNodes);
+  m_availableIdentifiers[m_currentIndex++] = i;
+  isSorted = false;
+}
+
+uint16_t TreePool::IdentifierStack::pop() {
+  if (m_currentIndex == 0) {
+    assert(false);
+    return 0;
+  }
+  assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfNodes);
+  return m_availableIdentifiers[--m_currentIndex];
+}
+
+// Remove an available identifier.
+void TreePool::IdentifierStack::remove(uint16_t j) {
+  assert(TreeNode::IsValidIdentifier(j));
+  // TODO : implement an optimized binary search using the sorted state
+  for (uint16_t i = 0; i < m_currentIndex; i++) {
+    if (m_availableIdentifiers[i] == j) {
+      memmove(m_availableIdentifiers + i, m_availableIdentifiers + i + 1, (m_currentIndex - i - 1) * sizeof(uint16_t));
+      m_currentIndex -= 1;
+      return;
+    }
+  }
+  assert(false);
+}
+
+// Reset m_nodeForIdentifierOffset for all available identifiers
+void TreePool::IdentifierStack::resetNodeForIdentifierOffsets(uint16_t * nodeForIdentifierOffset) const {
+  for (uint16_t i = 0; i < m_currentIndex; i++) {
+    nodeForIdentifierOffset[m_availableIdentifiers[i]] = UINT16_MAX;
+  }
+}
+
+// Discard all nodes after firstNodeToDiscard
 void TreePool::freePoolFromNode(TreeNode * firstNodeToDiscard) {
   assert(firstNodeToDiscard != nullptr);
   assert(firstNodeToDiscard >= first());
   assert(firstNodeToDiscard <= last());
 
-  if (firstNodeToDiscard < last()) {
-    // There should be no tree that continues into the pool zone to discard
-    assert(firstNodeToDiscard->parent() == nullptr);
-  }
-  TreeNode * currentNode = firstNodeToDiscard;
-  TreeNode * lastNode = last();
-  while (currentNode < lastNode) {
-    freeIdentifier(currentNode->identifier());
+  // Free all identifiers
+  m_identifiers.reset();
+  TreeNode * currentNode = first();
+  while (currentNode < firstNodeToDiscard) {
+    m_identifiers.remove(currentNode->identifier());
     currentNode = currentNode->next();
   }
-  m_cursor = reinterpret_cast<char *>(firstNodeToDiscard);
+  m_identifiers.resetNodeForIdentifierOffsets(m_nodeForIdentifierOffset);
+  m_cursor = reinterpret_cast<char *>(currentNode);
+  // TODO : Assert no tree that continues into the discarded pool zone
 }
 
 }

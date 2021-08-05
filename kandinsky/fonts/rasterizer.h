@@ -14,6 +14,7 @@
 #include FT_FREETYPE_H
 
 #include "code_points.h"
+#include "font_constants.h"
 
 #define ENSURE(action, description...) \
   {                                    \
@@ -24,6 +25,42 @@
       exit(-1);                        \
     }                                  \
   }
+
+int max(int a, int b) {
+  return a < b ? b : a;
+}
+
+void checkInputs(int argc, char * argv[]);
+void initTTF(FT_Library * library, FT_Face * face, const char * font_file, int requestedGlyphWidth,
+             int requestedGlyphHeight);
+void computeMetrics(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * maxBelowBaseline);
+void checkGlyphDimensions(int glyphWidth, int requestedGlyphWidth, int glyphHeight,
+                          int requestedGlyphHeight);
+int writeSharedFontFiles(const char * cppFilename, int grayscaleBitsPerPixel, int maxGlyphPixelCount);
+void generateGlyphData(FT_Face face, uint16_t * glyphDataOffset, int * glyphDataOffsetLength,
+                       uint8_t * glyphData, int sizeOfGlyphData, int * glyphDataLength,
+                       int glyphWidth, int glyphHeight, int maxAboveBaseline, int grayscaleBitsPerPixel);
+void writeFontSourceFile(const char * fontSourceFilename, const char * fontName, int glyphWidth,
+                     int glyphHeight, uint16_t * glyphDataOffset, int glyphDataOffsetLength,
+                     uint8_t * glyphData, int glyphDataLength, int grayscaleBitsPerPixel,
+                     int CodePointToGlyphIndexLength);
+void storeRenderedGlyphsImage(const char * outputImage, FT_Face face, int glyphWidth,
+                              int glyphHeight, int maxAboveBaseline);
+
+void loadCodePoint(FT_Face face, wchar_t codePoint);
+void drawGlyphOnBuffer(FT_GlyphSlot glyph, int glyphWidth, int glyphHeight, int maxAboveBaseline,
+                       uint8_t * glyphBuffer, int sizeOfUncompressedGlyphBuffer,
+                       int grayscaleBitsPerPixel);
+int compressAndAppend(uint8_t * uncompressedGlyphBuffer, int sizeOfUncompressedGlyphBuffer,
+                      uint8_t * glyphData, int glyphDataOffset, int maxGlyphDataSize);
+int writeCodePointIndexPairTable(FILE * output);
+
+static void prettyPrintArray(FILE * stream, int maxWidth, int typeSize, void * array,
+                             int numberOfElements);
+
+#ifdef GENERATE_PNG
+#define PNG_SKIP_SETJMP_CHECK
+#include <png.h>
 
 // Pixel format is RGB888
 typedef struct {
@@ -38,58 +75,12 @@ typedef struct {
   int height;
 } image_t;
 
-
-int max(int a, int b) {
-  return a < b ? b : a;
-}
-void computeBBox(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * maxBelowBaseline);
-void drawGridAndBackground(image_t * bitmap_image,
-                           int glyph_width,
-                           int glyph_height,
-                           int grid_size,
-                           int maxAboveBaseline);
-void drawAllGlyphsInImage(FT_Face face,
-                          image_t * bitmap_image,
-                          int grid_width,
-                          int glyph_width,
-                          int glyph_height,
-                          int grid_size,
-                          int maxAboveBaseline);
-void generateSourceFile(const char * filepath,
-                        image_t * bitmap_image,
-                        int grid_width,
-                        int glyph_width,
-                        int glyph_height,
-                        int grid_size,
-                        const char * font_name);
-void writeCodePointIndexPairTable(FILE * output);
-void fillGlyphBuffer(uint8_t * uncompressedGlyphBuffer,
-                     int codepoint,
-                     image_t * bitmap_image,
-                     int grid_width,
-                     int glyph_width,
-                     int glyph_height,
-                     int grid_size,
-                     int grayscaleBitsPerPixel,
-                     int sizeOfUncompressedGlyphBuffer);
-void writeGlyphData(FILE * output,
-                    image_t * bitmap_image,
-                    int grid_width,
-                    int glyph_width,
-                    int glyph_height,
-                    int grid_size);
-
-#ifdef GENERATE_PNG
-#define PNG_SKIP_SETJMP_CHECK
-#include <png.h>
-void writeImageToPNGFile(image_t * image, char * filename);
+void drawBackground(image_t * bitmap_image, int glyphWidth, int glyphHeight, int grid_size,
+                    int maxAboveBaseline);
+void drawGlyphInImage(FT_Bitmap * glyphBitmap, image_t * image, int xOffset, int yOffset);
+void drawAllGlyphsInImage(FT_Face face, image_t * bitmap_image, int gridWidth, int glyphWidth,
+                          int glyphHeight, int grid_size, int maxAboveBaseline);
+void writeImageToPNGFile(image_t * image, const char * filename);
 #endif
-
-void drawGlyphInImage(FT_Bitmap * glyphBitmap, image_t * image, int x, int y);
-static void prettyPrintArray(FILE * stream,
-                             int maxWidth,
-                             int typeSize,
-                             void * array,
-                             int numberOfElements);
 
 #endif /* KANDINSKY_FONTS_RASTERIZER_H */

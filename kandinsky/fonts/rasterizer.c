@@ -8,100 +8,310 @@
 #include "../../ion/src/external/lz4/lz4hc.h"
 
 int main(int argc, char * argv[]) {
+  checkInputs(argc, argv);
+
   FT_Library library;
   FT_Face face;
-  image_t bitmap_image;
-
-  int expectedNumberOfArguments = 8;
+  char * font_file = argv[1];
+  int requestedGlyphWidth = atoi(argv[2]);
+  int requestedGlyphHeight = atoi(argv[3]);
+  int packed_glyph_width = atoi(argv[4]);
+  int packed_glyphHeight = atoi(argv[5]);
+  char * font_name = argv[6];
+  char * output_cpp = argv[7];
+  char * sharedFontPath = argv[8];
 #ifdef GENERATE_PNG
-  expectedNumberOfArguments = 9;
+  char * output_png = argv[9];
+#endif
+
+  initTTF(&library, &face, font_file, requestedGlyphWidth, requestedGlyphHeight);
+
+  int maxWidth = 0;
+  int maxAboveBaseline = 0;
+  int maxBelowBaseline = 0;
+  computeMetrics(face, &maxWidth, &maxAboveBaseline, &maxBelowBaseline);
+  ENSURE(maxWidth > 0 && maxAboveBaseline > 0 && maxBelowBaseline > 0, "Computing bounds");
+
+  int glyphWidth = maxWidth - 1;  // TODO remove the -1
+  int glyphHeight = maxAboveBaseline + maxBelowBaseline;
+  checkGlyphDimensions(glyphWidth, packed_glyph_width, glyphHeight, packed_glyphHeight);
+
+  int glyphDataOffsetLength = 0, glyphDataLength = 0;
+  uint16_t * glyphDataOffset = (uint16_t *)malloc((NumberOfCodePoints + 1) * sizeof(uint16_t *));
+  int sizeOfUncompressedGlyphBuffer = glyphWidth * glyphHeight *  k_grayscaleBitsPerPixel / 8;
+  int glyphDataBufferSize = NumberOfCodePoints * sizeOfUncompressedGlyphBuffer;
+  uint8_t * glyphData = (uint8_t *)malloc(glyphDataBufferSize);
+
+  int numberOfCodePointsPairs = writeSharedFontFiles(sharedFontPath, k_grayscaleBitsPerPixel,
+                                                     sizeOfUncompressedGlyphBuffer);
+  generateGlyphData(face, glyphDataOffset, &glyphDataOffsetLength, glyphData, glyphDataBufferSize,
+                    &glyphDataLength, glyphWidth, glyphHeight, maxAboveBaseline,
+                    k_grayscaleBitsPerPixel);
+  writeFontSourceFile(output_cpp, font_name, glyphWidth, glyphHeight, glyphDataOffset,
+                      glyphDataOffsetLength, glyphData, glyphDataLength, k_grayscaleBitsPerPixel,
+                      numberOfCodePointsPairs);
+
+#if GENERATE_PNG
+  storeRenderedGlyphsImage(output_png, face, glyphWidth, glyphHeight, maxAboveBaseline);
+#endif
+
+  return 0;
+}
+
+void checkInputs(int argc, char * argv[]) {
+  int expectedNumberOfArguments = 9;
+#ifdef GENERATE_PNG
+  expectedNumberOfArguments++;
 #endif
   if (argc != expectedNumberOfArguments) {
 #ifdef GENERATE_PNG
-    fprintf(stderr, "Usage: %s font_file glyph_width glyph_height font_name output_cpp output_png\n", argv[0]);
+    fprintf(stderr,
+            "Usage: %s font_file glyphWidth glyphHeight font_name font_cpp codepoint_to_glyph_index_cpp "
+            "output_png\n",
+            argv[0]);
 #else
-    fprintf(stderr, "Usage: %s font_file glyph_width glyph_height font_name output_cpp\n", argv[0]);
+    fprintf(stderr, "Usage: %s font_file glyphWidth glyphHeight font_name font_cpp\n", argv[0]);
 #endif
     fprintf(stderr, "  font_file: Path of the font file to load\n");
-    fprintf(stderr, "  glyph_width: Width of bitmap glyphs, in pixels\n");
-    fprintf(stderr, "  glyph_height: Height of bitmap glyphs, in pixels\n");
+    fprintf(stderr, "  glyphWidth: Width of bitmap glyphs, in pixels\n");
+    fprintf(stderr, "  glyphHeight: Height of bitmap glyphs, in pixels\n");
     fprintf(stderr, "  packed_glyph_width: Minimal glyph width in pixels. Pass 0 if unsure.\n");
-    fprintf(stderr, "  packed_glyph_height: Minimal glyph height in pixels. Pass 0 if unsure.\n");
+    fprintf(stderr, "  packed_glyphHeight: Minimal glyph height in pixels. Pass 0 if unsure.\n");
     fprintf(stderr, "  font_name: name of the loaded font\n");
-    fprintf(stderr, "  output_cpp: Name of the generated C source file\n");
+    fprintf(stderr, "  font_cpp: Name of the generated C source file\n");
+    fprintf(stderr, "  codepoint_to_glyph_index_cpp: Name of the generated shared C source file\n");
 #ifdef GENERATE_PNG
     fprintf(stderr, "  output_png: Name of the generated PNG file\n");
 #endif
     exit(1);
   }
 
-  char * font_file = argv[1];
-  int requested_glyph_width = atoi(argv[2]);
-  int requested_glyph_height = atoi(argv[3]);
-  int packed_glyph_width = atoi(argv[4]);
-  int packed_glyph_height = atoi(argv[5]);
-  char * font_name = argv[6];
-  char * output_cpp = argv[7];
-#ifdef GENERATE_PNG
-  char * output_png = argv[8];
-#endif
+  // Check CodePoints is sorted
+  for (int i = 0; i < NumberOfCodePoints - 1; i++) {
+    ENSURE(CodePoints[i] < CodePoints[i + 1], "CodePoints array must be sorted: %d > %d",
+           CodePoints[i], CodePoints[i + 1]);
+  }
+}
 
-  ENSURE(!FT_Init_FreeType(&library), "Initializing library");
+void initTTF(FT_Library * library, FT_Face * face, const char * font_file, int requestedGlyphWidth,
+             int requestedGlyphHeight) {
+  ENSURE(!FT_Init_FreeType(library), "Initializing library");
   // 0 means we're picking the first face in the provided file
-  ENSURE(!FT_New_Face(library, font_file, 0, &face), "Loading font file %s", font_file);
-  ENSURE(!FT_Set_Pixel_Sizes(face, requested_glyph_width, requested_glyph_height), "Setting face pixel size to %dx%d", requested_glyph_width, requested_glyph_height);
+  ENSURE(!FT_New_Face(*library, font_file, 0, face), "Loading font file %s", font_file);
+  ENSURE(!FT_Set_Pixel_Sizes(*face, requestedGlyphWidth, requestedGlyphHeight),
+         "Setting face pixel size to %dx%d", requestedGlyphWidth, requestedGlyphHeight);
+}
 
+void computeMetrics(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * maxBelowBaseline) {
   /* Glyph metrics are complicated. Here are some useful links:
    * https://www.freetype.org/freetype2/docs/glyphs/metrics.png
    * https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html
-   * https://www.freetype.org/freetype2/docs/reference/ft2-basic_types.html#FT_Bitmap
-   */
-  int maxWidth = 0;
-  int maxAboveBaseline = 0;
-  int maxBelowBaseline = 0;
-  computeBBox(face, &maxWidth, &maxAboveBaseline, &maxBelowBaseline);
-  ENSURE(maxWidth > 0 && maxAboveBaseline > 0 && maxBelowBaseline > 0, "Computing bounds");
-
-  int glyph_width = maxWidth - 1;  // TODO remove the -1
-  if (packed_glyph_width != 0) {
-    ENSURE(glyph_width == packed_glyph_width, "Expecting a packed glyph width of %d but got %d instead", packed_glyph_width, glyph_width);
-  } else {
-    printf("Computed packed_glyph_width = %d\n", glyph_width);
+   * https://www.freetype.org/freetype2/docs/reference/ft2-basic_types.html#FT_Bitmap */
+  for (int i = 0; i < NumberOfCodePoints; i++) {
+    wchar_t codePoint = CodePoints[i];
+    loadCodePoint(face, codePoint);
+    int aboveBaseline = face->glyph->bitmap_top;
+    int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
+    int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
+    *maxWidth = max(width, *maxWidth);
+    *maxAboveBaseline = max(aboveBaseline, *maxAboveBaseline);
+    *maxBelowBaseline = max(belowBaseline, *maxBelowBaseline);
   }
-  int glyph_height = maxAboveBaseline + maxBelowBaseline;
-  if (packed_glyph_height != 0) {
-    ENSURE(glyph_height == packed_glyph_height, "Expecting a packed glyph height of %d but got %d instead", packed_glyph_height, glyph_height);
-  } else {
-    printf("Computed packed_glyph_height = %d\n", glyph_height);
-  }
-
-  int grid_size = 1;
-  int grid_width = 20;
-  int grid_height = ((NumberOfCodePoints - 1) / grid_width) + 1;
-
-  bitmap_image.width = grid_width * (glyph_width + grid_size) - 1 * grid_size;
-  bitmap_image.height = grid_height * (glyph_height + grid_size) - 1 * grid_size;
-  bitmap_image.pixels = malloc(sizeof(pixel_t) * bitmap_image.width * bitmap_image.height);
-  ENSURE(bitmap_image.pixels != NULL, "Allocating bitmap image of size %dx%d at %ld bytes per pixel", bitmap_image.width, bitmap_image.height, sizeof(pixel_t));
-
-  drawGridAndBackground(&bitmap_image, glyph_width, glyph_height, grid_size, maxAboveBaseline);
-  drawAllGlyphsInImage(face, &bitmap_image, grid_width, glyph_width, glyph_height, grid_size, maxAboveBaseline);
-
-#if GENERATE_PNG
-  writeImageToPNGFile(&bitmap_image, output_png);
-#endif
-
-  generateSourceFile(output_cpp, &bitmap_image, grid_width, glyph_width, glyph_height, grid_size, font_name);
-
-  free(bitmap_image.pixels);
-
-  return 0;
 }
 
-static void prettyPrintArray(FILE * stream, int maxWidth, int typeSize, void * array, int numberOfElements) {
+void checkGlyphDimensions(int glyphWidth, int requestedGlyphWidth, int glyphHeight,
+                          int requestedGlyphHeight) {
+  if (requestedGlyphWidth != 0) {
+    ENSURE(glyphWidth == requestedGlyphWidth,
+           "Expecting a packed glyph width of %d but got %d instead", requestedGlyphWidth,
+           glyphWidth);
+  } else {
+    printf("Computed requestedGlyphWidth = %d\n", glyphWidth);
+  }
+  if (requestedGlyphHeight != 0) {
+    ENSURE(glyphHeight == requestedGlyphHeight,
+           "Expecting a packed glyph height of %d but got %d instead", requestedGlyphHeight,
+           glyphHeight);
+  } else {
+    printf("Computed packed_glyphHeight = %d\n", glyphHeight);
+  }
+}
+
+int writeSharedFontFiles(const char * cppFilename, int grayscaleBitsPerPixel,
+                         int maxGlyphPixelCount) {
+  // header
+  char * headerFilename = (char *)malloc(strlen(cppFilename) + 1);
+  strcpy(headerFilename, cppFilename);
+  char * extensionPos = strrchr(headerFilename, '.');
+  strcpy(extensionPos, ".h");
+  FILE * header = fopen(headerFilename, "w");
+  fprintf(header, "/* This file is auto-generated by the rasterizer */\n\n");
+  fprintf(header, "namespace SharedFont {\n\n");
+  fprintf(header, "constexpr int k_bitsPerPixel = %d;\n", grayscaleBitsPerPixel);
+  fprintf(header, "constexpr int k_maxGlyphPixelCount = %d;\n", maxGlyphPixelCount);
+  fprintf(header, "\n}\n");
+
+  // source
+  FILE * output = fopen(cppFilename, "w");
+  fprintf(output, "/* This file is auto-generated by the rasterizer */\n\n");
+  fprintf(output, "#include <kandinsky/font.h>\n\n");
+  int numberOfCodePointsPairs = writeCodePointIndexPairTable(output);
+
+  fprintf(output, "const KDFont::CodePointIndexPair * KDFont::s_CodePointToGlyphIndex = table;\n");
+  fprintf(output, "const size_t KDFont::s_codePointPairsTableLength = %d;\n\n",
+          numberOfCodePointsPairs);
+  fclose(output);
+  return numberOfCodePointsPairs;
+}
+
+int writeCodePointIndexPairTable(FILE * output) {
+  int previousIndex = -1;
+  uint32_t previousCodePoint = 0;
+  int numberOfPairs = 0;
+
+  fprintf(output, "static constexpr KDFont::CodePointIndexPair table[] = {\n");
+  for (int i = 0; i < NumberOfCodePoints; i++) {
+    int currentCodePoint = CodePoints[i];
+    if (currentCodePoint != (previousCodePoint + (i - previousIndex))) {
+      fprintf(output, "  KDFont::CodePointIndexPair(0x%x, %d),\n", currentCodePoint, i);
+      previousCodePoint = currentCodePoint;
+      previousIndex = i;
+      numberOfPairs++;
+    }
+  }
+  fprintf(output, "};\n\n");
+  return numberOfPairs;
+}
+
+void writeFontSourceFile(const char * fontSourceFilename, const char * fontName, int glyphWidth,
+                         int glyphHeight, uint16_t * glyphDataOffset, int glyphDataOffsetLength,
+                         uint8_t * glyphData, int glyphDataLength, int grayscaleBitsPerPixel,
+                         int CodePointToGlyphIndexLength) {
+  FILE * fontFile = fopen(fontSourceFilename, "w");
+
+  fprintf(fontFile, "/* This file is auto-generated by the rasterizer */\n\n");
+  fprintf(fontFile, "#include <kandinsky/font.h>\n\n");
+
+  fprintf(fontFile, "static constexpr KDCoordinate glyphWidth = %d;\n\n", glyphWidth);
+  fprintf(fontFile, "static constexpr KDCoordinate glyphHeight = %d;\n\n", glyphHeight);
+
+  // glyphDataOffset
+  fprintf(fontFile, "static constexpr uint16_t glyphDataOffset[%d] = {", NumberOfCodePoints + 1);
+  prettyPrintArray(fontFile, 80, 2, glyphDataOffset, glyphDataOffsetLength);
+  fprintf(fontFile, "};\n\n");
+
+  size_t finalDataSize = glyphDataLength;
+  size_t initialDataSize = NumberOfCodePoints * glyphWidth * glyphHeight;
+
+  fprintf(fontFile, "/* Rasterized  = %5zu bytes (%d glyphs x %d pixels)\n", initialDataSize,
+          NumberOfCodePoints, glyphWidth * glyphHeight);
+  fprintf(fontFile, " * Downsampled = %5lu bytes (1/%d of rasterized)\n",
+          initialDataSize * grayscaleBitsPerPixel / 8, 8 / grayscaleBitsPerPixel);
+  fprintf(fontFile, " * Compressed  = %5zu bytes (%.2f%% of rasterized) */\n", finalDataSize,
+          100.0 * finalDataSize / initialDataSize);
+
+  // glyphData
+  fprintf(fontFile, "static constexpr uint8_t glyphData[%d] = {", glyphDataLength);
+  prettyPrintArray(fontFile, 80, 1, glyphData, glyphDataLength);
+  fprintf(fontFile, "};\n\n");
+
+  // Font instanciation
+  fprintf(fontFile,
+          "const KDFont KDFont::private%s(glyphWidth, glyphHeight, glyphDataOffset, glyphData);\n",
+          fontName);
+
+  fclose(fontFile);
+}
+
+void loadCodePoint(FT_Face face, wchar_t codePoint) {
+  // Load codePoint into face->glyph
+  // FT_LOAD_RENDER: Render the glyph upon load
+  ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%08x", codePoint);
+}
+
+void drawGlyphOnBuffer(FT_GlyphSlot glyph, int glyphWidth, int glyphHeight, int maxAboveBaseline,
+                       uint8_t * glyphBuffer, int sizeOfUncompressedGlyphBuffer,
+                       int grayscaleBitsPerPixel) {
+  int bitmap_right = glyph->bitmap_left + glyph->bitmap.width;
+  int bitmap_top = maxAboveBaseline - glyph->bitmap_top;
+  int bitmap_bottom = bitmap_top + glyph->bitmap.rows;
+
+  uint8_t accumulator = 0;
+  int uncompressedGlyphBufferIndex = 0;
+  int numberOfValuesAccumulated = 0;
+  for (int y = 0; y < glyphHeight; y++) {
+    for (int x = 0; x < glyphWidth; x++) {
+      unsigned char grayscalePixel;
+      if (x >= glyph->bitmap_left && x < bitmap_right && y >= bitmap_top && y < bitmap_bottom) {
+        // We're in the buffer
+        grayscalePixel = glyph->bitmap.buffer[(y - bitmap_top) * glyph->bitmap.pitch +
+                                              (x - glyph->bitmap_left)] >>
+                         (8 - grayscaleBitsPerPixel);
+      } else {
+        grayscalePixel = 0;
+      }
+
+      accumulator = (accumulator << grayscaleBitsPerPixel) | grayscalePixel;
+      if (numberOfValuesAccumulated++ == (8 / grayscaleBitsPerPixel) - 1) {
+        glyphBuffer[uncompressedGlyphBufferIndex++] = accumulator;
+        accumulator = 0;
+        numberOfValuesAccumulated = 0;
+      }
+    }
+  }
+  ENSURE(accumulator == 0, "Discarded accumulator data (accumulator = %d)", accumulator);
+  ENSURE(numberOfValuesAccumulated == 0,
+         "Discarded accumulator data (numberOfValuesAccumulated = %d)", numberOfValuesAccumulated);
+  ENSURE(uncompressedGlyphBufferIndex == sizeOfUncompressedGlyphBuffer,
+         "Error filling uncompressed buffer, only %d out of %d", uncompressedGlyphBufferIndex,
+         sizeOfUncompressedGlyphBuffer);
+}
+
+int compressAndAppend(uint8_t * uncompressedGlyphBuffer, int sizeOfUncompressedGlyphBuffer,
+                      uint8_t * glyphData, int glyphDataOffset, int maxGlyphDataSize) {
+  int sizeOfCompressedGlyphBuffer = LZ4_compress_HC(
+      (const char *)uncompressedGlyphBuffer, (char *)(glyphData + glyphDataOffset),
+      sizeOfUncompressedGlyphBuffer, maxGlyphDataSize - glyphDataOffset, LZ4HC_CLEVEL_MAX);
+  return sizeOfCompressedGlyphBuffer;
+}
+
+void generateGlyphData(FT_Face face, uint16_t * glyphDataOffset, int * glyphDataOffsetLength,
+                       uint8_t * glyphData, int sizeOfGlyphData, int * glyphDataLength,
+                       int glyphWidth, int glyphHeight, int maxAboveBaseline,
+                       int grayscaleBitsPerPixel) {
+  int sizeOfUncompressedGlyphBuffer = glyphWidth * glyphHeight * grayscaleBitsPerPixel / 8;
+  ENSURE(8 * sizeOfUncompressedGlyphBuffer == glyphWidth * glyphHeight * grayscaleBitsPerPixel,
+         "Error: the glyph size (%dx%d@%dbpp) cannot fit in an integral number of bytes",
+         glyphWidth, glyphHeight, grayscaleBitsPerPixel);
+  uint8_t * uncompressedGlyphBuffer = (uint8_t *)malloc(sizeOfUncompressedGlyphBuffer);
+  int offset = 0;
+  // Start with a 0
+  glyphDataOffset[0] = 0;
+  *glyphDataOffsetLength = 1;
+
+  for (int index = 0; index < NumberOfCodePoints; index++) {
+    wchar_t codePoint = CodePoints[index];
+    loadCodePoint(face, codePoint);
+    // // Reinit
+    // for (int i = 0; i < sizeOfUncompressedGlyphBuffer; i++) {
+    //   uncompressedGlyphBuffer[i] = 0;
+    // }
+    drawGlyphOnBuffer(face->glyph, glyphWidth, glyphHeight, maxAboveBaseline,
+                      uncompressedGlyphBuffer, sizeOfUncompressedGlyphBuffer,
+                      grayscaleBitsPerPixel);
+    offset += compressAndAppend(uncompressedGlyphBuffer, sizeOfUncompressedGlyphBuffer, glyphData,
+                                offset, sizeOfGlyphData);
+    glyphDataOffset[*glyphDataOffsetLength] = offset;
+    (*glyphDataOffsetLength)++;
+  }
+  *glyphDataLength = offset;
+}
+
+static void prettyPrintArray(FILE * stream, int maxWidth, int typeSize, void * array,
+                             int numberOfElements) {
   int lineWidth = 999;
-  for (int i=0; i<numberOfElements; i++) {
-    int itemWidth = 1 + 2*typeSize + 2 + 1; // space + 0x + data + comma
+  for (int i = 0; i < numberOfElements; i++) {
+    int itemWidth = 1 + 2 * typeSize + 2 + 1;  // space + 0x + data + comma
     if (lineWidth + itemWidth > maxWidth) {
       fprintf(stream, "\n ");
       lineWidth = 1;
@@ -111,7 +321,7 @@ static void prettyPrintArray(FILE * stream, int maxWidth, int typeSize, void * a
     } else if (typeSize == 2) {
       fprintf(stream, " 0x%04x", ((uint16_t *)array)[i]);
     }
-    if (i == numberOfElements-1) {
+    if (i == numberOfElements - 1) {
       fprintf(stream, "\n");
     } else {
       fprintf(stream, ",");
@@ -120,44 +330,40 @@ static void prettyPrintArray(FILE * stream, int maxWidth, int typeSize, void * a
   }
 }
 
-void drawGlyphInImage(FT_Bitmap * glyphBitmap, image_t * image, int x, int y) {
-  // printf("Drawing glyph. Size is %dx%d, pitch is %d\n", glyphBitmap->width, glyphBitmap->rows, glyphBitmap->pitch);
-  ENSURE(glyphBitmap->pixel_mode == FT_PIXEL_MODE_GRAY, "Checking glyph is in FT_PIXEL_MODE_GRAY");
-  for (int j=0;j<glyphBitmap->rows;j++) {
-    for (int i=0;i<glyphBitmap->width;i++) {
-      uint8_t glyphPixel = *(glyphBitmap->buffer + j*glyphBitmap->pitch + i);
-      pixel_t * currentPixelPointer = (image->pixels + (y+j)*image->width + (x+i));
-      *currentPixelPointer = (pixel_t){.red = (0xFF-glyphPixel), .green = (0xFF-glyphPixel), .blue = (0xFF-glyphPixel)}; // Alpha blending
-    }
-  }
+#ifdef GENERATE_PNG
+
+void storeRenderedGlyphsImage(const char * outputImage, FT_Face face, int glyphWidth,
+                              int glyphHeight, int maxAboveBaseline) {
+  int grid_size = 1;
+  int gridWidth = 20;
+  int grid_height = ((NumberOfCodePoints - 1) / gridWidth) + 1;
+
+  // Initialize image
+  image_t bitmapImage;
+  bitmapImage.width = gridWidth * (glyphWidth + grid_size) - 1 * grid_size;
+  bitmapImage.height = grid_height * (glyphHeight + grid_size) - 1 * grid_size;
+  bitmapImage.pixels = (pixel_t *)malloc(sizeof(pixel_t) * bitmapImage.width * bitmapImage.height);
+  ENSURE(bitmapImage.pixels != NULL, "Allocating bitmap image of size %dx%d at %ld bytes per pixel",
+         bitmapImage.width, bitmapImage.height, sizeof(pixel_t));
+
+  drawBackground(&bitmapImage, glyphWidth, glyphHeight, grid_size, maxAboveBaseline);
+  drawAllGlyphsInImage(face, &bitmapImage, gridWidth, glyphWidth, glyphHeight, grid_size,
+                       maxAboveBaseline);
+  writeImageToPNGFile(&bitmapImage, outputImage);
 }
 
-void computeBBox(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * maxBelowBaseline) {
-  for (int i=0; i < NumberOfCodePoints; i++) {
-    wchar_t codePoint = CodePoints[i];
-    // Load codePoint into face->glyph
-    ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%02x", codePoint);
-    int aboveBaseline = face->glyph->bitmap_top;
-    int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
-    int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
-    *maxWidth = max(width, *maxWidth);
-    *maxAboveBaseline = max(aboveBaseline, *maxAboveBaseline);
-    *maxBelowBaseline = max(belowBaseline, *maxBelowBaseline);
-    // printf("Codepoint %04x : %dx%d\n", codePoint, width, aboveBaseline+belowBaseline);
-  }
-}
-
-void drawGridAndBackground(image_t * bitmap_image, int glyph_width, int glyph_height, int grid_size, int maxAboveBaseline) {
+void drawBackground(image_t * bitmap_image, int glyphWidth, int glyphHeight, int grid_size,
+                    int maxAboveBaseline) {
   pixel_t grid_color = {.red = 0xFF, .green = 0, .blue = 0};
   pixel_t baseline_color = {.red = 0x82, .green = 0xFF, .blue = 0x82};
   pixel_t white = {.red = 0xFF, .green = 0xFF, .blue = 0xFF};
   for (int i = 0; i < bitmap_image->width; i++) {
     for (int j = 0; j < bitmap_image->height; j++) {
       pixel_t pixel;
-      if (i % (glyph_width + grid_size) >= glyph_width ||
-          j % (glyph_height + grid_size) >= glyph_height) {
+      if (i % (glyphWidth + grid_size) >= glyphWidth ||
+          j % (glyphHeight + grid_size) >= glyphHeight) {
         pixel = grid_color;
-      } else if (j % (glyph_height + grid_size) == maxAboveBaseline) {
+      } else if (j % (glyphHeight + grid_size) == maxAboveBaseline) {
         pixel = baseline_color;
       } else {
         pixel = white;
@@ -167,183 +373,43 @@ void drawGridAndBackground(image_t * bitmap_image, int glyph_width, int glyph_he
   }
 }
 
-void drawAllGlyphsInImage(FT_Face face,
-                          image_t * bitmap_image,
-                          int grid_width,
-                          int glyph_width,
-                          int glyph_height,
-                          int grid_size,
-                          int maxAboveBaseline) {
+void drawGlyphInImage(FT_Bitmap * glyphBitmap, image_t * image, int xOffset, int yOffset) {
+  // printf("Drawing glyph. Size is %dx%d, pitch is %d\n", glyphBitmap->width, glyphBitmap->rows,
+  // glyphBitmap->pitch);
+  ENSURE(glyphBitmap->pixel_mode == FT_PIXEL_MODE_GRAY, "Checking glyph is in FT_PIXEL_MODE_GRAY");
+  for (int j = 0; j < glyphBitmap->rows; j++) {
+    for (int i = 0; i < glyphBitmap->width; i++) {
+      uint8_t glyphPixel = glyphBitmap->buffer[j * glyphBitmap->pitch + i];
+      pixel_t * currentPixelPointer = &(
+          image->pixels[(yOffset + j) * image->width + (xOffset + i)]);
+      *currentPixelPointer = (pixel_t){.red = (0xFF - glyphPixel),
+                                       .green = (0xFF - glyphPixel),
+                                       .blue = (0xFF - glyphPixel)};  // Alpha blending
+    }
+  }
+}
+
+void drawAllGlyphsInImage(FT_Face face, image_t * bitmap_image, int gridWidth, int glyphWidth,
+                          int glyphHeight, int grid_size, int maxAboveBaseline) {
   for (int i = 0; i < NumberOfCodePoints; i++) {
     wchar_t codePoint = CodePoints[i];
-    int x = i % grid_width;
-    int y = i / grid_width;
-    // FT_LOAD_RENDER: Render the glyph upon load
-    ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%08x", codePoint);
+    int x = i % gridWidth;
+    int y = i / gridWidth;
+    loadCodePoint(face, codePoint);
     // printf("Advances = %dx%d\n", face->glyph->bitmap_left, face->glyph->bitmap_top);
     if (face->glyph->bitmap_left < 0) {
-      // Combining characters are shifted left in FreeType so as to combine with the previous
-      // character We don't want that, so we move it back right
-      face->glyph->bitmap_left += glyph_width;
+      /* Combining characters are shifted left in FreeType so as to combine with the previous
+       * character We don't want that, so we move it back right */
+      face->glyph->bitmap_left += glyphWidth;
     }
-    drawGlyphInImage(&face->glyph->bitmap,
-                     bitmap_image,
-                     x * (glyph_width + grid_size) + face->glyph->bitmap_left,
-                     y * (glyph_height + grid_size) + maxAboveBaseline - face->glyph->bitmap_top);
+    drawGlyphInImage(&face->glyph->bitmap, bitmap_image,
+                     x * (glyphWidth + grid_size) + face->glyph->bitmap_left,
+                     y * (glyphHeight + grid_size) + maxAboveBaseline - face->glyph->bitmap_top);
   }
 }
 
-void generateSourceFile(const char * filepath,
-                        image_t * bitmap_image,
-                        int grid_width,
-                        int glyph_width,
-                        int glyph_height,
-                        int grid_size,
-                        const char * font_name) {
-  FILE * sourceFile = fopen(filepath, "w");
-
-  fprintf(sourceFile, "/* This file is auto-generated by the rasterizer */\n\n");
-  fprintf(sourceFile, "#include <kandinsky/font.h>\n\n");
-
-  // Step 1 - Build the GlyphIndex <-> UnicodeCodePoint correspondance table
-  writeCodePointIndexPairTable(sourceFile);
-
-  // Step 2 - Build Glyph data
-  writeGlyphData(sourceFile, bitmap_image, grid_width, glyph_width, glyph_height, grid_size);
-
-  fprintf(sourceFile, "const KDFont KDFont::private%s(tableLength, table, glyphWidth, glyphHeight, glyphDataOffset, glyphData);\n", font_name);
-
-  fclose(sourceFile);
-}
-
-void writeCodePointIndexPairTable(FILE * output) {
-  int previousIndex = -1;
-  uint32_t previousCodePoint = 0;
-  int numberOfPairs = 0;
-
-  fprintf(output, "static constexpr KDFont::CodePointIndexPair table[] = {\n");
-  for (int i=0; i<NumberOfCodePoints; i++) {
-    int currentCodePoint = CodePoints[i];
-    if (currentCodePoint != (previousCodePoint + (i-previousIndex))) {
-      fprintf(output, "  KDFont::CodePointIndexPair(0x%x, %d),\n", currentCodePoint, i);
-      previousCodePoint = currentCodePoint;
-      previousIndex = i;
-      numberOfPairs++;
-    }
-  }
-  fprintf(output, "};\n\n");
-
-  fprintf(output, "static constexpr size_t tableLength = %d;\n\n", numberOfPairs);
-}
-
-void fillGlyphBuffer(uint8_t * uncompressedGlyphBuffer,
-                     int character,
-                     image_t * bitmap_image,
-                     int grid_width,
-                     int glyph_width,
-                     int glyph_height,
-                     int grid_size,
-                     int grayscaleBitsPerPixel,
-                     int sizeOfUncompressedGlyphBuffer) {
-  int gridColumn = (character % grid_width * (glyph_width + grid_size));
-  int gridRow = (character / grid_width * (glyph_height + grid_size));
-  uint8_t accumulator = 0;
-  int uncompressedGlyphBufferIndex = 0;
-  int numberOfValuesAccumulated = 0;
-  for (int y = 0; y < glyph_height; y++) {
-    for (int x = 0; x < glyph_width; x++) {
-      pixel_t * pixel =
-          &bitmap_image->pixels[(gridRow + y) * bitmap_image->width + (x + gridColumn)];
-
-      uint8_t grayscaleValue = (0xFF - pixel->green) >> (8 - grayscaleBitsPerPixel);
-      accumulator = (accumulator << grayscaleBitsPerPixel) | grayscaleValue;
-      if (numberOfValuesAccumulated++ == (8 / grayscaleBitsPerPixel) - 1) {
-        uncompressedGlyphBuffer[uncompressedGlyphBufferIndex++] = accumulator;
-        accumulator = 0;
-        numberOfValuesAccumulated = 0;
-      }
-    }
-  }
-  ENSURE(accumulator == 0, "Discarded accumulator data (accumulator = %d)", accumulator);
-  ENSURE(numberOfValuesAccumulated == 0,
-         "Discarded accumulator data (numberOfValuesAccumulated = %d)",
-         numberOfValuesAccumulated);
-  ENSURE(uncompressedGlyphBufferIndex == sizeOfUncompressedGlyphBuffer,
-         "Error filling uncompressed buffer, only %d out of %d",
-         uncompressedGlyphBufferIndex,
-         sizeOfUncompressedGlyphBuffer);
-}
-
-void writeGlyphData(FILE * output, image_t * bitmap_image,
-                     int grid_width,
-                     int glyph_width,
-                     int glyph_height,
-                     int grid_size) {
-  fprintf(output, "static constexpr KDCoordinate glyphWidth = %d;\n\n", glyph_width);
-  fprintf(output, "static constexpr KDCoordinate glyphHeight = %d;\n\n", glyph_height);
-
-  int grayscaleBitsPerPixel = 4;
-
-  int sizeOfUncompressedGlyphBuffer = glyph_width * glyph_height * grayscaleBitsPerPixel / 8;
-  ENSURE(8*sizeOfUncompressedGlyphBuffer == glyph_width * glyph_height * grayscaleBitsPerPixel, "Error: the glyph size (%dx%d@%dbpp) cannot fit in an integral number of bytes", glyph_width, glyph_height, grayscaleBitsPerPixel);
-  uint8_t * uncompressedGlyphBuffer = (uint8_t *)malloc(sizeOfUncompressedGlyphBuffer);
-
-  uint16_t glyphDataOffset[NumberOfCodePoints+1];
-  int maxGlyphDataSize = NumberOfCodePoints* sizeOfUncompressedGlyphBuffer;
-  uint8_t * glyphData = (uint8_t *)malloc(maxGlyphDataSize);
-  uint16_t lastOffset = 0;
-
-  for (int character = 0; character < NumberOfCodePoints; character++) {
-    fillGlyphBuffer(uncompressedGlyphBuffer,
-                    character,
-                    bitmap_image,
-                    grid_width,
-                    glyph_width,
-                    glyph_height,
-                    grid_size,
-                    grayscaleBitsPerPixel,
-                    sizeOfUncompressedGlyphBuffer);
-
-    int sizeOfCompressedGlyphBuffer = LZ4_compress_HC(
-      (const char *)uncompressedGlyphBuffer,
-      (char *)(glyphData + lastOffset),
-      sizeOfUncompressedGlyphBuffer,
-      maxGlyphDataSize - lastOffset,
-      LZ4HC_CLEVEL_MAX
-    );
-
-    ENSURE(sizeOfCompressedGlyphBuffer > 0, "Could not compress glyph %d", character);
-
-    glyphDataOffset[character] = lastOffset;
-    lastOffset += sizeOfCompressedGlyphBuffer;
-  }
-
-  // Write the end of array so that we can extract the last size as glyphDataOffset[index + 1] - glyphDataOffset[index]
-  glyphDataOffset[NumberOfCodePoints] = lastOffset;
-
-  fprintf(output, "static constexpr uint16_t glyphDataOffset[%d] = {", NumberOfCodePoints + 1);
-  prettyPrintArray(output, 80, 2, glyphDataOffset, NumberOfCodePoints + 1);
-  fprintf(output, "};\n\n");
-
-  size_t finalDataSize = lastOffset;
-  size_t initialDataSize = NumberOfCodePoints * glyph_width * glyph_height;
-
-  fprintf(output, "/* Rasterized  = %5zu bytes (%d glyphs x %d pixels)\n", initialDataSize, NumberOfCodePoints, glyph_width*glyph_height);
-  fprintf(output, " * Downsampled = %5lu bytes (1/%d of rasterized)\n", initialDataSize*grayscaleBitsPerPixel/8, 8/grayscaleBitsPerPixel);
-  fprintf(output, " * Compressed  = %5zu bytes (%.2f%% of rasterized) */\n", finalDataSize, 100.0*finalDataSize/initialDataSize);
-
-  fprintf(output, "static constexpr uint8_t glyphData[%d] = {", lastOffset);
-  prettyPrintArray(output, 80, 1, glyphData, lastOffset);
-  fprintf(output, "};\n\n");
-
-  free(glyphData);
-  free(uncompressedGlyphBuffer);
-}
-
-#if GENERATE_PNG
-
-void writeImageToPNGFile(image_t * image, char * filename) {
-  FILE * file = fopen(filename, "wb"); // Write in binary mode
+void writeImageToPNGFile(image_t * image, const char * filename) {
+  FILE * file = fopen(filename, "wb");  // Write in binary mode
   ENSURE(file != NULL, "Opening file %s", filename);
 
   png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -354,23 +420,20 @@ void writeImageToPNGFile(image_t * image, char * filename) {
 
   png_init_io(png, file);
 
-  png_set_IHDR(png, info,
-      image->width, image->height,
-      8, // Number of bits per channel
-      PNG_COLOR_TYPE_RGB,
-      PNG_INTERLACE_NONE,
-      PNG_COMPRESSION_TYPE_DEFAULT,
-      PNG_FILTER_TYPE_DEFAULT);
+  png_set_IHDR(png, info, image->width, image->height,
+               8,  // Number of bits per channel
+               PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
+               PNG_FILTER_TYPE_DEFAULT);
 
   png_write_info(png, info);
 
-  for (int j=0;j<image->height;j++) {
-    png_write_row(png, (png_bytep)(image->pixels+j*image->width));
+  for (int j = 0; j < image->height; j++) {
+    png_write_row(png, (png_bytep)(image->pixels + j * image->width));
   }
 
   png_write_end(png, NULL);
 
-  png_free_data(png, info, PNG_FREE_ALL, -1); // -1 = all items
+  png_free_data(png, info, PNG_FREE_ALL, -1);  // -1 = all items
   png_destroy_write_struct(&png, (png_infopp)NULL);
   fclose(file);
 }

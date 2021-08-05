@@ -8,7 +8,9 @@
 /* This array lists the code points that are rasterized by rasterizer.c. We put
  * most characters from the LATIN charset, and some mathematical characters.
  * WARNING: the array has to be sorted. */
-
+#ifdef __cplusplus
+constexpr
+#endif
 uint32_t CodePoints[] = {
   0x20, //   // SPACE
   0x21, // ! // EXCLAMATION MARK
@@ -155,6 +157,6 @@ uint32_t CodePoints[] = {
   0x1D422, // 𝐢 // MATHEMATICAL BOLD SMALL I"
 };
 
-int NumberOfCodePoints = sizeof(CodePoints)/sizeof(CodePoints[0]);
+const int NumberOfCodePoints = sizeof(CodePoints)/sizeof(CodePoints[0]);
 
 #endif

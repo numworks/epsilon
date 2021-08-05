@@ -120,26 +120,16 @@ private:
 
   class IdentifierStack final {
   public:
-    IdentifierStack() : m_currentIndex(0) {
-      for (uint16_t i = 0; i < MaxNumberOfNodes; i++) {
-        push(i);
-      }
-    }
-    void push(uint16_t i) {
-      assert(TreeNode::IsValidIdentifier(m_currentIndex) && m_currentIndex < MaxNumberOfNodes);
-      m_availableIdentifiers[m_currentIndex++] = i;
-    }
-    uint16_t pop() {
-      if (m_currentIndex == 0) {
-        assert(false);
-        return 0;
-      }
-      assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfNodes);
-      return m_availableIdentifiers[--m_currentIndex];
-    }
+    IdentifierStack() { reset(); }
+    void reset();
+    void push(uint16_t i);
+    uint16_t pop();
+    void remove(uint16_t j);
+    void resetNodeForIdentifierOffsets(uint16_t * nodeForIdentifierOffset) const;
   private:
     uint16_t m_currentIndex;
     uint16_t m_availableIdentifiers[MaxNumberOfNodes];
+    bool isSorted;
     static_assert(MaxNumberOfNodes < INT16_MAX && sizeof(m_availableIdentifiers[0] == sizeof(uint16_t)), "Tree node identifiers do not have the right data size.");
   };
 

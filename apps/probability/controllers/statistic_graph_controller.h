@@ -17,6 +17,7 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
 
 private:
   constexpr static int k_titleBufferSize = 30;

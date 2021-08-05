@@ -79,10 +79,10 @@ int CalculationParameterController::numberOfRows() const {
 
 KDCoordinate CalculationParameterController::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_preImageCellType) {
-    return heightForCellAtIndex(&m_preimageCell, index, false);
+    return heightForCellAtIndex(&m_preimageCell, index);
   }
   MessageTableCell tempCell;
-  return heightForCellAtIndex(&tempCell, index, false);
+  return heightForCellAtIndex(&tempCell, index);
 }
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {

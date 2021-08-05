@@ -57,7 +57,7 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_addedCellType) {
     ExpressionTableCell tempCell;
-    return heightForCellAtIndex(&tempCell, index, false);
+    return heightForCellAtIndex(&tempCell, index);
   }
   return MathToolbox::nonMemoizedRowHeight(index);
 }

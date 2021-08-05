@@ -39,7 +39,7 @@ void StoreParameterController::didBecomeFirstResponder() {
 
 KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_regressionCellType) {
-    return heightForCellAtIndex(&m_changeRegressionCell, index, true);
+    return heightForCellAtIndex(&m_changeRegressionCell, index);
   }
   return Shared::StoreParameterController::nonMemoizedRowHeight(index);
 }

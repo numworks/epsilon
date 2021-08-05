@@ -57,7 +57,7 @@ int GenericSubController::numberOfRows() const {
 
 KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
   MessageTableCell tempCell;
-  return heightForCellAtIndex(&tempCell, index, false);
+  return heightForCellAtIndex(&tempCell, index);
 }
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int index) {

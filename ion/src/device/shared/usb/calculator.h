@@ -29,7 +29,7 @@ public:
     __attribute__((section(".dfu_entry_point"))) // Needed to pinpoint this symbol in the linker script
     __attribute__((used)) // Make sure this symbol is not discarded at link time
     ;
-  Calculator(const char * serialNumber) :
+  Calculator(const char * serialNumber, const char * stringDescriptor) :
     Device(&m_dfuInterface),
     m_deviceDescriptor(
         0x0210, /* bcdUSB: USB Specification Number which the device complies
@@ -103,7 +103,7 @@ public:
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("NumWorks Calculator"),
     m_serialNumberStringDescriptor(serialNumber),
-    m_interfaceFlashStringDescriptor(Config::InterfaceFlashStringDescriptor),
+    m_interfaceFlashStringDescriptor(stringDescriptor),
     m_interfaceSRAMStringDescriptor("@SRAM/0x20000000/01*256Ke"), // See note at the end of the file
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
     m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),

@@ -37,6 +37,7 @@ SlotInfo * slotInfo();
 void willExecuteDFU();
 void didExecuteDFU();
 bool shouldInterruptDFU();
+const char * stringDescriptor();
 
 }
 }

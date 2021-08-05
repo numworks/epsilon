@@ -13,7 +13,7 @@ void Calculator::PollAndReset() {
    * dfu. */
   char serialNumber[Ion::k_serialNumberLength+1];
   SerialNumber::copy(serialNumber);
-  Calculator c(serialNumber);
+  Calculator c(serialNumber, USB::stringDescriptor());
 
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected() && !(USB::shouldInterruptDFU() && !c.isErasingAndWriting())) {
     c.poll();

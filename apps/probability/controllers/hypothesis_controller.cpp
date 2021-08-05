@@ -171,7 +171,7 @@ void HypothesisController::loadHypothesisParam() {
   int offset = strlen(symbolPrefix());
   buffer[offset++] = '=';
   float p = m_statistic->hypothesisParams()->firstParam();
-  defaultParseFloat(p, buffer + offset, bufferSize);
+  defaultParseFloat(p, buffer + offset, bufferSize - offset);
 
   m_h0.setAccessoryText(buffer);
   m_ha.reload();

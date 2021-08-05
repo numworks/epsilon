@@ -26,6 +26,7 @@ kandinsky_fonts_src += $(addprefix kandinsky/fonts/, \
   LargeFont.ttf \
   SmallFont.ttf \
 )
+kandinsky_src += $(BUILD_DIR)/kandinsky/fonts/codepoint_to_glyph_index.cpp
 
 kandinsky_src += $(kandinsky_fonts_src)
 kandinsky_minimal_src += $(kandinsky_fonts_src)
@@ -38,7 +39,7 @@ tests_src += $(addprefix kandinsky/test/,\
 
 code_points = kandinsky/fonts/code_points.h
 
-RASTERIZER_CFLAGS := -std=c99 $(shell pkg-config freetype2 --cflags)
+RASTERIZER_CFLAGS := -std=c99 -Iion/include $(shell pkg-config freetype2 --cflags)
 RASTERIZER_LDFLAGS := $(shell pkg-config freetype2 --libs)
 
 HAS_LIBPNG := $(shell pkg-config libpng --exists && echo 1)
@@ -50,8 +51,8 @@ endif
 $(eval $(call rule_for, \
   HOSTCC, \
   kandinsky/fonts/rasterizer, \
-  kandinsky/fonts/rasterizer.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
-  $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$^ $$(RASTERIZER_LDFLAGS) -o $$@, \
+  kandinsky/fonts/rasterizer.c kandinsky/fonts/code_points.h $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
+  $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$(filter-out %.h,$$^) $$(RASTERIZER_LDFLAGS) -o $$@, \
   global \
 ))
 
@@ -63,9 +64,12 @@ $(call rule_for, \
   RASTER, \
   kandinsky/fonts/$(1).cpp, \
   kandinsky/fonts/$(1).ttf $$(RASTERIZER), \
-  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $(if $(HAS_LIBPNG),$$(basename $$@).png), \
+  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $$(dir $$@)/codepoint_to_glyph_index.cpp $(if $(HAS_LIBPNG),$$(basename $$@).png), \
   global \
 )
+# codepoint_to_glyph_index.cpp is generated as an aside by the rasterizer
+# we tell make that it can be built with an empty recipe as long as the font is built
+$(BUILD_DIR)/kandinsky/fonts/codepoint_to_glyph_index.cpp: $(BUILD_DIR)/kandinsky/fonts/$(1).cpp
 endef
 
 $(eval $(call raster_font,SmallFont,12,7,14))

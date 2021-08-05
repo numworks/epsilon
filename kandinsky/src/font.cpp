@@ -59,7 +59,7 @@ void KDFont::fetchGrayscaleGlyphAtIndex(KDFont::GlyphIndex index, uint8_t * gray
     compressedGlyphData(index),
     grayscaleBuffer,
     compressedGlyphDataSize(index),
-    m_glyphSize.width() * m_glyphSize.height() * k_bitsPerPixel/8
+    m_glyphSize.width() * m_glyphSize.height() * k_grayscaleBitsPerPixel/8
   );
 }
 
@@ -70,20 +70,20 @@ void KDFont::colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffe
    * colors derived from the temporary grayscale values, we will never overwrite
    * the remaining grayscale values since those are smaller. So we can avoid a
    * separate buffer for the temporary grayscale values. */
-  assert(k_bitsPerPixel < 8*sizeof(KDColor));
+  assert(k_grayscaleBitsPerPixel < 8*sizeof(KDColor));
 
   uint8_t * grayscaleBuffer = glyphBuffer->grayscaleBuffer();
   KDColor * colorBuffer = glyphBuffer->colorBuffer();
 
-  uint8_t mask = (0xFF >> (8-k_bitsPerPixel));
+  uint8_t mask = (0xFF >> (8-k_grayscaleBitsPerPixel));
   int pixelIndex = m_glyphSize.width() * m_glyphSize.height() - 1; // Let's start at the final pixel
-  int grayscaleByteIndex = pixelIndex * k_bitsPerPixel / 8;
+  int grayscaleByteIndex = pixelIndex * k_grayscaleBitsPerPixel / 8;
   while (pixelIndex >= 0) {
-    assert(grayscaleByteIndex == pixelIndex * k_bitsPerPixel / 8);
+    assert(grayscaleByteIndex == pixelIndex * k_grayscaleBitsPerPixel / 8);
     uint8_t grayscaleByte = grayscaleBuffer[grayscaleByteIndex--]; // We consume a grayscale byte...
-    for (int j=0; j<8/k_bitsPerPixel; j++) { // .. and we'll output 8/k_bits pixels
+    for (int j=0; j<8/k_grayscaleBitsPerPixel; j++) { // .. and we'll output 8/k_bits pixels
       uint8_t grayscale = grayscaleByte & mask;
-      grayscaleByte = grayscaleByte >> k_bitsPerPixel;
+      grayscaleByte = grayscaleByte >> k_grayscaleBitsPerPixel;
       assert(pixelIndex >= 0);
       colorBuffer[pixelIndex--] = renderPalette->colorAtIndex(grayscale);
     }
@@ -91,59 +91,8 @@ void KDFont::colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffe
 }
 
 KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
-#define USE_BINARY_SEARCH 0
-#if USE_BINARY_SEARCH
-  int lowerBound = 0;
-  int upperBound = m_tableLength;
-  while (true) {
-    int currentIndex = (lowerBound+upperBound)/2;
-    // printf("Considering %d in [%d,%d]\n", currentIndex, lowerBound, upperBound);
-    const CodePointIndexPair * currentPair = m_table + currentIndex;
-    const CodePointIndexPair * nextPair = (currentIndex + 1) < m_tableLength ? currentPair + 1 : nullptr;
-    // printf("At this point, currentPair->codePoint() = %d and c = %d\n", currentPair->codePoint(), c);
-    if (currentPair->codePoint() == c) {
-      return currentPair->glyphIndex();
-    } else if (currentPair->codePoint() > c) {
-      // We need to look below
-      if (upperBound == currentIndex) {
-        // There's nothing below. Error out.
-        return 0;
-      }
-      upperBound = currentIndex;
-      continue;
-    } else if (nextPair == nullptr) {
-      return 0;
-    } else if (nextPair->codePoint() == c) {
-      return nextPair->glyphIndex();
-    } else if (nextPair->codePoint() < c) {
-      // We need to look above
-      if (lowerBound == currentIndex) {
-        // There's nothing above. Error out.
-        return 0;
-      }
-      lowerBound = currentIndex;
-      continue;
-    } else {
-      // At this point,
-      // currentPair->codePoint < c && nextPair != nullptr && nextPair->codePoint > c
-      // Yay, it's over!
-      // There can be an empty space between the currentPair and the nextPair
-      // e.g. currentPair(3,1) and nextPair(9, 4)
-      // means value at codePoints 3, 4, 5, 6, 7, 8, 9
-      //     are glyph identifiers 1, ?, ?, ?, ?, ?, 4
-      //                 solved as 1, 2, 3, 0, 0, 0, 4
-
-      // Let's hunt down the zeroes
-      CodePoint lastCodePointOfCurrentPair = currentPair->codePoint() + (nextPair->glyphIndex() - currentPair->glyphIndex() - 1);
-      if (c > lastCodePointOfCurrentPair) {
-        return 0;
-      }
-      return currentPair->glyphIndex() + (c - currentPair->codePoint());
-    }
-  }
-#else
-  const CodePointIndexPair * currentPair = m_table;
-  const CodePointIndexPair * endPair = m_table + m_tableLength - 1;
+  const CodePointIndexPair * currentPair = s_CodePointToGlyphIndex;
+  const CodePointIndexPair * endPair = &s_CodePointToGlyphIndex[s_codePointPairsTableLength - 1];
   if (c < currentPair->codePoint()) {
     goto NoMatchingGlyph;
   }
@@ -162,17 +111,16 @@ KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
     return endPair->glyphIndex();
   }
   NoMatchingGlyph:
-  assert(CodePoints[IndexForReplacementCharacterCodePoint] == 0xFFFD);
-  return IndexForReplacementCharacterCodePoint;
-#endif
+  assert(CodePoints[k_indexForReplacementCharacterCodePoint] == 0xFFFD);
+  return k_indexForReplacementCharacterCodePoint;
 }
 
 bool KDFont::CanBeWrittenWithGlyphs(const char * text) {
   UTF8Decoder decoder(text);
   CodePoint cp = decoder.nextCodePoint();
   while(cp != UCodePointNull) {
-    if (LargeFont->indexForCodePoint(cp) == KDFont::IndexForReplacementCharacterCodePoint
-     || SmallFont->indexForCodePoint(cp) == KDFont::IndexForReplacementCharacterCodePoint)
+    if (LargeFont->indexForCodePoint(cp) == k_indexForReplacementCharacterCodePoint
+     || SmallFont->indexForCodePoint(cp) == k_indexForReplacementCharacterCodePoint)
     {
       return false;
     }

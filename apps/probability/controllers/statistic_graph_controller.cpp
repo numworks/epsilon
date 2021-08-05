@@ -1,5 +1,7 @@
 #include "statistic_graph_controller.h"
 
+#include <escher/clipboard.h>
+
 #include "probability/app.h"
 #include "probability/text_helpers.h"
 
@@ -30,7 +32,8 @@ const char * StatisticGraphController::title() {
     const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormat);
     snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, zBuffer, pBuffer);
   } else {
-    const char * format = I18n::translate(I18n::Message::StatisticGraphControllerIntervalTitleFormat);
+    const char * format = I18n::translate(
+        I18n::Message::StatisticGraphControllerIntervalTitleFormat);
     char MEBuffer[30];
     defaultParseFloat(m_statistic->marginOfError(), MEBuffer, sizeof(MEBuffer));
     snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, MEBuffer);
@@ -47,9 +50,9 @@ void StatisticGraphController::didBecomeFirstResponder() {
                            ? GraphDisplayMode::TwoCurve
                            : GraphDisplayMode::OneCurve;
   StatisticGraphView::LegendPosition pos = m_statistic->hypothesisParams()->op() ==
-                                          HypothesisParams::ComparisonOperator::Lower
-                                      ? StatisticGraphView::LegendPosition::Left
-                                      : StatisticGraphView::LegendPosition::Right;
+                                                   HypothesisParams::ComparisonOperator::Lower
+                                               ? StatisticGraphView::LegendPosition::Left
+                                               : StatisticGraphView::LegendPosition::Right;
   m_graphView.setMode(m);
   m_graphView.setLegendPosition(pos);
   m_graphView.setType(t);
@@ -63,6 +66,25 @@ void StatisticGraphController::didBecomeFirstResponder() {
                                                       m_statistic->marginOfError());
   }
   m_graphView.reload();
+}
+
+bool StatisticGraphController::handleEvent(Ion::Events::Event event) {
+  if (App::app()->subapp() == Data::SubApp::Intervals && event == Ion::Events::Copy) {
+    // Copy confidence interval as matrix
+    char buffer[40];
+    char lowerBound[20];
+    char upperBound[20];
+    defaultParseFloat(m_statistic->estimate() - m_statistic->marginOfError(),
+                      lowerBound,
+                      sizeof(lowerBound));
+    defaultParseFloat(m_statistic->estimate() + m_statistic->marginOfError(),
+                      upperBound,
+                      sizeof(upperBound));
+    snprintf(buffer, sizeof(buffer), "[[%s,%s]]", lowerBound, upperBound);
+    Escher::Clipboard::sharedClipboard()->store(buffer, strlen(buffer));
+    return true;
+  }
+  return false;
 }
 
 }  // namespace Probability

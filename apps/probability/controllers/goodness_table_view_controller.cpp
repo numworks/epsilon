@@ -58,8 +58,7 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
     m_inputTableView.recomputeNumberOfRows();
   }
   // Select new column or jump to new row
-  m_inputTableView.selectCellAtLocation(1 - selectedColumn,
-                                        m_inputTableView.selectedRow() + (selectedColumn == 1));
+  m_inputTableView.selectCellAtLocation(selectedColumn, m_inputTableView.selectedRow() + 1);
   m_inputTableView.reloadData(false);  // TODO why needed ?
   return true;
 }

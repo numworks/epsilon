@@ -487,5 +487,7 @@ Expression Decimal::shallowBeautify() {
 
 template Decimal Decimal::Decimal::Builder(double);
 template Decimal Decimal::Decimal::Builder(float);
+template float DecimalNode::templatedApproximate() const;
+template double DecimalNode::templatedApproximate() const;
 
 }

@@ -42,14 +42,13 @@ private:
   class ContentView : public VerticalLayout {
   public:
     ContentView(Escher::SelectableTableView * table, I18n::Message titleMessage);
-    int numberOfSubviews() const override { return 3; }
+    int numberOfSubviews() const override { return 2; }
     Escher::View * subviewAtIndex(int i) override;
     void relayout();
 
   private:
     friend ResultsView;
-    constexpr static int k_spacerHeight = 5;
-    SpacerView m_spacer;
+    constexpr static int k_marginAroundTitle = 5;
     Escher::MessageTextView m_title;
     Escher::SelectableTableView * m_table;
   };

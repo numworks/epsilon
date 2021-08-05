@@ -131,7 +131,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 
 KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
   ExpressionTableCellWithMessage tempCell;
-  return heightForCellAtIndex(&tempCell, j, true);
+  return heightForCellAtIndex(&tempCell, j);
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

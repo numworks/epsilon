@@ -480,7 +480,7 @@ void MathToolbox::viewDidDisappear() {
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_leafCellType) {
     ExpressionTableCellWithMessage tempCell;
-    return heightForCellAtIndex(&tempCell, index, true);
+    return heightForCellAtIndex(&tempCell, index);
   }
   return Escher::Toolbox::nonMemoizedRowHeight(index);
 }

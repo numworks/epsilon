@@ -111,45 +111,26 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return 0;
 }
 
-KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index, bool unsafe) {
+KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
   // A non-null implementation of cellWidth is required to compute cell height.
   assert(cellWidth() != 0);
   // Set cell's frame width
   cell->setSize(KDSize(cellWidth(), cell->bounds().height()));
-  if (!unsafe || m_memoizationLockedLevel == 0) {
-    // Setup cell as if it was to be displayed
-    willDisplayCellForIndex(cell, index);
-  } else {
-    /* If memoization is under lock, and willDisplayCellForIndex is unsafe
-     * (allocating something in the shared pool), a Poincare exceptions may be
-     * raised, and must be caught here to clean lock before falling back on
-     * parent exception checkpoint.*/
-    {
-      // Encapsulate exception so it is destroyed before fallback is raised
-      Poincare::ExceptionCheckpoint ecp;
-      if (ExceptionRun(ecp)) {
-        willDisplayCellForIndex(cell, index);
-        // WillDisplayCellForIndex was successful
-        unsafe = false;
-      }
-    }
-    if (unsafe) {
-      /* An exception occurred. Remove Lock and fall back on parent's exception
-       * checkpoint as intended. */
-      m_memoizationLockedLevel = 0;
-      Poincare::ExceptionCheckpoint::Raise();
-    }
-  }
+  // Setup cell as if it was to be displayed
+  willDisplayCellForIndex(cell, index);
   // Return cell's height
   return cell->minimalSizeForOptimalDisplay().height();
 }
 
 void MemoizedListViewDataSource::resetMemoization(bool force) {
-  if (m_memoizationLockedLevel > 0) {
-    // Memoization shouldn't be under lock if called with force
-    assert(!force);
+  if (!force && m_memoizationLockedLevel > 0) {
     return;
   }
+  /* With interruption and exceptions, a memoization lock status may end up
+   * corrupted. It is here resetted because called with force. If we were not
+   * supposed to do this, it will be caught when next unlock call will trigger
+   * an assertion as m_memoizationLockedLevel will be negative. */
+  m_memoizationLockedLevel = 0;
   // Reset memoized index and corresponding cumulated height.
   m_memoizedIndexOffset = 0;
   m_memoizedCumulatedHeightOffset = 0;
@@ -186,7 +167,7 @@ KDCoordinate MemoizedListViewDataSource::nonMemoizedRowHeight(int j) {
     // Row number does not matter in this reusableCell() implementation.
     reusableCell(j, type) == reusableCell(0, type)
   );
-  return heightForCellAtIndex(reusableCell(j, type), j, false);
+  return heightForCellAtIndex(reusableCell(j, type), j);
 }
 
 int MemoizedListViewDataSource::getMemoizedIndex(int index) {
@@ -226,7 +207,7 @@ void MemoizedListViewDataSource::shiftMemoization(bool lowerIndex) {
     // Memoization is locked, do not shift
     return;
   }
-  // The new unknown value must be reseted.
+  // The new unknown value must be resetted.
   if (lowerIndex) {
     assert(m_memoizedIndexOffset > 0);
     m_memoizedIndexOffset--;

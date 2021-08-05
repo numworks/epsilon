@@ -40,7 +40,7 @@ HighlightCell * SingleRangeController::reusableCell(int index, int type) {
 KDCoordinate SingleRangeController::nonMemoizedRowHeight(int j) {
   int type = typeAtIndex(j);
   HighlightCell * cell = type == k_autoCellType ? static_cast<HighlightCell *>(&m_autoCell) : type == k_parameterCellType ? static_cast<HighlightCell *>(&m_boundsCells[j - 1]) : nullptr;
-  return cell ? heightForCellAtIndex(cell, j, false) : FloatParameterController<float>::nonMemoizedRowHeight(j);
+  return cell ? heightForCellAtIndex(cell, j) : FloatParameterController<float>::nonMemoizedRowHeight(j);
 }
 
 void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {

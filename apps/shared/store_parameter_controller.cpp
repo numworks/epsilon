@@ -102,7 +102,7 @@ KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
     assert(typeAtIndex(index) == k_defaultCellType);
     cell = reusableCell(0, k_defaultCellType);
   }
-  return heightForCellAtIndex(cell, index, false);
+  return heightForCellAtIndex(cell, index);
 }
 
 void StoreParameterController::deleteColumn() {

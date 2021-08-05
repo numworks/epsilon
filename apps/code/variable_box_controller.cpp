@@ -70,10 +70,10 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
   int cellType = typeAndOriginAtLocation(index);
   if (cellType == k_itemCellType) {
     ScriptNodeCell tempCell;
-    return heightForCellAtIndex(&tempCell, index, false);
+    return heightForCellAtIndex(&tempCell, index);
   }
   BufferTableCell tempCell;
-  return heightForCellAtIndex(&tempCell, index, false);
+  return heightForCellAtIndex(&tempCell, index);
 }
 
 int VariableBoxController::numberOfRows() const {

@@ -27,12 +27,15 @@ namespace Probability {
 class HypothesisController;
 
 /* Simple view to include list and description below */
-class TypeView : public VerticalLayout {
+class TypeView : public Escher::SolidColorView {
 public:
   TypeView(SelectableTableView * list, MessageTextView * description) :
-      m_list(list), m_description(description) {}
+      Escher::SolidColorView(Escher::Palette::WallScreen),
+      m_list(list),
+      m_description(description) {}
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
+  void layoutSubviews(bool force = false) override;
 
 private:
   SelectableTableView * m_list;
@@ -41,9 +44,12 @@ private:
 
 class TypeController : public SelectableListViewPage {
 public:
-  TypeController(StackViewController * parent, HypothesisController * hypothesisController,
-                 InputController * intervalInputController, Data::Test * globalTest,
-                 Data::TestType * globalTestType, Statistic * statistic);
+  TypeController(StackViewController * parent,
+                 HypothesisController * hypothesisController,
+                 InputController * intervalInputController,
+                 Data::Test * globalTest,
+                 Data::TestType * globalTestType,
+                 Statistic * statistic);
   View * view() override { return &m_contentView; }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override {

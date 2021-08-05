@@ -2,8 +2,6 @@
 #define APPS_PROBABILITY_GUI_HORIZONTAL_OR_VERTICAL_LAYOUT_H
 
 #include <apps/i18n.h>
-#include <escher/message_table_cell_with_chevron.h>
-#include <escher/message_text_view.h>
 #include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/solid_color_view.h>

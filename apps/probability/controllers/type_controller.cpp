@@ -16,6 +16,17 @@
 
 using namespace Probability;
 
+
+void Probability::TypeView::layoutSubviews(bool force) {
+  m_list->setFrame(KDRect(KDPointZero, m_frame.width(), 0), false);
+  KDSize listSize = m_list->minimalSizeForOptimalDisplay();
+  m_list->setFrame(KDRect(KDPointZero, listSize), force);
+  m_description->setFrame(
+      KDRect(0, listSize.height(), m_frame.width(), m_frame.height() - listSize.height()),
+      force);
+}
+
+
 TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
                                InputController * inputController,
@@ -30,8 +41,9 @@ TypeController::TypeController(StackViewController * parent,
     m_statistic(statistic) {
   m_description.setBackgroundColor(Palette::WallScreen);
   m_description.setTextColor(Palette::GrayDark);
-  m_description.setAlignment(0.5, 0);
+  m_description.setAlignment(0.5, 0.5);
   m_description.setFont(KDFont::SmallFont);
+  m_selectableTableView.setBottomMargin(0);
 }
 
 void TypeController::didBecomeFirstResponder() {

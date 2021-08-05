@@ -2,13 +2,11 @@
 #define APPS_PROBABILITY_GUI_SUBAPP_CELL_H
 
 #include <escher/chevron_view.h>
-#include <escher/message_table_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/table_cell.h>
 
+#include "highlight_image_cell.h"
 #include "horizontal_or_vertical_layout.h"
 #include "image_cell.h"
-#include "highlight_image_cell.h"
 
 namespace Probability {
 
@@ -33,37 +31,29 @@ private:
   MessageTextView m_messageView;
 };
 
-class TitleAndSubtitleView : public VerticalLayout {
-public:
-  TitleAndSubtitleView();
-  Escher::HighlightCell * subviewAtIndex(int i) override;
-  int numberOfSubviews() const override { return 2; }
-  void setMessages(I18n::Message title, I18n::Message subTitle);
-  HighlightMessageView * titleView() { return &m_title; }
-  HighlightMessageView * subTitleView() { return &m_subTitle; }
-
-private:
-  HighlightMessageView m_title;
-  HighlightMessageView m_subTitle;
-};
-
 /* Cell made of an icon, a title, a chevron and a subtitle below. */
-class SubappCell : public Escher::TableCell {
+class SubappCell : public Escher::HighlightCell, public Escher::Bordered {
 public:
+  SubappCell();
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlighted(bool highlighted) override;
   Escher::View * subviewAtIndex(int i) override;
-  int numberOfSubviews() const override { return 3; }
-  const View * accessoryView() const override { return &m_chevron; }
-  const View * labelView() const override { return &m_icon; }
-  const View * subLabelView() const override { return &m_titleAndSubtitleView; }
-  bool isSublabelAlignedRight() const override { return false; }
+  int numberOfSubviews() const override { return 4; }
+  KDSize minimalSizeForOptimalDisplay() const override;
+  void layoutSubviews(bool force = false) override;
 
   void setImage(const Escher::Image * image);
   void setMessages(I18n::Message title, I18n::Message subTitle);
 
 private:
+  constexpr static int k_verticalMarginTop = 10;
+  constexpr static int k_verticalMarginBetweenTexts = 5;
+  constexpr static int k_verticalMarginBottom = 7;
+  constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
+
   HighlightImageCell m_icon;
-  TitleAndSubtitleView m_titleAndSubtitleView;
+  HighlightMessageView m_title;
+  HighlightMessageView m_subTitle;
   ChevronView m_chevron;
 };
 

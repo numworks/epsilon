@@ -1,5 +1,6 @@
 #include <ion/external_apps.h>
 #include <shared/drivers/config/board.h>
+#include <shared/drivers/usb.h>
 #include <shared/drivers/userland_header.h>
 #include <shared/usb/calculator.h>
 #include <userland/drivers/board.h>
@@ -20,6 +21,7 @@ void Calculator::leave(uint32_t leaveAddress) {
     return;
   }
   Board::switchExecutableSlot(leaveAddress);
+  USB::didExecuteDFU();
   /* The jump can't be done from switchExecutableSlot since we need to
    * terminate the interruption procedure before jumping. */
   Reset::jump(leaveAddress + sizeof(UserlandHeader));

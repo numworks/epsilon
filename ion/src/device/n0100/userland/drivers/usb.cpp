@@ -21,6 +21,10 @@ bool shouldInterruptDFU() {
   return Keyboard::columnIsActive(Keyboard::columnForKey(Ion::Keyboard::Key::Back));
 }
 
+const char * stringDescriptor() {
+  return Config::InterfaceFlashStringDescriptor;
+}
+
 }
 }
 }

@@ -78,20 +78,18 @@ bool Probability::ResultsController::buttonAction() {
 
 Probability::ResultsView::ContentView::ContentView(Escher::SelectableTableView * table,
                                                    I18n::Message titleMessage) :
-    m_spacer(Palette::WallScreen, 0, k_spacerHeight),
     m_title(KDFont::SmallFont, titleMessage, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
     m_table(table) {
-  m_table->setMargins(k_spacerHeight, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
+  m_table->setMargins(k_marginAroundTitle, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
 Escher::View * Probability::ResultsView::ContentView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   if (i == 0) {
-    return &m_spacer;
-  } else if (i == 1) {
     return &m_title;
+  } else {
+    return m_table;
   }
-  return m_table;
 }
 
 void Probability::ResultsView::ContentView::relayout() {
@@ -104,11 +102,11 @@ Probability::ResultsView::ResultsView(Escher::SelectableTableView * table,
     ScrollView(&m_contentView, &m_scrollDataSource),
     m_contentView(table, titleMessage),
     m_tableDataSource(tableDataSource) {
-  setMargins(ContentView::k_spacerHeight, 0, Metric::CommonBottomMargin, 0);
+  setMargins(ContentView::k_marginAroundTitle, 0, Metric::CommonBottomMargin, 0);
 }
 
 KDPoint Probability::ResultsView::tableOrigin() {
-  return KDPoint(0, 2 * ContentView::k_spacerHeight + 14);
+  return KDPoint(0, ContentView::k_marginAroundTitle + KDFont::SmallFont->glyphSize().height());
 }
 
 void Probability::ResultsView::tableViewDidChangeSelectionAndDidScroll(

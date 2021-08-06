@@ -28,7 +28,10 @@ private:
                        HypothesisParams::ComparisonOperator op,
                        float z,
                        float zAlpha) const;
+  void drawLabelAndGraduationAtPosition(KDContext * ctx, float position) const;
   void drawZLabelAndGraduation(KDContext * ctx, float x) const;
+  void drawIntervalLabelAndGraduation(KDContext * ctx) const;
+
   static Poincare::Coordinate2D<float> evaluateTestAtAbsissa(float x,
                                                              void * model,
                                                              void * context);

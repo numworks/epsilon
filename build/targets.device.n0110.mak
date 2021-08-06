@@ -74,9 +74,9 @@ endif
 	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) $(BUILD_DIR)/bench.flash.bin
 	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) $(BUILD_DIR)/bench.ram.bin
 	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin output/binpack
-	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) epsilon.official.onboarding.update.two_binaries
-	cp $(BUILD_DIR)/epsilon.official.onboarding.update.internal.bin $(BUILD_DIR)/epsilon.official.onboarding.update.external.bin output/binpack
+	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) epsilon.onboarding.update.two_binaries
+	cp $(BUILD_DIR)/epsilon.onboarding.update.internal.bin $(BUILD_DIR)/epsilon.onboarding.update.external.bin output/binpack
 	$(MAKE) clean
-	cd output && for binary in flasher.bin bench.flash.bin bench.ram.bin epsilon.official.onboarding.update.internal.bin epsilon.official.onboarding.update.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cd output && for binary in flasher.bin bench.flash.bin bench.ram.bin epsilon.onboarding.update.internal.bin epsilon.onboarding.update.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd output && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
 	rm -rf output/binpack

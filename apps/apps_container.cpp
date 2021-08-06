@@ -245,6 +245,8 @@ void AppsContainer::run() {
     activateExamMode(globalPreferences->examMode());
   }
   refreshPreferences();
+  Ion::Power::selectStandbyMode(false);
+  Ion::Events::setSpinner(true);
 
   /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
    * called. During a longjump, the stack pointer is set to this stored stack

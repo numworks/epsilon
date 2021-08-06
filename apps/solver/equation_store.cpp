@@ -397,12 +397,12 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions++] = delta;
   for (int i = 0; i < m_numberOfSolutions; i++) {
-    Expression exactSolutionClone = exactSolutions[i].clone();
     if (solutionsAreApproximated) {
-      exactSolutionsApproximations[i] = exactSolutionClone;
+      exactSolutionsApproximations[i] = exactSolutions[i].clone();
     } else {
+      Expression exactSolution = exactSolutions[i];
       exactSolutions[i] = Expression();
-      exactSolutionClone.simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+      exactSolution.simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
     }
   }
   return Error::NoError;

@@ -29,19 +29,19 @@ void HomogeneityTableViewController::didBecomeFirstResponder() {
 bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     // Delete value
-    int row = m_table.selectedRow() - 1, col = m_table.selectedColumn() - 1;
-    m_statistic->setParameterAtPosition(row, col, HomogeneityStatistic::k_undefinedValue);
+    int row = m_table.selectedRow(), col = m_table.selectedColumn();
+    m_statistic->setParameterAtPosition(row - 1, col - 1, HomogeneityStatistic::k_undefinedValue);
 
     // Delete last row / column
     m_table.deselectTable();
-    if (row == m_innerTableData.numberOfRows() - 2) {
+    if (row == m_tableData.numberOfRows() - 2) {
       m_innerTableData.recomputeDimensions();
     }
-    if (col == m_innerTableData.numberOfColumns() - 2) {
+    if (col == m_tableData.numberOfColumns() - 2) {
       m_innerTableData.recomputeDimensions();
     }
-    m_table.selectCellAtClippedLocation(col + 1, row + 1, false);
-    m_table.reloadCellAtLocation(col + 1, row + 1);
+    m_table.selectCellAtClippedLocation(col, row, false);
+    m_table.reloadCellAtLocation(col, row );
     return true;
   }
   return false;
@@ -68,8 +68,8 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
       m_innerTableData.numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns) {
     m_innerTableData.recomputeDimensions();
   }
-
-  m_table.selectCellAtLocation(column, row + 1);
+  moveSelectionForEvent(event, &row, &column);
+  m_table.selectCellAtLocation(column, row);
   m_table.reloadData(false);  // TODO why needed ?
   return true;
 }

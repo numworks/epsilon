@@ -20,8 +20,6 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
   static constexpr int k_numberOfDeactivationMessageLines = 3;
-  static constexpr int k_numberOfCautionMessageLines = 3;
-  int numberOfCautionLines() const;
   int initialSelectedRow() const override;
   GlobalPreferences::ExamMode examMode();
   static constexpr int k_maxNumberOfCells = 2;

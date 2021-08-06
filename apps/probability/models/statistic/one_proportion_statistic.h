@@ -15,7 +15,7 @@ public:
   void computeInterval() override;
 
   // Confidence interval
-  const char * estimateSymbol() override { return "p"; };
+  const char * estimateSymbol() override { return "p̂"; };
   Poincare::Layout estimateLayout() override;
   I18n::Message estimateDescription() override { return I18n::Message::SampleProportion; };
 

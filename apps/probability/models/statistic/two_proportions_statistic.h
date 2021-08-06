@@ -17,7 +17,7 @@ public:
   bool hasDegreeOfFreedom() override { return false; };
 
   // Confidence interval
-  const char * estimateSymbol() override { return "p1-p2"; };
+  const char * estimateSymbol() override { return "p̂1-p̂2"; };
   Poincare::Layout estimateLayout() override;
   I18n::Message estimateDescription() override { return I18n::Message::SampleTwoProportions; };
 

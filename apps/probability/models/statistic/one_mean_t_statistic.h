@@ -15,7 +15,7 @@ public:
   void computeInterval() override;
 
   // Confidence interval
-  const char * estimateSymbol() override { return "x"; }
+  const char * estimateSymbol() override { return "x̅"; }
 
 protected:
   // Parameters

@@ -1,5 +1,4 @@
 #include <poincare/exception_checkpoint.h>
-#include <poincare/circuit_breaker_checkpoint.h>
 
 namespace Poincare {
 

@@ -2,6 +2,7 @@
 #define POINCARE_EXCEPTION_CHECKPOINT_H
 
 #include <poincare/checkpoint.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <setjmp.h>
 
 /* Usage: See comment in checkpoint.h
@@ -15,6 +16,7 @@
 namespace Poincare {
 
 class ExceptionCheckpoint final : public Checkpoint {
+friend CircuitBreakerCheckpoint;
 public:
   static void Raise() {
     assert(s_topmostExceptionCheckpoint != nullptr);
@@ -29,9 +31,10 @@ public:
   static TreeNode * TopmostEndOfPoolBeforeCheckpoint() {
     return s_topmostExceptionCheckpoint ? s_topmostExceptionCheckpoint->getEndOfPoolBeforeCheckpoint() : nullptr;
   }
-  static ExceptionCheckpoint * s_topmostExceptionCheckpoint;
 private:
   void rollback() override;
+
+  static ExceptionCheckpoint * s_topmostExceptionCheckpoint;
 
   jmp_buf m_jumpBuffer;
   ExceptionCheckpoint * m_parent;

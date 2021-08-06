@@ -21,6 +21,7 @@ float ZStatistic::_pVal(float z, char op) {
                      -z, 0, 1);
       ;
   }
+  return -1;
 }
 
 float ZStatistic::normedDensityFunction(float x) {

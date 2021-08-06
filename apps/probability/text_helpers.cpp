@@ -28,7 +28,7 @@ int snprintf(char * buffer, size_t bufferSize, const char * format, ...) {
     } else {
       *(buffer++) = *(format++);
     }
-    if (buffer - origin >= bufferSize - 1) {
+    if (buffer - origin >= (int)bufferSize - 1) {
       assert(false);
       break;
     }

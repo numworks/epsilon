@@ -14,7 +14,6 @@ constexpr KDColor StatisticCurveView::k_backgroundColor;
 void StatisticCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
   drawAxis(ctx, rect, Axis::Horizontal);
-  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
 
   if (App::app()->subapp() == Data::SubApp::Tests) {
     drawTest(ctx, rect);
@@ -34,7 +33,8 @@ bool StatisticCurveView::shouldDrawLabelAtPosition(float labelValue) const {
   if (App::app()->subapp() == Data::SubApp::Intervals) {
     return true;
   }
-  float margin = k_marginsAroundZLabel / static_cast<float>(bounds().width()) * (curveViewRange()->xMax() - curveViewRange()->xMin());
+  float margin = k_marginsAroundZLabel / static_cast<float>(bounds().width()) *
+                 (curveViewRange()->xMax() - curveViewRange()->xMin());
   float z = m_statistic->testCriticalValue();
   return labelValue >= z + margin || labelValue <= z - margin;
 }
@@ -45,22 +45,39 @@ void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
 
   // Coloring under curve
   colorUnderCurve(ctx, rect, m_statistic->hypothesisParams()->op(), z, zAlpha);
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateTestAtAbsissa, m_statistic, nullptr,
+  drawCartesianCurve(ctx,
+                     rect,
+                     -INFINITY,
+                     INFINITY,
+                     evaluateTestAtAbsissa,
+                     m_statistic,
+                     nullptr,
                      Escher::Palette::GrayVeryDark);
+  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   drawZLabelAndGraduation(ctx, z);
 }
 
 void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateIntervalAtAbsissa, m_statistic,
-                     nullptr, Escher::Palette::YellowDark, true, true,
+  drawCartesianCurve(ctx,
+                     rect,
+                     -INFINITY,
+                     INFINITY,
+                     evaluateIntervalAtAbsissa,
+                     m_statistic,
+                     nullptr,
+                     Escher::Palette::YellowDark,
+                     true,
+                     true,
                      m_statistic->estimate() - m_statistic->marginOfError(),
                      m_statistic->estimate() + m_statistic->marginOfError());
+  drawIntervalLabelAndGraduation(ctx);
 }
 
-void StatisticCurveView::colorUnderCurve(KDContext * ctx, KDRect rect,
-                                         HypothesisParams::ComparisonOperator op, float z,
+void StatisticCurveView::colorUnderCurve(KDContext * ctx,
+                                         KDRect rect,
+                                         HypothesisParams::ComparisonOperator op,
+                                         float z,
                                          float zAlpha) const {
-
   if (op == HypothesisParams::ComparisonOperator::Different) {
     // Recurse for both colors
     colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z, zAlpha);
@@ -73,8 +90,18 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx, KDRect rect,
   bool zMoreExtreme = op == HypothesisParams::ComparisonOperator::Higher ? z > zAlpha : z < zAlpha;
   KDColor middleColor = !zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   KDColor externColor = zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
-  drawCartesianCurve(ctx, rect, min, max, evaluateTestAtAbsissa, m_statistic, nullptr, middleColor,
-                     true, true, min, max);
+  drawCartesianCurve(ctx,
+                     rect,
+                     min,
+                     max,
+                     evaluateTestAtAbsissa,
+                     m_statistic,
+                     nullptr,
+                     middleColor,
+                     true,
+                     true,
+                     min,
+                     max);
   float xmin, xmax;
   if (op == HypothesisParams::ComparisonOperator::Higher) {
     xmin = max;
@@ -83,13 +110,47 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx, KDRect rect,
     xmin = -INFINITY;
     xmax = min;
   }
-  drawCartesianCurve(ctx, rect, xmin, xmax, evaluateTestAtAbsissa, m_statistic, nullptr,
-                     externColor, true, true, xmin, xmax);
+  drawCartesianCurve(ctx,
+                     rect,
+                     xmin,
+                     xmax,
+                     evaluateTestAtAbsissa,
+                     m_statistic,
+                     nullptr,
+                     externColor,
+                     true,
+                     true,
+                     xmin,
+                     xmax);
 }
 
-void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float x) const {
+void StatisticCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position) const {
   float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
-  float z = m_statistic->testCriticalValue();
+  KDCoordinate graduationPosition = std::round(floatToPixel(Axis::Horizontal, position));
+  // Graduation
+  KDRect graduation = KDRect(graduationPosition,
+                             verticalOrigin - (k_labelGraduationLength - 2) / 2,
+                             1,
+                             k_labelGraduationLength);
+  ctx->fillRect(graduation, KDColorBlack);
+  // Label
+  char buffer[k_labelBufferMaxSize];
+  Poincare::PrintFloat::ConvertFloatToText<float>(position,
+                                                  buffer,
+                                                  k_labelBufferMaxSize,
+                                                  k_labelBufferMaxGlyphLength,
+                                                  k_numberSignificantDigits,
+                                                  Poincare::Preferences::PrintFloatMode::Decimal);
+  KDPoint labelPosition = positionLabel(graduationPosition,
+                                        verticalOrigin,
+                                        KDFont::SmallFont->stringSize(buffer),
+                                        RelativePosition::None,
+                                        RelativePosition::Before);
+  ctx->drawString(buffer, labelPosition, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
+}
+
+void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float z) const {
+  float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
   KDCoordinate labelPosition = std::round(floatToPixel(Axis::Horizontal, z));
 
   // Graduation
@@ -108,6 +169,14 @@ void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float x) const
                                    RelativePosition::None,
                                    RelativePosition::Before);
   ctx->drawString(zText, position, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
+}
+
+void StatisticCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
+  float lowerBound = m_statistic->estimate() - m_statistic->marginOfError();
+  float upperBound = m_statistic->estimate() + m_statistic->marginOfError();
+  drawLabelAndGraduationAtPosition(ctx, lowerBound);
+  drawLabelAndGraduationAtPosition(ctx, m_statistic->estimate());
+  drawLabelAndGraduationAtPosition(ctx, upperBound);
 }
 
 Poincare::Coordinate2D<float> StatisticCurveView::evaluateTestAtAbsissa(float x,

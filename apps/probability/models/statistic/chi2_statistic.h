@@ -13,8 +13,6 @@ class Chi2Statistic : public CachedStatistic {
 public:
   Chi2Statistic();
   Poincare::Layout testCriticalValueSymbol() override;
-  const char * estimateSymbol() override { return ""; }
-  I18n::Message estimateDescription() override { return I18n::Message::Default; }
   bool hasDegreeOfFreedom() override { return true; }
   float degreeOfFreedom() override { return m_degreesOfFreedom; }
 

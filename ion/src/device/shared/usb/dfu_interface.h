@@ -22,7 +22,7 @@ public:
     m_status(Status::OK),
     m_state(State::dfuIDLE),
     m_addressPointer(0),
-    m_potentialNewAddressPointer(0),
+    m_potentialNewAddressPointer(k_nullAddress),
     m_erasePage(-1),
     m_largeBuffer{0},
     m_largeBufferLength(0),
@@ -131,6 +131,8 @@ private:
    * linked with dfu.ld, so we cannot access the values. */
   constexpr static uint32_t k_sramStartAddress = 0x20000000;
   constexpr static uint32_t k_sramEndAddress = 0x20040000;
+
+  constexpr static uint32_t k_nullAddress = 0xFFFFFFFF;
 
   // Download and upload
   bool processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength);

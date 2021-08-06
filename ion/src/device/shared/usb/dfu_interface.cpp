@@ -164,7 +164,7 @@ void DFUInterface::setAddressPointerCommand(SetupPacket * request, uint8_t * tra
 }
 
 void DFUInterface::changeAddressPointerIfNeeded() {
-  if (m_potentialNewAddressPointer == 0) {
+  if (m_potentialNewAddressPointer == k_nullAddress) {
     // There was no address change waiting.
     return;
   }

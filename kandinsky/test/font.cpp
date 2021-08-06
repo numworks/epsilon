@@ -1,39 +1,27 @@
-#include <quiz.h>
-#include <kandinsky/font.h>
 #include <assert.h>
+#include <kandinsky/font.h>
+#include <kandinsky/fonts/code_points.h>
+#include <quiz.h>
 
-static constexpr KDFont::CodePointIndexPair table[] = {
-  KDFont::CodePointIndexPair(3, 1), // CodePoint, identifier
-  KDFont::CodePointIndexPair(9, 4),
-  KDFont::CodePointIndexPair(12, 5),
-  KDFont::CodePointIndexPair(14, 7)
-};
+constexpr KDFont testFont(10, 10, nullptr, nullptr);
 
-constexpr KDFont testFont(4, table, 10, 10, nullptr, nullptr);
-
-constexpr int numberOfTests = 16;
-const KDFont::GlyphIndex index_for_code_point[numberOfTests] = {
-   KDFont::IndexForReplacementCharacterCodePoint,
-   KDFont::IndexForReplacementCharacterCodePoint,
-   KDFont::IndexForReplacementCharacterCodePoint,
-   1,
-   2,
-   3,
-   KDFont::IndexForReplacementCharacterCodePoint,
-   KDFont::IndexForReplacementCharacterCodePoint,
-   KDFont::IndexForReplacementCharacterCodePoint,
-   4,
-   KDFont::IndexForReplacementCharacterCodePoint,
-   KDFont::IndexForReplacementCharacterCodePoint,
-   5,
-   6,
-   7,
-   KDFont::IndexForReplacementCharacterCodePoint,
-};
+bool valueNotInArray(const uint32_t * array, int length, uint32_t value) {
+  for (int i = 0; i < length; i++) {
+    if (array[i] == value) {
+      return false;
+    }
+  }
+  return true;
+}
 
 QUIZ_CASE(kandinsky_font_index_for_code_point) {
-  for (int i=0; i<numberOfTests; i++) {
-    KDFont::GlyphIndex result = testFont.indexForCodePoint(i);
-    quiz_assert(result == index_for_code_point[i]);
+  quiz_assert(CodePoints[KDFont::k_indexForReplacementCharacterCodePoint] == 0xFFFD);
+
+  // Test all CodePoints
+  for (uint32_t codePoint = 0; codePoint < 65536; codePoint++) {
+    KDFont::GlyphIndex index = testFont.indexForCodePoint(codePoint);
+    quiz_assert(CodePoints[index] == codePoint ||
+                (index == KDFont::k_indexForReplacementCharacterCodePoint &&
+                 valueNotInArray(CodePoints, NumberOfCodePoints, codePoint)));
   }
 }

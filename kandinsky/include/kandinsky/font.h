@@ -68,6 +68,9 @@ public:
     CodePoint m_codePoint;
     GlyphIndex m_glyphIndex;
   };
+  constexpr static int k_indexForReplacementCharacterCodePoint = indexOf(CodePoints,
+                                                                         NumberOfCodePoints,
+                                                                         UCodePointReplacement);
   GlyphIndex indexForCodePoint(CodePoint c) const;
 
   void setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
@@ -84,10 +87,8 @@ public:
 
   constexpr KDFont(KDCoordinate glyphWidth, KDCoordinate glyphHeight, const uint16_t * glyphDataOffset, const uint8_t * data) :
     m_glyphSize(glyphWidth, glyphHeight), m_glyphDataOffset(glyphDataOffset), m_data(data) { }
+
 private:
-  constexpr static int k_indexForReplacementCharacterCodePoint = indexOf(CodePoints,
-                                                                         NumberOfCodePoints,
-                                                                         UCodePointReplacement);
   void fetchGrayscaleGlyphAtIndex(GlyphIndex index, uint8_t * grayscaleBuffer) const;
 
   const uint8_t * compressedGlyphData(GlyphIndex index) const {

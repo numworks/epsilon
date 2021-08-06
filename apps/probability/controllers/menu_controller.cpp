@@ -36,9 +36,8 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
   m_cells[k_indexOfDistribution].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
   m_cells[k_indexOfDistribution].setImage(ImageStore::Probability);
   m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest);
-  m_cells[k_indexOfTest].setMessages(I18n::Message::SignificanceTest, I18n::Message::TestDescr);
-  m_cells[k_indexOfInterval].setMessages(I18n::Message::ConfidenceInterval,
-                                         I18n::Message::IntervalDescr);
+  m_cells[k_indexOfTest].setMessages(I18n::Message::Tests, I18n::Message::TestDescr);
+  m_cells[k_indexOfInterval].setMessages(I18n::Message::Interval, I18n::Message::IntervalDescr);
   m_cells[k_indexOfInterval].setImage(ImageStore::ConfidenceInterval);
 }
 

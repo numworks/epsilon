@@ -56,16 +56,21 @@ const char * Probability::ResultsController::title() {
   if (App::app()->subapp() == Data::SubApp::Intervals) {
     char confidenceBuffer[k_titleBufferSize];
     defaultParseFloat(m_statistic->threshold(), confidenceBuffer, k_titleBufferSize);
-    const char * estimateSymbol = m_statistic->estimateSymbol();
-    char estimateBuffer[k_titleBufferSize];
-    defaultParseFloat(m_statistic->estimate(), estimateBuffer, k_titleBufferSize);
-    const char * format = I18n::translate(I18n::Message::ResultsControllerIntervalTitle);
-    snprintf(m_titleBuffer,
-             sizeof(m_titleBuffer),
-             format,
-             estimateSymbol,
-             estimateBuffer,
-             confidenceBuffer);
+    const char * confidence = I18n::translate(I18n::Message::Confidence);
+    if (App::app()->page() == Data::Page::Graph) {
+      const char * estimateSymbol = m_statistic->estimateSymbol();
+      char estimateBuffer[k_titleBufferSize];
+      defaultParseFloat(m_statistic->estimate(), estimateBuffer, k_titleBufferSize);
+      snprintf(m_titleBuffer,
+               sizeof(m_titleBuffer),
+               "%s=%s %s=%s",
+               estimateSymbol,
+               estimateBuffer,
+               confidence,
+               confidenceBuffer);
+    } else {
+      snprintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%s", confidence, confidenceBuffer);
+    }
     return m_titleBuffer;
   }
   return nullptr;

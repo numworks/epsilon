@@ -42,6 +42,7 @@ const char * StatisticGraphController::title() {
 }
 
 void StatisticGraphController::didBecomeFirstResponder() {
+  App::app()->setPage(Data::Page::Graph);
   TestConclusionView::Type t = m_statistic->testPassed() ? TestConclusionView::Type::Success
                                                          : TestConclusionView::Type::Failure;
   GraphDisplayMode m = m_statistic->hypothesisParams()->op() ==

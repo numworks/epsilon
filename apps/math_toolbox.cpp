@@ -362,7 +362,7 @@ constexpr ToolboxMessageTree randomChildren[] = {
 constexpr ToolboxMessageTree predictionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::Prediction95CommandWithArg, I18n::Message::Prediction95),
   ToolboxMessageTree::Leaf(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction),
-  ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence)
+  ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::ConfidenceInterval)
 };
 
 constexpr ToolboxMessageTree probabilityChildren[] = {

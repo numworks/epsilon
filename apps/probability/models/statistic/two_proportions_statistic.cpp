@@ -48,6 +48,22 @@ void TwoProportionsStatistic::computeInterval() {
   m_ME = _ME(m_zCritical, m_SE);
 }
 
+Poincare::Layout TwoProportionsStatistic::estimateLayout() {
+  // TODO add ^
+  HorizontalLayout p1 = HorizontalLayout::Builder(
+      CodePointLayout::Builder('p'),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
+                                    VerticalOffsetLayoutNode::Position::Subscript));
+  HorizontalLayout p2 = HorizontalLayout::Builder(
+      CodePointLayout::Builder('p'),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
+                                    VerticalOffsetLayoutNode::Position::Subscript));
+  HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
+  res.addOrMergeChildAtIndex(p2, 1, true);
+  res.addOrMergeChildAtIndex(p1, 0, true);
+  return std::move(res);
+}
+
 ParameterRepr TwoProportionsStatistic::paramReprAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {

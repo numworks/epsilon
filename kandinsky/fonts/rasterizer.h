@@ -47,7 +47,7 @@ void writeFontSourceFile(const char * fontSourceFilename, const char * fontName,
 void storeRenderedGlyphsImage(const char * outputImage, FT_Face face, int glyphWidth,
                               int glyphHeight, int maxAboveBaseline);
 
-void loadCodePoint(FT_Face face, wchar_t codePoint);
+void loadCodePoint(FT_Face face, wchar_t codePoint, int combinedCharactersShift);
 void drawGlyphOnBuffer(FT_GlyphSlot glyph, int glyphWidth, int glyphHeight, int maxAboveBaseline,
                        uint8_t * glyphBuffer, int sizeOfUncompressedGlyphBuffer,
                        int grayscaleBitsPerPixel);

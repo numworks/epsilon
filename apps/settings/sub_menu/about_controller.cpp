@@ -8,8 +8,7 @@ using namespace Escher;
 namespace Settings {
 
 AboutController::AboutController(Responder * parentResponder) :
-  GenericSubController(parentResponder),
-  m_view(&m_selectableTableView)
+  GenericSubController(parentResponder)
 {
 }
 

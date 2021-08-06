@@ -106,7 +106,7 @@ public:
     m_interfaceFlashStringDescriptor(stringDescriptor),
     m_interfaceSRAMStringDescriptor("@SRAM/0x20000000/01*256Ke"), // See note at the end of the file
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
-    m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),
+    m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "my.numworks.com"),
     m_extendedCompatIdDescriptor("WINUSB"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0

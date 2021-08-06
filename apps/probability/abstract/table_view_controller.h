@@ -4,6 +4,7 @@
 #include <apps/shared/text_field_delegate.h>
 #include <escher/metric.h>
 #include <escher/selectable_table_view.h>
+#include <ion/events.h>
 
 namespace Probability {
 
@@ -19,6 +20,9 @@ public:
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField,
                                     Ion::Events::Event event) override;
+
+protected:
+  void moveSelectionForEvent(Ion::Events::Event event, int * selectedRow, int * selectedColumn);
 };
 
 }  // namespace Probability

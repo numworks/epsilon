@@ -14,10 +14,29 @@ void TableViewController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
-bool Probability::TableViewController::textFieldShouldFinishEditing(
-    Escher::TextField * textField,
-    Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;  // TODO up and down too
+void TableViewController::moveSelectionForEvent(Ion::Events::Event event,
+                                                int * selectedRow,
+                                                int * selectedColumn) {
+  if (event == Ion::Events::Left) {
+    (*selectedColumn)--;
+  } else if (event == Ion::Events::Right) {
+    (*selectedColumn)++;
+  } else if (event == Ion::Events::Up) {
+    (*selectedRow)--;
+  } else if (event == Ion::Events::Down) {
+    (*selectedRow)++;
+  }
+}
+
+bool Probability::TableViewController::textFieldShouldFinishEditing(Escher::TextField * textField,
+                                                                    Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE ||
+         (event == Ion::Events::Right &&
+          selectableTableView()->selectedColumn() < tableViewDataSource()->numberOfColumns() - 1) ||
+         (event == Ion::Events::Left && selectableTableView()->selectedColumn() > 0) ||
+         (event == Ion::Events::Down &&
+          selectableTableView()->selectedRow() < tableViewDataSource()->numberOfRows() - 1) ||
+         (event == Ion::Events::Up && selectableTableView()->selectedRow() > 0);
 }
 
 }  // namespace Probability

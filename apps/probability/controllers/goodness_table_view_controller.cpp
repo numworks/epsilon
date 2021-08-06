@@ -57,8 +57,11 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
       m_inputTableView.numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
     m_inputTableView.recomputeNumberOfRows();
   }
+
   // Select new column or jump to new row
-  m_inputTableView.selectCellAtLocation(selectedColumn, m_inputTableView.selectedRow() + 1);
+  int selectedRow = m_inputTableView.selectedRow();
+  moveSelectionForEvent(event, &selectedRow, &selectedColumn);
+  m_inputTableView.selectCellAtClippedLocation(selectedColumn, selectedRow);
   m_inputTableView.reloadData(false);  // TODO why needed ?
   return true;
 }

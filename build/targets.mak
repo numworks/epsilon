@@ -33,31 +33,6 @@ $(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor,$(flav
 
 HANDY_TARGETS += $(foreach flavor,$(epsilon_flavors),epsilon.$(flavor))
 
-# Epsilon official targets
-
-epsilon_official_flavors = \
-  official \
-  official.onboarding \
-  official.onboarding.update \
-  official.onboarding.beta
-
-define rule_for_unconfirmed_official_flavor
-$$(BUILD_DIR)/epsilon.$(1).$$(EXE):
-	@echo "CAUTION: You are trying to build an official NumWorks firmware."
-	@echo "Distribution of such firmware by a third party is prohibited."
-	@echo "Please set the ACCEPT_OFFICIAL_TOS environment variable to proceed."
-	@exit -1
-endef
-
-ifeq ($(ACCEPT_OFFICIAL_TOS),1)
-rule_for_official_epsilon_flavor = rule_for_epsilon_flavor
-else
-rule_for_official_epsilon_flavor = rule_for_unconfirmed_official_flavor
-endif
-
-$(foreach flavor,$(epsilon_official_flavors),$(eval $(call $(rule_for_official_epsilon_flavor),$(flavor))))
-
-HANDY_TARGETS += $(foreach flavor,$(epsilon_official_flavors),epsilon.$(flavor))
 
 # Test
 

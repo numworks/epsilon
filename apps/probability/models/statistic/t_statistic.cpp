@@ -30,6 +30,7 @@ float TStatistic::_pVal(float degreesOfFreedom, float t) {
       return StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(-t, degreesOfFreedom) + 1 -
              StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(t, degreesOfFreedom);
   }
+  return -1;
 }
 
 float TStatistic::_tCritical(float degreesOfFreedom, float confidenceLevel) {

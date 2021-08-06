@@ -7,6 +7,9 @@ namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
+  if (address == 0 || address == Config::AXIMInterface) {
+    Reset::core();
+  }
   Board::executeIfAuthenticated(leaveAddress);
 }
 

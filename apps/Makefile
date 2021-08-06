@@ -27,8 +27,7 @@ apps_src += $(addprefix apps/,\
   battery_view.cpp \
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
-  exam_mode_configuration_official.cpp:+official \
-  exam_mode_configuration_non_official.cpp:-official \
+  exam_mode_configuration.cpp \
   global_preferences.cpp \
   i18n.py \
   lock_view.cpp \
@@ -42,7 +41,7 @@ apps_src += $(addprefix apps/,\
 )
 
 tests_src += $(addprefix apps/,\
-  exam_mode_configuration_official.cpp \
+  exam_mode_configuration.cpp \
 )
 
 

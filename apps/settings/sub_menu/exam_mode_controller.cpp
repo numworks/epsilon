@@ -37,12 +37,7 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3};
     m_contentView.setMessages(deactivateMessages, k_numberOfDeactivationMessageLines);
-  // --------------------- Please don't edit these lines ----------------------
-  } else if (numberOfCautionLines() > 0) {
-    I18n::Message cautionMessages[] = {I18n::Message::ExamModeWarning1, I18n::Message::ExamModeWarning2, I18n::Message::ExamModeWarning3};
-    m_contentView.setMessages(cautionMessages, numberOfCautionLines());
   }
-  // --------------------------------------------------------------------------
 }
 
 int ExamModeController::numberOfRows() const {

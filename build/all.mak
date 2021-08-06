@@ -28,32 +28,32 @@ all:
 	$(call file_check,$(ANDROID_GRADLE_PROPERTIES))
 	$(call file_check,$(IOS_MOBILE_PROVISION))
 	$(call command_check,$(EMCC))
-	@ rm -rf output/all_official
-	@ mkdir -p output/all_official
+	@ rm -rf output/all
+	@ mkdir -p output/all
 	@ echo "BUILD_FIRMWARE    DEVICE N0110"
 	@ $(MAKE) clean
-	@ $(MAKE) epsilon.official.onboarding.dfu
-	@ cp output/release/device/n0110/epsilon.official.onboarding.dfu output/all_official/epsilon.device.n0110.dfu
+	@ $(MAKE) epsilon.onboarding.dfu
+	@ cp output/release/device/n0110/epsilon.onboarding.dfu output/all/epsilon.device.n0110.dfu
 	@ echo "BUILD_FIRMWARE    DEVICE N0100"
 	@ $(MAKE) MODEL=n0100 clean
-	@ $(MAKE) MODEL=n0100 epsilon.official.onboarding.dfu
-	@ cp output/release/device/n0100/epsilon.official.onboarding.dfu output/all_official/epsilon.device.n0100.dfu
+	@ $(MAKE) MODEL=n0100 epsilon.onboarding.dfu
+	@ cp output/release/device/n0100/epsilon.onboarding.dfu output/all/epsilon.device.n0100.dfu
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
-	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.zip
-	@ cp output/release/simulator/web/epsilon.official.zip output/all_official/simulator.web.zip
+	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.zip
+	@ cp output/release/simulator/web/epsilon.zip output/all/simulator.web.zip
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
-	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.js
-	@ cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.js
+	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.js
+	@ cp output/release/simulator/web/epsilon.js output/all/epsilon.js
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
-	@ $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
-	@ cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.python.js
+	@ $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.js
+	@ cp output/release/simulator/web/epsilon.js output/all/epsilon.python.js
 	@ echo "BUILD_FIRMWARE    SIMULATOR ANDROID"
 	@ $(MAKE) PLATFORM=simulator TARGET=android clean
-	@ $(MAKE) PLATFORM=simulator TARGET=android epsilon.official.apk
-	@ cp output/release/simulator/android/epsilon.official.apk output/all_official/epsilon.official.apk
+	@ $(MAKE) PLATFORM=simulator TARGET=android epsilon.apk
+	@ cp output/release/simulator/android/epsilon.apk output/all/epsilon.apk
 	@ echo "BUILD_FIRMWARE    SIMULATOR IOS"
 	@ $(MAKE) PLATFORM=simulator TARGET=ios clean
-	@ $(MAKE) PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE=$(IOS_MOBILE_PROVISION) epsilon.official.ipa
-	@ cp output/release/simulator/ios/epsilon.official.ipa output/all_official/epsilon.ipa
+	@ $(MAKE) PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE=$(IOS_MOBILE_PROVISION) epsilon.ipa
+	@ cp output/release/simulator/ios/epsilon.ipa output/all/epsilon.ipa

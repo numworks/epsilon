@@ -5,7 +5,7 @@
 # https://www.gnu.org/software/make/manual/html_node/Canceling-Rules.html
 .PRECIOUS: $(BUILD_DIR)/%.app
 $(BUILD_DIR)/%.app: $(simulator_app_deps)
-	
+	$(Q)
 
 # Standard usage: make -j8 PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE=build/artifacts/NumWorks_Graphing_Calculator_Development.mobileprovision IOS_SIGNER_IDENTITY="Apple Development: [DEVELOPER NAME]" epsilon.ipa
 

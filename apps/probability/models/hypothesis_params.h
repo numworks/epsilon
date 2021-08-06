@@ -14,7 +14,7 @@ public:
   ComparisonOperator op() const { return m_op; }
   void setOp(const ComparisonOperator op) { m_op = op; }
 
-  static const char * charForComparisonOp(ComparisonOperator op) {
+  static const char * strForComparisonOp(ComparisonOperator op) {
     switch (op) {
       case ComparisonOperator::Lower:
         return "<";

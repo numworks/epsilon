@@ -19,7 +19,7 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
            bufferSize,
            "%s%s%s",
            symbol,
-           HypothesisParams::charForComparisonOp(
+           HypothesisParams::strForComparisonOp(
                static_cast<HypothesisParams::ComparisonOperator>(index)),
            firstParamBuffer);
   bufferCell->setText(buffer);

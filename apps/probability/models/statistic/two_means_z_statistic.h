@@ -13,7 +13,7 @@ public:
   void computeInterval() override;
 
   // Confidence interval
-  const char * estimateSymbol() override { return "x1-x2"; };
+  const char * estimateSymbol() override { return "x̅1-x̅2"; };
   Poincare::Layout estimateLayout() override;
   I18n::Message estimateDescription() override { return I18n::Message::SampleTwoMeans; };
 

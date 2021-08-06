@@ -193,7 +193,9 @@ uint16_t TreePool::IdentifierStack::pop() {
 // Remove an available identifier.
 void TreePool::IdentifierStack::remove(uint16_t j) {
   assert(TreeNode::IsValidIdentifier(j));
-  // TODO : implement an optimized binary search using the sorted state
+  /* TODO : Implement an optimized binary search using the sorted state.
+   * Alternatively, it may be worth using another data type such as a sorted
+   * list instead of a stack. */
   for (uint16_t i = 0; i < m_currentIndex; i++) {
     if (m_availableIdentifiers[i] == j) {
       memmove(m_availableIdentifiers + i, m_availableIdentifiers + i + 1, (m_currentIndex - i - 1) * sizeof(uint16_t));
@@ -224,9 +226,10 @@ void TreePool::freePoolFromNode(TreeNode * firstNodeToDiscard) {
     m_identifiers.remove(currentNode->identifier());
     currentNode = currentNode->next();
   }
+  assert(currentNode == firstNodeToDiscard);
   m_identifiers.resetNodeForIdentifierOffsets(m_nodeForIdentifierOffset);
   m_cursor = reinterpret_cast<char *>(currentNode);
-  // TODO : Assert no tree that continues into the discarded pool zone
+  // TODO : Assert that no tree continues into the discarded pool zone
 }
 
 }

@@ -30,6 +30,8 @@ void App::willBecomeInactive() {
 
 void App::didBecomeActive(Window * window) {
   ::App::didBecomeActive(window);
+  // Disable spinner
+  Ion::Events::setSpinner(false);
   // Force a core reset to exit
   Ion::Power::selectStandbyMode(true);
 }

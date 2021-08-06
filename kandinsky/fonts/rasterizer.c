@@ -109,7 +109,7 @@ void computeMetrics(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * 
    * https://www.freetype.org/freetype2/docs/reference/ft2-basic_types.html#FT_Bitmap */
   for (int i = 0; i < NumberOfCodePoints; i++) {
     wchar_t codePoint = CodePoints[i];
-    loadCodePoint(face, codePoint);
+    loadCodePoint(face, codePoint, -1);
     int aboveBaseline = face->glyph->bitmap_top;
     int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
     int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
@@ -223,10 +223,15 @@ void writeFontSourceFile(const char * fontSourceFilename, const char * fontName,
   fclose(fontFile);
 }
 
-void loadCodePoint(FT_Face face, wchar_t codePoint) {
+void loadCodePoint(FT_Face face, wchar_t codePoint, int combinedCharactersShift) {
   // Load codePoint into face->glyph
   // FT_LOAD_RENDER: Render the glyph upon load
   ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%08x", codePoint);
+  if (combinedCharactersShift > 0  && face->glyph->bitmap_left < 0) {
+    /* Combining characters are shifted left in FreeType so as to combine with the previous
+      * character We don't want that, so we move it back right */
+    face->glyph->bitmap_left += combinedCharactersShift;
+  }
 }
 
 void drawGlyphOnBuffer(FT_GlyphSlot glyph, int glyphWidth, int glyphHeight, int maxAboveBaseline,
@@ -291,7 +296,7 @@ void generateGlyphData(FT_Face face, uint16_t * glyphDataOffset, int * glyphData
 
   for (int index = 0; index < NumberOfCodePoints; index++) {
     wchar_t codePoint = CodePoints[index];
-    loadCodePoint(face, codePoint);
+    loadCodePoint(face, codePoint, glyphWidth);
     // // Reinit
     // for (int i = 0; i < sizeOfUncompressedGlyphBuffer; i++) {
     //   uncompressedGlyphBuffer[i] = 0;
@@ -395,13 +400,8 @@ void drawAllGlyphsInImage(FT_Face face, image_t * bitmap_image, int gridWidth, i
     wchar_t codePoint = CodePoints[i];
     int x = i % gridWidth;
     int y = i / gridWidth;
-    loadCodePoint(face, codePoint);
+    loadCodePoint(face, codePoint, glyphWidth);
     // printf("Advances = %dx%d\n", face->glyph->bitmap_left, face->glyph->bitmap_top);
-    if (face->glyph->bitmap_left < 0) {
-      /* Combining characters are shifted left in FreeType so as to combine with the previous
-       * character We don't want that, so we move it back right */
-      face->glyph->bitmap_left += glyphWidth;
-    }
     drawGlyphInImage(&face->glyph->bitmap, bitmap_image,
                      x * (glyphWidth + grid_size) + face->glyph->bitmap_left,
                      y * (glyphHeight + grid_size) + maxAboveBaseline - face->glyph->bitmap_top);

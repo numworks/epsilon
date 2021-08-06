@@ -14,7 +14,8 @@ public:
 
   // Confidence interval
   const char * estimateSymbol() override { return "x1-x2"; };
-  I18n::Message estimateDescription() override { return I18n::Message::Default; };
+  Poincare::Layout estimateLayout() override;
+  I18n::Message estimateDescription() override { return I18n::Message::SampleTwoMeans; };
 
 protected:
   // Parameters

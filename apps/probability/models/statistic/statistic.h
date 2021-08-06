@@ -2,7 +2,6 @@
 #define APPS_PROBABILITY_MODELS_STATISTIC_STATISTIC_H
 
 #include <apps/i18n.h>
-
 #include <poincare/layout.h>
 
 #include "probability/models/data_enums.h"
@@ -59,8 +58,9 @@ public:
   bool testPassed();
 
   // Confidence interval
-  virtual const char * estimateSymbol() = 0;
-  virtual I18n::Message estimateDescription() = 0;
+  virtual const char * estimateSymbol() { return nullptr; }
+  virtual Poincare::Layout estimateLayout() { return Poincare::Layout(); }
+  virtual I18n::Message estimateDescription() { return I18n::Message::Default; }
   /* The estimate is the center of the confidence interval,
    * and estimates the parameter of interest. */
   virtual float estimate() = 0;

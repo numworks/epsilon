@@ -47,6 +47,22 @@ void TwoMeansZStatistic::computeInterval() {
   m_ME = _ME(m_zCritical, m_SE);
 }
 
+Poincare::Layout TwoMeansZStatistic::estimateLayout() {
+  // TODO factor with TwoMeansTStat
+  HorizontalLayout x1 = HorizontalLayout::Builder(
+      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
+                                    VerticalOffsetLayoutNode::Position::Subscript));
+  HorizontalLayout x2 = HorizontalLayout::Builder(
+      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
+                                    VerticalOffsetLayoutNode::Position::Subscript));
+  HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
+  res.addOrMergeChildAtIndex(x2, 1, true);
+  res.addOrMergeChildAtIndex(x1, 0, true);
+  return std::move(res);
+}
+
 ParameterRepr TwoMeansZStatistic::paramReprAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {

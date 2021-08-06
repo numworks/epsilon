@@ -15,6 +15,7 @@ public:
     LayoutCellWithSubMessage::setHighlighted(highlight);
     m_labelView.setBackgroundColor(highlight ? Escher::Palette::Select : backgroundColor());
   }
+  bool alignLabelAndAccessory() const override { return true; }
   Escher::BufferTextView * bufferTextView() { return &m_labelView; }
 
 private:

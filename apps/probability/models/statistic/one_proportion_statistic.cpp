@@ -43,6 +43,10 @@ void OneProportionStatistic::computeInterval() {
   m_ME = _ME(m_zCritical, m_SE);
 }
 
+Poincare::Layout OneProportionStatistic::estimateLayout() {
+  return CodePointLayout::Builder('p'); // TODO replace with ^p
+}
+
 ParameterRepr OneProportionStatistic::paramReprAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X: {

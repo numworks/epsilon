@@ -16,6 +16,7 @@ public:
 
   // Confidence interval
   const char * estimateSymbol() override { return "p"; };
+  Poincare::Layout estimateLayout() override;
   I18n::Message estimateDescription() override { return I18n::Message::SampleProportion; };
 
 protected:

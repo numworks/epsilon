@@ -23,6 +23,7 @@ int ResultsDataSource::numberOfRows() const {
   Data::SubApp subapp = App::app()->subapp();
   int index = subapp == Data::SubApp::Tests ? 2 : 3;
   index += m_statistic->hasDegreeOfFreedom();
+  index += subapp == Data::SubApp::Intervals && !m_statistic->estimateLayout().isUninitialized();  // Add estimate cell
   return index + 1 /* button */;
 }
 
@@ -49,7 +50,16 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
           break;
       }
     } else {
+      if (m_statistic->estimateLayout().isUninitialized()) {
+        // Estimate cell is not displayed -> shift i
+        i++;
+      }
       switch (i) {
+        case IntervalCellOrder::Estimate:
+          message = m_statistic->estimateLayout();
+          subMessage = m_statistic->estimateDescription();
+          value = m_statistic->estimate();
+          break;
         case IntervalCellOrder::Critical:
           message = m_statistic->intervalCriticalValueSymbol();
           subMessage = I18n::Message::CriticalValue;

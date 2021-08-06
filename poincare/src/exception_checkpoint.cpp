@@ -25,7 +25,7 @@ bool ExceptionCheckpoint::setActive(bool interruption) {
 void ExceptionCheckpoint::rollback() {
   Checkpoint::rollback();
   // Reset CircuitBreakerCheckpoints depending on a later point in the pool.
-  CircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(getEndOfPoolBeforeCheckpoint());
+  CircuitBreakerCheckpoint::DiscardYoungerCircuitBreakerCheckpoints(getEndOfPoolBeforeCheckpoint());
   longjmp(m_jumpBuffer, 1);
 }
 

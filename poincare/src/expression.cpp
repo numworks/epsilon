@@ -694,7 +694,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   if (!CircuitBreakerRun(systemCheckpoint)) {
     // System interruption, try again with another ReductionTarget
     reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
-    systemCheckpoint.reset();
+    systemCheckpoint.discard();
   }
   Expression e = clone().deepReduce(reductionContext);
 #endif

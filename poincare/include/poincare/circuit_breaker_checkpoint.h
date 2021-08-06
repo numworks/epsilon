@@ -18,13 +18,15 @@ class CircuitBreakerCheckpoint : public Checkpoint {
 public:
   using Checkpoint::Checkpoint;
   bool setActive(Ion::CircuitBreaker::Status status);
-  void reset();
+  void discard();
   virtual Ion::CircuitBreaker::CheckpointType type() const = 0;
   static TreeNode * TopmostEndOfPoolBeforeCheckpoint();
-  static void ResetYoungerCircuitBreakerCheckpoints(TreeNode * node);
+  static void DiscardYoungerCircuitBreakerCheckpoints(TreeNode * node);
 private:
   virtual void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint *) = 0;
   virtual bool isCurrentCircuitBreakerCheckpoint() const = 0;
+  /* Keep current s_topmostExceptionCheckpoint to be able to restore it in a
+   * valid state if CircuitBreakerCheckpoint is used. */
   static Checkpoint * s_topmostExceptionCheckpoint;
 };
 
@@ -34,7 +36,7 @@ public:
   ~UserCircuitBreakerCheckpoint();
   Ion::CircuitBreaker::CheckpointType type() const override { return Ion::CircuitBreaker::CheckpointType::User; }
   static TreeNode * TopmostEndOfPoolBeforeCheckpoint() { return s_currentUserCircuitBreakerCheckpoint ? s_currentUserCircuitBreakerCheckpoint->getEndOfPoolBeforeCheckpoint() : nullptr; }
-  static void ResetYoungerCircuitBreakerCheckpoints(TreeNode * node) { if (node < TopmostEndOfPoolBeforeCheckpoint()) { s_currentUserCircuitBreakerCheckpoint->reset(); } }
+  static void DiscardYoungerCircuitBreakerCheckpoints(TreeNode * node) { if (node < TopmostEndOfPoolBeforeCheckpoint()) { s_currentUserCircuitBreakerCheckpoint->discard(); } }
 private:
   void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint * checkpoint) override { s_currentUserCircuitBreakerCheckpoint = checkpoint; }
   virtual bool isCurrentCircuitBreakerCheckpoint() const override { return s_currentUserCircuitBreakerCheckpoint == this; }
@@ -52,7 +54,7 @@ public:
   ~SystemCircuitBreakerCheckpoint();
   Ion::CircuitBreaker::CheckpointType type() const override { return Ion::CircuitBreaker::CheckpointType::System; }
   static TreeNode * TopmostEndOfPoolBeforeCheckpoint() { return s_currentSystemCircuitBreakerCheckpoint ? s_currentSystemCircuitBreakerCheckpoint->getEndOfPoolBeforeCheckpoint() : nullptr; }
-  static void ResetYoungerCircuitBreakerCheckpoints(TreeNode * node) { if (node < TopmostEndOfPoolBeforeCheckpoint()) { s_currentSystemCircuitBreakerCheckpoint->reset(); } }
+  static void DiscardYoungerCircuitBreakerCheckpoints(TreeNode * node) { if (node < TopmostEndOfPoolBeforeCheckpoint()) { s_currentSystemCircuitBreakerCheckpoint->discard(); } }
 private:
   void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint * checkpoint) override { s_currentSystemCircuitBreakerCheckpoint = checkpoint; }
   virtual bool isCurrentCircuitBreakerCheckpoint() const override { return s_currentSystemCircuitBreakerCheckpoint == this; }

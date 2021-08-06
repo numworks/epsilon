@@ -28,7 +28,7 @@ bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
   };
 }
 
-void CircuitBreakerCheckpoint::reset() {
+void CircuitBreakerCheckpoint::discard() {
   if (isCurrentCircuitBreakerCheckpoint()) {
     Ion::CircuitBreaker::unsetCheckpoint(type());
     setCurrentCircuitBreakerCheckpoint(nullptr);
@@ -44,18 +44,18 @@ TreeNode * CircuitBreakerCheckpoint::TopmostEndOfPoolBeforeCheckpoint() {
 
 /* Remove current circuit breaker checkpoints having their topmost end of pool
  * more recent in the stack. */
-void CircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(TreeNode * node) {
+void CircuitBreakerCheckpoint::DiscardYoungerCircuitBreakerCheckpoints(TreeNode * node) {
   assert(node);
-  UserCircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(node);
-  SystemCircuitBreakerCheckpoint::ResetYoungerCircuitBreakerCheckpoints(node);
+  UserCircuitBreakerCheckpoint::DiscardYoungerCircuitBreakerCheckpoints(node);
+  SystemCircuitBreakerCheckpoint::DiscardYoungerCircuitBreakerCheckpoints(node);
 }
 
 UserCircuitBreakerCheckpoint::~UserCircuitBreakerCheckpoint() {
-  reset();
+  discard();
 }
 
 SystemCircuitBreakerCheckpoint::~SystemCircuitBreakerCheckpoint() {
-  reset();
+  discard();
 }
 
 #if __EMSCRIPTEN__

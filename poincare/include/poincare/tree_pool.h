@@ -65,10 +65,10 @@ private:
   }
   void updateNodeForIdentifierFromNode(TreeNode * node);
   void renameNode(TreeNode * node, bool unregisterPreviousIdentifier = true) {
-    assert(isAfterTopmostCheckpoint(node));
+    assert(IsAfterTopmostCheckpoint(node));
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
-  static bool isAfterTopmostCheckpoint(TreeNode * node);
+  static bool IsAfterTopmostCheckpoint(TreeNode * node);
 
   // Iterators
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(constBuffer())); }

@@ -16,7 +16,6 @@
 
 using namespace Probability;
 
-
 void Probability::TypeView::layoutSubviews(bool force) {
   m_list->setFrame(KDRect(KDPointZero, m_frame.width(), 0), false);
   KDSize listSize = m_list->minimalSizeForOptimalDisplay();
@@ -25,7 +24,6 @@ void Probability::TypeView::layoutSubviews(bool force) {
       KDRect(0, listSize.height(), m_frame.width(), m_frame.height() - listSize.height()),
       force);
 }
-
 
 TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
@@ -107,8 +105,10 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 }
 
 const char * TypeController::title() {
-  // TODO replace with messages
-  const char * format = I18n::translate(I18n::Message::TypeControllerTitleFormat);
+  I18n::Message m = App::app()->subapp() == Data::SubApp::Tests
+                        ? I18n::Message::TypeControllerTitleTestFormat
+                        : I18n::Message::TypeControllerTitleIntervalFormat;
+  const char * format = I18n::translate(m);
   snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, testToText(App::app()->test()));
   return m_titleBuffer;
 }
@@ -119,19 +119,20 @@ int Probability::TypeController::numberOfRows() const {
 
 void Probability::TypeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
   int j = indexFromListIndex(i);
+  bool isTestSubApp = App::app()->subapp() == Data::SubApp::Tests;
   if (j < k_indexOfDescription) {
     I18n::Message message, submessage;
     switch (j) {
       case k_indexOfTTest:
-        message = I18n::Message::TTest;
+        message = isTestSubApp ? I18n::Message::TTest : I18n::Message::TInterval;
         submessage = I18n::Message::Recommended;
         break;
       case k_indexOfZTest:
-        message = I18n::Message::ZTest;
+        message = isTestSubApp ? I18n::Message::ZTest : I18n::Message::ZInterval;
         submessage = I18n::Message::RarelyUsed;
         break;
       case k_indexOfPooledTest:
-        message = I18n::Message::PooledTTest;
+        message = isTestSubApp ? I18n::Message::PooledTTest : I18n::Message::PooledTInterval;
         submessage = I18n::Message::RarelyUsed;
         break;
     }

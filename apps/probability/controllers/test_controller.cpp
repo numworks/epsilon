@@ -51,9 +51,8 @@ TestController::TestController(Escher::StackViewController * parentResponder,
 }
 
 const char * TestController::title() {
-  I18n::Message title = App::app()->subapp() == Data::SubApp::Tests
-                            ? I18n::Message::SignificanceTest
-                            : I18n::Message::ConfidenceInterval;
+  I18n::Message title = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::Tests
+                                                                    : I18n::Message::Interval;
   return I18n::translate(title);
 }
 

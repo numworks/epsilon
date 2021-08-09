@@ -11,6 +11,7 @@ namespace USB {
 namespace Config {
 
 constexpr static const char * InterfaceFlashStringDescriptor = "@Internal Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg";
+constexpr static const char * InterfaceSRAMStringDescriptor = "@SRAM/0x20000000/01*220Ke";
 constexpr static int BCDDevice = 0x0100;
 
 }

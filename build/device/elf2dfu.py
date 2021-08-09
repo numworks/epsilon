@@ -26,12 +26,16 @@ def generate_dfu_file(targets, usb_vid_pid, dfu_file):
   data = b''
   for t, target in enumerate(targets):
     target_data = b''
+    alt_setting = 0
     for image in target:
+      if (image['address'] >= 0x20000000 and image['address'] < 0x20040000):
+        # sRAM corresponds to the alternate setting 1
+        alt_setting = 1
       # Pad the image to 8 bytes, this seems to be needed
       pad = (8 - len(image['data']) % 8 ) % 8
       image['data'] = image['data'] + bytes(bytearray(8)[0:pad])
       target_data += struct.pack('<2I', image['address'], len(image['data'])) + image['data']
-    target_data = struct.pack('<6sBI255s2I', b'Target', 0, 1, b'ST...', len(target_data), len(target)) + target_data
+    target_data = struct.pack('<6sBI255s2I', b'Target', alt_setting, 1, b'ST...', len(target_data), len(target)) + target_data
     data += target_data
   data = struct.pack('<5sBIB', b'DfuSe', 1, len(data) + 11, len(targets)) + data
   v, d = map(lambda x: int(x,0) & 0xFFFF, usb_vid_pid.split(':'))

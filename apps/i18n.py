@@ -55,16 +55,25 @@ def source_definition(i18n_string):
             copyCodePoint = (ord(s[i]) < 0x300) or (ord(s[i]) > 0x36F)
             checkForCombining = False
         if args.compress and s[i] == '\\' and i+1 < length:
+            # When compressing, we need to use combined chars so that the
+            # correct chars will be uncompressed.
             combinedChar = ''
             if s[i+1] == '\\':
                 # Combine "\\" into '\'
                 combinedChar = '\\'
-            if s[i+1] == 'n':
+            elif s[i+1] == 'n':
                 # Combine "\n" into '\n'
                 combinedChar = '\n'
-            if s[i+1] == '"':
+            elif s[i+1] == '"':
                 # Combine "\"" into '"'
                 combinedChar = '"'
+            elif (i+3 < length) and s[i+1] == 'x' and s[i+2] == '1' and s[i+3] == '1':
+                # Combine "\x11" into '\x11'
+                combinedChar = '\x11'
+                i+=2
+            else :
+                sys.stderr.write(" \\" + str(s[i+1]) + " is not handled with compression. Exiting !\n")
+                sys.exit(-1)
             if combinedChar != '':
                 result = result + combinedChar
                 i+=2

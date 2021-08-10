@@ -165,7 +165,7 @@ bool HypothesisController::buttonAction() {
 }
 
 void HypothesisController::loadHypothesisParam() {
-  constexpr int bufferSize = 50;
+  constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
   strlcpy(buffer, symbolPrefix(), bufferSize);
   int offset = strlen(symbolPrefix());

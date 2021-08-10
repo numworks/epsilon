@@ -110,6 +110,8 @@ QUIZ_CASE(python_matplotlib_pyplot_scatter) {
   assert_command_execution_succeeds(env, "scatter([2,3,4,5,6],[3,4,5,6,7], color=(0,0,255))");
   assert_command_execution_succeeds(env, "show()");
   assert_command_execution_fails(env, "scatter([2,3,4,5,6],2)");
+  assert_command_execution_fails(env, "scatter(2)");
+  assert_command_execution_succeeds(env, "scatter(2,3,4)");
   deinit_environment();
 }
 

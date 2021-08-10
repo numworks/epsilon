@@ -362,7 +362,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args )
 
 mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
-  if (n_args > 2) {
+  if (n_args < 2) {
     nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"scatter() takes 2 positional arguments but %d were given",n_args));
   }
   sPlotStore->setShow(true);

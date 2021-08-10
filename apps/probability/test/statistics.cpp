@@ -62,7 +62,7 @@ void runTest(Statistic * stat, StatisticTestCase & test) {
   stat->computeTest();
 
   quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
-  quiz_assert(stat->testPassed() == test.m_testPassed);
+  quiz_assert(stat->canRejectNull() == test.m_testPassed);
   quiz_assert(roughlyEqual<float>(stat->zAlpha(), test.m_zAlpha));
   quiz_assert(roughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue));
   quiz_assert(roughlyEqual<float>(stat->pValue(), test.m_pValue));

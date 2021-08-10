@@ -40,8 +40,9 @@ void Statistic::setParamAtIndex(int i, float p) {
   }
 }
 
-bool Statistic::testPassed() {
-  return pValue() < std::fabs(m_threshold);
+bool Statistic::canRejectNull() {
+  assert(m_threshold >= 0 && m_threshold <= 1);
+  return pValue() <= m_threshold;
 }
 
 Poincare::Layout Statistic::intervalCriticalValueSymbol() {

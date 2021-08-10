@@ -84,10 +84,10 @@ Ion::Events::Event getPlatformEvent() {
   // First, check if the USB device has been connected to an USB host
   bool usbEnumerated = Ion::USB::isEnumerated();
   if (usbEnumerated != sLastUSBEnumerated) {
-    sLastUSBPlugged = Ion::USB::isPlugged();
-    sLastBatteryCharging = Device::Battery::isCharging();
     sLastUSBEnumerated = usbEnumerated;
     if (usbEnumerated) {
+      sLastUSBPlugged = Ion::USB::isPlugged();
+      sLastBatteryCharging = Device::Battery::isCharging();
       return Ion::Events::USBEnumeration;
     }
   }

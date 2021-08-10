@@ -55,7 +55,7 @@ public:
   /* Returns the value above which the probability
    * of landing is inferior to a given significance level. */
   virtual float zAlpha() = 0;
-  bool testPassed();
+  bool canRejectNull();
 
   // Confidence interval
   virtual const char * estimateSymbol() { return nullptr; }

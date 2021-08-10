@@ -79,6 +79,8 @@ T StudentLaw::lnCoefficient(T k) {
 // Specialisations
 template float StudentLaw::EvaluateAtAbscissa<float>(float, float);
 template double StudentLaw::EvaluateAtAbscissa<double>(double, double);
+template float StudentLaw::lnCoefficient<float>(float);
+template double StudentLaw::lnCoefficient<double>(double);
 template float StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
 template double StudentLaw::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
 template float StudentLaw::CumulativeDistributiveInverseForProbability<float>(float, float);

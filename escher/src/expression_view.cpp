@@ -20,12 +20,14 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 }
 
 bool ExpressionView::setLayout(Layout layoutR) {
-  if (!m_layout.wasErasedByException() && m_layout.isIdenticalTo(layoutR)) {
-    /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
-     * result in an ACCESS ERROR. */
+  /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
+   * result in an ACCESS ERROR. We need to overwrite m_layout anyway so that
+   * identifiers and reference counters are properly handled. */
+  bool shouldRedraw = !m_layout.wasErasedByException() && m_layout.isIdenticalTo(layoutR);
+  m_layout = layoutR;
+  if (shouldRedraw) {
     return false;
   }
-  m_layout = layoutR;
   markRectAsDirty(bounds());
   return true;
 }

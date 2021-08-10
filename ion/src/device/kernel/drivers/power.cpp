@@ -133,12 +133,9 @@ void suspend(bool checkIfOnOffKeyReleased) {
 
 void waitUntilOnOffKeyReleased() {
   /* Wait until power is released to avoid restarting just after suspending */
-  bool isPowerDown = true;
-  while (isPowerDown) {
-    Keyboard::State scan = Keyboard::scan();
-    isPowerDown = scan.keyDown(Keyboard::Key::OnOff);
+  while (Keyboard::scan().keyDown(Keyboard::Key::OnOff)) {
+    Ion::Timing::msleep(10); // Debouncing
   }
-  Ion::Timing::msleep(100); // Debouncing
   // Flush the keyboard queue to avoid handling artifacts state at wake-up
   Keyboard::Queue::sharedQueue()->flush();
   /* Special case: Power::suspend waits for the release of the OnOff key. We

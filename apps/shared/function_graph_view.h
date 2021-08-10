@@ -24,7 +24,6 @@ protected:
   float m_highlightedStart;
   float m_highlightedEnd;
   bool m_shouldColorHighlighted;
-private:
   Poincare::Context * m_context;
 };
 

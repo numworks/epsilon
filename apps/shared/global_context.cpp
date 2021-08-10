@@ -179,4 +179,8 @@ Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(const char 
   return Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
+void GlobalContext::tidy() {
+  sequenceStore()->tidy();
+}
+
 }

@@ -113,6 +113,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     } else {
       setFunctionInterrupted(i);
       f->tidy();
+      m_context->tidy();
     }
   }
 }

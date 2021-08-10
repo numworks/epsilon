@@ -1,3 +1,4 @@
+#include <drivers/keyboard.h>
 #include <drivers/keyboard_queue.h>
 #include <drivers/events.h>
 
@@ -30,6 +31,7 @@ Ion::Keyboard::State Queue::pop() {
 void Queue::flush(bool resetPending) {
   m_begin = 0;
   m_end = 0;
+  Keyboard::resetMemoizedState();
   Events::resetKeyboardState();
   if (resetPending) {
     Events::resetPendingKeyboardState();

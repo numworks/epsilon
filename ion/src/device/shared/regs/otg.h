@@ -9,6 +9,11 @@ namespace Regs {
 
 class OTG {
 public:
+  class GOTGINT : public Register32 {
+  public:
+    REGS_BOOL_FIELD(SEDET, 2);
+  };
+
   class GAHBCFG : public Register32 {
   public:
     REGS_BOOL_FIELD(GINTMSK, 0);
@@ -166,6 +171,7 @@ public:
   };
 
   constexpr OTG() {};
+  REGS_REGISTER_AT(GOTGINT, 0x004);
   REGS_REGISTER_AT(GAHBCFG, 0x008);
   REGS_REGISTER_AT(GUSBCFG, 0x00C);
   REGS_REGISTER_AT(GRSTCTL, 0x010);

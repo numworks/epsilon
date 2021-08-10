@@ -9,11 +9,11 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
                                                                 int index) {
   TextHighlightView * bufferCell = static_cast<TextHighlightView *>(cell);
 
-  constexpr int firstParamBufferSize = 20;
+  constexpr int firstParamBufferSize = Constants::k_shortBufferSize;
   char firstParamBuffer[firstParamBufferSize];
   defaultParseFloat(m_hypothesisParams->firstParam(), firstParamBuffer, firstParamBufferSize);
   const char * symbol = testToTextSymbol(App::app()->test());
-  constexpr int bufferSize = 20;
+  constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
   snprintf(buffer,
            bufferSize,

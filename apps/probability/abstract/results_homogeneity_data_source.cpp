@@ -1,5 +1,6 @@
 #include "results_homogeneity_data_source.h"
 
+#include "probability/constants.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
@@ -33,7 +34,7 @@ void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCe
     value = m_statistic->expectedValueAtLocation(j, i);
   }
 
-  constexpr int bufferSize = 20;
+  constexpr int bufferSize = Constants::k_shortBufferSize;
   char buffer[bufferSize];
   defaultParseFloat(value, buffer, bufferSize);
   myCell->setText(buffer);

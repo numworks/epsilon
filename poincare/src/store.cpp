@@ -40,6 +40,8 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
       SystemCircuitBreakerCheckpoint checkpoint;
       if (CircuitBreakerRun(checkpoint)) {
         reducedE = storedExpression.clone().deepReduce(reductionContext);
+      } else {
+        reductionContext.context()->tidy();
       }
     }
     if (!reducedE.isUninitialized() ) {

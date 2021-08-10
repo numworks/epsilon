@@ -692,6 +692,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
 #else
   SystemCircuitBreakerCheckpoint systemCheckpoint;
   if (!CircuitBreakerRun(systemCheckpoint)) {
+    context->tidy();
     // System interruption, try again with another ReductionTarget
     reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation, unitConversion);
     systemCheckpoint.discard();

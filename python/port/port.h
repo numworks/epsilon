@@ -4,6 +4,7 @@
 extern "C" {
 #include <stddef.h>
 #include <py/obj.h>
+#include "py/nlr.h"
 }
 #include <escher/view_controller.h>
 
@@ -21,6 +22,7 @@ public:
   ~ExecutionEnvironment();
   static ExecutionEnvironment * currentExecutionEnvironment();
   bool runCode(const char * );
+  static void HandleException(nlr_buf_t * nlr_buf, MicroPython::ExecutionEnvironment * env = nullptr);
   virtual const char * inputText(const char * prompt) { return nullptr; }
 
   // Sandbox

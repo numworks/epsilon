@@ -4,18 +4,24 @@
 #include <apps/shared/labeled_curve_view.h>
 #include "plot_store.h"
 
+namespace MicroPython {
+  class ExecutionEnvironment;
+}
+
 namespace Matplotlib {
 
 class PlotView : public Shared::LabeledCurveView {
 public:
   PlotView(PlotStore * s) : Shared::LabeledCurveView(s), m_store(s) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setMicroPythonExecutionEnvironment(MicroPython::ExecutionEnvironment * env) { m_micropythonEnvironment = env; }
 private:
   void traceDot(KDContext * ctx, KDRect r, PlotStore::Dot dot) const;
   void traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segment) const;
   void traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const;
   void traceLabel(KDContext * ctx, KDRect r, PlotStore::Label label) const;
   PlotStore * m_store;
+  MicroPython::ExecutionEnvironment * m_micropythonEnvironment;
 };
 
 }

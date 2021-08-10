@@ -66,43 +66,7 @@ bool MicroPython::ExecutionEnvironment::runCode(const char * str) {
     nlr_pop();
   } else { // Uncaught exception
     runSucceeded = false;
-    /* mp_obj_print_exception is supposed to handle error printing. However,
-     * because we want to print custom information, we copied and modified the
-     * content of mp_obj_print_exception instead of calling it. */
-    if (mp_obj_is_exception_instance((mp_obj_t)nlr.ret_val)) {
-        size_t n, *values;
-        mp_obj_exception_get_traceback((mp_obj_t)nlr.ret_val, &n, &values);
-        if (n > 0) {
-            assert(n % 3 == 0);
-            for (int i = n - 3; i >= 0; i -= 3) {
-              if (values[i] != 0 || i == 0) {
-                if (values[i] == 0) {
-                  mp_printf(&mp_plat_print, "  Last command\n");
-                } else {
-#if MICROPY_ENABLE_SOURCE_LINE
-                  mp_printf(&mp_plat_print, "  File \"%q\", line %d", values[i], (int)values[i + 1]);
-#else
-                  mp_printf(&mp_plat_print, "  File \"%q\"", values[i]);
-#endif
-                  // the block name can be NULL if it's unknown
-                  qstr block = values[i + 2];
-                  if (block == MP_QSTRnull) {
-                    mp_print_str(&mp_plat_print, "\n");
-                  } else {
-                    mp_printf(&mp_plat_print, ", in %q\n", block);
-                  }
-                }
-              }
-            }
-        }
-    }
-    mp_obj_print_helper(&mp_plat_print, (mp_obj_t)nlr.ret_val, PRINT_EXC);
-    mp_print_str(&mp_plat_print, "\n");
-    /* End of mp_obj_print_exception. */
-
-    // Flush the store if an error is encountered to avoid being stuck with a full memory
-    modpyplot_flush_used_heap();
-    // TODO: do the same for other modules?
+    HandleException(&nlr);
   }
 
   // Disable the user interruption
@@ -111,6 +75,59 @@ bool MicroPython::ExecutionEnvironment::runCode(const char * str) {
   assert(sCurrentExecutionEnvironment == this);
   sCurrentExecutionEnvironment = nullptr;
   return runSucceeded;
+}
+
+void MicroPython::ExecutionEnvironment::HandleException(nlr_buf_t * nlr_buf, MicroPython::ExecutionEnvironment * env) {
+  /* We need a static execution environment to print. If it's not already set,
+   * the caller should give it as a parameter. */
+  if (env != nullptr) {
+    assert(sCurrentExecutionEnvironment == nullptr);
+    sCurrentExecutionEnvironment = env;
+  }
+  assert(sCurrentExecutionEnvironment != nullptr);
+
+  /* mp_obj_print_exception is supposed to handle error printing. However,
+   * because we want to print custom information, we copied and modified the
+   * content of mp_obj_print_exception instead of calling it. */
+  if (mp_obj_is_exception_instance((mp_obj_t)(nlr_buf->ret_val))) {
+    size_t n, *values;
+    mp_obj_exception_get_traceback((mp_obj_t)(nlr_buf->ret_val), &n, &values);
+    if (n > 0) {
+      assert(n % 3 == 0);
+      for (int i = n - 3; i >= 0; i -= 3) {
+        if (values[i] != 0 || i == 0) {
+          if (values[i] == 0) {
+            mp_printf(&mp_plat_print, "  Last command\n");
+          } else {
+#if MICROPY_ENABLE_SOURCE_LINE
+            mp_printf(&mp_plat_print, "  File \"%q\", line %d", values[i], (int)values[i + 1]);
+#else
+            mp_printf(&mp_plat_print, "  File \"%q\"", values[i]);
+#endif
+            // the block name can be NULL if it's unknown
+            qstr block = values[i + 2];
+            if (block == MP_QSTRnull) {
+              mp_print_str(&mp_plat_print, "\n");
+            } else {
+              mp_printf(&mp_plat_print, ", in %q\n", block);
+            }
+          }
+        }
+      }
+    }
+  }
+  mp_obj_print_helper(&mp_plat_print, (mp_obj_t)(nlr_buf->ret_val), PRINT_EXC);
+  mp_print_str(&mp_plat_print, "\n");
+  /* End of mp_obj_print_exception. */
+
+  // Flush the store if an error is encountered to avoid being stuck with a full memory
+  modpyplot_flush_used_heap();
+  // TODO: do the same for other modules?
+
+  // Clean the static ExecutionEnvironment
+  if (env != nullptr) {
+    sCurrentExecutionEnvironment = nullptr;
+  }
 }
 
 void MicroPython::ExecutionEnvironment::interrupt() {

@@ -131,6 +131,10 @@ void keyboardWasScanned(State state) {
   }
 }
 
+void resetMemoizedState() {
+  sState = 0;
+}
+
 void handleInterruption() {
   for (uint8_t i=0; i<Config::numberOfColumns; i++) {
     uint8_t pin = Config::ColumnPins[i];

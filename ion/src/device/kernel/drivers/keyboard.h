@@ -15,6 +15,7 @@ void initInterruptions();
 void shutdownInterruptions();
 void debounce();
 void poll();
+void resetMemoizedState();
 void handleInterruption();
 
 State popState();

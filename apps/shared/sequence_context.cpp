@@ -118,6 +118,10 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
   }
 }
 
+void SequenceContext::tidy() {
+  m_sequenceStore->tidy();
+}
+
 template class TemplatedSequenceContext<float>;
 template class TemplatedSequenceContext<double>;
 template void * SequenceContext::helper<float>();

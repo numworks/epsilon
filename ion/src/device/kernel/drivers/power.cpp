@@ -98,7 +98,6 @@ void suspend(bool checkIfOnOffKeyReleased) {
     USB::initGPIO();
     if (scan == OnlyOnOffKeyDown || (!plugged && Ion::USB::isPlugged())) {
       // Wake up
-      waitUntilOnOffKeyReleased();
       break;
     } else {
       /* The wake up event can be an unplug event or a battery charging event.
@@ -125,9 +124,10 @@ void suspend(bool checkIfOnOffKeyReleased) {
     WarningDisplay::unauthenticatedUserland();
   }
 
-  /* waitUntilOnOffKeyReleased has flushed the Keyboard queue. The very next
-   * event is the OnOffEvent (to notify the userland that a switchOnOff has
-   * happened). */
+  /* Flush the keyboard queue to avoid handling artifacts state at wake-up.
+   * The very next event is the OnOffEvent to notify the userland that a
+   * switchOnOff has happened. */
+  Keyboard::Queue::sharedQueue()->flush();
   Keyboard::Queue::sharedQueue()->push(Ion::Keyboard::State(Ion::Keyboard::Key::OnOff));
 }
 
@@ -136,8 +136,6 @@ void waitUntilOnOffKeyReleased() {
   while (Keyboard::scan().keyDown(Keyboard::Key::OnOff)) {
     Ion::Timing::msleep(10); // Debouncing
   }
-  // Flush the keyboard queue to avoid handling artifacts state at wake-up
-  Keyboard::Queue::sharedQueue()->flush();
   /* Special case: Power::suspend waits for the release of the OnOff key. We
    * update sKeysSeenUp accordingly. */
   Events::resetKeyboardState();

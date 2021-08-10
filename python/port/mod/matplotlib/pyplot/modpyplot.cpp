@@ -451,6 +451,11 @@ mp_obj_t modpyplot_show() {
     return mp_const_none;
   }
   MicroPython::ExecutionEnvironment * env = MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
+  sPlotController->setMicroPythonExecutionEnvironment(env);
+  /* WARNING: We never unset the MicroPython::ExecutionEnvironment, so there
+   * might be a case of dangling pointer, as sPlotController is never destroyed.
+   * It's fine as long as we don't call sPlotController's PlotView's drawRect
+   * without re-setting its environment before. */
   env->displayViewController(sPlotController);
   sPlotStore->setShow(false);
   return mp_const_none;

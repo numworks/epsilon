@@ -1,5 +1,6 @@
 #include "plot_view.h"
 #include <algorithm>
+#include <python/port/port.h>
 
 namespace Matplotlib {
 
@@ -18,20 +19,25 @@ void PlotView::drawRect(KDContext * ctx, KDRect rect) const {
     drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
   }
 
-  for (PlotStore::Dot dot : m_store->dots()) {
-    traceDot(ctx, rect, dot);
-  }
-
-  for (PlotStore::Label label : m_store->labels()) {
-    traceLabel(ctx, rect, label);
-  }
-
-  for (PlotStore::Segment segment : m_store->segments()) {
-    traceSegment(ctx, rect, segment);
-  }
-
-  for (PlotStore::Rect rectangle : m_store->rects()) {
-    traceRect(ctx, rect, rectangle);
+  /* The following lines use MicroPython, which can fail, so we need to use nlr
+   * to catch any errors. */
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+    for (PlotStore::Dot dot : m_store->dots()) {
+      traceDot(ctx, rect, dot);
+    }
+    for (PlotStore::Label label : m_store->labels()) {
+      traceLabel(ctx, rect, label);
+    }
+    for (PlotStore::Segment segment : m_store->segments()) {
+      traceSegment(ctx, rect, segment);
+    }
+    for (PlotStore::Rect rectangle : m_store->rects()) {
+      traceRect(ctx, rect, rectangle);
+    }
+    nlr_pop();
+  } else { // Uncaught exception
+    MicroPython::ExecutionEnvironment::HandleException(&nlr, m_micropythonEnvironment);
   }
 }
 

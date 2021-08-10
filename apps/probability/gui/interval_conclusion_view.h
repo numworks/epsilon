@@ -4,6 +4,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/message_text_view.h>
 
+#include "probability/constants.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
 
 namespace Probability {
@@ -16,6 +17,8 @@ public:
   Escher::View * subviewAtIndex(int i) override;
 
 private:
+  constexpr static int k_intervalBufferSize = Constants::k_shortBufferSize + 4 /*" ± "*/ +
+                                              Constants::k_shortBufferSize;
   Escher::MessageTextView m_messageView;
   Escher::BufferTextView m_intervalView;
 };

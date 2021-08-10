@@ -1,6 +1,7 @@
 #include "input_categorical_controller.h"
 
 #include "probability/app.h"
+#include "probability/constants.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
@@ -31,7 +32,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   }
   m_statistic->setThreshold(p);
   // Reparse text
-  constexpr int bufferSize = 20;
+  constexpr int bufferSize = Constants::k_shortBufferSize;
   char buffer[bufferSize];
   defaultParseFloat(p, buffer, bufferSize);
   textField->setText(buffer);
@@ -43,7 +44,7 @@ void InputCategoricalController::didBecomeFirstResponder() {
   if (m_statistic->threshold() == -1) {
     // Init significance cell
     m_statistic->initThreshold(App::app()->subapp());
-    constexpr int bufferSize = 20;
+    constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
     defaultParseFloat(m_statistic->threshold(), buffer, bufferSize);
     m_contentView.setSignificanceCellText(buffer);

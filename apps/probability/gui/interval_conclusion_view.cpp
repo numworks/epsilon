@@ -17,15 +17,15 @@ IntervalConclusionView::IntervalConclusionView() {
 }
 
 void IntervalConclusionView::setInterval(float center, float ME) {
-  constexpr static int bufferSize = 20;
+  constexpr static int bufferSize = Constants::k_shortBufferSize;
   char bufferCenter[bufferSize];
   char bufferME[bufferSize];
 
   defaultParseFloat(center, bufferCenter, bufferSize);
   defaultParseFloat(ME, bufferME, bufferSize);
 
-  char buffer[bufferSize];
-  snprintf(buffer, bufferSize, "%s ± %s", bufferCenter, bufferME);
+  char buffer[k_intervalBufferSize];
+  snprintf(buffer, k_intervalBufferSize, "%s ± %s", bufferCenter, bufferME);
   m_intervalView.setText(buffer);
 }
 

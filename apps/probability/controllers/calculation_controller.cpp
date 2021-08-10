@@ -9,6 +9,7 @@
 
 #include "../images/calculation1_icon.h"
 #include "probability/app.h"
+#include "probability/constants.h"
 #include "probability/models/calculation/discrete_calculation.h"
 #include "probability/models/calculation/finite_integral_calculation.h"
 #include "probability/models/calculation/left_integral_calculation.h"
@@ -172,8 +173,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     if (field->isEditing()) {
       return;
     }
-    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+    constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
     // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using
     // scientific mode
@@ -286,8 +286,7 @@ void CalculationController::updateTitle() {
     if (currentChar >= k_titleBufferSize) {
       break;
     }
-    constexpr int precision = Preferences::ShortNumberOfSignificantDigits;
-    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+    constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
     defaultParseFloat(m_distribution->parameterValueAtIndex(index), buffer, bufferSize);
     currentChar += strlcpy(m_titleBuffer + currentChar, buffer, k_titleBufferSize - currentChar);

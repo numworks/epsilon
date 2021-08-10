@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "probability/constants.h"
 #include "probability/models/statistic/goodness_statistic.h"
 #include "probability/text_helpers.h"
 
@@ -69,7 +70,7 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
   if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");
   } else {
-    constexpr int bufferSize = 20;
+    constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
     defaultParseFloat(p, buffer, bufferSize);
     myCell->editableTextCell()->textField()->setText(buffer);

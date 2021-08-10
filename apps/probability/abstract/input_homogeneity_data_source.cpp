@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "probability/text_helpers.h"
+#include "probability/constants.h"
 
 namespace Probability {
 
@@ -43,7 +44,7 @@ void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
   if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");
   } else {
-    constexpr int bufferSize = 20;
+    constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
     defaultParseFloat(p, buffer, bufferSize);
     myCell->editableTextCell()->textField()->setText(buffer);

@@ -1,11 +1,13 @@
 #include "results_data_source.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/poincare_helpers.h>
 #include <escher/buffer_text_view.h>
 #include <kandinsky/color.h>
 #include <poincare/layout.h>
 
 #include "probability/app.h"
+#include "probability/constants.h"
 #include "probability/helpers.h"
 #include "probability/text_helpers.h"
 
@@ -23,7 +25,8 @@ int ResultsDataSource::numberOfRows() const {
   Data::SubApp subapp = App::app()->subapp();
   int index = subapp == Data::SubApp::Tests ? 2 : 3;
   index += m_statistic->hasDegreeOfFreedom();
-  index += subapp == Data::SubApp::Intervals && !m_statistic->estimateLayout().isUninitialized();  // Add estimate cell
+  index += subapp == Data::SubApp::Intervals &&
+           !m_statistic->estimateLayout().isUninitialized();  // Add estimate cell
   return index + 1 /* button */;
 }
 
@@ -82,9 +85,14 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
           break;
       }
     }
-    constexpr int bufferSize = 20;
+    constexpr int bufferSize = Constants::k_largeBufferSize;
     char buffer[bufferSize];
-    defaultParseFloat(value, buffer, bufferSize);
+    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+        value,
+        buffer,
+        bufferSize,
+        Poincare::Preferences::LargeNumberOfSignificantDigits,
+        Poincare::Preferences::PrintFloatMode::Decimal);
 
     messageCell->setLayout(message);
     messageCell->setAccessoryText(buffer);

@@ -70,6 +70,7 @@ private:
   constexpr static int k_typeOfRowHeader = 17;
   constexpr static int k_typeOfColumnHeader = 18;
   constexpr static int k_typeOfTopLeftCell = 19;
+  constexpr static int k_headerTranslationBuffer = 20;
 
   I18n::Message m_headerPrefix;
 

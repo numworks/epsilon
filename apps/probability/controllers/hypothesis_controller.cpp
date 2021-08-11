@@ -104,17 +104,9 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
 }
 
 bool Probability::HypothesisController::textFieldDidAbortEditing(TextField * textField) {
+  // Reload params to add "p=..."
   loadHypothesisParam();
   return true;
-}
-
-bool Probability::HypothesisController::textFieldDidHandleEvent(TextField * textField,
-                                                                bool returnValue,
-                                                                bool textSizeDidChange) {
-  if (returnValue && textField->isEditing()) {
-    m_selectableTableView.reloadData(false);  // To hide sublabel
-  }
-  return returnValue;
 }
 
 void Probability::HypothesisController::onDropdownSelected(int selectedRow) {

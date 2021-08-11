@@ -21,10 +21,10 @@ InputController::InputController(Escher::StackViewController * parent,
   // Initialize cells
   for (int i = 0; i < k_numberOfReusableCells; i++) {
     m_parameterCells[i].setParentResponder(&m_selectableTableView);
-    m_parameterCells[i].textField()->setDelegates(handler, this);
+    m_parameterCells[i].setDelegates(handler, this);
   }
   m_significanceCell.setParentResponder(&m_selectableTableView);
-  m_significanceCell.innerCell()->textField()->setDelegates(handler, this);
+  m_significanceCell.innerCell()->setDelegates(handler, this);
   m_significanceCell.innerCell()->setMessage(I18n::Message::Alpha);
   m_significanceCell.innerCell()->setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
@@ -153,22 +153,6 @@ bool Probability::InputController::textFieldDidFinishEditing(Escher::TextField *
   resetMemoization();
   m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
   return res;
-}
-
-bool Probability::InputController::textFieldDidHandleEvent(TextField * textField,
-                                                           bool returnValue,
-                                                           bool textSizeDidChange) {
-  if (returnValue) {
-    // Relayout to hide label
-    m_selectableTableView.reloadData(false);
-  }
-  return FloatParameterPage::textFieldDidHandleEvent(textField, returnValue, textSizeDidChange);
-}
-
-bool Probability::InputController::textFieldDidAbortEditing(TextField * textField) {
-  resetMemoization();
-  m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
-  return FloatParameterPage::textFieldDidAbortEditing(textField);
 }
 
 bool Probability::InputController::isCellEditing(Escher::HighlightCell * cell, int index) {

@@ -25,7 +25,8 @@ public:
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
-  void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
+  void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
+  void setInputEventHandlerDelegate(InputEventHandlerDelegate * inputEventHandlerDelegate);
   void reinitDraftTextBuffer() { m_contentView.reinitDraftTextBuffer(); }
   bool isEditing() const override;
   char * draftTextBuffer() const { return const_cast<char *>(m_contentView.editedText()); }

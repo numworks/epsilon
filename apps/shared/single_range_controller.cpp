@@ -18,7 +18,7 @@ SingleRangeController::SingleRangeController(Responder * parentResponder, InputE
   for (int i = 0; i < k_numberOfTextCells; i++) {
     m_boundsCells[i].setController(this);
     m_boundsCells[i].setParentResponder(&m_selectableTableView);
-    m_boundsCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
+    m_boundsCells[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }
 

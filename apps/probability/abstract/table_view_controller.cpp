@@ -23,7 +23,7 @@ void TableViewController::moveSelectionForEvent(Ion::Events::Event event,
     (*selectedColumn)++;
   } else if (event == Ion::Events::Up) {
     (*selectedRow)--;
-  } else if (event == Ion::Events::Down) {
+  } else if (event == Ion::Events::Down || event == Ion::Events::OK || event == Ion::Events::EXE) {
     (*selectedRow)++;
   }
 }

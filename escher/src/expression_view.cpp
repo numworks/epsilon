@@ -21,15 +21,15 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 
 bool ExpressionView::setLayout(Layout layoutR) {
   /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
-   * result in an ACCESS ERROR. We need to overwrite m_layout anyway so that
-   * identifiers and reference counters are properly handled. */
-  bool shouldRedraw = !m_layout.wasErasedByException() && m_layout.isIdenticalTo(layoutR);
+   * result in an ACCESS ERROR. */
+  bool shouldRedraw = m_layout.wasErasedByException() || !m_layout.isIdenticalTo(layoutR);
+  /* We need to overwrite m_layout anyway so that identifiers and reference
+   * counters are properly handled. */
   m_layout = layoutR;
   if (shouldRedraw) {
-    return false;
+    markRectAsDirty(bounds());
   }
-  markRectAsDirty(bounds());
-  return true;
+  return shouldRedraw;
 }
 
 void ExpressionView::setBackgroundColor(KDColor backgroundColor) {

@@ -57,8 +57,10 @@ void LayoutField::ContentView::clearLayout() {
   HorizontalLayout h = HorizontalLayout::Builder();
   if (m_expressionView.setLayout(h)) {
     resetSelection();
-    m_cursor.setLayout(h);
+  } else {
+    assert(selectionIsEmpty());
   }
+  m_cursor.setLayout(h);
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {

@@ -80,8 +80,7 @@ void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
         tableViewController()->tableViewDataSource()->cumulatedHeightFromIndex(row) +
             tableViewController()->selectableTableView()->topMargin(),
         tableViewController()->selectableTableView()->columnWidth(col),
-        tableViewController()->tableViewDataSource()->rowHeight(
-            row));  // TODO query tableViewController()->selectableTableView()::cellFrame
+        tableViewController()->tableViewDataSource()->rowHeight(row));
 
     m_contentView.scrollToContentRect(cellFrame);
   }

@@ -41,7 +41,7 @@ bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
       m_innerTableData.recomputeDimensions();
     }
     m_table.selectCellAtClippedLocation(col, row, false);
-    m_table.reloadCellAtLocation(col, row );
+    m_table.reloadCellAtLocation(col, row);
     return true;
   }
   return false;

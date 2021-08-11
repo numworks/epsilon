@@ -21,7 +21,7 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
 {
   for (int i = 0; i < k_numberOfCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
-    m_cells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
+    m_cells[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }
 

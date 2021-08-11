@@ -271,6 +271,17 @@ void TextField::setTextColor(KDColor textColor) {
   m_contentView.setTextColor(textColor);
 }
 
+void TextField::setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate,
+                             TextFieldDelegate * delegate) {
+  m_inputEventHandlerDelegate = inputEventHandlerDelegate;
+  m_delegate = delegate;
+}
+
+void TextField::setInputEventHandlerDelegate(
+    InputEventHandlerDelegate * inputEventHandlerDelegate) {
+  m_inputEventHandlerDelegate = inputEventHandlerDelegate;
+}
+
 bool TextField::isEditing() const {
   return m_contentView.isEditing();
 }
@@ -294,6 +305,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     if (!isEditing()) {
       reinitDraftTextBuffer();
       setEditing(true);
+      m_delegate->textFieldDidStartEditing(this);
     }
     return true;
   }
@@ -386,6 +398,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
+    m_delegate->textFieldDidStartEditing(this);
   }
   const char * text = this->text();
   assert(text == m_contentView.editedText());
@@ -535,6 +548,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     const char * previousText = m_contentView.text();
     setEditing(true);
+    m_delegate->textFieldDidStartEditing(this);
     setText(previousText);
     didHandleEvent = true;
   } else {
@@ -602,6 +616,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
+    m_delegate->textFieldDidStartEditing(this);
   }
 
   assert(isEditing());

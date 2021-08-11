@@ -30,9 +30,11 @@ public:
                Poincare::Preferences::ShortNumberOfSignificantDigits + 1) *
            m_textField.font()->glyphSize().width() + TextCursorView::k_width;
   }
+  virtual void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate,
+                            TextFieldDelegate * textFieldDelegate);
 
-  TextField m_textField;
 private:
+  TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };
 

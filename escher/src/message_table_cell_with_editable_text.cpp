@@ -22,4 +22,9 @@ void MessageTableCellWithEditableText::setAccessoryText(const char * text) {
   layoutSubviews();
 }
 
+void MessageTableCellWithEditableText::setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate,
+                                                    TextFieldDelegate * textFieldDelegate) {
+  m_textField.setDelegates(inputEventHandlerDelegate, textFieldDelegate);
+}
+
 }

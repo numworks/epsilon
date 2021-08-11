@@ -246,7 +246,6 @@ void lockPCBVersion() {}
 
 bool pcbVersionIsLocked() { return true; }
 
-
 bool isInReflashableSector(uint32_t address) {
   return address >= InternalFlash::Config::StartAddress && address < InternalFlash::Config::EndAddress;
 }

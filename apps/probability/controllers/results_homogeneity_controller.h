@@ -50,7 +50,6 @@ private:
     ContentView(Responder * parent, SelectableTableView * table, ButtonDelegate * buttonDelegate);
     int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int i) override;
-    // TODO add selection behavior
     Escher::Button * button() { return &m_next; }
     KDPoint tableOrigin();
     KDPoint buttonOrigin();

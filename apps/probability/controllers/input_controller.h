@@ -62,7 +62,8 @@ private:
   Statistic * m_statistic;
   ResultsController * m_resultsController;
 
-  constexpr static int k_numberOfReusableCells = 8;  // TODO count
+  constexpr static int k_numberOfReusableCells = Ion::Display::Height /
+                                                 Escher::TableCell::k_minimalLargeFontCellHeight + 1;
   constexpr static int k_significanceCellType = 2;
 
   LayoutCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];

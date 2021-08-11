@@ -9,8 +9,6 @@ ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic 
     m_statistic(statistic) {
   for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
     m_cells[i].setFont(KDFont::SmallFont);
-    m_cells[i].setText("1");
-    m_cells[i].setEven(i % 4 /* TODO */ == 0);
   }
 }
 

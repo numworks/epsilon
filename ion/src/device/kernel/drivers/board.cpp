@@ -112,21 +112,6 @@ bool addressInUserlandRAM(void * address) {
   return a >= Config::UserlandSRAMAddress && a < Config::UserlandSRAMAddress + Config::UserlandSRAMLength;
 }
 
-void lockUnlockedPCBVersion() {
-  if (pcbVersionIsLocked()) {
-    return;
-  }
-  /* PCB version is unlocked : the device is a N0110 that has been
-   * produced prior to the pcb revision 3.43. */
-  PCBVersion version = pcbVersion();
-  if (version != 0) {
-    /* Some garbage has been written in OTP0. We overwrite it fully, which is
-     * interepreted as blank. */
-    writePCBVersion(k_alternateBlankVersion);
-  }
-  lockPCBVersion();
-}
-
 }
 }
 }

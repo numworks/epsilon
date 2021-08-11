@@ -8,10 +8,6 @@
 void kernel_main() {
   assert(Ion::Device::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks);
 
-  /* Lock OTP on older devices to prevent garbage being written where the PCB
-   * version is read. */
-  Ion::Device::Board::lockUnlockedPCBVersion();
-
   switch_to_unpriviledged();
 
   // Jump to userland

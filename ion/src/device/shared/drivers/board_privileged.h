@@ -30,7 +30,6 @@ PCBVersion readPCBVersionInMemory();
 void writePCBVersion(PCBVersion version);
 void lockPCBVersion();
 bool pcbVersionIsLocked();
-void lockUnlockedPCBVersion();
 
 }
 }

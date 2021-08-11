@@ -221,7 +221,7 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     }
   }
   size_t size = UTF8Decoder::CharSizeOfCodePoint(c);
-  if (size >= bufferSize) {
+  if (static_cast<int>(size) >= bufferSize) {
     /* Code point doesn't fit, nullify the rest of the buffer to prevent
      * truncated utf8 characters */
     memset(buffer, 0, bufferSize);

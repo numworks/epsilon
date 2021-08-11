@@ -111,7 +111,6 @@ void InputCategoricalView::setResponderForSelectedRow() {
 }
 
 void InputCategoricalView::selectCorrectView() {
-  // TODO set behavior in didBecomeFirstResponder?
   m_significanceCell.setHighlighted(false);
   m_next.setHighlighted(false);
   if (m_viewSelection.selectedRow() != k_indexOfTable) {

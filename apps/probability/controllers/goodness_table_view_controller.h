@@ -14,7 +14,7 @@ public:
   GoodnessTableViewController(Escher::Responder * parent,
                               GoodnessStatistic * statistic,
                               Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                              DynamicTableViewDataSourceDelegate * delegate,  // TODO make them the same delegate ?
+                              DynamicTableViewDataSourceDelegate * delegate,
                               Escher::SelectableTableViewDelegate * scrollDelegate);
 
   void didBecomeFirstResponder() override;

@@ -26,7 +26,7 @@ class SelectableCellListPage : public SelectableListViewPage {
     assert(i >= 0 && i < k_numberOfRows);
     return &m_cells[i];
   }
-  Cell * cellAtIndex(int i) { return &m_cells[i]; }  // TODO useless?
+  Cell * cellAtIndex(int i) { return &m_cells[i]; }
 
  protected:
   constexpr static int k_numberOfRows = n;

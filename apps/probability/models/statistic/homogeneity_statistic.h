@@ -51,7 +51,7 @@ private:
   void computeExpectedValues();
 
   float m_input[k_maxNumberOfColumns * k_maxNumberOfRows];
-  float m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];  // TODO maybe store only totals ?
+  float m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];
   float m_rowTotals[k_maxNumberOfRows];
   float m_columnTotals[k_maxNumberOfColumns];
   float m_total;

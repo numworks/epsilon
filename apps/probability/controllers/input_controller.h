@@ -38,10 +38,6 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidHandleEvent(TextField * textField,
-                               bool returnValue,
-                               bool textSizeDidChange) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
 
   void openPage(ViewController * nextPage,
                 KDColor backgroundColor = s_titleColor,

@@ -21,7 +21,7 @@ DomainParameterController::DomainParameterController(Responder * parentResponder
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_domainCells[i].setParentResponder(&m_selectableTableView);
-    m_domainCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
+    m_domainCells[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }
 

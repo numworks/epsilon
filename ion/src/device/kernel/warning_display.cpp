@@ -1,6 +1,7 @@
 #include "warning_display.h"
 #include <drivers/events.h>
 #include <drivers/keyboard.h>
+#include <drivers/keyboard_queue.h>
 #include <drivers/display.h>
 #include <ion/display.h>
 #include <kandinsky/font.h>
@@ -43,16 +44,16 @@ void showMessage(const char * const * messages, int numberOfMessages) {
 }
 
 void waitUntilKeyPress() {
-  /* Shutdown events interruptions to prevent the spinner form going off and
-   * the queue from being filled with garbage. */
-  Events::shutdownInterruptions();
+  /* Prevent the stalling timer from going off and messing up the display */
+  Events::pauseStallingTimer();
   while (Keyboard::scan() != 0) {
     Ion::Timing::msleep(100);
   }
   while (Keyboard::scan() == 0) {
     Ion::Timing::msleep(100);
   }
-  Events::initInterruptions();
+  /* Flush the keyboard queue to avoid delayed reactions. */
+  Keyboard::Queue::sharedQueue()->flush();
 }
 
 constexpr static int sUnauthenticatedUserlandNumberOfMessages = 6;

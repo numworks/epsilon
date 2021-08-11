@@ -133,7 +133,7 @@ bool GraphView::functionWasInterrupted(int index) const {
 }
 
 void GraphView::setFunctionInterrupted(int index) const {
-  if (index >= 0 & static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
+  if (index >= 0 && static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
     m_functionsInterrupted |= 1 << index;
   }
 }

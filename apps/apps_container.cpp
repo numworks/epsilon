@@ -92,6 +92,9 @@ void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
   if (promptController() != nullptr && s_activeApp->snapshot()!= onBoardingAppSnapshot() && s_activeApp->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
     s_activeApp->displayModalViewController(promptController(), 0.f, 0.f);
   }
+  /* Reset first enumeration flag in case the device was unplugged during its
+   * off time. */
+  m_firstUSBEnumeration = true;
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */

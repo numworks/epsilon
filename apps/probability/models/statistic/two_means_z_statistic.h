@@ -35,9 +35,9 @@ private:
 
 
   float _xEstimate(float meanSample1, float meanSample2);
-  float _z(float deltaMean, float meanSample1, float n1, float sigma1, float meanSample2, float n2,
+  float computeZ(float deltaMean, float meanSample1, float n1, float sigma1, float meanSample2, float n2,
            float sigma2);
-  float _SE(float sigma1, int n1, float sigma2, int n2);
+  float computeStandardError(float sigma1, int n1, float sigma2, int n2);
 
   float m_params[k_numberOfParams];
 };

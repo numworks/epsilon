@@ -29,8 +29,8 @@ private:
   float sigma() { return m_params[ParamsOrder::Sigma]; }
 
   // Computation
-  float _z(float meanSample, float mean, float n, float sigma);
-  float _SE(float sigma, int n);
+  float computeZ(float meanSample, float mean, float n, float sigma);
+  float computeStandardError(float sigma, int n);
 
   float m_params[k_numberOfParams];
 };

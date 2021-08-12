@@ -10,14 +10,14 @@ public:
   GoodnessStatistic();
   int numberOfStatisticParameters() const override { return k_maxNumberOfRows * 2; }
 
-  constexpr static int k_maxNumberOfRows = 10;
   void computeTest() override;
   void recomputeData();
   int computeNumberOfRows();
 
+  constexpr static int k_maxNumberOfRows = 10;
 protected:
   float * paramArray() override { return m_input; }
-  int _degreesOfFreedom() { return numberOfValuePairs() - 1; }
+  int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
   float expectedValue(int index) override;
   float observedValue(int index) override;
 

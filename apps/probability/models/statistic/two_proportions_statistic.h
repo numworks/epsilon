@@ -36,9 +36,9 @@ private:
   float n2() { return m_params[ParamsOrder::N2]; }
 
   // Computation
-  float _pEstimate(float x1, float n1, float x2, float n2);
-  float _z(float deltaP0, float x1, int n1, float x2, int n2);
-  float _SE(float p1Estimate, int n1, float p2Estimate, int n2);
+  float computeEstimate(float x1, float n1, float x2, float n2);
+  float computeZ(float deltaP0, float x1, int n1, float x2, int n2);
+  float computeStandardError(float p1Estimate, int n1, float p2Estimate, int n2);
 
   float m_params[k_numberOfParams];
 };

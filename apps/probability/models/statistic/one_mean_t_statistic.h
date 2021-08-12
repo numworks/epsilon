@@ -31,9 +31,9 @@ private:
   float n() { return m_params[ParamsOrder::N]; }
 
   // Computation
-  float _degreesOfFreedom(int n);
-  float _t(float mean, float meanSample, float s, float n);
-  float _SE(float s, float n);
+  float computeDegreesOfFreedom(int n);
+  float computeT(float mean, float meanSample, float s, float n);
+  float computeStandardError(float s, float n);
 
   float m_params[k_numberOfParams];
 };

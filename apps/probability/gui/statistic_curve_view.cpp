@@ -183,7 +183,7 @@ Poincare::Coordinate2D<float> StatisticCurveView::evaluateTestAtAbsissa(float x,
                                                                         void * model,
                                                                         void * context) {
   Statistic * statistic = static_cast<Statistic *>(model);
-  return Poincare::Coordinate2D<float>(x, statistic->normedDensityFunction(x));
+  return Poincare::Coordinate2D<float>(x, statistic->normalizedDensityFunction(x));
 }
 
 Poincare::Coordinate2D<float> StatisticCurveView::evaluateIntervalAtAbsissa(float x,

@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#include "statistic.h"
+#include "cached_statistic.h"
 
 namespace Probability {
 
@@ -16,7 +16,9 @@ public:
   bool hasDegreeOfFreedom() override { return true; }
   float degreeOfFreedom() override { return m_degreesOfFreedom; }
 
-  float normedDensityFunction(float x) override;
+  float normalizedDensityFunction(float x) const override;
+  float cumulativeNormalizedDistributionFunction(float x) const override;
+  float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
 
   void computeInterval() override {}
 
@@ -34,9 +36,7 @@ protected:
   virtual float observedValue(int index) = 0;
   virtual int numberOfValuePairs() = 0;
 
-  float _z();
-  static float _zAlpha(float degreesOfFreedom, float significanceLevel);
-  static float _pVal(float degreesOfFreedom, float z);
+  float computeChi2();
 };
 
 }  // namespace Probability

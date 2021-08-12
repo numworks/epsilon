@@ -33,9 +33,9 @@ private:
   float n() { return m_params[ParamsOrder::N]; }
 
   // Computation
-  float _pEstimate(float x, float n);
-  float _z(float p0, float p, int n);
-  float _SE(float pEstimate, int n);
+  float computeEstimate(float x, float n);
+  float computeZ(float p0, float p, int n);
+  float computeStandardError(float pEstimate, int n);
 };
 
 }  // namespace Probability

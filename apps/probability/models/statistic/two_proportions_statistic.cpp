@@ -35,17 +35,16 @@ bool TwoProportionsStatistic::isValidParamAtIndex(int i, float p) {
 
 void TwoProportionsStatistic::computeTest() {
   float deltaP0 = m_hypothesisParams.firstParam();
-  m_zAlpha = absIfNeeded(_zAlpha(m_threshold));
-  m_z = _z(deltaP0, x1(), n1(), x2(), n2());
-  char op = static_cast<char>(m_hypothesisParams.op());
-  m_pValue = _pVal(m_z, op);
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_testCriticalValue = computeZ(deltaP0, x1(), n1(), x2(), n2());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
 }
 
 void TwoProportionsStatistic::computeInterval() {
-  m_pEstimate = _pEstimate(x1(), n1(), x2(), n2());
-  m_zCritical = _zCritical(threshold());
-  m_SE = _SE(x1(), n1(), x2(), n2());
-  m_ME = _ME(m_zCritical, m_SE);
+  m_estimate = computeEstimate(x1(), n1(), x2(), n2());
+  m_zCritical = computeIntervalCriticalValue(m_threshold);
+  m_SE = computeStandardError(x1(), n1(), x2(), n2());
+  m_ME = computeMarginOfError(m_zCritical, m_SE);
 }
 
 Poincare::Layout TwoProportionsStatistic::estimateLayout() {
@@ -99,18 +98,18 @@ ParameterRepr TwoProportionsStatistic::paramReprAtIndex(int i) const {
   return ParameterRepr{};
 }
 
-float TwoProportionsStatistic::_pEstimate(float x1, float n1, float x2, float n2) {
+float TwoProportionsStatistic::computeEstimate(float x1, float n1, float x2, float n2) {
   return x1 / n1 - x2 / n2;
 }
 
-float TwoProportionsStatistic::_z(float deltaP0, float x1, int n1, float x2, int n2) {
+float TwoProportionsStatistic::computeZ(float deltaP0, float x1, int n1, float x2, int n2) {
   float p1 = x1 / n1;
   float p2 = x2 / n2;
   float p = (x1 + x2) / (n1 + n2);
-  return absIfNeeded((p1 - p2 - deltaP0) / sqrt(p * (1 - p) * (1. / n1 + 1. / n2)));
+  return (p1 - p2 - deltaP0) / sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
 }
 
-float TwoProportionsStatistic::_SE(float x1, int n1, float x2, int n2) {
+float TwoProportionsStatistic::computeStandardError(float x1, int n1, float x2, int n2) {
   float p1Estimate = x1 / n1;
   float p2Estimate = x2 / n2;
   return sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2);

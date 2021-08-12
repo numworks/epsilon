@@ -2,7 +2,7 @@
 #define APPS_PROBABILITY_MODELS_STATISTIC_Z_STATISTIC_H
 
 #include "probability/helpers.h"
-#include "statistic.h"
+#include "cached_statistic.h"
 
 namespace Probability {
 
@@ -11,12 +11,10 @@ class ZStatistic : public CachedStatistic {
 public:
   Poincare::Layout testCriticalValueSymbol() override { return layoutFromText("z"); }
   bool hasDegreeOfFreedom() override { return false; }
-  float normedDensityFunction(float x) override;
+  float normalizedDensityFunction(float x) const override;
+  float cumulativeNormalizedDistributionFunction(float x) const override;
+  float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
 
-protected:
-  float _zAlpha(float alpha);
-  float _zCritical(float confidenceLevel);
-  float _pVal(float z, char op);
 };
 
 }  // namespace Probability

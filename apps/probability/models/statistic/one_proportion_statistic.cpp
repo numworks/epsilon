@@ -28,19 +28,18 @@ bool OneProportionStatistic::isValidParamAtIndex(int i, float p) {
 
 void OneProportionStatistic::computeTest() {
   float p0 = m_hypothesisParams.firstParam();
-  float prop = _pEstimate(x(), n());
+  float p = computeEstimate(x(), n());
 
-  m_zAlpha = absIfNeeded(_zAlpha(m_threshold));
-  m_z = _z(p0, prop, n());
-  char fakeOp = static_cast<char>(m_hypothesisParams.op());
-  m_pValue = _pVal(m_z, fakeOp);
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_testCriticalValue = computeZ(p0, p, n());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
 }
 
 void OneProportionStatistic::computeInterval() {
-  m_pEstimate = _pEstimate(x(), n());
-  m_zCritical = _zCritical(m_threshold);
-  m_SE = _SE(m_pEstimate, n());
-  m_ME = _ME(m_zCritical, m_SE);
+  m_estimate = computeEstimate(x(), n());
+  m_zCritical = computeIntervalCriticalValue(m_threshold);
+  m_SE = computeStandardError(m_estimate, n());
+  m_ME = computeMarginOfError(m_zCritical, m_SE);
 }
 
 Poincare::Layout OneProportionStatistic::estimateLayout() {
@@ -62,15 +61,15 @@ ParameterRepr OneProportionStatistic::paramReprAtIndex(int i) const {
   return ParameterRepr{};
 }
 
-float OneProportionStatistic::_pEstimate(float x, float n) {
+float OneProportionStatistic::computeEstimate(float x, float n) {
   return x / n;
 }
 
-float OneProportionStatistic::_z(float p0, float p, int n) {
-  return absIfNeeded((p - p0) / sqrt(p0 * (1 - p0) / n));
+float OneProportionStatistic::computeZ(float p0, float p, int n) {
+  return (p - p0) / sqrt(p0 * (1 - p0) / n);
 }
 
-float OneProportionStatistic::_SE(float pEstimate, int n) {
+float OneProportionStatistic::computeStandardError(float pEstimate, int n) {
   return sqrt(pEstimate * (1 - pEstimate) / n);
 }
 

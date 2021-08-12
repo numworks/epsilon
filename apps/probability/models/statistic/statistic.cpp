@@ -101,8 +101,44 @@ void Statistic::initializeStatistic(Statistic * statistic,
   }
 }
 
-float Statistic::absIfNeeded(float f) {
-  return m_hypothesisParams.op() == HypothesisParams::ComparisonOperator::Different ? fabs(f) : f;
+float Statistic::computePValue(float z, HypothesisParams::ComparisonOperator op) const {
+  // Compute probability of obtaining a more extreme result
+  switch (op) {
+    case HypothesisParams::ComparisonOperator::Higher:
+      return 1 - cumulativeNormalizedDistributionFunction(z);
+    case HypothesisParams::ComparisonOperator::Lower:
+      return cumulativeNormalizedDistributionFunction(z);
+    case HypothesisParams::ComparisonOperator::Different:
+      return 2 * cumulativeNormalizedDistributionFunction(-std::fabs(z));
+    default:
+      assert(false);
+      return -1;
+  }
+}
+
+float Statistic::computeZAlpha(float significanceLevel,
+                              HypothesisParams::ComparisonOperator op) const {
+  // Compute the absissa corresponding the the significance level
+  float proba;
+  switch (op) {
+    case HypothesisParams::ComparisonOperator::Higher:
+      proba = 1 - significanceLevel;
+      break;
+    case HypothesisParams::ComparisonOperator::Lower:
+      proba = significanceLevel;
+      break;
+    case HypothesisParams::ComparisonOperator::Different:
+      proba = 1 - significanceLevel / 2;
+      break;
+    default:
+      assert(false);
+      return -1;
+  }
+  return cumulativeNormalizedInverseDistributionFunction(proba);
+}
+
+float Statistic::computeIntervalCriticalValue(float confidenceLevel) const {
+  return cumulativeNormalizedInverseDistributionFunction(0.5 + confidenceLevel / 2);
 }
 
 }  // namespace Probability

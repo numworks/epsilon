@@ -30,6 +30,7 @@ public:
   Index2D computeDimensions();
 
   void recomputeData();
+
   constexpr static int k_maxNumberOfColumns = 10;
   constexpr static int k_maxNumberOfRows = 10;
 
@@ -38,18 +39,17 @@ protected:
   float expectedValue(int resultsIndex) override;
   float observedValueAtPosition(Index2D index);
   float expectedValueAtPosition(Index2D index);
-  int _degreesOfFreedom(Index2D max);
+  int computeDegreesOfFreedom(Index2D max);
   int numberOfValuePairs() override;
-
-private:
   float * paramArray() override { return m_input; }
 
+private:
   Index2D indexToIndex2D(int index);
   int index2DToIndex(Index2D indexes);
   int index2DToIndex(int row, int column);
   Index2D resultsIndexToIndex2D(int resultsIndex);
   int resultsIndexToArrayIndex(int resultsIndex);
-  void computeExpectedValues();
+  void computeExpectedValues(Index2D max);
 
   float m_input[k_maxNumberOfColumns * k_maxNumberOfRows];
   float m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];

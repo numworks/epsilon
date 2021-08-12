@@ -23,26 +23,28 @@ Poincare::Layout Chi2Statistic::testCriticalValueSymbol() {
           Poincare::VerticalOffsetLayoutNode::Position::Superscript));
 }
 
-float Chi2Statistic::normedDensityFunction(float x) {
+float Chi2Statistic::normalizedDensityFunction(float x) const {
+  assert(m_degreesOfFreedom > 0);
   return Chi2Law::EvaluateAtAbscissa(x, m_degreesOfFreedom);
 }
 
-float Chi2Statistic::_z() {
+float Chi2Statistic::cumulativeNormalizedDistributionFunction(float x) const {
+  assert(m_degreesOfFreedom > 0);
+  return Chi2Law::CumulativeDistributiveFunctionAtAbscissa(x, m_degreesOfFreedom);
+}
+
+float Chi2Statistic::cumulativeNormalizedInverseDistributionFunction(float proba) const {
+  assert(m_degreesOfFreedom > 0);
+  return Chi2Law::CumulativeDistributiveInverseForProbability(proba, m_degreesOfFreedom);
+}
+
+float Chi2Statistic::computeChi2() {
   float z = 0;
   int n = numberOfValuePairs();
   for (int i = 0; i < n; i++) {
     z += std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
   }
   return z;
-}
-
-float Chi2Statistic::_zAlpha(float degreesOfFreedom, float significanceLevel) {
-  return Chi2Law::CumulativeDistributiveInverseForProbability(1 - significanceLevel,
-                                                              degreesOfFreedom);
-}
-
-float Chi2Statistic::_pVal(float degreesOfFreedom, float z) {
-  return 1 - Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(z, degreesOfFreedom);
 }
 
 }  // namespace Probability

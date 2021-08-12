@@ -23,11 +23,11 @@ void HomogeneityStatistic::computeTest() {
   Index2D max = computeDimensions();
   m_numberOfResultRows = max.row;
   m_numberOfResultColumns = max.col;
-  computeExpectedValues();
-  m_z = _z();
-  m_degreesOfFreedom = _degreesOfFreedom(max);
-  m_zAlpha = absIfNeeded(_zAlpha(m_degreesOfFreedom, m_threshold));
-  m_pValue = _pVal(m_degreesOfFreedom, m_z);
+  computeExpectedValues(max);
+  m_testCriticalValue = computeChi2();
+  m_degreesOfFreedom = computeDegreesOfFreedom(max);
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
 }
 
 float HomogeneityStatistic::expectedValueAtLocation(int row, int column) {
@@ -42,7 +42,7 @@ float HomogeneityStatistic::expectedValue(int resultsIndex) {
   return m_expectedValues[resultsIndexToArrayIndex(resultsIndex)];
 }
 
-int HomogeneityStatistic::_degreesOfFreedom(Index2D max) {
+int HomogeneityStatistic::computeDegreesOfFreedom(Index2D max) {
   return (max.row - 1) * (max.col - 1);
 }
 
@@ -92,10 +92,9 @@ int HomogeneityStatistic::resultsIndexToArrayIndex(int resultsIndex) {
   return index2DToIndex(resultsIndexToIndex2D(resultsIndex));
 }
 
-void HomogeneityStatistic::computeExpectedValues() {
+void HomogeneityStatistic::computeExpectedValues(Index2D max) {
   // Compute row, column and overall sums
   m_total = 0;
-  Index2D max = computeDimensions();
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
       // int index = index2DToIndex(row, col);

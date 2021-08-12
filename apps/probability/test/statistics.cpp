@@ -23,14 +23,14 @@ struct StatisticTestCase {
   float m_firstHypothesisParam;
   HypothesisParams::ComparisonOperator m_op;
   int m_numberOfInputs;
-  float m_inputs[10];
+  float m_inputs[100];
   float m_significanceLevel;
   float m_confidenceLevel;
 
   // Results
   int m_numberOfParameters;
   bool m_hasDegreeOfFreedom;
-  float m_degreeOfFreedom;
+  float m_degreesOfFreedom;
   bool m_testPassed;
   float m_zAlpha;
   float m_testCriticalValue;
@@ -54,7 +54,8 @@ void inputValues(Statistic * stat, StatisticTestCase & test) {
 
   for (int i = 0; i < test.m_numberOfInputs; i++) {
     stat->setParamAtIndex(i, test.m_inputs[i]);
-    quiz_assert(stat->paramAtIndex(i) == test.m_inputs[i]);
+    quiz_assert((stat->paramAtIndex(i) && test.m_inputs[i]) ||
+                (stat->paramAtIndex(i) == test.m_inputs[i]));
   }
 }
 
@@ -67,7 +68,7 @@ void runTest(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(roughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue));
   quiz_assert(roughlyEqual<float>(stat->pValue(), test.m_pValue));
   if (stat->hasDegreeOfFreedom()) {
-    quiz_assert(roughlyEqual(stat->degreeOfFreedom(), test.m_degreeOfFreedom));
+    quiz_assert(roughlyEqual(stat->degreeOfFreedom(), test.m_degreesOfFreedom));
   }
 }
 
@@ -118,8 +119,8 @@ QUIZ_CASE(one_proportion_statistic) {
                         .m_numberOfParameters = 3,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
-                        .m_zAlpha = 2.3263483,
-                        .m_testCriticalValue = 1.9999998808,
+                        .m_zAlpha = 2.5758295059,
+                        .m_testCriticalValue = -1.9999998808,
                         .m_pValue = 0.0455002785,
                         .m_estimate = 84.f / 100.f,
                         .m_intervalCriticalValue = 2.57582951,
@@ -141,7 +142,7 @@ QUIZ_CASE(one_mean_t_statistic) {
                         .m_confidenceLevel = 0.95,
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreeOfFreedom = 50 - 1,
+                        .m_degreesOfFreedom = 50 - 1,
                         .m_testPassed = false,
                         .m_zAlpha = -1.6765508652,
                         .m_testCriticalValue = -0.4419349730,
@@ -158,9 +159,9 @@ QUIZ_CASE(one_mean_t_statistic) {
                         .m_confidenceLevel = 0.99,
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreeOfFreedom = 10 - 1,
+                        .m_degreesOfFreedom = 10 - 1,
                         .m_testPassed = true,
-                        .m_zAlpha = 2.8214385509,
+                        .m_zAlpha = 3.2498362064,
                         .m_testCriticalValue = 3.4152598381,
                         .m_pValue = 0.0076853633,
                         .m_estimate = 1.4f,
@@ -200,7 +201,7 @@ QUIZ_CASE(one_mean_z_statistic) {
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_zAlpha = 2.3263483047,
+                        .m_zAlpha = 2.5758295059,
                         .m_testCriticalValue = 3.1622774601,
                         .m_pValue = 0.0015654564,
                         .m_estimate = 2.3f,
@@ -264,7 +265,7 @@ QUIZ_CASE(two_means_t_statistic) {
                         .m_confidenceLevel = 0.95,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreeOfFreedom = 60.7450408936,
+                        .m_degreesOfFreedom = 60.7450408936,
                         .m_testPassed = false,
                         .m_zAlpha = 1.6703274250,
                         .m_testCriticalValue = -1.7087153196,
@@ -281,10 +282,10 @@ QUIZ_CASE(two_means_t_statistic) {
                         .m_confidenceLevel = 0.99,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreeOfFreedom = 113.2706527710,
+                        .m_degreesOfFreedom = 113.2706527710,
                         .m_testPassed = false,
-                        .m_zAlpha = 2.3597204685,
-                        .m_testCriticalValue = 0.6401526332,
+                        .m_zAlpha = 2.6199319363,
+                        .m_testCriticalValue = -0.6401526332,
                         .m_pValue = 0.5233662128,
                         .m_estimate = 4.2f - 18.3f,
                         .m_intervalCriticalValue = 2.6199319363,
@@ -306,15 +307,15 @@ QUIZ_CASE(pooled_t_test) {
                         .m_confidenceLevel = 0.876,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreeOfFreedom = 140,
+                        .m_degreesOfFreedom = 296,
                         .m_testPassed = false,
                         .m_zAlpha = 2.0628392696,
-                        .m_testCriticalValue = -0.0111625144,
-                        .m_pValue = 0.5044493467,
+                        .m_testCriticalValue = -0.0446507446,
+                        .m_pValue = 0.5177921057,
                         .m_estimate = 213.4f - 213.5f,
                         .m_intervalCriticalValue = 1.5425841808,
                         .m_standardError = 8.9585542679,
-                        .m_marginOfError = 17.6},
+                        .m_marginOfError = 13.8193244934},
       StatisticTestCase{.m_firstHypothesisParam = 0.,
                         .m_op = HypothesisParams::ComparisonOperator::Higher,
                         .m_numberOfInputs = 6,
@@ -323,18 +324,17 @@ QUIZ_CASE(pooled_t_test) {
                         .m_confidenceLevel = 0.9,
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreeOfFreedom = 12,
+                        .m_degreesOfFreedom = 22,
                         .m_testPassed = true,
                         .m_zAlpha = 1.3212366104,
                         .m_testCriticalValue = 2.887125562,
-                        .m_pValue = 0.0085543126,
+                        .m_pValue = 0.0042771697,
                         .m_estimate = 1.23 - 0.2,
                         .m_intervalCriticalValue = 1.7171442509,
                         .m_standardError = 0.3567562103,
                         .m_marginOfError = 0.6126018763}};
   PooledTwoMeansStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    printf("Pooled t test n°%d\n", i);
     testStatistic(&stat, tests[i]);
   }
 }
@@ -367,7 +367,7 @@ QUIZ_CASE(two_means_z_statistic) {
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
-                        .m_zAlpha = 2.3263483047,
+                        .m_zAlpha = 2.5758295059,
                         .m_testCriticalValue = 1.9819186926,
                         .m_pValue = 0.0474883318,
                         .m_estimate = 1542 - 1345.8f,
@@ -381,13 +381,14 @@ QUIZ_CASE(two_means_z_statistic) {
 
 QUIZ_CASE(goodness_statistic) {
   StatisticTestCase tests[] = {
-      StatisticTestCase{.m_numberOfInputs = 8,
+      StatisticTestCase{.m_op = HypothesisParams::ComparisonOperator::Higher,
+                        .m_numberOfInputs = 8,
                         .m_inputs = {1, 2, 2, 1, 3, 4, 4, 3},
                         .m_significanceLevel = 0.03,
                         .m_confidenceLevel = 0.9,
                         .m_numberOfParameters = GoodnessStatistic::k_maxNumberOfRows * 2 + 1,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreeOfFreedom = 3,
+                        .m_degreesOfFreedom = 3,
                         .m_testPassed = false,
                         .m_zAlpha = 8.9472894669,
                         .m_testCriticalValue = 2.0833332539,
@@ -397,5 +398,57 @@ QUIZ_CASE(goodness_statistic) {
     inputValues(&stat, tests[i]);
     stat.recomputeData();
     runTest(&stat, tests[i]);
+  }
+}
+
+QUIZ_CASE(homogeneity_statistic) {
+  StatisticTestCase tests[] = {StatisticTestCase{
+      .m_op = HypothesisParams::ComparisonOperator::Higher,
+      .m_numberOfInputs = HomogeneityStatistic::k_maxNumberOfColumns *
+                          HomogeneityStatistic::k_maxNumberOfRows,
+      .m_inputs = {1,   2,   4,   NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   2,   5,   5,   NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   4,   3,   2,   NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+      .m_significanceLevel = 0.03,
+      .m_confidenceLevel = 0.9,
+      .m_numberOfParameters =
+          HomogeneityStatistic::k_maxNumberOfColumns * HomogeneityStatistic::k_maxNumberOfRows + 1,
+      .m_hasDegreeOfFreedom = true,
+      .m_degreesOfFreedom = 4,
+      .m_testPassed = false,
+      .m_zAlpha = 10.7119007,
+      .m_testCriticalValue = 3.5017316341,
+      .m_pValue = 0.4776151180}};
+  float expectedValues[2][HomogeneityStatistic::k_maxNumberOfColumns *
+                          HomogeneityStatistic::k_maxNumberOfRows] = {
+      {1.75,  2.5,     2.75,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       3,     4.2857,  4.714,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       2.25,  3.214,   3.536,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN}};
+  HomogeneityStatistic stat;
+  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&stat, tests[i]);
+    stat.recomputeData();
+    runTest(&stat, tests[i]);
+    // Check expected values
+    for (int j = 0;
+         j < HomogeneityStatistic::k_maxNumberOfColumns * HomogeneityStatistic::k_maxNumberOfRows;
+         j++) {
+      float expected = stat.expectedValueAtLocation(j / HomogeneityStatistic::k_maxNumberOfColumns,
+                                                    j % HomogeneityStatistic::k_maxNumberOfColumns);
+      float real = expectedValues[i][j];
+      quiz_assert((std::isnan(real) && std::isnan(expected)) || roughlyEqual<float>(real, expected, 1e-4));
+    }
   }
 }

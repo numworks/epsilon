@@ -53,10 +53,9 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   assert(0 <= index && index < k_numberOfDataPoints);
   NewFunction function = (NewFunction)m_record;
   MessageTableCellWithMessageWithBuffer * myCell = static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
-  // TODO Hugo : Add descriptions
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
-    // myCell->setSubLabelMessage(function.functionCategory());
+    myCell->setSubLabelMessage(I18n::Message::Default);
     myCell->setAccessoryText(I18n::translate(function.functionCategory()));
   } else {
     myCell->setMessage(function.detailsTitle(index - 1));

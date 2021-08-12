@@ -91,47 +91,6 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
       Expression tempExpression = m_expression.clone();
-      if (tempExpression.type() == ExpressionNode::Type::Equal) {
-        if (tempExpression.childAtIndex(0).type() == ExpressionNode::Type::Function) {
-          tempExpression = tempExpression.childAtIndex(1);
-        } else {
-          tempExpression = Subtraction::Builder(tempExpression.childAtIndex(0), tempExpression.childAtIndex(1));
-          Poincare::ExpressionNode::ReductionContext reductionContext = Poincare::ExpressionNode::ReductionContext(
-            context, Preferences::ComplexFormat::Cartesian,
-            Poincare::Preferences::sharedPreferences()->angleUnit(),
-            GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
-            ExpressionNode::ReductionTarget::SystemForAnalysis,
-            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
-            Poincare::ExpressionNode::UnitConversion::Default);
-          // Reduce the expression
-          tempExpression = tempExpression.reduce(reductionContext);
-          // Get expression degree on y
-          int degree = tempExpression.polynomialDegree(context, "y");
-          if (degree <= 0 || degree >= 3) {
-            /* TODO handle Vertical line */
-            tempExpression = Undefined::Builder();
-          } else {
-            Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-            int d = tempExpression.getPolynomialReducedCoefficients("y", coefficients, context, Preferences::ComplexFormat::Cartesian, Poincare::Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-            assert(d == degree);
-            if (d == 1) {
-              Expression root;
-              Poincare::Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::sharedPreferences()->angleUnit());
-              tempExpression = root;
-            } else {
-              Expression root1, root2, delta;
-              int solutions = Poincare::Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::sharedPreferences()->angleUnit());
-              if (solutions <= 1) {
-                tempExpression = root1;
-              } else {
-                // TODO HUgo : Plot two curves instead
-                Expression alternator = DivisionRemainder::Builder(Floor::Builder(Multiplication::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(10))), Rational::Builder(2));
-                tempExpression = Addition::Builder(Multiplication::Builder(alternator, Subtraction::Builder(root1, root2.clone())), root2);
-              }
-            }
-          }
-        }
-      }
       PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
       // simplify might return an uninitialized Expression if interrupted
       if (!tempExpression.isUninitialized()) {

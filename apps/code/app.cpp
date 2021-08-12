@@ -57,13 +57,8 @@ void App::Snapshot::setOpt(const char * name, const char * value) {
     }
     *separator = 0;
     const char * scriptName = value;
-    /* We include the 0 in the scriptContent to represent the importation
-     * status. It is set to 1 after addScriptFromTemplate. Indeed, this '/0'
-     * char has two goals: ending the scriptName and representing the
-     * importation status; we cannot set it to 1 before adding the script to
-     * storage. */
     const char * scriptContent = separator;
-    Script::Create(scriptName, scriptContent);
+    Script::Create(scriptName, scriptContent + 1);
     return;
   }
   if (strcmp(name, "lock-on-console") == 0) {

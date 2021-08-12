@@ -98,6 +98,10 @@ ParameterRepr TwoProportionsStatistic::paramReprAtIndex(int i) const {
   return ParameterRepr{};
 }
 
+bool TwoProportionsStatistic::validateInputs() {
+  return (x1() < n1()) && (x2() < n2());
+}
+
 float TwoProportionsStatistic::computeEstimate(float x1, float n1, float x2, float n2) {
   return x1 / n1 - x2 / n2;
 }

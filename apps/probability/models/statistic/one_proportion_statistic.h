@@ -32,6 +32,8 @@ private:
   float x() { return m_params[ParamsOrder::X]; }
   float n() { return m_params[ParamsOrder::N]; }
 
+  bool validateInputs() override;
+
   // Computation
   float computeEstimate(float x, float n);
   float computeZ(float p0, float p, int n);

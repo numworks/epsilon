@@ -61,6 +61,10 @@ ParameterRepr OneProportionStatistic::paramReprAtIndex(int i) const {
   return ParameterRepr{};
 }
 
+bool OneProportionStatistic::validateInputs() {
+  return x() <= n();
+}
+
 float OneProportionStatistic::computeEstimate(float x, float n) {
   return x / n;
 }

@@ -57,8 +57,6 @@ void LayoutField::ContentView::clearLayout() {
   HorizontalLayout h = HorizontalLayout::Builder();
   if (m_expressionView.setLayout(h)) {
     resetSelection();
-  } else {
-    assert(selectionIsEmpty());
   }
   m_cursor.setLayout(h);
 }

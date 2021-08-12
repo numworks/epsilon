@@ -43,6 +43,16 @@ int GoodnessStatistic::computeNumberOfRows() {
   return i + 1;
 }
 
+bool GoodnessStatistic::validateInputs() {
+  int n = computeNumberOfRows();
+  for (int row = 0; row < n; row++) {
+    if (std::isnan(expectedValue(row)) || std::isnan(observedValue(row))) {
+      return false;
+    }
+  }
+  return true;
+}
+
 int GoodnessStatistic::numberOfValuePairs() {
   return computeNumberOfRows();
 }

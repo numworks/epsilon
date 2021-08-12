@@ -99,6 +99,10 @@ void InputController::didBecomeFirstResponder() {
 }
 
 void InputController::buttonAction() {
+  if (!m_statistic->validateInputs()) {
+    App::app()->displayWarning(I18n::Message::InvalidInputs);
+    return;
+  }
   if (App::app()->subapp() == Data::SubApp::Tests) {
     m_statistic->computeTest();
   } else {

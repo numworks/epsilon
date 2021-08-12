@@ -202,6 +202,7 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
   LayoutNode * nextChild = nullptr;
   for (int i = index1; i < index2; i++) {
     // Write the child
+    assert(currentChild);
     numberOfChar+= currentChild->serialize(buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfSignificantDigits);
     if (numberOfChar >= bufferSize-1) {
       assert(buffer[bufferSize - 1] == 0);

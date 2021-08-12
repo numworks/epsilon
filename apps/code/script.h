@@ -61,11 +61,11 @@ private:
     bool autoImportation() const { return getBit(k_autoImportationBit); }
     void setAutoImportation(bool v) { setBit(k_autoImportationBit, v); }
   private:
-    static constexpr int k_autoImportationBit = 0;
-    static constexpr int k_fetchedForVariableBoxBit = 6;
-    static constexpr int k_fetchedFromConsoleBit = 7;
-    void setBit(int i, bool value) { m_status = (m_status & ~(1 << i)) | (value << i); }
-    bool getBit(int i) const { return (m_status >> i) & 1; }
+    static constexpr uint8_t k_autoImportationBit = 0;
+    static constexpr uint8_t k_fetchedForVariableBoxBit = 6;
+    static constexpr uint8_t k_fetchedFromConsoleBit = 7;
+    void setBit(uint8_t i, bool value) { m_status = (m_status & ~(1 << i)) | (value << i); }
+    bool getBit(uint8_t i) const { return (m_status >> i) & 1; }
     uint8_t m_status;
   };
   static_assert(sizeof(Status)==1, "Unexpected status size");

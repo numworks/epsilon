@@ -28,6 +28,7 @@ public:
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_inputTableView; }
 
 private:
+  void deleteSelectedValue();
   GoodnessStatistic * m_statistic;
   InputGoodnessTableView m_inputTableView;
 };

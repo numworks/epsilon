@@ -129,6 +129,7 @@ Conic::Type Conic::getConicType() {
 }
 
 void Conic::rotateConic() {
+  // TODO Hugo : Only keep m_b and smallestPositive comnditions
   if (m_b == 0.0 && (m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c) &&
                      m_a == smallestPositive(m_a, m_c))) {
     // Conic is already rotated.
@@ -207,10 +208,10 @@ void Conic::centerConic() {
   if (c != 0.0) {
     k = e / (2 * c);
   } else {
-    k = (f - a * h * h - d * h) / e;
+    k = (f + a * h * h - d * h) / e;
   }
   if (a == 0.0) {
-    h = (f - c * k * k - e * k) / d;
+    h = (f + c * k * k - e * k) / d;
   }
   // A and C remain unchanged
   m_d = ApproximateForParameter(d - 2 * a * h);

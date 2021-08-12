@@ -34,7 +34,6 @@ void quiz_assert_circle(const char * expression, double radius, double cx = 0.0,
   quiz_assert(conic.getConicType() == Conic::Type::Circle);
   double x, y;
   conic.getCenter(&x, &y);
-  // TODO Hugo : Improve precision for center
   quiz_assert_conic_parameter_is(x, cx);
   quiz_assert_conic_parameter_is(y, cy);
   quiz_assert_conic_parameter_is(conic.getEccentricity(), 0.0);
@@ -110,5 +109,6 @@ QUIZ_CASE(poincare_conics_general) {
                         3.76999, 2.01069, -0.9, -0.1);  // 0.946213
   quiz_assert_ellipse("3x^2-2x*y+4y^2+x-y-7", 0.695847, 0.695847 * 1.72814,
                       1.72814, 1.24113, -0.136364, 0.0909091);  // 1.28098
+  quiz_assert_parabola("x^2+2*x*y+y^2+2*x+y-1", 0.176777, 1.1875, -1.9375);
   quiz_assert_parabola("4x^2-4x*y+y^2-x-2*y+2", 0.223607, 0.4, 0.8);
 }

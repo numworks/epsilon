@@ -228,10 +228,10 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
        * history here, we will be stuck outside the calculation app. */
       s_activeApp->snapshot()->reset();
     }
-  }
-  if (s_activeApp->snapshot() == homeAppSnapshot()) {
-    // Reset home selection if already selected
-    dispatchEvent(Ion::Events::Back);
+    if (s_activeApp->snapshot() == homeAppSnapshot()) {
+      // Reset home selection if already selected
+      dispatchEvent(Ion::Events::Back);
+    }
   }
   switchToBuiltinApp(appSnapshotAtIndex(0));
 }

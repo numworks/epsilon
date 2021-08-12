@@ -30,17 +30,16 @@ bool OneMeanZStatistic::isValidParamAtIndex(int i, float p) {
 }
 
 void OneMeanZStatistic::computeTest() {
-  m_z = _z(m_hypothesisParams.firstParam(), x(), n(), sigma());
-  m_zAlpha = absIfNeeded(_zAlpha(m_threshold));
-  char op = static_cast<char>(m_hypothesisParams.op());
-  m_pValue = _pVal(m_z, op);
+  m_testCriticalValue = computeZ(m_hypothesisParams.firstParam(), x(), n(), sigma());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
 }
 
 void OneMeanZStatistic::computeInterval() {
-  m_pEstimate = x();
-  m_zCritical = _zCritical(m_threshold);
-  m_SE = _SE(sigma(), n());
-  m_ME = _ME(m_zCritical, m_SE);
+  m_estimate = x();
+  m_zCritical = computeIntervalCriticalValue(m_threshold);
+  m_SE = computeStandardError(sigma(), n());
+  m_ME = computeMarginOfError(m_zCritical, m_SE);
 }
 
 ParameterRepr OneMeanZStatistic::paramReprAtIndex(int i) const {
@@ -62,11 +61,11 @@ ParameterRepr OneMeanZStatistic::paramReprAtIndex(int i) const {
   return ParameterRepr{};
 }
 
-float OneMeanZStatistic::_z(float mean, float meanSample, float n, float sigma) {
-  return absIfNeeded((meanSample - mean) / (sigma / sqrt(n)));
+float OneMeanZStatistic::computeZ(float mean, float meanSample, float n, float sigma) {
+  return (meanSample - mean) / (sigma / sqrt(n));
 }
 
-float OneMeanZStatistic::_SE(float sigma, int n) {
+float OneMeanZStatistic::computeStandardError(float sigma, int n) {
   return sigma / sqrt(n);
 }
 

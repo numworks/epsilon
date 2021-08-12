@@ -7,8 +7,8 @@ namespace Probability {
 
 class PooledTwoMeansStatistic : public TwoMeansTStatistic {
 public:
-  float _degreeOfFreedom(float s1, int n1, float s2, int n2) override;
-  float _SE(float s1, int n1, float s2, int n2) override;
+  float computeDegreesOfFreedom(float s1, int n1, float s2, int n2) override;
+  float computeStandardError(float s1, int n1, float s2, int n2) override;
   /* Pooled estimate of sigma */
   float _sp(float s1, int n1, float s2, int n2);
 };

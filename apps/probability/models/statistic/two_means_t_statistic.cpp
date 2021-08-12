@@ -34,18 +34,18 @@ bool TwoMeansTStatistic::isValidParamAtIndex(int i, float p) {
 
 void TwoMeansTStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
-  m_degreesOfFreedom = _degreeOfFreedom(s1(), n1(), s2(), n2());
-  m_zAlpha = absIfNeeded(_tAlpha(m_degreesOfFreedom, m_threshold));
-  m_z = _t(deltaMean, x1(), n1(), s1(), x2(), n2(), s2());
-  m_pValue = _pVal(m_degreesOfFreedom, m_z);
+  m_degreesOfFreedom = computeDegreesOfFreedom(s1(), n1(), s2(), n2());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_testCriticalValue = computeT(deltaMean, x1(), n1(), s1(), x2(), n2(), s2());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
 }
 
 void TwoMeansTStatistic::computeInterval() {
-  m_degreesOfFreedom = _degreeOfFreedom(s1(), n1(), s2(), n2());
-  m_pEstimate = _xEstimate(x1(), x2());
-  m_zCritical = _tCritical(m_degreesOfFreedom, threshold());
-  m_SE = _SE(s1(), n1(), s2(), n2());
-  m_ME = _ME(m_SE, m_zCritical);
+  m_degreesOfFreedom = computeDegreesOfFreedom(s1(), n1(), s2(), n2());
+  m_estimate = _xEstimate(x1(), x2());
+  m_zCritical = computeIntervalCriticalValue(m_threshold);
+  m_SE = computeStandardError(s1(), n1(), s2(), n2());
+  m_ME = computeMarginOfError(m_SE, m_zCritical);
 }
 
 Poincare::Layout TwoMeansTStatistic::estimateLayout() {
@@ -116,23 +116,23 @@ float TwoMeansTStatistic::_xEstimate(float meanSample1, float meanSample2) {
   return meanSample1 - meanSample2;
 }
 
-float TwoMeansTStatistic::_t(float deltaMean,
-                             float meanSample1,
-                             float n1,
-                             float s1,
-                             float meanSample2,
-                             float n2,
-                             float s2) {
-  return absIfNeeded(((meanSample1 - meanSample2) - (deltaMean)) / _SE(s1, n1, s2, n2));
+float TwoMeansTStatistic::computeT(float deltaMean,
+                                   float meanSample1,
+                                   float n1,
+                                   float s1,
+                                   float meanSample2,
+                                   float n2,
+                                   float s2) {
+  return ((meanSample1 - meanSample2) - (deltaMean)) / computeStandardError(s1, n1, s2, n2);
 }
 
-float TwoMeansTStatistic::_degreeOfFreedom(float s1, int n1, float s2, int n2) {
+float TwoMeansTStatistic::computeDegreesOfFreedom(float s1, int n1, float s2, int n2) {
   float v1 = pow(s1, 2) / n1;
   float v2 = pow(s2, 2) / n2;
   return pow(v1 + v2, 2) / (pow(v1, 2) / (n1 - 1) + pow(v2, 2) / (n2 - 1));
 }
 
-float TwoMeansTStatistic::_SE(float s1, int n1, float s2, int n2) {
+float TwoMeansTStatistic::computeStandardError(float s1, int n1, float s2, int n2) {
   return sqrt((s1 * s1 / n1 + s2 * s2 / n2));
 }
 

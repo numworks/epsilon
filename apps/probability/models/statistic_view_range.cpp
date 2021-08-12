@@ -72,8 +72,8 @@ StatisticViewRange::Range StatisticViewRange::computeYRange() const {
   }
   float zAlpha = m_statistic->zAlpha();
   float z = m_statistic->testCriticalValue();
-  float max = fmaxf(m_statistic->normedDensityFunction(z),
-                    m_statistic->normedDensityFunction(zAlpha));
+  float max = fmaxf(m_statistic->normalizedDensityFunction(z),
+                    m_statistic->normalizedDensityFunction(zAlpha));
   float pixelHeight = max / k_areaHeight;
   int pixelsDown = m_statisticCurveView->bounds().height() * k_yMargin;
   int pixelsUp = m_statisticCurveView->bounds().height() * (1 - k_yMargin);

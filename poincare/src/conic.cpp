@@ -33,7 +33,7 @@ Conic::Conic() :
     m_type(Type::Undefined) {
 }
 
-Conic::Conic(Expression e, Context * context, char * x, char * y) :
+Conic::Conic(const Expression e, Context * context, const char * x, const char * y) :
     m_a(0.0),
     m_b(0.0),
     m_c(0.0),

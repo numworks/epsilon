@@ -19,7 +19,7 @@ public:
   // Default constructor
   Conic();
   // Extract A,B,C,D,E,F parameters
-  Conic(Expression e, Context * context, char * x = "x", char * y = "y");
+  Conic(const Expression e, Context * context, const char * x = "x", const char * y = "y");
   // Return conic type from parameters
   Type getConicType();
   // Conic Eccentricity

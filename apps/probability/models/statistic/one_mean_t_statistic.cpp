@@ -32,18 +32,18 @@ bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
 
 void OneMeanTStatistic::computeTest() {
   float mean = m_hypothesisParams.firstParam();
-  m_degreesOfFreedom = _degreesOfFreedom(n());
-  m_zAlpha = absIfNeeded(_tAlpha(m_degreesOfFreedom, m_threshold));
-  m_z = _t(mean, x(), s(), n());
-  m_pValue = _pVal(m_degreesOfFreedom, m_z);
+  m_degreesOfFreedom = computeDegreesOfFreedom(n());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_testCriticalValue = computeT(mean, x(), s(), n());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
 }
 
 void OneMeanTStatistic::computeInterval() {
-  m_pEstimate = x();
-  m_degreesOfFreedom = _degreesOfFreedom(n());
-  m_zCritical = _tCritical(m_degreesOfFreedom, threshold());
-  m_SE = _SE(s(), n());
-  m_ME = _ME(m_zCritical, m_SE);
+  m_estimate = x();
+  m_degreesOfFreedom = computeDegreesOfFreedom(n());
+  m_zCritical = computeIntervalCriticalValue(m_threshold);
+  m_SE = computeStandardError(s(), n());
+  m_ME = computeMarginOfError(m_zCritical, m_SE);
 }
 
 ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {
@@ -66,15 +66,15 @@ ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {
   return ParameterRepr{};
 }
 
-float OneMeanTStatistic::_degreesOfFreedom(int n) {
+float OneMeanTStatistic::computeDegreesOfFreedom(int n) {
   return n - 1;
 }
 
-float OneMeanTStatistic::_t(float mean, float meanSample, float s, float n) {
-  return absIfNeeded((meanSample - mean) / (s / sqrt(n)));
+float OneMeanTStatistic::computeT(float mean, float meanSample, float s, float n) {
+  return (meanSample - mean) / (s / sqrt(n));
 }
 
-float OneMeanTStatistic::_SE(float s, float n) {
+float OneMeanTStatistic::computeStandardError(float s, float n) {
   return s / sqrt(n);
 }
 

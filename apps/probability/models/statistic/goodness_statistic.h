@@ -12,7 +12,7 @@ public:
 
   constexpr static int k_maxNumberOfRows = 10;
   void computeTest() override;
-
+  void recomputeData();
   int computeNumberOfRows();
 
 protected:
@@ -22,6 +22,8 @@ protected:
   float observedValue(int index) override;
 
 private:
+  void setExpectedValue(int index, float value);
+  void setObservedValue(int index, float value);
   int numberOfValuePairs() override;
 
   float m_input[k_maxNumberOfRows * 2];

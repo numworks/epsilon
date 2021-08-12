@@ -28,20 +28,7 @@ void HomogeneityTableViewController::didBecomeFirstResponder() {
 
 bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
-    // Delete value
-    int row = m_table.selectedRow(), col = m_table.selectedColumn();
-    m_statistic->setParameterAtPosition(row - 1, col - 1, HomogeneityStatistic::k_undefinedValue);
-
-    // Delete last row / column
-    m_table.deselectTable();
-    if (row == m_tableData.numberOfRows() - 2) {
-      m_innerTableData.recomputeDimensions();
-    }
-    if (col == m_tableData.numberOfColumns() - 2) {
-      m_innerTableData.recomputeDimensions();
-    }
-    m_table.selectCellAtClippedLocation(col, row, false);
-    m_table.reloadCellAtLocation(col, row);
+    deleteSelectedValue();
     return true;
   }
   return false;
@@ -72,6 +59,19 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
   m_table.selectCellAtLocation(column, row);
   m_table.reloadData(false);  // TODO why needed ?
   return true;
+}
+
+void HomogeneityTableViewController::deleteSelectedValue() {
+  int row = m_table.selectedRow(), col = m_table.selectedColumn();
+  m_statistic->setParameterAtPosition(row - 1, col - 1, HomogeneityStatistic::k_undefinedValue);
+  m_statistic->recomputeData();
+
+  // Delete last row / column
+  m_table.deselectTable();
+  m_innerTableData.recomputeDimensions();
+  m_innerTableData.recomputeDimensions();
+  m_table.selectCellAtClippedLocation(col, row, false);
+  m_table.reloadCellAtLocation(col, row);
 }
 
 }  // namespace Probability

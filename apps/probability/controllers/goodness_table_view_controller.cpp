@@ -22,21 +22,7 @@ void GoodnessTableViewController::didBecomeFirstResponder() {
 
 bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
-    // Remove value
-    int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();
-    m_statistic->setParamAtIndex(2 * (row - 1) + col, GoodnessStatistic::k_undefinedValue);
-
-    // Delete last row if needed
-    if (row == m_inputTableView.numberOfRows() - 2 &&
-        m_inputTableView.numberOfRows() > InputGoodnessTableView::k_minimumNumberOfRows &&
-        std::isnan(m_statistic->paramAtIndex(2 * (row - 1) + (1 - col)))) {
-      // Unhighlight selected cell in case it disappears after the row is removed
-      m_inputTableView.unhighlightSelectedCell();
-      m_inputTableView.recomputeNumberOfRows();
-      m_inputTableView.selectCellAtLocation(col,
-                                            std::min(row, m_inputTableView.numberOfRows() - 1));
-    }
-    m_inputTableView.reloadCellAtLocation(col, row);
+    deleteSelectedValue();
     return true;
   }
   return false;
@@ -64,6 +50,20 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   m_inputTableView.selectCellAtClippedLocation(selectedColumn, selectedRow);
   m_inputTableView.reloadData(false);  // TODO why needed ?
   return true;
+}
+
+void GoodnessTableViewController::deleteSelectedValue() {
+  // Remove value
+  int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();
+  m_statistic->setParamAtIndex(2 * (row - 1) + col, GoodnessStatistic::k_undefinedValue);
+
+  // Delete row if needed
+  // Unhighlight selected cell in case it disappears after the row is removed
+  m_inputTableView.unhighlightSelectedCell();
+  m_statistic->recomputeData();
+  m_inputTableView.recomputeNumberOfRows();
+  m_inputTableView.selectCellAtLocation(col, std::min(row, m_inputTableView.numberOfRows() - 1));
+  m_inputTableView.reloadCellAtLocation(col, row);
 }
 
 }  // namespace Probability

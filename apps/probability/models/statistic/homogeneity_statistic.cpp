@@ -120,4 +120,53 @@ void HomogeneityStatistic::computeExpectedValues() {
   }
 }
 
+void HomogeneityStatistic::recomputeData() {
+  // Remove empty rows / columns
+  Index2D dimensions = computeDimensions();
+  // Start with rows
+  int i = 0, j = 0;
+  while (i < dimensions.row) {
+    bool rowIsEmpty = true;
+    for (int col = 0; col < dimensions.col; col++) {
+      if (!std::isnan(parameterAtPosition(i, col))) {
+        rowIsEmpty = false;
+        break;
+      }
+    }
+    if (!rowIsEmpty) {
+      if (i != j) {
+        // Copy row from i to j
+        for (int col = 0; col < dimensions.col; col++) {
+          setParameterAtPosition(j, col, parameterAtPosition(i, col));
+          setParameterAtPosition(i, col, k_undefinedValue);
+        }
+      }
+      j++;
+    }
+    i++;
+  }
+
+  // Columns
+  i = 0, j = 0;
+  while (i < dimensions.col) {
+    bool colIsEmpty = true;
+    for (int row = 0; row < dimensions.row; row++) {
+      if (!std::isnan(parameterAtPosition(row, i))) {
+        colIsEmpty = false;
+        break;
+      }
+    }
+    if (!colIsEmpty) {
+      if (i != j) {
+        for (int row = 0; row < dimensions.row; row++) {
+          setParameterAtPosition(row, j, parameterAtPosition(row, i));
+          setParameterAtPosition(row, i, k_undefinedValue);
+        }
+      }
+      j++;
+    }
+    i++;
+  }
+}
+
 }  // namespace Probability

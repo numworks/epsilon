@@ -42,7 +42,8 @@ public:
   float threshold() const { return m_threshold; }
   void setThreshold(float s) { m_threshold = s; }
   HypothesisParams * hypothesisParams() { return &m_hypothesisParams; }
-  virtual bool isValidH0(float h0) { return true; };
+  virtual bool isValidH0(float h0) { return true; }
+  virtual bool validateInputs() { return true; };
 
   // Test statistic
   virtual Poincare::Layout testCriticalValueSymbol() = 0;

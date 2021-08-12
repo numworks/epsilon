@@ -29,6 +29,8 @@ protected:
   ParameterRepr paramReprAtIndex(int i) const override;
   float * paramArray() override { return m_params; }
 
+  bool validateInputs() override;
+
 private:
   float x1() { return m_params[ParamsOrder::X1]; }
   float n1() { return m_params[ParamsOrder::N1]; }

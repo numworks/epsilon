@@ -168,4 +168,16 @@ void HomogeneityStatistic::recomputeData() {
   }
 }
 
+bool HomogeneityStatistic::validateInputs() {
+  Index2D max = computeDimensions();
+  for (int row = 0; row < max.row; row++) {
+    for (int col = 0; col < max.col; col++) {
+      if (std::isnan(parameterAtPosition(row, col))) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 }  // namespace Probability

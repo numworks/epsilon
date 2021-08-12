@@ -30,6 +30,7 @@ public:
   Index2D computeDimensions();
 
   void recomputeData();
+  bool validateInputs() override;
 
   constexpr static int k_maxNumberOfColumns = 10;
   constexpr static int k_maxNumberOfRows = 10;

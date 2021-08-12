@@ -61,6 +61,10 @@ bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
 }
 
 bool InputCategoricalController::buttonAction() {
+  if (!m_statistic->validateInputs()) {
+    App::app()->displayWarning(I18n::Message::InvalidInputs);
+    return false;
+  }
   m_statistic->computeTest();
   openPage(m_resultsController);
   return true;

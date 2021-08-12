@@ -395,7 +395,7 @@ QUIZ_CASE(goodness_statistic) {
   GoodnessStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     inputValues(&stat, tests[i]);
-    stat.computeNumberOfRows();
+    stat.recomputeData();
     runTest(&stat, tests[i]);
   }
 }

@@ -26,6 +26,7 @@ public:
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_tableData; }
 
 private:
+  void deleteSelectedValue();
   Escher::SelectableTableViewDataSource m_selectionDataSource;
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;

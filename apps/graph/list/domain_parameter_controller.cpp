@@ -38,22 +38,21 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
   NewFunction::PlotType plotType = function()->plotType();
   switch (plotType) {
-    case NewFunction::PlotType::Cartesian:
-    {
-      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XMin, I18n::Message::XMax};
-      myCell->setMessage(labels[index]);
-      break;
-    }
     case NewFunction::PlotType::Parametric:
     {
       I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::TMin, I18n::Message::TMax};
       myCell->setMessage(labels[index]);
       break;
     }
+    case NewFunction::PlotType::Polar:
+    {
+      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ThetaMin, I18n::Message::ThetaMax};
+      myCell->setMessage(labels[index]);
+      break;
+    }
     default:
     {
-      assert(plotType == NewFunction::PlotType::Polar);
-      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ThetaMin, I18n::Message::ThetaMax};
+      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XMin, I18n::Message::XMax};
       myCell->setMessage(labels[index]);
       break;
     }

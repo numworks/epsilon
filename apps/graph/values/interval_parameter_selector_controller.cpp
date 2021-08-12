@@ -106,13 +106,12 @@ I18n::Message IntervalParameterSelectorController::messageForType(NewFunction::P
 }
 
 void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, NewFunction::PlotType plotType) {
-  if (plotType == NewFunction::PlotType::Cartesian) {
-    controller->setStartEndMessages(I18n::Message::XStart, I18n::Message::XEnd);
-  } else if (plotType == NewFunction::PlotType::Polar) {
+  if (plotType == NewFunction::PlotType::Polar) {
     controller->setStartEndMessages(I18n::Message::ThetaStart, I18n::Message::ThetaEnd);
-  } else {
-    assert(plotType == NewFunction::PlotType::Parametric);
+  } else if (plotType == NewFunction::PlotType::Parametric) {
     controller->setStartEndMessages(I18n::Message::TStart, I18n::Message::TEnd);
+  } else {
+    controller->setStartEndMessages(I18n::Message::XStart, I18n::Message::XEnd);
   }
 }
 

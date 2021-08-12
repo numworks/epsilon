@@ -39,8 +39,8 @@ all:
 	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.zip
 	@ cp output/release/simulator/web/epsilon.zip output/all_official/simulator.web.zip
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
-	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.js
-	@ cp output/release/simulator/web/epsilon.js output/all_official/epsilon.js
+	@ $(MAKE) PLATFORM=simulator TARGET=web htmlpack.zip
+	@ cp output/release/simulator/web/htmlpack.zip output/all_official/htmlpack.zip
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
 	@ $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.js

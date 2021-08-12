@@ -64,13 +64,14 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       if (type == NewFunction::PlotType::Cartesian) {
         float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
-         * because cache can be panned for cartesian curves, instead of being
-         * entirely invalidated. */
+        * because cache can be panned for cartesian curves, instead of being
+        * entirely invalidated. */
         tCacheMin = std::isnan(rectLeft) ? tmin : std::max(tmin, rectLeft);
         tCacheStep = pixelWidth();
       } else {
         tCacheMin = tmin;
-        // Compute tCacheStep and tStepNonCartesian
+        // TODO Hugo : Properly compute tCacheStep and tStepNonCartesian
+        tStepNonCartesian = (tmax - tmin) / 10.0938275501223f;
         // ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
       }
       // ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);

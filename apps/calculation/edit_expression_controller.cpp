@@ -146,6 +146,11 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     }
     return true;
   }
+  if (event == Ion::Events::Clear && m_contentView.expressionField()->isEmpty()) {
+    m_calculationStore->deleteAll();
+    m_historyController->reload();
+    return true;
+  }
   return false;
 }
 

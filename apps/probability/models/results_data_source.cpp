@@ -42,6 +42,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
         case TestCellOrder::Z:
           message = m_statistic->testCriticalValueSymbol();
           value = m_statistic->testCriticalValue();
+          subMessage = I18n::Message::TestStatistic;
           break;
         case TestCellOrder::PValue:
           message = layoutFromText(I18n::translate(I18n::Message::PValue));

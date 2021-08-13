@@ -279,10 +279,16 @@ constexpr ToolboxMessageTree energyAndPowerChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu, unitEnergyElectronVoltChildren),
 };
 
-constexpr ToolboxMessageTree unitTemperatureChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureCelsiusSymbol, I18n::Message::UnitTemperatureCelsius),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureFahrenheitSymbol, I18n::Message::UnitTemperatureFahrenheit),
+constexpr ToolboxMessageTree unitTemperatureKelvin = ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin);
+constexpr ToolboxMessageTree unitTemperatureCelsius = ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureCelsiusSymbol, I18n::Message::UnitTemperatureCelsius);
+constexpr ToolboxMessageTree unitTemperatureFahrenheit = ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureFahrenheitSymbol, I18n::Message::UnitTemperatureFahrenheit);
+
+constexpr const ToolboxMessageTree * const unitTemperatureChildrenForMetricToolbox[] = { &unitTemperatureKelvin, &unitTemperatureCelsius, &unitTemperatureFahrenheit };
+constexpr const ToolboxMessageTree * const unitTemperatureChildrenForImperialToolbox[] = { &unitTemperatureKelvin, &unitTemperatureFahrenheit, &unitTemperatureCelsius };
+
+constexpr ToolboxMessageTree unitTemperatureFork[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildrenForMetricToolbox),
+  ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildrenForImperialToolbox),
 };
 
 constexpr ToolboxMessageTree unitAmountMoleChildren[] = {
@@ -305,7 +311,7 @@ constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitElectricityMenu, electricityChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitForceAndPressureMenu, forceAndPressureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyAndPowerMenu, energyAndPowerChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureFork, true),
   ToolboxMessageTree::Node(I18n::Message::OthersMenu, OtherChildren),
 };
 

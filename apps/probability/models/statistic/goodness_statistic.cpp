@@ -45,6 +45,9 @@ int GoodnessStatistic::computeNumberOfRows() {
 
 bool GoodnessStatistic::validateInputs() {
   int n = computeNumberOfRows();
+  if (n <= 0) {
+    return false;
+  }
   for (int row = 0; row < n; row++) {
     if (std::isnan(expectedValue(row)) || std::isnan(observedValue(row))) {
       return false;

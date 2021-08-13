@@ -34,13 +34,13 @@ public:
   const char * title() override;
   int numberOfRows() const override;
 
-private:
   constexpr static int k_indexOfOneProp = 0;
   constexpr static int k_indexOfOneMean = 1;
   constexpr static int k_indexOfTwoProps = 2;
   constexpr static int k_indexOfTwoMeans = 3;
   constexpr static int k_indexOfCategorical = 4;
 
+private:
   HypothesisController * m_hypothesisController;
   TypeController * m_typeController;
   InputController * m_inputController;

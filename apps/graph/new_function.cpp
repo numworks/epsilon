@@ -10,6 +10,7 @@
 #include <poincare/matrix.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/comparison_operator.h>
 #include "../shared/poincare_helpers.h"
 #include <algorithm>
 
@@ -268,7 +269,7 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
   Expression result = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
   // TODO Hugo : Handle function assignment from outside
   // TODO Hugo : Handle other than equal
-  assert(result.type() == ExpressionNode::Type::Equal);
+  assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
   if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
     // Named function
     result = result.childAtIndex(1);
@@ -344,7 +345,7 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
 
 void NewFunction::Model::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
   if (!expressionToStore.isUninitialized()) {
-    if (expressionToStore.type() == ExpressionNode::Type::Equal && expressionToStore.childAtIndex(0).type() == ExpressionNode::Type::Function && expressionToStore.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
+    if (ComparisonOperator::IsComparisonOperatorType(expressionToStore.type()) && expressionToStore.childAtIndex(0).type() == ExpressionNode::Type::Function && expressionToStore.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
       Expression temp = expressionToStore.childAtIndex(0).clone();
       SymbolAbstract * symbol = static_cast<SymbolAbstract *>(&temp);
       record->setName(symbol->name());

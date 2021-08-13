@@ -1,5 +1,6 @@
 #include "parser.h"
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare/comparison_operator.h>
 #include <utility>
 #include <algorithm>
 #include <stdlib.h>
@@ -58,6 +59,11 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseRightwardsArrow, // Token::RightwardsArrow
     &Parser::parseEqual,           // Token::Equal
+    &Parser::parseInequal,         // Token::Inequal
+    &Parser::parseSuperior,        // Token::Superior
+    &Parser::parseSuperiorEqual,   // Token::SuperiorEqual
+    &Parser::parseInferior,        // Token::Inferior
+    &Parser::parseInferiorEqual,   // Token::InferiorEqual
     &Parser::parseUnexpected,      // Token::RightSystemParenthesis
     &Parser::parseUnexpected,      // Token::RightBracket
     &Parser::parseUnexpected,      // Token::RightParenthesis
@@ -254,19 +260,38 @@ void Parser::parseCaretWithParenthesis(Expression & leftHandSide, Token::Type st
   isThereImplicitMultiplication();
 }
 
-void Parser::parseEqual(Expression & leftHandSide, Token::Type stoppingType) {
+Expression BuildForToken(Token::Type tokenType, Expression & leftHandSide, Expression & rightHandSide) {
+  switch (tokenType) {
+  case Token::Equal:
+    return Equal::Builder(leftHandSide, rightHandSide);
+  case Token::Inequal:
+    return Inequal::Builder(leftHandSide, rightHandSide);
+  case Token::Superior:
+    return Superior::Builder(leftHandSide, rightHandSide);
+  case Token::SuperiorEqual:
+    return SuperiorEqual::Builder(leftHandSide, rightHandSide);
+  case Token::Inferior:
+    return Inferior::Builder(leftHandSide, rightHandSide);
+  default:
+    assert(tokenType == Token::InferiorEqual);
+    return InferiorEqual::Builder(leftHandSide, rightHandSide);
+  }
+}
+
+void Parser::parseComparisonOperator(Token::Type tokenType, Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error; // Equal must have a left operand
+    m_status = Status::Error; // Comparison operator must have a left operand
     return;
   }
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Equal)) {
-    /* We parse until finding a token of lesser precedence than Equal. The next
-     * token is thus either EndOfStream or RightwardsArrow. */
-    leftHandSide = Equal::Builder(leftHandSide, rightHandSide);
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::InferiorEqual)) {
+    /* We parse until finding a token of lesser precedence than InferiorEqual.
+     * The next token is thus either EndOfStream, RightwardsArrow or another
+     * operator. */
+    leftHandSide = BuildForToken(tokenType, leftHandSide, rightHandSide);
   }
   if (!m_nextToken.is(Token::EndOfStream)) {
-    m_status = Status::Error; // Equal should be top-most expression in Tree
+    m_status = Status::Error; // Operator should be top-most expression in Tree
     return;
   }
 }
@@ -299,7 +324,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
     return;
   }
   // Try parsing a unit convert
-  if (!m_nextToken.is(Token::EndOfStream) || rightHandSide.isUninitialized() || rightHandSide.type() == ExpressionNode::Type::Store || rightHandSide.type() == ExpressionNode::Type::UnitConvert || rightHandSide.type() == ExpressionNode::Type::Equal) {
+  if (!m_nextToken.is(Token::EndOfStream) || rightHandSide.isUninitialized() || rightHandSide.type() == ExpressionNode::Type::Store || rightHandSide.type() == ExpressionNode::Type::UnitConvert || ComparisonOperator::IsComparisonOperatorType(rightHandSide.type())) {
     m_status = Status::Error; // UnitConvert expect a unit on the right.
     return;
   }

@@ -212,6 +212,28 @@ Token Tokenizer::popToken() {
   if (c == '=') {
     return Token(Token::Equal);
   }
+  if (c == UCodePointInequal) {
+    // "!="" would have been great too but it conflicts with factorial syntax.
+    return Token(Token::Inequal);
+  }
+  if (c == '>') {
+    if (canPopCodePoint('=')) {
+      return Token(Token::SuperiorEqual);
+    }
+    return Token(Token::Superior);
+  }
+  if (c == UCodePointSuperiorEqual) {
+    return Token(Token::SuperiorEqual);
+  }
+  if (c == '<') {
+    if (canPopCodePoint('=')) {
+      return Token(Token::InferiorEqual);
+    }
+    return Token(Token::Inferior);
+  }
+  if (c == UCodePointInferiorEqual) {
+    return Token(Token::InferiorEqual);
+  }
   if (c == '[') {
     return Token(Token::LeftBracket);
   }

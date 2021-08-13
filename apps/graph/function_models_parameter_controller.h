@@ -29,7 +29,7 @@ private:
   constexpr static int k_modelCellType = 1;
   constexpr static int k_numberOfModels = 7;
   static constexpr const char * k_models[k_numberOfModels] = {
-    "", "f(x)=x", "x+y+1=0", "x+yinf=0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)" // "x+yinf=0" -> "x+y≤0"
+    "", "f(x)=x", "x+y+1=0", "x+y≤0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
   };
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
   static constexpr I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {

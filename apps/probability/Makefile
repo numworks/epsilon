@@ -167,7 +167,6 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/calculat
 
 $(eval $(call depends_on_transparent_image,apps/probability/gui/test_conclusion_view.cpp,$(addprefix apps/probability/images/,\
   test_success.png \
-  test_failure.png \
 )))
 
 $(eval $(call depends_on_transparent_image,apps/probability/gui/dropdown_view.cpp,\

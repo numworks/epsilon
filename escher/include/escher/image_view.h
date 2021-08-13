@@ -1,8 +1,8 @@
 #ifndef ESCHER_IMAGE_VIEW_H
 #define ESCHER_IMAGE_VIEW_H
 
-#include <escher/view.h>
 #include <escher/image.h>
+#include <escher/view.h>
 
 namespace Escher {
 
@@ -11,7 +11,9 @@ public:
   ImageView();
   void setImage(const Image * image);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDSize minimalSizeForOptimalDisplay() const override { return KDSize(m_image->width(), m_image->height()); }
+  KDSize minimalSizeForOptimalDisplay() const override {
+    return m_image ? KDSize(m_image->width(), m_image->height()) : KDSizeZero;
+  }
 
 protected:
   // Icon file is 55 x 56 = 3080
@@ -20,6 +22,6 @@ protected:
   const Image * m_image;
 };
 
-}
+}  // namespace Escher
 
 #endif

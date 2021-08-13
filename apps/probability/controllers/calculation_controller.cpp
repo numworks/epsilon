@@ -77,12 +77,11 @@ CalculationController::CalculationController(Responder * parentResponder,
 }
 
 void CalculationController::didBecomeFirstResponder() {
+  Probability::App::app()->setPage(Data::Page::ProbaGraph);
   updateTitle();
   reloadDistributionCurveView();
-  m_selectableTableView.reloadData();
-  Probability::App::app()->setPage(Data::Page::ProbaGraph);
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
   m_dropdown.init();
+  m_selectableTableView.reloadData();
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {

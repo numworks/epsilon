@@ -17,8 +17,8 @@
 using namespace Probability;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
-                               Escher::ViewController * distributionController,
-                               Escher::ViewController * testController,
+                               DistributionController * distributionController,
+                               TestController * testController,
                                Data::SubApp * globalSubapp,
                                Data::Test * globalTest,
                                Data::TestType * globalTestType,
@@ -60,27 +60,30 @@ Escher::HighlightCell * MenuController::reusableCell(int index, int type) {
 bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Data::SubApp subapp;
-    ViewController * view = nullptr;
+    ViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfDistribution:
         subapp = Data::SubApp::Probability;
-        view = m_distributionController;
+        controller = m_distributionController;
         break;
       case k_indexOfTest:
         subapp = Data::SubApp::Tests;
-        view = m_testController;
+        controller = m_testController;
         break;
       case k_indexOfInterval:
         subapp = Data::SubApp::Intervals;
-        view = m_testController;
+        controller = m_testController;
         break;
     }
-    assert(view != nullptr);
+    assert(controller != nullptr);
     if (subapp != App::app()->subapp()) {
       resetData(subapp);
     }
+    if (controller == m_testController) {
+      m_testController->selectRow(0);
+    }
     *m_globalSubapp = subapp;
-    openPage(view);
+    openPage(controller);
     return true;
   }
   return false;

@@ -69,39 +69,39 @@ void TestController::didBecomeFirstResponder() {
 bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Data::SubApp subapp = App::app()->subapp();
-    Escher::ViewController * view = nullptr;
+    Escher::ViewController * controller = nullptr;
     Data::Test test;
     switch (selectedRow()) {
       case k_indexOfOneProp:
         test = Data::Test::OneProp;
         if (subapp == Data::SubApp::Tests) {
-          view = m_hypothesisController;
+          controller = m_hypothesisController;
         } else {
-          view = m_inputController;
+          controller = m_inputController;
         }
         break;
       case k_indexOfTwoProps:
         test = Data::Test::TwoProps;
         if (subapp == Data::SubApp::Tests) {
-          view = m_hypothesisController;
+          controller = m_hypothesisController;
         } else {
-          view = m_inputController;
+          controller = m_inputController;
         }
         break;
       case k_indexOfOneMean:
         test = Data::Test::OneMean;
-        view = m_typeController;
+        controller = m_typeController;
         break;
       case k_indexOfTwoMeans:
         test = Data::Test::TwoMeans;
-        view = m_typeController;
+        controller = m_typeController;
         break;
       case k_indexOfCategorical:
         test = Data::Test::Categorical;
-        view = m_categoricalController;
+        controller = m_categoricalController;
         break;
     }
-    assert(view != nullptr);
+    assert(controller != nullptr);
     if (test != App::app()->test()) {
       if (Data::isProportion(test)) {
         *m_globalTestType = Data::TestType::ZTest;
@@ -117,7 +117,13 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 
     *m_globalTest = test;
 
-    openPage(view);
+    if (controller == m_typeController) {
+      m_typeController->selectRow(0);
+    } else if (controller == m_categoricalController) {
+      m_categoricalController->selectRow(0);
+    }
+
+    openPage(controller);
     return true;
   } else if (event == Ion::Events::Left) {
     stackViewController()->pop();

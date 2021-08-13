@@ -89,12 +89,7 @@ void InputController::didBecomeFirstResponder() {
     m_selectableTableView.reloadCellAtLocation(0, m_statistic->indexOfThreshold());
   }
   App::app()->setPage(Data::Page::Input);
-  // TODO factor out
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
+  selectCellAtLocation(0, 0);
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 

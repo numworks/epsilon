@@ -33,13 +33,7 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
 
 void ResultsController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::Results);
-  // TODO factor out
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(),
-                         std::min(selectedRow(), m_resultsDataSource.numberOfRows() - 1));
-  }
+  selectCellAtLocation(0, 0);
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
   m_resultsDataSource.resetMemoization();
   m_contentView.reload();

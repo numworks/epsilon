@@ -5,8 +5,9 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/table_cell.h>
-#include <escher/view_controller.h>
 
+#include "probability/controllers/distribution_controller.h"
+#include "probability/controllers/test_controller.h"
 #include "probability/gui/centering_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/gui/subapp_cell.h"
@@ -18,8 +19,8 @@ namespace Probability {
 class MenuController : public SelectableListViewPage {
 public:
   MenuController(Escher::StackViewController * parentResponder,
-                 Escher::ViewController * distributionController,
-                 Escher::ViewController * testController,
+                 DistributionController * distributionController,
+                 TestController * testController,
                  Data::SubApp * globalSubapp,
                  Data::Test * globalTest,
                  Data::TestType * globalTestType,
@@ -34,8 +35,8 @@ public:
 private:
   void resetData(Data::SubApp subapp);
   void initializeProbaData();
-  ViewController * m_distributionController;
-  ViewController * m_testController;
+  DistributionController * m_distributionController;
+  TestController * m_testController;
 
   constexpr static int k_numberOfCells = 3;
   constexpr static int k_indexOfDistribution = 0;

@@ -326,6 +326,9 @@ template HyperbolicArcTangent TreeHandle::FixedArityBuilder<HyperbolicArcTangent
 template HyperbolicCosine TreeHandle::FixedArityBuilder<HyperbolicCosine, HyperbolicCosineNode>(const Tuple &);
 template HyperbolicSine TreeHandle::FixedArityBuilder<HyperbolicSine, HyperbolicSineNode>(const Tuple &);
 template HyperbolicTangent TreeHandle::FixedArityBuilder<HyperbolicTangent, HyperbolicTangentNode>(const Tuple &);
+template Inequal TreeHandle::FixedArityBuilder<Inequal, InequalNode>(const Tuple &);
+template Inferior TreeHandle::FixedArityBuilder<Inferior, InferiorNode>(const Tuple &);
+template InferiorEqual TreeHandle::FixedArityBuilder<InferiorEqual, InferiorEqualNode>(const Tuple &);
 template ImaginaryPart TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>(const Tuple &);
 template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(const Tuple &);
 template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(const Tuple &);
@@ -371,6 +374,8 @@ template Sine TreeHandle::FixedArityBuilder<Sine, SineNode>(const Tuple &);
 template SquareRoot TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(const Tuple &);
 template Store TreeHandle::FixedArityBuilder<Store, StoreNode>(const Tuple &);
 template Subtraction TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
+template Superior TreeHandle::FixedArityBuilder<Superior, SuperiorNode>(const Tuple &);
+template SuperiorEqual TreeHandle::FixedArityBuilder<SuperiorEqual, SuperiorEqualNode>(const Tuple &);
 template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
 template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(const Tuple &);
 template Tangent TreeHandle::FixedArityBuilder<Tangent, TangentNode>(const Tuple &);

@@ -60,6 +60,7 @@ poincare_src += $(addprefix poincare/src/,\
   binomial_distribution_function.cpp \
   binom_pdf.cpp \
   ceiling.cpp \
+  comparison_operator.cpp \
   complex.cpp \
   complex_argument.cpp \
   complex_cartesian.cpp \
@@ -97,6 +98,9 @@ poincare_src += $(addprefix poincare/src/,\
   hyperbolic_tangent.cpp \
   hyperbolic_trigonometric_function.cpp \
   imaginary_part.cpp \
+  inequal.cpp \
+  inferior_equal.cpp \
+  inferior.cpp \
   infinity.cpp \
   integer.cpp \
   integral.cpp \
@@ -155,6 +159,8 @@ poincare_src += $(addprefix poincare/src/,\
   sum_and_product.cpp \
   subtraction.cpp \
   sum.cpp \
+  superior_equal.cpp \
+  superior.cpp \
   symbol.cpp \
   symbol_abstract.cpp \
   tangent.cpp \

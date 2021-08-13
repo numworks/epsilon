@@ -46,6 +46,9 @@
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/hyperbolic_tangent.h>
 #include <poincare/imaginary_part.h>
+#include <poincare/inequal.h>
+#include <poincare/inferior.h>
+#include <poincare/inferior_equal.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/integral.h>
@@ -90,6 +93,8 @@
 #include <poincare/store.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>
+#include <poincare/superior.h>
+#include <poincare/superior_equal.h>
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>

@@ -69,6 +69,9 @@ static constexpr CodePoint UCodePointRightwardsArrow          = 0x2192;  // →
 static constexpr CodePoint UCodePointNArySummation            = 0x2211;  // ∑
 static constexpr CodePoint UCodePointSquareRoot               = 0x221a;  // √
 static constexpr CodePoint UCodePointIntegral                 = 0x222b;  // ∫
+static constexpr CodePoint UCodePointInequal                  = 0x2260;  // ≠
+static constexpr CodePoint UCodePointInferiorEqual            = 0x2264;  // ≤
+static constexpr CodePoint UCodePointSuperiorEqual            = 0x2265;  // ≥
 static constexpr CodePoint UCodePointReplacement              = 0xFFFD;  // �
 static constexpr CodePoint UCodePointMathematicalBoldSmallI   = 0x1d422; // 𝐢
 

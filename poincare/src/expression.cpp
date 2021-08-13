@@ -2,6 +2,7 @@
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/expression_node.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/comparison_operator.h>
 #include <poincare/ghost.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
@@ -802,7 +803,7 @@ Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext)
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
   deepReduceChildren(reductionContext);
-  if (type() != ExpressionNode::Type::Equal && type() != ExpressionNode::Type::Store) {
+  if (type() != ExpressionNode::Type::Store && !ComparisonOperator::IsComparisonOperatorType(type())) {
     /* Bubble up dependencies */
     Matrix dependencies = Matrix::Builder();
     for (int i = 0; i < numberOfChildren(); i++) {

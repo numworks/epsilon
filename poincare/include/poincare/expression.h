@@ -33,6 +33,7 @@ class Expression : public TreeHandle {
   friend class BinomialDistributionFunction;
   friend class Ceiling;
   friend class CommonLogarithm;
+  friend class ComparisonOperator;
   template<typename T>
   friend class ComplexNode;
   friend class ComplexArgument;
@@ -60,6 +61,9 @@ class Expression : public TreeHandle {
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
   friend class ImaginaryPart;
+  friend class Inequal;
+  friend class Inferior;
+  friend class InferiorEqual;
   friend class Integer;
   friend class Integral;
   friend class InvNorm;
@@ -104,6 +108,8 @@ class Expression : public TreeHandle {
   friend class Store;
   friend class Subtraction;
   friend class SubtractionNode;
+  friend class Superior;
+  friend class SuperiorEqual;
   friend class Sum;
   friend class SumAndProduct;
   friend class SumAndProductNode;

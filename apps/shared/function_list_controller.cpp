@@ -50,7 +50,7 @@ KDCoordinate FunctionListController::columnWidth(int i) {
     case 0:
       return k_titlesColumnWidth;
     case 1:
-      return selectableTableView()->bounds().width()-k_titlesColumnWidth;
+      return selectableTableView()->bounds().width()-k_titlesColumnWidth-k_parametersColumnWidth;
     case 2:
       return k_parametersColumnWidth;
     default:

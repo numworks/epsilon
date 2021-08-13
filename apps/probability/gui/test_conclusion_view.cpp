@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "../images/test_failure.h"
 #include "../images/test_success.h"
 #include "probability/helpers.h"
 
@@ -48,7 +47,7 @@ void TestConclusionView::setType(Type t) {
   if (t == Type::Success) {
     m_icon.setImage(ImageStore::TestSuccess);
   } else {
-    m_icon.setImage(ImageStore::TestFailure);
+    m_icon.setImage(nullptr);
   }
   markRectAsDirty(bounds());
 }

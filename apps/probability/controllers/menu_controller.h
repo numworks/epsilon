@@ -32,6 +32,10 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   Escher::View * view() override { return &m_contentView; }
 
+  constexpr static int k_indexOfProbability = 0;
+  constexpr static int k_indexOfTest = 1;
+  constexpr static int k_indexOfInterval = 2;
+
 private:
   void resetData(Data::SubApp subapp);
   void initializeProbaData();
@@ -39,9 +43,6 @@ private:
   TestController * m_testController;
 
   constexpr static int k_numberOfCells = 3;
-  constexpr static int k_indexOfDistribution = 0;
-  constexpr static int k_indexOfTest = 1;
-  constexpr static int k_indexOfInterval = 2;
   SubappCell m_cells[k_numberOfCells];
   Data::SubApp * m_globalSubapp;
   Data::Test * m_globalTest;

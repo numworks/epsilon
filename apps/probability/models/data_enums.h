@@ -15,7 +15,6 @@ enum class Page {
   Hypothesis,
   Categorical,
   Input,
-  IntervalInput,
   InputGoodness,
   InputHomogeneity,
   Results,

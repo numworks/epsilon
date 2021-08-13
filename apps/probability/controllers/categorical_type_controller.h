@@ -36,10 +36,10 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-private:
   constexpr static int k_indexOfGoodnessCell = 0;
   constexpr static int k_indexOfHomogeneityCell = 1;
 
+private:
   Chi2Statistic * m_statistic;
   Data::CategoricalType * m_globalCategoricalType;
   InputGoodnessController * m_inputGoodnessController;

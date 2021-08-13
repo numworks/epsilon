@@ -62,16 +62,17 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
 
+  constexpr static int k_indexOfTTest = 0;
+  constexpr static int k_indexOfPooledTest = 1;
+  constexpr static int k_indexOfZTest = 2;
+  constexpr static int k_indexOfDescription = 3;
+
 private:
   int indexFromListIndex(int i) const;
   int listIndexFromIndex(int i) const;
   I18n::Message messageForTest(Data::Test t) const;
 
   constexpr static int k_numberOfRows = 3;
-  constexpr static int k_indexOfTTest = 0;
-  constexpr static int k_indexOfPooledTest = 1;
-  constexpr static int k_indexOfZTest = 2;
-  constexpr static int k_indexOfDescription = 3;
 
   HypothesisController * m_hypothesisController;
   InputController * m_inputController;

@@ -33,8 +33,8 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
     m_globalDistribution(globalDistribution),
     m_globalCalculation(globalCalculation),
     m_contentView(&m_selectableTableView) {
-  m_cells[k_indexOfDistribution].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
-  m_cells[k_indexOfDistribution].setImage(ImageStore::Probability);
+  m_cells[k_indexOfProbability].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
+  m_cells[k_indexOfProbability].setImage(ImageStore::Probability);
   m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest);
   m_cells[k_indexOfTest].setMessages(I18n::Message::Tests, I18n::Message::TestDescr);
   m_cells[k_indexOfInterval].setMessages(I18n::Message::Interval, I18n::Message::IntervalDescr);
@@ -62,7 +62,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     Data::SubApp subapp;
     ViewController * controller = nullptr;
     switch (selectedRow()) {
-      case k_indexOfDistribution:
+      case k_indexOfProbability:
         subapp = Data::SubApp::Probability;
         controller = m_distributionController;
         break;

@@ -72,6 +72,11 @@ public:
 
 private:
   App(Snapshot *);
+  void initTableSelections(Data::Page page,
+                           Data::SubApp subapp,
+                           Data::Test test,
+                           Data::TestType type,
+                           Data::CategoricalType categoricalType);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers

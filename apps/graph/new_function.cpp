@@ -118,6 +118,9 @@ I18n::Message NewFunction::functionCategory() const {
 }
 
 int NewFunction::detailsTotal() const {
+  if (isNull()) {
+    return 0;
+  }
   assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
   static const int total[k_numberOfPlotTypes] = {
     0, 0, 0, 3, 0,

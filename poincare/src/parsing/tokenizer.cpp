@@ -229,6 +229,9 @@ Token Tokenizer::popToken() {
     if (canPopCodePoint('=')) {
       return Token(Token::InferiorEqual);
     }
+    if (canPopCodePoint('>')) {
+      return Token(Token::Inequal);
+    }
     return Token(Token::Inferior);
   }
   if (c == UCodePointInferiorEqual) {

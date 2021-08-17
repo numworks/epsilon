@@ -61,19 +61,20 @@ bool NewFunction::isNamed() const {
   return fullName() != nullptr && fullName()[0] != '?';
 }
 
+// TODO : Account for y^2 sign !
 bool NewFunction::drawAbove() const {
-  EquationSymbol eqSymbol = equationSymbol();
-  return eqSymbol == EquationSymbol::Greater || eqSymbol == EquationSymbol::GreaterOrEqual || eqSymbol == EquationSymbol::Inequal;
+  ExpressionNode::Type eqSymbol = equationSymbol();
+  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual || eqSymbol == ExpressionNode::Type::Inequal;
 }
 
 bool NewFunction::drawBelow() const {
-  EquationSymbol eqSymbol = equationSymbol();
-  return eqSymbol == EquationSymbol::Less || eqSymbol == EquationSymbol::LessOrEqual || eqSymbol == EquationSymbol::Inequal;
+  ExpressionNode::Type eqSymbol = equationSymbol();
+  return eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual || eqSymbol == ExpressionNode::Type::Inequal;
 }
 
 bool NewFunction::drawCurve() const {
-  EquationSymbol eqSymbol = equationSymbol();
-  return eqSymbol == EquationSymbol::GreaterOrEqual || eqSymbol == EquationSymbol::LessOrEqual || eqSymbol == EquationSymbol::Equal;
+  ExpressionNode::Type eqSymbol = equationSymbol();
+  return eqSymbol == ExpressionNode::Type::SuperiorEqual || eqSymbol == ExpressionNode::Type::InferiorEqual || eqSymbol == ExpressionNode::Type::Equal;
 }
 
 int NewFunction::yDegree(Context * context) const {
@@ -271,8 +272,8 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
     return Undefined::Builder();
   }
   // TODO Hugo : Handle function assignment from outside
-  // TODO Hugo : Handle other than equal
   assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
+  m_equationSymbol = result.type();
   if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
     // Named function
     result = result.childAtIndex(1);
@@ -378,6 +379,11 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
    * | +  | 2  | Unhandled (Swap x and y ? # TODO)
    * | +  | +  | Unhandled
    */
+  /* TODO Hugo : Here we need to compute expressionEquation to make sure we get the
+   * equation symbol right. It could be improved. */
+  Expression equation = expressionEquation(context);
+  recordData()->setEquationSymbol(m_model.m_equationSymbol);
+
   // TODO Hugo : proprify returns here
   if (isNamed()) {
     // TODO Hugo :retrieve symbol, -> Polar, Parametric or Cartsian
@@ -403,7 +409,7 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
   if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
     char str[2] = "x";
     str[0] = UCodePointUnknown;
-    s_tempConic = Conic(expressionEquation(context), context, str);
+    s_tempConic = Conic(equation, context, str);
     Conic::Type ctype = s_tempConic.getConicType();
     if (ctype == Conic::Type::Hyperbola) {
       return recordData()->setPlotType(PlotType::Hyperbola);
@@ -621,7 +627,13 @@ Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * cont
   if (type != PlotType::Parametric) {
     if (hasTwoCurves()) {
       assert(e.numberOfChildren() > i);
-      return Coordinate2D<T>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(i), unknown, t, context));
+      /* TODO Hugo : Ensure the roots are already sorted. It should be possible
+       * once handling the sign of the coefficient of y^2. */
+      if (i == 0) {
+        return Coordinate2D<T>(t, std::max(Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
+      } else {
+        return Coordinate2D<T>(t, std::min(Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
+      }
     } else {
       assert(i == 0);
     }

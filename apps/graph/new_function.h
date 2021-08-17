@@ -20,16 +20,6 @@ public:
   constexpr static int k_parenthesedXNTArgumentByteLength = 3;
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
 
-  static constexpr size_t k_numberOfEquationSymbols = 6;
-  enum class EquationSymbol : uint8_t {
-    Equal = 0,
-    Inequal,
-    Greater,
-    GreaterOrEqual,
-    Less,
-    LessOrEqual,
-  };
-
   static constexpr size_t k_numberOfPlotTypes = 20;
   enum class PlotType : uint8_t {
     Cartesian = 0,
@@ -45,10 +35,10 @@ public:
     Parabola,
     Hyperbola,
     Inequality,
-    Greater,
-    GreaterOrEqual,
-    Less,
-    LessOrEqual,
+    Superior,
+    SuperiorEqual,
+    Inferior,
+    InferiorEqual,
     Other,
     Undefined,
     Unhandled
@@ -64,9 +54,9 @@ public:
   bool isNamed() const; // y = or f(x) = ?
   bool isAlongX() const { return symbol() == 'x'; }
   bool hasTwoCurves() const { return m_model.hasTwoCurves(); }
-  bool drawAbove() const; // Greater, GreaterOrEqual, Inequal
-  bool drawBelow() const; // Less, LessOrEqual, Inequal
-  bool drawCurve() const; // GreaterOrEqual, LessOrEqual, Equal
+  bool drawAbove() const; // Superior, SuperiorEqual, Inequal
+  bool drawBelow() const; // Inferior, InferiorEqual, Inequal
+  bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
   int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
   int xDegree(Poincare::Context * context) const; // Any degree is handled
 
@@ -89,7 +79,7 @@ public:
   // expressionReduced returns expressionReduced derivative(s)
   // TODO Hugo : Implement
   // Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
-  EquationSymbol equationSymbol() const { return recordData()->equationSymbol(); }
+  Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
   PlotType plotType() const { return recordData()->plotType(); }
   void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
   static I18n::Message ParameterMessageForPlotType(PlotType plotType);  // x, theta, t, y
@@ -155,7 +145,7 @@ private:
   class Model : public Shared::ExpressionModel {
     // TODO Hugo : Add derivative
   public:
-    Model() : ExpressionModel(), m_hasTwoCurves(false) {}
+    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal) {}
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
     bool hasTwoCurves() const { return m_hasTwoCurves; }
@@ -164,6 +154,7 @@ private:
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) override;
     mutable bool m_hasTwoCurves;
+    mutable Poincare::ExpressionNode::Type m_equationSymbol;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_model; }
@@ -177,8 +168,8 @@ private:
     }
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
-    EquationSymbol equationSymbol() const { return m_equationSymbol; }
-    void setEquationSymbol(EquationSymbol equationSymbol) { m_equationSymbol = equationSymbol; }
+    Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
+    void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) { m_equationSymbol = equationSymbol; }
     bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
     float tMin() const { return m_domain.min(); }
@@ -190,7 +181,7 @@ private:
     uint16_t m_color;
     bool m_active;
     PlotType m_plotType;
-    EquationSymbol m_equationSymbol;
+    Poincare::ExpressionNode::Type m_equationSymbol;
   };
 
   Model m_model;

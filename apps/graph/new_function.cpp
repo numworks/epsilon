@@ -267,6 +267,9 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
     return Undefined::Builder();
   }
   Expression result = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  if (result.isUninitialized()) {
+    return Undefined::Builder();
+  }
   // TODO Hugo : Handle function assignment from outside
   // TODO Hugo : Handle other than equal
   assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
@@ -452,8 +455,6 @@ double NewFunction::approximateDerivative(double x, Context * context) const {
 
 int NewFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
   // TODO Hugo : Re-check
-  // TODO Hugo : Find a much better place for this update
-  updatePlotType(Preferences::AngleUnit::Radian, context);
   PlotType type = plotType();
   if (type == PlotType::Parametric) {
     int result = 0;
@@ -691,6 +692,14 @@ Expression NewFunction::sumBetweenBounds(double start, double end, Context * con
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
+}
+
+Ion::Storage::Record::ErrorStatus NewFunction::setContent(const char * c, Poincare::Context * context) {
+  Ion::Storage::Record::ErrorStatus error = Shared::ExpressionModelHandle::setContent(c, context);
+  if (error == Ion::Storage::Record::ErrorStatus::None) {
+    updatePlotType(Preferences::AngleUnit::Radian, context);
+  }
+  return error;
 }
 
 void NewFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Context * context) const {

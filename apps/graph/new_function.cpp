@@ -289,7 +289,7 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
     * same function. So we need to keep a valid result while executing
     * 'Simplify'. Thus, we use a temporary expression. */
   Expression tempExpression = result.clone();
-  Shared::PoincareHelpers::Reduce(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+  Shared::PoincareHelpers::Reduce(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
   // Shared::PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   // simplify might return an uninitialized Expression if interrupted
   if (!tempExpression.isUninitialized()) {

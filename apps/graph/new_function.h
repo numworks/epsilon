@@ -139,6 +139,7 @@ public:
   // Integral
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const;
   // TODO Hugo : Consider cache
+  Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
   // TODO Hugo : Improve that
   static Poincare::Conic s_tempConic;

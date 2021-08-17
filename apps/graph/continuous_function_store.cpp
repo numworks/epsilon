@@ -7,12 +7,10 @@ uint32_t ContinuousFunctionStore::storeChecksum() {
 }
 
 bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
-  int nbOfActiveFunctions = numberOfActiveFunctions();
   if (nbActiveFunctions != nullptr) {
-    *nbActiveFunctions = nbOfActiveFunctions;
+    *nbActiveFunctions = numberOfActiveFunctions();
   }
-  // Still usefull ?
-  return numberOfActiveFunctionsOfType(NewFunction::PlotType::Cartesian) != nbOfActiveFunctions;
+  return numberOfActiveFunctionsOfType(NewFunction::PlotType::Polar) + numberOfActiveFunctionsOfType(NewFunction::PlotType::Parametric) == 0;
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

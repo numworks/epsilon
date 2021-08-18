@@ -59,7 +59,6 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseRightwardsArrow, // Token::RightwardsArrow
     &Parser::parseEqual,           // Token::Equal
-    &Parser::parseInequal,         // Token::Inequal
     &Parser::parseSuperior,        // Token::Superior
     &Parser::parseSuperiorEqual,   // Token::SuperiorEqual
     &Parser::parseInferior,        // Token::Inferior
@@ -264,8 +263,6 @@ Expression BuildForToken(Token::Type tokenType, Expression & leftHandSide, Expre
   switch (tokenType) {
   case Token::Equal:
     return Equal::Builder(leftHandSide, rightHandSide);
-  case Token::Inequal:
-    return Inequal::Builder(leftHandSide, rightHandSide);
   case Token::Superior:
     return Superior::Builder(leftHandSide, rightHandSide);
   case Token::SuperiorEqual:

@@ -61,7 +61,6 @@ class Expression : public TreeHandle {
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
   friend class ImaginaryPart;
-  friend class Inequal;
   friend class Inferior;
   friend class InferiorEqual;
   friend class Integer;

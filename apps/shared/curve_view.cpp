@@ -419,42 +419,78 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   }
 }
 
-void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
+void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize, int areaIndex) const {
+  if (lowerBound > upperBound) {
+    // Swap lower and upper bounds
+    float tempBound = lowerBound;
+    lowerBound = upperBound;
+    upperBound = tempBound;
+  }
   KDCoordinate min = (axis == Axis::Horizontal) ? rect.x() : rect.y();
   KDCoordinate max = (axis == Axis::Horizontal) ? rect.x() + rect.width() : rect.y() + rect.height();
-  KDCoordinate start = std::isinf(lowerBound) ? min : std::round(floatToPixel(axis, lowerBound));
-  KDCoordinate end = std::isinf(upperBound) ? max : std::round(floatToPixel(axis, upperBound));
+  // Alongside the y-axis, upperBound correspond to the start
+  float startBound = (axis == Axis::Horizontal) ? lowerBound : upperBound;
+  float endBound = (axis == Axis::Horizontal) ? upperBound : lowerBound;
+  KDCoordinate start = std::isinf(startBound) ? min : std::round(floatToPixel(axis, startBound));
+  start = start < min ? min : start;
+  KDCoordinate end = std::isinf(endBound) ? max : std::round(floatToPixel(axis, endBound));
+  end = end > max ? max : end;
   if (start > end) {
-    start = end;
-    end = std::round(floatToPixel(axis, lowerBound));
+    // Segment was out of rect
+    return;
   }
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
   KDCoordinate pixelCoordinate = std::round(floatToPixel(otherAxis, coordinate));
+  KDCoordinate otherMin = (axis == Axis::Vertical) ? rect.x() : rect.y();
+  KDCoordinate otherMax = (axis == Axis::Vertical) ? rect.x() + rect.width() : rect.y() + rect.height();
+  if (pixelCoordinate + thickness <= otherMin || pixelCoordinate >= otherMax) {
+    // Nothing will intersect
+    return;
+  }
+
+  if (areaIndex >= 0) {
+    assert(pixelCoordinate >= 0 && dashSize == 1);
+    /* Draw an inequation area. Up to four areas are handled. Otherwise, they
+     * override. */
+    int areaId = areaIndex%4;
+    /* Inequation Area is tiled over 4x4 blocks of pixels.
+     * Depending on the areaIndex, the colorized pixel will be :
+     *
+     * Segment:    Tile:              Example:
+     *    0        0 # 1 #         0 # 1 # 0 # 1 # 0 # 1 # 0 # 1 #
+     *    #   ->   # 2 # 3  ->     # 2 # 3 # 2 # 3 # 2 # 3 # 2 # 3
+     *    1        1 # 0 #         1 # 0 # 1 # 0 # 1 # 0 # 1 # 0 #
+     *    #        # 3 # 2         # 3 # 2 # 3 # 2 # 3 # 2 # 3 # 2
+     *
+     * Pixels' positions are absolute. Drawn independently, all segments shall
+     * align. */
+    const int evenOddIndex[4] = {0,0,1,1};
+    // Depending on the areaIndex, either even or odd lines are drawn
+    if ((pixelCoordinate + evenOddIndex[areaId])%2 == 0) {
+      // Compute the offset (modulo 4) to respect the tile's requirements
+      // - Offset due to areaId
+      const int areaOffset[4] = {0,2,0,2};
+      int offset = areaOffset[areaId];
+      // - Offset due to each subsequent segment shifting by 1
+      offset += pixelCoordinate%4;
+      // - Offset to make the segment alignment absolute (indepandent of start)
+      offset += 4 - start%4;
+      for (KDCoordinate i = start + offset%4; i < end; i += 4) {
+        KDPoint point = (axis == Axis::Horizontal) ? KDPoint(i, pixelCoordinate) :  KDPoint(pixelCoordinate, i);
+        assert(rect.contains(point));
+        ctx->setPixel(point, color);
+      }
+    }
+    return;
+  }
   if (dashSize < 0) {
     // Continuous segment is equivalent to one big dash
     dashSize = end - start;
-    if (dashSize < 0) {
-      // end-start overflowed
-      dashSize = KDCOORDINATE_MAX;
-    }
   }
-  KDRect lineRect = KDRectZero;
   for (KDCoordinate i = start; i < end; i += 2*dashSize) {
-    switch(axis) {
-      case Axis::Horizontal:
-        lineRect = KDRect(i, pixelCoordinate, dashSize, thickness);
-        break;
-      case Axis::Vertical:
-        lineRect = KDRect(pixelCoordinate, i, thickness, dashSize);
-        break;
-    }
-    if (rect.intersects(lineRect)) {
-      ctx->fillRect(lineRect, color);
-    }
-    if (i > KDCOORDINATE_MAX - 2*dashSize) {
-      // Avoid overflowing KDCoordinate
-      break;
-    }
+    KDRect lineRect = (axis == Axis::Horizontal) ? KDRect(i, pixelCoordinate, dashSize, thickness) :  KDRect(pixelCoordinate, i, thickness, dashSize);
+    assert(rect.intersects(lineRect));
+    ctx->fillRect(lineRect, color);
   }
 }
 
@@ -623,7 +659,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex) const {
   // Round to pixel perfect position to avoid landing in the middle of pixels
   tStart = roundFloatToPixelPerfect(tStart);
   colorLowerBound = roundFloatToPixelPerfect(colorLowerBound);
@@ -658,11 +694,19 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, std::min(0.0f, y), std::max(0.0f, y), color, 1);
     }
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
+    if (xyAreaBound && (shouldColorAreaWhenNan || !std::isnan(y))) {
+      float lowerBound = std::isnan(y) ? -INFINITY : std::min(y, xyAreaBound(t, model, context).x2());
+      float upperBound = std::isnan(y) ? INFINITY : std::max(y, xyAreaBound(t, model, context).x2());
+      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, lowerBound, upperBound, color, 1, 1, areaIndex);
+    }
+    // TODO Hugo : Implement dashed curve
+    if (dashedCurve) {
+      joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
+    }
   } while (!isLastSegment);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex) const {
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   float tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
@@ -672,7 +716,7 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, flo
     return;
   }
   float tStep = pixelWidth();
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaIndex);
 }
 
 float PolarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {

@@ -62,12 +62,12 @@ bool NewFunction::isNamed() const {
 }
 
 // TODO : Account for y^2 sign !
-bool NewFunction::drawAbove() const {
+bool NewFunction::drawSuperiorArea() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
   return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual || eqSymbol == ExpressionNode::Type::Inequal;
 }
 
-bool NewFunction::drawBelow() const {
+bool NewFunction::drawInferiorArea() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
   return eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual || eqSymbol == ExpressionNode::Type::Inequal;
 }

@@ -20,7 +20,7 @@ public:
   constexpr static int k_parenthesedXNTArgumentByteLength = 3;
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
 
-  static constexpr size_t k_numberOfPlotTypes = 20;
+  static constexpr size_t k_numberOfPlotTypes = 15;
   enum class PlotType : uint8_t {
     Cartesian = 0,
     Polar,
@@ -34,11 +34,6 @@ public:
     Ellipse,
     Parabola,
     Hyperbola,
-    Inequality,
-    Superior,
-    SuperiorEqual,
-    Inferior,
-    InferiorEqual,
     Other,
     Undefined,
     Unhandled
@@ -54,8 +49,8 @@ public:
   bool isNamed() const; // y = or f(x) = ?
   bool isAlongX() const { return symbol() == 'x'; }
   bool hasTwoCurves() const { return m_model.hasTwoCurves(); }
-  bool drawSuperiorArea() const; // Superior, SuperiorEqual, Inequal
-  bool drawInferiorArea() const; // Inferior, InferiorEqual, Inequal
+  bool drawSuperiorArea() const; // Superior, SuperiorEqual
+  bool drawInferiorArea() const; // Inferior, InferiorEqual
   bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
   int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
   int xDegree(Poincare::Context * context) const; // Any degree is handled

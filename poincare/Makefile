@@ -98,7 +98,6 @@ poincare_src += $(addprefix poincare/src/,\
   hyperbolic_tangent.cpp \
   hyperbolic_trigonometric_function.cpp \
   imaginary_part.cpp \
-  inequal.cpp \
   inferior_equal.cpp \
   inferior.cpp \
   infinity.cpp \

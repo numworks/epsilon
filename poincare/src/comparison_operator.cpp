@@ -26,7 +26,6 @@ Evaluation<T> ComparisonOperatorNode::templatedApproximate(ApproximationContext 
 bool ComparisonOperator::IsComparisonOperatorType(ExpressionNode::Type type) {
   switch (type) {
   case ExpressionNode::Type::Equal:
-  case ExpressionNode::Type::Inequal:
   case ExpressionNode::Type::Superior:
   case ExpressionNode::Type::SuperiorEqual:
   case ExpressionNode::Type::Inferior:

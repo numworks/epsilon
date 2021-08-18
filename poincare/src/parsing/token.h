@@ -19,7 +19,6 @@ public:
     EndOfStream = 0, // Must be the first
     RightwardsArrow,
     Equal,
-    Inequal,
     Superior,
     SuperiorEqual,
     Inferior,

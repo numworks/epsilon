@@ -46,7 +46,6 @@
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/hyperbolic_tangent.h>
 #include <poincare/imaginary_part.h>
-#include <poincare/inequal.h>
 #include <poincare/inferior.h>
 #include <poincare/inferior_equal.h>
 #include <poincare/infinity.h>

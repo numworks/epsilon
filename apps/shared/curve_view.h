@@ -65,7 +65,7 @@ protected:
   }
   void drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
-      KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;
+      KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1, int areaIndex = -1) const;
   void drawSegment(KDContext * ctx, KDRect rect,
     float x, float y, float u, float v,
     KDColor color, bool thick = true
@@ -104,8 +104,8 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
-  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
+  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = true, EvaluateXYForFloatParameter xyAreaBound = nullptr, bool shouldColorAreaWhenNan = false, int areaIndex = 0) const;
+  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = true, EvaluateXYForFloatParameter xyAreaBound = nullptr, bool shouldColorAreaWhenNan = false, int areaIndex = 0) const;
   void drawPolarCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;

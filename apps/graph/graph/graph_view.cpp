@@ -37,7 +37,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 
   FunctionGraphView::drawRect(ctx, rect);
-
+  int areaIndex = 0;
   for (int i = 0; i < activeFunctionsCount ; i++) {
     if (functionWasInterrupted(i)) {
       continue;
@@ -91,28 +91,80 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
       } else {
-        // Cartesian
-        drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
-            NewFunction * f = (NewFunction *)model;
-            Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateXYAtParameter(t, c);
-            }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd,
+        // Cartesian.
+        bool superiorArea = f->drawSuperiorArea();
+        bool inferiorArea = f->drawInferiorArea();
+        assert(!(superiorArea && inferiorArea));
+        Shared::CurveView::EvaluateXYForFloatParameter xyInfinite =
+            [](float t, void *, void *) {
+              return Poincare::Coordinate2D<float>(t, INFINITY);
+            };
+        Shared::CurveView::EvaluateXYForFloatParameter xyMinusInfinite =
+            [](float t, void *, void *) {
+              return Poincare::Coordinate2D<float>(t, -INFINITY);
+            };
+        Shared::CurveView::EvaluateXYForFloatParameter xyAreaBound = nullptr;
+        // Draw the first cartesian curve
+        Shared::CurveView::EvaluateXYForDoubleParameter xyDoubleEvaluation =
             [](double t, void * model, void * context) {
+              NewFunction * f = (NewFunction *)model;
+              Poincare::Context * c = (Poincare::Context *)context;
+              return f->evaluateXYAtParameter(t, c, 0);
+            };
+        Shared::CurveView::EvaluateXYForFloatParameter xyFloatEvaluation =
+            [](float t, void * model, void * context) {
+              NewFunction * f = (NewFunction *)model;
+              Poincare::Context * c = (Poincare::Context *)context;
+              return f->evaluateXYAtParameter(t, c, 0);
+            };
+        if (superiorArea || inferiorArea) {
+          // The drawn area goes from the xyFloatEvaluation to xyAreaBound.
+          if (superiorArea) {
+            // Superior area ends at +inf
+            xyAreaBound = xyInfinite;
+          } else if (!f->hasTwoCurves()) {
+            // Inferior area ends at -inf
+            xyAreaBound = xyMinusInfinite;
+          } else {
+            // Inferior area ends at the second curve
+            xyAreaBound = [](float t, void * model, void * context) {
+              NewFunction * f = (NewFunction *)model;
+              Poincare::Context * c = (Poincare::Context *)context;
+              return f->evaluateXYAtParameter(t, c, 1);
+            };
+          }
+        }
+        drawCartesianCurve(ctx, rect, tmin, tmax, xyFloatEvaluation,
+                           f.operator->(), context(), f->color(), true,
+                           record == m_selectedRecord, m_highlightedStart,
+                           m_highlightedEnd, xyDoubleEvaluation, f->drawCurve(),
+                           xyAreaBound, false, areaIndex);
+        if (f->hasTwoCurves()) {
+          // Draw the second cartesian curve, which is lesser than the first
+          xyDoubleEvaluation = [](double t, void * model, void * context) {
             NewFunction * f = (NewFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateXYAtParameter(t, c);
-            });
-        if (f->hasTwoCurves()) {
-          drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
-                NewFunction * f = (NewFunction *)model;
-                Poincare::Context * c = (Poincare::Context *)context;
-                return f->evaluateXYAtParameter(t, c, 1);
-              }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd,
-              [](double t, void * model, void * context) {
-                NewFunction * f = (NewFunction *)model;
-                Poincare::Context * c = (Poincare::Context *)context;
-                return f->evaluateXYAtParameter(t, c, 1);
-              });
+            return f->evaluateXYAtParameter(t, c, 1);
+          };
+          xyFloatEvaluation = [](float t, void * model, void * context) {
+            NewFunction * f = (NewFunction *)model;
+            Poincare::Context * c = (Poincare::Context *)context;
+            return f->evaluateXYAtParameter(t, c, 1);
+          };
+          xyAreaBound = nullptr;
+          if (superiorArea) {
+            // Inferior area ends at -inf
+            xyAreaBound = xyMinusInfinite;
+          }
+          drawCartesianCurve(
+              ctx, rect, tmin, tmax, xyFloatEvaluation, f.operator->(),
+              context(), f->color(), true, record == m_selectedRecord,
+              m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
+              f->drawCurve(), xyAreaBound, true, areaIndex);
+        }
+        if (superiorArea || inferiorArea) {
+          // We display the superposition of up to 4 areas
+          areaIndex++;
         }
         // TODO Hugo : Draw vertical line with drawSegment ?
         /* Draw tangent */

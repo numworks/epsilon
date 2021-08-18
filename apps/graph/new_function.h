@@ -54,8 +54,8 @@ public:
   bool isNamed() const; // y = or f(x) = ?
   bool isAlongX() const { return symbol() == 'x'; }
   bool hasTwoCurves() const { return m_model.hasTwoCurves(); }
-  bool drawAbove() const; // Superior, SuperiorEqual, Inequal
-  bool drawBelow() const; // Inferior, InferiorEqual, Inequal
+  bool drawSuperiorArea() const; // Superior, SuperiorEqual, Inequal
+  bool drawInferiorArea() const; // Inferior, InferiorEqual, Inequal
   bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
   int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
   int xDegree(Poincare::Context * context) const; // Any degree is handled

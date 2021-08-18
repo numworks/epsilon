@@ -326,7 +326,6 @@ template HyperbolicArcTangent TreeHandle::FixedArityBuilder<HyperbolicArcTangent
 template HyperbolicCosine TreeHandle::FixedArityBuilder<HyperbolicCosine, HyperbolicCosineNode>(const Tuple &);
 template HyperbolicSine TreeHandle::FixedArityBuilder<HyperbolicSine, HyperbolicSineNode>(const Tuple &);
 template HyperbolicTangent TreeHandle::FixedArityBuilder<HyperbolicTangent, HyperbolicTangentNode>(const Tuple &);
-template Inequal TreeHandle::FixedArityBuilder<Inequal, InequalNode>(const Tuple &);
 template Inferior TreeHandle::FixedArityBuilder<Inferior, InferiorNode>(const Tuple &);
 template InferiorEqual TreeHandle::FixedArityBuilder<InferiorEqual, InferiorEqualNode>(const Tuple &);
 template ImaginaryPart TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>(const Tuple &);

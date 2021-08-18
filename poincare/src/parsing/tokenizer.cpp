@@ -212,10 +212,6 @@ Token Tokenizer::popToken() {
   if (c == '=') {
     return Token(Token::Equal);
   }
-  if (c == UCodePointInequal) {
-    // "!="" would have been great too but it conflicts with factorial syntax.
-    return Token(Token::Inequal);
-  }
   if (c == '>') {
     if (canPopCodePoint('=')) {
       return Token(Token::SuperiorEqual);
@@ -228,9 +224,6 @@ Token Tokenizer::popToken() {
   if (c == '<') {
     if (canPopCodePoint('=')) {
       return Token(Token::InferiorEqual);
-    }
-    if (canPopCodePoint('>')) {
-      return Token(Token::Inequal);
     }
     return Token(Token::Inferior);
   }

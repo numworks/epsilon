@@ -141,7 +141,7 @@ bool ListController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      CodePoint symbols[6] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual, UCodePointInequal};
+      CodePoint symbols[5] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
       for (size_t i = 0; i < sizeof(symbols); i++) {
         if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == symbols[i]) {
           return true;

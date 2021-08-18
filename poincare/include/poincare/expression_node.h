@@ -47,7 +47,6 @@ public:
     Store,
     UnitConvert,
     Equal,
-    Inequal,
     Superior,
     Inferior,
     SuperiorEqual,

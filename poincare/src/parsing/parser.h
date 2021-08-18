@@ -66,7 +66,6 @@ private:
   void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseComparisonOperator(Token::Type tokenType, Expression & leftHandSide, Token::Type stoppingType);
   void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::Equal, leftHandSide, stoppingType); }
-  void parseInequal(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::Inequal, leftHandSide, stoppingType); }
   void parseSuperior(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::Superior, leftHandSide, stoppingType); }
   void parseSuperiorEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::SuperiorEqual, leftHandSide, stoppingType); }
   void parseInferior(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::Inferior, leftHandSide, stoppingType); }

@@ -64,12 +64,12 @@ bool NewFunction::isNamed() const {
 // TODO : Account for y^2 sign !
 bool NewFunction::drawSuperiorArea() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
-  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual || eqSymbol == ExpressionNode::Type::Inequal;
+  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual;
 }
 
 bool NewFunction::drawInferiorArea() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
-  return eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual || eqSymbol == ExpressionNode::Type::Inequal;
+  return eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual;
 }
 
 bool NewFunction::drawCurve() const {
@@ -113,8 +113,7 @@ I18n::Message NewFunction::functionCategory() const {
   static const I18n::Message category[k_numberOfPlotTypes] = {
     I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::LineType, I18n::Message::VerticalLineType,
     I18n::Message::HorizontalLineType, I18n::Message::InequationType, I18n::Message::ConicsType, I18n::Message::CircleType, I18n::Message::EllipseType,
-    I18n::Message::ParabolaType, I18n::Message::HyperbolaType, I18n::Message::InequationType, I18n::Message::InequationType, I18n::Message::InequationType,
-    I18n::Message::InequationType, I18n::Message::InequationType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
+    I18n::Message::ParabolaType, I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
   };
   return category[static_cast<size_t>(plotType())];
 }
@@ -128,7 +127,6 @@ int NewFunction::detailsTotal() const {
     0, 0, 0, 3, 0,
     0, 0, 0, 3, 6,
     3, 6, 0, 0, 0,
-    0, 0, 0, 0, 0,
   };
   return total[static_cast<size_t>(plotType())];
 }
@@ -383,6 +381,10 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
    * equation symbol right. It could be improved. */
   Expression equation = expressionEquation(context);
   recordData()->setEquationSymbol(m_model.m_equationSymbol);
+
+  if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
+    return recordData()->setPlotType(PlotType::Inequation);
+  }
 
   // TODO Hugo : proprify returns here
   if (isNamed()) {

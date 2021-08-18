@@ -699,10 +699,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
       float upperBound = std::isnan(y) ? INFINITY : std::max(y, xyAreaBound(t, model, context).x2());
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, lowerBound, upperBound, color, 1, 1, areaIndex);
     }
-    // TODO Hugo : Implement dashed curve
-    if (dashedCurve) {
-      joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
+    if (dashedCurve && i%8 != 0) {
+      // TODO Hugo : Improve dashed curve, using derivatives for instance.
+      continue;
     }
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
   } while (!isLastSegment);
 }
 

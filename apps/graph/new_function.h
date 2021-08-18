@@ -157,7 +157,7 @@ private:
   // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer {
   public:
-    RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
+    RecordDataBuffer(KDColor color) : m_domain(-INFINITY, INFINITY), m_color(color), m_active(true), m_plotType(PlotType::Undefined), m_equationSymbol(Poincare::ExpressionNode::Type::Equal)  {}
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }

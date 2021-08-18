@@ -227,6 +227,9 @@ void Conic::centerConic() {
 }
 
 void Conic::canonize() {
+  // TODO Hugo : Multiply by -1 if
+  // - both a and c are negative
+  // - !(a and c positive) and f positive
   // Canonize the equation by rotating and centering it
   centerConic();
   /* Equation should be in either of these canonic forms :

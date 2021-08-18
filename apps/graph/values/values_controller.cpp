@@ -194,7 +194,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
     const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(record);
-      *isDerivative = i != index && f->plotType() == NewFunction::PlotType::Cartesian;
+      *isDerivative = i != index && f->isAlongX();
       return record;
     }
     index += numberOfColumnsForCurrentRecord;
@@ -217,7 +217,7 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
   ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(record);
   NewFunction::PlotType plotType = f->plotType();
   return 1 +
-    (plotType == NewFunction::PlotType::Cartesian && f->displayDerivative());
+    (f->isAlongX() && f->displayDerivative());
 }
 
 int ValuesController::numberOfColumnsForPlotType(int plotTypeIndex) const {
@@ -305,7 +305,7 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
 ViewController * ValuesController::functionParameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (functionStore()->modelForRecord(record)->plotType() != NewFunction::PlotType::Cartesian) {
+  if (!functionStore()->modelForRecord(record)->isAlongX()) {
     return nullptr;
   }
   if (isDerivative) {

@@ -30,7 +30,7 @@ void CalculationGraphController::viewWillAppear() {
     m_graphView->setBannerView(&m_defaultBannerView);
   } else {
     m_isActive = true;
-    assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == NewFunction::PlotType::Cartesian);
+    assert(App::app()->functionStore()->modelForRecord(m_record)->isAlongX());
     m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(), pointOfInterest.x2());
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();

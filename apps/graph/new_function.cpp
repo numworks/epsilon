@@ -10,6 +10,7 @@
 #include <poincare/matrix.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/trigonometry.h>
 #include <poincare/comparison_operator.h>
 #include "../shared/poincare_helpers.h"
 #include <algorithm>
@@ -481,7 +482,7 @@ int NewFunction::printValue(double cursorT, double cursorX, double cursorY, char
 
 bool NewFunction::shouldClipTRangeToXRange() const {
   // TODO Hugo : Re-check
-  return plotType() != PlotType::Parametric && plotType() != PlotType::Polar;
+  return isAlongX();
 }
 
 void NewFunction::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Context * context, bool xRange) const {
@@ -526,7 +527,7 @@ void NewFunction::setTMax(float tMax) {
 
 float NewFunction::rangeStep() const {
   // TODO Hugo : Re-check
-  return !(plotType() == PlotType::Parametric || plotType() == PlotType::Polar) ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
+  return isAlongX() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
 }
 
 bool NewFunction::basedOnCostlyAlgorithms(Context * context) const {
@@ -536,7 +537,7 @@ bool NewFunction::basedOnCostlyAlgorithms(Context * context) const {
 
 void NewFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
   // TODO Hugo : Re-check
-  if (plotType() == PlotType::Parametric || plotType() == PlotType::Polar) {
+  if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
     *yMinIntrinsic = FLT_MAX;
@@ -569,7 +570,7 @@ void NewFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMi
 
 void NewFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
   // TODO Hugo : Re-check
-  if (plotType() == PlotType::Parametric || plotType() == PlotType::Polar) {
+  if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
     return;
@@ -619,7 +620,7 @@ size_t NewFunction::Model::expressionSize(const Ion::Storage::Record * record) c
 template<typename T>
 Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * context, int i) const {
   if (t < tMin() || t > tMax()) {
-    return Coordinate2D<T>(plotType() == PlotType::Cartesian ? t : NAN, NAN);
+    return Coordinate2D<T>(isAlongX() ? t : NAN, NAN);
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknown[bufferSize];
@@ -669,7 +670,7 @@ Coordinate2D<double> NewFunction::nextRootFrom(double start, double max, Context
 
 Coordinate2D<double> NewFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
   // TODO Hugo : Re-check
-  assert(plotType() == PlotType::Cartesian);
+  assert(isAlongX());
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
@@ -684,7 +685,7 @@ Coordinate2D<double> NewFunction::nextIntersectionFrom(double start, double max,
 
 Coordinate2D<double> NewFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
   // TODO Hugo : Re-check
-  assert(plotType() == PlotType::Cartesian);
+  assert(isAlongX());
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
@@ -699,7 +700,7 @@ Coordinate2D<double> NewFunction::nextPointOfInterestFrom(double start, double m
 
 Expression NewFunction::sumBetweenBounds(double start, double end, Context * context) const {
   // TODO Hugo : Re-check
-  assert(plotType() == PlotType::Cartesian);
+  assert(isAlongX());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
   return Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(start), Float<double>::Builder(end)); // Integral takes ownership of args
@@ -711,7 +712,13 @@ Expression NewFunction::sumBetweenBounds(double start, double end, Context * con
 Ion::Storage::Record::ErrorStatus NewFunction::setContent(const char * c, Poincare::Context * context) {
   Ion::Storage::Record::ErrorStatus error = Shared::ExpressionModelHandle::setContent(c, context);
   if (error == Ion::Storage::Record::ErrorStatus::None) {
+    bool previousAlongXStatus = isAlongX();
     updatePlotType(Preferences::AngleUnit::Radian, context);
+    if (previousAlongXStatus != isAlongX()) {
+      // Recompute the definition's domain
+      setTMin(isAlongX() ? 0.0 : -INFINITY);
+      setTMax(isAlongX() ? 2.0*Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit()) : INFINITY);
+    }
   }
   return error;
 }

@@ -61,7 +61,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       float tmax = f->tMax();
 
       float tCacheMin, tCacheStep, tStepNonCartesian;
-      if (type == NewFunction::PlotType::Cartesian) {
+      if (f->isAlongX()) {
         float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
         * because cache can be panned for cartesian curves, instead of being

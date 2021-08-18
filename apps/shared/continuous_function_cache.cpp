@@ -35,7 +35,7 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
   //   cache->clear();
   // }
 
-  // if (function->plotType() == Graph::NewFunction::PlotType::Cartesian && tStep != 0) {
+  // if (function->isAlongX() && tStep != 0) {
   //   function->cache()->pan(function, tMin);
   // }
   // function->cache()->setRange(function, tMin, tStep);
@@ -97,18 +97,18 @@ int ContinuousFunctionCache::indexForParameter(const Graph::NewFunction * functi
   }
   int res = std::round(delta);
   assert(res >= 0);
-  if ((res >= k_sizeOfCache && function->plotType() == Graph::NewFunction::PlotType::Cartesian)
-   || (res >= k_sizeOfCache / 2 && function->plotType() != Graph::NewFunction::PlotType::Cartesian)
+  if ((res >= k_sizeOfCache && function->isAlongX())
+   || (res >= k_sizeOfCache / 2 && !function->isAlongX())
    || std::fabs(res - delta) > k_cacheHitTolerance) {
     return -1;
   }
-  assert(function->plotType() == Graph::NewFunction::PlotType::Cartesian || m_startOfCache == 0);
+  assert(function->isAlongX() || m_startOfCache == 0);
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const Graph::NewFunction * function, Poincare::Context * context, float t, int i) {
   assert(false);
-  if (function->plotType() == Graph::NewFunction::PlotType::Cartesian) {
+  if (function->isAlongX()) {
     if (std::isnan(m_cache[i])) {
       // m_cache[i] = function->privateEvaluateXYAtParameter(t, context).x2();
     }
@@ -123,7 +123,7 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const Graph
 }
 
 void ContinuousFunctionCache::pan(Graph::NewFunction * function, float newTMin) {
-  assert(function->plotType() == Graph::NewFunction::PlotType::Cartesian);
+  assert(function->isAlongX());
   if (newTMin == m_tMin) {
     return;
   }

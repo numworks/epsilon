@@ -61,7 +61,7 @@ void GraphController::selectFunctionWithCursor(int functionIndex) {
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   bool displayDerivative = m_displayDerivativeInBanner &&
-    functionStore()->modelForRecord(record)->plotType() == NewFunction::PlotType::Cartesian;
+    functionStore()->modelForRecord(record)->isAlongX();
   m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
   FunctionGraphController::reloadBannerView();
   if (!displayDerivative) {
@@ -86,7 +86,7 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
 
 double GraphController::defaultCursorT(Ion::Storage::Record record) {
   ExpiringPointer<NewFunction> function = functionStore()->modelForRecord(record);
-  if (function->plotType() == NewFunction::PlotType::Cartesian) {
+  if (function->isAlongX()) {
     return FunctionGraphController::defaultCursorT(record);
   }
   return function->tMin();
@@ -106,7 +106,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
       continue;
     }
     ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(currentRecord);
-    assert(f->plotType() == NewFunction::PlotType::Cartesian);
+    assert(f->isAlongX());
     /* Select the closest horizontal curve, then the closest vertically, then
      * the lowest curve index. */
     double currentTMin = f->tMin();

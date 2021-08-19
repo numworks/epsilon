@@ -1,3 +1,0 @@
-[submodule "epsilon-bootloader"]
-	path = epsilon-bootloader
-	url = git@github.com:numworks/epsilon-bootloader.git

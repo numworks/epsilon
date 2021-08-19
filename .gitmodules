@@ -1,0 +1,3 @@
+[submodule "ion/src/device/n0110/epsilon-bootloader"]
+	path = ion/src/device/n0110/epsilon-bootloader
+	url = git@github.com:numworks/epsilon-bootloader.git

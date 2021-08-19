@@ -140,7 +140,7 @@ private:
   class Model : public Shared::ExpressionModel {
     // TODO Hugo : Add derivative
   public:
-    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal) {}
+    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined) {}
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
     bool hasTwoCurves() const { return m_hasTwoCurves; }
@@ -150,6 +150,8 @@ private:
     void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) override;
     mutable bool m_hasTwoCurves;
     mutable Poincare::ExpressionNode::Type m_equationSymbol;
+    // TODO Hugo : Avoid this
+    mutable PlotType m_plotType;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_model; }

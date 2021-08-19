@@ -36,8 +36,8 @@ private:
 
   // Computation
   float computeEstimate(float x, float n);
-  float computeZ(float p0, float p, int n);
-  float computeStandardError(float pEstimate, int n);
+  float computeZ(float p0, float p, float n);
+  float computeStandardError(float pEstimate, float n);
 };
 
 }  // namespace Probability

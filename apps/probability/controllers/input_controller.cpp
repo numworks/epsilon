@@ -131,6 +131,7 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
 
 Escher::HighlightCell * InputController::reusableParameterCell(int index, int type) {
   if (type == k_parameterCellType) {
+    assert(index >= 0 && index < k_numberOfReusableCells);
     return &(m_parameterCells[index]);
   }
   assert(type == k_significanceCellType);
@@ -149,7 +150,6 @@ bool Probability::InputController::textFieldDidFinishEditing(Escher::TextField *
                                                              const char * text,
                                                              Ion::Events::Event event) {
   bool res = FloatParameterPage::textFieldDidFinishEditing(textField, text, event);
-  resetMemoization();
   m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
   return res;
 }

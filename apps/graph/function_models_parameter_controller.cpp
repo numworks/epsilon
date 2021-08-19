@@ -11,6 +11,7 @@ using namespace Escher;
 namespace Graph {
 
 constexpr const char * FunctionModelsParameterController::k_models[k_numberOfModels];
+constexpr I18n::Message FunctionModelsParameterController::k_modelDescriptions[k_numberOfExpressionCells];
 
 FunctionModelsParameterController::FunctionModelsParameterController(Responder * parentResponder, void * functionStore, ListController * listController) :
   SelectableListViewController(parentResponder),

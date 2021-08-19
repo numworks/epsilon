@@ -1,6 +1,11 @@
 #include "expression_model.h"
 #include "global_context.h"
 #include "poincare_helpers.h"
+#include "function.h"
+#include <ion/unicode/utf8_helper.h>
+#include <poincare/comparison_operator.h>
+#include <poincare/function.h>
+#include <poincare/symbol.h>
 #include <apps/apps_container.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/undefined.h>
@@ -49,11 +54,10 @@ void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t
 bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poincare::Context * context) const {
   if (m_circular == -1) {
     Expression e = expressionClone(record);
-    if (e.type() == ExpressionNode::Type::Equal) {
+    if (!e.isUninitialized() && e.type() == ExpressionNode::Type::Equal) {
       if (e.childAtIndex(0).type() == ExpressionNode::Type::Function) {
         e = e.childAtIndex(1);
-      }
-      else {
+      } else {
         return false;
       }
     }
@@ -159,6 +163,12 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   error = record->setValue(newData);
   // Any error would have occured at the first call to setValue
   assert(error == Ion::Storage::Record::ErrorStatus::None);
+  if (!newExpression.isUninitialized() && Poincare::ComparisonOperator::IsComparisonOperatorType(newExpression.type()) && newExpression.childAtIndex(0).type() == ExpressionNode::Type::Function) {
+    Poincare::Expression a = newExpression.childAtIndex(0);
+    Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
+    Ion::Storage::Record::ErrorStatus error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
+    assert(error == Ion::Storage::Record::ErrorStatus::None);
+  }
 
   /* Here we delete only the elements relative to the expression model kept in
    * this handle. */
@@ -184,6 +194,38 @@ Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, Co
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c, context);
+
+    if (!expressionToStore.isUninitialized() && Poincare::ComparisonOperator::IsComparisonOperatorType(expressionToStore.type())) {
+      constexpr size_t maxBaseNameSize = Poincare::SymbolAbstract::k_maxNameSize;
+      const char * firstParenthesis = UTF8Helper::CodePointSearch(c, CodePoint('(')); // CopyUntilCodePoint
+      const size_t foundBaseNameLength = firstParenthesis - c;
+      if (firstParenthesis[0] != 0 && foundBaseNameLength + 1 <= maxBaseNameSize && foundBaseNameLength > 0 && firstParenthesis[0] != 0) {
+        char baseName[maxBaseNameSize];
+        memcpy(baseName, c, foundBaseNameLength);
+        baseName[foundBaseNameLength] = 0;
+        if (Function::BaseNameCompliant(baseName) == Function::NameNotCompliantError::None) {
+          UTF8Decoder decoder(firstParenthesis);
+          decoder.nextCodePoint();
+          CodePoint newSymbol = decoder.nextCodePoint();
+          if (newSymbol == CodePoint('x') || newSymbol == CodePoint('t') || newSymbol == CodePoint(UCodePointGreekSmallLetterTheta)) {
+            if (decoder.nextCodePoint() == CodePoint(')')) {
+              CodePoint comparisonOperator = decoder.nextCodePoint();
+              if (comparisonOperator == CodePoint('=') || comparisonOperator == CodePoint('<') || comparisonOperator == CodePoint('>') || comparisonOperator == CodePoint(UCodePointInferiorEqual) || comparisonOperator == CodePoint(UCodePointSuperiorEqual)) {
+                // Finally, we have a function assignment situation.
+                // Create the function
+                Poincare::Function function = Poincare::Function::Builder(baseName, foundBaseNameLength, Poincare::Symbol::Builder(newSymbol));
+                // Update the expression
+                expressionToStore.replaceChildAtIndexInPlace(0, function);
+                expressionToStore.childAtIndex(1).replaceSymbolWithExpression(Symbol::Builder(newSymbol), Symbol::Builder(UCodePointUnknown));
+                // Symbol has already been replaced
+                symbol = 0;
+              }
+            }
+          }
+        }
+      }
+    }
+
     if (!expressionToStore.isUninitialized() && symbol != 0) {
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknown));
     }

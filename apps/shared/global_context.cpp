@@ -3,6 +3,7 @@
 #include "sequence.h"
 #include "poincare_helpers.h"
 #include <poincare/rational.h>
+#include <poincare/equal.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
@@ -171,7 +172,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const 
     }
     recordToSet = newModel;
   }
-  error = Graph::NewFunction(recordToSet).setExpressionContent(expressionToStore);
+  Poincare::Expression equation = Poincare::Equal::Builder(symbol.clone(), expressionToStore);
+  error = Graph::NewFunction(recordToSet).setExpressionContent(equation);
   return error;
 }
 

@@ -6,6 +6,7 @@
 #include <poincare/polynomial.h>
 #include <poincare/zoom.h>
 #include <poincare/integral.h>
+#include <poincare/function.h>
 #include <poincare/float.h>
 #include <poincare/matrix.h>
 #include <poincare/symbol_abstract.h>
@@ -263,6 +264,7 @@ CodePoint NewFunction::symbol() const {
 
 Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // TODO Hugo : Add todo expressionReduced on circularity ?
+  m_plotType = PlotType::Undefined;
   if (record->fullName() != nullptr && record->fullName()[0] != '?' && isCircularlyDefined(record, context)) {
     return Undefined::Builder();
   }
@@ -273,11 +275,22 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
   // TODO Hugo : Handle function assignment from outside
   assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
   m_equationSymbol = result.type();
-  if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
+  if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && (
+      result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))
+      || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))
+      || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('t'))
+      )
+    ) {
+    // TODO Hugo : Improve that
+    if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))) {
+      m_plotType = PlotType::Polar;
+    } else if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))) {
+      m_plotType = PlotType::Cartesian;
+    } else {
+      m_plotType = PlotType::Parametric;
+    }
     // Named function
     result = result.childAtIndex(1);
-    // TOCHECK Hugo
-    assert(record->fullName() != nullptr && record->fullName()[0] != '?');
   } else {
     result = Subtraction::Builder(result.childAtIndex(0), result.childAtIndex(1));
     // ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(
@@ -347,13 +360,7 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
 }
 
 void NewFunction::Model::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
-  if (!expressionToStore.isUninitialized()) {
-    if (ComparisonOperator::IsComparisonOperatorType(expressionToStore.type()) && expressionToStore.childAtIndex(0).type() == ExpressionNode::Type::Function && expressionToStore.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
-      Expression temp = expressionToStore.childAtIndex(0).clone();
-      SymbolAbstract * symbol = static_cast<SymbolAbstract *>(&temp);
-      record->setName(symbol->name());
-    }
-  }
+  // TODO Hugo : No need to override this method,
   ExpressionModel::updateNewDataWithExpression(record, expressionToStore, expressionAddress, expressionToStoreSize, previousExpressionSize);
 }
 
@@ -380,18 +387,18 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
    */
   /* TODO Hugo : Here we need to compute expressionEquation to make sure we get the
    * equation symbol right. It could be improved. */
+  // TODO Hugo : Improve how Cartesian, Polar and parametric curves are detected.
   Expression equation = expressionEquation(context);
   recordData()->setEquationSymbol(m_model.m_equationSymbol);
+  if (m_model.m_plotType != PlotType::Undefined) {
+    // Polar, parametric, or cartesian decided in expressionEquation.
+    return recordData()->setPlotType(m_model.m_plotType);
+  }
 
   if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
     return recordData()->setPlotType(PlotType::Inequation);
   }
 
-  // TODO Hugo : proprify returns here
-  if (isNamed()) {
-    // TODO Hugo :retrieve symbol, -> Polar, Parametric or Cartsian
-    return recordData()->setPlotType(PlotType::Cartesian);
-  }
   int yDeg = yDegree(context);
   int xDeg = xDegree(context);
   if (yDeg == 0 && xDeg == 0) {
@@ -711,13 +718,13 @@ Expression NewFunction::sumBetweenBounds(double start, double end, Context * con
 
 Ion::Storage::Record::ErrorStatus NewFunction::setContent(const char * c, Poincare::Context * context) {
   Ion::Storage::Record::ErrorStatus error = Shared::ExpressionModelHandle::setContent(c, context);
-  if (error == Ion::Storage::Record::ErrorStatus::None) {
+  if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     bool previousAlongXStatus = isAlongX();
     updatePlotType(Preferences::AngleUnit::Radian, context);
     if (previousAlongXStatus != isAlongX()) {
       // Recompute the definition's domain
-      setTMin(isAlongX() ? 0.0 : -INFINITY);
-      setTMax(isAlongX() ? 2.0*Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit()) : INFINITY);
+      setTMin(!isAlongX() ? 0.0 : -INFINITY);
+      setTMax(!isAlongX() ? 2.0*Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit()) : INFINITY);
     }
   }
   return error;

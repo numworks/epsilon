@@ -21,7 +21,7 @@ OneMeanTStatistic::OneMeanTStatistic() {
 bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
   switch (i) {
     case ParamsOrder::N:
-      return p > 0;
+      return p > 1;
     case ParamsOrder::X:
     case ParamsOrder::S:
       return p >= 0;

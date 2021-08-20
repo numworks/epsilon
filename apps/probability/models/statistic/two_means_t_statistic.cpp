@@ -24,7 +24,7 @@ bool TwoMeansTStatistic::isValidParamAtIndex(int i, float p) {
   switch (i) {
     case ParamsOrder::N1:
     case ParamsOrder::N2:
-      return p > 0;
+      return p > 1;
     case ParamsOrder::S1:
     case ParamsOrder::S2:
       return p >= 0;

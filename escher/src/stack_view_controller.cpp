@@ -269,10 +269,12 @@ void StackViewController::setupActiveView() {
 }
 
 void StackViewController::setupActiveViewController() {
-  setupActiveView();
   ViewController * vc = topViewController();
   if (vc) {
     vc->setParentResponder(this);
+  }
+  setupActiveView();
+  if (vc) {
     Container::activeApp()->setFirstResponder(vc);
   }
 }

@@ -109,7 +109,7 @@ void View::setFrame(KDRect frame, bool force) {
 
   if (m_superview != nullptr) {
     /* We will move this view. This will leave a blank spot in its superview
-     * were it previously was.
+     * where it previously was.
      * At this point, we know that the only area that needs to be redrawn in the
      * superview is the old frame minus the part covered by the new frame.*/
     m_superview->markRectAsDirty(m_frame.differencedWith(frame));

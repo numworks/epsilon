@@ -125,6 +125,7 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
 }
 
 void StatisticCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position) const {
+  assert(std::isfinite(position));
   float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
   KDCoordinate graduationPosition = std::round(floatToPixel(Axis::Horizontal, position));
   // Graduation
@@ -172,11 +173,13 @@ void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float z) const
 }
 
 void StatisticCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
-  float lowerBound = m_statistic->estimate() - m_statistic->marginOfError();
-  float upperBound = m_statistic->estimate() + m_statistic->marginOfError();
-  drawLabelAndGraduationAtPosition(ctx, lowerBound);
   drawLabelAndGraduationAtPosition(ctx, m_statistic->estimate());
-  drawLabelAndGraduationAtPosition(ctx, upperBound);
+  if (std::isfinite(m_statistic->marginOfError())) {  // Can be INF if confidence level = 1
+    float lowerBound = m_statistic->estimate() - m_statistic->marginOfError();
+    float upperBound = m_statistic->estimate() + m_statistic->marginOfError();
+    drawLabelAndGraduationAtPosition(ctx, lowerBound);
+    drawLabelAndGraduationAtPosition(ctx, upperBound);
+  }
 }
 
 Poincare::Coordinate2D<float> StatisticCurveView::evaluateTestAtAbsissa(float x,

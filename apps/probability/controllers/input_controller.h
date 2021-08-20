@@ -35,9 +35,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
 
   void openPage(ViewController * nextPage,
                 KDColor backgroundColor = s_titleColor,
@@ -62,8 +59,8 @@ private:
   Statistic * m_statistic;
   ResultsController * m_resultsController;
 
-  constexpr static int k_numberOfReusableCells = Ion::Display::Height /
-                                                 Escher::TableCell::k_minimalLargeFontCellHeight + 1;
+  constexpr static int k_numberOfReusableCells =
+      Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 1;
   constexpr static int k_significanceCellType = 2;
 
   LayoutCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];

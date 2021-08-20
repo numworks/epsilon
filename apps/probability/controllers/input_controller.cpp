@@ -146,14 +146,6 @@ bool Probability::InputController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool Probability::InputController::textFieldDidFinishEditing(Escher::TextField * textField,
-                                                             const char * text,
-                                                             Ion::Events::Event event) {
-  bool res = FloatParameterPage::textFieldDidFinishEditing(textField, text, event);
-  m_selectableTableView.reloadCellAtLocation(selectedColumn(), selectedRow());
-  return res;
-}
-
 bool Probability::InputController::isCellEditing(Escher::HighlightCell * cell, int index) {
   if (index == m_statistic->indexOfThreshold()) {
     return static_cast<MessageTableCellWithSeparator *>(cell)

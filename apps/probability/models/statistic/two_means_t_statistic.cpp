@@ -126,13 +126,13 @@ float TwoMeansTStatistic::computeT(float deltaMean,
   return ((meanSample1 - meanSample2) - (deltaMean)) / computeStandardError(s1, n1, s2, n2);
 }
 
-float TwoMeansTStatistic::computeDegreesOfFreedom(float s1, int n1, float s2, int n2) {
+float TwoMeansTStatistic::computeDegreesOfFreedom(float s1, float n1, float s2, float n2) {
   float v1 = pow(s1, 2) / n1;
   float v2 = pow(s2, 2) / n2;
   return pow(v1 + v2, 2) / (pow(v1, 2) / (n1 - 1) + pow(v2, 2) / (n2 - 1));
 }
 
-float TwoMeansTStatistic::computeStandardError(float s1, int n1, float s2, int n2) {
+float TwoMeansTStatistic::computeStandardError(float s1, float n1, float s2, float n2) {
   return sqrt((s1 * s1 / n1 + s2 * s2 / n2));
 }
 

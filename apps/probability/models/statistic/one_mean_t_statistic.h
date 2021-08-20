@@ -31,7 +31,7 @@ private:
   float n() { return m_params[ParamsOrder::N]; }
 
   // Computation
-  float computeDegreesOfFreedom(int n);
+  float computeDegreesOfFreedom(float n);
   float computeT(float mean, float meanSample, float s, float n);
   float computeStandardError(float s, float n);
 

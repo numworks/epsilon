@@ -30,7 +30,7 @@ private:
 
   // Computation
   float computeZ(float meanSample, float mean, float n, float sigma);
-  float computeStandardError(float sigma, int n);
+  float computeStandardError(float sigma, float n);
 
   float m_params[k_numberOfParams];
 };

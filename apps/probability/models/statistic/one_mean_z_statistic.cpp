@@ -65,7 +65,7 @@ float OneMeanZStatistic::computeZ(float mean, float meanSample, float n, float s
   return (meanSample - mean) / (sigma / sqrt(n));
 }
 
-float OneMeanZStatistic::computeStandardError(float sigma, int n) {
+float OneMeanZStatistic::computeStandardError(float sigma, float n) {
   return sigma / sqrt(n);
 }
 

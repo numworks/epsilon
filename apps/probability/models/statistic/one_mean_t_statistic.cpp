@@ -66,7 +66,7 @@ ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {
   return ParameterRepr{};
 }
 
-float OneMeanTStatistic::computeDegreesOfFreedom(int n) {
+float OneMeanTStatistic::computeDegreesOfFreedom(float n) {
   return n - 1;
 }
 

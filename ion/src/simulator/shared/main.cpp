@@ -114,7 +114,9 @@ int main(int argc, char * argv[]) {
   if (screenshotPath) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(screenshotPath);
   }
+#if !defined(_WIN32)
   signal(SIGUSR1, Ion::Simulator::Actions::handleUSR1Sig);
+#endif
 #endif
 
   // Default language

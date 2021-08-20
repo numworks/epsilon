@@ -45,11 +45,13 @@ void saveStateForReload() {
 }
 
 void handleUSR1Sig(int s) {
+#if !defined(_WIN32)
   if (s == SIGUSR1) {
     saveStateForReload();
     Window::shutdown();
     exit(0);
   }
+#endif
 }
 
 }

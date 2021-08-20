@@ -14,6 +14,7 @@ jobs:
   android:
     runs-on: ubuntu-latest
     steps:
+      - run: pip3 install lz4
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=android
       - run: make PLATFORM=simulator TARGET=android epsilon.apk
@@ -26,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@2020-q2
       - uses: actions/checkout@v2
       - run: make MODEL=n0100 epsilon.dfu
@@ -40,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - run: pip3 install lz4
       - uses: numworks/setup-arm-toolchain@2020-q2
       - uses: actions/checkout@v2
       - run: make MODEL=n0110 kernel.A.elf
@@ -79,6 +82,7 @@ jobs:
       - uses: numworks/setup-emscripten@v1
         with:
           sdk: 1.39.16-fastcomp
+      - run: pip3 install lz4
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=web
       - run: make PLATFORM=simulator TARGET=web epsilon.zip
@@ -92,6 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - run: pip3 install lz4
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.bin
@@ -105,6 +110,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk
+      - run: pip3 install lz4
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.app
@@ -118,6 +124,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk
+      - run: pip3 install lz4
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa

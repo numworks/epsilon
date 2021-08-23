@@ -5,15 +5,15 @@
 namespace Escher {
 
 void TransparentImageView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (m_image == nullptr) {
+    return;
+  }
   if (!m_image->hasTransparency()) {
     ImageView::drawRect(ctx, rect);
   } else {
     // Draw transparent image, blended with background color
     // We could also implement blending with the screen with ctx->blendRectWithMask
 
-    if (m_image == nullptr) {
-      return;
-    }
     assert(bounds().width() == m_image->width());
     assert(bounds().height() == m_image->height());
 

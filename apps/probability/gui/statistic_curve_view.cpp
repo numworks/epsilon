@@ -43,7 +43,8 @@ void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
   float z = m_statistic->testCriticalValue();
   float zAlpha = m_statistic->zAlpha();
 
-  // Coloring under curve
+  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
+  drawZLabelAndGraduation(ctx, z);
   colorUnderCurve(ctx, rect, m_statistic->hypothesisParams()->op(), z, zAlpha);
   drawCartesianCurve(ctx,
                      rect,
@@ -53,8 +54,6 @@ void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
                      m_statistic,
                      nullptr,
                      Escher::Palette::GrayVeryDark);
-  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
-  drawZLabelAndGraduation(ctx, z);
 }
 
 void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
@@ -80,6 +79,8 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
                                          float zAlpha) const {
   if (op == HypothesisParams::ComparisonOperator::Different) {
     // Recurse for both colors
+    z = std::fabs(z);
+    assert(zAlpha > 0);
     colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z, zAlpha);
     colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z, -zAlpha);
     return;

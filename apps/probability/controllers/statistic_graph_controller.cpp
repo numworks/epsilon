@@ -9,11 +9,7 @@ namespace Probability {
 
 StatisticGraphController::StatisticGraphController(StackViewController * stack,
                                                    Statistic * statistic) :
-    Page(stack),
-    m_graphView(&m_rangeLeft, &m_rangeRight),
-    m_rangeLeft(m_graphView.curveViewLeft(), true),
-    m_rangeRight(m_graphView.curveViewRight(), false),
-    m_statistic(statistic) {
+    Page(stack), m_graphView(statistic, &m_range, this), m_statistic(statistic) {
 }
 
 ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
@@ -43,25 +39,8 @@ const char * StatisticGraphController::title() {
 
 void StatisticGraphController::didBecomeFirstResponder() {
   App::app()->setPage(Data::Page::Graph);
-  TestConclusionView::Type t = m_statistic->canRejectNull() ? TestConclusionView::Type::Success
-                                                         : TestConclusionView::Type::Failure;
-  GraphDisplayMode m = m_statistic->hypothesisParams()->op() ==
-                                   HypothesisParams::ComparisonOperator::Different &&
-                               App::app()->subapp() == Data::SubApp::Tests
-                           ? GraphDisplayMode::TwoCurve
-                           : GraphDisplayMode::OneCurve;
-  StatisticGraphView::LegendPosition pos = m_statistic->hypothesisParams()->op() ==
-                                                   HypothesisParams::ComparisonOperator::Lower
-                                               ? StatisticGraphView::LegendPosition::Left
-                                               : StatisticGraphView::LegendPosition::Right;
-  m_graphView.setMode(m);
-  m_graphView.setLegendPosition(pos);
-  m_graphView.setType(t);
   m_graphView.setStatistic(m_statistic);
-  m_rangeLeft.setMode(m);
-  m_rangeRight.setMode(m);
-  m_rangeLeft.setStatistic(m_statistic);
-  m_rangeRight.setStatistic(m_statistic);
+  m_range.setStatistic(m_statistic);
   if (App::app()->subapp() == Data::SubApp::Intervals) {
     m_graphView.intervalConclusionView()->setInterval(m_statistic->estimate(),
                                                       m_statistic->marginOfError());
@@ -86,6 +65,10 @@ bool StatisticGraphController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+bool StatisticGraphController::shouldPositionLegendLeft() {
+  return m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Lower;
 }
 
 }  // namespace Probability

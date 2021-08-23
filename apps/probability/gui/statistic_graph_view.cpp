@@ -4,9 +4,13 @@
 
 namespace Probability {
 
-StatisticGraphView::StatisticGraphView(StatisticViewRange * rangeLeft,
-                                       StatisticViewRange * rangeRight) :
-    m_separatorView(Palette::WallScreen), m_curveViewLeft(rangeLeft), m_curveViewRight(rangeRight) {
+StatisticGraphView::StatisticGraphView(Statistic * statistic,
+                                       StatisticViewRange * range,
+                                       LegendPositionDataSource * legendPositionDataSource) :
+    m_separatorView(Palette::WallScreen),
+    m_curveView(range),
+    m_legendPositionDataSource(legendPositionDataSource),
+    m_testConclusionView(statistic) {
 }
 
 KDSize StatisticGraphView::minimalSizeForOptimalDisplay() const {
@@ -14,18 +18,17 @@ KDSize StatisticGraphView::minimalSizeForOptimalDisplay() const {
 }
 
 void StatisticGraphView::setStatistic(Statistic * statistic) {
-  m_curveViewLeft.setStatistic(statistic);
-  m_curveViewRight.setStatistic(statistic);
+  m_curveView.setStatistic(statistic);
 }
 
 void StatisticGraphView::reload() {
+  m_testConclusionView.reload();
   layoutSubviews();
-  m_curveViewLeft.reload();
-  m_curveViewRight.reload();
+  m_curveView.reload();
 }
 
 int StatisticGraphView::numberOfSubviews() const {
-  return 5 - (App::app()->subapp() == Data::SubApp::Intervals);
+  return 4 - (App::app()->subapp() == Data::SubApp::Intervals);
 }
 
 void StatisticGraphView::layoutSubviews(bool force) {
@@ -33,23 +36,14 @@ void StatisticGraphView::layoutSubviews(bool force) {
   int availableWidth = m_frame.width();
   int curveViewHeight = availableHeight - k_conclusionViewHeight;
   // Layout curve views and sep according to mode
-  if (m_mode == GraphDisplayMode::OneCurve) {
-    m_curveViewLeft.setFrame(KDRect(KDPointZero, KDSize(availableWidth, curveViewHeight)), force);
-    m_separatorView.setFrame(KDRectZero, force);
-    m_curveViewRight.setFrame(KDRectZero, force);
-  } else {
-    int width = (availableWidth - k_separatorWidth) / 2;
-    KDSize size(width, curveViewHeight);
-    m_curveViewLeft.setFrame(KDRect(KDPointZero, size), force);
-    m_separatorView.setFrame(KDRect(KDPoint(width, 0), KDSize(k_separatorWidth, curveViewHeight)),
-                             force);
-    m_curveViewRight.setFrame(KDRect(KDPoint(width + k_separatorWidth, 0), size), force);
-  }
+  m_curveView.setFrame(KDRect(KDPointZero, KDSize(availableWidth, curveViewHeight)), force);
+  m_separatorView.setFrame(KDRectZero, force);
+
   conclusionView()->setFrame(
       KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)),
       true);
   KDSize k_legendSize = m_legend.minimalSizeForOptimalDisplay();
-  KDPoint legendOrigin = m_legendPosition == LegendPosition::Left
+  KDPoint legendOrigin = m_legendPositionDataSource->shouldPositionLegendLeft()
                              ? KDPoint(k_legendMarginRight, k_legendMarginTop)
                              : KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight,
                                        k_legendMarginTop);
@@ -58,11 +52,7 @@ void StatisticGraphView::layoutSubviews(bool force) {
 
 Escher::View * StatisticGraphView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
-  Escher::View * subviews[] = {&m_curveViewLeft,
-                               &m_curveViewRight,
-                               &m_separatorView,
-                               conclusionView(),
-                               &m_legend};
+  Escher::View * subviews[] = {&m_curveView, &m_separatorView, conclusionView(), &m_legend};
   return subviews[i];
 }
 

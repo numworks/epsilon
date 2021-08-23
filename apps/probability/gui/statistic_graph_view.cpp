@@ -5,10 +5,9 @@
 namespace Probability {
 
 StatisticGraphView::StatisticGraphView(Statistic * statistic,
-                                       StatisticViewRange * range,
                                        LegendPositionDataSource * legendPositionDataSource) :
     m_separatorView(Palette::WallScreen),
-    m_curveView(range),
+    m_curveView(statistic),
     m_legendPositionDataSource(legendPositionDataSource),
     m_testConclusionView(statistic) {
 }

@@ -22,6 +22,10 @@ public:
 
   void computeInterval() override {}
 
+  float xMin() const override;
+  float xMax() const override;
+  float yMax() const override;
+  
   constexpr static float k_undefinedValue = NAN;
 
 protected:

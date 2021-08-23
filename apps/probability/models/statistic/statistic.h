@@ -2,6 +2,7 @@
 #define APPS_PROBABILITY_MODELS_STATISTIC_STATISTIC_H
 
 #include <apps/i18n.h>
+#include <apps/shared/curve_view_range.h>
 #include <poincare/layout.h>
 
 #include "probability/models/data_enums.h"
@@ -17,7 +18,7 @@ struct ParameterRepr {
 /* A Statistic is something that is computed from a sample and whose distribution is known.
  * From its distribution, we can compute statistical test results and confidence intervals.
  */
-class Statistic {
+class Statistic : public Shared::CurveViewRange {
 public:
   Statistic() : m_threshold(-1) {}
   virtual ~Statistic() = default;
@@ -85,7 +86,17 @@ public:
                                   Data::TestType type,
                                   Data::CategoricalType categoricalType);
 
+  // CurveViewRange
+  float yMin() const override;
+
 protected:
+  // TODO factor with Distribution
+  constexpr static float k_displayTopMarginRatio = 0.05f;
+  constexpr static float k_displayLeftMarginRatio = 0.05f;
+  constexpr static float k_displayRightMarginRatio = 0.05f;
+  constexpr static float k_displayBottomMarginRatio = 0.2f;
+  constexpr static float k_displayWidthToSTDRatio = 5.f;
+
   virtual int numberOfStatisticParameters() const = 0;
   virtual ParameterRepr paramReprAtIndex(int i) const = 0;
   virtual float * paramArray() = 0;

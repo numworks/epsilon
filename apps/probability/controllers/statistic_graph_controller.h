@@ -10,7 +10,7 @@
 
 namespace Probability {
 
-class StatisticGraphController : public Page {
+class StatisticGraphController : public Page, public LegendPositionDataSource {
 public:
   StatisticGraphController(StackViewController * stack, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override;
@@ -19,12 +19,13 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
+  bool shouldPositionLegendLeft() override;
+
 private:
   constexpr static int k_titleBufferSize = 30;
   char m_titleBuffer[k_titleBufferSize];
   StatisticGraphView m_graphView;
-  StatisticViewRange m_rangeLeft;
-  StatisticViewRange m_rangeRight;
+  StatisticViewRange m_range;
   Statistic * m_statistic;
 };
 }  // namespace Probability

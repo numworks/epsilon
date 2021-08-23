@@ -16,40 +16,12 @@
 
 namespace Probability {
 
-TestConclusionView::TestConclusionView() {
+TestConclusionView::TestConclusionView(Statistic * statistic) : m_statistic(statistic) {
   m_textView1.setBackgroundColor(Escher::Palette::WallScreen);
   m_textView1.setAlignment(0.5f, 0.5f);
   m_textView2.setBackgroundColor(Escher::Palette::WallScreen);
   m_textView2.setAlignment(0.5f, 0.5f);
   m_icon.setImage(ImageStore::TestSuccess);
-}
-
-void TestConclusionView::setType(Type t) {
-  I18n::Message message;
-  Poincare::HorizontalLayout layout = Poincare::HorizontalLayout::Builder(
-      Poincare::CodePointLayout::Builder('H'),
-      Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('0'),
-          Poincare::VerticalOffsetLayoutNode::Position::Subscript));
-  if (t == Type::Success) {
-    layout.addOrMergeChildAtIndex(layoutFromText(I18n::translate(I18n::Message::ConclusionSuccess1)),
-                                  2,
-                                  true);
-    message = I18n::Message::ConclusionSuccess2;
-  } else {
-    layout.addOrMergeChildAtIndex(layoutFromText(I18n::translate(I18n::Message::ConclusionFailure1)),
-                                  2,
-                                  true);
-    message = I18n::Message::ConclusionFailure2;
-  }
-  m_textView1.setLayout(layout);
-  m_textView2.setMessage(message);
-  if (t == Type::Success) {
-    m_icon.setImage(ImageStore::TestSuccess);
-  } else {
-    m_icon.setImage(nullptr);
-  }
-  markRectAsDirty(bounds());
 }
 
 Escher::View * TestConclusionView::subviewAtIndex(int i) {
@@ -80,6 +52,40 @@ KDSize TestConclusionView::minimalSizeForOptimalDisplay() const {
   KDSize textSize2 = m_textView2.minimalSizeForOptimalDisplay();
   return KDSize(iconSize.width() + std::max(textSize1.width(), textSize2.width()),
                 std::max<int>(iconSize.height(), textSize1.height() + textSize2.height()));
+}
+
+void TestConclusionView::reload() {
+  fillConclusionTextViews(m_statistic->canRejectNull());
+  if (m_statistic->canRejectNull()) {
+    m_icon.setImage(ImageStore::TestSuccess);
+  } else {
+    m_icon.setImage(nullptr);
+  }
+  markRectAsDirty(bounds());
+}
+
+void TestConclusionView::fillConclusionTextViews(bool isTestSuccessfull) {
+  I18n::Message message;
+  Poincare::HorizontalLayout layout = Poincare::HorizontalLayout::Builder(
+      Poincare::CodePointLayout::Builder('H'),
+      Poincare::VerticalOffsetLayout::Builder(
+          Poincare::CodePointLayout::Builder('0'),
+          Poincare::VerticalOffsetLayoutNode::Position::Subscript));
+  if (isTestSuccessfull) {
+    layout.addOrMergeChildAtIndex(
+        layoutFromText(I18n::translate(I18n::Message::ConclusionSuccess1)),
+        2,
+        true);
+    message = I18n::Message::ConclusionSuccess2;
+  } else {
+    layout.addOrMergeChildAtIndex(
+        layoutFromText(I18n::translate(I18n::Message::ConclusionFailure1)),
+        2,
+        true);
+    message = I18n::Message::ConclusionFailure2;
+  }
+  m_textView1.setLayout(layout);
+  m_textView2.setMessage(message);
 }
 
 }  // namespace Probability

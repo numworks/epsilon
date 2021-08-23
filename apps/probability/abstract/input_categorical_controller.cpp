@@ -25,9 +25,11 @@ bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textFi
 bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField,
                                                            const char * text,
                                                            Ion::Events::Event event) {
-  // Parse significance level
+  // Parse and check significance level
   float p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false) ||
+      !m_statistic->isValidParamAtIndex(m_statistic->indexOfThreshold(), p)) {
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   m_statistic->setThreshold(p);

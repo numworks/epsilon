@@ -38,6 +38,20 @@ float Chi2Statistic::cumulativeNormalizedInverseDistributionFunction(float proba
   return Chi2Law::CumulativeDistributiveInverseForProbability(proba, m_degreesOfFreedom);
 }
 
+float Chi2Statistic::xMin() const {
+  return -k_displayLeftMarginRatio * xMax();
+}
+
+float Chi2Statistic::xMax() const {
+  return (1 + k_displayRightMarginRatio) * (m_degreesOfFreedom + k_displayWidthToSTDRatio * std::sqrt(m_degreesOfFreedom));
+}
+
+float Chi2Statistic::yMax() const {
+  // TODO factor with ChiSquareDistribution
+  float max = m_degreesOfFreedom <= 2 ? 0.5 : normalizedDensityFunction(m_degreesOfFreedom - 1) * 1.2;
+  return (1 + k_displayTopMarginRatio) * max;
+}
+
 float Chi2Statistic::computeChi2() {
   float z = 0;
   int n = numberOfValuePairs();

@@ -23,4 +23,16 @@ float TStatistic::cumulativeNormalizedInverseDistributionFunction(float proba) c
   return StudentLaw::CumulativeDistributiveInverseForProbability(proba, m_degreesOfFreedom);
 }
 
+float TStatistic::xMin() const {
+  return -k_displayWidthToSTDRatio;
+}
+
+float TStatistic::xMax() const {
+  return k_displayWidthToSTDRatio;
+}
+
+float TStatistic::yMax() const {
+  return (1 + k_displayTopMarginRatio) * normalizedDensityFunction(0);
+}
+
 }  // namespace Probability

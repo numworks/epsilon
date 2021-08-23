@@ -15,6 +15,9 @@ public:
   float cumulativeNormalizedDistributionFunction(float x) const override;
   float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
 
+  float xMin() const override;
+  float xMax() const override;
+  float yMax() const override;
 };
 
 }  // namespace Probability

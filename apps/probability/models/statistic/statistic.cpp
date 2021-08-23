@@ -101,6 +101,11 @@ void Statistic::initializeStatistic(Statistic * statistic,
   }
 }
 
+float Statistic::yMin() const {
+  // TODO factor with Distribution
+  return -k_displayBottomMarginRatio * yMax();
+}
+
 float Statistic::computePValue(float z, HypothesisParams::ComparisonOperator op) const {
   // Compute probability of obtaining a more extreme result
   switch (op) {

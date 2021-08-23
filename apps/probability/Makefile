@@ -21,6 +21,8 @@ app_probability_src = $(addprefix apps/probability/,\
   text_helpers.cpp \
 )
 
+app_probability_test_src += apps/probability/text_helpers.cpp
+
 app_probability_src += $(addprefix apps/probability/models/,\
   statistic_view_range.cpp \
   student_law.cpp \
@@ -129,6 +131,7 @@ tests_src += $(addprefix apps/probability/test/,\
   chi2_law.cpp \
   statistics.cpp \
   data.cpp \
+  snprintf.cpp \
 )
 
 # Allow #include "probability/..."

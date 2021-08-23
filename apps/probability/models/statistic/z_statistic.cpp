@@ -18,4 +18,16 @@ float ZStatistic::cumulativeNormalizedInverseDistributionFunction(float proba) c
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(proba, 0, 1);
 }
 
+float ZStatistic::xMin() const {
+  return -k_displayWidthToSTDRatio;
+}
+
+float ZStatistic::xMax() const {
+  return k_displayWidthToSTDRatio;
+}
+
+float ZStatistic::yMax() const {
+  return (1 + k_displayTopMarginRatio) * normalizedDensityFunction(0);
+}
+
 }  // namespace Probability

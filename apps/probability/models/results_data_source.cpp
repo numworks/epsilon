@@ -30,6 +30,10 @@ int ResultsDataSource::numberOfRows() const {
   return index + 1 /* button */;
 }
 
+KDCoordinate ResultsDataSource::cellWidth() {
+  return Ion::Display::Width - Escher::Metric::CommonLeftMargin - Escher::Metric::CommonRightMargin;
+}
+
 void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
   if (i < numberOfRows() - 1) {
     LayoutCellWithBufferWithMessage * messageCell = static_cast<LayoutCellWithBufferWithMessage *>(

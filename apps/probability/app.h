@@ -62,13 +62,6 @@ public:
   Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }
 
   TELEMETRY_ID("Probability");
-  // TODO better handling
-  bool textFieldDidFinishEditing(TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) {
-    textField->setText(text);
-    return true;
-  }
 
 private:
   App(Snapshot *);

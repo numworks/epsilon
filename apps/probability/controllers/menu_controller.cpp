@@ -33,6 +33,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
     m_globalDistribution(globalDistribution),
     m_globalCalculation(globalCalculation),
     m_contentView(&m_selectableTableView) {
+  selectRow(0);
   m_cells[k_indexOfProbability].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
   m_cells[k_indexOfProbability].setImage(ImageStore::Probability);
   m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest);
@@ -43,10 +44,6 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
 
 void MenuController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::Menu);
-  // TODO factor out
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  }
   m_selectableTableView.reloadData(true);
 }
 

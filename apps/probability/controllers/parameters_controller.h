@@ -4,13 +4,14 @@
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <apps/shared/float_parameter_controller.h>
 #include "probability/models/distribution/distribution.h"
+#include "probability/gui/page_controller.h"
 #include "calculation_controller.h"
 
 namespace Probability {
 
-class ParametersController : public Shared::FloatParameterController<double> {
+class ParametersController : public DoubleParameterPage {
 public:
-  ParametersController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
+  ParametersController(Escher::StackViewController * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
@@ -21,6 +22,13 @@ public:
   TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  void openPage(ViewController * nextPage,
+                KDColor backgroundColor = Palette::SubTab,
+                KDColor separatorColor = Palette::SubTab,
+                KDColor textColor = KDColorWhite) {
+    DoubleParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
+  }
+
 private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;

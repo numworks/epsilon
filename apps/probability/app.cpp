@@ -89,12 +89,20 @@ App::App(Snapshot * snapshot) :
   Data::CategoricalType categoricalType = snapshot->data()->categoricalType();
 
   initTableSelections(page, subapp, test, type, categoricalType);
-  // TODO open Parameters and Calculation too
   switch (page) {
     case Data::Page::Menu:
       break;
     case Data::Page::Distribution:
       m_menuController.openPage(&m_distributionController);
+      break;
+    case Data::Page::Parameters:
+      m_menuController.openPage(&m_distributionController);
+      m_distributionController.openPage(&m_parameterController);
+      break;
+    case Data::Page::ProbaGraph:
+      m_menuController.openPage(&m_distributionController);
+      m_distributionController.openPage(&m_parameterController);
+      m_parameterController.openPage(&m_calculationController);
       break;
     case Data::Page::Test:
       m_menuController.openPage(&m_testController);
@@ -171,10 +179,6 @@ App::App(Snapshot * snapshot) :
         m_hypothesisController.openPage(&m_inputController);
         m_inputController.openPage(&m_resultsController);
       }
-      break;
-    case Data::Page::ProbaGraph:
-      m_menuController.openPage(&m_distributionController);
-      m_stackViewController.push(&m_calculationController);
       break;
     case Data::Page::Graph:
       m_menuController.openPage(&m_testController);

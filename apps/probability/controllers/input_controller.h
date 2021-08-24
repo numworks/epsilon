@@ -57,7 +57,7 @@ private:
   bool setParameterAtIndex(int parameterIndex, float f) override;
 
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +
-                                           3 * Constants::k_shortFloatNumberOfChars + 2 /* op */;
+                                           3 * Constants::k_shortFloatNumberOfChars + 2 /* op */ + 10;
   char m_titleBuffer[k_titleBufferSize];
   Statistic * m_statistic;
   ResultsController * m_resultsController;

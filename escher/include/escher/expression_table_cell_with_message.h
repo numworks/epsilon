@@ -13,6 +13,10 @@ public:
   const View * subLabelView() const override { return &m_subLabelView; }
   void setHighlighted(bool highlight) override;
   void setSubLabelMessage(I18n::Message messageBody);
+
+protected:
+  bool isSublabelAlignedRight() const override { return false; }
+
 private:
   MessageTextView m_subLabelView;
 };

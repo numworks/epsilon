@@ -14,7 +14,7 @@ TwoProportionsStatistic::TwoProportionsStatistic() {
   m_params[ParamsOrder::X1] = 20;
   m_params[ParamsOrder::N1] = 50;
   m_params[ParamsOrder::X2] = 40;
-  m_params[ParamsOrder::N2] = 60;
+  m_params[ParamsOrder::N2] = 80;
 }
 
 bool TwoProportionsStatistic::isValidH0(float p) {

@@ -13,10 +13,10 @@ namespace Probability {
 
 TwoMeansTStatistic::TwoMeansTStatistic() {
   m_params[ParamsOrder::X1] = 20;
-  m_params[ParamsOrder::N1] = 50;
+  m_params[ParamsOrder::N1] = 10;
   m_params[ParamsOrder::S1] = 2;
-  m_params[ParamsOrder::X2] = 19;
-  m_params[ParamsOrder::N2] = 50;
+  m_params[ParamsOrder::X2] = 21;
+  m_params[ParamsOrder::N2] = 12;
   m_params[ParamsOrder::S2] = 2;
 }
 

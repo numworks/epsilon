@@ -17,8 +17,8 @@ public:
   Escher::View * subviewAtIndex(int i) override;
 
 private:
-  constexpr static int k_intervalBufferSize = Constants::k_shortBufferSize + 4 /*" ± "*/ +
-                                              Constants::k_shortBufferSize;
+  constexpr static int k_intervalBufferSize = Constants::k_shortFloatNumberOfChars + sizeof("±") +
+                                              Constants::k_shortFloatNumberOfChars + 1 /* \0 */;
   Escher::MessageTextView m_messageView;
   Escher::BufferTextView m_intervalView;
 };

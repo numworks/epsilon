@@ -19,7 +19,8 @@ InputCategoricalController::InputCategoricalController(
 
 bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField,
                                                               Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;  // TODO up and down too
+  return event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Up ||
+         event == Ion::Events::Down;
 }
 
 bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField,
@@ -38,7 +39,11 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   char buffer[bufferSize];
   defaultParseFloat(p, buffer, bufferSize);
   textField->setText(buffer);
-  m_contentView.selectView(InputCategoricalView::k_indexOfNext);
+  if (event == Ion::Events::Up) {
+    m_contentView.selectView(InputCategoricalView::k_indexOfTable);
+  } else {
+    m_contentView.selectView(InputCategoricalView::k_indexOfNext);
+  }
   return true;
 }
 

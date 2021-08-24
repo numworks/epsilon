@@ -15,7 +15,6 @@
 #include "probability/models/calculation/left_integral_calculation.h"
 #include "probability/models/calculation/right_integral_calculation.h"
 #include "probability/models/data.h"
-#include "probability/text_helpers.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -125,7 +124,7 @@ KDCoordinate CalculationController::columnWidth(int i) {
 }
 
 KDCoordinate CalculationController::rowHeight(int j) {
-  return 27; /* TODO query minimalSizeForOptimaDisplay */
+  return m_dropdown.minimalSizeForOptimalDisplay().height();
 }
 
 KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
@@ -270,32 +269,22 @@ void CalculationController::onDropdownSelected(int selectedRow) {
 }
 
 void CalculationController::updateTitle() {
-  // TODO use sprintf
   int currentChar = 0;
   for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
-    /* strlcpy returns the size of src, not the size copied, but it is not a
-     * problem here. */
-    currentChar += strlcpy(m_titleBuffer + currentChar,
-                           I18n::translate(m_distribution->parameterNameAtIndex(index)),
-                           k_titleBufferSize - currentChar);
-    if (currentChar >= k_titleBufferSize) {
-      break;
-    }
-    currentChar += strlcpy(m_titleBuffer + currentChar, " = ", k_titleBufferSize - currentChar);
-    if (currentChar >= k_titleBufferSize) {
-      break;
-    }
     constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
     defaultParseFloat(m_distribution->parameterValueAtIndex(index), buffer, bufferSize);
-    currentChar += strlcpy(m_titleBuffer + currentChar, buffer, k_titleBufferSize - currentChar);
-    if (currentChar + 1 >= k_titleBufferSize) {
+    currentChar += snprintf(m_titleBuffer + currentChar,
+                            k_titleBufferSize - currentChar,
+                            "%s = %s ",
+                            I18n::translate(m_distribution->parameterNameAtIndex(index)),
+                            buffer);
+    if (currentChar >= k_titleBufferSize - 1) {
+      assert(false);
       break;
     }
-    m_titleBuffer[currentChar++] = ' ';
   }
-  // Nullify last inserted character (' ') or end of buffer if full
-  m_titleBuffer[std::min(currentChar, k_titleBufferSize) - 1] = 0;
+  m_titleBuffer[currentChar] = '\0';  // Override last '\0'
 }
 
 }  // namespace Probability

@@ -9,6 +9,8 @@
 #include "probability/gui/distribution_curve_view.h"
 #include "probability/gui/dropdown_view.h"
 #include "probability/gui/calculation_popup_data_source.h"
+#include "probability/constants.h"
+#include "probability/text_helpers.h"
 
 namespace Probability {
 
@@ -81,7 +83,7 @@ class CalculationController : public Escher::ViewController,
   CalculationPopupDataSource m_imagesDataSource;
   Dropdown m_dropdown;  // TODO select CalculationCell when event Right and popup is showing
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
-  constexpr static int k_titleBufferSize = 30;
+  constexpr static int k_titleBufferSize = sizeof("d1 =  d2 =  ") + 2 * Constants::k_shortFloatNumberOfChars;
   char m_titleBuffer[k_titleBufferSize];
 };
 

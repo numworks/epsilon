@@ -70,7 +70,7 @@ public:
 private:
   int indexFromListIndex(int i) const;
   int listIndexFromIndex(int i) const;
-  I18n::Message messageForTest(Data::Test t) const;
+  I18n::Message messageForTest(Data::SubApp subapp, Data::Test t) const;
 
   constexpr static int k_numberOfRows = 3;
 

@@ -3,24 +3,25 @@
 
 #include <apps/shared/parameter_text_field_delegate.h>
 
-#include "probability/models/calculation/calculation.h"
-#include "probability/models/distribution/distribution.h"
+#include "probability/constants.h"
 #include "probability/gui/calculation_cell.h"
+#include "probability/gui/calculation_popup_data_source.h"
 #include "probability/gui/distribution_curve_view.h"
 #include "probability/gui/dropdown_view.h"
-#include "probability/gui/calculation_popup_data_source.h"
-#include "probability/constants.h"
+#include "probability/gui/page_controller.h"
+#include "probability/models/calculation/calculation.h"
+#include "probability/models/distribution/distribution.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
 
-class CalculationController : public Escher::ViewController,
+class CalculationController : public Page,
                               public Escher::TableViewDataSource,
                               public Escher::SelectableTableViewDataSource,
                               public Shared::ParameterTextFieldDelegate,
                               public DropdownCallback {
  public:
-  CalculationController(Escher::Responder * parentResponder,
+  CalculationController(Escher::StackViewController * parentResponder,
                         Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution,
                         Calculation * calculation);
   /* Responder */

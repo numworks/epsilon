@@ -51,6 +51,12 @@ public:
       PageController(stackViewController) {}
 };
 
+class DoubleParameterPage : public PageController<Shared::FloatParameterController<double>> {
+public:
+  DoubleParameterPage(StackViewController * stackViewController) :
+      PageController(stackViewController) {}
+};
+
 }  // namespace Probability
 
 #endif /* APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H */

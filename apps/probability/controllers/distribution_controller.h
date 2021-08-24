@@ -7,14 +7,15 @@
 
 #include "parameters_controller.h"
 #include "probability/gui/distribution_cell.h"
+#include "probability/gui/page_controller.h"
 #include "probability/models/distribution/distribution.h"
 
 namespace Probability {
 
-class DistributionController : public Escher::SelectableListViewController {
+class DistributionController : public SelectableListViewPage {
 public:
-  DistributionController(Escher::Responder * parentResponder,
-                         Distribution * m_distribution,
+  DistributionController(Escher::StackViewController * parentResponder,
+                         Distribution * distribution,
                          ParametersController * parametersController);
   const char * title() override {
     return I18n::translate(I18n::Message::DistributionControllerTitle);

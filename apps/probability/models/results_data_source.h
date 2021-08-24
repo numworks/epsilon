@@ -17,7 +17,7 @@ class ResultsDataSource : public Escher::MemoizedListViewDataSource {
 public:
   ResultsDataSource(Escher::Responder * parent, Statistic * statistic, ButtonDelegate * delegate);
   int numberOfRows() const override;
-  KDCoordinate cellWidth() override { return 290; /* TODO */ };
+  KDCoordinate cellWidth() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

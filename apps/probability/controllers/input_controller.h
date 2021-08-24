@@ -17,6 +17,7 @@
 #include "probability/gui/page_controller.h"
 #include "probability/models/data.h"
 #include "probability/models/statistic/statistic.h"
+#include "probability/text_helpers.h"
 #include "results_controller.h"
 
 namespace Probability {
@@ -55,7 +56,10 @@ private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
 
-  char m_titleBuffer[50];
+  constexpr static int k_titleBufferSize = stringLength("H0:= Ha: α=") + 7 /* μ1-μ2 */ +
+                                           3 * Constants::k_shortBufferSize + 2 /* op */ +
+                                           1 /* \0 */;
+  char m_titleBuffer[k_titleBufferSize];
   Statistic * m_statistic;
   ResultsController * m_resultsController;
 

@@ -80,7 +80,7 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
   if (op == HypothesisParams::ComparisonOperator::Different) {
     // Recurse for both colors
     z = std::fabs(z);
-    assert(zAlpha > 0);
+    assert(zAlpha >= 0);
     colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z, zAlpha);
     colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z, -zAlpha);
     return;

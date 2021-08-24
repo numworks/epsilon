@@ -24,6 +24,7 @@ app_probability_src = $(addprefix apps/probability/,\
 app_probability_test_src += apps/probability/text_helpers.cpp
 
 app_probability_src += $(addprefix apps/probability/models/,\
+  statistic_view_range.cpp \
   student_law.cpp \
   chi2_law.cpp \
   results_data_source.cpp \

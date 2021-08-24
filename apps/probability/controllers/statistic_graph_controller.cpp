@@ -9,7 +9,7 @@ namespace Probability {
 
 StatisticGraphController::StatisticGraphController(StackViewController * stack,
                                                    Statistic * statistic) :
-    Page(stack), m_graphView(statistic, this), m_statistic(statistic) {
+    Page(stack), m_graphView(statistic, &m_range, this), m_statistic(statistic) {
 }
 
 ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
@@ -40,6 +40,7 @@ const char * StatisticGraphController::title() {
 void StatisticGraphController::didBecomeFirstResponder() {
   App::app()->setPage(Data::Page::Graph);
   m_graphView.setStatistic(m_statistic);
+  m_range.setStatistic(m_statistic);
   if (App::app()->subapp() == Data::SubApp::Intervals) {
     m_graphView.intervalConclusionView()->setInterval(m_statistic->estimate(),
                                                       m_statistic->marginOfError());

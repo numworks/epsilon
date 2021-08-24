@@ -32,7 +32,6 @@ Probability::InputCategoricalView::ContentView::ContentView(
     m_spacer(Palette::WallScreenDark, 0, k_marginVertical) {
   significanceCell->setMessage(I18n::Message::GreekAlpha);
   significanceCell->setSubLabelMessage(I18n::Message::SignificanceLevel);
-  significanceCell->textField()->setText("0.05");  // TODO kinda ugly?
 }
 
 Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {

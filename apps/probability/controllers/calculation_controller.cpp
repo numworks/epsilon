@@ -268,6 +268,19 @@ void CalculationController::onDropdownSelected(int selectedRow) {
   reload();
 }
 
+bool CalculationController::popupDidReceiveEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Right) {
+    m_dropdown.selectRow(m_dropdown.selectedRow());
+    m_dropdown.close();
+    m_dropdown.setHighlighted(false);
+    setCalculationAccordingToIndex(m_dropdown.selectedRow());
+    selectColumn(selectedColumn() + 1);
+    reload();
+    return true;
+  }
+  return false;
+}
+
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_distribution->numberOfParameter(); index++) {

@@ -64,6 +64,7 @@ private:
 class DropdownCallback {
 public:
   virtual void onDropdownSelected(int selectedRow) = 0;
+  virtual bool popupDidReceiveEvent(Ion::Events::Event event) { return false; }
 };
 
 class Dropdown;
@@ -81,6 +82,8 @@ public:
   bool handleEvent(Ion::Events::Event e) override;
   void registerCallback(DropdownCallback * callback) { m_callback = callback; }
   int selectedRow() { return m_selectionDataSource.selectedRow(); }
+  void selectRow(int row);
+  void close();
 
 private:
   PopupListViewDataSource * popupListViewDataSource() { return &m_popupListDataSource; }
@@ -107,8 +110,10 @@ public:
   void reloadAllCells();
   void init();
   int selectedRow() { return m_popup.selectedRow(); }
+  void selectRow(int row) { m_popup.selectRow(row); }
 
   void open();
+  void close();
 
 private:
   DropdownPopupController m_popup;

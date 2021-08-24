@@ -44,11 +44,11 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
     m_inputTableView.recomputeNumberOfRows();
   }
 
-  // Select new column or jump to new row
   int selectedRow = m_inputTableView.selectedRow();
+  m_inputTableView.reloadCellAtLocation(selectedColumn, selectedRow);
+  // Select correct cell
   moveSelectionForEvent(event, &selectedRow, &selectedColumn);
   m_inputTableView.selectCellAtClippedLocation(selectedColumn, selectedRow);
-  m_inputTableView.reloadData(false);  // TODO why needed ?
   return true;
 }
 

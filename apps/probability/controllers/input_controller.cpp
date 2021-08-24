@@ -42,7 +42,7 @@ const char * InputController::title() {
       char alphaBuffer[10];
       defaultParseFloat(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
       snprintf(m_titleBuffer,
-               sizeof(m_titleBuffer),
+               k_titleBufferSize,
                "H0:%s=%s Ha:%s%s%s α=%s",
                symbol,
                paramBuffer,
@@ -52,7 +52,7 @@ const char * InputController::title() {
                alphaBuffer);
     } else {
       snprintf(m_titleBuffer,
-               sizeof(m_titleBuffer),
+               k_titleBufferSize,
                "H0:%s=%s Ha:%s%s%s",
                symbol,
                paramBuffer,
@@ -64,7 +64,7 @@ const char * InputController::title() {
     const char * symbol = testTypeToText(App::app()->testType());
     const char * text = testToText(App::app()->test());
     const char * format = I18n::translate(I18n::Message::InputControllerIntervalTitleFormat);
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, symbol, text);
+    snprintf(m_titleBuffer, k_titleBufferSize, format, symbol, text);
   }
   return m_titleBuffer;
 }

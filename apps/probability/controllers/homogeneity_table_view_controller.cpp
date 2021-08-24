@@ -55,9 +55,9 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
       m_innerTableData.numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns) {
     m_innerTableData.recomputeDimensions();
   }
+  m_table.reloadCellAtLocation(column, row);
   moveSelectionForEvent(event, &row, &column);
   m_table.selectCellAtLocation(column, row);
-  m_table.reloadData(false);  // TODO why needed ?
   return true;
 }
 

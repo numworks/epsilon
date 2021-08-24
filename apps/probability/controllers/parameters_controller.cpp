@@ -45,8 +45,8 @@ void ParametersController::ContentView::layoutSubviews(bool force) {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, CalculationController * calculationController) :
-  FloatParameterController(parentResponder),
+ParametersController::ParametersController(Escher::StackViewController * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, CalculationController * calculationController) :
+  DoubleParameterPage(parentResponder),
   m_contentView(&m_selectableTableView),
   m_menuListCell{},
   m_distribution(distribution),

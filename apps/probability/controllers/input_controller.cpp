@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "probability/app.h"
+#include "probability/constants.h"
 #include "probability/models/data.h"
 #include "probability/text_helpers.h"
 #include "results_controller.h"
@@ -34,12 +35,12 @@ const char * InputController::title() {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
     const char * symbol = testToTextSymbol(App::app()->test());
     const char * op = HypothesisParams::strForComparisonOp(m_statistic->hypothesisParams()->op());
-    char paramBuffer[10];
+    char paramBuffer[Constants::k_shortBufferSize];
     defaultParseFloat(m_statistic->hypothesisParams()->firstParam(),
                       paramBuffer,
                       sizeof(paramBuffer));
     if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
-      char alphaBuffer[10];
+      char alphaBuffer[Constants::k_shortBufferSize];
       defaultParseFloat(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
       snprintf(m_titleBuffer,
                k_titleBufferSize,

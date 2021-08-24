@@ -3,6 +3,7 @@
 #include <escher/clipboard.h>
 
 #include "probability/app.h"
+#include "probability/constants.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
@@ -21,8 +22,8 @@ ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
 
 const char * StatisticGraphController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
-    char zBuffer[10];
-    char pBuffer[10];
+    char zBuffer[Constants::k_shortBufferSize];
+    char pBuffer[Constants::k_shortBufferSize];
     defaultParseFloat(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
     defaultParseFloat(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
     const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormat);
@@ -30,7 +31,7 @@ const char * StatisticGraphController::title() {
   } else {
     const char * format = I18n::translate(
         I18n::Message::StatisticGraphControllerIntervalTitleFormat);
-    char MEBuffer[30];
+    char MEBuffer[Constants::k_shortBufferSize];
     defaultParseFloat(m_statistic->marginOfError(), MEBuffer, sizeof(MEBuffer));
     snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, MEBuffer);
   }
@@ -51,17 +52,17 @@ void StatisticGraphController::didBecomeFirstResponder() {
 bool StatisticGraphController::handleEvent(Ion::Events::Event event) {
   if (App::app()->subapp() == Data::SubApp::Intervals && event == Ion::Events::Copy) {
     // Copy confidence interval as matrix
-    char buffer[40];
-    char lowerBound[20];
-    char upperBound[20];
+    char copyBuffer[2 * Constants::k_shortBufferSize + 4];
+    char lowerBound[Constants::k_shortBufferSize];
+    char upperBound[Constants::k_shortBufferSize];
     defaultParseFloat(m_statistic->estimate() - m_statistic->marginOfError(),
                       lowerBound,
                       sizeof(lowerBound));
     defaultParseFloat(m_statistic->estimate() + m_statistic->marginOfError(),
                       upperBound,
                       sizeof(upperBound));
-    snprintf(buffer, sizeof(buffer), "[[%s,%s]]", lowerBound, upperBound);
-    Escher::Clipboard::sharedClipboard()->store(buffer, strlen(buffer));
+    snprintf(copyBuffer, sizeof(copyBuffer), "[[%s,%s]]", lowerBound, upperBound);
+    Escher::Clipboard::sharedClipboard()->store(copyBuffer, strlen(copyBuffer));
     return true;
   }
   return false;

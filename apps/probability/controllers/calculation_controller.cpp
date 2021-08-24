@@ -46,11 +46,11 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
       force);
 }
 
-CalculationController::CalculationController(Responder * parentResponder,
+CalculationController::CalculationController(Escher::StackViewController * parentResponder,
                                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                                              Distribution * distribution,
                                              Calculation * calculation) :
-    ViewController(parentResponder),
+    Page(parentResponder),
     m_calculation(calculation),
     m_distribution(distribution),
     m_contentView(&m_selectableTableView, distribution, calculation),

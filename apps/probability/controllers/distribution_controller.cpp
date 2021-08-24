@@ -26,8 +26,10 @@ using namespace Escher;
 
 namespace Probability {
 
-DistributionController::DistributionController(Responder * parentResponder, Distribution * distribution, ParametersController * parametersController) :
-  SelectableListViewController(parentResponder),
+DistributionController::DistributionController(Escher::StackViewController * parentResponder,
+                                               Distribution * distribution,
+                                               ParametersController * parametersController) :
+  SelectableListViewPage(parentResponder),
   m_distribution(distribution),
   m_parametersController(parametersController)
 {

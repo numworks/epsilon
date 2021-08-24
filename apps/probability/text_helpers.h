@@ -17,12 +17,6 @@ const char * testTypeToText(Data::TestType t);
 template <typename T>
 int defaultParseFloat(T value, char buffer[], int bufferSize);
 
-int constexpr stringLength(const char * str);
-
-int constexpr stringLength(const char * str) {
-  return *str ? 1 + stringLength(str + 1) : 0;
-}
-
 }  // namespace Probability
 
 #endif /* APPS_PROBABILITY_TEXT_HELPERS_H */

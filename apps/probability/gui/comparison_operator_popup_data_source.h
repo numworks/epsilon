@@ -21,7 +21,8 @@ public:
 
 private:
   constexpr static int k_cellBufferSize = 5 /* p1-p2 */ + 2 /* op */ +
-                                          Constants::k_shortBufferSize /* float */ + 1 /* \0 */;
+                                          Constants::k_shortFloatNumberOfChars /* float */ +
+                                          1 /* \0 */;
   constexpr static int k_numberOfOperators = 3;
   TextHighlightView m_cells[k_numberOfOperators];
   HypothesisParams * m_hypothesisParams;

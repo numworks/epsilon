@@ -166,6 +166,6 @@ void HypothesisController::loadHypothesisParam() {
 
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
-  resetMemoization();  // TODO only when m_ha changes size ?
+  resetMemoization();
   m_selectableTableView.reloadData();
 }

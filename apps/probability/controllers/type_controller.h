@@ -81,7 +81,7 @@ private:
   TypeView m_contentView;
   MessageTextView m_description;
 
-  char m_titleBuffer[30];  // TODO count max
+  char m_titleBuffer[30];
 
   Data::TestType * m_globalTestType;
   Statistic * m_statistic;

@@ -58,6 +58,7 @@ class CalculationController : public Escher::ViewController,
 
   // Dropdown
   void onDropdownSelected(int selectedRow) override;
+  bool popupDidReceiveEvent(Ion::Events::Event event) override;
 
  private:
   constexpr static int k_numberOfCalculationCells = 3;
@@ -81,7 +82,7 @@ class CalculationController : public Escher::ViewController,
   ContentView m_contentView;
   Escher::SelectableTableView m_selectableTableView;
   CalculationPopupDataSource m_imagesDataSource;
-  Dropdown m_dropdown;  // TODO select CalculationCell when event Right and popup is showing
+  Dropdown m_dropdown;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   constexpr static int k_titleBufferSize = sizeof("d1 =  d2 =  ") + 2 * Constants::k_shortFloatNumberOfChars;
   char m_titleBuffer[k_titleBufferSize];

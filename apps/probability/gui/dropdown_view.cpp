@@ -130,18 +130,29 @@ void DropdownPopupController::didBecomeFirstResponder() {
 }
 
 bool DropdownPopupController::handleEvent(Ion::Events::Event e) {
+  if (m_callback->popupDidReceiveEvent(e)) {
+    return true;
+  }
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     // Set correct inner cell
     int row = m_selectionDataSource.selectedRow();
-    m_dropdown->setInnerCell(m_popupListDataSource.innerCellAtIndex(row));
-
-    Escher::Container::activeApp()->dismissModalViewController();
+    selectRow(row);
+    close();
     if (m_callback) {
       m_callback->onDropdownSelected(m_selectionDataSource.selectedRow());
     }
     return true;
   }
   return false;
+}
+
+void DropdownPopupController::selectRow(int row) {
+  m_selectionDataSource.selectRow(row);
+  m_dropdown->setInnerCell(m_popupListDataSource.innerCellAtIndex(row));
+}
+
+void DropdownPopupController::close() {
+  Escher::Container::activeApp()->dismissModalViewController();
 }
 
 KDPoint DropdownPopupController::topLeftCornerForSelection(Escher::View * originView) {
@@ -195,6 +206,10 @@ void Dropdown::open() {
                                                              0.f,
                                                              topLeftAngle.y(),
                                                              topLeftAngle.x());
+}
+
+void Dropdown::close() {
+  m_popup.close();
 }
 
 }  // namespace Probability

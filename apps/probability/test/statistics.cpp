@@ -206,7 +206,7 @@ QUIZ_CASE(one_mean_z_statistic) {
                         .m_pValue = 0.0015654564,
                         .m_estimate = 2.3f,
                         .m_intervalCriticalValue = 2.5758295059,
-                        .m_standardError = 0.4427188635,
+                        .m_standardError = 0.4427188933,
                         .m_marginOfError = 1.1403683424}};
   OneMeanZStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
@@ -255,7 +255,6 @@ QUIZ_CASE(two_proportions_statistic) {
 }
 
 QUIZ_CASE(two_means_t_statistic) {
-  // TODO check test cases
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 0,
                         .m_op = HypothesisParams::ComparisonOperator::Higher,
@@ -402,6 +401,7 @@ QUIZ_CASE(goodness_statistic) {
 }
 
 QUIZ_CASE(homogeneity_statistic) {
+  // clang-format off
   StatisticTestCase tests[] = {StatisticTestCase{
       .m_op = HypothesisParams::ComparisonOperator::Higher,
       .m_numberOfInputs = HomogeneityStatistic::k_maxNumberOfColumns *
@@ -436,6 +436,7 @@ QUIZ_CASE(homogeneity_statistic) {
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN}};
+  // clang-format on
   HomogeneityStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     inputValues(&stat, tests[i]);
@@ -448,7 +449,8 @@ QUIZ_CASE(homogeneity_statistic) {
       float expected = stat.expectedValueAtLocation(j / HomogeneityStatistic::k_maxNumberOfColumns,
                                                     j % HomogeneityStatistic::k_maxNumberOfColumns);
       float real = expectedValues[i][j];
-      quiz_assert((std::isnan(real) && std::isnan(expected)) || roughlyEqual<float>(real, expected, 1e-4));
+      quiz_assert(std::isnan(real) && std::isnan(expected) ||
+                  roughlyEqual<float>(real, expected, 1e-4));
     }
   }
 }

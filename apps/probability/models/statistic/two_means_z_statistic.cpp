@@ -14,10 +14,10 @@ namespace Probability {
 TwoMeansZStatistic::TwoMeansZStatistic() {
   m_params[ParamsOrder::X1] = 20;
   m_params[ParamsOrder::Sigma1] = 2;
-  m_params[ParamsOrder::N1] = 50;
-  m_params[ParamsOrder::X2] = 19;
+  m_params[ParamsOrder::N1] = 10;
+  m_params[ParamsOrder::X2] = 21;
   m_params[ParamsOrder::Sigma2] = 2;
-  m_params[ParamsOrder::N2] = 50;
+  m_params[ParamsOrder::N2] = 12;
 }
 
 bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {

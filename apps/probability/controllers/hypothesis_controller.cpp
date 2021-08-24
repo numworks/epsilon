@@ -143,7 +143,6 @@ HighlightCell * HypothesisController::reusableCell(int i, int type) {
 
 void HypothesisController::didBecomeFirstResponder() {
   App::app()->setPage(Data::Page::Hypothesis);
-  // TODO factor out
   selectCellAtLocation(0, 0);
   m_ha.dropdown()->init();
   loadHypothesisParam();

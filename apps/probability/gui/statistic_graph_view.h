@@ -6,6 +6,7 @@
 
 #include "interval_conclusion_view.h"
 #include "legend_view.h"
+#include "probability/models/statistic_view_range.h"
 #include "statistic_curve_view.h"
 #include "test_conclusion_view.h"
 
@@ -21,7 +22,8 @@ public:
  */
 class StatisticGraphView : public Escher::View {  // TODO VerticalLayout ?
 public:
-  StatisticGraphView(Statistic * statistic, LegendPositionDataSource * legendPositionDataSource);
+  StatisticGraphView(Statistic * statistic, StatisticViewRange * range,
+                     LegendPositionDataSource * legendPositionDataSource);
   KDSize minimalSizeForOptimalDisplay() const override;
   void setStatistic(Statistic * statistic);
   void reload();

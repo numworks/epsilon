@@ -88,7 +88,7 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
 
   float min = std::min(z, zAlpha);
   float max = std::max(z, zAlpha);
-  bool zMoreExtreme = op == HypothesisParams::ComparisonOperator::Higher ? z > zAlpha : z < zAlpha;
+  bool zMoreExtreme = op == HypothesisParams::ComparisonOperator::Higher ? z >= zAlpha : z <= zAlpha;
   KDColor middleColor = !zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   KDColor externColor = zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   drawCartesianCurve(ctx,

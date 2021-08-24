@@ -46,7 +46,7 @@ TypeController::TypeController(StackViewController * parent,
 
 void TypeController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::Type);
-  m_description.setMessage(messageForTest(App::app()->test()));
+  m_description.setMessage(messageForTest(App::app()->subapp(), App::app()->test()));
   if (selectedRow() == -1) {
     selectRow(0);
   }
@@ -158,7 +158,9 @@ int Probability::TypeController::listIndexFromIndex(int i) const {
   return i;
 }
 
-I18n::Message Probability::TypeController::messageForTest(Data::Test t) const {
-  return t == Data::Test::OneMean ? I18n::Message::OneMeanTestDescr
-                                  : I18n::Message::TwoMeanTestDescr;
+I18n::Message Probability::TypeController::messageForTest(Data::SubApp subapp, Data::Test t) const {
+  return subapp == Data::SubApp::Tests ? t == Data::Test::OneMean ? I18n::Message::OneMeanTestDescr
+                                                                  : I18n::Message::TwoMeanTestDescr
+         : t == Data::Test::OneMean    ? I18n::Message::OneMeanIntervalDescr
+                                       : I18n::Message::TwoMeanIntervalDescr;
 }

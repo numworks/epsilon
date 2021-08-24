@@ -163,6 +163,10 @@ void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float z) const
   ctx->fillRect(graduation, KDColorBlack);
 
   // Label
+  if (z < curveViewRange()->xMin() || z > curveViewRange()->xMax()) {
+    // z outside screen
+    return;
+  }
   const char * zText = "z";
 
   KDPoint position = positionLabel(labelPosition,

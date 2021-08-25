@@ -37,9 +37,8 @@ private:
     // An active function must be defined
     return isModelDefined(model, context) && static_cast<NewFunction *>(model)->isActive();
   }
-  // TODO Hugo factorize things (isFunctionActive ?)
+  // TODO Hugo : Factorize or delete function_store.cpp, simplify methods
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }
-  // const char * modelExtension() const override { return Ion::Storage::funcExtension; }
   Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
   static bool isFunctionActiveOfType(Shared::ExpressionModelHandle * model, void * context) {

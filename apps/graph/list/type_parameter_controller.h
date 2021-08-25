@@ -24,7 +24,8 @@ public:
   TELEMETRY_ID("TypeParameter");
 
   // MemoizedListViewDataSource
-  int numberOfRows() const override { return 1 + ((NewFunction)m_record).detailsTotal(); }
+  // Todo Hugo : Remove useless details once the curve type will be visible list
+  int numberOfRows() const override { return ((NewFunction)m_record).detailsTotal(); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::MessageTableCellWithMessageWithBuffer * reusableCell(int index, int type) override;

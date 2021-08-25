@@ -121,14 +121,15 @@ I18n::Message NewFunction::functionCategory() const {
 }
 
 int NewFunction::detailsTotal() const {
+  // Todo Hugo : Remove useless details once the curve type will be visible list
   if (isNull()) {
-    return 0;
+    return 1;
   }
   assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
   static const int total[k_numberOfPlotTypes] = {
-    0, 0, 0, 3, 0,
-    0, 0, 0, 3, 6,
-    3, 6, 0, 0, 0,
+    1, 1, 1, 4, 1,
+    1, 1, 1, 4, 7,
+    4, 7, 1, 1, 1,
   };
   return total[static_cast<size_t>(plotType())];
 }
@@ -325,9 +326,26 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
     if (record->fullName() == nullptr || record->fullName()[0] == '?') {
       // Transform the solution by solving the equation in y
       int degree = m_expression.polynomialDegree(context, "y");
-      if (degree <= 0 || degree >= 3) {
-        // TODO Hugo : handle Vertical line  here
+      if (degree < 0 || degree >= 3) {
         m_expression = Undefined::Builder();
+      } else if (degree == 0) {
+        // Vertical line
+        char str[2] = "x";
+        str[0] = UCodePointUnknown;
+        int xDegree = m_expression.polynomialDegree(context, str);
+        if (xDegree == 1) {
+          Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+          int d = m_expression.getPolynomialReducedCoefficients(str, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+          assert(d == xDegree);
+          Expression root;
+          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+          m_expression = root;
+        } else {
+          /* TODO : We could handle equations of any degree by solving the
+           * equation within the graph view bounds, to plot as many vertical
+           * lines as needed. */
+          m_expression = Undefined::Builder();
+        }
       } else {
         Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
         int d = m_expression.getPolynomialReducedCoefficients("y", coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
@@ -395,11 +413,16 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
     return recordData()->setPlotType(m_model.m_plotType);
   }
 
+  int yDeg = yDegree(context);
   if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
-    return recordData()->setPlotType(PlotType::Inequation);
+    if (yDeg == 1 || yDeg == 2) {
+      return recordData()->setPlotType(PlotType::Inequation);
+    } else {
+      // TODO : Handle vertical lines
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
   }
 
-  int yDeg = yDegree(context);
   int xDeg = xDegree(context);
   if (yDeg == 0 && xDeg == 0) {
     return recordData()->setPlotType(PlotType::Undefined);
@@ -407,7 +430,7 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
   if (yDeg == 0 && xDeg == 1) {
     return recordData()->setPlotType(PlotType::VerticalLine);
   }
-  if (yDeg == 0 && xDeg == 1) {
+  if (yDeg == 1 && xDeg == 0) {
     return recordData()->setPlotType(PlotType::HorizontalLine);
   }
   if (yDeg == 1 && xDeg == 1) {
@@ -646,6 +669,10 @@ Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * cont
       }
     } else {
       assert(i == 0);
+    }
+    if (type == PlotType::VerticalLine) {
+      // Invert x and y with vertical lines so it can be scrolled vertically
+      return Coordinate2D<T>(Shared::PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context), t);
     }
     return Coordinate2D<T>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
   }

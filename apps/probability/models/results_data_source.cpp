@@ -85,7 +85,6 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
           break;
         case IntervalCellOrder::IntervalDegree:
           message = layoutFromText(I18n::translate(I18n::Message::DegreesOfFreedom));
-          subMessage = I18n::Message::DegreesOfFreedom;
           value = m_statistic->degreeOfFreedom();
           break;
       }

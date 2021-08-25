@@ -63,9 +63,7 @@ T StudentLaw::CumulativeDistributiveInverseForProbability(T probability, T k) {
   if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON ||
         std::fabs(result.x1() - xmin) < FLT_EPSILON ||
         std::fabs(result.x1() - xmax) < FLT_EPSILON)) {
-    /* TODO We would like to put this as an assertion, but sometimes we do get
-     * false result: we replace them with inf to make the problem obvisous to
-     * the student. */
+    assert(false);
     return probability > 0.5 ? INFINITY : -INFINITY;
   }
   return result.x1();

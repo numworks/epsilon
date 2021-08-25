@@ -125,7 +125,6 @@ Shared::ExpiringPointer<NewFunction> DomainParameterController::function() const
 }
 
 FloatParameterController<float>::InfinityTolerance DomainParameterController::infinityAllowanceForRow(int row) const {
-  NewFunction::PlotType plotType = function()->plotType();
   if (function()->isAlongX()) {
     return row == 0 ? FloatParameterController<float>::InfinityTolerance::MinusInfinity : FloatParameterController<float>::InfinityTolerance::PlusInfinity;
   }

@@ -1,6 +1,7 @@
 FunctionApp = "Grapher"
 FunctionAppCapital = "GRAPHER"
 FunctionTab = "Functions"
+UseFunctionModel = "Use a function template"
 AddFunction = "Add function"
 DeleteFunction = "Delete function"
 CurveType = "Curve type"

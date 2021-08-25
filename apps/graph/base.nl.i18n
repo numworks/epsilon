@@ -1,6 +1,7 @@
 FunctionApp = "Functies"
 FunctionAppCapital = "FUNCTIES"
 FunctionTab = "Functies"
+UseFunctionModel = "Use a function template"
 AddFunction = "Functie toevoegen"
 DeleteFunction = "Functie verwijderen"
 CurveType = "Kromme type"

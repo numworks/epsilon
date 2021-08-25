@@ -30,7 +30,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(Responder *
 }
 
 const char * FunctionModelsParameterController::title() {
-  return I18n::translate(I18n::Message::UseEquationModel);
+  return I18n::translate(I18n::Message::UseFunctionModel);
 }
 
 void FunctionModelsParameterController::viewWillAppear() {

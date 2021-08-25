@@ -215,7 +215,6 @@ int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
 
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
   ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(record);
-  NewFunction::PlotType plotType = f->plotType();
   return 1 +
     (f->isAlongX() && f->displayDerivative());
 }

@@ -17,6 +17,9 @@ T Chi2Law::EvaluateAtAbscissa(T x, T k) {
   if (x == 0) {
     return 0;
   }
+  if (std::isinf(x)) {
+    return 0;
+  }
   const float halfk = k / 2.0;
   const float halfX = x / 2.0f;
   return std::exp(-lgamma(halfk) - halfX + (halfk - 1.0f) * std::log(halfX)) / 2.0f;

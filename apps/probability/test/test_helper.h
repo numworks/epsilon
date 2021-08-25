@@ -29,8 +29,8 @@ void inline assertRoughlyEqual(T a, T b, T threshold = FLT_EPSILON, bool absolut
   quiz_assert(roughlyEqual<T>(a, b, threshold, absolute));
 }
 
-struct TestCase {
-  TestCase(double K, double X, double d, double p, float precision = 1e-7) :
+struct LawTestCase {
+  LawTestCase(double K, double X, double d, double p, float precision = 1e-7) :
       k(K), x(X), density(d), probability(p), precision(precision) {}
   double k;
   double x;

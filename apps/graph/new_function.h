@@ -69,7 +69,7 @@ public:
   // Expression clone is of the form (exp1) = (exp2)
   // expressionEquation returns (exp1) - (exp2) or (exp2) if isNamed() (reduced ?)
   Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionEquation(this, context); }
-  // expressionReduced returns equations solutions in y ( matrix if multiple solutions) // TODO Hugo :: parent implementation should be fine
+  // expressionReduced returns equations solutions in y ( matrix if multiple solutions) // TODO Hugo : parent implementation should be fine
   // Poincare::Expression expressionReduced(Poincare::Context * context) const override;
   // expressionReduced returns expressionReduced derivative(s)
   // TODO Hugo : Implement
@@ -167,7 +167,7 @@ private:
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
     Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
     void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) { m_equationSymbol = equationSymbol; }
-    bool isActive() const { return m_active; }
+    bool isActive() const { return m_active && m_plotType != PlotType::Unhandled && m_plotType != PlotType::Undefined; }
     void setActive(bool active) { m_active = active; }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }

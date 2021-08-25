@@ -9,7 +9,6 @@
 #include "page_controller.h"
 
 namespace Probability {
-//TODO get rid ?
 /*
  * This Class is useful to create a SelectableListViewController of
  * the same type of cells.

@@ -18,9 +18,9 @@ public:
 };
 
 /* This is the common view for Significance Tests and Confidence Intervals.
- * It displays either 1 or 2 CurveViews separated by a Separator, a legend, and a ConclusionView.
+ * It displays a CurveView, a legend, and a ConclusionView.
  */
-class StatisticGraphView : public Escher::View {  // TODO VerticalLayout ?
+class StatisticGraphView : public Escher::View {
 public:
   StatisticGraphView(Statistic * statistic, StatisticViewRange * range,
                      LegendPositionDataSource * legendPositionDataSource);
@@ -41,7 +41,6 @@ private:
   constexpr static int k_separatorWidth = 14;
   constexpr static int k_legendMarginRight = 10;
   constexpr static int k_legendMarginTop = 10;
-  Escher::SolidColorView m_separatorView;
   StatisticCurveView m_curveView;
   LegendView m_legend;
   LegendPositionDataSource * m_legendPositionDataSource;

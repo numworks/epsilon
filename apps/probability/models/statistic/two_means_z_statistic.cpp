@@ -7,6 +7,8 @@
 
 #include <cmath>
 
+#include "probability/text_helpers.h"
+
 using namespace Poincare;
 
 namespace Probability {
@@ -47,19 +49,7 @@ void TwoMeansZStatistic::computeInterval() {
 }
 
 Poincare::Layout TwoMeansZStatistic::estimateLayout() {
-  // TODO factor with TwoMeansTStat
-  HorizontalLayout x1 = HorizontalLayout::Builder(
-      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
-  HorizontalLayout x2 = HorizontalLayout::Builder(
-      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
-  HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
-  res.addOrMergeChildAtIndex(x2, 1, true);
-  res.addOrMergeChildAtIndex(x1, 0, true);
-  return std::move(res);
+  return XOneMinusXTwoLayout();
 }
 
 ParameterRepr TwoMeansZStatistic::paramReprAtIndex(int i) const {
@@ -72,17 +62,13 @@ ParameterRepr TwoMeansZStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{x1, I18n::Message::Sample1Mean};
     }
     case ParamsOrder::N1: {
-      HorizontalLayout n1 = HorizontalLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+      HorizontalLayout n1 = codePointSubscriptCodePointLayout('n', '1');
       return ParameterRepr{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma1: {
-      HorizontalLayout sigma1 = HorizontalLayout::Builder(
-          CodePointLayout::Builder(CodePoint(UCodePointGreekSmallLetterSigma)),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+      HorizontalLayout sigma1 = codePointSubscriptCodePointLayout(
+          CodePoint(UCodePointGreekSmallLetterSigma),
+          '1');
       return ParameterRepr{sigma1, I18n::Message::Sample1Std};
     }
     case ParamsOrder::X2: {
@@ -93,17 +79,14 @@ ParameterRepr TwoMeansZStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{x2, I18n::Message::Sample2Mean};
     }
     case ParamsOrder::N2: {
-      HorizontalLayout n2 = HorizontalLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+      HorizontalLayout n2 = codePointSubscriptCodePointLayout('n', '2');
+      ;
       return ParameterRepr{n2, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma2: {
-      HorizontalLayout sigma2 = HorizontalLayout::Builder(
-          CodePointLayout::Builder(CodePoint(UCodePointGreekSmallLetterSigma)),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+      HorizontalLayout sigma2 = codePointSubscriptCodePointLayout(
+          CodePoint(UCodePointGreekSmallLetterSigma),
+          '2');
       return ParameterRepr{sigma2, I18n::Message::Sample2Std};
     }
   }
@@ -115,8 +98,13 @@ float TwoMeansZStatistic::_xEstimate(float meanSample1, float meanSample2) {
   return meanSample1 - meanSample2;
 }
 
-float TwoMeansZStatistic::computeZ(float deltaMean, float meanSample1, float n1, float sigma1,
-                             float meanSample2, float n2, float sigma2) {
+float TwoMeansZStatistic::computeZ(float deltaMean,
+                                   float meanSample1,
+                                   float n1,
+                                   float sigma1,
+                                   float meanSample2,
+                                   float n2,
+                                   float sigma2) {
   return ((meanSample1 - meanSample2) - (deltaMean)) / computeStandardError(sigma1, n1, sigma2, n2);
 }
 

@@ -7,6 +7,8 @@
 
 #include <cmath>
 
+#include "probability/text_helpers.h"
+
 using namespace Poincare;
 
 namespace Probability {
@@ -49,18 +51,7 @@ void TwoMeansTStatistic::computeInterval() {
 }
 
 Poincare::Layout TwoMeansTStatistic::estimateLayout() {
-  HorizontalLayout x1 = HorizontalLayout::Builder(
-      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
-  HorizontalLayout x2 = HorizontalLayout::Builder(
-      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
-  HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
-  res.addOrMergeChildAtIndex(x2, 1, true);
-  res.addOrMergeChildAtIndex(x1, 0, true);
-  return std::move(res);
+  return XOneMinusXTwoLayout();
 }
 
 ParameterRepr TwoMeansTStatistic::paramReprAtIndex(int i) const {
@@ -73,17 +64,11 @@ ParameterRepr TwoMeansTStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{x1, I18n::Message::Sample1Mean};
     }
     case ParamsOrder::S1: {
-      HorizontalLayout s1 = HorizontalLayout::Builder(
-          CodePointLayout::Builder('s'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+      HorizontalLayout s1 = codePointSubscriptCodePointLayout('s', '1');
       return ParameterRepr{s1, I18n::Message::Sample1Std};
     }
     case ParamsOrder::N1: {
-      HorizontalLayout n1 = HorizontalLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+      HorizontalLayout n1 = codePointSubscriptCodePointLayout('n', '1');
       return ParameterRepr{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::X2: {
@@ -94,17 +79,11 @@ ParameterRepr TwoMeansTStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{x2, I18n::Message::Sample2Mean};
     }
     case ParamsOrder::S2: {
-      HorizontalLayout s1 = HorizontalLayout::Builder(
-          CodePointLayout::Builder('s'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
-      return ParameterRepr{s1, I18n::Message::Sample2Std};
+      HorizontalLayout s2 = codePointSubscriptCodePointLayout('s', '2');
+      return ParameterRepr{s2, I18n::Message::Sample2Std};
     }
     case ParamsOrder::N2: {
-      HorizontalLayout n2 = HorizontalLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+      HorizontalLayout n2 = codePointSubscriptCodePointLayout('n', '2');
       return ParameterRepr{n2, I18n::Message::Sample2Size};
     }
   }

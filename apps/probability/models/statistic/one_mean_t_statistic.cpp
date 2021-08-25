@@ -54,8 +54,8 @@ ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {
       return ParameterRepr{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::S: {
-      HorizontalLayout n1 = HorizontalLayout::Builder(CodePointLayout::Builder('s'));
-      return ParameterRepr{n1, I18n::Message::StandardDeviation};
+      HorizontalLayout s = HorizontalLayout::Builder(CodePointLayout::Builder('s'));
+      return ParameterRepr{s, I18n::Message::StandardDeviation};
     }
     case ParamsOrder::N: {
       HorizontalLayout n = HorizontalLayout::Builder(CodePointLayout::Builder('n'));

@@ -167,6 +167,7 @@ private:
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
     Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
     void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) { m_equationSymbol = equationSymbol; }
+    // TODO Hugo : Fix Turn on/off menu
     bool isActive() const { return m_active && m_plotType != PlotType::Unhandled && m_plotType != PlotType::Undefined; }
     void setActive(bool active) { m_active = active; }
     float tMin() const { return m_domain.min(); }

@@ -449,7 +449,7 @@ QUIZ_CASE(homogeneity_statistic) {
       float expected = stat.expectedValueAtLocation(j / HomogeneityStatistic::k_maxNumberOfColumns,
                                                     j % HomogeneityStatistic::k_maxNumberOfColumns);
       float real = expectedValues[i][j];
-      quiz_assert(std::isnan(real) && std::isnan(expected) ||
+      quiz_assert((std::isnan(real) && std::isnan(expected)) ||
                   roughlyEqual<float>(real, expected, 1e-4));
     }
   }

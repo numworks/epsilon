@@ -15,7 +15,9 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(cursor->t(), buffer, k_textBufferSize, numberOfSignificantDigits());
+  assert(!function->isAlongX() || function->plotType() == Graph::NewFunction::PlotType::VerticalLine || cursor->x() == cursor->t());
+  // TODO Hugo : Use isAlongX() instead if previous assert never triggers.
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(function->plotType() == Graph::NewFunction::PlotType::VerticalLine ? cursor->x() : cursor->t(), buffer, k_textBufferSize, numberOfSignificantDigits());
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
   bannerView()->abscissaValue()->setText(buffer);

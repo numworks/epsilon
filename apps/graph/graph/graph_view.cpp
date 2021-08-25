@@ -91,6 +91,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
+      } else if (type == NewFunction::PlotType::VerticalLine) {
+        // TODO Hugo : Use the right cursor here
+        float abscissa = f->evaluateXYAtParameter(0.0, context()).x1();
+        float minOrdinate = pixelToFloat(Axis::Vertical, rect.top());
+        float maxOrdinate = pixelToFloat(Axis::Vertical, rect.bottom());
+        drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color(), false);
       } else {
         // Cartesian.
         bool superiorArea = f->drawSuperiorArea();
@@ -167,7 +173,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           // We display the superposition of up to 4 areas
           areaIndex++;
         }
-        // TODO Hugo : Draw vertical line with drawSegment ?
         /* Draw tangent */
         if (m_tangent && record == m_selectedRecord) {
           // TODO Hugo : Use the right cursor here

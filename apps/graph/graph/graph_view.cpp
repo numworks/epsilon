@@ -50,11 +50,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       // ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
       NewFunction::PlotType type = f->plotType();
       Poincare::Expression e = f->expressionReduced(context());
-      // TODO Hugo ::fix it
       if (e.isUndefined() || (
             (type == NewFunction::PlotType::Parametric || f->hasTwoCurves()) &&
             e.childAtIndex(0).isUndefined() &&
             e.childAtIndex(1).isUndefined())) {
+        // TODO Hugo : Ensure that two curves can't be undefined
+        assert(!f->hasTwoCurves());
         continue;
       }
       float tmin = f->tMin();
@@ -169,7 +170,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         // TODO Hugo : Draw vertical line with drawSegment ?
         /* Draw tangent */
         if (m_tangent && record == m_selectedRecord) {
-          // TODO Hugo : Use right cursor
+          // TODO Hugo : Use the right cursor here
           float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
           float tangentParameterB = -tangentParameterA*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
           // To represent the tangent, we draw segment from and to abscissas at the extremity of the drawn rect

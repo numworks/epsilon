@@ -51,7 +51,7 @@ void ListController::renameSelectedFunction() {
 
 bool ListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   assert(textField != nullptr);
-  assert(false); // TODO hugo check;
+  assert(false); // TODO Hugo : check;
   return true;
   // // Compute the new name
   // size_t textLength = strlen(text);

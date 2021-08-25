@@ -12,7 +12,6 @@ public:
   const View * accessoryView() const override { return &m_accessoryView; }
   void setHighlighted(bool highlight) override;
   void setAccessoryText(const char * textBody);
-  const char * accessoryText();
   const char * text() const override {
     return m_accessoryView.text();
   }

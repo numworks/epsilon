@@ -22,7 +22,6 @@ void TypeParameterController::didBecomeFirstResponder() {
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    // TODO Hugo : Copy paste relevant content
     return true;
   }
   if (event == Ion::Events::Left) {

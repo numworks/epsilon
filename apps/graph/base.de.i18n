@@ -1,6 +1,7 @@
 FunctionApp = "Funktionen"
 FunctionAppCapital = "FUNKTIONEN"
 FunctionTab = "Funktionen"
+UseFunctionModel = "Use a function template"
 AddFunction = "Funktion hinzufügen"
 DeleteFunction = "Funktion löschen"
 CurveType = "Bildungsgesetz der Kurve"

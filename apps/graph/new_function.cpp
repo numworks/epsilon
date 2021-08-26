@@ -20,6 +20,8 @@ using namespace Poincare;
 
 namespace Graph {
 
+constexpr char NewFunction::k_unknownName[2];
+constexpr char NewFunction::k_ordinateName[2];
 Conic NewFunction::s_tempConic;
 double NewFunction::s_tempLine[2];
 
@@ -81,13 +83,11 @@ bool NewFunction::drawCurve() const {
 }
 
 int NewFunction::yDegree(Context * context) const {
-  return expressionEquation(context).polynomialDegree(context, "y");
+  return expressionEquation(context).polynomialDegree(context, k_ordinateName);
 }
 
 int NewFunction::xDegree(Context * context) const {
-  char str[2] = "x";
-  str[0] = UCodePointUnknown;
-  return expressionEquation(context).polynomialDegree(context, str);
+  return expressionEquation(context).polynomialDegree(context, k_unknownName);
 }
 
 int NewFunction::nameWithArgument(char * buffer, size_t bufferSize) {
@@ -104,7 +104,7 @@ int NewFunction::nameWithArgument(char * buffer, size_t bufferSize) {
     result += strlcpy(buffer+result, ")", bufferSize-result);
     return result;
   }
-  return strlcpy(buffer, "y", bufferSize);
+  return strlcpy(buffer, k_ordinateName, bufferSize);
 }
 
 I18n::Message NewFunction::parameterMessageName() const {
@@ -327,17 +327,15 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
     m_hasTwoCurves = false;
     if (record->fullName() == nullptr || record->fullName()[0] == '?') {
       // Transform the solution by solving the equation in y
-      int degree = m_expression.polynomialDegree(context, "y");
+      int degree = m_expression.polynomialDegree(context, k_ordinateName);
       if (degree < 0 || degree >= 3) {
         m_expression = Undefined::Builder();
       } else if (degree == 0) {
         // Vertical line
-        char str[2] = "x";
-        str[0] = UCodePointUnknown;
-        int xDegree = m_expression.polynomialDegree(context, str);
+        int xDegree = m_expression.polynomialDegree(context, k_unknownName);
         if (xDegree == 1) {
           Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-          int d = m_expression.getPolynomialReducedCoefficients(str, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+          int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
           assert(d == xDegree);
           Expression root;
           Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
@@ -350,7 +348,7 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
         }
       } else {
         Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-        int d = m_expression.getPolynomialReducedCoefficients("y", coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+        int d = m_expression.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
         assert(d == degree);
         if (d == 1) {
           Expression root;
@@ -438,16 +436,13 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
     return recordData()->setPlotType(PlotType::HorizontalLine);
   }
   if (yDeg == 1 && xDeg == 1) {
-    // TODO Hugo : Factorize this "x"
-    char str[2] = "x";
-    str[0] = UCodePointUnknown;
     Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
     Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
     Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
     Expression lineExpression = expressionReduced(context).clone();
     // Reduce to another target for coefficient analysis.
     Shared::PoincareHelpers::Reduce(&lineExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
-    int d = lineExpression.getPolynomialReducedCoefficients(str, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    int d = lineExpression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
     if (d == 1) {
       s_tempLine[0] = coefficients[1].approximateToScalar<double>(context, complexFormat,
                                                         angleUnit);
@@ -460,9 +455,7 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
     return recordData()->setPlotType(PlotType::Cartesian);
   }
   if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
-    char str[2] = "x";
-    str[0] = UCodePointUnknown;
-    s_tempConic = Conic(equation, context, str);
+    s_tempConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = s_tempConic.getConicType();
     if (ctype == Conic::Type::Hyperbola) {
       return recordData()->setPlotType(PlotType::Hyperbola);

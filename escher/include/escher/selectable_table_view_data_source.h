@@ -14,8 +14,8 @@ public:
   }
   int selectedRow() const { return m_selectedCellY; }
   int selectedColumn() const { return m_selectedCellX; }
-  virtual void selectRow(int j) { m_selectedCellY = j; }
-  virtual void selectColumn(int i) { m_selectedCellX = i; }
+  void selectRow(int j) { m_selectedCellY = j; }
+  void selectColumn(int i) { m_selectedCellX = i; }
   void selectCellAtLocation(int i, int j) {
     m_selectedCellX = i;
     m_selectedCellY = j;

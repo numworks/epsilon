@@ -23,6 +23,7 @@ int Polynomial::LinearPolynomialRoots(Expression a, Expression b, Expression * r
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
 
   *root = Division::Builder(Opposite::Builder(b), a).simplify(reductionContext);
+  *root = root->simplify(reductionContext);
   return !root->isUndefined();
 }
 

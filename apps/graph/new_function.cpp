@@ -265,6 +265,7 @@ CodePoint NewFunction::symbol() const {
 
 Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // TODO Hugo : Add todo expressionReduced on circularity ?
+  // TODO Hugo : Either memoize or limit calls to this method
   m_plotType = PlotType::Undefined;
   if (record->fullName() != nullptr && record->fullName()[0] != '?' && isCircularlyDefined(record, context)) {
     return Undefined::Builder();
@@ -373,6 +374,8 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
         }
       }
     }
+    // Reduce it to optimize approximations
+    Shared::PoincareHelpers::Reduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   }
   return m_expression;
 }
@@ -452,10 +455,7 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
       return recordData()->setPlotType(PlotType::Ellipse);
     } else if (ctype == Conic::Type::Circle) {
       return recordData()->setPlotType(PlotType::Circle);
-    } else if (ctype == Conic::Type::Undefined) {
-      return recordData()->setPlotType(PlotType::Conics);
     }
-    assert(ctype != Conic::Type::Unknown);
   }
   if (yDeg == 2) {
     return recordData()->setPlotType(PlotType::Other);

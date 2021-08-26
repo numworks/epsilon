@@ -21,6 +21,7 @@ using namespace Poincare;
 namespace Graph {
 
 Conic NewFunction::s_tempConic;
+double NewFunction::s_tempLine[2];
 
 NewFunction NewFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
@@ -214,7 +215,7 @@ double NewFunction::detailsValue(int i) const {
   assert(i < detailsTotal());
   if (type == PlotType::Line) {
     static const double titles[3] = {
-      NAN, 3.14, 3.14,
+      NAN, s_tempLine[0], s_tempLine[1],
     };
     return titles[i];
   }
@@ -437,7 +438,23 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
     return recordData()->setPlotType(PlotType::HorizontalLine);
   }
   if (yDeg == 1 && xDeg == 1) {
-    return recordData()->setPlotType(PlotType::Line);
+    // TODO Hugo : Factorize this "x"
+    char str[2] = "x";
+    str[0] = UCodePointUnknown;
+    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
+    Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+    Expression lineExpression = expressionReduced(context).clone();
+    // Reduce to another target for coefficient analysis.
+    Shared::PoincareHelpers::Reduce(&lineExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    int d = lineExpression.getPolynomialReducedCoefficients(str, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    if (d == 1) {
+      s_tempLine[0] = coefficients[1].approximateToScalar<double>(context, complexFormat,
+                                                        angleUnit);
+      s_tempLine[1] = coefficients[0].approximateToScalar<double>(context, complexFormat,
+                                                        angleUnit);
+      return recordData()->setPlotType(PlotType::Line);
+    } // Otherwise, there probably was a x*y term in the equation.
   }
   if (yDeg == 1) {
     return recordData()->setPlotType(PlotType::Cartesian);

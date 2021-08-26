@@ -12,6 +12,11 @@ app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
   regularized_gamma.cpp \
   student_distribution.cpp \
   two_parameter_distribution.cpp \
+  exponential_distribution.cpp \
+  normal_distribution.cpp \
+  poisson_distribution.cpp \
+  regularized_gamma.cpp \
+  uniform_distribution.cpp \
 )
 
 app_probability_test_src += $(addprefix apps/probability/models/,student_law.cpp chi2_law.cpp)
@@ -30,14 +35,6 @@ app_probability_src += $(addprefix apps/probability/models/,\
   results_data_source.cpp \
 )
 
-app_probability_src += $(addprefix apps/probability/models/distribution/,\
-  exponential_distribution.cpp \
-  normal_distribution.cpp \
-  poisson_distribution.cpp \
-  regularized_gamma.cpp \
-  uniform_distribution.cpp \
-)
-
 app_probability_src += $(addprefix apps/probability/models/calculation/,\
   calculation.cpp \
   discrete_calculation.cpp \
@@ -46,7 +43,7 @@ app_probability_src += $(addprefix apps/probability/models/calculation/,\
   finite_integral_calculation.cpp \
 )
 
-statistic_src += $(addprefix apps/probability/models/statistic/,\
+app_probability_test_src += $(addprefix apps/probability/models/statistic/,\
   statistic.cpp \
   z_statistic.cpp \
   t_statistic.cpp \
@@ -61,9 +58,6 @@ statistic_src += $(addprefix apps/probability/models/statistic/,\
   goodness_statistic.cpp \
   homogeneity_statistic.cpp \
 )
-
-app_probability_src += $(statistic_src)
-app_probability_test_src += $(statistic_src)
 
 app_probability_src += $(addprefix apps/probability/gui/,\
   calculation_cell.cpp \

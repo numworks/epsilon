@@ -622,6 +622,10 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 constexpr static int k_maxNumberOfIterations = 10;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
+  // Round to pixel perfect position to avoid landing in the middle of pixels
+  tStart = roundFloatToPixelPerfect(tStart);
+  colorLowerBound = roundFloatToPixelPerfect(colorLowerBound);
+
   float previousT = NAN;
   float t = NAN;
   float previousX = NAN;
@@ -1123,6 +1127,12 @@ float CurveView::labelValueAtIndex(Axis axis, int i) const {
 
 bool CurveView::bannerIsVisible() const {
   return m_bannerView && m_mainViewSelected;
+}
+
+float CurveView::roundFloatToPixelPerfect(float x) const {
+  float pixelStart = floatToPixel(Axis::Horizontal, x);
+  x -= (pixelStart - std::round(pixelStart)) * pixelWidth();
+  return x;
 }
 
 }

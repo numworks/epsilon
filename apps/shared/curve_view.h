@@ -123,6 +123,7 @@ protected:
   KDPoint positionLabel(KDCoordinate xPosition, KDCoordinate yPosition, KDSize labelSize, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
   Escher::View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
+
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
@@ -154,6 +155,8 @@ private:
   void computeHorizontalExtremaLabels(bool increaseNumberOfSignificantDigits = false);
   float labelValueAtIndex(Axis axis, int i) const;
   bool bannerIsVisible() const;
+  float roundFloatToPixelPerfect(float x) const;
+
   CurveViewRange * m_curveViewRange;
   CursorView * m_cursorView;
   bool m_mainViewSelected;

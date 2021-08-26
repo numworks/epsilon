@@ -126,8 +126,9 @@ public:
   // TODO Hugo : Consider cache
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
-  // TODO Hugo : Improve that
+  // TODO Hugo : Fix this terrible workaround
   static Poincare::Conic s_tempConic;
+  static double s_tempLine[2];
   // TODO Hugo : usefull ?
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);

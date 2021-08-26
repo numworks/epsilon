@@ -98,7 +98,7 @@ Constant Constant::Builder(CodePoint c) {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
   size_t codePointSize = SerializationHelper::CodePoint(buffer, bufferSize, c);
-  return SymbolAbstract::Builder<Constant, ConstantNode>(buffer, codePointSize);
+  return SymbolAbstract::Builder<Constant, ConstantNode>(buffer, codePointSize - 1);
 }
 
 Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

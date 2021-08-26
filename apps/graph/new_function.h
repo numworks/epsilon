@@ -15,10 +15,10 @@ class NewFunction : public Shared::ExpressionModelHandle {
 public:
   /* Possible arguments: n, x, t, θ
    * The CodePoint θ is two char long. */
-  constexpr static int k_parenthesedArgumentCodePointLength = 3;
-  constexpr static int k_parenthesedThetaArgumentByteLength = 4;
-  constexpr static int k_parenthesedXNTArgumentByteLength = 3;
-  constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
+  static constexpr int k_parenthesedArgumentCodePointLength = 3;
+  static constexpr int k_parenthesedThetaArgumentByteLength = 4;
+  static constexpr int k_parenthesedXNTArgumentByteLength = 3;
+  static constexpr int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
 
   static constexpr size_t k_numberOfPlotTypes = 15;
   enum class PlotType : uint8_t {
@@ -126,11 +126,13 @@ public:
   // TODO Hugo : Consider cache
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
+  static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
+  static constexpr char k_ordinateName[2] = "y";
   // TODO Hugo : Fix this terrible workaround
   static Poincare::Conic s_tempConic;
   static double s_tempLine[2];
   // TODO Hugo : usefull ?
-  constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
+  static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i = 0) const;

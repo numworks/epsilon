@@ -93,7 +93,7 @@ LawTestCase studentTests[]{
     LawTestCase(7, 18, 7.700718899661956e-08, 0.999999798186122, 1e-3),
 };
 
-QUIZ_CASE(student_law) {
+QUIZ_CASE(probability_student_law) {
   for (int i = 0; i < sizeof(studentTests) / sizeof(LawTestCase); i++) {
     LawTestCase t = studentTests[i];
     // double

@@ -49,7 +49,7 @@ LawTestCase chi2Tests[] = {
     LawTestCase(100, 0, 0.0, 0.0),
     LawTestCase(100, 100, 0.028162503162596778, 0.5188083154720433, 1e-6)};
 
-QUIZ_CASE(chi2_law) {
+QUIZ_CASE(probability_chi2_law) {
   for (int i = 0; i < sizeof(chi2Tests) / sizeof(LawTestCase); i++) {
     LawTestCase t = chi2Tests[i];
     // double

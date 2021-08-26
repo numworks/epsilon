@@ -92,7 +92,7 @@ void testStatistic(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(roughlyEqual<float>(stat->marginOfError(), test.m_marginOfError));
 }
 
-QUIZ_CASE(one_proportion_statistic) {
+QUIZ_CASE(probability_one_proportion_statistic) {
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 0.4,
                         .m_op = HypothesisParams::ComparisonOperator::Lower,
@@ -132,7 +132,7 @@ QUIZ_CASE(one_proportion_statistic) {
   }
 }
 
-QUIZ_CASE(one_mean_t_statistic) {
+QUIZ_CASE(probability_one_mean_t_statistic) {
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 128,
                         .m_op = HypothesisParams::ComparisonOperator::Lower,
@@ -174,7 +174,7 @@ QUIZ_CASE(one_mean_t_statistic) {
   }
 }
 
-QUIZ_CASE(one_mean_z_statistic) {
+QUIZ_CASE(probability_one_mean_z_statistic) {
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 128,
                         .m_op = HypothesisParams::ComparisonOperator::Lower,
@@ -214,7 +214,7 @@ QUIZ_CASE(one_mean_z_statistic) {
   }
 }
 
-QUIZ_CASE(two_proportions_statistic) {
+QUIZ_CASE(probability_two_proportions_statistic) {
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 0,
                         .m_op = HypothesisParams::ComparisonOperator::Higher,
@@ -254,7 +254,7 @@ QUIZ_CASE(two_proportions_statistic) {
   }
 }
 
-QUIZ_CASE(two_means_t_statistic) {
+QUIZ_CASE(probability_two_means_t_statistic) {
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 0,
                         .m_op = HypothesisParams::ComparisonOperator::Higher,
@@ -296,7 +296,7 @@ QUIZ_CASE(two_means_t_statistic) {
   }
 }
 
-QUIZ_CASE(pooled_t_test) {
+QUIZ_CASE(probability_pooled_t_test) {
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 0.3,
                         .m_op = HypothesisParams::ComparisonOperator::Higher,
@@ -338,7 +338,7 @@ QUIZ_CASE(pooled_t_test) {
   }
 }
 
-QUIZ_CASE(two_means_z_statistic) {
+QUIZ_CASE(probability_two_means_z_statistic) {
   TwoMeansZStatistic stat;
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_firstHypothesisParam = 0.,
@@ -378,7 +378,7 @@ QUIZ_CASE(two_means_z_statistic) {
   }
 }
 
-QUIZ_CASE(goodness_statistic) {
+QUIZ_CASE(probability_goodness_statistic) {
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_op = HypothesisParams::ComparisonOperator::Higher,
                         .m_numberOfInputs = 8,
@@ -400,7 +400,7 @@ QUIZ_CASE(goodness_statistic) {
   }
 }
 
-QUIZ_CASE(homogeneity_statistic) {
+QUIZ_CASE(probability_homogeneity_statistic) {
   // clang-format off
   StatisticTestCase tests[] = {StatisticTestCase{
       .m_op = HypothesisParams::ComparisonOperator::Higher,

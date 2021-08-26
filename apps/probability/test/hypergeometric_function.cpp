@@ -13,7 +13,7 @@ void assert_hypergeometric_is(double a, double b, double c, double z, double res
   quiz_assert(std::fabs(r - result)/result <= 100 * precision); // Multiply by 100 because precision is too strict
 }
 
-QUIZ_CASE(hypergeometric_function) {
+QUIZ_CASE(probability_hypergeometric_function) {
   assert_hypergeometric_is(1.0, 2.0, 3.0, 0.5, 1.545177444479562475337856971665412544604001074882042032965);
   assert_hypergeometric_is(0.5, 0.6, 0.9, 0.2, 1.076590925287316818209663064430201685162648800967441005164);
   assert_hypergeometric_is(1.4, 0.72, 3.56, 0.9, 1.496490448634238403792101320605116555747748144140465947806);

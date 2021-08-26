@@ -13,7 +13,7 @@ void assert_regularized_gamma_is(double s, double x, double result) {
   quiz_assert(std::fabs(r - result) <= precision);
 }
 
-QUIZ_CASE(regularized_gamma) {
+QUIZ_CASE(probability_regularized_gamma) {
   assert_regularized_gamma_is(1.0, 0.0, 0.0);
   assert_regularized_gamma_is(10.0, 0.0, 0.0);
   assert_regularized_gamma_is(100.0, 0.0, 0.0);

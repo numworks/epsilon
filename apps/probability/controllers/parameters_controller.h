@@ -36,7 +36,6 @@ private:
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
-  // TODO change to Vertical Layout
   class ContentView : public Escher::View {
   public:
     ContentView(Escher::SelectableTableView * selectableTableView);

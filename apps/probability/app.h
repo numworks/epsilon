@@ -73,7 +73,6 @@ private:
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers
-  // TODO store only memory for one controller (as a union ?)
   StatisticGraphController m_statisticGraphController;
   ResultsHomogeneityController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;

@@ -9,7 +9,6 @@
 #include <apps/shared/text_field_delegate.h>
 #include <apps/shared/layout_field_delegate.h>
 #include "../function_models_parameter_controller.h"
-#include <escher/even_odd_cell_with_ellipsis.h>
 
 namespace Graph {
 
@@ -17,38 +16,22 @@ class ListController : public Shared::FunctionListController, public Shared::Tex
 public:
   ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   const char * title() override;
-  void renameSelectedFunction();
-  // TextFieldDelegate
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
   // Make methods public
   void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
-  // Cannot select first column (TODO Hugo) nor last column of last row
-  void selectColumn(int j) override { if (j != 0 && !(j == 2 && selectedRow() + 1 == numberOfRows())) { SelectableTableViewDataSource::selectColumn(j); } }
-  void selectRow(int i) override { if ( selectedColumn() != 0 && !(selectedColumn() == 2 && i + 1 == numberOfRows())) { SelectableTableViewDataSource::selectRow(i); } }
-
 private:
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   void addModel() override;
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
-  // TODO Hugo : use new type of expression cell with left accessory for color, and giveAccessoryAllWidth with some tweaks
-  Shared::FunctionTitleCell * titleCells(int index) override;
-  Escher::HighlightCell * expressionCells(int index) override;
-  Escher::HighlightCell * parameterCells(int index) override;
-  void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j) override;
-  void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;
-  void willDisplayParameterCellAtIndex(Escher::HighlightCell * cell, int j) override;
-  void setFunctionNameInTextField(Shared::ExpiringPointer<NewFunction> function, Escher::TextField * textField);
+  Escher::HighlightCell * functionCells(int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
   ContinuousFunctionStore * modelStore() override;
-  TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
+  // TODO create new kind of cell
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
-  Escher::EvenOddCellWithEllipsis m_expressionParameterCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;

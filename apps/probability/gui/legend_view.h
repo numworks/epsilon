@@ -10,34 +10,6 @@
 
 namespace Probability {
 
-class LegendLabel : public HorizontalLayout {
-public:
-  LegendLabel(const char * label, KDColor color);
-  int numberOfSubviews() const override { return 2; }
-  Escher::View * subviewAtIndex(int i) override {
-    View * subviews[] = {&m_icon, &m_labelView};
-    return subviews[i];
-  }
-  KDSize minimalSizeForOptimalDisplay() const override;
-  void layoutSubviews(bool force) override;
-
-private:
-  constexpr static int k_marginBetween = 5;
-  constexpr static int k_offsetTop = 3;
-  constexpr static int k_diameter = 8;
-  class Icon : public Escher::View {
-  public:
-    Icon(KDColor color) : m_color(color) {}
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_diameter, k_diameter); }
-
-  private:
-    KDColor m_color;
-  };
-  Escher::BufferTextView m_labelView;
-  Icon m_icon;
-};
-
 class LegendView : public VerticalLayout {
 public:
   LegendView() :
@@ -47,6 +19,39 @@ public:
   Escher::View * subviewAtIndex(int i) override { return i == 0 ? &m_pValue : &m_alpha; }
 
 private:
+
+  class LegendLabel : public HorizontalLayout {
+  public:
+    LegendLabel(const char * label, KDColor color);
+    int numberOfSubviews() const override { return 2; }
+    Escher::View * subviewAtIndex(int i) override {
+      View * subviews[] = {&m_icon, &m_labelView};
+      return subviews[i];
+    }
+    KDSize minimalSizeForOptimalDisplay() const override;
+    void layoutSubviews(bool force) override;
+
+  private:
+    constexpr static int k_marginBetween = 5;
+    constexpr static int k_offsetTop = 3;
+    constexpr static int k_diameter = 8;
+
+    class Icon : public Escher::View {
+    public:
+      Icon(KDColor color) : m_color(color) {}
+      void drawRect(KDContext * ctx, KDRect rect) const override;
+      KDSize minimalSizeForOptimalDisplay() const override {
+        return KDSize(k_diameter, k_diameter);
+      }
+
+    private:
+      KDColor m_color;
+    };
+
+    Escher::BufferTextView m_labelView;
+    Icon m_icon;
+  };
+
   LegendLabel m_pValue;
   LegendLabel m_alpha;
 };

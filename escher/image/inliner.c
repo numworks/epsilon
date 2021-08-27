@@ -37,7 +37,7 @@ int main(int argc, char * argv[]) {
   const char * inputPath = argv[1];
   bool transparent = FALSE;
   if (argc == 5) {
-    ERROR_IF(strcmp(argv[4], "--transparent") != 0, "Argument must be '--transparent'");
+    ERROR_IF(strcmp(argv[4], "--transparent") != 0, "Last argument must be '--transparent'");
     transparent = TRUE;
   }
   FILE * inputFile = fopen(inputPath, "rb");

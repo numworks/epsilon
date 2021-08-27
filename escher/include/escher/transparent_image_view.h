@@ -1,5 +1,5 @@
-#ifndef ESCHER_INCLUDE_ESCHER_TRANSPARENT_IMAGE_VIEW_H
-#define ESCHER_INCLUDE_ESCHER_TRANSPARENT_IMAGE_VIEW_H
+#ifndef ESCHER_TRANSPARENT_IMAGE_VIEW_H
+#define ESCHER_TRANSPARENT_IMAGE_VIEW_H
 
 #include "image_view.h"
 
@@ -12,10 +12,10 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
 private:
-  void blendInplace(KDColor * colorBuffer, uint8_t * alphaBuffer) const;
+  void blendInPlace(KDColor * colorBuffer, uint8_t * alphaBuffer) const;
   KDColor m_backgroundColor;
 };
 
 }  // namespace Escher
 
-#endif /* ESCHER_INCLUDE_ESCHER_TRANSPARENT_IMAGE_VIEW_H */
+#endif /* ESCHER_TRANSPARENT_IMAGE_VIEW_H */

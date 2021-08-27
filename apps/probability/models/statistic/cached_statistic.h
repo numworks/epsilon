@@ -17,7 +17,7 @@ public:
   float estimate() override { return m_estimate; };
   float intervalCriticalValue() override { return m_zCritical; };
   float standardError() override { return m_SE; };
-  float marginOfError() override { return m_ME; };
+  float marginOfError() override { return m_marginOfError; };
 
 protected:
   float computeMarginOfError(float zCritical, float SE) { return zCritical * SE; }
@@ -28,7 +28,7 @@ protected:
   float m_estimate;
   float m_zCritical;
   float m_SE;
-  float m_ME;
+  float m_marginOfError;
 };
 
 }  // namespace Probability

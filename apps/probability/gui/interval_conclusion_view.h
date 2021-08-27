@@ -12,7 +12,7 @@ namespace Probability {
 class IntervalConclusionView : public VerticalLayout {
 public:
   IntervalConclusionView();
-  void setInterval(float center, float ME);
+  void setInterval(float center, float marginOfError);
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
 

@@ -6,8 +6,8 @@
 
 using namespace Poincare;
 
-void assert_reduces_to_formal_expression(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian) {
-  assert_parsed_expression_simplify_to(expression, result, User, angleUnit, Metric, Cartesian, ReplaceAllDefinedSymbolsWithDefinition);
+void assert_reduces_to_formal_expression(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian, Preferences::ComplexFormat complexFormat = Cartesian) {
+  assert_parsed_expression_simplify_to(expression, result, User, angleUnit, Metric, complexFormat, ReplaceAllDefinedSymbolsWithDefinition);
 }
 
 QUIZ_CASE(poincare_derivative_formal) {
@@ -48,6 +48,7 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(f(x),x,x)", "1/2");
   assert_reduces_to_formal_expression("diff(a^2,a,x)", "2×x");
   assert_reduces_to_formal_expression("diff(a^2,a,a)", "4");
+  assert_reduces_to_formal_expression("diff(b^2,b,2)", "4", Radian, Real);
 
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();

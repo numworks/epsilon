@@ -9,6 +9,7 @@
 #include <apps/shared/text_field_delegate.h>
 #include <apps/shared/layout_field_delegate.h>
 #include "../function_models_parameter_controller.h"
+#include "function_cell.h"
 
 namespace Graph {
 
@@ -18,7 +19,8 @@ public:
   const char * title() override;
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
   // Make methods public
   void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
@@ -30,11 +32,11 @@ private:
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
   ContinuousFunctionStore * modelStore() override;
-  // TODO create new kind of cell
-  Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
+  FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;
+  bool m_parameterColumnSelected;
 };
 
 }

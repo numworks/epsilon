@@ -1,35 +1,15 @@
 #ifndef APPS_PROBABILITY_GUI_SUBAPP_CELL_H
 #define APPS_PROBABILITY_GUI_SUBAPP_CELL_H
 
+#include <escher/bordered.h>
 #include <escher/chevron_view.h>
 #include <escher/message_text_view.h>
 
 #include "highlight_image_cell.h"
-#include "horizontal_or_vertical_layout.h"
+#include "highlight_message_view.h"
 #include "image_cell.h"
 
 namespace Probability {
-
-/* Highlightable view with a message */
-class HighlightMessageView : public HighlightCell {
-public:
-  void setHighlighted(bool highlighted) override {
-    HighlightCell::setHighlighted(highlighted);
-    m_messageView.setBackgroundColor(highlighted ? Palette::Select : KDColorWhite);
-  }
-  void setMessage(I18n::Message m) { m_messageView.setMessage(m); }
-  int numberOfSubviews() const override { return 1; }
-  View * subviewAtIndex(int i) override { return &m_messageView; }
-  KDSize minimalSizeForOptimalDisplay() const override {
-    return m_messageView.minimalSizeForOptimalDisplay();
-  }
-  void layoutSubviews(bool force) override { m_messageView.setFrame(bounds(), force); }
-  void setFont(const KDFont * font) { m_messageView.setFont(font); }
-  void setTextColor(KDColor color) { m_messageView.setTextColor(color); }
-
-private:
-  MessageTextView m_messageView;
-};
 
 /* Cell made of an icon, a title, a chevron and a subtitle below. */
 class SubappCell : public Escher::HighlightCell, public Escher::Bordered {
@@ -54,7 +34,7 @@ private:
   HighlightImageCell m_icon;
   HighlightMessageView m_title;
   HighlightMessageView m_subTitle;
-  ChevronView m_chevron;
+  Escher::ChevronView m_chevron;
 };
 
 }  // namespace Probability

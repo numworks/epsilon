@@ -1,15 +1,6 @@
 #include "input_homogeneity_controller.h"
 
-#include <apps/i18n.h>
-#include <escher/container.h>
-#include <escher/palette.h>
-#include <kandinsky/color.h>
-#include <kandinsky/font.h>
-#include <string.h>
-
 #include "probability/app.h"
-#include "probability/models/data.h"
-#include "probability/text_helpers.h"
 
 using namespace Probability;
 

@@ -1,7 +1,5 @@
 #include "distribution_cell.h"
 
-#include <assert.h>
-
 using namespace Escher;
 
 namespace Probability {

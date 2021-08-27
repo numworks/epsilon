@@ -1,9 +1,9 @@
 #include "hypergeometric_function.h"
-#include "helper.h"
+
 #include <cmath>
-#include <float.h>
 #include <assert.h>
 
+#include "helper.h"
 
 bool hypergeometricFunction(double a, double b, double c, double z, double epsilon, int maxNumberOfIterations, double * result) {
   // TODO Put interruption instead of maxNumberOfIterations

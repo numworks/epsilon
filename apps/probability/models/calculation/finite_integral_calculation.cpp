@@ -1,8 +1,8 @@
 #include "finite_integral_calculation.h"
-#include "probability/models/distribution/normal_distribution.h"
+
 #include <assert.h>
-#include <ion.h>
-#include <cmath>
+
+#include "probability/models/distribution/normal_distribution.h"
 
 namespace Probability {
 

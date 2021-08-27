@@ -2,10 +2,8 @@
 #define APPS_PROBABILITY_CONTROLLERS_CATEGORICAL_TYPE_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/container.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 

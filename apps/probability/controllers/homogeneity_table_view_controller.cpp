@@ -1,7 +1,5 @@
 #include "homogeneity_table_view_controller.h"
 
-#include "probability/controllers/input_homogeneity_controller.h"
-
 namespace Probability {
 
 HomogeneityTableViewController::HomogeneityTableViewController(

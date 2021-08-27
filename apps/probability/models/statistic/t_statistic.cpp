@@ -1,7 +1,5 @@
 #include "t_statistic.h"
 
-#include <poincare/normal_distribution.h>
-
 #include "probability/models/student_law.h"
 
 namespace Probability {

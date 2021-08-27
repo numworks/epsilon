@@ -1,5 +1,7 @@
 #include "bordering_view.h"
 
+#include <escher/palette.h>
+
 namespace Probability {
 
 void BorderingView::drawRect(KDContext * ctx, KDRect rect) const {

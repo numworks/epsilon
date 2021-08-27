@@ -2,7 +2,6 @@
 #define APPS_PROBABILITY_GUI_HIGHLIGHT_IMAGE_CELL_H
 
 #include <escher/highlight_cell.h>
-#include <escher/palette.h>
 #include <escher/transparent_image_view.h>
 
 namespace Probability {

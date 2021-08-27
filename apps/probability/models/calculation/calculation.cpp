@@ -1,5 +1,5 @@
 #include "calculation.h"
-#include <assert.h>
+
 #include <cmath>
 
 namespace Probability {

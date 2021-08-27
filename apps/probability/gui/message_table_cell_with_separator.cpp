@@ -2,8 +2,6 @@
 
 #include <escher/palette.h>
 
-#include "probability/app.h"
-
 namespace Probability {
 
 MessageTableCellWithSeparator::MessageTableCellWithSeparator(

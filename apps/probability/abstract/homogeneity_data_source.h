@@ -2,12 +2,9 @@
 #define APPS_PROBABILITY_ABSTRACT_HOMOGENEITY_DATA_SOURCE_H
 
 #include <apps/i18n.h>
-#include <apps/shared/parameter_text_field_delegate.h>
 #include <escher/even_odd_buffer_text_cell.h>
-#include <escher/input_event_handler_delegate.h>
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
-#include <escher/text_field_delegate.h>
 
 #include "probability/abstract/chained_selectable_table_view_delegate.h"
 #include "probability/gui/bordered_table_view_data_source.h"

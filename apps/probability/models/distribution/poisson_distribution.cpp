@@ -1,7 +1,7 @@
 #include "poisson_distribution.h"
+
 #include <assert.h>
 #include <cmath>
-#include <ion.h>
 
 namespace Probability {
 

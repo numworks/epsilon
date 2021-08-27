@@ -5,7 +5,6 @@
 
 #include "button_delegate.h"
 #include "input_categorical_view.h"
-#include "probability/controllers/results_controller.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/statistic/chi2_statistic.h"
 

@@ -9,19 +9,14 @@ namespace Probability {
 
 class HighlightImageCell : public Escher::HighlightCell {
 public:
-  HighlightImageCell() : Escher::HighlightCell() { m_contentView.setBackgroundColor(KDColorWhite); }
-  void setHighlighted(bool highlighted) override {
-    m_contentView.setBackgroundColor(highlighted ? Escher::Palette::Select : KDColorWhite);
-    HighlightCell::setHighlighted(highlighted);
-  };
+  HighlightImageCell();
+  void setHighlighted(bool highlighted) override;
 
   // Wrap TransparentImageView
   int numberOfSubviews() const override { return 1; }
   Escher::View * subviewAtIndex(int i) override { return &m_contentView; }
-  KDSize minimalSizeForOptimalDisplay() const override {
-    return m_contentView.minimalSizeForOptimalDisplay();
-  }
-  void layoutSubviews(bool force) override { m_contentView.setFrame(bounds(), force); }
+  KDSize minimalSizeForOptimalDisplay() const override;
+  void layoutSubviews(bool force) override;
   void setImage(const Escher::Image * image) { m_contentView.setImage(image); }
 
 private:

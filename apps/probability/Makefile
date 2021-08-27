@@ -60,55 +60,56 @@ app_probability_test_src += $(addprefix apps/probability/models/statistic/,\
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\
+  bordering_view.cpp \
   calculation_cell.cpp \
+  calculation_popup_data_source.cpp \
+  centering_view.cpp \
+  comparison_operator_popup_data_source.cpp \
   distribution_cell.cpp \
   distribution_curve_view.cpp \
-  image_cell.cpp \
-  horizontal_or_vertical_layout.cpp \
-  statistic_graph_view.cpp \
-  test_conclusion_view.cpp \
-  interval_conclusion_view.cpp \
-  statistic_curve_view.cpp \
-  legend_view.cpp \
-  subapp_cell.cpp \
-  centering_view.cpp \
   dropdown_view.cpp \
-  calculation_popup_data_source.cpp \
-  bordering_view.cpp \
-  comparison_operator_popup_data_source.cpp \
+  highlight_image_cell.cpp \
+  horizontal_or_vertical_layout.cpp \
+  image_cell.cpp \
   input_goodness_table_view.cpp \
+  interval_conclusion_view.cpp \
   layout_cell.cpp \
-  layout_cell_with_sub_message.cpp \
   layout_cell_with_editable_text_with_message.cpp \
+  layout_cell_with_sub_message.cpp \
+  legend_view.cpp \
   message_table_cell_with_separator.cpp \
+  statistic_curve_view.cpp \
+  statistic_graph_view.cpp \
+  subapp_cell.cpp \
+  test_conclusion_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\
   calculation_controller.cpp \
-  distribution_controller.cpp \
-  parameters_controller.cpp \
-  menu_controller.cpp \
-  test_controller.cpp \
-  hypothesis_controller.cpp \
   categorical_type_controller.cpp \
-  type_controller.cpp \
-  input_controller.cpp \
-  results_controller.cpp \
-  input_goodness_controller.cpp \
-  input_homogeneity_controller.cpp \
-  results_homogeneity_controller.cpp \
-  statistic_graph_controller.cpp \
+  distribution_controller.cpp \
   goodness_table_view_controller.cpp \
   homogeneity_table_view_controller.cpp \
+  hypothesis_controller.cpp \
+  input_controller.cpp \
+  input_goodness_controller.cpp \
+  input_homogeneity_controller.cpp \
+  menu_controller.cpp \
+  parameters_controller.cpp \
+  results_controller.cpp \
+  results_homogeneity_controller.cpp \
+  statistic_graph_controller.cpp \
+  test_controller.cpp \
+  type_controller.cpp \
 )
 
 app_probability_src +=  $(addprefix apps/probability/abstract/,\
   homogeneity_data_source.cpp \
   input_categorical_controller.cpp \
-  table_view_controller.cpp \
-  input_homogeneity_data_source.cpp \
   input_categorical_view.cpp \
+  input_homogeneity_data_source.cpp \
   results_homogeneity_data_source.cpp \
+  table_view_controller.cpp \
 )
 
 

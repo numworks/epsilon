@@ -1,18 +1,17 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_STATISTIC_GRAPH_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_STATISTIC_GRAPH_CONTROLLER_H
 
-#include <escher/buffer_table_cell.h>
 #include <escher/stack_view_controller.h>
 
+#include "probability/gui/page_controller.h"
 #include "probability/gui/statistic_graph_view.h"
-#include "probability/gui/selectable_cell_list_controller.h"
 #include "probability/models/statistic_view_range.h"
 
 namespace Probability {
 
 class StatisticGraphController : public Page, public LegendPositionDataSource {
 public:
-  StatisticGraphController(StackViewController * stack, Statistic * statistic);
+  StatisticGraphController(Escher::StackViewController * stack, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override;
   const char * title() override;
   Escher::View * view() override { return &m_graphView; }

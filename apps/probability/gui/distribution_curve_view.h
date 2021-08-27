@@ -1,10 +1,8 @@
 #ifndef APPS_PROBABILITY_GUI_DISTRIBUTION_CURVE_VIEW_H
 #define APPS_PROBABILITY_GUI_DISTRIBUTION_CURVE_VIEW_H
 
-#include <apps/constant.h>
 #include <apps/shared/curve_view.h>
 #include <poincare/coordinate_2D.h>
-#include <poincare/print_float.h>
 
 #include "probability/models/calculation/calculation.h"
 #include "probability/models/distribution/distribution.h"

@@ -1,7 +1,5 @@
 #include "pooled_two_means_statistic.h"
 
-#include "math.h"
-
 namespace Probability {
 
 float PooledTwoMeansStatistic::computeDegreesOfFreedom(float s1, float n1, float s2, float n2) {

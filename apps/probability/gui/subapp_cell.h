@@ -3,11 +3,9 @@
 
 #include <escher/bordered.h>
 #include <escher/chevron_view.h>
-#include <escher/message_text_view.h>
 
 #include "highlight_image_cell.h"
 #include "highlight_message_view.h"
-#include "image_cell.h"
 
 namespace Probability {
 

@@ -1,9 +1,7 @@
 #include "parameters_controller.h"
-#include <apps/constant.h>
-#include <assert.h>
-#include <string.h>
 
-#include "probability/text_helpers.h"
+#include <assert.h>
+
 #include "probability/app.h"
 
 using namespace Escher;

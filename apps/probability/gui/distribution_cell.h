@@ -3,7 +3,6 @@
 
 #include <escher/chevron_view.h>
 #include <escher/i18n.h>
-#include <escher/image_view.h>
 #include <escher/message_text_view.h>
 #include <escher/table_cell.h>
 

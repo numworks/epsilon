@@ -1,10 +1,6 @@
 #include "statistic_view_range.h"
 
-#include <algorithm>
-#include <cmath>
-
 #include "probability/app.h"
-#include "probability/gui/statistic_curve_view.h"
 
 namespace Probability {
 

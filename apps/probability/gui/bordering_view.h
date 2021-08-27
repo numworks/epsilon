@@ -2,7 +2,6 @@
 #define APPS_PROBABILITY_GUI_BORDERING_VIEW_H
 
 #include <escher/bordered.h>
-#include <escher/palette.h>
 #include <escher/view.h>
 
 namespace Probability {

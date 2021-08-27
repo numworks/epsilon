@@ -1,6 +1,5 @@
 #include "chi2_law.h"
 
-#include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 
 #include <cmath>
@@ -58,7 +57,10 @@ T Chi2Law::CumulativeDistributiveInverseForProbability(T probability, T k) {
     xmax *= 10;
   }
 
-  struct Args { T proba; T k; };
+  struct Args {
+    T proba;
+    T k;
+  };
   Args args{probability, k};
 
   Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(

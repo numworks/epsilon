@@ -1,18 +1,8 @@
 #include "input_goodness_controller.h"
 
-#include <apps/i18n.h>
-#include <assert.h>
-#include <escher/container.h>
 #include <escher/input_event_handler_delegate.h>
-#include <escher/invocation.h>
-#include <escher/responder.h>
-#include <escher/selectable_table_view_data_source.h>
-#include <escher/table_view_data_source.h>
-#include <escher/text_field_delegate.h>
 
 #include "probability/app.h"
-#include "probability/models/data.h"
-#include "probability/text_helpers.h"
 
 using namespace Probability;
 

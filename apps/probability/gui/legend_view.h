@@ -3,23 +3,22 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
-#include <escher/solid_color_view.h>
 #include <escher/view.h>
 
 #include "horizontal_or_vertical_layout.h"
 
 namespace Probability {
 
+/* A View displaying the legend for Test graphs */
 class LegendView : public VerticalLayout {
 public:
   LegendView() :
       m_pValue(I18n::translate(I18n::Message::PValue), KDColorOrange),
-      m_alpha(I18n::translate(I18n::Message::GreekAlpha), Palette::GrayMiddle) {}
+      m_alpha(I18n::translate(I18n::Message::GreekAlpha), Escher::Palette::GrayMiddle) {}
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override { return i == 0 ? &m_pValue : &m_alpha; }
 
 private:
-
   class LegendLabel : public HorizontalLayout {
   public:
     LegendLabel(const char * label, KDColor color);

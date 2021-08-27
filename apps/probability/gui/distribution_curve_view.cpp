@@ -1,7 +1,5 @@
 #include "distribution_curve_view.h"
 
-#include <assert.h>
-
 #include "probability/models/distribution/normal_distribution.h"
 
 using namespace Shared;

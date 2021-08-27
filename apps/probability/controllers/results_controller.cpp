@@ -2,16 +2,10 @@
 
 #include <apps/i18n.h>
 #include <escher/input_event_handler_delegate.h>
-#include <escher/responder.h>
-#include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
-#include <algorithm>
-
 #include "probability/app.h"
-#include "probability/helpers.h"
-#include "probability/models/data.h"
 #include "probability/text_helpers.h"
 
 using namespace Probability;

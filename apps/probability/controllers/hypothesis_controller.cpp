@@ -2,24 +2,16 @@
 
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
-#include <apps/shared/poincare_helpers.h>
-#include <escher/container.h>
 #include <escher/input_event_handler_delegate.h>
-#include <escher/invocation.h>
-#include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/preferences.h>
 #include <poincare/vertical_offset_layout.h>
 #include <shared/poincare_helpers.h>
 #include <string.h>
 
-#include <new>
-
 #include "input_controller.h"
 #include "probability/app.h"
-#include "probability/models/data.h"
 #include "probability/text_helpers.h"
 
 using namespace Probability;

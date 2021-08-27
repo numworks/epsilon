@@ -3,7 +3,7 @@
 namespace Probability {
 
 void LegendView::LegendLabel::Icon::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, m_color, Palette::WallScreen);
+  ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, m_color, Escher::Palette::WallScreen);
 }
 
 LegendView::LegendLabel::LegendLabel(const char * label, KDColor color) : m_icon(color) {

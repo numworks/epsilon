@@ -44,7 +44,7 @@ void TwoProportionsStatistic::computeInterval() {
   m_estimate = computeEstimate(x1(), n1(), x2(), n2());
   m_zCritical = computeIntervalCriticalValue(m_threshold);
   m_SE = computeStandardError(x1(), n1(), x2(), n2());
-  m_ME = computeMarginOfError(m_zCritical, m_SE);
+  m_marginOfError = computeMarginOfError(m_zCritical, m_SE);
 }
 
 Poincare::Layout TwoProportionsStatistic::estimateLayout() {

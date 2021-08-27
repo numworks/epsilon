@@ -32,9 +32,9 @@ bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
 void OneMeanTStatistic::computeTest() {
   float mean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = computeDegreesOfFreedom(n());
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeT(mean, x(), s(), n());
-  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
 
 void OneMeanTStatistic::computeInterval() {
@@ -45,24 +45,24 @@ void OneMeanTStatistic::computeInterval() {
   m_marginOfError = computeMarginOfError(m_zCritical, m_SE);
 }
 
-ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {
+ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X: {
       HorizontalLayout x = HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')));
-      return ParameterRepr{x, I18n::Message::SampleMean};
+      return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::S: {
       HorizontalLayout s = HorizontalLayout::Builder(CodePointLayout::Builder('s'));
-      return ParameterRepr{s, I18n::Message::StandardDeviation};
+      return ParameterRepresentation{s, I18n::Message::StandardDeviation};
     }
     case ParamsOrder::N: {
       HorizontalLayout n = HorizontalLayout::Builder(CodePointLayout::Builder('n'));
-      return ParameterRepr{n, I18n::Message::SampleSize};
+      return ParameterRepresentation{n, I18n::Message::SampleSize};
     }
   }
   assert(false);
-  return ParameterRepr{};
+  return ParameterRepresentation{};
 }
 
 float OneMeanTStatistic::computeDegreesOfFreedom(float n) {

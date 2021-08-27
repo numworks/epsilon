@@ -19,7 +19,7 @@ public:
   }
   void setHighlighted(bool highlight) override;
   void setSubLabelMessage(I18n::Message textBody);
-  bool hideSublabel() override { return singleRowMode() && textField()->isEditing(); }
+  bool shouldHideSublabel() override { return singleRowMode() && textField()->isEditing(); }
 
   // ChainedTextFieldDelegate
   void textFieldDidStartEditing(TextField * textField) override;

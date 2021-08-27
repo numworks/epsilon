@@ -50,7 +50,7 @@ void inputValues(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(roughlyEqual<float>(stat->threshold(), test.m_significanceLevel));
 
   stat->hypothesisParams()->setFirstParam(test.m_firstHypothesisParam);
-  stat->hypothesisParams()->setOp(test.m_op);
+  stat->hypothesisParams()->setComparisonOperator(test.m_op);
 
   for (int i = 0; i < test.m_numberOfInputs; i++) {
     stat->setParamAtIndex(i, test.m_inputs[i]);

@@ -72,7 +72,7 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
   } else {
     constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
-    defaultParseFloat(p, buffer, bufferSize);
+    defaultConvertFloatToText(p, buffer, bufferSize);
     myCell->editableTextCell()->textField()->setText(buffer);
   }
 }

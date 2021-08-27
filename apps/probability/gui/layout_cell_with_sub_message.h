@@ -13,7 +13,7 @@ public:
   const View * subLabelView() const override { return &m_messageTextView; }
   void setSubLabelMessage(I18n::Message message);
   void setHighlighted(bool highlight) override;
-  bool isSublabelAlignedRight() const override { return false; }
+  bool shouldAlignSublabelRight() const override { return false; }
 
 private:
   Escher::MessageTextView m_messageTextView;

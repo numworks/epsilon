@@ -26,8 +26,8 @@ void HomogeneityStatistic::computeTest() {
   computeExpectedValues(max);
   m_testCriticalValue = computeChi2();
   m_degreesOfFreedom = computeDegreesOfFreedom(max);
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
-  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
 
 float HomogeneityStatistic::expectedValueAtLocation(int row, int column) {

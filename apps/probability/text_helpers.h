@@ -17,7 +17,7 @@ const char * testToTextSymbol(Data::Test t);
 const char * testTypeToText(Data::TestType t);
 
 template <typename T>
-int defaultParseFloat(T value, char buffer[], int bufferSize);
+int defaultConvertFloatToText(T value, char buffer[], int bufferSize);
 
 Poincare::Layout XOneMinusXTwoLayout();
 

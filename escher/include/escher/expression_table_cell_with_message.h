@@ -15,7 +15,7 @@ public:
   void setSubLabelMessage(I18n::Message messageBody);
 
 protected:
-  bool isSublabelAlignedRight() const override { return false; }
+  bool shouldAlignSublabelRight() const override { return false; }
 
 private:
   MessageTextView m_subLabelView;

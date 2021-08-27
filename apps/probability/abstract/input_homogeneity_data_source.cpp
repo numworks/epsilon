@@ -46,7 +46,7 @@ void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
   } else {
     constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
-    defaultParseFloat(p, buffer, bufferSize);
+    defaultConvertFloatToText(p, buffer, bufferSize);
     myCell->editableTextCell()->textField()->setText(buffer);
   }
   myCell->setEven(row % 2 == 0);

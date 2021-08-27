@@ -31,8 +31,8 @@ public:
 protected:
   float m_degreesOfFreedom;
 
-  ParameterRepr paramReprAtIndex(int i) const override {
-    return ParameterRepr{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
+  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+    return ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }
 
   // Chi2 specific

@@ -45,7 +45,7 @@ void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
 
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   drawZLabelAndGraduation(ctx, z);
-  colorUnderCurve(ctx, rect, m_statistic->hypothesisParams()->op(), z, zAlpha);
+  colorUnderCurve(ctx, rect, m_statistic->hypothesisParams()->comparisonOperator(), z, zAlpha);
   drawCartesianCurve(ctx,
                      rect,
                      -INFINITY,

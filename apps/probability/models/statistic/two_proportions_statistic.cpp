@@ -35,9 +35,9 @@ bool TwoProportionsStatistic::isValidParamAtIndex(int i, float p) {
 
 void TwoProportionsStatistic::computeTest() {
   float deltaP0 = m_hypothesisParams.firstParam();
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeZ(deltaP0, x1(), n1(), x2(), n2());
-  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
 
 void TwoProportionsStatistic::computeInterval() {
@@ -63,39 +63,39 @@ Poincare::Layout TwoProportionsStatistic::estimateLayout() {
   return std::move(res);
 }
 
-ParameterRepr TwoProportionsStatistic::paramReprAtIndex(int i) const {
+ParameterRepresentation TwoProportionsStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {
       HorizontalLayout x1 = HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
-      return ParameterRepr{x1, I18n::Message::SuccessSample1};
+      return ParameterRepresentation{x1, I18n::Message::SuccessSample1};
     }
     case ParamsOrder::N1: {
       HorizontalLayout n1 = HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
-      return ParameterRepr{n1, I18n::Message::Sample1Size};
+      return ParameterRepresentation{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::X2: {
       HorizontalLayout x2 = HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
-      return ParameterRepr{x2, I18n::Message::SuccessSample2};
+      return ParameterRepresentation{x2, I18n::Message::SuccessSample2};
     }
     case ParamsOrder::N2: {
       HorizontalLayout n2 = HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
-      return ParameterRepr{n2, I18n::Message::Sample2Size};
+      return ParameterRepresentation{n2, I18n::Message::Sample2Size};
     }
   }
   assert(false);
-  return ParameterRepr{};
+  return ParameterRepresentation{};
 }
 
 bool TwoProportionsStatistic::validateInputs() {

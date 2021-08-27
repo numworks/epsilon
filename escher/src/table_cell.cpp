@@ -96,7 +96,7 @@ void TableCell::layoutSubviews(bool force) {
   KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);
   KDCoordinate labelWidth = cropIfOverflow(labelSize.width(), width);
   KDCoordinate subLabelHeight = cropIfOverflow(subLabelSize.height(), height);
-  KDCoordinate subLabelWidth = hideSublabel() ? 0 : cropIfOverflow(subLabelSize.width(), width);
+  KDCoordinate subLabelWidth = shouldHideSublabel() ? 0 : cropIfOverflow(subLabelSize.width(), width);
   KDCoordinate accessoryHeight = cropIfOverflow(accessorySize.height(), height);
   KDCoordinate accessoryWidth =
       accessory ? cropIfOverflow(std::max(accessorySize.width(), accessoryMinimalWidthOverridden()),
@@ -111,12 +111,12 @@ void TableCell::layoutSubviews(bool force) {
         label, KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight), force);
     x += labelWidth + Metric::CellHorizontalElementMargin;
 
-    if (isSublabelAlignedRight() & !giveAccessoryAllWidth()) {
+    if (shouldAlignSublabelRight() & !giveAccessoryAllWidth()) {
       // Align SubLabel right
       x = xEnd - accessoryWidth - Metric::CellHorizontalElementMargin - subLabelWidth;
     }
 
-    if (!hideSublabel()) {
+    if (!shouldHideSublabel()) {
       setFrameIfViewExists(
           subLabel,
           KDRect(x, y + (height - subLabelHeight) / 2, subLabelWidth, subLabelHeight),
@@ -139,7 +139,7 @@ void TableCell::layoutSubviews(bool force) {
 
   } else {  // Two rows
     setFrameIfViewExists(label, KDRect(x, y, labelWidth, labelHeight), force);
-    if (isSublabelAlignedRight()) {
+    if (shouldAlignSublabelRight()) {
       x = xEnd - subLabelWidth;
     }
     setFrameIfViewExists(
@@ -148,11 +148,11 @@ void TableCell::layoutSubviews(bool force) {
             x, y + labelHeight + Metric::CellVerticalElementMargin, subLabelWidth, subLabelHeight),
         force);
 
-    KDCoordinate accessoryY = y + (alignLabelAndAccessory() ? 0 : (height - accessoryHeight) / 2);
+    KDCoordinate accessoryY = y + (shouldAlignLabelAndAccessory() ? 0 : (height - accessoryHeight) / 2);
     if (giveAccessoryAllWidth()) {
       KDCoordinate maxX =
           leftOffset + Metric::CellVerticalElementMargin +
-          (alignLabelAndAccessory() ? labelWidth : std::max(labelWidth, subLabelWidth));
+          (shouldAlignLabelAndAccessory() ? labelWidth : std::max(labelWidth, subLabelWidth));
       setFrameIfViewExists(
           accessory, KDRect(maxX, accessoryY, xEnd - maxX, accessoryHeight), force);
     } else {

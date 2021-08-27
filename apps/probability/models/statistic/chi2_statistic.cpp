@@ -12,7 +12,7 @@
 namespace Probability {
 
 Chi2Statistic::Chi2Statistic() : m_degreesOfFreedom(-1) {
-  m_hypothesisParams.setOp(HypothesisParams::ComparisonOperator::Higher);  // Always higher
+  m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Higher);  // Always higher
 }
 
 Poincare::Layout Chi2Statistic::testCriticalValueSymbol() {

@@ -36,9 +36,9 @@ bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {
 
 void TwoMeansZStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeZ(deltaMean, x1(), n1(), sigma1(), x2(), n2(), sigma2());
-  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
 
 void TwoMeansZStatistic::computeInterval() {
@@ -52,46 +52,46 @@ Poincare::Layout TwoMeansZStatistic::estimateLayout() {
   return XOneMinusXTwoLayout();
 }
 
-ParameterRepr TwoMeansZStatistic::paramReprAtIndex(int i) const {
+ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {
       HorizontalLayout x1 = HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
-      return ParameterRepr{x1, I18n::Message::Sample1Mean};
+      return ParameterRepresentation{x1, I18n::Message::Sample1Mean};
     }
     case ParamsOrder::N1: {
       HorizontalLayout n1 = codePointSubscriptCodePointLayout('n', '1');
-      return ParameterRepr{n1, I18n::Message::Sample1Size};
+      return ParameterRepresentation{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma1: {
       HorizontalLayout sigma1 = codePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '1');
-      return ParameterRepr{sigma1, I18n::Message::Sample1Std};
+      return ParameterRepresentation{sigma1, I18n::Message::Sample1Std};
     }
     case ParamsOrder::X2: {
       HorizontalLayout x2 = HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
-      return ParameterRepr{x2, I18n::Message::Sample2Mean};
+      return ParameterRepresentation{x2, I18n::Message::Sample2Mean};
     }
     case ParamsOrder::N2: {
       HorizontalLayout n2 = codePointSubscriptCodePointLayout('n', '2');
       ;
-      return ParameterRepr{n2, I18n::Message::Sample1Size};
+      return ParameterRepresentation{n2, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma2: {
       HorizontalLayout sigma2 = codePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '2');
-      return ParameterRepr{sigma2, I18n::Message::Sample2Std};
+      return ParameterRepresentation{sigma2, I18n::Message::Sample2Std};
     }
   }
   assert(false);
-  return ParameterRepr{};
+  return ParameterRepresentation{};
 }
 
 float TwoMeansZStatistic::_xEstimate(float meanSample1, float meanSample2) {

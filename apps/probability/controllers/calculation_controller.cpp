@@ -175,7 +175,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     char buffer[bufferSize];
     // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using
     // scientific mode
-    defaultParseFloat(m_calculation->parameterAtIndex(i - 1), buffer, bufferSize);
+    defaultConvertFloatToText(m_calculation->parameterAtIndex(i - 1), buffer, bufferSize);
     field->setText(buffer);
   }
 }
@@ -286,7 +286,7 @@ void CalculationController::updateTitle() {
   for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
     constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
-    defaultParseFloat(m_distribution->parameterValueAtIndex(index), buffer, bufferSize);
+    defaultConvertFloatToText(m_distribution->parameterValueAtIndex(index), buffer, bufferSize);
     currentChar += snprintf(m_titleBuffer + currentChar,
                             k_titleBufferSize - currentChar,
                             "%s = %s ",

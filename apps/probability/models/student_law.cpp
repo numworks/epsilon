@@ -10,7 +10,7 @@ namespace Probability {
 
 template <typename T>
 T StudentLaw::EvaluateAtAbscissa(T x, T k) {
-  return std::exp(lnCoefficient(k) - (k + 1.0f) / 2.0f * std::log(1.0f + x * x / k));
+  return std::exp(lnCoefficient(k) - (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
 }
 
 template <typename T>
@@ -31,7 +31,6 @@ T StudentLaw::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
 
 template <typename T>
 T StudentLaw::CumulativeDistributiveInverseForProbability(T probability, T k) {
-  // Compute inverse using Solver::IncreasingFunctionRoot
   if (probability == 0.5) {
     return (T)0.0;
   } else if (probability > 1.0 - DBL_EPSILON) {
@@ -51,6 +50,7 @@ T StudentLaw::CumulativeDistributiveInverseForProbability(T probability, T k) {
   };
   Args args{probability, k};
 
+  // Compute inverse using Solver::IncreasingFunctionRoot
   Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
       xmin, xmax, DBL_EPSILON,
       [](double x, Poincare::Context * context, const void * auxiliary) {

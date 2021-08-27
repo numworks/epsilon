@@ -111,16 +111,16 @@ QUIZ_CASE(probability_student_law) {
     // floats
     assertRoughlyEqual<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(t.x, t.k),
                               t.density,
-                              sqrt(t.precision));
+                              std::sqrt(t.precision));
     assertRoughlyEqual<float>(
         Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(t.x, t.k),
         t.probability,
-        sqrt(t.precision));
+        std::sqrt(t.precision));
     assertRoughlyEqual<float>(
         Probability::StudentLaw::CumulativeDistributiveInverseForProbability<float>(t.probability,
                                                                                     t.k),
         t.x,
-        sqrt(t.precision));
+        std::sqrt(t.precision));
   }
 
   // Special cases p=0

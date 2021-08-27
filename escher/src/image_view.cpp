@@ -19,9 +19,9 @@ void ImageView::drawRect(KDContext * ctx, KDRect rect) const {
   assert(bounds().width() == m_image->width());
   assert(bounds().height() == m_image->height());
 
-  KDColor pixelBuffer[maxPixelBufferSize];
+  KDColor pixelBuffer[k_maxPixelBufferSize];
   int pixelBufferSize = m_image->width() * m_image->height();
-  assert(pixelBufferSize <= maxPixelBufferSize);
+  assert(pixelBufferSize <= k_maxPixelBufferSize);
   assert(Ion::stackSafe()); // That's a VERY big buffer we're allocating on the stack
 
   Ion::decompress(

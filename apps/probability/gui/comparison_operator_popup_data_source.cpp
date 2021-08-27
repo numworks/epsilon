@@ -11,7 +11,7 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
 
   constexpr int firstParamBufferSize = Constants::k_shortBufferSize;
   char firstParamBuffer[firstParamBufferSize];
-  defaultParseFloat(m_hypothesisParams->firstParam(), firstParamBuffer, firstParamBufferSize);
+  defaultConvertFloatToText(m_hypothesisParams->firstParam(), firstParamBuffer, firstParamBufferSize);
   const char * symbol = testToTextSymbol(App::app()->test());
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];

@@ -16,7 +16,7 @@ public:
   const View * labelView() const override { return &m_iconView; }
   const View * accessoryView() const override { return &m_chevronView; }
   const View * subLabelView() const override { return &m_messageView; }
-  bool isSublabelAlignedRight() const override { return false; }
+  bool shouldAlignSublabelRight() const override { return false; }
 
   void reloadCell() override;
   void setLabel(I18n::Message message);

@@ -28,9 +28,9 @@ void OneProportionStatistic::computeTest() {
   float p0 = m_hypothesisParams.firstParam();
   float p = computeEstimate(x(), n());
 
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.op());
+  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeZ(p0, p, n());
-  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.op());
+  m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
 
 void OneProportionStatistic::computeInterval() {
@@ -44,19 +44,19 @@ Poincare::Layout OneProportionStatistic::estimateLayout() {
   return CodePointLayout::Builder('p'); // TODO replace with ^p
 }
 
-ParameterRepr OneProportionStatistic::paramReprAtIndex(int i) const {
+ParameterRepresentation OneProportionStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X: {
       Layout x = CodePointLayout::Builder('x');
-      return ParameterRepr{x, I18n::Message::NumberOfSuccesses};
+      return ParameterRepresentation{x, I18n::Message::NumberOfSuccesses};
     }
     case ParamsOrder::N: {
       Layout n = CodePointLayout::Builder('n');
-      return ParameterRepr{n, I18n::Message::SampleSize};
+      return ParameterRepresentation{n, I18n::Message::SampleSize};
     }
   }
   assert(false);
-  return ParameterRepr{};
+  return ParameterRepresentation{};
 }
 
 bool OneProportionStatistic::validateInputs() {

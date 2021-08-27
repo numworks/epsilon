@@ -11,8 +11,8 @@ public:
   float firstParam() const { return m_firstParam; }
   void setFirstParam(float firstParam) { m_firstParam = firstParam; }
 
-  ComparisonOperator op() const { return m_op; }
-  void setOp(const ComparisonOperator op) { m_op = op; }
+  ComparisonOperator comparisonOperator() const { return m_operator; }
+  void setComparisonOperator(const ComparisonOperator op) { m_operator = op; }
 
   static const char * strForComparisonOp(ComparisonOperator op) {
     switch (op) {
@@ -28,7 +28,7 @@ public:
 
 private:
   float m_firstParam;
-  ComparisonOperator m_op;
+  ComparisonOperator m_operator;
 };
 
 }  // namespace Probability

@@ -16,6 +16,7 @@ using namespace Poincare;
 
 namespace Probability {
 
+// TODO export to other apps
 int snprintf(char * buffer, size_t bufferSize, const char * format, ...) {
   char * origin = buffer;
   va_list args;
@@ -24,7 +25,7 @@ int snprintf(char * buffer, size_t bufferSize, const char * format, ...) {
     if (*format == '%') {
       if (*(format + 1) == 's') {
         // Insert text now
-        buffer += strlcpy(buffer, va_arg(args, char *), 10000);
+        buffer += strlcpy(buffer, va_arg(args, char *), bufferSize - (buffer - origin));
       } else if (*(format + 1) == 'c') {
         // Insert char
         *buffer = static_cast<char>(va_arg(args, int));
@@ -96,7 +97,7 @@ const char * testTypeToText(Data::TestType t) {
 }
 
 template <typename T>
-int defaultParseFloat(T value, char buffer[], int bufferSize) {
+int defaultConvertFloatToText(T value, char buffer[], int bufferSize) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       value,
       buffer,
@@ -105,8 +106,8 @@ int defaultParseFloat(T value, char buffer[], int bufferSize) {
       Poincare::Preferences::PrintFloatMode::Decimal);
 }
 
-template int defaultParseFloat(float value, char buffer[], int bufferSize);
-template int defaultParseFloat(double value, char buffer[], int bufferSize);
+template int defaultConvertFloatToText(float value, char buffer[], int bufferSize);
+template int defaultConvertFloatToText(double value, char buffer[], int bufferSize);
 
 Poincare::Layout XOneMinusXTwoLayout() {
   HorizontalLayout x1 = HorizontalLayout::Builder(

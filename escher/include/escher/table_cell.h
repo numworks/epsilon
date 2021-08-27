@@ -58,10 +58,10 @@ protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  virtual bool alignLabelAndAccessory() const { return false; }
-  virtual bool isSublabelAlignedRight() const { return true; }
+  virtual bool shouldAlignLabelAndAccessory() const { return false; }
+  virtual bool shouldAlignSublabelRight() const { return true; }
   virtual KDCoordinate accessoryMinimalWidthOverridden() const { return -1; }
-  virtual bool hideSublabel() { return false; }
+  virtual bool shouldHideSublabel() { return false; }
 
   bool singleRowMode() const;
 

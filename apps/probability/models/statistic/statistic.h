@@ -10,7 +10,7 @@
 
 namespace Probability {
 
-struct ParameterRepr {
+struct ParameterRepresentation {
   Poincare::Layout m_symbol;
   I18n::Message m_description;
 };
@@ -38,8 +38,8 @@ public:
   float paramAtIndex(int i);
   virtual bool isValidParamAtIndex(int i, float p);
   void setParamAtIndex(int i, float p);
-  Poincare::Layout paramSymbolAtIndex(int i) const { return paramReprAtIndex(i).m_symbol; }
-  I18n::Message paramDescriptionAtIndex(int i) const { return paramReprAtIndex(i).m_description; }
+  Poincare::Layout paramSymbolAtIndex(int i) const { return paramRepresentationAtIndex(i).m_symbol; }
+  I18n::Message paramDescriptionAtIndex(int i) const { return paramRepresentationAtIndex(i).m_description; }
   float threshold() const { return m_threshold; }
   void setThreshold(float s) { m_threshold = s; }
   HypothesisParams * hypothesisParams() { return &m_hypothesisParams; }
@@ -98,7 +98,7 @@ protected:
   constexpr static float k_displayWidthToSTDRatio = 5.f;
 
   virtual int numberOfStatisticParameters() const = 0;
-  virtual ParameterRepr paramReprAtIndex(int i) const = 0;
+  virtual ParameterRepresentation paramRepresentationAtIndex(int i) const = 0;
   virtual float * paramArray() = 0;
 
   float computePValue(float z, HypothesisParams::ComparisonOperator op) const;

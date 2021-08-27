@@ -23,7 +23,7 @@ public:
   void didBecomeFirstResponder() override {
     Escher::Container::activeApp()->setFirstResponder(&m_dropdown);
   }
-  bool isSublabelAlignedRight() const override { return false; }
+  bool shouldAlignSublabelRight() const override { return false; }
   void reload() {
     m_dropdown.reloadAllCells();
     markRectAsDirty(bounds());
@@ -33,7 +33,7 @@ public:
     m_dropdown.setHighlighted(highlight);
     LayoutCellWithSubMessage::setHighlighted(highlight);
   }
-  bool alignLabelAndAccessory() const override { return true; }
+  bool shouldAlignLabelAndAccessory() const override { return true; }
 
 private:
   Dropdown m_dropdown;

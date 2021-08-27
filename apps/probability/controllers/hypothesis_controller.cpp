@@ -114,7 +114,7 @@ void Probability::HypothesisController::onDropdownSelected(int selectedRow) {
       op = HypothesisParams::ComparisonOperator::Higher;
       break;
   }
-  m_statistic->hypothesisParams()->setOp(op);
+  m_statistic->hypothesisParams()->setComparisonOperator(op);
 }
 
 const char * Probability::HypothesisController::symbolPrefix() {
@@ -154,7 +154,7 @@ void HypothesisController::loadHypothesisParam() {
   int offset = strlen(symbolPrefix());
   buffer[offset++] = '=';
   float p = m_statistic->hypothesisParams()->firstParam();
-  defaultParseFloat(p, buffer + offset, bufferSize - offset);
+  defaultConvertFloatToText(p, buffer + offset, bufferSize - offset);
 
   m_h0.setAccessoryText(buffer);
   m_ha.reload();

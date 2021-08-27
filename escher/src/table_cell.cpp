@@ -40,12 +40,12 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(const View * label, const
   KDCoordinate subLabelHeight = subLabelSize.height();
   // Compute minimal Height for Label and subLabel
   KDCoordinate labelsHeight =
-      singleRow ? std::max<KDCoordinate>(labelHeight, subLabelHeight)
+      singleRow ? std::max(labelHeight, subLabelHeight)
                 : labelHeight + Metric::CellVerticalElementMargin + subLabelHeight;
   /* Space required for bottom separator is not accounted for as it overlaps
    * with neighbor cells. It is added to the frame in TableView, and exploited
    * when layouting subviews. */
-  return k_separatorThickness + Metric::CellTopMargin + std::max<KDCoordinate>(labelsHeight, accessorySize.height()) + Metric::CellBottomMargin;
+  return k_separatorThickness + Metric::CellTopMargin + std::max(labelsHeight, accessorySize.height()) + Metric::CellBottomMargin;
 }
 
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
@@ -96,12 +96,12 @@ void TableCell::layoutSubviews(bool force) {
   KDCoordinate labelHeight = cropIfOverflow(labelSize.height(), height);
   KDCoordinate labelWidth = cropIfOverflow(labelSize.width(), width);
   KDCoordinate subLabelHeight = cropIfOverflow(subLabelSize.height(), height);
-  KDCoordinate subLabelWidth = shouldHideSublabel() ? 0 : cropIfOverflow(subLabelSize.width(), width);
+  KDCoordinate subLabelWidth = shouldHideSublabel() ? 0
+                                                    : cropIfOverflow(subLabelSize.width(), width);
   KDCoordinate accessoryHeight = cropIfOverflow(accessorySize.height(), height);
-  KDCoordinate accessoryWidth =
-      accessory ? cropIfOverflow(std::max(accessorySize.width(), accessoryMinimalWidthOverridden()),
-                                 width)
-                : 0;
+  KDCoordinate accessoryWidth = cropIfOverflow(
+      std::max(accessorySize.width(), accessoryMinimalWidthOverridden()),
+      width);
 
   bool singleRow = singleRowMode(bounds().width(), label, subLabel, accessoryWidth);
 
@@ -184,10 +184,9 @@ bool TableCell::singleRowMode(KDCoordinate width,
   constexpr KDCoordinate leftOffset = k_separatorThickness + Metric::CellLeftMargin;
   width -= leftOffset + Metric::CellRightMargin + k_separatorThickness;
 
-  bool singleRow = labelSize.width() + subLabelSize.width() + accessoryWidth +
-                           2 * Metric::CellHorizontalElementMargin <
-                       width ||
-                   !(labelView && sublabelView);
+  bool singleRow = (labelSize.width() + subLabelSize.width() + accessoryWidth +
+                        2 * Metric::CellHorizontalElementMargin < width)
+                    || !(labelView && sublabelView);
   return singleRow;
 }
 

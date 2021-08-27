@@ -8,7 +8,8 @@
 namespace Probability {
 
 /* This class is in charge of computing the range to display for a given statistic.
- * In case two ranges are needed (the graph is split), the StatisticViewRange has a m_isLeftRange.
+ * It wraps the range required by the statistic and scales it if needed, depending on the type of
+ * the graph (Test or Interval)
  */
 class StatisticViewRange : public Shared::CurveViewRange {
 public:

@@ -21,10 +21,10 @@ static void setToAllSymetries(float buffer[], float alpha, int i, int j, int r) 
 
 void KDContext::fillAntialiasedCircle(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background) {
   // This algorithm can be greatly optimized
-  constexpr static int maxD = 30;
-  assert(radius < maxD);
-  float buffer[maxD * maxD]{0};
-  KDColor colorBuffer[maxD * maxD];
+  constexpr static int maxDiameter = 30;
+  assert(radius <= maxDiameter / 2);
+  float buffer[maxDiameter * maxDiameter]{0};
+  KDColor colorBuffer[maxDiameter * maxDiameter];
 
   int numberOfIterations = std::round((radius)*M_SQRT1_2);
   int r2 = radius * radius;

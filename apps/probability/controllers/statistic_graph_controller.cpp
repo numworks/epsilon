@@ -24,15 +24,15 @@ const char * StatisticGraphController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     char zBuffer[Constants::k_shortBufferSize];
     char pBuffer[Constants::k_shortBufferSize];
-    defaultParseFloat(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
-    defaultParseFloat(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
+    defaultConvertFloatToText(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
+    defaultConvertFloatToText(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
     const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormat);
     snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, zBuffer, pBuffer);
   } else {
     const char * format = I18n::translate(
         I18n::Message::StatisticGraphControllerIntervalTitleFormat);
     char marginOfErrorBuffer[Constants::k_shortBufferSize];
-    defaultParseFloat(m_statistic->marginOfError(),
+    defaultConvertFloatToText(m_statistic->marginOfError(),
                       marginOfErrorBuffer,
                       sizeof(marginOfErrorBuffer));
     snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, marginOfErrorBuffer);
@@ -57,10 +57,10 @@ bool StatisticGraphController::handleEvent(Ion::Events::Event event) {
     char copyBuffer[2 * Constants::k_shortBufferSize + 4];
     char lowerBound[Constants::k_shortBufferSize];
     char upperBound[Constants::k_shortBufferSize];
-    defaultParseFloat(m_statistic->estimate() - m_statistic->marginOfError(),
+    defaultConvertFloatToText(m_statistic->estimate() - m_statistic->marginOfError(),
                       lowerBound,
                       sizeof(lowerBound));
-    defaultParseFloat(m_statistic->estimate() + m_statistic->marginOfError(),
+    defaultConvertFloatToText(m_statistic->estimate() + m_statistic->marginOfError(),
                       upperBound,
                       sizeof(upperBound));
     snprintf(copyBuffer, sizeof(copyBuffer), "[[%s,%s]]", lowerBound, upperBound);
@@ -71,7 +71,7 @@ bool StatisticGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 bool StatisticGraphController::shouldPositionLegendLeft() {
-  return m_statistic->hypothesisParams()->op() == HypothesisParams::ComparisonOperator::Lower;
+  return m_statistic->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Lower;
 }
 
 }  // namespace Probability

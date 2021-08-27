@@ -22,8 +22,8 @@ public:
   Responder * responder() override { return this; }
   const char * text() const override { return !m_textField.isEditing() ? m_textField.text() : nullptr; }
   void setAccessoryText(const char * text);
-  bool isSublabelAlignedRight() const override { return false; }
-  bool  alignLabelAndAccessory() const override { return true; }
+  bool shouldAlignSublabelRight() const override { return false; }
+  bool  shouldAlignLabelAndAccessory() const override { return true; }
   bool giveAccessoryAllWidth() const override { return true; }
   KDCoordinate accessoryMinimalWidthOverridden() const override {
     return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(

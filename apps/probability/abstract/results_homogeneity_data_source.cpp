@@ -34,7 +34,7 @@ void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCe
 
   constexpr int bufferSize = Constants::k_shortBufferSize;
   char buffer[bufferSize];
-  defaultParseFloat(value, buffer, bufferSize);
+  defaultConvertFloatToText(value, buffer, bufferSize);
   myCell->setText(buffer);
   myCell->setEven(j % 2 == 0);
 }

@@ -26,11 +26,11 @@ public:
   Escher::TextField * textField() { return &m_textField; }
 
   bool giveAccessoryAllWidth() const override { return true; }
-  bool alignLabelAndAccessory() const override { return true; }
+  bool shouldAlignLabelAndAccessory() const override { return true; }
 
   void setAccessoryText(const char * text);
   void setHighlighted(bool highlight) override;
-  bool hideSublabel() override { return singleRowMode() && m_textField.isEditing(); }
+  bool shouldHideSublabel() override { return singleRowMode() && m_textField.isEditing(); }
 
   void textFieldDidStartEditing(Escher::TextField * textField) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,

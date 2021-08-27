@@ -37,7 +37,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   // Reparse text
   constexpr int bufferSize = Constants::k_shortBufferSize;
   char buffer[bufferSize];
-  defaultParseFloat(p, buffer, bufferSize);
+  defaultConvertFloatToText(p, buffer, bufferSize);
   textField->setText(buffer);
   if (event == Ion::Events::Up) {
     m_contentView.selectView(InputCategoricalView::k_indexOfTable);
@@ -53,7 +53,7 @@ void InputCategoricalController::didBecomeFirstResponder() {
     m_statistic->initThreshold(App::app()->subapp());
     constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
-    defaultParseFloat(m_statistic->threshold(), buffer, bufferSize);
+    defaultConvertFloatToText(m_statistic->threshold(), buffer, bufferSize);
     m_contentView.setSignificanceCellText(buffer);
   }
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);

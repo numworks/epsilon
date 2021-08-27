@@ -21,8 +21,8 @@ void IntervalConclusionView::setInterval(float center, float marginOfError) {
   char bufferCenter[bufferSize];
   char buffermarginOfError[bufferSize];
 
-  defaultParseFloat(center, bufferCenter, bufferSize);
-  defaultParseFloat(marginOfError, buffermarginOfError, bufferSize);
+  defaultConvertFloatToText(center, bufferCenter, bufferSize);
+  defaultConvertFloatToText(marginOfError, buffermarginOfError, bufferSize);
 
   char buffer[k_intervalBufferSize];
   snprintf(buffer, k_intervalBufferSize, "%s ± %s", bufferCenter, buffermarginOfError);

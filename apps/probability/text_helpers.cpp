@@ -124,7 +124,7 @@ Poincare::Layout XOneMinusXTwoLayout() {
 }
 
 Poincare::HorizontalLayout codePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript) {
-  HorizontalLayout n1 = HorizontalLayout::Builder(
+  return HorizontalLayout::Builder(
       CodePointLayout::Builder(base),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder(subscript, KDFont::LargeFont),
                                     VerticalOffsetLayoutNode::Position::Subscript));

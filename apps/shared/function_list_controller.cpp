@@ -59,7 +59,6 @@ int FunctionListController::reusableCellCount(int type) {
 }
 
 void FunctionListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(isAddEmptyRow(index));
   EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(index%2 == 0);
   myCell->setHighlighted(index == selectedRow());
@@ -111,35 +110,15 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
+  if (selectedRow() < 0) {
+    return false;
+  }
   if (event == Ion::Events::Down) {
-    if (selectedRow() == -1) {
-      return false;
-    }
     selectableTableView()->deselectTable();
     footer()->setSelectedButton(0);
     return true;
   }
-  if (selectedRow() < 0) {
-    return false;
-  }
-  // TODO Hugo : Handle button state and call accordingly
-  if (selectedColumn() == 0) {
-    return handleEventOnExpression(event);
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    configureFunction(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
-    return true;
-  }
-  if (event == Ion::Events::Backspace) {
-    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    if (removeModelRow(record)) {
-      int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
-      selectCellAtLocation(selectedColumn(), newSelectedRow);
-      selectableTableView()->reloadData();
-    }
-    return true;
-  }
-  return false;
+  return handleEventOnExpression(event);
 }
 
 void FunctionListController::didEnterResponderChain(Responder * previousFirstResponder) {

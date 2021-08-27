@@ -1,6 +1,7 @@
 #ifndef APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_VIEW_H
 #define APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_VIEW_H
 
+#include <escher/button.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
 #include <ion/events.h>

@@ -1,9 +1,9 @@
 #include "regularized_gamma.h"
-#include "distribution.h"
-#include "helper.h"
+
 #include <cmath>
-#include <float.h>
 #include <assert.h>
+
+#include "helper.h"
 
 bool regularizedGamma(double s, double x, double epsilon, int maxNumberOfIterations, double * result) {
   // TODO Put interruption instead of maxNumberOfIterations

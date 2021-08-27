@@ -11,9 +11,6 @@
 #include "hypothesis_controller.h"
 #include "probability/app.h"
 #include "probability/gui/selectable_cell_list_controller.h"
-#include "probability/models/data.h"
-#include "probability/models/statistic/one_proportion_statistic.h"
-#include "probability/models/statistic/two_proportions_statistic.h"
 #include "type_controller.h"
 
 using namespace Probability;

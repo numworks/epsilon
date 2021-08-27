@@ -9,13 +9,13 @@ namespace Probability {
 SubappCell::SubappCell() {
   m_title.setFont(KDFont::LargeFont);
   m_subTitle.setFont(KDFont::SmallFont);
-  m_subTitle.setTextColor(Palette::GrayDark);
+  m_subTitle.setTextColor(Escher::Palette::GrayDark);
 }
 
 void SubappCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Palette::Select : KDColorWhite;
+  KDColor backColor = isHighlighted() ? Escher::Palette::Select : KDColorWhite;
   drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(), Escher::Palette::GrayBright);
 }
 
 void SubappCell::setHighlighted(bool highlighted) {

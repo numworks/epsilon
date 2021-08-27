@@ -2,8 +2,6 @@
 
 #include <poincare/normal_distribution.h>
 
-#include "probability/models/data.h"
-
 namespace Probability {
 
 float ZStatistic::normalizedDensityFunction(float x) const {

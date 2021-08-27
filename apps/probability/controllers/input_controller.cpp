@@ -1,12 +1,9 @@
 #include "input_controller.h"
 
 #include <escher/stack_view_controller.h>
-#include <poincare/print_float.h>
-#include <string.h>
 
 #include "probability/app.h"
 #include "probability/constants.h"
-#include "probability/models/data.h"
 #include "probability/text_helpers.h"
 #include "results_controller.h"
 

@@ -6,7 +6,6 @@
 #include <kandinsky/font.h>
 
 #include "probability/app.h"
-#include "probability/models/data.h"
 
 using namespace Probability;
 

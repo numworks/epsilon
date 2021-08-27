@@ -2,7 +2,6 @@
 #define APPS_PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H
 
 #include <escher/message_table_cell_with_editable_text_with_message.h>
-#include <apps/shared/float_parameter_controller.h>
 #include "probability/models/distribution/distribution.h"
 #include "probability/gui/page_controller.h"
 #include "calculation_controller.h"
@@ -23,8 +22,8 @@ public:
   int numberOfRows() const override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void openPage(ViewController * nextPage,
-                KDColor backgroundColor = Palette::SubTab,
-                KDColor separatorColor = Palette::SubTab,
+                KDColor backgroundColor = Escher::Palette::SubTab,
+                KDColor separatorColor = Escher::Palette::SubTab,
                 KDColor textColor = KDColorWhite) {
     DoubleParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }

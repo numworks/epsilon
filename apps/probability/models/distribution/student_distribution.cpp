@@ -1,9 +1,7 @@
 #include "student_distribution.h"
 
-#include <poincare/regularized_incomplete_beta_function.h>
 #include <cmath>
 
-#include "helper.h"
 #include "probability/models/student_law.h"
 
 namespace Probability {

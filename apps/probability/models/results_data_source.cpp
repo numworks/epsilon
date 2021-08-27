@@ -2,14 +2,11 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
-#include <escher/buffer_text_view.h>
-#include <kandinsky/color.h>
 #include <poincare/layout.h>
 
 #include "probability/app.h"
 #include "probability/constants.h"
 #include "probability/helpers.h"
-#include "probability/text_helpers.h"
 
 namespace Probability {
 

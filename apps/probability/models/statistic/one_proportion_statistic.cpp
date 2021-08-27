@@ -1,8 +1,6 @@
 #include "one_proportion_statistic.h"
 
 #include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
 

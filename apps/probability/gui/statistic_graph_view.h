@@ -1,7 +1,6 @@
 #ifndef APPS_PROBABILITY_GUI_DISTRIBUTION_GRAPH_VIEW_H
 #define APPS_PROBABILITY_GUI_DISTRIBUTION_GRAPH_VIEW_H
 
-#include <escher/solid_color_view.h>
 #include <escher/view.h>
 
 #include "interval_conclusion_view.h"

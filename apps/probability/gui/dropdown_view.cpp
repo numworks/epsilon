@@ -5,7 +5,6 @@
 #include <escher/palette.h>
 
 #include <algorithm>
-#include <cmath>
 
 #include "../images/caret.h"
 

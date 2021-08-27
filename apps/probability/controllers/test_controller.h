@@ -2,11 +2,10 @@
 #define APPS_PROBABILITY_CONTROLLERS_TEST_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
-#include <escher/responder.h>
 #include <ion/events.h>
 
 #include "probability/gui/selectable_cell_list_controller.h"
-#include "probability/models/data.h"
+#include "probability/models/statistic/statistic.h"
 
 namespace Probability {
 

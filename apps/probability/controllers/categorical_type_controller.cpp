@@ -3,15 +3,10 @@
 #include <apps/i18n.h>
 #include <escher/stack_view_controller.h>
 
-#include <new>
-
 #include "input_goodness_controller.h"
 #include "input_homogeneity_controller.h"
 #include "probability/app.h"
 #include "probability/gui/selectable_cell_list_controller.h"
-#include "probability/models/data.h"
-#include "probability/models/statistic/goodness_statistic.h"
-#include "probability/models/statistic/homogeneity_statistic.h"
 
 using namespace Probability;
 

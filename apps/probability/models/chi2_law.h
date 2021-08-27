@@ -1,7 +1,7 @@
 #ifndef APPS_PROBABILITY_MODELS_CHI2_LAW_H
 #define APPS_PROBABILITY_MODELS_CHI2_LAW_H
 
-#include "float.h"
+#include <float.h>
 
 namespace Probability {
 

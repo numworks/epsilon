@@ -10,10 +10,10 @@ namespace Probability {
 IntervalConclusionView::IntervalConclusionView() {
   m_messageView.setMessage(I18n::Message::ConfidenceInterval);
   m_messageView.setAlignment(0.5f, 0.5f);
-  m_messageView.setBackgroundColor(Palette::WallScreen);
+  m_messageView.setBackgroundColor(Escher::Palette::WallScreen);
   m_intervalView.setFont(KDFont::LargeFont);
   m_intervalView.setAlignment(0.5f, 0.5f);
-  m_intervalView.setBackgroundColor(Palette::WallScreen);
+  m_intervalView.setBackgroundColor(Escher::Palette::WallScreen);
 }
 
 void IntervalConclusionView::setInterval(float center, float marginOfError) {

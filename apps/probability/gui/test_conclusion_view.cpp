@@ -1,15 +1,11 @@
 #include "test_conclusion_view.h"
 
 #include <apps/i18n.h>
-#include <apps/shared/dots.h>
-#include <float.h>
-#include <kandinsky/font.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <algorithm>
-#include <cmath>
 
 #include "../images/test_success.h"
 #include "probability/helpers.h"

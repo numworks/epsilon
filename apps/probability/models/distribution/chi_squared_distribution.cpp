@@ -1,10 +1,8 @@
 #include "chi_squared_distribution.h"
 
 #include <cmath>
-#include <algorithm>
 
 #include "probability/models/chi2_law.h"
-#include "regularized_gamma.h"
 
 namespace Probability {
 

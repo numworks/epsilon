@@ -1,7 +1,6 @@
 #include "helper.h"
-#include "distribution.h"
+
 #include <cmath>
-#include <float.h>
 #include <assert.h>
 
 void increaseIfTooSmall(double * d) {

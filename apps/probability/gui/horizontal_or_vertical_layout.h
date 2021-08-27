@@ -1,21 +1,16 @@
 #ifndef APPS_PROBABILITY_GUI_HORIZONTAL_OR_VERTICAL_LAYOUT_H
 #define APPS_PROBABILITY_GUI_HORIZONTAL_OR_VERTICAL_LAYOUT_H
 
-#include <apps/i18n.h>
 #include <escher/palette.h>
-#include <escher/responder.h>
 #include <escher/solid_color_view.h>
 #include <kandinsky/color.h>
-#include <kandinsky/context.h>
 #include <kandinsky/rect.h>
-
-#include "selectable_cell_list_controller.h"
 
 namespace Probability {
 
 class OrientedLayout : public Escher::SolidColorView {
 public:
-  OrientedLayout(KDColor color = Palette::WallScreen) :
+  OrientedLayout(KDColor color = Escher::Palette::WallScreen) :
       Escher::SolidColorView(color), m_marginX(0), m_marginY(0) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
@@ -44,7 +39,7 @@ private:
 /* View that lays out its subviews vertically.*/
 class VerticalLayout : public OrientedLayout {
 public:
-  VerticalLayout(KDColor color = Palette::WallScreen) : OrientedLayout(color) {}
+  VerticalLayout(KDColor color = Escher::Palette::WallScreen) : OrientedLayout(color) {}
 
   KDCoordinate firstCoordinate(KDPoint p) const override { return p.x(); }
   KDCoordinate secondCoordinate(KDPoint p) const override { return p.y(); }
@@ -58,7 +53,7 @@ public:
 /* View that lays out its subviews horizontally.*/
 class HorizontalLayout : public OrientedLayout {
 public:
-  HorizontalLayout(KDColor color = Palette::WallScreen) : OrientedLayout(color) {}
+  HorizontalLayout(KDColor color = Escher::Palette::WallScreen) : OrientedLayout(color) {}
 
   KDCoordinate firstCoordinate(KDPoint p) const override { return p.y(); }
   KDCoordinate secondCoordinate(KDPoint p) const override { return p.x(); }

@@ -2,17 +2,12 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
-#include <escher/selectable_list_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
-#include <string.h>
 
-#include "categorical_type_controller.h"
 #include "hypothesis_controller.h"
 #include "probability/app.h"
-#include "probability/models/data.h"
 #include "probability/text_helpers.h"
-#include "type_controller.h"
 
 using namespace Probability;
 

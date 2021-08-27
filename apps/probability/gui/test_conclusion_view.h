@@ -2,7 +2,7 @@
 #define APPS_PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
 
 #include <escher/expression_view.h>
-#include <escher/palette.h>
+#include <escher/message_text_view.h>
 
 #include "probability/gui/highlight_image_cell.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"

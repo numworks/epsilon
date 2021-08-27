@@ -1,6 +1,6 @@
 #include "discrete_calculation.h"
+
 #include <assert.h>
-#include <ion.h>
 #include <cmath>
 
 namespace Probability {

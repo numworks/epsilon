@@ -2,7 +2,6 @@
 #define APPS_PROBABILITY_ABSTRACT_TABLE_VIEW_CONTROLLER_H
 
 #include <apps/shared/text_field_delegate.h>
-#include <escher/metric.h>
 #include <escher/selectable_table_view.h>
 #include <ion/events.h>
 

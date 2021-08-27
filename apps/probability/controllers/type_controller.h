@@ -1,14 +1,9 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
 
-#include <escher/container.h>
 #include <escher/highlight_cell.h>
-#include <escher/memoized_list_view_data_source.h>
-#include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_text_view.h>
-#include <escher/responder.h>
-#include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
@@ -16,15 +11,11 @@
 
 #include "hypothesis_controller.h"
 #include "input_controller.h"
-#include "probability/gui/horizontal_or_vertical_layout.h"
 #include "probability/gui/page_controller.h"
-#include "probability/models/data.h"
 
 using namespace Escher;
 
 namespace Probability {
-
-class HypothesisController;
 
 /* Simple view to include list and description below */
 class TypeView : public Escher::SolidColorView {

@@ -39,7 +39,7 @@ void OneMeanZStatistic::computeInterval() {
   m_estimate = x();
   m_zCritical = computeIntervalCriticalValue(m_threshold);
   m_SE = computeStandardError(sigma(), n());
-  m_ME = computeMarginOfError(m_zCritical, m_SE);
+  m_marginOfError = computeMarginOfError(m_zCritical, m_SE);
 }
 
 ParameterRepr OneMeanZStatistic::paramReprAtIndex(int i) const {

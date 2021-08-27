@@ -31,9 +31,11 @@ const char * StatisticGraphController::title() {
   } else {
     const char * format = I18n::translate(
         I18n::Message::StatisticGraphControllerIntervalTitleFormat);
-    char MEBuffer[Constants::k_shortBufferSize];
-    defaultParseFloat(m_statistic->marginOfError(), MEBuffer, sizeof(MEBuffer));
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, MEBuffer);
+    char marginOfErrorBuffer[Constants::k_shortBufferSize];
+    defaultParseFloat(m_statistic->marginOfError(),
+                      marginOfErrorBuffer,
+                      sizeof(marginOfErrorBuffer));
+    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, marginOfErrorBuffer);
   }
   return m_titleBuffer;
 }

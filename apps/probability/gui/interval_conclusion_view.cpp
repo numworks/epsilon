@@ -16,16 +16,16 @@ IntervalConclusionView::IntervalConclusionView() {
   m_intervalView.setBackgroundColor(Palette::WallScreen);
 }
 
-void IntervalConclusionView::setInterval(float center, float ME) {
+void IntervalConclusionView::setInterval(float center, float marginOfError) {
   constexpr static int bufferSize = Constants::k_shortBufferSize;
   char bufferCenter[bufferSize];
-  char bufferME[bufferSize];
+  char buffermarginOfError[bufferSize];
 
   defaultParseFloat(center, bufferCenter, bufferSize);
-  defaultParseFloat(ME, bufferME, bufferSize);
+  defaultParseFloat(marginOfError, buffermarginOfError, bufferSize);
 
   char buffer[k_intervalBufferSize];
-  snprintf(buffer, k_intervalBufferSize, "%s ± %s", bufferCenter, bufferME);
+  snprintf(buffer, k_intervalBufferSize, "%s ± %s", bufferCenter, buffermarginOfError);
   m_intervalView.setText(buffer);
 }
 

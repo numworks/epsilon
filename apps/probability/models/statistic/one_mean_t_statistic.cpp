@@ -43,7 +43,7 @@ void OneMeanTStatistic::computeInterval() {
   m_degreesOfFreedom = computeDegreesOfFreedom(n());
   m_zCritical = computeIntervalCriticalValue(m_threshold);
   m_SE = computeStandardError(s(), n());
-  m_ME = computeMarginOfError(m_zCritical, m_SE);
+  m_marginOfError = computeMarginOfError(m_zCritical, m_SE);
 }
 
 ParameterRepr OneMeanTStatistic::paramReprAtIndex(int i) const {

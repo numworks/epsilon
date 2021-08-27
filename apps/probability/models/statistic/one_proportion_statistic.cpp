@@ -39,7 +39,7 @@ void OneProportionStatistic::computeInterval() {
   m_estimate = computeEstimate(x(), n());
   m_zCritical = computeIntervalCriticalValue(m_threshold);
   m_SE = computeStandardError(m_estimate, n());
-  m_ME = computeMarginOfError(m_zCritical, m_SE);
+  m_marginOfError = computeMarginOfError(m_zCritical, m_SE);
 }
 
 Poincare::Layout OneProportionStatistic::estimateLayout() {

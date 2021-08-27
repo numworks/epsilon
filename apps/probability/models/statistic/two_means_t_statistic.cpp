@@ -47,7 +47,7 @@ void TwoMeansTStatistic::computeInterval() {
   m_estimate = _xEstimate(x1(), x2());
   m_zCritical = computeIntervalCriticalValue(m_threshold);
   m_SE = computeStandardError(s1(), n1(), s2(), n2());
-  m_ME = computeMarginOfError(m_SE, m_zCritical);
+  m_marginOfError = computeMarginOfError(m_SE, m_zCritical);
 }
 
 Poincare::Layout TwoMeansTStatistic::estimateLayout() {

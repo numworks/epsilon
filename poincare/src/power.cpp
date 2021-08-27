@@ -1065,20 +1065,22 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expressi
    *        = (g`ln(f) + gf`/f) * f^g
    *        = g`ln(f)f^g + gf`f^(g-1)
    *
-   * Valid whenever f,g are derivable and f > 0 */
-
-  /* We might want to be able to derivate f^n when f <= 0 and n is a positive
-   * integer */
+   * Valid whenever f,g are derivable and (f > 0 or g' = 0) */
 
   Expression base = childAtIndex(0);
   Expression exponent = childAtIndex(1);
   Multiplication derivedFromBase = Multiplication::Builder();
   Multiplication derivedFromExponent = Multiplication::Builder();
 
-  derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 0, 0);
-  derivedFromExponent.addChildAtIndexInPlace(clone(), 1, 1);
-  derivedFromExponent.addChildAtIndexInPlace(exponent.clone(), 2, 2);
-  derivedFromExponent.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
+  derivedFromExponent.addChildAtIndexInPlace(exponent.clone(), 0, 0);
+  derivedFromExponent.derivateChildAtIndexInPlace(0, reductionContext, symbol, symbolValue);
+  /* Reduce the derived g, to check for its null status and, if null, prevent
+   * using naperian logarithm of f, which rely on the sign of f. */
+  derivedFromExponent.deepReduceChildren(reductionContext);
+  if (derivedFromExponent.childAtIndex(0).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
+    derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 1, 1);
+    derivedFromExponent.addChildAtIndexInPlace(clone(), 2, 2);
+  }
 
   derivedFromBase.addChildAtIndexInPlace(exponent.clone() , 0, 0);
   derivedFromBase.addChildAtIndexInPlace(Power::Builder(

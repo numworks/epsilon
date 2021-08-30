@@ -82,6 +82,7 @@ int MathVariableBoxController::numberOfRows() const {
     case Page::Expression:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
+      // TODO Hugo : Filter out expression with name starting with '?'
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::funcExtension);
     case Page::Sequence:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
@@ -133,6 +134,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   }
   myCell->setLayout(symbolLayout);
+  // TODO Hugo : Display only half of the expression for functions
   myCell->setSubLabelLayout(expressionLayoutForRecord(record, index));
   myCell->reloadScroll();
   myCell->reloadCell();

@@ -7,7 +7,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 #include <string.h>
 #include <cmath>
 #include <algorithm>
@@ -154,9 +154,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
        * UserDefined number of significant digits), do not display the exact
        * output. Indeed, in this case, the layouts are identical. */
       strcmp(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined)) == 0
-      // If the approximate output is 'unreal' or the exact result is 'undef'
+      // If the approximate output is 'nonreal' or the exact result is 'undef'
    || strcmp(exactOutputText(), Undefined::Name()) == 0
-   || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Unreal::Name()) == 0
+   || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Nonreal::Name()) == 0
       /* If the approximate output is 'undef' and the input and exactOutput are
        * equal */
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0

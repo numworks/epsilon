@@ -15,7 +15,7 @@ extern "C" {
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
 #include <poincare/constant.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 #include <ion.h>
 #include <cmath>
 
@@ -48,7 +48,7 @@ T ComplexNode<T>::toScalar() const {
 template<typename T>
 Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   if (complexFormat == Preferences::ComplexFormat::Real && Expression::EncounteredComplex()) {
-    return Unreal::Builder();
+    return Nonreal::Builder();
   }
   T ra, tb;
   if (complexFormat == Preferences::ComplexFormat::Polar) {

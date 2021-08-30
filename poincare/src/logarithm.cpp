@@ -15,7 +15,7 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/square_root.h>
 #include <poincare/undefined.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 #include <ion.h>
 #include <assert.h>
 #include <cmath>
@@ -165,7 +165,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
       || childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative)
   {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-      Expression result = Unreal::Builder();
+      Expression result = Nonreal::Builder();
       replaceWithInPlace(result);
       return result;
     }

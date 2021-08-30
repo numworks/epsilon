@@ -24,7 +24,7 @@
 #include <poincare/symbol.h>
 #include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion.h>
 #include <assert.h>
@@ -313,7 +313,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixC
 template<typename T> Evaluation<T> PowerNode::templatedApproximate(ApproximationContext approximationContext) const {
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
-   * root. We return this value in that case to avoid returning "unreal". */
+   * root. We return this value in that case to avoid returning "nonreal". */
   if (approximationContext.complexFormat() == Preferences::ComplexFormat::Real) {
     Evaluation<T> base = childAtIndex(0)->approximate(T(), approximationContext);
     if (base.type() != EvaluationNode<T>::Type::Complex) {
@@ -771,8 +771,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * - c is an integer
    *
    * Warning 1: in real mode only c integer is not enough:
-   * ex: ((-2)^(1/2))^2 = unreal != -2
-   * We escape that case by returning 'unreal' if the a^b is complex.
+   * ex: ((-2)^(1/2))^2 = nonreal != -2
+   * We escape that case by returning 'nonreal' if the a^b is complex.
    *
    * Warning 2: If we did not apply this rule on expressions of the form
    * (a^b)^(-1), we would end up in infinite loop when factorizing an addition
@@ -791,12 +791,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     if (!apply && rationalIndex.isInteger()) {
       if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
         Expression approximation = base.approximate<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);
-        if (approximation.type() == ExpressionNode::Type::Unreal) {
+        if (approximation.type() == ExpressionNode::Type::Nonreal) {
           replaceWithInPlace(approximation);
           return approximation;
         }
         /* The inner power is undefined, it can be 'x^(1/2)' for instance. We
-         * don't want to simplify this as it could be unreal with x = -2 but
+         * don't want to simplify this as it could be nonreal with x = -2 but
          * also real with x = 2.
          * Testing if the approximation is real is a dirty trick to filter out
          * variables but not units. */
@@ -1118,7 +1118,7 @@ Expression Power::denominator(ExpressionNode::ReductionContext reductionContext)
 
 Expression Power::PowerRationalRational(Rational base, Rational index, ExpressionNode::ReductionContext reductionContext) {
   assert(!base.numeratorOrDenominatorIsInfinity() && !index.numeratorOrDenominatorIsInfinity());
-  /* Handle this case right now to always reduce to Unreal if needed. */
+  /* Handle this case right now to always reduce to Nonreal if needed. */
   if (base.isNegative()) {
     Multiplication res = Multiplication::Builder();
     /* Compute -1^(a/b) */
@@ -1129,7 +1129,7 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
        * - has no real solution otherwise */
       if (!index.unsignedIntegerNumerator().isEven()) {
         if (index.integerDenominator().isEven()) {
-          return Unreal::Builder();
+          return Nonreal::Builder();
         } else {
           res.addChildAtIndexInPlace(Rational::Builder(-1), 0, res.numberOfChildren());
         }

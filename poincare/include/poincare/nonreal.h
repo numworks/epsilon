@@ -1,23 +1,23 @@
-#ifndef POINCARE_UNREAL_H
-#define POINCARE_UNREAL_H
+#ifndef POINCARE_NONREAL_H
+#define POINCARE_NONREAL_H
 
 #include <poincare/undefined.h>
 
 namespace Poincare {
 
-class UnrealNode final : public UndefinedNode {
+class NonrealNode final : public UndefinedNode {
 public:
 
   // TreeNode
-  size_t size() const override { return sizeof(UnrealNode); }
+  size_t size() const override { return sizeof(NonrealNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "Unreal";
+    stream << "nonreal";
   }
 #endif
 
   // Properties
-  Type type() const override { return Type::Unreal; }
+  Type type() const override { return Type::Nonreal; }
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -28,7 +28,7 @@ public:
   }
 
   /* Derivation
-   * Unlike Numbers that derivate to 0, Unreal derivates to Unreal. */
+   * Unlike Numbers that derivate to 0, Nonreal derivates to Nonreal. */
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return true; }
 
   // Layout
@@ -41,15 +41,15 @@ private:
   }
 };
 
-class Unreal final : public Number {
+class Nonreal final : public Number {
 public:
-  static Unreal Builder() { return TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(); }
-  Unreal() = delete;
+  static Nonreal Builder() { return TreeHandle::FixedArityBuilder<Nonreal, NonrealNode>(); }
+  Nonreal() = delete;
   static const char * Name() {
-    return "unreal";
+    return "nonreal";
   }
   static int NameSize() {
-    return 7;
+    return 8;
   }
 };
 

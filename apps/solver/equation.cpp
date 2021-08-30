@@ -5,7 +5,7 @@
 #include <poincare/empty_context.h>
 #include <poincare/equal.h>
 #include <poincare/undefined.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 #include <poincare/rational.h>
 #include <ion/unicode/utf8_helper.h>
 
@@ -39,8 +39,8 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
   if (expressionRed.isUninitialized()) {
     expressionRed = expressionInputWithoutFunctions;
   }
-  if (expressionRed.type() == ExpressionNode::Type::Unreal) {
-    returnedExpression = Unreal::Builder();
+  if (expressionRed.type() == ExpressionNode::Type::Nonreal) {
+    returnedExpression = Nonreal::Builder();
   } else if (expressionRed.recursivelyMatches(
         [](const Expression e, Context * context) {
           return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context);

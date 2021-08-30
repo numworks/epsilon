@@ -80,6 +80,21 @@ mp_obj_t modkandinsky_draw_line(size_t n_args, const mp_obj_t * args) {
   return mp_const_none;
 }
 
+mp_obj_t modkandinsky_draw_circle(size_t n_args, const mp_obj_t * args) {
+  mp_int_t cx = mp_obj_get_int(args[0]);
+  mp_int_t cy = mp_obj_get_int(args[1]);
+  mp_int_t r = mp_obj_get_int(args[2]);
+  if(r<0)
+  {
+    r = -r;
+  }
+  KDPoint center = KDPoint(cx, cy);
+  KDColor color = MicroPython::Color::Parse(args[3]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->drawCircle(center, r, color);
+  return mp_const_none;
+}
+
 mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   mp_int_t x = mp_obj_get_int(args[0]);
   mp_int_t y = mp_obj_get_int(args[1]);
@@ -99,6 +114,52 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   KDIonContext::sharedContext()->fillRect(rect, color);
   return mp_const_none;
 }
+
+mp_obj_t modkandinsky_fill_circle(size_t n_args, const mp_obj_t * args) {
+  mp_int_t cx = mp_obj_get_int(args[0]);
+  mp_int_t cy = mp_obj_get_int(args[1]);
+  mp_int_t r = mp_obj_get_int(args[2]);
+  if(r<0)
+  {
+    r = -r;
+  }
+  KDPoint center = KDPoint(cx, cy);
+  KDColor color = MicroPython::Color::Parse(args[3]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->fillCircle(center, r, color);
+  return mp_const_none;
+}
+
+mp_obj_t modkandinsky_fill_polygon(size_t n_args, const mp_obj_t * args) {
+  KDCoordinate pointsX[KDContext::k_polygonMaxNumberOfPoints];
+  KDCoordinate pointsY[KDContext::k_polygonMaxNumberOfPoints];
+
+  size_t itemLength;
+  mp_obj_t * items;
+
+  mp_obj_get_array(args[0], &itemLength, &items);
+
+  if (itemLength < 3) {
+    mp_raise_ValueError("polygon must have at least 3 points");
+  }
+  else if (itemLength > KDContext::k_polygonMaxNumberOfPoints) {
+    mp_raise_ValueError("polygon is defined by too many points");
+  }
+
+  for(unsigned int i=0; i<itemLength; i++)
+  {
+    mp_obj_t * coordinates;
+    mp_obj_get_array_fixed_n(items[i], 2, &coordinates);
+
+    pointsX[i] = mp_obj_get_int(coordinates[0]);
+    pointsY[i] = mp_obj_get_int(coordinates[1]);
+  }
+
+  KDColor color = MicroPython::Color::Parse(args[1]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->fillPolygon(pointsX, pointsY, itemLength, color);
+  return mp_const_none;
+} 
 
 mp_obj_t modkandinsky_wait_vblank() {
   micropython_port_interrupt_if_needed();

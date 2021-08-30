@@ -28,6 +28,10 @@ public:
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
 
+  // Circle
+  void drawCircle(KDPoint c, KDCoordinate r, KDColor color);
+  void fillCircle(KDPoint c, KDCoordinate r, KDColor color);
+
   // Rect
   void fillRect(KDRect rect, KDColor color);
   void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
@@ -36,6 +40,10 @@ public:
   virtual void pushRect(KDRect, const KDColor * pixels) = 0;
   virtual void pushRectUniform(KDRect rect, KDColor color) = 0;
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
+
+  //Polygon 
+  static const int k_polygonMaxNumberOfPoints = 32;
+  void fillPolygon(KDCoordinate pointsX[], KDCoordinate pointsY[], int numberOfPoints, KDColor color);
 protected:
   KDContext(KDPoint origin, KDRect clippingRect);
 private:

@@ -371,13 +371,11 @@ void Parser::parseUnit(Expression & leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   const Unit::Representative * unitRepresentative = nullptr;
   const Unit::Prefix * unitPrefix = nullptr;
-  leftHandSide = Constant::Builder(m_currentToken.codePoint());
-  if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(), &unitRepresentative, &unitPrefix)) {
-    leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
-  } else {
+  if (!Unit::CanParse(m_currentToken.text(), m_currentToken.length(), &unitRepresentative, &unitPrefix)) {
     m_status = Status::Error; // Unit does not exist
     return;
   }
+  leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
   isThereImplicitMultiplication();
 }
 

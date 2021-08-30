@@ -20,7 +20,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
 private:
-  constexpr static int k_cellBufferSize = 5 /* p1-p2 */ + 2 /* op */ +
+  constexpr static int k_cellBufferSize = 7 /* μ1-μ2 */ + 2 /* op */ +
                                           Constants::k_shortFloatNumberOfChars /* float */ +
                                           1 /* \0 */;
   constexpr static int k_numberOfOperators = 3;

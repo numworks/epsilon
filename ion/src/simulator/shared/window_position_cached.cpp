@@ -1,8 +1,7 @@
 #include "window.h"
-
-#include <SDL.h>
-
 #include "platform.h"
+#include <SDL.h>
+#include <stdio.h>
 
 namespace Ion {
 namespace Simulator {

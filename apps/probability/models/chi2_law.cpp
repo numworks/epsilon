@@ -4,6 +4,7 @@
 
 #include <cmath>
 
+#include "law_helper.h"
 #include "probability/models/distribution/regularized_gamma.h"
 
 namespace Probability {
@@ -49,30 +50,23 @@ T Chi2Law::CumulativeDistributiveInverseForProbability(T probability, T k) {
     return 0;
   }
 
-  double xmin = DBL_EPSILON;
-  double xmax = 10;
-
-  while (Chi2Law::CumulativeDistributiveFunctionAtAbscissa<T>(xmax, k) < probability) {
-    xmin = xmax;
-    xmax *= 10;
-  }
-
   struct Args {
     T proba;
     T k;
   };
   Args args{probability, k};
 
-  Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
-      xmin,
-      xmax,
-      DBL_EPSILON,
+  Poincare::Solver::ValueAtAbscissa evaluation =
       [](double x, Poincare::Context * context, const void * auxiliary) {
         const Args * args = static_cast<const Args *>(auxiliary);
         return CumulativeDistributiveFunctionAtAbscissa<double>(x, args->k) - args->proba;
-      },
-      nullptr,
-      &args);
+      };
+
+  double xmin, xmax;
+  findBoundsForBinarySearch(evaluation, nullptr, &args, xmin, xmax);
+
+  Poincare::Coordinate2D<double> result =
+      Poincare::Solver::IncreasingFunctionRoot(xmin, xmax, DBL_EPSILON, evaluation, nullptr, &args);
   return result.x1();
 }
 

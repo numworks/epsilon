@@ -25,9 +25,9 @@ void MatrixListController::setExpression(Poincare::Expression e) {
   Poincare::Preferences::ComplexFormat currentComplexFormat = preferences->complexFormat();
   if (currentComplexFormat == Poincare::Preferences::ComplexFormat::Real) {
     /* Temporary change complex format to avoid all additional expressions to be
-     * "unreal" (with [i] for instance). As additional results are computed from
+     * "nonreal" (with [i] for instance). As additional results are computed from
      * the output, which is built taking ComplexFormat into account, there are
-     * no risks of displaying additional results on an unreal output. */
+     * no risks of displaying additional results on an nonreal output. */
     preferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   }
 

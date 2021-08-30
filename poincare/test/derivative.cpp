@@ -2,7 +2,7 @@
 #include <ion/storage.h>
 #include <poincare/derivative.h>
 #include <poincare/undefined.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 
 using namespace Poincare;
 
@@ -12,7 +12,7 @@ void assert_reduces_to_formal_expression(const char * expression, const char * r
 
 QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(undef,x,x)", Undefined::Name());
-  assert_reduces_to_formal_expression("diff(unreal,x,x)", Unreal::Name());
+  assert_reduces_to_formal_expression("diff(nonreal,x,x)", Nonreal::Name());
   assert_reduces_to_formal_expression("diff(inf,x,x)", Undefined::Name());
   assert_reduces_to_formal_expression("diff(1,x,x)", "0");
   assert_reduces_to_formal_expression("diff(π,x,x)", "0");
@@ -65,8 +65,8 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1");
   assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11");
   assert_reduces_for_approximation("diff(ln(x),x,0)", Undefined::Name());
-  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", Unreal::Name());
-  assert_reduces_for_approximation("diff(log(x),x,-10)", Unreal::Name());
+  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", Nonreal::Name());
+  assert_reduces_for_approximation("diff(log(x),x,-10)", Nonreal::Name());
 
   assert_reduces_for_approximation("diff(abs(x),x,123)", "1");
   assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1");
@@ -90,8 +90,8 @@ QUIZ_CASE(poincare_derivative_approximation) {
   assert_approximate_to("diff(ln(x),x,1)", "1");
   assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
   assert_approximate_to("diff(ln(x),x,0)", Undefined::Name());
-  assert_approximate_to("diff(ln(x),x,-3.1)", Unreal::Name());
-  assert_approximate_to("diff(log(x),x,-10)", Unreal::Name());
+  assert_approximate_to("diff(ln(x),x,-3.1)", Nonreal::Name());
+  assert_approximate_to("diff(log(x),x,-10)", Nonreal::Name());
   assert_approximate_to("diff(abs(x),x,123)", "1");
   assert_approximate_to("diff(abs(x),x,-2.34)", "-1");
   assert_approximate_to("diff(1/x,x,-2)", "-0.25");

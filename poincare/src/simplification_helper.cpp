@@ -4,7 +4,7 @@
 #include <poincare/expression.h>
 #include <poincare/parenthesis.h>
 #include <poincare/undefined.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 #include <assert.h>
 
 
@@ -37,13 +37,13 @@ Expression SimplificationHelper::shallowReduceUndefined(Expression e) {
   Expression result;
   const int childrenCount = e.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
-    /* The reduction is shortcut if one child is unreal or undefined:
-     * - the result is unreal if at least one child is unreal
+    /* The reduction is shortcut if one child is nonreal or undefined:
+     * - the result is nonreal if at least one child is nonreal
      * - the result is undefined if at least one child is undefined but no child
-     *   is unreal */
+     *   is nonreal */
     ExpressionNode::Type childIType = e.childAtIndex(i).type();
-    if (childIType == ExpressionNode::Type::Unreal) {
-      result = Unreal::Builder();
+    if (childIType == ExpressionNode::Type::Nonreal) {
+      result = Nonreal::Builder();
       break;
     } else if (childIType == ExpressionNode::Type::Undefined) {
       result = Undefined::Builder();
@@ -86,8 +86,8 @@ Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Express
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
     Expression value = e.shallowReduce(reductionContext);
-    if (value.type() == ExpressionNode::Type::Unreal || value.type() == ExpressionNode::Type::Undefined) {
-      // Undefined * _unit is Undefined. Same with Unreal.
+    if (value.type() == ExpressionNode::Type::Nonreal || value.type() == ExpressionNode::Type::Undefined) {
+      // Undefined * _unit is Undefined. Same with Nonreal.
       mul.replaceWithInPlace(value);
       return value;
     }

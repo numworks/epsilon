@@ -263,11 +263,12 @@ Expression CalculationStore::ansExpression(Context * context) {
     return approximate;
   }
   /* Special case: If exact output was hidden, it should not be accessible using
-   * ans, unless it is equal to a non-undef and non-unreal approximation. */
+   * ans, unless it is equal to an approximation that is neither undefined nor
+   * nonreal. */
   const char * exactOutputText = mostRecentCalculation->exactOutputText();
   const char * approximateOutputText = mostRecentCalculation->approximateOutputText(Calculation::NumberOfSignificantDigits::UserDefined);
   if (mostRecentCalculation->displayOutput(context) == Calculation::DisplayOutput::ApproximateOnly && (strcmp(approximateOutputText, exactOutputText) != 0 ||
-      exactOutput.type() == ExpressionNode::Type::Unreal || exactOutput.type() == ExpressionNode::Type::Undefined)) {
+      exactOutput.type() == ExpressionNode::Type::Nonreal || exactOutput.type() == ExpressionNode::Type::Undefined)) {
     return input;
   }
   return exactOutput;

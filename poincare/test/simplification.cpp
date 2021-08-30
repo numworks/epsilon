@@ -658,8 +658,8 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×𝐢");
   assert_parsed_expression_simplify_to("√(-x)", "√(-x)");
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Metric, Cartesian);
-  assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("(-0.0001)^6.3", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("√(-3)^2", "nonreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("(-0.0001)^6.3", "nonreal", User, Radian, Metric, Real);
   // Principal angle of root of unity
   assert_parsed_expression_simplify_to("(-5)^(-1/3)", "root(25,3)/10+root(16875,6)/10×𝐢", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "\u0012√(√(6)+8)+√(6)+9\u0013/√(√(6)+8)", User, Radian, Metric, Real);
@@ -1348,16 +1348,16 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
 
 QUIZ_CASE(poincare_simplification_complex_format) {
   // Real
-  assert_parsed_expression_simplify_to("𝐢", "unreal", User, Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("√(-1)", "unreal", User, Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("√(-1)×√(-1)", "unreal", User, Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("ln(-2)", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("𝐢", "nonreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("√(-1)", "nonreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("√(-1)×√(-1)", "nonreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("ln(-2)", "nonreal", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("(-8)^(2/3)", "4", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("(-8)^(2/5)", "2×root(2,5)", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("(-8)^(1/5)", "-root(8,5)", User, Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("(-8)^(1/4)", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("(-8)^(1/4)", "nonreal", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("(-8)^(1/3)", "-2", User, Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("[[1,2+√(-1)]]", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("[[1,2+√(-1)]]", "nonreal", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("atan(-2)", "-atan(2)", User, Radian, Metric, Real);
 
@@ -1365,13 +1365,13 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("a", "a", User, Radian, Metric, Real);
   // a = 2+i
   assert_reduce("2+𝐢→a", Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("a", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("a", "nonreal", User, Radian, Metric, Real);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
   // f : x → x+1
   assert_reduce("x+1+𝐢→f(x)", Radian, Metric, Real);
-  assert_parsed_expression_simplify_to("f(3)", "unreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("f(3)", "nonreal", User, Radian, Metric, Real);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 

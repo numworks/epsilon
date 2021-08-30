@@ -25,7 +25,7 @@ void ComplexListController::setExpression(Poincare::Expression e) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat currentComplexFormat = preferences->complexFormat();
   if (currentComplexFormat == Poincare::Preferences::ComplexFormat::Real) {
-    // Temporary change complex format to avoid all additional expressions to be "unreal"
+    // Temporary change complex format to avoid all additional expressions to be "nonreal"
     preferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   }
 

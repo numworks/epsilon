@@ -28,7 +28,7 @@ public:
   enum class Type : uint8_t {
     Uninitialized = 0,
     Undefined = 1,
-    Unreal,
+    Nonreal,
     Rational,
     BasedInteger,
     Decimal,

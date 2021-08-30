@@ -212,8 +212,8 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined || e.recursivelyMatches(Expression::IsMatrix, context, replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition)) {
       return Error::EquationUndefined;
     }
-    if (e.type() == ExpressionNode::Type::Unreal) {
-      return Error::EquationUnreal;
+    if (e.type() == ExpressionNode::Type::Nonreal) {
+      return Error::EquationNonreal;
     }
     numberOfVariables = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, numberOfVariables);
     if (numberOfVariables == -1) {
@@ -296,8 +296,8 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   for (int i = 0; i < initialNumberOfSolutions; i++) {
     if (!exactSolutions[i].isUninitialized()) {
       assert(!exactSolutionsApproximations[i].isUninitialized());
-      if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Unreal) {
-        // Discard unreal solutions.
+      if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Nonreal) {
+        // Discard nonreal solutions.
         m_numberOfSolutions--;
         continue;
       } else if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Undefined) {

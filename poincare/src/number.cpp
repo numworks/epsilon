@@ -19,7 +19,7 @@ namespace Poincare {
 double NumberNode::doubleApproximation() const {
   switch (type()) {
     case Type::Undefined:
-    case Type::Unreal:
+    case Type::Nonreal:
       return NAN;
     case Type::Infinity:
       assert(Number(this).sign() == Sign::Negative || Number(this).sign() == Sign::Positive);

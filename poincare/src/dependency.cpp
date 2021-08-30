@@ -11,7 +11,7 @@ Expression DependencyNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T> Evaluation<T> DependencyNode::templatedApproximate(ApproximationContext approximationContext) const {
   ExpressionNode * dependencies = childAtIndex(1);
-  if (dependencies->type() == Type::Undefined || dependencies->type() == Type::Unreal) {
+  if (dependencies->type() == Type::Undefined || dependencies->type() == Type::Nonreal) {
     return Complex<T>::Undefined();
   }
   assert(dependencies->type() == ExpressionNode::Type::Matrix);
@@ -26,11 +26,11 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
 // Dependency
 
 Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  /* If one of the element in the matrix is undefined (unreal), the whole matrix will
-   * be reduced to Undefined (Unreal). */
+  /* If one of the element in the matrix is undefined (nonreal), the whole
+   * matrix will be reduced to Undefined (Nonreal). */
   Expression dependencies = childAtIndex(1);
   if (dependencies.isUndefined()) {
-    /* dependencies is either Undefined or Unreal. */
+    /* dependencies is either Undefined or Nonreal. */
     replaceWithInPlace(dependencies);
     return dependencies;
   }
@@ -71,7 +71,7 @@ void Dependency::addDependency(Expression newDependency) {
     Matrix matrixChild = static_cast<Matrix &>(dependencies);
     matrixChild.addChildAtIndexInPlace(newDependency.clone(), numberOfDependencies(), numberOfDependencies());
   }
-  /* If dependencies is not a Matrix, it is either Undef or Unreal. As such,
+  /* If dependencies is not a Matrix, it is either Undef or Nonreal. As such,
    * the expression will be undefined: new dependencies will not change that,
    * and will disappear in the next reduction. */
 }

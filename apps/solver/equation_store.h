@@ -18,7 +18,7 @@ public:
   enum class Error : int16_t {
     NoError = 0,
     EquationUndefined = -1,
-    EquationUnreal = -2,
+    EquationNonreal = -2,
     TooManyVariables = -3,
     NonLinearSystem = -4,
     RequireApproximateSolution = -5,

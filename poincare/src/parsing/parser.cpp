@@ -45,7 +45,7 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
     Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, Unreal::Name())    == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, Nonreal::Name())    == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "v")               == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "w")               == 0
@@ -430,8 +430,8 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
     leftHandSide = Infinity::Builder(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined::Builder();
-  } else if (m_currentToken.compareTo(Unreal::Name()) == 0) {
-    leftHandSide = Unreal::Builder();
+  } else if (m_currentToken.compareTo(Nonreal::Name()) == 0) {
+    leftHandSide = Nonreal::Builder();
   } else {
     assert(m_currentToken.compareTo("u") == 0
         || m_currentToken.compareTo("v") == 0

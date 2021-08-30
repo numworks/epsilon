@@ -75,10 +75,10 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
 }
 
 static bool rootSmallerThan(const Expression * root1, const Expression * root2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  if (root2->type() == ExpressionNode::Type::Undefined || root2->type() == ExpressionNode::Type::Unreal) {
+  if (root2->type() == ExpressionNode::Type::Undefined || root2->type() == ExpressionNode::Type::Nonreal) {
     return true;
   }
-  if (root1->type() == ExpressionNode::Type::Undefined || root1->type() == ExpressionNode::Type::Unreal) {
+  if (root1->type() == ExpressionNode::Type::Undefined || root1->type() == ExpressionNode::Type::Nonreal) {
     return false;
   }
   float r1 = root1->approximateToScalar<float>(context, complexFormat, angleUnit);

@@ -128,14 +128,25 @@ Conic::Type Conic::getConicType() {
   return m_type;
 }
 
+void Conic::opposeCoefficients() {
+  m_a *= -1.0;
+  m_b *= -1.0;
+  m_c *= -1.0;
+  m_d *= -1.0;
+  m_e *= -1.0;
+  m_f *= -1.0;
+}
+
 void Conic::rotateConic() {
+  if (m_a <= 0.0 && m_c <= 0.0) {
+    opposeCoefficients();
+  }
   // TODO Hugo : Only keep m_b and smallestPositive comnditions
   if (m_b == 0.0 && (m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c) &&
                      m_a == smallestPositive(m_a, m_c))) {
     // Conic is already rotated.
     return;
   }
-  assert(m_r == 0.0);
   double a = m_a;
   double b = m_b;
   double c = m_c;
@@ -161,7 +172,7 @@ void Conic::rotateConic() {
      *     - equal (Circle)
      *     - greater than A (Elipsis, major axis along x)
      */
-    if (m_a == smallestPositive(m_a, m_c, true)) {
+    if ((m_a > 0.0 || m_c > 0.0) && m_a == smallestPositive(m_a, m_c, true)) {
       // TODO Hugo : Remove this assert
       assert(m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c));
       break;
@@ -169,7 +180,11 @@ void Conic::rotateConic() {
     assert(i < 3);
     r += M_PI / 2;
   }
-  m_r = r;
+  /* TODO Hugo : Ensure m_r is still correct. In any case, m_r is unused and
+  * shall be removed */
+  // If rotated for second time, no more
+  assert(m_r == 0.0 || ( m_c * m_e == 0.0 && m_a * m_d == 0.0 && (r == M_PI/2 || r == M_PI*3/2)));
+  m_r += r;
   // Conic shall be rotated such that a is positive, non-null and smaller than c
   // if c is positive
   assert(m_a > 0.0);
@@ -250,6 +265,15 @@ void Conic::canonize() {
   m_d /= factor;
   m_e /= factor;
   m_f /= factor;
+
+  if (m_a != smallestPositive(m_a, m_c, true)) {
+    /* When centering the conic, m_f might switch sign, threatening the
+     * assertion that a is the smallest positive for canonic form. In that case
+     * we rotate the conic once more. As everything is already centered, it
+     * isn't an issue. */
+    rotateConic();
+  }
+
   assert(m_f == -1.0 || m_a + m_c == 1.0);
   // TODO Hugo : Remove these asserts
   assert(m_f == -1.0 || m_a == 1.0);

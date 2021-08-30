@@ -46,6 +46,8 @@ private:
   static double ApproximateForParameter(double value) {
     return std::abs(value) < k_tolerance ? 0.0 : value;
   }
+  // Oppose all coefficients to ensure canonic form
+  void opposeCoefficients();
   // Remove rotation from the parameters (B = 0)
   void rotateConic();
   // Remove both rotation and off-centering from the parameters

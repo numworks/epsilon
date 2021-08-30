@@ -18,11 +18,11 @@ extern "C" {
 namespace Home {
 
 Controller::ContentView::ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource) :
-  m_selectableTableView(controller, controller, selectionDataSource, controller)
+  m_selectableTableView(controller, controller, &m_backgroundView, selectionDataSource, controller),
+  m_backgroundView()
 {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
-  m_selectableTableView.setBackgroundColor(Palette::HomeBackground);
   static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->verticalBar()->setMargin(k_indicatorMargin);
 }
 
@@ -31,7 +31,7 @@ SelectableTableView * Controller::ContentView::selectableTableView() {
 }
 
 void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::HomeBackground);
+  m_selectableTableView.drawRect(ctx, rect);
 }
 
 void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons, int numberOfColumns) {
@@ -45,6 +45,10 @@ void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSo
   }
 }
 
+BackgroundView * Controller::ContentView::backgroundView() {
+  return &m_backgroundView;
+}
+
 int Controller::ContentView::numberOfSubviews() const {
   return 1;
 }
@@ -56,6 +60,8 @@ View * Controller::ContentView::subviewAtIndex(int index) {
 
 void Controller::ContentView::layoutSubviews(bool force) {
   m_selectableTableView.setFrame(bounds(), force);
+  m_backgroundView.setFrame(KDRect(0, Metric::TitleBarHeight, Ion::Display::Width, Ion::Display::Height-Metric::TitleBarHeight), force);
+  m_backgroundView.updateDataValidity();
 }
 
 Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource, ::App * app) :
@@ -63,6 +69,21 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
   m_view(this, selectionDataSource)
 {
   m_app = app;
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    m_cells[i].setBackgroundView(m_view.backgroundView());
+  }
+
+  m_view.backgroundView()->setDefaultColor(Palette::HomeBackground);
+
+      
+#ifdef HOME_DISPLAY_EXTERNALS
+    int index = External::Archive::indexFromName("wallpaper.obm");
+    if(index > -1) {
+      External::Archive::File image;
+      External::Archive::fileAtIndex(index, image);
+      m_view.backgroundView()->setBackgroundImage(image.data);
+    }
+#endif
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {

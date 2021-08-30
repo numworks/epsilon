@@ -7,8 +7,11 @@
 #include <algorithm>
 #include <cmath>
 
+template <class T>
+constexpr T minRepresentable(T valueType);
+
 template <typename T>
-bool inline roughlyEqual(T a, T b, T threshold = 1e-9, bool absolute = false) {
+bool inline roughlyEqual(T a, T b, T threshold, bool absolute = false) {
   if (absolute) {
     return std::fabs(a - b) < threshold;
   }
@@ -24,8 +27,18 @@ bool inline roughlyEqual(T a, T b, T threshold = 1e-9, bool absolute = false) {
   return res;
 }
 
+template <>
+inline float minRepresentable<float>(float valueType) {
+  return FLT_EPSILON;
+}
+
+template <>
+inline double minRepresentable(double valueType) {
+  return DBL_EPSILON;
+}
+
 template <typename T>
-void inline assertRoughlyEqual(T a, T b, T threshold = FLT_EPSILON, bool absolute = false) {
+void inline assertRoughlyEqual(T a, T b, T threshold = minRepresentable(T()), bool absolute = false) {
   quiz_assert(roughlyEqual<T>(a, b, threshold, absolute));
 }
 

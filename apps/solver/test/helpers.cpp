@@ -23,7 +23,8 @@ void solve_and_process_error(std::initializer_list<const char *> equations, T &&
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, equation);
     Ion::Storage::Record record = equationStore.recordAtIndex(equationStore.numberOfModels()-1);
     Shared::ExpiringPointer<Equation> model = equationStore.modelForRecord(record);
-    model->setContent(equation, &globalContext);
+    err = model->setContent(equation, &globalContext);
+    quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, equation);
   }
   bool replaceFunctionsButNotSymbols = false;
   equationStore.tidy();

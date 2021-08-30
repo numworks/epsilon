@@ -111,4 +111,10 @@ QUIZ_CASE(poincare_conics_general) {
                       1.72814, 1.24113, -0.136364, 0.0909091);  // 1.28098
   quiz_assert_parabola("x^2+2*x*y+y^2+2*x+y-1", 0.176777, 1.1875, -1.9375);
   quiz_assert_parabola("4x^2-4x*y+y^2-x-2*y+2", 0.223607, 0.4, 0.8);
+  // With negative coefficients
+  quiz_assert_circle("-x^2-y^2+x-y", 0.707107, 0.5, -0.5);  // 1/sqrt(2)
+  quiz_assert_circle("x^2+y^2+10x+1", 4.89898, -5, 0);  // sqrt(77)/2
+  quiz_assert_hyperbola("-x^2+10*x*y-y^2-1", 1.29099, 1.29099 * 0.5,
+                        0.5, 0.408248, 0, 0);  // sqrt(5/3), 1/sqrt(6)
+  quiz_assert_parabola("-x^2-2*x*y-y^2-2*x-y+1", 0.176777, 1.1875, -1.9375);
 }

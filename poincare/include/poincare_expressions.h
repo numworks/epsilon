@@ -95,7 +95,7 @@
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
 #include <poincare/unit_convert.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
 #include <poincare/variable_context.h>
 #include <poincare/vector_cross.h>
 #include <poincare/vector_dot.h>

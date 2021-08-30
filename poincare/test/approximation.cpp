@@ -155,7 +155,7 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to_scalar<float>("[[1,2][3,4]]^2", NAN);
 
 
-  assert_expression_approximates_to<float>("(-10)^0.00000001", "unreal", Radian, Metric, Real);
+  assert_expression_approximates_to<float>("(-10)^0.00000001", "nonreal", Radian, Metric, Real);
   assert_expression_approximates_to<float>("(-10)^0.00000001", "1+3.141593ᴇ-8×𝐢", Radian, Metric, Cartesian);
   assert_expression_simplifies_approximates_to<float>("3.5^2.0000001", "12.25");
   assert_expression_simplifies_approximates_to<float>("3.7^2.0000001", "13.69");
@@ -971,17 +971,17 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("0.1", "0.1", Radian, Metric, Real);
   assert_expression_approximates_to<float>("0.1234567", "0.1234567", Radian, Metric, Real);
   assert_expression_approximates_to<double>("0.123456789012345", "0.12345678901235", Radian, Metric, Real);
-  assert_expression_approximates_to<float>("1+2×𝐢", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<double>("1+𝐢-𝐢", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<float>("1+𝐢-1", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<double>("1+𝐢", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<float>("3+𝐢", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<double>("3-𝐢", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<float>("3-𝐢-3", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<float>("𝐢", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<double>("√(-1)", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<double>("√(-1)×√(-1)", "unreal", Radian, Metric, Real);
-  assert_expression_approximates_to<double>("ln(-2)", "unreal", Radian, Metric, Real);
+  assert_expression_approximates_to<float>("1+2×𝐢", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<double>("1+𝐢-𝐢", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<float>("1+𝐢-1", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<double>("1+𝐢", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<float>("3+𝐢", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<double>("3-𝐢", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<float>("3-𝐢-3", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<float>("𝐢", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<double>("√(-1)", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<double>("√(-1)×√(-1)", "nonreal", Radian, Metric, Real);
+  assert_expression_approximates_to<double>("ln(-2)", "nonreal", Radian, Metric, Real);
   // Power/Root approximates to the first REAL root in Real mode
   assert_expression_simplifies_approximates_to<double>("(-8)^(1/3)", "-2", Radian, Metric, Real); // Power have to be simplified first in order to spot the right form c^(p/q) with p, q integers
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian, Metric, Real); // Root approximates to the first REAL root in Real mode

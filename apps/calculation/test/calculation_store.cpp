@@ -513,12 +513,12 @@ QUIZ_CASE(calculation_complex_format) {
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
   assertCalculationIs("1+𝐢", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+𝐢", "1+𝐢", &globalContext, &store);
-  assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "unreal", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("ln(-2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "unreal", "unreal", &globalContext, &store);
-  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "unreal", "unreal", &globalContext, &store);
+  assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "nonreal", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("ln(-2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
+  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "-2", "-2", &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "4", "4", &globalContext, &store);
-  assertCalculationIs("(-2)^(1/4)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "unreal", "unreal", &globalContext, &store);
+  assertCalculationIs("(-2)^(1/4)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   assertCalculationIs("1+𝐢", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+𝐢", "1+𝐢", &globalContext, &store);

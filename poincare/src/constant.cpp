@@ -5,8 +5,8 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/unreal.h>
-#include <poincare/unreal.h>
+#include <poincare/nonreal.h>
+#include <poincare/nonreal.h>
 #include <ion.h>
 #include <cmath>
 #include <assert.h>
@@ -105,7 +105,7 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   Expression result;
   bool isI = isIComplex();
   if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && isI) {
-    result = Unreal::Builder();
+    result = Nonreal::Builder();
   } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {
     result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
   } else {

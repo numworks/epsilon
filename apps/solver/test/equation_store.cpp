@@ -132,10 +132,10 @@ QUIZ_CASE(equation_solve) {
 QUIZ_CASE(equation_solve_complex_real) {
   set_complex_format(Real);
   assert_solves_to("x+𝐢=0", "x=-𝐢"); // We still want complex solutions if the input has some complex value
-  assert_solves_to_error("x+√(-1)=0", EquationUnreal);
+  assert_solves_to_error("x+√(-1)=0", EquationNonreal);
   assert_solves_to("x^2+x+1=0", {"delta=-3"});
-  assert_solves_to_error("x^2-√(-1)=0", EquationUnreal);
-  assert_solves_to_error("x+√(-1)×√(-1)=0", EquationUnreal);
+  assert_solves_to_error("x^2-√(-1)=0", EquationNonreal);
+  assert_solves_to_error("x+√(-1)×√(-1)=0", EquationNonreal);
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2");
   // With a predefined variable that should be ignored
   set("h", "3");

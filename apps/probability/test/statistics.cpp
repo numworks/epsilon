@@ -45,9 +45,9 @@ void inputValues(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(stat->hasDegreeOfFreedom() == test.m_hasDegreeOfFreedom);
 
   stat->initThreshold(Data::SubApp::Tests);
-  quiz_assert(roughlyEqual<float>(stat->threshold(), 0.05f));  // Significance level
+  assertRoughlyEqual<float>(stat->threshold(), 0.05f);  // Significance level
   stat->setThreshold(test.m_significanceLevel);
-  quiz_assert(roughlyEqual<float>(stat->threshold(), test.m_significanceLevel));
+  assertRoughlyEqual<float>(stat->threshold(), test.m_significanceLevel);
 
   stat->hypothesisParams()->setFirstParam(test.m_firstHypothesisParam);
   stat->hypothesisParams()->setComparisonOperator(test.m_op);
@@ -64,11 +64,11 @@ void runTest(Statistic * stat, StatisticTestCase & test) {
 
   quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
   quiz_assert(stat->canRejectNull() == test.m_testPassed);
-  quiz_assert(roughlyEqual<float>(stat->zAlpha(), test.m_zAlpha));
-  quiz_assert(roughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue));
-  quiz_assert(roughlyEqual<float>(stat->pValue(), test.m_pValue));
+  assertRoughlyEqual<float>(stat->zAlpha(), test.m_zAlpha, 5 * FLT_EPSILON);
+  assertRoughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue);
+  assertRoughlyEqual<float>(stat->pValue(), test.m_pValue);
   if (stat->hasDegreeOfFreedom()) {
-    quiz_assert(roughlyEqual(stat->degreeOfFreedom(), test.m_degreesOfFreedom));
+    assertRoughlyEqual(stat->degreeOfFreedom(), test.m_degreesOfFreedom);
   }
 }
 
@@ -80,16 +80,16 @@ void testStatistic(Statistic * stat, StatisticTestCase & test) {
 
   // Confidence interval
   stat->initThreshold(Data::SubApp::Intervals);
-  quiz_assert(roughlyEqual<float>(stat->threshold(), 0.95f));  // Confidence level
+  assertRoughlyEqual<float>(stat->threshold(), 0.95f);  // Confidence level
   stat->setThreshold(test.m_confidenceLevel);
-  quiz_assert(roughlyEqual<float>(stat->threshold(), test.m_confidenceLevel));
+  assertRoughlyEqual<float>(stat->threshold(), test.m_confidenceLevel);
 
   stat->computeInterval();
 
-  quiz_assert(roughlyEqual<float>(stat->estimate(), test.m_estimate));
-  quiz_assert(roughlyEqual<float>(stat->intervalCriticalValue(), test.m_intervalCriticalValue));
-  quiz_assert(roughlyEqual<float>(stat->standardError(), test.m_standardError));
-  quiz_assert(roughlyEqual<float>(stat->marginOfError(), test.m_marginOfError));
+  assertRoughlyEqual<float>(stat->estimate(), test.m_estimate);
+  assertRoughlyEqual<float>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, 5 * FLT_EPSILON);
+  assertRoughlyEqual<float>(stat->standardError(), test.m_standardError, 5 * FLT_EPSILON);
+  assertRoughlyEqual<float>(stat->marginOfError(), test.m_marginOfError, 5 * FLT_EPSILON);
 }
 
 QUIZ_CASE(probability_one_proportion_statistic) {

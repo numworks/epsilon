@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+#include "law_helper.h"
+
 namespace Probability {
 
 template <typename T>
@@ -39,33 +41,25 @@ T StudentLaw::CumulativeDistributiveInverseForProbability(T probability, T k) {
     return -INFINITY;
   }
 
-  const double small = DBL_EPSILON;
-  const double big = 1E10;
-  double xmin = probability < 0.5 ? -big : small;
-  double xmax = probability < 0.5 ? -small : big;
-
   struct Args {
     T proba;
     T k;
   };
   Args args{probability, k};
-
-  // Compute inverse using Solver::IncreasingFunctionRoot
-  Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
-      xmin, xmax, DBL_EPSILON,
+  Poincare::Solver::ValueAtAbscissa evaluation =
       [](double x, Poincare::Context * context, const void * auxiliary) {
         const Args * args = static_cast<const Args *>(auxiliary);
-        return CumulativeDistributiveFunctionAtAbscissa<double>(x, args->k) - args->proba;
-      },
-      nullptr, &args);
-  /* Either no result was found, the precision is ok or the result was outside
-   * the given bounds */
-  if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON ||
-        std::fabs(result.x1() - xmin) < FLT_EPSILON ||
-        std::fabs(result.x1() - xmax) < FLT_EPSILON)) {
-    assert(false);
-    return probability > 0.5 ? INFINITY : -INFINITY;
-  }
+        return static_cast<double>(CumulativeDistributiveFunctionAtAbscissa<T>(x, args->k) -
+                                   args->proba);
+      };
+
+  double xmin, xmax;
+  findBoundsForBinarySearch(evaluation, nullptr, &args, xmin, xmax);
+  assert((xmin < xmax) && std::isfinite(xmin) && std::isfinite(xmax));
+
+  // Compute inverse using Solver::IncreasingFunctionRoot
+  Poincare::Coordinate2D<double> result =
+      Poincare::Solver::IncreasingFunctionRoot(xmin, xmax, DBL_EPSILON, evaluation, nullptr, &args);
   return result.x1();
 }
 

@@ -122,15 +122,14 @@ I18n::Message NewFunction::functionCategory() const {
 }
 
 int NewFunction::detailsTotal() const {
-  // Todo Hugo : Remove useless details once the curve type will be visible list
   if (isNull()) {
-    return 1;
+    return 0;
   }
   assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
   static const int total[k_numberOfPlotTypes] = {
-    1, 1, 1, 4, 1,
-    1, 1, 1, 4, 7,
-    4, 7, 1, 1, 1,
+    0, 0, 0, 3, 0,
+    0, 0, 0, 3, 6,
+    3, 6, 0, 0, 0,
   };
   return total[static_cast<size_t>(plotType())];
 }

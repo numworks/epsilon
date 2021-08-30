@@ -220,16 +220,16 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
       return result;
     }
   }
-  size_t size = UTF8Decoder::CharSizeOfCodePoint(c);
-  if (static_cast<int>(size) >= bufferSize) {
+  size_t length = UTF8Decoder::CharSizeOfCodePoint(c);
+  if (static_cast<int>(length) >= bufferSize) {
     /* Code point doesn't fit, nullify the rest of the buffer to prevent
      * truncated utf8 characters */
     memset(buffer, 0, bufferSize);
   } else {
     UTF8Decoder::CodePointToChars(c, buffer, bufferSize - 1);
-    buffer[size] = 0;
+    buffer[length] = 0;
   }
-  return size;
+  return length;
 }
 
 }

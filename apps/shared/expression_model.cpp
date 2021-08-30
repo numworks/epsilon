@@ -55,6 +55,7 @@ void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t
 bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poincare::Context * context) const {
   if (m_circular == -1) {
     Expression e = expressionClone(record);
+    // TODO Hugo : Improve this
     if (!e.isUninitialized() && e.type() == ExpressionNode::Type::Equal) {
       if (e.childAtIndex(0).type() == ExpressionNode::Type::Function) {
         e = e.childAtIndex(1);

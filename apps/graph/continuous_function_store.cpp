@@ -14,6 +14,7 @@ bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFuncti
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
+  // TODO Hugo : Maybe handle more than 10 ?
   char name[3] = {'?', '?', 0}; // name is going to be ?0 or ?1 or ... ?5
   int currentNumber = 0;
   while (currentNumber < k_maxNumberOfMemoizedModels) {

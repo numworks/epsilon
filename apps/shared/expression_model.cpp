@@ -20,6 +20,7 @@
 #include <cmath>
 #include <assert.h>
 #include <algorithm>
+#include <iostream>
 
 using namespace Ion;
 using namespace Poincare;
@@ -163,11 +164,24 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   error = record->setValue(newData);
   // Any error would have occured at the first call to setValue
   assert(error == Ion::Storage::Record::ErrorStatus::None);
+  // TODO Hugo : Factorize this code, using ContinuousFunctionStore::addEmptyModel.
   if (!newExpression.isUninitialized() && Poincare::ComparisonOperator::IsComparisonOperatorType(newExpression.type()) && newExpression.childAtIndex(0).type() == ExpressionNode::Type::Function) {
     Poincare::Expression a = newExpression.childAtIndex(0);
     Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
-    Ion::Storage::Record::ErrorStatus error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
-    assert(error == Ion::Storage::Record::ErrorStatus::None);
+    error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
+  } else if (record->fullName()[0] != '?') {
+    // Reset record name back to default
+    char name[3] = {'?', '?', 0}; // name is going to be ?0 or ?1 or ... ?5
+    int currentNumber = 0;
+    while (currentNumber < 10) {
+      name[1] = '0'+currentNumber;
+      if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::funcExtension).isNull()) {
+        break;
+      }
+      currentNumber++;
+    }
+    assert(currentNumber < 10);
+    error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
   }
 
   /* Here we delete only the elements relative to the expression model kept in

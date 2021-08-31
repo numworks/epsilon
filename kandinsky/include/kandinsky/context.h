@@ -20,7 +20,8 @@ public:
                      KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite,
                      int maxLength = -1);
   KDPoint alignAndDrawString(const char * text, KDPoint p, KDSize frame,
-                             float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f,
+                             float horizontalAlignment = KDFont::ALIGN_CENTER,
+                             float verticalAlignment = KDFont::ALIGN_CENTER,
                              const KDFont * font = KDFont::LargeFont,
                              KDColor textColor = KDColorBlack,
                              KDColor backgroundColor = KDColorWhite, int maxLength = -1);

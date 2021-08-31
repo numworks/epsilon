@@ -9,8 +9,10 @@ using namespace Escher;
 namespace Solver {
 
 IntervalController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_instructions0(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_instructions1(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_instructions0(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction0, KDFont::ALIGN_CENTER,
+                  KDFont::ALIGN_CENTER, KDColorBlack, Palette::WallScreen),
+  m_instructions1(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction1, KDFont::ALIGN_CENTER,
+                  KDFont::ALIGN_CENTER, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
 }

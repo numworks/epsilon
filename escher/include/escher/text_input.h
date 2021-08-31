@@ -29,16 +29,17 @@ protected:
 
   class ContentView : public View {
   public:
-    ContentView(const KDFont * font, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f) :
-      View(),
-      m_cursorView(),
-      m_font(font),
-      m_selectionStart(nullptr),
-      m_selectionEnd(nullptr),
-      m_cursorLocation(nullptr),
-      m_horizontalAlignment(horizontalAlignment),
-      m_verticalAlignment(verticalAlignment)
-    {}
+    ContentView(const KDFont * font,
+                float horizontalAlignment = KDFont::ALIGN_LEFT,
+                float verticalAlignment = KDFont::ALIGN_CENTER) :
+        View(),
+        m_cursorView(),
+        m_font(font),
+        m_selectionStart(nullptr),
+        m_selectionEnd(nullptr),
+        m_cursorLocation(nullptr),
+        m_horizontalAlignment(horizontalAlignment),
+        m_verticalAlignment(verticalAlignment) {}
 
     // Font
     void setFont(const KDFont * font);

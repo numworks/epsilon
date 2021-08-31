@@ -14,7 +14,7 @@ SelectableViewWithMessages::SelectableViewWithMessages(SelectableTableView * sel
 {
   for (int i = 0; i < k_maxNumberOfLines; i++) {
     m_messageLines[i].setFont(KDFont::SmallFont);
-    m_messageLines[i].setAlignment(0.5f, 0.5f);
+    m_messageLines[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
     m_messageLines[i].setBackgroundColor(Palette::WallScreen);
   }
 }

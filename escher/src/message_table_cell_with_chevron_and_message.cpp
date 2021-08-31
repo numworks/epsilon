@@ -5,7 +5,7 @@ namespace Escher {
 
 MessageTableCellWithChevronAndMessage::MessageTableCellWithChevronAndMessage() :
   MessageTableCellWithChevron((I18n::Message)0),
-  m_subtitleView(KDFont::SmallFont, (I18n::Message)0, 1.0f, 0.5f, Palette::GrayDark)
+  m_subtitleView(KDFont::SmallFont, (I18n::Message)0, KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER, Palette::GrayDark)
 {
 }
 

@@ -9,7 +9,8 @@ using namespace Escher;
 namespace Probability {
 
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER,
+              Palette::GrayDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
   // Remove selectable table top margin to control margin between text and table

@@ -9,7 +9,6 @@
 #include "../graph/new_function.h"
 #include "text_field_delegate.h"
 #include "expiring_pointer.h"
-#include "../graph/new_function.h"
 
 namespace Shared {
 

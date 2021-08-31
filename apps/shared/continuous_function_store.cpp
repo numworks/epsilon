@@ -1,6 +1,6 @@
 #include "continuous_function_store.h"
 
-namespace Graph {
+namespace Shared {
 
 uint32_t ContinuousFunctionStore::storeChecksum() {
   return Ion::Storage::sharedStorage()->checksum();
@@ -30,13 +30,13 @@ Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   return error;
 }
 
-Shared::ExpressionModelHandle * ContinuousFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+ExpressionModelHandle * ContinuousFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   m_functions[cacheIndex] = NewFunction(record);
   return &m_functions[cacheIndex];
 }
 
-Shared::ExpressionModelHandle * ContinuousFunctionStore::memoizedModelAtIndex(int cacheIndex) const {
+ExpressionModelHandle * ContinuousFunctionStore::memoizedModelAtIndex(int cacheIndex) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_functions[cacheIndex];
 }

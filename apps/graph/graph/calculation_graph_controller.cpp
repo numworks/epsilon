@@ -66,7 +66,7 @@ Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAb
   return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext(), Solver::k_relativePrecision, Solver::k_minimalStep, Solver::DefaultMaximalStep(start, max));
 }
 
-ContinuousFunctionStore * CalculationGraphController::functionStore() const {
+Shared::ContinuousFunctionStore * CalculationGraphController::functionStore() const {
   return App::app()->functionStore();
 }
 

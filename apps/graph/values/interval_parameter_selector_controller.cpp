@@ -36,7 +36,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();
-    NewFunction::PlotType plotType = plotTypeAtRow(selectedRow());
+    Shared::NewFunction::PlotType plotType = plotTypeAtRow(selectedRow());
     controller->setTitle(messageForType(plotType));
     setStartEndMessages(controller, plotType);
     controller->setInterval(App::app()->intervalForType(plotType));
@@ -49,9 +49,9 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
 int IntervalParameterSelectorController::numberOfRows() const {
   int rowCount = 0;
   int plotTypeIndex = 0;
-  NewFunction::PlotType plotType;
-  while (plotTypeIndex < NewFunction::k_numberOfPlotTypes) {
-    plotType = static_cast<NewFunction::PlotType>(plotTypeIndex);
+  Shared::NewFunction::PlotType plotType;
+  while (plotTypeIndex < Shared::NewFunction::k_numberOfPlotTypes) {
+    plotType = static_cast<Shared::NewFunction::PlotType>(plotTypeIndex);
     bool plotTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfType(plotType) > 0;
     rowCount += plotTypeIsShown;
     plotTypeIndex++;
@@ -70,21 +70,21 @@ HighlightCell * IntervalParameterSelectorController::reusableCell(int index, int
 }
 
 int IntervalParameterSelectorController::reusableCellCount(int type) {
-  return NewFunction::k_numberOfPlotTypes;
+  return Shared::NewFunction::k_numberOfPlotTypes;
 }
 
 void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < numberOfRows());
-  NewFunction::PlotType plotType = plotTypeAtRow(index);
+  Shared::NewFunction::PlotType plotType = plotTypeAtRow(index);
   static_cast<MessageTableCellWithChevron *>(cell)->setMessage(messageForType(plotType));
 }
 
-NewFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {
+Shared::NewFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {
   int rowCount = 0;
   int plotTypeIndex = 0;
-  NewFunction::PlotType plotType;
-  while (plotTypeIndex < NewFunction::k_numberOfPlotTypes) {
-    plotType = static_cast<NewFunction::PlotType>(plotTypeIndex);
+  Shared::NewFunction::PlotType plotType;
+  while (plotTypeIndex < Shared::NewFunction::k_numberOfPlotTypes) {
+    plotType = static_cast<Shared::NewFunction::PlotType>(plotTypeIndex);
     bool plotTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfType(plotType) > 0;
     if (plotTypeIsShown && rowCount == j) {
       break;
@@ -96,8 +96,8 @@ NewFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) 
   return plotType;
 }
 
-I18n::Message IntervalParameterSelectorController::messageForType(NewFunction::PlotType plotType) {
-  constexpr I18n::Message message[NewFunction::k_numberOfPlotTypes] = {
+I18n::Message IntervalParameterSelectorController::messageForType(Shared::NewFunction::PlotType plotType) {
+  constexpr I18n::Message message[Shared::NewFunction::k_numberOfPlotTypes] = {
     I18n::Message::IntervalX,
     I18n::Message::IntervalTheta,
     I18n::Message::IntervalT
@@ -105,10 +105,10 @@ I18n::Message IntervalParameterSelectorController::messageForType(NewFunction::P
   return message[static_cast<size_t>(plotType)];
 }
 
-void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, NewFunction::PlotType plotType) {
-  if (plotType == NewFunction::PlotType::Polar) {
+void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::NewFunction::PlotType plotType) {
+  if (plotType == Shared::NewFunction::PlotType::Polar) {
     controller->setStartEndMessages(I18n::Message::ThetaStart, I18n::Message::ThetaEnd);
-  } else if (plotType == NewFunction::PlotType::Parametric) {
+  } else if (plotType == Shared::NewFunction::PlotType::Parametric) {
     controller->setStartEndMessages(I18n::Message::TStart, I18n::Message::TEnd);
   } else {
     controller->setStartEndMessages(I18n::Message::XStart, I18n::Message::XEnd);

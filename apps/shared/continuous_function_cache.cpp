@@ -1,5 +1,5 @@
 #include "continuous_function_cache.h"
-#include "../graph/new_function.h"
+#include "new_function.h"
 #include <limits.h>
 
 namespace Shared {
@@ -10,7 +10,7 @@ constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
 
 // public
 void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
-  // Graph::NewFunction * function = static_cast<Graph::NewFunction *>(fun);
+  // NewFunction * function = static_cast<NewFunction *>(fun);
 
   // if (!cache) {
   //   /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
@@ -47,7 +47,7 @@ void ContinuousFunctionCache::clear() {
   invalidateBetween(0, k_sizeOfCache);
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const Graph::NewFunction * function, Poincare::Context * context, float t) {
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const NewFunction * function, Poincare::Context * context, float t) {
   assert(false);
   int resIndex = indexForParameter(function, t);
   if (resIndex < 0) {
@@ -85,12 +85,12 @@ void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   }
 }
 
-void ContinuousFunctionCache::setRange(Graph::NewFunction * function, float tMin, float tStep) {
+void ContinuousFunctionCache::setRange(NewFunction * function, float tMin, float tStep) {
   m_tMin = tMin;
   m_tStep = tStep;
 }
 
-int ContinuousFunctionCache::indexForParameter(const Graph::NewFunction * function, float t) const {
+int ContinuousFunctionCache::indexForParameter(const NewFunction * function, float t) const {
   float delta = (t - m_tMin) / m_tStep;
   if (delta < 0 || delta > INT_MAX) {
     return -1;
@@ -106,7 +106,7 @@ int ContinuousFunctionCache::indexForParameter(const Graph::NewFunction * functi
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const Graph::NewFunction * function, Poincare::Context * context, float t, int i) {
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const NewFunction * function, Poincare::Context * context, float t, int i) {
   assert(false);
   if (function->isAlongX()) {
     if (std::isnan(m_cache[i])) {
@@ -122,7 +122,7 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const Graph
   return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
 }
 
-void ContinuousFunctionCache::pan(Graph::NewFunction * function, float newTMin) {
+void ContinuousFunctionCache::pan(NewFunction * function, float newTMin) {
   assert(function->isAlongX());
   if (newTMin == m_tMin) {
     return;

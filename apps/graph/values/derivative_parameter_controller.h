@@ -5,7 +5,7 @@
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/selectable_list_view_controller.h>
-#include "../continuous_function_store.h"
+#include "../../shared/continuous_function_store.h"
 
 namespace Graph {
 
@@ -25,13 +25,13 @@ public:
     m_record = record;
   }
 private:
-  ContinuousFunctionStore * functionStore();
+  Shared::ContinuousFunctionStore * functionStore();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else
   constexpr static int k_totalNumberOfCell = 1;
 #endif
-  constexpr static int k_maxNumberOfCharsInTitle = NewFunction::k_maxNameWithArgumentSize + 1; // +1 for the ' of the derivative
+  constexpr static int k_maxNumberOfCharsInTitle = Shared::NewFunction::k_maxNameWithArgumentSize + 1; // +1 for the ' of the derivative
   char m_pageTitle[k_maxNumberOfCharsInTitle];
   Escher::MessageTableCell m_hideColumn;
 #if COPY_COLUMN

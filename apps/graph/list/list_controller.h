@@ -3,7 +3,7 @@
 
 #include "list_parameter_controller.h"
 #include "text_field_function_title_cell.h"
-#include "../continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
@@ -31,7 +31,7 @@ private:
   int maxNumberOfDisplayableRows() override;
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
-  ContinuousFunctionStore * modelStore() override;
+  Shared::ContinuousFunctionStore * modelStore() override;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;

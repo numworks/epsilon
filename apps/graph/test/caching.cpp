@@ -13,7 +13,7 @@ bool floatEquals(float a, float b, float tolerance = 1.f/static_cast<float>(Ion:
   return (std::isnan(a) && std::isnan(b)) || IsApproximatelyEqual(a, b, tolerance, 0.);
 }
 
-void assert_check_cartesian_cache_against_function(NewFunction * function, ContinuousFunctionCache * cache, Context * context, float tMin) {
+void assert_check_cartesian_cache_against_function(ContinuousFunction * function, ContinuousFunctionCache * cache, Context * context, float tMin) {
   /* We set the cache to nullptr to force the evaluation (otherwise we would be
    * comparing the cache against itself). */
   function->setCache(nullptr);
@@ -32,7 +32,7 @@ void assert_check_cartesian_cache_against_function(NewFunction * function, Conti
   function->setCache(cache);
 }
 
-void assert_cartesian_cache_stays_valid_while_panning(NewFunction * function, Context * context, InteractiveCurveViewRange * range, CurveViewCursor * cursor, ContinuousFunctionStore * store, float step) {
+void assert_cartesian_cache_stays_valid_while_panning(ContinuousFunction * function, Context * context, InteractiveCurveViewRange * range, CurveViewCursor * cursor, ContinuousFunctionStore * store, float step) {
   ContinuousFunctionCache * cache = store->cacheAtIndex(0);
   assert(cache);
 
@@ -49,7 +49,7 @@ void assert_cartesian_cache_stays_valid_while_panning(NewFunction * function, Co
   }
 }
 
-void assert_check_polar_cache_against_function(NewFunction * function, Context * context, InteractiveCurveViewRange * range, ContinuousFunctionStore * store) {
+void assert_check_polar_cache_against_function(ContinuousFunction * function, Context * context, InteractiveCurveViewRange * range, ContinuousFunctionStore * store) {
   ContinuousFunctionCache * cache = store->cacheAtIndex(0);
   assert(cache);
 
@@ -78,7 +78,7 @@ void assert_check_polar_cache_against_function(NewFunction * function, Context *
   }
 }
 
-void assert_cache_stays_valid(NewFunction::PlotType type, const char * definition, float rangeXMin = -5, float rangeXMax = 5) {
+void assert_cache_stays_valid(ContinuousFunction::PlotType type, const char * definition, float rangeXMin = -5, float rangeXMax = 5) {
   GlobalContext globalContext;
   ContinuousFunctionStore functionStore;
 
@@ -89,7 +89,7 @@ void assert_cache_stays_valid(NewFunction::PlotType type, const char * definitio
   graphRange.setYMax(3.f);
 
   CurveViewCursor cursor;
-  NewFunction * function = addFunction(definition, type, &functionStore, &globalContext);
+  ContinuousFunction * function = addFunction(definition, type, &functionStore, &globalContext);
   Coordinate2D<float> origin = function->evaluateXYAtParameter(0.f, &globalContext);
   cursor.moveTo(0.f, origin.x1(), origin.x2());
 

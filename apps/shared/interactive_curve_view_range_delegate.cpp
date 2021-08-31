@@ -14,7 +14,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float xMinLimit, fl
   int length = functionStore->numberOfActiveFunctions();
 
   for (int i = 0; i < length; i++) {
-    ExpiringPointer<NewFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
     f->xRangeForDisplay(xMinLimit, xMaxLimit, &xMinTemp, &xMaxTemp, &yMinTemp, &yMaxTemp, context);
     Poincare::Zoom::CombineRanges(xMinTemp, xMaxTemp, *xMin, *xMax, xMin, xMax);
     Poincare::Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMinIntrinsic, *yMaxIntrinsic, yMinIntrinsic, yMaxIntrinsic);
@@ -31,7 +31,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
   *yMin = yMinIntrinsic;
   *yMax = yMaxIntrinsic;
   for (int i = 0; i < length; i++) {
-    ExpiringPointer<NewFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
     f->yRangeForDisplay(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, &yMinTemp, &yMaxTemp, context, optimizeRange);
     Poincare::Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMin, *yMax, yMin, yMax);
   }
@@ -41,10 +41,10 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
 
 void InteractiveCurveViewRangeDelegate::DefaultImproveFullRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, ContinuousFunctionStore * functionStore) {
   if (functionStore->numberOfActiveFunctions() == 1) {
-    ExpiringPointer<NewFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(0));
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(0));
     if (!f->basedOnCostlyAlgorithms(context)) {
       Poincare::Zoom::ValueAtAbscissa evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
-        return static_cast<const NewFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+        return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
       };
       Poincare::Zoom::ExpandSparseWindow(evaluation, xMin, xMax, yMin, yMax, context, f.operator->());
     }

@@ -50,7 +50,7 @@ KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < k_numberOfDataPoints);
-  Shared::NewFunction function = (Shared::NewFunction)m_record;
+  Shared::ContinuousFunction function = (Shared::ContinuousFunction)m_record;
   MessageTableCellWithMessageWithBuffer * myCell = static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);

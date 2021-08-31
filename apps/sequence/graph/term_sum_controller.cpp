@@ -49,7 +49,7 @@ double TermSumController::cursorNextStep(double x, int direction) {
   return std::round(m_cursor->x()+delta);
 }
 
-Layout TermSumController::createFunctionLayout(Shared::ExpiringPointer<NewFunction> function) {
+Layout TermSumController::createFunctionLayout(Shared::ExpiringPointer<ContinuousFunction> function) {
   Shared::Sequence * sequence = static_cast<Shared::Sequence *>(function.pointer());
   return sequence->nameLayout();
 }

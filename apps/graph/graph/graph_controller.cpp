@@ -45,8 +45,8 @@ bool GraphController::defaultRangeIsNormalized() const {
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {
   GraphController * graphController = static_cast<GraphController *>(m_graphController);
   Shared::ContinuousFunctionStore * store = graphController->functionStore();
-  ExpiringPointer<NewFunction> function = store->modelForRecord(store->activeRecordAtIndex(j));
-  constexpr size_t bufferSize = NewFunction::k_maxNameWithArgumentSize;
+  ExpiringPointer<ContinuousFunction> function = store->modelForRecord(store->activeRecordAtIndex(j));
+  constexpr size_t bufferSize = ContinuousFunction::k_maxNameWithArgumentSize;
   char buffer[bufferSize];
   int size = function->nameWithArgument(buffer, bufferSize);
   return LayoutHelper::String(buffer, size);
@@ -54,7 +54,7 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) co
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
-  ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
 }
 
@@ -85,7 +85,7 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
 }
 
 double GraphController::defaultCursorT(Ion::Storage::Record record) {
-  ExpiringPointer<NewFunction> function = functionStore()->modelForRecord(record);
+  ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
   if (function->isAlongX()) {
     return FunctionGraphController::defaultCursorT(record);
   }
@@ -105,7 +105,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
     if (currentRecord == record) {
       continue;
     }
-    ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(currentRecord);
+    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(currentRecord);
     assert(f->isAlongX());
     /* Select the closest horizontal curve, then the closest vertically, then
      * the lowest curve index. */

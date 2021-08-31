@@ -81,7 +81,7 @@ void CurveParameterController::viewWillAppear() {
 }
 
 bool CurveParameterController::shouldDisplayCalculationAndDerivative() const {
-  Shared::ExpiringPointer<NewFunction> f = App::app()->functionStore()->modelForRecord(m_record);
+  Shared::ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
   return f->isAlongX();
 }
 

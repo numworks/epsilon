@@ -123,7 +123,7 @@ float Statistic::computePValue(float z, HypothesisParams::ComparisonOperator op)
 
 float Statistic::computeZAlpha(float significanceLevel,
                               HypothesisParams::ComparisonOperator op) const {
-  // Compute the absissa corresponding the the significance level
+  // Compute the abscissa corresponding the the significance level
   float proba;
   switch (op) {
     case HypothesisParams::ComparisonOperator::Higher:

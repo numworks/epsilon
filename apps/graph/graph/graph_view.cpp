@@ -175,7 +175,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         }
         /* Draw tangent */
         if (m_tangent && record == m_selectedRecord) {
-          // TODO Hugo : Use the right cursor here
+          // TODO Hugo : Use the right cursor here : find i of the scrolled curve
           float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
           float tangentParameterB = -tangentParameterA*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
           // To represent the tangent, we draw segment from and to abscissas at the extremity of the drawn rect

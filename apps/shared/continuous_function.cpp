@@ -13,6 +13,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
 #include <poincare/comparison_operator.h>
+#include <poincare/derivative.h>
 #include "poincare_helpers.h"
 #include <algorithm>
 
@@ -492,22 +493,49 @@ I18n::Message ContinuousFunction::ParameterMessageForPlotType(PlotType plotType)
 }
 
 bool ContinuousFunction::displayDerivative() const {
-  // TODO Hugo : Re-implement derivative
-  return false;
+  return recordData()->displayDerivative();
 }
 
 void ContinuousFunction::setDisplayDerivative(bool display) {
-  // TODO Hugo : Re-implement derivative
+  return recordData()->setDisplayDerivative(display);
 }
 
 int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
-  // TODO Hugo : Re-implement derivative
-  return 0;
+  // Fill buffer with f(x). Keep size for derivative sign.
+  int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
+  int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
+  assert(numberOfChars + derivativeSize < (int)bufferSize);
+  char * firstParenthesis = const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));
+  if (!UTF8Helper::CodePointIs(firstParenthesis, '(')) {
+    assert(firstParenthesis[0] == 0 && buffer - firstParenthesis > bufferSize);
+    firstParenthesis[derivativeSize-1] = 0;
+  } else {
+    memmove(firstParenthesis + derivativeSize, firstParenthesis, numberOfChars - (firstParenthesis - buffer) + 1);
+  }
+  UTF8Decoder::CodePointToChars('\'', firstParenthesis, derivativeSize);
+  return numberOfChars + derivativeSize;
 }
 
-double ContinuousFunction::approximateDerivative(double x, Context * context) const {
-  // TODO Hugo : Re-implement derivative
-  return 0.0;
+double ContinuousFunction::approximateDerivative(double x, Context * context, int i) const {
+  assert(isAlongX());
+  PlotType type = plotType();
+  if (x < tMin() || x > tMax() || type == PlotType::VerticalLine) {
+    return NAN;
+  }
+  // Derivative is simplified once and for all
+  Expression derivate = expressionDerivateReduced(context);
+  if (hasTwoCurves()) {
+      assert(derivate.numberOfChildren() > i);
+      /* TODO Hugo : !!! Ensure the roots are already sorted. It should be
+       * possible once handling the sign of the coefficient of y^2.
+       * Currently, derivatives make no sense. */
+      assert(derivate.type() == Poincare::ExpressionNode::Type::Dependency);
+      derivate = derivate.childAtIndex(0);
+      derivate = derivate.childAtIndex(i);
+  } else {
+    assert(i == 0);
+  }
+  return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context);
 }
 
 int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
@@ -655,6 +683,14 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
 }
 
+void ContinuousFunction::Model::tidy() const {
+  m_hasTwoCurves = false;
+  m_equationSymbol = Poincare::ExpressionNode::Type::Equal;
+  m_plotType = PlotType::Undefined;
+  m_expressionDerivate = Expression();
+  ExpressionModel::tidy();
+}
+
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
   // TODO Hugo : Re-check
   return (char *)record->value().buffer+sizeof(RecordDataBuffer);
@@ -663,6 +699,32 @@ void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record *
 size_t ContinuousFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
   // TODO Hugo : Re-check
   return record->value().size-sizeof(RecordDataBuffer);
+}
+
+Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const {
+  if (m_expressionDerivate.isUninitialized()) {
+    Expression expression = expressionReduced(record, context).clone();
+    if (hasTwoCurves()) {
+      Matrix newExpr = Matrix::Builder();
+      assert(expression.type() == Poincare::ExpressionNode::Type::Matrix);
+      newExpr.addChildAtIndexInPlace(Poincare::Derivative::Builder(expression.childAtIndex(1), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown)), 0, 0);
+      newExpr.addChildAtIndexInPlace(Poincare::Derivative::Builder(expression.childAtIndex(0), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown)), 1, 1);
+      newExpr.setDimensions(2, 1);
+      m_expressionDerivate = newExpr;
+    } else {
+      m_expressionDerivate = Poincare::Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+    }
+    /* On complex functions, this step can take a significant time.
+     * A workaround could be to identify big functions to skip simplification at
+     * the cost of possible inaccurate evaluations (such as diff(abs(x),x,0) not
+     * being undefined). */
+    PoincareHelpers::Simplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    // simplify might return an uninitialized Expression if interrupted
+    if (m_expressionDerivate.isUninitialized()) {
+      m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+    }
+  }
+  return m_expressionDerivate;
 }
 
 template<typename T>

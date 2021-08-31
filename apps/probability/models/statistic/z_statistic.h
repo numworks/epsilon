@@ -11,7 +11,7 @@ class ZStatistic : public CachedStatistic {
 public:
   Poincare::Layout testCriticalValueSymbol() override { return layoutFromText("z"); }
   bool hasDegreeOfFreedom() override { return false; }
-  float normalizedDensityFunction(float x) const override;
+  float canonicalDensityFunction(float x) const override;
   float cumulativeNormalizedDistributionFunction(float x) const override;
   float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
 

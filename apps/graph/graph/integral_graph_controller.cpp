@@ -37,7 +37,7 @@ double IntegralGraphController::cursorNextStep(double x, int direction) {
   return x + (direction > 0 ? 1.0 : -1.0)*static_cast<double>(m_graphRange->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
 }
 
-Layout IntegralGraphController::createFunctionLayout(ExpiringPointer<NewFunction> function) {
+Layout IntegralGraphController::createFunctionLayout(ExpiringPointer<ContinuousFunction> function) {
   constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize+5; // f(x)dx
   char buffer[bufferSize];
   const char * dx = "dx";

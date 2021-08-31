@@ -105,7 +105,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   }
   assert(j >= 0 && j < modelStore()->numberOfModels());
   FunctionCell * myCell = static_cast<FunctionCell *>(cell);
-  ExpiringPointer<NewFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   myCell->setLayout(f->layout());
   myCell->setMessage(f->functionCategory());
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;

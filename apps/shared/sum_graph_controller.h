@@ -6,7 +6,7 @@
 #include "function_graph_view.h"
 #include "vertical_cursor_view.h"
 #include "simple_interactive_curve_view_controller.h"
-#include "new_function.h"
+#include "continuous_function.h"
 #include "text_field_delegate.h"
 #include "expiring_pointer.h"
 
@@ -42,7 +42,7 @@ private:
   Shared::CurveView * curveView() override { return m_graphView; }
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
-  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<NewFunction> function) = 0;
+  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<ContinuousFunction> function) = 0;
   class LegendView : public Escher::View {
   public:
     LegendView(SumGraphController * controller, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);

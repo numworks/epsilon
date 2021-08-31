@@ -1,5 +1,5 @@
 #include "global_context.h"
-#include "new_function.h"
+#include "continuous_function.h"
 #include "sequence.h"
 #include "poincare_helpers.h"
 #include <poincare/rational.h>
@@ -31,7 +31,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
   } else if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     // TODO Hugo : Improve this workaround
-    Symbol symbol = Symbol::Builder(NewFunction(record).symbol());
+    Symbol symbol = Symbol::Builder(ContinuousFunction(record).symbol());
     // function name does not matter here
     Poincare::Function f = Poincare::Function::Builder("f", 1, symbol);
     return PoincareHelpers::CreateLayout(ExpressionForFunction(f, record));
@@ -115,7 +115,7 @@ const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & sym
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
-  Expression e = NewFunction(r).expressionClone();
+  Expression e = ContinuousFunction(r).expressionClone();
   assert(symbol.type() == ExpressionNode::Type::Function);
   if (!e.isUninitialized()) {
     e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), symbol.childAtIndex(0));
@@ -173,14 +173,14 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const 
   if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     // The previous record was not a function. Destroy it and create the new record.
     previousRecord.destroy();
-    NewFunction newModel = NewFunction::NewModel(&error, symbol.name());
+    ContinuousFunction newModel = ContinuousFunction::NewModel(&error, symbol.name());
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     recordToSet = newModel;
   }
   Poincare::Expression equation = Poincare::Equal::Builder(symbol.clone(), expressionToStore);
-  error = NewFunction(recordToSet).setExpressionContent(equation);
+  error = ContinuousFunction(recordToSet).setExpressionContent(equation);
   return error;
 }
 

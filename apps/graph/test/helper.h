@@ -9,11 +9,11 @@ using namespace Shared;
 
 namespace Graph {
 
-constexpr NewFunction::PlotType Cartesian = NewFunction::PlotType::Cartesian;
-constexpr NewFunction::PlotType Polar = NewFunction::PlotType::Polar;
-constexpr NewFunction::PlotType Parametric = NewFunction::PlotType::Parametric;
+constexpr ContinuousFunction::PlotType Cartesian = ContinuousFunction::PlotType::Cartesian;
+constexpr ContinuousFunction::PlotType Polar = ContinuousFunction::PlotType::Polar;
+constexpr ContinuousFunction::PlotType Parametric = ContinuousFunction::PlotType::Parametric;
 
-NewFunction * addFunction(const char * definition, NewFunction::PlotType type, ContinuousFunctionStore * store, Context * context);
+ContinuousFunction * addFunction(const char * definition, ContinuousFunction::PlotType type, ContinuousFunctionStore * store, Context * context);
 
 }
 

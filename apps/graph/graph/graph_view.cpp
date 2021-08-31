@@ -43,15 +43,15 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       continue;
     }
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-    ExpiringPointer<NewFunction> f = functionStore->modelForRecord(record);
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
       // TODO Hugo : Restore cache
       // ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
-      NewFunction::PlotType type = f->plotType();
+      ContinuousFunction::PlotType type = f->plotType();
       Poincare::Expression e = f->expressionReduced(context());
       if (e.isUndefined() || (
-            (type == NewFunction::PlotType::Parametric || f->hasTwoCurves()) &&
+            (type == ContinuousFunction::PlotType::Parametric || f->hasTwoCurves()) &&
             e.childAtIndex(0).isUndefined() &&
             e.childAtIndex(1).isUndefined())) {
         // TODO Hugo : Ensure that two curves can't be undefined
@@ -77,21 +77,21 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }
       // ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 
-      if (type == NewFunction::PlotType::Polar) {
+      if (type == ContinuousFunction::PlotType::Polar) {
         // Polar
         drawPolarCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
-            NewFunction * f = (NewFunction *)model;
+            ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
-      } else if (type == NewFunction::PlotType::Parametric) {
+      } else if (type == ContinuousFunction::PlotType::Parametric) {
         // Parametric
         drawCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
-            NewFunction * f = (NewFunction *)model;
+            ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
-      } else if (type == NewFunction::PlotType::VerticalLine) {
+      } else if (type == ContinuousFunction::PlotType::VerticalLine) {
         // TODO Hugo : Use the right cursor here
         float abscissa = f->evaluateXYAtParameter(0.0, context()).x1();
         float minOrdinate = pixelToFloat(Axis::Vertical, rect.top());
@@ -114,13 +114,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         // Draw the first cartesian curve
         Shared::CurveView::EvaluateXYForDoubleParameter xyDoubleEvaluation =
             [](double t, void * model, void * context) {
-              NewFunction * f = (NewFunction *)model;
+              ContinuousFunction * f = (ContinuousFunction *)model;
               Poincare::Context * c = (Poincare::Context *)context;
               return f->evaluateXYAtParameter(t, c, 0);
             };
         Shared::CurveView::EvaluateXYForFloatParameter xyFloatEvaluation =
             [](float t, void * model, void * context) {
-              NewFunction * f = (NewFunction *)model;
+              ContinuousFunction * f = (ContinuousFunction *)model;
               Poincare::Context * c = (Poincare::Context *)context;
               return f->evaluateXYAtParameter(t, c, 0);
             };
@@ -135,7 +135,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           } else {
             // Inferior area ends at the second curve
             xyAreaBound = [](float t, void * model, void * context) {
-              NewFunction * f = (NewFunction *)model;
+              ContinuousFunction * f = (ContinuousFunction *)model;
               Poincare::Context * c = (Poincare::Context *)context;
               return f->evaluateXYAtParameter(t, c, 1);
             };
@@ -149,12 +149,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         if (f->hasTwoCurves()) {
           // Draw the second cartesian curve, which is lesser than the first
           xyDoubleEvaluation = [](double t, void * model, void * context) {
-            NewFunction * f = (NewFunction *)model;
+            ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c, 1);
           };
           xyFloatEvaluation = [](float t, void * model, void * context) {
-            NewFunction * f = (NewFunction *)model;
+            ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c, 1);
           };

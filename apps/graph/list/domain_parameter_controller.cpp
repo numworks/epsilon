@@ -36,15 +36,15 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
     return;
   }
   MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
-  NewFunction::PlotType plotType = function()->plotType();
+  ContinuousFunction::PlotType plotType = function()->plotType();
   switch (plotType) {
-    case NewFunction::PlotType::Parametric:
+    case ContinuousFunction::PlotType::Parametric:
     {
       I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::TMin, I18n::Message::TMax};
       myCell->setMessage(labels[index]);
       break;
     }
-    case NewFunction::PlotType::Polar:
+    case ContinuousFunction::PlotType::Polar:
     {
       I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ThetaMin, I18n::Message::ThetaMax};
       myCell->setMessage(labels[index]);
@@ -118,7 +118,7 @@ void DomainParameterController::buttonAction() {
   stack->pop();
 }
 
-Shared::ExpiringPointer<NewFunction> DomainParameterController::function() const {
+Shared::ExpiringPointer<ContinuousFunction> DomainParameterController::function() const {
   assert(!m_record.isNull());
   App * myApp = App::app();
   return myApp->functionStore()->modelForRecord(m_record);

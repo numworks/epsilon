@@ -1,6 +1,6 @@
 #include "math_variable_box_controller.h"
 #include "shared/global_context.h"
-#include "shared/new_function.h"
+#include "shared/continuous_function.h"
 #include <escher/metric.h>
 #include <escher/message_table_cell_with_message.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -116,7 +116,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     static_assert(Shared::Function::k_maxNameWithArgumentSize > Poincare::SymbolAbstract::k_maxNameSize, "Forgot argument's size?");
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
-    Shared::NewFunction f(record);
+    Shared::ContinuousFunction f(record);
     symbolLength = f.nameWithArgument(
         symbolName,
         Shared::Function::k_maxNameWithArgumentSize

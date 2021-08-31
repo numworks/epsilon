@@ -25,12 +25,12 @@ void IntersectionGraphController::reloadBannerView() {
   char buffer[bufferSize];
   const char * legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
-  ExpiringPointer<NewFunction> f = functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(m_record);
   int numberOfChar = f->nameWithArgument(buffer, bufferSize - 2 * strlen(legend));
   assert(numberOfChar < bufferSize);
   numberOfChar += Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, legend);
   // keep 1 char for '=';
-  ExpiringPointer<NewFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
+  ExpiringPointer<ContinuousFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
   numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize - numberOfChar - strlen(legend));
   assert(numberOfChar <= bufferSize);
   Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed",
@@ -46,7 +46,7 @@ Poincare::Coordinate2D<double> IntersectionGraphController::computeNewPointOfInt
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     if (record != m_record) {
-      NewFunction f = *(functionStore()->modelForRecord(record));
+      ContinuousFunction f = *(functionStore()->modelForRecord(record));
       Poincare::Coordinate2D<double> intersection = functionStore()->modelForRecord(m_record)->nextIntersectionFrom(start, max, context, f.expressionReduced(context), relativePrecision, minimalStep, maximalStep, f.tMin(), f.tMax());
       if ((std::isnan(result.x1()) || std::fabs(intersection.x1()-start) < std::fabs(result.x1()-start)) && !std::isnan(intersection.x1())) {
         m_intersectedRecord = record;

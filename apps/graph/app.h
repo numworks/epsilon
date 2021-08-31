@@ -6,7 +6,7 @@
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/continuous_function_store.h"
-#include "../shared/new_function.h"
+#include "../shared/continuous_function.h"
 #include "../shared/function_app.h"
 #include "../shared/interval.h"
 
@@ -28,14 +28,14 @@ public:
     const Descriptor * descriptor() const override;
     Shared::ContinuousFunctionStore * functionStore() override { return &m_functionStore; }
     Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
-    Shared::Interval * intervalForType(Shared::NewFunction::PlotType plotType) {
+    Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
       return m_interval + static_cast<size_t>(plotType);
     }
   private:
     void tidy() override;
     Shared::ContinuousFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
-    Shared::Interval m_interval[Shared::NewFunction::k_numberOfPlotTypes]; // TODO Hugo : Have 1 interval per symbol, so back to three
+    Shared::Interval m_interval[Shared::ContinuousFunction::k_numberOfPlotTypes]; // TODO Hugo : Have 1 interval per symbol, so back to three
   };
   static App * app() {
     return static_cast<App *>(Escher::Container::activeApp());
@@ -47,7 +47,7 @@ public:
   CodePoint XNT() override;
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
   Shared::ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
-  Shared::Interval * intervalForType(Shared::NewFunction::PlotType plotType) {
+  Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
     return snapshot()->intervalForType(plotType);
   }
   ValuesController * valuesController() override {

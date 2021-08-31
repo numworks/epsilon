@@ -48,7 +48,7 @@ bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, co
   if (myApp->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
-  ExpiringPointer<NewFunction> function = App::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   assert(function->isAlongX());
   double y = function->evaluate2DAtParameter(floatBody, myApp->localContext()).x2();
   m_cursor->moveTo(floatBody, floatBody, y);
@@ -74,7 +74,7 @@ void TangentGraphController::reloadBannerView() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
 
   int precision = numberOfSignificantDigits();
-  ExpiringPointer<NewFunction> function = App::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), context);
   Poincare::Print::customPrintf(buffer, bufferSize, "a=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);

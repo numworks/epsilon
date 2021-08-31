@@ -67,7 +67,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   }
 }
 
-ExpiringPointer<NewFunction> FunctionParameterController::function() {
+ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 

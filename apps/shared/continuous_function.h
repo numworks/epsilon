@@ -1,58 +1,94 @@
 #ifndef SHARED_CONTINUOUS_FUNCTION_H
 #define SHARED_CONTINUOUS_FUNCTION_H
 
-/* Although the considered functions are not generally continuous
- * mathematically speaking, the present class is named ContinuousFunction to
- * mark the difference with the Sequence class.
- *
- * We could not simply name it Function, since such a class already exists:
- * it is the base class of ContinuousFunction and Sequence.
- */
-
-#include "global_context.h"
-#include "continuous_function_cache.h"
-#include "function.h"
+#include "expression_model_handle.h"
 #include "range_1D.h"
-#include <poincare/symbol.h>
-#include <poincare/coordinate_2D.h>
+#include <apps/i18n.h>
+#include <poincare/symbol_abstract.h>
+#include <poincare/conic.h>
+
+// TODO Hugo : Emscripten things
 
 namespace Shared {
 
-class ContinuousFunction : public Function {
-  /* We want the cache to be able to call privateEvaluateXYAtParameter to
-   * bypass cache lookup when memoizing the function's values. */
-  friend class ContinuousFunctionCache;
+class ContinuousFunction : public ExpressionModelHandle {
 public:
-  static void DefaultName(char buffer[], size_t bufferSize);
-  static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
-  ContinuousFunction(Ion::Storage::Record record = Record()) :
-    Function(record),
-    m_cache(nullptr)
-  {}
-  I18n::Message parameterMessageName() const override;
-  CodePoint symbol() const override;
-  Poincare::Expression expressionReduced(Poincare::Context * context) const override;
-  Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
+  /* Possible arguments: n, x, t, θ
+   * The CodePoint θ is two char long. */
+  static constexpr int k_parenthesedArgumentCodePointLength = 3;
+  static constexpr int k_parenthesedThetaArgumentByteLength = 4;
+  static constexpr int k_parenthesedXNTArgumentByteLength = 3;
+  static constexpr int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
 
-  static constexpr int k_numberOfPlotTypes = 3;
+  static constexpr size_t k_numberOfPlotTypes = 15;
   enum class PlotType : uint8_t {
     Cartesian = 0,
-    Polar = 1,
-    Parametric = 2
+    Polar,
+    Parametric,
+    Line,
+    VerticalLine,
+    HorizontalLine,
+    Inequation,
+    Conics,
+    Circle,
+    Ellipse,
+    Parabola,
+    Hyperbola,
+    Other,
+    Undefined,
+    Unhandled
   };
-  PlotType plotType() const;
-  void setPlotType(PlotType plotType, Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
-  static I18n::Message ParameterMessageForPlotType(PlotType plotType);
+
+  static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
+  ContinuousFunction(Ion::Storage::Record record = Record()) : ExpressionModelHandle(record) {}
+
+  // Properties
+  bool isActive() const;
+  KDColor color() const;
+  void setActive(bool active);
+  bool isNamed() const; // y = or f(x) = ?
+  bool isAlongX() const { return symbol() == 'x'; }
+  bool hasTwoCurves() const { return m_model.hasTwoCurves(); }
+  bool drawSuperiorArea() const; // Superior, SuperiorEqual
+  bool drawInferiorArea() const; // Inferior, InferiorEqual
+  bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
+  int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
+  int xDegree(Poincare::Context * context) const; // Any degree is handled
+
+  int nameWithArgument(char * buffer, size_t bufferSize);
+  I18n::Message parameterMessageName() const;
+
+  I18n::Message functionCategory() const; // Line, polar, cartesian, ...
+
+  int detailsTotal() const;
+  I18n::Message detailsTitle(int i) const;
+  I18n::Message detailsDescription(int i) const;
+  double detailsValue(int i) const;
+
+  CodePoint symbol() const override; // x, theta, t, y
+  // Expression clone is of the form (exp1) = (exp2)
+  // expressionEquation returns (exp1) - (exp2) or (exp2) if isNamed() (reduced ?)
+  Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionEquation(this, context); }
+  // expressionReduced returns equations solutions in y ( matrix if multiple solutions) // TODO Hugo : parent implementation should be fine
+  // Poincare::Expression expressionReduced(Poincare::Context * context) const override;
+  // expressionReduced returns expressionReduced derivative(s)
+  // TODO Hugo : Implement
+  // Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
+  Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
+  PlotType plotType() const { return recordData()->plotType(); }
+  void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
+  static I18n::Message ParameterMessageForPlotType(PlotType plotType);  // x, theta, t, y
 
   // Evaluation
-  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const {
-    return templatedApproximateAtParameter(t, context);
+  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context, int i = 0) const {
+    return templatedApproximateAtParameter(t, context, i);
   }
-  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const override {
-    return (m_cache) ? m_cache->valueForParameter(this, context, t) : privateEvaluateXYAtParameter<float>(t, context);
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context, int i = 0) const {
+    // TODO Hugo : cache ?
+    return privateEvaluateXYAtParameter<float>(t, context, i);
   }
-  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const override {
-    return privateEvaluateXYAtParameter<double>(t, context);
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int i = 0) const {
+    return privateEvaluateXYAtParameter<double>(t, context, i);
   }
 
   // Derivative
@@ -61,19 +97,23 @@ public:
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context) const;
 
-  int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+  int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
+
+  // Definition Interval ( signature to plot )
+  void protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const;
 
   // tMin and tMax
-  bool shouldClipTRangeToXRange() const override { return plotType() == PlotType::Cartesian; }
-  float tMin() const override;
-  float tMax() const override;
+  bool shouldClipTRangeToXRange() const;  // Returns true if the function will not be displayed if t is outside x range.
+  float tMin() const;
+  float tMax() const;
   void setTMin(float tMin);
   void setTMax(float tMax);
-  float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
+  float rangeStep() const;
 
-  bool basedOnCostlyAlgorithms(Poincare::Context * context) const override;
-  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
-  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const override;
+  // Range
+  bool basedOnCostlyAlgorithms(Poincare::Context * context) const;
+  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const;
+  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const;
 
   // Extremum
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
@@ -82,66 +122,77 @@ public:
   Poincare::Coordinate2D<double> nextRootFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
   Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
   // Integral
-  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
-
-  // Cache
-  ContinuousFunctionCache * cache() const { return m_cache; }
-  void setCache(ContinuousFunctionCache * v) { m_cache = v; }
+  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const;
+  // TODO Hugo : Consider cache
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
-  constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
+  static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
+  static constexpr char k_ordinateName[2] = "y";
+  // TODO Hugo : Fix this terrible workaround
+  static Poincare::Conic s_tempConic;
+  static double s_tempLine[2];
+  // TODO Hugo : usefull ?
+  static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
-  template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
-  void didBecomeInactive() override { m_cache = nullptr; }
+  template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i = 0) const;
+  void didBecomeInactive() {} // m_cache = nullptr; }
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
 
-  /* RecordDataBuffer is the layout of the data buffer of Record
-   * representing a ContinuousFunction. See comment on
-   * Shared::Function::RecordDataBuffer about packing. */
-  class __attribute__((packed)) RecordDataBuffer : public Function::RecordDataBuffer {
+  class Model : public ExpressionModel {
+    // TODO Hugo : Add derivative
   public:
-    RecordDataBuffer(KDColor color) :
-      Function::RecordDataBuffer(color),
-      m_plotType(PlotType::Cartesian),
-      m_domain(-INFINITY, INFINITY),
-      m_displayDerivative(false)
-    {}
+    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined) {}
+    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
+    Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
+    bool hasTwoCurves() const { return m_hasTwoCurves; }
+  // private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
+    size_t expressionSize(const Ion::Storage::Record * record) const override;
+    void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) override;
+    mutable bool m_hasTwoCurves;
+    mutable Poincare::ExpressionNode::Type m_equationSymbol;
+    // TODO Hugo : Avoid this
+    mutable PlotType m_plotType;
+  };
+  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
+  const ExpressionModel * model() const override { return &m_model; }
+
+  // TODO Hugo : Padding
+  class __attribute__((packed)) RecordDataBuffer {
+  public:
+    RecordDataBuffer(KDColor color) : m_domain(-INFINITY, INFINITY), m_color(color), m_active(true), m_plotType(PlotType::Undefined), m_equationSymbol(Poincare::ExpressionNode::Type::Equal)  {}
+    KDColor color() const {
+      return KDColor::RGB16(m_color);
+    }
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
-    bool displayDerivative() const { return m_displayDerivative; }
-    void setDisplayDerivative(bool display) { m_displayDerivative = display; }
+    Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
+    void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) { m_equationSymbol = equationSymbol; }
+    // TODO Hugo : Fix Turn on/off menu
+    bool isActive() const { return m_active && m_plotType != PlotType::Unhandled && m_plotType != PlotType::Undefined; }
+    void setActive(bool active) { m_active = active; }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }
     void setTMin(float tMin) { m_domain.setMin(tMin); }
     void setTMax(float tMax) { m_domain.setMax(tMax); }
   private:
-    PlotType m_plotType;
     Range1D m_domain;
-    bool m_displayDerivative;
-    /* In the record, after the boolean flag about displayDerivative, there is
-     * the expression of the function, directly copied from the pool. */
-    //char m_expression[0];
+    uint16_t m_color;
+    bool m_active;
+    PlotType m_plotType;
+    Poincare::ExpressionNode::Type m_equationSymbol;
   };
-  class Model : public ExpressionModel {
-  public:
-    Model() : ExpressionModel(),
-        m_expressionDerivate()
-        {}
-    Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
-    void tidy() const override;
-  private:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
-    size_t expressionSize(const Ion::Storage::Record * record) const override;
-    mutable Poincare::Expression m_expressionDerivate;
-  };
-  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
-  const ExpressionModel * model() const override { return &m_model; }
-  RecordDataBuffer * recordData() const;
-  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context) const;
+
   Model m_model;
-  ContinuousFunctionCache * m_cache;
+  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context, int i = 0) const;
+  RecordDataBuffer * recordData() const {
+    assert(!isNull());
+    Ion::Storage::Record::Data d = value();
+    return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
+  }
 };
 
 }

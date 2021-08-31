@@ -10,7 +10,7 @@ namespace Graph {
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::NewFunction::k_parenthesedThetaArgumentByteLength, this, m_textFieldBuffer, k_textFieldBufferSize, k_textFieldBufferSize, nullptr, listController, font, KDContext::k_alignRight, KDContext::k_alignCenter),
+  m_textField(Shared::ContinuousFunction::k_parenthesedThetaArgumentByteLength, this, m_textFieldBuffer, k_textFieldBufferSize, k_textFieldBufferSize, nullptr, listController, font, KDContext::k_alignRight, KDContext::k_alignCenter),
   m_textFieldBuffer("")
 {
 }
@@ -27,7 +27,7 @@ Responder * TextFieldFunctionTitleCell::responder() {
 void TextFieldFunctionTitleCell::setEditing(bool editing) {
   Container::activeApp()->setFirstResponder(&m_textField);
   const char * previousText = m_textField.text();
-  int extensionLength = UTF8Helper::HasCodePoint(previousText, UCodePointGreekSmallLetterTheta) ? Shared::NewFunction::k_parenthesedThetaArgumentByteLength : Shared::NewFunction::k_parenthesedXNTArgumentByteLength;
+  int extensionLength = UTF8Helper::HasCodePoint(previousText, UCodePointGreekSmallLetterTheta) ? Shared::ContinuousFunction::k_parenthesedThetaArgumentByteLength : Shared::ContinuousFunction::k_parenthesedXNTArgumentByteLength;
   m_textField.setExtensionLength(extensionLength);
   m_textField.setEditing(true);
   m_textField.setDraftTextBufferSize(Poincare::SymbolAbstract::k_maxNameSize+extensionLength);

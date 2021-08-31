@@ -1,7 +1,7 @@
 #ifndef SHARED_FUNCTION_STORE_H
 #define SHARED_FUNCTION_STORE_H
 
-#include "new_function.h"
+#include "continuous_function.h"
 #include "expression_model_store.h"
 #include <stdint.h>
 
@@ -19,11 +19,11 @@ public:
   Ion::Storage::Record activeRecordAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &isFunctionActive, nullptr);
   }
-  ExpiringPointer<NewFunction> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<NewFunction>(static_cast<NewFunction *>(privateModelForRecord(record))); }
+  ExpiringPointer<ContinuousFunction> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<ContinuousFunction>(static_cast<ContinuousFunction *>(privateModelForRecord(record))); }
 protected:
   static bool isFunctionActive(ExpressionModelHandle * model, void * context) {
     // An active function must be defined
-    return isModelDefined(model, context) && static_cast<NewFunction *>(model)->isActive();
+    return isModelDefined(model, context) && static_cast<ContinuousFunction *>(model)->isActive();
   }
 };
 

@@ -1,70 +1,45 @@
 #include "continuous_function.h"
-#include "poincare_helpers.h"
-#include <apps/constant.h>
-#include <poincare/derivative.h>
+#include <escher/palette.h>
+#include <poincare/subtraction.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
+#include <poincare/polynomial.h>
+#include <poincare/zoom.h>
 #include <poincare/integral.h>
+#include <poincare/function.h>
+#include <poincare/float.h>
 #include <poincare/matrix.h>
-#include <poincare/multiplication.h>
-#include <poincare/rational.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
-#include <escher/palette.h>
-#include <ion/unicode/utf8_helper.h>
-#include <ion/unicode/utf8_decoder.h>
-#include <apps/i18n.h>
-#include <float.h>
-#include <cmath>
+#include <poincare/comparison_operator.h>
+#include "poincare_helpers.h"
 #include <algorithm>
 
 using namespace Poincare;
-using namespace Escher;
 
 namespace Shared {
 
-void ContinuousFunction::DefaultName(char buffer[], size_t bufferSize) {
-  constexpr int k_maxNumberOfDefaultLetterNames = 4;
-  constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
-    'f', 'g', 'h', 'p'
-  };
-  /* First default names are f, g, h, p and then f0, f1... ie, "f[number]",
-   * for instance "f12", that does not exist yet in the storage. */
-  size_t constantNameLength = 1; // 'f', no null-terminating char
-  assert(bufferSize > constantNameLength+1);
-  // Find the next available name
-  int currentNumber = -k_maxNumberOfDefaultLetterNames;
-  int currentNumberLength = 0;
-  int availableBufferSize = bufferSize - constantNameLength;
-  while (currentNumberLength < availableBufferSize) {
-    // Choose letter
-    buffer[0] = currentNumber < 0 ? k_defaultLetterNames[k_maxNumberOfDefaultLetterNames+currentNumber] : k_defaultLetterNames[0];
-    // Choose number if required
-    if (currentNumber >= 0) {
-      currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
-    } else {
-      buffer[1] = 0;
-    }
-    if (GlobalContext::SymbolAbstractNameIsFree(buffer)) {
-      // Name found
-      break;
-    }
-    currentNumber++;
-  }
-  assert(currentNumberLength >= 0 && currentNumberLength < availableBufferSize);
-}
+constexpr char ContinuousFunction::k_unknownName[2];
+constexpr char ContinuousFunction::k_ordinateName[2];
+Conic ContinuousFunction::s_tempConic;
+double ContinuousFunction::s_tempLine[2];
 
 ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
   // Create the record
-  char nameBuffer[SymbolAbstract::k_maxNameSize];
-  RecordDataBuffer data(Palette::nextDataColor(&s_colorIndex));
+  RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
   if (baseName == nullptr) {
-    DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
-    baseName = nameBuffer;
+    // TODO Hugo : Check this
+    assert(false);
+    // Return if error
+    return ContinuousFunction();
   }
-  *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
 
-  // Return if error
+  *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
+    assert(false); // TOCHECK Hugo
+    // Return if error
     return ContinuousFunction();
   }
 
@@ -72,203 +47,545 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   return ContinuousFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
-int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
-  // Fill buffer with f(x). Keep size for derivative sign.
-  int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
-  int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
-  assert(numberOfChars + derivativeSize < (int)bufferSize);
-  char * firstParenthesis = const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));
-  if (!UTF8Helper::CodePointIs(firstParenthesis, '(')) {
-    return numberOfChars;
-  }
-  memmove(firstParenthesis + derivativeSize, firstParenthesis, numberOfChars - (firstParenthesis - buffer) + 1);
-  UTF8Decoder::CodePointToChars('\'', firstParenthesis, derivativeSize);
-  return numberOfChars + derivativeSize;
+bool ContinuousFunction::isActive() const {
+  return recordData()->isActive();
 }
 
-Poincare::Expression ContinuousFunction::expressionReduced(Poincare::Context * context) const {
-  Poincare::Expression result = ExpressionModelHandle::expressionReduced(context);
-  if (plotType() == PlotType::Parametric) {
-    Expression trueExpression = result.type() == ExpressionNode::Type::Dependency ? result.childAtIndex(0) : result;
-    if (trueExpression.type() != Poincare::ExpressionNode::Type::Matrix
-     || static_cast<Poincare::Matrix&>(trueExpression).numberOfRows() != 2
-     || static_cast<Poincare::Matrix&>(trueExpression).numberOfColumns() != 1)
-    {
-      return Poincare::Expression::Parse("[[undef][undef]]", nullptr);
-    }
+KDColor ContinuousFunction::color() const {
+  return recordData()->color();
+}
+
+void ContinuousFunction::setActive(bool active) {
+  recordData()->setActive(active);
+  if (!active) {
+    didBecomeInactive();
   }
-  return result;
+}
+
+bool ContinuousFunction::isNamed() const {
+  return fullName() != nullptr && fullName()[0] != '?';
+}
+
+// TODO : Account for y^2 sign !
+bool ContinuousFunction::drawSuperiorArea() const {
+  ExpressionNode::Type eqSymbol = equationSymbol();
+  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual;
+}
+
+bool ContinuousFunction::drawInferiorArea() const {
+  ExpressionNode::Type eqSymbol = equationSymbol();
+  return eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual;
+}
+
+bool ContinuousFunction::drawCurve() const {
+  ExpressionNode::Type eqSymbol = equationSymbol();
+  return eqSymbol == ExpressionNode::Type::SuperiorEqual || eqSymbol == ExpressionNode::Type::InferiorEqual || eqSymbol == ExpressionNode::Type::Equal;
+}
+
+int ContinuousFunction::yDegree(Context * context) const {
+  return expressionEquation(context).polynomialDegree(context, k_ordinateName);
+}
+
+int ContinuousFunction::xDegree(Context * context) const {
+  return expressionEquation(context).polynomialDegree(context, k_unknownName);
+}
+
+int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
+  if (isNamed()) {
+    int funcNameSize = SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
+    assert(funcNameSize > 0);
+    size_t result = funcNameSize;
+    assert(result <= bufferSize);
+    buffer[result++] = '(';
+    assert(result <= bufferSize);
+    assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
+    result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
+    assert(result <= bufferSize);
+    result += strlcpy(buffer+result, ")", bufferSize-result);
+    return result;
+  }
+  return strlcpy(buffer, k_ordinateName, bufferSize);
 }
 
 I18n::Message ContinuousFunction::parameterMessageName() const {
   return ParameterMessageForPlotType(plotType());
 }
 
+I18n::Message ContinuousFunction::functionCategory() const {
+  assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
+  static const I18n::Message category[k_numberOfPlotTypes] = {
+    I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::LineType, I18n::Message::VerticalLineType,
+    I18n::Message::HorizontalLineType, I18n::Message::InequationType, I18n::Message::ConicsType, I18n::Message::CircleType, I18n::Message::EllipseType,
+    I18n::Message::ParabolaType, I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
+  };
+  return category[static_cast<size_t>(plotType())];
+}
+
+int ContinuousFunction::detailsTotal() const {
+  if (isNull()) {
+    return 0;
+  }
+  assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
+  static const int total[k_numberOfPlotTypes] = {
+    0, 0, 0, 3, 0,
+    0, 0, 0, 3, 6,
+    3, 6, 0, 0, 0,
+  };
+  return total[static_cast<size_t>(plotType())];
+}
+
+I18n::Message ContinuousFunction::detailsTitle(int i) const {
+  PlotType type = plotType();
+  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
+  assert(i < detailsTotal());
+  if (type == PlotType::Line) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::LineEquationTitle, I18n::Message::LineSlopeTitle, I18n::Message::LineYInterceptTitle,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Circle) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::CircleRadiusTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Ellipse) {
+    static const I18n::Message titles[6] = {
+      I18n::Message::EllipseSemiMajorAxisTitle, I18n::Message::EllipseSemiMinorAxisTitle, I18n::Message::LinearEccentricityTitle,
+      I18n::Message::EccentricityTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Parabola) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::ParabolaParameterTitle, I18n::Message::ParabolaVertexAbscissaTitle, I18n::Message::ParabolaVertexOrdinateTitle,
+    };
+    return titles[i];
+  }
+  assert(type == PlotType::Hyperbola);
+  static const I18n::Message titles[6] = {
+    I18n::Message::HyperbolaSemiMajorAxisTitle, I18n::Message::HyperbolaSemiMinorAxisTitle, I18n::Message::LinearEccentricityTitle,
+    I18n::Message::EccentricityTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
+  };
+  return titles[i];
+}
+
+I18n::Message ContinuousFunction::detailsDescription(int i) const {
+  PlotType type = plotType();
+  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
+  assert(i < detailsTotal());
+  if (type == PlotType::Line) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::LineEquationDescription, I18n::Message::LineSlopeDescription, I18n::Message::LineYInterceptDescription,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Circle) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::CircleRadiusDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Ellipse) {
+    static const I18n::Message titles[6] = {
+      I18n::Message::EllipseSemiMajorAxisDescription, I18n::Message::EllipseSemiMinorAxisDescription, I18n::Message::LinearEccentricityDescription,
+      I18n::Message::EccentricityDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Parabola) {
+    static const I18n::Message titles[3] = {
+      I18n::Message::ParabolaParameterDescription, I18n::Message::ParabolaVertexAbscissaDescription, I18n::Message::ParabolaVertexOrdinateDescription,
+    };
+    return titles[i];
+  }
+  assert(type == PlotType::Hyperbola);
+  static const I18n::Message titles[6] = {
+    I18n::Message::HyperbolaSemiMajorAxisDescription, I18n::Message::HyperbolaSemiMinorAxisDescription, I18n::Message::LinearEccentricityDescription,
+    I18n::Message::EccentricityDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
+  };
+  return titles[i];
+}
+
+double ContinuousFunction::detailsValue(int i) const {
+  PlotType type = plotType();
+  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
+  assert(i < detailsTotal());
+  if (type == PlotType::Line) {
+    static const double titles[3] = {
+      NAN, s_tempLine[0], s_tempLine[1],
+    };
+    return titles[i];
+  }
+  double cx, cy;
+  if (type == PlotType::Parabola) {
+    s_tempConic.getSummit(&cx, &cy);
+  } else {
+    s_tempConic.getCenter(&cx, &cy);
+  }
+  if (type == PlotType::Circle) {
+    double titles[3] = {
+      s_tempConic.getRadius(), cx, cy,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Ellipse) {
+    double titles[6] = {
+      s_tempConic.getSemiMajorAxis(), s_tempConic.getSemiMinorAxis(), s_tempConic.getLinearEccentricity(),
+      s_tempConic.getEccentricity(), cx, cy,
+    };
+    return titles[i];
+  }
+  if (type == PlotType::Parabola) {
+    double titles[3] = {
+      s_tempConic.getParameter(), cx, cy,
+    };
+    return titles[i];
+  }
+  assert(type == PlotType::Hyperbola);
+  double titles[6] = {
+    s_tempConic.getSemiMajorAxis(), s_tempConic.getSemiMinorAxis(), s_tempConic.getLinearEccentricity(),
+    s_tempConic.getEccentricity(), cx, cy,
+  };
+  return titles[i];
+}
+
 CodePoint ContinuousFunction::symbol() const {
+  // TODO Hugo : Rotate available symbols
   switch (plotType()) {
-  case PlotType::Cartesian:
-    return 'x';
+  case PlotType::Parametric:
+    return 't';
   case PlotType::Polar:
     return UCodePointGreekSmallLetterTheta;
   default:
-    assert(plotType() == PlotType::Parametric);
-    return 't';
+    return 'x';
   }
 }
 
-ContinuousFunction::PlotType ContinuousFunction::plotType() const {
-  return recordData()->plotType();
-}
-
-void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences::AngleUnit angleUnit, Context * context) {
-  PlotType currentPlotType = plotType();
-  if (newPlotType == currentPlotType) {
-    return;
+Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
+  // TODO Hugo : Add todo expressionReduced on circularity ?
+  // TODO Hugo : Either memoize or limit calls to this method
+  m_plotType = PlotType::Undefined;
+  if (record->fullName() != nullptr && record->fullName()[0] != '?' && isCircularlyDefined(record, context)) {
+    return Undefined::Builder();
   }
-
-  recordData()->setPlotType(newPlotType);
-
-  setCache(nullptr);
-
-  // Recompute the layouts
-  m_model.tidy();
-
-  // Recompute the definition domain
-  double tMin = (newPlotType == PlotType::Parametric || newPlotType == PlotType::Polar) ? 0.0 : -INFINITY;
-  double tMax = (newPlotType == PlotType::Parametric || newPlotType == PlotType::Polar) ? 2.0*Trigonometry::PiInAngleUnit(angleUnit) : INFINITY;
-  setTMin(tMin);
-  setTMax(tMax);
-
-  /* Recompute the unknowns. For instance, if the function was f(x) = xθ, it is
-   * stored as f(?) = ?θ. When switching to polar type, it should be stored as
-   * f(?) = ?? */
-  constexpr int previousTextContentMaxSize = Constant::MaxSerializedExpressionSize;
-  char previousTextContent[previousTextContentMaxSize];
-  m_model.text(this, previousTextContent, previousTextContentMaxSize, symbol());
-
-  Ion::Storage::Record::ErrorStatus error = setContent(previousTextContent, context);
-  // Handle parametric function switch
-  if (currentPlotType == PlotType::Parametric && error == Ion::Storage::Record::ErrorStatus::None) {
-    Expression e = expressionClone();
-    if (e.isUninitialized()
-        || e.type() != ExpressionNode::Type::Matrix
-        || static_cast<Poincare::Matrix&>(e).numberOfRows() != 2
-        || static_cast<Poincare::Matrix&>(e).numberOfColumns() != 1) {
-      return;
+  Expression result = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  if (result.isUninitialized()) {
+    return Undefined::Builder();
+  }
+  // TODO Hugo : Handle function assignment from outside
+  assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
+  m_equationSymbol = result.type();
+  if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && (
+      result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))
+      || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))
+      || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('t'))
+      )
+    ) {
+    // TODO Hugo : Improve that
+    if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))) {
+      m_plotType = PlotType::Polar;
+    } else if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))) {
+      m_plotType = PlotType::Cartesian;
+    } else {
+      m_plotType = PlotType::Parametric;
     }
-    // Change [x(t) y(t)] to y(t)
-    Expression nextContent = e.childAtIndex(1);
-    /* We need to detach it, otherwise nextContent will think it has a parent
-     * when we retrieve it from the storage. */
-    nextContent.detachFromParent();
-    error = setExpressionContent(nextContent);
-  } else if (newPlotType == PlotType::Parametric && error == Ion::Storage::Record::ErrorStatus::None) {
-    Expression e = expressionClone();
-    // Change y(t) to [t y(t)]
-    Matrix newExpr = Matrix::Builder();
-    newExpr.addChildAtIndexInPlace(Symbol::Builder(UCodePointUnknown), 0, 0);
-    // if y(t) was not uninitialized, insert [t 2t] to set an example
-    e = e.isUninitialized() ? Multiplication::Builder(Rational::Builder(2), Symbol::Builder(UCodePointUnknown)) : e;
-    newExpr.addChildAtIndexInPlace(e, newExpr.numberOfChildren(), newExpr.numberOfChildren());
-    newExpr.setDimensions(2, 1);
-    error = setExpressionContent(newExpr);
+    // Named function
+    result = result.childAtIndex(1);
+  } else {
+    result = Subtraction::Builder(result.childAtIndex(0), result.childAtIndex(1));
+    // ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(
+    //   context, Preferences::sharedPreferences()->complexFormat(),
+    //   Preferences::sharedPreferences()->angleUnit(),
+    //   GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
+    //   ExpressionNode::ReductionTarget::SystemForAnalysis,
+    //   ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    // result = result.reduce(reductionContext);
   }
-  if (error != Ion::Storage::Record::ErrorStatus::None) {
-    // An error occurred, reset plot type to the initial one.
-    recordData()->setPlotType(currentPlotType);
+  /* 'Simplify' routine might need to call expressionReduced on the very
+    * same function. So we need to keep a valid result while executing
+    * 'Simplify'. Thus, we use a temporary expression. */
+  Expression tempExpression = result.clone();
+  PoincareHelpers::Reduce(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  // PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+  // simplify might return an uninitialized Expression if interrupted
+  if (!tempExpression.isUninitialized()) {
+    result = tempExpression;
   }
+  // TODO Hugo : Memoize it ?
+  return result;
+}
+
+Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Record * record, Context * context) const {
+  // TODO Hugo : Fix this
+  // Get expression degree on y
+  if (m_expression.isUninitialized()) {
+    // Retrieve the expression from the equation
+    m_expression = expressionEquation(record, context);
+    m_hasTwoCurves = false;
+    if (record->fullName() == nullptr || record->fullName()[0] == '?') {
+      // Transform the solution by solving the equation in y
+      int degree = m_expression.polynomialDegree(context, k_ordinateName);
+      if (degree < 0 || degree >= 3) {
+        m_expression = Undefined::Builder();
+      } else if (degree == 0) {
+        // Vertical line
+        int xDegree = m_expression.polynomialDegree(context, k_unknownName);
+        if (xDegree == 1) {
+          Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+          int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+          assert(d == xDegree);
+          Expression root;
+          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+          m_expression = root;
+        } else {
+          /* TODO : We could handle equations of any degree by solving the
+           * equation within the graph view bounds, to plot as many vertical
+           * lines as needed. */
+          m_expression = Undefined::Builder();
+        }
+      } else {
+        Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+        int d = m_expression.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+        assert(d == degree);
+        if (d == 1) {
+          Expression root;
+          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+          m_expression = root;
+        } else {
+          Expression root1, root2, delta;
+          int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+          if (solutions <= 1) {
+            m_expression = root1;
+          } else {
+            m_hasTwoCurves = true;
+            Matrix newExpr = Matrix::Builder();
+            newExpr.addChildAtIndexInPlace(root1, 0, 0);
+            newExpr.addChildAtIndexInPlace(root2, 1, 1);
+            newExpr.setDimensions(2, 1);
+            // TODO HUgo : Plot two curves
+            m_expression = newExpr;
+            // Expression alternator = DivisionRemainder::Builder(Floor::Builder(Multiplication::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(10))), Rational::Builder(2));
+            // m_expression = Addition::Builder(Multiplication::Builder(alternator, Subtraction::Builder(root1, root2.clone())), root2);
+          }
+        }
+      }
+    }
+    // Reduce it to optimize approximations
+    PoincareHelpers::Reduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+  }
+  return m_expression;
+}
+
+Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record * record) const {
+  assert(record->fullName() != nullptr);
+  /* A new Expression has to be created at each call (because it might be tempered with after calling) */
+  Expression e = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  assert(ComparisonOperator::IsComparisonOperatorType(e.type()));
+  return e.childAtIndex(1);
+  // TODO Hugo : Maybe perform the substitution with symbol here.
+}
+
+void ContinuousFunction::Model::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
+  // TODO Hugo : No need to override this method,
+  ExpressionModel::updateNewDataWithExpression(record, expressionToStore, expressionAddress, expressionToStoreSize, previousExpressionSize);
+}
+
+void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
+  // Compute plot type from expressions
+  /* If of format f(...) = ... , handle this -> Cartesian, Polar, Parametric or Undefined
+   * | y  | x  | Status
+   * | 0  | 0  | Undefined
+   * | 0  | 1  | Vertical Line
+   * | 0  | 2  | Unhandled (Multiple vertical lines ? # TODO)
+   * | 0  | +  | Unhandled (Multiple vertical lines ? # TODO)
+   * | 1  | 0  | Horizontal Line
+   * | 1  | 1  | Line
+   * | 1  | 2  | Cartesian
+   * | 1  | +  | Cartesian
+   * | 2  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
+   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola # TODO differentiate
+   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola # TODO differentiate
+   * | 2  | +  | Other
+   * | +  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
+   * | +  | 1  | Unhandled (Swap x and y ? # TODO)
+   * | +  | 2  | Unhandled (Swap x and y ? # TODO)
+   * | +  | +  | Unhandled
+   */
+  /* TODO Hugo : Here we need to compute expressionEquation to make sure we get the
+   * equation symbol right. It could be improved. */
+  // TODO Hugo : Improve how Cartesian, Polar and parametric curves are detected.
+  Expression equation = expressionEquation(context);
+  recordData()->setEquationSymbol(m_model.m_equationSymbol);
+  if (m_model.m_plotType != PlotType::Undefined) {
+    // Polar, parametric, or cartesian decided in expressionEquation.
+    return recordData()->setPlotType(m_model.m_plotType);
+  }
+
+  int yDeg = yDegree(context);
+  if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
+    if (yDeg == 1 || yDeg == 2) {
+      return recordData()->setPlotType(PlotType::Inequation);
+    } else {
+      // TODO : Handle vertical lines
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
+  }
+
+  int xDeg = xDegree(context);
+  if (yDeg == 0 && xDeg == 0) {
+    return recordData()->setPlotType(PlotType::Undefined);
+  }
+  if (yDeg == 0 && xDeg == 1) {
+    return recordData()->setPlotType(PlotType::VerticalLine);
+  }
+  if (yDeg == 1 && xDeg == 0) {
+    return recordData()->setPlotType(PlotType::HorizontalLine);
+  }
+  if (yDeg == 1 && xDeg == 1) {
+    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
+    Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+    Expression lineExpression = expressionReduced(context).clone();
+    // Reduce to another target for coefficient analysis.
+    PoincareHelpers::Reduce(&lineExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    int d = lineExpression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    if (d == 1) {
+      s_tempLine[0] = coefficients[1].approximateToScalar<double>(context, complexFormat,
+                                                        angleUnit);
+      s_tempLine[1] = coefficients[0].approximateToScalar<double>(context, complexFormat,
+                                                        angleUnit);
+      return recordData()->setPlotType(PlotType::Line);
+    } // Otherwise, there probably was a x*y term in the equation.
+  }
+  if (yDeg == 1) {
+    return recordData()->setPlotType(PlotType::Cartesian);
+  }
+  if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
+    s_tempConic = Conic(equation, context, k_unknownName);
+    Conic::Type ctype = s_tempConic.getConicType();
+    if (ctype == Conic::Type::Hyperbola) {
+      return recordData()->setPlotType(PlotType::Hyperbola);
+    } else if (ctype == Conic::Type::Parabola) {
+      return recordData()->setPlotType(PlotType::Parabola);
+    } else if (ctype == Conic::Type::Ellipse) {
+      return recordData()->setPlotType(PlotType::Ellipse);
+    } else if (ctype == Conic::Type::Circle) {
+      return recordData()->setPlotType(PlotType::Circle);
+    }
+  }
+  if (yDeg == 2) {
+    return recordData()->setPlotType(PlotType::Other);
+  }
+  return recordData()->setPlotType(PlotType::Unhandled);
 }
 
 I18n::Message ContinuousFunction::ParameterMessageForPlotType(PlotType plotType) {
-  if (plotType == PlotType::Cartesian) {
-    return I18n::Message::X;
+  if (plotType == PlotType::Parametric) {
+    return I18n::Message::T;
   }
   if (plotType == PlotType::Polar) {
     return I18n::Message::Theta;
   }
-  assert(plotType == PlotType::Parametric);
-  return I18n::Message::T;
-}
-
-template <typename T>
-Poincare::Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context) const {
-  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context);
-  PlotType type = plotType();
-  if (type == PlotType::Cartesian || type == PlotType::Parametric) {
-    return x1x2;
-  }
-  assert(type == PlotType::Polar);
-  T factor = (T)1.0;
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  if (angleUnit == Preferences::AngleUnit::Degree) {
-    factor = (T) (M_PI/180.0);
-  } else if (angleUnit == Preferences::AngleUnit::Gradian) {
-    factor = (T) (M_PI/200.0);
-  } else {
-    assert(angleUnit == Preferences::AngleUnit::Radian);
-  }
-  const float angle = x1x2.x1()*factor;
-  return Coordinate2D<T>(x1x2.x2() * std::cos(angle), x1x2.x2() * std::sin(angle));
+  return I18n::Message::X;
 }
 
 bool ContinuousFunction::displayDerivative() const {
-  return recordData()->displayDerivative();
+  // TODO Hugo : Re-implement derivative
+  return false;
 }
 
 void ContinuousFunction::setDisplayDerivative(bool display) {
-  return recordData()->setDisplayDerivative(display);
+  // TODO Hugo : Re-implement derivative
 }
 
-int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
+  // TODO Hugo : Re-implement derivative
+  return 0;
+}
+
+double ContinuousFunction::approximateDerivative(double x, Context * context) const {
+  // TODO Hugo : Re-implement derivative
+  return 0.0;
+}
+
+int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
+  // TODO Hugo : Re-check
   PlotType type = plotType();
-  if (type == PlotType::Cartesian) {
-    return Function::printValue(cursorT, cursorX, cursorY, buffer, bufferSize, precision, context);
+  if (type == PlotType::Parametric) {
+    int result = 0;
+    result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
+    result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
+    result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
+    result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
+    result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
+    return result;
   }
   if (type == PlotType::Polar) {
     return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
   }
-  assert(type == PlotType::Parametric);
-  int result = 0;
-  result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
-  result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
-  result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
-  result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
-  result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
-  return result;
+  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }
 
-double ContinuousFunction::approximateDerivative(double x, Poincare::Context * context) const {
-  assert(plotType() == PlotType::Cartesian);
-  if (x < tMin() || x > tMax()) {
-    return NAN;
+bool ContinuousFunction::shouldClipTRangeToXRange() const {
+  // TODO Hugo : Re-check
+  return isAlongX();
+}
+
+void ContinuousFunction::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Context * context, bool xRange) const {
+  // TODO Hugo : Re-check
+  Zoom::ValueAtAbscissa evaluation;
+  if (xRange) {
+    evaluation = [](float x, Context * context, const void * auxiliary) {
+      return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x1();
+    };
+  } else {
+    evaluation = [](float x, Context * context, const void * auxiliary) {
+      return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    };
   }
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknown[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknown);
-  // Derivative is simplified once and for all
-  return PoincareHelpers::ApproximateWithValueForSymbol(expressionDerivateReduced(context), unknown, x, context);
+
+  Zoom::FullRange(evaluation, tMin, tMax, tStep, min, max, context, this);
 }
 
 float ContinuousFunction::tMin() const {
+  // TODO Hugo : Re-check
   return recordData()->tMin();
 }
 
 float ContinuousFunction::tMax() const {
+  // TODO Hugo : Re-check
   return recordData()->tMax();
 }
 
 void ContinuousFunction::setTMin(float tMin) {
+  // TODO Hugo : Re-check
   recordData()->setTMin(tMin);
-  setCache(nullptr);
+  // TODO Hugo : Re-check cache
+  // setCache(nullptr);
 }
 
 void ContinuousFunction::setTMax(float tMax) {
+  // TODO Hugo : Re-check
   recordData()->setTMax(tMax);
-  setCache(nullptr);
+  // TODO Hugo : Re-check cache
+  // setCache(nullptr);
 }
 
-void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const {
-  if (plotType() != PlotType::Cartesian) {
+float ContinuousFunction::rangeStep() const {
+  // TODO Hugo : Re-check
+  return isAlongX() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
+}
+
+bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
+  // TODO Hugo : Re-implement
+  return true;
+}
+
+void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
+  // TODO Hugo : Re-check
+  if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
     *yMinIntrinsic = FLT_MAX;
@@ -294,13 +611,14 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
      * result of the evaluations. As we are not interested in precise results
      * but only in ordering, this approximation is sufficient. */
     constexpr float precision = 1e-5;
-    return precision * std::round(static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
+    return precision * std::round(static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
   };
   Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
 }
 
-void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const {
-  if (plotType() != PlotType::Cartesian) {
+void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
+  // TODO Hugo : Re-check
+  if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
     return;
@@ -321,7 +639,7 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   }
 
   Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
-    return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
   };
 
   if (yMaxForced - yMinForced <= ratio * (xMax - xMin)) {
@@ -337,80 +655,74 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
 }
 
-void ContinuousFunction::Model::tidy() const {
-  m_expressionDerivate = Expression();
-  ExpressionModel::tidy();
-}
-
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
+  // TODO Hugo : Re-check
   return (char *)record->value().buffer+sizeof(RecordDataBuffer);
 }
 
 size_t ContinuousFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
+  // TODO Hugo : Re-check
   return record->value().size-sizeof(RecordDataBuffer);
 }
 
-Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const {
-  if (m_expressionDerivate.isUninitialized()) {
-    m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
-    /* On complex functions, this step can take a significant time.
-     * A workaround could be to identify big functions to skip simplification at
-     * the cost of possible inaccurate evaluations (such as diff(abs(x),x,0) not
-     * being undefined). */
-    PoincareHelpers::Simplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-    // simplify might return an uninitialized Expression if interrupted
-    if (m_expressionDerivate.isUninitialized()) {
-      m_expressionDerivate = Poincare::Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
-    }
-  }
-  return m_expressionDerivate;
-}
-
-ContinuousFunction::RecordDataBuffer * ContinuousFunction::recordData() const {
-  assert(!isNull());
-  Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
-}
-
 template<typename T>
-Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincare::Context * context) const {
+Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context * context, int i) const {
   if (t < tMin() || t > tMax()) {
-    return Coordinate2D<T>(plotType() == PlotType::Cartesian ? t : NAN, NAN);
+    return Coordinate2D<T>(isAlongX() ? t : NAN, NAN);
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknown[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknown);
+  SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknown);
   PlotType type = plotType();
   Expression e = expressionReduced(context);
   if (type != PlotType::Parametric) {
-    assert(type == PlotType::Cartesian || type == PlotType::Polar);
+    if (hasTwoCurves()) {
+      assert(e.numberOfChildren() > i);
+      /* TODO Hugo : Ensure the roots are already sorted. It should be possible
+       * once handling the sign of the coefficient of y^2. */
+      if (i == 0) {
+        return Coordinate2D<T>(t, std::max(PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
+      } else {
+        return Coordinate2D<T>(t, std::min(PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
+      }
+    } else {
+      assert(i == 0);
+    }
+    if (type == PlotType::VerticalLine) {
+      // Invert x and y with vertical lines so it can be scrolled vertically
+      return Coordinate2D<T>(PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context), t);
+    }
     return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
   }
   if (e.type() == ExpressionNode::Type::Dependency) {
     e = e.childAtIndex(0);
   }
   assert(e.type() == ExpressionNode::Type::Matrix);
-  assert(static_cast<Poincare::Matrix&>(e).numberOfRows() == 2);
-  assert(static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);
+  assert(static_cast<Matrix&>(e).numberOfRows() == 2);
+  assert(static_cast<Matrix&>(e).numberOfColumns() == 1);
   return Coordinate2D<T>(
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context),
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
 
 Coordinate2D<double> ContinuousFunction::nextMinimumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
+  // TODO Hugo : Re-check
   return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> ContinuousFunction::nextMaximumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
+  // TODO Hugo : Re-check
   return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
+  // TODO Hugo : Re-check
   return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
 }
 
-Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
-  assert(plotType() == PlotType::Cartesian);
+Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
+  // TODO Hugo : Re-check
+  assert(isAlongX());
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
@@ -424,7 +736,8 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
 }
 
 Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
-  assert(plotType() == PlotType::Cartesian);
+  // TODO Hugo : Re-check
+  assert(isAlongX());
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
@@ -437,33 +750,61 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
   return compute(expressionReduced(context), unknownX, start, max, context, relativePrecision, minimalStep, maximalStep);
 }
 
-Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
-  assert(plotType() == PlotType::Cartesian);
+Expression ContinuousFunction::sumBetweenBounds(double start, double end, Context * context) const {
+  // TODO Hugo : Re-check
+  assert(isAlongX());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
-  return Poincare::Integral::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknown), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
+  return Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(start), Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Poincare::Context * context) {
-  setCache(nullptr);
-  return ExpressionModelHandle::setContent(c, context);
+  Ion::Storage::Record::ErrorStatus error = ExpressionModelHandle::setContent(c, context);
+  if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
+    bool previousAlongXStatus = isAlongX();
+    updatePlotType(Preferences::AngleUnit::Radian, context);
+    if (previousAlongXStatus != isAlongX()) {
+      // Recompute the definition's domain
+      setTMin(!isAlongX() ? 0.0 : -INFINITY);
+      setTMax(!isAlongX() ? 2.0*Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit()) : INFINITY);
+    }
+  }
+  return error;
 }
 
-bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
-  return expressionReduced(context).hasExpression([](const Expression e, const void * context) {
-      return e.type() == ExpressionNode::Type::Sequence
-          || e.type() == ExpressionNode::Type::Integral
-          || e.type() == ExpressionNode::Type::Derivative;
-      }, nullptr);
+void ContinuousFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Context * context) const {
+  // TODO Hugo : Re-implement
 }
 
-template Coordinate2D<float> ContinuousFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
-template Coordinate2D<double> ContinuousFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;
-
-template Poincare::Coordinate2D<float> ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Poincare::Context *) const;
-template Poincare::Coordinate2D<double> ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Poincare::Context *) const;
-
+template <typename T>
+Poincare::Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i) const {
+  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context, i);
+  PlotType type = plotType();
+  if (type != PlotType::Polar) {
+    return x1x2;
+  }
+  assert(type == PlotType::Polar);
+  T factor = (T)1.0;
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    factor = (T) (M_PI/180.0);
+  } else if (angleUnit == Preferences::AngleUnit::Gradian) {
+    factor = (T) (M_PI/200.0);
+  } else {
+    assert(angleUnit == Preferences::AngleUnit::Radian);
+  }
+  const float angle = x1x2.x1()*factor;
+  return Coordinate2D<T>(x1x2.x2() * std::cos(angle), x1x2.x2() * std::sin(angle));
 }
+
+template Coordinate2D<float> ContinuousFunction::templatedApproximateAtParameter<float>(float, Context *, int) const;
+template Coordinate2D<double> ContinuousFunction::templatedApproximateAtParameter<double>(double, Context *, int) const;
+
+template Coordinate2D<float> ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context *, int) const;
+template Coordinate2D<double> ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context *, int) const;
+
+
+} // namespace Graph

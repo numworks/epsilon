@@ -13,7 +13,7 @@ public:
 private:
   I18n::Message legendMessageAtStep(Step step) override;
   double cursorNextStep(double position, int direction) override;
-  Poincare::Layout createFunctionLayout(Shared::ExpiringPointer<Shared::NewFunction> function) override;
+  Poincare::Layout createFunctionLayout(Shared::ExpiringPointer<Shared::ContinuousFunction> function) override;
 };
 
 }

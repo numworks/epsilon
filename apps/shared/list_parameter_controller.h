@@ -27,7 +27,7 @@ public:
 protected:
   virtual bool handleEnterOnRow(int rowIndex);
   ContinuousFunctionStore * functionStore();
-  ExpiringPointer<NewFunction> function();
+  ExpiringPointer<ContinuousFunction> function();
   Ion::Storage::Record m_record;
 private:
   // Return index of shared cell from row number

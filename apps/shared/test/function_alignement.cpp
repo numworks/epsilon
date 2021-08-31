@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include "../new_function.h"
+#include "../continuous_function.h"
 #include "../continuous_function_store.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
@@ -23,10 +23,10 @@ void interactWithRecordMember(SequenceStore * store, Ion::Storage::Record rec) {
 }
 
 void interactWithRecordMember(ContinuousFunctionStore * store, Ion::Storage::Record rec) {
-  NewFunction * fct = store->modelForRecord(rec).pointer();
+  ContinuousFunction * fct = store->modelForRecord(rec).pointer();
   // Setting m_min from record member m_domain, which has a 2-byte alignment
   fct->setTMin(3.0f);
-  interactWithBaseRecordMember<NewFunction>(fct);
+  interactWithBaseRecordMember<ContinuousFunction>(fct);
 }
 
 template<class T>

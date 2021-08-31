@@ -10,7 +10,7 @@ bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFuncti
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();
   }
-  return numberOfActiveFunctionsOfType(NewFunction::PlotType::Polar) + numberOfActiveFunctionsOfType(NewFunction::PlotType::Parametric) == 0;
+  return numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar) + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric) == 0;
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
@@ -26,13 +26,13 @@ Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   }
   assert(currentNumber < k_maxNumberOfMemoizedModels);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::RecordDoesNotExist;
-  NewFunction newModel = NewFunction::NewModel(&error, name);
+  ContinuousFunction newModel = ContinuousFunction::NewModel(&error, name);
   return error;
 }
 
 ExpressionModelHandle * ContinuousFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
-  m_functions[cacheIndex] = NewFunction(record);
+  m_functions[cacheIndex] = ContinuousFunction(record);
   return &m_functions[cacheIndex];
 }
 

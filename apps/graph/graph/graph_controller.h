@@ -45,7 +45,7 @@ private:
   FunctionSelectionController * curveSelectionController() const override { return const_cast<FunctionSelectionController *>(&m_functionSelectionController); }
   Shared::ContinuousFunctionStore * functionStore() const override { return static_cast<Shared::ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool defaultRangeIsNormalized() const override;
-  void interestingFunctionRange(Shared::ExpiringPointer<Shared::NewFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
+  void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
   void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
 
   Shared::RoundCursorView m_cursorView;

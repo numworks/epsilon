@@ -1,5 +1,6 @@
 #include "function_go_to_parameter_controller.h"
 #include "function_app.h"
+#include "../graph/new_function.h"
 #include <assert.h>
 #include <cmath>
 #include <ion/display.h>

@@ -88,7 +88,8 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
 
   float min = std::min(z, zAlpha);
   float max = std::max(z, zAlpha);
-  bool zMoreExtreme = op == HypothesisParams::ComparisonOperator::Higher ? z >= zAlpha : z <= zAlpha;
+  bool zMoreExtreme = op == HypothesisParams::ComparisonOperator::Higher ? z >= zAlpha
+                                                                         : z <= zAlpha;
   KDColor middleColor = !zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   KDColor externColor = zMoreExtreme ? Escher::Palette::YellowDark : Escher::Palette::GrayMiddle;
   drawCartesianCurve(ctx,
@@ -126,32 +127,40 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
 }
 
 void StatisticCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position) const {
-  assert(std::isfinite(position));
-  float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
-  KDCoordinate graduationPosition = std::round(floatToPixel(Axis::Horizontal, position));
-  // Graduation
-  KDRect graduation = KDRect(graduationPosition,
-                             verticalOrigin - (k_labelGraduationLength - 2) / 2,
-                             1,
-                             k_labelGraduationLength);
-  ctx->fillRect(graduation, KDColorBlack);
-  // Label
-  char buffer[k_labelBufferMaxSize];
-  Poincare::PrintFloat::ConvertFloatToText<float>(position,
-                                                  buffer,
-                                                  k_labelBufferMaxSize,
-                                                  k_labelBufferMaxGlyphLength,
-                                                  k_numberSignificantDigits,
-                                                  Poincare::Preferences::PrintFloatMode::Decimal);
-  KDPoint labelPosition = positionLabel(graduationPosition,
-                                        verticalOrigin,
-                                        KDFont::SmallFont->stringSize(buffer),
-                                        RelativePosition::None,
-                                        RelativePosition::Before);
-  ctx->drawString(buffer, labelPosition, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
+  // Draw only if visible
+  if ((curveViewRange()->xMin() <= position) && (position <= curveViewRange()->xMax())) {
+    float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
+    KDCoordinate graduationPosition = std::round(floatToPixel(Axis::Horizontal, position));
+    // Graduation
+    KDRect graduation = KDRect(graduationPosition,
+                               verticalOrigin - (k_labelGraduationLength - 2) / 2,
+                               1,
+                               k_labelGraduationLength);
+    ctx->fillRect(graduation, KDColorBlack);
+    // Label
+    char buffer[k_labelBufferMaxSize];
+    Poincare::PrintFloat::ConvertFloatToText<float>(position,
+                                                    buffer,
+                                                    k_labelBufferMaxSize,
+                                                    k_labelBufferMaxGlyphLength,
+                                                    k_numberSignificantDigits,
+                                                    Poincare::Preferences::PrintFloatMode::Decimal);
+    KDPoint labelPosition = positionLabel(graduationPosition,
+                                          verticalOrigin,
+                                          KDFont::SmallFont->stringSize(buffer),
+                                          RelativePosition::None,
+                                          RelativePosition::Before);
+    ctx->drawString(buffer, labelPosition, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
+  }
 }
 
 void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float z) const {
+  // Label
+  if (z < curveViewRange()->xMin() || z > curveViewRange()->xMax()) {
+    // z outside screen
+    return;
+  }
+
   float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
   KDCoordinate labelPosition = std::round(floatToPixel(Axis::Horizontal, z));
 
@@ -162,13 +171,7 @@ void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float z) const
                              k_labelGraduationLength);
   ctx->fillRect(graduation, KDColorBlack);
 
-  // Label
-  if (z < curveViewRange()->xMin() || z > curveViewRange()->xMax()) {
-    // z outside screen
-    return;
-  }
   const char * zText = "z";
-
   KDPoint position = positionLabel(labelPosition,
                                    verticalOrigin,
                                    KDFont::SmallFont->stringSize(zText),
@@ -179,12 +182,10 @@ void StatisticCurveView::drawZLabelAndGraduation(KDContext * ctx, float z) const
 
 void StatisticCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
   drawLabelAndGraduationAtPosition(ctx, m_statistic->estimate());
-  if (std::isfinite(m_statistic->marginOfError())) {  // Can be INF if confidence level = 1
-    float lowerBound = m_statistic->estimate() - m_statistic->marginOfError();
-    float upperBound = m_statistic->estimate() + m_statistic->marginOfError();
-    drawLabelAndGraduationAtPosition(ctx, lowerBound);
-    drawLabelAndGraduationAtPosition(ctx, upperBound);
-  }
+  float lowerBound = m_statistic->estimate() - m_statistic->marginOfError();
+  float upperBound = m_statistic->estimate() + m_statistic->marginOfError();
+  drawLabelAndGraduationAtPosition(ctx, lowerBound);
+  drawLabelAndGraduationAtPosition(ctx, upperBound);
 }
 
 Poincare::Coordinate2D<float> StatisticCurveView::evaluateTestAtAbsissa(float x,

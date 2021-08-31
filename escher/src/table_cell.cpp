@@ -186,7 +186,10 @@ bool TableCell::singleRowMode(KDCoordinate width,
 
   bool singleRow = (labelSize.width() + subLabelSize.width() + accessoryWidth +
                         2 * Metric::CellHorizontalElementMargin < width)
-                    || !(labelView && sublabelView);
+                        || labelView == nullptr
+                        || sublabelView == nullptr
+                        || labelSize.width() == 0
+                        || subLabelSize.width() == 0;
   return singleRow;
 }
 

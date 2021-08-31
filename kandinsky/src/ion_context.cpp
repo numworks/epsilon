@@ -1,5 +1,5 @@
 #include <kandinsky/ion_context.h>
-#include <ion.h>
+#include <ion/display.h>
 
 KDRealIonContext::KDRealIonContext() : KDContext(KDPointZero, KDRect(0, 0, Ion::Display::Width, Ion::Display::Height)) {}
 void KDRealIonContext::pushRect(KDRect rect, const KDColor * pixels) {
@@ -60,4 +60,13 @@ void KDIonContext::pullRect(KDRect rect, KDColor * pixels) {
     rootContext = &m_realContext;
   }
   rootContext->pullRect(rect, pixels);
+}
+
+void KDIonContext::putchar(char c) {
+  static KDPoint cursor = KDPointZero;
+  char text[2] = {c, 0};
+  cursor = sharedContext()->drawString(text, cursor);
+  if (cursor.y() > Ion::Display::Height) {
+    cursor = KDPoint(cursor.x(), 0);
+  }
 }

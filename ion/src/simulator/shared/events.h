@@ -5,15 +5,6 @@
 #include <SDL.h>
 
 namespace Ion {
-namespace Simulator {
-namespace Events {
-
-void dumpEventCount(int i);
-void logAfter(int numberOfEvents);
-
-}
-}
-
 namespace Events {
 
 static constexpr size_t sharedExternalTextBufferSize = sizeof(SDL_TextInputEvent::text);

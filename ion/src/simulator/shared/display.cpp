@@ -12,6 +12,7 @@ namespace Display {
 static SDL_Texture * sFramebufferTexture = nullptr;
 
 void init(SDL_Renderer * renderer) {
+  Framebuffer::setActive(true);
   Uint32 texturePixelFormat = SDL_PIXELFORMAT_RGB565;
   assert(sizeof(KDColor) == SDL_BYTESPERPIXEL(texturePixelFormat));
   sFramebufferTexture = SDL_CreateTexture(
@@ -23,7 +24,7 @@ void init(SDL_Renderer * renderer) {
   );
 }
 
-void quit() {
+void shutdown() {
   SDL_DestroyTexture(sFramebufferTexture);
   sFramebufferTexture = nullptr;
 }

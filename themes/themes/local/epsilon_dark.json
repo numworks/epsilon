@@ -1,6 +1,6 @@
 {
     "name": "Epsilon Dark",
-    "icons": "epsilon_light",
+    "icons": "epsilon_dark",
     "colors": {
         "PrimaryText": "ffffff",
         "SecondaryText": "585858",

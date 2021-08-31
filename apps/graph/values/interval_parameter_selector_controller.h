@@ -4,7 +4,7 @@
 #include <apps/shared/interval_parameter_controller.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/selectable_list_view_controller.h>
-#include "../new_function.h"
+#include "../../shared/new_function.h"
 
 namespace Graph {
 
@@ -20,11 +20,11 @@ public:
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  void setStartEndMessages(Shared::IntervalParameterController * controller, NewFunction::PlotType plotType);
+  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::NewFunction::PlotType plotType);
 private:
-  NewFunction::PlotType plotTypeAtRow(int j) const;
-  I18n::Message messageForType(NewFunction::PlotType plotType);
-  Escher::MessageTableCellWithChevron m_intervalParameterCell[NewFunction::k_numberOfPlotTypes];
+  Shared::NewFunction::PlotType plotTypeAtRow(int j) const;
+  I18n::Message messageForType(Shared::NewFunction::PlotType plotType);
+  Escher::MessageTableCellWithChevron m_intervalParameterCell[Shared::NewFunction::k_numberOfPlotTypes];
 };
 
 }

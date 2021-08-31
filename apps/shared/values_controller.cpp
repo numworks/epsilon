@@ -296,7 +296,7 @@ void ValuesController::updateNumberOfColumns() const {
   m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
 }
 
-Graph::ContinuousFunctionStore * ValuesController::functionStore() const {
+ContinuousFunctionStore * ValuesController::functionStore() const {
   return FunctionApp::app()->functionStore();
 }
 

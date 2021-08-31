@@ -1,17 +1,17 @@
-#ifndef GRAPH_NEW_FUNCTION_H
-#define GRAPH_NEW_FUNCTION_H
+#ifndef SHARED_NEW_FUNCTION_H
+#define SHARED_NEW_FUNCTION_H
 
-#include "../shared/expression_model_handle.h"
-#include "../shared/range_1D.h"
+#include "expression_model_handle.h"
+#include "range_1D.h"
 #include <apps/i18n.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/conic.h>
 
 // TODO Hugo : Emscripten things
 
-namespace Graph {
+namespace Shared {
 
-class NewFunction : public Shared::ExpressionModelHandle {
+class NewFunction : public ExpressionModelHandle {
 public:
   /* Possible arguments: n, x, t, θ
    * The CodePoint θ is two char long. */
@@ -40,7 +40,7 @@ public:
   };
 
   static NewFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
-  NewFunction(Ion::Storage::Record record = Record()) : Shared::ExpressionModelHandle(record) {}
+  NewFunction(Ion::Storage::Record record = Record()) : ExpressionModelHandle(record) {}
 
   // Properties
   bool isActive() const;
@@ -140,7 +140,7 @@ private:
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
 
-  class Model : public Shared::ExpressionModel {
+  class Model : public ExpressionModel {
     // TODO Hugo : Add derivative
   public:
     Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined) {}
@@ -158,7 +158,7 @@ private:
     mutable PlotType m_plotType;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
-  const Shared::ExpressionModel * model() const override { return &m_model; }
+  const ExpressionModel * model() const override { return &m_model; }
 
   // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer {
@@ -179,7 +179,7 @@ private:
     void setTMin(float tMin) { m_domain.setMin(tMin); }
     void setTMax(float tMax) { m_domain.setMax(tMax); }
   private:
-    Shared::Range1D m_domain;
+    Range1D m_domain;
     uint16_t m_color;
     bool m_active;
     PlotType m_plotType;

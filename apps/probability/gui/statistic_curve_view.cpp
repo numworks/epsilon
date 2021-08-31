@@ -50,7 +50,7 @@ void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
                      rect,
                      -INFINITY,
                      INFINITY,
-                     evaluateTestAtAbsissa,
+                     evaluateTestAtAbscissa,
                      m_statistic,
                      nullptr,
                      Escher::Palette::GrayVeryDark);
@@ -61,7 +61,7 @@ void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
                      rect,
                      -INFINITY,
                      INFINITY,
-                     evaluateIntervalAtAbsissa,
+                     evaluateIntervalAtAbscissa,
                      m_statistic,
                      nullptr,
                      Escher::Palette::YellowDark,
@@ -96,7 +96,7 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
                      rect,
                      min,
                      max,
-                     evaluateTestAtAbsissa,
+                     evaluateTestAtAbscissa,
                      m_statistic,
                      nullptr,
                      middleColor,
@@ -116,7 +116,7 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
                      rect,
                      xmin,
                      xmax,
-                     evaluateTestAtAbsissa,
+                     evaluateTestAtAbscissa,
                      m_statistic,
                      nullptr,
                      externColor,
@@ -188,14 +188,14 @@ void StatisticCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
   drawLabelAndGraduationAtPosition(ctx, upperBound);
 }
 
-Poincare::Coordinate2D<float> StatisticCurveView::evaluateTestAtAbsissa(float x,
+Poincare::Coordinate2D<float> StatisticCurveView::evaluateTestAtAbscissa(float x,
                                                                         void * model,
                                                                         void * context) {
   Statistic * statistic = static_cast<Statistic *>(model);
-  return Poincare::Coordinate2D<float>(x, statistic->normalizedDensityFunction(x));
+  return Poincare::Coordinate2D<float>(x, statistic->canonicalDensityFunction(x));
 }
 
-Poincare::Coordinate2D<float> StatisticCurveView::evaluateIntervalAtAbsissa(float x,
+Poincare::Coordinate2D<float> StatisticCurveView::evaluateIntervalAtAbscissa(float x,
                                                                             void * model,
                                                                             void * context) {
   Statistic * statistic = static_cast<Statistic *>(model);

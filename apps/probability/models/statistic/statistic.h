@@ -80,7 +80,7 @@ public:
 
   int indexOfThreshold() { return numberOfStatisticParameters(); }
   void initThreshold(Data::SubApp subapp);
-  /* Instanciate correct Statistic based on Test and TestType. */
+  /* Instantiate correct Statistic based on Test and TestType. */
   static void initializeStatistic(Statistic * statistic,
                                   Data::Test t,
                                   Data::TestType type,

@@ -32,10 +32,10 @@ private:
   void drawZLabelAndGraduation(KDContext * ctx, float x) const;
   void drawIntervalLabelAndGraduation(KDContext * ctx) const;
 
-  static Poincare::Coordinate2D<float> evaluateTestAtAbsissa(float x,
+  static Poincare::Coordinate2D<float> evaluateTestAtAbscissa(float x,
                                                              void * model,
                                                              void * context);
-  static Poincare::Coordinate2D<float> evaluateIntervalAtAbsissa(float x,
+  static Poincare::Coordinate2D<float> evaluateIntervalAtAbscissa(float x,
                                                                  void * model,
                                                                  void * context);
   static constexpr KDColor k_backgroundColor = Escher::Palette::WallScreen;

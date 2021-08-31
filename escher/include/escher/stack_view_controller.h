@@ -82,7 +82,7 @@ private:
     View * m_contentView;
     int8_t m_numberOfStacks;
     /* Represents the stacks to display, _starting from the end_.
-     * m_headersDisplayMask = 0b11111011   ->  shoudln't display m_stackViews[m_numberOfStacks - 1 - 2]. */
+     * m_headersDisplayMask = 0b11111011   ->  shouldn't display m_stackViews[m_numberOfStacks - 1 - 2]. */
     uint8_t m_headersDisplayMask;
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;

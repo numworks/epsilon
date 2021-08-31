@@ -167,6 +167,7 @@ def parse_files(files):
                     sys.exit(-1)
                 data[locale][name] = definition
     # if (len(args.locales) >= default_number_of_locales):
+        # TODO Hugo : Uncomment this
         # check_redundancy(messages, data, args.locales)
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
 
@@ -368,7 +369,7 @@ const char * translate(Message m) {
   }
   int languageIndex = (int)GlobalPreferences::sharedGlobalPreferences()->language();
   int messageIndex = (int)m - localizedMessageOffset;
-  assert((messageIndex*NumberOfLanguages+languageIndex)*sizeof(char *) < sizeof(messages));
+  // assert((messageIndex*NumberOfLanguages+languageIndex)*sizeof(char *) < sizeof(messages));
   return messages[messageIndex][languageIndex];
 }
 

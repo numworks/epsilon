@@ -76,7 +76,7 @@ KDCoordinate FunctionGraphController::FunctionSelectionController::rowHeight(int
 void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index < graphController()->functionStore()->numberOfActiveFunctions());
   ExpiringPointer<Graph::NewFunction> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
-  static_cast<CurveSelectionCell *>(cell)->setLayout(HorizontalLayout::Builder({nameLayoutAtIndex(index), LayoutHelper::String("=", 2), function->layout().clone()}));
+  static_cast<CurveSelectionCell *>(cell)->setLayout(function->layout().clone());
 }
 
 void FunctionGraphController::reloadBannerView() {

@@ -146,6 +146,7 @@ private:
     Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined) {}
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
+    Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
     bool hasTwoCurves() const { return m_hasTwoCurves; }
   // private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;

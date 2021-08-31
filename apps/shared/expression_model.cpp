@@ -34,7 +34,8 @@ ExpressionModel::ExpressionModel() :
 }
 
 void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol) const {
-  Expression e = expressionClone(record);
+  assert(record->fullName() != nullptr);
+  Expression e = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
   if (e.isUninitialized()) {
     if (bufferSize > 0) {
       buffer[0] = 0;
@@ -54,14 +55,6 @@ void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t
 bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poincare::Context * context) const {
   if (m_circular == -1) {
     Expression e = expressionClone(record);
-    // TODO Hugo : Improve this
-    if (!e.isUninitialized() && e.type() == ExpressionNode::Type::Equal) {
-      if (e.childAtIndex(0).type() == ExpressionNode::Type::Function) {
-        e = e.childAtIndex(1);
-      } else {
-        return false;
-      }
-    }
     m_circular = Expression::ExpressionWithoutSymbols(e, context).isUninitialized();
   }
   return m_circular;
@@ -121,7 +114,8 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
 
 Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol) const {
   if (m_layout.isUninitialized()) {
-    Expression clone = expressionClone(record);
+    assert(record->fullName() != nullptr);
+    Expression clone = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
     if (!clone.isUninitialized() && symbol != 0) {
       clone = clone.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
     }

@@ -830,7 +830,7 @@ typedef double mp_float_t;
 
 // Whether str.center() method provided
 #ifndef MICROPY_PY_BUILTINS_STR_CENTER
-#define MICROPY_PY_BUILTINS_STR_CENTER (0)
+#define MICROPY_PY_BUILTINS_STR_CENTER (1)
 #endif
 
 // Whether str.count() method provided
@@ -850,7 +850,7 @@ typedef double mp_float_t;
 
 // Whether str.splitlines() method provided
 #ifndef MICROPY_PY_BUILTINS_STR_SPLITLINES
-#define MICROPY_PY_BUILTINS_STR_SPLITLINES (0)
+#define MICROPY_PY_BUILTINS_STR_SPLITLINES (1)
 #endif
 
 // Whether to support bytearray object
@@ -934,20 +934,20 @@ typedef double mp_float_t;
 // "Reverse" methods are controlled by
 // MICROPY_PY_REVERSE_SPECIAL_METHODS below.
 #ifndef MICROPY_PY_ALL_SPECIAL_METHODS
-#define MICROPY_PY_ALL_SPECIAL_METHODS (0)
+#define MICROPY_PY_ALL_SPECIAL_METHODS (1)
 #endif
 
 // Whether to support all inplace arithmetic operarion methods
 // (__imul__, etc.)
 #ifndef MICROPY_PY_ALL_INPLACE_SPECIAL_METHODS
-#define MICROPY_PY_ALL_INPLACE_SPECIAL_METHODS (0)
+#define MICROPY_PY_ALL_INPLACE_SPECIAL_METHODS (1)
 #endif
 
 // Whether to support reverse arithmetic operarion methods
 // (__radd__, etc.). Additionally gated by
 // MICROPY_PY_ALL_SPECIAL_METHODS.
 #ifndef MICROPY_PY_REVERSE_SPECIAL_METHODS
-#define MICROPY_PY_REVERSE_SPECIAL_METHODS (0)
+#define MICROPY_PY_REVERSE_SPECIAL_METHODS (1)
 #endif
 
 // Whether to support compile function

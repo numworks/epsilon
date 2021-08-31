@@ -6,7 +6,7 @@ namespace Probability {
 
 using namespace Poincare;
 
-float TStatistic::normalizedDensityFunction(float x) const {
+float TStatistic::canonicalDensityFunction(float x) const {
   assert(m_degreesOfFreedom > 0);
   return StudentLaw::EvaluateAtAbscissa<float>(x, m_degreesOfFreedom);
 }
@@ -30,7 +30,7 @@ float TStatistic::xMax() const {
 }
 
 float TStatistic::yMax() const {
-  return (1 + k_displayTopMarginRatio) * normalizedDensityFunction(0);
+  return (1 + k_displayTopMarginRatio) * canonicalDensityFunction(0);
 }
 
 }  // namespace Probability

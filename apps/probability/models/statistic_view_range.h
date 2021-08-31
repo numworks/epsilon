@@ -25,10 +25,10 @@ private:
   float intervalYMax() const;
   float intervalXMin() const;
   float intervalXMax() const;
-  float normalizedYMin() const;
-  float normalizedYMax() const;
-  float normalizedXMin() const;
-  float normalizedXMax() const;
+  float canonicalYMin() const;
+  float canonicalYMax() const;
+  float canonicalXMin() const;
+  float canonicalXMax() const;
 
   Statistic * m_statistic;
 };

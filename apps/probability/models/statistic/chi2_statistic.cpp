@@ -23,7 +23,7 @@ Poincare::Layout Chi2Statistic::testCriticalValueSymbol() {
           Poincare::VerticalOffsetLayoutNode::Position::Superscript));
 }
 
-float Chi2Statistic::normalizedDensityFunction(float x) const {
+float Chi2Statistic::canonicalDensityFunction(float x) const {
   assert(m_degreesOfFreedom > 0);
   return Chi2Law::EvaluateAtAbscissa(x, m_degreesOfFreedom);
 }
@@ -48,7 +48,7 @@ float Chi2Statistic::xMax() const {
 
 float Chi2Statistic::yMax() const {
   // TODO factor with ChiSquareDistribution
-  float max = m_degreesOfFreedom <= 2 ? 0.5 : normalizedDensityFunction(m_degreesOfFreedom - 1) * 1.2;
+  float max = m_degreesOfFreedom <= 2 ? 0.5 : canonicalDensityFunction(m_degreesOfFreedom - 1) * 1.2;
   return (1 + k_displayTopMarginRatio) * max;
 }
 

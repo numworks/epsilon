@@ -4,7 +4,7 @@
 
 namespace Probability {
 
-float ZStatistic::normalizedDensityFunction(float x) const {
+float ZStatistic::canonicalDensityFunction(float x) const {
   return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, 0, 1);
 }
 
@@ -25,7 +25,7 @@ float ZStatistic::xMax() const {
 }
 
 float ZStatistic::yMax() const {
-  return (1 + k_displayTopMarginRatio) * normalizedDensityFunction(0);
+  return (1 + k_displayTopMarginRatio) * canonicalDensityFunction(0);
 }
 
 }  // namespace Probability

@@ -378,6 +378,15 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
   return m_expression;
 }
 
+Expression NewFunction::Model::expressionClone(const Ion::Storage::Record * record) const {
+  assert(record->fullName() != nullptr);
+  /* A new Expression has to be created at each call (because it might be tempered with after calling) */
+  Expression e = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  assert(ComparisonOperator::IsComparisonOperatorType(e.type()));
+  return e.childAtIndex(1);
+  // TODO Hugo : Maybe perform the substitution with symbol here.
+}
+
 void NewFunction::Model::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
   // TODO Hugo : No need to override this method,
   ExpressionModel::updateNewDataWithExpression(record, expressionToStore, expressionAddress, expressionToStoreSize, previousExpressionSize);

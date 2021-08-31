@@ -17,15 +17,6 @@ void pullRect(KDRect r, KDColor * pixels);
 void pullRectSecure(KDRect r, KDColor * pixels);
 bool waitForVBlank();
 
-/* TODO Hugo : Implement SVC for all the methods that are exposed to the
- * userland and that are interacting directly with the screen driver :
- * waitForVBlank : Reading pins and using time, should it be implemented in SVC?
- * displayUniformTilingSize10 : Calling functions handled in SVC -> no need
- * displayColoredTilingSize10 : Calling functions handled in SVC -> no need
- * POSTPushMulticolor : Implemented in SVC, see TODO in svc.cpp :
- *     TODO Hugo : [Important]Fix crash on device when this row is uncommented
- */
-
 // For Power On Self tests
 void POSTPushMulticolor(int rootNumberTiles, int tileSize);
 

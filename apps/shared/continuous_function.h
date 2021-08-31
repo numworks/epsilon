@@ -72,8 +72,7 @@ public:
   // expressionReduced returns equations solutions in y ( matrix if multiple solutions) // TODO Hugo : parent implementation should be fine
   // Poincare::Expression expressionReduced(Poincare::Context * context) const override;
   // expressionReduced returns expressionReduced derivative(s)
-  // TODO Hugo : Implement
-  // Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
+  Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
   Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
   PlotType plotType() const { return recordData()->plotType(); }
   void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
@@ -95,7 +94,7 @@ public:
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
-  double approximateDerivative(double x, Poincare::Context * context) const;
+  double approximateDerivative(double x, Poincare::Context * context, int i = 0) const;
 
   int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
 
@@ -143,10 +142,12 @@ private:
   class Model : public ExpressionModel {
     // TODO Hugo : Add derivative
   public:
-    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined) {}
+    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined), m_expressionDerivate() {}
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
     Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
+    Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    void tidy() const override;
     bool hasTwoCurves() const { return m_hasTwoCurves; }
   // private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
@@ -156,6 +157,7 @@ private:
     mutable Poincare::ExpressionNode::Type m_equationSymbol;
     // TODO Hugo : Avoid this
     mutable PlotType m_plotType;
+    mutable Poincare::Expression m_expressionDerivate;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel * model() const override { return &m_model; }
@@ -163,12 +165,14 @@ private:
   // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer {
   public:
-    RecordDataBuffer(KDColor color) : m_domain(-INFINITY, INFINITY), m_color(color), m_active(true), m_plotType(PlotType::Undefined), m_equationSymbol(Poincare::ExpressionNode::Type::Equal)  {}
+    RecordDataBuffer(KDColor color) : m_domain(-INFINITY, INFINITY), m_color(color), m_active(true), m_displayDerivative(false), m_plotType(PlotType::Undefined), m_equationSymbol(Poincare::ExpressionNode::Type::Equal)  {}
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
+    bool displayDerivative() const { return m_displayDerivative; }
+    void setDisplayDerivative(bool display) { m_displayDerivative = display; }
     Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
     void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) { m_equationSymbol = equationSymbol; }
     // TODO Hugo : Fix Turn on/off menu
@@ -182,6 +186,7 @@ private:
     Range1D m_domain;
     uint16_t m_color;
     bool m_active;
+    bool m_displayDerivative;
     PlotType m_plotType;
     Poincare::ExpressionNode::Type m_equationSymbol;
   };

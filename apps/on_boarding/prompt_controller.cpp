@@ -8,7 +8,7 @@ namespace OnBoarding {
 
 PromptController::MessageViewWithSkip::MessageViewWithSkip(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages) :
   MessageView(messages, colors, numberOfMessages),
-  m_skipView(KDFont::SmallFont, I18n::Message::Skip, 1.0f, 0.5f),
+  m_skipView(KDFont::SmallFont, I18n::Message::Skip, KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER),
   m_okView()
 {
 }

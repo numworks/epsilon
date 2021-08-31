@@ -37,7 +37,8 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder 
 ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(), I18n::Message::ConsolePrompt, 0, 0.5),
+  m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(),
+               I18n::Message::ConsolePrompt, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER),
   m_scrollableView(this),
   m_line()
 {

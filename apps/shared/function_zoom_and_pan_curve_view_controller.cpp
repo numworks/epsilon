@@ -114,7 +114,7 @@ FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView()
     m_legends[i].setFont(ContentView::k_legendFont);
     m_legends[i].setMessage(messages[i]);
     m_legends[i].setBackgroundColor(BackgroundColor());
-    m_legends[i].setAlignment(0.5f, 0.5f);
+    m_legends[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
   }
   KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Up, KeyView::Type::Down, KeyView::Type::Left, KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
   for (int i = 0; i < k_numberOfTokens ; i++) {

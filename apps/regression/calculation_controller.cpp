@@ -29,7 +29,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  m_r2TitleCell.setAlignment(1.0f, 0.5f);
+  m_r2TitleCell.setAlignment(KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_columnTitleCells[i].setParentResponder(&m_selectableTableView);
   }
@@ -138,7 +138,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       return;
     }
     EvenOddMessageTextCell * myCell = static_cast<EvenOddMessageTextCell *>(cell);
-    myCell->setAlignment(1.0f, 0.5f);
+    myCell->setAlignment(KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER);
     if (j <= k_regressionCellIndex) {
       I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};
       myCell->setMessage(titles[j-1]);

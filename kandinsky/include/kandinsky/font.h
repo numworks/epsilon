@@ -39,6 +39,12 @@ public:
   static constexpr const KDFont * LargeFont = &privateLargeFont;
   static constexpr const KDFont * SmallFont = &privateSmallFont;
 
+  static constexpr float ALIGN_LEFT = 0.;
+  static constexpr float ALIGN_RIGHT = 1.;
+  static constexpr float ALIGN_CENTER = 0.5;
+  static constexpr float ALIGN_TOP = 0.;
+  static constexpr float ALIGN_BOTTOM = 1.;
+
   static bool CanBeWrittenWithGlyphs(const char * text);
 
   KDSize stringSize(const char * text, int textLength = -1) const {

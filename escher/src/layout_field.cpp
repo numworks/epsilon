@@ -15,14 +15,18 @@ using namespace Poincare;
 namespace Escher {
 
 LayoutField::ContentView::ContentView() :
-  m_cursor(),
-  m_insertionCursor(),
-  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite, &m_selectionStart, &m_selectionEnd),
-  m_cursorView(),
-  m_selectionStart(),
-  m_selectionEnd(),
-  m_isEditing(false)
-{
+    m_cursor(),
+    m_insertionCursor(),
+    m_expressionView(KDFont::ALIGN_LEFT,
+                     KDFont::ALIGN_CENTER,
+                     KDColorBlack,
+                     KDColorWhite,
+                     &m_selectionStart,
+                     &m_selectionEnd),
+    m_cursorView(),
+    m_selectionStart(),
+    m_selectionEnd(),
+    m_isEditing(false) {
   clearLayout();
 }
 

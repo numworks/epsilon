@@ -9,10 +9,10 @@ namespace Probability {
 
 IntervalConclusionView::IntervalConclusionView() {
   m_messageView.setMessage(I18n::Message::ConfidenceInterval);
-  m_messageView.setAlignment(0.5f, 0.5f);
+  m_messageView.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
   m_messageView.setBackgroundColor(Escher::Palette::WallScreen);
   m_intervalView.setFont(KDFont::LargeFont);
-  m_intervalView.setAlignment(0.5f, 0.5f);
+  m_intervalView.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
   m_intervalView.setBackgroundColor(Escher::Palette::WallScreen);
 }
 

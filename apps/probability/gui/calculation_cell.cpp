@@ -10,11 +10,12 @@ using namespace Escher;
 
 namespace Probability {
 
-CalculationCell::CalculationCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
-  m_text(KDFont::LargeFont, I18n::Message::Default, 0.5f, 0.5f),
-  m_calculation(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_isResponder(true)
-{
+CalculationCell::CalculationCell(Responder * parentResponder,
+                                 InputEventHandlerDelegate * inputEventHandlerDelegate,
+                                 TextFieldDelegate * textFieldDelegate) :
+    m_text(KDFont::LargeFont, I18n::Message::Default, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER),
+    m_calculation(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
+    m_isResponder(true) {
 }
 
 Responder * CalculationCell::responder() {
@@ -35,10 +36,9 @@ void CalculationCell::setHighlighted(bool highlight) {
 
 KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-  return KDSize(
-    2 * k_margin + textSize.width() + calculationCellWidth() + 2 * Escher::Metric::CellSeparatorThickness,
-    KDFont::LargeFont->glyphSize().height()
-  );
+  return KDSize(2 * k_margin + textSize.width() + calculationCellWidth() +
+                    2 * Escher::Metric::CellSeparatorThickness,
+                KDFont::LargeFont->glyphSize().height());
 }
 
 void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -94,4 +94,4 @@ KDCoordinate CalculationCell::calculationCellWidth() const {
   return std::min(maxTextFieldWidth, std::max(minTextFieldWidth, calculationCellWidth));
 }
 
-}
+}  // namespace Probability

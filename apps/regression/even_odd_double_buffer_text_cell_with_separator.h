@@ -9,7 +9,9 @@ namespace Regression {
 
 class EvenOddDoubleBufferTextCellWithSeparator : public Escher::EvenOddCell, public Escher::Responder {
 public:
-  EvenOddDoubleBufferTextCellWithSeparator(Escher::Responder * parentResponder = nullptr, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f);
+  EvenOddDoubleBufferTextCellWithSeparator(Escher::Responder * parentResponder = nullptr,
+                                           float horizontalAlignment = KDFont::ALIGN_RIGHT,
+                                           float verticalAlignment = KDFont::ALIGN_CENTER);
   const char * text() const override;
   const char * firstText() const;
   const char * secondText() const;

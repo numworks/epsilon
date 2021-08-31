@@ -13,13 +13,13 @@ void ModalViewEmptyController::ModalViewEmptyView::initMessageViews() {
     MessageTextView * message = messageTextViewAtIndex(i);
     message->setFont(k_font);
     message->setBackgroundColor(k_backgroundColor);
-    float verticalAlignment = 0.5f;
+    float verticalAlignment = KDFont::ALIGN_CENTER;
     if (i == 0) {
-      verticalAlignment = 1.0f;
+      verticalAlignment = KDFont::ALIGN_TOP;
     } else if (i == numberOfMessageViews - 1) {
-      verticalAlignment = 0.0f;
+      verticalAlignment = KDFont::ALIGN_BOTTOM;
     }
-    message->setAlignment(0.5f, verticalAlignment);
+    message->setAlignment(KDFont::ALIGN_CENTER, verticalAlignment);
   }
 }
 

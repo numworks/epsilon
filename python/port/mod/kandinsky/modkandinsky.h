@@ -11,3 +11,4 @@ mp_obj_t modkandinsky_fill_circle(size_t n_args, const mp_obj_t *args);
 mp_obj_t modkandinsky_fill_polygon(size_t n_args, const mp_obj_t *args);
 mp_obj_t modkandinsky_wait_vblank();
 mp_obj_t modkandinsky_get_keys();
+mp_obj_t modkandinsky_get_palette();

@@ -429,6 +429,13 @@ Q(large_font)
 Q(small_font)
 Q(wait_vblank)
 Q(get_keys)
+Q(get_palette)
+
+Q(PrimaryText)
+Q(SecondaryText)
+Q(AccentText)
+Q(Toolbar)
+Q(HomeBackground)
 
 // Keys QSTRs
 Q(left)

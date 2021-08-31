@@ -7,7 +7,7 @@
 #include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/stack_view_controller.h>
 #include <ion/storage.h>
-#include "../new_function.h"
+#include "../../shared/new_function.h"
 
 namespace Graph {
 
@@ -24,7 +24,7 @@ public:
   TELEMETRY_ID("TypeParameter");
 
   // MemoizedListViewDataSource
-  int numberOfRows() const override { return 1 + ((NewFunction)m_record).detailsTotal(); }
+  int numberOfRows() const override { return 1 + ((Shared::NewFunction)m_record).detailsTotal(); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::MessageTableCellWithMessageWithBuffer * reusableCell(int index, int type) override;

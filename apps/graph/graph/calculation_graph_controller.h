@@ -5,7 +5,7 @@
 #include "banner_view.h"
 #include "../../shared/simple_interactive_curve_view_controller.h"
 #include "../../shared/function_banner_delegate.h"
-#include "../continuous_function_store.h"
+#include "../../shared/continuous_function_store.h"
 
 namespace Graph {
 
@@ -23,7 +23,7 @@ protected:
   void reloadBannerView() override;
   int numberOfSignificantDigits() const override { return Poincare::Preferences::LargeNumberOfSignificantDigits; }
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
-  ContinuousFunctionStore * functionStore() const;
+  Shared::ContinuousFunctionStore * functionStore() const;
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;

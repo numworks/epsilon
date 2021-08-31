@@ -38,7 +38,7 @@ app_graph_src = $(addprefix apps/graph/,\
 app_graph_src += $(app_graph_test_src)
 apps_src += $(app_graph_src)
 
-i18n_files += $(call i18n_with_universal_for,graph/base)
+i18n_files += $(call i18n_without_universal_for,graph/base)
 
 # tests_src += $(addprefix apps/graph/test/,\
 #   caching.cpp \

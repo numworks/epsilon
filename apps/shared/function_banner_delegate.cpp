@@ -6,8 +6,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, Graph::ContinuousFunctionStore * functionStore, Poincare::Context * context) {
-  ExpiringPointer<Graph::NewFunction> function = functionStore->modelForRecord(record);
+void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, ContinuousFunctionStore * functionStore, Poincare::Context * context) {
+  ExpiringPointer<NewFunction> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
   int numberOfChar = 0;
   numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, k_textBufferSize-numberOfChar-1);
@@ -15,9 +15,9 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  assert(!function->isAlongX() || function->plotType() == Graph::NewFunction::PlotType::VerticalLine || cursor->x() == cursor->t());
+  assert(!function->isAlongX() || function->plotType() == NewFunction::PlotType::VerticalLine || cursor->x() == cursor->t());
   // TODO Hugo : Use isAlongX() instead if previous assert never triggers.
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(function->plotType() == Graph::NewFunction::PlotType::VerticalLine ? cursor->x() : cursor->t(), buffer, k_textBufferSize, numberOfSignificantDigits());
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(function->plotType() == NewFunction::PlotType::VerticalLine ? cursor->x() : cursor->t(), buffer, k_textBufferSize, numberOfSignificantDigits());
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
   bannerView()->abscissaValue()->setText(buffer);

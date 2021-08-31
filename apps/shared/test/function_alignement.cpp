@@ -1,6 +1,6 @@
 #include <quiz.h>
-#include "../../graph/new_function.h"
-#include "../../graph/continuous_function_store.h"
+#include "../new_function.h"
+#include "../continuous_function_store.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
 
@@ -22,11 +22,11 @@ void interactWithRecordMember(SequenceStore * store, Ion::Storage::Record rec) {
   interactWithBaseRecordMember<Sequence>(seq);
 }
 
-void interactWithRecordMember(Graph::ContinuousFunctionStore * store, Ion::Storage::Record rec) {
-  Graph::NewFunction * fct = store->modelForRecord(rec).pointer();
+void interactWithRecordMember(ContinuousFunctionStore * store, Ion::Storage::Record rec) {
+  NewFunction * fct = store->modelForRecord(rec).pointer();
   // Setting m_min from record member m_domain, which has a 2-byte alignment
   fct->setTMin(3.0f);
-  interactWithBaseRecordMember<Graph::NewFunction>(fct);
+  interactWithBaseRecordMember<NewFunction>(fct);
 }
 
 template<class T>
@@ -74,7 +74,7 @@ QUIZ_CASE(alignment_handling) {
    * differently-aligned objects - is performed (if storage/record
    * implementations change for instance). */
   testAlignmentHandlingFor<SequenceStore>();
-  testAlignmentHandlingFor<Graph::ContinuousFunctionStore>();
+  testAlignmentHandlingFor<ContinuousFunctionStore>();
 }
 
 }

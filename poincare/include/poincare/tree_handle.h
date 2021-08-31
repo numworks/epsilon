@@ -4,10 +4,6 @@
 #include <poincare/tree_pool.h>
 #include <initializer_list>
 
-namespace Shared {
-  class ContinuousFunction;
-}
-
 namespace Poincare {
 /* TODO: implement an iterator over the children, so we can use "for (TreeHandle
  * c : children)" instead of a for loop over the child index. This should be
@@ -23,7 +19,6 @@ namespace Poincare {
  * therefore needs to be implemented in the Handle rather than the Node.
  */
 class TreeHandle {
-  friend class ::Shared::ContinuousFunction;
   friend class TreeNode;
   friend class TreePool;
 public:

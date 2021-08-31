@@ -13,12 +13,12 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
 #include <poincare/comparison_operator.h>
-#include "../shared/poincare_helpers.h"
+#include "poincare_helpers.h"
 #include <algorithm>
 
 using namespace Poincare;
 
-namespace Graph {
+namespace Shared {
 
 constexpr char NewFunction::k_unknownName[2];
 constexpr char NewFunction::k_ordinateName[2];
@@ -307,8 +307,8 @@ Expression NewFunction::Model::expressionEquation(const Ion::Storage::Record * r
     * same function. So we need to keep a valid result while executing
     * 'Simplify'. Thus, we use a temporary expression. */
   Expression tempExpression = result.clone();
-  Shared::PoincareHelpers::Reduce(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
-  // Shared::PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+  PoincareHelpers::Reduce(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  // PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   // simplify might return an uninitialized Expression if interrupted
   if (!tempExpression.isUninitialized()) {
     result = tempExpression;
@@ -373,7 +373,7 @@ Expression NewFunction::Model::expressionReduced(const Ion::Storage::Record * re
       }
     }
     // Reduce it to optimize approximations
-    Shared::PoincareHelpers::Reduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    PoincareHelpers::Reduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   }
   return m_expression;
 }
@@ -449,7 +449,7 @@ void NewFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * con
     Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
     Expression lineExpression = expressionReduced(context).clone();
     // Reduce to another target for coefficient analysis.
-    Shared::PoincareHelpers::Reduce(&lineExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    PoincareHelpers::Reduce(&lineExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
     int d = lineExpression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
     if (d == 1) {
       s_tempLine[0] = coefficients[1].approximateToScalar<double>(context, complexFormat,
@@ -516,16 +516,16 @@ int NewFunction::printValue(double cursorT, double cursorX, double cursorY, char
   if (type == PlotType::Parametric) {
     int result = 0;
     result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
-    result += Shared::PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
+    result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
     result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
-    result += Shared::PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
+    result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
     result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
     return result;
   }
   if (type == PlotType::Polar) {
-    return Shared::PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
+    return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
   }
-  return Shared::PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
+  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }
 
 bool NewFunction::shouldClipTRangeToXRange() const {
@@ -681,18 +681,18 @@ Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * cont
       /* TODO Hugo : Ensure the roots are already sorted. It should be possible
        * once handling the sign of the coefficient of y^2. */
       if (i == 0) {
-        return Coordinate2D<T>(t, std::max(Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
+        return Coordinate2D<T>(t, std::max(PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
       } else {
-        return Coordinate2D<T>(t, std::min(Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
+        return Coordinate2D<T>(t, std::min(PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
       }
     } else {
       assert(i == 0);
     }
     if (type == PlotType::VerticalLine) {
       // Invert x and y with vertical lines so it can be scrolled vertically
-      return Coordinate2D<T>(Shared::PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context), t);
+      return Coordinate2D<T>(PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context), t);
     }
-    return Coordinate2D<T>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
+    return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
   }
   if (e.type() == ExpressionNode::Type::Dependency) {
     e = e.childAtIndex(0);
@@ -701,23 +701,23 @@ Coordinate2D<T> NewFunction::templatedApproximateAtParameter(T t, Context * cont
   assert(static_cast<Matrix&>(e).numberOfRows() == 2);
   assert(static_cast<Matrix&>(e).numberOfColumns() == 1);
   return Coordinate2D<T>(
-      Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context),
-      Shared::PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
+      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context),
+      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
 
 Coordinate2D<double> NewFunction::nextMinimumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
   // TODO Hugo : Re-check
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Shared::PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> NewFunction::nextMaximumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
   // TODO Hugo : Re-check
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Shared::PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> NewFunction::nextRootFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
   // TODO Hugo : Re-check
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(Shared::PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
+  return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> NewFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
@@ -732,7 +732,7 @@ Coordinate2D<double> NewFunction::nextIntersectionFrom(double start, double max,
   if (start == max) {
     return NAN;
   }
-  return Shared::PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, max, context, e, relativePrecision, minimalStep, maximalStep);
+  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, max, context, e, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> NewFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
@@ -762,7 +762,7 @@ Expression NewFunction::sumBetweenBounds(double start, double end, Context * con
 }
 
 Ion::Storage::Record::ErrorStatus NewFunction::setContent(const char * c, Poincare::Context * context) {
-  Ion::Storage::Record::ErrorStatus error = Shared::ExpressionModelHandle::setContent(c, context);
+  Ion::Storage::Record::ErrorStatus error = ExpressionModelHandle::setContent(c, context);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     bool previousAlongXStatus = isAlongX();
     updatePlotType(Preferences::AngleUnit::Radian, context);

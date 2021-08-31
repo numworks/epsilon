@@ -16,7 +16,7 @@ public:
   bool hasDegreeOfFreedom() override { return true; }
   float degreeOfFreedom() override { return m_degreesOfFreedom; }
 
-  float normalizedDensityFunction(float x) const override;
+  float canonicalDensityFunction(float x) const override;
   float cumulativeNormalizedDistributionFunction(float x) const override;
   float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
 

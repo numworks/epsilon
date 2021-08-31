@@ -5,19 +5,19 @@
 namespace Probability {
 
 float StatisticViewRange::yMin() const {
-  return isInTestSubapp() ? normalizedYMin() : intervalYMin();
+  return isInTestSubapp() ? canonicalYMin() : intervalYMin();
 }
 
 float StatisticViewRange::yMax() const {
-  return isInTestSubapp() ? normalizedYMax() : intervalYMax();
+  return isInTestSubapp() ? canonicalYMax() : intervalYMax();
 }
 
 float StatisticViewRange::xMin() const {
-  return isInTestSubapp() ? normalizedXMin() : intervalXMin();
+  return isInTestSubapp() ? canonicalXMin() : intervalXMin();
 }
 
 float StatisticViewRange::xMax() const {
-  return isInTestSubapp() ? normalizedXMax() : intervalXMax();
+  return isInTestSubapp() ? canonicalXMax() : intervalXMax();
 }
 
 bool StatisticViewRange::isInTestSubapp() const {
@@ -25,34 +25,34 @@ bool StatisticViewRange::isInTestSubapp() const {
 }
 
 float StatisticViewRange::intervalYMin() const {
-  return normalizedYMin();
+  return canonicalYMin();
 }
 
 float StatisticViewRange::intervalYMax() const {
-  return normalizedYMax();
+  return canonicalYMax();
 }
 
 float StatisticViewRange::intervalXMin() const {
-  return m_statistic->estimate() + normalizedXMin() * m_statistic->standardError();
+  return m_statistic->estimate() + canonicalXMin() * m_statistic->standardError();
 }
 
 float StatisticViewRange::intervalXMax() const {
-  return m_statistic->estimate() + normalizedXMax() * m_statistic->standardError();
+  return m_statistic->estimate() + canonicalXMax() * m_statistic->standardError();
 }
 
-float StatisticViewRange::normalizedYMin() const {
+float StatisticViewRange::canonicalYMin() const {
   return m_statistic->yMin();
 }
 
-float StatisticViewRange::normalizedYMax() const {
+float StatisticViewRange::canonicalYMax() const {
   return m_statistic->yMax();
 }
 
-float StatisticViewRange::normalizedXMin() const {
+float StatisticViewRange::canonicalXMin() const {
   return m_statistic->xMin();
 }
 
-float StatisticViewRange::normalizedXMax() const {
+float StatisticViewRange::canonicalXMax() const {
   return m_statistic->xMax();
 }
 

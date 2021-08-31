@@ -26,9 +26,9 @@ public:
   virtual void computeTest() = 0;
   virtual void computeInterval() = 0;
 
-  virtual float normalizedDensityFunction(float x) const = 0;
+  virtual float canonicalDensityFunction(float x) const = 0;
   virtual float densityFunction(float x) {
-    return normalizedDensityFunction((x - estimate()) / standardError());
+    return canonicalDensityFunction((x - estimate()) / standardError());
   };
   virtual float cumulativeNormalizedDistributionFunction(float x) const = 0;
   virtual float cumulativeNormalizedInverseDistributionFunction(float proba) const = 0;

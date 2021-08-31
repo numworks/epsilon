@@ -41,14 +41,14 @@ PopUpController::ContentView::ContentView(Responder * parentResponder, int numbe
       }, this),
     KDFont::SmallFont),
   m_okButton(this, okMessage, okInvocation, KDFont::SmallFont),
-  m_warningTextView(KDFont::SmallFont, warningMessage, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_warningTextView(KDFont::SmallFont, warningMessage, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, KDColorWhite, KDColorBlack),
   m_numberOfLines(numberOfLines),
   m_messageTextViews{}
 {
   assert(m_numberOfLines <= k_maxNumberOfLines && m_numberOfLines >= 0);
   for (int i = 0; i < m_numberOfLines; i++) {
     m_messageTextViews[i].setFont(KDFont::SmallFont);
-    m_messageTextViews[i].setAlignment(0.5f, 0.5f);
+    m_messageTextViews[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
     m_messageTextViews[i].setBackgroundColor(KDColorBlack);
     m_messageTextViews[i].setTextColor(KDColorWhite);
   }

@@ -19,10 +19,17 @@ namespace Escher {
 
 class TextField : public TextInput, public EditableField {
 public:
-  TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
-    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate = nullptr,
-    const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
-    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  TextField(Responder * parentResponder,
+            char * textBuffer,
+            size_t textBufferSize,
+            size_t draftTextBufferSize,
+            InputEventHandlerDelegate * inputEventHandlerDelegate,
+            TextFieldDelegate * delegate = nullptr,
+            const KDFont * font = KDFont::LargeFont,
+            float horizontalAlignment = KDFont::ALIGN_LEFT,
+            float verticalAlignment = KDFont::ALIGN_CENTER,
+            KDColor textColor = KDColorBlack,
+            KDColor backgroundColor = KDColorWhite);
   void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);

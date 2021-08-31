@@ -3,11 +3,22 @@
 
 namespace Escher {
 
-MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, I18n::Message message) :
-  Responder(parentResponder),
-  MessageTableCell(message),
-  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::maxBufferSize(), inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 1.0f, 0.5f, KDColorBlack)
-{
+MessageTableCellWithEditableText::MessageTableCellWithEditableText(
+    Responder * parentResponder,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * textFieldDelegate,
+    I18n::Message message) :
+    Responder(parentResponder),
+    MessageTableCell(message),
+    m_textField(this,
+                m_textBody,
+                Poincare::PrintFloat::k_maxFloatCharSize,
+                TextField::maxBufferSize(),
+                inputEventHandlerDelegate,
+                textFieldDelegate,
+                KDFont::LargeFont,
+                KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER,
+                KDColorBlack) {
   m_textBody[0] = '\0';
 }
 

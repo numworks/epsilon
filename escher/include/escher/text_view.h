@@ -12,14 +12,17 @@ namespace Escher {
 
 class TextView : public View {
 public:
-  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) :
-    View(),
-    m_font(font),
-    m_horizontalAlignment(horizontalAlignment),
-    m_verticalAlignment(verticalAlignment),
-    m_textColor(textColor),
-    m_backgroundColor(backgroundColor)
-  {}
+  TextView(const KDFont * font = KDFont::LargeFont,
+           float horizontalAlignment = KDFont::ALIGN_LEFT,
+           float verticalAlignment = KDFont::ALIGN_TOP,
+           KDColor textColor = KDColorBlack,
+           KDColor backgroundColor = KDColorWhite) :
+      View(),
+      m_font(font),
+      m_horizontalAlignment(horizontalAlignment),
+      m_verticalAlignment(verticalAlignment),
+      m_textColor(textColor),
+      m_backgroundColor(backgroundColor) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);

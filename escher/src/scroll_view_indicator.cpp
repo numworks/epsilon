@@ -109,8 +109,8 @@ void ScrollViewArrow::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), m_backgroundColor);
   char arrowString[2] = {m_arrow, 0}; // TODO Change when code points
   ctx->alignAndDrawString(arrowString, KDPointZero, m_frame.size(),
-    (m_arrow == Top || m_arrow == Bottom) * 0.5f,
-    (m_arrow == Left || m_arrow == Right) * 0.5f,
+    (m_arrow == Top || m_arrow == Bottom) ? KDFont::ALIGN_CENTER : KDFont::ALIGN_LEFT,
+    (m_arrow == Left || m_arrow == Right) ? KDFont::ALIGN_CENTER : KDFont::ALIGN_TOP,
     KDFont::LargeFont, m_color, m_backgroundColor, m_visible);
 }
 

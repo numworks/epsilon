@@ -8,7 +8,7 @@ namespace Regression {
 class ColumnTitleCell : public EvenOddDoubleBufferTextCellWithSeparator {
 public:
   ColumnTitleCell(Escher::Responder * parentResponder = nullptr) :
-    EvenOddDoubleBufferTextCellWithSeparator(parentResponder, 0.5f, 0.5f),
+    EvenOddDoubleBufferTextCellWithSeparator(parentResponder, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER),
     m_functionColor(Escher::Palette::Red)
   {
   }

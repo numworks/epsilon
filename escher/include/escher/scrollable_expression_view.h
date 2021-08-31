@@ -9,7 +9,13 @@ namespace Escher {
 
 class ScrollableExpressionView : public ScrollableView, public ScrollViewDataSource {
 public:
-  ScrollableExpressionView(Responder * parentResponder, KDCoordinate leftRightMargin, KDCoordinate topBottomMargin, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  ScrollableExpressionView(Responder * parentResponder,
+                           KDCoordinate leftRightMargin,
+                           KDCoordinate topBottomMargin,
+                           float horizontalAlignment = KDFont::ALIGN_LEFT,
+                           float verticalAlignment = KDFont::ALIGN_CENTER,
+                           KDColor textColor = KDColorBlack,
+                           KDColor backgroundColor = KDColorWhite);
   Poincare::Layout layout() const;
   void setLayout(Poincare::Layout layout);
   void setBackgroundColor(KDColor backgroundColor) override;

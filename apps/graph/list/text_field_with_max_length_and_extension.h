@@ -15,8 +15,8 @@ public:
       Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
       Escher::TextFieldDelegate * delegate = nullptr,
       const KDFont * size = KDFont::LargeFont,
-      float horizontalAlignment = 0.0f,
-      float verticalAlignment = 0.5f,
+      float horizontalAlignment = KDFont::ALIGN_LEFT,
+      float verticalAlignment = KDFont::ALIGN_CENTER,
       KDColor textColor = KDColorBlack,
       KDColor backgroundColor = KDColorWhite) :
     TextFieldWithExtension(extensionLength, parentResponder, textBuffer, textBufferSize, draftTextBufferSize, inputEventHandlerDelegate, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor) {}

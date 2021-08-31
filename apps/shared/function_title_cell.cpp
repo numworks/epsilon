@@ -55,7 +55,7 @@ float FunctionTitleCell::verticalAlignment() const {
       0.0f,
       std::min(
         1.0f,
-        m_baseline < 0 ? 0.5f : verticalAlignmentGivenExpressionBaselineAndRowHeight(m_baseline, subviewFrame().height())));
+        m_baseline < 0 ? KDFont::ALIGN_CENTER : verticalAlignmentGivenExpressionBaselineAndRowHeight(m_baseline, subviewFrame().height())));
 }
 
 }

@@ -7,7 +7,7 @@ using namespace Escher;
 
 MathVariableBoxEmptyController::MathVariableBoxEmptyView::MathVariableBoxEmptyView() :
   ModalViewEmptyView(),
-  m_layoutExample(0.5f, 0.5f, KDColorBlack, Palette::WallScreen)
+  m_layoutExample(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, KDColorBlack, Palette::WallScreen)
 {
   initMessageViews();
 }

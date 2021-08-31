@@ -14,9 +14,9 @@ namespace Probability {
 
 TestConclusionView::TestConclusionView(Statistic * statistic) : m_statistic(statistic) {
   m_textView1.setBackgroundColor(Escher::Palette::WallScreen);
-  m_textView1.setAlignment(0.5f, 0.5f);
+  m_textView1.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
   m_textView2.setBackgroundColor(Escher::Palette::WallScreen);
-  m_textView2.setAlignment(0.5f, 0.5f);
+  m_textView2.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
   m_icon.setImage(ImageStore::TestSuccess);
 }
 

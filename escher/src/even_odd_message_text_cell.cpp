@@ -5,7 +5,7 @@ namespace Escher {
 
 EvenOddMessageTextCell::EvenOddMessageTextCell(const KDFont * font) :
   EvenOddCell(),
-  m_messageTextView(font, (I18n::Message)0, 0.5f, 0.5f)
+  m_messageTextView(font, (I18n::Message)0, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER)
 {
 }
 

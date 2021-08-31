@@ -11,8 +11,9 @@ using namespace Escher;
 
 TitleBarView::TitleBarView() :
   View(),
-  m_titleView(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
-  m_preferenceView(KDFont::SmallFont, 1.0f, 0.5, KDColorWhite, Palette::YellowDark)
+  m_titleView(KDFont::SmallFont, I18n::Message::Default, KDFont::ALIGN_CENTER,
+              KDFont::ALIGN_CENTER, KDColorWhite, Palette::YellowDark),
+  m_preferenceView(KDFont::SmallFont, KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER, KDColorWhite, Palette::YellowDark)
 {
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }

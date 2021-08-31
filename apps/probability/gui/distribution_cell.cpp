@@ -6,7 +6,12 @@ namespace Probability {
 
 DistributionCell::DistributionCell() :
     TableCell(),
-    m_messageView(KDFont::LargeFont, (I18n::Message)0, 0, 0.5, KDColorBlack, KDColorWhite) {
+    m_messageView(KDFont::LargeFont,
+                  (I18n::Message)0,
+                  KDFont::ALIGN_LEFT,
+                  KDFont::ALIGN_CENTER,
+                  KDColorBlack,
+                  KDColorWhite) {
 }
 
 void DistributionCell::reloadCell() {

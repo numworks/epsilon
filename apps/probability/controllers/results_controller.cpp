@@ -71,7 +71,12 @@ bool Probability::ResultsController::buttonAction() {
 
 Probability::ResultsView::ContentView::ContentView(Escher::SelectableTableView * table,
                                                    I18n::Message titleMessage) :
-    m_title(KDFont::SmallFont, titleMessage, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
+    m_title(KDFont::SmallFont,
+            titleMessage,
+            KDFont::ALIGN_CENTER,
+            KDFont::ALIGN_CENTER,
+            Palette::GrayDark,
+            Palette::WallScreen),
     m_table(table) {
   m_table->setMargins(k_marginAroundTitle, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }

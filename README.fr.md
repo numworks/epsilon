@@ -14,13 +14,13 @@
 Upsilon est un fork d'Omega, un fork d'Epsilon, l'OS de Numworks tournant sur les calculatrices du même nom, qui apporte beaucoup de fonctionnalités en plus, mais qui fut archivé et fermé pour des raisons légales après un changement de politique de Numworks. Upsilon est fait pour ceux qui aimeraient voir un futur pour les OS créées par les utilisateurs pour Numworks, même après l'arrèt du projet initial.
 
 ### Quelques fonctionnalités supplémentaires
-- RDes améliorations du module python Kandinsky
+- Un module python kandinsky amélioré
 - Un support pour fonds d'écrans personnalisés
 - Des applications externes
-- Des thèmes
-- Des améliorations pour python
-- Un tableau périodique légèrement modifié
-- L'utilisation du signe "="
+- Un thème Upsilon
+- La surcharge des opérateurs en python
+- Un tableau périodique légèrement amélioré
+- L'utilisation possible du signe "=" dans les calculs
 - *Ainsi que tout ce qui a été ajouté sur Omega, et bien plus...* [Changelogs complets d'Omega](https://github.com/Omega-Numworks/Omega/wiki/Changelog) | [Fonctionnalités principales d'Omega & captures d'écran](https://github.com/Omega-Numworks/Omega/wiki/Main-features).
 
 ## Installation

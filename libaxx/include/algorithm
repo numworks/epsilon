@@ -1,6 +1,8 @@
 #ifndef LIBAXX_ALGORITHM
 #define LIBAXX_ALGORITHM
 
+#include <utility>
+
 namespace std {
 
 template<class T>
@@ -11,6 +13,13 @@ inline const T & min(const T & a, const T & b ) {
 template<class T>
 inline const T & max(const T & a, const T & b ) {
   return (b > a) ? b : a;
+}
+
+template< class T >
+void swap( T& a, T& b ) {
+  T temp = std::move(a);
+  a = std::move(b);
+  b = std::move(temp);
 }
 
 }

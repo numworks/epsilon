@@ -28,6 +28,7 @@ public:
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
+  void drawAntialiasedLine(KDPoint p1, KDPoint p2, KDColor c, KDColor background);
 
   // Rect
   void fillRect(KDRect rect, KDColor color);

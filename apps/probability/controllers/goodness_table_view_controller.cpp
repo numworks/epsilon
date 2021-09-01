@@ -40,7 +40,7 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   int index = 2 * (m_inputTableView.selectedRow() - 1) + selectedColumn;
   m_statistic->setParamAtIndex(index, p);
   if (m_inputTableView.selectedRow() == m_inputTableView.numberOfRows() - 1 &&
-      m_inputTableView.numberOfRows() < GoodnessStatistic::k_maxNumberOfRows) {
+      m_inputTableView.numberOfRows() <= GoodnessStatistic::k_maxNumberOfRows) {
     m_inputTableView.recomputeNumberOfRows();
   }
 

@@ -12,6 +12,7 @@ HomogeneityStatistic::HomogeneityStatistic() {
 }
 
 void HomogeneityStatistic::setParameterAtPosition(int row, int column, float value) {
+  assert(index2DToIndex(row, column) < indexOfThreshold());
   setParamAtIndex(index2DToIndex(row, column), value);
 }
 

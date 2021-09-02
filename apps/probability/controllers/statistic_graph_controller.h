@@ -21,7 +21,8 @@ public:
   bool shouldPositionLegendLeft() override;
 
 private:
-  constexpr static int k_titleBufferSize = 30;
+  constexpr static int k_titleBufferSize = sizeof("z= p-value=") +
+                                           Constants::k_shortFloatNumberOfChars * 2;
   char m_titleBuffer[k_titleBufferSize];
   StatisticGraphView m_graphView;
   StatisticViewRange m_range;

@@ -55,7 +55,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
   }
   m_table.reloadCellAtLocation(column, row);
   moveSelectionForEvent(event, &row, &column);
-  m_table.selectCellAtLocation(column, row);
+  m_table.selectCellAtClippedLocation(column, row);
   return true;
 }
 

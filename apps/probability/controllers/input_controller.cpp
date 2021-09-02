@@ -31,14 +31,15 @@ const char * InputController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
     const char * symbol = testToTextSymbol(App::app()->test());
-    const char * op = HypothesisParams::strForComparisonOp(m_statistic->hypothesisParams()->comparisonOperator());
+    const char * op = HypothesisParams::strForComparisonOp(
+        m_statistic->hypothesisParams()->comparisonOperator());
     char paramBuffer[Constants::k_shortBufferSize];
-    defaultConvertFloatToText(m_statistic->hypothesisParams()->firstParam(),
-                      paramBuffer,
-                      sizeof(paramBuffer));
+    convertFloatToText(m_statistic->hypothesisParams()->firstParam(),
+                       paramBuffer,
+                       sizeof(paramBuffer));
     if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
       char alphaBuffer[Constants::k_shortBufferSize];
-      defaultConvertFloatToText(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
+      convertFloatToText(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
       snprintf(m_titleBuffer,
                k_titleBufferSize,
                "H0:%s=%s Ha:%s%s%s α=%s",
@@ -171,4 +172,13 @@ bool Probability::InputController::setParameterAtIndex(int parameterIndex, float
   }
   m_statistic->setParamAtIndex(parameterIndex, f);
   return true;
+}
+
+int Probability::InputController::convertFloatToText(float value, char * buffer, int bufferSize) {
+  return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+      value,
+      buffer,
+      bufferSize,
+      k_numberOfTitleSignificantDigit,
+      Poincare::Preferences::PrintFloatMode::Decimal);
 }

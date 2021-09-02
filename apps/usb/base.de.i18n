@@ -1,7 +1,7 @@
 USBConnected = "TASCHENRECHNER IST ANGESCHLOSSEN"
 ConnectedMessage1 = "Um Daten zu übertragen, verbinden"
 ConnectedMessage2 = "Sie sich von Ihrem Computer aus mit"
-ConnectedMessage3 = "workshop.numworks.com."
+ConnectedMessage3 = "getomega.dev/ide."
 ConnectedMessage4 = "Drücken Sie die Zurück-Taste am"
 ConnectedMessage5 = "Taschenrechner oder Kabel abziehen,"
 ConnectedMessage6 = "um die Verbindung zu trennen."

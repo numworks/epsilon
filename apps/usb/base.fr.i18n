@@ -1,7 +1,7 @@
 USBConnected = "LA CALCULATRICE EST CONNECTÉE"
 ConnectedMessage1 = "Pour transférer des données, connectez-"
 ConnectedMessage2 = "vous depuis votre ordinateur sur le site"
-ConnectedMessage3 = "workshop.numworks.com"
+ConnectedMessage3 = "getomega.dev/ide"
 ConnectedMessage4 = "Appuyez sur la touche RETOUR"
 ConnectedMessage5 = "de la calculatrice ou débranchez-la"
 ConnectedMessage6 = "pour la déconnecter."

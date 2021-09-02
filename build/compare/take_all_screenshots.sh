@@ -20,7 +20,8 @@ size=$original_size
 
 while [ $size -gt $HEADER_SIZE ]
 do
-  output=${output_folder}/img-$(( size - HEADER_SIZE )).png
+  event=$(xxd -p -l1 -s $(( size - 1)) ${state_file})
+  output=${output_folder}/img-$(( size - HEADER_SIZE ))-${event}.png
   echo $output
   ./${epsilon} --headless --load-state-file <(head -c${size} ${state_file}) --take-screenshot ${output} > /dev/null
   size=$(( size - 1 ))

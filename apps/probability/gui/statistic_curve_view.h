@@ -26,11 +26,12 @@ private:
   void colorUnderCurve(KDContext * ctx,
                        KDRect rect,
                        HypothesisParams::ComparisonOperator op,
-                       float z,
-                       float zAlpha) const;
-  void drawLabelAndGraduationAtPosition(KDContext * ctx, float position) const;
-  void drawZLabelAndGraduation(KDContext * ctx, float x) const;
+                       float z) const;
+  void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, const char * text) const;
+  void drawZLabelAndZGraduation(KDContext * ctx, float x) const;
   void drawIntervalLabelAndGraduation(KDContext * ctx) const;
+
+  void convertFloatToText(float value, char * buffer, int bufferSize) const;
 
   static Poincare::Coordinate2D<float> evaluateTestAtAbscissa(float x,
                                                              void * model,

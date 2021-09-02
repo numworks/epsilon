@@ -9,50 +9,36 @@
 
 namespace Probability {
 
-/* A View displaying the legend for Test graphs */
-class LegendView : public VerticalLayout {
+/* A View displaying the p-value legend for Test graphs */
+class LegendView : public HorizontalLayout {
 public:
-  LegendView() :
-      m_pValue(I18n::translate(I18n::Message::PValue), KDColorOrange),
-      m_alpha(I18n::translate(I18n::Message::GreekAlpha), Escher::Palette::GrayMiddle) {}
+  LegendView(const char * label = I18n::translate(I18n::Message::PValue),
+             KDColor color = KDColorOrange);
   int numberOfSubviews() const override { return 2; }
-  Escher::View * subviewAtIndex(int i) override { return i == 0 ? &m_pValue : &m_alpha; }
+  Escher::View * subviewAtIndex(int i) override {
+    View * subviews[] = {&m_icon, &m_labelView};
+    return subviews[i];
+  }
+  KDSize minimalSizeForOptimalDisplay() const override;
+  void layoutSubviews(bool force) override;
 
 private:
-  class LegendLabel : public HorizontalLayout {
+  constexpr static int k_marginBetween = 5;
+  constexpr static int k_offsetTop = 3;
+  constexpr static int k_diameter = 8;
+
+  class Icon : public Escher::View {
   public:
-    LegendLabel(const char * label, KDColor color);
-    int numberOfSubviews() const override { return 2; }
-    Escher::View * subviewAtIndex(int i) override {
-      View * subviews[] = {&m_icon, &m_labelView};
-      return subviews[i];
-    }
-    KDSize minimalSizeForOptimalDisplay() const override;
-    void layoutSubviews(bool force) override;
+    Icon(KDColor color) : m_color(color) {}
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+    KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_diameter, k_diameter); }
 
   private:
-    constexpr static int k_marginBetween = 5;
-    constexpr static int k_offsetTop = 3;
-    constexpr static int k_diameter = 8;
-
-    class Icon : public Escher::View {
-    public:
-      Icon(KDColor color) : m_color(color) {}
-      void drawRect(KDContext * ctx, KDRect rect) const override;
-      KDSize minimalSizeForOptimalDisplay() const override {
-        return KDSize(k_diameter, k_diameter);
-      }
-
-    private:
-      KDColor m_color;
-    };
-
-    Escher::BufferTextView m_labelView;
-    Icon m_icon;
+    KDColor m_color;
   };
 
-  LegendLabel m_pValue;
-  LegendLabel m_alpha;
+  Escher::BufferTextView m_labelView;
+  Icon m_icon;
 };
 
 }  // namespace Probability

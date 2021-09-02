@@ -10,7 +10,7 @@ namespace Probability {
 
 StatisticGraphController::StatisticGraphController(StackViewController * stack,
                                                    Statistic * statistic) :
-    Page(stack), m_graphView(statistic, &m_range, this), m_statistic(statistic) {
+    Page(stack), m_graphView(statistic, &m_range), m_statistic(statistic) {
 }
 
 ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
@@ -33,8 +33,8 @@ const char * StatisticGraphController::title() {
         I18n::Message::StatisticGraphControllerIntervalTitleFormat);
     char marginOfErrorBuffer[Constants::k_shortBufferSize];
     defaultConvertFloatToText(m_statistic->marginOfError(),
-                      marginOfErrorBuffer,
-                      sizeof(marginOfErrorBuffer));
+                              marginOfErrorBuffer,
+                              sizeof(marginOfErrorBuffer));
     snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, marginOfErrorBuffer);
   }
   return m_titleBuffer;
@@ -58,20 +58,16 @@ bool StatisticGraphController::handleEvent(Ion::Events::Event event) {
     char lowerBound[Constants::k_shortBufferSize];
     char upperBound[Constants::k_shortBufferSize];
     defaultConvertFloatToText(m_statistic->estimate() - m_statistic->marginOfError(),
-                      lowerBound,
-                      sizeof(lowerBound));
+                              lowerBound,
+                              sizeof(lowerBound));
     defaultConvertFloatToText(m_statistic->estimate() + m_statistic->marginOfError(),
-                      upperBound,
-                      sizeof(upperBound));
+                              upperBound,
+                              sizeof(upperBound));
     snprintf(copyBuffer, sizeof(copyBuffer), "[[%s,%s]]", lowerBound, upperBound);
     Escher::Clipboard::sharedClipboard()->store(copyBuffer, strlen(copyBuffer));
     return true;
   }
   return false;
-}
-
-bool StatisticGraphController::shouldPositionLegendLeft() {
-  return m_statistic->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Lower;
 }
 
 }  // namespace Probability

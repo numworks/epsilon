@@ -11,18 +11,12 @@
 
 namespace Probability {
 
-class LegendPositionDataSource {
-public:
-  virtual bool shouldPositionLegendLeft() = 0;
-};
-
 /* This is the common view for Significance Tests and Confidence Intervals.
  * It displays a CurveView, a legend, and a ConclusionView.
  */
 class StatisticGraphView : public Escher::View {
 public:
-  StatisticGraphView(Statistic * statistic, StatisticViewRange * range,
-                     LegendPositionDataSource * legendPositionDataSource);
+  StatisticGraphView(Statistic * statistic, StatisticViewRange * range);
   KDSize minimalSizeForOptimalDisplay() const override;
   void setStatistic(Statistic * statistic);
   void reload();
@@ -42,7 +36,6 @@ private:
   constexpr static int k_legendMarginTop = 10;
   StatisticCurveView m_curveView;
   LegendView m_legend;
-  LegendPositionDataSource * m_legendPositionDataSource;
   // TODO union of the two?
   TestConclusionView m_testConclusionView;
   IntervalConclusionView m_intervalConclusionView;

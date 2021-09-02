@@ -4,12 +4,8 @@
 
 namespace Probability {
 
-StatisticGraphView::StatisticGraphView(Statistic * statistic,
-                                       StatisticViewRange * range,
-                                       LegendPositionDataSource * legendPositionDataSource) :
-    m_curveView(range),
-    m_legendPositionDataSource(legendPositionDataSource),
-    m_testConclusionView(statistic) {
+StatisticGraphView::StatisticGraphView(Statistic * statistic, StatisticViewRange * range) :
+    m_curveView(range), m_testConclusionView(statistic) {
 }
 
 KDSize StatisticGraphView::minimalSizeForOptimalDisplay() const {
@@ -40,10 +36,8 @@ void StatisticGraphView::layoutSubviews(bool force) {
       KDRect(KDPoint(0, curveViewHeight), KDSize(availableWidth, k_conclusionViewHeight)),
       true);
   KDSize k_legendSize = m_legend.minimalSizeForOptimalDisplay();
-  KDPoint legendOrigin = m_legendPositionDataSource->shouldPositionLegendLeft()
-                             ? KDPoint(k_legendMarginRight, k_legendMarginTop)
-                             : KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight,
-                                       k_legendMarginTop);
+  KDPoint legendOrigin = KDPoint(availableWidth - k_legendSize.width() - k_legendMarginRight,
+                                 k_legendMarginTop);
   m_legend.setFrame(KDRect(legendOrigin, k_legendSize), force);
 }
 

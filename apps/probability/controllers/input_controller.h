@@ -45,7 +45,9 @@ private:
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
+  int convertFloatToText(float value, char * buffer, int bufferSize);
 
+  constexpr static int k_numberOfTitleSignificantDigit = 3;
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +
                                            3 * Constants::k_shortFloatNumberOfChars + 2 /* op */ + 10;
   char m_titleBuffer[k_titleBufferSize];

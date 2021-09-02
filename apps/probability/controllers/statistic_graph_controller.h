@@ -9,7 +9,7 @@
 
 namespace Probability {
 
-class StatisticGraphController : public Page, public LegendPositionDataSource {
+class StatisticGraphController : public Page {
 public:
   StatisticGraphController(Escher::StackViewController * stack, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override;
@@ -17,8 +17,6 @@ public:
   Escher::View * view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-
-  bool shouldPositionLegendLeft() override;
 
 private:
   constexpr static int k_titleBufferSize = sizeof("z= p-value=") +

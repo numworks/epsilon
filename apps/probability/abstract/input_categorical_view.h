@@ -30,7 +30,6 @@ public:
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
-  KDSize contentSize() const override { return KDSize(bounds().width(), 10000); };
   void layoutSubviews(bool force = false) override {
     Escher::ScrollView::layoutSubviews(force);
   };  // Made public

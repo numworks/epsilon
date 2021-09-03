@@ -36,9 +36,14 @@ void InputHomogeneityDataSource::recomputeDimensions() {
   HomogeneityStatistic::Index2D dimensions = m_statistic->computeDimensions();
   bool displayLastEmptyRow = dimensions.row < HomogeneityStatistic::k_maxNumberOfRows;
   bool displayLastEmptyColumn = dimensions.col < HomogeneityStatistic::k_maxNumberOfColumns;
-  m_numberOfRows = std::max(k_initialNumberOfRows, dimensions.row + displayLastEmptyRow);
-  m_numberOfColumns = std::max(k_initialNumberOfColumns, dimensions.col + displayLastEmptyColumn);
-  DynamicTableViewDataSource::notify();
+  int newNumberOfRows = std::max(k_initialNumberOfRows, dimensions.row + displayLastEmptyRow);
+  int newNumberOfColumns = std::max(k_initialNumberOfColumns,
+                                    dimensions.col + displayLastEmptyColumn);
+  if (newNumberOfRows != m_numberOfRows || newNumberOfColumns != m_numberOfColumns) {
+    m_numberOfRows = newNumberOfRows;
+    m_numberOfColumns = newNumberOfColumns;
+    DynamicTableViewDataSource::notify();
+  }
 }
 
 void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(

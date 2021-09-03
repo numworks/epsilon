@@ -67,9 +67,7 @@ void HomogeneityTableViewController::deleteSelectedValue() {
   // Delete last row / column
   m_table.deselectTable();
   m_innerTableData.recomputeDimensions();
-  m_innerTableData.recomputeDimensions();
   m_table.selectCellAtClippedLocation(col, row, false);
-  m_table.reloadCellAtLocation(col, row);
 }
 
 }  // namespace Probability

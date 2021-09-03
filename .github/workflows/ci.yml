@@ -111,7 +111,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk
-      - run: pip3 install lz4
+      - run: pip3 install lz4 # TODO: should be part of brew formula
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.app
@@ -125,7 +125,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk
-      - run: pip3 install lz4
+      - run: pip3 install lz4 # TODO: should be part of brew formula
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa

@@ -21,7 +21,7 @@ public:
                                     Ion::Events::Event event) override;
 
 protected:
-  void moveSelectionForEvent(Ion::Events::Event event, int * selectedRow, int * selectedColumn);
+  static void moveSelectionForEvent(Ion::Events::Event event, int * selectedRow, int * selectedColumn);
 };
 
 }  // namespace Probability

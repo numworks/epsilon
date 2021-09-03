@@ -78,13 +78,15 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
       int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer + 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() - jump);
+      selectCorrectView();
+      setResponderForSelectedRow();
     }
     if (event == Ion::Events::Down && m_viewSelection.selectedRow() < k_indexOfNext) {
       int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer - 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() + jump);
+      selectCorrectView();
+      setResponderForSelectedRow();
     }
-    selectCorrectView();
-    setResponderForSelectedRow();
     return true;
   }
   return false;
@@ -152,5 +154,5 @@ void Probability::InputCategoricalView::setTableView(TableViewController * table
 
 void Probability::InputCategoricalView::tableViewDataSourceDidChangeSize() {
   // Relayout when inner table changes size
-  layoutSubviews(true);
+  layoutSubviews();
 }

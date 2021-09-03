@@ -51,8 +51,8 @@ HomogeneityTableDataSourceWithTotals::HomogeneityTableDataSourceWithTotals(
 void HomogeneityTableDataSourceWithTotals::willDisplayCellAtLocation(Escher::HighlightCell * cell,
                                                                      int column,
                                                                      int row) {
-  if ((column == 0 && row == m_contentTable->numberOfRows()) ||
-      (row == 0 && column == m_contentTable->numberOfColumns())) {
+  if ((column == 0 && row == m_innerDataSource->numberOfRows()) ||
+      (row == 0 && column == m_innerDataSource->numberOfColumns())) {
     // Override to display "Total" instead
     Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
     myCell->setText(I18n::translate(m_totalMessage));

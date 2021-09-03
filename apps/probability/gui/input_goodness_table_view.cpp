@@ -56,8 +56,11 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
 void InputGoodnessTableView::recomputeNumberOfRows() {
   int innerNumberOfRows = m_statistic->computeNumberOfRows();
   bool displayLastEmptyRow = innerNumberOfRows < GoodnessStatistic::k_maxNumberOfRows;
-  m_numberOfRows = std::max(innerNumberOfRows + 1 + displayLastEmptyRow, k_minimumNumberOfRows);
-  DynamicTableViewDataSource::notify();
+  int newNumberOfRows = std::max(innerNumberOfRows + 1 + displayLastEmptyRow, k_minimumNumberOfRows);
+  if (newNumberOfRows != m_numberOfRows) {
+    m_numberOfRows = newNumberOfRows;
+    DynamicTableViewDataSource::notify();
+  }
 }
 
 void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::HighlightCell * cell,

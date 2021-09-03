@@ -13,18 +13,18 @@ public:
 class DynamicTableViewDataSource {
 public:
   DynamicTableViewDataSource(DynamicTableViewDataSourceDelegate * delegate = nullptr) :
-      m_dydnamicDatSourceDelegate(delegate) {}
-  void registerDelegate(DynamicTableViewDataSourceDelegate * delegate) { m_dydnamicDatSourceDelegate = delegate; }
+      m_dynamicDatSourceDelegate(delegate) {}
+  void registerDelegate(DynamicTableViewDataSourceDelegate * delegate) { m_dynamicDatSourceDelegate = delegate; }
 
 protected:
   void notify() {
-    if (m_dydnamicDatSourceDelegate) {
-      m_dydnamicDatSourceDelegate->tableViewDataSourceDidChangeSize();
+    if (m_dynamicDatSourceDelegate) {
+      m_dynamicDatSourceDelegate->tableViewDataSourceDidChangeSize();
     }
   }
 
 private:
-  DynamicTableViewDataSourceDelegate * m_dydnamicDatSourceDelegate;
+  DynamicTableViewDataSourceDelegate * m_dynamicDatSourceDelegate;
 };
 
 }  // namespace Probability

@@ -15,7 +15,7 @@ KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
     requiredSecond += secondLength(subviewSize);
     requiredFirst = std::max<int>(requiredFirst, firstLength(subviewSize));
   }
-  return reorderedSize(requiredFirst, requiredSecond);
+  return reorderedSize(requiredFirst + 2 * firstMargin(), requiredSecond);
 }
 
 void OrientedLayout::layoutSubviews(bool force) {

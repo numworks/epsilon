@@ -10,7 +10,7 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(
     Escher::SelectableTableViewDelegate * tableDelegate,
     I18n::Message headerPrefix) :
     ChainedSelectableTableViewDelegate(tableDelegate),
-    m_contentTable(contentTable),
+    m_innerDataSource(contentTable),
     m_headerPrefix(headerPrefix),
     m_topLeftCell(Escher::Palette::WallScreenDark) {
   // First row
@@ -37,7 +37,7 @@ HighlightCell * HomogeneityTableDataSource::reusableCell(int i, int type) {
   if (type == k_typeOfRowHeader) {
     return &m_rowHeader[i];
   }
-  return m_contentTable->reusableCell(i, type);
+  return m_innerDataSource->reusableCell(i, type);
 }
 
 int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
@@ -50,7 +50,7 @@ int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
   if (i == 0) {
     return k_typeOfRowHeader;
   }
-  return m_contentTable->typeAtLocation(i - 1, j - 1);
+  return m_innerDataSource->typeAtLocation(i - 1, j - 1);
 }
 
 void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
@@ -87,7 +87,7 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
   }
 
   else {
-    m_contentTable->willDisplayCellAtLocation(cell, column - 1, row - 1);
+    m_innerDataSource->willDisplayCellAtLocation(cell, column - 1, row - 1);
   }
 }
 

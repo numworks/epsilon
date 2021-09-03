@@ -16,8 +16,6 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int j) override {
     return Escher::TableViewDataSource::cumulatedHeightFromIndex(j) + j * horizontalBorderHeight();
   }
-
-private:
 };
 
 }  // namespace Probability

@@ -25,11 +25,11 @@ public:
   HomogeneityTableDataSource(TableViewDataSource * contentTable,
                              Escher::SelectableTableViewDelegate * tableDelegate,
                              I18n::Message headerPrefix = I18n::Message::Group);
-  int numberOfRows() const override { return m_contentTable->numberOfRows() + 1; }
-  int numberOfColumns() const override { return m_contentTable->numberOfColumns() + 1; }
+  int numberOfRows() const override { return m_innerDataSource->numberOfRows() + 1; }
+  int numberOfColumns() const override { return m_innerDataSource->numberOfColumns() + 1; }
   int reusableCellCount(int type) override {
-    return type == 0 ? m_contentTable->reusableCellCount(0) + numberOfColumns() + numberOfRows() - 1
-                     : m_contentTable->reusableCellCount(type);
+    return type == 0 ? m_innerDataSource->reusableCellCount(0) + numberOfColumns() + numberOfRows() - 1
+                     : m_innerDataSource->reusableCellCount(type);
   }
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int i, int type) override;
@@ -61,7 +61,7 @@ public:
   constexpr static int k_numberOfReusableCells = k_numberOfReusableRows * k_numberOfReusableColumns;
 
 protected:
-  TableViewDataSource * m_contentTable;
+  TableViewDataSource * m_innerDataSource;
 
 private:
   constexpr static int k_typeOfRowHeader = 17;

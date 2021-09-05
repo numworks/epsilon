@@ -1,0 +1,3 @@
+ReaderApp = "Reader"
+ReaderAppCapital = "READER"
+NoFileToDisplay = "Aucun fichier à afficher!"

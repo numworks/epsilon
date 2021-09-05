@@ -136,6 +136,7 @@ extern const struct _mp_obj_module_t modpyplot_module;
 extern const struct _mp_obj_module_t modtime_module;
 extern const struct _mp_obj_module_t modos_module;
 extern const struct _mp_obj_module_t modturtle_module;
+extern const struct _mp_obj_module_t ulab_user_cmodule;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_ion), MP_ROM_PTR(&modion_module) }, \
@@ -145,6 +146,7 @@ extern const struct _mp_obj_module_t modturtle_module;
     { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) }, \
     { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&modos_module) }, \
     { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_ulab), MP_ROM_PTR(&ulab_user_cmodule) }, \
 
 // Enable setjmp in debug mode. This is to avoid some optimizations done
 // specifically for x86_64 using inline assembly, which makes the debug binary

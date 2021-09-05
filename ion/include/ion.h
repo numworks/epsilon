@@ -35,7 +35,7 @@ namespace Ion {
 const char * serialNumber();
 const volatile char * username();
 const char * softwareVersion();
-const char * omegaVersion();
+const char * UpsilonVersion();
 const char * patchLevel();
 const char * fccId();
 const char * pcbVersion();

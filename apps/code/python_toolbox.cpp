@@ -252,8 +252,46 @@ const ToolboxMessageTree NumpyModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NumpyLinalgModule, NumpyLinalgModuleChildren)
 };
 
+const ToolboxMessageTree ScipyLinalgModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyLinalgFunction, I18n::Message::PythonScipyLinalgFunction, false, I18n::Message::PythonCommandScipyLinalgFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyLinalgChoSolve),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyLinalgSolveTriangular)
+};
+
+const ToolboxMessageTree ScipyOptimizeModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyOptimizeFunction, I18n::Message::PythonScipyOptimizeFunction, false, I18n::Message::PythonCommandScipyOptimizeFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyOptimizeBisect),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyOptimizeFmin),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyOptimizeNewton)
+};
+
+const ToolboxMessageTree ScipySignalModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySignalFunction, I18n::Message::PythonScipySignalFunction, false, I18n::Message::PythonCommandScipySignalFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySignalSosfilt),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySignalSpectrogram)
+};
+
+const ToolboxMessageTree ScipySpecialModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySpecialFunction, I18n::Message::PythonScipySpecialFunction, false, I18n::Message::PythonCommandScipySpecialFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySpecialErf),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySpecialErfc),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySpecialGamma),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipySpecialGammaln),
+};
+
+const ToolboxMessageTree ScipyModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromScipy, I18n::Message::PythonImportScipy, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyFunction, I18n::Message::PythonScipyFunction, false, I18n::Message::PythonCommandScipyFunctionWithoutArg),
+  ToolboxMessageTree::Node(I18n::Message::ScipyLinalgModule, ScipyLinalgModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::ScipyOptimizeModule, ScipyOptimizeModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::ScipySignalModule, ScipySignalModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::ScipySpecialModule, ScipySpecialModuleChildren),
+  
+};
+
 const ToolboxMessageTree UlabModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NumpyModule, NumpyModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::ScipyModule, ScipyModuleChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UlabDocumentation, I18n::Message::UlabDocumentationLink)
 };
 

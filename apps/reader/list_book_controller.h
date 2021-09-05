@@ -6,35 +6,35 @@
 
 #include "read_book_controller.h"
 
-namespace reader
+namespace Reader
 {
 
-class ListBookController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource
+class ListBookController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource, public AlternateEmptyViewDefaultDelegate
 {
 public:
-    ListBookController(Responder * parentResponder);
-    View* view() override;
+  ListBookController(Responder * parentResponder);
+  View* view() override;
 
-    int numberOfRows() const override;
-    KDCoordinate cellHeight() override;
-    HighlightCell * reusableCell(int index) override;
-    int reusableCellCount() const override;
-    void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-    void didBecomeFirstResponder() override;
-    bool handleEvent(Ion::Events::Event event) override;
-    bool hasBook(const char* filename) const;
-    void cleanRemovedBookRecord();
+  int numberOfRows() const override;
+  KDCoordinate cellHeight() override;
+  HighlightCell * reusableCell(int index) override;
+  int reusableCellCount() const override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
+  bool hasBook(const char* filename) const;
+  void cleanRemovedBookRecord();
+  bool isEmpty() const override;
+  I18n::Message emptyMessage() override;
+  Responder * defaultController() override;
 private:
-    SelectableTableView m_tableView;
-
-    static const int NB_FILES = 20;
-    External::Archive::File m_files[NB_FILES];
-    int m_nbFiles = 0;
-
-    static const int NB_CELLS = 6;
-    MessageTableCell m_cells[NB_CELLS];
-
-    ReadBookController m_readBookController;
+  SelectableTableView m_tableView;
+  static const int k_maxFilesNumber = 20;
+  External::Archive::File m_files[k_maxFilesNumber];
+  int m_filesNumber = 0;
+  static const int k_cellsNumber = 6;
+  MessageTableCellWithChevron m_cells[k_cellsNumber];
+  ReadBookController m_readBookController;
 };
 
 }

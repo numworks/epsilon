@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "list_book_controller.h"
 
-namespace reader {
+namespace Reader {
 
 class App : public ::App {
 public:
@@ -22,6 +22,7 @@ public:
 private:
   App(Snapshot * snapshot);
   ListBookController m_listBookController;
+  AlternateEmptyViewController m_alternateEmptyViewController;
   StackViewController m_stackViewController;
 };
 

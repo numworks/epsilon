@@ -5,7 +5,7 @@
 #include "apps/external/archive.h"
 #include "word_wrap_view.h"
 
-namespace reader {
+namespace Reader {
 
 class ReadBookController : public ViewController {
 public:

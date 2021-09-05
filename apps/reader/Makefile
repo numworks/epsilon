@@ -1,4 +1,4 @@
-apps += reader::App
+apps += Reader::App
 app_headers += apps/reader/app.h
 
 app_sreader_src = $(addprefix apps/reader/,\

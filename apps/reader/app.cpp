@@ -4,7 +4,7 @@
 #include "apps/i18n.h"
 
 
-namespace reader {
+namespace Reader {
 
 I18n::Message App::Descriptor::name() {
   return I18n::Message::ReaderApp;
@@ -32,7 +32,8 @@ App::Descriptor * App::Snapshot::descriptor() {
 App::App(Snapshot * snapshot) :
   ::App(snapshot, &m_stackViewController),
   m_listBookController(&m_stackViewController),
-  m_stackViewController(nullptr, &m_listBookController)
+  m_alternateEmptyViewController(&m_stackViewController, &m_listBookController, &m_listBookController),
+  m_stackViewController(&m_modalViewController, &m_alternateEmptyViewController)
 {
 }
 

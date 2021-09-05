@@ -3,23 +3,23 @@
 
 #include <escher.h>
 
-namespace reader
+namespace Reader
 {
 
 class WordWrapTextView : public PointerTextView {
 public:
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    void setText(const char*, int length);
-    void nextPage();
-    void previousPage();
-    int getPageOffset() const;
-    void setPageOffset(int o);
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setText(const char*, int length);
+  void nextPage();
+  void previousPage();
+  int getPageOffset() const;
+  void setPageOffset(int o);
 protected:
-    int m_pageOffset = 0;
-    mutable int m_nextPageOffset = 0;
-    int m_length = 0;
+  int m_pageOffset = 0;
+  mutable int m_nextPageOffset = 0;
+  int m_length = 0;
 
-    static const int margin = 10;
+  static const int margin = 10;
 };
 
 }

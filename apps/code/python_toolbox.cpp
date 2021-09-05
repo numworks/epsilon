@@ -225,7 +225,9 @@ const ToolboxMessageTree NumpyFunctionsModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyNan),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyInf),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyE),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyPi)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyPi),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpySetPrintOptions),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyGetPrintOptions)
 };
 
 const ToolboxMessageTree NumpyFftModuleChildren[] = {
@@ -252,6 +254,7 @@ const ToolboxMessageTree NumpyModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NumpyLinalgModule, NumpyLinalgModuleChildren)
 };
 
+#if !defined(DEVICE_N0100)
 const ToolboxMessageTree ScipyLinalgModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyLinalgFunction, I18n::Message::PythonScipyLinalgFunction, false, I18n::Message::PythonCommandScipyLinalgFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyLinalgChoSolve),
@@ -286,12 +289,15 @@ const ToolboxMessageTree ScipyModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::ScipyOptimizeModule, ScipyOptimizeModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::ScipySignalModule, ScipySignalModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::ScipySpecialModule, ScipySpecialModuleChildren),
-  
 };
+
+#endif
 
 const ToolboxMessageTree UlabModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NumpyModule, NumpyModuleChildren),
+#if !defined(DEVICE_N0100)
   ToolboxMessageTree::Node(I18n::Message::ScipyModule, ScipyModuleChildren),
+#endif
   ToolboxMessageTree::Leaf(I18n::Message::UlabDocumentation, I18n::Message::UlabDocumentationLink)
 };
 

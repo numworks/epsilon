@@ -270,7 +270,7 @@
 
 // frombuffer adds 600 bytes to the firmware
 #ifndef ULAB_NUMPY_HAS_FROMBUFFER
-#define ULAB_NUMPY_HAS_FROMBUFFER       (1)
+#define ULAB_NUMPY_HAS_FROMBUFFER       (0)
 #endif
 
 // functions that create an array
@@ -644,7 +644,7 @@
 #endif
 
 #ifndef ULAB_HAS_UTILS_MODULE
-#define ULAB_HAS_UTILS_MODULE               (1)
+#define ULAB_HAS_UTILS_MODULE               (0)
 #endif
 
 #ifndef ULAB_UTILS_HAS_FROM_INT16_BUFFER

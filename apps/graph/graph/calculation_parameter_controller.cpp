@@ -116,11 +116,14 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
 
 bool CalculationParameterController::shouldDisplayIntersection() const {
   Shared::ContinuousFunctionStore * store = App::app()->functionStore();
-  // TODO Hugo : Update this to handle intersection between all types.
-  int numberOfCartesianFunctions = store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Cartesian);
+  // TODO Hugo : Maybe update this to handle intersection between all types.
+  int intersectableFunctions = 0;
+  intersectableFunctions += store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Cartesian);
+  intersectableFunctions += store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Line);
+  intersectableFunctions += store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::HorizontalLine);
   // Intersection row is displayed when all functions are cartesian and there are least two of them
   // TODO: compute intersections between polar/parametric/cartesian functions?
-  return numberOfCartesianFunctions > 1 && numberOfCartesianFunctions == store->numberOfActiveFunctions();
+  return intersectableFunctions > 1 && intersectableFunctions == store->numberOfActiveFunctions();
 }
 
 }

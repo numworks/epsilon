@@ -46,8 +46,9 @@ public:
 private:
   static constexpr KDCoordinate k_abscissaCellWidth = k_cellWidth + Escher::Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3) * 7 + 2*Escher::Metric::SmallCellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)" and KDFont::SmallFont->glyphSize().width() = 7
+  static constexpr size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
   static constexpr int k_maxNumberOfDisplayableFunctions = 4;
-  static constexpr int k_maxNumberOfDisplayableAbscissaCells = Shared::ContinuousFunction::k_numberOfPlotTypes * k_maxNumberOfDisplayableRows;
+  static constexpr int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfSymbolTypes * k_maxNumberOfDisplayableRows;
   static constexpr int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
 
   // Values controller
@@ -67,10 +68,10 @@ private:
   // Number of columns
   int numberOfColumnsForAbscissaColumn(int column) override;
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
-  int numberOfColumnsForPlotType(int plotTypeIndex) const;
+  int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   int numberOfAbscissaColumnsBeforeColumn(int column);
   int numberOfValuesColumns() override;
-  Shared::ContinuousFunction::PlotType plotTypeAtColumn(int * i) const;
+  Shared::ContinuousFunction::SymbolType symbolTypeAtColumn(int * i) const;
 
   // Function evaluation memoization
   static constexpr int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
@@ -90,8 +91,8 @@ private:
   // Parameter controllers
   Escher::ViewController * functionParameterController() override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
-  /* The paramater i should be the column index and plotTypeAtColumn changes it
-   * to be the relative column index within the sub table. */
+  /* The paramater i should be the column index and symbolTypeAtColumn changes
+   * it to be the relative column index within the sub table. */
 
   // Cells & View
   Shared::Hideable * hideableCellFromType(Escher::HighlightCell * cell, int type);
@@ -99,7 +100,7 @@ private:
   Escher::EvenOddBufferTextCell * floatCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }
   Escher::EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells); return &m_abscissaCells[j]; }
-  int abscissaTitleCellsCount() const override { return Shared::ContinuousFunction::k_numberOfPlotTypes; }
+  int abscissaTitleCellsCount() const override { return k_maxNumberOfSymbolTypes; }
   Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
@@ -116,10 +117,10 @@ private:
   };
 
   ValuesSelectableTableView m_selectableTableView;
-  mutable int m_numberOfValuesColumnsForType[Shared::ContinuousFunction::k_numberOfPlotTypes];
+  mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
-  AbscissaTitleCell m_abscissaTitleCells[Shared::ContinuousFunction::k_numberOfPlotTypes];
+  AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;

@@ -19,13 +19,19 @@ public:
   Ion::Storage::Record activeRecordAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &isFunctionActive, nullptr);
   }
-  // TODO Hugo
   bool displaysNonCartesianFunctions(int * nbActiveFunctions = nullptr) const;
+  // TODO Hugo : Remove unused methods here
+  int numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType symbolType) const {
+    return numberOfModelsSatisfyingTest(&isFunctionActiveOfSymbolType, &symbolType);
+  }
   int numberOfActiveFunctionsOfType(ContinuousFunction::PlotType plotType) const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveOfType, &plotType);
   }
   Ion::Storage::Record activeRecordOfTypeAtIndex(ContinuousFunction::PlotType plotType, int i) const {
     return recordSatisfyingTestAtIndex(i, &isFunctionActiveOfType, &plotType);
+  }
+  Ion::Storage::Record activeRecordOfSymbolTypeAtIndex(ContinuousFunction::SymbolType symbolType, int i) const {
+    return recordSatisfyingTestAtIndex(i, &isFunctionActiveOfSymbolType, &symbolType);
   }
   ExpiringPointer<ContinuousFunction> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<ContinuousFunction>(static_cast<ContinuousFunction *>(privateModelForRecord(record))); }
   // TODO Hugo : Handle cache
@@ -44,6 +50,10 @@ private:
   static bool isFunctionActiveOfType(ExpressionModelHandle * model, void * context) {
     ContinuousFunction::PlotType plotType = *static_cast<ContinuousFunction::PlotType *>(context);
     return isFunctionActive(model, context) && plotType == static_cast<ContinuousFunction *>(model)->plotType();
+  }
+  static bool isFunctionActiveOfSymbolType(ExpressionModelHandle * model, void * context) {
+    ContinuousFunction::SymbolType symbolType = *static_cast<ContinuousFunction::SymbolType *>(context);
+    return isFunctionActive(model, context) && symbolType == static_cast<ContinuousFunction *>(model)->symbolType();
   }
   mutable ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
   // TODO Hugo : Handle cache

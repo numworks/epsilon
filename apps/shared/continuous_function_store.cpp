@@ -10,7 +10,7 @@ bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFuncti
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();
   }
-  return numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar) + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric) == 0;
+  return numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::Theta) + numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::T) == 0;
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

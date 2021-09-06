@@ -31,7 +31,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
       IntervalParameterController * intervalController = valuesController->intervalParameterController();
       intervalController->setInterval(valuesController->intervalAtColumn(0));
       int i = 1;
-      intervalSelectorController->setStartEndMessages(intervalController, valuesController->plotTypeAtColumn(&i));
+      intervalSelectorController->setStartEndMessages(intervalController, valuesController->symbolTypeAtColumn(&i));
       stack->push(intervalController);
       return true;
     }
@@ -50,11 +50,11 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
 // TableViewDataSource
 
 KDCoordinate ValuesController::columnWidth(int i) {
-  ContinuousFunction::PlotType plotType = plotTypeAtColumn(&i);
+  ContinuousFunction::SymbolType symbolType = symbolTypeAtColumn(&i);
   if (i == 0) {
     return k_abscissaCellWidth;
   }
-  if (i > 0 && plotType == ContinuousFunction::PlotType::Parametric) {
+  if (i > 0 && symbolType == ContinuousFunction::SymbolType::T) {
     return k_parametricCellWidth;
   }
   return k_cellWidth;
@@ -125,7 +125,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
-  plotTypeAtColumn(&i);
+  symbolTypeAtColumn(&i);
   return Shared::ValuesController::typeAtLocation(i, j);
 }
 
@@ -146,6 +146,7 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
 // AlternateEmptyViewDelegate
 
 I18n::Message ValuesController::emptyMessage() {
+  // TODO Hugo : Count only models we can display values for.
   if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }
@@ -156,25 +157,26 @@ I18n::Message ValuesController::emptyMessage() {
 
 void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
   int c = column+1;
-  m_intervalParameterSelectorController.setStartEndMessages(controller, plotTypeAtColumn(&c));
+  m_intervalParameterSelectorController.setStartEndMessages(controller, symbolTypeAtColumn(&c));
 }
 
 // Number of columns memoization
 
 void ValuesController::updateNumberOfColumns() const {
-  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
-    m_numberOfValuesColumnsForType[plotTypeIndex] = 0;
+  for (int symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
+    m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;
   }
+  // TODO Hugo : Count only models we can display values for.
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
-    int plotTypeIndex = static_cast<int>(f->plotType());
-    m_numberOfValuesColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
+    int symbolTypeIndex = static_cast<int>(f->symbolType());
+    m_numberOfValuesColumnsForType[symbolTypeIndex] += numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = 0;
-  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
+  for (int symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
     // Count abscissa column if the sub table does exist
-    m_numberOfColumns += numberOfColumnsForPlotType(plotTypeIndex);
+    m_numberOfColumns += numberOfColumnsForSymbolType(symbolTypeIndex);
   }
 }
 
@@ -187,10 +189,10 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  ContinuousFunction::PlotType plotType = plotTypeAtColumn(&i);
+  ContinuousFunction::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
-  for (int k = 0; k < functionStore()->numberOfActiveFunctionsOfType(plotType); k++) {
-    Ion::Storage::Record record = functionStore()->activeRecordOfTypeAtIndex(plotType, k);
+  for (int k = 0; k < functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType); k++) {
+    Ion::Storage::Record record = functionStore()->activeRecordOfSymbolTypeAtIndex(symbolType, k);
     const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
@@ -204,13 +206,13 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
-  return App::app()->intervalForType(plotTypeAtColumn(&columnIndex));
+  return App::app()->intervalForSymbolType(symbolTypeAtColumn(&columnIndex));
 }
 
 // Number of columns
 
 int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
-  return numberOfColumnsForPlotType((int)plotTypeAtColumn(&column));
+  return numberOfColumnsForSymbolType((int)symbolTypeAtColumn(&column));
 }
 
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
@@ -219,15 +221,15 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
     (f->isAlongX() && f->displayDerivative());
 }
 
-int ValuesController::numberOfColumnsForPlotType(int plotTypeIndex) const {
-  return m_numberOfValuesColumnsForType[plotTypeIndex] + (m_numberOfValuesColumnsForType[plotTypeIndex] > 0); // Count abscissa column if there is one
+int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {
+  return m_numberOfValuesColumnsForType[symbolTypeIndex] + (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0); // Count abscissa column if there is one
 }
 
 int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) {
   int result = 0;
-  int plotType = column < 0 ?  ContinuousFunction::k_numberOfPlotTypes : (int)plotTypeAtColumn(&column) + 1;
-  for (int plotTypeIndex = 0; plotTypeIndex < plotType; plotTypeIndex++) {
-    result += (m_numberOfValuesColumnsForType[plotTypeIndex] > 0);
+  int symbolType = column < 0 ?  k_maxNumberOfSymbolTypes : (int)symbolTypeAtColumn(&column) + 1;
+  for (int symbolTypeIndex = 0; symbolTypeIndex < symbolType; symbolTypeIndex++) {
+    result += (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0);
   }
   return result;
 }
@@ -236,13 +238,13 @@ int ValuesController::numberOfValuesColumns() {
   return m_numberOfColumns - numberOfAbscissaColumnsBeforeColumn(-1);
 }
 
-ContinuousFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
-  int plotTypeIndex = 0;
-  while (*i >= numberOfColumnsForPlotType(plotTypeIndex)) {
-    *i -= numberOfColumnsForPlotType(plotTypeIndex++);
-    assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
+ContinuousFunction::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
+  int symbolTypeIndex = 0;
+  while (*i >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
+    *i -= numberOfColumnsForSymbolType(symbolTypeIndex++);
+    assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
   }
-  return static_cast<ContinuousFunction::PlotType>(plotTypeIndex);
+  return static_cast<ContinuousFunction::SymbolType>(symbolTypeIndex);
 }
 
 // Function evaluation memoization
@@ -254,10 +256,10 @@ int ValuesController::valuesColumnForAbsoluteColumn(int column) {
 int ValuesController::absoluteColumnForValuesColumn(int column) {
   int abscissaColumns = 0;
   int valuesColumns = 0;
-  int plotTypeIndex = 0;
+  int symbolTypeIndex = 0;
   do {
-    assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
-    const int numberOfValuesColumnsForType = m_numberOfValuesColumnsForType[plotTypeIndex++];
+    assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
+    const int numberOfValuesColumnsForType = m_numberOfValuesColumnsForType[symbolTypeIndex++];
     valuesColumns += numberOfValuesColumnsForType;
     abscissaColumns += (numberOfValuesColumnsForType > 0);
   } while (valuesColumns <= column);
@@ -272,7 +274,7 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   Ion::Storage::Record record = recordAtColumn(column, &isDerivative);
   Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  bool isParametric = function->plotType() == ContinuousFunction::PlotType::Parametric;
+  bool isParametric = function->symbolType() == ContinuousFunction::SymbolType::T;
   if (isDerivative) {
     evaluationY = function->approximateDerivative(abscissa, context);
   } else {
@@ -316,7 +318,7 @@ ViewController * ValuesController::functionParameterController() {
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return ContinuousFunction::ParameterMessageForPlotType(plotTypeAtColumn(&columnIndex));
+  return ContinuousFunction::ParameterMessageForSymbolType(symbolTypeAtColumn(&columnIndex));
 }
 
 // Cells & View

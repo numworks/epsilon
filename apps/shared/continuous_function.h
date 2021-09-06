@@ -20,14 +20,24 @@ public:
   static constexpr int k_parenthesedXNTArgumentByteLength = 3;
   static constexpr int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
 
+  // x, t, θ
+  static constexpr size_t k_numberOfSymbolTypes = 3;
+  enum class SymbolType : uint8_t {
+    Theta = 0,
+    T,
+    X,
+  };
+
   static constexpr size_t k_numberOfPlotTypes = 15;
   enum class PlotType : uint8_t {
-    Cartesian = 0,
-    Polar,
+    Polar = 0,
     Parametric,
+    // All remaining types use x as a symbol
+    Cartesian,
     Line,
-    VerticalLine,
     HorizontalLine,
+    // All remaining types shall not be active in values table
+    VerticalLine,
     Inequation,
     Conics,
     Circle,
@@ -35,15 +45,23 @@ public:
     Parabola,
     Hyperbola,
     Other,
+    // All remaining types shall not be active
     Undefined,
     Unhandled
   };
+
+  // TODO Hugo : Add staticAssert for this
+  static SymbolType SymbolForPlotType(PlotType plotType) {
+    return plotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(plotType);
+  }
 
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   ContinuousFunction(Ion::Storage::Record record = Record()) : ExpressionModelHandle(record) {}
 
   // Properties
   bool isActive() const;
+  // TODO Hugo : Filter out Conics and others from Table
+  // bool isActiveInTable() const { return isActive() && plotType() <= PlotType::HorizontalLine; }
   KDColor color() const;
   void setActive(bool active);
   bool isNamed() const; // y = or f(x) = ?
@@ -75,8 +93,9 @@ public:
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
   Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
   PlotType plotType() const { return recordData()->plotType(); }
+  SymbolType symbolType() const { return SymbolForPlotType(plotType()); }
   void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
-  static I18n::Message ParameterMessageForPlotType(PlotType plotType);  // x, theta, t, y
+  static I18n::Message ParameterMessageForSymbolType(SymbolType symbolType);  // x, theta, t, y
 
   // Evaluation
   Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context, int i = 0) const {

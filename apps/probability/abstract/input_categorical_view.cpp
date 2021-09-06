@@ -24,7 +24,6 @@ Probability::InputCategoricalView::ContentView::ContentView(
     SelectableTableView * dataInputTableView,
     MessageTableCellWithEditableTextWithMessage * significanceCell,
     Escher::Button * next) :
-    VerticalLayout(Palette::WallScreenDark),
     m_dataInputTableView(dataInputTableView),
     m_innerView(significanceCell, &m_spacer, next),
     m_spacer(Palette::WallScreenDark, 0, k_marginVertical) {
@@ -110,6 +109,7 @@ void InputCategoricalView::setResponderForSelectedRow() {
 }
 
 void InputCategoricalView::selectCorrectView() {
+  // TODO only one
   m_significanceCell.setHighlighted(false);
   m_next.setHighlighted(false);
   if (m_viewSelection.selectedRow() != k_indexOfTable) {
@@ -131,7 +131,7 @@ KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
   if (contentView->bounds().width() <= 0)
     contentView->setSize(KDSize(bounds().width(), contentView->bounds().height()));
   KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
-  return KDSize(bounds().width()+ leftMargin() + rightMargin(), requiredSize.height());
+  return KDSize(bounds().width() + leftMargin() + rightMargin(), requiredSize.height());
 }
 
 void Probability::InputCategoricalView::selectView(int index) {
@@ -149,7 +149,7 @@ void Probability::InputCategoricalView::setTableView(TableViewController * table
   SelectableTableView * tableView = tableViewController->selectableTableView();
   m_contentView.setTableView(tableView);
   tableView->setMargins(0, Metric::CommonRightMargin, k_marginVertical, Metric::CommonLeftMargin);
-  tableView->setBackgroundColor(KDColorOrange);
+  tableView->setBackgroundColor(Escher::Palette::WallScreenDark);
   tableView->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
 }
 

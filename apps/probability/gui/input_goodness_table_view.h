@@ -11,11 +11,12 @@
 #include "probability/abstract/dynamic_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/models/statistic/goodness_statistic.h"
+#include "probability/gui/selectable_table_view_with_background.h"
 
 namespace Probability {
 
 /* This is the table used to input Expected and Observed results. */
-class InputGoodnessTableView : public Escher::SelectableTableView,
+class InputGoodnessTableView : public SelectableTableViewWithBackground,
                                public BorderedTableViewDataSource,
                                public DynamicTableViewDataSource {
 public:

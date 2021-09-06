@@ -109,14 +109,14 @@ int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
 }
 
 I18n::Message ContinuousFunction::parameterMessageName() const {
-  return ParameterMessageForPlotType(plotType());
+  return ParameterMessageForSymbolType(symbolType());
 }
 
 I18n::Message ContinuousFunction::functionCategory() const {
   assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
   static const I18n::Message category[k_numberOfPlotTypes] = {
-    I18n::Message::CartesianType, I18n::Message::PolarType, I18n::Message::ParametricType, I18n::Message::LineType, I18n::Message::VerticalLineType,
-    I18n::Message::HorizontalLineType, I18n::Message::InequationType, I18n::Message::ConicsType, I18n::Message::CircleType, I18n::Message::EllipseType,
+    I18n::Message::PolarType, I18n::Message::ParametricType,I18n::Message::CartesianType,  I18n::Message::LineType, I18n::Message::HorizontalLineType,
+    I18n::Message::VerticalLineType, I18n::Message::InequationType, I18n::Message::ConicsType, I18n::Message::CircleType, I18n::Message::EllipseType,
     I18n::Message::ParabolaType, I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
   };
   return category[static_cast<size_t>(plotType())];
@@ -482,14 +482,15 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
   return recordData()->setPlotType(PlotType::Unhandled);
 }
 
-I18n::Message ContinuousFunction::ParameterMessageForPlotType(PlotType plotType) {
-  if (plotType == PlotType::Parametric) {
+I18n::Message ContinuousFunction::ParameterMessageForSymbolType(SymbolType symbolType) {
+  switch (symbolType) {
+  case SymbolType::T:
     return I18n::Message::T;
-  }
-  if (plotType == PlotType::Polar) {
+  case SymbolType::Theta:
     return I18n::Message::Theta;
+  default:
+    return I18n::Message::X;
   }
-  return I18n::Message::X;
 }
 
 bool ContinuousFunction::displayDerivative() const {

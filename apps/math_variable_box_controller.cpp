@@ -134,7 +134,6 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   }
   myCell->setLayout(symbolLayout);
-  // TODO Hugo : Display only half of the expression for functions
   myCell->setSubLabelLayout(expressionLayoutForRecord(record, index));
   myCell->reloadScroll();
   myCell->reloadCell();

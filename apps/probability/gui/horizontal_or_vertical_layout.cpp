@@ -37,6 +37,18 @@ void OrientedLayout::layoutSubviews(bool force) {
   }
 }
 
+void Probability::OrientedLayout::drawRect(KDContext * ctx, KDRect rect) const {
+  // Draw in margins
+  ctx->fillRect(KDRect(0, 0, m_marginX, bounds().height()), m_backgroundColor);
+  ctx->fillRect(KDRect(bounds().width() - m_marginX, 0, m_marginX, bounds().height()),
+                m_backgroundColor);
+  ctx->fillRect(KDRect(m_marginX, 0, bounds().width() - 2 * m_marginX, m_marginY),
+                m_backgroundColor);
+  ctx->fillRect(
+      KDRect(m_marginX, bounds().height() - m_marginY, bounds().width() - 2 * m_marginX, m_marginY),
+      m_backgroundColor);
+}
+
 KDCoordinate Probability::OrientedLayout::firstMargin() const {
   return reorderedPoint(m_marginX, m_marginY).x();
 }

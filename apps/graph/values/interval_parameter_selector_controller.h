@@ -20,11 +20,12 @@ public:
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::PlotType plotType);
+  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::SymbolType symbolType);
 private:
-  Shared::ContinuousFunction::PlotType plotTypeAtRow(int j) const;
-  I18n::Message messageForType(Shared::ContinuousFunction::PlotType plotType);
-  Escher::MessageTableCellWithChevron m_intervalParameterCell[Shared::ContinuousFunction::k_numberOfPlotTypes];
+  static constexpr size_t k_numberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
+  Shared::ContinuousFunction::SymbolType symbolTypeAtRow(int j) const;
+  I18n::Message messageForType(Shared::ContinuousFunction::SymbolType symbolType);
+  Escher::MessageTableCellWithChevron m_intervalParameterCell[k_numberOfSymbolTypes];
 };
 
 }

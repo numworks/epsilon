@@ -16,6 +16,9 @@ public:
   int numberOfActiveFunctions() const {
     return numberOfModelsSatisfyingTest(&isFunctionActive, nullptr);
   }
+  int numberOfActiveFunctionsInTable() const {
+    return numberOfModelsSatisfyingTest(&isFunctionActiveInTable, nullptr);
+  }
   Ion::Storage::Record activeRecordAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &isFunctionActive, nullptr);
   }
@@ -39,6 +42,10 @@ public:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
 
 private:
+  static bool isFunctionActiveInTable(ExpressionModelHandle * model, void * context) {
+    // An active function must be defined
+    return isFunctionActive(model, context) && static_cast<ContinuousFunction *>(model)->isActiveInTable();
+  }
   static bool isFunctionActive(ExpressionModelHandle * model, void * context) {
     // An active function must be defined
     return isModelDefined(model, context) && static_cast<ContinuousFunction *>(model)->isActive();
@@ -53,7 +60,7 @@ private:
   }
   static bool isFunctionActiveOfSymbolType(ExpressionModelHandle * model, void * context) {
     ContinuousFunction::SymbolType symbolType = *static_cast<ContinuousFunction::SymbolType *>(context);
-    return isFunctionActive(model, context) && symbolType == static_cast<ContinuousFunction *>(model)->symbolType();
+    return isFunctionActiveInTable(model, context) && symbolType == static_cast<ContinuousFunction *>(model)->symbolType();
   }
   mutable ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
   // TODO Hugo : Handle cache

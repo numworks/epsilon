@@ -145,8 +145,15 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
 
 // AlternateEmptyViewDelegate
 
+bool ValuesController::isEmpty() const {
+  if (functionStore()->numberOfActiveFunctionsInTable() == 0) {
+    return true;
+  }
+  return false;
+}
+
 I18n::Message ValuesController::emptyMessage() {
-  // TODO Hugo : Count only models we can display values for.
+  // TODO Hugo : Use a third message for when functions are just incompatible
   if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }
@@ -166,8 +173,7 @@ void ValuesController::updateNumberOfColumns() const {
   for (int symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
     m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;
   }
-  // TODO Hugo : Count only models we can display values for.
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+  for (int i = 0; i < functionStore()->numberOfActiveFunctionsInTable(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
     int symbolTypeIndex = static_cast<int>(f->symbolType());

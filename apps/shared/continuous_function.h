@@ -60,8 +60,8 @@ public:
 
   // Properties
   bool isActive() const;
-  // TODO Hugo : Filter out Conics and others from Table
-  // bool isActiveInTable() const { return isActive() && plotType() <= PlotType::HorizontalLine; }
+  // TODO Hugo : Add staticAssert for this
+  bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
   KDColor color() const;
   void setActive(bool active);
   bool isNamed() const; // y = or f(x) = ?

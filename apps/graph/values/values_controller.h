@@ -34,6 +34,7 @@ public:
   }
 
   // AlternateEmptyViewDelegate
+  bool isEmpty() const override;
   I18n::Message emptyMessage() override;
 
   // Parameters controllers getters

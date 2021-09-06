@@ -8,10 +8,10 @@
 
 namespace Probability {
 
-class OrientedLayout : public Escher::SolidColorView {
+class OrientedLayout : public Escher::View {
 public:
   OrientedLayout(KDColor color = Escher::Palette::WallScreen) :
-      Escher::SolidColorView(color), m_marginX(0), m_marginY(0) {}
+      m_backgroundColor(color), m_marginX(0), m_marginY(0) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
   void setMargins(KDCoordinate marginX, KDCoordinate marginY) {
@@ -25,7 +25,10 @@ public:
   virtual KDCoordinate secondLength(KDSize p) const = 0;
   virtual KDSize reorderedSize(KDCoordinate first, KDCoordinate second) const = 0;
 
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+
 protected:
+  KDColor m_backgroundColor;
   KDCoordinate m_marginX;
   KDCoordinate m_marginY;
 

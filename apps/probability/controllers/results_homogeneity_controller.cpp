@@ -12,7 +12,6 @@ using namespace Probability;
 HomogeneityResultsView::ContentView::ContentView(Responder * parent,
                                                  SelectableTableView * table,
                                                  ButtonDelegate * buttonDelegate) :
-    VerticalLayout(Escher::Palette::WallScreenDark),
     m_title(KDFont::SmallFont,
             I18n::Message::HomogeneityResultsTitle,
             KDFont::ALIGN_CENTER,

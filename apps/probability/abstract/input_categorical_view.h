@@ -72,7 +72,7 @@ private:
       InnerVerticalLayout(MessageTableCellWithEditableTextWithMessage * significanceCell,
                           SpacerView * spacer,
                           Escher::Button * next) :
-          VerticalLayout(Palette::WallScreenDark),
+          VerticalLayout(Escher::Palette::WallScreenDark),
           m_significanceCell(significanceCell),
           m_spacer(spacer),
           m_next(next) {

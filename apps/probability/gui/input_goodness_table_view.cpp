@@ -17,7 +17,7 @@ InputGoodnessTableView::InputGoodnessTableView(
     Escher::TextFieldDelegate * textFieldDelegate,
     DynamicTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
-    SelectableTableView(parentResponder, this, &m_tableSelection, scrollDelegate),
+    SelectableTableViewWithBackground(parentResponder, this, &m_tableSelection, scrollDelegate),
     DynamicTableViewDataSource(delegate),
     m_numberOfRows(k_minimumNumberOfRows),
     m_statistic(statistic) {

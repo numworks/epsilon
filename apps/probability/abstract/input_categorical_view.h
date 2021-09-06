@@ -30,12 +30,10 @@ public:
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
-  void layoutSubviews(bool force = false) override {
-    Escher::ScrollView::layoutSubviews(force);
-  };  // Made public
-
-  void drawRect(KDContext * ctx, KDRect rect) const override {
-    ctx->fillRect(rect, Palette::WallScreenDark);
+  using Escher::ScrollView::layoutSubviews;  // Made public
+  KDSize contentSize() const override {
+    return KDSize(maxContentWidthDisplayableWithoutScrolling(),
+                  m_contentView.minimalSizeForOptimalDisplay().height());
   }
 
   // Responder

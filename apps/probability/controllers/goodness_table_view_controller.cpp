@@ -63,7 +63,6 @@ void GoodnessTableViewController::deleteSelectedValue() {
   m_statistic->recomputeData();
   m_inputTableView.recomputeNumberOfRows();
   m_inputTableView.selectCellAtLocation(col, std::min(row, m_inputTableView.numberOfRows() - 1));
-  m_inputTableView.reloadCellAtLocation(col, row);
 }
 
 }  // namespace Probability

@@ -25,11 +25,12 @@ void OrientedLayout::layoutSubviews(bool force) {
   KDCoordinate offsetSecond = secondMargin();
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
-    subviewAtIndex(i)->setSize(reorderedSize(availableFirst, availableSecond));
+    Escher::View * subview = subviewAtIndex(i);
+    subview->setSize(reorderedSize(availableFirst, secondLength(subview->bounds().size())));
     KDCoordinate requiredSecond = secondLength(subviewAtIndex(i)->minimalSizeForOptimalDisplay());
     KDRect proposedFrame = reorderedRect(
         KDRect(KDPoint(firstMargin(), offsetSecond), availableFirst, requiredSecond));
-    subviewAtIndex(i)->setFrame(proposedFrame, false);
+    subview->setFrame(proposedFrame, false);
     availableSecond -= requiredSecond;
     offsetSecond += requiredSecond;
     assert(availableSecond >= 0);

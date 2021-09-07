@@ -171,7 +171,7 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   }
   Context * context = reductionContext.context();
   assert(!childAtIndex(1).deepIsMatrix(context));
-  if (childAtIndex(2).deepIsMatrix(context)) {
+  if (childAtIndex(0).deepIsMatrix(context) || childAtIndex(2).deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
 

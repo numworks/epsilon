@@ -58,16 +58,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
         configureFunction(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
         return true;
       }
-      if (event == Ion::Events::Backspace) {
-        // Delete the entire function
-        Ion::Storage::Record record = modelStore()->recordAtIndex(
-            modelIndexForRow(selectedRow()));
-        if (removeModelRow(record)) {
-          assert(selectedRow() < numberOfRows());
-          selectableTableView()->reloadData();
-        }
-        return true;
-      }
       if (event == Ion::Events::Left) {
         // Leave parameter column
         m_parameterColumnSelected = false;

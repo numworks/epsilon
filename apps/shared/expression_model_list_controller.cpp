@@ -192,15 +192,10 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<ExpressionModelHandle> model =  modelStore()->modelForRecord(record);
-    if (model->shouldBeClearedBeforeRemove()) {
-      reinitSelectedExpression(model);
-    } else {
-      if (removeModelRow(record)) {
-        int newSelectedRow = selectedRow() >= numberOfExpressionRows() ? numberOfExpressionRows()-1 : selectedRow();
-        selectCellAtLocation(selectedColumn(), newSelectedRow);
-        selectableTableView()->reloadData();
-      }
+    if (removeModelRow(record)) {
+      int newSelectedRow = selectedRow() >= numberOfExpressionRows() ? numberOfExpressionRows()-1 : selectedRow();
+      selectCellAtLocation(selectedColumn(), newSelectedRow);
+      selectableTableView()->reloadData();
     }
     return true;
   }

@@ -60,10 +60,13 @@ const char * InputController::title() {
                paramBuffer);
     }
   } else {
-    const char * symbol = testTypeToText(App::app()->testType());
-    const char * text = testToText(App::app()->test());
-    const char * format = I18n::translate(I18n::Message::InputControllerIntervalTitleFormat);
-    snprintf(m_titleBuffer, k_titleBufferSize, format, symbol, text);
+    I18n::Message format = titleFormatForTest(App::app()->test(), App::app()->testType());
+    char buffer[30];
+    strlcpy(buffer, I18n::translate(I18n::Message::Interval), sizeof(buffer));
+    decapitalize(buffer);
+
+    snprintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format), buffer);
+    return m_titleBuffer;
   }
   return m_titleBuffer;
 }

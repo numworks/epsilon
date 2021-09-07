@@ -100,11 +100,19 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 }
 
 const char * TypeController::title() {
-  I18n::Message m = App::app()->subapp() == Data::SubApp::Tests
-                        ? I18n::Message::TypeControllerTitleTestFormat
-                        : I18n::Message::TypeControllerTitleIntervalFormat;
-  const char * format = I18n::translate(m);
-  snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, testToText(App::app()->test()));
+  I18n::Message format = App::app()->test() == Data::Test::OneMean
+                        ? I18n::Message::TypeControllerTitleOne
+                        : I18n::Message::TypeControllerTitleTwo;
+  I18n::Message testOrInterval = App::app()->subapp() == Data::SubApp::Tests
+                                     ? I18n::Message::Test
+                                     : I18n::Message::Interval;
+  char buffer[30];
+  strlcpy(buffer, I18n::translate(testOrInterval), sizeof(buffer));
+  decapitalize(buffer);
+  snprintf(m_titleBuffer,
+           sizeof(m_titleBuffer),
+           I18n::translate(format),
+           buffer);
   return m_titleBuffer;
 }
 

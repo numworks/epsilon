@@ -72,7 +72,8 @@ private:
   TypeView m_contentView;
   MessageTextView m_description;
 
-  char m_titleBuffer[30];
+  constexpr static int k_titleBufferSize = sizeof("intervalle pour une moyenne à deux échantillons");
+  char m_titleBuffer[k_titleBufferSize];
 
   Data::TestType * m_globalTestType;
   Statistic * m_statistic;

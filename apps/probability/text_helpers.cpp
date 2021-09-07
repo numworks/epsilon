@@ -96,6 +96,55 @@ const char * testTypeToText(Data::TestType t) {
   }
 }
 
+I18n::Message titleFormatForTest(Data::Test test, Data::TestType type) {
+  switch (test) {
+    case Data::Test::OneProp:
+      return I18n::Message::HypothesisControllerTitleOneProp;
+    case Data::Test::TwoProps:
+      return I18n::Message::HypothesisControllerTitleTwoProps;
+    case Data::Test::OneMean:
+      switch (type) {
+        case Data::TestType::ZTest:
+          return I18n::Message::HypothesisControllerTitleOneMeanZ;
+        case Data::TestType::TTest:
+          return I18n::Message::HypothesisControllerTitleOneMeanT;
+        default:
+          assert(false);
+          return I18n::Message::Default;
+      }
+    case Data::Test::TwoMeans:
+      switch (type) {
+        case Data::TestType::ZTest:
+          return I18n::Message::HypothesisControllerTitleTwoMeansZ;
+        case Data::TestType::TTest:
+          return I18n::Message::HypothesisControllerTitleTwoMeansT;
+        case Data::TestType::PooledTTest:
+          return I18n::Message::HypothesisControllerTitleTwoMeansPooledT;
+        default:
+          assert(false);
+          return I18n::Message::Default;
+      }
+
+    default:
+      assert(false);
+      return I18n::Message::Default;
+  }
+}
+
+void decapitalize(char * text) {
+  constexpr static int jumpToLowerCase = 'a' - 'A';
+  if (text[0] >= 'A' && text[0] <= 'Z') {
+    text[0] += jumpToLowerCase;
+  }
+}
+
+void capitalize(char * text) {
+  constexpr static int jumpToUpperCase = 'A' - 'a';
+  if (text[0] >= 'a' && text[0] <= 'z') {
+    text[0] += jumpToUpperCase;
+  }
+}
+
 template <typename T>
 int defaultConvertFloatToText(T value, char buffer[], int bufferSize) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(

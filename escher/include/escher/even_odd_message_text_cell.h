@@ -9,7 +9,7 @@ namespace Escher {
 
 class EvenOddMessageTextCell : public EvenOddCell {
 public:
-  EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont);
+  EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f, KDCoordinate horizontalMargin = k_horizontalMargin);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);
@@ -20,6 +20,8 @@ protected:
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   MessageTextView m_messageTextView;
+private:
+  const KDCoordinate m_horizontalMargin;
 };
 
 }

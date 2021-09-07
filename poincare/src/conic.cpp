@@ -107,9 +107,12 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
                                                      angleUnit);
   assert(std::isfinite(m_a) && std::isfinite(m_b) && std::isfinite(m_c) &&
          std::isfinite(m_d) && std::isfinite(m_e) && std::isfinite(m_f));
+  // Type may still change to undefined during canonization.
+  updateConicType();
+  canonize();
 }
 
-Conic::Type Conic::getConicType() {
+void Conic::updateConicType() {
   if (m_type == Type::Unknown) {
     if ((m_a == 0.0 && m_c == 0.0) ||
         (m_b == 0.0 &&
@@ -125,7 +128,6 @@ Conic::Type Conic::getConicType() {
       }
     }
   }
-  return m_type;
 }
 
 void Conic::opposeCoefficients() {
@@ -266,6 +268,12 @@ void Conic::canonize() {
   m_e /= factor;
   m_f /= factor;
 
+  if ((m_a <= 0.0 && m_c <= 0.0)) {
+    // Both m_a, m_c and m_f are negative
+    m_type = Type::Undefined;
+    return;
+  }
+
   if (m_a != smallestPositive(m_a, m_c, true)) {
     /* When centering the conic, m_f might switch sign, threatening the
      * assertion that a is the smallest positive for canonic form. In that case
@@ -284,60 +292,52 @@ double Conic::getDeterminant() const {
   return m_b * m_b - 4.0 * m_a * m_c;
 }
 
-void Conic::getCenter(double * cx, double * cy) {
-  centerConic();
+void Conic::getCenter(double * cx, double * cy) const {
   *cx = m_cx;
   *cy = m_cy;
 }
 
-double Conic::getEccentricity() {
-  assert(getConicType() != Type::Undefined);
-  canonize();
-  Type type = getConicType();
+double Conic::getEccentricity() const {
+  assert(m_type != Type::Undefined);
   double e = std::sqrt(1 - smallestPositive(m_a, m_c, false) /
                                nonSmallestPositive(m_a, m_c, false));
-  if (type == Type::Circle) {
+  if (m_type == Type::Circle) {
     assert(e == 0.0);
-  } else if (type == Type::Parabola) {
+  } else if (m_type == Type::Parabola) {
     assert(e == 1.0);
   }
   return e;
 }
 
-double Conic::getSemiMajorAxis() {
-  assert(getConicType() == Type::Ellipse || getConicType() == Type::Hyperbola);
-  canonize();
+double Conic::getSemiMajorAxis() const {
+  assert(m_type == Type::Ellipse || m_type == Type::Hyperbola);
   return std::sqrt(1 / smallestPositive(m_a, m_c));
 }
 
-double Conic::getSemiMinorAxis() {
-  assert(getConicType() == Type::Ellipse || getConicType() == Type::Hyperbola);
-  canonize();
+double Conic::getSemiMinorAxis() const {
+  assert(m_type == Type::Ellipse || m_type == Type::Hyperbola);
   return std::sqrt(1 / std::abs(nonSmallestPositive(m_a, m_c)));
 }
 
-double Conic::getLinearEccentricity() {
-  assert(getConicType() == Type::Ellipse || getConicType() == Type::Hyperbola);
-  canonize();
+double Conic::getLinearEccentricity() const {
+  assert(m_type == Type::Ellipse || m_type == Type::Hyperbola);
   return std::sqrt(std::abs(1 / m_a - 1 / m_c));
 }
 
-double Conic::getParameter() {
-  assert(getConicType() == Type::Parabola);
-  canonize();
+double Conic::getParameter() const {
+  assert(m_type == Type::Parabola);
   return std::abs(m_d == 0.0 ? m_e : m_d) / 2;
 }
 
-void Conic::getSummit(double * sx, double * sy) {
-  assert(getConicType() == Type::Parabola);
+void Conic::getSummit(double * sx, double * sy) const {
+  assert(m_type == Type::Parabola);
   // Parabola's summit is also it's center
   getCenter(sx, sy);
   assert(m_f == 0.0 && m_b == 0.0 && m_a * m_c == 0.0 && m_d * m_e == 0.0);
 }
 
-double Conic::getRadius() {
-  assert(getConicType() == Type::Circle);
-  canonize();
+double Conic::getRadius() const {
+  assert(m_type == Type::Circle);
   return std::sqrt(1 / m_a);
 }
 

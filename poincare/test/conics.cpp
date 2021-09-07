@@ -99,6 +99,9 @@ QUIZ_CASE(poincare_conics_invalid) {
   quiz_assert_undefined("y^2+x^2-ln(x)");
   quiz_assert_undefined("y^3+y^2+x^2");
   quiz_assert_undefined("x*y^2+x^2");
+  quiz_assert_undefined("y^2+x^2+1");
+  quiz_assert_undefined("y^2+x^2+x*y+x+y+1");
+  quiz_assert_undefined("y^2+1");
 }
 
 QUIZ_CASE(poincare_conics_general) {

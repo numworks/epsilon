@@ -146,9 +146,6 @@ public:
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
   static constexpr char k_ordinateName[2] = "y";
-  // TODO Hugo : Fix this terrible workaround
-  static Poincare::Conic s_tempConic;
-  static double s_tempLine[2];
   // TODO Hugo : usefull ?
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
@@ -201,7 +198,13 @@ private:
     float tMax() const { return m_domain.max(); }
     void setTMin(float tMin) { m_domain.setMin(tMin); }
     void setTMax(float tMax) { m_domain.setMax(tMax); }
+    void setConic(Poincare::Conic conic) { m_conic = conic; }
+    Poincare::Conic getConic() const { return m_conic; }
+    void setLine(double a, double b) { m_line[0] = a; m_line[1] = b; }
+    double getLine(size_t paramIndex) const { assert(paramIndex < 2); return m_line[paramIndex]; }
   private:
+    Poincare::Conic m_conic;
+    double m_line[2];
     Range1D m_domain;
     uint16_t m_color;
     bool m_active;

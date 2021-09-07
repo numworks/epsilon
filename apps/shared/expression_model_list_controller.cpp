@@ -16,7 +16,8 @@ namespace Shared {
 
 ExpressionModelListController::ExpressionModelListController(Responder * parentResponder, I18n::Message text) :
   ViewController(parentResponder),
-  m_addNewModel()
+  // TODO Hugo : Properly define left margin.
+  m_addNewModel(KDFont::LargeFont, 0.0f, 0.5f, 2 * Escher::Metric::BigCellMargin)
 {
   resetMemoization();
   m_addNewModel.setMessage(text);

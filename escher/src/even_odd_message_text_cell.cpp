@@ -3,9 +3,10 @@
 
 namespace Escher {
 
-EvenOddMessageTextCell::EvenOddMessageTextCell(const KDFont * font) :
+EvenOddMessageTextCell::EvenOddMessageTextCell(const KDFont * font, float horizontalAlignment, float verticalAlignment, KDCoordinate horizontalMargin) :
   EvenOddCell(),
-  m_messageTextView(font, (I18n::Message)0, KDContext::k_alignCenter, KDContext::k_alignCenter)
+  m_messageTextView(font, (I18n::Message)0, horizontalAlignment, verticalAlignment),
+  m_horizontalMargin(horizontalMargin)
 {
 }
 
@@ -39,7 +40,7 @@ View * EvenOddMessageTextCell::subviewAtIndex(int index) {
 
 void EvenOddMessageTextCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
-  m_messageTextView.setFrame(KDRect(k_horizontalMargin, 0, boundsThis.width() - 2*k_horizontalMargin, boundsThis.height()), force);
+  m_messageTextView.setFrame(KDRect(m_horizontalMargin, 0, boundsThis.width() - 2*m_horizontalMargin, boundsThis.height()), force);
 }
 
 }

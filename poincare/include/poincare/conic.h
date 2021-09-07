@@ -21,23 +21,23 @@ public:
   // Extract A,B,C,D,E,F parameters
   Conic(const Expression e, Context * context, const char * x = "x", const char * y = "y");
   // Return conic type from parameters
-  Type getConicType();
+  Type getConicType() const { return m_type; }
   // Conic Eccentricity
-  double getEccentricity();
+  double getEccentricity() const;
   // Conic Center
-  void getCenter(double * cx, double * cy);
+  void getCenter(double * cx, double * cy) const;
   // Ellipse or Hyperbola's semi major axis
-  double getSemiMajorAxis();
+  double getSemiMajorAxis() const;
   // Ellipse or Hyperbola's linear eccentricity
-  double getLinearEccentricity();
+  double getLinearEccentricity() const;
   // Ellipse or Hyperbola's semi minor axis
-  double getSemiMinorAxis();
+  double getSemiMinorAxis() const;
   // Parabola's parameter
-  double getParameter();
+  double getParameter() const;
   // Coordinates of Parabola's summit (relative to parameters' center)
-  void getSummit(double * sx, double * sy);
+  void getSummit(double * sx, double * sy) const;
   // Circle's radius
-  double getRadius();
+  double getRadius() const;
 
 private:
   // Thereshold under which a parameter is considered null
@@ -48,6 +48,8 @@ private:
   }
   // Oppose all coefficients to ensure canonic form
   void opposeCoefficients();
+  // Update conic type from parameters
+  void updateConicType();
   // Remove rotation from the parameters (B = 0)
   void rotateConic();
   // Remove both rotation and off-centering from the parameters

@@ -23,8 +23,6 @@ namespace Shared {
 
 constexpr char ContinuousFunction::k_unknownName[2];
 constexpr char ContinuousFunction::k_ordinateName[2];
-Conic ContinuousFunction::s_tempConic;
-double ContinuousFunction::s_tempLine[2];
 
 ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
@@ -214,40 +212,41 @@ double ContinuousFunction::detailsValue(int i) const {
   assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
   assert(i < detailsTotal());
   if (type == PlotType::Line) {
-    static const double titles[3] = {
-      NAN, s_tempLine[0], s_tempLine[1],
+    double titles[3] = {
+      NAN, recordData()->getLine(0), recordData()->getLine(1),
     };
     return titles[i];
   }
   double cx, cy;
+  const Conic conicRepresentation = recordData()->getConic();
   if (type == PlotType::Parabola) {
-    s_tempConic.getSummit(&cx, &cy);
+    conicRepresentation.getSummit(&cx, &cy);
   } else {
-    s_tempConic.getCenter(&cx, &cy);
+    conicRepresentation.getCenter(&cx, &cy);
   }
   if (type == PlotType::Circle) {
     double titles[3] = {
-      s_tempConic.getRadius(), cx, cy,
+      conicRepresentation.getRadius(), cx, cy,
     };
     return titles[i];
   }
   if (type == PlotType::Ellipse) {
     double titles[6] = {
-      s_tempConic.getSemiMajorAxis(), s_tempConic.getSemiMinorAxis(), s_tempConic.getLinearEccentricity(),
-      s_tempConic.getEccentricity(), cx, cy,
+      conicRepresentation.getSemiMajorAxis(), conicRepresentation.getSemiMinorAxis(), conicRepresentation.getLinearEccentricity(),
+      conicRepresentation.getEccentricity(), cx, cy,
     };
     return titles[i];
   }
   if (type == PlotType::Parabola) {
     double titles[3] = {
-      s_tempConic.getParameter(), cx, cy,
+      conicRepresentation.getParameter(), cx, cy,
     };
     return titles[i];
   }
   assert(type == PlotType::Hyperbola);
   double titles[6] = {
-    s_tempConic.getSemiMajorAxis(), s_tempConic.getSemiMinorAxis(), s_tempConic.getLinearEccentricity(),
-    s_tempConic.getEccentricity(), cx, cy,
+    conicRepresentation.getSemiMajorAxis(), conicRepresentation.getSemiMinorAxis(), conicRepresentation.getLinearEccentricity(),
+    conicRepresentation.getEccentricity(), cx, cy,
   };
   return titles[i];
 }
@@ -453,10 +452,11 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
     PoincareHelpers::Reduce(&lineExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
     int d = lineExpression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
     if (d == 1) {
-      s_tempLine[0] = coefficients[1].approximateToScalar<double>(context, complexFormat,
-                                                        angleUnit);
-      s_tempLine[1] = coefficients[0].approximateToScalar<double>(context, complexFormat,
-                                                        angleUnit);
+      recordData()->setLine(coefficients[1].approximateToScalar<double>(
+                                context, complexFormat, angleUnit),
+                            coefficients[0].approximateToScalar<double>(
+                                context, complexFormat, angleUnit));
+
       return recordData()->setPlotType(PlotType::Line);
     } // Otherwise, there probably was a x*y term in the equation.
   }
@@ -464,8 +464,9 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
     return recordData()->setPlotType(PlotType::Cartesian);
   }
   if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
-    s_tempConic = Conic(equation, context, k_unknownName);
-    Conic::Type ctype = s_tempConic.getConicType();
+    Conic equationConic = Conic(equation, context, k_unknownName);
+    Conic::Type ctype = equationConic.getConicType();
+    recordData()->setConic(equationConic);
     if (ctype == Conic::Type::Hyperbola) {
       return recordData()->setPlotType(PlotType::Hyperbola);
     } else if (ctype == Conic::Type::Parabola) {

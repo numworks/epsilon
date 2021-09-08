@@ -107,6 +107,7 @@ protected:
   ContentView m_contentView;
 
 private:
+  void removePreviousGlyphIfRepetition(bool defaultXNTHasChanged);
   bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
   bool privateHandleSelectEvent(Ion::Events::Event event);

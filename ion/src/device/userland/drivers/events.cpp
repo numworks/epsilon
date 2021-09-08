@@ -21,7 +21,7 @@ ShiftAlphaStatus SVC_ATTRIBUTES shiftAlphaStatus() {
   SVC_RETURNING_R0(SVC_EVENTS_SHIFT_ALPHA_STATUS, ShiftAlphaStatus)
 }
 
-int SVC_ATTRIBUTES repetitionFactor() {
+int SVC_ATTRIBUTES repetitionFactor(bool repetition) {
   SVC_RETURNING_R0(SVC_EVENTS_REPETITION_FACTOR, int)
 }
 

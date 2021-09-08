@@ -6,6 +6,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/code_point_layout.h>
+#include <ion/events.h>
 #include <assert.h>
 #include <string.h>
 #include <algorithm>
@@ -346,6 +347,11 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
+    if (Ion::Events::repetitionFactor(true) > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
+      // XNT is Cycling, remove the last inserted character
+      // TODO Hugo : Handle cycling when xnt is initialized.
+      m_contentView.cursor()->performBackspace();
+    }
   }
 
   // Delete the selected layouts if needed

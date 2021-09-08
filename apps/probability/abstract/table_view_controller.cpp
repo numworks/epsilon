@@ -8,9 +8,6 @@ void TableViewController::didBecomeFirstResponder() {
   if (selectableTableView()->selectedRow() < 0) {
     selectableTableView()->selectRow(1);
   }
-  if (selectableTableView()->selectedColumn() < 0) {
-    selectableTableView()->selectColumn(1);
-  }
   Escher::Container::activeApp()->setFirstResponder(selectableTableView());
 }
 

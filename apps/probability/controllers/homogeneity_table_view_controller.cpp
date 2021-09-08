@@ -17,10 +17,10 @@ HomogeneityTableViewController::HomogeneityTableViewController(
 }
 
 void HomogeneityTableViewController::didBecomeFirstResponder() {
-  if (m_table.selectedColumn() < 0) {
+  m_innerTableData.recomputeDimensions();
+  if (m_table.selectedColumn() <= 0) {
     m_table.selectColumn(1);
   }
-  m_innerTableData.recomputeDimensions();
   TableViewController::didBecomeFirstResponder();
 }
 

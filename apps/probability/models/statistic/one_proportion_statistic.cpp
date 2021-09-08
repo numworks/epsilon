@@ -44,6 +44,13 @@ Poincare::Layout OneProportionStatistic::estimateLayout() {
   return CodePointLayout::Builder('p'); // TODO replace with ^p
 }
 
+void OneProportionStatistic::setParamAtIndex(int index, float p) {
+  if (index == ParamsOrder::N || index == ParamsOrder::X) {
+    p = std::round(p);
+  }
+  ZStatistic::setParamAtIndex(index, p);
+}
+
 ParameterRepresentation OneProportionStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X: {

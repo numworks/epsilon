@@ -37,7 +37,7 @@ public:
   int numberOfParameters() { return numberOfStatisticParameters() + 1 /* threshold */; }
   float paramAtIndex(int i);
   virtual bool isValidParamAtIndex(int i, float p);
-  void setParamAtIndex(int i, float p);
+  virtual void setParamAtIndex(int i, float p);
   Poincare::Layout paramSymbolAtIndex(int i) const { return paramRepresentationAtIndex(i).m_symbol; }
   I18n::Message paramDescriptionAtIndex(int i) const { return paramRepresentationAtIndex(i).m_description; }
   float threshold() const { return m_threshold; }

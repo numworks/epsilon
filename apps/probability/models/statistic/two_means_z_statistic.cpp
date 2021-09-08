@@ -52,6 +52,13 @@ Poincare::Layout TwoMeansZStatistic::estimateLayout() {
   return XOneMinusXTwoLayout();
 }
 
+void TwoMeansZStatistic::setParamAtIndex(int index, float p) {
+  if (index == ParamsOrder::N1 || index == ParamsOrder::N2) {
+    p = std::round(p);
+  }
+  ZStatistic::setParamAtIndex(index, p);
+}
+
 ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {

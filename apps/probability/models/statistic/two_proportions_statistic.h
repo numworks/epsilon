@@ -10,6 +10,8 @@ public:
   TwoProportionsStatistic();
   bool isValidH0(float p) override;
   bool isValidParamAtIndex(int i, float p) override;
+  void setParamAtIndex(int index, float p) override;
+
   void computeTest() override;
   void computeInterval() override;
 

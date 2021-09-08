@@ -29,6 +29,13 @@ bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
   return TStatistic::isValidParamAtIndex(i, p);
 }
 
+void OneMeanTStatistic::setParamAtIndex(int index, float p) {
+  if (index == ParamsOrder::N) {
+    p = std::round(p);
+  }
+  TStatistic::setParamAtIndex(index, p);
+}
+
 void OneMeanTStatistic::computeTest() {
   float mean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = computeDegreesOfFreedom(n());

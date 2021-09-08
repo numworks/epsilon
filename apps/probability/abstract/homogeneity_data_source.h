@@ -17,7 +17,6 @@ namespace Probability {
 
 /* This class wraps a TableViewDataSource by adding a Row & Column header around it.
  * Specifically meant for InputHomogeneity and HomogeneityResults. */
-// TODO memoize
 class HomogeneityTableDataSource : public BorderedTableViewDataSource,
                                    public SelectableTableViewDataSource,
                                    public ChainedSelectableTableViewDelegate {

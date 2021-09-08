@@ -9,18 +9,10 @@
 
 namespace Probability {
 
-class IntervalConclusionView : public VerticalLayout {
+class IntervalConclusionView : public Escher::BufferTextView {
 public:
   IntervalConclusionView();
   void setInterval(float center, float marginOfError);
-  int numberOfSubviews() const override { return 2; }
-  Escher::View * subviewAtIndex(int i) override;
-
-private:
-  constexpr static int k_intervalBufferSize = Constants::k_shortFloatNumberOfChars + sizeof("±") +
-                                              Constants::k_shortFloatNumberOfChars + 1 /* \0 */;
-  Escher::MessageTextView m_messageView;
-  Escher::BufferTextView m_intervalView;
 };
 
 }  // namespace Probability

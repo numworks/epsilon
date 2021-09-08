@@ -17,7 +17,8 @@ public:
   void setText(const char * text) override;
   const char * text() const override;
   void appendText(const char * text);
-private:
+
+protected:
   char m_buffer[k_maxNumberOfChar];
   size_t m_maxDisplayedTextLength;
 };

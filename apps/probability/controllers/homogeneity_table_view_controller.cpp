@@ -43,14 +43,11 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
   m_statistic->setParameterAtPosition(row - 1, column - 1, p);
 
   m_table.deselectTable();
-  // Add row
-  if (row == m_innerTableData.numberOfRows() &&
-      m_innerTableData.numberOfRows() < HomogeneityStatistic::k_maxNumberOfRows) {
-    m_innerTableData.recomputeDimensions();
-  }
-  // Add column
-  if (column == m_innerTableData.numberOfColumns() &&
-      m_innerTableData.numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns) {
+  // Add row or column
+  if ((row == m_innerTableData.numberOfRows() &&
+       m_innerTableData.numberOfRows() < HomogeneityStatistic::k_maxNumberOfRows) ||
+      (column == m_innerTableData.numberOfColumns() &&
+       m_innerTableData.numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns)) {
     m_innerTableData.recomputeDimensions();
   }
   m_table.reloadCellAtLocation(column, row);
@@ -63,11 +60,13 @@ void HomogeneityTableViewController::deleteSelectedValue() {
   int row = m_table.selectedRow(), col = m_table.selectedColumn();
   m_statistic->setParameterAtPosition(row - 1, col - 1, HomogeneityStatistic::k_undefinedValue);
   m_statistic->recomputeData();
+  m_table.reloadCellAtLocation(col, row);
 
   // Delete last row / column
   m_table.deselectTable();
   m_innerTableData.recomputeDimensions();
   m_table.selectCellAtClippedLocation(col, row, false);
+
 }
 
 }  // namespace Probability

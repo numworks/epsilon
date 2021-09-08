@@ -10,10 +10,12 @@ void removeShift();
 bool isShiftActive();
 bool isAlphaActive();
 bool isLockActive();
-void resetLongRepetition();
-void incrementRepetitionFactor();
-void setLongRepetition(int longRepetition);
 void updateModifiersFromEvent(Event e);
+int longPressFactor();
+void resetLongPress();
+void resetRepetition();
+void incrementLongPress();
+void incrementRepetition();
 
 }
 }

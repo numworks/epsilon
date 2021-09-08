@@ -62,7 +62,24 @@ TextFieldDelegateApp::TextFieldDelegateApp(Snapshot * snapshot, ViewController *
 
 bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
-    return field->addXNTCodePoint(XNT());
+    CodePoint defaultXNT = XNT();
+    int XNTIndex = Ion::Events::repetitionFactor(true);
+    if (XNTIndex > 0) {
+      // Cycle through XNT CodePoints, starting from default code point position
+      constexpr size_t numberOfCodePoints = 4;
+      constexpr CodePoint XNTCodePoints[numberOfCodePoints] = {'x', 'n', 't', UCodePointGreekSmallLetterTheta};
+      for (size_t i = 0; i < numberOfCodePoints; i++) {
+        XNTIndex++;
+        if (XNTCodePoints[i] == defaultXNT) {
+          break;
+        }
+      }
+      // Unknown default code point
+      defaultXNT = XNTCodePoints[XNTIndex%numberOfCodePoints];
+    }
+    /* TODO Hugo : Select the inserted XNT so that, if the inserted codePoint is
+     * more than 1 character long, it is correctly replaced when cycling. */
+    return field->addXNTCodePoint(defaultXNT);
   }
   return false;
 }

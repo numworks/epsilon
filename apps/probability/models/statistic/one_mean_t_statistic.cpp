@@ -4,6 +4,8 @@
 #include <poincare/conjugate_layout.h>
 #include <poincare/horizontal_layout.h>
 
+#include "probability/app.h"
+
 #include <cmath>
 
 using namespace Poincare;
@@ -11,10 +13,17 @@ using namespace Poincare;
 namespace Probability {
 
 OneMeanTStatistic::OneMeanTStatistic() {
-  m_params[ParamsOrder::X] = 127;
-  m_params[ParamsOrder::N] = 10;
-  m_params[ParamsOrder::S] = 2;
-  m_hypothesisParams.setFirstParam(128);
+  if (App::app()->subapp() == Data::SubApp::Tests) {
+    m_params[ParamsOrder::X] = 47.9;
+    m_params[ParamsOrder::N] = 12;
+    m_params[ParamsOrder::S] = 2.81;
+    m_hypothesisParams.setFirstParam(50);
+    m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Lower);
+  } else {
+    m_params[ParamsOrder::X] = 1.2675;
+    m_params[ParamsOrder::N] = 40;
+    m_params[ParamsOrder::S] = 0.3332;
+  }
 }
 
 bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
@@ -55,16 +64,16 @@ void OneMeanTStatistic::computeInterval() {
 ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X: {
-      HorizontalLayout x = HorizontalLayout::Builder(
+      Poincare::HorizontalLayout x = Poincare::HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')));
       return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::S: {
-      HorizontalLayout s = HorizontalLayout::Builder(CodePointLayout::Builder('s'));
+      Poincare::HorizontalLayout s = Poincare::HorizontalLayout::Builder(CodePointLayout::Builder('s'));
       return ParameterRepresentation{s, I18n::Message::SampleSTD};
     }
     case ParamsOrder::N: {
-      HorizontalLayout n = HorizontalLayout::Builder(CodePointLayout::Builder('n'));
+      Poincare::HorizontalLayout n = Poincare::HorizontalLayout::Builder(CodePointLayout::Builder('n'));
       return ParameterRepresentation{n, I18n::Message::SampleSize};
     }
   }

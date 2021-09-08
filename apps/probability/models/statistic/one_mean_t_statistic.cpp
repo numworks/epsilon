@@ -61,7 +61,7 @@ ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) con
     }
     case ParamsOrder::S: {
       HorizontalLayout s = HorizontalLayout::Builder(CodePointLayout::Builder('s'));
-      return ParameterRepresentation{s, I18n::Message::StandardDeviation};
+      return ParameterRepresentation{s, I18n::Message::SampleSTD};
     }
     case ParamsOrder::N: {
       HorizontalLayout n = HorizontalLayout::Builder(CodePointLayout::Builder('n'));

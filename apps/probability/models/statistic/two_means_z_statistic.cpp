@@ -76,7 +76,7 @@ ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) co
       HorizontalLayout sigma1 = codePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '1');
-      return ParameterRepresentation{sigma1, I18n::Message::Sample1Std};
+      return ParameterRepresentation{sigma1, I18n::Message::Population1Std};
     }
     case ParamsOrder::X2: {
       HorizontalLayout x2 = HorizontalLayout::Builder(
@@ -94,7 +94,7 @@ ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) co
       HorizontalLayout sigma2 = codePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '2');
-      return ParameterRepresentation{sigma2, I18n::Message::Sample2Std};
+      return ParameterRepresentation{sigma2, I18n::Message::Population2Std};
     }
   }
   assert(false);

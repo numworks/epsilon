@@ -59,7 +59,7 @@ ParameterRepresentation OneMeanZStatistic::paramRepresentationAtIndex(int i) con
     }
     case ParamsOrder::Sigma: {
       Layout sigma = CodePointLayout::Builder(CodePoint(UCodePointGreekSmallLetterSigma));
-      return ParameterRepresentation{sigma, I18n::Message::StandardDeviation};
+      return ParameterRepresentation{sigma, I18n::Message::PopulationStd};
     }
   }
   assert(false);

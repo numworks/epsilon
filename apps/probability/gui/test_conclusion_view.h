@@ -12,7 +12,7 @@ namespace Probability {
 
 /* This view displays a message "test has been rejected / can't be rejected"
  * and a matching icon. */
-class TestConclusionView : public HorizontalLayout {
+class TestConclusionView : public Escher::View {
 public:
   TestConclusionView(Statistic * statistic);
   int numberOfSubviews() const override { return 3; }
@@ -20,10 +20,12 @@ public:
   void layoutSubviews(bool force) override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+
   void reload();
 
 private:
-  void fillConclusionTextViews(bool isTestSuccessfull);
+  void generateConclusionTexts(bool isTestSuccessfull);
 
   constexpr static int k_marginBetween = 0;
   constexpr static int k_marginLeft = 20;

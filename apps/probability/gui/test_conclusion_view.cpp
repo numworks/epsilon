@@ -50,8 +50,16 @@ KDSize TestConclusionView::minimalSizeForOptimalDisplay() const {
                 std::max<int>(iconSize.height(), textSize1.height() + textSize2.height()));
 }
 
+void TestConclusionView::drawRect(KDContext * ctx, KDRect rect) const {
+  KDSize contentSize = minimalSizeForOptimalDisplay();
+  KDCoordinate topOffset = (m_frame.height() - contentSize.height()) / 2;
+  ctx->fillRect(KDRect(0, 0, bounds().width(), topOffset), Escher::Palette::WallScreen);
+  ctx->fillRect(KDRect(0, bounds().height() - topOffset, bounds().width(), topOffset),
+                Escher::Palette::WallScreen);
+}
+
 void TestConclusionView::reload() {
-  fillConclusionTextViews(m_statistic->canRejectNull());
+  generateConclusionTexts(m_statistic->canRejectNull());
   if (m_statistic->canRejectNull()) {
     m_icon.setImage(ImageStore::TestSuccess);
   } else {
@@ -60,7 +68,7 @@ void TestConclusionView::reload() {
   markRectAsDirty(bounds());
 }
 
-void TestConclusionView::fillConclusionTextViews(bool isTestSuccessfull) {
+void TestConclusionView::generateConclusionTexts(bool isTestSuccessfull) {
   I18n::Message message;
   Poincare::HorizontalLayout layout = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H'),

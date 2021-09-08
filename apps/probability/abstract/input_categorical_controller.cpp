@@ -87,7 +87,7 @@ void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
   if (!withinTemporarySelection && previousSelectedCellY != row) {
     // Make m_contentView scroll to cell
     KDRect cellFrame = KDRect(
-        tableViewController()->tableViewDataSource()->cumulatedWidthFromIndex(col),
+        0,  // We'll scroll only vertically
         tableViewController()->tableViewDataSource()->cumulatedHeightFromIndex(row) +
             tableViewController()->selectableTableView()->topMargin(),
         tableViewController()->selectableTableView()->columnWidth(col),

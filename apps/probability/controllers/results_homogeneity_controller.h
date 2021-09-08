@@ -36,11 +36,16 @@ public:
   Escher::Button * button() { return m_contentView.button(); }
   // ScrollView
   KDSize minimalSizeForOptimalDisplay() const override;
-  KDSize contentSize() const override { return KDSize(bounds().width(), 10000); }
+  KDSize contentSize() const override {
+    return KDSize(maxContentWidthDisplayableWithoutScrolling(),
+                  m_contentView.minimalSizeForOptimalDisplay().height());
+  }
   KDPoint tableOrigin() { return m_contentView.tableOrigin(); }
   KDPoint buttonOrigin() { return m_contentView.buttonOrigin(); }
 
   void drawRect(KDContext * ctx, KDRect rect) const override;
+
+  void reload();
 
   constexpr static int k_topMargin = 5;
 

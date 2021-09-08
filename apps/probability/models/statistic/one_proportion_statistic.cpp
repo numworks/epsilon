@@ -4,14 +4,23 @@
 
 #include <cmath>
 
+#include "probability/app.h"
+
 using namespace Poincare;
 
 namespace Probability {
 
 OneProportionStatistic::OneProportionStatistic() {
-  m_params[ParamsOrder::X] = 20;
-  m_params[ParamsOrder::N] = 50;
-  m_hypothesisParams.setFirstParam(0.5);
+  if (App::app()->subapp() == Data::SubApp::Tests) {
+    m_params[ParamsOrder::X] = 47;
+    m_params[ParamsOrder::N] = 500;
+    m_hypothesisParams.setFirstParam(0.08);
+    m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Higher);
+  } else {
+    m_params[ParamsOrder::X] = 107;
+    m_params[ParamsOrder::N] = 251;
+
+  }
 }
 
 bool OneProportionStatistic::isValidParamAtIndex(int i, float p) {
@@ -41,7 +50,7 @@ void OneProportionStatistic::computeInterval() {
 }
 
 Poincare::Layout OneProportionStatistic::estimateLayout() {
-  return CodePointLayout::Builder('p'); // TODO replace with ^p
+  return CodePointLayout::Builder('p');  // TODO replace with ^p
 }
 
 void OneProportionStatistic::setParamAtIndex(int index, float p) {

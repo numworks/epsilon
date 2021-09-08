@@ -6,15 +6,26 @@
 
 #include <cmath>
 
+#include "probability/app.h"
+
 using namespace Poincare;
 
 namespace Probability {
 
 TwoProportionsStatistic::TwoProportionsStatistic() {
-  m_params[ParamsOrder::X1] = 20;
-  m_params[ParamsOrder::N1] = 50;
-  m_params[ParamsOrder::X2] = 40;
-  m_params[ParamsOrder::N2] = 80;
+  if (App::app()->subapp() == Data::SubApp::Tests) {
+    m_params[ParamsOrder::X1] = 19;
+    m_params[ParamsOrder::N1] = 80;
+    m_params[ParamsOrder::X2] = 26;
+    m_params[ParamsOrder::N2] = 150;
+    m_hypothesisParams.setFirstParam(0);
+    m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Different);
+  } else {
+    m_params[ParamsOrder::X1] = 639;
+    m_params[ParamsOrder::N1] = 799;
+    m_params[ParamsOrder::X2] = 1555;
+    m_params[ParamsOrder::N2] = 2253;
+  }
 }
 
 bool TwoProportionsStatistic::isValidH0(float p) {
@@ -49,15 +60,15 @@ void TwoProportionsStatistic::computeInterval() {
 
 Poincare::Layout TwoProportionsStatistic::estimateLayout() {
   // TODO add ^
-  HorizontalLayout p1 = HorizontalLayout::Builder(
+  Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(
       CodePointLayout::Builder('p'),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
                                     VerticalOffsetLayoutNode::Position::Subscript));
-  HorizontalLayout p2 = HorizontalLayout::Builder(
+  Poincare::HorizontalLayout p2 = Poincare::HorizontalLayout::Builder(
       CodePointLayout::Builder('p'),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                     VerticalOffsetLayoutNode::Position::Subscript));
-  HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
+  Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(CodePointLayout::Builder('-'));
   res.addOrMergeChildAtIndex(p2, 1, true);
   res.addOrMergeChildAtIndex(p1, 0, true);
   return std::move(res);
@@ -74,28 +85,28 @@ void TwoProportionsStatistic::setParamAtIndex(int index, float p) {
 ParameterRepresentation TwoProportionsStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {
-      HorizontalLayout x1 = HorizontalLayout::Builder(
+      Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x1, I18n::Message::SuccessSample1};
     }
     case ParamsOrder::N1: {
-      HorizontalLayout n1 = HorizontalLayout::Builder(
+      Poincare::HorizontalLayout n1 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::X2: {
-      HorizontalLayout x2 = HorizontalLayout::Builder(
+      Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x2, I18n::Message::SuccessSample2};
     }
     case ParamsOrder::N2: {
-      HorizontalLayout n2 = HorizontalLayout::Builder(
+      Poincare::HorizontalLayout n2 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));

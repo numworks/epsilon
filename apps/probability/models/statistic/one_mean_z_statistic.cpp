@@ -3,6 +3,8 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/conjugate_layout.h>
 
+#include "probability/app.h"
+
 #include <cmath>
 
 using namespace Poincare;
@@ -10,10 +12,17 @@ using namespace Poincare;
 namespace Probability {
 
 OneMeanZStatistic::OneMeanZStatistic() {
-  m_params[ParamsOrder::X] = 127;
-  m_params[ParamsOrder::N] = 10;
-  m_params[ParamsOrder::Sigma] = 2;
-  m_hypothesisParams.setFirstParam(128);
+    if (App::app()->subapp() == Data::SubApp::Tests) {
+    m_params[ParamsOrder::X] = 47.9;
+    m_params[ParamsOrder::N] = 12;
+    m_params[ParamsOrder::Sigma] = 2.81;
+    m_hypothesisParams.setFirstParam(50);
+    m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Lower);
+  } else {
+    m_params[ParamsOrder::X] = 240.80;
+    m_params[ParamsOrder::N] = 16;
+    m_params[ParamsOrder::Sigma] = 20;
+  }
 }
 
 bool OneMeanZStatistic::isValidParamAtIndex(int i, float p) {

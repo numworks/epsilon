@@ -10,6 +10,7 @@ class OneMeanTStatistic : public TStatistic {
 public:
   OneMeanTStatistic();
   bool isValidParamAtIndex(int i, float p) override;
+  void setParamAtIndex(int index, float p) override;
 
   void computeTest() override;
   void computeInterval() override;

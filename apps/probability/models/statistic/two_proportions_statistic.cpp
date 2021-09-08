@@ -63,6 +63,14 @@ Poincare::Layout TwoProportionsStatistic::estimateLayout() {
   return std::move(res);
 }
 
+void TwoProportionsStatistic::setParamAtIndex(int index, float p) {
+  if (index == ParamsOrder::N1 || index == ParamsOrder::N2 || index == ParamsOrder::X1 ||
+      index == ParamsOrder::X2) {
+    p = std::round(p);
+  }
+  ZStatistic::setParamAtIndex(index, p);
+}
+
 ParameterRepresentation TwoProportionsStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {

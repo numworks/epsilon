@@ -9,6 +9,8 @@ class TwoMeansZStatistic : public ZStatistic {
 public:
   TwoMeansZStatistic();
   bool isValidParamAtIndex(int i, float p) override;
+  void setParamAtIndex(int index, float p) override;
+
   void computeTest() override;
   void computeInterval() override;
 
@@ -16,6 +18,7 @@ public:
   const char * estimateSymbol() override { return "x̅1-x̅2"; };
   Poincare::Layout estimateLayout() override;
   I18n::Message estimateDescription() override { return I18n::Message::SampleTwoMeans; };
+
 
 protected:
   // Parameters

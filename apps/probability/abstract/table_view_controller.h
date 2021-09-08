@@ -12,6 +12,7 @@ public:
   using Escher::Responder::Responder;
 
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event e) override;
 
   virtual Escher::SelectableTableView * selectableTableView() = 0;
   virtual Escher::TableViewDataSource * tableViewDataSource() = 0;

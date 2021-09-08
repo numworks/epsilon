@@ -155,5 +155,8 @@ void Probability::InputCategoricalView::setTableView(TableViewController * table
 
 void Probability::InputCategoricalView::tableViewDataSourceDidChangeSize() {
   // Relayout when inner table changes size
+  // We need to reload the table because its width might change but it won't relayout as its frame
+  // isn't change by the InputCategoricalController
+  m_tableViewController->selectableTableView()->reloadData(false);
   layoutSubviews();
 }

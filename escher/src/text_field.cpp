@@ -11,6 +11,7 @@
 #include <poincare/sum.h>
 #include <poincare/product.h>
 #include <poincare/symbol_abstract.h>
+#include <ion/events.h>
 #include <assert.h>
 #include <algorithm>
 
@@ -381,6 +382,19 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void TextField::removePreviousGlyphIfRepetition(bool defaultXNTHasChanged) {
+  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor(true) > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
+    // Since XNT is cycling on simple glyphs, remove the last inserted one
+    bool success = removePreviousGlyph();
+    assert(success);
+    (void) success; // Silence compilation warnings
+    /* TODO Hugo : Handle cycling with non-default layouts.
+     * TODO Hugo : Fix issues with repetition over a syntax error dismissal
+     * A solution is to "select" the inserted XNT, so that next xnt will
+     * override it, and any other action will deselect it. */
+  }
+}
+
 size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength) {
   /* If cursor is in one of the following functions, and everything before the
    * cursor is correctly nested, the default XNTCodePoint will be improved.
@@ -400,6 +414,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
   }
+  bool defaultXNTHasChanged = false;
   const char * text = this->text();
   assert(text == m_contentView.editedText());
   const char * locationOfCursor = cursorLocation();
@@ -435,6 +450,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
             functionFound = true;
             // Update default code point
             defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);
+            defaultXNTHasChanged = true;
           }
         }
         if (!functionFound) {
@@ -463,6 +479,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   // Step 2 : Handle intermediary cases
   if (!functionFound || cursorInVariableField) {
     // General or local default code point.
+    removePreviousGlyphIfRepetition(defaultXNTHasChanged);
     return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
   }
   // Step 3 : Search variable field
@@ -490,6 +507,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
     }
   }
   if (!variableFound || c == UCodePointNull) {
+    removePreviousGlyphIfRepetition(defaultXNTHasChanged);
     return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
   }
   // Step 4 : Identify where variable text starts and ends.
@@ -520,6 +538,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
     }
   }
   // Fall back on default code point
+  removePreviousGlyphIfRepetition(defaultXNTHasChanged);
   return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
 }
 

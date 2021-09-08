@@ -5,8 +5,6 @@ namespace Ion {
 namespace Events {
 
 static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
-static int sLongRepetition = 1;
-int sEventRepetitionCount = 0;
 
 ShiftAlphaStatus shiftAlphaStatus() {
   return sShiftAlphaStatus;
@@ -34,31 +32,8 @@ bool isLockActive() {
   return sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
-void setLongRepetition(int longRepetition) {
- sLongRepetition = longRepetition;
-}
-
-int repetitionFactor() {
-  return sLongRepetition;
-};
-
 void setShiftAlphaStatus(ShiftAlphaStatus s) {
   sShiftAlphaStatus = s;
-}
-
-static void ComputeAndSetRepetionFactor(int eventRepetitionCount) {
-  // The Repetition factor is increased by 4 every 20 loops in getEvent(2 sec)
-  setLongRepetition((eventRepetitionCount / 20) * 4 + 1);
-}
-
-void resetLongRepetition() {
-  sEventRepetitionCount = 0;
-  ComputeAndSetRepetionFactor(sEventRepetitionCount);
-}
-
-void incrementRepetitionFactor() {
-  sEventRepetitionCount++;
-  ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
 void updateModifiersFromEvent(Event e) {
@@ -113,6 +88,38 @@ void updateModifiersFromEvent(Event e) {
       }
       break;
   }
+}
+
+// Two repetition factors are available :
+static int sLongPressCounter = 0;
+static int sRepetitionCounter = 0;
+
+int longPressFactor() {
+  // The long press factor is increased by 4 every 20 loops in getEvent(2 sec)
+  return (sLongPressCounter / 20) * 4 + 1;
+}
+
+int repetitionFactor(bool repetition) {
+  // Depending on repetition flag, Two repetition factors are available :
+  // - How much the event has been repeatedly pressed (Raw value)
+  // - How long the event has been pressed (Computed value)
+  return repetition ? sRepetitionCounter : longPressFactor();
+}
+
+void resetLongPress() {
+  sLongPressCounter = 0;
+}
+
+void resetRepetition() {
+  sRepetitionCounter = 0;
+}
+
+void incrementLongPress() {
+  sLongPressCounter++;
+}
+
+void incrementRepetition() {
+  sRepetitionCounter++;
 }
 
 }

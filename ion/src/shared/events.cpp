@@ -85,6 +85,8 @@ Event sharedGetEvent(int * timeout) {
 
     Event platformEvent = getPlatformEvent();
     if (platformEvent != None) {
+      (platformEvent == sLastEvent) ? incrementRepetition() : resetRepetition();
+      sLastEvent = platformEvent;
       return platformEvent;
     }
 
@@ -98,7 +100,7 @@ Event sharedGetEvent(int * timeout) {
 
       if (keysSeenTransitionningFromUpToDown != 0) {
         sEventIsRepeating = false;
-        resetLongRepetition();
+        resetLongPress();
         /* The key that triggered the event corresponds to the first non-zero bit
          * in "match". This is a rather simple logic operation for the which many
          * processors have an instruction (ARM thumb uses CLZ).
@@ -110,6 +112,7 @@ Event sharedGetEvent(int * timeout) {
         sLastEventAlpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
         Event event(key, sLastEventShift, sLastEventAlpha, lock);
         updateModifiersFromEvent(event);
+        (event == sLastEvent) ? incrementRepetition() : resetRepetition();
         sLastEvent = event;
         sLastKeyboardState = state;
         return event;
@@ -132,7 +135,7 @@ Event sharedGetEvent(int * timeout) {
     }
 
     if (*timeout == 0) {
-      resetLongRepetition();
+      resetLongPress();
       return None;
     }
 
@@ -143,7 +146,7 @@ Event sharedGetEvent(int * timeout) {
     if (elapsedTime >= delayForRepeat) {
       assert(isRepeatableEvent);
       sEventIsRepeating = true;
-      Ion::Events::incrementRepetitionFactor();
+      Ion::Events::incrementLongPress();
       return sLastEvent;
     }
   }

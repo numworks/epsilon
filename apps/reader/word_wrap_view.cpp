@@ -1,3 +1,4 @@
+
 #include "word_wrap_view.h"
 
 #include "utility.h"
@@ -22,51 +23,55 @@ void WordWrapTextView::previousPage() {
   if(m_pageOffset <= 0) {
     return;
   }
-  const int spaceWidth = m_font->stringSize(" ").width();
 
-  const char * endOfWord = text() + m_pageOffset;
+  const int charWidth = m_font->glyphSize().width();
+  const int charHeight = m_font->glyphSize().height();
+
+  const char * endOfWord = text() + m_pageOffset - 1;
   const char * startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
-  
-  KDPoint textPosition(m_frame.width() - margin, m_frame.height() - margin);
+
+  KDPoint textEndPosition(m_frame.width() - k_margin, m_frame.height() - k_margin);
 
   while(startOfWord>=text()) {
-    endOfWord = UTF8Helper::EndOfWord(startOfWord);
-    KDSize textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
-    KDPoint previousTextPosition = KDPoint(textPosition.x()-textSize.width(), textPosition.y());
-    
-    if(previousTextPosition.x() < margin) {
-      textPosition = KDPoint(m_frame.width() - margin, textPosition.y() - textSize.height());
-      previousTextPosition = KDPoint(textPosition.x() - textSize.width(), textPosition.y());
-    }
-    if(textPosition.y() - textSize.height() < margin) {
-      break;
-    }
-
-    
-    --startOfWord;
-    while(startOfWord >= text() && *startOfWord == ' ') {
-      previousTextPosition = KDPoint(previousTextPosition.x() - spaceWidth, previousTextPosition.y());
-      --startOfWord;
-    }
-    if(previousTextPosition.x() < margin) {
-      previousTextPosition = KDPoint(m_frame.width() - margin, previousTextPosition.y() - textSize.height());
-    }
-    
-  
-    while(startOfWord >= text() && *startOfWord == '\n') {
-      previousTextPosition = KDPoint(m_frame.width() - margin, previousTextPosition.y() - textSize.height());
-      --startOfWord;
-    }  
-
-    if(previousTextPosition.y() - textSize.height() < margin) {
-      break;
-    }
-
-    textPosition = previousTextPosition;
-    endOfWord = startOfWord;
     startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
+    endOfWord = UTF8Helper::EndOfWord(startOfWord); 
+    KDSize textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+    KDPoint textStartPosition = KDPoint(textEndPosition.x()-textSize.width(), textEndPosition.y());
+
+    if(textStartPosition.x() < k_margin) {
+      textEndPosition = KDPoint(m_frame.width() - k_margin, textEndPosition.y() - charHeight);
+      textStartPosition = KDPoint(textEndPosition.x() - textSize.width(), textEndPosition.y());
+    }
+    if(textEndPosition.y() - textSize.height() < k_margin) {
+      break;
+    }
+
+    --startOfWord;
+    while(startOfWord >= text() && (*startOfWord == ' ' || *startOfWord == '\n')) {
+      if(*startOfWord == ' ') {
+        textStartPosition = KDPoint(textStartPosition.x() - charWidth, textStartPosition.y());
+      }
+      else {
+        textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y() - charHeight);
+      }
+      --startOfWord;
+    }
+
+    if(textStartPosition.y() < k_margin) { // If out of page, quit
+      break;
+    }
+
+    if(textStartPosition.y() != textEndPosition.y()) { // If line changed, x is at start of line 
+      textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y());
+    }
+    if(textStartPosition.x() < k_margin) { // Go to line if left overflow
+      textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y() - charHeight);
+    }
+
+    textEndPosition = textStartPosition;
+    endOfWord = startOfWord;
   }
-  if(startOfWord == text()) {
+  if(startOfWord + 1 == text()) {
     m_pageOffset = 0;
   }
   else {
@@ -81,52 +86,57 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
   const char * endOfFile = text() + m_length;
   const char * startOfWord = text() + m_pageOffset;
   const char * endOfWord = UTF8Helper::EndOfWord(startOfWord);
-  KDPoint textPosition(margin, margin);
+  KDPoint textPosition(k_margin, k_margin);
 
   const int wordMaxLength = 128;
   char word[wordMaxLength];
 
-  const int spaceWidth = m_font->stringSize(" ").width();
+  const int charWidth = m_font->glyphSize().width();
+  const int charHeight = m_font->glyphSize().height();
 
   while(startOfWord < endOfFile) {
-
     KDSize textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
     KDPoint nextTextPosition = KDPoint(textPosition.x()+textSize.width(), textPosition.y());
     
-    if(nextTextPosition.x() > m_frame.width() - margin) {
-      textPosition = KDPoint(margin, textPosition.y() + textSize.height());
-      nextTextPosition = KDPoint(margin + textSize.width(), textPosition.y());
+    if(nextTextPosition.x() > m_frame.width() - k_margin) { // Right overflow
+      textPosition = KDPoint(k_margin, textPosition.y() + textSize.height());
+      nextTextPosition = KDPoint(k_margin + textSize.width(), textPosition.y());
     }
-    if(textPosition.y() + textSize.height() > m_frame.height() - margin) {
+
+    if(textPosition.y() + textSize.height() > m_frame.height() - k_margin) { // Bottom overflow
       break;
     }
 
     stringNCopy(word, wordMaxLength, startOfWord, endOfWord-startOfWord);
     ctx->drawString(word, textPosition, m_font, m_textColor, m_backgroundColor);
 
-    while(*endOfWord == ' ') {
-      nextTextPosition = KDPoint(nextTextPosition.x() + spaceWidth, nextTextPosition.y());
+    while(*endOfWord == ' ' || *endOfWord == '\n') {
+      if(*endOfWord == ' ') {
+        nextTextPosition = KDPoint(nextTextPosition.x() + charWidth, nextTextPosition.y());
+      }
+      else {
+        nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + charHeight);
+      }
       ++endOfWord;
     }
-    if(nextTextPosition.x() > m_frame.width() - margin) {
-      nextTextPosition = KDPoint(margin, nextTextPosition.y() + textSize.height());
-    }
 
-    while(*endOfWord == '\n') {
-      nextTextPosition = KDPoint(margin, nextTextPosition.y() + textSize.height());
-      ++endOfWord;
-    }  
-
-    if(nextTextPosition.y() + textSize.height() > m_frame.height() - margin) {
+    if(nextTextPosition.y() + textSize.height() > m_frame.height() - k_margin) { // If out of page, quit
       break;
+    }
+    if(nextTextPosition.y() != textPosition.y()) { // If line changed, x is at start of line 
+      nextTextPosition = KDPoint(k_margin, nextTextPosition.y());
+    }
+    if(nextTextPosition.x() > m_frame.width() - k_margin) { // Go to line if right overflow
+      nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + textSize.height());
     }
 
     textPosition = nextTextPosition;
     startOfWord = endOfWord;
     endOfWord = UTF8Helper::EndOfWord(startOfWord);
   }
-  m_nextPageOffset = startOfWord - text();
-}
+
+  m_nextPageOffset = endOfWord - text();
+};
 
 int WordWrapTextView::getPageOffset() const {
   return m_pageOffset;

@@ -18,8 +18,7 @@ protected:
   int m_pageOffset = 0;
   mutable int m_nextPageOffset = 0;
   int m_length = 0;
-
-  static const int margin = 10;
+  static const int k_margin = 10;
 };
 
 }

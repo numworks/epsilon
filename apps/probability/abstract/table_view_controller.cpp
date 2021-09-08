@@ -11,6 +11,14 @@ void TableViewController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
+bool TableViewController::handleEvent(Ion::Events::Event e) {
+  if (e == Ion::Events::Left) {
+    // Catch left event to avoid popping controller from StackViewController
+    return true;
+  }
+  return false;
+}
+
 void TableViewController::moveSelectionForEvent(Ion::Events::Event event,
                                                 int * selectedRow,
                                                 int * selectedColumn) {

@@ -29,7 +29,7 @@ bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
     deleteSelectedValue();
     return true;
   }
-  return false;
+  return TableViewController::handleEvent(event);
 }
 
 bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField * textField,

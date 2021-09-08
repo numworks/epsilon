@@ -25,7 +25,7 @@ bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
     deleteSelectedValue();
     return true;
   }
-  return false;
+  return TableViewController::handleEvent(event);
 }
 
 bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * textField,

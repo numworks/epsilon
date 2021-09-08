@@ -8,12 +8,9 @@
 namespace Probability {
 
 IntervalConclusionView::IntervalConclusionView() {
-  m_messageView.setMessage(I18n::Message::ConfidenceInterval);
-  m_messageView.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
-  m_messageView.setBackgroundColor(Escher::Palette::WallScreen);
-  m_intervalView.setFont(KDFont::LargeFont);
-  m_intervalView.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
-  m_intervalView.setBackgroundColor(Escher::Palette::WallScreen);
+  setFont(KDFont::LargeFont);
+  setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+  setBackgroundColor(Escher::Palette::WallScreen);
 }
 
 void IntervalConclusionView::setInterval(float center, float marginOfError) {
@@ -24,17 +21,12 @@ void IntervalConclusionView::setInterval(float center, float marginOfError) {
   defaultConvertFloatToText(center, bufferCenter, bufferSize);
   defaultConvertFloatToText(marginOfError, buffermarginOfError, bufferSize);
 
-  char buffer[k_intervalBufferSize];
-  snprintf(buffer, k_intervalBufferSize, "%s ± %s", bufferCenter, buffermarginOfError);
-  m_intervalView.setText(buffer);
-}
-
-Escher::View * IntervalConclusionView::subviewAtIndex(int i) {
-  assert(i < 2);
-  if (i == 0) {
-    return &m_messageView;
-  }
-  return &m_intervalView;
+  snprintf(m_buffer,
+           k_maxNumberOfChar,
+           "%s\n%s ± %s",
+           I18n::translate(I18n::Message::ConfidenceInterval),
+           bufferCenter,
+           buffermarginOfError);
 }
 
 }  // namespace Probability

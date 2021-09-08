@@ -109,19 +109,22 @@ void InputCategoricalView::setResponderForSelectedRow() {
 }
 
 void InputCategoricalView::selectCorrectView() {
-  // TODO only one
-  m_significanceCell.setHighlighted(false);
-  m_next.setHighlighted(false);
   if (m_viewSelection.selectedRow() != k_indexOfTable) {
     Escher::HighlightCell * view;
     if (m_viewSelection.selectedRow() == k_indexOfSignificance) {
       view = &m_significanceCell;
+      if (m_next.isHighlighted()) {
+        m_next.setHighlighted(false);
+      }
     } else {
       view = &m_next;
+      m_significanceCell.setHighlighted(false);
     }
     view->setHighlighted(true);
     KDPoint offset = m_contentView.pointFromPointInView(view, view->bounds().bottomRight());
     scrollToContentPoint(offset);
+  } else {
+    m_significanceCell.setHighlighted(false);
   }
 }
 

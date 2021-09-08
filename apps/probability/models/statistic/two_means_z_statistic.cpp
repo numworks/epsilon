@@ -7,6 +7,7 @@
 
 #include <cmath>
 
+#include "probability/app.h"
 #include "probability/text_helpers.h"
 
 using namespace Poincare;
@@ -14,12 +15,23 @@ using namespace Poincare;
 namespace Probability {
 
 TwoMeansZStatistic::TwoMeansZStatistic() {
-  m_params[ParamsOrder::X1] = 20;
-  m_params[ParamsOrder::Sigma1] = 2;
-  m_params[ParamsOrder::N1] = 10;
-  m_params[ParamsOrder::X2] = 21;
-  m_params[ParamsOrder::Sigma2] = 2;
-  m_params[ParamsOrder::N2] = 12;
+  if (App::app()->subapp() == Data::SubApp::Tests) {
+    m_params[ParamsOrder::X1] = 5;
+    m_params[ParamsOrder::N1] = 10;
+    m_params[ParamsOrder::Sigma1] = 8.743;
+    m_params[ParamsOrder::X2] = -0.273;
+    m_params[ParamsOrder::N2] = 11;
+    m_params[ParamsOrder::Sigma2] = 5.901;
+    m_hypothesisParams.setFirstParam(0);
+    m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Higher);
+  } else {
+    m_params[ParamsOrder::X1] = 23.7;
+    m_params[ParamsOrder::N1] = 30;
+    m_params[ParamsOrder::Sigma1] = 17.5;
+    m_params[ParamsOrder::X2] = 34.53;
+    m_params[ParamsOrder::N2] = 30;
+    m_params[ParamsOrder::Sigma2] = 14.26;
+  }
 }
 
 bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {
@@ -62,36 +74,36 @@ void TwoMeansZStatistic::setParamAtIndex(int index, float p) {
 ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {
-      HorizontalLayout x1 = HorizontalLayout::Builder(
+      Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x1, I18n::Message::Sample1Mean};
     }
     case ParamsOrder::N1: {
-      HorizontalLayout n1 = codePointSubscriptCodePointLayout('n', '1');
+      Poincare::HorizontalLayout n1 = codePointSubscriptCodePointLayout('n', '1');
       return ParameterRepresentation{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma1: {
-      HorizontalLayout sigma1 = codePointSubscriptCodePointLayout(
+      Poincare::HorizontalLayout sigma1 = codePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '1');
       return ParameterRepresentation{sigma1, I18n::Message::Population1Std};
     }
     case ParamsOrder::X2: {
-      HorizontalLayout x2 = HorizontalLayout::Builder(
+      Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
           ConjugateLayout::Builder(CodePointLayout::Builder('x')),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x2, I18n::Message::Sample2Mean};
     }
     case ParamsOrder::N2: {
-      HorizontalLayout n2 = codePointSubscriptCodePointLayout('n', '2');
+      Poincare::HorizontalLayout n2 = codePointSubscriptCodePointLayout('n', '2');
       ;
       return ParameterRepresentation{n2, I18n::Message::Sample1Size};
     }
     case ParamsOrder::Sigma2: {
-      HorizontalLayout sigma2 = codePointSubscriptCodePointLayout(
+      Poincare::HorizontalLayout sigma2 = codePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '2');
       return ParameterRepresentation{sigma2, I18n::Message::Population2Std};

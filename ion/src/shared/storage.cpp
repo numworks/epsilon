@@ -215,6 +215,19 @@ int Storage::numberOfRecordsWithExtension(const char * extension) {
   return count;
 }
 
+int Storage::numberOfNamedFunctions() {
+  int count = 0;
+  size_t extensionLength = strlen(funcExtension);
+  for (char * p : *this) {
+    const char * name = fullNameOfRecordStarting(p);
+    // TODO Hugo : Factorize this with isNamed()
+    if (name[0] != '?' && FullNameHasExtension(name, funcExtension, extensionLength)) {
+      count++;
+    }
+  }
+  return count;
+}
+
 Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int index) {
   int currentIndex = -1;
   const char * name = nullptr;
@@ -223,6 +236,31 @@ Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int 
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
     if (FullNameHasExtension(currentName, extension, extensionLength)) {
+      currentIndex++;
+    }
+    if (currentIndex == index) {
+      recordAddress = p;
+      name = currentName;
+      break;
+    }
+  }
+  if (name == nullptr) {
+    return Record();
+  }
+  Record r = Record(name);
+  m_lastRecordRetrieved = r;
+  m_lastRecordRetrievedPointer = recordAddress;
+  return Record(name);
+}
+
+Storage::Record Storage::namedFunctionRecordAtIndex(int index) {
+  int currentIndex = -1;
+  const char * name = nullptr;
+  size_t extensionLength = strlen(funcExtension);
+  char * recordAddress = nullptr;
+  for (char * p : *this) {
+    const char * currentName = fullNameOfRecordStarting(p);
+    if (currentName[0] != '?' && FullNameHasExtension(currentName, funcExtension, extensionLength)) {
       currentIndex++;
     }
     if (currentIndex == index) {

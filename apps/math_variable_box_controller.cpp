@@ -83,7 +83,7 @@ int MathVariableBoxController::numberOfRows() const {
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
       // TODO Hugo : Filter out expression with name starting with '?'
-      return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::funcExtension);
+      return Storage::sharedStorage()->numberOfNamedFunctions();
     case Page::Sequence:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
     default:
@@ -291,8 +291,14 @@ const char * MathVariableBoxController::extension() const {
 
 Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   assert(m_currentPage != Page::RootMenu);
-  assert(!Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex).isNull());
-  return Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
+  Storage::Record record;
+  if (m_currentPage == Page::Function) {
+    record = Storage::sharedStorage()->namedFunctionRecordAtIndex(rowIndex);
+  } else {
+    record = Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
+  }
+  assert(!record.isNull());
+  return record;
 }
 
 ViewController * MathVariableBoxController::emptyViewController() {

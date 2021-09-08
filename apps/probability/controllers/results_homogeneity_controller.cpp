@@ -63,14 +63,20 @@ Probability::HomogeneityResultsView::HomogeneityResultsView(Responder * parent,
 
 KDSize Probability::HomogeneityResultsView::minimalSizeForOptimalDisplay() const {
   // Pass expected size to VerticalLayout to propagate to TableCells
+  // TODO factorize with InputCategoricalView ..?
   ContentView * contentView = const_cast<ContentView *>(&m_contentView);
-  contentView->setSize(KDSize(bounds().width(), 10000));
+  if (contentView->bounds().width() <= 0)
+    contentView->setSize(KDSize(bounds().width(), contentView->bounds().height()));
   KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
   return KDSize(bounds().width(), requiredSize.height());
 }
 
 void Probability::HomogeneityResultsView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorOrange);
+}
+
+void Probability::HomogeneityResultsView::reload() {
+  layoutSubviews();
 }
 
 ResultsHomogeneityController::ResultsHomogeneityController(
@@ -100,6 +106,7 @@ void ResultsHomogeneityController::didBecomeFirstResponder() {
   }
   m_table.reloadData(false);
   selectCorrectView();
+  m_contentView.reload();
 }
 
 bool Probability::ResultsHomogeneityController::handleEvent(Ion::Events::Event event) {

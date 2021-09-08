@@ -27,6 +27,13 @@ bool OneMeanZStatistic::isValidParamAtIndex(int i, float p) {
   return ZStatistic::isValidParamAtIndex(i, p);
 }
 
+void OneMeanZStatistic::setParamAtIndex(int index, float p) {
+  if (index == ParamsOrder::N) {
+    p = std::round(p);
+  }
+  ZStatistic::setParamAtIndex(index, p);
+}
+
 void OneMeanZStatistic::computeTest() {
   m_testCriticalValue = computeZ(m_hypothesisParams.firstParam(), x(), n(), sigma());
   m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());

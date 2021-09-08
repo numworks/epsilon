@@ -54,6 +54,13 @@ Poincare::Layout TwoMeansTStatistic::estimateLayout() {
   return XOneMinusXTwoLayout();
 }
 
+void TwoMeansTStatistic::setParamAtIndex(int index, float p) {
+  if (index == ParamsOrder::N1 || index == ParamsOrder::N2) {
+    p = std::round(p);
+  }
+  TStatistic::setParamAtIndex(index, p);
+}
+
 ParameterRepresentation TwoMeansTStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X1: {

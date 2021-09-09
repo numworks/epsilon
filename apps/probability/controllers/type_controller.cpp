@@ -159,8 +159,10 @@ int Probability::TypeController::listIndexFromIndex(int i) const {
 }
 
 I18n::Message Probability::TypeController::messageForTest(Data::SubApp subapp, Data::Test t) const {
-  return subapp == Data::SubApp::Tests ? t == Data::Test::OneMean ? I18n::Message::OneMeanTestDescr
-                                                                  : I18n::Message::TwoMeanTestDescr
-         : t == Data::Test::OneMean    ? I18n::Message::OneMeanIntervalDescr
-                                       : I18n::Message::TwoMeanIntervalDescr;
+  if (subapp == Data::SubApp::Tests) {
+    return t == Data::Test::OneMean ? I18n::Message::OneMeanTestDescr
+                                    : I18n::Message::TwoMeanTestDescr;
+  }
+  return t == Data::Test::OneMean ? I18n::Message::OneMeanIntervalDescr
+                                  : I18n::Message::TwoMeanIntervalDescr;
 }

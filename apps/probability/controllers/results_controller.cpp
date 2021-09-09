@@ -88,10 +88,6 @@ Escher::View * Probability::ResultsView::ContentView::subviewAtIndex(int i) {
   }
 }
 
-void Probability::ResultsView::ContentView::relayout() {
-  layoutSubviews();
-}
-
 Probability::ResultsView::ResultsView(Escher::SelectableTableView * table,
                                       Escher::TableViewDataSource * tableDataSource,
                                       I18n::Message titleMessage) :

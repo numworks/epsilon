@@ -92,6 +92,9 @@ public:
   // expressionReduced returns expressionReduced derivative(s)
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
   Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
+  Poincare::Expression equationExpression(const Ion::Storage::Record * record) const {
+    return m_model.originalEquation(record, symbol());
+  }
   PlotType plotType() const { return recordData()->plotType(); }
   SymbolType symbolType() const { return SymbolForPlotType(plotType()); }
   void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
@@ -159,6 +162,8 @@ private:
     // TODO Hugo : Add derivative
   public:
     Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined), m_expressionDerivate() {}
+    // TODO Hugo : Properly rename these functions
+    Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
     Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;

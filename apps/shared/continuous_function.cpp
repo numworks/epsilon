@@ -263,6 +263,10 @@ CodePoint ContinuousFunction::symbol() const {
   }
 }
 
+Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const {
+  return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record)).replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
+}
+
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // TODO Hugo : Add todo expressionReduced on circularity ?
   // TODO Hugo : Either memoize or limit calls to this method
@@ -503,12 +507,16 @@ void ContinuousFunction::setDisplayDerivative(bool display) {
 }
 
 int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
+  if (!isNamed()) {
+    return strlcpy(buffer, "y'", bufferSize);
+  }
   // Fill buffer with f(x). Keep size for derivative sign.
   int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
   int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
   assert(numberOfChars + derivativeSize < (int)bufferSize);
   char * firstParenthesis = const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));
   if (!UTF8Helper::CodePointIs(firstParenthesis, '(')) {
+    assert(false); // TODO Hugo : Check this assert never happens
     assert(firstParenthesis[0] == 0 && buffer - firstParenthesis > bufferSize);
     firstParenthesis[derivativeSize-1] = 0;
   } else {

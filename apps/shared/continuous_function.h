@@ -205,17 +205,19 @@ private:
     void setTMax(float tMax) { m_domain.setMax(tMax); }
     void setConic(Poincare::Conic conic) { m_conic = conic; }
     Poincare::Conic getConic() const { return m_conic; }
-    void setLine(double a, double b) { m_line[0] = a; m_line[1] = b; }
-    double getLine(size_t paramIndex) const { assert(paramIndex < 2); return m_line[paramIndex]; }
+    void setLine(double a, double b) { m_lineA = a; m_lineB = b; }
+    double getLine(size_t paramIndex) const { assert(paramIndex < 2); return paramIndex == 0 ? m_lineA : m_lineB; }
   private:
-    Poincare::Conic m_conic;
-    double m_line[2];
-    Range1D m_domain;
-    uint16_t m_color;
-    bool m_active;
-    bool m_displayDerivative;
-    PlotType m_plotType;
-    Poincare::ExpressionNode::Type m_equationSymbol;
+    // sizeof - align
+    Poincare::Conic m_conic; // 80 - 8
+    double m_lineA; // 8 - 8
+    double m_lineB; // 8 - 8
+    Range1D m_domain; // 8 - 4
+    uint16_t m_color; // 2 - 2
+    bool m_active; // 1 - 1
+    bool m_displayDerivative; // 1 - 1
+    PlotType m_plotType; // 1 - 1
+    Poincare::ExpressionNode::Type m_equationSymbol; // 1 - 1
   };
 
   Model m_model;

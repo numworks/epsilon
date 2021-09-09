@@ -29,6 +29,8 @@ public:
   constexpr static float k_undefinedValue = NAN;
 
 protected:
+  using CachedStatistic::setParamAtIndex;  // Hidden
+  using CachedStatistic::paramAtIndex;  // Hidden
   float m_degreesOfFreedom;
 
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {

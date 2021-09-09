@@ -56,8 +56,21 @@ bool GoodnessStatistic::validateInputs() {
   return true;
 }
 
+float GoodnessStatistic::paramAtLocation(int row, int column) {
+  return paramAtIndex(locationToTableIndex(row, column));
+}
+
+void GoodnessStatistic::setParamAtLocation(int row, int column, float p) {
+  setParamAtIndex(locationToTableIndex(row, column), p);
+}
+
 int GoodnessStatistic::numberOfValuePairs() {
   return computeNumberOfRows();
+}
+
+int GoodnessStatistic::locationToTableIndex(int row, int column) {
+  assert((column == 0 || column == 1) && (row >= 0 && row < k_maxNumberOfRows));
+  return 2 * row + column;
 }
 
 float GoodnessStatistic::expectedValue(int index) {

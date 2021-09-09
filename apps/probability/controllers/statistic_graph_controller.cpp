@@ -10,7 +10,7 @@ namespace Probability {
 
 StatisticGraphController::StatisticGraphController(StackViewController * stack,
                                                    Statistic * statistic) :
-    Page(stack), m_graphView(statistic, &m_range), m_statistic(statistic) {
+      Page(stack), m_graphView(statistic, &m_range), m_statistic(statistic) {
 }
 
 ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {

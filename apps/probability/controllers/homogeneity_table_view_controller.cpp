@@ -8,11 +8,11 @@ HomogeneityTableViewController::HomogeneityTableViewController(
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     DynamicTableViewDataSourceDelegate * dataSourceDelegate,
     Escher::SelectableTableViewDelegate * tableDelegate) :
-    TableViewController(parent),
-    m_innerTableData(&m_table, inputEventHandlerDelegate, statistic, this, dataSourceDelegate),
-    m_tableData(&m_innerTableData, tableDelegate),
-    m_table(this, &m_tableData, &m_selectionDataSource, &m_tableData),
-    m_statistic(statistic) {
+      TableViewController(parent),
+      m_innerTableData(&m_table, inputEventHandlerDelegate, statistic, this, dataSourceDelegate),
+      m_tableData(&m_innerTableData, tableDelegate),
+      m_table(this, &m_tableData, &m_selectionDataSource, &m_tableData),
+      m_statistic(statistic) {
   m_selectionDataSource.selectColumn(-1);
 }
 
@@ -66,7 +66,6 @@ void HomogeneityTableViewController::deleteSelectedValue() {
   m_table.deselectTable();
   m_innerTableData.recomputeDimensions();
   m_table.selectCellAtClippedLocation(col, row, false);
-
 }
 
 }  // namespace Probability

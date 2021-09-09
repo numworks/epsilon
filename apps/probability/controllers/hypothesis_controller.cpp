@@ -20,13 +20,13 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputController * inputController,
                                            InputEventHandlerDelegate * handler,
                                            Statistic * statistic) :
-    SelectableListViewPage(parent),
-    m_inputController(inputController),
-    m_operatorDataSource(statistic->hypothesisParams()),
-    m_h0(&m_selectableTableView, handler, this),
-    m_ha(&m_selectableTableView, &m_operatorDataSource, this),
-    m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
-    m_statistic(statistic) {
+      SelectableListViewPage(parent),
+      m_inputController(inputController),
+      m_operatorDataSource(statistic->hypothesisParams()),
+      m_h0(&m_selectableTableView, handler, this),
+      m_ha(&m_selectableTableView, &m_operatorDataSource, this),
+      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
+      m_statistic(statistic) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),
       Poincare::VerticalOffsetLayout::Builder(

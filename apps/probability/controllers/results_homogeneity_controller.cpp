@@ -12,23 +12,23 @@ using namespace Probability;
 HomogeneityResultsView::ContentView::ContentView(Responder * parent,
                                                  SelectableTableView * table,
                                                  ButtonDelegate * buttonDelegate) :
-    m_title(KDFont::SmallFont,
-            I18n::Message::HomogeneityResultsTitle,
-            KDFont::ALIGN_CENTER,
-            KDFont::ALIGN_CENTER,
-            Escher::Palette::GrayVeryDark,
-            Escher::Palette::WallScreenDark),
-    m_table(table),
-    m_next(parent,
-           I18n::Message::Next,
-           buttonDelegate->buttonActionInvocation(),
-           KDFont::LargeFont),
-    m_buttonWrapper(&m_next) {
+      m_title(KDFont::SmallFont,
+              I18n::Message::HomogeneityResultsTitle,
+              KDFont::ALIGN_CENTER,
+              KDFont::ALIGN_CENTER,
+              Escher::Palette::GrayVeryDark,
+              Escher::Palette::WallScreenDark),
+      m_table(table),
+      m_next(parent,
+             I18n::Message::Next,
+             buttonDelegate->buttonActionInvocation(),
+             KDFont::LargeFont),
+      m_buttonWrapper(&m_next) {
 }
 
 Probability::HomogeneityResultsView::ContentView::ButtonWithHorizontalMargins::
     ButtonWithHorizontalMargins(Escher::Button * button, KDCoordinate margin) :
-    VerticalLayout(Palette::WallScreenDark), m_button(button) {
+      VerticalLayout(Palette::WallScreenDark), m_button(button) {
   setMargins(margin, KDCoordinate(0));
 }
 
@@ -56,7 +56,8 @@ KDPoint Probability::HomogeneityResultsView::ContentView::buttonOrigin() {
 Probability::HomogeneityResultsView::HomogeneityResultsView(Responder * parent,
                                                             SelectableTableView * table,
                                                             ButtonDelegate * buttonDelegate) :
-    ScrollView(&m_contentView, &m_scrollDataSource), m_contentView(parent, table, buttonDelegate) {
+      ScrollView(&m_contentView, &m_scrollDataSource),
+      m_contentView(parent, table, buttonDelegate) {
   setMargins(Metric::CellTopMargin, 0, Metric::CommonBottomMargin, 0);
   setBackgroundColor(Palette::WallScreenDark);
 }
@@ -83,13 +84,13 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     StackViewController * stackViewController,
     HomogeneityStatistic * statistic,
     ResultsController * resultsController) :
-    Page(stackViewController),
-    m_resultsController(resultsController),
-    m_contentView(this, &m_table, this),
-    m_tableData(&m_innerTableData, this),
-    m_innerTableData(statistic),
-    m_table(this, &m_tableData, &m_tableData, this),
-    m_isTableSelected(true) {
+      Page(stackViewController),
+      m_resultsController(resultsController),
+      m_contentView(this, &m_table, this),
+      m_tableData(&m_innerTableData, this),
+      m_innerTableData(statistic),
+      m_table(this, &m_tableData, &m_tableData, this),
+      m_isTableSelected(true) {
   m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_table.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
   m_table.setMargins(HomogeneityResultsView::k_topMargin,

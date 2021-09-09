@@ -26,12 +26,12 @@ TypeController::TypeController(StackViewController * parent,
                                Data::Test * globalTest,
                                Data::TestType * globalTestType,
                                Statistic * statistic) :
-    SelectableListViewPage(parent),
-    m_hypothesisController(hypothesisController),
-    m_inputController(inputController),
-    m_contentView(&m_selectableTableView, &m_description),
-    m_globalTestType(globalTestType),
-    m_statistic(statistic) {
+      SelectableListViewPage(parent),
+      m_hypothesisController(hypothesisController),
+      m_inputController(inputController),
+      m_contentView(&m_selectableTableView, &m_description),
+      m_globalTestType(globalTestType),
+      m_statistic(statistic) {
   m_description.setBackgroundColor(Palette::WallScreen);
   m_description.setTextColor(Palette::GrayDark);
   m_description.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
@@ -101,18 +101,15 @@ Escher::View * TypeView::subviewAtIndex(int i) {
 
 const char * TypeController::title() {
   I18n::Message format = App::app()->test() == Data::Test::OneMean
-                        ? I18n::Message::TypeControllerTitleOne
-                        : I18n::Message::TypeControllerTitleTwo;
+                             ? I18n::Message::TypeControllerTitleOne
+                             : I18n::Message::TypeControllerTitleTwo;
   I18n::Message testOrInterval = App::app()->subapp() == Data::SubApp::Tests
                                      ? I18n::Message::Test
                                      : I18n::Message::Interval;
   char buffer[30];
   strlcpy(buffer, I18n::translate(testOrInterval), sizeof(buffer));
   decapitalize(buffer);
-  snprintf(m_titleBuffer,
-           sizeof(m_titleBuffer),
-           I18n::translate(format),
-           buffer);
+  snprintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format), buffer);
   return m_titleBuffer;
 }
 

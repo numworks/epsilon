@@ -24,15 +24,15 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                Data::TestType * globalTestType,
                                Data::CategoricalType * globalCategoricalType,
                                Statistic * statistic) :
-    SelectableCellListPage(parentResponder),
-    m_hypothesisController(hypothesisController),
-    m_typeController(typeController),
-    m_inputController(inputController),
-    m_categoricalController(categoricalController),
-    m_globalTest(globalTest),
-    m_globalTestType(globalTestType),
-    m_globalCategoricalType(globalCategoricalType),
-    m_statistic(statistic) {
+      SelectableCellListPage(parentResponder),
+      m_hypothesisController(hypothesisController),
+      m_typeController(typeController),
+      m_inputController(inputController),
+      m_categoricalController(categoricalController),
+      m_globalTest(globalTest),
+      m_globalTestType(globalTestType),
+      m_globalCategoricalType(globalCategoricalType),
+      m_statistic(statistic) {
   // Create cells
   static_assert(k_numberOfRows < 8, "If more than 8 cells they should be reused");
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
@@ -48,8 +48,9 @@ TestController::TestController(Escher::StackViewController * parentResponder,
 }
 
 const char * TestController::title() {
-  I18n::Message title = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::Tests
-                                                                    : I18n::Message::ConfidenceInterval;
+  I18n::Message title = App::app()->subapp() == Data::SubApp::Tests
+                            ? I18n::Message::Tests
+                            : I18n::Message::ConfidenceInterval;
   return I18n::translate(title);
 }
 

@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class Conic {
+class __attribute__((packed)) Conic {
 public:
   enum class Type : uint8_t {
     Hyperbola = 0,

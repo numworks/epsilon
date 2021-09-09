@@ -174,7 +174,7 @@ void ValuesController::setStartEndMessages(Shared::IntervalParameterController *
 // Number of columns memoization
 
 void ValuesController::updateNumberOfColumns() const {
-  for (int symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
+  for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
     m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;
   }
   for (int i = 0; i < functionStore()->numberOfActiveFunctionsInTable(); i++) {
@@ -184,7 +184,7 @@ void ValuesController::updateNumberOfColumns() const {
     m_numberOfValuesColumnsForType[symbolTypeIndex] += numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = 0;
-  for (int symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
+  for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
     // Count abscissa column if the sub table does exist
     m_numberOfColumns += numberOfColumnsForSymbolType(symbolTypeIndex);
   }

@@ -10,6 +10,7 @@ constexpr KDColor Palette::PurpleDark;
 constexpr KDColor Palette::GrayWhite;
 constexpr KDColor Palette::GrayBright;
 constexpr KDColor Palette::GrayMiddle;
+constexpr KDColor Palette::GraySlightlyDark;
 constexpr KDColor Palette::GrayDark;
 constexpr KDColor Palette::GrayVeryDark;
 constexpr KDColor Palette::Select;

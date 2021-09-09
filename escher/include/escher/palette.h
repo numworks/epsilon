@@ -15,6 +15,7 @@ public:
   constexpr static KDColor GrayWhite = KDColor::RGB24(0xf5f5f5);
   constexpr static KDColor GrayBright = KDColor::RGB24(0xececec);
   constexpr static KDColor GrayMiddle = KDColor::RGB24(0xd9d9d9);
+  constexpr static KDColor GraySlightlyDark = KDColor::RGB24(0xbebbc6);
   constexpr static KDColor GrayDark = KDColor::RGB24(0xa7a7a7);
   constexpr static KDColor GrayVeryDark = KDColor::RGB24(0x8c8c8c);
   constexpr static KDColor Select = KDColor::RGB24(0xd4d7e0);

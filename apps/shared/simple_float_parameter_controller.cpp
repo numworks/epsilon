@@ -84,7 +84,7 @@ bool SimpleFloatParameterController<T>::textFieldDidFinishEditing(TextField * te
   T floatBody;
   int row = selectedRow();
   InfinityTolerance infTolerance = infinityAllowanceForRow(row);
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity)) {
     return false;
   }
   if (!setParameterAtIndex(row, floatBody)) {

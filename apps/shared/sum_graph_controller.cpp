@@ -89,7 +89,7 @@ void SumGraphController::setRecord(Ion::Storage::Record record) {
 
 bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
   if ((m_step == Step::SecondParameter && floatBody < m_startSum) || !moveCursorHorizontallyToPosition(floatBody)) {

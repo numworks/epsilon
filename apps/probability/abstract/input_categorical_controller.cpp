@@ -28,7 +28,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
                                                            Ion::Events::Event event) {
   // Parse and check significance level
   float p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false) ||
+  if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false) ||
       !m_statistic->isValidParamAtIndex(m_statistic->indexOfThreshold(), p)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
@@ -40,9 +40,9 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   defaultConvertFloatToText(p, buffer, bufferSize);
   textField->setText(buffer);
   if (event == Ion::Events::Up) {
-    m_contentView.selectView(InputCategoricalView::k_indexOfTable);
+    m_contentView.selectViewAtIndex(InputCategoricalView::k_indexOfTable);
   } else {
-    m_contentView.selectView(InputCategoricalView::k_indexOfNext);
+    m_contentView.selectViewAtIndex(InputCategoricalView::k_indexOfNext);
   }
   return true;
 }

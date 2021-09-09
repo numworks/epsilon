@@ -72,10 +72,7 @@ bool Probability::HypothesisController::textFieldDidReceiveEvent(Escher::TextFie
 
 bool Probability::HypothesisController::textFieldShouldFinishEditing(Escher::TextField * textField,
                                                                      Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return true;
-  }
-  return false;
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
 bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextField * textField,
@@ -156,6 +153,7 @@ void HypothesisController::loadHypothesisParam() {
   strlcpy(buffer, symbolPrefix(), bufferSize);
   int offset = strlen(symbolPrefix());
   buffer[offset++] = '=';
+  assert(offset < bufferSize);
   float p = m_statistic->hypothesisParams()->firstParam();
   defaultConvertFloatToText(p, buffer + offset, bufferSize - offset);
 

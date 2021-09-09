@@ -17,6 +17,7 @@ Escher::View * InputCategoricalView::ContentView::InnerVerticalLayout::subviewAt
     case 2:
       return m_next;
   }
+  assert(false);
   return nullptr;
 }
 
@@ -68,7 +69,7 @@ void InputCategoricalView::didBecomeFirstResponder() {
     m_viewSelection.selectRow(0);
   }
   setResponderForSelectedRow();
-  selectCorrectView();
+  highlightCorrectView();
 }
 
 bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
@@ -77,13 +78,13 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
       int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer + 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() - jump);
-      selectCorrectView();
+      highlightCorrectView();
       setResponderForSelectedRow();
     }
     if (event == Ion::Events::Down && m_viewSelection.selectedRow() < k_indexOfNext) {
       int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer - 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() + jump);
-      selectCorrectView();
+      highlightCorrectView();
       setResponderForSelectedRow();
     }
     return true;
@@ -108,7 +109,7 @@ void InputCategoricalView::setResponderForSelectedRow() {
   Escher::Container::activeApp()->setFirstResponder(responderForRow(m_viewSelection.selectedRow()));
 }
 
-void InputCategoricalView::selectCorrectView() {
+void InputCategoricalView::highlightCorrectView() {
   if (m_viewSelection.selectedRow() != k_indexOfTable) {
     Escher::HighlightCell * view;
     if (m_viewSelection.selectedRow() == k_indexOfSignificance) {
@@ -137,9 +138,9 @@ KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
   return KDSize(bounds().width() + leftMargin() + rightMargin(), requiredSize.height());
 }
 
-void Probability::InputCategoricalView::selectView(int index) {
+void Probability::InputCategoricalView::selectViewAtIndex(int index) {
   m_viewSelection.selectRow(index);
-  selectCorrectView();
+  highlightCorrectView();
   setResponderForSelectedRow();
 }
 

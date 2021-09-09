@@ -16,6 +16,7 @@ InputController::InputController(Escher::StackViewController * parent,
                                  Statistic * statistic,
                                  Escher::InputEventHandlerDelegate * handler) :
       FloatParameterPage(parent), m_statistic(statistic), m_resultsController(resultsController) {
+  m_okButton.setMessage(I18n::Message::Next);
   // Initialize cells
   for (int i = 0; i < k_numberOfReusableCells; i++) {
     m_parameterCells[i].setParentResponder(&m_selectableTableView);

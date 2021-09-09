@@ -50,7 +50,7 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
       Responder(parentResponder),
       m_tableViewController(tableViewController),
       m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
-      m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), Escher::Palette::WallScreenDark),
+      m_next(this, I18n::Message::Next, buttonDelegate->buttonActionInvocation(), Escher::Palette::WallScreenDark),
       m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
                     &m_significanceCell,
                     &m_next) {

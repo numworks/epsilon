@@ -25,7 +25,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_operatorDataSource(statistic->hypothesisParams()),
       m_h0(&m_selectableTableView, handler, this),
       m_ha(&m_selectableTableView, &m_operatorDataSource, this),
-      m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
+      m_next(&m_selectableTableView, I18n::Message::Next, buttonActionInvocation()),
       m_statistic(statistic) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),

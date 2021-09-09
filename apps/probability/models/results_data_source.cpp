@@ -15,7 +15,7 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
                                      ButtonDelegate * delegate) :
     MemoizedListViewDataSource(),
     m_statistic(statistic),
-    m_next(parent, I18n::Message::Ok, delegate->buttonActionInvocation()) {
+    m_next(parent, I18n::Message::Next, delegate->buttonActionInvocation()) {
 }
 
 int ResultsDataSource::numberOfRows() const {

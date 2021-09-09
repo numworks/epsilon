@@ -37,8 +37,7 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   }
 
   int selectedColumn = m_inputTableView.selectedColumn();
-  int index = 2 * (m_inputTableView.selectedRow() - 1) + selectedColumn;
-  m_statistic->setParamAtIndex(index, p);
+  m_statistic->setParamAtLocation(m_inputTableView.selectedRow() - 1, selectedColumn, p);
   if (m_inputTableView.selectedRow() == m_inputTableView.numberOfRows() - 1 &&
       m_inputTableView.numberOfRows() <= GoodnessStatistic::k_maxNumberOfRows) {
     m_inputTableView.recomputeNumberOfRows();
@@ -55,7 +54,7 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
 void GoodnessTableViewController::deleteSelectedValue() {
   // Remove value
   int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();
-  m_statistic->setParamAtIndex(2 * (row - 1) + col, GoodnessStatistic::k_undefinedValue);
+  m_statistic->setParamAtLocation(row - 1, col, GoodnessStatistic::k_undefinedValue);
 
   // Delete row if needed
   // Unhighlight selected cell in case it disappears after the row is removed

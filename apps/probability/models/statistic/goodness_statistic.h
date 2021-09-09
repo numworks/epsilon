@@ -15,18 +15,22 @@ public:
   int computeNumberOfRows();
   bool validateInputs() override;
 
+  float paramAtLocation(int row, int column);
+  void setParamAtLocation(int row, int column, float p);
+
   constexpr static int k_maxNumberOfRows = 10;
 
-protected:
+private:
   float * paramArray() override { return m_input; }
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
   float expectedValue(int index) override;
   float observedValue(int index) override;
 
-private:
   void setExpectedValue(int index, float value);
   void setObservedValue(int index, float value);
   int numberOfValuePairs() override;
+
+  int locationToTableIndex(int row, int column);
 
   float m_input[k_maxNumberOfRows * 2];
 };

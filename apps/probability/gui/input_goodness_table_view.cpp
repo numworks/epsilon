@@ -17,10 +17,10 @@ InputGoodnessTableView::InputGoodnessTableView(
     Escher::TextFieldDelegate * textFieldDelegate,
     DynamicTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
-    SelectableTableViewWithBackground(parentResponder, this, &m_tableSelection, scrollDelegate),
-    DynamicTableViewDataSource(delegate),
-    m_numberOfRows(k_minimumNumberOfRows),
-    m_statistic(statistic) {
+      SelectableTableViewWithBackground(parentResponder, this, &m_tableSelection, scrollDelegate),
+      DynamicTableViewDataSource(delegate),
+      m_numberOfRows(k_minimumNumberOfRows),
+      m_statistic(statistic) {
   m_header[0].setMessage(I18n::Message::Observed);
   m_header[1].setMessage(I18n::Message::Expected);
   m_header[0].setEven(true);
@@ -56,7 +56,8 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
 void InputGoodnessTableView::recomputeNumberOfRows() {
   int innerNumberOfRows = m_statistic->computeNumberOfRows();
   bool displayLastEmptyRow = innerNumberOfRows < GoodnessStatistic::k_maxNumberOfRows;
-  int newNumberOfRows = std::max(innerNumberOfRows + 1 + displayLastEmptyRow, k_minimumNumberOfRows);
+  int newNumberOfRows = std::max(innerNumberOfRows + 1 + displayLastEmptyRow,
+                                 k_minimumNumberOfRows);
   if (newNumberOfRows != m_numberOfRows) {
     m_numberOfRows = newNumberOfRows;
     DynamicTableViewDataSource::didChangeSize();
@@ -69,8 +70,7 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
   if (j == 0) {  // Header
     return;
   }
-  int index = 2 * (j - 1) + i;
-  float p = m_statistic->paramAtIndex(index);
+  float p = m_statistic->paramAtLocation(j - 1, i);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");

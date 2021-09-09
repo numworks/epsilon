@@ -1,6 +1,7 @@
 #ifndef APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_VIEW_H
 #define APPS_PROBABILITY_ABSTRACT_INPUT_CATEGORICAL_VIEW_H
 
+#include <apps/shared/button_with_separator.h>
 #include <escher/button.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/responder.h>
@@ -66,30 +67,26 @@ private:
     void setTableView(SelectableTableView * tableView) { m_dataInputTableView = tableView; }
 
   private:
-    /* Layout cell, a spacer and button with side margins */
+    /* Layout cell and button with side margins */
     class InnerVerticalLayout : public VerticalLayout {
     public:
       InnerVerticalLayout(MessageTableCellWithEditableTextWithMessage * significanceCell,
-                          SpacerView * spacer,
                           Escher::Button * next) :
-          VerticalLayout(Escher::Palette::WallScreenDark),
-          m_significanceCell(significanceCell),
-          m_spacer(spacer),
-          m_next(next) {
+            VerticalLayout(Escher::Palette::WallScreenDark),
+            m_significanceCell(significanceCell),
+            m_next(next) {
         setMargins(Metric::CommonRightMargin, 0);
       };
       Escher::View * subviewAtIndex(int i) override;
-      int numberOfSubviews() const override { return 3; }
+      int numberOfSubviews() const override { return 2; }
 
     private:
       MessageTableCellWithEditableTextWithMessage * m_significanceCell;
-      SpacerView * m_spacer;
       Escher::Button * m_next;
     };
 
     SelectableTableView * m_dataInputTableView;
     InnerVerticalLayout m_innerView;
-    SpacerView m_spacer;
   };
 
   constexpr static int k_marginVertical = 5;
@@ -99,7 +96,7 @@ private:
 
   TableViewController * m_tableViewController;
   MessageTableCellWithEditableTextWithMessage m_significanceCell;
-  Escher::Button m_next;
+  Shared::ButtonWithSeparator m_next;
   ContentView m_contentView;
 
   SelectableTableViewDataSource m_viewSelection;

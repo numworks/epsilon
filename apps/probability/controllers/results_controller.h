@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/input_event_handler_delegate.h>
+#include <escher/palette.h>
 #include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
@@ -52,7 +53,9 @@ private:
   Escher::TableViewDataSource * m_tableDataSource;
 };
 
-class ResultsController : public Page, public ButtonDelegate, public Escher::SelectableTableViewDataSource {
+class ResultsController : public Page,
+                          public ButtonDelegate,
+                          public Escher::SelectableTableViewDataSource {
 public:
   ResultsController(Escher::StackViewController * parent,
                     Statistic * statistic,
@@ -64,8 +67,8 @@ public:
   void didBecomeFirstResponder() override;
   bool buttonAction() override;
   void openPage(ViewController * nextPage,
-                KDColor backgroundColor = s_titleColor,
-                KDColor separatorColor = s_titleColor,
+                KDColor backgroundColor = Escher::Palette::GraySlightlyDark,
+                KDColor separatorColor = Escher::Palette::GraySlightlyDark,
                 KDColor textColor = KDColorWhite) {
     Page::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }

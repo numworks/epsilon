@@ -3,12 +3,9 @@
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/even_odd_buffer_text_cell.h>
-#include <escher/highlight_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/responder.h>
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
-#include <escher/view.h>
 #include <kandinsky/coordinate.h>
 
 #include "probability/abstract/button_delegate.h"

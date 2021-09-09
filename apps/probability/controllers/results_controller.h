@@ -39,7 +39,6 @@ private:
     ContentView(Escher::SelectableTableView * table, I18n::Message titleMessage);
     int numberOfSubviews() const override { return 2; }
     Escher::View * subviewAtIndex(int i) override;
-    void relayout();
 
   private:
     friend ResultsView;

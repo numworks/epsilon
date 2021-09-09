@@ -63,21 +63,60 @@ static constexpr int calculationSizes[4] = {sizeof(DiscreteCalculation),
 static constexpr int maxCalculationSize = arrayMax(calculationSizes);
 typedef char CalculationBuffer[maxCalculationSize];
 
+#if __EMSCRIPTEN__
+// Emscripten requires buffers to be aligned
+constexpr static int k_distributionAlignments[9] = {alignof(ChiSquaredDistribution),
+                                                    alignof(ExponentialDistribution),
+                                                    alignof(GeometricDistribution),
+                                                    alignof(PoissonDistribution),
+                                                    alignof(StudentDistribution),
+                                                    alignof(BinomialDistribution),
+                                                    alignof(FisherDistribution),
+                                                    alignof(NormalDistribution),
+                                                    alignof(UniformDistribution)};
+constexpr static size_t k_distributionAlignment = arrayMax(k_distributionAlignments);
+constexpr static int k_calculationAlignments[4] = {alignof(DiscreteCalculation),
+                                                   alignof(LeftIntegralCalculation),
+                                                   alignof(FiniteIntegralCalculation),
+                                                   alignof(RightIntegralCalculation)};
+constexpr static size_t k_calculationAlignment = arrayMax(k_calculationAlignments);
+#endif
+
 struct ProbaData {
-  DistributionBuffer m_distributionBuffer;
-  CalculationBuffer m_calculationBuffer;
+#if __EMSCRIPTEN__
+  alignas(k_distributionAlignment)
+#endif
+      DistributionBuffer m_distributionBuffer;
+#if __EMSCRIPTEN__
+  alignas(k_calculationAlignment)
+#endif
+      CalculationBuffer m_calculationBuffer;
 };
 
 static constexpr int statisticSizes[10] = {sizeof(OneProportionStatistic),
-                                          sizeof(OneMeanZStatistic),
-                                          sizeof(OneMeanTStatistic),
-                                          sizeof(TwoProportionsStatistic),
-                                          sizeof(TwoMeansZStatistic),
-                                          sizeof(TwoMeansTStatistic),
-                                          sizeof(PooledTwoMeansStatistic),
-                                          sizeof(Chi2Statistic),
-                                          sizeof(GoodnessStatistic),
-                                          sizeof(HomogeneityStatistic)};
+                                           sizeof(OneMeanZStatistic),
+                                           sizeof(OneMeanTStatistic),
+                                           sizeof(TwoProportionsStatistic),
+                                           sizeof(TwoMeansZStatistic),
+                                           sizeof(TwoMeansTStatistic),
+                                           sizeof(PooledTwoMeansStatistic),
+                                           sizeof(Chi2Statistic),
+                                           sizeof(GoodnessStatistic),
+                                           sizeof(HomogeneityStatistic)};
+#if __EMSCRIPTEN__
+// Emscripten requires buffers to be aligned
+constexpr static int k_statisticAlignments[10] = {alignof(OneProportionStatistic),
+                                                  alignof(OneMeanZStatistic),
+                                                  alignof(OneMeanTStatistic),
+                                                  alignof(TwoProportionsStatistic),
+                                                  alignof(TwoMeansZStatistic),
+                                                  alignof(TwoMeansTStatistic),
+                                                  alignof(PooledTwoMeansStatistic),
+                                                  alignof(Chi2Statistic),
+                                                  alignof(GoodnessStatistic),
+                                                  alignof(HomogeneityStatistic)};
+constexpr static size_t k_statisticAlignment = arrayMax(k_statisticAlignments);
+#endif
 
 constexpr int maxStatisticSize = arrayMax(statisticSizes);
 typedef char StatisticBuffer[maxStatisticSize];
@@ -86,7 +125,10 @@ struct StatisticData {
   Test m_test;
   CategoricalType m_categoricalType;
   TestType m_testType;
-  StatisticBuffer m_statisticBuffer;
+#if __EMSCRIPTEN__
+  alignas(k_statisticAlignment)
+#endif
+      StatisticBuffer m_statisticBuffer;
 
   Statistic * statistic() { return reinterpret_cast<Statistic *>(m_statisticBuffer); }
 };

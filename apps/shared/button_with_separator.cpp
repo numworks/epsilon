@@ -4,16 +4,19 @@ using namespace Escher;
 
 namespace Shared {
 
-ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder, I18n::Message message, Invocation invocation) :
-  Button(parentResponder, message, invocation, KDFont::LargeFont, KDColorBlack)
-{
+ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder,
+                                         I18n::Message textBody,
+                                         Escher::Invocation invocation,
+                                         KDColor backgroundColor) :
+      Button(parentResponder, textBody, invocation, KDFont::LargeFont, KDColorBlack),
+      m_backgroundColor(backgroundColor) {
 }
 
 void ButtonWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   ctx->fillRect(KDRect(0, 0, width, k_lineThickness), Palette::GrayBright);
-  ctx->fillRect(KDRect(0, k_lineThickness, width, k_margin), Palette::WallScreen);
+  ctx->fillRect(KDRect(0, k_lineThickness, width, k_margin), m_backgroundColor);
   // Draw rectangle around cell
   ctx->fillRect(KDRect(0, k_lineThickness + k_margin, width, k_lineThickness), Palette::GrayBright);
   ctx->fillRect(KDRect(0, 2*k_lineThickness + k_margin, k_lineThickness, height - k_margin - k_lineThickness), Palette::GrayBright);

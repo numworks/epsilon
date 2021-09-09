@@ -13,8 +13,6 @@ Escher::View * InputCategoricalView::ContentView::InnerVerticalLayout::subviewAt
       return m_significanceCell;
       break;
     case 1:
-      return m_spacer;
-    case 2:
       return m_next;
   }
   assert(false);
@@ -25,9 +23,7 @@ Probability::InputCategoricalView::ContentView::ContentView(
     SelectableTableView * dataInputTableView,
     MessageTableCellWithEditableTextWithMessage * significanceCell,
     Escher::Button * next) :
-      m_dataInputTableView(dataInputTableView),
-      m_innerView(significanceCell, &m_spacer, next),
-      m_spacer(Palette::WallScreenDark, 0, k_marginVertical) {
+      m_dataInputTableView(dataInputTableView), m_innerView(significanceCell, next) {
   significanceCell->setMessage(I18n::Message::GreekAlpha);
   significanceCell->setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
@@ -54,7 +50,7 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
       Responder(parentResponder),
       m_tableViewController(tableViewController),
       m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
-      m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), KDFont::LargeFont),
+      m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), Escher::Palette::WallScreenDark),
       m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
                     &m_significanceCell,
                     &m_next) {

@@ -116,7 +116,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     if (isDerivative) {
       function->derivativeNameWithArgument(bufferName, bufferNameSize);
     } else {
-      function->nameWithArgument(bufferName, bufferNameSize);
+      if (function->isNamed()) {
+        function->nameWithArgument(bufferName, bufferNameSize);
+      } else {
+        PoincareHelpers::Serialize(function->equationExpression(&record), bufferName, bufferNameSize, Preferences::LargeNumberOfSignificantDigits);
+      }
     }
     myFunctionCell->setText(bufferName);
     myFunctionCell->setColor(function->color());

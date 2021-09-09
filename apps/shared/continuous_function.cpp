@@ -37,7 +37,7 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
 
   *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
-    assert(false); // TOCHECK Hugo
+    assert(false); // TODO Hugo : Check it never happens
     // Return if error
     return ContinuousFunction();
   }
@@ -340,6 +340,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
           Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
           int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
           assert(d == xDegree);
+          (void) d; // Silence compilation warning
           Expression root;
           Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
           m_expression = root;

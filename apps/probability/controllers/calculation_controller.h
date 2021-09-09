@@ -20,9 +20,10 @@ class CalculationController : public Page,
                               public Escher::SelectableTableViewDataSource,
                               public Shared::ParameterTextFieldDelegate,
                               public DropdownCallback {
- public:
+public:
   CalculationController(Escher::StackViewController * parentResponder,
-                        Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution,
+                        Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+                        Distribution * distribution,
                         Calculation * calculation);
   /* Responder */
   void didBecomeFirstResponder() override;
@@ -31,27 +32,34 @@ class CalculationController : public Page,
   /* ViewController */
   Escher::View * view() override { return &m_contentView; }
   const char * title() override { return m_titleBuffer; }
-  TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
+  TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Calculation");
 
   /* TableViewDataSource */
-  int numberOfRows() const override;
+  int numberOfRows() const override { return 1; }
   int numberOfColumns() const override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
-  int typeAtLocation(int i, int j) override;
+  int reusableCellCount(int type) override { return 1; }
+  int typeAtLocation(int i, int j) override { return i; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   /* TextField delegate */
-  bool textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) override;
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidHandleEvent(Escher::TextField * textField,
+                               bool returnValue,
+                               bool textSizeDidChange) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField,
+                                    Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField,
+                                 const char * text,
+                                 Ion::Events::Event event) override;
 
   void reloadDistributionCurveView();
   void reload();
@@ -61,17 +69,18 @@ class CalculationController : public Page,
   void onDropdownSelected(int selectedRow) override;
   bool popupDidReceiveEvent(Ion::Events::Event event) override;
 
- private:
+private:
   constexpr static int k_numberOfCalculationCells = 3;
   constexpr static KDCoordinate k_tableMargin = 3;
   void updateTitle();
   class ContentView : public Escher::View {
-   public:
-    ContentView(Escher::SelectableTableView * selectableTableView, Distribution * distribution,
+  public:
+    ContentView(Escher::SelectableTableView * selectableTableView,
+                Distribution * distribution,
                 Calculation * calculation);
     DistributionCurveView * distributionCurveView() { return &m_distributionCurveView; }
 
-   private:
+  private:
     int numberOfSubviews() const override { return 2; };
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
@@ -85,7 +94,8 @@ class CalculationController : public Page,
   CalculationPopupDataSource m_imagesDataSource;
   Dropdown m_dropdown;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
-  constexpr static int k_titleBufferSize = sizeof("d1 =  d2 =  ") + 2 * Constants::k_shortFloatNumberOfChars;
+  constexpr static int k_titleBufferSize = sizeof("d1 =  d2 =  ") +
+                                           2 * Constants::k_shortFloatNumberOfChars;
   char m_titleBuffer[k_titleBufferSize];
 };
 

@@ -27,7 +27,7 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
   // Save attributes for later use

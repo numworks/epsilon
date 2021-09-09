@@ -41,7 +41,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   int selectedView() { return m_viewSelection.selectedRow(); }
-  void selectView(int index);
+  void selectViewAtIndex(int index);
   void setSignificanceCellText(const char * text);
   void setTableView(TableViewController * tableViewController);
 
@@ -95,7 +95,7 @@ private:
   constexpr static int k_marginVertical = 5;
   Responder * responderForRow(int row);
   void setResponderForSelectedRow();
-  void selectCorrectView();
+  void highlightCorrectView();
 
   TableViewController * m_tableViewController;
   MessageTableCellWithEditableTextWithMessage m_significanceCell;

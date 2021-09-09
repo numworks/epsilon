@@ -42,7 +42,7 @@ void InputHomogeneityDataSource::recomputeDimensions() {
   if (newNumberOfRows != m_numberOfRows || newNumberOfColumns != m_numberOfColumns) {
     m_numberOfRows = newNumberOfRows;
     m_numberOfColumns = newNumberOfColumns;
-    DynamicTableViewDataSource::notify();
+    DynamicTableViewDataSource::didChangeSize();
   }
 }
 

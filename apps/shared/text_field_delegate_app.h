@@ -18,7 +18,7 @@ public:
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
   bool isAcceptableText(const char * text);
   template<typename T>
-  bool hasUndefinedValue(const char * text, T & value, bool enablePlusInfinity = false, bool enableMinusInfinity = false);
+  bool hasUndefinedValue(const char * text, T * value, bool enablePlusInfinity = false, bool enableMinusInfinity = false);
 protected:
   TextFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
   bool fieldDidReceiveEvent(Escher::EditableField * field, Escher::Responder * responder, Ion::Events::Event event);

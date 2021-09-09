@@ -36,7 +36,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
                                                                const char * text,
                                                                Ion::Events::Event event) {
   float p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, p, false, false)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
     return false;
   }
   int row = m_table.selectedRow(), column = m_table.selectedColumn();

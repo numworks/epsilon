@@ -41,11 +41,11 @@ bool TextFieldDelegateApp::isAcceptableText(const char * text) {
 }
 
 template<typename T>
-bool TextFieldDelegateApp::hasUndefinedValue(const char * text, T & value, bool enablePlusInfinity, bool enableMinusInfinity) {
-  value = PoincareHelpers::ApproximateToScalar<T>(text, localContext());
-  bool isUndefined = std::isnan(value)
-    || (!enablePlusInfinity && value > 0 && std::isinf(value))
-    || (!enableMinusInfinity && value < 0 && std::isinf(value));
+bool TextFieldDelegateApp::hasUndefinedValue(const char * text, T * value, bool enablePlusInfinity, bool enableMinusInfinity) {
+  *value = PoincareHelpers::ApproximateToScalar<T>(text, localContext());
+  bool isUndefined = std::isnan(*value)
+    || (!enablePlusInfinity && *value > 0 && std::isinf(*value))
+    || (!enableMinusInfinity && *value < 0 && std::isinf(*value));
   if (isUndefined) {
     displayWarning(I18n::Message::UndefinedValue);
   }
@@ -103,7 +103,7 @@ bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression
   return true;
 }
 
-template bool TextFieldDelegateApp::hasUndefinedValue(const char *, float &, bool, bool);
-template bool TextFieldDelegateApp::hasUndefinedValue(const char *, double &, bool, bool);
+template bool TextFieldDelegateApp::hasUndefinedValue(const char *, float *, bool, bool);
+template bool TextFieldDelegateApp::hasUndefinedValue(const char *, double *, bool, bool);
 
 }

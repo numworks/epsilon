@@ -23,7 +23,7 @@ public:
   }
 
 protected:
-  void notify() {
+  void didChangeSize() {
     if (m_dynamicDatSourceDelegate) {
       m_dynamicDatSourceDelegate->tableViewDataSourceDidChangeSize();
     }

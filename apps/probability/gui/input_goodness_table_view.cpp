@@ -59,7 +59,7 @@ void InputGoodnessTableView::recomputeNumberOfRows() {
   int newNumberOfRows = std::max(innerNumberOfRows + 1 + displayLastEmptyRow, k_minimumNumberOfRows);
   if (newNumberOfRows != m_numberOfRows) {
     m_numberOfRows = newNumberOfRows;
-    DynamicTableViewDataSource::notify();
+    DynamicTableViewDataSource::didChangeSize();
   }
 }
 

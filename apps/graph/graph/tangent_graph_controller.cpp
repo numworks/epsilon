@@ -44,7 +44,7 @@ void TangentGraphController::didBecomeFirstResponder() {
 bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   double floatBody;
-  if (myApp->hasUndefinedValue(text, floatBody)) {
+  if (myApp->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);

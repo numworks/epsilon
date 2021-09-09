@@ -29,6 +29,7 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(
 
 HighlightCell * HomogeneityTableDataSource::reusableCell(int i, int type) {
   if (type == k_typeOfTopLeftCell) {
+    assert(i == 0);
     return &m_topLeftCell;
   }
   if (type == k_typeOfColumnHeader) {
@@ -70,12 +71,15 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
     int length = strlen(txt);
     char digit;
     if (row == 0) {
+      assert(column <= '9' - '1');
       digit = '1' + (column - 1);
     } else {
+      assert(row <= 'Z' - 'A');
       digit = 'A' + (row - 1);
     }
 
     txt[length] = digit;
+    assert(length + 1 < bufferSize);
     txt[length + 1] = 0;
     myCell->setText(txt);
     KDColor textColor = KDColorBlack;

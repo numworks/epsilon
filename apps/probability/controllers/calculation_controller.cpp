@@ -102,10 +102,6 @@ void CalculationController::viewDidDisappear() {
   ViewController::viewDidDisappear();
 }
 
-int CalculationController::numberOfRows() const {
-  return 1;
-}
-
 int CalculationController::numberOfColumns() const {
   return m_calculation->numberOfParameters() + 1;
 }
@@ -148,14 +144,6 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
     default:
       return &m_calculationCells[type - 1];
   }
-}
-
-int CalculationController::reusableCellCount(int type) {
-  return 1;
-}
-
-int CalculationController::typeAtLocation(int i, int j) {
-  return i;
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -209,7 +197,7 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField,
                                                       const char * text,
                                                       Ion::Events::Event event) {
   double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
   if (m_calculation->type() != Calculation::Type::FiniteIntegral && selectedColumn() == 2) {
@@ -293,10 +281,6 @@ void CalculationController::updateTitle() {
                             "%s = %s ",
                             I18n::translate(m_distribution->parameterNameAtIndex(index)),
                             buffer);
-    if (currentChar >= k_titleBufferSize - 1) {
-      assert(false);
-      break;
-    }
   }
   m_titleBuffer[currentChar] = '\0';  // Override last '\0'
 }

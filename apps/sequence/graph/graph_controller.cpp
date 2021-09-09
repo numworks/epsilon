@@ -51,7 +51,7 @@ float GraphController::interestingXMin() const {
 bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   double floatBody;
-  if (myApp->hasUndefinedValue(text, floatBody)) {
+  if (myApp->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));

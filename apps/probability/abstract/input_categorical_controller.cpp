@@ -11,10 +11,10 @@ InputCategoricalController::InputCategoricalController(
     Page * resultsController,
     Chi2Statistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
-    Page(parent),
-    m_statistic(statistic),
-    m_resultsController(resultsController),
-    m_contentView(this, this, nullptr, inputEventHandlerDelegate, this) {
+      Page(parent),
+      m_statistic(statistic),
+      m_resultsController(resultsController),
+      m_contentView(this, this, nullptr, inputEventHandlerDelegate, this) {
 }
 
 bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField,

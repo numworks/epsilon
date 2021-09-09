@@ -16,11 +16,11 @@ CategoricalTypeController::CategoricalTypeController(
     Data::CategoricalType * globalCategoricalType,
     InputGoodnessController * inputGoodnessController,
     InputHomogeneityController * inputHomogeneityController) :
-    SelectableCellListPage(parent),
-    m_statistic(statistic),
-    m_globalCategoricalType(globalCategoricalType),
-    m_inputGoodnessController(inputGoodnessController),
-    m_inputHomogeneityController(inputHomogeneityController) {
+      SelectableCellListPage(parent),
+      m_statistic(statistic),
+      m_globalCategoricalType(globalCategoricalType),
+      m_inputGoodnessController(inputGoodnessController),
+      m_inputHomogeneityController(inputHomogeneityController) {
   selectRow(0);  // Select first row by default
   m_cells[k_indexOfGoodnessCell].setMessage(I18n::Message::GoodnessOfFit);
   m_cells[k_indexOfHomogeneityCell].setMessage(I18n::Message::Homogeneity);

@@ -5,7 +5,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
 
-#include "probability/abstract/dynamic_data_source.h"
+#include "probability/abstract/dynamic_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 

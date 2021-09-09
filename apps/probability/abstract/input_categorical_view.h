@@ -7,7 +7,7 @@
 #include <ion/events.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "probability/abstract/dynamic_data_source.h"
+#include "probability/abstract/dynamic_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
 #include "probability/gui/spacer_view.h"

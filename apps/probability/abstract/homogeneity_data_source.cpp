@@ -9,19 +9,19 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(
     TableViewDataSource * contentTable,
     Escher::SelectableTableViewDelegate * tableDelegate,
     I18n::Message headerPrefix) :
-    ChainedSelectableTableViewDelegate(tableDelegate),
-    m_innerDataSource(contentTable),
-    m_headerPrefix(headerPrefix),
-    m_topLeftCell(Escher::Palette::WallScreenDark) {
+      ChainedSelectableTableViewDelegate(tableDelegate),
+      m_innerDataSource(contentTable),
+      m_headerPrefix(headerPrefix),
+      m_topLeftCell(Escher::Palette::WallScreenDark) {
   // First row
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
-    m_colHeader[i].setAlignment(.5f, .5f);
+    m_colHeader[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
     m_colHeader[i].setFont(KDFont::SmallFont);
     m_colHeader[i].setEven(true);
   }
   // First column
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_rowHeader[i].setAlignment(.5f, .5f);
+    m_rowHeader[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
     m_rowHeader[i].setFont(KDFont::SmallFont);
     m_rowHeader[i].setEven(i % 2 == 0);
   }

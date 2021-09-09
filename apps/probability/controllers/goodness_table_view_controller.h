@@ -1,7 +1,7 @@
 #ifndef APPS_PROBABILITY_CONTROLLERS_GOODNESS_TABLE_VIEW_CONTROLLER_H
 #define APPS_PROBABILITY_CONTROLLERS_GOODNESS_TABLE_VIEW_CONTROLLER_H
 
-#include "probability/abstract/dynamic_data_source.h"
+#include "probability/abstract/dynamic_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/input_goodness_table_view.h"
 #include "probability/models/statistic/goodness_statistic.h"

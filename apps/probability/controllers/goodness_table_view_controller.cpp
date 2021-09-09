@@ -10,9 +10,9 @@ GoodnessTableViewController::GoodnessTableViewController(
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     DynamicTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
-    TableViewController(parent),
-    m_statistic(statistic),
-    m_inputTableView(this, inputEventHandlerDelegate, statistic, this, delegate, scrollDelegate) {
+      TableViewController(parent),
+      m_statistic(statistic),
+      m_inputTableView(this, inputEventHandlerDelegate, statistic, this, delegate, scrollDelegate) {
 }
 
 void GoodnessTableViewController::didBecomeFirstResponder() {

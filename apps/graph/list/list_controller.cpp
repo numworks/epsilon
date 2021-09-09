@@ -25,8 +25,9 @@ const char * ListController::title() {
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      CodePoint symbols[5] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
-      for (size_t i = 0; i < sizeof(symbols); i++) {
+      constexpr size_t numberOfSymbols = 5;
+      CodePoint symbols[numberOfSymbols] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
+      for (size_t i = 0; i < numberOfSymbols; i++) {
         if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == symbols[i]) {
           return true;
         }

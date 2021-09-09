@@ -6,7 +6,7 @@
 namespace Probability {
 
 ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic) :
-    m_statistic(statistic) {
+      m_statistic(statistic) {
   for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
     m_cells[i].setFont(KDFont::SmallFont);
   }
@@ -44,8 +44,8 @@ HomogeneityTableDataSourceWithTotals::HomogeneityTableDataSourceWithTotals(
     Escher::SelectableTableViewDelegate * tableDelegate,
     I18n::Message headerPrefix,
     I18n::Message totalMessage) :
-    HomogeneityTableDataSource(contentTable, tableDelegate, headerPrefix),
-    m_totalMessage(totalMessage) {
+      HomogeneityTableDataSource(contentTable, tableDelegate, headerPrefix),
+      m_totalMessage(totalMessage) {
 }
 
 void HomogeneityTableDataSourceWithTotals::willDisplayCellAtLocation(Escher::HighlightCell * cell,

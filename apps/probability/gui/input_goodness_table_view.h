@@ -8,10 +8,10 @@
 #include <escher/selectable_table_view.h>
 
 #include "bordered_table_view_data_source.h"
-#include "probability/abstract/dynamic_data_source.h"
+#include "probability/abstract/dynamic_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
-#include "probability/models/statistic/goodness_statistic.h"
 #include "probability/gui/selectable_table_view_with_background.h"
+#include "probability/models/statistic/goodness_statistic.h"
 
 namespace Probability {
 

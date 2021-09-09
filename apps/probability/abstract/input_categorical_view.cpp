@@ -24,9 +24,9 @@ Probability::InputCategoricalView::ContentView::ContentView(
     SelectableTableView * dataInputTableView,
     MessageTableCellWithEditableTextWithMessage * significanceCell,
     Escher::Button * next) :
-    m_dataInputTableView(dataInputTableView),
-    m_innerView(significanceCell, &m_spacer, next),
-    m_spacer(Palette::WallScreenDark, 0, k_marginVertical) {
+      m_dataInputTableView(dataInputTableView),
+      m_innerView(significanceCell, &m_spacer, next),
+      m_spacer(Palette::WallScreenDark, 0, k_marginVertical) {
   significanceCell->setMessage(I18n::Message::GreekAlpha);
   significanceCell->setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
@@ -49,14 +49,14 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
                                            TableViewController * tableViewController,
                                            InputEventHandlerDelegate * inputEventHandlerDelegate,
                                            TextFieldDelegate * textFieldDelegate) :
-    Escher::ScrollView(&m_contentView, &m_scrollDataSource),
-    Responder(parentResponder),
-    m_tableViewController(tableViewController),
-    m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
-    m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), KDFont::LargeFont),
-    m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
-                  &m_significanceCell,
-                  &m_next) {
+      Escher::ScrollView(&m_contentView, &m_scrollDataSource),
+      Responder(parentResponder),
+      m_tableViewController(tableViewController),
+      m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
+      m_next(this, I18n::Message::Ok, buttonDelegate->buttonActionInvocation(), KDFont::LargeFont),
+      m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
+                    &m_significanceCell,
+                    &m_next) {
   setTopMargin(Metric::CommonTopMargin);
   setBottomMargin(Metric::CommonBottomMargin);
   setBackgroundColor(Palette::WallScreenDark);

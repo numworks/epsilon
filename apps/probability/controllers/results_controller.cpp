@@ -17,12 +17,12 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
                                      StatisticGraphController * statisticGraphController,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :
-    Page(parent),
-    m_tableView(this, &m_resultsDataSource, this, &m_contentView),
-    m_contentView(&m_tableView, &m_resultsDataSource),
-    m_resultsDataSource(&m_tableView, statistic, this),
-    m_statistic(statistic),
-    m_statisticGraphController(statisticGraphController) {
+      Page(parent),
+      m_tableView(this, &m_resultsDataSource, this, &m_contentView),
+      m_contentView(&m_tableView, &m_resultsDataSource),
+      m_resultsDataSource(&m_tableView, statistic, this),
+      m_statistic(statistic),
+      m_statisticGraphController(statisticGraphController) {
 }
 
 void ResultsController::didBecomeFirstResponder() {
@@ -71,13 +71,13 @@ bool Probability::ResultsController::buttonAction() {
 
 Probability::ResultsView::ContentView::ContentView(Escher::SelectableTableView * table,
                                                    I18n::Message titleMessage) :
-    m_title(KDFont::SmallFont,
-            titleMessage,
-            KDFont::ALIGN_CENTER,
-            KDFont::ALIGN_CENTER,
-            Palette::GrayDark,
-            Palette::WallScreen),
-    m_table(table) {
+      m_title(KDFont::SmallFont,
+              titleMessage,
+              KDFont::ALIGN_CENTER,
+              KDFont::ALIGN_CENTER,
+              Palette::GrayDark,
+              Palette::WallScreen),
+      m_table(table) {
   m_table->setMargins(k_marginAroundTitle, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
@@ -97,9 +97,9 @@ void Probability::ResultsView::ContentView::relayout() {
 Probability::ResultsView::ResultsView(Escher::SelectableTableView * table,
                                       Escher::TableViewDataSource * tableDataSource,
                                       I18n::Message titleMessage) :
-    ScrollView(&m_contentView, &m_scrollDataSource),
-    m_contentView(table, titleMessage),
-    m_tableDataSource(tableDataSource) {
+      ScrollView(&m_contentView, &m_scrollDataSource),
+      m_contentView(table, titleMessage),
+      m_tableDataSource(tableDataSource) {
   setMargins(ContentView::k_marginAroundTitle, 0, Metric::CommonBottomMargin, 0);
 }
 

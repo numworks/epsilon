@@ -9,34 +9,35 @@ namespace Probability {
  * which need to be informed of a change in selection. */
 class ChainedSelectableTableViewDelegate : public Escher::SelectableTableViewDelegate {
 public:
-  ChainedSelectableTableViewDelegate(Escher::SelectableTableViewDelegate * nextDelegate = nullptr) :
-      m_nextDelegate(nextDelegate) {}
+  ChainedSelectableTableViewDelegate(
+      Escher::SelectableTableViewDelegate * parentDelegate = nullptr) :
+      m_parentDelegate(parentDelegate) {}
 
   void tableViewDidChangeSelection(Escher::SelectableTableView * t,
                                    int previousSelectedCellX,
                                    int previousSelectedCellY,
                                    bool withinTemporarySelection = false) {
-    if (m_nextDelegate) {
-      m_nextDelegate->tableViewDidChangeSelection(t,
-                                                  previousSelectedCellX,
-                                                  previousSelectedCellY,
-                                                  withinTemporarySelection);
+    if (m_parentDelegate) {
+      m_parentDelegate->tableViewDidChangeSelection(t,
+                                                    previousSelectedCellX,
+                                                    previousSelectedCellY,
+                                                    withinTemporarySelection);
     }
   }
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t,
                                                int previousSelectedCellX,
                                                int previousSelectedCellY,
                                                bool withinTemporarySelection = false) {
-    if (m_nextDelegate) {
-      m_nextDelegate->tableViewDidChangeSelectionAndDidScroll(t,
-                                                              previousSelectedCellX,
-                                                              previousSelectedCellY,
-                                                              withinTemporarySelection);
+    if (m_parentDelegate) {
+      m_parentDelegate->tableViewDidChangeSelectionAndDidScroll(t,
+                                                                previousSelectedCellX,
+                                                                previousSelectedCellY,
+                                                                withinTemporarySelection);
     }
   }
 
 private:
-  Escher::SelectableTableViewDelegate * m_nextDelegate;
+  Escher::SelectableTableViewDelegate * m_parentDelegate;
 };
 
 }  // namespace Probability

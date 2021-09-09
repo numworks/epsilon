@@ -16,10 +16,10 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
     HomogeneityStatistic * statistic,
     TextFieldDelegate * textFieldDelegate,
     DynamicTableViewDataSourceDelegate * dataSourceDelegate) :
-    DynamicTableViewDataSource(dataSourceDelegate),
-    m_numberOfRows(k_initialNumberOfRows),
-    m_numberOfColumns(k_initialNumberOfColumns),
-    m_statistic(statistic) {
+      DynamicTableViewDataSource(dataSourceDelegate),
+      m_numberOfRows(k_initialNumberOfRows),
+      m_numberOfColumns(k_initialNumberOfColumns),
+      m_statistic(statistic) {
   for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
     m_cells[i].setParentResponder(tableView);
     m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,

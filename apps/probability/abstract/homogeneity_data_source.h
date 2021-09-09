@@ -27,8 +27,9 @@ public:
   int numberOfRows() const override { return m_innerDataSource->numberOfRows() + 1; }
   int numberOfColumns() const override { return m_innerDataSource->numberOfColumns() + 1; }
   int reusableCellCount(int type) override {
-    return type == 0 ? m_innerDataSource->reusableCellCount(0) + numberOfColumns() + numberOfRows() - 1
-                     : m_innerDataSource->reusableCellCount(type);
+    return type == 0
+               ? m_innerDataSource->reusableCellCount(0) + numberOfColumns() + numberOfRows() - 1
+               : m_innerDataSource->reusableCellCount(type);
   }
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int i, int type) override;

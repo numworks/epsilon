@@ -24,15 +24,15 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Data::TestType * globalTestType,
                                Distribution * globalDistribution,
                                Calculation * globalCalculation) :
-    SelectableListViewPage(parentResponder),
-    m_distributionController(distributionController),
-    m_testController(testController),
-    m_globalSubapp(globalSubapp),
-    m_globalTest(globalTest),
-    m_globalTestType(globalTestType),
-    m_globalDistribution(globalDistribution),
-    m_globalCalculation(globalCalculation),
-    m_contentView(&m_selectableTableView) {
+      SelectableListViewPage(parentResponder),
+      m_distributionController(distributionController),
+      m_testController(testController),
+      m_globalSubapp(globalSubapp),
+      m_globalTest(globalTest),
+      m_globalTestType(globalTestType),
+      m_globalDistribution(globalDistribution),
+      m_globalCalculation(globalCalculation),
+      m_contentView(&m_selectableTableView) {
   selectRow(0);
   m_cells[k_indexOfProbability].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
   m_cells[k_indexOfProbability].setImage(ImageStore::Probability);

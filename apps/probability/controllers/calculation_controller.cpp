@@ -27,7 +27,8 @@ constexpr int CalculationController::k_titleBufferSize;
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView,
                                                 Distribution * distribution,
                                                 Calculation * calculation) :
-    m_selectableTableView(selectableTableView), m_distributionCurveView(distribution, calculation) {
+      m_selectableTableView(selectableTableView),
+      m_distributionCurveView(distribution, calculation) {
 }
 
 View * CalculationController::ContentView::subviewAtIndex(int index) {
@@ -50,13 +51,13 @@ CalculationController::CalculationController(Escher::StackViewController * paren
                                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                                              Distribution * distribution,
                                              Calculation * calculation) :
-    Page(parentResponder),
-    m_calculation(calculation),
-    m_distribution(distribution),
-    m_contentView(&m_selectableTableView, distribution, calculation),
-    m_selectableTableView(this),
-    m_imagesDataSource(distribution),
-    m_dropdown(&m_selectableTableView, &m_imagesDataSource, this) {
+      Page(parentResponder),
+      m_calculation(calculation),
+      m_distribution(distribution),
+      m_contentView(&m_selectableTableView, distribution, calculation),
+      m_selectableTableView(this),
+      m_imagesDataSource(distribution),
+      m_dropdown(&m_selectableTableView, &m_imagesDataSource, this) {
   assert(distribution != nullptr);
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);

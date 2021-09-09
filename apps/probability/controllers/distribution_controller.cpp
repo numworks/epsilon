@@ -1,6 +1,18 @@
 #include "distribution_controller.h"
+
 #include <assert.h>
+
 #include <new>
+
+#include "../images/binomial_icon.h"
+#include "../images/chi_squared_icon.h"
+#include "../images/exponential_icon.h"
+#include "../images/fisher_icon.h"
+#include "../images/geometric_icon.h"
+#include "../images/normal_icon.h"
+#include "../images/poisson_icon.h"
+#include "../images/student_icon.h"
+#include "../images/uniform_icon.h"
 #include "probability/app.h"
 #include "probability/models/data.h"
 #include "probability/models/distribution/binomial_distribution.h"
@@ -12,15 +24,6 @@
 #include "probability/models/distribution/poisson_distribution.h"
 #include "probability/models/distribution/student_distribution.h"
 #include "probability/models/distribution/uniform_distribution.h"
-#include "../images/binomial_icon.h"
-#include "../images/chi_squared_icon.h"
-#include "../images/exponential_icon.h"
-#include "../images/fisher_icon.h"
-#include "../images/geometric_icon.h"
-#include "../images/normal_icon.h"
-#include "../images/poisson_icon.h"
-#include "../images/student_icon.h"
-#include "../images/uniform_icon.h"
 
 using namespace Escher;
 
@@ -29,10 +32,9 @@ namespace Probability {
 DistributionController::DistributionController(Escher::StackViewController * parentResponder,
                                                Distribution * distribution,
                                                ParametersController * parametersController) :
-  SelectableListViewPage(parentResponder),
-  m_distribution(distribution),
-  m_parametersController(parametersController)
-{
+      SelectableListViewPage(parentResponder),
+      m_distribution(distribution),
+      m_parametersController(parametersController) {
   assert(m_distribution != nullptr);
 }
 
@@ -75,32 +77,28 @@ HighlightCell * Probability::DistributionController::reusableCell(int index, int
   return &m_cells[index];
 }
 
-constexpr I18n::Message sMessages[] = {
-  I18n::Message::Binomial,
-  I18n::Message::Uniforme,
-  I18n::Message::Exponential,
-  I18n::Message::Normal,
-  I18n::Message::ChiSquared,
-  I18n::Message::Student,
-  I18n::Message::Geometric,
-  I18n::Message::Poisson,
-  I18n::Message::Fisher
-};
+constexpr I18n::Message sMessages[] = {I18n::Message::Binomial,
+                                       I18n::Message::Uniforme,
+                                       I18n::Message::Exponential,
+                                       I18n::Message::Normal,
+                                       I18n::Message::ChiSquared,
+                                       I18n::Message::Student,
+                                       I18n::Message::Geometric,
+                                       I18n::Message::Poisson,
+                                       I18n::Message::Fisher};
 
 void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   DistributionCell * myCell = static_cast<DistributionCell *>(cell);
   myCell->setLabel(sMessages[index]);
-  const Image * images[k_totalNumberOfModels] = {
-    ImageStore::BinomialIcon,
-    ImageStore::UniformIcon,
-    ImageStore::ExponentialIcon,
-    ImageStore::NormalIcon,
-    ImageStore::ChiSquaredIcon,
-    ImageStore::StudentIcon,
-    ImageStore::GeometricIcon,
-    ImageStore::PoissonIcon,
-    ImageStore::FisherIcon
-  };
+  const Image * images[k_totalNumberOfModels] = {ImageStore::BinomialIcon,
+                                                 ImageStore::UniformIcon,
+                                                 ImageStore::ExponentialIcon,
+                                                 ImageStore::NormalIcon,
+                                                 ImageStore::ChiSquaredIcon,
+                                                 ImageStore::StudentIcon,
+                                                 ImageStore::GeometricIcon,
+                                                 ImageStore::PoissonIcon,
+                                                 ImageStore::FisherIcon};
   myCell->setImage(images[index]);
   myCell->reloadCell();
 }
@@ -112,36 +110,36 @@ void Probability::DistributionController::setDistributionAccordingToIndex(int in
   m_distribution->~Distribution();
   switch (index) {
     case 0:
-      new(m_distribution) BinomialDistribution();
+      new (m_distribution) BinomialDistribution();
       break;
     case 1:
-      new(m_distribution) UniformDistribution();
+      new (m_distribution) UniformDistribution();
       break;
     case 2:
-      new(m_distribution) ExponentialDistribution();
+      new (m_distribution) ExponentialDistribution();
       break;
     case 3:
-      new(m_distribution) NormalDistribution();
+      new (m_distribution) NormalDistribution();
       break;
     case 4:
-      new(m_distribution) ChiSquaredDistribution();
+      new (m_distribution) ChiSquaredDistribution();
       break;
     case 5:
-      new(m_distribution) StudentDistribution();
+      new (m_distribution) StudentDistribution();
       break;
     case 6:
-      new(m_distribution) GeometricDistribution();
+      new (m_distribution) GeometricDistribution();
       break;
     case 7:
-      new(m_distribution) PoissonDistribution();
+      new (m_distribution) PoissonDistribution();
       break;
     case 8:
-      new(m_distribution) FisherDistribution();
+      new (m_distribution) FisherDistribution();
       break;
     default:
-     return;
+      return;
   }
   m_parametersController->reinitCalculation();
 }
 
-}
+}  // namespace Probability

@@ -19,7 +19,10 @@ app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
   uniform_distribution.cpp \
 )
 
-app_probability_test_src += $(addprefix apps/probability/models/,student_law.cpp chi2_law.cpp)
+app_probability_test_src += $(addprefix apps/probability/models/,\
+  student_law.cpp \
+  chi2_law.cpp \
+)
 
 app_probability_src = $(addprefix apps/probability/,\
   app.cpp \

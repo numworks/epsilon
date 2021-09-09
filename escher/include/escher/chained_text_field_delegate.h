@@ -9,8 +9,8 @@ namespace Escher {
  */
 class ChainedTextFieldDelegate : public TextFieldDelegate {
 public:
-  ChainedTextFieldDelegate(TextFieldDelegate * nextDelegate) : m_nextDelegate(nextDelegate) {}
-  void setTextFieldDelegate(TextFieldDelegate * delegate) { m_nextDelegate = delegate; }
+  ChainedTextFieldDelegate(TextFieldDelegate * parentDelegate) : m_parentDelegate(parentDelegate) {}
+  void setTextFieldDelegate(TextFieldDelegate * delegate) { m_parentDelegate = delegate; }
 
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
@@ -24,7 +24,7 @@ public:
   void textFieldDidStartEditing(TextField * textField) override;
 
 private:
-  TextFieldDelegate * m_nextDelegate;
+  TextFieldDelegate * m_parentDelegate;
 };
 
 }  // namespace Escher

@@ -48,7 +48,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
 
 int IntervalParameterSelectorController::numberOfRows() const {
   int rowCount = 0;
-  int symbolTypeIndex = 0;
+  size_t symbolTypeIndex = 0;
   Shared::ContinuousFunction::SymbolType symbolType;
   while (symbolTypeIndex < k_numberOfSymbolTypes) {
     symbolType = static_cast<Shared::ContinuousFunction::SymbolType>(symbolTypeIndex);
@@ -81,7 +81,7 @@ void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell 
 
 Shared::ContinuousFunction::SymbolType IntervalParameterSelectorController::symbolTypeAtRow(int j) const {
   int rowCount = 0;
-  int symbolTypeIndex = 0;
+  size_t symbolTypeIndex = 0;
   Shared::ContinuousFunction::SymbolType symbolType;
   while (symbolTypeIndex < k_numberOfSymbolTypes) {
     symbolType = static_cast<Shared::ContinuousFunction::SymbolType>(symbolTypeIndex);

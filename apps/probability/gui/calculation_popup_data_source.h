@@ -14,7 +14,8 @@ public:
   CalculationPopupDataSource(Distribution * distribution) : m_distribution(distribution) {}
   int numberOfRows() const override;
   KDCoordinate rowHeight(int r) override {
-    return 1; /* Not needed because PopupListViewDataSource takes care of it */
+    assert(false); /* Not needed because PopupListViewDataSource takes care of it */
+    return 1;
   }
   int reusableCellCount(int type) override { return k_numberOfImages; }
   HighlightImageCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }

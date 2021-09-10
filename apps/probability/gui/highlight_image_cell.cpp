@@ -7,7 +7,7 @@ HighlightImageCell::HighlightImageCell() : Escher::HighlightCell() { m_contentVi
 void HighlightImageCell::setHighlighted(bool highlighted) {
   m_contentView.setBackgroundColor(highlighted ? Escher::Palette::Select : KDColorWhite);
   HighlightCell::setHighlighted(highlighted);
-};
+}
 
 KDSize HighlightImageCell::minimalSizeForOptimalDisplay() const {
   return m_contentView.minimalSizeForOptimalDisplay();

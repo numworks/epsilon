@@ -49,8 +49,8 @@ void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(0, 0, width, height), background);
   }
   // Write title
-  ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(), KDFont::ALIGN_CENTER,
-                          KDFont::ALIGN_CENTER, KDFont::SmallFont, text, background);
+  ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(), KDContext::k_alignCenter,
+                          KDContext::k_alignCenter, KDFont::SmallFont, text, background);
 }
 
 #if ESCHER_VIEW_LOGGING

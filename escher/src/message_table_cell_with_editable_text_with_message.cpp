@@ -10,7 +10,7 @@ MessageTableCellWithEditableTextWithMessage::MessageTableCellWithEditableTextWit
     I18n::Message message) :
     MessageTableCellWithEditableText(parentResponder, inputEventHandlerDelegate, this, message),
     ChainedTextFieldDelegate(textFieldDelegate),
-    m_subLabelView(KDFont::SmallFont, (I18n::Message)0, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER, Palette::GrayDark) {
+    m_subLabelView(KDFont::SmallFont, (I18n::Message)0, KDContext::k_alignLeft, KDContext::k_alignCenter, Palette::GrayDark) {
 }
 
 void MessageTableCellWithEditableTextWithMessage::setSubLabelMessage(I18n::Message textBody) {

@@ -9,8 +9,8 @@ namespace Shared {
 BufferTextViewWithTextField::BufferTextViewWithTextField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, const KDFont * font) :
   View(),
   Responder(parentResponder),
-  m_bufferTextView(font, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER),
-  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, font, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER)
+  m_bufferTextView(font, KDContext::k_alignLeft, KDContext::k_alignCenter),
+  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, font, KDContext::k_alignLeft, KDContext::k_alignCenter)
 {
 }
 

@@ -28,7 +28,7 @@ private:
     constexpr static KDCoordinate k_topAndBottomMargin = 20;
     constexpr static KDCoordinate k_middleMargin = 10;
     constexpr static KDCoordinate k_horizontalMargin = 20;
-    constexpr static float k_middleAlignment = KDFont::ALIGN_CENTER;
+    constexpr static float k_middleAlignment = KDContext::k_alignCenter;
     constexpr static float k_shiftedAlignment = 0.7f; // = (k_topAndBottomMargin + textHeight/2)/(k_topAndBottomMargin + textHeight + 0.5*k_middleMargin)
     MessageTextView m_textView1;
     MessageTextView m_textView2;

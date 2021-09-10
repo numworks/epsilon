@@ -8,8 +8,8 @@ DistributionCell::DistributionCell() :
     TableCell(),
     m_messageView(KDFont::LargeFont,
                   (I18n::Message)0,
-                  KDFont::ALIGN_LEFT,
-                  KDFont::ALIGN_CENTER,
+                  KDContext::k_alignLeft,
+                  KDContext::k_alignCenter,
                   KDColorBlack,
                   KDColorWhite) {
 }

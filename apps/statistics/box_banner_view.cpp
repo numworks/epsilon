@@ -6,9 +6,9 @@ using namespace Escher;
 namespace Statistics {
 
 BoxBannerView::BoxBannerView() :
-  m_seriesName(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_calculationName(Font(), I18n::Message::Minimum, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_calculationValue(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor())
+  m_seriesName(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_calculationName(Font(), I18n::Message::Minimum, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_calculationValue(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor())
 {
 }
 

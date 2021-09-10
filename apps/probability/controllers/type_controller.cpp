@@ -34,7 +34,7 @@ TypeController::TypeController(StackViewController * parent,
       m_statistic(statistic) {
   m_description.setBackgroundColor(Palette::WallScreen);
   m_description.setTextColor(Palette::GrayDark);
-  m_description.setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+  m_description.setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
   m_description.setFont(KDFont::SmallFont);
   m_selectableTableView.setBottomMargin(0);
 }

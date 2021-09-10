@@ -22,7 +22,7 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
       assert(mode() == Mode::Country);
       AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
       if (appsContainer->promptController()) {
-        Container::activeApp()->displayModalViewController(appsContainer->promptController(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+        Container::activeApp()->displayModalViewController(appsContainer->promptController(), KDContext::k_alignCenter, KDContext::k_alignCenter);
       } else {
         appsContainer->switchToBuiltinApp(appsContainer->appSnapshotAtIndex(0));
       }

@@ -10,8 +10,8 @@ namespace Shared {
 
 AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
-  m_approximateSign(k_font, k_defaultApproximateMessage, KDFont::ALIGN_CENTER,
-                    KDFont::ALIGN_CENTER, Palette::GrayVeryDark),
+  m_approximateSign(k_font, k_defaultApproximateMessage, KDContext::k_alignCenter,
+                    KDContext::k_alignCenter, Palette::GrayVeryDark),
   m_centeredExpressionView(),
   m_selectedSubviewPosition(SubviewPosition::Center),
   m_displayCenter(true)

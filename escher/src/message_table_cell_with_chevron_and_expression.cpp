@@ -6,7 +6,7 @@ namespace Escher {
 
 MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message) :
   MessageTableCellWithChevron(message),
-  m_subtitleView(KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER, Palette::GrayDark)
+  m_subtitleView(KDContext::k_alignRight, KDContext::k_alignCenter, Palette::GrayDark)
 {
 }
 

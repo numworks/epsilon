@@ -19,8 +19,8 @@ public:
   static_assert(k_maxNumberOfCharsInLabel < Escher::BufferTextView::k_maxNumberOfChar, "k_maxNumberOfCharsInLabel is too high");
   ScriptNodeCell() :
     TableCell(),
-    m_labelView(KDFont::LargeFont, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
-    m_subLabelView(KDFont::SmallFont, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER, Escher::Palette::GrayDark)
+    m_labelView(KDFont::LargeFont, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
+    m_subLabelView(KDFont::SmallFont, KDContext::k_alignLeft, KDContext::k_alignCenter, Escher::Palette::GrayDark)
   {}
   void setScriptNode(ScriptNode * node);
 

@@ -26,8 +26,8 @@ public:
             InputEventHandlerDelegate * inputEventHandlerDelegate,
             TextFieldDelegate * delegate = nullptr,
             const KDFont * font = KDFont::LargeFont,
-            float horizontalAlignment = KDFont::ALIGN_LEFT,
-            float verticalAlignment = KDFont::ALIGN_CENTER,
+            float horizontalAlignment = KDContext::k_alignLeft,
+            float verticalAlignment = KDContext::k_alignCenter,
             KDColor textColor = KDColorBlack,
             KDColor backgroundColor = KDColorWhite);
   void setBackgroundColor(KDColor backgroundColor) override;

@@ -29,9 +29,9 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_seriesTitleCells[i].setSeparatorLeft(true);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
-    m_calculationTitleCells[i].setAlignment(KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER);
+    m_calculationTitleCells[i].setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
     m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
-    m_calculationSymbolCells[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+    m_calculationSymbolCells[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_calculationSymbolCells[i].setMessageFont(KDFont::SmallFont);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {

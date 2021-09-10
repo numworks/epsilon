@@ -11,7 +11,7 @@ TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listCont
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
   m_textField(Shared::Function::k_parenthesedThetaArgumentByteLength, this, m_textFieldBuffer, k_textFieldBufferSize,
-              k_textFieldBufferSize, nullptr, listController, font, KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER),
+              k_textFieldBufferSize, nullptr, listController, font, KDContext::k_alignRight, KDContext::k_alignCenter),
   m_textFieldBuffer("")
 {
 }

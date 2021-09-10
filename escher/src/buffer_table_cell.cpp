@@ -11,8 +11,8 @@ BufferTableCell::BufferTableCell() :
     TableCell(),
     // Text is aligned to the left, vertically centered and has a small font.
     m_labelView(KDFont::SmallFont,
-                KDFont::ALIGN_LEFT,
-                KDFont::ALIGN_CENTER,
+                KDContext::k_alignLeft,
+                KDContext::k_alignCenter,
                 k_textColor,
                 k_backgroundColor,
                 k_maxNumberOfCharsInBuffer) {

@@ -13,7 +13,7 @@ namespace Probability {
 CalculationCell::CalculationCell(Responder * parentResponder,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                  TextFieldDelegate * textFieldDelegate) :
-    m_text(KDFont::LargeFont, I18n::Message::Default, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER),
+    m_text(KDFont::LargeFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter),
     m_calculation(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
     m_isResponder(true) {
 }

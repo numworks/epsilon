@@ -21,8 +21,8 @@ namespace Solver {
 constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
-  m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, KDColorBlack, k_backgroundColor),
-  m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, KDColorBlack, k_backgroundColor),
+  m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, k_backgroundColor),
+  m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, k_backgroundColor),
   m_selectableTableView(controller, controller, controller, controller),
   m_displayWarningMoreSolutions(false)
 {
@@ -103,7 +103,7 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
 SolutionsController::SolutionsController(Responder * parentResponder, EquationStore * equationStore) :
   ViewController(parentResponder),
   m_equationStore(equationStore),
-  m_deltaCell(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER),
+  m_deltaCell(KDContext::k_alignCenter, KDContext::k_alignCenter),
   m_delta2Layout(),
   m_delta3Layout(),
   m_contentView(this)
@@ -125,7 +125,7 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
     m_approximateValueCells[i].setFont(KDFont::LargeFont);
   }
   for (int i = 0; i < k_numberOfSymbolCells; i++) {
-    m_symbolCells[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+    m_symbolCells[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_symbolCells[i].setFont(KDFont::LargeFont);
   }
 }

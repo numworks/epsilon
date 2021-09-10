@@ -63,7 +63,7 @@ void App::dismissModalViewController(bool willExitApp) {
 
 void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2, bool specialExitKeys) {
   m_warningController.setLabel(warningMessage1, warningMessage2, specialExitKeys);
-  displayModalViewController(&m_warningController, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+  displayModalViewController(&m_warningController, KDContext::k_alignCenter, KDContext::k_alignCenter);
 }
 
 void App::didBecomeActive(Window * window) {

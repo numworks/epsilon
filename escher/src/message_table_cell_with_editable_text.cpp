@@ -17,7 +17,7 @@ MessageTableCellWithEditableText::MessageTableCellWithEditableText(
                 inputEventHandlerDelegate,
                 textFieldDelegate,
                 KDFont::LargeFont,
-                KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER,
+                KDContext::k_alignRight, KDContext::k_alignCenter,
                 KDColorBlack) {
   m_textBody[0] = '\0';
 }

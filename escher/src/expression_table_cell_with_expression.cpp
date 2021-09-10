@@ -10,8 +10,8 @@ ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder *
     m_subLabelExpressionView(this,
                              0,
                              0,
-                             KDFont::ALIGN_RIGHT,
-                             KDFont::ALIGN_CENTER,
+                             KDContext::k_alignRight,
+                             KDContext::k_alignCenter,
                              Palette::GrayDark,
                              KDColorWhite) {
 }

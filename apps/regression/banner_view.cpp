@@ -11,13 +11,13 @@ BannerView::BannerView(
   TextFieldDelegate * textFieldDelegate
 ) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_dotNameView(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_regressionTypeView(Font(), (I18n::Message)0, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_subText0(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_subText1(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_subText2(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_subText3(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
-  m_subText4(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
+  m_dotNameView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_regressionTypeView(Font(), (I18n::Message)0, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_subText0(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_subText1(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_subText2(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_subText3(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_subText4(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_numberOfSubviews(k_maxNumberOfSubviews)
 {
 }

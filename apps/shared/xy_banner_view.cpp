@@ -10,7 +10,7 @@ XYBannerView::XYBannerView(
   InputEventHandlerDelegate * inputEventHandlerDelegate,
   TextFieldDelegate * textFieldDelegate
 ) :
-  m_abscissaSymbol(Font(), KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor()),
+  m_abscissaSymbol(Font(), KDContext::k_alignRight, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_abscissaValue(
     parentResponder,
     m_textBody,
@@ -19,12 +19,12 @@ XYBannerView::XYBannerView(
     inputEventHandlerDelegate,
     textFieldDelegate,
     Font(),
-    KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER,
+    KDContext::k_alignLeft, KDContext::k_alignCenter,
     TextColor(),
     BackgroundColor()
   ),
   m_abscissaView(&m_abscissaSymbol, &m_abscissaValue),
-  m_ordinateView(Font(), KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, TextColor(), BackgroundColor())
+  m_ordinateView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor())
 {
   m_textBody[0] = 0;
 }

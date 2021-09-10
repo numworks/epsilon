@@ -5,7 +5,7 @@ namespace Escher {
 
 MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message) :
   MessageTableCell(message),
-  m_subtitleView(KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER, Palette::GrayDark)
+  m_subtitleView(KDContext::k_alignRight, KDContext::k_alignCenter, Palette::GrayDark)
 {
 }
 

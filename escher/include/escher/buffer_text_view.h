@@ -9,8 +9,8 @@ class BufferTextView : public TextView {
 public:
   static constexpr size_t k_maxNumberOfChar = 256;
   BufferTextView(const KDFont * font = KDFont::LargeFont,
-                 float horizontalAlignment = KDFont::ALIGN_CENTER,
-                 float verticalAlignment = KDFont::ALIGN_CENTER,
+                 float horizontalAlignment = KDContext::k_alignCenter,
+                 float verticalAlignment = KDContext::k_alignCenter,
                  KDColor textColor = KDColorBlack,
                  KDColor backgroundColor = KDColorWhite,
                  size_t maxDisplayedTextLength = k_maxNumberOfChar - 1);

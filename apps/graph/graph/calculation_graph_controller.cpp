@@ -14,7 +14,7 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
   m_bannerView(bannerView),
   m_graphRange(curveViewRange),
   m_record(),
-  m_defaultBannerView(BannerView::Font(), defaultMessage, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER,
+  m_defaultBannerView(BannerView::Font(), defaultMessage, KDContext::k_alignCenter, KDContext::k_alignCenter,
                       BannerView::TextColor(), BannerView::BackgroundColor()),
   m_isActive(false)
 {

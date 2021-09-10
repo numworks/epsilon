@@ -70,7 +70,7 @@ private:
     Root
   };
 
-  static bool BoundOfIntervalOfDefinitionIsReached(float y1, float y2) { return std::isfinite(y1) && !std::isinf(y2) && std::isnan(y2); }
+  static bool BoundOfIntervalOfDefinitionIsReached(float y1, float y2) { return !std::isinf(y1) && !std::isinf(y2) && std::isnan(y1) != std::isnan(y2); }
   /* IsConvexAroundExtremum checks whether an interval contains an extremum or
    * an asymptote, by recursively computing the slopes. In case of an extremum,
    * the slope should taper off toward the center. */

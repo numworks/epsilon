@@ -86,11 +86,11 @@ float OneMeanTStatistic::computeDegreesOfFreedom(float n) {
 }
 
 float OneMeanTStatistic::computeT(float mean, float meanSample, float s, float n) {
-  return (meanSample - mean) / (s / sqrt(n));
+  return (meanSample - mean) / (s / std::sqrt(n));
 }
 
 float OneMeanTStatistic::computeStandardError(float s, float n) {
-  return s / sqrt(n);
+  return s / std::sqrt(n);
 }
 
 }  // namespace Probability

@@ -127,7 +127,7 @@ float TwoMeansZStatistic::computeZ(float deltaMean,
 }
 
 float TwoMeansZStatistic::computeStandardError(float sigma1, int n1, float sigma2, int n2) {
-  return sqrt((sigma1 * sigma1 / n1 + sigma2 * sigma2 / n2));
+  return std::sqrt((sigma1 * sigma1 / n1 + sigma2 * sigma2 / n2));
 }
 
 }  // namespace Probability

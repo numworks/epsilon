@@ -7,7 +7,7 @@ namespace Escher {
 Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font, KDColor textColor) :
   HighlightCell(),
   Responder(parentResponder),
-  m_messageTextView(font, textBody, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER, textColor),
+  m_messageTextView(font, textBody, KDContext::k_alignCenter, KDContext::k_alignCenter, textColor),
   m_invocation(invocation),
   m_font(font)
 {

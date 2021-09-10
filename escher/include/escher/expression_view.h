@@ -15,8 +15,8 @@ namespace Escher {
 
 class ExpressionView : public View {
 public:
-  ExpressionView(float horizontalAlignment = KDFont::ALIGN_LEFT,
-                 float verticalAlignment = KDFont::ALIGN_CENTER,
+  ExpressionView(float horizontalAlignment = KDContext::k_alignLeft,
+                 float verticalAlignment = KDContext::k_alignCenter,
                  KDColor textColor = KDColorBlack,
                  KDColor backgroundColor = KDColorWhite,
                  Poincare::Layout * selectionStart = nullptr,

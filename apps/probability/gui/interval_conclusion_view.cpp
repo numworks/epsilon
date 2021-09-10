@@ -9,7 +9,7 @@ namespace Probability {
 
 IntervalConclusionView::IntervalConclusionView() {
   setFont(KDFont::LargeFont);
-  setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+  setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
   setBackgroundColor(Escher::Palette::WallScreen);
 }
 

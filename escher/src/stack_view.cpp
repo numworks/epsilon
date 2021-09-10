@@ -41,7 +41,7 @@ void StackView::drawRect(KDContext * ctx, KDRect rect) const {
   // Add horizontal margins
   KDPoint point = KDPoint(Metric::CellLeftMargin, 0);
   KDSize size = KDSize(m_frame.width() - Metric::CellLeftMargin - Metric::CellRightMargin, m_frame.height());
-  ctx->alignAndDrawString(m_controller->title(), point, size, KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER,
+  ctx->alignAndDrawString(m_controller->title(), point, size, KDContext::k_alignCenter, KDContext::k_alignCenter,
                           font, m_textColor, m_backgroundColor);
 }
 

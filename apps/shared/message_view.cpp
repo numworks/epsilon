@@ -10,7 +10,7 @@ MessageView::MessageView(const I18n::Message * messages, const KDColor * colors,
   for (uint8_t i = 0; i < m_numberOfMessages; i++) {
     m_messageTextViews[i].setFont(i == 0 ? KDFont::LargeFont : KDFont::SmallFont);
     m_messageTextViews[i].setMessage(messages[i]);
-    m_messageTextViews[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+    m_messageTextViews[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_messageTextViews[i].setTextColor(colors[i]);
   }
 }

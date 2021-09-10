@@ -30,8 +30,8 @@ protected:
   class ContentView : public View {
   public:
     ContentView(const KDFont * font,
-                float horizontalAlignment = KDFont::ALIGN_LEFT,
-                float verticalAlignment = KDFont::ALIGN_CENTER) :
+                float horizontalAlignment = KDContext::k_alignLeft,
+                float verticalAlignment = KDContext::k_alignCenter) :
         View(),
         m_cursorView(),
         m_font(font),

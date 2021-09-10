@@ -130,13 +130,13 @@ float TwoProportionsStatistic::computeZ(float deltaP0, float x1, int n1, float x
   float p1 = x1 / n1;
   float p2 = x2 / n2;
   float p = (x1 + x2) / (n1 + n2);
-  return (p1 - p2 - deltaP0) / sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
+  return (p1 - p2 - deltaP0) / std::sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
 }
 
 float TwoProportionsStatistic::computeStandardError(float x1, int n1, float x2, int n2) {
   float p1Estimate = x1 / n1;
   float p2Estimate = x2 / n2;
-  return sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2);
+  return std::sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2);
 }
 
 }  // namespace Probability

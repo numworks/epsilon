@@ -130,7 +130,7 @@ float TwoMeansTStatistic::computeDegreesOfFreedom(float s1, float n1, float s2, 
 }
 
 float TwoMeansTStatistic::computeStandardError(float s1, float n1, float s2, float n2) {
-  return sqrt((s1 * s1 / n1 + s2 * s2 / n2));
+  return std::sqrt((s1 * s1 / n1 + s2 * s2 / n2));
 }
 
 }  // namespace Probability

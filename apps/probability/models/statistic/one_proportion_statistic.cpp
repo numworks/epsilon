@@ -82,11 +82,11 @@ float OneProportionStatistic::computeEstimate(float x, float n) {
 
 float OneProportionStatistic::computeZ(float p0, float p, float n) {
   assert(n > 0 && p0 >= 0 && p >= 0 && p0 <= 1 && p <= 1);
-  return (p - p0) / sqrt(p0 * (1 - p0) / n);
+  return (p - p0) / std::sqrt(p0 * (1 - p0) / n);
 }
 
 float OneProportionStatistic::computeStandardError(float pEstimate, float n) {
-  return sqrt(pEstimate * (1 - pEstimate) / n);
+  return std::sqrt(pEstimate * (1 - pEstimate) / n);
 }
 
 }  // namespace Probability

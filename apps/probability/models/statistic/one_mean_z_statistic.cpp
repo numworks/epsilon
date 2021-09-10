@@ -74,11 +74,11 @@ ParameterRepresentation OneMeanZStatistic::paramRepresentationAtIndex(int i) con
 }
 
 float OneMeanZStatistic::computeZ(float mean, float meanSample, float n, float sigma) {
-  return (meanSample - mean) / (sigma / sqrt(n));
+  return (meanSample - mean) / (sigma / std::sqrt(n));
 }
 
 float OneMeanZStatistic::computeStandardError(float sigma, float n) {
-  return sigma / sqrt(n);
+  return sigma / std::sqrt(n);
 }
 
 }  // namespace Probability

@@ -12,9 +12,12 @@ namespace Probability {
 class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
 public:
   ComparisonOperatorPopupDataSource(HypothesisParams * hypothesisParams) :
-      m_hypothesisParams(hypothesisParams) {}
+        m_hypothesisParams(hypothesisParams) {}
   int numberOfRows() const override { return k_numberOfOperators; }
-  KDCoordinate rowHeight(int r) override { return 0; }
+  KDCoordinate rowHeight(int r) override {
+    assert(false); /* Not needed because PopupListViewDataSource takes care of it */
+    return 0;
+  }
   int reusableCellCount(int type) override { return k_numberOfOperators; }
   TextHighlightView * reusableCell(int i, int type) override { return &m_cells[i]; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

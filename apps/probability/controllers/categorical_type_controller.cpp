@@ -49,6 +49,7 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
     if (type != App::app()->categoricalType()) {
       *m_globalCategoricalType = type;
       Statistic::initializeStatistic(m_statistic,
+                                     App::app()->subapp(),
                                      App::app()->test(),
                                      App::app()->testType(),
                                      App::app()->categoricalType());

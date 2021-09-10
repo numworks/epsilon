@@ -23,6 +23,8 @@ public:
   Statistic() : m_threshold(-1) {}
   virtual ~Statistic() = default;
 
+  virtual void init(Data::SubApp subapp) {}
+
   virtual void computeTest() = 0;
   virtual void computeInterval() = 0;
 
@@ -38,8 +40,12 @@ public:
   float paramAtIndex(int i);
   virtual bool isValidParamAtIndex(int i, float p);
   virtual void setParamAtIndex(int i, float p);
-  Poincare::Layout paramSymbolAtIndex(int i) const { return paramRepresentationAtIndex(i).m_symbol; }
-  I18n::Message paramDescriptionAtIndex(int i) const { return paramRepresentationAtIndex(i).m_description; }
+  Poincare::Layout paramSymbolAtIndex(int i) const {
+    return paramRepresentationAtIndex(i).m_symbol;
+  }
+  I18n::Message paramDescriptionAtIndex(int i) const {
+    return paramRepresentationAtIndex(i).m_description;
+  }
   float threshold() const { return m_threshold; }
   void setThreshold(float s) { m_threshold = s; }
   HypothesisParams * hypothesisParams() { return &m_hypothesisParams; }
@@ -82,6 +88,7 @@ public:
   void initThreshold(Data::SubApp subapp);
   /* Instantiate correct Statistic based on Test and TestType. */
   static void initializeStatistic(Statistic * statistic,
+                                  Data::SubApp subapp,
                                   Data::Test t,
                                   Data::TestType type,
                                   Data::CategoricalType categoricalType);

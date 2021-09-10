@@ -7,6 +7,12 @@
 
 class KDContext {
 public:
+  static constexpr float k_alignLeft = 0.;
+  static constexpr float k_alignRight = 1.;
+  static constexpr float k_alignCenter = 0.5;
+  static constexpr float k_alignTop = 0.;
+  static constexpr float k_alignBottom = 1.;
+
   void setOrigin(KDPoint origin) { m_origin = origin; }
   void setClippingRect(KDRect clippingRect) { m_clippingRect = clippingRect; }
 
@@ -20,8 +26,8 @@ public:
                      KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite,
                      int maxLength = -1);
   KDPoint alignAndDrawString(const char * text, KDPoint p, KDSize frame,
-                             float horizontalAlignment = KDFont::ALIGN_CENTER,
-                             float verticalAlignment = KDFont::ALIGN_CENTER,
+                             float horizontalAlignment = KDContext::k_alignCenter,
+                             float verticalAlignment = KDContext::k_alignCenter,
                              const KDFont * font = KDFont::LargeFont,
                              KDColor textColor = KDColorBlack,
                              KDColor backgroundColor = KDColorWhite, int maxLength = -1);

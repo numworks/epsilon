@@ -13,8 +13,8 @@ namespace Escher {
 class TextView : public View {
 public:
   TextView(const KDFont * font = KDFont::LargeFont,
-           float horizontalAlignment = KDFont::ALIGN_LEFT,
-           float verticalAlignment = KDFont::ALIGN_TOP,
+           float horizontalAlignment = KDContext::k_alignLeft,
+           float verticalAlignment = KDContext::k_alignTop,
            KDColor textColor = KDColorBlack,
            KDColor backgroundColor = KDColorWhite) :
       View(),

@@ -30,7 +30,7 @@ protected:
   public:
     CurveSelectionCell() :
       Escher::TableCell(),
-      m_expressionView(KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER, KDColorBlack, KDColorWhite)
+      m_expressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
     {}
     Escher::View * labelView() const override { return const_cast<Escher::ExpressionView *>(&m_expressionView); }
     Escher::View * accessoryView() const override { return const_cast<Escher::ChevronView *>(&m_chevronView); }

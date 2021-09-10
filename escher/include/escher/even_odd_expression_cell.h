@@ -8,8 +8,8 @@ namespace Escher {
 
 class EvenOddExpressionCell : public EvenOddCell {
 public:
-  EvenOddExpressionCell(float horizontalAlignment = KDFont::ALIGN_LEFT,
-                        float verticalAlignment = KDFont::ALIGN_CENTER,
+  EvenOddExpressionCell(float horizontalAlignment = KDContext::k_alignLeft,
+                        float verticalAlignment = KDContext::k_alignCenter,
                         KDColor textColor = KDColorBlack,
                         KDColor backgroundColor = KDColorWhite);
   void setEven(bool even) override;

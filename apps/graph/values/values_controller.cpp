@@ -112,7 +112,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     bool isDerivative = false;
     Ion::Storage::Record record = recordAtColumn(i, &isDerivative);
     Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-    myFunctionCell->setHorizontalAlignment(KDFont::ALIGN_CENTER);
+    myFunctionCell->setHorizontalAlignment(KDContext::k_alignCenter);
     if (isDerivative) {
       function->derivativeNameWithArgument(bufferName, bufferNameSize);
     } else {

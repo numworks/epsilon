@@ -155,10 +155,10 @@ void SumGraphController::reloadBannerView() {
 /* Legend View */
 
 SumGraphController::LegendView::LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
-  m_sum(KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER, KDColorBlack, Palette::GrayMiddle),
-  m_legend(k_font, I18n::Message::Default, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER, KDColorBlack, Palette::GrayMiddle),
+  m_sum(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
+  m_legend(k_font, I18n::Message::Default, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
   m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font,
-                 KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER, KDColorBlack, Palette::GrayMiddle),
+                 KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
   m_sumSymbol(sumSymbol)
 {
   m_textBuffer[0] = 0;
@@ -212,7 +212,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
     }
   }
   m_sum.setLayout(sumLayout);
-  m_sum.setAlignment(step == Step::Result ? KDFont::ALIGN_CENTER : KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER);
+  m_sum.setAlignment(step == Step::Result ? KDContext::k_alignCenter : KDContext::k_alignLeft, KDContext::k_alignCenter);
   layoutSubviews(step, false);
 }
 

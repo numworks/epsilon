@@ -15,6 +15,6 @@ void EmptyBatteryWindow::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->alignAndDrawString(warningMessage,
                           KDPointZero,
                           KDSize(Ion::Display::Width, Ion::Display::Height),
-                          KDFont::ALIGN_CENTER,
-                          KDFont::ALIGN_CENTER);
+                          KDContext::k_alignCenter,
+                          KDContext::k_alignCenter);
 }

@@ -22,8 +22,8 @@ public:
   AlternateEmptyViewDefaultDelegate() :
       m_message(KDFont::SmallFont,
                 (I18n::Message)0,
-                KDFont::ALIGN_CENTER,
-                KDFont::ALIGN_CENTER,
+                KDContext::k_alignCenter,
+                KDContext::k_alignCenter,
                 KDColorBlack,
                 Palette::WallScreen) {}
   virtual I18n::Message emptyMessage() = 0;

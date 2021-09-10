@@ -11,8 +11,8 @@ namespace Probability {
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
       m_titleView(KDFont::SmallFont,
                   I18n::Message::ChooseParameters,
-                  KDFont::ALIGN_CENTER,
-                  KDFont::ALIGN_CENTER,
+                  KDContext::k_alignCenter,
+                  KDContext::k_alignCenter,
                   Palette::GrayDark,
                   Palette::WallScreen),
       m_selectableTableView(selectableTableView) {

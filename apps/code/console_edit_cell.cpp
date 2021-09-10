@@ -13,7 +13,7 @@ namespace Code {
 ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(), nullptr, KDFont::ALIGN_LEFT, KDFont::ALIGN_CENTER),
+  m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(), nullptr, KDContext::k_alignLeft, KDContext::k_alignCenter),
   m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, GlobalPreferences::sharedGlobalPreferences()->font())
 {
 }

@@ -5,7 +5,7 @@ using namespace Escher;
 
 ShiftAlphaLockView::ShiftAlphaLockView() :
   View(),
-  m_shiftAlphaView(KDFont::SmallFont, I18n::Message::Default, KDFont::ALIGN_RIGHT, KDFont::ALIGN_CENTER, KDColorWhite, Palette::YellowDark),
+  m_shiftAlphaView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignRight, KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark),
   m_status(Ion::Events::ShiftAlphaStatus::Default)
 {
 }

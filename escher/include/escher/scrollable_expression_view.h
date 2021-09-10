@@ -12,8 +12,8 @@ public:
   ScrollableExpressionView(Responder * parentResponder,
                            KDCoordinate leftRightMargin,
                            KDCoordinate topBottomMargin,
-                           float horizontalAlignment = KDFont::ALIGN_LEFT,
-                           float verticalAlignment = KDFont::ALIGN_CENTER,
+                           float horizontalAlignment = KDContext::k_alignLeft,
+                           float verticalAlignment = KDContext::k_alignCenter,
                            KDColor textColor = KDColorBlack,
                            KDColor backgroundColor = KDColorWhite);
   Poincare::Layout layout() const;

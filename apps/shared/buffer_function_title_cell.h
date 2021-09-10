@@ -27,7 +27,7 @@ protected:
   KDRect bufferTextViewFrame() const;
   Escher::EvenOddBufferTextCell * bufferTextView() { return &m_bufferTextView; }
 private:
-  constexpr static float k_verticalAlignment = KDFont::ALIGN_CENTER;
+  constexpr static float k_verticalAlignment = KDContext::k_alignCenter;
   Escher::EvenOddBufferTextCell m_bufferTextView;
 };
 

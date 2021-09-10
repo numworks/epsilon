@@ -17,8 +17,8 @@ namespace Escher {
 LayoutField::ContentView::ContentView() :
     m_cursor(),
     m_insertionCursor(),
-    m_expressionView(KDFont::ALIGN_LEFT,
-                     KDFont::ALIGN_CENTER,
+    m_expressionView(KDContext::k_alignLeft,
+                     KDContext::k_alignCenter,
                      KDColorBlack,
                      KDColorWhite,
                      &m_selectionStart,

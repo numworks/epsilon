@@ -15,13 +15,13 @@ HomogeneityTableDataSource::HomogeneityTableDataSource(
       m_topLeftCell(Escher::Palette::WallScreenDark) {
   // First row
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
-    m_colHeader[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+    m_colHeader[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_colHeader[i].setFont(KDFont::SmallFont);
     m_colHeader[i].setEven(true);
   }
   // First column
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_rowHeader[i].setAlignment(KDFont::ALIGN_CENTER, KDFont::ALIGN_CENTER);
+    m_rowHeader[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_rowHeader[i].setFont(KDFont::SmallFont);
     m_rowHeader[i].setEven(i % 2 == 0);
   }

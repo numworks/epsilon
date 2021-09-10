@@ -5,60 +5,78 @@
 using namespace Probability;
 
 KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
-  int requiredFirst = 0, requiredSecond = 2 * secondMargin();
-  KDCoordinate proposedFirst = firstLength(bounds().size()) - 2 * firstMargin();
+  int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 2 * mainDirectionMargin();
+  KDCoordinate proposedSecondaryDirection = secondaryDirectionLength(bounds().size()) -
+                                            2 * secondaryDirectionMargin();
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
     Escher::View * subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
-    subview->setSize(reorderedSize(proposedFirst, secondLength(subview->bounds().size())));
+    subview->setSize(
+        reorderedSize(mainDirectionLength(subview->bounds().size()), proposedSecondaryDirection));
     KDSize subviewSize = subview->minimalSizeForOptimalDisplay();
-    requiredSecond += secondLength(subviewSize);
-    requiredFirst = std::max<int>(requiredFirst, firstLength(subviewSize));
+    requiredMainDirectionLength += mainDirectionLength(subviewSize);
+    requiredSecondaryDirectionLength = std::max<int>(requiredSecondaryDirectionLength,
+                                                     secondaryDirectionLength(subviewSize));
   }
-  return reorderedSize(requiredFirst + 2 * firstMargin(), requiredSecond);
+  return reorderedSize(requiredMainDirectionLength,
+                       requiredSecondaryDirectionLength + 2 * secondaryDirectionMargin());
 }
 
 void OrientedLayout::layoutSubviews(bool force) {
   KDSize boundsSize = bounds().size();
-  KDCoordinate availableFirst = firstLength(boundsSize) - 2 * firstMargin();
-  KDCoordinate availableSecond = secondLength(boundsSize) - 2 * secondMargin();
-  KDCoordinate offsetSecond = secondMargin();
+  KDCoordinate availableSecondaryDirection = secondaryDirectionLength(boundsSize) -
+                                             2 * secondaryDirectionMargin();
+  KDCoordinate availableMainDirection = mainDirectionLength(boundsSize) - 2 * mainDirectionMargin();
+  KDCoordinate offsetMainDirection = mainDirectionMargin();
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
     Escher::View * subview = subviewAtIndex(i);
-    subview->setSize(reorderedSize(availableFirst, secondLength(subview->bounds().size())));
-    KDCoordinate requiredSecond = secondLength(subviewAtIndex(i)->minimalSizeForOptimalDisplay());
+    subview->setSize(
+        reorderedSize(mainDirectionLength(subview->bounds().size()), availableSecondaryDirection));
+    KDCoordinate requiredMainDirectionLength = mainDirectionLength(
+        subviewAtIndex(i)->minimalSizeForOptimalDisplay());
     KDRect proposedFrame = reorderedRect(
-        KDRect(KDPoint(firstMargin(), offsetSecond), availableFirst, requiredSecond));
+        KDRect(KDPoint(offsetMainDirection, secondaryDirectionMargin()),
+               requiredMainDirectionLength,
+               availableSecondaryDirection));
     subview->setFrame(proposedFrame, false);
-    availableSecond -= requiredSecond;
-    offsetSecond += requiredSecond;
-    assert(availableSecond >= 0);
+    availableMainDirection -= requiredMainDirectionLength;
+    offsetMainDirection += requiredMainDirectionLength;
+    assert(availableMainDirection >= 0);
   }
 }
 
 void Probability::OrientedLayout::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw in margins
-  ctx->fillRect(KDRect(0, 0, m_marginX, bounds().height()), m_backgroundColor);
-  ctx->fillRect(KDRect(bounds().width() - m_marginX, 0, m_marginX, bounds().height()),
+  ctx->fillRect(KDRect(0, 0, m_secondaryDirectionMargin, bounds().height()), m_backgroundColor);
+  ctx->fillRect(KDRect(bounds().width() - m_secondaryDirectionMargin,
+                       0,
+                       m_secondaryDirectionMargin,
+                       bounds().height()),
                 m_backgroundColor);
-  ctx->fillRect(KDRect(m_marginX, 0, bounds().width() - 2 * m_marginX, m_marginY),
+  ctx->fillRect(KDRect(m_secondaryDirectionMargin,
+                       0,
+                       bounds().width() - 2 * m_secondaryDirectionMargin,
+                       m_mainDirectionMargin),
                 m_backgroundColor);
-  ctx->fillRect(
-      KDRect(m_marginX, bounds().height() - m_marginY, bounds().width() - 2 * m_marginX, m_marginY),
-      m_backgroundColor);
+  ctx->fillRect(KDRect(m_secondaryDirectionMargin,
+                       bounds().height() - m_mainDirectionMargin,
+                       bounds().width() - 2 * m_secondaryDirectionMargin,
+                       m_mainDirectionMargin),
+                m_backgroundColor);
 }
 
-KDCoordinate Probability::OrientedLayout::firstMargin() const {
-  return reorderedPoint(m_marginX, m_marginY).x();
+KDCoordinate Probability::OrientedLayout::secondaryDirectionMargin() const {
+  return reorderedPoint(m_mainDirectionMargin, m_secondaryDirectionMargin).x();
 }
 
-KDCoordinate Probability::OrientedLayout::secondMargin() const {
-  return reorderedPoint(m_marginX, m_marginY).y();
+KDCoordinate Probability::OrientedLayout::mainDirectionMargin() const {
+  return reorderedPoint(m_mainDirectionMargin, m_secondaryDirectionMargin).y();
 }
 
-KDPoint Probability::OrientedLayout::reorderedPoint(KDCoordinate first, KDCoordinate second) const {
-  KDSize s = reorderedSize(first, second);
+KDPoint Probability::OrientedLayout::reorderedPoint(KDCoordinate mainDirection,
+                                                    KDCoordinate secondaryDirection) const {
+  KDSize s = reorderedSize(mainDirection, secondaryDirection);
   return KDPoint(s.width(), s.height());
 }
 

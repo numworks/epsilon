@@ -29,7 +29,7 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   // Create the record
   RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
   if (baseName == nullptr) {
-    // TODO Hugo : Check this
+    // TODO Hugo : Check this assert never happens
     assert(false);
     // Return if error
     return ContinuousFunction();
@@ -65,7 +65,7 @@ bool ContinuousFunction::isNamed() const {
   return fullName() != nullptr && fullName()[0] != '?';
 }
 
-// TODO : Account for y^2 sign !
+// TODO Hugo : Account for y^2 sign !
 bool ContinuousFunction::drawSuperiorArea() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
   return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual;
@@ -252,7 +252,6 @@ double ContinuousFunction::detailsValue(int i) const {
 }
 
 CodePoint ContinuousFunction::symbol() const {
-  // TODO Hugo : Rotate available symbols
   switch (plotType()) {
   case PlotType::Parametric:
     return 't';
@@ -278,7 +277,6 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   if (result.isUninitialized()) {
     return Undefined::Builder();
   }
-  // TODO Hugo : Handle function assignment from outside
   assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
   m_equationSymbol = result.type();
   if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && (
@@ -369,10 +367,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
             newExpr.addChildAtIndexInPlace(root1, 0, 0);
             newExpr.addChildAtIndexInPlace(root2, 1, 1);
             newExpr.setDimensions(2, 1);
-            // TODO HUgo : Plot two curves
             m_expression = newExpr;
-            // Expression alternator = DivisionRemainder::Builder(Floor::Builder(Multiplication::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(10))), Rational::Builder(2));
-            // m_expression = Addition::Builder(Multiplication::Builder(alternator, Subtraction::Builder(root1, root2.clone())), root2);
           }
         }
       }
@@ -392,11 +387,6 @@ Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record
   // TODO Hugo : Maybe perform the substitution with symbol here.
 }
 
-void ContinuousFunction::Model::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
-  // TODO Hugo : No need to override this method,
-  ExpressionModel::updateNewDataWithExpression(record, expressionToStore, expressionAddress, expressionToStoreSize, previousExpressionSize);
-}
-
 void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
   // Compute plot type from expressions
   /* If of format f(...) = ... , handle this -> Cartesian, Polar, Parametric or Undefined
@@ -410,8 +400,8 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
    * | 1  | 2  | Cartesian
    * | 1  | +  | Cartesian
    * | 2  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
-   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola # TODO differentiate
-   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola # TODO differentiate
+   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
+   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
    * | 2  | +  | Other
    * | +  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
    * | +  | 1  | Unhandled (Swap x and y ? # TODO)
@@ -433,7 +423,7 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
     if (yDeg == 1 || yDeg == 2) {
       return recordData()->setPlotType(PlotType::Inequation);
     } else {
-      // TODO : Handle vertical lines
+      // TODO Hugo : Handle vertical lines inequations
       return recordData()->setPlotType(PlotType::Unhandled);
     }
   }
@@ -568,7 +558,6 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
 }
 
 bool ContinuousFunction::shouldClipTRangeToXRange() const {
-  // TODO Hugo : Re-check
   return isAlongX();
 }
 
@@ -589,41 +578,30 @@ void ContinuousFunction::protectedFullRangeForDisplay(float tMin, float tMax, fl
 }
 
 float ContinuousFunction::tMin() const {
-  // TODO Hugo : Re-check
   return recordData()->tMin();
 }
 
 float ContinuousFunction::tMax() const {
-  // TODO Hugo : Re-check
   return recordData()->tMax();
 }
 
 void ContinuousFunction::setTMin(float tMin) {
-  // TODO Hugo : Re-check
   recordData()->setTMin(tMin);
   // TODO Hugo : Re-check cache
   // setCache(nullptr);
 }
 
 void ContinuousFunction::setTMax(float tMax) {
-  // TODO Hugo : Re-check
   recordData()->setTMax(tMax);
   // TODO Hugo : Re-check cache
   // setCache(nullptr);
 }
 
 float ContinuousFunction::rangeStep() const {
-  // TODO Hugo : Re-check
   return isAlongX() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
 }
 
-bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
-  // TODO Hugo : Re-implement
-  return true;
-}
-
 void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
-  // TODO Hugo : Re-check
   if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
@@ -656,7 +634,6 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
 }
 
 void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
-  // TODO Hugo : Re-check
   if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
@@ -703,12 +680,10 @@ void ContinuousFunction::Model::tidy() const {
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
-  // TODO Hugo : Re-check
   return (char *)record->value().buffer+sizeof(RecordDataBuffer);
 }
 
 size_t ContinuousFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
-  // TODO Hugo : Re-check
   return record->value().size-sizeof(RecordDataBuffer);
 }
 
@@ -779,22 +754,18 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
 }
 
 Coordinate2D<double> ContinuousFunction::nextMinimumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
-  // TODO Hugo : Re-check
   return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> ContinuousFunction::nextMaximumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
-  // TODO Hugo : Re-check
   return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
-  // TODO Hugo : Re-check
   return nextPointOfInterestFrom(start, max, context, [](Expression e, char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
 }
 
 Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
-  // TODO Hugo : Re-check
   assert(isAlongX());
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
@@ -809,7 +780,6 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
 }
 
 Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
-  // TODO Hugo : Re-check
   assert(isAlongX());
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
@@ -824,7 +794,6 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
 }
 
 Expression ContinuousFunction::sumBetweenBounds(double start, double end, Context * context) const {
-  // TODO Hugo : Re-check
   assert(isAlongX());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());

@@ -10,7 +10,20 @@ bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFuncti
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();
   }
-  return numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::Theta) + numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::T) == 0;
+  return numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::Theta) + numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::T) != 0;
+}
+
+bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctions) const {
+  if (nbActiveFunctions != nullptr) {
+    *nbActiveFunctions = numberOfActiveFunctions();
+  }
+  return 0 !=
+    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar) +
+    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric) +
+    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Circle) +
+    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Ellipse) +
+    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Hyperbola) +
+    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parabola);
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

@@ -74,6 +74,9 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
 }
 
 Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
+  if (bufferLen < 0) {
+    bufferLen = strlen(buffer);
+  }
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   UTF8Decoder decoder(buffer);

@@ -156,8 +156,6 @@ private:
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i = 0) const;
   void didBecomeInactive() {} // m_cache = nullptr; }
 
-  void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
-
   class Model : public ExpressionModel {
     // TODO Hugo : Add derivative
   public:
@@ -173,7 +171,6 @@ private:
   // private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
-    void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) override;
     mutable bool m_hasTwoCurves;
     mutable Poincare::ExpressionNode::Type m_equationSymbol;
     // TODO Hugo : Avoid this

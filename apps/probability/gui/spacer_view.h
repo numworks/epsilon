@@ -5,9 +5,9 @@
 
 namespace Probability {
 
-class SpacerView : public SolidColorCell {
+class SpacerCell : public SolidColorCell {
 public:
-  SpacerView(KDColor color, KDCoordinate width, KDCoordinate height) :
+  SpacerCell(KDColor color, KDCoordinate width, KDCoordinate height) :
       SolidColorCell(color), m_width(width), m_height(height) {}
   KDSize minimalSizeForOptimalDisplay() const override { return KDSize(m_width, m_height); }
 

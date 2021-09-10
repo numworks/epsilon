@@ -34,7 +34,7 @@ public:
  * and can open subPages easily by pushing them to the StackViewController. */
 class Page : public PageController<Escher::ViewController> {
 public:
-  Page(Escher::StackViewController * stackViewController) : PageController(stackViewController){};
+  Page(Escher::StackViewController * stackViewController) : PageController(stackViewController) {}
 };
 
 /* Similar to a Page but for SelectableListViewController */
@@ -42,19 +42,19 @@ class SelectableListViewPage : public PageController<Escher::SelectableListViewC
 public:
   SelectableListViewPage(Escher::StackViewController * stackViewController,
                          Escher::SelectableTableViewDelegate * tableDelegate = nullptr) :
-      PageController(stackViewController, tableDelegate){};
+        PageController(stackViewController, tableDelegate){};
 };
 
 class FloatParameterPage : public PageController<Shared::FloatParameterController<float>> {
 public:
   FloatParameterPage(Escher::StackViewController * stackViewController) :
-      PageController(stackViewController) {}
+        PageController(stackViewController) {}
 };
 
 class DoubleParameterPage : public PageController<Shared::FloatParameterController<double>> {
 public:
   DoubleParameterPage(Escher::StackViewController * stackViewController) :
-      PageController(stackViewController) {}
+        PageController(stackViewController) {}
 };
 
 }  // namespace Probability

@@ -11,31 +11,32 @@ namespace Probability {
 class OrientedLayout : public Escher::View {
 public:
   OrientedLayout(KDColor color = Escher::Palette::WallScreen) :
-      m_backgroundColor(color), m_marginX(0), m_marginY(0) {}
+        m_backgroundColor(color), m_secondaryDirectionMargin(0), m_mainDirectionMargin(0) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
-  void setMargins(KDCoordinate marginX, KDCoordinate marginY) {
-    m_marginX = marginX;
-    m_marginY = marginY;
+  void setMargins(KDCoordinate secondaryDirectionMargin, KDCoordinate mainDirectionMargin) {
+    m_secondaryDirectionMargin = secondaryDirectionMargin;
+    m_mainDirectionMargin = mainDirectionMargin;
   }
 
-  virtual KDCoordinate firstCoordinate(KDPoint p) const = 0;
-  virtual KDCoordinate secondCoordinate(KDPoint p) const = 0;
-  virtual KDCoordinate firstLength(KDSize p) const = 0;
-  virtual KDCoordinate secondLength(KDSize p) const = 0;
-  virtual KDSize reorderedSize(KDCoordinate first, KDCoordinate second) const = 0;
+  virtual KDCoordinate secondaryDirectionCoordinate(KDPoint p) const = 0;
+  virtual KDCoordinate mainDirectionCoordinate(KDPoint p) const = 0;
+  virtual KDCoordinate secondaryDirectionLength(KDSize p) const = 0;
+  virtual KDCoordinate mainDirectionLength(KDSize p) const = 0;
+  virtual KDSize reorderedSize(KDCoordinate mainDirection,
+                               KDCoordinate secondaryDirection) const = 0;
 
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
 protected:
   KDColor m_backgroundColor;
-  KDCoordinate m_marginX;
-  KDCoordinate m_marginY;
+  KDCoordinate m_secondaryDirectionMargin;
+  KDCoordinate m_mainDirectionMargin;
 
 private:
-  KDCoordinate firstMargin() const;
-  KDCoordinate secondMargin() const;
-  KDPoint reorderedPoint(KDCoordinate first, KDCoordinate second) const;
+  KDCoordinate secondaryDirectionMargin() const;
+  KDCoordinate mainDirectionMargin() const;
+  KDPoint reorderedPoint(KDCoordinate mainDirection, KDCoordinate secondaryDirection) const;
   KDRect reorderedRect(KDRect rect) const;
 };
 
@@ -44,12 +45,12 @@ class VerticalLayout : public OrientedLayout {
 public:
   VerticalLayout(KDColor color = Escher::Palette::WallScreen) : OrientedLayout(color) {}
 
-  KDCoordinate firstCoordinate(KDPoint p) const override { return p.x(); }
-  KDCoordinate secondCoordinate(KDPoint p) const override { return p.y(); }
-  KDCoordinate firstLength(KDSize p) const override { return p.width(); }
-  KDCoordinate secondLength(KDSize p) const override { return p.height(); }
-  KDSize reorderedSize(KDCoordinate first, KDCoordinate second) const override {
-    return KDSize(first, second);
+  KDCoordinate secondaryDirectionCoordinate(KDPoint p) const override { return p.x(); }
+  KDCoordinate mainDirectionCoordinate(KDPoint p) const override { return p.y(); }
+  KDCoordinate secondaryDirectionLength(KDSize p) const override { return p.width(); }
+  KDCoordinate mainDirectionLength(KDSize p) const override { return p.height(); }
+  KDSize reorderedSize(KDCoordinate mainDirection, KDCoordinate secondaryDirection) const override {
+    return KDSize(secondaryDirection, mainDirection);
   }
 };
 
@@ -58,12 +59,12 @@ class HorizontalLayout : public OrientedLayout {
 public:
   HorizontalLayout(KDColor color = Escher::Palette::WallScreen) : OrientedLayout(color) {}
 
-  KDCoordinate firstCoordinate(KDPoint p) const override { return p.y(); }
-  KDCoordinate secondCoordinate(KDPoint p) const override { return p.x(); }
-  KDCoordinate firstLength(KDSize p) const override { return p.height(); }
-  KDCoordinate secondLength(KDSize p) const override { return p.width(); }
-  KDSize reorderedSize(KDCoordinate first, KDCoordinate second) const override {
-    return KDSize(second, first);
+  KDCoordinate secondaryDirectionCoordinate(KDPoint p) const override { return p.y(); }
+  KDCoordinate mainDirectionCoordinate(KDPoint p) const override { return p.x(); }
+  KDCoordinate secondaryDirectionLength(KDSize p) const override { return p.height(); }
+  KDCoordinate mainDirectionLength(KDSize p) const override { return p.width(); }
+  KDSize reorderedSize(KDCoordinate mainDirection, KDCoordinate secondaryDirection) const override {
+    return KDSize(mainDirection, secondaryDirection);
   }
 };
 

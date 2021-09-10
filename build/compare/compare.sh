@@ -5,7 +5,7 @@ set -e
 # === Functions definition ===
 
 function print_help() {
-  echo -e "Usage: compare [--debug] [MAKEFLAGS=...] <folder_with_scenarii> <source_1> <source_2>"
+  echo -e "Usage: compare [--debug] [MAKEFLAGS=...] <folder_with_scenari> <source_1> <source_2>"
   echo -e "\nCompare two sources of screenshots on a sequence of scenari (state files)"
   echo -e "A source can either be:"
   echo -e " - a folder, containing png images of the same name as the state files"
@@ -13,9 +13,9 @@ function print_help() {
   echo -e " - a git ref (i.e. a commit hash, a branch, HEAD...)"
   echo -e "Outputs a report of which screenshot mismatched, and stores the corresponding images"
   echo -e "\nExample:"
-  echo -e "\t$ compare scenarii/ Epsilon_master Epsilon_new"
-  echo -e "\t$ compare scenarii/ folder_with_images/ Epsilon_new"
-  echo -e "\t$ compare MAKEFLAGS=\"-j4 PLATFORM=simulator DEBUG=1\" scenarii/ folder_with_images/ HEAD"
+  echo -e "\t$ compare scenari/ Epsilon_master Epsilon_new"
+  echo -e "\t$ compare scenari/ folder_with_images/ Epsilon_new"
+  echo -e "\t$ compare MAKEFLAGS=\"-j4 PLATFORM=simulator DEBUG=1\" scenari/ folder_with_images/ HEAD"
 }
 
 
@@ -200,10 +200,10 @@ then
   shift
 fi
 
-scenarii_folder="$1"
-if ! find "${scenarii_folder}" -type f -name '*.nws' > /dev/null
+scenari_folder="$1"
+if ! find "${scenari_folder}" -type f -name '*.nws' > /dev/null
 then
-  error "No state file found in ${scenarii_folder}"
+  error "No state file found in ${scenari_folder}"
   exit 3
 fi
 
@@ -215,7 +215,7 @@ parse_arg "$3" 2
 
 log args ${arg1_mode} ${arg1} ${arg2_mode} ${arg2}
 
-for state_file in "${scenarii_folder}"/*.nws
+for state_file in "${scenari_folder}"/*.nws
 do
   filestem=$(stem "${state_file}")
   log state_file: "$filestem"

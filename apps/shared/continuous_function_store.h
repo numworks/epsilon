@@ -23,6 +23,7 @@ public:
     return recordSatisfyingTestAtIndex(i, &isFunctionActive, nullptr);
   }
   bool displaysNonCartesianFunctions(int * nbActiveFunctions = nullptr) const;
+  bool displaysFunctionsToNormalize(int * nbActiveFunctions = nullptr) const;
   // TODO Hugo : Remove unused methods here
   int numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType symbolType) const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveOfSymbolType, &symbolType);

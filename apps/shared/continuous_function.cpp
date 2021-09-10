@@ -562,7 +562,7 @@ bool ContinuousFunction::shouldClipTRangeToXRange() const {
 }
 
 void ContinuousFunction::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Context * context, bool xRange) const {
-  // TODO Hugo : Re-check
+  assert(!hasTwoCurves());
   Zoom::ValueAtAbscissa evaluation;
   if (xRange) {
     evaluation = [](float x, Context * context, const void * auxiliary) {
@@ -631,6 +631,33 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
     return precision * std::round(static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2() / precision);
   };
   Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
+
+  if (hasTwoCurves()) {
+    float xMinTemp = *xMin;
+    float xMaxTemp = *xMax;
+    float yMinTemp = *yMinIntrinsic;
+    float yMaxTemp = *yMaxIntrinsic;
+
+    *xMin = NAN;
+    *xMax = NAN;
+    *yMinIntrinsic = NAN;
+    *yMaxIntrinsic = NAN;
+
+    Zoom::ValueAtAbscissa evaluation2 = [](float x, Context * context, const void * auxiliary) {
+      /* When evaluating sin(x)/x close to zero using the standard sine function,
+      * one can detect small variations, while the cardinal sine is supposed to
+      * be locally monotonous. To smooth out such variations, we round the
+      * result of the evaluations. As we are not interested in precise results
+      * but only in ordering, this approximation is sufficient. */
+      constexpr float precision = 1e-5;
+
+      return precision * std::round(static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context, 1).x2() / precision);
+    };
+    Zoom::InterestingRangesForDisplay(evaluation2, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
+
+    Zoom::CombineRanges(xMinTemp, xMaxTemp, *xMin, *xMax, xMin, xMax);
+    Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMinIntrinsic, *yMaxIntrinsic, yMinIntrinsic, yMaxIntrinsic);
+  }
 }
 
 void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
@@ -658,17 +685,45 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
     return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
   };
 
-  if (yMaxForced - yMinForced <= ratio * (xMax - xMin)) {
+  /* TODO Hugo : To handle second curve here, we would need to update
+   * RangeWithRatioForDisplay so that it handles two evaluations. Otherwise,
+   * preserving the ratio with a fixed xMin xMax with two curves is hard. */
+  if (yMaxForced - yMinForced <= ratio * (xMax - xMin) && !hasTwoCurves()) {
     Zoom::RangeWithRatioForDisplay(evaluation, ratio, xMin, xMax, yMinForced, yMaxForced, yMin, yMax, context, this);
+    // if (hasTwoCurves()) {
+    //   float yMinTemp = *yMin;
+    //   float yMaxTemp = *yMax;
+    //   *yMin = NAN;
+    //   *yMax = NAN;
+    //   Zoom::ValueAtAbscissa evaluation2 = [](float x, Context * context, const void * auxiliary) {
+    //     return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context, 1).x2();
+    //   };
+    //   Zoom::RangeWithRatioForDisplay(evaluation2, ratio, xMin, xMax, yMinForced, yMaxForced, yMin, yMax, context, this);
+    //   Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMin, *yMax, yMin, yMax);
+    //   assert(false); // Ratio is no longer respected.
+    // }
     if (*yMin < *yMax) {
       return;
     }
+    *yMin = NAN;
+    *yMax = NAN;
   }
 
-  *yMin = NAN;
-  *yMax = NAN;
-
   Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
+
+  if (hasTwoCurves()) {
+    float yMinTemp = *yMin;
+    float yMaxTemp = *yMax;
+    *yMin = NAN;
+    *yMax = NAN;
+
+    Zoom::ValueAtAbscissa evaluation2 = [](float x, Context * context, const void * auxiliary) {
+      return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context, 1).x2();
+    };
+    Zoom::RefinedYRangeForDisplay(evaluation2, xMin, xMax, yMin, yMax, context, this);
+
+    Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMin, *yMax, yMin, yMax);
+  }
 }
 
 void ContinuousFunction::Model::tidy() const {
@@ -817,8 +872,12 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
   return error;
 }
 
-void ContinuousFunction::fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Context * context) const {
-  // TODO Hugo : Re-implement
+bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
+  return expressionReduced(context).hasExpression([](const Expression e, const void * context) {
+      return e.type() == ExpressionNode::Type::Sequence
+          || e.type() == ExpressionNode::Type::Integral
+          || e.type() == ExpressionNode::Type::Derivative;
+      }, nullptr);
 }
 
 template <typename T>

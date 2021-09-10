@@ -22,7 +22,7 @@ public:
   ContinuousFunctionStore * functionStore() const { return &m_store; }
 
   // InteractiveCurveViewRangeDelegate
-  bool defaultRangeIsNormalized() const override { return functionStore()->displaysNonCartesianFunctions(); }
+  bool defaultRangeIsNormalized() const override { return functionStore()->displaysFunctionsToNormalize(); }
   void computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) override { DefaultComputeXRange(xMinLimit, xMaxLimit, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, context(), functionStore()); }
   void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax, bool optimizeRange) override { DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, Ratio(), yMin, yMax, context(), functionStore(), optimizeRange); }
   void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) override { DefaultImproveFullRange(xMin, xMax, yMin, yMax, context(), functionStore()); }

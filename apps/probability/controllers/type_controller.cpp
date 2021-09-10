@@ -73,6 +73,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     assert(view != nullptr);
     if (t != App::app()->testType()) {
       Statistic::initializeStatistic(m_statistic,
+                                     App::app()->subapp(),
                                      App::app()->test(),
                                      t,
                                      Data::CategoricalType::Unset);

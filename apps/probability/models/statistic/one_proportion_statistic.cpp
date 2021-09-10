@@ -4,14 +4,12 @@
 
 #include <cmath>
 
-#include "probability/app.h"
-
 using namespace Poincare;
 
 namespace Probability {
 
-OneProportionStatistic::OneProportionStatistic() {
-  if (App::app()->subapp() == Data::SubApp::Tests) {
+void OneProportionStatistic::init(Data::SubApp subapp) {
+  if (subapp == Data::SubApp::Tests) {
     m_params[ParamsOrder::X] = 47;
     m_params[ParamsOrder::N] = 500;
     m_hypothesisParams.setFirstParam(0.08);
@@ -19,7 +17,6 @@ OneProportionStatistic::OneProportionStatistic() {
   } else {
     m_params[ParamsOrder::X] = 107;
     m_params[ParamsOrder::N] = 251;
-
   }
 }
 

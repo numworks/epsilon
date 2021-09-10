@@ -4,16 +4,14 @@
 #include <poincare/conjugate_layout.h>
 #include <poincare/horizontal_layout.h>
 
-#include "probability/app.h"
-
 #include <cmath>
 
 using namespace Poincare;
 
 namespace Probability {
 
-OneMeanTStatistic::OneMeanTStatistic() {
-  if (App::app()->subapp() == Data::SubApp::Tests) {
+void OneMeanTStatistic::init(Data::SubApp subapp) {
+  if (subapp == Data::SubApp::Tests) {
     m_params[ParamsOrder::X] = 47.9;
     m_params[ParamsOrder::N] = 12;
     m_params[ParamsOrder::S] = 2.81;
@@ -69,11 +67,13 @@ ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) con
       return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::S: {
-      Poincare::HorizontalLayout s = Poincare::HorizontalLayout::Builder(CodePointLayout::Builder('s'));
+      Poincare::HorizontalLayout s = Poincare::HorizontalLayout::Builder(
+          CodePointLayout::Builder('s'));
       return ParameterRepresentation{s, I18n::Message::SampleSTD};
     }
     case ParamsOrder::N: {
-      Poincare::HorizontalLayout n = Poincare::HorizontalLayout::Builder(CodePointLayout::Builder('n'));
+      Poincare::HorizontalLayout n = Poincare::HorizontalLayout::Builder(
+          CodePointLayout::Builder('n'));
       return ParameterRepresentation{n, I18n::Message::SampleSize};
     }
   }

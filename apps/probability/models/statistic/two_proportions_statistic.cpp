@@ -12,7 +12,7 @@ using namespace Poincare;
 
 namespace Probability {
 
-TwoProportionsStatistic::TwoProportionsStatistic() {
+void TwoProportionsStatistic::init(Data::SubApp subapp) {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     m_params[ParamsOrder::X1] = 19;
     m_params[ParamsOrder::N1] = 80;
@@ -68,7 +68,8 @@ Poincare::Layout TwoProportionsStatistic::estimateLayout() {
       CodePointLayout::Builder('p'),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                     VerticalOffsetLayoutNode::Position::Subscript));
-  Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(CodePointLayout::Builder('-'));
+  Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(
+      CodePointLayout::Builder('-'));
   res.addOrMergeChildAtIndex(p2, 1, true);
   res.addOrMergeChildAtIndex(p1, 0, true);
   return std::move(res);

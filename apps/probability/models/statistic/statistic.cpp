@@ -62,6 +62,7 @@ void Statistic::initThreshold(Data::SubApp subapp) {
 }
 
 void Statistic::initializeStatistic(Statistic * statistic,
+                                    Data::SubApp subapp,
                                     Data::Test t,
                                     Data::TestType type,
                                     Data::CategoricalType categoricalType) {
@@ -99,6 +100,7 @@ void Statistic::initializeStatistic(Statistic * statistic,
       assert(false);
       break;
   }
+  statistic->init(subapp);
 }
 
 float Statistic::yMin() const {
@@ -122,7 +124,7 @@ float Statistic::computePValue(float z, HypothesisParams::ComparisonOperator op)
 }
 
 float Statistic::computeZAlpha(float significanceLevel,
-                              HypothesisParams::ComparisonOperator op) const {
+                               HypothesisParams::ComparisonOperator op) const {
   // Compute the abscissa corresponding the the significance level
   float proba;
   switch (op) {

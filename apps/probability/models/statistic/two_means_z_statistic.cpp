@@ -7,15 +7,14 @@
 
 #include <cmath>
 
-#include "probability/app.h"
 #include "probability/text_helpers.h"
 
 using namespace Poincare;
 
 namespace Probability {
 
-TwoMeansZStatistic::TwoMeansZStatistic() {
-  if (App::app()->subapp() == Data::SubApp::Tests) {
+void TwoMeansZStatistic::init(Data::SubApp subapp) {
+  if (subapp == Data::SubApp::Tests) {
     m_params[ParamsOrder::X1] = 5;
     m_params[ParamsOrder::N1] = 10;
     m_params[ParamsOrder::Sigma1] = 8.743;

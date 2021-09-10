@@ -8,7 +8,7 @@ namespace Probability {
 // TODO factor with OneMeanZStatistic
 class OneMeanTStatistic : public TStatistic {
 public:
-  OneMeanTStatistic();
+  void init(Data::SubApp subapp) override;
   bool isValidParamAtIndex(int i, float p) override;
   void setParamAtIndex(int index, float p) override;
 

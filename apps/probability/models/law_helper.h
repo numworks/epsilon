@@ -5,19 +5,25 @@
 
 namespace Probability {
 
+/* This method looks for bounds such that cumulativeDistributionEvaluation(xmin) < 0 <
+ * cumulativeDistributionEvaluation(xmax). */
 template <typename T>
-void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa evaluation,
-                Poincare::Context * context,
-                const void * auxiliary,
-                T & xmin,
-                T & xmax) {
-  constexpr static int k_maxNumberOfIterations = 1e9;
+void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistributionEvaluation,
+                               Poincare::Context * context,
+                               const void * auxiliary,
+                               T & xmin,
+                               T & xmax) {
+  /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a working interval, or
+   * symmetrically if the zero is on the left. This obviously assumes that
+   * cumulativeDistributionEvaluation is an increasing function.*/
+  constexpr static int k_maxNumberOfIterations = 308;  // std::log10(DBL_MAX)
 
   xmin = 0, xmax = 10;
-  T sign = evaluation(0, context, auxiliary) < 0 ? 1 : -1;
+  T sign = cumulativeDistributionEvaluation(0, context, auxiliary) < 0 ? 1 : -1;
   int iteration = 0;
 
-  while ((sign * evaluation(sign * xmax, context, auxiliary) < 0) &&
+  // We check if xmax if after the root, and otherwise multiply it by 10
+  while ((sign * cumulativeDistributionEvaluation(sign * xmax, context, auxiliary) < 0) &&
          (iteration < k_maxNumberOfIterations)) {
     xmin = xmax;
     xmax *= 10;
@@ -27,12 +33,7 @@ void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa evaluation,
   xmax += 1;
   xmin -= 1;
 
-  if (iteration == k_maxNumberOfIterations) {
-    // Failed to find zero
-    assert(false);
-    xmin = NAN;
-    xmax = NAN;
-  }
+  assert(iteration != k_maxNumberOfIterations);
 
   if (sign < 0) {
     double temp = -xmin;

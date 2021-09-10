@@ -3,16 +3,14 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/conjugate_layout.h>
 
-#include "probability/app.h"
-
 #include <cmath>
 
 using namespace Poincare;
 
 namespace Probability {
 
-OneMeanZStatistic::OneMeanZStatistic() {
-    if (App::app()->subapp() == Data::SubApp::Tests) {
+void OneMeanZStatistic::init(Data::SubApp subapp) {
+  if (subapp == Data::SubApp::Tests) {
     m_params[ParamsOrder::X] = 47.9;
     m_params[ParamsOrder::N] = 12;
     m_params[ParamsOrder::Sigma] = 2.81;

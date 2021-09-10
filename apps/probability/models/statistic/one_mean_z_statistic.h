@@ -7,7 +7,8 @@ namespace Probability {
 
 class OneMeanZStatistic : public ZStatistic {
 public:
-  OneMeanZStatistic();
+  void init(Data::SubApp subapp) override;
+
   bool isValidParamAtIndex(int i, float p) override;
   void setParamAtIndex(int index, float p) override;
 

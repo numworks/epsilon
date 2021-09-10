@@ -7,7 +7,7 @@ namespace Probability {
 
 class TwoMeansTStatistic : public TStatistic {
 public:
-  TwoMeansTStatistic();
+  void init(Data::SubApp subapp) override;
   bool isValidParamAtIndex(int i, float p) override;
   void setParamAtIndex(int index, float p) override;
 
@@ -36,8 +36,13 @@ private:
   float s2() { return m_params[ParamsOrder::S2]; }
 
   float _xEstimate(float meanSample1, float meanSample2);
-  float computeT(float deltaMean, float meanSample1, float n1, float sigma1, float meanSample2, float n2,
-           float sigma2);
+  float computeT(float deltaMean,
+                 float meanSample1,
+                 float n1,
+                 float sigma1,
+                 float meanSample2,
+                 float n2,
+                 float sigma2);
   virtual float computeDegreesOfFreedom(float s1, float n1, float s2, float n2);
   virtual float computeStandardError(float s1, float n1, float s2, float n2);
 

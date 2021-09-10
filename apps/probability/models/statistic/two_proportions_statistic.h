@@ -7,7 +7,7 @@ namespace Probability {
 
 class TwoProportionsStatistic : public ZStatistic {
 public:
-  TwoProportionsStatistic();
+  void init(Data::SubApp subapp) override;
   bool isValidH0(float p) override;
   bool isValidParamAtIndex(int i, float p) override;
   void setParamAtIndex(int index, float p) override;

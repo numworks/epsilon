@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/layout.h>
+#include <poincare/layout_helper.h>
 
 #include "probability/app.h"
 #include "probability/constants.h"
@@ -13,9 +14,9 @@ namespace Probability {
 ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
                                      Statistic * statistic,
                                      ButtonDelegate * delegate) :
-    MemoizedListViewDataSource(),
-    m_statistic(statistic),
-    m_next(parent, I18n::Message::Next, delegate->buttonActionInvocation()) {
+      MemoizedListViewDataSource(),
+      m_statistic(statistic),
+      m_next(parent, I18n::Message::Next, delegate->buttonActionInvocation()) {
 }
 
 int ResultsDataSource::numberOfRows() const {
@@ -46,11 +47,12 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
           subMessage = I18n::Message::TestStatistic;
           break;
         case TestCellOrder::PValue:
-          message = layoutFromText(I18n::translate(I18n::Message::PValue));
+          message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::PValue));
           value = m_statistic->pValue();
           break;
         case TestCellOrder::TestDegree:
-          message = layoutFromText(I18n::translate(I18n::Message::DegreesOfFreedom));
+          message = Poincare::LayoutHelper::String(
+              I18n::translate(I18n::Message::DegreesOfFreedom));
           value = m_statistic->degreeOfFreedom();
           break;
       }
@@ -71,17 +73,18 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
           value = m_statistic->intervalCriticalValue();
           break;
         case IntervalCellOrder::SE:
-          message = layoutFromText(I18n::translate(I18n::Message::SE));
+          message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::SE));
           subMessage = I18n::Message::StandardError;
           value = m_statistic->standardError();
           break;
         case IntervalCellOrder::ME:
-          message = layoutFromText(I18n::translate(I18n::Message::ME));
+          message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ME));
           subMessage = I18n::Message::MarginOfError;
           value = m_statistic->marginOfError();
           break;
         case IntervalCellOrder::IntervalDegree:
-          message = layoutFromText(I18n::translate(I18n::Message::DegreesOfFreedom));
+          message = Poincare::LayoutHelper::String(
+              I18n::translate(I18n::Message::DegreesOfFreedom));
           value = m_statistic->degreeOfFreedom();
           break;
       }

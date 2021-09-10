@@ -21,15 +21,6 @@ constexpr static int arrayMax(const int (&data)[N]) {
   return max_between(data, data + N);
 }
 
-inline Poincare::Layout layoutFromText(const char * text) {
-  Poincare::HorizontalLayout layout = Poincare::HorizontalLayout::Builder();
-  for (unsigned int i = 0; i < strlen(text); i++) {
-    Poincare::CodePointLayout l = Poincare::CodePointLayout::Builder(CodePoint(text[i]));
-    layout.addChildAtIndex(l, i, i, nullptr);
-  }
-  return std::move(layout);
-}
-
 }  // namespace Probability
 
 #endif /* APPS_PROBABILITY_HELPERS_H */

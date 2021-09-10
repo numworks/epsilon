@@ -31,7 +31,7 @@ public:
   int numberOfColumns() const override { return k_numberOfColumns; }
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
-  int typeAtLocation(int i, int j) override { return j == 0 ? k_typeOfHeader : 0; }
+  int typeAtLocation(int i, int j) override { return j == 0 ? k_typeOfHeader : k_typeOfInnerCells; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   KDCoordinate columnWidth(int i) override { return k_columnWidth; }
@@ -46,12 +46,14 @@ public:
 
 private:
   constexpr static int k_rowHeight = 20;
+  constexpr static int k_typeOfInnerCells = 0;
   constexpr static int k_typeOfHeader = 1;
   constexpr static int k_numberOfColumns = 2;
   constexpr static int k_maxNumberOfReusableRows = (Ion::Display::Height -
                                                     Escher::Metric::TitleBarHeight -
                                                     Escher::Metric::StackTitleHeight) /
-                                                   HomogeneityTableDataSource::k_rowHeight;
+                                                       HomogeneityTableDataSource::k_rowHeight +
+                                                   2;
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
                                         k_borderBetweenColumns) /

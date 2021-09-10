@@ -2,7 +2,7 @@
 
 namespace Probability {
 
-void LegendView::Icon::drawRect(KDContext * ctx, KDRect rect) const {
+void LegendView::DotView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, m_color, Escher::Palette::WallScreen);
 }
 

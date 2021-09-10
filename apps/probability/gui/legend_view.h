@@ -27,9 +27,9 @@ private:
   constexpr static int k_offsetTop = 3;
   constexpr static int k_diameter = 8;
 
-  class Icon : public Escher::View {
+  class DotView : public Escher::View {
   public:
-    Icon(KDColor color) : m_color(color) {}
+    DotView(KDColor color) : m_color(color) {}
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_diameter, k_diameter); }
 
@@ -38,7 +38,7 @@ private:
   };
 
   Escher::BufferTextView m_labelView;
-  Icon m_icon;
+  DotView m_icon;
 };
 
 }  // namespace Probability

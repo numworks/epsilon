@@ -60,11 +60,7 @@ void TestConclusionView::drawRect(KDContext * ctx, KDRect rect) const {
 
 void TestConclusionView::reload() {
   generateConclusionTexts(m_statistic->canRejectNull());
-  if (m_statistic->canRejectNull()) {
-    m_icon.setImage(ImageStore::TestSuccess);
-  } else {
-    m_icon.setImage(nullptr);
-  }
+  m_icon.setImage(m_statistic->canRejectNull() ? ImageStore::TestSuccess : nullptr);
   markRectAsDirty(bounds());
 }
 

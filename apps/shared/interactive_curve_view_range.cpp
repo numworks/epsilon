@@ -352,6 +352,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
      * bottom margin (which depends on the banner height). */
     m_delegate->updateBottomMargin();
 
+    float dy;
     if (computeY || (computeX && m_yAuto)) {
       assert(!intrinsicYRangeIsUnset());
       /* If X and Y are computed automatically, we want the Y range to be
@@ -365,7 +366,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
         MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
       }
       /* Add vertical margins */
-      float dy = newYMax - newYMin;
+      dy = newYMax - newYMin;
       m_yRange.setMin(roundLimit(m_delegate->addMargin(newYMin, dy, true , true), dy, true), k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(newYMax, dy, true , false), dy, false), k_lowerMaxFloat, k_upperMaxFloat);
     }
@@ -379,7 +380,6 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
       protectedNormalize(canChangeX, computeY, shrink);
       if (computeY && !intrinsicYRangeIsUnset() && m_yMinIntrinsic <= m_yMaxIntrinsic) {
         /* Make sure the intrinsic Y values are on screen. */
-        float dy = yMax() - yMin();
         float yMinIntrinsicWithMargin = m_delegate->addMargin(m_yMinIntrinsic, dy, true, true);
         bool changedYMin = false;
         if (yMinIntrinsicWithMargin < yMin()) {

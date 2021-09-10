@@ -71,10 +71,10 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
     int length = strlen(txt);
     char digit;
     if (row == 0) {
-      assert(column <= '9' - '1');
+      assert(column - 1 <= '9' - '1');
       digit = '1' + (column - 1);
     } else {
-      assert(row <= 'Z' - 'A');
+      assert(row - 1 <= 'Z' - 'A');
       digit = 'A' + (row - 1);
     }
 

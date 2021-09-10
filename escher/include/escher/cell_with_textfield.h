@@ -1,5 +1,5 @@
-#ifndef ESCHER_INCLUDE_ESCHER_CELL_WITH_TEXTFIELD_H
-#define ESCHER_INCLUDE_ESCHER_CELL_WITH_TEXTFIELD_H
+#ifndef ESCHER_CELL_WITH_TEXTFIELD_H
+#define ESCHER_CELL_WITH_TEXTFIELD_H
 
 #include <escher/text_field.h>
 
@@ -13,4 +13,4 @@ public:
 
 }  // namespace Escher
 
-#endif /* ESCHER_INCLUDE_ESCHER_CELL_WITH_TEXTFIELD_H */
+#endif /* ESCHER_CELL_WITH_TEXTFIELD_H */

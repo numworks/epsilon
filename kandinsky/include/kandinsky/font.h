@@ -11,7 +11,7 @@
 #include "palette.h"
 
 constexpr static int indexOf(const uint32_t * array, const int arraySize, const uint32_t value) {
-  return value == *array ? 0 : 1 + indexOf(array + 1, arraySize - 1, value);
+  return (arraySize == 0 || value == *array) ? 0 : 1 + indexOf(array + 1, arraySize - 1, value);
 }
 
 /* We use UTF-8 encoding. This means that a character is encoded as a code point
@@ -104,6 +104,7 @@ private:
   uint16_t compressedGlyphDataSize(GlyphIndex index) const {
     return m_glyphDataOffset[index+1] - m_glyphDataOffset[index];
   }
+
   int signedCharAsIndex(const char c) const {
     static constexpr uint8_t k_magicCharOffsetValue = 0x20; // FIXME: Value from kandinsky/fonts/rasterizer.c (CHARACTER_RANGE_START). 0x20 because we do not want have a glyph for the first 20 ASCII characters
     int cInt = c;

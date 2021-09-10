@@ -235,19 +235,19 @@ QUIZ_CASE(probability_two_proportions_statistic) {
       StatisticTestCase{.m_firstHypothesisParam = 0.3,
                         .m_op = HypothesisParams::ComparisonOperator::Lower,
                         .m_numberOfInputs = 4,
-                        .m_inputs = {60, 100, 44.1, 90},
+                        .m_inputs = {60, 100, 44.4, 90},
                         .m_significanceLevel = 0.01,
                         .m_confidenceLevel = 0.99,
                         .m_numberOfParameters = 5,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
                         .m_zAlpha = -2.3263483047,
-                        .m_testCriticalValue = -2.6274206638,
-                        .m_pValue = 0.0043017864,
-                        .m_estimate = 60.f / 100.f - 44.1f / 90.f,
+                        .m_testCriticalValue = -2.6117918491,
+                        .m_pValue = 0.0045034885,
+                        .m_estimate = 60.f / 100.f - 44.f / 90.f,
                         .m_intervalCriticalValue = 2.5758295059,
-                        .m_standardError = 0.0719490498,
-                        .m_marginOfError = 0.1853284836}};
+                        .m_standardError = 0.0719472468,
+                        .m_marginOfError = 0.1853238344}};
   TwoProportionsStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);

@@ -1,9 +1,9 @@
-#include <kandinsky/context.h>
-
 #include <assert.h>
+#include <kandinsky/context.h>
+#include <stdlib.h>
+
 #include <algorithm>
 #include <cmath>
-#include <stdlib.h>
 
 void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
   // Find the largest gap
@@ -26,8 +26,8 @@ void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
   assert(right.x() >= left.x());
   assert(bottom.y() >= top.y());
 
-  KDCoordinate deltaX = 2*(right.x() - left.x());
-  KDCoordinate deltaY = 2*(bottom.y() - top.y());
+  KDCoordinate deltaX = 2 * (right.x() - left.x());
+  KDCoordinate deltaY = 2 * (bottom.y() - top.y());
 
   KDPoint p = KDPointZero, alwaysTranslate = KDPointZero, conditionalTranslate = KDPointZero;
   KDCoordinate scanLength, error, minusError, plusError;
@@ -38,7 +38,7 @@ void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
     error = right.x() - left.x();
     minusError = deltaY;
     plusError = deltaX;
-    alwaysTranslate = KDPoint(1,0);
+    alwaysTranslate = KDPoint(1, 0);
     conditionalTranslate = KDPoint(0, (right.y() >= left.y() ? 1 : -1));
   } else {
     p = top;
@@ -46,7 +46,7 @@ void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
     error = bottom.y() - top.y();
     minusError = deltaX;
     plusError = deltaY;
-    alwaysTranslate = KDPoint(0,1);
+    alwaysTranslate = KDPoint(0, 1);
     conditionalTranslate = KDPoint((bottom.x() >= top.x() ? 1 : -1), 0);
   }
 
@@ -64,6 +64,7 @@ void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
 
 void KDContext::drawAntialiasedLine(KDPoint p1, KDPoint p2, KDColor c, KDColor background) {
   // Implements Xiaolin Wu's line algorithm
+  // https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
 
   int x1 = p1.x(), x2 = p2.x(), y1 = p1.y(), y2 = p2.y();
 
@@ -79,7 +80,7 @@ void KDContext::drawAntialiasedLine(KDPoint p1, KDPoint p2, KDColor c, KDColor b
 
   int dx = x2 - x1;
   int dy = y2 - y1;
-  double gradient = (dx == 0) ? 1 : static_cast<double>(dy)/dx;
+  double gradient = (dx == 0) ? 1 : static_cast<double>(dy) / dx;
 
   for (int x = x1; x <= x2; x++) {
     double y = y1 + gradient * (x - x1);

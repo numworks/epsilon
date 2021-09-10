@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/layout_helper.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <algorithm>
@@ -73,13 +74,13 @@ void TestConclusionView::generateConclusionTexts(bool isTestSuccessfull) {
           Poincare::VerticalOffsetLayoutNode::Position::Subscript));
   if (isTestSuccessfull) {
     layout.addOrMergeChildAtIndex(
-        layoutFromText(I18n::translate(I18n::Message::ConclusionSuccess1)),
+        Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ConclusionSuccess1)),
         2,
         true);
     message = I18n::Message::ConclusionSuccess2;
   } else {
     layout.addOrMergeChildAtIndex(
-        layoutFromText(I18n::translate(I18n::Message::ConclusionFailure1)),
+        Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ConclusionFailure1)),
         2,
         true);
     message = I18n::Message::ConclusionFailure2;

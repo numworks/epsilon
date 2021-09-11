@@ -6,3 +6,5 @@ epsilon.map
 .vscode
 .DS_Store
 .gradle
+
+.idea/

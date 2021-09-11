@@ -1,8 +1,8 @@
 ---
 name: Other
-about: A question? A problem? ...
+about: A question? A problem? …
 title: ''
-labels: Triage
+labels: 'Status: Triage'
 assignees: ''
 
 ---

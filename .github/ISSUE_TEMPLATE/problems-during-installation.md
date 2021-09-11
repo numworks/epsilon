@@ -2,18 +2,18 @@
 name: Problems during installation
 about: Need help to install Omega?
 title: ''
-labels: Installation issue, Triage
+labels: 'Status: Triage, Type: Installation issue'
 assignees: ''
 
 ---
 
-#### Describe the problem
+**Describe the problem**
 
 
-#### Logs
+**Logs**
 ```
 Copy/paste the logs here (If you have some)
 ```
 
-#### Environment
+**Environment**
  - Omega Version: {go to settings > about > Omega Version and type the version here}

@@ -32,7 +32,7 @@ public:
     m_storageSize(Ion::Storage::k_storageSize),
     m_footer(Magic),
     m_ohm_header(OmegaMagic),
-    m_omegaVersion{OMEGA_VERSION},
+    m_UpsilonVersion{OMEGA_VERSION},
 #ifdef OMEGA_USERNAME
     m_username{OMEGA_USERNAME},
 #else
@@ -48,14 +48,14 @@ public:
     assert(m_ohm_footer == OmegaMagic);
     return m_version;
   }
-  const char * omegaVersion() const {
+  const char * UpsilonVersion() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
     assert(m_ohm_header == OmegaMagic);
     assert(m_ohm_footer == OmegaMagic);
-    return m_omegaVersion;
+    return m_UpsilonVersion;
   }
   const volatile char * username() const volatile {
     assert(m_storageAddress != nullptr);
@@ -85,7 +85,7 @@ private:
   size_t m_storageSize;
   uint32_t m_footer;
   uint32_t m_ohm_header;
-  const char m_omegaVersion[16];
+  const char m_UpsilonVersion[16];
   const volatile char m_username[16];
   uint32_t m_ohm_footer;
 };
@@ -96,8 +96,8 @@ const char * Ion::softwareVersion() {
   return platform_infos.version();
 }
 
-const char * Ion::omegaVersion() {
-  return platform_infos.omegaVersion();
+const char * Ion::UpsilonVersion() {
+  return platform_infos.UpsilonVersion();
 }
 
 const volatile char * Ion::username() {

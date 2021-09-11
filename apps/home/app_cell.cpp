@@ -8,6 +8,7 @@ namespace Home {
 AppCell::AppCell() :
   HighlightCell(),
   m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::HomeCellText, Palette::HomeCellBackground),
+  m_backgroundView(nullptr),
   m_visible(true), m_external_app(false)
 {
 }
@@ -15,8 +16,8 @@ AppCell::AppCell() :
 
 void AppCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
-  ctx->fillRect(KDRect(0,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, bounds().width(), nameSize.height()+2*k_nameHeightMargin), Palette::HomeBackground);
-}
+  m_backgroundView->drawRect(ctx, KDRect(0, bounds().height()-nameSize.height() - 2*k_nameHeightMargin, bounds().width(), nameSize.height()+2*k_nameHeightMargin));
+  }
 
 int AppCell::numberOfSubviews() const {
   return m_visible ? 2 : 0;
@@ -68,6 +69,10 @@ void AppCell::setVisible(bool visible) {
     m_visible = visible;
     markRectAsDirty(bounds());
   }
+}
+
+void AppCell::setBackgroundView(const BackgroundView * backgroundView) {
+  m_backgroundView = backgroundView;
 }
 
 void AppCell::reloadCell() {

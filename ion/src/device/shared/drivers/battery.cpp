@@ -30,7 +30,7 @@ Charge level() {
 
   constexpr static int numberOfChargeStates = 4;
   constexpr static int numberOfThresholds = numberOfChargeStates - 1;
-  constexpr float hysteresis = 0.02f;
+  constexpr float hysteresis = 0.04f;
   const float thresholds[numberOfThresholds] = {3.6f + hysteresis, 3.7f, 3.8f}; // We do not want to lower the threshold for empty battery, so we add the hysteresis to it
   int nextLevel = -1;
   for (int i = 0; i < numberOfThresholds; i++) {

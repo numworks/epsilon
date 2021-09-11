@@ -1,10 +1,17 @@
 ---
 name: Feature request
-about: Suggest an idea for an improvement of Omega
+about: Suggest an idea for Omega
 title: ''
-labels: Feature, Triage
+labels: 'Status: Triage, Type: Feature'
 assignees: ''
 
 ---
 
-#### What I want to see in the next version of Omega
+**Is your feature request related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+
+**Describe the solution you'd like**
+A clear and concise description of what you want to happen.
+
+**Additional context**
+Add any other context or screenshots about the feature request here.

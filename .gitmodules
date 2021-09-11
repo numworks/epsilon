@@ -3,4 +3,4 @@
 	url = https://github.com/Omega-Numworks/Omega-RPN.git
 [submodule "apps/atomic"]
 	path = apps/atomic
-	url = https://github.com/Omega-Numworks/Omega-Atomic.git
+	url = https://github.com/Lauryy06/atomic

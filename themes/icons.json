@@ -9,6 +9,7 @@
     "apps/graph/graph_icon.png" : "apps/graph_icon.png",
     "apps/probability/probability_icon.png" : "apps/probability_icon.png",
     "apps/regression/regression_icon.png" : "apps/regression_icon.png",
+    "apps/reader/reader_icon.png" : "apps/reader_icon.png",
     "apps/rpn/rpn_icon.png" : "apps/rpn_icon.png",
     "apps/sequence/sequence_icon.png" : "apps/sequence_icon.png",
     "apps/settings/settings_icon.png" : "apps/settings_icon.png",

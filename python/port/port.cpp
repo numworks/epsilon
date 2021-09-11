@@ -61,6 +61,7 @@ extern "C" {
 #include "mphalport.h"
 #include "mod/turtle/modturtle.h"
 #include "mod/matplotlib/pyplot/modpyplot.h"
+#include "mod/ulab/ulab.h"
 }
 
 #include <escher/palette.h>

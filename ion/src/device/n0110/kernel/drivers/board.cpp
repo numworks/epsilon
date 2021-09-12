@@ -328,14 +328,14 @@ void shutdownPeripheralsClocks(bool keepLEDAwake) {
 }
 
 bool isRunningSlotA() {
-  return reinterpret_cast<uint32_t>(&_isr_vector_table_start_flash) < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+  return reinterpret_cast<uint32_t>(&_isr_vector_table_start_flash) < Board::Config::SlotBStartAddress;
 }
 
 bool isInReflashableSector(uint32_t address) {
   if (isRunningSlotA()) {
-    return address >= ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2 && address < ExternalFlash::Config::EndAddress;
+    return address >= Board::Config::SlotBStartAddress && address < ExternalFlash::Config::EndAddress;
   }
-  return address >= ExternalFlash::Config::StartAddress && address < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+  return (address >= ExternalFlash::Config::StartAddress && address < Board::Config::SlotBStartAddress) || (address >= Board::Config::StorageStartAdress && address < ExternalFlash::Config::EndAddress);
 }
 
 void switchExecutableSlot(uint32_t leaveAddress) {

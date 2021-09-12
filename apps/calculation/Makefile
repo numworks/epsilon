@@ -19,6 +19,7 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/list_controller.cpp \
   additional_outputs/matrix_list_controller.cpp \
   additional_outputs/rational_list_controller.cpp \
+  additional_outputs/second_degree_list_controller.cpp \
   additional_outputs/trigonometry_graph_cell.cpp \
   additional_outputs/trigonometry_list_controller.cpp \
   additional_outputs/trigonometry_model.cpp \

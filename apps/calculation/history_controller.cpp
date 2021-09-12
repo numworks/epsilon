@@ -16,6 +16,7 @@ HistoryController::HistoryController(EditExpressionController * editExpressionCo
   m_complexController(editExpressionController),
   m_integerController(editExpressionController),
   m_rationalController(editExpressionController),
+  m_secondDegreeController(editExpressionController),
   m_trigonometryController(editExpressionController),
   m_unitController(editExpressionController),
   m_matrixController(editExpressionController)
@@ -100,6 +101,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       Expression e = calculationAtIndex(focusRow)->exactOutput();
       if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
         vc = &m_complexController;
+      } else if (additionalInfoType == Calculation::AdditionalInformationType::SecondDegree) {
+        vc = &m_secondDegreeController;
       } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
         vc = &m_trigonometryController;
         // Find which of the input or output is the cosine/sine

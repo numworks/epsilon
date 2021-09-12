@@ -146,11 +146,18 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  /* 2.7 Empty sector
-   * We have to override the sector configured by the bootloader. */
+  /* 2.7 Enable unpriveleged access to ITCM RAM
+   * This memory is only used by external application. */
   MPU.RNR()->setREGION(sector++);
-  MPU.RBAR()->setADDR(0);
-  MPU.RASR()->setENABLE(0);
+  MPU.RBAR()->setADDR(Board::Config::ITCMRAMAdress);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_16KB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(1);
+  MPU.RASR()->setS(1);
+  MPU.RASR()->setC(1);
+  MPU.RASR()->setB(1);
+  MPU.RASR()->setENABLE(true);
 
   /* We assert that all sectors have been initialized. Otherwise, the bootloader
    * configuration is still active on the last sectors when their configuration

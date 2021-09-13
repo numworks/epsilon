@@ -1,10 +1,10 @@
 ifeq ($(FIRMWARE_COMPONENT),bootloader)
-include ion/src/$(PLATFORM)/$(MODEL)/epsilon-bootloader/$(FIRMWARE_COMPONENT)/Makefile
+include ion/src/$(PLATFORM)/epsilon-bootloader/$(FIRMWARE_COMPONENT)/Makefile
 else
--include ion/src/$(PLATFORM)/$(MODEL)/$(FIRMWARE_COMPONENT)/Makefile
+-include ion/src/$(PLATFORM)/$(FIRMWARE_COMPONENT)/Makefile
 endif
 
-include ion/src/$(PLATFORM)/$(MODEL)/shared/Makefile
+-include ion/src/$(PLATFORM)/shared/$(FIRMWARE_COMPONENT).mak
 
 # We need to work around a GCC bug (concerning versions < 5.1). It is valid in
 # C++11 to initialize a character array by providing a string litteral (e.g.
@@ -13,7 +13,7 @@ include ion/src/$(PLATFORM)/$(MODEL)/shared/Makefile
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 $(call object_for,ion/src/$(PLATFORM)/kernel/drivers/kernel_header.cpp ion/src/$(PLATFORM)/userland/drivers/userland_header.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
-ION_DEVICE_SFLAGS += -Iion/src/$(PLATFORM)/$(MODEL)/shared -Iion/src/$(PLATFORM)/$(MODEL) -Iion/src/$(PLATFORM)/shared -Iion/src/$(PLATFORM) #TODO EMILIE: remove */shared and specify shared in inclusions
+ION_DEVICE_SFLAGS += -Iion/src/$(PLATFORM)/shared -Iion/src/$(PLATFORM) #TODO EMILIE: remove */shared and specify shared in inclusions
 
 IN_FACTORY ?= 0
 ION_DEVICE_SFLAGS += -DPCB_LATEST=$(PCB_LATEST) -DIN_FACTORY=$(IN_FACTORY)

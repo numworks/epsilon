@@ -1,8 +1,10 @@
 #include "function_models_parameter_controller.h"
 #include "list/list_controller.h"
+#include <poincare/integer.h>
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
 #include <assert.h>
+#include "../shared/global_context.h"
 #include "app.h"
 
 using namespace Poincare;
@@ -42,6 +44,38 @@ void FunctionModelsParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
+int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferSize) {
+  constexpr int k_maxNumberOfDefaultLetterNames = 4;
+  constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
+    'f', 'g', 'h', 'p'
+  };
+  /* First default names are f, g, h, p and then f0, f1... ie, "f[number]",
+   * for instance "f12", that does not exist yet in the storage. */
+  size_t constantNameLength = 1; // 'f', no null-terminating char
+  assert(bufferSize > constantNameLength+1);
+  // Find the next available name
+  int currentNumber = -k_maxNumberOfDefaultLetterNames;
+  int currentNumberLength = 0;
+  int availableBufferSize = bufferSize - constantNameLength;
+  while (currentNumberLength < availableBufferSize) {
+    // Choose letter and number if required
+    if (currentNumber >= 0) {
+      buffer[0] = k_defaultLetterNames[0];
+      currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
+    } else {
+      buffer[0] = k_defaultLetterNames[k_maxNumberOfDefaultLetterNames+currentNumber];
+      buffer[1] = 0;
+    }
+    if (Shared::GlobalContext::SymbolAbstractNameIsFree(buffer)) {
+      // Name found
+      break;
+    }
+    currentNumber++;
+  }
+  assert(currentNumberLength >= 0 && currentNumberLength < availableBufferSize);
+  return constantNameLength + currentNumberLength;
+}
+
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record::ErrorStatus error = App::app()->functionStore()->addEmptyModel();
@@ -50,7 +84,23 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
       return false;
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
-    m_listController->editSelectedRecordWithText(k_models[selectedRow()]);
+    int rowIndex = selectedRow();
+    assert(rowIndex >= 0 && rowIndex < k_numberOfModels);
+    bool success;
+    if (rowIndex != k_indexOfCartesianModel && rowIndex != k_indexOfParametricModel && rowIndex != k_indexOfPolarModel) {
+      success = m_listController->editSelectedRecordWithText(k_models[rowIndex]);
+    } else {
+      /* Model starts with a named function. If that name is already taken, use
+       * another one. */
+      char buffer[k_maxSizeOfNamedModel];
+      int functionNameLength = defaultName(buffer, k_maxSizeOfNamedModel);
+      size_t constantNameLength = 1; // 'f', no null-terminating char
+      assert(strlen(k_models[rowIndex] + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
+      strcpy(buffer + functionNameLength, k_models[rowIndex] + constantNameLength);
+      success = m_listController->editSelectedRecordWithText(buffer);
+    }
+    assert(success);
+    (void) success; // Silence warnings
     Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(Ion::Events::OK);
     return true;

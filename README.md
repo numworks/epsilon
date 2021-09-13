@@ -73,7 +73,7 @@ These can be used to distribute Upsilon (so that it can be flashed by anyone wit
 
 ```bash
 git clone --recursive https://github.com/Lauryy06/Upsilon.git
-cd Omega
+cd Upsilon
 git checkout omega-master
 make clean
 make MODEL=n0100 OMEGA_USERNAME="" -j8

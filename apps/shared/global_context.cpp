@@ -85,8 +85,16 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
     assert(symbol.type() == ExpressionNode::Type::Function);
     Expression child = symbol.childAtIndex(0);
     assert(child.type() == ExpressionNode::Type::Symbol);
-    finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<Symbol&>(child), Symbol::Builder(UCodePointUnknown));
-    SetExpressionForFunction(finalExpression, symbol, record);
+    Symbol childSymbol = static_cast<Symbol&>(child);
+    finalExpression = finalExpression.replaceSymbolWithExpression(childSymbol, Symbol::Builder(UCodePointUnknown));
+    if (!(childSymbol.isIdenticalTo(Symbol::Builder('x')) || childSymbol.isIdenticalTo(Symbol::Builder('t')) || childSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta)))) {
+      // Unsupported symbol. Fall back to 'x'
+      Expression newSymbol = symbol.clone();
+      newSymbol.replaceChildAtIndexInPlace(0, Symbol::Builder('x'));
+      SetExpressionForFunction(finalExpression, static_cast<SymbolAbstract&>(newSymbol), record);
+    } else {
+      SetExpressionForFunction(finalExpression, symbol, record);
+    }
   }
 }
 

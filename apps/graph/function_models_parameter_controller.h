@@ -31,10 +31,17 @@ private:
   static constexpr const char * k_models[k_numberOfModels] = {
     "", "f(x)=x", "x+y+1=0", "x+y≤0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
   };
+  // Models starting with f(x)=
+  constexpr static int k_indexOfCartesianModel = 1;
+  constexpr static int k_indexOfParametricModel = 5;
+  constexpr static int k_indexOfPolarModel = 6;
+  constexpr static size_t k_maxSizeOfNamedModel = 26;
+  // Expression cells
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
   static constexpr I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
     I18n::Message::CartesianType, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::EllipseType, I18n::Message::ParametricType, I18n::Message::PolarType
   };
+  int defaultName(char buffer[], size_t bufferSize);
   Escher::StackViewController * stackController() const;
   Escher::MessageTableCell m_emptyModelCell;
   Escher::ExpressionTableCellWithMessage m_modelCells[k_numberOfExpressionCells];

@@ -75,7 +75,7 @@ void assert_best_cartesian_range_is(const char * definition, float targetXMin, f
 QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("undef", -10, 10, -5.66249943, 4.96249962);
   assert_best_cartesian_range_is("x!", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("abs(x)", -10, 10, -1.8562, 8.768798);
+  assert_best_cartesian_range_is("abs(x)", -10, 10, -1.702784, 8.922215);
 
   assert_best_cartesian_range_is("0", -10, 10, -5.66249943, 4.96249962);
   assert_best_cartesian_range_is("1", -10, 10, -4.66249943, 5.96249962);
@@ -109,8 +109,13 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("log(x)", -0.900000036, 3.10000014, -1.21249986, 0.912499905);
 
   assert_best_cartesian_range_is("√(x)", -3, 9, -1.83749962, 4.53749943);
+  assert_best_cartesian_range_is("√(x-1)", -2, 10, -1.83749962, 4.53749943);
   assert_best_cartesian_range_is("√(x^2+1)-x", -10, 10, -1.26249981, 9.36249924);
   assert_best_cartesian_range_is("root(x^3+1,3)-x", -2, 2.29999995, -0.392187476, 1.89218748);
+  // TODO : Fix ranges for x^x
+  assert_best_cartesian_range_is("x^x", -19.1054859, 14.1054859, -60, 120);
+  assert_best_cartesian_range_is("(x-1)^(x-1)", -15.8523216, 11.8523216, -3.85904503, 10.85904520);
+
 }
 
 QUIZ_CASE(graph_ranges_several_functions) {

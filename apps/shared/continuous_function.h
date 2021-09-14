@@ -72,6 +72,7 @@ public:
   bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
   int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
   int xDegree(Poincare::Context * context) const; // Any degree is handled
+  bool isYCoefficientNonNull(int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * YSign = nullptr) const;
 
   int nameWithArgument(char * buffer, size_t bufferSize);
   I18n::Message parameterMessageName() const;

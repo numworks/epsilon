@@ -30,6 +30,7 @@ class ComparisonOperator : public Expression {
 public:
   ComparisonOperator(const ComparisonOperatorNode * n) : Expression(n) {}
   static bool IsComparisonOperatorType(ExpressionNode::Type type);
+  static ExpressionNode::Type Opposite(ExpressionNode::Type type);
   // For the comparison A ? B, create the reduced expression A-B
   Expression standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const;
 };

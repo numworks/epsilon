@@ -36,6 +36,20 @@ bool ComparisonOperator::IsComparisonOperatorType(ExpressionNode::Type type) {
   }
 }
 
+ExpressionNode::Type ComparisonOperator::Opposite(ExpressionNode::Type type) {
+  switch (type) {
+  case ExpressionNode::Type::Superior:
+    return ExpressionNode::Type::Inferior;
+  case ExpressionNode::Type::SuperiorEqual:
+    return ExpressionNode::Type::InferiorEqual;
+  case ExpressionNode::Type::Inferior:
+    return ExpressionNode::Type::Superior;
+  default:
+    assert(type == ExpressionNode::Type::InferiorEqual);
+    return ExpressionNode::Type::SuperiorEqual;
+  }
+}
+
 Expression ComparisonOperator::standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const {
   Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
   return sub.reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, reductionTarget));

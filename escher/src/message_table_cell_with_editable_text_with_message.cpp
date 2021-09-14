@@ -8,9 +8,13 @@ MessageTableCellWithEditableTextWithMessage::MessageTableCellWithEditableTextWit
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     TextFieldDelegate * textFieldDelegate,
     I18n::Message message) :
-    MessageTableCellWithEditableText(parentResponder, inputEventHandlerDelegate, this, message),
-    ChainedTextFieldDelegate(textFieldDelegate),
-    m_subLabelView(KDFont::SmallFont, (I18n::Message)0, KDContext::k_alignLeft, KDContext::k_alignCenter, Palette::GrayDark) {
+      MessageTableCellWithEditableText(parentResponder, inputEventHandlerDelegate, this, message),
+      ChainedTextFieldDelegate(textFieldDelegate),
+      m_subLabelView(KDFont::SmallFont,
+                     (I18n::Message)0,
+                     KDContext::k_alignLeft,
+                     KDContext::k_alignCenter,
+                     Palette::GrayDark) {
 }
 
 void MessageTableCellWithEditableTextWithMessage::setSubLabelMessage(I18n::Message textBody) {
@@ -34,9 +38,12 @@ bool MessageTableCellWithEditableTextWithMessage::textFieldDidFinishEditing(
     TextField * textField,
     const char * text,
     Ion::Events::Event event) {
-  // Relayout to show sublabel
-  layoutSubviews();
-  return ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
+  bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
+  if (success) {
+    // Relayout to show sublabel
+    layoutSubviews();
+  }
+  return success;
 }
 
 bool MessageTableCellWithEditableTextWithMessage::textFieldDidAbortEditing(TextField * textField) {

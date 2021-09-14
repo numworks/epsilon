@@ -23,8 +23,6 @@ public:
   virtual KDCoordinate mainDirectionCoordinate(KDPoint p) const = 0;
   virtual KDCoordinate secondaryDirectionLength(KDSize p) const = 0;
   virtual KDCoordinate mainDirectionLength(KDSize p) const = 0;
-  virtual KDSize reorderedSize(KDCoordinate mainDirection,
-                               KDCoordinate secondaryDirection) const = 0;
 
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
@@ -34,10 +32,13 @@ protected:
   KDCoordinate m_mainDirectionMargin;
 
 private:
+  virtual KDSize sizeFromMainAndSecondaryDirection(KDCoordinate mainDirection,
+                                                   KDCoordinate secondaryDirection) const = 0;
   KDCoordinate secondaryDirectionMargin() const;
   KDCoordinate mainDirectionMargin() const;
-  KDPoint reorderedPoint(KDCoordinate mainDirection, KDCoordinate secondaryDirection) const;
-  KDRect reorderedRect(KDRect rect) const;
+  KDPoint pointFromMainAndSecondaryDirection(KDCoordinate mainDirection,
+                                             KDCoordinate secondaryDirection) const;
+  KDRect rectFromMainAndSecondaryDirection(KDRect rect) const;
 };
 
 /* View that lays out its subviews vertically.*/
@@ -49,7 +50,8 @@ public:
   KDCoordinate mainDirectionCoordinate(KDPoint p) const override { return p.y(); }
   KDCoordinate secondaryDirectionLength(KDSize p) const override { return p.width(); }
   KDCoordinate mainDirectionLength(KDSize p) const override { return p.height(); }
-  KDSize reorderedSize(KDCoordinate mainDirection, KDCoordinate secondaryDirection) const override {
+  KDSize sizeFromMainAndSecondaryDirection(KDCoordinate mainDirection,
+                                           KDCoordinate secondaryDirection) const override {
     return KDSize(secondaryDirection, mainDirection);
   }
 };
@@ -63,7 +65,8 @@ public:
   KDCoordinate mainDirectionCoordinate(KDPoint p) const override { return p.x(); }
   KDCoordinate secondaryDirectionLength(KDSize p) const override { return p.height(); }
   KDCoordinate mainDirectionLength(KDSize p) const override { return p.width(); }
-  KDSize reorderedSize(KDCoordinate mainDirection, KDCoordinate secondaryDirection) const override {
+  KDSize sizeFromMainAndSecondaryDirection(KDCoordinate mainDirection,
+                                           KDCoordinate secondaryDirection) const override {
     return KDSize(mainDirection, secondaryDirection);
   }
 };

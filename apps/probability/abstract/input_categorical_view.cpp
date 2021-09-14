@@ -50,7 +50,10 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
       Responder(parentResponder),
       m_tableViewController(tableViewController),
       m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
-      m_next(this, I18n::Message::Next, buttonDelegate->buttonActionInvocation(), Escher::Palette::WallScreenDark),
+      m_next(this,
+             I18n::Message::Next,
+             buttonDelegate->buttonActionInvocation(),
+             Escher::Palette::WallScreenDark),
       m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
                     &m_significanceCell,
                     &m_next) {
@@ -128,8 +131,9 @@ void InputCategoricalView::highlightCorrectView() {
 KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
   // Pass expected size to VerticalLayout to propagate to TableCells
   ContentView * contentView = const_cast<ContentView *>(&m_contentView);
-  if (contentView->bounds().width() <= 0)
+  if (contentView->bounds().width() <= 0) {
     contentView->setSize(KDSize(bounds().width(), contentView->bounds().height()));
+  }
   KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
   return KDSize(bounds().width() + leftMargin() + rightMargin(), requiredSize.height());
 }

@@ -64,7 +64,7 @@ public:
   virtual float degreeOfFreedom() { return -1; }
   /* Returns the value above/below (depending on the operator) which the probability
    * of landing is inferior to a given significance level. */
-  virtual float zAlpha() = 0;
+  virtual float zAlpha() = 0;  // TODO needed ?
   bool canRejectNull();
 
   // Confidence interval

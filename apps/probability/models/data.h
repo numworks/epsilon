@@ -157,7 +157,6 @@ public:
   Test * testPointer() { return &(statisticData()->m_test); }
   TestType testType() { return statisticData()->m_testType; }
   TestType * testTypePointer() { return &(statisticData()->m_testType); }
-  void setTestType(TestType t) { statisticData()->m_testType = t; }
   CategoricalType categoricalType() { return statisticData()->m_categoricalType; }
   CategoricalType * categoricalTypePointer() { return &statisticData()->m_categoricalType; }
   Statistic * statistic() { return statisticData()->statistic(); }

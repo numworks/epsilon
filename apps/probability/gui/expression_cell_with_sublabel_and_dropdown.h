@@ -1,22 +1,22 @@
-#ifndef APPS_PROBABILITY_GUI_MESSAGE_TABLE_CELL_WITH_SUBLABEL_AND_DROPDOWN_H
-#define APPS_PROBABILITY_GUI_MESSAGE_TABLE_CELL_WITH_SUBLABEL_AND_DROPDOWN_H
+#ifndef APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H
+#define APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H
 
 #include <escher/container.h>
+#include <escher/expression_table_cell_with_message.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
 
 #include "dropdown_view.h"
-#include "layout_cell_with_sub_message.h"
 
 namespace Probability {
 
-class LayoutCellWithSublabelAndDropdown : public LayoutCellWithSubMessage,
-                                          public Escher::Responder {
+class ExpressionCellWithSublabelAndDropdown : public Escher::ExpressionTableCellWithMessage {
 public:
-  LayoutCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
-                                    Escher::ListViewDataSource * listDataSource,
-                                    DropdownCallback * callback = nullptr) :
-      Responder(parentResponder), m_dropdown(this, listDataSource, callback) {}
+  ExpressionCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
+                                        Escher::ListViewDataSource * listDataSource,
+                                        DropdownCallback * callback = nullptr) :
+        ExpressionTableCellWithMessage(parentResponder),
+        m_dropdown(this, listDataSource, callback) {}
   const Escher::View * accessoryView() const override { return &m_dropdown; }
   Dropdown * dropdown() { return &m_dropdown; }
   Escher::Responder * responder() override { return this; }
@@ -31,7 +31,7 @@ public:
   }
   void setHighlighted(bool highlight) override {
     m_dropdown.setHighlighted(highlight);
-    LayoutCellWithSubMessage::setHighlighted(highlight);
+    Escher::ExpressionTableCellWithMessage::setHighlighted(highlight);
   }
   bool shouldAlignLabelAndAccessory() const override { return true; }
 
@@ -41,4 +41,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_MESSAGE_TABLE_CELL_WITH_SUBLABEL_AND_DROPDOWN_H */
+#endif /* APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H */

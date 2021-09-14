@@ -5,7 +5,7 @@
 #include <escher/memoized_list_view_data_source.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "probability/gui/layout_cell_with_buffer_with_message.h"
+#include "probability/gui/expression_cell_with_buffer_with_message.h"
 #include "probability/models/statistic/statistic.h"
 
 namespace Probability {
@@ -30,7 +30,7 @@ private:
   constexpr static int k_buttonCellType = 1;
   constexpr static int k_numberOfReusableCells = 5;
   Statistic * m_statistic;
-  LayoutCellWithBufferWithMessage m_resultCells[k_numberOfReusableCells];
+  ExpressionCellWithBufferWithMessage m_resultCells[k_numberOfReusableCells];
   Shared::ButtonWithSeparator m_next;
 };
 

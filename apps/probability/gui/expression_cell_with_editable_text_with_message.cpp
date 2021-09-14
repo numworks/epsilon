@@ -1,14 +1,14 @@
-#include "layout_cell_with_editable_text_with_message.h"
+#include "expression_cell_with_editable_text_with_message.h"
 
 #include <escher/container.h>
 
 namespace Probability {
 
-LayoutCellWithEditableTextWithMessage::LayoutCellWithEditableTextWithMessage(
+ExpressionCellWithEditableTextWithMessage::ExpressionCellWithEditableTextWithMessage(
     Escher::Responder * parent,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Escher::TextFieldDelegate * textFieldDelegate) :
-      Responder(parent),
+      Escher::ExpressionTableCellWithMessage(parent),
       ChainedTextFieldDelegate(textFieldDelegate),
       m_textField(this,
                   m_textBody,
@@ -21,31 +21,32 @@ LayoutCellWithEditableTextWithMessage::LayoutCellWithEditableTextWithMessage(
   m_textBody[0] = '\0';
 }
 
-void LayoutCellWithEditableTextWithMessage::didBecomeFirstResponder() {
+void ExpressionCellWithEditableTextWithMessage::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_textField);
 }
 
-void LayoutCellWithEditableTextWithMessage::setAccessoryText(const char * text) {
+void ExpressionCellWithEditableTextWithMessage::setAccessoryText(const char * text) {
   m_textField.setText(text);
   layoutSubviews();
 }
 
-void LayoutCellWithEditableTextWithMessage::setHighlighted(bool highlight) {
-  LayoutCellWithSubMessage::setHighlighted(highlight);
+void ExpressionCellWithEditableTextWithMessage::setHighlighted(bool highlight) {
+  Escher::ExpressionTableCellWithMessage::setHighlighted(highlight);
   KDColor color = highlight ? Escher::Palette::Select : backgroundColor();
   m_textField.setBackgroundColor(color);
 }
 
-void LayoutCellWithEditableTextWithMessage::textFieldDidStartEditing(
+void ExpressionCellWithEditableTextWithMessage::textFieldDidStartEditing(
     Escher::TextField * textField) {
   // Relayout to hide sublabel
   layoutSubviews();
   ChainedTextFieldDelegate::textFieldDidStartEditing(textField);
 }
 
-bool LayoutCellWithEditableTextWithMessage::textFieldDidFinishEditing(Escher::TextField * textField,
-                                                                      const char * text,
-                                                                      Ion::Events::Event event) {
+bool ExpressionCellWithEditableTextWithMessage::textFieldDidFinishEditing(
+    Escher::TextField * textField,
+    const char * text,
+    Ion::Events::Event event) {
   bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
   if (success) {
     // Relayout to show sublabel
@@ -54,14 +55,14 @@ bool LayoutCellWithEditableTextWithMessage::textFieldDidFinishEditing(Escher::Te
   return success;
 }
 
-bool LayoutCellWithEditableTextWithMessage::textFieldDidAbortEditing(
+bool ExpressionCellWithEditableTextWithMessage::textFieldDidAbortEditing(
     Escher::TextField * textField) {
   // Relayout to show sublabel
   layoutSubviews();
   return ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);
 }
 
-void LayoutCellWithEditableTextWithMessage::setDelegates(
+void ExpressionCellWithEditableTextWithMessage::setDelegates(
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Escher::TextFieldDelegate * textFieldDelegate) {
   m_textField.setInputEventHandlerDelegate(inputEventHandlerDelegate);

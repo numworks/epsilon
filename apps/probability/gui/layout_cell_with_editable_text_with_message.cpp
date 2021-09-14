@@ -8,16 +8,16 @@ LayoutCellWithEditableTextWithMessage::LayoutCellWithEditableTextWithMessage(
     Escher::Responder * parent,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Escher::TextFieldDelegate * textFieldDelegate) :
-    Responder(parent),
-    ChainedTextFieldDelegate(textFieldDelegate),
-    m_textField(this,
-                m_textBody,
-                sizeof(m_textBody),
-                Escher::TextField::maxBufferSize(),
-                inputEventHandlerDelegate,
-                this,
-                KDFont::LargeFont,
-                1.) {
+      Responder(parent),
+      ChainedTextFieldDelegate(textFieldDelegate),
+      m_textField(this,
+                  m_textBody,
+                  sizeof(m_textBody),
+                  Escher::TextField::maxBufferSize(),
+                  inputEventHandlerDelegate,
+                  this,
+                  KDFont::LargeFont,
+                  1.) {
   m_textBody[0] = '\0';
 }
 
@@ -46,9 +46,12 @@ void LayoutCellWithEditableTextWithMessage::textFieldDidStartEditing(
 bool LayoutCellWithEditableTextWithMessage::textFieldDidFinishEditing(Escher::TextField * textField,
                                                                       const char * text,
                                                                       Ion::Events::Event event) {
-  // Relayout to show sublabel
-  layoutSubviews();
-  return ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
+  bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
+  if (success) {
+    // Relayout to show sublabel
+    layoutSubviews();
+  }
+  return success;
 }
 
 bool LayoutCellWithEditableTextWithMessage::textFieldDidAbortEditing(

@@ -35,11 +35,11 @@
 namespace Poincare {
 
 /* The values must be in the order defined in poincare/preferences:
- * Degrees / Radians / Gradians */
+ * Radians / Degrees / Gradians */
 
 static constexpr int s_piDivisor[] {
-  180,
   1,
+  180,
   200
 };
 
@@ -56,11 +56,11 @@ Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUni
 }
 
 double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
-  if (angleUnit == Preferences::AngleUnit::Degree) {
-    return 180.0;
-  }
   if (angleUnit == Preferences::AngleUnit::Radian) {
     return M_PI;
+  }
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    return 180.0;
   }
   assert(angleUnit == Preferences::AngleUnit::Gradian);
   return 200.0;

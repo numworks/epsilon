@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "../shared/global_context.h"
 #include "app.h"
+#include <string.h>
 
 using namespace Poincare;
 using namespace Escher;
@@ -96,7 +97,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
       int functionNameLength = defaultName(buffer, k_maxSizeOfNamedModel);
       size_t constantNameLength = 1; // 'f', no null-terminating char
       assert(strlen(k_models[rowIndex] + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
-      strcpy(buffer + functionNameLength, k_models[rowIndex] + constantNameLength);
+      strlcpy(buffer + functionNameLength, k_models[rowIndex] + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
       success = m_listController->editSelectedRecordWithText(buffer);
     }
     assert(success);

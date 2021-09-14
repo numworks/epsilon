@@ -6,7 +6,7 @@
 
 namespace Probability {
 
-class TextHighlightView : public Escher::HighlightCell {
+class BufferTextHighlightCell : public Escher::HighlightCell {
 public:
   void setText(const char * text) { m_textView.setText(text); }
   Escher::View * subviewAtIndex(int i) override { return &m_textView; }

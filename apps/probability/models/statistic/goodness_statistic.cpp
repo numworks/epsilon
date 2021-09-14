@@ -69,7 +69,7 @@ int GoodnessStatistic::numberOfValuePairs() {
 }
 
 int GoodnessStatistic::locationToTableIndex(int row, int column) {
-  assert((column == 0 || column == 1) && (row >= 0 && row < k_maxNumberOfRows));
+  assert((column == 0 || column == 1) && (row >= 0 && row < k_maxNumberOfRows));
   return 2 * row + column;
 }
 

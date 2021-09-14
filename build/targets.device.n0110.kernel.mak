@@ -5,7 +5,7 @@ HANDY_TARGETS += kernel.A kernel.B
 # stack protector
 SFLAGS += -fstack-protector-strong
 
-kernel_obj = $(call flavored_object_for,$(kernel_src),)
+kernel_obj = $(call flavored_object_for,$(kernel_src),$(MODEL))
 $(BUILD_DIR)/kernel.A.$(EXE): $(kernel_obj)
 $(BUILD_DIR)/kernel.B.$(EXE): $(kernel_obj)
 $(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += $(KERNEL_LDFLAGS)

@@ -104,6 +104,9 @@ void assert_cache_stays_valid(ContinuousFunction::PlotType type, const char * de
 }
 
 QUIZ_CASE(graph_caching) {
+  Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+
   assert_cache_stays_valid(Cartesian, "x");
   assert_cache_stays_valid(Cartesian, "x^2");
   assert_cache_stays_valid(Cartesian, "sin(x)");
@@ -119,6 +122,8 @@ QUIZ_CASE(graph_caching) {
   assert_cache_stays_valid(Polar, "sin(θ)", 2e-4f, 1e-3f);
   assert_cache_stays_valid(Polar, "cos(5θ)", 0.f, 360.f);
   assert_cache_stays_valid(Polar, "cos(5θ)", -1e8f, 1e8f);
+
+  Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
 }
 
 }

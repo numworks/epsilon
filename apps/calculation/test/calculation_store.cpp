@@ -200,6 +200,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
+  Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1/3", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1/0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
@@ -236,6 +239,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("cos(π/2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
   GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
+  Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
 }
 
 void assertMainCalculationOutputIs(const char * input, const char * output, Context * context, CalculationStore * store) {

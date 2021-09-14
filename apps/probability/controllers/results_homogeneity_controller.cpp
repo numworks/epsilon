@@ -9,76 +9,6 @@
 
 using namespace Probability;
 
-HomogeneityResultsView::ContentView::ContentView(Responder * parent,
-                                                 SelectableTableView * table,
-                                                 ButtonDelegate * buttonDelegate) :
-      m_title(KDFont::SmallFont,
-              I18n::Message::HomogeneityResultsTitle,
-              KDContext::k_alignCenter,
-              KDContext::k_alignCenter,
-              Escher::Palette::GrayVeryDark,
-              Escher::Palette::WallScreenDark),
-      m_table(table),
-      m_next(parent,
-             I18n::Message::Next,
-             buttonDelegate->buttonActionInvocation(),
-             KDFont::LargeFont),
-      m_buttonWrapper(&m_next) {
-}
-
-Probability::HomogeneityResultsView::ContentView::ButtonWithHorizontalMargins::
-    ButtonWithHorizontalMargins(Escher::Button * button, KDCoordinate margin) :
-      VerticalLayout(Palette::WallScreenDark), m_button(button) {
-  setMargins(margin, KDCoordinate(0));
-}
-
-Escher::View * Probability::HomogeneityResultsView::ContentView::subviewAtIndex(int i) {
-  switch (i) {
-    case k_indexOfTitle:
-      return &m_title;
-    case k_indexOfTable:
-      return m_table;
-    case k_indexOfButton:
-      return &m_buttonWrapper;
-  }
-  assert(false);
-  return nullptr;
-}
-
-KDPoint Probability::HomogeneityResultsView::ContentView::tableOrigin() {
-  return KDPoint(0, m_title.minimalSizeForOptimalDisplay().height());
-}
-
-KDPoint Probability::HomogeneityResultsView::ContentView::buttonOrigin() {
-  return KDPoint(0, tableOrigin().y() + m_table->minimalSizeForOptimalDisplay().height());
-}
-
-Probability::HomogeneityResultsView::HomogeneityResultsView(Responder * parent,
-                                                            SelectableTableView * table,
-                                                            ButtonDelegate * buttonDelegate) :
-      ScrollView(&m_contentView, &m_scrollDataSource),
-      m_contentView(parent, table, buttonDelegate) {
-  setMargins(Metric::CellTopMargin, 0, Metric::CommonBottomMargin, 0);
-  setBackgroundColor(Palette::WallScreenDark);
-}
-
-KDSize Probability::HomogeneityResultsView::minimalSizeForOptimalDisplay() const {
-  // Pass expected size to VerticalLayout to propagate to TableCells
-  // TODO factorize with InputCategoricalView ..?
-  ContentView * contentView = const_cast<ContentView *>(&m_contentView);
-  if (contentView->bounds().width() <= 0)
-    contentView->setSize(KDSize(bounds().width(), contentView->bounds().height()));
-  KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
-  return KDSize(bounds().width(), requiredSize.height());
-}
-
-void Probability::HomogeneityResultsView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorOrange);
-}
-
-void Probability::HomogeneityResultsView::reload() {
-  layoutSubviews();
-}
 
 ResultsHomogeneityController::ResultsHomogeneityController(
     StackViewController * stackViewController,
@@ -93,9 +23,9 @@ ResultsHomogeneityController::ResultsHomogeneityController(
       m_isTableSelected(true) {
   m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_table.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
-  m_table.setMargins(HomogeneityResultsView::k_topMargin,
+  m_table.setMargins(ResultsHomogeneityView::k_topMargin,
                      Metric::CommonRightMargin,
-                     HomogeneityResultsView::k_topMargin,
+                     ResultsHomogeneityView::k_topMargin,
                      Metric::CommonLeftMargin);
 }
 

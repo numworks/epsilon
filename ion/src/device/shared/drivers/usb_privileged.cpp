@@ -1,5 +1,6 @@
 #include "usb_privileged.h"
-#include <drivers/config/usb.h>
+#include <config/usb.h>
+#include <drivers/usb_pins.h>
 #include <regs/regs.h>
 
 using namespace Ion::Device::Regs;

@@ -7,7 +7,6 @@
 namespace Ion {
 namespace Device {
 namespace Board {
-namespace Config {
 
 /* The bootloader, kernel and userland starts should be aligned to the begining of a sector (to flash them easily).
  * The memory layouts are the following:
@@ -34,7 +33,6 @@ constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
 constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
 constexpr static uint32_t UserlandStackLength = 0x8000; // 32K
 
-}
 }
 }
 }

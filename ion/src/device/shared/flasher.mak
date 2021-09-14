@@ -12,6 +12,7 @@ ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
   board_privileged.cpp \
   board_privileged_n0110.cpp \
+  board_unprotected.cpp \
   display.cpp \
   external_flash.cpp \
   external_flash_command.cpp \

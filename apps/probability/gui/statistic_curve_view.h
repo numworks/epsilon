@@ -4,6 +4,7 @@
 #include <apps/shared/curve_view.h>
 #include <escher/palette.h>
 #include <poincare/coordinate_2D.h>
+#include <poincare/layout.h>
 
 #include "probability/models/statistic/statistic.h"
 
@@ -28,17 +29,19 @@ private:
                        HypothesisParams::ComparisonOperator op,
                        float z) const;
   void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, const char * text) const;
+  void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const;
   void drawZLabelAndZGraduation(KDContext * ctx, float x) const;
   void drawIntervalLabelAndGraduation(KDContext * ctx) const;
+  KDCoordinate drawGraduationAtPosition(KDContext * ctx, float position) const;
 
   void convertFloatToText(float value, char * buffer, int bufferSize) const;
 
   static Poincare::Coordinate2D<float> evaluateTestAtAbscissa(float x,
-                                                             void * model,
-                                                             void * context);
+                                                              void * model,
+                                                              void * context);
   static Poincare::Coordinate2D<float> evaluateIntervalAtAbscissa(float x,
-                                                                 void * model,
-                                                                 void * context);
+                                                                  void * model,
+                                                                  void * context);
   static constexpr KDColor k_backgroundColor = Escher::Palette::WallScreen;
   char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   Statistic * m_statistic;

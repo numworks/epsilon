@@ -111,8 +111,8 @@ void InputController::buttonAction() {
 
 void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index < m_statistic->indexOfThreshold()) {
-    LayoutCellWithEditableTextWithMessage * mCell =
-        static_cast<LayoutCellWithEditableTextWithMessage *>(cell);
+    ExpressionCellWithEditableTextWithMessage * mCell =
+        static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
     mCell->setLayout(m_statistic->paramSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_statistic->paramDescriptionAtIndex(index));
   } else if (index == m_statistic->indexOfThreshold()) {
@@ -156,7 +156,7 @@ bool Probability::InputController::isCellEditing(Escher::HighlightCell * cell, i
         ->textField()
         ->isEditing();
   }
-  return static_cast<LayoutCellWithEditableTextWithMessage *>(cell)->textField()->isEditing();
+  return static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)->textField()->isEditing();
 }
 
 void Probability::InputController::setTextInCell(Escher::HighlightCell * cell,
@@ -165,7 +165,7 @@ void Probability::InputController::setTextInCell(Escher::HighlightCell * cell,
   if (index == m_statistic->indexOfThreshold()) {
     static_cast<MessageTableCellWithSeparator *>(cell)->innerCell()->textField()->setText(text);
   } else {
-    static_cast<LayoutCellWithEditableTextWithMessage *>(cell)->textField()->setText(text);
+    static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)->textField()->setText(text);
   }
 }
 

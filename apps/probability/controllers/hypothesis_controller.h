@@ -12,8 +12,8 @@
 #include "input_controller.h"
 #include "probability/abstract/button_delegate.h"
 #include "probability/gui/comparison_operator_popup_data_source.h"
-#include "probability/gui/layout_cell_with_editable_text_with_message.h"
-#include "probability/gui/message_table_cell_with_sublabel_and_dropdown.h"
+#include "probability/gui/expression_cell_with_editable_text_with_message.h"
+#include "probability/gui/expression_cell_with_sublabel_and_dropdown.h"
 #include "probability/gui/page_controller.h"
 
 using namespace Escher;
@@ -69,8 +69,8 @@ private:
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 
-  LayoutCellWithEditableTextWithMessage m_h0;
-  LayoutCellWithSublabelAndDropdown m_ha;
+  ExpressionCellWithEditableTextWithMessage m_h0;
+  ExpressionCellWithSublabelAndDropdown m_ha;
   Shared::ButtonWithSeparator m_next;
 
   char m_titleBuffer[40];

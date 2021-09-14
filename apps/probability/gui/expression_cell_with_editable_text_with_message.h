@@ -1,20 +1,18 @@
-#ifndef APPS_PROBABILITY_GUI_LAYOUT_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
-#define APPS_PROBABILITY_GUI_LAYOUT_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
+#ifndef APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
+#define APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
 
 #include <escher/chained_text_field_delegate.h>
+#include <escher/expression_table_cell_with_message.h>
 #include <escher/responder.h>
 #include <escher/text_field.h>
 #include <poincare/print_float.h>
 
-#include "layout_cell_with_sub_message.h"
-
 namespace Probability {
 
-class LayoutCellWithEditableTextWithMessage : public LayoutCellWithSubMessage,
-                                              public Escher::Responder,
-                                              public Escher::ChainedTextFieldDelegate {
+class ExpressionCellWithEditableTextWithMessage : public Escher::ExpressionTableCellWithMessage,
+                                                  public Escher::ChainedTextFieldDelegate {
 public:
-  LayoutCellWithEditableTextWithMessage(
+  ExpressionCellWithEditableTextWithMessage(
       Escher::Responder * parent = nullptr,
       Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
       Escher::TextFieldDelegate * textFieldDelegate = nullptr);
@@ -39,7 +37,7 @@ public:
   bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   void setDelegates(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                            Escher::TextFieldDelegate * textFieldDelegate);
+                    Escher::TextFieldDelegate * textFieldDelegate);
 
 private:
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
@@ -48,4 +46,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_LAYOUT_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H */
+#endif /* APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H */

@@ -17,6 +17,9 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
       MemoizedListViewDataSource(),
       m_statistic(statistic),
       m_next(parent, I18n::Message::Next, delegate->buttonActionInvocation()) {
+  for (int i = 0; i < k_numberOfReusableCells; i++) {
+    m_resultCells[i].setParentResponder(parent);
+  }
 }
 
 int ResultsDataSource::numberOfRows() const {
@@ -34,8 +37,8 @@ KDCoordinate ResultsDataSource::cellWidth() {
 
 void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
   if (i < numberOfRows() - 1) {
-    LayoutCellWithBufferWithMessage * messageCell = static_cast<LayoutCellWithBufferWithMessage *>(
-        cell);
+    ExpressionCellWithBufferWithMessage * messageCell =
+        static_cast<ExpressionCellWithBufferWithMessage *>(cell);
     Poincare::Layout message;
     I18n::Message subMessage = I18n::Message::Default;
     float value;
@@ -113,7 +116,7 @@ Escher::HighlightCell * ResultsDataSource::reusableCell(int index, int type) {
 
 int ResultsDataSource::reusableCellCount(int type) {
   if (type == k_resultCellType) {
-    return sizeof(m_resultCells) / sizeof(LayoutCellWithBufferWithMessage);
+    return sizeof(m_resultCells) / sizeof(ExpressionCellWithBufferWithMessage);
   }
   return 1;
 }

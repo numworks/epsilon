@@ -4,7 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
 
-#include "probability/gui/layout_cell_with_editable_text_with_message.h"
+#include "probability/gui/expression_cell_with_editable_text_with_message.h"
 #include "probability/gui/message_table_cell_with_separator.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/statistic/statistic.h"
@@ -49,7 +49,8 @@ private:
 
   constexpr static int k_numberOfTitleSignificantDigit = 3;
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +
-                                           3 * Constants::k_shortFloatNumberOfChars + 2 /* op */ + 10;
+                                           3 * Constants::k_shortFloatNumberOfChars + 2 /* op */ +
+                                           10;
   char m_titleBuffer[k_titleBufferSize];
   Statistic * m_statistic;
   ResultsController * m_resultsController;
@@ -58,7 +59,7 @@ private:
       Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 1;
   constexpr static int k_significanceCellType = 2;
 
-  LayoutCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];
+  ExpressionCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];
   MessageTableCellWithSeparator m_significanceCell;
 };
 

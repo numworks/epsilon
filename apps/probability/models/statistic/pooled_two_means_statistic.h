@@ -10,7 +10,7 @@ public:
   float computeDegreesOfFreedom(float s1, float n1, float s2, float n2) override;
   float computeStandardError(float s1, float n1, float s2, float n2) override;
   /* Pooled estimate of sigma */
-  float _sp(float s1, float n1, float s2, float n2);
+  float computeSP(float s1, float n1, float s2, float n2);
 };
 
 }  // namespace Probability

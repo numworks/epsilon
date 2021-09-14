@@ -1,3 +1,5 @@
+include ion/src/device/shared/usb/Makefile
+
 ion_device_userland_src += $(addprefix ion/src/device/shared/boot/, \
   rt0.cpp \
 )

@@ -1,4 +1,4 @@
-include ion/src/device/n0110/shared/usb/Makefile
+include ion/src/device/shared/usb/Makefile
 
 ion_device_flasher_src += $(addprefix ion/src/device/shared/boot/, \
   isr.c \

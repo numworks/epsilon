@@ -1,18 +1,17 @@
-#ifndef APPS_PROBABILITY_GUI_LAYOUT_CELL_WITH_BUFFER_WITH_MESSAGE_H
-#define APPS_PROBABILITY_GUI_LAYOUT_CELL_WITH_BUFFER_WITH_MESSAGE_H
+#ifndef APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_BUFFER_WITH_MESSAGE_H
+#define APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_BUFFER_WITH_MESSAGE_H
 
 #include <escher/buffer_text_view.h>
-
-#include "layout_cell_with_sub_message.h"
+#include <escher/expression_table_cell_with_message.h>
 
 namespace Probability {
 
-class LayoutCellWithBufferWithMessage : public LayoutCellWithSubMessage {
+class ExpressionCellWithBufferWithMessage : public Escher::ExpressionTableCellWithMessage {
 public:
   const View * accessoryView() const override { return &m_labelView; }
   void setAccessoryText(const char * textBody) { m_labelView.setText(textBody); }
   void setHighlighted(bool highlight) override {
-    LayoutCellWithSubMessage::setHighlighted(highlight);
+    ExpressionTableCellWithMessage::setHighlighted(highlight);
     m_labelView.setBackgroundColor(highlight ? Escher::Palette::Select : backgroundColor());
   }
   bool shouldAlignLabelAndAccessory() const override { return true; }
@@ -24,4 +23,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_LAYOUT_CELL_WITH_BUFFER_WITH_MESSAGE_H */
+#endif /* APPS_PROBABILITY_GUI_EXPRESSION_CELL_WITH_BUFFER_WITH_MESSAGE_H */

@@ -1,7 +1,6 @@
 #include "statistic.h"
 
 #include <assert.h>
-#include <math.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>

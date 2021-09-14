@@ -333,7 +333,6 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
       return true;
     }
     setEditing(true);
-    m_delegate->textFieldDidStartEditing(this);
     return true;
   }
   /* If a move event was not caught before, we handle it here to avoid bubbling

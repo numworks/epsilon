@@ -64,6 +64,7 @@ public:
 
   DisplayType displayType() const { return m_displayType; }
   void setDisplayType(DisplayType type) { m_displayType = type; }
+  void setFont(const KDFont * font) { m_font = font; }
 
 protected:
   // LayoutNode
@@ -92,6 +93,8 @@ public:
   static CodePointLayout Builder(CodePoint c, const KDFont * font = KDFont::LargeFont);
   const KDFont * font() const { return const_cast<CodePointLayout *>(this)->node()->font(); }
   CodePoint codePoint() const { return const_cast<CodePointLayout *>(this)->node()->codePoint(); }
+  void setFont(const KDFont * font) { node()->setFont(font); }
+
 private:
   using Layout::node;
   CodePointLayoutNode * node() { return static_cast<CodePointLayoutNode *>(Layout::node()); }

@@ -51,6 +51,9 @@ int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
   if (i == 0) {
     return k_typeOfRowHeader;
   }
+  assert(m_innerDataSource->typeAtLocation(i - 1, j - 1) != k_typeOfTopLeftCell &&
+         m_innerDataSource->typeAtLocation(i - 1, j - 1) != k_typeOfColumnHeader &&
+         m_innerDataSource->typeAtLocation(i - 1, j - 1) != k_typeOfRowHeader);
   return m_innerDataSource->typeAtLocation(i - 1, j - 1);
 }
 

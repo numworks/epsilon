@@ -82,7 +82,7 @@ void CurveParameterController::viewWillAppear() {
 
 bool CurveParameterController::shouldDisplayCalculationAndDerivative() const {
   Shared::ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
-  return f->isAlongX();
+  return f->isAlongX() && f->isActiveInTable();
 }
 
 int CurveParameterController::cellIndex(int visibleCellIndex) const {

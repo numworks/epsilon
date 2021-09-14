@@ -33,8 +33,8 @@ public:
     Polar = 2
   };
   enum class AngleUnit : uint8_t {
-    Degree = 0,
-    Radian = 1,
+    Radian = 0,
+    Degree = 1,
     Gradian = 2
   };
   enum class UnitFormat : uint8_t {

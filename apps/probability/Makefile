@@ -81,6 +81,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   layout_cell_with_sub_message.cpp \
   legend_view.cpp \
   message_table_cell_with_separator.cpp \
+  results_homogeneity_view.cpp \
   selectable_table_view_with_background.cpp \
   statistic_curve_view.cpp \
   statistic_graph_view.cpp \

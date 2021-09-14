@@ -7,7 +7,7 @@ namespace Probability {
 
 void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell,
                                                                 int index) {
-  TextHighlightView * bufferCell = static_cast<TextHighlightView *>(cell);
+  BufferTextHighlightCell * bufferCell = static_cast<BufferTextHighlightCell *>(cell);
 
   constexpr int firstParamBufferSize = Constants::k_shortBufferSize;
   char firstParamBuffer[firstParamBufferSize];

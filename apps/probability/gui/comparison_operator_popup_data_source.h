@@ -3,9 +3,9 @@
 
 #include <escher/list_view_data_source.h>
 
+#include "buffer_text_highlight_cell.h"
 #include "probability/constants.h"
 #include "probability/models/hypothesis_params.h"
-#include "text_highlight_view.h"
 
 namespace Probability {
 
@@ -19,7 +19,7 @@ public:
     return 0;
   }
   int reusableCellCount(int type) override { return k_numberOfOperators; }
-  TextHighlightView * reusableCell(int i, int type) override { return &m_cells[i]; }
+  BufferTextHighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
 private:
@@ -27,7 +27,7 @@ private:
                                           Constants::k_shortFloatNumberOfChars /* float */ +
                                           1 /* \0 */;
   constexpr static int k_numberOfOperators = 3;
-  TextHighlightView m_cells[k_numberOfOperators];
+  BufferTextHighlightCell m_cells[k_numberOfOperators];
   HypothesisParams * m_hypothesisParams;
 };
 

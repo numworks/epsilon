@@ -1,6 +1,6 @@
 #include "dfu_interface.h"
 #include <string.h>
-#include <drivers/config/board_ram.h>
+#include <drivers/board_ram.h>
 #include <drivers/flash_privileged.h>
 #include <ion/timing.h>
 
@@ -230,7 +230,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
 }
 
 void DFUInterface::writeOnMemory() {
-  if (m_writeAddress >= Board::Config::WritableSRAMStartAddress && m_writeAddress + m_largeBufferLength < Board::Config::WritableSRAMEndAddress) {
+  if (m_writeAddress >= Board::writableSRAMStartAddress() && m_writeAddress + m_largeBufferLength < Board::writableSRAMEndAddress()) {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);

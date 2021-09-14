@@ -1,9 +1,8 @@
 #ifndef ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_BOARD_H
 #define ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_BOARD_H
 
-#include <drivers/config/internal_flash.h>
-#include <drivers/config/external_flash.h>
-#include <ion/src/device/shared/drivers/config/board.h>
+#include <config/internal_flash.h>
+#include <config/external_flash.h>
 #include <stdint.h>
 #include <stddef.h>
 

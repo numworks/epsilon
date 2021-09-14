@@ -1,5 +1,5 @@
 #include <ion/usb.h>
-#include <drivers/config/usb.h>
+#include <config/usb.h>
 #include <regs/regs.h>
 
 namespace Ion {

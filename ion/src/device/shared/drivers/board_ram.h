@@ -7,8 +7,8 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-uint32_t writableSRAMStartAdress();
-uint32_t writableSRAMEndAdress();
+uint32_t writableSRAMStartAddress();
+uint32_t writableSRAMEndAddress();
 
 }
 }

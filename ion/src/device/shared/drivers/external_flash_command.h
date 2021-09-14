@@ -19,7 +19,7 @@
  * and 2^7-1 sectors of 64Kb. These sectors are the smallest erasable units. If
  * need be, we can define more sectors to erase even more finely the flash. */
 
-#include <drivers/config/clocks.h>
+#include <config/clocks.h>
 #include <regs/regs.h>
 #include <stddef.h>
 #include <stdint.h>

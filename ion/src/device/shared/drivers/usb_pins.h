@@ -1,8 +1,6 @@
 #ifndef ION_DEVICE_SHARED_CONFIG_USB_H
 #define ION_DEVICE_SHARED_CONFIG_USB_H
 
-#include <drivers/config/board.h>
-#include <drivers/config/internal_flash.h>
 #include <regs/regs.h>
 
 namespace Ion {

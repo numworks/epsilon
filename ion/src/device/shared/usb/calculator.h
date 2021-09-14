@@ -3,7 +3,9 @@
 
 #include <stddef.h>
 #include <assert.h>
-#include <drivers/config/usb.h>
+#include <config/internal_flash.h>
+#include <drivers/usb_descriptor.h>
+#include <drivers/usb_pins.h>
 #include "dfu_interface.h"
 #include "stack/device.h"
 #include "stack/descriptor/bos_descriptor.h"

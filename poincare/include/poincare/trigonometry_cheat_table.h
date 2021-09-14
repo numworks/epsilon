@@ -22,8 +22,8 @@ class TrigonometryCheatTable {
 public:
   constexpr static int k_numberOfEntries = 37;
   enum class Type {
-    AngleInDegrees = 0,
-    AngleInRadians = 1,
+    AngleInRadians = 0,
+    AngleInDegrees = 1,
     AngleInGradians = 2,
     Cosine = 3,
     Sine = 4,
@@ -51,8 +51,8 @@ private:
     };
     // END OF PAIR CLASS
 
-    constexpr Row(Pair angleInDegrees, Pair angleInRadians, Pair angleInGradians, Pair sine, Pair cosine, Pair tangent) :
-      m_pairs{angleInDegrees, angleInRadians, angleInGradians, sine, cosine, tangent} {}
+    constexpr Row(Pair angleInRadians, Pair angleInDegrees, Pair angleInGradians, Pair sine, Pair cosine, Pair tangent) :
+      m_pairs{angleInRadians, angleInDegrees, angleInGradians, sine, cosine, tangent} {}
     float floatForType(Type t) const {
       assert(((int) t) >= 0 && ((int) t) < k_numberOfPairs);
       return m_pairs[(int)t].value();

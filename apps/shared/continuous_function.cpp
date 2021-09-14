@@ -89,6 +89,39 @@ int ContinuousFunction::xDegree(Context * context) const {
   return expressionEquation(context).polynomialDegree(context, k_unknownName);
 }
 
+// Check if a coefficient of y is never null. Compute its sign.
+bool ContinuousFunction::isYCoefficientNonNull(int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * coefficientSign) const {
+  assert(yDeg >= 0);
+  if (coefficientSign) {
+    *coefficientSign = ExpressionNode::Sign::Unknown;
+  }
+  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  int dy = expressionEquation(context).getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  assert(dy >= yDeg);
+  ExpressionNode::NullStatus coefficientNullStatus = coefficients[yDeg].nullStatus(context);
+  if (coefficientNullStatus == ExpressionNode::NullStatus::Null || coefficients[yDeg].polynomialDegree(context, k_unknownName) != 0) {
+    // Coefficient may be null or depends on x (which may be null)
+    // NOTE : We could handle cases where it depends on x but is never null
+    return false;
+  }
+  if (coefficientSign != nullptr) {
+    *coefficientSign = coefficients[yDeg].sign(context);
+  }
+  if (coefficientNullStatus == ExpressionNode::NullStatus::NonNull && (coefficientSign == nullptr || *coefficientSign != ExpressionNode::Sign::Unknown)) {
+    // Coefficient is non null, sign is either known or disregarded.
+    return true;
+  }
+  // Approximate the coefficient, update sign and nullstatus
+  double approximation = coefficients[yDeg].approximateToScalar<double>(context, complexFormat, angleUnit);
+  coefficientNullStatus = approximation != 0. ? ExpressionNode::NullStatus::NonNull : ExpressionNode::NullStatus::Null;
+  if (coefficientSign != nullptr) {
+    *coefficientSign = approximation < 0. ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
+  }
+  return coefficientNullStatus == ExpressionNode::NullStatus::NonNull;
+}
+
 int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
   if (isNamed()) {
     int funcNameSize = SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
@@ -420,7 +453,14 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
 
   int yDeg = yDegree(context);
   if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
-    if (yDeg == 1 || yDeg == 2) {
+    ExpressionNode::Sign YSign;
+    if ((yDeg == 1 || yDeg == 2) && isYCoefficientNonNull(yDeg, context, &YSign) && YSign != ExpressionNode::Sign::Unknown) {
+      if (YSign == ExpressionNode::Sign::Negative) {
+        // Oppose the comparison operator
+        Poincare::ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.m_equationSymbol);
+        m_model.m_equationSymbol = newEquationSymbol;
+        recordData()->setEquationSymbol(newEquationSymbol);
+      }
       return recordData()->setPlotType(PlotType::Inequation);
     } else {
       // TODO Hugo : Handle vertical lines inequations
@@ -434,6 +474,11 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
   }
   if (yDeg == 0 && xDeg == 1) {
     return recordData()->setPlotType(PlotType::VerticalLine);
+  }
+  if (yDeg <= 0 || !isYCoefficientNonNull(yDeg, context)) {
+    /* Any other case where yDeg is null isn't handled.
+     * Same if y's highest degree term depends on x, or may be null. */
+    return recordData()->setPlotType(PlotType::Unhandled);
   }
   if (yDeg == 1 && xDeg == 0) {
     return recordData()->setPlotType(PlotType::HorizontalLine);

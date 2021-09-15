@@ -36,4 +36,4 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
 )
 
 ion_device_bootloader_src += ion/src/device/shared/post_and_hardware_tests
-ion_device_flasher_src += $(ion_device_dfu_src)
+ion_device_bootloader_src += $(ion_device_dfu_src)

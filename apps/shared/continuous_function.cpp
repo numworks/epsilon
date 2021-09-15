@@ -100,6 +100,7 @@ bool ContinuousFunction::isYCoefficientNonNull(int yDeg, Poincare::Context * con
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   int dy = expressionEquation(context).getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   assert(dy >= yDeg);
+  (void) dy; // Silence warnings
   ExpressionNode::NullStatus coefficientNullStatus = coefficients[yDeg].nullStatus(context);
   if (coefficientNullStatus == ExpressionNode::NullStatus::Null || coefficients[yDeg].polynomialDegree(context, k_unknownName) != 0) {
     // Coefficient may be null or depends on x (which may be null)

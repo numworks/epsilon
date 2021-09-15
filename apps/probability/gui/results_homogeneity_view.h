@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_RESULTS_HOMOGENEITY_VIEW_H
-#define APPS_PROBABILITY_GUI_RESULTS_HOMOGENEITY_VIEW_H
+#ifndef PROBABILITY_GUI_RESULTS_HOMOGENEITY_VIEW_H
+#define PROBABILITY_GUI_RESULTS_HOMOGENEITY_VIEW_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/message_text_view.h>
@@ -72,4 +72,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_RESULTS_HOMOGENEITY_VIEW_H */
+#endif /* PROBABILITY_GUI_RESULTS_HOMOGENEITY_VIEW_H */

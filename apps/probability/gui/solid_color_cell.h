@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_SOLID_COLOR_CELL_H
-#define APPS_PROBABILITY_GUI_SOLID_COLOR_CELL_H
+#ifndef PROBABILITY_GUI_SOLID_COLOR_CELL_H
+#define PROBABILITY_GUI_SOLID_COLOR_CELL_H
 
 #include <escher/highlight_cell.h>
 #include <kandinsky/color.h>
@@ -22,4 +22,4 @@ class SolidColorCell : public HighlightCell {
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_SOLID_COLOR_CELL_H */
+#endif /* PROBABILITY_GUI_SOLID_COLOR_CELL_H */

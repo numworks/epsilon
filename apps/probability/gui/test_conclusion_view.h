@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
-#define APPS_PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
+#ifndef PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
+#define PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H
 
 #include <escher/expression_view.h>
 #include <escher/message_text_view.h>
@@ -39,4 +39,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H */
+#endif /* PROBABILITY_GUI_TEST_CONCLUSION_VIEW_H */

@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_MODELS_DATA_ENUMS_H
-#define APPS_PROBABILITY_MODELS_DATA_ENUMS_H
+#ifndef PROBABILITY_MODELS_DATA_ENUMS_H
+#define PROBABILITY_MODELS_DATA_ENUMS_H
 
 namespace Probability {
 namespace Data {
@@ -52,4 +52,4 @@ enum class CategoricalType { Unset, Goodness, Homogeneity };
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_MODELS_DATA_ENUMS_H */
+#endif /* PROBABILITY_MODELS_DATA_ENUMS_H */

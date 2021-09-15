@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_LEGEND_VIEW_H
-#define APPS_PROBABILITY_GUI_LEGEND_VIEW_H
+#ifndef PROBABILITY_GUI_LEGEND_VIEW_H
+#define PROBABILITY_GUI_LEGEND_VIEW_H
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
@@ -41,4 +41,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_LEGEND_VIEW_H */
+#endif /* PROBABILITY_GUI_LEGEND_VIEW_H */

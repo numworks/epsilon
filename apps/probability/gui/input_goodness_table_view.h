@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H
-#define APPS_PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H
+#ifndef PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H
+#define PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
@@ -71,4 +71,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H */
+#endif /* PROBABILITY_GUI_INPUT_GOODNESS_TABLE_VIEW_H */

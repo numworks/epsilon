@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_MODELS_LAW_HELPER_H
-#define APPS_PROBABILITY_MODELS_LAW_HELPER_H
+#ifndef PROBABILITY_MODELS_LAW_HELPER_H
+#define PROBABILITY_MODELS_LAW_HELPER_H
 
 #include <poincare/solver.h>
 
@@ -44,4 +44,4 @@ void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistr
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_MODELS_LAW_HELPER_H */
+#endif /* PROBABILITY_MODELS_LAW_HELPER_H */

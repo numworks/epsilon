@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_ABSTRACT_TABLE_VIEW_CONTROLLER_H
-#define APPS_PROBABILITY_ABSTRACT_TABLE_VIEW_CONTROLLER_H
+#ifndef PROBABILITY_ABSTRACT_TABLE_VIEW_CONTROLLER_H
+#define PROBABILITY_ABSTRACT_TABLE_VIEW_CONTROLLER_H
 
 #include <apps/shared/text_field_delegate.h>
 #include <escher/selectable_table_view.h>
@@ -27,4 +27,4 @@ protected:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_ABSTRACT_TABLE_VIEW_CONTROLLER_H */
+#endif /* PROBABILITY_ABSTRACT_TABLE_VIEW_CONTROLLER_H */

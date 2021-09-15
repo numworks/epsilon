@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_CENTERING_VIEW_H
-#define APPS_PROBABILITY_GUI_CENTERING_VIEW_H
+#ifndef PROBABILITY_GUI_CENTERING_VIEW_H
+#define PROBABILITY_GUI_CENTERING_VIEW_H
 
 #include <escher/view.h>
 #include <escher/palette.h>
@@ -23,4 +23,4 @@ private:
 
 } // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_CENTERING_VIEW_H */
+#endif /* PROBABILITY_GUI_CENTERING_VIEW_H */

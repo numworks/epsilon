@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_TEXT_HIGHLIGHT_VIEW_H
-#define APPS_PROBABILITY_GUI_TEXT_HIGHLIGHT_VIEW_H
+#ifndef PROBABILITY_GUI_TEXT_HIGHLIGHT_VIEW_H
+#define PROBABILITY_GUI_TEXT_HIGHLIGHT_VIEW_H
 
 #include <escher/buffer_text_view.h>
 #include <escher/highlight_cell.h>
@@ -25,4 +25,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_TEXT_HIGHLIGHT_VIEW_H */
+#endif /* PROBABILITY_GUI_TEXT_HIGHLIGHT_VIEW_H */

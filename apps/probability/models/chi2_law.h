@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_MODELS_CHI2_LAW_H
-#define APPS_PROBABILITY_MODELS_CHI2_LAW_H
+#ifndef PROBABILITY_MODELS_CHI2_LAW_H
+#define PROBABILITY_MODELS_CHI2_LAW_H
 
 #include <float.h>
 
@@ -21,4 +21,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_MODELS_CHI2_LAW_H */
+#endif /* PROBABILITY_MODELS_CHI2_LAW_H */

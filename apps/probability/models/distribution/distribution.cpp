@@ -130,7 +130,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
      /* We would like to put this as an assertion, but sometimes we do get
       * false result: we replace them with inf to make the problem obvious to
       * the student. */
-     assert(false);
+     assert(false);  // TODO this assert is used to hunt a case where that happens. If it doesn't, then we can remove this block of code
      return *probability > 0.5 ? INFINITY : -INFINITY;
    }
    return result.x1();

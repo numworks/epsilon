@@ -1,7 +1,7 @@
 #include "one_mean_z_statistic.h"
 
 #include <poincare/code_point_layout.h>
-#include <poincare/conjugate_layout.h>
+#include <poincare/condensed_conjugate_layout.h>
 
 #include <cmath>
 
@@ -57,7 +57,7 @@ void OneMeanZStatistic::computeInterval() {
 ParameterRepresentation OneMeanZStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X: {
-      Layout x = ConjugateLayout::Builder(CodePointLayout::Builder('x'));
+      Layout x = CondensedConjugateLayout::Builder(CodePointLayout::Builder('x'));
       return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::N: {

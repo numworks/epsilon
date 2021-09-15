@@ -397,8 +397,9 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
           } else {
             m_hasTwoCurves = true;
             Matrix newExpr = Matrix::Builder();
-            newExpr.addChildAtIndexInPlace(root1, 0, 0);
-            newExpr.addChildAtIndexInPlace(root2, 1, 1);
+            // Roots must be ordered so that the first curve is above the second
+            newExpr.addChildAtIndexInPlace(root2, 0, 0);
+            newExpr.addChildAtIndexInPlace(root1, 1, 1);
             newExpr.setDimensions(2, 1);
             m_expression = newExpr;
           }
@@ -572,9 +573,6 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
   Expression derivate = expressionDerivateReduced(context);
   if (hasTwoCurves()) {
       assert(derivate.numberOfChildren() > i);
-      /* TODO Hugo : !!! Ensure the roots are already sorted. It should be
-       * possible once handling the sign of the coefficient of y^2.
-       * Currently, derivatives make no sense. */
       assert(derivate.type() == Poincare::ExpressionNode::Type::Dependency);
       derivate = derivate.childAtIndex(0);
       derivate = derivate.childAtIndex(i);
@@ -826,13 +824,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
   if (type != PlotType::Parametric) {
     if (hasTwoCurves()) {
       assert(e.numberOfChildren() > i);
-      /* TODO Hugo : Ensure the roots are already sorted. It should be possible
-       * once handling the sign of the coefficient of y^2. */
-      if (i == 0) {
-        return Coordinate2D<T>(t, std::max(PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
-      } else {
-        return Coordinate2D<T>(t, std::min(PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context), PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context)));
-      }
+      return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(i), unknown, t, context));
     } else {
       assert(i == 0);
     }

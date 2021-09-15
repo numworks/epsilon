@@ -51,10 +51,18 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
     *root2 = Undefined::Builder();
     multipleRoot = true;
   } else {
-    *root1 = Division::Builder(
+    // Grapher relies on the order here to properly navigate implicit curves.
+    int offset = 0;
+    ExpressionNode::Sign aSign = a.sign(context);
+    if (aSign != ExpressionNode::Sign::Positive && (aSign == ExpressionNode::Sign::Negative || a.approximateToScalar<double>(context, complexFormat, angleUnit) < 0.)) {
+      // Coefficient a is negative, swap root1 and root 2 to preseverve order.
+      offset = 1;
+    }
+    Expression * roots[2] = {root1, root2};
+    *roots[offset%2] = Division::Builder(
         Subtraction::Builder(Opposite::Builder(b.clone()), SquareRoot::Builder(delta->clone())),
         Multiplication::Builder(Rational::Builder(2), a.clone()));
-    *root2 = Division::Builder(
+    *roots[(1+offset)%2] = Division::Builder(
         Addition::Builder(Opposite::Builder(b.clone()), SquareRoot::Builder(delta->clone())),
         Multiplication::Builder(Rational::Builder(2), a.clone()));
   }

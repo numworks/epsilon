@@ -8,6 +8,7 @@
 #include "additional_outputs/complex_list_controller.h"
 #include "additional_outputs/integer_list_controller.h"
 #include "additional_outputs/rational_list_controller.h"
+#include "additional_outputs/second_degree_list_controller.h"
 #include "additional_outputs/trigonometry_list_controller.h"
 #include "additional_outputs/unit_list_controller.h"
 #include "additional_outputs/matrix_list_controller.h"
@@ -47,6 +48,7 @@ private:
   ComplexListController m_complexController;
   IntegerListController m_integerController;
   RationalListController m_rationalController;
+  SecondDegreeListController m_secondDegreeController;
   TrigonometryListController m_trigonometryController;
   UnitListController m_unitController;
   MatrixListController m_matrixController;

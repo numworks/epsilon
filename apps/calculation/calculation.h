@@ -39,6 +39,7 @@ public:
     None = 0,
     Integer,
     Rational,
+    SecondDegree,
     Trigonometry,
     Unit,
     Matrix,

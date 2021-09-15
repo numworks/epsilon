@@ -8,6 +8,7 @@
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
 #include <poincare/unreal.h>
+#include <poincare/symbol_abstract.h>
 #include <string.h>
 #include <cmath>
 #include <algorithm>
@@ -271,6 +272,9 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   }
   if (o.type() == ExpressionNode::Type::Matrix) {
     return AdditionalInformationType::Matrix;
+  }
+  if (o.polynomialDegree(context, "x") == 2) {
+    return AdditionalInformationType::SecondDegree;
   }
   return AdditionalInformationType::None;
 }

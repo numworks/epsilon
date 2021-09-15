@@ -54,7 +54,7 @@ Also, you can change the number of processes that run in parallel during the bui
 
 ```bash
 git clone --recursive https://github.com/Lauryy06/Upsilon.git
-cd Omega
+cd Upsilon
 git checkout omega-master
 make clean
 make OMEGA_USERNAME="{Your name, max 15 characters}" -j4
@@ -73,7 +73,7 @@ These can be used to distribute Upsilon (so that it can be flashed by anyone wit
 
 ```bash
 git clone --recursive https://github.com/Lauryy06/Upsilon.git
-cd Omega
+cd Upsilon
 git checkout omega-master
 make clean
 make MODEL=n0100 OMEGA_USERNAME="" -j8

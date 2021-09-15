@@ -11,7 +11,7 @@ class App;
 
 class GraphControllerHelper {
 protected:
-  bool privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed = 1, int indexFunctionSelectedByCursor2 = 0);
+  bool privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed = 1, int secondaryCurveIndex = 0);
   void reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record);
   virtual BannerView * bannerView() = 0;
 private:

@@ -45,20 +45,21 @@ protected:
   virtual ContinuousFunctionStore * functionStore() const;
 
   // Closest vertical curve helper
-  virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
-    return closestCurveIndexVertically(goingUp, currentSelectedCurve, context);
+  virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSecondaryCurveIndex, int * secondaryCurveIndex) const {
+    return closestCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSecondaryCurveIndex, secondaryCurveIndex);
   }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   int selectedCurveRelativePosition() const override { return *m_indexFunctionSelectedByCursor; }
-  Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;
+  Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int secondaryCurveIndex = 0) const override;
   int numberOfCurves() const override;
+  bool hasTwoCurves(int curveIndex) const override;
   void initCursorParameters() override;
   bool cursorMatchesModel() override;
   CurveView * curveView() override;
 
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
   // TODO Hugo : Improve this workaround
-  int m_indexFunctionSelectedByCursor2;
+  int m_selectedSecondaryCurveIndex;
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;

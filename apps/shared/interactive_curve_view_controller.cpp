@@ -177,8 +177,8 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
-
-  Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), floatBody, textFieldDelegateApp()->localContext());
+  // TODO Hugo : Find and apply relevant secondary index
+  Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), floatBody, textFieldDelegateApp()->localContext(), 0);
   m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
   reloadBannerView();
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
@@ -213,60 +213,84 @@ bool InteractiveCurveViewController::isCursorVisible() {
         && y <= range->yMax() - cursorTopMarginRatio() * yRange));
 }
 
-int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
+int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSecondaryCurveIndex, int * secondaryCurveIndex) const {
   double x = m_cursor->x();
   double y = m_cursor->y();
   if (std::isnan(y)) {
     y = goingUp ? -INFINITY : INFINITY;
   }
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
+  bool currentCurveHasSecondaryCurves = hasTwoCurves(currentCurveIndex);
   int nextCurveIndex = -1;
+  int nextSecondaryCurveIndex = 0;
   int curvesCount = numberOfCurves();
   for (int i = 0; i < curvesCount; i++) {
-    if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
+    // Checking secondary curves if there are
+    int startSecondaryIndex = 0;
+    int totalSecondaryIndex = 1;
+    if (currentCurveHasSecondaryCurves && currentCurveIndex == i) {
+      // Check for the remaining secondary curve only
+      startSecondaryIndex = 1 - currentSecondaryCurveIndex;
+      totalSecondaryIndex = startSecondaryIndex + 1;
+    } else if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
+      // Nothing to check for
       continue;
+    } else if (hasTwoCurves(i)) {
+        totalSecondaryIndex = 2;
     }
-    double newY = xyValues(i, x, context).x2();
-    if (!suitableYValue(newY)) {
-      continue;
-    }
-    bool isNextCurve = false;
-    /* Choosing the closest vertical curve is quite complex because we need to
-     * take care of curves that have the same value at the current x.
-     * When moving up, if several curves have the same value y1, we choose the
-     * curve:
-     * - Of index lower than the current curve index if the current curve has
-     *   the value y1 at the current x.
-     * - Of highest index possible.
-     * When moving down, if several curves have the same value y1, we choose the
-     * curve:
-     * - Of index higher than the current curve index if the current curve has
-     *   the value y1 at the current x.
-     * - Of lowest index possible. */
-    if (goingUp) {
-      if (newY > y && newY < nextY) {
-        isNextCurve = true;
-      } else if (newY == nextY) {
-        assert(i > nextCurveIndex);
-        if (newY != y || currentCurveIndex < 0 || i < currentCurveIndex) {
+    int currentIndexScore = 2*currentCurveIndex + currentSecondaryCurveIndex;
+    int nextIndexScore = 2*nextCurveIndex + nextSecondaryCurveIndex;
+    for (int iSecondary = startSecondaryIndex; iSecondary < totalSecondaryIndex; iSecondary++) {
+      double newY = xyValues(i, x, context, iSecondary).x2();
+      if (!suitableYValue(newY)) {
+        continue;
+      }
+      bool isNextCurve = false;
+      /* Choosing the closest vertical curve is quite complex because we need to
+       * take care of curves that have the same value at the current x.
+       * When moving up, if several curves have the same value y1, we choose the
+       * curve:
+       * - Of index score lower than the current curve index score if the
+       *   current curve has the value y1 at the current x.
+       * - Of highest index score possible.
+       * When moving down, if several curves have the same value y1, we choose
+       * the curve:
+       * - Of index score higher than the current curve index score if the
+       *   current curve has the value y1 at the current x.
+       * - Of lowest index score possible.
+       * Index score is computed so that both primary and secondary curve (with
+       * a lesser weight) indexes are taken into account. */
+      int newIndexScore = 2*i + iSecondary;
+      if (goingUp) {
+        if (newY > y && newY < nextY) {
+          isNextCurve = true;
+        } else if (newY == nextY) {
+          assert(newIndexScore > nextIndexScore);
+          if (newY != y || currentIndexScore < 0 || newIndexScore < currentIndexScore) {
+            isNextCurve = true;
+          }
+        } else if (newY == y && newIndexScore < currentIndexScore) {
           isNextCurve = true;
         }
-      } else if (newY == y && i < currentCurveIndex) {
-        isNextCurve = true;
+      } else {
+        if (newY < y && newY > nextY) {
+          isNextCurve = true;
+        } else if (newY == nextY) {
+          assert(newIndexScore > nextIndexScore);
+        } else if (newY == y && newIndexScore > currentIndexScore) {
+          isNextCurve = true;
+        }
       }
-    } else {
-      if (newY < y && newY > nextY) {
-        isNextCurve = true;
-      } else if (newY == nextY) {
-        assert(i > nextCurveIndex);
-      } else if (newY == y && i > currentCurveIndex) {
-        isNextCurve = true;
+      if (isNextCurve) {
+        nextY = newY;
+        nextCurveIndex = i;
+        nextSecondaryCurveIndex = iSecondary;
+        nextIndexScore = 2*nextCurveIndex + nextSecondaryCurveIndex;
       }
     }
-    if (isNextCurve) {
-      nextY = newY;
-      nextCurveIndex = i;
-    }
+  }
+  if (secondaryCurveIndex) {
+    *secondaryCurveIndex = nextSecondaryCurveIndex;
   }
   return nextCurveIndex;
 }

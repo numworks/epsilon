@@ -2,6 +2,7 @@
 #define REGS_OTG_H
 
 #include "register.h"
+#include <config/otg.h>
 
 namespace Ion {
 namespace Device {
@@ -21,6 +22,7 @@ public:
 
   class GUSBCFG : public Register32 {
   public:
+    using Register32::Register32;
     REGS_BOOL_FIELD(PHYSEL, 6);
     REGS_FIELD(TRDT, uint8_t, 13, 10);
     REGS_BOOL_FIELD(FDMOD, 30);
@@ -62,7 +64,7 @@ public:
   class GRXSTSP : public Register32 {
   public:
     using Register32::Register32;
-    enum class PKTSTS {
+    enum class PKTSTS : uint8_t {
       GlobalOutNAK = 1,
       OutReceived = 2,
       OutTransferCompleted = 3, // After each Out Transaction
@@ -93,7 +95,7 @@ public:
 
   class DCFG : public Register32 {
   public:
-    enum class DSPD {
+    enum class DSPD : uint8_t {
       FullSpeed = 3,
     };
     void setDSPD(DSPD s) volatile { setBitRange(1, 0, (uint8_t)s); }
@@ -118,14 +120,21 @@ public:
 
   class DIEPCTL0 : public Register32 {
   public:
-    enum class MPSIZ {
+    using Register32::Register32;
+#if REGS_CONFIG_OTG_LARGE_MPSIZ
+    enum class MPSIZ : uint16_t {
+      Size64 = 64,
+    };
+    REGS_TYPE_FIELD(MPSIZ, 10, 0);
+#else
+    enum class MPSIZ : uint8_t {
       Size64 = 0,
       Size32 = 1,
       Size16 = 2,
       Size8 = 3
     };
-    using Register32::Register32;
-    void setMPSIZ(MPSIZ s) volatile { setBitRange(1, 0, (uint8_t)s); }
+    REGS_TYPE_FIELD(MPSIZ, 1, 0);
+#endif
     REGS_BOOL_FIELD(STALL, 21);
     REGS_FIELD(TXFNUM, uint8_t, 25, 22);
     REGS_BOOL_FIELD(CNAK, 26);

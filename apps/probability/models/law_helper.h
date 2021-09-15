@@ -19,11 +19,11 @@ void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistr
   constexpr static int k_maxNumberOfIterations = 308;  // std::log10(DBL_MAX)
 
   xmin = 0, xmax = 10;
-  T sign = cumulativeDistributionEvaluation(0, context, auxiliary) < 0 ? 1 : -1;
+  T signOfRoot = cumulativeDistributionEvaluation(0, context, auxiliary) < 0 ? 1 : -1;
   int iteration = 0;
 
   // We check if xmax if after the root, and otherwise multiply it by 10
-  while ((sign * cumulativeDistributionEvaluation(sign * xmax, context, auxiliary) < 0) &&
+  while ((signOfRoot * cumulativeDistributionEvaluation(signOfRoot * xmax, context, auxiliary) < 0) &&
          (iteration < k_maxNumberOfIterations)) {
     xmin = xmax;
     xmax *= 10;
@@ -35,7 +35,7 @@ void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistr
 
   assert(iteration != k_maxNumberOfIterations);
 
-  if (sign < 0) {
+  if (signOfRoot < 0) {
     double temp = -xmin;
     xmin = -xmax;
     xmax = temp;

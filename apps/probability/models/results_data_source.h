@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H
-#define APPS_PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H
+#ifndef PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H
+#define PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/memoized_list_view_data_source.h>
@@ -36,4 +36,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H */
+#endif /* PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H */

@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_CONSTANTS_H
-#define APPS_PROBABILITY_CONSTANTS_H
+#ifndef PROBABILITY_CONSTANTS_H
+#define PROBABILITY_CONSTANTS_H
 
 #include <poincare/print_float.h>
 
@@ -19,4 +19,4 @@ constexpr int k_largeFloatNumberOfChars = k_largeBufferSize - 1;
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_CONSTANTS_H */
+#endif /* PROBABILITY_CONSTANTS_H */

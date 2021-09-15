@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H
-#define APPS_PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H
+#ifndef PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H
+#define PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H
 
 #include <apps/shared/curve_view.h>
 #include <escher/palette.h>
@@ -49,4 +49,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H */
+#endif /* PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H */

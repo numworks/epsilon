@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_TEXT_HELPERS_H
-#define APPS_PROBABILITY_TEXT_HELPERS_H
+#ifndef PROBABILITY_TEXT_HELPERS_H
+#define PROBABILITY_TEXT_HELPERS_H
 
 #include <apps/i18n.h>
 #include <ion/unicode/code_point.h>
@@ -32,4 +32,4 @@ Poincare::Layout setSmallFont(Poincare::Layout layout);
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_TEXT_HELPERS_H */
+#endif /* PROBABILITY_TEXT_HELPERS_H */

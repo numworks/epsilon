@@ -239,8 +239,11 @@ void Conic::centerConic() {
   double sr = std::sin(m_r);
   m_cx = -(h * cr + k * sr);
   m_cy = -(h * (-sr) + k * cr);
-  assert(m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
-         ((m_a * m_c == 0.0) == (m_f == 0.0)));
+  if (!(m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
+      ((m_a * m_c == 0.0) == (m_f == 0.0)))) {
+    m_type = Type::Undefined;
+    return;
+  }
 }
 
 void Conic::canonize() {
@@ -249,6 +252,9 @@ void Conic::canonize() {
   // - !(a and c positive) and f positive
   // Canonize the equation by rotating and centering it
   centerConic();
+  if (m_type == Type::Undefined) {
+    return;
+  }
   /* Equation should be in either of these canonic forms :
    * - Circle, Ellipse, Hyperbola : Ax^2 + Cy^2 = 1, A > 0 and 0 < C or C >= A
    * - Parabola                   : x^2 + Ey = 0

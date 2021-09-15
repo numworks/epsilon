@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_HELPERS_H
-#define APPS_PROBABILITY_HELPERS_H
+#ifndef PROBABILITY_HELPERS_H
+#define PROBABILITY_HELPERS_H
 
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -23,4 +23,4 @@ constexpr static int arrayMax(const int (&data)[N]) {
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_HELPERS_H */
+#endif /* PROBABILITY_HELPERS_H */

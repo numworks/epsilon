@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_SUBAPP_CELL_H
-#define APPS_PROBABILITY_GUI_SUBAPP_CELL_H
+#ifndef PROBABILITY_GUI_SUBAPP_CELL_H
+#define PROBABILITY_GUI_SUBAPP_CELL_H
 
 #include <escher/bordered.h>
 #include <escher/chevron_view.h>
@@ -37,4 +37,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_SUBAPP_CELL_H */
+#endif /* PROBABILITY_GUI_SUBAPP_CELL_H */

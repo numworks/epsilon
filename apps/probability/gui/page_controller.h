@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H
-#define APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H
+#ifndef PROBABILITY_GUI_PAGE_CONTROLLER_H
+#define PROBABILITY_GUI_PAGE_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/selectable_list_view_controller.h>
@@ -59,4 +59,4 @@ public:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_PAGE_CONTROLLER_H */
+#endif /* PROBABILITY_GUI_PAGE_CONTROLLER_H */

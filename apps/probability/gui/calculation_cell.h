@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_CALCULATION_CELL_H
-#define APPS_PROBABILITY_GUI_CALCULATION_CELL_H
+#ifndef PROBABILITY_GUI_CALCULATION_CELL_H
+#define PROBABILITY_GUI_CALCULATION_CELL_H
 
 #include <escher/editable_text_cell.h>
 #include <escher/highlight_cell.h>
@@ -37,4 +37,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_CALCULATION_CELL_H */
+#endif /* PROBABILITY_GUI_CALCULATION_CELL_H */

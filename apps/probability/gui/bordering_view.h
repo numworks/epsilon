@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_BORDERING_VIEW_H
-#define APPS_PROBABILITY_GUI_BORDERING_VIEW_H
+#ifndef PROBABILITY_GUI_BORDERING_VIEW_H
+#define PROBABILITY_GUI_BORDERING_VIEW_H
 
 #include <escher/bordered.h>
 #include <escher/view.h>
@@ -21,4 +21,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_BORDERING_VIEW_H */
+#endif /* PROBABILITY_GUI_BORDERING_VIEW_H */

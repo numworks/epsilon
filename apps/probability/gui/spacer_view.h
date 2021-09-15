@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_SPACER_VIEW_H
-#define APPS_PROBABILITY_GUI_SPACER_VIEW_H
+#ifndef PROBABILITY_GUI_SPACER_VIEW_H
+#define PROBABILITY_GUI_SPACER_VIEW_H
 
 #include "solid_color_cell.h"
 
@@ -17,4 +17,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_SPACER_VIEW_H */
+#endif /* PROBABILITY_GUI_SPACER_VIEW_H */

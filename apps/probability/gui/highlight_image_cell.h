@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_GUI_HIGHLIGHT_IMAGE_CELL_H
-#define APPS_PROBABILITY_GUI_HIGHLIGHT_IMAGE_CELL_H
+#ifndef PROBABILITY_GUI_HIGHLIGHT_IMAGE_CELL_H
+#define PROBABILITY_GUI_HIGHLIGHT_IMAGE_CELL_H
 
 #include <escher/highlight_cell.h>
 #include <escher/transparent_image_view.h>
@@ -26,4 +26,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_GUI_HIGHLIGHT_IMAGE_CELL_H */
+#endif /* PROBABILITY_GUI_HIGHLIGHT_IMAGE_CELL_H */

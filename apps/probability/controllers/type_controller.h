@@ -1,5 +1,5 @@
-#ifndef APPS_PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
-#define APPS_PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
+#ifndef PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
+#define PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
 
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
@@ -81,4 +81,4 @@ private:
 
 }  // namespace Probability
 
-#endif /* APPS_PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H */
+#endif /* PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H */

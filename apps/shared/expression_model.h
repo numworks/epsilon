@@ -20,6 +20,7 @@ public:
   // Setters
   Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, Poincare::Context * context, CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
+  Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Poincare::Context * context, CodePoint symbol = 0);
 
   virtual void tidy() const;
   bool hasValidExpression() { return !m_expression.isUninitialized(); }

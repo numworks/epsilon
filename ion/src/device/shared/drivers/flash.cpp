@@ -1,4 +1,4 @@
-#include <drivers/config/internal_flash.h>
+#include <config/internal_flash.h>
 #include <shared/drivers/flash_privileged.h>
 #include <shared/drivers/flash_unprivileged.h>
 #include <shared/drivers/internal_flash.h>

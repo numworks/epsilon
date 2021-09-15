@@ -1,13 +1,15 @@
+#include <config/board.h>
 #include <drivers/board_unprivileged.h>
-#include <drivers/config/board.h>
+#include <drivers/board_unprivileged_n0110.h>
 #include <drivers/kernel_header.h>
+#include <drivers/ram_layout.h>
 
 namespace Ion {
 namespace Device {
 namespace Board {
 
 KernelHeader * kernelHeader() {
-  return reinterpret_cast<KernelHeader *>((isRunningSlotA() ? Config::SlotAStartAddress : Config::SlotBStartAddress) +  Board::Config::SignedPayloadSize);
+  return reinterpret_cast<KernelHeader *>((isRunningSlotA() ? Config::SlotAStartAddress : Config::SlotBStartAddress) +  Board::SignedPayloadSize);
 }
 
 UserlandHeader * userlandHeader() {

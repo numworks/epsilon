@@ -907,7 +907,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
       setTMax(!isAlongX() ? 2.0*Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit()) : INFINITY);
     }
   }
-  return error;
+  return ExpressionModelHandle::renameRecordIfNeeded(c, context);
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {

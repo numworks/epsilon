@@ -60,11 +60,11 @@ SECTIONS {
   } >SRAM AT> FLASH_USERLAND
 
   .signature : {
-    INCLUDE flash/signature.ld
+    INCLUDE signature.ld
   } >FLASH_USERLAND
 
   .external_apps : {
-    INCLUDE flash/external_apps.ld
+    INCLUDE external_apps.ld
   } >FLASH_USERLAND
 
   .bss : {

@@ -1,10 +1,10 @@
 #include <ion/usb.h>
 #include <string.h>
 #include <assert.h>
+#include <config/board.h>
 #include <drivers/cache.h>
-#include <shared/drivers/config/board.h>
 #include <shared/drivers/board_unprivileged.h>
-#include <shared/drivers/usb.h>
+#include <drivers/usb.h>
 
 extern const void * _process_stack_end;
 extern char _dfu_bootloader_flash_start;

@@ -1,5 +1,5 @@
 #include <ion/external_apps.h>
-#include <shared/drivers/config/board.h>
+#include <config/board.h>
 #include <shared/drivers/usb.h>
 #include <shared/drivers/userland_header.h>
 #include <shared/usb/calculator.h>

@@ -1,7 +1,7 @@
 #include "isr.h"
 #include <shared/boot/rt0.h>
 #include <ion.h>
-#include <shared/drivers/config/board.h>
+#include <config/board.h>
 #include <shared/drivers/usb.h>
 
 extern "C" {

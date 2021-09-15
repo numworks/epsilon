@@ -1,5 +1,5 @@
 #include <shared/drivers/board_unprivileged.h>
-#include <shared/drivers/config/board.h>
+#include <config/board.h>
 
 extern "C" {
 extern char _external_apps_flash_start;

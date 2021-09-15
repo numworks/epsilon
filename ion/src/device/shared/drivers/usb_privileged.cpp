@@ -1,5 +1,5 @@
 #include "usb_privileged.h"
-#include <config/usb.h>
+#include <drivers/usb.h>
 #include <drivers/usb_pins.h>
 #include <regs/regs.h>
 

@@ -1,8 +1,8 @@
 #include <ion/usb.h>
 #include <ion/authentication.h>
 #include <shared/drivers/board_unprivileged.h>
-#include <shared/drivers/usb.h>
-#include <userland/drivers/config/usb.h>
+#include <shared/drivers/board_unprivileged_n0110.h>
+#include <drivers/usb.h>
 #include <userland/drivers/svcall.h>
 
 namespace Ion {

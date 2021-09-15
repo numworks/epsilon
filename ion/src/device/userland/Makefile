@@ -1,10 +1,12 @@
-ion_device_userland_src += $(addprefix ion/src/device/userland/boot, \
+ion_device_userland_src += $(addprefix ion/src/device/userland/boot/, \
   isr.cpp \
   rt0.cpp \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/userland/drivers/, \
   board_n0110.cpp:+n0110 \
+  board_ram_n0100.cpp:+n0100 \
+  board_ram_n0110.cpp:+n0110 \
   clipboard.cpp \
   console_display.cpp:+consoledisplay \
   console_dummy.cpp:-consoledisplay \
@@ -26,8 +28,6 @@ ion_device_userland_svc_src += $(addprefix ion/src/device/userland/drivers/, \
   backlight.cpp \
   battery.cpp \
   board.cpp \
-  board_ram_n0100.cpp:+n0100 \
-  board_ram_n0110.cpp:+n0110 \
   circuit_breaker.cpp \
   crc32.cpp \
   display.cpp \

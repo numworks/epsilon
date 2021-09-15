@@ -372,6 +372,9 @@ const ToolboxMessageTree IonModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromIon, I18n::Message::PythonImportIon, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandIonFunction, I18n::Message::PythonIonFunction, false, I18n::Message::PythonCommandIonFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandIsKeyDown, I18n::Message::PythonIsKeyDown),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBattery, I18n::Message::PythonBattery),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBatteryLevel, I18n::Message::PythonBatteryLevel),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBatteryIscharging, I18n::Message::PythonBatteryIscharging),
   ToolboxMessageTree::Leaf(I18n::Message::IonSelector, I18n::Message::IonSelector)
 };
 
@@ -498,6 +501,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandIsNaN, I18n::Message::PythonIsNaN),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKandinskyFunction, I18n::Message::PythonKandinskyFunction, false, I18n::Message::PythonCommandKandinskyFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandIsKeyDown, I18n::Message::PythonIsKeyDown),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBattery, I18n::Message::PythonBattery),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLdexp, I18n::Message::PythonLdexp),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandLeft, I18n::Message::PythonTurtleLeft),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLength, I18n::Message::PythonLength),

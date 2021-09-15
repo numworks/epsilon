@@ -4,7 +4,10 @@
 #include <cmath>
 #include <apps/settings/main_controller.h>
 #include <poincare/integer.h>
+#include <poincare/number.h>
 #include <ion/storage.h>
+
+#include <poincare/preferences.h>
 
 #define MP_STRINGIFY_HELPER(x) #x
 #define MP_STRINGIFY(x) MP_STRINGIFY_HELPER(x)
@@ -13,6 +16,8 @@
 #error This file expects OMEGA_STATE to be defined
 #endif
 
+
+using namespace Shared;
 namespace Settings {
 
 AboutController::AboutController(Responder * parentResponder) :
@@ -159,11 +164,17 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   } else {
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
     static const char * mpVersion = MICROPY_VERSION_STRING;
+
+    static char batteryLevel[15];
+    int batteryLen = Poincare::Number::FloatNumber(Ion::Battery::voltage()).serialize(batteryLevel, 15, Poincare::Preferences::PrintFloatMode::Decimal, 3);
+    batteryLevel[batteryLen] = 'V';
+
     static const char * messages[] = {
       (const char*) Ion::username(),
       Ion::softwareVersion(),
       Ion::UpsilonVersion(),
       mpVersion,
+      batteryLevel,
       "",
       Ion::serialNumber(),
       Ion::fccId(),

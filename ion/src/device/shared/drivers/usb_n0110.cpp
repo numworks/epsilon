@@ -1,4 +1,3 @@
-#include <config/usb.h>
 #include <drivers/board.h>
 #include <drivers/usb.h>
 #include <drivers/usb_pins.h>

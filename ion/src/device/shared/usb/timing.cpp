@@ -1,5 +1,5 @@
 #include <ion/timing.h>
-#include <shared/drivers/config/timing.h>
+#include <config/timing.h>
 
 namespace Ion {
 namespace Timing {

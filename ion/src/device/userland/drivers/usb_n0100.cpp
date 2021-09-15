@@ -1,6 +1,7 @@
-#include <drivers/config/usb.h>
-#include <kernel/drivers/keyboard.h>
 #include <ion/usb.h>
+#include <drivers/usb.h>
+#include <drivers/usb_pins.h>
+#include <kernel/drivers/keyboard.h>
 
 namespace Ion {
 namespace USB {

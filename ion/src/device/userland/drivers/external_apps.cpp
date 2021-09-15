@@ -1,6 +1,6 @@
 #include <ion/external_apps.h>
 #include <drivers/board.h>
-#include <shared/drivers/config/board.h>
+#include <config/board.h>
 #include <assert.h>
 
 #ifndef EXTERNAL_APPS_API_LEVEL

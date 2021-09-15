@@ -1,5 +1,5 @@
 #include <shared/drivers/flash_unprivileged.h>
-#include <drivers/config/external_flash.h>
+#include <config/external_flash.h>
 #include <assert.h>
 
 namespace Ion {

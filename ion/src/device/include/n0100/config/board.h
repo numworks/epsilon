@@ -2,8 +2,7 @@
 #define ION_DEVICE_N0100_SHARED_DRIVERS_CONFIG_BOARD_H
 
 #include <shared/boot/isr.h>
-#include <drivers/config/internal_flash.h>
-#include <ion/src/device/shared/drivers/config/board.h>
+#include <config/internal_flash.h>
 #include <stdint.h>
 #include <stddef.h>
 

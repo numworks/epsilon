@@ -72,16 +72,43 @@ void GraphController::reloadBannerView() {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, scrollSpeed, m_indexFunctionSelectedByCursor2);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, scrollSpeed, m_selectedSecondaryCurveIndex);
 }
 
-int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
+int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSecondaryCurveIndex, int * secondaryCurveIndex) const {
+  assert(secondaryCurveIndex != nullptr);
   int nbOfActiveFunctions = 0;
   if (!functionStore()->displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
-    return FunctionGraphController::nextCurveIndexVertically(goingUp, currentSelectedCurve, context);
+    return FunctionGraphController::nextCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSecondaryCurveIndex, secondaryCurveIndex);
   }
+  // By default, select first secondary curve
+  *secondaryCurveIndex = 0;
+  if (!goingUp && currentSecondaryCurveIndex == 0) {
+    // Check for secondary curve in current function
+    ExpiringPointer<ContinuousFunction> currentF = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(currentSelectedCurve));
+    if (currentF->hasTwoCurves()) {
+      // Switch to second secondary curve
+      *secondaryCurveIndex = 1;
+      return currentSelectedCurve;
+    }
+  } else if (goingUp && currentSecondaryCurveIndex == 1) {
+    // Switch to first secondary curve
+    return currentSelectedCurve;
+  }
+  // Go to the next function
   int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? -1 : 1);
-  return nextActiveFunctionIndex >= nbOfActiveFunctions ? -1 : nextActiveFunctionIndex;
+  if (nextActiveFunctionIndex >= nbOfActiveFunctions || nextActiveFunctionIndex < 0) {
+    return -1;
+  }
+  if (goingUp) {
+    // Check for secondary curve in next function when going up
+    ExpiringPointer<ContinuousFunction> nextF = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
+    if (nextF->hasTwoCurves()) {
+      // Select second secondary curve
+      *secondaryCurveIndex = 1;
+    }
+  }
+  return nextActiveFunctionIndex;
 }
 
 double GraphController::defaultCursorT(Ion::Storage::Record record) {
@@ -100,6 +127,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
   double xDelta = DBL_MAX;
   double nextY = 0.0;
   double nextT = 0.0;
+  int nextSecondaryCurve = 0;
   for (int i = 0; i < functionsCount; i++) {
     Ion::Storage::Record currentRecord = functionStore()->activeRecordAtIndex(i);
     if (currentRecord == record) {
@@ -124,12 +152,16 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
         double potentialNextTMin = f->tMin();
         double potentialNextTMax = f->tMax();
         double potentialNextT = std::max(potentialNextTMin, std::min(potentialNextTMax, t));
-        Coordinate2D<double> xy = f->evaluateXYAtParameter(potentialNextT, App::app()->localContext(), 0);
-        if (currentXDelta < xDelta || std::abs(xy.x2() - m_cursor->y()) < std::abs(nextY - m_cursor->y())) {
-          nextCurveIndex = i;
-          xDelta = currentXDelta;
-          nextY = xy.x2();
-          nextT = potentialNextT;
+        // If a function has two curves
+        for (int secondaryCurveIndex = 0; secondaryCurveIndex < (f->hasTwoCurves() ? 2 : 1); secondaryCurveIndex++) {
+          Coordinate2D<double> xy = f->evaluateXYAtParameter(potentialNextT, App::app()->localContext(), secondaryCurveIndex);
+          if (currentXDelta < xDelta || std::abs(xy.x2() - m_cursor->y()) < std::abs(nextY - m_cursor->y())) {
+            nextCurveIndex = i;
+            xDelta = currentXDelta;
+            nextY = xy.x2();
+            nextT = potentialNextT;
+            nextSecondaryCurve = secondaryCurveIndex;
+          }
         }
       }
     }
@@ -138,7 +170,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
     return;
   }
   m_cursor->moveTo(nextT, nextT, nextY);
-  m_indexFunctionSelectedByCursor2 = 0;
+  m_selectedSecondaryCurveIndex = nextSecondaryCurve;
   selectFunctionWithCursor(nextCurveIndex);
   return;
 }

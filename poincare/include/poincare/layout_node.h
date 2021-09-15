@@ -27,6 +27,7 @@ public:
     CeilingLayout,
     CodePointLayout,
     CondensedSumLayout,
+    CondensedConjugateLayout,
     ConjugateLayout,
     DerivativeLayout,
     EmptyLayout,

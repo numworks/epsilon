@@ -1,7 +1,7 @@
 #include "one_mean_t_statistic.h"
 
 #include <poincare/code_point_layout.h>
-#include <poincare/conjugate_layout.h>
+#include <poincare/condensed_conjugate_layout.h>
 #include <poincare/horizontal_layout.h>
 
 #include <cmath>
@@ -63,7 +63,7 @@ ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) con
   switch (i) {
     case ParamsOrder::X: {
       Poincare::HorizontalLayout x = Poincare::HorizontalLayout::Builder(
-          ConjugateLayout::Builder(CodePointLayout::Builder('x')));
+          CondensedConjugateLayout::Builder(CodePointLayout::Builder('x')));
       return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::S: {

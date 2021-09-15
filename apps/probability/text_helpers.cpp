@@ -3,7 +3,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
-#include <poincare/conjugate_layout.h>
+#include <poincare/condensed_conjugate_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <stdarg.h>
@@ -160,11 +160,11 @@ template int defaultConvertFloatToText(double value, char buffer[], int bufferSi
 
 Poincare::Layout XOneMinusXTwoLayout() {
   HorizontalLayout x1 = HorizontalLayout::Builder(
-      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
+      CondensedConjugateLayout::Builder(CodePointLayout::Builder('x')),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
                                     VerticalOffsetLayoutNode::Position::Subscript));
   HorizontalLayout x2 = HorizontalLayout::Builder(
-      ConjugateLayout::Builder(CodePointLayout::Builder('x')),
+      CondensedConjugateLayout::Builder(CodePointLayout::Builder('x')),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                     VerticalOffsetLayoutNode::Position::Subscript));
   HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));

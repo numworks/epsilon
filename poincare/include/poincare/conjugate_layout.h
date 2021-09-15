@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ConjugateLayoutNode final : public LayoutNode {
+class ConjugateLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
@@ -33,10 +33,11 @@ protected:
   KDSize computeSize() override;
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
-private:
   constexpr static KDCoordinate k_overlineWidth = 1;
   constexpr static KDCoordinate k_overlineVerticalMargin = 1;
   LayoutNode * childLayout() { return childAtIndex(0); }
+
+private:
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };

@@ -5,12 +5,10 @@
 #include <escher/buffer_text_view.h>
 #include <escher/view.h>
 
-#include "horizontal_or_vertical_layout.h"
-
 namespace Probability {
 
 /* A View displaying the p-value legend for Test graphs */
-class LegendView : public HorizontalLayout {
+class LegendView : public Escher::View {
 public:
   LegendView(const char * label = I18n::translate(I18n::Message::PValue),
              KDColor color = KDColorOrange);

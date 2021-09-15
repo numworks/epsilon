@@ -62,7 +62,7 @@ T Chi2Law::CumulativeDistributiveInverseForProbability(T probability, T k) {
         return CumulativeDistributiveFunctionAtAbscissa<double>(x, args->k) - args->proba;
       };
 
-  double xmin, xmax;
+  double xmin, xmax;  // IncreasingFunctionRoot requires double
   findBoundsForBinarySearch(evaluation, nullptr, &args, xmin, xmax);
 
   Poincare::Coordinate2D<double> result =

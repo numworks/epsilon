@@ -12,7 +12,7 @@ namespace Probability {
 
 class StatisticCurveView : public Shared::CurveView {
 public:
-  StatisticCurveView(Shared::CurveViewRange * range) : Shared::CurveView(range) {}
+  using Shared::CurveView::CurveView;
   void setStatistic(Statistic * statistic) { m_statistic = statistic; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 

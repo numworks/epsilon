@@ -33,7 +33,7 @@ public:
   void reload();
 
 private:
-  /* Lays out a SpacerCell, a title and a table */
+  /* Lays out a title and a table */
   class ContentView : public VerticalLayout {
   public:
     ContentView(Escher::SelectableTableView * table, I18n::Message titleMessage);

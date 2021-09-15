@@ -1,5 +1,7 @@
 #include "legend_view.h"
 
+#include <escher/palette.h>
+
 namespace Probability {
 
 void LegendView::DotView::drawRect(KDContext * ctx, KDRect rect) const {

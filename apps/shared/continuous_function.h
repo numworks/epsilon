@@ -147,6 +147,7 @@ public:
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const;
   // TODO Hugo : Consider cache
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
+  void udpateModel(Poincare::Context * context);
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
   static constexpr char k_ordinateName[2] = "y";

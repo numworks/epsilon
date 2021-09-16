@@ -90,7 +90,7 @@ int ContinuousFunction::xDegree(Context * context) const {
 }
 
 // Check if a coefficient of y is never null. Compute its sign.
-bool ContinuousFunction::isYCoefficientNonNull(int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * coefficientSign) const {
+bool ContinuousFunction::isYCoefficientNonNull(int yDeg, Context * context, Poincare::ExpressionNode::Sign * coefficientSign) const {
   assert(yDeg >= 0);
   if (coefficientSign) {
     *coefficientSign = ExpressionNode::Sign::Unknown;
@@ -786,7 +786,7 @@ size_t ContinuousFunction::Model::expressionSize(const Ion::Storage::Record * re
   return record->value().size-sizeof(RecordDataBuffer);
 }
 
-Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const {
+Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Storage::Record * record, Context * context) const {
   if (m_expressionDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
     if (hasTwoCurves()) {
@@ -896,18 +896,23 @@ Expression ContinuousFunction::sumBetweenBounds(double start, double end, Contex
    * the derivative table. */
 }
 
-Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Poincare::Context * context) {
+Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Context * context) {
   Ion::Storage::Record::ErrorStatus error = ExpressionModelHandle::setContent(c, context);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
-    bool previousAlongXStatus = isAlongX();
-    updatePlotType(Preferences::AngleUnit::Radian, context);
-    if (previousAlongXStatus != isAlongX()) {
-      // Recompute the definition's domain
-      setTMin(!isAlongX() ? 0.0 : -INFINITY);
-      setTMax(!isAlongX() ? 2.0*Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit()) : INFINITY);
-    }
+    udpateModel(context);
+    editableModel()->renameRecordIfNeeded(this, c, context, symbol());
   }
-  return ExpressionModelHandle::renameRecordIfNeeded(c, context);
+  return error;
+}
+
+void ContinuousFunction::udpateModel(Context * context) {
+  bool previousAlongXStatus = isAlongX();
+  updatePlotType(Preferences::AngleUnit::Radian, context);
+  if (previousAlongXStatus != isAlongX()) {
+    // Recompute the definition's domain
+    setTMin(!isAlongX() ? 0.0 : -INFINITY);
+    setTMax(!isAlongX() ? 2.0*Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit()) : INFINITY);
+  }
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
@@ -919,7 +924,7 @@ bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
 }
 
 template <typename T>
-Poincare::Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i) const {
+Poincare::Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * context, int i) const {
   Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context, i);
   PlotType type = plotType();
   if (type != PlotType::Polar) {

@@ -51,11 +51,11 @@ void InputCategoricalController::didBecomeFirstResponder() {
   if (m_statistic->threshold() == -1) {
     // Init significance cell
     m_statistic->initThreshold(App::app()->subapp());
-    constexpr int bufferSize = Constants::k_shortBufferSize;
-    char buffer[bufferSize];
-    defaultConvertFloatToText(m_statistic->threshold(), buffer, bufferSize);
-    m_contentView.setSignificanceCellText(buffer);
   }
+  constexpr int bufferSize = Constants::k_shortBufferSize;
+  char buffer[bufferSize];
+  defaultConvertFloatToText(m_statistic->threshold(), buffer, bufferSize);
+  m_contentView.setSignificanceCellText(buffer);
   Escher::Container::activeApp()->setFirstResponder(&m_contentView);
 }
 

@@ -39,7 +39,7 @@ void GraphController::viewWillAppear() {
 }
 
 bool GraphController::defaultRangeIsNormalized() const {
-  return functionStore()->displaysNonCartesianFunctions();
+  return functionStore()->displaysFunctionsToNormalize();
 }
 
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {

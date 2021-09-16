@@ -19,7 +19,7 @@
 #include <regs/rng.h>
 #include <regs/sdio.h>
 #include <regs/spi.h>
-#include <regs/syscfg_stm32f.h>
+#include <regs/syscfg.h>
 #include <regs/tim.h>
 #include <regs/usart.h>
 

@@ -25,7 +25,13 @@ public:
 
   bool giveAccessoryAllWidth() const override { return true; }
   bool shouldAlignLabelAndAccessory() const override { return true; }
-
+  KDCoordinate accessoryMinimalWidthOverridden() const override {
+    // TODO this is redundant with MessageTableCellWithEditableText
+    return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
+               Poincare::Preferences::ShortNumberOfSignificantDigits + 1) *
+               m_textField.font()->glyphSize().width() +
+           Escher::TextCursorView::k_width;
+  }
   void setAccessoryText(const char * text);
   void setHighlighted(bool highlight) override;
   bool shouldHideSublabel() override { return singleRowMode() && m_textField.isEditing(); }

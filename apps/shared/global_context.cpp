@@ -91,9 +91,9 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
       // Unsupported symbol. Fall back to 'x'
       Expression newSymbol = symbol.clone();
       newSymbol.replaceChildAtIndexInPlace(0, Symbol::Builder('x'));
-      SetExpressionForFunction(finalExpression, static_cast<SymbolAbstract&>(newSymbol), record);
+      setExpressionForFunction(finalExpression, static_cast<SymbolAbstract&>(newSymbol), record);
     } else {
-      SetExpressionForFunction(finalExpression, symbol, record);
+      setExpressionForFunction(finalExpression, symbol, record);
     }
   }
 }
@@ -175,7 +175,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), Ion::Storage::expExtension, expression.addressInPool(), expression.size());
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
+Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
@@ -188,7 +188,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const 
     recordToSet = newModel;
   }
   Poincare::Expression equation = Poincare::Equal::Builder(symbol.clone(), expressionToStore);
-  error = ContinuousFunction(recordToSet).setExpressionContent(equation);
+  ContinuousFunction model = ContinuousFunction(recordToSet);
+  error = model.setExpressionContent(equation);
+  model.udpateModel(this);
   return error;
 }
 

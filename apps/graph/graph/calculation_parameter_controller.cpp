@@ -9,7 +9,7 @@ using namespace Escher;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
   SelectableListViewController(parentResponder),
   m_preimageCell(I18n::Message::Preimage),
   m_record(),

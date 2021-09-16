@@ -10,11 +10,13 @@ using namespace Escher;
 
 namespace Graph {
 
-ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, InputEventHandlerDelegate * inputEventHandlerDelegate) :
+ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
-  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, inputEventHandlerDelegate),
+  Shared::InputEventHandlerDelegate(),
+  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, this),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController),
+  m_functionToolbox(),
   m_parameterColumnSelected(false)
 {}
 
@@ -104,6 +106,12 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);
   myCell->setParameterSelected(m_parameterColumnSelected);
+}
+
+Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
+  // Set sender
+  m_functionToolbox.setSender(textInput);
+  return &m_functionToolbox;
 }
 
 void ListController::addModel() {

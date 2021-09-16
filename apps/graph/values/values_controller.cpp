@@ -13,7 +13,7 @@ namespace Graph {
 
 // Constructors
 
-ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
+ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
   m_functionTitleCells{},

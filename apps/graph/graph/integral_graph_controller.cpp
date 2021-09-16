@@ -13,7 +13,7 @@ using namespace Escher;
 
 namespace Graph {
 
-IntegralGraphController::IntegralGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+IntegralGraphController::IntegralGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   SumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, UCodePointIntegral)
 {
 }

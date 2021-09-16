@@ -457,7 +457,6 @@ constexpr ToolboxMessageTree listsChildren[] = {
 #endif
 
 constexpr ToolboxMessageTree menu[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::Theta, I18n::Message::Theta),
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),

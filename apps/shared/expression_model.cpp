@@ -169,8 +169,13 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::renameRecordIfNeeded(Ion::Sto
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   // TODO Hugo : Factorize this code, using ContinuousFunctionStore::addEmptyModel.
   if (Storage::FullNameHasExtension(record->fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
-    if (!newExpression.isUninitialized() && newExpression.type() == ExpressionNode::Type::Equal && newExpression.childAtIndex(0).type() == ExpressionNode::Type::Function) {
-      // TODO Hugo : verify the symbol as well
+    if (!newExpression.isUninitialized()
+      && Poincare::ComparisonOperator::IsComparisonOperatorType(newExpression.type())
+      && newExpression.childAtIndex(0).type() == ExpressionNode::Type::Function
+      && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('x'))
+        || (newExpression.type() == ExpressionNode::Type::Equal
+          && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('t'))
+            || newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta)))))) {
       Poincare::Expression a = newExpression.childAtIndex(0);
       Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
       error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
@@ -224,7 +229,7 @@ Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, Co
           UTF8Decoder decoder(firstParenthesis);
           decoder.nextCodePoint();
           CodePoint newSymbol = decoder.nextCodePoint();
-          if (newSymbol == CodePoint('x') || newSymbol == CodePoint('t') || newSymbol == CodePoint(UCodePointGreekSmallLetterTheta)) {
+          if (newSymbol == CodePoint('x') || (expressionToStore.type() == Poincare::ExpressionNode::Type::Equal && (newSymbol == CodePoint('t') || newSymbol == CodePoint(UCodePointGreekSmallLetterTheta)))) {
             if (decoder.nextCodePoint() == CodePoint(')')) {
               CodePoint comparisonOperator = decoder.nextCodePoint();
               if (comparisonOperator == CodePoint('=') || comparisonOperator == CodePoint('<') || comparisonOperator == CodePoint('>') || comparisonOperator == CodePoint(UCodePointInferiorEqual) || comparisonOperator == CodePoint(UCodePointSuperiorEqual)) {

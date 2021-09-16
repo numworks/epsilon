@@ -313,12 +313,11 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   }
   assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
   m_equationSymbol = result.type();
-  if (result.childAtIndex(0).type() == ExpressionNode::Type::Function && (
-      result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))
-      || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))
-      || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('t'))
-      )
-    ) {
+  if (result.childAtIndex(0).type() == ExpressionNode::Type::Function
+    && (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))
+      || (result.type() == ExpressionNode::Type::Equal
+        && (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))
+          || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('t')))))) {
     // TODO Hugo : Improve that
     if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))) {
       m_plotType = PlotType::Polar;

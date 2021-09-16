@@ -23,6 +23,7 @@ app_graph_src = $(addprefix apps/graph/,\
   graph/tangent_graph_controller.cpp \
   list/function_cell.cpp \
   list/domain_parameter_controller.cpp \
+  list/function_toolbox.cpp \
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
   list/text_field_function_title_cell.cpp \

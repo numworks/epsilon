@@ -12,7 +12,7 @@ using namespace Escher;
 
 namespace Graph {
 
-ListParameterController::ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, InputEventHandlerDelegate * inputEventHandlerDelegate) :
+ListParameterController::ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
   m_listController(listController),
   m_typeCell(),

@@ -8,7 +8,7 @@ using namespace Escher;
 
 namespace Graph {
 
-DomainParameterController::DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
+DomainParameterController::DomainParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
   FloatParameterController<float>(parentResponder),
   m_domainCells{},
   m_record(),

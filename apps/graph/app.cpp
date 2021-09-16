@@ -56,7 +56,7 @@ bool App::isAcceptableExpression(const Poincare::Expression exp) {
 
 App::App(Snapshot * snapshot) :
   FunctionApp(snapshot, &m_inputViewController),
-  m_listController(&m_listFooter, &m_listHeader, &m_listFooter, this),
+  m_listController(&m_listFooter, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
@@ -69,7 +69,7 @@ App::App(Snapshot * snapshot) :
   m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, &m_valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader),
   m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, this, &m_listController, &m_listController)
+  m_inputViewController(&m_modalViewController, &m_tabViewController, &m_listController, &m_listController, &m_listController)
 {
 }
 

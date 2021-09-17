@@ -1,4 +1,4 @@
-TOOLCHAIN = apple
+TOOLCHAIN ?= apple
 EXE = bin
 
 APPLE_PLATFORM = macos

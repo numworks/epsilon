@@ -148,8 +148,8 @@ I18n::Message ContinuousFunction::functionCategory() const {
   assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
   static const I18n::Message category[k_numberOfPlotTypes] = {
     I18n::Message::PolarType, I18n::Message::ParametricType,I18n::Message::CartesianType,  I18n::Message::LineType, I18n::Message::HorizontalLineType,
-    I18n::Message::VerticalLineType, I18n::Message::InequationType, I18n::Message::ConicsType, I18n::Message::CircleType, I18n::Message::EllipseType,
-    I18n::Message::ParabolaType, I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
+    I18n::Message::VerticalLineType, I18n::Message::InequationType, I18n::Message::CircleType, I18n::Message::EllipseType, I18n::Message::ParabolaType,
+    I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
   };
   return category[static_cast<size_t>(plotType())];
 }
@@ -161,8 +161,8 @@ int ContinuousFunction::detailsTotal() const {
   assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
   static const int total[k_numberOfPlotTypes] = {
     0, 0, 0, 3, 0,
-    0, 0, 0, 3, 6,
-    3, 6, 0, 0, 0,
+    0, 0, 3, 6, 3,
+    6, 0, 0, 0,
   };
   return total[static_cast<size_t>(plotType())];
 }

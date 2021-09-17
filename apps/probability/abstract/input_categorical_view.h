@@ -11,7 +11,6 @@
 #include "probability/abstract/dynamic_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
-#include "probability/gui/spacer_view.h"
 
 namespace Probability {
 
@@ -23,11 +22,11 @@ class InputCategoricalView : public Escher::ScrollView,
                              public Escher::Responder,
                              public DynamicTableViewDataSourceDelegate {
 public:
-  InputCategoricalView(Responder * parentResponder,
+  InputCategoricalView(Escher::Responder * parentResponder,
                        ButtonDelegate * buttonDelegate,
                        TableViewController * tableViewController,
-                       InputEventHandlerDelegate * inputEventHandlerDelegate,
-                       TextFieldDelegate * textFieldDelegate);
+                       Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+                       Escher::TextFieldDelegate * textFieldDelegate);
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -59,33 +58,33 @@ private:
   /* Layout a Table, a cell and a button separated by spacers. */
   class ContentView : public VerticalLayout {
   public:
-    ContentView(SelectableTableView * dataInputTableView,
-                MessageTableCellWithEditableTextWithMessage * significanceCell,
+    ContentView(Escher::SelectableTableView * dataInputTableView,
+                Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
                 Escher::Button * next);
     int numberOfSubviews() const override { return 2 /* Table + InnerVerticalLayout */; }
     Escher::View * subviewAtIndex(int i) override;
-    void setTableView(SelectableTableView * tableView) { m_dataInputTableView = tableView; }
+    void setTableView(Escher::SelectableTableView * tableView) { m_dataInputTableView = tableView; }
 
   private:
     /* Layout cell and button with side margins */
     class InnerVerticalLayout : public VerticalLayout {
     public:
-      InnerVerticalLayout(MessageTableCellWithEditableTextWithMessage * significanceCell,
+      InnerVerticalLayout(Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
                           Escher::Button * next) :
             VerticalLayout(Escher::Palette::WallScreenDark),
             m_significanceCell(significanceCell),
             m_next(next) {
-        setMargins(Metric::CommonRightMargin, 0);
+        setMargins(Escher::Metric::CommonRightMargin, 0);
       };
       Escher::View * subviewAtIndex(int i) override;
       int numberOfSubviews() const override { return 2; }
 
     private:
-      MessageTableCellWithEditableTextWithMessage * m_significanceCell;
+      Escher::MessageTableCellWithEditableTextWithMessage * m_significanceCell;
       Escher::Button * m_next;
     };
 
-    SelectableTableView * m_dataInputTableView;
+    Escher::SelectableTableView * m_dataInputTableView;
     InnerVerticalLayout m_innerView;
   };
 
@@ -95,11 +94,11 @@ private:
   void highlightCorrectView();
 
   TableViewController * m_tableViewController;
-  MessageTableCellWithEditableTextWithMessage m_significanceCell;
+  Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
   Shared::ButtonWithSeparator m_next;
   ContentView m_contentView;
 
-  SelectableTableViewDataSource m_viewSelection;
+  Escher::SelectableTableViewDataSource m_viewSelection;
   Escher::ScrollViewDataSource m_scrollDataSource;
 };
 

@@ -3,7 +3,6 @@
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
-#include "probability/gui/spacer_view.h"
 
 using namespace Probability;
 
@@ -20,8 +19,8 @@ Escher::View * InputCategoricalView::ContentView::InnerVerticalLayout::subviewAt
 }
 
 Probability::InputCategoricalView::ContentView::ContentView(
-    SelectableTableView * dataInputTableView,
-    MessageTableCellWithEditableTextWithMessage * significanceCell,
+    Escher::SelectableTableView * dataInputTableView,
+    Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
     Escher::Button * next) :
       m_dataInputTableView(dataInputTableView), m_innerView(significanceCell, next) {
   significanceCell->setMessage(I18n::Message::GreekAlpha);
@@ -44,8 +43,8 @@ Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {
 InputCategoricalView::InputCategoricalView(Responder * parentResponder,
                                            ButtonDelegate * buttonDelegate,
                                            TableViewController * tableViewController,
-                                           InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                           TextFieldDelegate * textFieldDelegate) :
+                                           Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+                                           Escher::TextFieldDelegate * textFieldDelegate) :
       Escher::ScrollView(&m_contentView, &m_scrollDataSource),
       Responder(parentResponder),
       m_tableViewController(tableViewController),
@@ -57,9 +56,9 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
       m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
                     &m_significanceCell,
                     &m_next) {
-  setTopMargin(Metric::CommonTopMargin);
-  setBottomMargin(Metric::CommonBottomMargin);
-  setBackgroundColor(Palette::WallScreenDark);
+  setTopMargin(Escher::Metric::CommonTopMargin);
+  setBottomMargin(Escher::Metric::CommonBottomMargin);
+  setBackgroundColor(Escher::Palette::WallScreenDark);
 }
 
 void InputCategoricalView::didBecomeFirstResponder() {
@@ -91,7 +90,7 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-Responder * InputCategoricalView::responderForRow(int row) {
+Escher::Responder * InputCategoricalView::responderForRow(int row) {
   switch (m_viewSelection.selectedRow()) {
     case k_indexOfTable:
       return m_tableViewController;
@@ -150,9 +149,9 @@ void Probability::InputCategoricalView::setSignificanceCellText(const char * tex
 
 void Probability::InputCategoricalView::setTableView(TableViewController * tableViewController) {
   m_tableViewController = tableViewController;
-  SelectableTableView * tableView = tableViewController->selectableTableView();
+  Escher::SelectableTableView * tableView = tableViewController->selectableTableView();
   m_contentView.setTableView(tableView);
-  tableView->setMargins(0, Metric::CommonRightMargin, k_marginVertical, Metric::CommonLeftMargin);
+  tableView->setMargins(0, Escher::Metric::CommonRightMargin, k_marginVertical, Escher::Metric::CommonLeftMargin);
   tableView->setBackgroundColor(Escher::Palette::WallScreenDark);
   tableView->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
 }

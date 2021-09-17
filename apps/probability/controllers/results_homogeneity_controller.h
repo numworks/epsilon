@@ -7,7 +7,6 @@
 #include "probability/gui/page_controller.h"
 #include "probability/gui/results_homogeneity_view.h"
 #include "probability/gui/selectable_table_view_with_background.h"
-#include "probability/gui/spacer_view.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 #include "results_controller.h"
 

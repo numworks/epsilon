@@ -13,7 +13,7 @@ public:
   HomogeneityTableViewController(Escher::Responder * parent,
                                  HomogeneityStatistic * statistic,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                 DynamicTableViewDataSourceDelegate * dataSourceDelegate,
+                                 DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate,
                                  Escher::SelectableTableViewDelegate * tableDelegate);
 
   void didBecomeFirstResponder() override;

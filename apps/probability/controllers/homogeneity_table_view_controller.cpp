@@ -6,7 +6,7 @@ HomogeneityTableViewController::HomogeneityTableViewController(
     Escher::Responder * parent,
     HomogeneityStatistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate,
-    DynamicTableViewDataSourceDelegate * dataSourceDelegate,
+    DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate,
     Escher::SelectableTableViewDelegate * tableDelegate) :
       TableViewController(parent),
       m_innerTableData(&m_table, inputEventHandlerDelegate, statistic, this, dataSourceDelegate),

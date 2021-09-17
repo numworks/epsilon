@@ -15,8 +15,8 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     HomogeneityStatistic * statistic,
     TextFieldDelegate * textFieldDelegate,
-    DynamicTableViewDataSourceDelegate * dataSourceDelegate) :
-      DynamicTableViewDataSource(dataSourceDelegate),
+    DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate) :
+      DynamicSizeTableViewDataSource(dataSourceDelegate),
       m_numberOfRows(k_initialNumberOfRows),
       m_numberOfColumns(k_initialNumberOfColumns),
       m_statistic(statistic) {
@@ -42,7 +42,7 @@ void InputHomogeneityDataSource::recomputeDimensions() {
   if (newNumberOfRows != m_numberOfRows || newNumberOfColumns != m_numberOfColumns) {
     m_numberOfRows = newNumberOfRows;
     m_numberOfColumns = newNumberOfColumns;
-    DynamicTableViewDataSource::didChangeSize();
+    DynamicSizeTableViewDataSource::didChangeSize();
   }
 }
 

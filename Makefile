@@ -12,6 +12,10 @@ include build/toolchain.$(TOOLCHAIN).mak
 include build/variants.mak
 include build/helpers.mk
 
+ifeq (${MODEL}, n0100)
+  EPSILON_APPS := $(filter-out reader,$(EPSILON_APPS))
+endif
+
 ifeq (${MODEL}, n0110)
   apps_list = ${EPSILON_APPS}
 else

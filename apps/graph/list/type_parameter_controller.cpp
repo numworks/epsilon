@@ -32,7 +32,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 const char * TypeParameterController::title() {
-  return I18n::translate(I18n::Message::CurveType);
+  return I18n::translate(I18n::Message::Details);
 }
 
 void TypeParameterController::viewWillAppear() {

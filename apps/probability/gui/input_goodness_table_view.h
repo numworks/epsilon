@@ -8,7 +8,7 @@
 #include <escher/selectable_table_view.h>
 
 #include "bordered_table_view_data_source.h"
-#include "probability/abstract/dynamic_table_view_data_source.h"
+#include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/gui/selectable_table_view_with_background.h"
 #include "probability/models/statistic/goodness_statistic.h"
@@ -18,13 +18,13 @@ namespace Probability {
 /* This is the table used to input Expected and Observed results. */
 class InputGoodnessTableView : public SelectableTableViewWithBackground,
                                public BorderedTableViewDataSource,
-                               public DynamicTableViewDataSource {
+                               public DynamicSizeTableViewDataSource {
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
                          Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                          GoodnessStatistic * statistic,
                          Escher::TextFieldDelegate * textFieldDelegate,
-                         DynamicTableViewDataSourceDelegate * delegate = nullptr,
+                         DynamicSizeTableViewDataSourceDelegate * delegate = nullptr,
                          Escher::SelectableTableViewDelegate * scrollDelegate = nullptr);
   // DataSource
   int numberOfRows() const override { return m_numberOfRows; };

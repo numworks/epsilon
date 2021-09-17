@@ -15,10 +15,10 @@ InputGoodnessTableView::InputGoodnessTableView(
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     GoodnessStatistic * statistic,
     Escher::TextFieldDelegate * textFieldDelegate,
-    DynamicTableViewDataSourceDelegate * delegate,
+    DynamicSizeTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
       SelectableTableViewWithBackground(parentResponder, this, &m_tableSelection, scrollDelegate),
-      DynamicTableViewDataSource(delegate),
+      DynamicSizeTableViewDataSource(delegate),
       m_numberOfRows(k_minimumNumberOfRows),
       m_statistic(statistic) {
   m_header[0].setMessage(I18n::Message::Observed);
@@ -60,7 +60,7 @@ void InputGoodnessTableView::recomputeNumberOfRows() {
                                  k_minimumNumberOfRows);
   if (newNumberOfRows != m_numberOfRows) {
     m_numberOfRows = newNumberOfRows;
-    DynamicTableViewDataSource::didChangeSize();
+    DynamicSizeTableViewDataSource::didChangeSize();
   }
 }
 

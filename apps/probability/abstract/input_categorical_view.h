@@ -8,7 +8,7 @@
 #include <ion/events.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "probability/abstract/dynamic_table_view_data_source.h"
+#include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/horizontal_or_vertical_layout.h"
 
@@ -20,7 +20,7 @@ namespace Probability {
  */
 class InputCategoricalView : public Escher::ScrollView,
                              public Escher::Responder,
-                             public DynamicTableViewDataSourceDelegate {
+                             public DynamicSizeTableViewDataSourceDelegate {
 public:
   InputCategoricalView(Escher::Responder * parentResponder,
                        ButtonDelegate * buttonDelegate,
@@ -45,7 +45,7 @@ public:
   void setSignificanceCellText(const char * text);
   void setTableView(TableViewController * tableViewController);
 
-  // DynamicTableViewDataSourceDelegate
+  // DynamicSizeTableViewDataSourceDelegate
   void tableViewDataSourceDidChangeSize() override;
 
   constexpr static int k_indexOfTable = 0;

@@ -71,7 +71,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     assert(!m_record.isNull());
     Shared::ExpiringPointer<ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     if (cell == &m_typeCell) {
-      m_typeCell.setMessage(I18n::Message::CurveType);
+      m_typeCell.setMessage(I18n::Message::Details);
       m_typeCell.setSubtitle(function->functionCategory());
     } else {
       assert(cell == &m_functionDomain);

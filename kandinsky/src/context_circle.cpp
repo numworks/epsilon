@@ -1,3 +1,6 @@
+/* Based on https://cs.uwaterloo.ca/research/tr/1984/CS-84-38.pdf
+ * Algorithms for drawing anti-aliased circles and ellipses
+ * Dan Field */
 #include <kandinsky/context.h>
 
 #include <cmath>
@@ -7,7 +10,21 @@ static int posToIndex(int i, int j, int r) {
   return r + i + (r - 1 - j) * 2 * r;
 }
 
-// Sets the pixel value to all eight octant
+// TODO both setToAllSymetries set values to the same pixels several times
+/* Sets the pixel value to all eight octant
+ * when the diameter is even
+ *          , - ~ ~ ~ - ,
+ *      , '   x  |  x    ' ,
+ *    ,   ⟍      |       ⟋  ',
+ *   ,  x    ⟍   |    ⟋    x  ,
+ *  ,          ⟍ | ⟋           ,
+ *  ,------------|--------------,
+ *  ,          ⟋ | ⟍           ,
+ *   ,  x   ⟋    |   ⟍     x  ,
+ *    ,   ⟋      |      ⟍    ,
+ *      ,     x  |  x      ,'
+ *        ' - , _ _ _ ,  '
+ */
 static void setToAllSymetries(float buffer[], float alpha, int i, int j, int r) {
   buffer[posToIndex(i, j, r)] = alpha;
   buffer[posToIndex(i, -j - 1, r)] = alpha;

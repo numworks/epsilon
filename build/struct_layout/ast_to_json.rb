@@ -65,7 +65,7 @@ class_name = ARGV[0]
 stack = []
 ignore_line = true
 STDIN.each_line.with_index do |l,i|
-  if l == "         0 | class #{class_name}\n"
+  if l.casecmp("         0 | class #{class_name}\n") == 0
     ignore_line = false
   end
   if l.start_with?("           | ") && ignore_line == false

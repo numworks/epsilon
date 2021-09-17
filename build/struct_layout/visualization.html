@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-<title>AppsContainer size breakdown</title>
+<title>App size breakdown</title>
 <style>
 svg {
   font: 10px sans-serif;
@@ -55,7 +55,7 @@ rect.parent,
 
 </style>
 
-<h1>AppsContainer size breakdown</h1>
+<h1>App size breakdown</h1>
 
 <p id="chart">
 
@@ -104,7 +104,7 @@ grandparent.append("text")
     .attr("y", 6 - margin.top)
     .attr("dy", ".75em");
 
-d3.json("../../apps/main.ast.json", function(root) {
+d3.json("JSON_FILE", function(root) {
   initialize(root);
   accumulate(root);
   layout(root);

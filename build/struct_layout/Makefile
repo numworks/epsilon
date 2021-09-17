@@ -1,24 +1,28 @@
-products += apps/main.ast build/struct_layout/data.json
-
-.PHONY: apps_container_struct_layout
+.PHONY: apps_struct_layout
 OPEN = open
 
-ifeq ($(CXX),clang++)
+ifeq ($(PLATFORM) $(TARGET) $(CXX),simulator macos clang++)
 
-%.ast: %.cpp %.o
+OUTPUT := output/struct_layout
+
+$(OUTPUT)/records_layout.ast: apps/apps_container.cpp
 	@echo "AST     $@"
-	@$(CXX) -fno-color-diagnostics -Xclang -fdump-record-layouts $(SFLAGS) $(CXXFLAGS) -MF /dev/null -c $< -o /dev/null > $@
+	$(Q) mkdir -p $(OUTPUT)
+	$(MAKE) epsilon.bin
+	$(CXX) -fno-color-diagnostics -Xclang -fdump-record-layouts $(SFLAGS) $(CXXFLAGS) $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -Iapps -MF /dev/null -c $< -o /dev/null > $@
 
-%.ast.json: %.ast
+$(OUTPUT)/%.ast.json: $(OUTPUT)/records_layout.ast
 	@echo "JSON    $@"
-	@cat $< | ruby build/struct_layout/ast_to_json.rb AppsContainer > $@
+	cat $< | ruby build/struct_layout/ast_to_json.rb $*::App > $@
 
-apps_container_struct_layout: apps/main.ast.json
-	$(OPEN) build/struct_layout/visualization.html
+apps_struct_layout: $(addprefix $(OUTPUT)/,$(addsuffix .ast.json,$(EPSILON_APPS)))
+	for arg in $(basename $(basename $(notdir $^))); do cp build/struct_layout/visualization.html $(OUTPUT)/$${arg}.html; sed -i '' "s/JSON_FILE/$${arg}.ast.json/g" $(OUTPUT)/$${arg}.html; done
+	@cd $(OUTPUT) && $(PYTHON) -m http.server 8000
+	@echo "In a browser, go to http://localhost:8000/[APP_NAME].html to navigate in the app structure"
 
 else
 
-apps_container_struct_layout:
-	@echo "Struct layout requires the use of Clang"
+apps_struct_layout:
+	@echo "Struct layout requires the use of Clang: make PLATFORM=simulator TARGET=macos TOOLCHAIN=host-clang apps_struct_layout"
 
 endif

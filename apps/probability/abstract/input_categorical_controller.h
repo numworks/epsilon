@@ -17,16 +17,16 @@ class InputCategoricalController : public Page,
                                    public ButtonDelegate,
                                    public Escher::SelectableTableViewDelegate {
 public:
-  InputCategoricalController(StackViewController * parent,
+  InputCategoricalController(Escher::StackViewController * parent,
                              Page * resultsController,
                              Chi2Statistic * statistic,
-                             InputEventHandlerDelegate * inputEventHandlerDelegate);
+                             Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   virtual TableViewController * tableViewController() = 0;
 
   // TextFieldDelegate
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField,
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
 
@@ -37,13 +37,13 @@ public:
   bool buttonAction() override;
 
   // ViewController
-  View * view() override { return &m_contentView; }
-  ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitle;
+  Escher::View * view() override { return &m_contentView; }
+  Escher::ViewController::TitlesDisplay titlesDisplay() override {
+    return Escher::ViewController::TitlesDisplay::DisplayLastTitle;
   }
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
+  void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t,
                                                int previousSelectedCellX,
                                                int previousSelectedCellY,
                                                bool withinTemporarySelection) override;

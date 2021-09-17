@@ -44,19 +44,22 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       }
     }
   }
-  if (function->plotType() == ContinuousFunction::PlotType::Hyperbola || function->plotType() == ContinuousFunction::PlotType::Circle) {
+  if (function->plotType() == ContinuousFunction::PlotType::Hyperbola) {
     Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
     if (std::isfinite(xy.x2())) {
       double t2 = t + dir * step * scrollSpeed;
       xy = function->evaluateXYAtParameter(t2, App::app()->localContext(), *secondaryCurveIndex);
       int tries = 0;
-      while (std::isnan(xy.x2()) && tries < 20) {
+      int maxTries = std::ceil(numberOfStepsInGradUnit * Shared::CurveViewRange::k_maxNumberOfXGridUnits);
+      while (std::isnan(xy.x2()) && tries < maxTries) {
         tries ++;
         t2 += dir * step * scrollSpeed;
         xy = function->evaluateXYAtParameter(t2, App::app()->localContext(), *secondaryCurveIndex);
       }
-      t = t2 - dir * step * scrollSpeed;
-      t = std::max(tMin, std::min(tMax, t));
+      if (tries < maxTries) {
+        t = t2 - dir * step * scrollSpeed;
+        t = std::max(tMin, std::min(tMax, t));
+      }
     }
   }
   t += dir * step * scrollSpeed;

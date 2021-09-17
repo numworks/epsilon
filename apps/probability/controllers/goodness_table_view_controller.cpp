@@ -8,7 +8,7 @@ GoodnessTableViewController::GoodnessTableViewController(
     Escher::Responder * parent,
     GoodnessStatistic * statistic,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    DynamicTableViewDataSourceDelegate * delegate,
+    DynamicSizeTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
       TableViewController(parent),
       m_statistic(statistic),

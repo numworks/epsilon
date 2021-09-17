@@ -5,7 +5,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
 
-#include "probability/abstract/dynamic_table_view_data_source.h"
+#include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 
@@ -13,13 +13,13 @@ namespace Probability {
 
 using namespace Escher;
 
-class InputHomogeneityDataSource : public TableViewDataSource, public DynamicTableViewDataSource {
+class InputHomogeneityDataSource : public TableViewDataSource, public DynamicSizeTableViewDataSource {
 public:
   InputHomogeneityDataSource(SelectableTableView * tableView,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                              HomogeneityStatistic * statistic,
                              TextFieldDelegate * textFieldDelegate,
-                             DynamicTableViewDataSourceDelegate * dataSourceDelegate);
+                             DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate);
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) override {
@@ -33,7 +33,7 @@ public:
 
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
-  // DynamicTableViewDataSource
+  // DynamicSizeTableViewDataSource
   void recomputeDimensions();
 
 private:

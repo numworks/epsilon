@@ -146,8 +146,7 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField,
 }
 
 void ParametersController::buttonAction() {
-  StackViewController * stack = stackController();
-  stack->push(m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+  openPage(m_calculationController);
 }
 
 }  // namespace Probability

@@ -26,8 +26,6 @@ public:
   KDPoint tableOrigin() { return m_contentView.tableOrigin(); }
   KDPoint buttonOrigin() { return m_contentView.buttonOrigin(); }
 
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-
   void reload();
 
   constexpr static int k_topMargin = 5;

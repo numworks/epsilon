@@ -69,10 +69,6 @@ KDSize Probability::ResultsHomogeneityView::minimalSizeForOptimalDisplay() const
   return KDSize(bounds().width(), requiredSize.height());
 }
 
-void Probability::ResultsHomogeneityView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorOrange);
-}
-
 void Probability::ResultsHomogeneityView::reload() {
   layoutSubviews();
 }

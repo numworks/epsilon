@@ -37,53 +37,61 @@ Upsilon is a fork of Omega, an user-made OS that runs on the Numworks calculator
 <details>
 <summary><b>1.1 Linux</b></summary>
 
-  <details>
-  <summary>Debian or Ubuntu</summary>
+<br>
 
-  <br>
 
-  You just have to install dependencies by running these command with superuser privileges in a Terminal:
+<details>
+<summary>Debian or Ubuntu</summary>
 
-  ```bash
-  apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config gcc-arm-none-eabi binutils-arm-none-eabi
-  ```
+<br>
 
-  And there you can go to step 2!
+You just have to install dependencies by running these command with superuser privileges in a Terminal:
 
-  <br>
+```bash
+apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config gcc-arm-none-eabi binutils-arm-none-eabi
+```
 
-  </details>
+And there you can go to step 2!
 
-  <details>
-  <summary>Fedora</summary>
+<br>
 
-  <br>
+</details>
 
-  First install basics dev tools.
+<details>
+<summary>Fedora</summary>
 
-  ```bash
-  dnf install make automake gcc gcc-c++ kernel-devel
-  ```
+<br>
 
-  Then install required packages.
+First install basics dev tools.
 
-  ```bash
-  dnf install git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config
-  ```
+```bash
+dnf install make automake gcc gcc-c++ kernel-devel
+```
 
-  Then, install GCC cross compiler for ARM.
+Then install required packages.
 
-  ```bash
-  dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
-  ```
+```bash
+dnf install git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config
+```
 
-  <br>
+Then, install GCC cross compiler for ARM.
 
-  </details>
+```bash
+dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
+```
+
+<br>
+
+</details>
+
+<br>
+
 </details>
 
 <details>
 <summary><b>1.2 Mac</b></summary>
+
+<br>
 
 It's recommended to use [Homebrew](https://brew.sh/). Once it's installed, just run:
 ```bash
@@ -95,11 +103,16 @@ and it will install all dependencies.
 
 And there you can go to step 2!
 
+<br>
+
+
 
 </details>
 
 <details>
 <summary><b>1.3 Windows</b></summary>
+
+<br>
 
 [Msys2](https://www.msys2.org/) environment is recommended to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it's installed, paste these commands into the Msys2 terminal.
 
@@ -116,7 +129,6 @@ echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc
 Just restart and you can go to step 2!
 </details>
 
-<br>
 <br>
 
 ### 2. Set up repo

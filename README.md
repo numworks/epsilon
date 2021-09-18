@@ -133,7 +133,6 @@ Just restart and you can go to step 2!
 
 ### 2. Set up repo
 
-<br>
 
 Clone repo and use 'upsilon-dev' branch by pasting these two commands:
 
@@ -143,11 +142,10 @@ cd Upsilon
 git checkout upsilon-dev
 ```
 <br>
-<br>
+
 
 ### 3.Choose the target
 
-<br>
 
 <details>
   <summary><b>Model n0100</b></summary>

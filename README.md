@@ -149,7 +149,7 @@ git checkout upsilon-dev
 <br>
 
 
-### 3.Choose the target
+### 3. Choose the target
 
 
 <details>

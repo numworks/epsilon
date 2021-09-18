@@ -13,6 +13,9 @@
 
 Upsilon is a fork of Omega, an user-made OS that runs on the Numworks calculator, which brings many features to it, but was discontinued because of a policy change from Numworks. Upsilon is for the people who want to see a future for user-made OSes for Numworks, even after the closure and archiving of Omega.
 
+
+
+
 ### Some new features
 - Enhancements for the Kandinsky python module
 - A support for wallpapers
@@ -21,6 +24,8 @@ Upsilon is a fork of Omega, an user-made OS that runs on the Numworks calculator
 - Operator overload for python
 - Improvements for the Periodic table application
 - *And everything that has been added to Omega before its termination!* [See Omega's changelog here](https://github.com/Omega-Numworks/Omega/wiki/Changelog) | [Main Omega features + screenshots](https://github.com/Omega-Numworks/Omega/wiki/Main-features).
+
+<br>
 
 ## Installation
 

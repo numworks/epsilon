@@ -26,9 +26,116 @@ Upsilon is a fork of Omega, an user-made OS that runs on the Numworks calculator
 
 ### Manual
 
-*As of today, only the manual installation is available.*
+*As of today, only the manual installation is available. You can refer to this [website](https://www.numworks.com/resources/engineering/software/build/) for the first step if you get errors.*
 
-First of all, follow **step 1** [here](https://www.numworks.com/resources/engineering/software/build/). Then:
+
+
+### 1. Install SDK
+
+<br>
+
+<details>
+<summary><b>1.1 Linux</b></summary>
+
+  <details>
+  <summary>Debian or Ubuntu</summary>
+
+  <br>
+
+  You just have to install dependencies by running these command with superuser privileges in a Terminal:
+
+  ```bash
+  apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config gcc-arm-none-eabi binutils-arm-none-eabi
+  ```
+
+  And there you can go to step 2!
+
+  <br>
+
+  </details>
+
+  <details>
+  <summary>Fedora</summary>
+
+  <br>
+
+  First install basics dev tools.
+
+  ```bash
+  dnf install make automake gcc gcc-c++ kernel-devel
+  ```
+
+  Then install required packages.
+
+  ```bash
+  dnf install git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config
+  ```
+
+  Then, install GCC cross compiler for ARM.
+
+  ```bash
+  dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
+  ```
+
+  <br>
+
+  </details>
+</details>
+
+<details>
+<summary><b>1.2 Mac</b></summary>
+
+It's recommended to use [Homebrew](https://brew.sh/). Once it's installed, just run:
+```bash
+brew install numworks/tap/epsilon-sdk
+```
+and it will install all dependencies.
+
+<br>
+
+And there you can go to step 2!
+
+
+</details>
+
+<details>
+<summary><b>1.3 Windows</b></summary>
+
+[Msys2](https://www.msys2.org/) environment is recommended to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it's installed, paste these commands into the Msys2 terminal.
+
+```bash
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb git make python
+echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
+```
+
+Next, you'll need to install the [GCC toolchain for ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH. Just enter:
+
+```bash
+echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc
+```
+Just restart and you can go to step 2!
+</details>
+
+<br>
+<br>
+
+### 2. Set up repo
+
+<br>
+
+Clone repo and use 'upsilon-dev' branch by pasting these two commands:
+
+```bash
+git clone --recursive https://github.com/Lauryy06/Upsilon.git
+cd Upsilon
+git checkout upsilon-dev
+```
+<br>
+<br>
+
+### 3.Choose the target
+
+<br>
 
 <details>
   <summary><b>Model n0100</b></summary>
@@ -36,55 +143,53 @@ First of all, follow **step 1** [here](https://www.numworks.com/resources/engine
 (note: you can change the `EPSILON_I18N=en` flag to `fr`, `nl`, `pt`, `it`, `de`, `es` or `hu`).
 
 ```bash
-git clone --recursive https://github.com/Lauryy06/Upsilon.git
-cd Upsilon
-git checkout omega-master
 make MODEL=n0100 clean
 make MODEL=n0100 EPSILON_I18N=en OMEGA_USERNAME="{Your name, max 15 characters}" -j4
-make MODEL=n0100 epsilon_flash
 ```
 
-Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
-Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
+Now, run either:
+
+```bash
+make MODEL=n0100 epsilon_flash
+```
+to directly flash the calculator after pressing simultaneously `reset` and `6` buttons and pluging in.
+
+<br>
+
+or:
+
+```bash
+make MODEL=n0100 OMEGA_USERNAME="" binpack -j4
+```
+to make binpack wich you can flash to the caculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0100/). Binpacks are a great way to share a custom build of Upsilon to friends.
   
 </details>
 
 <details>
   <summary><b>Model n0110</b></summary>
 
+
 ```bash
-git clone --recursive https://github.com/Lauryy06/Upsilon.git
-cd Upsilon
-git checkout omega-master
 make clean
 make OMEGA_USERNAME="{Your name, max 15 characters}" -j4
-make epsilon_flash
 ```
 
-Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
-Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
-  
-</details>
-
-<details>
-  <summary><b>Bin files</b></summary>
-  
-These can be used to distribute Upsilon (so that it can be flashed by anyone with [Webdfu_Numworks](https://ti-planet.github.io/webdfu_numworks/)).
+Now, run either:
 
 ```bash
-git clone --recursive https://github.com/Lauryy06/Upsilon.git
-cd Upsilon
-git checkout omega-master
-make clean
-make MODEL=n0100 OMEGA_USERNAME="" -j8
-make MODEL=n0100 OMEGA_USERNAME="" binpack -j8
-make OMEGA_USERNAME="" -j8
-make OMEGA_USERNAME="" binpack -j8
+make epsilon_flash
 ```
+to directly flash the calculator after pressing simultaneously `reset` and `6` buttons and pluging in.
 
-Important: Don't forget the `--recursive` tag, because Upsilon relies on submodules.
-Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
-  
+<br>
+
+or:
+
+```bash
+make OMEGA_USERNAME="" binpack -j4
+```
+to make binpack wich you can flash to the caculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). Binpacks are a great way to share a custom build of Upsilon to friends.
+
 </details>
 
 <details>
@@ -103,17 +208,12 @@ source emsdk_env.sh
 Then, compile Upsilon :
 
 ```bash
-git clone --recursive https://github.com/Lauryy06/Upsilon.git
-cd Upsilon
-git checkout omega-master
 make clean
 make PLATFORM=simulator TARGET=web OMEGA_USERNAME="{Your name, max 15 characters}" -j4
 ```
 
 The simulator is now in `output/release/simulator/web/simulator.zip`
 
-Important: Don't forget the `--recursive` tag, because Upsilon relies on submodules.
-Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
 
 </details>
 
@@ -135,6 +235,14 @@ You can then put epsilon.3dsx on a SD card to run it from the HBC or use 3dslink
 ```
 
 </details>
+
+<br>
+
+Important: Don't forget the `--recursive` tag, because Upsilon relies on submodules.
+Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
+Don't forget to put your pseudo instead of `{your pseudo, max 15 char}`. If you don't want one, just remove the `OMEGA_USERNAME=""` argument.
+
+<br>
 
 If you need help, you can join our Discord server here : https://discord.gg/Q9buEMduXG
 

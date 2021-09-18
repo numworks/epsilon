@@ -69,7 +69,7 @@ void WordWrapTextView::previousPage() {
     }
 
     textEndPosition = textStartPosition;
-    endOfWord = startOfWord;
+    endOfWord = startOfWord + 1;
   }
   if(startOfWord + 1 == text()) {
     m_pageOffset = 0;
@@ -120,6 +120,10 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
       ++endOfWord;
     }
 
+    //We must change value of startOfWord now to avoid having
+    //two times the same word if the break below is used
+    startOfWord = endOfWord;
+
     if(nextTextPosition.y() + textSize.height() > m_frame.height() - k_margin) { // If out of page, quit
       break;
     }
@@ -131,11 +135,10 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
     }
 
     textPosition = nextTextPosition;
-    startOfWord = endOfWord;
     endOfWord = UTF8Helper::EndOfWord(startOfWord);
   }
 
-  m_nextPageOffset = endOfWord - text();
+  m_nextPageOffset = startOfWord - text();
 };
 
 int WordWrapTextView::getPageOffset() const {

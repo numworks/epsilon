@@ -1,6 +1,6 @@
 
+#include <poincare/preferences.h>
 #include "word_wrap_view.h"
-
 #include "utility.h"
 
 namespace Reader

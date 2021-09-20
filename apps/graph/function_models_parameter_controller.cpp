@@ -45,7 +45,7 @@ void FunctionModelsParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferSize) {
+int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferSize) const {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'

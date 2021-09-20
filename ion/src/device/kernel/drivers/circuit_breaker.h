@@ -18,7 +18,7 @@ bool setCheckpoint(Ion::CircuitBreaker::CheckpointType type);
 Ion::CircuitBreaker::Status status();
 void unsetCheckpoint(Ion::CircuitBreaker::CheckpointType type);
 void lock();
-void unlock();
+void unlock(bool runLockedCheckpoint = true);
 void forceUnlock();
 
 }

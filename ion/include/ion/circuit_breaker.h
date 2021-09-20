@@ -25,7 +25,7 @@ bool hasCheckpoint(CheckpointType type);
 void unsetCheckpoint(CheckpointType type);
 void loadCheckpoint(CheckpointType type);
 void lock();
-void unlock();
+void unlock(bool runLockedCheckpoint = true);
 
 #if PLATFORM_DEVICE
 Status setCheckpoint(CheckpointType type);

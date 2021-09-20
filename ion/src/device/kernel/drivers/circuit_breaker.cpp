@@ -222,12 +222,14 @@ void lock() {
   s_numberOfLocks++;
 }
 
-void unlock() {
+void unlock(bool runLockedCheckpoint) {
   assert(s_numberOfLocks > 0);
   s_numberOfLocks--;
   if (s_numberOfLocks == 0 && TIM6.running()) {
     TIM6.stop();
-    Device::CircuitBreaker::loadCheckpoint(s_lockedCheckpointType);
+    if (runLockedCheckpoint) {
+      Device::CircuitBreaker::loadCheckpoint(s_lockedCheckpointType);
+    }
   }
 }
 

@@ -1,15 +1,14 @@
 #ifndef PROBABILITY_ABSTRACT_RESULTS_HOMOGENEITY_DATA_SOURCE_H
 #define PROBABILITY_ABSTRACT_RESULTS_HOMOGENEITY_DATA_SOURCE_H
 
-#include <escher/table_view_data_source.h>
-
+#include "dynamic_table_view_data_source.h"
 #include "homogeneity_data_source.h"
 
 namespace Probability {
 
 /* This DataSource reads the statistic and displays the expected values and the totals for each cell
  * position. */
-class ResultsHomogeneityDataSource : public Escher::TableViewDataSource {
+class ResultsHomogeneityDataSource : public DynamicTableViewDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells> {
 public:
   ResultsHomogeneityDataSource(HomogeneityStatistic * statistic);
   int numberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }
@@ -17,15 +16,12 @@ public:
   KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
   int typeAtLocation(int i, int j) override { return 0; }
-  HighlightCell * reusableCell(int i, int type) override;
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
 private:
-  void createCells();
-  static void destroyCells(void * cells);
+  bool createCells() override;
   HomogeneityStatistic * m_statistic;
-  EvenOddBufferTextCell * m_cells;
 };
 
 /* This class adds a row / column header to the ResultsHomogeneityDataSource. */

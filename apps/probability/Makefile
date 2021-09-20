@@ -106,6 +106,7 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 )
 
 app_probability_src +=  $(addprefix apps/probability/abstract/,\
+  dynamic_table_view_data_source.cpp \
   homogeneity_data_source.cpp \
   input_categorical_controller.cpp \
   input_categorical_view.cpp \

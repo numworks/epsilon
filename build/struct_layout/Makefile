@@ -5,6 +5,7 @@ ifeq ($(PLATFORM) $(TARGET) $(CXX),simulator macos clang++)
 
 OUTPUT := output/struct_layout
 
+.PHONY: $(OUTPUT)/records_layout.ast
 $(OUTPUT)/records_layout.ast: apps/apps_container.cpp
 	@echo "AST     $@"
 	@mkdir -p $(OUTPUT)

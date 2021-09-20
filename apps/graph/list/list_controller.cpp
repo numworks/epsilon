@@ -39,12 +39,34 @@ bool layoutRepresentsAnEquality(Poincare::Layout l) {
   return !match.isUninitialized();
 }
 
+bool layoutRepresentsPolarFunction(Poincare::Layout l) {
+  Poincare::Layout match = l.recursivelyMatches(
+    [](Poincare::Layout layout) {
+      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == UCodePointGreekSmallLetterTheta;
+    });
+  return !match.isUninitialized();
+}
+
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquality(layoutField->layout())) {
       layoutField->putCursorLeftOfLayout();
-      layoutField->handleEventWithText("y=");
+      if (layoutRepresentsPolarFunction(layoutField->layout())) {
+        // Insert "f(θ)=" or, if "f" is taken, another default function name.
+        constexpr int bufferSize = 10;
+        char buffer[bufferSize];
+        int length = m_modelsParameterController.defaultName(buffer, bufferSize - 6);
+        buffer[length++] = '(';
+        length += UTF8Decoder::CodePointToChars(UCodePointGreekSmallLetterTheta, buffer + length, bufferSize - length);
+        assert(bufferSize >= length + 3);
+        buffer[length++] = ')';
+        buffer[length++] = '=';
+        buffer[length++] = 0;
+        layoutField->handleEventWithText(buffer);
+      } else {
+        layoutField->handleEventWithText("y=");
+      }
     }
   }
   return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);

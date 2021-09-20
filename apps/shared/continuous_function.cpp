@@ -460,9 +460,10 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
     return recordData()->setPlotType(m_model.m_plotType);
   }
 
+  int xDeg = xDegree(context);
   if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
     ExpressionNode::Sign YSign;
-    if ((yDeg == 1 || yDeg == 2) && isYCoefficientNonNull(yDeg, context, &YSign) && YSign != ExpressionNode::Sign::Unknown) {
+    if ((yDeg == 1 || (yDeg == 2 && xDeg > 0)) && isYCoefficientNonNull(yDeg, context, &YSign) && YSign != ExpressionNode::Sign::Unknown) {
       if (YSign == ExpressionNode::Sign::Negative) {
         // Oppose the comparison operator
         Poincare::ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.m_equationSymbol);
@@ -476,7 +477,6 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
     }
   }
 
-  int xDeg = xDegree(context);
   if (yDeg == 0 && xDeg == 0) {
     return recordData()->setPlotType(PlotType::Undefined);
   }

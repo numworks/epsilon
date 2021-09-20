@@ -10,7 +10,6 @@ class_names = ARGV
 class_of_interest = nil
 puts ("CLASS NAMES,SIZES")
 puts
-puts
 STDIN.each_line.with_index do |l,i|
   for class_name in class_names do
     if l.casecmp("         0 | class #{class_name}\n") == 0
@@ -21,7 +20,6 @@ STDIN.each_line.with_index do |l,i|
     size = l.match(/sizeof=([0-9]+)/).captures.first
     size = size.to_i
     puts ("#{class_of_interest},#{size}")
-    puts
     class_of_interest = nil
   end
 end

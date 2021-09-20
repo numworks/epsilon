@@ -7,29 +7,19 @@
 namespace Probability {
 
 ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic) :
-      m_statistic(statistic),
-      m_cells(nullptr)
+  DynamicTableViewDataSource(),
+  m_statistic(statistic)
 {
 }
 
-void ResultsHomogeneityDataSource::createCells() {
-  if (m_cells == nullptr) {
-    static_assert(sizeof(EvenOddBufferTextCell) * HomogeneityTableDataSource::k_numberOfReusableCells <= Probability::App::k_bufferSize, "Probability::App::m_buffer is not large enough");
-    m_cells = new (Probability::App::app()->buffer()) EvenOddBufferTextCell[HomogeneityTableDataSource::k_numberOfReusableCells];
-    Probability::App::app()->setBufferDestructor(ResultsHomogeneityDataSource::destroyCells);
+bool ResultsHomogeneityDataSource::createCells() {
+  if (DynamicTableViewDataSource::createCells()) {
     for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
       m_cells[i].setFont(KDFont::SmallFont);
     }
+    return true;
   }
-}
-
-void ResultsHomogeneityDataSource::destroyCells(void * cells) {
-  delete [] static_cast<EvenOddBufferTextCell *>(cells);
-}
-
-HighlightCell * ResultsHomogeneityDataSource::reusableCell(int i, int type) {
-  createCells();
-  return &m_cells[i];
+  return false;
 }
 
 void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCell * cell,

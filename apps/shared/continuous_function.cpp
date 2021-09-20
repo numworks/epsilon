@@ -447,12 +447,16 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
   // TODO Hugo : Improve how Cartesian, Polar and parametric curves are detected.
   Expression equation = expressionEquation(context);
   recordData()->setEquationSymbol(m_model.m_equationSymbol);
+  int yDeg = yDegree(context);
   if (m_model.m_plotType != PlotType::Undefined) {
+    if (yDeg != 0) {
+      m_model.m_plotType = PlotType::Undefined;
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
     // Polar, parametric, or cartesian decided in expressionEquation.
     return recordData()->setPlotType(m_model.m_plotType);
   }
 
-  int yDeg = yDegree(context);
   if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
     ExpressionNode::Sign YSign;
     if ((yDeg == 1 || yDeg == 2) && isYCoefficientNonNull(yDeg, context, &YSign) && YSign != ExpressionNode::Sign::Unknown) {

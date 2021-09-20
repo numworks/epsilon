@@ -22,8 +22,10 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
 private:
+  void createCells();
+  static void destroyCells(void * cells);
   HomogeneityStatistic * m_statistic;
-  EvenOddBufferTextCell m_cells[HomogeneityTableDataSource::k_numberOfReusableCells];
+  EvenOddBufferTextCell * m_cells;
 };
 
 /* This class adds a row / column header to the ResultsHomogeneityDataSource. */

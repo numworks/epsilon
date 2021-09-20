@@ -61,6 +61,12 @@ public:
   Data::TestType testType() { return snapshot()->data()->testType(); }
   Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }
 
+  // Buffer API
+  void * buffer();
+  typedef void (*BufferDestructor)(void * cells);
+  void setBufferDestructor(BufferDestructor destructor) { m_bufferDestructor = destructor; }
+  static constexpr int k_bufferSize = 19800;//32*1024;
+
   TELEMETRY_ID("Probability");
 
 private:
@@ -88,6 +94,10 @@ private:
   TestController m_testController;
   MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
+  /* Buffer used for allocating table cells to avoid duplicating required
+   * space for these memory-needy tables. */
+  char m_buffer[k_bufferSize];
+  BufferDestructor m_bufferDestructor;
 };
 
 }  // namespace Probability

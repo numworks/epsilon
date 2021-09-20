@@ -24,6 +24,7 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) override { return index == 0 ? k_emptyModelCellType : k_modelCellType; }
+  int defaultName(char buffer[], size_t bufferSize) const;
 private:
   constexpr static int k_emptyModelCellType = 0;
   constexpr static int k_modelCellType = 1;
@@ -41,7 +42,6 @@ private:
   static constexpr I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
     I18n::Message::CartesianType, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::EllipseType, I18n::Message::ParametricType, I18n::Message::PolarType
   };
-  int defaultName(char buffer[], size_t bufferSize);
   Escher::StackViewController * stackController() const;
   Escher::MessageTableCell m_emptyModelCell;
   Escher::ExpressionTableCellWithMessage m_modelCells[k_numberOfExpressionCells];

@@ -16,6 +16,7 @@
 #include <poincare/derivative.h>
 #include "poincare_helpers.h"
 #include <algorithm>
+#include "global_context.h"
 
 using namespace Poincare;
 
@@ -303,6 +304,7 @@ Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Recor
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // TODO Hugo : Add todo expressionReduced on circularity ?
   // TODO Hugo : Either memoize or limit calls to this method
+  // Initialize plot type
   m_plotType = PlotType::Undefined;
   if (record->fullName() != nullptr && record->fullName()[0] != '?' && isCircularlyDefined(record, context)) {
     return Undefined::Builder();
@@ -313,41 +315,42 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   }
   assert(ComparisonOperator::IsComparisonOperatorType(result.type()));
   m_equationSymbol = result.type();
+  bool recordShouldBeNammed = false;
   if (result.childAtIndex(0).type() == ExpressionNode::Type::Function
     && (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))
       || (result.type() == ExpressionNode::Type::Equal
         && (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))
           || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('t')))))) {
+    // Expression is of the form f(x)[=/>/<] or f([t/theta])=
     // TODO Hugo : Improve that
-    if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))) {
-      m_plotType = PlotType::Polar;
-    } else if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))) {
-      m_plotType = PlotType::Cartesian;
+    assert(record->fullName() != nullptr);
+    Expression exp = result.childAtIndex(0).clone();
+    Poincare::Function f = static_cast<Poincare::Function&>(exp);
+    const size_t functionNameLength = strlen(f.name());
+    if (Shared::GlobalContext::SymbolAbstractNameIsFree(f.name())
+        || (record->fullName()[0] != '?'
+            && memcmp(record->fullName(), f.name(), functionNameLength) == 0
+            && record->fullName()[functionNameLength] == '.')) {
+      // Named record : it is either already named, or will soon be renamed.
+      if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))) {
+        m_plotType = PlotType::Polar;
+      } else if (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('x'))) {
+        m_plotType = PlotType::Cartesian;
+      } else {
+        m_plotType = PlotType::Parametric;
+      }
+      result = result.childAtIndex(1);
+      recordShouldBeNammed = true;
     } else {
-      m_plotType = PlotType::Parametric;
+      // Function in first half of the equation refer to an already defined one.
+      result.childAtIndex(0).replaceChildAtIndexInPlace(0, Symbol::Builder(UCodePointUnknown));
     }
-    // Named function
-    result = result.childAtIndex(1);
-  } else {
+  }
+  if (!recordShouldBeNammed) {
     result = Subtraction::Builder(result.childAtIndex(0), result.childAtIndex(1));
-    // ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(
-    //   context, Preferences::sharedPreferences()->complexFormat(),
-    //   Preferences::sharedPreferences()->angleUnit(),
-    //   GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
-    //   ExpressionNode::ReductionTarget::SystemForAnalysis,
-    //   ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-    // result = result.reduce(reductionContext);
   }
-  /* 'Simplify' routine might need to call expressionReduced on the very
-    * same function. So we need to keep a valid result while executing
-    * 'Simplify'. Thus, we use a temporary expression. */
-  Expression tempExpression = result.clone();
-  PoincareHelpers::Reduce(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
-  // PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-  // simplify might return an uninitialized Expression if interrupted
-  if (!tempExpression.isUninitialized()) {
-    result = tempExpression;
-  }
+  PoincareHelpers::Reduce(&result, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  assert(!result.isUninitialized()); // TODO Hugo : Ensure this assert
   // TODO Hugo : Memoize it ?
   return result;
 }

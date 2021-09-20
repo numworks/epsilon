@@ -495,10 +495,19 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
     Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
     Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
     Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-    Expression lineExpression = expressionReduced(context).clone();
+    // Expression lineExpression = expressionReduced(context).clone();
+    /* TODO Hugo : Expression reduced might return invalid result if function was
+     * previously nammed. As a result, we use this workaround. Also, make sure
+     * nowhere in updatePlotType isNamed() is relied on. */
+    // Compute root in y :
+    int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    assert(dy == yDeg);
+    Expression root;
+    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, complexFormat, angleUnit);
     // Reduce to another target for coefficient analysis.
-    PoincareHelpers::Reduce(&lineExpression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
-    int d = lineExpression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    PoincareHelpers::Reduce(&root, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    // Compute coefficients
+    int d = root.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
     if (d == 1) {
       recordData()->setLine(coefficients[1].approximateToScalar<double>(
                                 context, complexFormat, angleUnit),

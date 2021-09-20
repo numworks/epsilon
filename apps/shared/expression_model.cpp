@@ -9,13 +9,6 @@
 #include <apps/apps_container.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/undefined.h>
-#include <poincare/subtraction.h>
-#include <poincare/multiplication.h>
-#include <poincare/constant.h>
-#include <poincare/addition.h>
-#include <poincare/floor.h>
-#include <poincare/division_remainder.h>
-#include <poincare/polynomial.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -158,6 +151,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   error = record->setValue(newData);
   // Any error would have occured at the first call to setValue
   assert(error == Ion::Storage::Record::ErrorStatus::None);
+
   /* Here we delete only the elements relative to the expression model kept in
    * this handle. */
   tidy();

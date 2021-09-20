@@ -18,7 +18,7 @@ void loadCheckpoint(CheckpointType) {}
 
 void lock() {}
 
-void unlock() {}
+void unlock(bool runLockedCheckpoint) {}
 
 Status statusAfterSetjmp(int, CheckpointType) {
   return Status::Ignored;

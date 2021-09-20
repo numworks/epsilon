@@ -40,13 +40,15 @@ bool handlePreemption(bool stalling) {
       return true;
     }
   } else if (currentPreemptiveState.keyDown(Keyboard::Key::OnOff)) {
-    Device::Power::suspend(true);
-    if (stalling && Device::CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::Home)) {
-      /* If we were stalling (in the middle of processing an event), we load
-       * the Home checkpoint to avoid resuming the execution in the middle of
-       * redrawing the display for instance. */
-      Device::CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::Home);
-      return true;
+    if (stalling) {
+      Device::Power::suspend(true);
+      if (Device::CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::Home)) {
+        /* If we were stalling (in the middle of processing an event), we load
+         * the Home checkpoint to avoid resuming the execution in the middle of
+         * redrawing the display for instance. */
+        Device::CircuitBreaker::loadCheckpoint(CircuitBreaker::CheckpointType::Home);
+        return true;
+      }
     }
   } else if (currentPreemptiveState.keyDown(Keyboard::Key::Back)) {
     if (stalling && Device::CircuitBreaker::hasCheckpoint(CircuitBreaker::CheckpointType::User)) {

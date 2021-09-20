@@ -176,6 +176,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OnOff) {
+    Ion::Power::suspend(true);
     didSuspend(true);
     return true;
   }

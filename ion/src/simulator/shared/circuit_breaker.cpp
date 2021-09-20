@@ -50,10 +50,10 @@ void lock() {
   sNumberOfLocks++;
 }
 
-void unlock() {
+void unlock(bool runLockedCheckpoint) {
   assert(sNumberOfLocks > 0);
   sNumberOfLocks--;
-  if (sNumberOfLocks == 0 && sLoadCheckpointInterrupted) {
+  if (sNumberOfLocks == 0 && sLoadCheckpointInterrupted && runLockedCheckpoint) {
     CircuitBreaker::loadCheckpoint(sLockedCheckpointType);
   }
 }

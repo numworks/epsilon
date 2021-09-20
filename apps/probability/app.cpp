@@ -79,7 +79,9 @@ App::App(Snapshot * snapshot) :
                      snapshot->data()->testTypePointer(),
                      snapshot->data()->distribution(),
                      snapshot->data()->calculation()),
-    m_stackViewController(&m_modalViewController, &m_menuController) {
+    m_stackViewController(&m_modalViewController, &m_menuController),
+    m_bufferDestructor(nullptr)
+{
   // Reopen correct page
   // TODO delegate decisions to controllers somehow
   Data::Page page = snapshot->navigation()->page();
@@ -285,6 +287,13 @@ void App::initTableSelections(Data::Page page,
       }
     }
   }
+}
+
+void * App::buffer() {
+  if (m_bufferDestructor) {
+    m_bufferDestructor(m_buffer);
+  }
+  return m_buffer;
 }
 
 const App::Descriptor * App::Snapshot::descriptor() const {

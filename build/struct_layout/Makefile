@@ -15,8 +15,12 @@ $(OUTPUT)/%.ast.json: $(OUTPUT)/records_layout.ast
 	@echo "JSON    $@"
 	cat $< | ruby build/struct_layout/ast_to_json.rb $*::App > $@
 
-apps_struct_layout: $(addprefix $(OUTPUT)/,$(addsuffix .ast.json,$(EPSILON_APPS)))
-	for arg in $(basename $(basename $(notdir $^))); do cp build/struct_layout/visualization.html $(OUTPUT)/$${arg}.html; sed -i '' "s/JSON_FILE/$${arg}.ast.json/g" $(OUTPUT)/$${arg}.html; done
+$(OUTPUT)/app_sizes.csv: $(OUTPUT)/records_layout.ast
+	@echo "SIZE    $@"
+	cat $< | ruby build/struct_layout/ast_to_size_summary.rb $(addsuffix ::App,$(EPSILON_APPS)) > $@
+
+apps_struct_layout: $(addprefix $(OUTPUT)/,$(addsuffix .ast.json,$(EPSILON_APPS))) $(OUTPUT)/app_sizes.csv
+	for arg in $(basename $(basename $(filter-out app_sizes.csv,$(notdir $^)))); do cp build/struct_layout/visualization.html $(OUTPUT)/$${arg}.html; sed -i '' "s/JSON_FILE/$${arg}.ast.json/g" $(OUTPUT)/$${arg}.html; done
 	@cd $(OUTPUT) && $(PYTHON) -m http.server 8000
 	@echo "In a browser, go to http://localhost:8000/[APP_NAME].html to navigate in the app structure"
 

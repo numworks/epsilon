@@ -87,8 +87,6 @@ public:
   // Expression clone is of the form (exp1) = (exp2)
   // expressionEquation returns (exp1) - (exp2) or (exp2) if isNamed() (reduced ?)
   Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionEquation(this, context); }
-  // expressionReduced returns equations solutions in y ( matrix if multiple solutions) // TODO Hugo : parent implementation should be fine
-  // Poincare::Expression expressionReduced(Poincare::Context * context) const override;
   // expressionReduced returns expressionReduced derivative(s)
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
   Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
@@ -158,7 +156,6 @@ private:
   void didBecomeInactive() {} // m_cache = nullptr; }
 
   class Model : public ExpressionModel {
-    // TODO Hugo : Add derivative
   public:
     Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined), m_expressionDerivate() {}
     // TODO Hugo : Properly rename these functions

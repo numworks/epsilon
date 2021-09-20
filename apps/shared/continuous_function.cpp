@@ -66,7 +66,6 @@ bool ContinuousFunction::isNamed() const {
   return fullName() != nullptr && fullName()[0] != '?';
 }
 
-// TODO Hugo : Account for y^2 sign !
 bool ContinuousFunction::drawSuperiorArea() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
   return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual;

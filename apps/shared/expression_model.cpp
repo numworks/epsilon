@@ -175,25 +175,33 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::renameRecordIfNeeded(Ion::Sto
       && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('x'))
         || (newExpression.type() == ExpressionNode::Type::Equal
           && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('t'))
-            || newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta)))))) {
+            || newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta)))))
+        ) {
       Poincare::Expression a = newExpression.childAtIndex(0);
       Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
       error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
-    } else if (record->fullName()[0] != '?') {
-      // Reset record name back to default
-      char name[3] = {'?', '?', 0}; // name is going to be ?0 or ?1 or ... ?5
-      int currentNumber = 0;
-      // TODO Hugo : Handle currentNumber exceeding 10
-      while (currentNumber < 10) {
-        name[1] = '0'+currentNumber;
-        if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::funcExtension).isNull()) {
-          break;
-        }
-        currentNumber++;
+      if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
+        return error;
       }
-      assert(currentNumber < 10);
-      error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
+      // Reset error, record's name will be resetted.
+      error = Ion::Storage::Record::ErrorStatus::None;
+    } else if (record->fullName()[0] == '?') {
+      // No need to rename anything.
+      return error;
     }
+    // Reset record name back to default
+    char name[3] = {'?', '?', 0}; // name is going to be ?0 or ?1 or ... ?5
+    int currentNumber = 0;
+    // TODO Hugo : Handle currentNumber exceeding 10
+    while (currentNumber < 10) {
+      name[1] = '0'+currentNumber;
+      if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::funcExtension).isNull()) {
+        break;
+      }
+      currentNumber++;
+    }
+    assert(currentNumber < 10);
+    error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
   }
   return error;
 }

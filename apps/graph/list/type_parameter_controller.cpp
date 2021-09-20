@@ -5,7 +5,6 @@
 #include <assert.h>
 #include "../../shared/poincare_helpers.h"
 
-// TODO Hugo : Delete type_helper
 using namespace Escher;
 
 namespace Graph {

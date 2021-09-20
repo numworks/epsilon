@@ -82,7 +82,6 @@ int MathVariableBoxController::numberOfRows() const {
     case Page::Expression:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
-      // TODO Hugo : Filter out expression with name starting with '?'
       return Storage::sharedStorage()->numberOfNamedFunctions();
     case Page::Sequence:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::seqExtension);

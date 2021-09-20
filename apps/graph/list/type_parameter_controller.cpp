@@ -58,17 +58,19 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     myCell->setAccessoryText(I18n::translate(function.functionCategory()));
   } else {
     myCell->setMessage(function.detailsTitle(index - 1));
-    myCell->setSubLabelMessage(function.detailsDescription(index - 1));
-    constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
-    constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
-    char buffer[bufferSize];
     double value = function.detailsValue(index - 1);
     if (std::isnan(value)) {
-      buffer[0] = 0;
+      // There are no value to display, use the accessory for description
+      myCell->setAccessoryText(I18n::translate(function.detailsDescription(index - 1)));
+      myCell->setSubLabelMessage(I18n::Message::Default);
     } else {
+      constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
+      constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+      char buffer[bufferSize];
       Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
+      myCell->setAccessoryText(buffer);
+      myCell->setSubLabelMessage(function.detailsDescription(index - 1));
     }
-    myCell->setAccessoryText(buffer);
   }
 }
 

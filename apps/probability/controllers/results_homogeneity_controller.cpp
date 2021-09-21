@@ -18,7 +18,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
       m_resultsController(resultsController),
       m_contentView(this, &m_table, this),
       m_tableData(&m_innerTableData, this),
-      m_innerTableData(statistic),
+      m_innerTableData(statistic, this),
       m_table(this, &m_tableData, &m_tableData, this),
       m_isTableSelected(true) {
   m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
@@ -62,6 +62,10 @@ void Probability::ResultsHomogeneityController::tableViewDidChangeSelectionAndDi
     int previousSelectedCellY,
     bool withinTemporarySelection) {
   scrollToCorrectLocation();
+}
+
+void Probability::ResultsHomogeneityController::initCell(void * cell) {
+  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::SmallFont);
 }
 
 void Probability::ResultsHomogeneityController::selectCorrectView() {

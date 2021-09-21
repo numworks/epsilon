@@ -37,10 +37,13 @@ void SelectableTableView::selectColumn(int i) {
   m_selectionDataSource->selectColumn(i);
 }
 
-void SelectableTableView::reloadData(bool setFirstResponder) {
+void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) {
   int col = selectedColumn();
   int row = selectedRow();
-  deselectTable(true);
+  // TODO: remove setSelection? (Cf comment in DynamicCellsDataSource)
+  if (setSelection) {
+    deselectTable(true);
+  }
   /* FIXME: The problem with calling deselectTable is that at this point in time
    * the datasource's model is very likely to have changed. Therefore it's
    * rather complicated to get a pointer to the currently selected cell (in
@@ -48,7 +51,9 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
   /* As a workaround, datasources can reset the highlighted state in their
    * willDisplayCell callback. */
   TableView::layoutSubviews();
-  selectCellAtLocation(col, row, setFirstResponder, true);
+  if (setSelection) {
+    selectCellAtLocation(col, row, setFirstResponder, true);
+  }
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {

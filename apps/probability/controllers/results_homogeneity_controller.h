@@ -14,7 +14,8 @@ namespace Probability {
 
 class ResultsHomogeneityController : public Page,
                                      public ButtonDelegate,
-                                     public Escher::SelectableTableViewDelegate {
+                                     public Escher::SelectableTableViewDelegate,
+                                     public DynamicCellsDataSourceDelegate {
 public:
   ResultsHomogeneityController(StackViewController * stackViewController,
                                HomogeneityStatistic * statistic,
@@ -33,6 +34,9 @@ public:
                                                int previousSelectedCellX,
                                                int previousSelectedCellY,
                                                bool withinTemporarySelection = false) override;
+
+  void initCell(void * cell) override;
+  Escher::SelectableTableView * tableView() override { return &m_table; }
 
 private:
   void selectCorrectView();

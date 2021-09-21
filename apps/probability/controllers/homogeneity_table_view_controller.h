@@ -24,9 +24,11 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_table; }
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_tableData; }
 
+  void initCell(void * cell) override;
+  Escher::SelectableTableView * tableView() override { return &m_table; }
+
 private:
   void deleteSelectedValue();
-  void initCell(void * cell) override;
   Escher::SelectableTableViewDataSource m_selectionDataSource;
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;

@@ -47,21 +47,6 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   return ContinuousFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
-bool ContinuousFunction::isActive() const {
-  return recordData()->isActive();
-}
-
-KDColor ContinuousFunction::color() const {
-  return recordData()->color();
-}
-
-void ContinuousFunction::setActive(bool active) {
-  recordData()->setActive(active);
-  if (!active) {
-    didBecomeInactive();
-  }
-}
-
 bool ContinuousFunction::isNamed() const {
   return fullName() != nullptr && fullName()[0] != '?';
 }
@@ -619,22 +604,6 @@ bool ContinuousFunction::shouldClipTRangeToXRange() const {
   return isAlongX();
 }
 
-void ContinuousFunction::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Context * context, bool xRange) const {
-  assert(!hasTwoCurves());
-  Zoom::ValueAtAbscissa evaluation;
-  if (xRange) {
-    evaluation = [](float x, Context * context, const void * auxiliary) {
-      return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x1();
-    };
-  } else {
-    evaluation = [](float x, Context * context, const void * auxiliary) {
-      return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
-    };
-  }
-
-  Zoom::FullRange(evaluation, tMin, tMax, tStep, min, max, context, this);
-}
-
 float ContinuousFunction::tMin() const {
   return recordData()->tMin();
 }
@@ -662,6 +631,7 @@ float ContinuousFunction::rangeStep() const {
 void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
   if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
+    assert(!hasTwoCurves());
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
     *yMinIntrinsic = FLT_MAX;
     *yMaxIntrinsic = -FLT_MAX;
@@ -721,6 +691,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
 void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
   if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
+    assert(!hasTwoCurves());
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
     return;
   }
@@ -735,6 +706,7 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   }
 
   if (!optimizeRange) {
+    assert(!hasTwoCurves());
     protectedFullRangeForDisplay(xMin, xMax, (xMax - xMin) / (Ion::Display::Width / 4), yMin, yMax, context, false);
     return;
   }

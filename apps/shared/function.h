@@ -51,8 +51,8 @@ public:
   virtual I18n::Message parameterMessageName() const = 0;
 
   // Evaluation
-  virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const = 0;
-  virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const = 0;
+  virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context, int i = 0) const = 0;
+  virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int i = 0) const = 0;
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 
   // Range
@@ -79,7 +79,7 @@ protected:
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }
-    bool isActive() const { return m_active; }
+    virtual bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
   private:
 #if __EMSCRIPTEN__

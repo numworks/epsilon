@@ -62,10 +62,10 @@ public:
   bool hasValidExpression(Poincare::Context * context) { return m_definition.hasValidExpression() && !badlyReferencesItself(context); }
   bool badlyReferencesItself(Poincare::Context * context);
   // Approximation
-  Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context) const override {
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context, int i = 0) const override {
     return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
-  Poincare::Coordinate2D<double> evaluateXYAtParameter(double x, Poincare::Context * context) const override {
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double x, Poincare::Context * context, int i = 0) const override {
     return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
   template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIndex = -1) const;

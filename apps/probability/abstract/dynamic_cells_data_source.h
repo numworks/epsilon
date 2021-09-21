@@ -30,7 +30,7 @@ private:
 
 class DynamicCellsDataSourceDelegate {
 public:
-  virtual void initCell(void * cell) = 0;
+  virtual void initCell(void * cell, int index) = 0;
   virtual Escher::SelectableTableView * tableView() = 0;
 };
 

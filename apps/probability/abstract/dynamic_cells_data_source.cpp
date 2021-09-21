@@ -11,7 +11,7 @@ void DynamicCellsDataSource<T,N>::createCells() {
     m_cells = new (Probability::App::app()->buffer()) T[N];
     Probability::App::app()->setBufferDestructor(this);
     for (int i = 0; i < N; i++) {
-      m_delegate->initCell(&m_cells[i]);
+      m_delegate->initCell(&m_cells[i], i);
     }
     // TODO: reloadData(setFirstResponder = false, setSelection = false),
     // selSelection argument was made especially for this local use. Should we

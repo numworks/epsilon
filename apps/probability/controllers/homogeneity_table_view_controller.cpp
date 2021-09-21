@@ -16,7 +16,7 @@ HomogeneityTableViewController::HomogeneityTableViewController(
   m_selectionDataSource.selectColumn(-1);
 }
 
-void HomogeneityTableViewController::initCell(void * cell) {
+void HomogeneityTableViewController::initCell(void * cell, int index) {
   EvenOddEditableTextCell * c = static_cast<EvenOddEditableTextCell *>(cell);
   c->setParentResponder(&m_table);
   c->editableTextCell()->textField()->setDelegates(Probability::App::app(), this);

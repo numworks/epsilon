@@ -436,7 +436,7 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
   recordData()->setEquationSymbol(m_model.m_equationSymbol);
   int yDeg = yDegree(context);
   if (m_model.m_plotType != PlotType::Undefined) {
-    if (yDeg != 0) {
+    if (yDeg > 0) {
       m_model.m_plotType = PlotType::Undefined;
       return recordData()->setPlotType(PlotType::Unhandled);
     }

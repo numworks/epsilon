@@ -44,7 +44,7 @@ bool GraphController::defaultRangeIsNormalized() const {
 
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {
   GraphController * graphController = static_cast<GraphController *>(m_graphController);
-  Shared::ContinuousFunctionStore * store = graphController->functionStore();
+  ContinuousFunctionStore * store = graphController->functionStore();
   ExpiringPointer<ContinuousFunction> function = store->modelForRecord(store->activeRecordAtIndex(j));
   constexpr size_t bufferSize = ContinuousFunction::k_maxNameWithArgumentSize;
   char buffer[bufferSize];

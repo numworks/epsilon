@@ -1,5 +1,5 @@
 #include "function_toolbox.h"
-#include "../../shared/continuous_function_store.h"
+#include "../continuous_function_store.h"
 #include <poincare/layout_helper.h>
 #include <assert.h>
 #include <poincare/code_point_layout.h>

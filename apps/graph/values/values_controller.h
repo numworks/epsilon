@@ -1,7 +1,7 @@
 #ifndef GRAPH_VALUES_CONTROLLER_H
 #define GRAPH_VALUES_CONTROLLER_H
 
-#include "../../shared/continuous_function_store.h"
+#include "../continuous_function_store.h"
 #include "../../shared/buffer_function_title_cell.h"
 #include "../../shared/hideable_even_odd_buffer_text_cell.h"
 #include "../../shared/values_controller.h"
@@ -63,7 +63,7 @@ private:
   // Model getters
   Ion::Storage::Record recordAtColumn(int i) override;
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
-  Shared::ContinuousFunctionStore * functionStore() const override { return static_cast<Shared::ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
+  ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
   Shared::Interval * intervalAtColumn(int columnIndex) override;
 
   // Number of columns

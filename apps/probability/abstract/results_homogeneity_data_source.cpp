@@ -6,14 +6,10 @@
 
 namespace Probability {
 
-ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic) :
-  DynamicCellsDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(this),
+ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate) :
+  DynamicCellsDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(dynamicCellsDataSourceDelegate),
   m_statistic(statistic)
 {
-}
-
-void ResultsHomogeneityDataSource::initCell(void * cell) {
-  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::SmallFont);
 }
 
 void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCell * cell,

@@ -13,6 +13,13 @@ void DynamicCellsDataSource<T,N>::createCells() {
     for (int i = 0; i < N; i++) {
       m_delegate->initCell(&m_cells[i]);
     }
+    // TODO: reloadData(setFirstResponder = false, setSelection = false),
+    // selSelection argument was made especially for this local use. Should we
+    // use 'm_delegate->tableView()->deselectTable();' and ensure that the
+    // SelectionDataSource reprensents the selection correctly (before/after
+    // the table first/last cell to make sure to re-select the right cell when
+    // selecting the table).
+    m_delegate->tableView()->reloadData(false, false);
   }
 }
 

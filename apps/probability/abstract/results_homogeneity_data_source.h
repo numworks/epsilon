@@ -8,9 +8,9 @@ namespace Probability {
 
 /* This DataSource reads the statistic and displays the expected values and the totals for each cell
  * position. */
-class ResultsHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicCellsDataSourceDelegate {
+class ResultsHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells> {
 public:
-  ResultsHomogeneityDataSource(HomogeneityStatistic * statistic);
+  ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate);
   int numberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }
   int numberOfColumns() const override { return m_statistic->numberOfResultColumns() + 1; }
   KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
@@ -19,8 +19,6 @@ public:
   Escher::HighlightCell * reusableCell(int i, int type) override { return cell(i); }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  void initCell(void * cell) override;
-
 private:
   HomogeneityStatistic * m_statistic;
 };

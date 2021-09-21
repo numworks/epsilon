@@ -3,6 +3,7 @@
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/selectable_table_view.h>
+#include <escher/table_view_data_source.h>
 
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/dynamic_table_view_data_source.h"
@@ -13,13 +14,14 @@ namespace Probability {
 
 using namespace Escher;
 
-class InputHomogeneityDataSource : public DynamicTableViewDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicSizeTableViewDataSource {
+class InputHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicTableViewDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicSizeTableViewDataSource {
 public:
   InputHomogeneityDataSource(DynamicTableViewDataSourceDelegate * dynamicTableViewDataSourceDelegate,
                              HomogeneityStatistic * statistic,
                              DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate);
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }
+  Escher::HighlightCell * reusableCell(int i, int type) override { return cell(i); }
   int reusableCellCount(int type) override {
     return HomogeneityTableDataSource::k_numberOfReusableCells;
   }

@@ -31,7 +31,7 @@ void DynamicTableViewDataSource<T,N>::destroyCells() {
 }
 
 template <typename T, int N>
-Escher::HighlightCell * DynamicTableViewDataSource<T,N>::reusableCell(int i, int type) {
+Escher::HighlightCell * DynamicTableViewDataSource<T,N>::cell(int i) {
   createCells();
   return &m_cells[i];
 }

@@ -54,11 +54,11 @@ public:
                                                  Escher::Metric::TitleBarHeight -
                                                  Escher::Metric::StackTitleHeight) /
                                                     HomogeneityTableDataSource::k_rowHeight +
-                                                1;
+                                                2;
   constexpr static int k_numberOfReusableColumns = Ion::Display::Width /
                                                        HomogeneityTableDataSource::k_columnWidth +
-                                                   1;
-  constexpr static int k_numberOfReusableCells = k_numberOfReusableRows * k_numberOfReusableColumns;
+                                                   2;
+  constexpr static int k_numberOfReusableCells = (k_numberOfReusableRows -1 ) * (k_numberOfReusableColumns - 1);
 
 protected:
   TableViewDataSource * m_innerDataSource;

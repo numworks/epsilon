@@ -5,7 +5,7 @@
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_list_view_controller.h>
-#include "continuous_function.h"
+#include "function.h"
 
 namespace Shared {
 
@@ -30,7 +30,7 @@ protected:
   Escher::MessageTableCellWithChevron m_copyColumn;
   Ion::Storage::Record m_record;
 private:
-  char m_pageTitle[ContinuousFunction::k_maxNameWithArgumentSize];
+  char m_pageTitle[Function::k_maxNameWithArgumentSize];
 };
 
 }

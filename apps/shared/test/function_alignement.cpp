@@ -22,7 +22,7 @@ void interactWithRecordMember(SequenceStore * store, Ion::Storage::Record rec) {
   interactWithBaseRecordMember<Sequence>(seq);
 }
 
-void interactWithRecordMember(ContinuousFunctionStore * store, Ion::Storage::Record rec) {
+void interactWithRecordMember(Graph::ContinuousFunctionStore * store, Ion::Storage::Record rec) {
   ContinuousFunction * fct = store->modelForRecord(rec).pointer();
   // Setting m_min from record member m_domain, which has a 2-byte alignment
   fct->setTMin(3.0f);
@@ -74,7 +74,7 @@ QUIZ_CASE(alignment_handling) {
    * differently-aligned objects - is performed (if storage/record
    * implementations change for instance). */
   testAlignmentHandlingFor<SequenceStore>();
-  testAlignmentHandlingFor<ContinuousFunctionStore>();
+  testAlignmentHandlingFor<Graph::ContinuousFunctionStore>();
 }
 
 }

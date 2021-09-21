@@ -5,8 +5,8 @@
 #include <escher/selectable_table_view.h>
 #include <escher/table_view_data_source.h>
 
+#include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
-#include "probability/abstract/dynamic_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 
@@ -14,9 +14,9 @@ namespace Probability {
 
 using namespace Escher;
 
-class InputHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicTableViewDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicSizeTableViewDataSource {
+class InputHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicSizeTableViewDataSource {
 public:
-  InputHomogeneityDataSource(DynamicTableViewDataSourceDelegate * dynamicTableViewDataSourceDelegate,
+  InputHomogeneityDataSource(DynamicCellsDataSourceDelegate * dynamicTableViewDataSourceDelegate,
                              HomogeneityStatistic * statistic,
                              DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate);
   int numberOfRows() const override { return m_numberOfRows; }

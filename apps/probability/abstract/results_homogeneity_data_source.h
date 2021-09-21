@@ -1,14 +1,14 @@
 #ifndef PROBABILITY_ABSTRACT_RESULTS_HOMOGENEITY_DATA_SOURCE_H
 #define PROBABILITY_ABSTRACT_RESULTS_HOMOGENEITY_DATA_SOURCE_H
 
-#include "dynamic_table_view_data_source.h"
+#include "dynamic_cells_data_source.h"
 #include "homogeneity_data_source.h"
 
 namespace Probability {
 
 /* This DataSource reads the statistic and displays the expected values and the totals for each cell
  * position. */
-class ResultsHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicTableViewDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicTableViewDataSourceDelegate {
+class ResultsHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicCellsDataSourceDelegate {
 public:
   ResultsHomogeneityDataSource(HomogeneityStatistic * statistic);
   int numberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }

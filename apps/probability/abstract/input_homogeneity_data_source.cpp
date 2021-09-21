@@ -11,10 +11,10 @@ constexpr int InputHomogeneityDataSource::k_initialNumberOfRows;
 constexpr int InputHomogeneityDataSource::k_initialNumberOfColumns;
 
 InputHomogeneityDataSource::InputHomogeneityDataSource(
-    DynamicTableViewDataSourceDelegate * dynamicTableViewDataSourceDelegate,
+    DynamicCellsDataSourceDelegate * dynamicTableViewDataSourceDelegate,
     HomogeneityStatistic * statistic,
     DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate) :
-      DynamicTableViewDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(dynamicTableViewDataSourceDelegate),
+      DynamicCellsDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(dynamicTableViewDataSourceDelegate),
       DynamicSizeTableViewDataSource(dataSourceDelegate),
       m_numberOfRows(k_initialNumberOfRows),
       m_numberOfColumns(k_initialNumberOfColumns),

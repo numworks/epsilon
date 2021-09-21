@@ -70,7 +70,7 @@ HighlightCell * DerivativeParameterController::reusableCell(int index, int type)
   return cells[index];
 }
 
-Shared::ContinuousFunctionStore * DerivativeParameterController::functionStore() {
+ContinuousFunctionStore * DerivativeParameterController::functionStore() {
   return App::app()->functionStore();
 }
 

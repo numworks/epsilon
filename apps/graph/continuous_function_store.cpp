@@ -1,6 +1,9 @@
 #include "continuous_function_store.h"
+#include <ion.h>
 
-namespace Shared {
+using namespace Shared;
+
+namespace Graph {
 
 bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
   if (nbActiveFunctions != nullptr) {

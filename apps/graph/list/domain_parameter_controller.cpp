@@ -118,7 +118,7 @@ void DomainParameterController::buttonAction() {
   stack->pop();
 }
 
-Shared::ExpiringPointer<ContinuousFunction> DomainParameterController::function() const {
+Shared::ExpiringPointer<Shared::ContinuousFunction> DomainParameterController::function() const {
   assert(!m_record.isNull());
   App * myApp = App::app();
   return myApp->functionStore()->modelForRecord(m_record);

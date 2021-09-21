@@ -29,7 +29,7 @@ void GraphView::reload(bool resetInterrupted, bool force) {
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  Shared::ContinuousFunctionStore * functionStore = App::app()->functionStore();
+  ContinuousFunctionStore * functionStore = App::app()->functionStore();
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
   if (allFunctionsInterrupted(activeFunctionsCount)) {
     // All functions were interrupted, do not draw anything.

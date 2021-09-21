@@ -115,7 +115,7 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool CalculationParameterController::shouldDisplayIntersection() const {
-  Shared::ContinuousFunctionStore * store = App::app()->functionStore();
+  ContinuousFunctionStore * store = App::app()->functionStore();
   // TODO Hugo : Maybe update this to handle intersection between all types.
   int intersectableFunctions = 0;
   intersectableFunctions += store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Cartesian);

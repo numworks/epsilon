@@ -1,19 +1,26 @@
 #include "homogeneity_table_view_controller.h"
+#include "probability/app.h"
 
 namespace Probability {
 
 HomogeneityTableViewController::HomogeneityTableViewController(
     Escher::Responder * parent,
     HomogeneityStatistic * statistic,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
     DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate,
     Escher::SelectableTableViewDelegate * tableDelegate) :
       TableViewController(parent),
-      m_innerTableData(&m_table, inputEventHandlerDelegate, statistic, this, dataSourceDelegate),
+      m_innerTableData(this, statistic, dataSourceDelegate),
       m_tableData(&m_innerTableData, tableDelegate),
       m_table(this, &m_tableData, &m_selectionDataSource, &m_tableData),
       m_statistic(statistic) {
   m_selectionDataSource.selectColumn(-1);
+}
+
+void HomogeneityTableViewController::initCell(void * cell) {
+  EvenOddEditableTextCell * c = static_cast<EvenOddEditableTextCell *>(cell);
+  c->setParentResponder(&m_table);
+  c->editableTextCell()->textField()->setDelegates(Probability::App::app(), this);
+  c->setFont(KDFont::SmallFont);
 }
 
 void HomogeneityTableViewController::didBecomeFirstResponder() {

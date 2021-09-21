@@ -37,5 +37,6 @@ Escher::HighlightCell * DynamicTableViewDataSource<T,N>::reusableCell(int i, int
 }
 
 template class DynamicTableViewDataSource<Escher::EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
+template class DynamicTableViewDataSource<Escher::EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
 
 }

@@ -23,9 +23,9 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBaseline(KDCoordinate baseline);
   virtual const KDFont * font() const = 0;
-  constexpr static KDCoordinate k_colorIndicatorThickness = 2;
 protected:
   constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
+  constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   KDRect subviewFrame() const;
   float verticalAlignment() const;
   Orientation m_orientation;

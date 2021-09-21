@@ -18,7 +18,7 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
       Page(parent),
       m_tableView(this, &m_resultsDataSource, this, &m_contentView),
       m_contentView(&m_tableView, &m_resultsDataSource),
-      m_resultsDataSource(&m_tableView, statistic, this),
+      m_resultsDataSource(&m_tableView, statistic, this, this),
       m_statistic(statistic),
       m_statisticGraphController(statisticGraphController) {
 }
@@ -65,6 +65,10 @@ const char * Probability::ResultsController::title() {
 bool Probability::ResultsController::buttonAction() {
   openPage(m_statisticGraphController);
   return true;
+}
+
+void Probability::ResultsController::initCell(void * cell, int index) {
+  static_cast<ExpressionCellWithBufferWithMessage *>(cell)->setParentResponder(&m_tableView);
 }
 
 Probability::ResultsView::ContentView::ContentView(Escher::SelectableTableView * table,

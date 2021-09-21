@@ -13,13 +13,13 @@ namespace Probability {
 
 ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
                                      Statistic * statistic,
-                                     ButtonDelegate * delegate) :
+                                     ButtonDelegate * buttonDelegate,
+                                     DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate) :
       MemoizedListViewDataSource(),
+      DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage>(dynamicCellsDataSourceDelegate),
       m_statistic(statistic),
-      m_next(parent, I18n::Message::Next, delegate->buttonActionInvocation()) {
-  for (int i = 0; i < k_numberOfReusableCells; i++) {
-    m_resultCells[i].setParentResponder(parent);
-  }
+      m_next(parent, I18n::Message::Next, buttonDelegate->buttonActionInvocation())
+{
 }
 
 int ResultsDataSource::numberOfRows() const {
@@ -109,14 +109,14 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
 
 Escher::HighlightCell * ResultsDataSource::reusableCell(int index, int type) {
   if (type == k_resultCellType) {
-    return &m_resultCells[index];
+    return cell(index);
   }
   return &m_next;
 }
 
 int ResultsDataSource::reusableCellCount(int type) {
   if (type == k_resultCellType) {
-    return sizeof(m_resultCells) / sizeof(ExpressionCellWithBufferWithMessage);
+    return k_numberOfReusableCells;
   }
   return 1;
 }

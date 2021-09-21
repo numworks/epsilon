@@ -46,5 +46,6 @@ Escher::HighlightCell * DynamicCellsDataSource<T,N>::cell(int i) {
 
 template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
 template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
+template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>;
 
 }

@@ -8,7 +8,7 @@ namespace Probability {
 
 /* This DataSource reads the statistic and displays the expected values and the totals for each cell
  * position. */
-class ResultsHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells> {
+class ResultsHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddBufferTextCell, k_maxNumberOfEvenOddBufferTextCells> {
 public:
   ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate);
   int numberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }

@@ -14,7 +14,7 @@ namespace Probability {
 
 using namespace Escher;
 
-class InputHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicSizeTableViewDataSource {
+class InputHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>, public DynamicSizeTableViewDataSource {
 public:
   InputHomogeneityDataSource(DynamicCellsDataSourceDelegate * dynamicTableViewDataSourceDelegate,
                              HomogeneityStatistic * statistic,

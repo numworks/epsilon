@@ -14,7 +14,7 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
     DynamicCellsDataSourceDelegate * dynamicTableViewDataSourceDelegate,
     HomogeneityStatistic * statistic,
     DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate) :
-      DynamicCellsDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(dynamicTableViewDataSourceDelegate),
+      DynamicCellsDataSource<EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>(dynamicTableViewDataSourceDelegate),
       DynamicSizeTableViewDataSource(dataSourceDelegate),
       m_numberOfRows(k_initialNumberOfRows),
       m_numberOfColumns(k_initialNumberOfColumns),

@@ -291,7 +291,7 @@ void App::initTableSelections(Data::Page page,
 
 void * App::buffer() {
   if (m_bufferDestructor) {
-    m_bufferDestructor(m_buffer);
+    m_bufferDestructor->destroyCells();
   }
   return m_buffer;
 }

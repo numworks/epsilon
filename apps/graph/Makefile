@@ -27,7 +27,6 @@ app_graph_src = $(addprefix apps/graph/,\
   list/function_toolbox.cpp \
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
-  list/text_field_function_title_cell.cpp \
   list/type_parameter_controller.cpp \
   values/abscissa_title_cell.cpp \
   values/derivative_parameter_controller.cpp \

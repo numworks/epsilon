@@ -3,9 +3,7 @@
 
 #include "function_toolbox.h"
 #include "list_parameter_controller.h"
-#include "text_field_function_title_cell.h"
 #include "../continuous_function_store.h"
-#include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
 #include <apps/shared/layout_field_delegate.h>
@@ -15,26 +13,47 @@
 
 namespace Graph {
 
-class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
+class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate, public Escher::ListViewDataSource {
 public:
   ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer);
+  // ListViewDataSource
+  int numberOfRows() const override { return this->numberOfExpressionRows(); }
+  KDCoordinate rowHeight(int j) override { return ExpressionModelListController::memoizedRowHeight(j); }
+  KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
+  KDCoordinate cellWidth() override;
+  int typeAtIndex(int index) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override;
+  // ViewController
   const char * title() override;
+  Escher::View * view() override { return &m_selectableTableView; }
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   // Responder
+  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  // ExpressionModelListController
+  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   // Make methods public
   void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
   Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
 private:
   constexpr static int k_maxNumberOfDisplayableRows = 5;
+  KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
+    return ListViewDataSource::cumulatedHeightFromIndex(j);
+  }
+  int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override {
+    return ListViewDataSource::indexFromCumulatedHeight(offsetY);
+  }
   void addModel() override;
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
   ContinuousFunctionStore * modelStore() override;
+  Escher::SelectableTableView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;

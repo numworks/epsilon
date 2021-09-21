@@ -17,6 +17,7 @@ public:
   bool shouldAlignLabelAndAccessory() const override { return true; }
   bool shouldAlignSublabelRight() const override { return false; }
   Escher::BufferTextView * bufferTextView() { return &m_labelView; }
+  const char * text() const override { return m_labelView.text(); }
 
 private:
   Escher::BufferTextView m_labelView;

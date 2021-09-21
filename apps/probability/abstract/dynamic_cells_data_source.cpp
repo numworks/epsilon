@@ -1,5 +1,6 @@
 #include "dynamic_cells_data_source.h"
 #include "probability/app.h"
+#include <new>
 
 namespace Probability {
 

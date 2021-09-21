@@ -1,10 +1,10 @@
-#include "dynamic_table_view_data_source.h"
+#include "dynamic_cells_data_source.h"
 #include "probability/app.h"
 
 namespace Probability {
 
 template <typename T, int N>
-void DynamicTableViewDataSource<T,N>::createCells() {
+void DynamicCellsDataSource<T,N>::createCells() {
   if (m_cells == nullptr) {
     static_assert(sizeof(T) * N <= Probability::App::k_bufferSize, "Probability::App::m_buffer is not large enough");
     m_cells = new (Probability::App::app()->buffer()) T[N];
@@ -16,7 +16,7 @@ void DynamicTableViewDataSource<T,N>::createCells() {
 }
 
 template <typename T, int N>
-void DynamicTableViewDataSource<T,N>::destroyCells() {
+void DynamicCellsDataSource<T,N>::destroyCells() {
   /* We manually call T destructor since we cannot use 'delete' due to the
    * placement new.
    * Note Bene: we qualify the destructor call (by prefixing it by its class
@@ -31,12 +31,12 @@ void DynamicTableViewDataSource<T,N>::destroyCells() {
 }
 
 template <typename T, int N>
-Escher::HighlightCell * DynamicTableViewDataSource<T,N>::cell(int i) {
+Escher::HighlightCell * DynamicCellsDataSource<T,N>::cell(int i) {
   createCells();
   return &m_cells[i];
 }
 
-template class DynamicTableViewDataSource<Escher::EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
-template class DynamicTableViewDataSource<Escher::EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
+template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
+template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>;
 
 }

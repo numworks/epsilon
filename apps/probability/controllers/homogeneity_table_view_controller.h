@@ -8,7 +8,7 @@
 
 namespace Probability {
 
-class HomogeneityTableViewController : public TableViewController, public DynamicTableViewDataSourceDelegate {
+class HomogeneityTableViewController : public TableViewController, public DynamicCellsDataSourceDelegate {
 public:
   HomogeneityTableViewController(Escher::Responder * parent,
                                  HomogeneityStatistic * statistic,

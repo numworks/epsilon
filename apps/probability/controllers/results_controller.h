@@ -54,7 +54,8 @@ private:
 
 class ResultsController : public Page,
                           public ButtonDelegate,
-                          public Escher::SelectableTableViewDataSource {
+                          public Escher::SelectableTableViewDataSource,
+                          public DynamicCellsDataSourceDelegate {
 public:
   ResultsController(Escher::StackViewController * parent,
                     Statistic * statistic,
@@ -72,6 +73,9 @@ public:
     Page::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }
   Escher::View * view() override { return &m_contentView; }
+
+  void initCell(void * cell, int index) override;
+  Escher::SelectableTableView * tableView() override { return &m_tableView; }
 
 protected:
   Escher::SelectableTableView m_tableView;

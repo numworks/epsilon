@@ -7,7 +7,7 @@
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
 
-#include "abstract/dynamic_table_view_data_source.h"
+#include "abstract/dynamic_cells_data_source.h"
 #include "controllers/categorical_type_controller.h"
 #include "controllers/distribution_controller.h"
 #include "controllers/hypothesis_controller.h"
@@ -64,7 +64,7 @@ public:
 
   // Buffer API
   void * buffer();
-  void setBufferDestructor(DynamicTableViewDataSourceDestructor * destructor) { m_bufferDestructor = destructor; }
+  void setBufferDestructor(DynamicCellsDataSourceDestructor * destructor) { m_bufferDestructor = destructor; }
   static constexpr int k_bufferSize = 35200; // = max(sizeof(Escher::EvenOddBufferTextCell),sizeof(Escher::EvenOddEditableTextCell)) * HomogeneityTableDataSource::k_numberOfReusableCells = max(360,640)*55
 
   TELEMETRY_ID("Probability");
@@ -97,7 +97,7 @@ private:
   /* Buffer used for allocating table cells to avoid duplicating required
    * space for these memory-needy tables. */
   char m_buffer[k_bufferSize];
-  DynamicTableViewDataSourceDestructor * m_bufferDestructor;
+  DynamicCellsDataSourceDestructor * m_bufferDestructor;
 };
 
 }  // namespace Probability

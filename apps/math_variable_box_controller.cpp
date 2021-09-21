@@ -115,7 +115,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     static_assert(Shared::Function::k_maxNameWithArgumentSize > Poincare::SymbolAbstract::k_maxNameSize, "Forgot argument's size?");
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
-    Shared::ContinuousFunction f(record);
+    ContinuousFunction f(record);
     symbolLength = f.nameWithArgument(
         symbolName,
         Shared::Function::k_maxNameWithArgumentSize

@@ -11,7 +11,7 @@ const char * ValuesFunctionParameterController::title() {
 }
 
 void ValuesFunctionParameterController::viewWillAppear() {
-  FunctionApp::app()->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, ContinuousFunction::k_maxNameWithArgumentSize);
+  FunctionApp::app()->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, Function::k_maxNameWithArgumentSize);
 }
 
 void ValuesFunctionParameterController::didBecomeFirstResponder() {

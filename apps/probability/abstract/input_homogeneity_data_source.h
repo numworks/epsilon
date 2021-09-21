@@ -3,9 +3,9 @@
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/selectable_table_view.h>
-#include <escher/table_view_data_source.h>
 
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
+#include "probability/abstract/dynamic_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 
@@ -13,12 +13,10 @@ namespace Probability {
 
 using namespace Escher;
 
-class InputHomogeneityDataSource : public TableViewDataSource, public DynamicSizeTableViewDataSource {
+class InputHomogeneityDataSource : public DynamicTableViewDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicSizeTableViewDataSource {
 public:
-  InputHomogeneityDataSource(SelectableTableView * tableView,
-                             InputEventHandlerDelegate * inputEventHandlerDelegate,
+  InputHomogeneityDataSource(DynamicTableViewDataSourceDelegate * dynamicTableViewDataSourceDelegate,
                              HomogeneityStatistic * statistic,
-                             TextFieldDelegate * textFieldDelegate,
                              DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate);
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }
@@ -26,7 +24,6 @@ public:
     return HomogeneityTableDataSource::k_numberOfReusableCells;
   }
   int typeAtLocation(int i, int j) override { return 0; }
-  HighlightCell * reusableCell(int i, int type) override;
 
   KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
   KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
@@ -43,7 +40,6 @@ private:
   int m_numberOfRows;
   int m_numberOfColumns;
 
-  EvenOddEditableTextCell m_cells[HomogeneityTableDataSource::k_numberOfReusableCells];
   HomogeneityStatistic * m_statistic;
 };
 

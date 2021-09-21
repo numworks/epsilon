@@ -11,25 +11,14 @@ constexpr int InputHomogeneityDataSource::k_initialNumberOfRows;
 constexpr int InputHomogeneityDataSource::k_initialNumberOfColumns;
 
 InputHomogeneityDataSource::InputHomogeneityDataSource(
-    SelectableTableView * tableView,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    DynamicTableViewDataSourceDelegate * dynamicTableViewDataSourceDelegate,
     HomogeneityStatistic * statistic,
-    TextFieldDelegate * textFieldDelegate,
     DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate) :
+      DynamicTableViewDataSource<EvenOddEditableTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(dynamicTableViewDataSourceDelegate),
       DynamicSizeTableViewDataSource(dataSourceDelegate),
       m_numberOfRows(k_initialNumberOfRows),
       m_numberOfColumns(k_initialNumberOfColumns),
       m_statistic(statistic) {
-  for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
-    m_cells[i].setParentResponder(tableView);
-    m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
-                                                             textFieldDelegate);
-    m_cells[i].setFont(KDFont::SmallFont);
-  }
-}
-
-HighlightCell * InputHomogeneityDataSource::reusableCell(int i, int type) {
-  return &m_cells[i];
 }
 
 void InputHomogeneityDataSource::recomputeDimensions() {

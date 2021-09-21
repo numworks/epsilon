@@ -8,11 +8,10 @@
 
 namespace Probability {
 
-class HomogeneityTableViewController : public TableViewController {
+class HomogeneityTableViewController : public TableViewController, public DynamicTableViewDataSourceDelegate {
 public:
   HomogeneityTableViewController(Escher::Responder * parent,
                                  HomogeneityStatistic * statistic,
-                                 InputEventHandlerDelegate * inputEventHandlerDelegate,
                                  DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate,
                                  Escher::SelectableTableViewDelegate * tableDelegate);
 
@@ -27,6 +26,7 @@ public:
 
 private:
   void deleteSelectedValue();
+  void initCell(void * cell) override;
   Escher::SelectableTableViewDataSource m_selectionDataSource;
   InputHomogeneityDataSource m_innerTableData;
   HomogeneityTableDataSource m_tableData;

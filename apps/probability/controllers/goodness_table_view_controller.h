@@ -9,11 +9,10 @@
 namespace Probability {
 
 /* Controls the InputGoodnessTableView */
-class GoodnessTableViewController : public TableViewController {
+class GoodnessTableViewController : public TableViewController, public DynamicCellsDataSourceDelegate {
 public:
   GoodnessTableViewController(Escher::Responder * parent,
                               GoodnessStatistic * statistic,
-                              Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                               DynamicSizeTableViewDataSourceDelegate * delegate,
                               Escher::SelectableTableViewDelegate * scrollDelegate);
 
@@ -26,6 +25,9 @@ public:
   // TableViewController
   Escher::SelectableTableView * selectableTableView() override { return &m_inputTableView; }
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_inputTableView; }
+
+  void initCell(void * cell, int index) override;
+  Escher::SelectableTableView * tableView() override { return &m_inputTableView; }
 
 private:
   void deleteSelectedValue();

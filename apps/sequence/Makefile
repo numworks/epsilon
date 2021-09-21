@@ -26,8 +26,8 @@ apps_src += $(app_sequence_src)
 
 i18n_files += $(call i18n_without_universal_for,sequence/base)
 
-# tests_src += $(addprefix apps/sequence/test/,\
-#   sequence.cpp\
-# )
+tests_src += $(addprefix apps/sequence/test/,\
+  sequence.cpp\
+)
 
 $(eval $(call depends_on_image,apps/sequence/app.cpp,apps/sequence/sequence_icon.png))

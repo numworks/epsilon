@@ -13,12 +13,50 @@ namespace Graph {
 ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   Shared::InputEventHandlerDelegate(),
+  m_selectableTableView(this, this, this, this),
   m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, this),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController),
   m_functionToolbox(),
   m_parameterColumnSelected(false)
-{}
+{
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setVerticalCellOverlap(0);
+}
+
+/* TableViewDataSource */
+
+KDCoordinate ListController::cellWidth() {
+  return selectableTableView()->bounds().width();
+}
+
+int ListController::typeAtIndex(int index) {
+  if (isAddEmptyRow(index)) {
+    return 1;
+  }
+  return 0;
+}
+
+HighlightCell * ListController::reusableCell(int index, int type) {
+  assert(index >= 0 && index < maxNumberOfDisplayableRows());
+  if (type == 0) {
+    return functionCells(index);
+  }
+  assert(type == 1);
+  return &(m_addNewModel);
+}
+
+int ListController::reusableCellCount(int type) {
+  if (type == 3) {
+    return 2;
+  }
+  if (type > 3) {
+    return 1;
+  }
+  return maxNumberOfDisplayableRows();
+}
+
+/* ViewController */
 
 const char * ListController::title() {
   return I18n::translate(I18n::Message::FunctionTab);
@@ -72,6 +110,21 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
+/* Responder */
+
+void ListController::didBecomeFirstResponder() {
+  if (selectedRow() == -1) {
+    selectCellAtLocation(0, 0);
+  } else {
+    selectCellAtLocation(selectedColumn(), selectedRow());
+  }
+  if (selectedRow() >= numberOfRows()) {
+    selectCellAtLocation(selectedColumn(), numberOfRows()-1);
+  }
+  footer()->setSelectedButton(-1);
+  Container::activeApp()->setFirstResponder(selectableTableView());
+}
+
 bool ListController::handleEvent(Ion::Events::Event event) {
   // Here we handle an additional parameter column, within FunctionCell's button
   if (selectedRow() >= 0 && selectedRow() <= numberOfRows() && !isAddEmptyRow(selectedRow())) {
@@ -96,7 +149,27 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       return true;
     }
   }
-  return FunctionListController::handleEvent(event);
+  if (event == Ion::Events::Up) {
+    if (selectedRow() == -1) {
+      footer()->setSelectedButton(-1);
+      selectableTableView()->selectCellAtLocation(0, numberOfRows()-1);
+      Container::activeApp()->setFirstResponder(selectableTableView());
+      return true;
+    }
+    selectableTableView()->deselectTable();
+    assert(selectedRow() == -1);
+    Container::activeApp()->setFirstResponder(tabController());
+    return true;
+  }
+  if (selectedRow() < 0) {
+    return false;
+  }
+  if (event == Ion::Events::Down) {
+    selectableTableView()->deselectTable();
+    footer()->setSelectedButton(0);
+    return true;
+  }
+  return handleEventOnExpression(event);
 }
 
 Shared::ListParameterController * ListController::parameterController() {
@@ -114,20 +187,24 @@ HighlightCell * ListController::functionCells(int index) {
 
 void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   assert(cell != nullptr);
-  FunctionListController::willDisplayCellForIndex(cell, j);
+  EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
+  evenOddCell->setEven(j%2 == 0);
+  evenOddCell->setHighlighted(j == selectedRow());
   if (isAddEmptyRow(j)) {
+    evenOddCell->reloadCell();
     return;
   }
   assert(j >= 0 && j < modelStore()->numberOfModels());
-  FunctionCell * myCell = static_cast<FunctionCell *>(cell);
+  FunctionCell * functionCell = static_cast<FunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  myCell->setLayout(f->layout());
-  myCell->setMessage(f->functionCategory());
+  functionCell->setLayout(f->layout());
+  functionCell->setMessage(f->functionCategory());
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
-  myCell->setColor(functionColor);
+  functionCell->setColor(functionColor);
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
-  myCell->setTextColor(textColor);
-  myCell->setParameterSelected(m_parameterColumnSelected);
+  functionCell->setTextColor(textColor);
+  functionCell->setParameterSelected(m_parameterColumnSelected);
+  functionCell->reloadCell();
 }
 
 Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {

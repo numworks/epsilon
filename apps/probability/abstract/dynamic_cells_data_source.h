@@ -21,6 +21,7 @@ template <typename T, int N>
 class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
 public:
   DynamicCellsDataSource(DynamicCellsDataSourceDelegate * delegate) : m_cells(nullptr), m_delegate(delegate) {}
+  ~DynamicCellsDataSource();
   Escher::HighlightCell * cell(int i);
   void destroyCells() override;
 protected:

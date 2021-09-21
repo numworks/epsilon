@@ -5,6 +5,13 @@
 namespace Probability {
 
 template <typename T, int N>
+DynamicCellsDataSource<T,N>::~DynamicCellsDataSource() {
+  if (m_cells) {
+    destroyCells();
+  }
+}
+
+template <typename T, int N>
 void DynamicCellsDataSource<T,N>::createCells() {
   if (m_cells == nullptr) {
     static_assert(sizeof(T) * N <= Probability::App::k_bufferSize, "Probability::App::m_buffer is not large enough");

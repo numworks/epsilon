@@ -39,6 +39,8 @@ public:
 constexpr int k_maxNumberOfEvenOddBufferTextCells = HomogeneityTableDataSource::k_numberOfReusableCells;
 constexpr int k_inputGoodnessTableNumberOfReusableCells = 24; // static assertion in implemtation
 constexpr int k_maxNumberOfEvenOddEditableTextCells = constexpr_max(HomogeneityTableDataSource::k_numberOfReusableCells, k_inputGoodnessTableNumberOfReusableCells);
+constexpr int k_inputControllerNumberOfReusableCells = 7;
+constexpr int k_maxNumberOfExpressionCellsWithEditableTextWithMessage = k_inputControllerNumberOfReusableCells;
 
 }  // namespace Probability
 

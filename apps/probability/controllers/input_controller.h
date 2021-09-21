@@ -4,6 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
 
+#include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/gui/expression_cell_with_editable_text_with_message.h"
 #include "probability/gui/message_table_cell_with_separator.h"
 #include "probability/gui/page_controller.h"
@@ -12,7 +13,7 @@
 
 namespace Probability {
 
-class InputController : public FloatParameterPage {
+class InputController : public FloatParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate {
 public:
   InputController(Escher::StackViewController * parent,
                   ResultsController * resultsController,
@@ -34,6 +35,11 @@ public:
     FloatParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }
 
+  void initCell(void * cell, int index) override;
+  Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
+
+  constexpr static int k_numberOfReusableCells =
+      Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 1;
 protected:
   float parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
   bool isCellEditing(Escher::HighlightCell * cell, int index) override;
@@ -55,11 +61,8 @@ private:
   Statistic * m_statistic;
   ResultsController * m_resultsController;
 
-  constexpr static int k_numberOfReusableCells =
-      Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 1;
   constexpr static int k_significanceCellType = 2;
 
-  ExpressionCellWithEditableTextWithMessage m_parameterCells[k_numberOfReusableCells];
   MessageTableCellWithSeparator m_significanceCell;
 };
 

@@ -45,7 +45,9 @@ Escher::HighlightCell * DynamicCellsDataSource<T,N>::cell(int i) {
 }
 
 static_assert(k_inputGoodnessTableNumberOfReusableCells == InputGoodnessTableView::k_numberOfReusableCells, "k_inputGoodnessTableNumberOfReusableCells should be updated with InputGoodnessTableView::k_numberOfReusableCells");
+static_assert(k_inputControllerNumberOfReusableCells == InputController::k_numberOfReusableCells, "k_inputControllerNumberOfReusableCells should be updated with InputController::k_numberOfReusableCells");
 template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_maxNumberOfEvenOddBufferTextCells>;
 template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>;
+template class DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>;
 
 }

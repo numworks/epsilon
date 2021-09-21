@@ -12,13 +12,14 @@ constexpr int InputGoodnessTableView::k_minimumNumberOfRows;
 
 InputGoodnessTableView::InputGoodnessTableView(
     Escher::Responder * parentResponder,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     GoodnessStatistic * statistic,
     Escher::TextFieldDelegate * textFieldDelegate,
-    DynamicSizeTableViewDataSourceDelegate * delegate,
+    DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate,
+    DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSource,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
       SelectableTableViewWithBackground(parentResponder, this, &m_tableSelection, scrollDelegate),
-      DynamicSizeTableViewDataSource(delegate),
+      DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>(dynamicCellsDataSourceDelegate),
+      DynamicSizeTableViewDataSource(dynamicSizeTableViewDataSource),
       m_numberOfRows(k_minimumNumberOfRows),
       m_statistic(statistic) {
   m_header[0].setMessage(I18n::Message::Observed);
@@ -27,21 +28,13 @@ InputGoodnessTableView::InputGoodnessTableView(
   m_header[1].setEven(true);
   m_header[0].setMessageFont(KDFont::SmallFont);
   m_header[1].setMessageFont(KDFont::SmallFont);
-
-  for (unsigned int i = 0; i < sizeof(m_cells) / sizeof(Escher::EvenOddEditableTextCell); i++) {
-    m_cells[i].setParentResponder(this);
-    m_cells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
-                                                             textFieldDelegate);
-    m_cells[i].setEven((i / 2) % 2 == 1);
-    m_cells[i].setFont(KDFont::SmallFont);
-  }
 }
 
 int InputGoodnessTableView::reusableCellCount(int type) {
   if (type == k_typeOfHeader) {
-    return k_numberOfColumns;
+    return k_inputGoodnessTableNumberOfColumns;
   }
-  return k_maxNumberOfReusableRows * k_numberOfColumns;
+  return k_inputGoodnessTableMaxNumberOfReusableRows * k_inputGoodnessTableNumberOfColumns;
 }
 
 Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
@@ -50,7 +43,7 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
     assert(i < 2);
     return &m_header[i];
   }
-  return &m_cells[i];
+  return cell(i);
 }
 
 void InputGoodnessTableView::recomputeNumberOfRows() {

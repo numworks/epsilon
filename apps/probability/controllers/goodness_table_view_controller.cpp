@@ -1,4 +1,5 @@
 #include "goodness_table_view_controller.h"
+#include "probability/app.h"
 
 #include <algorithm>
 
@@ -7,12 +8,11 @@ namespace Probability {
 GoodnessTableViewController::GoodnessTableViewController(
     Escher::Responder * parent,
     GoodnessStatistic * statistic,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     DynamicSizeTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
       TableViewController(parent),
       m_statistic(statistic),
-      m_inputTableView(this, inputEventHandlerDelegate, statistic, this, delegate, scrollDelegate) {
+      m_inputTableView(this, statistic, this, this, delegate, scrollDelegate) {
 }
 
 void GoodnessTableViewController::didBecomeFirstResponder() {
@@ -62,6 +62,14 @@ void GoodnessTableViewController::deleteSelectedValue() {
   m_statistic->recomputeData();
   m_inputTableView.recomputeNumberOfRows();
   m_inputTableView.selectCellAtLocation(col, std::min(row, m_inputTableView.numberOfRows() - 1));
+}
+
+void GoodnessTableViewController::initCell(void * cell, int index) {
+  Escher::EvenOddEditableTextCell * c = static_cast<Escher::EvenOddEditableTextCell *>(cell);
+  c->setParentResponder(&m_inputTableView);
+  c->editableTextCell()->textField()->setDelegates(Probability::App::app(), this);
+  c->setEven((index / 2) % 2 == 1);
+  c->setFont(KDFont::SmallFont);
 }
 
 }  // namespace Probability

@@ -382,8 +382,14 @@ const ToolboxMessageTree TimeModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportTime, I18n::Message::PythonImportTime, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromTime, I18n::Message::PythonImportTime, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTimeFunction, I18n::Message::PythonTimeFunction, false, I18n::Message::PythonCommandTimeFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTime, I18n::Message::PythonTime),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMonotonic, I18n::Message::PythonMonotonic, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSleep, I18n::Message::PythonSleep)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSleep, I18n::Message::PythonSleep),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLocalTime, I18n::Message::PythonLocalTime),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMktime, I18n::Message::PythonMktime),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSetLocaltime, I18n::Message::PythonSetLocaltime),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRTCmode, I18n::Message::PythonRTCmode),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSetRTCmode, I18n::Message::PythonSetRTCmode),
 };
 
 const ToolboxMessageTree OsModuleChildren[] = {

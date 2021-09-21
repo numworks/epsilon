@@ -305,7 +305,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       || (result.type() == ExpressionNode::Type::Equal
         && (result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))
           || result.childAtIndex(0).childAtIndex(0).isIdenticalTo(Symbol::Builder('t')))))) {
-    // Expression is of the form f(x)[=/>/<] or f([t/theta])=
+    // Expression is of the form f(x)[=/>/<] or f([t/θ])=
     // TODO Hugo : Improve that
     assert(record->fullName() != nullptr);
     Expression exp = result.childAtIndex(0).clone();
@@ -582,8 +582,13 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
   return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context);
 }
 
-int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
-  // TODO Hugo : Re-check
+int ContinuousFunction::printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
+  if (index == 0) {
+    /* With Vertical curves, cursorT != cursorX .
+     * We need the value for symbol=... */
+    return PoincareHelpers::ConvertFloatToText<double>(isAlongX() ? cursorX : cursorT, buffer, bufferSize, precision);
+  }
+
   PlotType type = plotType();
   if (type == PlotType::Parametric) {
     int result = 0;

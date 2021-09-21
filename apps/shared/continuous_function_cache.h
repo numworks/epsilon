@@ -8,7 +8,7 @@
 
 namespace Shared {
 
-class Function;
+class ContinuousFunction;
 
 class ContinuousFunctionCache {
 public:

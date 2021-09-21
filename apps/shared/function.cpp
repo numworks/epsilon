@@ -56,8 +56,8 @@ void Function::setActive(bool active) {
   }
 }
 
-int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
-  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
+int Function::printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+  return PoincareHelpers::ConvertFloatToText<double>(index == 0 ? cursorT : cursorY, buffer, bufferSize, precision);
 }
 
 int Function::name(char * buffer, size_t bufferSize) {

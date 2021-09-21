@@ -3,20 +3,20 @@
 
 #include <poincare/context.h>
 #include <assert.h>
-#include "continuous_function_store.h"
+#include "function_store.h"
 
 namespace Shared {
 
 class InteractiveCurveViewRange;
-class ContinuousFunctionStore;
+class FunctionStore;
 
 class InteractiveCurveViewRangeDelegate {
 public:
   static constexpr float k_defaultXHalfRange = 10.0f;
 
-  static void DefaultComputeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context, ContinuousFunctionStore * functionStore);
-  static void DefaultComputeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float ratio, float * yMin, float * yMax, Poincare::Context * context, ContinuousFunctionStore * functionStore, bool optimizeRange);
-  static void DefaultImproveFullRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, ContinuousFunctionStore * functionStore);
+  static void DefaultComputeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context, FunctionStore * functionStore);
+  static void DefaultComputeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float ratio, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore, bool optimizeRange);
+  static void DefaultImproveFullRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore);
   static float DefaultAddMargin(float x, float range, bool isVertical, bool isMin, float top, float bottom, float left, float right);
 
   virtual float interestingXMin() const { return -k_defaultXHalfRange; }

@@ -3,7 +3,7 @@
 
 #include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
-#include "continuous_function_store.h"
+#include "function_store.h"
 #include "function_graph_view.h"
 #include "function_curve_parameter_controller.h"
 
@@ -42,7 +42,7 @@ protected:
   Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorT(Ion::Storage::Record record);
-  virtual ContinuousFunctionStore * functionStore() const;
+  virtual FunctionStore * functionStore() const;
 
   // Closest vertical curve helper
   virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSecondaryCurveIndex, int * secondaryCurveIndex) const {

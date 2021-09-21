@@ -64,7 +64,7 @@ void Probability::ResultsHomogeneityController::tableViewDidChangeSelectionAndDi
   scrollToCorrectLocation();
 }
 
-void Probability::ResultsHomogeneityController::initCell(void * cell) {
+void Probability::ResultsHomogeneityController::initCell(void * cell, int index) {
   static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::SmallFont);
 }
 

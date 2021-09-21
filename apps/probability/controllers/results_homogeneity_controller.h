@@ -35,7 +35,7 @@ public:
                                                int previousSelectedCellY,
                                                bool withinTemporarySelection = false) override;
 
-  void initCell(void * cell) override;
+  void initCell(void * cell, int index) override;
   Escher::SelectableTableView * tableView() override { return &m_table; }
 
 private:

@@ -2,10 +2,6 @@
 
 namespace Shared {
 
-uint32_t ContinuousFunctionStore::storeChecksum() {
-  return Ion::Storage::sharedStorage()->checksum();
-}
-
 bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();

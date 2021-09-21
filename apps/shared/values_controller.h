@@ -3,7 +3,7 @@
 
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/button_row_controller.h>
-#include "continuous_function_store.h"
+#include "function_store.h"
 #include "function_title_cell.h"
 #include "editable_cell_table_view_controller.h"
 #include "interval.h"
@@ -69,7 +69,7 @@ protected:
   Responder * tabController() const override;
 
   // Model getters
-  virtual ContinuousFunctionStore * functionStore() const;
+  virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
 
   // Number of columns memoization

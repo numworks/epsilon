@@ -1,26 +1,18 @@
 #ifndef SHARED_CONTINUOUS_FUNCTION_STORE_H
 #define SHARED_CONTINUOUS_FUNCTION_STORE_H
 
-#include "expression_model_store.h"
+#include "function_store.h"
 #include "continuous_function.h"
-#include <stdint.h>
 
 namespace Shared {
 
 // ContinuousFunctionStore stores functions and gives them a color.
 
-class ContinuousFunctionStore : public ExpressionModelStore {
+class ContinuousFunctionStore : public FunctionStore {
 public:
-  ContinuousFunctionStore() : ExpressionModelStore() {}
-  uint32_t storeChecksum();
-  int numberOfActiveFunctions() const {
-    return numberOfModelsSatisfyingTest(&isFunctionActive, nullptr);
-  }
+  ContinuousFunctionStore() : FunctionStore() {}
   int numberOfActiveFunctionsInTable() const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveInTable, nullptr);
-  }
-  Ion::Storage::Record activeRecordAtIndex(int i) const {
-    return recordSatisfyingTestAtIndex(i, &isFunctionActive, nullptr);
   }
   bool displaysNonCartesianFunctions(int * nbActiveFunctions = nullptr) const;
   bool displaysFunctionsToNormalize(int * nbActiveFunctions = nullptr) const;
@@ -46,10 +38,6 @@ private:
   static bool isFunctionActiveInTable(ExpressionModelHandle * model, void * context) {
     // An active function must be defined
     return isFunctionActive(model, context) && static_cast<ContinuousFunction *>(model)->isActiveInTable();
-  }
-  static bool isFunctionActive(ExpressionModelHandle * model, void * context) {
-    // An active function must be defined
-    return isModelDefined(model, context) && static_cast<ContinuousFunction *>(model)->isActive();
   }
   // TODO Hugo : Factorize or delete function_store.cpp, simplify methods
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }

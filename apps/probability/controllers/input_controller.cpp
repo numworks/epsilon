@@ -15,17 +15,23 @@ InputController::InputController(Escher::StackViewController * parent,
                                  ResultsController * resultsController,
                                  Statistic * statistic,
                                  Escher::InputEventHandlerDelegate * handler) :
-      FloatParameterPage(parent), m_statistic(statistic), m_resultsController(resultsController) {
+      FloatParameterPage(parent),
+      DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>(this),
+      m_statistic(statistic),
+      m_resultsController(resultsController)
+{
   m_okButton.setMessage(I18n::Message::Next);
   // Initialize cells
-  for (int i = 0; i < k_numberOfReusableCells; i++) {
-    m_parameterCells[i].setParentResponder(&m_selectableTableView);
-    m_parameterCells[i].setDelegates(handler, this);
-  }
   m_significanceCell.setParentResponder(&m_selectableTableView);
   m_significanceCell.innerCell()->setDelegates(handler, this);
   m_significanceCell.innerCell()->setMessage(I18n::Message::Alpha);
   m_significanceCell.innerCell()->setSubLabelMessage(I18n::Message::SignificanceLevel);
+}
+
+void InputController::initCell(void * cell, int index) {
+  ExpressionCellWithEditableTextWithMessage * c = static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
+  c->setParentResponder(&m_selectableTableView);
+  c->setDelegates(Probability::App::app(), this);
 }
 
 const char * InputController::title() {
@@ -135,7 +141,7 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
 Escher::HighlightCell * InputController::reusableParameterCell(int index, int type) {
   if (type == k_parameterCellType) {
     assert(index >= 0 && index < k_numberOfReusableCells);
-    return &(m_parameterCells[index]);
+    return cell(index);
   }
   assert(type == k_significanceCellType);
   return &m_significanceCell;

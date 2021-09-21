@@ -18,7 +18,7 @@ InputGoodnessTableView::InputGoodnessTableView(
     DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSource,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
       SelectableTableViewWithBackground(parentResponder, this, &m_tableSelection, scrollDelegate),
-      DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>(dynamicCellsDataSourceDelegate),
+      DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>(dynamicCellsDataSourceDelegate),
       DynamicSizeTableViewDataSource(dynamicSizeTableViewDataSource),
       m_numberOfRows(k_minimumNumberOfRows),
       m_statistic(statistic) {
@@ -32,9 +32,9 @@ InputGoodnessTableView::InputGoodnessTableView(
 
 int InputGoodnessTableView::reusableCellCount(int type) {
   if (type == k_typeOfHeader) {
-    return k_inputGoodnessTableNumberOfColumns;
+    return k_numberOfColumns;
   }
-  return k_inputGoodnessTableMaxNumberOfReusableRows * k_inputGoodnessTableNumberOfColumns;
+  return k_maxNumberOfReusableRows * k_numberOfColumns;
 }
 
 Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {

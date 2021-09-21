@@ -7,7 +7,7 @@
 namespace Probability {
 
 ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate) :
-  DynamicCellsDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(dynamicCellsDataSourceDelegate),
+  DynamicCellsDataSource<EvenOddBufferTextCell, k_maxNumberOfEvenOddBufferTextCells>(dynamicCellsDataSourceDelegate),
   m_statistic(statistic)
 {
 }

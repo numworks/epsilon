@@ -16,14 +16,10 @@
 
 namespace Probability {
 
-constexpr static int k_inputGoodnessTableNumberOfColumns = 2;
-constexpr static int k_inputGoodnessTableMaxNumberOfReusableRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::StackTitleHeight) / HomogeneityTableDataSource::k_rowHeight + 2;
-constexpr static int k_inputGoodnessTableNumberOfReusableCells = k_inputGoodnessTableNumberOfColumns * k_inputGoodnessTableMaxNumberOfReusableRows;
-
 /* This is the table used to input Expected and Observed results. */
 class InputGoodnessTableView : public SelectableTableViewWithBackground,
                                public BorderedTableViewDataSource,
-                               public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>,
+                               public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>,
                                public DynamicSizeTableViewDataSource {
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
@@ -34,7 +30,7 @@ public:
                          Escher::SelectableTableViewDelegate * scrollDelegate = nullptr);
   // DataSource
   int numberOfRows() const override { return m_numberOfRows; };
-  int numberOfColumns() const override { return k_inputGoodnessTableNumberOfColumns; }
+  int numberOfColumns() const override { return k_numberOfColumns; }
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
   int typeAtLocation(int i, int j) override { return j == 0 ? k_typeOfHeader : k_typeOfInnerCells; }
@@ -47,6 +43,9 @@ public:
   void recomputeNumberOfRows();
 
   constexpr static int k_minimumNumberOfRows = 2;
+  constexpr static int k_numberOfColumns = 2;
+  constexpr static int k_maxNumberOfReusableRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::StackTitleHeight) / HomogeneityTableDataSource::k_rowHeight + 2;
+  constexpr static int k_numberOfReusableCells = k_numberOfColumns * k_maxNumberOfReusableRows;
 
   using Escher::SelectableTableView::unhighlightSelectedCell;  // Made public
 
@@ -63,7 +62,7 @@ private:
 
   GoodnessStatistic * m_statistic;
 
-  Escher::EvenOddMessageTextCell m_header[k_inputGoodnessTableNumberOfColumns];
+  Escher::EvenOddMessageTextCell m_header[k_numberOfColumns];
 
   Escher::SelectableTableViewDataSource m_tableSelection;
 };

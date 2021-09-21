@@ -3,6 +3,8 @@
 
 #include <escher/highlight_cell.h>
 #include <escher/selectable_table_view.h>
+#include "probability/abstract/homogeneity_data_source.h"
+#include "probability/helpers.h"
 
 namespace Probability {
 
@@ -33,6 +35,10 @@ public:
   virtual void initCell(void * cell, int index) = 0;
   virtual Escher::SelectableTableView * tableView() = 0;
 };
+
+constexpr int k_maxNumberOfEvenOddBufferTextCells = HomogeneityTableDataSource::k_numberOfReusableCells;
+constexpr int k_inputGoodnessTableNumberOfReusableCells = 24; // static assertion in implemtation
+constexpr int k_maxNumberOfEvenOddEditableTextCells = constexpr_max(HomogeneityTableDataSource::k_numberOfReusableCells, k_inputGoodnessTableNumberOfReusableCells);
 
 }  // namespace Probability
 

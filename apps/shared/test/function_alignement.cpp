@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include "../continuous_function.h"
-#include "../continuous_function_store.h"
+#include "../../graph/continuous_function_store.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
 

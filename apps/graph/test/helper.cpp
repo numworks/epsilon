@@ -2,7 +2,7 @@
 
 namespace Graph {
 
-ContinuousFunction * addFunction(const char * definition, Shared::ContinuousFunction::PlotType type, Shared::ContinuousFunctionStore * store, Context * context) {
+ContinuousFunction * addFunction(const char * definition, Shared::ContinuousFunction::PlotType type, ContinuousFunctionStore * store, Context * context) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void) err; // Silence compilation warning about unused variable.

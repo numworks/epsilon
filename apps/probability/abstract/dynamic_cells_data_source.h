@@ -2,6 +2,7 @@
 #define PROBABILITY_ABSTRACT_DYNAMIC_CELLS_DATA_SOURCE_H
 
 #include <escher/highlight_cell.h>
+#include <escher/selectable_table_view.h>
 
 namespace Probability {
 
@@ -30,6 +31,7 @@ private:
 class DynamicCellsDataSourceDelegate {
 public:
   virtual void initCell(void * cell) = 0;
+  virtual Escher::SelectableTableView * tableView() = 0;
 };
 
 }  // namespace Probability

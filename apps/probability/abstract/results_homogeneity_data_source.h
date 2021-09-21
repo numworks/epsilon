@@ -8,7 +8,7 @@ namespace Probability {
 
 /* This DataSource reads the statistic and displays the expected values and the totals for each cell
  * position. */
-class ResultsHomogeneityDataSource : public DynamicTableViewDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells> {
+class ResultsHomogeneityDataSource : public DynamicTableViewDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>, public DynamicTableViewDataSourceDelegate {
 public:
   ResultsHomogeneityDataSource(HomogeneityStatistic * statistic);
   int numberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }
@@ -18,9 +18,9 @@ public:
   int typeAtLocation(int i, int j) override { return 0; }
   int reusableCellCount(int type) override { return numberOfRows() * numberOfColumns(); };
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  void initCell(void * cell) override;
 
 private:
-  bool createCells() override;
   HomogeneityStatistic * m_statistic;
 };
 

@@ -7,16 +7,29 @@ namespace Probability {
 
 /* This DataSource allocated its cells in a external buffer provided by the app. */
 
-template <typename T, int N>
-class DynamicTableViewDataSource : public Escher::TableViewDataSource {
+class DynamicTableViewDataSourceDelegate;
+
+class DynamicTableViewDataSourceDestructor {
 public:
-  DynamicTableViewDataSource() : m_cells(nullptr) {}
+  virtual void destroyCells() = 0;
+};
+
+template <typename T, int N>
+class DynamicTableViewDataSource : public Escher::TableViewDataSource, public DynamicTableViewDataSourceDestructor {
+public:
+  DynamicTableViewDataSource(DynamicTableViewDataSourceDelegate * delegate) : m_cells(nullptr), m_delegate(delegate) {}
   Escher::HighlightCell * reusableCell(int i, int type) override;
+  void destroyCells() override;
 protected:
-  virtual bool createCells();
+  void createCells();
   T * m_cells;
 private:
-  static void destroyCells(void * cells);
+  DynamicTableViewDataSourceDelegate * m_delegate;
+};
+
+class DynamicTableViewDataSourceDelegate {
+public:
+  virtual void initCell(void * cell) = 0;
 };
 
 }  // namespace Probability

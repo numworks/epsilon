@@ -7,19 +7,13 @@
 namespace Probability {
 
 ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic) :
-  DynamicTableViewDataSource(),
+  DynamicTableViewDataSource<EvenOddBufferTextCell, HomogeneityTableDataSource::k_numberOfReusableCells>(this),
   m_statistic(statistic)
 {
 }
 
-bool ResultsHomogeneityDataSource::createCells() {
-  if (DynamicTableViewDataSource::createCells()) {
-    for (int i = 0; i < HomogeneityTableDataSource::k_numberOfReusableCells; i++) {
-      m_cells[i].setFont(KDFont::SmallFont);
-    }
-    return true;
-  }
-  return false;
+void ResultsHomogeneityDataSource::initCell(void * cell) {
+  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::SmallFont);
 }
 
 void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCell * cell,

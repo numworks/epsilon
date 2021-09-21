@@ -1,7 +1,7 @@
 #ifndef PROBABILITY_ABSTRACT_DYNAMIC_TABLE_VIEW_DATA_SOURCE_H
 #define PROBABILITY_ABSTRACT_DYNAMIC_TABLE_VIEW_DATA_SOURCE_H
 
-#include <escher/table_view_data_source.h>
+#include <escher/highlight_cell.h>
 
 namespace Probability {
 
@@ -15,10 +15,10 @@ public:
 };
 
 template <typename T, int N>
-class DynamicTableViewDataSource : public Escher::TableViewDataSource, public DynamicTableViewDataSourceDestructor {
+class DynamicTableViewDataSource : public DynamicTableViewDataSourceDestructor {
 public:
   DynamicTableViewDataSource(DynamicTableViewDataSourceDelegate * delegate) : m_cells(nullptr), m_delegate(delegate) {}
-  Escher::HighlightCell * reusableCell(int i, int type) override;
+  Escher::HighlightCell * cell(int i);
   void destroyCells() override;
 protected:
   void createCells();

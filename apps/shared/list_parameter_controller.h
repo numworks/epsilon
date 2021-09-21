@@ -5,7 +5,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_switch.h>
 #include <escher/selectable_table_view_delegate.h>
-#include "continuous_function_store.h"
+#include "function_store.h"
 
 namespace Shared {
 
@@ -26,8 +26,8 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
   virtual bool handleEnterOnRow(int rowIndex);
-  ContinuousFunctionStore * functionStore();
-  ExpiringPointer<ContinuousFunction> function();
+  FunctionStore * functionStore();
+  ExpiringPointer<Function> function();
   Ion::Storage::Record m_record;
 private:
   // Return index of shared cell from row number

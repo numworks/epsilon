@@ -6,8 +6,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, ContinuousFunctionStore * functionStore, Poincare::Context * context) {
-  ExpiringPointer<ContinuousFunction> function = functionStore->modelForRecord(record);
+void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
+  ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
   int numberOfChar = 0;
   numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, k_textBufferSize-numberOfChar-1);
@@ -15,9 +15,8 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  assert(!function->isAlongX() || function->plotType() == ContinuousFunction::PlotType::VerticalLine || cursor->x() == cursor->t());
-  // TODO Hugo : Use isAlongX() instead if previous assert never triggers.
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(function->plotType() == ContinuousFunction::PlotType::VerticalLine ? cursor->x() : cursor->t(), buffer, k_textBufferSize, numberOfSignificantDigits());
+  numberOfChar = function->printValue(0, cursor->t(), cursor->x(),cursor->y(), buffer, k_textBufferSize, numberOfSignificantDigits(), context);
+
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
   bannerView()->abscissaValue()->setText(buffer);
@@ -25,7 +24,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, "=", k_textBufferSize-numberOfChar);
-  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, numberOfSignificantDigits(), context);
+  numberOfChar += function->printValue(1, cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, numberOfSignificantDigits(), context);
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
   bannerView()->ordinateView()->setText(buffer);

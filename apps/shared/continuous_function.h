@@ -55,7 +55,7 @@ public:
   bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
   bool isNamed() const; // y = or f(x) = ?
   bool isAlongX() const { return symbol() == 'x'; }
-  bool hasTwoCurves() const { return m_model.hasTwoCurves(); }
+  bool hasTwoCurves() const override { return m_model.hasTwoCurves(); }
   bool drawSuperiorArea() const; // Superior, SuperiorEqual
   bool drawInferiorArea() const; // Inferior, InferiorEqual
   bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
@@ -106,7 +106,7 @@ public:
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context, int i = 0) const;
 
-  int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+  int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
 
   // tMin and tMax
   bool shouldClipTRangeToXRange() const override;  // Returns true if the function will not be displayed if t is outside x range.

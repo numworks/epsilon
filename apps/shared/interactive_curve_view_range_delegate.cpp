@@ -1,11 +1,11 @@
 #include "interactive_curve_view_range_delegate.h"
 #include "interactive_curve_view_range.h"
-#include "continuous_function_store.h"
+#include "function_store.h"
 #include <poincare/zoom.h>
 
 namespace Shared {
 
-void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context, ContinuousFunctionStore * functionStore) {
+void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context, FunctionStore * functionStore) {
   float xMinTemp, xMaxTemp, yMinTemp ,yMaxTemp;
   *xMin = FLT_MAX;
   *xMax = -FLT_MAX;
@@ -14,7 +14,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float xMinLimit, fl
   int length = functionStore->numberOfActiveFunctions();
 
   for (int i = 0; i < length; i++) {
-    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
+    ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
     f->xRangeForDisplay(xMinLimit, xMaxLimit, &xMinTemp, &xMaxTemp, &yMinTemp, &yMaxTemp, context);
     Poincare::Zoom::CombineRanges(xMinTemp, xMaxTemp, *xMin, *xMax, xMin, xMax);
     Poincare::Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMinIntrinsic, *yMaxIntrinsic, yMinIntrinsic, yMaxIntrinsic);
@@ -23,7 +23,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeXRange(float xMinLimit, fl
   Poincare::Zoom::SanitizeRangeForDisplay(xMin, xMax);
 }
 
-void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float ratio, float * yMin, float * yMax, Poincare::Context * context, ContinuousFunctionStore * functionStore, bool optimizeRange) {
+void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float ratio, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore, bool optimizeRange) {
   int length = functionStore->numberOfActiveFunctions();
 
   float yMinTemp, yMaxTemp;
@@ -31,7 +31,7 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
   *yMin = yMinIntrinsic;
   *yMax = yMaxIntrinsic;
   for (int i = 0; i < length; i++) {
-    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
+    ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(i));
     f->yRangeForDisplay(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, &yMinTemp, &yMaxTemp, context, optimizeRange);
     Poincare::Zoom::CombineRanges(yMinTemp, yMaxTemp, *yMin, *yMax, yMin, yMax);
   }
@@ -39,12 +39,12 @@ void InteractiveCurveViewRangeDelegate::DefaultComputeYRange(float xMin, float x
   Poincare::Zoom::SanitizeRangeForDisplay(yMin, yMax, ratio * (xMax - xMin) / 2.f);
 }
 
-void InteractiveCurveViewRangeDelegate::DefaultImproveFullRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, ContinuousFunctionStore * functionStore) {
+void InteractiveCurveViewRangeDelegate::DefaultImproveFullRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore) {
   if (functionStore->numberOfActiveFunctions() == 1) {
-    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(0));
+    ExpiringPointer<Function> f = functionStore->modelForRecord(functionStore->activeRecordAtIndex(0));
     if (!f->basedOnCostlyAlgorithms(context)) {
       Poincare::Zoom::ValueAtAbscissa evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
-        return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+        return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
       };
       Poincare::Zoom::ExpandSparseWindow(evaluation, xMin, xMax, yMin, yMax, context, f.operator->());
     }

@@ -37,6 +37,7 @@ public:
   bool isActive() const;
   KDColor color() const;
   void setActive(bool active);
+  virtual bool hasTwoCurves() const { return false; }
 
   // Definition Interval
   virtual bool shouldClipTRangeToXRange() const { return true; } // Returns true if the function will not be displayed if t is outside x range.
@@ -47,7 +48,7 @@ public:
   // Name
   int name(char * buffer, size_t bufferSize);
   virtual int nameWithArgument(char * buffer, size_t bufferSize);
-  virtual int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
+  virtual int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
   virtual I18n::Message parameterMessageName() const = 0;
 
   // Evaluation

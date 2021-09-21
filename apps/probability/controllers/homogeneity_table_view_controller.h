@@ -24,7 +24,7 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_table; }
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_tableData; }
 
-  void initCell(void * cell) override;
+  void initCell(void * cell, int index) override;
   Escher::SelectableTableView * tableView() override { return &m_table; }
 
 private:

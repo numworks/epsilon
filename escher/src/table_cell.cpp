@@ -105,10 +105,11 @@ void TableCell::layoutSubviews(bool force) {
 
   bool singleRow = singleRowMode(bounds().width(), label, subLabel, accessoryWidth);
 
+  KDRect labelRect = KDRectZero, subLabelRect = KDRectZero, accessoryRect = KDRectZero;
+
   if (singleRow) {  // Single row -> align vertically each view
     // Label on the left, aligned vertically
-    setFrameIfViewExists(
-        label, KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight), force);
+    labelRect = KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight);
     x += labelWidth + Metric::CellHorizontalElementMargin;
 
     if (shouldAlignSublabelRight() & !giveAccessoryAllWidth()) {
@@ -121,51 +122,38 @@ void TableCell::layoutSubviews(bool force) {
     }
 
     if (!shouldHideSublabel()) {
-      setFrameIfViewExists(
-          subLabel,
-          KDRect(x, y + (height - subLabelHeight) / 2, subLabelWidth, subLabelHeight),
-          force);
+      subLabelRect = KDRect(x, y + (height - subLabelHeight) / 2, subLabelWidth, subLabelHeight);
       x += subLabelWidth + Metric::CellHorizontalElementMargin;
     }
 
     KDCoordinate accessoryY = y + (height - accessoryHeight) / 2;
     if (giveAccessoryAllWidth()) {
-      setFrameIfViewExists(
-          accessory,
-          KDRect(x, accessoryY, xEnd - x, accessoryHeight),
-          force);
+      accessoryRect = KDRect(x, accessoryY, xEnd - x, accessoryHeight);
     } else {
-      setFrameIfViewExists(
-          accessory,
-          KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight),
-          force);
+      accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight);
     }
-
   } else {  // Two rows
-    setFrameIfViewExists(label, KDRect(x, y, labelWidth, labelHeight), force);
+    labelRect = KDRect(x, y, labelWidth, labelHeight);
     if (shouldAlignSublabelRight()) {
       x = xEnd - subLabelWidth;
     }
-    setFrameIfViewExists(
-        subLabel,
-        KDRect(
-            x, y + labelHeight + Metric::CellVerticalElementMargin, subLabelWidth, subLabelHeight),
-        force);
-
+    subLabelRect = KDRect(x, y + labelHeight + Metric::CellVerticalElementMargin, subLabelWidth, subLabelHeight);
     KDCoordinate accessoryY = y + (shouldAlignLabelAndAccessory() ? 0 : (height - accessoryHeight) / 2);
     if (giveAccessoryAllWidth()) {
       KDCoordinate maxX =
           leftOffset + Metric::CellVerticalElementMargin +
           (shouldAlignLabelAndAccessory() ? labelWidth : std::max(labelWidth, subLabelWidth));
-      setFrameIfViewExists(
-          accessory, KDRect(maxX, accessoryY, xEnd - maxX, accessoryHeight), force);
+      accessoryRect = KDRect(maxX, accessoryY, xEnd - maxX, accessoryHeight);
     } else {
-      setFrameIfViewExists(
-          accessory,
-          KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight),
-          force);
+      accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight);
     }
   }
+  // Set frames
+  setFrameIfViewExists(label, labelRect, force);
+  setFrameIfViewExists(subLabel, subLabelRect, force);
+  setFrameIfViewExists(accessory, accessoryRect, force);
+  // Assert no subview intersects
+  assert(!labelRect.intersects(subLabelRect) && !subLabelRect.intersects(accessoryRect) && !accessoryRect.intersects(labelRect));
 }
 
 bool TableCell::singleRowMode() const {

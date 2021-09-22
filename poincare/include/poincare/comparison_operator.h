@@ -21,8 +21,8 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override;
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override;
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 

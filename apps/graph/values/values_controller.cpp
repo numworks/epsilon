@@ -328,7 +328,7 @@ ViewController * ValuesController::functionParameterController() {
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return ContinuousFunction::ParameterMessageForSymbolType(symbolTypeAtColumn(&columnIndex));
+  return ContinuousFunction::MessageForSymbolType(symbolTypeAtColumn(&columnIndex));
 }
 
 // Cells & View

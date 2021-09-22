@@ -10,7 +10,7 @@ I18n::Message AppsContainer::k_promptMessages[] = {
   I18n::Message::BetaVersionMessage5,
   I18n::Message::BetaVersionMessage6};
 
-KDColor AppsContainer::k_promptColors[] = {
+KDColor AppsContainer::k_promptFGColors[] = {
   KDColorBlack,
   KDColorBlack,
   KDColorBlack,
@@ -19,5 +19,15 @@ KDColor AppsContainer::k_promptColors[] = {
   KDColorBlack,
   KDColorBlack,
   Palette::AccentText};
+
+KDColor AppsContainer::k_promptBGColors[] = {
+    KDColorWhite,
+    KDColorWhite,
+    KDColorWhite,
+    KDColorWhite,
+    KDColorWhite,
+    KDColorWhite,
+    KDColorWhite,
+    KDColorWhite};
 
 int AppsContainer::k_promptNumberOfMessages = 8;

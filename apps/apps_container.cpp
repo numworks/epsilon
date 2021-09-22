@@ -29,7 +29,7 @@ AppsContainer::AppsContainer() :
   m_globalContext(),
   m_variableBoxController(),
   m_examPopUpController(this),
-  m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages),
+  m_promptController(k_promptMessages, k_promptFGColors, k_promptBGColors, k_promptNumberOfMessages),
   m_batteryTimer(),
   m_suspendTimer(),
   m_backlightDimmingTimer(),

@@ -486,6 +486,7 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
     // Compute root in y :
     int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
     assert(dy == yDeg);
+    (void) dy; // Silence compilation warnings
     Expression root;
     Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, complexFormat, angleUnit);
     // Reduce to another target for coefficient analysis.

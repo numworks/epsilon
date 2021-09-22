@@ -14,7 +14,7 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   Shared::InputEventHandlerDelegate(),
   m_selectableTableView(this, this, this, this),
-  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, this),
+  m_parameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, this),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController),
   m_functionToolbox(),

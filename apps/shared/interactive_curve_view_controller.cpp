@@ -239,7 +239,6 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
         totalSecondaryIndex = 2;
     }
     int currentIndexScore = 2*currentCurveIndex + currentSecondaryCurveIndex;
-    int nextIndexScore = 2*nextCurveIndex + nextSecondaryCurveIndex;
     for (int iSecondary = startSecondaryIndex; iSecondary < totalSecondaryIndex; iSecondary++) {
       double newY = xyValues(i, x, context, iSecondary).x2();
       if (!suitableYValue(newY)) {
@@ -265,7 +264,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
         if (newY > y && newY < nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore > nextIndexScore);
+          assert(newIndexScore > 2*nextCurveIndex + nextSecondaryCurveIndex);
           if (newY != y || currentIndexScore < 0 || newIndexScore < currentIndexScore) {
             isNextCurve = true;
           }
@@ -276,7 +275,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
         if (newY < y && newY > nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore > nextIndexScore);
+          assert(newIndexScore > 2*nextCurveIndex + nextSecondaryCurveIndex);
         } else if (newY == y && newIndexScore > currentIndexScore) {
           isNextCurve = true;
         }
@@ -285,7 +284,6 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
         nextY = newY;
         nextCurveIndex = i;
         nextSecondaryCurveIndex = iSecondary;
-        nextIndexScore = 2*nextCurveIndex + nextSecondaryCurveIndex;
       }
     }
   }

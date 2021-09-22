@@ -13,7 +13,7 @@ class ListController;
 
 class ListParameterController : public Shared::ListParameterController {
 public:
-  ListParameterController(ListController * listController, Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
+  ListParameterController(Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;
   // MemoizedListViewDataSource
   Escher::HighlightCell * reusableCell(int index, int type) override;
@@ -24,7 +24,6 @@ protected:
   bool handleEnterOnRow(int rowIndex) override;
 private:
   bool displayDetails() const { return ((Shared::ContinuousFunction)m_record).detailsTotal() > 0; }
-  ListController * m_listController;
   Escher::MessageTableCellWithChevronAndMessage m_typeCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;
   TypeParameterController m_typeParameterController;

@@ -39,7 +39,7 @@ public:
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
 
   constexpr static int k_numberOfReusableCells =
-      Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 1;
+      Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 2;
 protected:
   float parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
   bool isCellEditing(Escher::HighlightCell * cell, int index) override;

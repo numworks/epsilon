@@ -65,7 +65,7 @@ public:
   // Buffer API
   void * buffer();
   void setBufferDestructor(DynamicCellsDataSourceDestructor * destructor) { m_bufferDestructor = destructor; }
-  static constexpr int k_bufferSize = 35200; // = max(sizeof(Escher::EvenOddBufferTextCell),sizeof(Escher::EvenOddEditableTextCell)) * HomogeneityTableDataSource::k_numberOfReusableCells = max(360,640)*55
+  static constexpr int k_bufferSize = 46080; // = max(sizeof(Escher::EvenOddBufferTextCell),sizeof(Escher::EvenOddEditableTextCell)) * HomogeneityTableDataSource::k_numberOfReusableCells = max(360,640)*72
 
   TELEMETRY_ID("Probability");
 

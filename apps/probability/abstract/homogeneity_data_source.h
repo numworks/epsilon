@@ -58,7 +58,7 @@ public:
   constexpr static int k_numberOfReusableColumns = Ion::Display::Width /
                                                        HomogeneityTableDataSource::k_columnWidth +
                                                    2;
-  constexpr static int k_numberOfReusableCells = (k_numberOfReusableRows -1 ) * (k_numberOfReusableColumns - 1);
+  constexpr static int k_numberOfReusableCells = k_numberOfReusableRows * k_numberOfReusableColumns;
 
 protected:
   TableViewDataSource * m_innerDataSource;

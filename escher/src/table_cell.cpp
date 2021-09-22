@@ -134,9 +134,8 @@ void TableCell::layoutSubviews(bool force) {
     }
   } else {  // Two rows
     labelRect = KDRect(x, y, labelWidth, labelHeight);
-    if (shouldAlignSublabelRight()) {
-      x = xEnd - subLabelWidth;
-    }
+    /* Even if sublabel should be aligned to the right, we want it aligned left
+     * in a two row configuration. */
     subLabelRect = KDRect(x, y + labelHeight + Metric::CellVerticalElementMargin, subLabelWidth, subLabelHeight);
     KDCoordinate accessoryY = y + (shouldAlignLabelAndAccessory() ? 0 : (height - accessoryHeight) / 2);
     if (giveAccessoryAllWidth()) {

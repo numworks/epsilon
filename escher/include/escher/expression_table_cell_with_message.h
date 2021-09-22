@@ -14,9 +14,6 @@ public:
   void setHighlighted(bool highlight) override;
   void setSubLabelMessage(I18n::Message messageBody);
 
-protected:
-  bool shouldAlignSublabelRight() const override { return false; }
-
 private:
   MessageTextView m_subLabelView;
 };

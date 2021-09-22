@@ -27,24 +27,164 @@ constexpr char ContinuousFunction::k_ordinateName[2];
 
 ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
+  assert(baseName != nullptr);
   // Create the record
   RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
-  if (baseName == nullptr) {
-    // TODO Hugo : Check this assert never happens
-    assert(false);
-    // Return if error
-    return ContinuousFunction();
-  }
-
   *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
-    assert(false); // TODO Hugo : Check it never happens
-    // Return if error
     return ContinuousFunction();
   }
-
   // Return the ContinuousFunction with the new record
   return ContinuousFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
+}
+
+I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
+  switch (symbolType) {
+  case SymbolType::T:
+    return I18n::Message::T;
+  case SymbolType::Theta:
+    return I18n::Message::Theta;
+  default:
+    return I18n::Message::X;
+  }
+}
+
+void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
+  // Retrieve ContinuousFunction's equation
+  Expression equation = expressionEquation(context);
+  // Compute equation's degree regarding x and y.
+  int yDeg = equation.polynomialDegree(context, k_ordinateName);
+  int xDeg = equation.polynomialDegree(context, k_unknownName);
+  // Inequations : equation symbol has been updated when parsing the equation
+  recordData()->setEquationSymbol(m_model.m_equationSymbol);
+  if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
+    ExpressionNode::Sign ySign;
+    // Inequations are handled with a few constraint on y and x degrees.
+    if ((yDeg == 1 || (yDeg == 2 && xDeg > 0)) && isYCoefficientNonNull(yDeg, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
+      if (ySign == ExpressionNode::Sign::Negative) {
+        // Oppose the comparison operator
+        Poincare::ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.m_equationSymbol);
+        m_model.m_equationSymbol = newEquationSymbol;
+        recordData()->setEquationSymbol(newEquationSymbol);
+      }
+      return recordData()->setPlotType(PlotType::Inequation);
+    } else if (yDeg <= 0 && m_model.m_plotType == PlotType::Cartesian) {
+      // Inequation on a named cartesian function
+      return recordData()->setPlotType(PlotType::Inequation);
+    } else {
+      // TODO : Handle vertical lines inequations
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
+  }
+  // TODO Hugo : Improve how named functions are detected
+  // Named functions : PlotType has been updated when parsing the equation
+  if (m_model.m_plotType != PlotType::Undefined) {
+    // There should be no y symbol.
+    if (yDeg > 0) {
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
+    return recordData()->setPlotType(m_model.m_plotType);
+  }
+
+  /* We can now rely on x and y degree to identify plot type :
+   * | y  | x  | Status
+   * | 0  | 0  | Undefined
+   * | 0  | 1  | Vertical Line
+   * | 0  | +  | Unhandled
+   * | 1  | 0  | Horizontal Line
+   * | 1  | 1  | Line
+   * | 1  | +  | Cartesian
+   * | 2  | 0  | Other (Two Horizontal Lines)
+   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
+   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
+   * | 2  | +  | Other
+   * | +  | +  | Unhandled
+   */
+
+  if (yDeg == 0 && xDeg == 0) {
+    return recordData()->setPlotType(PlotType::Undefined);
+  }
+  if (yDeg == 0 && xDeg == 1) {
+    return recordData()->setPlotType(PlotType::VerticalLine);
+  }
+  if (yDeg <= 0 || !isYCoefficientNonNull(yDeg, context)) {
+    /* Any other case where yDeg is null or negative isn't handled.
+     * Same if y's highest degree term depends on x, or may be null. */
+    return recordData()->setPlotType(PlotType::Unhandled);
+  }
+  if (yDeg == 1 && xDeg == 0) {
+    return recordData()->setPlotType(PlotType::HorizontalLine);
+  }
+  if (yDeg == 1 && xDeg == 1) {
+    // Compute metrics for details view of Line
+    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
+    Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+    // Expression lineExpression = expressionReduced(context).clone();
+    /* TODO Hugo : Expression reduced might return invalid result if function was
+     * previously nammed. As a result, we use this workaround. Also, make sure
+     * nowhere in updatePlotType isNamed() is relied on. */
+    // Compute root in y :
+    int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    assert(dy == yDeg);
+    (void) dy; // Silence compilation warnings
+    Expression root;
+    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, complexFormat, angleUnit);
+    // Reduce to another target for coefficient analysis.
+    PoincareHelpers::Reduce(&root, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    // Compute coefficients
+    int d = root.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    if (d == 1) {
+      recordData()->setLine(coefficients[1].approximateToScalar<double>(
+                                context, complexFormat, angleUnit),
+                            coefficients[0].approximateToScalar<double>(
+                                context, complexFormat, angleUnit));
+
+      return recordData()->setPlotType(PlotType::Line);
+    } // Otherwise, there probably was a x*y term in the equation.
+  }
+  if (yDeg == 1) {
+    return recordData()->setPlotType(PlotType::Cartesian);
+  }
+  if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
+    Conic equationConic = Conic(equation, context, k_unknownName);
+    Conic::Type ctype = equationConic.getConicType();
+    recordData()->setConic(equationConic);
+    if (ctype == Conic::Type::Hyperbola) {
+      return recordData()->setPlotType(PlotType::Hyperbola);
+    } else if (ctype == Conic::Type::Parabola) {
+      return recordData()->setPlotType(PlotType::Parabola);
+    } else if (ctype == Conic::Type::Ellipse) {
+      return recordData()->setPlotType(PlotType::Ellipse);
+    } else if (ctype == Conic::Type::Circle) {
+      return recordData()->setPlotType(PlotType::Circle);
+    }
+  }
+  if (yDeg == 2) {
+    return recordData()->setPlotType(PlotType::Other);
+  }
+  return recordData()->setPlotType(PlotType::Unhandled);
+}
+
+I18n::Message ContinuousFunction::plotTypeMessage() const {
+  assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
+  static const I18n::Message category[k_numberOfPlotTypes] = {
+    I18n::Message::PolarType, I18n::Message::ParametricType,I18n::Message::CartesianType,  I18n::Message::LineType, I18n::Message::HorizontalLineType,
+    I18n::Message::VerticalLineType, I18n::Message::InequationType, I18n::Message::CircleType, I18n::Message::EllipseType, I18n::Message::ParabolaType,
+    I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
+  };
+  return category[static_cast<size_t>(plotType())];
+}
+
+CodePoint ContinuousFunction::symbol() const {
+  switch (symbolType()) {
+  case SymbolType::T:
+    return 't';
+  case SymbolType::Theta:
+    return UCodePointGreekSmallLetterTheta;
+  default:
+    return 'x';
+  }
 }
 
 bool ContinuousFunction::isNamed() const {
@@ -64,14 +204,6 @@ bool ContinuousFunction::drawInferiorArea() const {
 bool ContinuousFunction::drawCurve() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
   return eqSymbol == ExpressionNode::Type::SuperiorEqual || eqSymbol == ExpressionNode::Type::InferiorEqual || eqSymbol == ExpressionNode::Type::Equal;
-}
-
-int ContinuousFunction::yDegree(Context * context) const {
-  return expressionEquation(context).polynomialDegree(context, k_ordinateName);
-}
-
-int ContinuousFunction::xDegree(Context * context) const {
-  return expressionEquation(context).polynomialDegree(context, k_unknownName);
 }
 
 // Check if a coefficient of y is never null. Compute its sign.
@@ -123,20 +255,6 @@ int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
     return result;
   }
   return strlcpy(buffer, k_ordinateName, bufferSize);
-}
-
-I18n::Message ContinuousFunction::parameterMessageName() const {
-  return ParameterMessageForSymbolType(symbolType());
-}
-
-I18n::Message ContinuousFunction::functionCategory() const {
-  assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
-  static const I18n::Message category[k_numberOfPlotTypes] = {
-    I18n::Message::PolarType, I18n::Message::ParametricType,I18n::Message::CartesianType,  I18n::Message::LineType, I18n::Message::HorizontalLineType,
-    I18n::Message::VerticalLineType, I18n::Message::InequationType, I18n::Message::CircleType, I18n::Message::EllipseType, I18n::Message::ParabolaType,
-    I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
-  };
-  return category[static_cast<size_t>(plotType())];
 }
 
 int ContinuousFunction::detailsTotal() const {
@@ -270,17 +388,6 @@ double ContinuousFunction::detailsValue(int i) const {
   return titles[i];
 }
 
-CodePoint ContinuousFunction::symbol() const {
-  switch (plotType()) {
-  case PlotType::Parametric:
-    return 't';
-  case PlotType::Polar:
-    return UCodePointGreekSmallLetterTheta;
-  default:
-    return 'x';
-  }
-}
-
 Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const {
   return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record)).replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
 }
@@ -406,134 +513,6 @@ Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record
   assert(ComparisonOperator::IsComparisonOperatorType(e.type()));
   return e.childAtIndex(1);
   // TODO Hugo : Maybe perform the substitution with symbol here.
-}
-
-void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
-  // Compute plot type from expressions
-  /* If of format f(...) = ... , handle this -> Cartesian, Polar, Parametric or Undefined
-   * | y  | x  | Status
-   * | 0  | 0  | Undefined
-   * | 0  | 1  | Vertical Line
-   * | 0  | 2  | Unhandled (Multiple vertical lines ? # TODO)
-   * | 0  | +  | Unhandled (Multiple vertical lines ? # TODO)
-   * | 1  | 0  | Horizontal Line
-   * | 1  | 1  | Line
-   * | 1  | 2  | Cartesian
-   * | 1  | +  | Cartesian
-   * | 2  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
-   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | +  | Other
-   * | +  | 0  | Unhandled (Multiple horizontal lines ? # TODO)
-   * | +  | 1  | Unhandled (Swap x and y ? # TODO)
-   * | +  | 2  | Unhandled (Swap x and y ? # TODO)
-   * | +  | +  | Unhandled
-   */
-  /* TODO Hugo : Here we need to compute expressionEquation to make sure we get the
-   * equation symbol right. It could be improved. */
-  // TODO Hugo : Improve how Cartesian, Polar and parametric curves are detected.
-  Expression equation = expressionEquation(context);
-  recordData()->setEquationSymbol(m_model.m_equationSymbol);
-  int yDeg = yDegree(context);
-  if (m_model.m_plotType != PlotType::Undefined) {
-    if (yDeg > 0) {
-      m_model.m_plotType = PlotType::Undefined;
-      return recordData()->setPlotType(PlotType::Unhandled);
-    }
-    // Polar, parametric, or cartesian decided in expressionEquation.
-    return recordData()->setPlotType(m_model.m_plotType);
-  }
-
-  int xDeg = xDegree(context);
-  if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
-    ExpressionNode::Sign YSign;
-    if ((yDeg == 1 || (yDeg == 2 && xDeg > 0)) && isYCoefficientNonNull(yDeg, context, &YSign) && YSign != ExpressionNode::Sign::Unknown) {
-      if (YSign == ExpressionNode::Sign::Negative) {
-        // Oppose the comparison operator
-        Poincare::ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.m_equationSymbol);
-        m_model.m_equationSymbol = newEquationSymbol;
-        recordData()->setEquationSymbol(newEquationSymbol);
-      }
-      return recordData()->setPlotType(PlotType::Inequation);
-    } else {
-      // TODO Hugo : Handle vertical lines inequations
-      return recordData()->setPlotType(PlotType::Unhandled);
-    }
-  }
-
-  if (yDeg == 0 && xDeg == 0) {
-    return recordData()->setPlotType(PlotType::Undefined);
-  }
-  if (yDeg == 0 && xDeg == 1) {
-    return recordData()->setPlotType(PlotType::VerticalLine);
-  }
-  if (yDeg <= 0 || !isYCoefficientNonNull(yDeg, context)) {
-    /* Any other case where yDeg is null isn't handled.
-     * Same if y's highest degree term depends on x, or may be null. */
-    return recordData()->setPlotType(PlotType::Unhandled);
-  }
-  if (yDeg == 1 && xDeg == 0) {
-    return recordData()->setPlotType(PlotType::HorizontalLine);
-  }
-  if (yDeg == 1 && xDeg == 1) {
-    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
-    Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-    // Expression lineExpression = expressionReduced(context).clone();
-    /* TODO Hugo : Expression reduced might return invalid result if function was
-     * previously nammed. As a result, we use this workaround. Also, make sure
-     * nowhere in updatePlotType isNamed() is relied on. */
-    // Compute root in y :
-    int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-    assert(dy == yDeg);
-    (void) dy; // Silence compilation warnings
-    Expression root;
-    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, complexFormat, angleUnit);
-    // Reduce to another target for coefficient analysis.
-    PoincareHelpers::Reduce(&root, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
-    // Compute coefficients
-    int d = root.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-    if (d == 1) {
-      recordData()->setLine(coefficients[1].approximateToScalar<double>(
-                                context, complexFormat, angleUnit),
-                            coefficients[0].approximateToScalar<double>(
-                                context, complexFormat, angleUnit));
-
-      return recordData()->setPlotType(PlotType::Line);
-    } // Otherwise, there probably was a x*y term in the equation.
-  }
-  if (yDeg == 1) {
-    return recordData()->setPlotType(PlotType::Cartesian);
-  }
-  if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
-    Conic equationConic = Conic(equation, context, k_unknownName);
-    Conic::Type ctype = equationConic.getConicType();
-    recordData()->setConic(equationConic);
-    if (ctype == Conic::Type::Hyperbola) {
-      return recordData()->setPlotType(PlotType::Hyperbola);
-    } else if (ctype == Conic::Type::Parabola) {
-      return recordData()->setPlotType(PlotType::Parabola);
-    } else if (ctype == Conic::Type::Ellipse) {
-      return recordData()->setPlotType(PlotType::Ellipse);
-    } else if (ctype == Conic::Type::Circle) {
-      return recordData()->setPlotType(PlotType::Circle);
-    }
-  }
-  if (yDeg == 2) {
-    return recordData()->setPlotType(PlotType::Other);
-  }
-  return recordData()->setPlotType(PlotType::Unhandled);
-}
-
-I18n::Message ContinuousFunction::ParameterMessageForSymbolType(SymbolType symbolType) {
-  switch (symbolType) {
-  case SymbolType::T:
-    return I18n::Message::T;
-  case SymbolType::Theta:
-    return I18n::Message::Theta;
-  default:
-    return I18n::Message::X;
-  }
 }
 
 bool ContinuousFunction::displayDerivative() const {

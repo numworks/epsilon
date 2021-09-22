@@ -13,7 +13,15 @@ namespace Shared {
 
 class ContinuousFunction : public Function {
 public:
-  // x, t, θ
+  /* ContinuousFunction */
+
+  // Create a record with baseName
+  static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
+  // Builder
+  ContinuousFunction(Ion::Storage::Record record = Record()) : Function(record) {}
+
+  /* Symbol and Plot types */
+
   static constexpr size_t k_numberOfSymbolTypes = 3;
   enum class SymbolType : uint8_t {
     Theta = 0,
@@ -25,11 +33,11 @@ public:
   enum class PlotType : uint8_t {
     Polar = 0,
     Parametric,
-    // All remaining types use x as a symbol
+    // All following types use x as a symbol
     Cartesian,
     Line,
     HorizontalLine,
-    // All remaining types shall not be active in values table
+    // All following types shall never be active in values table
     VerticalLine,
     Inequation,
     Circle,
@@ -37,43 +45,63 @@ public:
     Parabola,
     Hyperbola,
     Other,
-    // All remaining types shall not be active
+    // All following types shall never be active
     Undefined,
     Unhandled
   };
 
-  // TODO Hugo : Add staticAssert for this
+  static_assert(
+    (static_cast<SymbolType>(PlotType::Polar) == SymbolType::Theta &&
+      static_cast<SymbolType>(PlotType::Parametric) == SymbolType::T &&
+      static_cast<SymbolType>(PlotType::Cartesian) == SymbolType::X),
+    "First PlotTypes should match SymbolTypes");
+  // Return SymbolType corresponding to PlotType
   static SymbolType SymbolForPlotType(PlotType plotType) {
     return plotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(plotType);
   }
+  // Return Message corresponding to SymbolType
+  static I18n::Message MessageForSymbolType(SymbolType symbolType);
+  // Return ContinuousFunction's PlotType
+  PlotType plotType() const { return recordData()->plotType(); }
+  // Return ContinuousFunction's SymbolType
+  SymbolType symbolType() const { return SymbolForPlotType(plotType()); }
+  // Update ContinuousFunction's PlotType
+  void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
+  // Return ContinuousFunction's PlotType message
+  I18n::Message plotTypeMessage() const;
 
-  static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
-  ContinuousFunction(Ion::Storage::Record record = Record()) : Function(record) {}
+  /* Function */
 
-  // Properties
-  // TODO Hugo : Add staticAssert for this
+  // Return Message corresponding to ContinuousFunction's SymbolType
+  I18n::Message parameterMessageName() const override { return MessageForSymbolType(symbolType()); }
+  // Return CodePoint corresponding to ContinuousFunction's SymbolType
+  CodePoint symbol() const override;
+
+  /* Properties */
+
   bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
-  bool isNamed() const; // y = or f(x) = ?
+  bool isNamed() const;
   bool isAlongX() const { return symbol() == 'x'; }
   bool hasTwoCurves() const override { return m_model.hasTwoCurves(); }
   bool drawSuperiorArea() const; // Superior, SuperiorEqual
   bool drawInferiorArea() const; // Inferior, InferiorEqual
   bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
-  int yDegree(Poincare::Context * context) const; // Handled y degree are 0, 1 or 2
-  int xDegree(Poincare::Context * context) const; // Any degree is handled
   bool isYCoefficientNonNull(int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * YSign = nullptr) const;
-
   int nameWithArgument(char * buffer, size_t bufferSize) override;
-  I18n::Message parameterMessageName() const override;
 
-  I18n::Message functionCategory() const; // Line, polar, cartesian, ...
+  /* Helper */
+
+  int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+
+  /* Detail view */
 
   int detailsTotal() const;
   I18n::Message detailsTitle(int i) const;
   I18n::Message detailsDescription(int i) const;
   double detailsValue(int i) const;
 
-  CodePoint symbol() const override; // x, theta, t, y
+  /* Expression */
+
   // Expression clone is of the form (exp1) = (exp2)
   // expressionEquation returns (exp1) - (exp2) or (exp2) if isNamed() (reduced ?)
   Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionEquation(this, context); }
@@ -83,12 +111,11 @@ public:
   Poincare::Expression equationExpression(const Ion::Storage::Record * record) const {
     return m_model.originalEquation(record, symbol());
   }
-  PlotType plotType() const { return recordData()->plotType(); }
-  SymbolType symbolType() const { return SymbolForPlotType(plotType()); }
-  void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
-  static I18n::Message ParameterMessageForSymbolType(SymbolType symbolType);  // x, theta, t, y
+  Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
+  void udpateModel(Poincare::Context * context);
 
-  // Evaluation
+  /* Evaluation */
+
   Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context, int i = 0) const {
     return templatedApproximateAtParameter(t, context, i);
   }
@@ -100,15 +127,15 @@ public:
     return privateEvaluateXYAtParameter<double>(t, context, i);
   }
 
-  // Derivative
+  /* Derivative */
+
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context, int i = 0) const;
 
-  int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+  /* tMin and tMax */
 
-  // tMin and tMax
   bool shouldClipTRangeToXRange() const override;  // Returns true if the function will not be displayed if t is outside x range.
   float tMin() const override;
   float tMax() const override;
@@ -116,56 +143,44 @@ public:
   void setTMax(float tMax);
   float rangeStep() const override;
 
-  // Range
+  /* Range */
+
   bool basedOnCostlyAlgorithms(Poincare::Context * context) const override;
   void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
   void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const override;
 
-  // Extremum
+  /* Extremum */
+
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
   Poincare::Coordinate2D<double> nextMaximumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
-  // Roots
+
+  /* Roots */
+
   Poincare::Coordinate2D<double> nextRootFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
   Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
-  // Integral
+
+  /* Integral */
+
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
+
+  /* Cache */
   // TODO Hugo : Consider cache
-  Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
-  void udpateModel(Poincare::Context * context);
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
   static constexpr char k_ordinateName[2] = "y";
-  // TODO Hugo : usefull ?
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
+
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
-  template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i = 0) const;
+
+  template<typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int i = 0) const;
+  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context, int i = 0) const;
+
+
   // TODO Hugo : Restore cache or remove it
   void didBecomeInactive() override {} // m_cache = nullptr; }
 
-  class Model : public ExpressionModel {
-  public:
-    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined), m_expressionDerivate() {}
-    // TODO Hugo : Properly rename these functions
-    Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
-    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
-    Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
-    Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
-    Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
-    void tidy() const override;
-    bool hasTwoCurves() const { return m_hasTwoCurves; }
-  // private:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
-    size_t expressionSize(const Ion::Storage::Record * record) const override;
-    mutable bool m_hasTwoCurves;
-    mutable Poincare::ExpressionNode::Type m_equationSymbol;
-    // TODO Hugo : Avoid this
-    mutable PlotType m_plotType;
-    mutable Poincare::Expression m_expressionDerivate;
-  };
-  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
-  const ExpressionModel * model() const override { return &m_model; }
-
+  /* Record */
   // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
@@ -197,14 +212,37 @@ private:
     PlotType m_plotType; // 1 - 1
     Poincare::ExpressionNode::Type m_equationSymbol; // 1 - 1
   };
-
-  Model m_model;
-  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context, int i = 0) const;
+  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   RecordDataBuffer * recordData() const {
     assert(!isNull());
     Ion::Storage::Record::Data d = value();
     return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
   }
+
+  /* Model */
+
+  class Model : public ExpressionModel {
+  public:
+    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined), m_expressionDerivate() {}
+    // TODO Hugo : Properly rename these functions
+    Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
+    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
+    Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
+    Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    void tidy() const override;
+    bool hasTwoCurves() const { return m_hasTwoCurves; }
+  // private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
+    size_t expressionSize(const Ion::Storage::Record * record) const override;
+    mutable bool m_hasTwoCurves;
+    mutable Poincare::ExpressionNode::Type m_equationSymbol;
+    // TODO Hugo : Avoid this
+    mutable PlotType m_plotType;
+    mutable Poincare::Expression m_expressionDerivate;
+  };
+  const ExpressionModel * model() const override { return &m_model; }
+  Model m_model;
 };
 
 }

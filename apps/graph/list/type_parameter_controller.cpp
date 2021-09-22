@@ -54,7 +54,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
-    myCell->setAccessoryText(I18n::translate(function.functionCategory()));
+    myCell->setAccessoryText(I18n::translate(function.plotTypeMessage()));
   } else {
     myCell->setMessage(function.detailsTitle(index - 1));
     double value = function.detailsValue(index - 1);

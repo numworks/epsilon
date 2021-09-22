@@ -15,7 +15,8 @@ public:
   const char * text() const override {
     return m_accessoryView.text();
   }
-protected:
+private:
+  bool shouldAlignSublabelRight() const override { return false; }
   BufferTextView m_accessoryView;
 };
 

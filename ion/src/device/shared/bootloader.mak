@@ -9,30 +9,35 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight_basic.cpp \
   base64.cpp \
   battery.cpp \
+  board_frequency_prescaler.cpp:-n0120 \
+  board_frequency_vos.cpp:+n0120 \
   board_privileged.cpp \
-  board_privileged_n0110.cpp \
+  board_privileged_n0110.cpp:+n0110 \
+  board_privileged_n0120.cpp:+n0120 \
   display.cpp \
   display_image.cpp \
   display_shortcut.cpp \
   display_vblank.cpp \
   external_flash.cpp \
-  external_flash_command.cpp \
+  external_flash_qspi_n0110.cpp:+n0110 \
+  external_flash_qspi_n0120.cpp:+n0120 \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
   internal_flash.cpp \
-  internal_flash_otp.cpp \
+  internal_flash_otp_n0110.cpp:+n0110 \
+  internal_flash_otp_n0120.cpp:+n0120 \
   keyboard.cpp \
   keyboard_init.cpp \
-  power_configuration.cpp \
   power_suspend.cpp \
+  power_standby_n0110.cpp:+n0110 \
+  power_standby_n0120.cpp:+n0120 \
   random.cpp \
   reset.cpp \
   serial_number.cpp \
   timing.cpp \
   usb.cpp \
-  usb_n0110.cpp \
-  usb_privileged.cpp \
-  usb_unprivileged.cpp \
+  usb_gpio_n0110.cpp:+n0110 \
+  usb_gpio_n0120.cpp:+n0120 \
 )
 
 ion_device_bootloader_src += ion/src/device/shared/post_and_hardware_tests

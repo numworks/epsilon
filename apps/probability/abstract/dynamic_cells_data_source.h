@@ -40,7 +40,7 @@ public:
 constexpr int k_maxNumberOfEvenOddBufferTextCells = HomogeneityTableDataSource::k_numberOfReusableCells;
 constexpr int k_inputGoodnessTableNumberOfReusableCells = 24; // static assertion in implementation
 constexpr int k_maxNumberOfEvenOddEditableTextCells = constexpr_max(HomogeneityTableDataSource::k_numberOfReusableCells, k_inputGoodnessTableNumberOfReusableCells);
-constexpr int k_inputControllerNumberOfReusableCells = 7;
+constexpr int k_inputControllerNumberOfReusableCells = 8;
 constexpr int k_maxNumberOfExpressionCellsWithEditableTextWithMessage = k_inputControllerNumberOfReusableCells;
 constexpr int k_resultDataSourceNumberOfReusableCells = 5;
 constexpr int k_maxNumberOfExpressionCellsWithBufferWithMessage = k_resultDataSourceNumberOfReusableCells;

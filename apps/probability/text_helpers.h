@@ -10,9 +10,7 @@
 
 namespace Probability {
 
-const char * testToText(Data::Test t);
 const char * testToTextSymbol(Data::Test t);
-const char * testTypeToText(Data::TestType t);
 I18n::Message titleFormatForTest(Data::Test test, Data::TestType type);
 I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type);
 

@@ -16,28 +16,6 @@ using namespace Poincare;
 
 namespace Probability {
 
-const char * testToText(Data::Test t) {
-  I18n::Message msg;
-  switch (t) {
-    case Data::Test::OneProp:
-      msg = I18n::Message::OneProportion;  // TODO these are very similar to
-                                           // I18n::Message::TestOneProp
-      break;
-    case Data::Test::OneMean:
-      msg = I18n::Message::OneMean;
-      break;
-    case Data::Test::TwoProps:
-      msg = I18n::Message::TwoProportions;
-      break;
-    case Data::Test::TwoMeans:
-      msg = I18n::Message::TwoMeans;
-      break;
-    default:
-      assert(false);
-  }
-  return I18n::translate(msg);
-}
-
 const char * testToTextSymbol(Data::Test t) {
   switch (t) {
     case Data::Test::OneProp:
@@ -48,20 +26,6 @@ const char * testToTextSymbol(Data::Test t) {
       return "p1-p2";  // TODO subscript
     case Data::Test::TwoMeans:
       return "μ1-μ2";
-    default:
-      assert(false);
-      return nullptr;
-  }
-}
-
-const char * testTypeToText(Data::TestType t) {
-  switch (t) {
-    case Data::TestType::TTest:
-      return "t";
-    case Data::TestType::PooledTTest:
-      return I18n::translate(I18n::Message::PooledT);
-    case Data::TestType::ZTest:
-      return "z";
     default:
       assert(false);
       return nullptr;

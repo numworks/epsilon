@@ -25,6 +25,7 @@ public:
 
   bool giveAccessoryAllWidth() const override { return true; }
   bool shouldAlignLabelAndAccessory() const override { return true; }
+  bool shouldAlignSublabelRight() const override { return false; }
   KDCoordinate accessoryMinimalWidthOverridden() const override {
     // TODO this is redundant with MessageTableCellWithEditableText
     return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(

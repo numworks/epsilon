@@ -2,7 +2,7 @@
 
 ion_device_usb_src += $(addprefix ion/src/device/shared/usb/, \
   calculator.cpp \
-  calculator_leave_bootloader.cpp:+leavebootloader,+n0110 \
+  calculator_leave_bootloader.cpp:+leavebootloader,-n0100 \
   calculator_leave_n0100.cpp:+n0100 \
   calculator_leave_n0110.cpp:-leavebootloader,-leaveuserland,-n0100 \
   calculator_leave_userland.cpp:+leaveuserland,+n0110 \

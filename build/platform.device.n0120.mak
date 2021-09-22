@@ -1,2 +1,3 @@
 TOOLCHAIN ?= arm-gcc-m7h
 ION_KEYBOARD_LAYOUT = layout_B3
+PCB_LATEST = 0

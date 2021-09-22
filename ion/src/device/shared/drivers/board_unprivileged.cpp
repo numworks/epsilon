@@ -1,4 +1,4 @@
-#include <shared/drivers/board_unprivileged.h>
+#include <drivers/board.h>
 #include <drivers/userland_header.h>
 
 namespace Ion {

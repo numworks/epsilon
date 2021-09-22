@@ -10,21 +10,27 @@ ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
   backlight_basic.cpp \
   base64.cpp \
+  board_frequency_prescaler.cpp:-n0120 \
+  board_frequency_vos.cpp:+n0120 \
+  board_peripherals_clocks_n0110.cpp:+n0110 \
+  board_peripherals_clocks_n0120.cpp:+n0120 \
   board_privileged.cpp \
-  board_privileged_n0110.cpp \
+  board_privileged_n0110.cpp:+n0110 \
+  board_privileged_n0120.cpp:+n0120 \
   board_unprotected.cpp \
   display.cpp \
   external_flash.cpp \
-  external_flash_command.cpp \
+  external_flash_qspi_n0110.cpp:+n0110 \
+  external_flash_qspi_n0120.cpp:+n0120 \
   internal_flash.cpp \
-  internal_flash_otp.cpp \
+  internal_flash_otp_n0110.cpp:+n0110 \
+  internal_flash_otp_n0120.cpp:+n0120 \
   reset.cpp \
   serial_number.cpp \
   timing.cpp \
   usb.cpp \
-  usb_n0110.cpp \
-  usb_privileged.cpp \
-  usb_unprivileged.cpp \
+  usb_gpio_n0110.cpp:+n0110 \
+  usb_gpio_n0120.cpp:+n0120 \
 )
 
 ion_device_flasher_src += $(ion_device_dfu_src)

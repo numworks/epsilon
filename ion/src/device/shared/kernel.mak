@@ -12,28 +12,31 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   board_frequency_vos.cpp:+n0120 \
   board_privileged.cpp \
   board_privileged_n0110.cpp:+n0110 \
+  board_privileged_n0120.cpp:+n0120 \
   board_unprivileged.cpp \
-  board_unprivileged_n0100.cpp:+n0100 \
-  board_unprivileged_n0110.cpp:+n0110 \
-  cache.cpp:+n0110 \
+  board_unprivileged_standalone.cpp:+n0100 \
+  board_unprivileged_dual_slots.cpp:-n0100 \
+  cache.cpp:-n0100 \
   crc32.cpp \
   display.cpp \
   display_image.cpp:+n0100 \
   flash.cpp:+n0100 \
-  flash_privileged.cpp:+n0110 \
-  flash_unprivileged.cpp:+n0110 \
+  flash_privileged.cpp:-n0100 \
+  flash_unprivileged.cpp:-n0100 \
   internal_flash.cpp \
   internal_flash_otp_n0110.cpp:+n0110 \
   internal_flash_otp_n0120.cpp:+n0120 \
   keyboard.cpp \
   led.cpp \
-  power.cpp \
-  power_configuration.cpp:+n0110 \
+  power_stm32f.cpp:-n0120 \
+  power_stm32h.cpp:+n0120 \
+  power_standby_n0110.cpp:+n0110 \
+  power_standby_n0120.cpp:+n0120 \
   random.cpp \
   reset.cpp \
   serial_number.cpp \
   timing.cpp \
-  trampoline.cpp:+n0110 \
+  trampoline.cpp:-n0100 \
   usb.cpp \
   usb_gpio_n0100.cpp:+n0100 \
   usb_gpio_n0110.cpp:+n0110 \

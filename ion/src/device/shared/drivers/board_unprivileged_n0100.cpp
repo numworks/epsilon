@@ -1,5 +1,5 @@
 #include <config/board.h>
-#include <drivers/board_unprivileged.h>
+#include <drivers/board.h>
 #include <drivers/kernel_header.h>
 
 namespace Ion {

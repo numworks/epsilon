@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <config/internal_flash.h>
 #include <drivers/usb.h>
-#include <drivers/usb_pins.h>
 #include "dfu_interface.h"
 #include "stack/device.h"
 #include "stack/descriptor/bos_descriptor.h"

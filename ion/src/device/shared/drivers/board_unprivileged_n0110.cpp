@@ -1,6 +1,5 @@
 #include <config/board.h>
-#include <drivers/board_unprivileged.h>
-#include <drivers/board_unprivileged_n0110.h>
+#include <drivers/board.h>
 #include <drivers/kernel_header.h>
 #include <drivers/ram_layout.h>
 

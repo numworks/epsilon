@@ -20,6 +20,11 @@ constexpr static uint32_t SectorAddresses[NumberOfSectors+1] = {
   0x08100000
 };
 
+/* The Device is powered by a 2.8V LDO. This allows us to perform writes to the
+ * Flash 32 bits at once. */
+constexpr Regs::FLASH::CR::PSIZE MemoryAccessWidth = Regs::FLASH::CR::PSIZE::X32;
+typedef uint32_t MemoryAccessType;
+
 }
 }
 }

@@ -13,7 +13,6 @@ ion_device_userland_src += $(addprefix ion/src/device/shared/drivers/, \
   flash_unprivileged.cpp:+n0110 \
   serial_number.cpp:+n0100 \
   trampoline.cpp:+n0110 \
-  usb.cpp:+n0110 \
   usb_unprivileged.cpp \
 )
 

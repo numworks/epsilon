@@ -8,7 +8,8 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
   battery.cpp \
   battery_charge.cpp \
-  board_frequency.cpp \
+  board_frequency_prescaler.cpp:-n0120 \
+  board_frequency_vos.cpp:+n0120 \
   board_privileged.cpp \
   board_privileged_n0110.cpp:+n0110 \
   board_unprivileged.cpp \
@@ -22,7 +23,8 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   flash_privileged.cpp:+n0110 \
   flash_unprivileged.cpp:+n0110 \
   internal_flash.cpp \
-  internal_flash_otp.cpp:+n0110 \
+  internal_flash_otp_n0110.cpp:+n0110 \
+  internal_flash_otp_n0120.cpp:+n0120 \
   keyboard.cpp \
   led.cpp \
   power.cpp \
@@ -33,9 +35,9 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   timing.cpp \
   trampoline.cpp:+n0110 \
   usb.cpp \
-  usb_n0110.cpp:+n0110 \
-  usb_privileged.cpp \
-  usb_unprivileged.cpp \
+  usb_gpio_n0100.cpp:+n0100 \
+  usb_gpio_n0110.cpp:+n0110 \
+  usb_gpio_n0120.cpp:+n0120 \
   wakeup.cpp \
 )
 

@@ -204,7 +204,7 @@ public:
     return (class DIEPINT *)(Base() + 0x908 + i*0x20);
   }
   constexpr uint32_t Base() const {
-    return 0x50000000;
+    return REGS_CONFIG_OTG_BASE_ADDRESS;
   }
 };
 

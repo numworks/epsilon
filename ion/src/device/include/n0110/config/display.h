@@ -10,12 +10,30 @@ namespace Config {
 
 using namespace Regs;
 
-constexpr static GPIOPin FSMCPins[] = {
-  GPIOPin(GPIOD, 0), GPIOPin(GPIOD, 1), GPIOPin(GPIOD, 4), GPIOPin(GPIOD, 5),
-  GPIOPin(GPIOD, 7), GPIOPin(GPIOD, 8), GPIOPin(GPIOD, 9), GPIOPin(GPIOD, 10),
-  GPIOPin(GPIOD, 11), GPIOPin(GPIOD, 14), GPIOPin(GPIOD, 15), GPIOPin(GPIOE, 7),
-  GPIOPin(GPIOE, 8), GPIOPin(GPIOE, 9), GPIOPin(GPIOE, 10), GPIOPin(GPIOE, 11),
-  GPIOPin(GPIOE, 12), GPIOPin(GPIOE, 13), GPIOPin(GPIOE, 14), GPIOPin(GPIOE, 15),
+constexpr GPIO::AFR::AlternateFunction FSMC_AF = GPIO::AFR::AlternateFunction::AF12;
+constexpr GPIO::PUPDR::Pull FSMC_Pull = GPIO::PUPDR::Pull::None;
+constexpr GPIO::OSPEEDR::OutputSpeed FSMC_Speed = GPIO::OSPEEDR::OutputSpeed::Medium;
+constexpr static AFGPIOPin FSMCPins[] = {
+  AFGPIOPin(GPIOD, 0, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 1, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 4, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 5, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 7, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 8, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 9, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 10, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 11, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 14, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOD, 15, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 7, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 8, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 9, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 10, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 11, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 12, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 13, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 14, FSMC_AF, FSMC_Pull, FSMC_Speed),
+  AFGPIOPin(GPIOE, 15, FSMC_AF, FSMC_Pull, FSMC_Speed),
 };
 
 constexpr static GPIOPin PowerPin = GPIOPin(GPIOC, 8);

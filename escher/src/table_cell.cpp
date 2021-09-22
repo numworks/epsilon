@@ -113,7 +113,11 @@ void TableCell::layoutSubviews(bool force) {
 
     if (shouldAlignSublabelRight() & !giveAccessoryAllWidth()) {
       // Align SubLabel right
-      x = xEnd - accessoryWidth - Metric::CellHorizontalElementMargin - subLabelWidth;
+      x = xEnd - subLabelWidth;
+      if (accessoryWidth > 0) {
+        // Account for both accessoryWidth and the additional horizontal margin.
+        x -= (accessoryWidth + Metric::CellHorizontalElementMargin);
+      }
     }
 
     if (!shouldHideSublabel()) {
@@ -184,12 +188,16 @@ bool TableCell::singleRowMode(KDCoordinate width,
   constexpr KDCoordinate leftOffset = k_separatorThickness + Metric::CellLeftMargin;
   width -= leftOffset + Metric::CellRightMargin + k_separatorThickness;
 
-  bool singleRow = (labelSize.width() + subLabelSize.width() + accessoryWidth +
-                        2 * Metric::CellHorizontalElementMargin < width)
-                        || labelView == nullptr
-                        || sublabelView == nullptr
-                        || labelSize.width() == 0
-                        || subLabelSize.width() == 0;
+  KDCoordinate minimalWidth = labelSize.width() +
+                              Metric::CellHorizontalElementMargin +
+                              subLabelSize.width();
+  if (accessoryWidth > 0) {
+    minimalWidth += Metric::CellHorizontalElementMargin + accessoryWidth;
+  }
+
+  bool singleRow = (minimalWidth < width) || labelView == nullptr ||
+                   sublabelView == nullptr || labelSize.width() == 0 ||
+                   subLabelSize.width() == 0;
   return singleRow;
 }
 

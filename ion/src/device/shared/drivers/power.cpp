@@ -10,7 +10,7 @@ using namespace Regs;
 
 void sleepConfiguration() {
   // Decrease HCLK frequency
-  Board::setStandardFrequency(Device::Board::Frequency::Low);
+  Board::setFrequency(Device::Board::Frequency::Low);
 
 #if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   // Disable over-drive

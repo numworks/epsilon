@@ -1,8 +1,8 @@
 #include "dfu_interface.h"
-#include <string.h>
-#include <drivers/board_ram.h>
+#include <drivers/board.h>
 #include <drivers/flash_privileged.h>
 #include <ion/timing.h>
+#include <string.h>
 
 namespace Ion {
 namespace Device {

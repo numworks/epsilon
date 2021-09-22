@@ -18,6 +18,14 @@ int ComparisonOperatorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, comparisonString());
 }
 
+Evaluation<float> ComparisonOperatorNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<float>(approximationContext);
+}
+
+Evaluation<double> ComparisonOperatorNode::approximate(DoublePrecision p, ApproximationContext approximationContext) const {
+  return templatedApproximate<double>(approximationContext);
+}
+
 template<typename T>
 Evaluation<T> ComparisonOperatorNode::templatedApproximate(ApproximationContext approximationContext) const {
   return Complex<T>::Undefined();

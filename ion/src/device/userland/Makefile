@@ -4,13 +4,13 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/boot/, \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/userland/drivers/, \
-  board_n0110.cpp:+n0110 \
-  board_ram_n0100.cpp:+n0100 \
-  board_ram_n0110.cpp:+n0110 \
+  board_dual_slots.cpp:-n0100 \
+  board_ram_dfu_relocated.cpp:+n0100 \
+  board_ram_dfu_xip.cpp:-n0100 \
   clipboard.cpp \
   console_display.cpp:+consoledisplay \
   console_dummy.cpp:-consoledisplay \
-  external_apps.cpp:+n0110 \
+  external_apps.cpp:-n0100 \
   reset.cpp \
   reset_n0100.cpp:+n0100 \
   serial_number.cpp \
@@ -33,18 +33,18 @@ ion_device_userland_svc_src += $(addprefix ion/src/device/userland/drivers/, \
   display.cpp \
   events.cpp \
   fcc_id.cpp \
-  flash.cpp:+n0110 \
+  flash.cpp:-n0100 \
   keyboard.cpp \
   led.cpp \
   pcb_version.cpp \
   persisting_bytes.cpp \
   power.cpp \
   random.cpp \
-  reset_n0110.cpp:+n0110 \
-  serial_number_n0110.cpp:+n0110 \
+  reset_svcall.cpp:-n0100 \
+  serial_number_svcall.cpp:-n0100 \
   timing.cpp \
   usb.cpp \
-  usb_n0110.cpp:+n0110 \
+  usb_svcall.cpp:-n0100 \
 )
 
 ion_device_userland_src += $(ion_device_userland_svc_src)

@@ -11,8 +11,8 @@ namespace Config {
 /* FIXME Those values calculated theorically by adapting the values from a
  * 192MHz cpu to a 540MHz cpu, but are in practice 1.9 times to slow. We could
  * avoid this issue altogether by reworking the sleep. */
-constexpr static int LoopsPerMillisecondLowFrequency = 10485;
-constexpr static int LoopsPerMillisecondHighFrequency = 8*10485;
+constexpr static int LoopsPerMillisecondLowFrequency = 1000;
+constexpr static int LoopsPerMillisecondHighFrequency = 100000;
 constexpr static int LoopsPerMicrosecond = 43;
 
 }

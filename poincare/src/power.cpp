@@ -654,6 +654,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * rational.
    * r^(s+a+...) -> r^s*r^(a+...) */
   if (baseType == ExpressionNode::Type::Rational && indexType == ExpressionNode::Type::Addition && index.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
+    // PowerRationalRational might alter base called r so we clone it to derive r^s from this
+    base = base.clone();
     Rational rationalBase = static_cast<Rational &>(base);
     Addition additionIndex = static_cast<Addition &>(index);
     Rational rationalIndex = index.childAtIndex(0).convert<Rational>();

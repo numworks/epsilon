@@ -107,8 +107,8 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
   if (yDeg == 0 && xDeg == 1) {
     return recordData()->setPlotType(PlotType::VerticalLine);
   }
-  if (yDeg <= 0 || !isYCoefficientNonNull(yDeg, context)) {
-    /* Any other case where yDeg is null or negative isn't handled.
+  if (yDeg <= 0 || yDeg > 2 || !isYCoefficientNonNull(yDeg, context)) {
+    /* Any other case where yDeg is null ,> 2 or negative isn't handled.
      * Same if y's highest degree term depends on x, or may be null. */
     return recordData()->setPlotType(PlotType::Unhandled);
   }
@@ -117,31 +117,36 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
   }
   if (yDeg == 1 && xDeg == 1) {
     // Compute metrics for details view of Line
-    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
     Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
     Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-    // Expression lineExpression = expressionReduced(context).clone();
-    /* TODO Hugo : Expression reduced might return invalid result if function was
-     * previously nammed. As a result, we use this workaround. Also, make sure
-     * nowhere in updatePlotType isNamed() is relied on. */
-    // Compute root in y :
-    int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+    Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
+    ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
+    /* TODO Hugo : Factorize with expressionReduced. Beware of invalid result if
+     * function was previously nammed. */
+    // Compute solution in y :
+    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    int dy = equation.getPolynomialReducedCoefficients(
+        k_ordinateName, coefficients, context, complexFormat, angleUnit,
+        unitFormat, symbolicComputation);
     assert(dy == yDeg);
-    (void) dy; // Silence compilation warnings
+    (void)dy;  // Silence compilation warnings
     Expression root;
-    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root, context, complexFormat, angleUnit);
+    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root,
+                                      context, complexFormat, angleUnit);
     // Reduce to another target for coefficient analysis.
-    PoincareHelpers::Reduce(&root, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
-    // Compute coefficients
-    int d = root.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-    if (d == 1) {
-      recordData()->setLine(coefficients[1].approximateToScalar<double>(
-                                context, complexFormat, angleUnit),
-                            coefficients[0].approximateToScalar<double>(
-                                context, complexFormat, angleUnit));
-
-      return recordData()->setPlotType(PlotType::Line);
-    } // Otherwise, there probably was a x*y term in the equation.
+    PoincareHelpers::Reduce(&root, context,
+                            ExpressionNode::ReductionTarget::SystemForAnalysis);
+    // Separate the two line coefficients
+    int d = root.getPolynomialReducedCoefficients(
+        k_unknownName, coefficients, context, complexFormat, angleUnit,
+        unitFormat, symbolicComputation);
+    assert(d == xDeg)(void) d;  // Silence compilation warnings
+    // Approximate and store the two line coefficients
+    recordData()->setLine(coefficients[1].approximateToScalar<double>(
+                              context, complexFormat, angleUnit),
+                          coefficients[0].approximateToScalar<double>(
+                              context, complexFormat, angleUnit));
+    return recordData()->setPlotType(PlotType::Line);
   }
   if (yDeg == 1) {
     return recordData()->setPlotType(PlotType::Cartesian);
@@ -160,10 +165,9 @@ void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Contex
       return recordData()->setPlotType(PlotType::Circle);
     }
   }
-  if (yDeg == 2) {
-    return recordData()->setPlotType(PlotType::Other);
-  }
-  return recordData()->setPlotType(PlotType::Unhandled);
+  assert(yDeg == 2);
+  // Unknown type that we are able to plot anyway.
+  return recordData()->setPlotType(PlotType::Other);
 }
 
 I18n::Message ContinuousFunction::plotTypeMessage() const {

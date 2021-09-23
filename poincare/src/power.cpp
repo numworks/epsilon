@@ -654,8 +654,6 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * rational.
    * r^(s+a+...) -> r^s*r^(a+...) */
   if (baseType == ExpressionNode::Type::Rational && indexType == ExpressionNode::Type::Addition && index.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    // PowerRationalRational might alter base called r so we clone it to derive r^s from this
-    base = base.clone();
     Rational rationalBase = static_cast<Rational &>(base);
     Addition additionIndex = static_cast<Addition &>(index);
     Rational rationalIndex = index.childAtIndex(0).convert<Rational>();
@@ -1145,8 +1143,10 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
     }
     base.setSign(ExpressionNode::Sign::Positive);
     Expression res2 = PowerRationalRational(base, index, reductionContext);
+    /* PowerRationalRational doesn't alter its arguments: restore the sign of
+     * the base. */
+    base.setSign(ExpressionNode::Sign::Negative);
     if (res2.isUninitialized()) {
-      /* The expression could not be reduced. Restore the sign of the base. */
       base.setSign(ExpressionNode::Sign::Negative);
       return Expression();
     } else {
@@ -1174,7 +1174,11 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
       return std::move(base);
     }
     index.setSign(ExpressionNode::Sign::Positive);
-    return PowerRationalRational(base, index, reductionContext);
+    Expression res = PowerRationalRational(base, index, reductionContext);
+    /* PowerRationalRational doesn't alter its arguments: restore the sign of
+     * the index. */
+    index.setSign(ExpressionNode::Sign::Negative);
+    return res;
   }
   assert(!index.isNegative());
   /* We are handling an expression of the form (p/q)^(a/b), with a and b

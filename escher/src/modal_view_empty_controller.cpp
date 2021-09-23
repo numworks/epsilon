@@ -15,9 +15,9 @@ void ModalViewEmptyController::ModalViewEmptyView::initMessageViews() {
     message->setBackgroundColor(k_backgroundColor);
     float verticalAlignment = KDContext::k_alignCenter;
     if (i == 0) {
-      verticalAlignment = KDContext::k_alignTop;
-    } else if (i == numberOfMessageViews - 1) {
       verticalAlignment = KDContext::k_alignBottom;
+    } else if (i == numberOfMessageViews - 1) {
+      verticalAlignment = KDContext::k_alignTop;
     }
     message->setAlignment(KDContext::k_alignCenter, verticalAlignment);
   }

@@ -53,6 +53,7 @@ void configureGlobalVariables() {
    * order is not specified, most often than not this yields the dreaded static
    * init order fiasco. How about bypassing the issue altogether? */
   if (&_init_array_start != &_init_array_end) {
+    while (1) {}
     abort();
   }
 #endif

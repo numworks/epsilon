@@ -39,5 +39,5 @@ $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 openocd:
 	openocd -f build/$(PLATFORM)/openocd.$(MODEL).cfg
 
-$(BUILD_DIR)/%.$(EXE): LDDEPS += $(LDSCRIPT) ion/src/$(PLATFORM)/shared/flash/shared_config_flash.ld ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_flash.ld
+$(BUILD_DIR)/%.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_flash.ld ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_sram.ld
 $(BUILD_DIR)/%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared/flash -Lion/src/$(PLATFORM)/shared/flash/$(MODEL)

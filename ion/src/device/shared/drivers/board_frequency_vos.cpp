@@ -16,7 +16,7 @@ static void setLowVoltageScaling() {
   // Disable PLL
   RCC.CR()->setPLL1ON(false);
   RCC.CR()->setPLL2ON(false);
-  while (!RCC.CR()->getPLL1RDY() || !RCC.CR()->getPLL2RDY()) {}
+  while (RCC.CR()->getPLL1RDY() || RCC.CR()->getPLL2RDY()) {}
   // Decrease VOS
   PWR.D3CR()->setVOS(PWR::D3CR::VOS::Scale3);
   while (!PWR.D3CR()->getVOSRDY()) {}

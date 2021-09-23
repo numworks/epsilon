@@ -66,7 +66,8 @@ private:
   bool updateAlphaLock();
 
   static I18n::Message k_promptMessages[];
-  static KDColor k_promptColors[];
+  static KDColor k_promptFGColors[];
+  static KDColor k_promptBGColors[];
   static int k_promptNumberOfMessages;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;

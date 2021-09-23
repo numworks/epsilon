@@ -10,13 +10,13 @@ namespace OnBoarding {
 
 class PromptController : public ViewController {
 public:
-  PromptController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
+  PromptController(I18n::Message * messages, KDColor * fgcolors, KDColor * bgcolors, uint8_t numberOfMessages);
   View * view() override { return &m_messageViewWithSkip; }
   bool handleEvent(Ion::Events::Event event) override;
 private:
   class MessageViewWithSkip : public MessageView {
   public:
-    MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
+    MessageViewWithSkip(I18n::Message * messages, KDColor * fgcolors, KDColor * bgcolors, uint8_t numberOfMessages);
   protected:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;

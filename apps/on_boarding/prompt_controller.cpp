@@ -4,8 +4,8 @@
 
 namespace OnBoarding {
 
-PromptController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
-  MessageView(messages, colors, numberOfMessages),
+PromptController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * fgcolors, KDColor * bgcolors, uint8_t numberOfMessages) :
+  MessageView(messages, fgcolors, bgcolors, numberOfMessages),
   m_skipView(KDFont::SmallFont, I18n::Message::Skip, 1.0f, 0.5f),
   m_okView()
 {
@@ -42,9 +42,9 @@ void PromptController::MessageViewWithSkip::layoutSubviews(bool force) {
   m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize), force);
 }
 
-PromptController::PromptController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
+PromptController::PromptController(I18n::Message * messages, KDColor * fgcolors, KDColor * bgcolors, uint8_t numberOfMessages) :
   ViewController(nullptr),
-  m_messageViewWithSkip(messages, colors, numberOfMessages)
+  m_messageViewWithSkip(messages, fgcolors, bgcolors, numberOfMessages)
 {
 }
 

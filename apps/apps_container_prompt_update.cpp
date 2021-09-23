@@ -8,12 +8,20 @@ I18n::Message AppsContainer::k_promptMessages[] = {
   I18n::Message::UpdateMessage3,
   I18n::Message::UpdateMessage4};
 
-KDColor AppsContainer::k_promptColors[] = {
+KDColor AppsContainer::k_promptFGColors[] = {
   KDColorBlack,
   KDColorBlack,
   KDColorBlack,
   KDColorWhite,
   KDColorBlack,
   Palette::AccentText};
+
+KDColor AppsContainer::k_promptBGColors[] = {
+    KDColorWhite,
+    KDColorWhite,
+    KDColorWhite,
+    KDColorBlack,
+    KDColorWhite,
+    KDColorBlack};
 
 int AppsContainer::k_promptNumberOfMessages = 6;

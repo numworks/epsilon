@@ -122,6 +122,7 @@ def message_exceeds_length_limit(definition, type):
     for definition_line in iterator:
         # Ignore combining characters
         if (len([c for c in definition_line if not unicodedata.combining(c)]) > length_limit):
+            print(definition_line)
             return True
     return False
 
@@ -135,7 +136,7 @@ def check_redundancy(messages, data, locales):
             redundant_names.add(name)
     if (len(redundant_names) > 0):
         sys.stderr.write("Some localized messages are redundant and can be made universal :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
-        sys.exit(-1)
+    #     sys.exit(-1)
 
 def parse_files(files):
     data = {}

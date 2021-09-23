@@ -7,6 +7,10 @@
 #include <stdint.h>
 #include <string.h>
 
+#warning REMOVE
+#include <iostream>
+#include <ion/unicode/code_point.h>
+
 namespace Poincare {
 namespace Print {
 
@@ -62,7 +66,15 @@ int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
       *(buffer++) = *(format++);
     }
     if (buffer - origin >= (int)bufferSize - 1) {
+#warning REMOVE
+#if 0
       assert(false);
+#else
+      buffer = origin + bufferSize - 2;
+      *(buffer++) = UCodePointUnknown;
+      std::cout << "Text exceed buffer size : " << buffer - origin << " VS " << (int)bufferSize - 1 << "\n";
+      std::cout << "\t" << origin << "\n";
+#endif
       break;
     }
   }

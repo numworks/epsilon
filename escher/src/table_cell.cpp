@@ -3,6 +3,8 @@
 #include <escher/metric.h>
 #include <algorithm>
 #include <ion/display.h>
+#warning REMOVE
+#include <iostream>
 
 namespace Escher {
 
@@ -147,12 +149,38 @@ void TableCell::layoutSubviews(bool force) {
       accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight);
     }
   }
+
+#warning REMOVE
+#if 0
   // Set frames
   setFrameIfViewExists(label, labelRect, force);
   setFrameIfViewExists(subLabel, subLabelRect, force);
   setFrameIfViewExists(accessory, accessoryRect, force);
   // Assert no subview intersects
   assert(!labelRect.intersects(subLabelRect) && !subLabelRect.intersects(accessoryRect) && !accessoryRect.intersects(labelRect));
+#else
+  bool a = false;
+  if (labelRect.intersects(subLabelRect)) {
+    labelRect = KDRect(labelRect.origin(), KDSize(subLabelRect.left()-labelRect.left(), labelRect.height()));
+    a = true;
+  }
+  if (subLabelRect.intersects(accessoryRect)) {
+    subLabelRect = KDRect(subLabelRect.origin(), KDSize(accessoryRect.left()-subLabelRect.left(), subLabelRect.height()));
+    a = true;
+  }
+  if (accessoryRect.intersects(labelRect)) {
+    labelRect = KDRect(labelRect.origin(), KDSize(accessoryRect.left()-labelRect.left(), labelRect.height()));
+    a = true;
+  }
+  if (a) {
+    std::cout << "Something did not fit well in a cell.\n";
+  }
+  // Set frames
+  setFrameIfViewExists(label, labelRect, force);
+  setFrameIfViewExists(subLabel, subLabelRect, force);
+  setFrameIfViewExists(accessory, accessoryRect, force);
+  // Assert no subview intersects
+#endif
 }
 
 bool TableCell::singleRowMode() const {

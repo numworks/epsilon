@@ -23,7 +23,7 @@ public:
 protected:
   bool handleEnterOnRow(int rowIndex) override;
 private:
-  bool displayDetails() const { return ((Shared::ContinuousFunction)m_record).detailsTotal() > 0; }
+  bool displayDetails() const { return ((Shared::ContinuousFunction)m_record).detailsNumberOfSections() > 0; }
   Escher::MessageTableCellWithChevronAndMessage m_typeCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;
   TypeParameterController m_typeParameterController;

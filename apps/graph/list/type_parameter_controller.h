@@ -24,7 +24,7 @@ public:
   TELEMETRY_ID("TypeParameter");
 
   // MemoizedListViewDataSource
-  int numberOfRows() const override { return 1 + ((Shared::ContinuousFunction)m_record).detailsTotal(); }
+  int numberOfRows() const override { return 1 + ((Shared::ContinuousFunction)m_record).detailsNumberOfSections(); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::MessageTableCellWithMessageWithBuffer * reusableCell(int index, int type) override;

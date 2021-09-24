@@ -24,7 +24,7 @@ constexpr static uint32_t STBootloaderAddress = 0x1FF00000;
 constexpr static uint32_t AXIMInterface = 0x08000000;
 constexpr static uint32_t BootloaderStartAddress = AXIMInterface;
 constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
-constexpr static uint32_t BootloaderTrampolineSize = 0x2000; // 8k
+constexpr static uint32_t BootloaderTrampolineSize = 0x400; // 1k
 constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
 
 // Slots

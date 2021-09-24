@@ -49,135 +49,24 @@ I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
   }
 }
 
-void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
-  // Retrieve ContinuousFunction's equation
-  Expression equation = expressionEquation(context);
-  // Compute equation's degree regarding x and y.
-  int yDeg = equation.polynomialDegree(context, k_ordinateName);
-  int xDeg = equation.polynomialDegree(context, k_unknownName);
-  // Inequations : equation symbol has been updated when parsing the equation
-  recordData()->setEquationSymbol(m_model.m_equationSymbol);
-  if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
-    ExpressionNode::Sign ySign;
-    // Inequations are handled with a few constraint on y and x degrees.
-    if ((yDeg == 1 || (yDeg == 2 && xDeg > 0)) && isYCoefficientNonNull(yDeg, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
-      if (ySign == ExpressionNode::Sign::Negative) {
-        // Oppose the comparison operator
-        Poincare::ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.m_equationSymbol);
-        m_model.m_equationSymbol = newEquationSymbol;
-        recordData()->setEquationSymbol(newEquationSymbol);
-      }
-      return recordData()->setPlotType(PlotType::Inequation);
-    } else if (yDeg <= 0 && m_model.m_plotType == PlotType::Cartesian) {
-      // Inequation on a named cartesian function
-      return recordData()->setPlotType(PlotType::Inequation);
-    } else {
-      // TODO : Handle vertical lines inequations
-      return recordData()->setPlotType(PlotType::Unhandled);
-    }
-  }
-  // TODO Hugo : Improve how named functions are detected
-  // Named functions : PlotType has been updated when parsing the equation
-  if (m_model.m_plotType != PlotType::Undefined) {
-    // There should be no y symbol.
-    if (yDeg > 0) {
-      return recordData()->setPlotType(PlotType::Unhandled);
-    }
-    return recordData()->setPlotType(m_model.m_plotType);
-  }
-
-  /* We can now rely on x and y degree to identify plot type :
-   * | y  | x  | Status
-   * | 0  | 0  | Undefined
-   * | 0  | 1  | Vertical Line
-   * | 0  | +  | Unhandled
-   * | 1  | 0  | Horizontal Line
-   * | 1  | 1  | Line
-   * | 1  | +  | Cartesian
-   * | 2  | 0  | Other (Two Horizontal Lines)
-   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | +  | Other
-   * | +  | +  | Unhandled
-   */
-
-  if (yDeg == 0 && xDeg == 0) {
-    return recordData()->setPlotType(PlotType::Undefined);
-  }
-  if (yDeg == 0 && xDeg == 1) {
-    return recordData()->setPlotType(PlotType::VerticalLine);
-  }
-  if (yDeg <= 0 || yDeg > 2 || !isYCoefficientNonNull(yDeg, context)) {
-    /* Any other case where yDeg is null ,> 2 or negative isn't handled.
-     * Same if y's highest degree term depends on x, or may be null. */
-    return recordData()->setPlotType(PlotType::Unhandled);
-  }
-  if (yDeg == 1 && xDeg == 0) {
-    return recordData()->setPlotType(PlotType::HorizontalLine);
-  }
-  if (yDeg == 1 && xDeg == 1) {
-    // Compute metrics for details view of Line
-    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
-    Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-    Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-    ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
-    /* TODO Hugo : Factorize with expressionReduced. Beware of invalid result if
-     * function was previously nammed. */
-    // Compute solution in y :
-    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int dy = equation.getPolynomialReducedCoefficients(
-        k_ordinateName, coefficients, context, complexFormat, angleUnit,
-        unitFormat, symbolicComputation);
-    assert(dy == yDeg);
-    (void)dy;  // Silence compilation warnings
-    Expression root;
-    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root,
-                                      context, complexFormat, angleUnit);
-    // Reduce to another target for coefficient analysis.
-    PoincareHelpers::Reduce(&root, context,
-                            ExpressionNode::ReductionTarget::SystemForAnalysis);
-    // Separate the two line coefficients
-    int d = root.getPolynomialReducedCoefficients(
-        k_unknownName, coefficients, context, complexFormat, angleUnit,
-        unitFormat, symbolicComputation);
-    assert(d == xDeg)(void) d;  // Silence compilation warnings
-    // Approximate and store the two line coefficients
-    recordData()->setLine(coefficients[1].approximateToScalar<double>(
-                              context, complexFormat, angleUnit),
-                          coefficients[0].approximateToScalar<double>(
-                              context, complexFormat, angleUnit));
-    return recordData()->setPlotType(PlotType::Line);
-  }
-  if (yDeg == 1) {
-    return recordData()->setPlotType(PlotType::Cartesian);
-  }
-  if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
-    Conic equationConic = Conic(equation, context, k_unknownName);
-    Conic::Type ctype = equationConic.getConicType();
-    recordData()->setConic(equationConic);
-    if (ctype == Conic::Type::Hyperbola) {
-      return recordData()->setPlotType(PlotType::Hyperbola);
-    } else if (ctype == Conic::Type::Parabola) {
-      return recordData()->setPlotType(PlotType::Parabola);
-    } else if (ctype == Conic::Type::Ellipse) {
-      return recordData()->setPlotType(PlotType::Ellipse);
-    } else if (ctype == Conic::Type::Circle) {
-      return recordData()->setPlotType(PlotType::Circle);
-    }
-  }
-  assert(yDeg == 2);
-  // Unknown type that we are able to plot anyway.
-  return recordData()->setPlotType(PlotType::Other);
+ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
+  PlotType functionPlotType = plotType();
+  return functionPlotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(functionPlotType);
 }
 
 I18n::Message ContinuousFunction::plotTypeMessage() const {
-  assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
-  static const I18n::Message category[k_numberOfPlotTypes] = {
-    I18n::Message::PolarType, I18n::Message::ParametricType,I18n::Message::CartesianType,  I18n::Message::LineType, I18n::Message::HorizontalLineType,
-    I18n::Message::VerticalLineType, I18n::Message::InequationType, I18n::Message::CircleType, I18n::Message::EllipseType, I18n::Message::ParabolaType,
-    I18n::Message::HyperbolaType, I18n::Message::OtherType, I18n::Message::UndefinedType, I18n::Message::UnhandledType,
+  const size_t plotTypeIndex = static_cast<size_t>(plotType());
+  assert(plotTypeIndex < k_numberOfPlotTypes);
+  constexpr I18n::Message category[k_numberOfPlotTypes] = {
+      I18n::Message::PolarType,          I18n::Message::ParametricType,
+      I18n::Message::CartesianType,      I18n::Message::LineType,
+      I18n::Message::HorizontalLineType, I18n::Message::VerticalLineType,
+      I18n::Message::InequationType,     I18n::Message::CircleType,
+      I18n::Message::EllipseType,        I18n::Message::ParabolaType,
+      I18n::Message::HyperbolaType,      I18n::Message::OtherType,
+      I18n::Message::UndefinedType,      I18n::Message::UnhandledType,
   };
-  return category[static_cast<size_t>(plotType())];
+  return category[plotTypeIndex];
 }
 
 CodePoint ContinuousFunction::symbol() const {
@@ -191,13 +80,39 @@ CodePoint ContinuousFunction::symbol() const {
   }
 }
 
-bool ContinuousFunction::isNamed() const {
-  return fullName() != nullptr && fullName()[0] != '?';
+int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
+  if (isNamed()) {
+    return Function::nameWithArgument(buffer, bufferSize);
+  }
+  return strlcpy(buffer, k_ordinateName, bufferSize);
 }
 
-bool ContinuousFunction::drawSuperiorArea() const {
+int ContinuousFunction::printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
+  if (index == 0) {
+    /* With Vertical curves, cursorT != cursorX .
+     * We need the value for symbol=... */
+    return PoincareHelpers::ConvertFloatToText<double>(isAlongX() ? cursorX : cursorT, buffer, bufferSize, precision);
+  }
+
+  PlotType type = plotType();
+  if (type == PlotType::Parametric) {
+    int result = 0;
+    result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
+    result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
+    result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
+    result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
+    result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
+    return result;
+  }
+  if (type == PlotType::Polar) {
+    return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
+  }
+  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
+}
+
+bool ContinuousFunction::drawDottedCurve() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
-  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual;
+  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::Inferior;
 }
 
 bool ContinuousFunction::drawInferiorArea() const {
@@ -205,153 +120,147 @@ bool ContinuousFunction::drawInferiorArea() const {
   return eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual;
 }
 
-bool ContinuousFunction::drawCurve() const {
+bool ContinuousFunction::drawSuperiorArea() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
-  return eqSymbol == ExpressionNode::Type::SuperiorEqual || eqSymbol == ExpressionNode::Type::InferiorEqual || eqSymbol == ExpressionNode::Type::Equal;
+  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual;
 }
 
-// Check if a coefficient of y is never null. Compute its sign.
-bool ContinuousFunction::isYCoefficientNonNull(int yDeg, Context * context, Poincare::ExpressionNode::Sign * coefficientSign) const {
-  assert(yDeg >= 0);
-  if (coefficientSign) {
-    *coefficientSign = ExpressionNode::Sign::Unknown;
-  }
-  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  int dy = expressionEquation(context).getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-  assert(dy >= yDeg);
-  (void) dy; // Silence warnings
-  ExpressionNode::NullStatus coefficientNullStatus = coefficients[yDeg].nullStatus(context);
-  if (coefficientNullStatus == ExpressionNode::NullStatus::Null || coefficients[yDeg].polynomialDegree(context, k_unknownName) != 0) {
-    // Coefficient may be null or depends on x (which may be null)
-    // NOTE : We could handle cases where it depends on x but is never null
-    return false;
-  }
-  if (coefficientSign != nullptr) {
-    *coefficientSign = coefficients[yDeg].sign(context);
-  }
-  if (coefficientNullStatus == ExpressionNode::NullStatus::NonNull && (coefficientSign == nullptr || *coefficientSign != ExpressionNode::Sign::Unknown)) {
-    // Coefficient is non null, sign is either known or disregarded.
-    return true;
-  }
-  // Approximate the coefficient, update sign and nullstatus
-  double approximation = coefficients[yDeg].approximateToScalar<double>(context, complexFormat, angleUnit);
-  coefficientNullStatus = approximation != 0. ? ExpressionNode::NullStatus::NonNull : ExpressionNode::NullStatus::Null;
-  if (coefficientSign != nullptr) {
-    *coefficientSign = approximation < 0. ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
-  }
-  return coefficientNullStatus == ExpressionNode::NullStatus::NonNull;
+bool ContinuousFunction::isNamed() const {
+  // Unnamed functions have a fullname starting with '?'
+  const char * recordFullName = fullName();
+  return recordFullName != nullptr && recordFullName[0] != '?';
 }
 
-int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
-  if (isNamed()) {
-    int funcNameSize = SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
-    assert(funcNameSize > 0);
-    size_t result = funcNameSize;
-    assert(result <= bufferSize);
-    buffer[result++] = '(';
-    assert(result <= bufferSize);
-    assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
-    result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
-    assert(result <= bufferSize);
-    result += strlcpy(buffer+result, ")", bufferSize-result);
-    return result;
-  }
-  return strlcpy(buffer, k_ordinateName, bufferSize);
-}
-
-int ContinuousFunction::detailsTotal() const {
+int ContinuousFunction::detailsNumberOfSections() const {
   if (isNull()) {
     return 0;
   }
-  assert(static_cast<size_t>(plotType()) < k_numberOfPlotTypes);
-  static const int total[k_numberOfPlotTypes] = {
-    0, 0, 0, 3, 0,
-    0, 0, 3, 6, 3,
-    6, 0, 0, 0,
-  };
-  return total[static_cast<size_t>(plotType())];
+  switch (plotType()) {
+    case PlotType::Line:
+      return k_lineDetailsSections;
+    case PlotType::Circle:
+      return k_circleDetailsSections;
+    case PlotType::Ellipse:
+      return k_ellipseDetailsSections;
+    case PlotType::Parabola:
+      return k_parabolaDetailsSections;
+    case PlotType::Hyperbola:
+      return k_hyperbolaDetailsSections;
+    default:
+      return 0;
+  }
 }
 
 I18n::Message ContinuousFunction::detailsTitle(int i) const {
-  PlotType type = plotType();
-  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
-  assert(i < detailsTotal());
-  if (type == PlotType::Line) {
-    static const I18n::Message titles[3] = {
-      I18n::Message::LineEquationTitle, I18n::Message::LineSlopeTitle, I18n::Message::LineYInterceptTitle,
-    };
-    return titles[i];
+  assert(i < detailsNumberOfSections());
+  switch (plotType()) {
+    case PlotType::Line: {
+      constexpr I18n::Message titles[k_lineDetailsSections] = {
+          I18n::Message::LineEquationTitle,
+          I18n::Message::LineSlopeTitle,
+          I18n::Message::LineYInterceptTitle,
+      };
+      return titles[i];
+    }
+    case PlotType::Circle: {
+      constexpr I18n::Message titles[k_circleDetailsSections] = {
+          I18n::Message::CircleRadiusTitle,
+          I18n::Message::CenterAbscissaTitle,
+          I18n::Message::CenterOrdinateTitle,
+      };
+      return titles[i];
+    }
+    case PlotType::Ellipse: {
+      constexpr I18n::Message titles[k_ellipseDetailsSections] = {
+          I18n::Message::EllipseSemiMajorAxisTitle,
+          I18n::Message::EllipseSemiMinorAxisTitle,
+          I18n::Message::LinearEccentricityTitle,
+          I18n::Message::EccentricityTitle,
+          I18n::Message::CenterAbscissaTitle,
+          I18n::Message::CenterOrdinateTitle,
+      };
+      return titles[i];
+    }
+    case PlotType::Parabola: {
+      constexpr I18n::Message titles[k_parabolaDetailsSections] = {
+          I18n::Message::ParabolaParameterTitle,
+          I18n::Message::ParabolaVertexAbscissaTitle,
+          I18n::Message::ParabolaVertexOrdinateTitle,
+      };
+      return titles[i];
+    }
+    default: {
+      assert(plotType() == PlotType::Hyperbola);
+      constexpr I18n::Message titles[k_hyperbolaDetailsSections] = {
+          I18n::Message::HyperbolaSemiMajorAxisTitle,
+          I18n::Message::HyperbolaSemiMinorAxisTitle,
+          I18n::Message::LinearEccentricityTitle,
+          I18n::Message::EccentricityTitle,
+          I18n::Message::CenterAbscissaTitle,
+          I18n::Message::CenterOrdinateTitle,
+      };
+      return titles[i];
+    }
   }
-  if (type == PlotType::Circle) {
-    static const I18n::Message titles[3] = {
-      I18n::Message::CircleRadiusTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
-    };
-    return titles[i];
-  }
-  if (type == PlotType::Ellipse) {
-    static const I18n::Message titles[6] = {
-      I18n::Message::EllipseSemiMajorAxisTitle, I18n::Message::EllipseSemiMinorAxisTitle, I18n::Message::LinearEccentricityTitle,
-      I18n::Message::EccentricityTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
-    };
-    return titles[i];
-  }
-  if (type == PlotType::Parabola) {
-    static const I18n::Message titles[3] = {
-      I18n::Message::ParabolaParameterTitle, I18n::Message::ParabolaVertexAbscissaTitle, I18n::Message::ParabolaVertexOrdinateTitle,
-    };
-    return titles[i];
-  }
-  assert(type == PlotType::Hyperbola);
-  static const I18n::Message titles[6] = {
-    I18n::Message::HyperbolaSemiMajorAxisTitle, I18n::Message::HyperbolaSemiMinorAxisTitle, I18n::Message::LinearEccentricityTitle,
-    I18n::Message::EccentricityTitle, I18n::Message::CenterAbscissaTitle, I18n::Message::CenterOrdinateTitle,
-  };
-  return titles[i];
 }
 
 I18n::Message ContinuousFunction::detailsDescription(int i) const {
-  PlotType type = plotType();
-  assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
-  assert(i < detailsTotal());
-  if (type == PlotType::Line) {
-    static const I18n::Message titles[3] = {
-      I18n::Message::LineEquationDescription, I18n::Message::LineSlopeDescription, I18n::Message::LineYInterceptDescription,
-    };
-    return titles[i];
+  assert(i < detailsNumberOfSections());
+  switch (plotType()) {
+    case PlotType::Line: {
+      constexpr I18n::Message descriptions[k_lineDetailsSections] = {
+          I18n::Message::LineEquationDescription,
+          I18n::Message::LineSlopeDescription,
+          I18n::Message::LineYInterceptDescription,
+      };
+      return descriptions[i];
+    }
+    case PlotType::Circle: {
+      constexpr I18n::Message descriptions[k_circleDetailsSections] = {
+          I18n::Message::CircleRadiusDescription,
+          I18n::Message::CenterAbscissaDescription,
+          I18n::Message::CenterOrdinateDescription,
+      };
+      return descriptions[i];
+    }
+    case PlotType::Ellipse: {
+      constexpr I18n::Message descriptions[k_ellipseDetailsSections] = {
+          I18n::Message::EllipseSemiMajorAxisDescription,
+          I18n::Message::EllipseSemiMinorAxisDescription,
+          I18n::Message::LinearEccentricityDescription,
+          I18n::Message::EccentricityDescription,
+          I18n::Message::CenterAbscissaDescription,
+          I18n::Message::CenterOrdinateDescription,
+      };
+      return descriptions[i];
+    }
+    case PlotType::Parabola: {
+      constexpr I18n::Message descriptions[k_parabolaDetailsSections] = {
+          I18n::Message::ParabolaParameterDescription,
+          I18n::Message::ParabolaVertexAbscissaDescription,
+          I18n::Message::ParabolaVertexOrdinateDescription,
+      };
+      return descriptions[i];
+    }
+    default: {
+      assert(plotType() == PlotType::Hyperbola);
+      constexpr I18n::Message descriptions[k_hyperbolaDetailsSections] = {
+          I18n::Message::HyperbolaSemiMajorAxisDescription,
+          I18n::Message::HyperbolaSemiMinorAxisDescription,
+          I18n::Message::LinearEccentricityDescription,
+          I18n::Message::EccentricityDescription,
+          I18n::Message::CenterAbscissaDescription,
+          I18n::Message::CenterOrdinateDescription,
+      };
+      return descriptions[i];
+    }
   }
-  if (type == PlotType::Circle) {
-    static const I18n::Message titles[3] = {
-      I18n::Message::CircleRadiusDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
-    };
-    return titles[i];
-  }
-  if (type == PlotType::Ellipse) {
-    static const I18n::Message titles[6] = {
-      I18n::Message::EllipseSemiMajorAxisDescription, I18n::Message::EllipseSemiMinorAxisDescription, I18n::Message::LinearEccentricityDescription,
-      I18n::Message::EccentricityDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
-    };
-    return titles[i];
-  }
-  if (type == PlotType::Parabola) {
-    static const I18n::Message titles[3] = {
-      I18n::Message::ParabolaParameterDescription, I18n::Message::ParabolaVertexAbscissaDescription, I18n::Message::ParabolaVertexOrdinateDescription,
-    };
-    return titles[i];
-  }
-  assert(type == PlotType::Hyperbola);
-  static const I18n::Message titles[6] = {
-    I18n::Message::HyperbolaSemiMajorAxisDescription, I18n::Message::HyperbolaSemiMinorAxisDescription, I18n::Message::LinearEccentricityDescription,
-    I18n::Message::EccentricityDescription, I18n::Message::CenterAbscissaDescription, I18n::Message::CenterOrdinateDescription,
-  };
-  return titles[i];
 }
 
 double ContinuousFunction::detailsValue(int i) const {
   PlotType type = plotType();
   assert(static_cast<size_t>(type) < k_numberOfPlotTypes);
-  assert(i < detailsTotal());
+  assert(i < detailsNumberOfSections());
   if (type == PlotType::Line) {
     double titles[3] = {
       NAN, recordData()->getLine(0), recordData()->getLine(1),
@@ -467,7 +376,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
         int xDegree = m_expression.polynomialDegree(context, k_unknownName);
         if (xDegree == 1) {
           Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-          int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+          int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), k_defaultUnitFormat, k_defaultSymbolicComputation);
           assert(d == xDegree);
           (void) d; // Silence compilation warning
           Expression root;
@@ -481,7 +390,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
         }
       } else {
         Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-        int d = m_expression.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+        int d = m_expression.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), k_defaultUnitFormat, k_defaultSymbolicComputation);
         assert(d == degree);
         if (d == 1) {
           Expression root;
@@ -564,29 +473,6 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
     assert(i == 0);
   }
   return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context);
-}
-
-int ContinuousFunction::printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
-  if (index == 0) {
-    /* With Vertical curves, cursorT != cursorX .
-     * We need the value for symbol=... */
-    return PoincareHelpers::ConvertFloatToText<double>(isAlongX() ? cursorX : cursorT, buffer, bufferSize, precision);
-  }
-
-  PlotType type = plotType();
-  if (type == PlotType::Parametric) {
-    int result = 0;
-    result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
-    result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
-    result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
-    result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
-    result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
-    return result;
-  }
-  if (type == PlotType::Polar) {
-    return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
-  }
-  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }
 
 bool ContinuousFunction::shouldClipTRangeToXRange() const {
@@ -845,6 +731,161 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
     return NAN;
   }
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, max, context, e, relativePrecision, minimalStep, maximalStep);
+}
+
+void ContinuousFunction::updatePlotType(Preferences::AngleUnit angleUnit, Context * context) {
+  // Retrieve ContinuousFunction's equation
+  Expression equation = expressionEquation(context);
+  // Compute equation's degree regarding x and y.
+  int yDeg = equation.polynomialDegree(context, k_ordinateName);
+  int xDeg = equation.polynomialDegree(context, k_unknownName);
+  // Inequations : equation symbol has been updated when parsing the equation
+  recordData()->setEquationSymbol(m_model.m_equationSymbol);
+  if (m_model.m_equationSymbol != ExpressionNode::Type::Equal) {
+    ExpressionNode::Sign ySign;
+    // Inequations are handled with a few constraint on y and x degrees.
+    if ((yDeg == 1 || (yDeg == 2 && xDeg > 0)) && isYCoefficientNonNull(equation, yDeg, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
+      if (ySign == ExpressionNode::Sign::Negative) {
+        // Oppose the comparison operator
+        Poincare::ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.m_equationSymbol);
+        m_model.m_equationSymbol = newEquationSymbol;
+        recordData()->setEquationSymbol(newEquationSymbol);
+      }
+      return recordData()->setPlotType(PlotType::Inequation);
+    } else if (yDeg <= 0 && m_model.m_plotType == PlotType::Cartesian) {
+      // Inequation on a named cartesian function
+      return recordData()->setPlotType(PlotType::Inequation);
+    } else {
+      // TODO : Handle vertical lines inequations
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
+  }
+  // TODO Hugo : Improve how named functions are detected
+  // Named functions : PlotType has been updated when parsing the equation
+  if (m_model.m_plotType != PlotType::Undefined) {
+    // There should be no y symbol.
+    if (yDeg > 0) {
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
+    return recordData()->setPlotType(m_model.m_plotType);
+  }
+
+  /* We can now rely on x and y degree to identify plot type :
+   * | y  | x  | Status
+   * | 0  | 0  | Undefined
+   * | 0  | 1  | Vertical Line
+   * | 0  | +  | Unhandled
+   * | 1  | 0  | Horizontal Line
+   * | 1  | 1  | Line
+   * | 1  | +  | Cartesian
+   * | 2  | 0  | Other (Two Horizontal Lines)
+   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
+   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
+   * | 2  | +  | Other
+   * | +  | +  | Unhandled
+   */
+
+  if (yDeg == 0 && xDeg == 0) {
+    return recordData()->setPlotType(PlotType::Undefined);
+  }
+  if (yDeg == 0 && xDeg == 1) {
+    return recordData()->setPlotType(PlotType::VerticalLine);
+  }
+  if (yDeg <= 0 || yDeg > 2 || !isYCoefficientNonNull(equation, yDeg, context)) {
+    /* Any other case where yDeg is null ,> 2 or negative isn't handled.
+     * Same if y's highest degree term depends on x, or may be null. */
+    return recordData()->setPlotType(PlotType::Unhandled);
+  }
+  if (yDeg == 1 && xDeg == 0) {
+    return recordData()->setPlotType(PlotType::HorizontalLine);
+  }
+  if (yDeg == 1 && xDeg == 1) {
+    // Compute metrics for details view of Line
+    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
+    Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+    /* TODO Hugo : Factorize with expressionReduced. Beware of invalid result if
+     * function was previously nammed. */
+    // Compute solution in y :
+    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    int dy = equation.getPolynomialReducedCoefficients(
+        k_ordinateName, coefficients, context, complexFormat, angleUnit,
+        k_defaultUnitFormat, k_defaultSymbolicComputation);
+    assert(dy == yDeg);
+    (void)dy;  // Silence compilation warnings
+    Expression root;
+    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root,
+                                      context, complexFormat, angleUnit);
+    // Reduce to another target for coefficient analysis.
+    PoincareHelpers::Reduce(&root, context,
+                            ExpressionNode::ReductionTarget::SystemForAnalysis);
+    // Separate the two line coefficients
+    int d = root.getPolynomialReducedCoefficients(
+        k_unknownName, coefficients, context, complexFormat, angleUnit,
+        k_defaultUnitFormat, k_defaultSymbolicComputation);
+    assert(d == xDeg);
+    (void) d;  // Silence compilation warnings
+    // Approximate and store the two line coefficients
+    recordData()->setLine(coefficients[1].approximateToScalar<double>(
+                              context, complexFormat, angleUnit),
+                          coefficients[0].approximateToScalar<double>(
+                              context, complexFormat, angleUnit));
+    return recordData()->setPlotType(PlotType::Line);
+  }
+  if (yDeg == 1) {
+    return recordData()->setPlotType(PlotType::Cartesian);
+  }
+  if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
+    Conic equationConic = Conic(equation, context, k_unknownName);
+    Conic::Type ctype = equationConic.getConicType();
+    recordData()->setConic(equationConic);
+    if (ctype == Conic::Type::Hyperbola) {
+      return recordData()->setPlotType(PlotType::Hyperbola);
+    } else if (ctype == Conic::Type::Parabola) {
+      return recordData()->setPlotType(PlotType::Parabola);
+    } else if (ctype == Conic::Type::Ellipse) {
+      return recordData()->setPlotType(PlotType::Ellipse);
+    } else if (ctype == Conic::Type::Circle) {
+      return recordData()->setPlotType(PlotType::Circle);
+    }
+  }
+  assert(yDeg == 2);
+  // Unknown type that we are able to plot anyway.
+  return recordData()->setPlotType(PlotType::Other);
+}
+
+bool ContinuousFunction::isYCoefficientNonNull(Poincare::Expression equation, int yDeg, Context * context, Poincare::ExpressionNode::Sign * coefficientSign) const {
+  assert(yDeg >= 0 && !equation.isUninitialized());
+  if (coefficientSign != nullptr) {
+    *coefficientSign = ExpressionNode::Sign::Unknown;
+  }
+  // Compute y coefficients
+  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
+  assert(dy >= yDeg);
+  (void) dy; // Silence warnings
+  // Retrieve requested coefficient
+  ExpressionNode::NullStatus coefficientNullStatus = coefficients[yDeg].nullStatus(context);
+  if (coefficientNullStatus == ExpressionNode::NullStatus::Null || coefficients[yDeg].polynomialDegree(context, k_unknownName) != 0) {
+    // Coefficient is null or depends on x (which may be null)
+    // NOTE : We could handle here cases where it depends on x but is never null
+    return false;
+  }
+  if (coefficientSign != nullptr) {
+    *coefficientSign = coefficients[yDeg].sign(context);
+  }
+  if (coefficientNullStatus == ExpressionNode::NullStatus::NonNull && (coefficientSign == nullptr || *coefficientSign != ExpressionNode::Sign::Unknown)) {
+    // Coefficient is non null, sign is either known or disregarded.
+    return true;
+  }
+  // Approximate the coefficient, update sign and nullstatus
+  double approximation = coefficients[yDeg].approximateToScalar<double>(context, complexFormat, angleUnit);
+  coefficientNullStatus = approximation != 0. ? ExpressionNode::NullStatus::NonNull : ExpressionNode::NullStatus::Null;
+  if (coefficientSign != nullptr) {
+    *coefficientSign = approximation < 0. ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
+  }
+  return coefficientNullStatus == ExpressionNode::NullStatus::NonNull;
 }
 
 Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {

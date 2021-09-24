@@ -145,7 +145,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
                            f.operator->(), context(), f->color(), true,
                            record == m_selectedRecord, m_highlightedStart,
                            m_highlightedEnd, xyDoubleEvaluation,
-                           !f->drawCurve(), xyAreaBound, false, areaIndex);
+                           f->drawDottedCurve(), xyAreaBound, false, areaIndex);
         if (f->hasTwoCurves()) {
           // Draw the second cartesian curve, which is lesser than the first
           xyDoubleEvaluation = [](double t, void * model, void * context) {
@@ -167,7 +167,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               ctx, rect, tmin, tmax, xyFloatEvaluation, f.operator->(),
               context(), f->color(), true, record == m_selectedRecord,
               m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
-              !f->drawCurve(), xyAreaBound, true, areaIndex);
+              f->drawDottedCurve(), xyAreaBound, true, areaIndex);
         }
         if (superiorArea || inferiorArea) {
           // We display the superposition of up to 4 areas

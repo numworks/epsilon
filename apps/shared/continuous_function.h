@@ -6,6 +6,7 @@
 #include <apps/i18n.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/conic.h>
+#include <poincare/preferences.h>
 
 // TODO Hugo : Emscripten things
 
@@ -55,18 +56,12 @@ public:
       static_cast<SymbolType>(PlotType::Parametric) == SymbolType::T &&
       static_cast<SymbolType>(PlotType::Cartesian) == SymbolType::X),
     "First PlotTypes should match SymbolTypes");
-  // Return SymbolType corresponding to PlotType
-  static SymbolType SymbolForPlotType(PlotType plotType) {
-    return plotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(plotType);
-  }
   // Return Message corresponding to SymbolType
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
   // Return ContinuousFunction's PlotType
   PlotType plotType() const { return recordData()->plotType(); }
   // Return ContinuousFunction's SymbolType
-  SymbolType symbolType() const { return SymbolForPlotType(plotType()); }
-  // Update ContinuousFunction's PlotType
-  void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
+  SymbolType symbolType() const;
   // Return ContinuousFunction's PlotType message
   I18n::Message plotTypeMessage() const;
 
@@ -76,28 +71,37 @@ public:
   I18n::Message parameterMessageName() const override { return MessageForSymbolType(symbolType()); }
   // Return CodePoint corresponding to ContinuousFunction's SymbolType
   CodePoint symbol() const override;
+  // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
+  int nameWithArgument(char * buffer, size_t bufferSize) override;
+  // Insert x or y (depending on index) value in buffer
+  int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
 
   /* Properties */
 
-  bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
-  bool isNamed() const;
-  bool isAlongX() const { return symbol() == 'x'; }
+  // Wether to draw a dotted or solid line (Strict inequalities).
+  bool drawDottedCurve() const;
+  // Wether to draw the area "below" the curve or not
+  bool drawInferiorArea() const;
+  // Wether to draw the area "above" the curve or not
+  bool drawSuperiorArea() const;
+  // If the ContinuousFunction should be plot with two curves
   bool hasTwoCurves() const override { return m_model.hasTwoCurves(); }
-  bool drawSuperiorArea() const; // Superior, SuperiorEqual
-  bool drawInferiorArea() const; // Inferior, InferiorEqual
-  bool drawCurve() const; // SuperiorEqual, InferiorOrEqual, Equal
-  bool isYCoefficientNonNull(int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * YSign = nullptr) const;
-  int nameWithArgument(char * buffer, size_t bufferSize) override;
-
-  /* Helper */
-
-  int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+  // If the ContinuousFunction should be considered active in table
+  bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
+  // If the ContinuousFunction has x for unknown symbol
+  bool isAlongX() const { return symbol() == 'x'; }
+  // If the ContinuousFunction is named ("f(x)=...")
+  bool isNamed() const;
 
   /* Detail view */
 
-  int detailsTotal() const;
+  // Number of sections to display in the ContinuousFunction's detail menu
+  int detailsNumberOfSections() const;
+  // Title of given section in ContinuousFunction's detail menu
   I18n::Message detailsTitle(int i) const;
+  // Description of given section in ContinuousFunction's detail menu
   I18n::Message detailsDescription(int i) const;
+  // Value of given section in ContinuousFunction's detail menu
   double detailsValue(int i) const;
 
   /* Expression */
@@ -169,6 +173,21 @@ private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
   static constexpr char k_ordinateName[2] = "y";
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
+  static constexpr Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
+  static constexpr Poincare::ExpressionNode::SymbolicComputation k_defaultSymbolicComputation = Poincare::ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
+  static constexpr size_t k_lineDetailsSections = 3;
+  static constexpr size_t k_circleDetailsSections = 3;
+  static constexpr size_t k_ellipseDetailsSections = 6;
+  static constexpr size_t k_parabolaDetailsSections = 3;
+  static constexpr size_t k_hyperbolaDetailsSections = 6;
+
+
+  // Update ContinuousFunction's PlotType
+  void updatePlotType(Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
+
+  // If y coefficient at yDeg in equation is NonNull. Can also compute its sign.
+  bool isYCoefficientNonNull(Poincare::Expression equation, int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * YSign = nullptr) const;
+
 
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;

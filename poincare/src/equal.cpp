@@ -52,11 +52,28 @@ Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat
 Expression Equal::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   
   Expression e = Equal::Builder(Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone()).shallowReduce(reductionContext), Rational::Builder(0));
-  if (e.childAtIndex(0).isIdenticalTo(e.childAtIndex(1))) {
+  Expression leftSide = e.childAtIndex(0);
+  if (leftSide.isIdenticalTo(e.childAtIndex(1))) {
     Expression result = Rational::Builder(1);
     replaceWithInPlace(result);
     return result;
   }
+  if (leftSide.isUndefined()) {
+    return leftSide;
+  }
+  if (leftSide.type() == ExpressionNode::Type::Multiplication) {
+    Multiplication m = static_cast<Multiplication&>(leftSide);
+    int i = 0;
+    while (i < numberOfChildren()-1) {
+      if (m.childAtIndex(i).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::NonNull) {
+        m.removeChildAtIndexInPlace(i);
+      }
+      else {
+        i++;
+      }
+    }
+  }
+
   return e;
 }
 

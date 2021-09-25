@@ -43,9 +43,9 @@ public:
 
 private:
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
-  constexpr static size_t k_maxScriptNodesCount = 32; // Chosen without particular reasons
+  constexpr static size_t k_maxScriptNodesCount = 128; // Chosen without particular reasons (Number of functions in the variables box)
   constexpr static int k_totalBuiltinNodesCount = 107;
-  constexpr static uint8_t k_scriptOriginsCount = 3;
+  constexpr static uint8_t k_scriptOriginsCount = 8; // Number of scripts loaded in the variable box
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
   constexpr static KDCoordinate k_subtitleRowHeight = 23;

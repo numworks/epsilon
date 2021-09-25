@@ -22,7 +22,11 @@ MEMORY {
  * object). Using a stack too small would result in some memory being
  * overwritten (for instance, vtables that live in the .rodata section). */
 
-STACK_SIZE = 32K;
+/* The image is quite large too!
+ * So we put the stack to 18K so there's still space
+ * for our image, if not LD will throw an error. */
+
+STACK_SIZE = 18K;
 
 SECTIONS {
   .isr_vector_table ORIGIN(RAM_BUFFER) : {

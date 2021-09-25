@@ -143,6 +143,10 @@ Si vous avez besoin d'aide, n'hésitez pas à rejoindre notre serveur discord : 
 <a href="https://discord.gg/Q9buEMduXG"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86287349-54ef5800-bbe8-11ea-80c1-34eb1f93eebd.png" /></p></a>
 ---
 
+## Liens utiles
+* [Upsilon external (pour installer des applications supplémentaires et des fonds d'écran)](https://lauryy06.github.io/Upsilon-External/)
+* [Documentation d'ulab](https://micropython-ulab.readthedocs.io/en/latest/)
+
 ## Contribution
 
 Pour contribuer, merci de lire le [Wiki d'Omega](https://github.com/Omega-Numworks/Omega/wiki/Contributing), les mêmes règles s'appliquent ici.

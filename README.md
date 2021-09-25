@@ -263,11 +263,14 @@ If you need help, you can join our Discord server here : https://discord.gg/Q9bu
 
 <a href="https://discord.gg/Q9buEMduXG"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86287349-54ef5800-bbe8-11ea-80c1-34eb1f93eebd.png" /></p></a>
 ---
+## Useful links
+* [Upsilon external (to install additional apps and wallpapers)](https://lauryy06.github.io/Upsilon-External/)
+* [Ulab documentation](https://micropython-ulab.readthedocs.io/en/latest/)
 
 ## Contributing
 
 To contribute, please refer to [Omega's Wiki](https://github.com/Omega-Numworks/Omega/wiki/Contributing), the same rules apply here.
-
+  
 ## Related repositories
 
 Here are the main links toward Omega's different websites and repositories, that have been used for the creation of Upsilon.

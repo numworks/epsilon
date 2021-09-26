@@ -154,6 +154,11 @@ port_src += $(addprefix python/port/,\
   mod/turtle/modturtle.cpp \
   mod/turtle/modturtle_table.c \
   mod/turtle/turtle.cpp \
+  mphalport.c \
+)
+
+ifeq ($(INCLUDE_ULAB), 1)
+port_src += $(addprefix python/port/,\
   mod/ulab/scipy/linalg/linalg.c \
   mod/ulab/scipy/optimize/optimize.c \
   mod/ulab/scipy/signal/signal.c \
@@ -180,8 +185,8 @@ port_src += $(addprefix python/port/,\
   mod/ulab/user/user.c \
   mod/ulab/utils/utils.c \
   mod/ulab/ulab.c \
-  mphalport.c \
 )
+endif
 
 # Workarounds
 

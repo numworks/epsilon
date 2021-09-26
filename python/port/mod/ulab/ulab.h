@@ -34,13 +34,7 @@
 
 // Determines, whether scipy is defined in ulab. The sub-modules and functions
 // of scipy have to be defined separately
-#ifndef ULAB_HAS_SCIPY
-#if defined(DEVICE_N0100)
-#define ULAB_HAS_SCIPY                      (0)
-#else
 #define ULAB_HAS_SCIPY                      (1)
-#endif
-#endif
 
 // The maximum number of dimensions the firmware should be able to support
 // Possible values lie between 1, and 4, inclusive

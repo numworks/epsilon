@@ -604,6 +604,7 @@ Q(username)
 Q(rename)
 Q(listdir)
 
+#if defined(INCLUDE_ULAB)
 // ulab QSTRs
 Q(threshold)
 Q(edgeitems)
@@ -721,3 +722,4 @@ Q(from_int16_buffer)
 Q(from_uint16_buffer)
 Q(from_int32_buffer)
 Q(from_uint32_buffer)
+#endif

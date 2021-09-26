@@ -135,7 +135,9 @@ const ToolboxMessageTree MatplotlibPyplotModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGray, I18n::Message::PythonColorGray, false)
 };
 
-  const ToolboxMessageTree NumpyNdarrayModuleChildren[] = {
+#if defined(INCLUDE_ULAB)
+
+const ToolboxMessageTree NumpyNdarrayModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyArray),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyArange),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyConcatenate),
@@ -254,7 +256,6 @@ const ToolboxMessageTree NumpyModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NumpyLinalgModule, NumpyLinalgModuleChildren)
 };
 
-#if !defined(DEVICE_N0100)
 const ToolboxMessageTree ScipyLinalgModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyLinalgFunction, I18n::Message::PythonScipyLinalgFunction, false, I18n::Message::PythonCommandScipyLinalgFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScipyLinalgChoSolve),
@@ -291,15 +292,13 @@ const ToolboxMessageTree ScipyModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::ScipySpecialModule, ScipySpecialModuleChildren),
 };
 
-#endif
-
 const ToolboxMessageTree UlabModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NumpyModule, NumpyModuleChildren),
-#if !defined(DEVICE_N0100)
   ToolboxMessageTree::Node(I18n::Message::ScipyModule, ScipyModuleChildren),
-#endif
   ToolboxMessageTree::Leaf(I18n::Message::UlabDocumentation, I18n::Message::UlabDocumentationLink)
 };
+
+#endif
 
 const ToolboxMessageTree TurtleModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportTurtle, I18n::Message::PythonImportTurtle, false),
@@ -406,7 +405,9 @@ const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::MathModule, MathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::CmathModule, CMathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::MatplotlibPyplotModule, MatplotlibPyplotModuleChildren),
+#if defined(INCLUDE_ULAB)
   ToolboxMessageTree::Node(I18n::Message::UlabModule, UlabModuleChildren),
+#endif
   ToolboxMessageTree::Node(I18n::Message::TurtleModule, TurtleModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::RandomModule, RandomModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren),
@@ -678,9 +679,11 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
 
 bool PythonToolbox::selectLeaf(int selectedRow) {
   ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
+#if defined(INCLUDE_ULAB)
   if(node->text() == I18n::Message::UlabDocumentationLink){
     return true;
   }
+#endif
   m_selectableTableView.deselectTable();
   if(node->insertedText() == I18n::Message::IonSelector){
     m_ionKeys.setSender(sender());

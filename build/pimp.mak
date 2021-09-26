@@ -1,15 +1,16 @@
 # You gotta PIMP MY CALC
 
 ifndef NO_PIMP
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m    ____                                  \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m   / __ \\____ ___  ___  ____ _____ _     \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m  / / / / __ \`__ \\/ _ \\/ __ \`/ __ \`/ \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m / /_/ / / / / / /  __/ /_/ / /_/ /       \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m \\____/_/ /_/ /_/\\___/\\__, /\\__,_/    \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m                     /____/               \n")
-PLS_IGNORE := $(shell >&2 printf "\e[33m          - Omega does what Epsilon't     \e[0m\n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m         __  __      ______ ____   ____   _____\n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m        / / / /_____/ ,____/_/ /  / __ \/'_   /\n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m       / / / / __ '/ /____/ / /  / / / / / / / \n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m      / /_/ / /_/ /___,  / / /__/ /_/ / / / /  \n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m      \____/ ____/______/_/____/\____/_/ /_/   \n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m          / /                                  \n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[1m         /_/                                   \n")
+PLS_IGNORE := $(shell >&2 printf "\e[33m          - When Epsiloff and Omegout          \e[0m\n")
 PLS_IGNORE := $(shell >&2 printf "\n")
-PLS_IGNORE := $(shell >&2 printf "\e[32mBuilding O$(OMEGA_VERSION)-E$(EPSILON_VERSION)\n")
+PLS_IGNORE := $(shell >&2 printf "\e[32mBuilding U$(UPSILON_VERSION)-E$(EPSILON_VERSION)\n")
 
 ifeq (${PLATFORM},device)
   DISPLAY_TARGET = Numworks $(MODEL)

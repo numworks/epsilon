@@ -105,8 +105,8 @@ public:
 
   /* Expression */
 
-  // Returns the unaltered equation expression, replacing unknown symbols.
-  Poincare::Expression equationExpression(const Ion::Storage::Record * record) const {
+  // Return the unaltered equation expression, replacing unknown symbols.
+  Poincare::Expression originalEquation(const Ion::Storage::Record * record) const {
     return m_model.originalEquation(record, symbol());
   }
   // Update plotType as well as tMin and tMax values.
@@ -172,13 +172,14 @@ public:
 
   /* Integral */
 
-  // Returns the expression of the integral between start and end
+  // Return the expression of the integral between start and end
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
 
   /* Cache */
 
   // TODO Hugo : Consider re-implementing cache
   // void didBecomeInactive() override { m_cache = nullptr; }
+  static constexpr char k_unnamedRecordFirstChar = '?';
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
   static constexpr char k_ordinateName[2] = "y";
@@ -188,25 +189,25 @@ private:
 
   /* Range */
 
-  // Returns true if the function will not be displayed if t is outside x range.
+  // Return true if the function will not be displayed if t is outside x range.
   bool shouldClipTRangeToXRange() const override { return isAlongX(); } // TODO Hugo : Delete this method if unused
-  // Returns step computed from t range or NAN if isAlongX() is true.
+  // Return step computed from t range or NAN if isAlongX() is true.
   float rangeStep() const override;
 
   /* Expressions */
 
-  // Returns the expression representing the equation for computations
-  Poincare::Expression expressionEquation(Poincare::Context * context) const  { // TODO Hugo : Rename expressionEquation and equationExpression
+  // Return the expression representing the equation for computations
+  Poincare::Expression expressionEquation(Poincare::Context * context) const  {
     return m_model.expressionEquation(this, context);
   }
-  // Returns reduced curve expression derivative
+  // Return reduced curve expression derivative
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
 
   /* Properties */
 
   // Update ContinuousFunction's PlotType
   void updatePlotType(Poincare::Context * context);
-  // Returns the equation's symbol
+  // Return the equation's symbol
   Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
   // If y coefficient at yDeg in equation is NonNull. Can also compute its sign.
   bool isYCoefficientNonNull(Poincare::Expression equation, int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * YSign = nullptr) const;
@@ -214,11 +215,11 @@ private:
   /* Evaluation */
 
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
-  // Computes coordinates of the next point of interest, from a starting point
+  // Compute coordinates of the next point of interest, from a starting point
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
-  // Evaluates XY at parameter (distinct from approximation with Polar types)
+  // Evaluate XY at parameter (distinct from approximation with Polar types)
   template<typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int secondaryCurveIndex = 0) const;
-  // Approximates XY at parameter
+  // Approximate XY at parameter
   template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context, int secondaryCurveIndex = 0) const;
 
   /* Record */
@@ -226,14 +227,18 @@ private:
   // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
-    RecordDataBuffer(KDColor color) : Shared::Function::RecordDataBuffer(color), m_domain(-INFINITY, INFINITY), m_plotType(PlotType::Undefined), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_displayDerivative(false) {}
+    RecordDataBuffer(KDColor color) :
+        Shared::Function::RecordDataBuffer(color),
+        m_domain(-INFINITY, INFINITY),
+        m_plotType(PlotType::Undefined),
+        m_equationSymbol(Poincare::ExpressionNode::Type::Equal),
+        m_displayDerivative(false) {}
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
     Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
     void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) { m_equationSymbol = equationSymbol; }
-    // TODO Hugo : Fix Turn on/off menu
     bool isActive() const override { return Shared::Function::RecordDataBuffer::isActive() && m_plotType != PlotType::Unhandled && m_plotType != PlotType::Undefined; }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }
@@ -249,9 +254,9 @@ private:
     //char m_expression[0];
   };
 
-  // Returns metadata size
+  // Return metadata size
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
-  // Returns record data
+  // Return record data
   RecordDataBuffer * recordData() const {
     assert(!isNull());
     return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(value().buffer));
@@ -261,15 +266,28 @@ private:
 
   class Model : public ExpressionModel {
   public:
-    Model() : ExpressionModel(), m_hasTwoCurves(false), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_plotType(PlotType::Undefined), m_expressionDerivate() {}
+    Model() :
+        ExpressionModel(),
+        m_hasTwoCurves(false),
+        m_equationSymbol(Poincare::ExpressionNode::Type::Equal),
+        m_plotType(PlotType::Undefined),
+        m_expressionDerivate() {}
+    // Return the expression to plot.
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
+    // Return the expression of the named function (right side of the equal)
     Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
+    // Return the entire expression that the user inputted. Replace symbols.
     Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
+    // Return the expression representing the equation
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
     void tidy() const override;
     bool hasTwoCurves() const { return m_hasTwoCurves; }
-  // private:
+    Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
+    void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) const { m_equationSymbol = equationSymbol; }
+    PlotType plotType() const { return m_plotType; }
+  private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     mutable bool m_hasTwoCurves;

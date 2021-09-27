@@ -221,6 +221,7 @@ int Storage::numberOfNamedFunctions() {
   for (char * p : *this) {
     const char * name = fullNameOfRecordStarting(p);
     // TODO Hugo : Factorize this with isNamed()
+    // TODO Hugo : Some of this code should be in continuousFunction
     if (name[0] != '?' && FullNameHasExtension(name, funcExtension, extensionLength)) {
       count++;
     }
@@ -260,6 +261,7 @@ Storage::Record Storage::namedFunctionRecordAtIndex(int index) {
   char * recordAddress = nullptr;
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
+    // TODO Hugo : Some of this code should be in continuousFunction
     if (currentName[0] != '?' && FullNameHasExtension(currentName, funcExtension, extensionLength)) {
       currentIndex++;
     }

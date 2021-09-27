@@ -180,6 +180,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::renameRecordIfNeeded(Ion::Sto
       // Reset error, record's name will be resetted.
       error = Ion::Storage::Record::ErrorStatus::None;
     } else if (record->fullName()[0] == '?') {
+      // TODO Hugo : Some of this code should be in continuousFunction
       // No need to rename anything.
       return error;
     }

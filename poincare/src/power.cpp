@@ -205,7 +205,8 @@ Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, 
   if (complexFormat != Preferences::ComplexFormat::Real && c.real() < (T)0.0 && std::round(d.real()) != d.real()) {
     /* Principal root of a negative base and non-integer index is always complex
      * Neglecting it could cause visual artefacts when plotting x^x with a
-     * cartesian complex format. */
+     * cartesian complex format. The issue is still visible when x is so small
+     * that result is 0, which is plotted even though it is "complex". */
     return Complex<T>::Builder(result);
   }
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c, d, false));

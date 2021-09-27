@@ -27,7 +27,7 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctio
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   // TODO Hugo : Maybe handle more than 10 ?
-  char name[3] = {'?', '?', 0}; // name is going to be ?0 or ?1 or ... ?5
+  char name[3] = {ContinuousFunction::k_unnamedRecordFirstChar, 0, 0}; // name is going to be ?0 or ?1 or ... ?5
   int currentNumber = 0;
   while (currentNumber < k_maxNumberOfMemoizedModels) {
     name[1] = '0'+currentNumber;

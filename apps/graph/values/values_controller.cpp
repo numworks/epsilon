@@ -119,7 +119,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
       if (function->isNamed()) {
         function->nameWithArgument(bufferName, bufferNameSize);
       } else {
-        PoincareHelpers::Serialize(function->equationExpression(&record), bufferName, bufferNameSize, Preferences::LargeNumberOfSignificantDigits);
+        PoincareHelpers::Serialize(function->originalEquation(&record), bufferName, bufferNameSize, Preferences::LargeNumberOfSignificantDigits);
       }
     }
     myFunctionCell->setText(bufferName);

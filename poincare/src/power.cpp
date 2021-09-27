@@ -202,6 +202,12 @@ Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, 
    * so arg(c^d) = y*ln(r)+xθ.
    * We consider that arg[π] is negligeable if it is negligeable compared to
    * norm(d) = sqrt(x^2+y^2) and ln(r) = ln(norm(c)).*/
+  if (complexFormat != Preferences::ComplexFormat::Real && c.real() < (T)0.0 && std::round(d.real()) != d.real()) {
+    /* Principal root of a negative base and non-integer index is always complex
+     * Neglecting it could cause visual artefacts when plotting x^x with a
+     * cartesian complex format. */
+    return Complex<T>::Builder(result);
+  }
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c, d, false));
 }
 

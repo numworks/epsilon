@@ -21,9 +21,6 @@ bool inline roughlyEqual(T a, T b, T threshold, bool absolute = false) {
   }
   T relerr = std::fabs(a - b) / max;
   bool res = max == 0 || relerr < threshold;
-  if (!res) {
-    printf("Roughly equal : %.10f vs %.10f ", a, b);
-  }
   return res;
 }
 

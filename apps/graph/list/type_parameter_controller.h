@@ -8,6 +8,7 @@
 #include <escher/stack_view_controller.h>
 #include <ion/storage.h>
 #include "../../shared/continuous_function.h"
+#include <poincare/conic.h>
 
 namespace Graph {
 
@@ -24,18 +25,38 @@ public:
   TELEMETRY_ID("TypeParameter");
 
   // MemoizedListViewDataSource
-  int numberOfRows() const override { return 1 + ((Shared::ContinuousFunction)m_record).detailsNumberOfSections(); }
+  int numberOfRows() const override { return 1 + detailsNumberOfSections(); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::MessageTableCellWithMessageWithBuffer * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtIndex(int index) override { return 0; }
-
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
+  // Number of sections to display in the ContinuousFunction's detail menu
+  int detailsNumberOfSections() const;
+  void setRecord(Ion::Storage::Record record);
 private:
-  constexpr static int k_numberOfDataPoints = 7; // max
+  static constexpr size_t k_lineDetailsSections = 3;
+  static constexpr size_t k_circleDetailsSections = 3;
+  static constexpr size_t k_ellipseDetailsSections = 6;
+  static constexpr size_t k_parabolaDetailsSections = 3;
+  static constexpr size_t k_hyperbolaDetailsSections = 6;
+  static constexpr int k_numberOfDataPoints = 7; // max + 1 for plot type
+  // Return record's plot type
+  Shared::ContinuousFunction::PlotType plotType() const { assert(!m_record.isNull()); return ((Shared::ContinuousFunction)m_record).plotType(); }
+  // Title of given section in ContinuousFunction's detail menu
+  I18n::Message detailsTitle(int i) const;
+  // Description of given section in ContinuousFunction's detail menu
+  I18n::Message detailsDescription(int i) const;
+  // Value of given section in ContinuousFunction's detail menu
+  double detailsValue(int i) const { assert(i < detailsNumberOfSections()); return m_detailValues[i]; }
+  // Set the detail values for a line
+  void setLineDetailsValues(double slope, double intercept);
+  // Set the detail values for a conic
+  void setConicDetailsValues(Poincare::Conic conic);
+
   Escher::StackViewController * stackController() const;
   Escher::MessageTableCellWithMessageWithBuffer m_cells[k_numberOfDataPoints];
+  double m_detailValues[k_numberOfDataPoints-1];
   Ion::Storage::Record m_record;
 };
 

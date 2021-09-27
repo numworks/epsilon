@@ -1,5 +1,6 @@
 #include "type_parameter_controller.h"
 #include <poincare/layout_helper.h>
+#include <poincare/expression.h>
 #include <apps/i18n.h>
 #include "../app.h"
 #include <assert.h>
@@ -49,18 +50,19 @@ KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < k_numberOfDataPoints);
-  Shared::ContinuousFunction function = (Shared::ContinuousFunction)m_record;
   MessageTableCellWithMessageWithBuffer * myCell = static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
+    // TODO Hugo : Maybe create a static helper for plotTypeMessage
+    Shared::ContinuousFunction function = (Shared::ContinuousFunction)m_record;
     myCell->setAccessoryText(I18n::translate(function.plotTypeMessage()));
   } else {
-    myCell->setMessage(function.detailsTitle(index - 1));
-    double value = function.detailsValue(index - 1);
+    myCell->setMessage(detailsTitle(index - 1));
+    double value = detailsValue(index - 1);
     if (std::isnan(value)) {
       // There are no value to display, use the accessory for description
-      myCell->setAccessoryText(I18n::translate(function.detailsDescription(index - 1)));
+      myCell->setAccessoryText(I18n::translate(detailsDescription(index - 1)));
       myCell->setSubLabelMessage(I18n::Message::Default);
     } else {
       constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
@@ -68,7 +70,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       char buffer[bufferSize];
       Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
       myCell->setAccessoryText(buffer);
-      myCell->setSubLabelMessage(function.detailsDescription(index - 1));
+      myCell->setSubLabelMessage(detailsDescription(index - 1));
     }
   }
 }
@@ -76,6 +78,191 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
 MessageTableCellWithMessageWithBuffer * TypeParameterController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   return &m_cells[index];
+}
+
+void TypeParameterController::setRecord(Ion::Storage::Record record) {
+  // TODO Hugo : Maybe compare checksum if useful
+  m_record = record;
+  if (!m_record.isNull()) {
+    Shared::ContinuousFunction function = (Shared::ContinuousFunction)m_record;
+    Poincare::Context * context = App::app()->localContext();
+    if (function.plotType() == Shared::ContinuousFunction::PlotType::Line) {
+      double slope, intercept;
+      function.getLineParameters(&slope, &intercept, context);
+      setLineDetailsValues(slope, intercept);
+    } else if (function.isConic()) {
+      setConicDetailsValues(function.getConicParameters(context));
+    }
+  }
+}
+
+int TypeParameterController::detailsNumberOfSections() const {
+  switch (plotType()) {
+    case Shared::ContinuousFunction::PlotType::Line:
+      return k_lineDetailsSections;
+    case Shared::ContinuousFunction::PlotType::Circle:
+      return k_circleDetailsSections;
+    case Shared::ContinuousFunction::PlotType::Ellipse:
+      return k_ellipseDetailsSections;
+    case Shared::ContinuousFunction::PlotType::Parabola:
+      return k_parabolaDetailsSections;
+    case Shared::ContinuousFunction::PlotType::Hyperbola:
+      return k_hyperbolaDetailsSections;
+    default:
+      return 0;
+  }
+}
+
+I18n::Message TypeParameterController::detailsTitle(int i) const {
+  assert(i < detailsNumberOfSections());
+  switch (plotType()) {
+    case Shared::ContinuousFunction::PlotType::Line: {
+      constexpr I18n::Message titles[k_lineDetailsSections] = {
+          I18n::Message::LineEquationTitle,
+          I18n::Message::LineSlopeTitle,
+          I18n::Message::LineYInterceptTitle,
+      };
+      return titles[i];
+    }
+    case Shared::ContinuousFunction::PlotType::Circle: {
+      constexpr I18n::Message titles[k_circleDetailsSections] = {
+          I18n::Message::CircleRadiusTitle,
+          I18n::Message::CenterAbscissaTitle,
+          I18n::Message::CenterOrdinateTitle,
+      };
+      return titles[i];
+    }
+    case Shared::ContinuousFunction::PlotType::Ellipse: {
+      constexpr I18n::Message titles[k_ellipseDetailsSections] = {
+          I18n::Message::EllipseSemiMajorAxisTitle,
+          I18n::Message::EllipseSemiMinorAxisTitle,
+          I18n::Message::LinearEccentricityTitle,
+          I18n::Message::EccentricityTitle,
+          I18n::Message::CenterAbscissaTitle,
+          I18n::Message::CenterOrdinateTitle,
+      };
+      return titles[i];
+    }
+    case Shared::ContinuousFunction::PlotType::Parabola: {
+      constexpr I18n::Message titles[k_parabolaDetailsSections] = {
+          I18n::Message::ParabolaParameterTitle,
+          I18n::Message::ParabolaVertexAbscissaTitle,
+          I18n::Message::ParabolaVertexOrdinateTitle,
+      };
+      return titles[i];
+    }
+    default: {
+      assert(plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      constexpr I18n::Message titles[k_hyperbolaDetailsSections] = {
+          I18n::Message::HyperbolaSemiMajorAxisTitle,
+          I18n::Message::HyperbolaSemiMinorAxisTitle,
+          I18n::Message::LinearEccentricityTitle,
+          I18n::Message::EccentricityTitle,
+          I18n::Message::CenterAbscissaTitle,
+          I18n::Message::CenterOrdinateTitle,
+      };
+      return titles[i];
+    }
+  }
+}
+
+I18n::Message TypeParameterController::detailsDescription(int i) const {
+  assert(i < detailsNumberOfSections());
+  switch (plotType()) {
+    case Shared::ContinuousFunction::PlotType::Line: {
+      constexpr I18n::Message descriptions[k_lineDetailsSections] = {
+          I18n::Message::LineEquationDescription,
+          I18n::Message::LineSlopeDescription,
+          I18n::Message::LineYInterceptDescription,
+      };
+      return descriptions[i];
+    }
+    case Shared::ContinuousFunction::PlotType::Circle: {
+      constexpr I18n::Message descriptions[k_circleDetailsSections] = {
+          I18n::Message::CircleRadiusDescription,
+          I18n::Message::CenterAbscissaDescription,
+          I18n::Message::CenterOrdinateDescription,
+      };
+      return descriptions[i];
+    }
+    case Shared::ContinuousFunction::PlotType::Ellipse: {
+      constexpr I18n::Message descriptions[k_ellipseDetailsSections] = {
+          I18n::Message::EllipseSemiMajorAxisDescription,
+          I18n::Message::EllipseSemiMinorAxisDescription,
+          I18n::Message::LinearEccentricityDescription,
+          I18n::Message::EccentricityDescription,
+          I18n::Message::CenterAbscissaDescription,
+          I18n::Message::CenterOrdinateDescription,
+      };
+      return descriptions[i];
+    }
+    case Shared::ContinuousFunction::PlotType::Parabola: {
+      constexpr I18n::Message descriptions[k_parabolaDetailsSections] = {
+          I18n::Message::ParabolaParameterDescription,
+          I18n::Message::ParabolaVertexAbscissaDescription,
+          I18n::Message::ParabolaVertexOrdinateDescription,
+      };
+      return descriptions[i];
+    }
+    default: {
+      assert(plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      constexpr I18n::Message descriptions[k_hyperbolaDetailsSections] = {
+          I18n::Message::HyperbolaSemiMajorAxisDescription,
+          I18n::Message::HyperbolaSemiMinorAxisDescription,
+          I18n::Message::LinearEccentricityDescription,
+          I18n::Message::EccentricityDescription,
+          I18n::Message::CenterAbscissaDescription,
+          I18n::Message::CenterOrdinateDescription,
+      };
+      return descriptions[i];
+    }
+  }
+}
+
+void TypeParameterController::setLineDetailsValues(double slope, double intercept) {
+  assert(plotType() == Shared::ContinuousFunction::PlotType::Line);
+  m_detailValues[0] = NAN;
+  m_detailValues[1] = slope;
+  m_detailValues[2] = intercept;
+}
+
+void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
+  Shared::ContinuousFunction::PlotType type = plotType();
+  double cx, cy;
+  if (type == Shared::ContinuousFunction::PlotType::Parabola) {
+    conic.getSummit(&cx, &cy);
+  } else {
+    conic.getCenter(&cx, &cy);
+  }
+  if (type == Shared::ContinuousFunction::PlotType::Circle) {
+    m_detailValues[0] = conic.getRadius();
+    m_detailValues[1] = cx;
+    m_detailValues[2] = cy;
+    return;
+  }
+  if (type == Shared::ContinuousFunction::PlotType::Ellipse) {
+    m_detailValues[0] = conic.getSemiMajorAxis();
+    m_detailValues[1] = conic.getSemiMinorAxis();
+    m_detailValues[2] = conic.getLinearEccentricity();
+    m_detailValues[3] = conic.getEccentricity();
+    m_detailValues[4] = cx;
+    m_detailValues[5] = cy;
+    return;
+  }
+  if (type == Shared::ContinuousFunction::PlotType::Parabola) {
+    m_detailValues[0] = conic.getParameter();
+    m_detailValues[1] = cx;
+    m_detailValues[2] = cy;
+    return;
+  }
+  assert(type == Shared::ContinuousFunction::PlotType::Hyperbola);
+  m_detailValues[0] = conic.getSemiMajorAxis();
+  m_detailValues[1] = conic.getSemiMinorAxis();
+  m_detailValues[2] = conic.getLinearEccentricity();
+  m_detailValues[3] = conic.getEccentricity();
+  m_detailValues[4] = cx;
+  m_detailValues[5] = cy;
+  return;
 }
 
 StackViewController * TypeParameterController::stackController() const {

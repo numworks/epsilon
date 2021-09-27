@@ -861,6 +861,13 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
       /* We need to be sure that the point is not an artifact caused by error
        * in float approximation. */
       float pvd = xyDoubleEvaluation ? floatToPixel(Axis::Vertical, static_cast<float>(xyDoubleEvaluation(u, model, context).x2())) : pvf;
+      if (std::isnan(pvd)) {
+        /* Double evaluation is NAN while float evaluation is not. It can happen
+         * with precision sensitive functions such as (-1)^x. We stamp at pvf
+         * anyway, instead of setting isRightDotValid to false and continuing
+         * because the latter solution significantly slows down the graph. */
+        pvd = pvf;
+      }
       stampAtLocation(ctx, rect, puf, pvd, color, thick);
       return;
     }
@@ -984,6 +991,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
    * (pxf,pyf) which is then translated to the center of the top-left pixel of
    * stampMask.
    */
+  assert(!isnan(pxf) && !isnan(pyf));
   KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
   const uint8_t * stampMask = thick ? thickStampMask : thinStampMask;
   pxf -= (stampSize + 1 - 1)/2.0f;

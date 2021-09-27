@@ -51,6 +51,13 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void ListParameterController::setRecord(Ion::Storage::Record record) {
+  Shared::ListParameterController::setRecord(record);
+  /* Set m_typeParameterController record here because we need record's
+   * detailsNumberOfSections() to know if it should be displayed. */
+  m_typeParameterController.setRecord(m_record);
+}
+
 char intervalBracket(double value, bool opening) {
   return std::isinf(value) == opening ? ']' : '[';
 }
@@ -93,7 +100,6 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
   }
   switch (rowIndex) {
   case 0:
-    m_typeParameterController.setRecord(m_record);
     stack->push(&m_typeParameterController);
     return true;
   case 1:

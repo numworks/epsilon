@@ -142,188 +142,31 @@ bool ContinuousFunction::isNamed() const {
   return recordFullName != nullptr && recordFullName[0] != '?';
 }
 
-int ContinuousFunction::detailsNumberOfSections() const {
-  if (isNull()) {
-    return 0;
-  }
-  switch (plotType()) {
-    case PlotType::Line:
-      return k_lineDetailsSections;
-    case PlotType::Circle:
-      return k_circleDetailsSections;
-    case PlotType::Ellipse:
-      return k_ellipseDetailsSections;
-    case PlotType::Parabola:
-      return k_parabolaDetailsSections;
-    case PlotType::Hyperbola:
-      return k_hyperbolaDetailsSections;
-    default:
-      return 0;
-  }
+void ContinuousFunction::getLineParameters(double * slope, double * intercept, Poincare::Context * context) const {
+  assert(plotType() == PlotType::Line);
+  Expression equation = expressionReduced(context);
+  // Compute metrics for details view of Line
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  // Reduce to another target for coefficient analysis.
+  // TODO Hugo : Ensure reducing again is unnecessary
+  // PoincareHelpers::Reduce(&equation, context,
+  //                         ExpressionNode::ReductionTarget::SystemForAnalysis);
+  // Separate the two line coefficients
+  int d = equation.getPolynomialReducedCoefficients(
+      k_unknownName, coefficients, context, complexFormat, angleUnit,
+      k_defaultUnitFormat, k_defaultSymbolicComputation);
+  assert(d == 1);
+  (void) d;  // Silence compilation warnings
+  // Approximate and return the two line coefficients
+  *slope = coefficients[1].approximateToScalar<double>(context, complexFormat, angleUnit);
+  *intercept = coefficients[0].approximateToScalar<double>(context, complexFormat, angleUnit);
 }
 
-I18n::Message ContinuousFunction::detailsTitle(int i) const {
-  assert(i < detailsNumberOfSections());
-  switch (plotType()) {
-    case PlotType::Line: {
-      constexpr I18n::Message titles[k_lineDetailsSections] = {
-          I18n::Message::LineEquationTitle,
-          I18n::Message::LineSlopeTitle,
-          I18n::Message::LineYInterceptTitle,
-      };
-      return titles[i];
-    }
-    case PlotType::Circle: {
-      constexpr I18n::Message titles[k_circleDetailsSections] = {
-          I18n::Message::CircleRadiusTitle,
-          I18n::Message::CenterAbscissaTitle,
-          I18n::Message::CenterOrdinateTitle,
-      };
-      return titles[i];
-    }
-    case PlotType::Ellipse: {
-      constexpr I18n::Message titles[k_ellipseDetailsSections] = {
-          I18n::Message::EllipseSemiMajorAxisTitle,
-          I18n::Message::EllipseSemiMinorAxisTitle,
-          I18n::Message::LinearEccentricityTitle,
-          I18n::Message::EccentricityTitle,
-          I18n::Message::CenterAbscissaTitle,
-          I18n::Message::CenterOrdinateTitle,
-      };
-      return titles[i];
-    }
-    case PlotType::Parabola: {
-      constexpr I18n::Message titles[k_parabolaDetailsSections] = {
-          I18n::Message::ParabolaParameterTitle,
-          I18n::Message::ParabolaVertexAbscissaTitle,
-          I18n::Message::ParabolaVertexOrdinateTitle,
-      };
-      return titles[i];
-    }
-    default: {
-      assert(plotType() == PlotType::Hyperbola);
-      constexpr I18n::Message titles[k_hyperbolaDetailsSections] = {
-          I18n::Message::HyperbolaSemiMajorAxisTitle,
-          I18n::Message::HyperbolaSemiMinorAxisTitle,
-          I18n::Message::LinearEccentricityTitle,
-          I18n::Message::EccentricityTitle,
-          I18n::Message::CenterAbscissaTitle,
-          I18n::Message::CenterOrdinateTitle,
-      };
-      return titles[i];
-    }
-  }
-}
-
-I18n::Message ContinuousFunction::detailsDescription(int i) const {
-  assert(i < detailsNumberOfSections());
-  switch (plotType()) {
-    case PlotType::Line: {
-      constexpr I18n::Message descriptions[k_lineDetailsSections] = {
-          I18n::Message::LineEquationDescription,
-          I18n::Message::LineSlopeDescription,
-          I18n::Message::LineYInterceptDescription,
-      };
-      return descriptions[i];
-    }
-    case PlotType::Circle: {
-      constexpr I18n::Message descriptions[k_circleDetailsSections] = {
-          I18n::Message::CircleRadiusDescription,
-          I18n::Message::CenterAbscissaDescription,
-          I18n::Message::CenterOrdinateDescription,
-      };
-      return descriptions[i];
-    }
-    case PlotType::Ellipse: {
-      constexpr I18n::Message descriptions[k_ellipseDetailsSections] = {
-          I18n::Message::EllipseSemiMajorAxisDescription,
-          I18n::Message::EllipseSemiMinorAxisDescription,
-          I18n::Message::LinearEccentricityDescription,
-          I18n::Message::EccentricityDescription,
-          I18n::Message::CenterAbscissaDescription,
-          I18n::Message::CenterOrdinateDescription,
-      };
-      return descriptions[i];
-    }
-    case PlotType::Parabola: {
-      constexpr I18n::Message descriptions[k_parabolaDetailsSections] = {
-          I18n::Message::ParabolaParameterDescription,
-          I18n::Message::ParabolaVertexAbscissaDescription,
-          I18n::Message::ParabolaVertexOrdinateDescription,
-      };
-      return descriptions[i];
-    }
-    default: {
-      assert(plotType() == PlotType::Hyperbola);
-      constexpr I18n::Message descriptions[k_hyperbolaDetailsSections] = {
-          I18n::Message::HyperbolaSemiMajorAxisDescription,
-          I18n::Message::HyperbolaSemiMinorAxisDescription,
-          I18n::Message::LinearEccentricityDescription,
-          I18n::Message::EccentricityDescription,
-          I18n::Message::CenterAbscissaDescription,
-          I18n::Message::CenterOrdinateDescription,
-      };
-      return descriptions[i];
-    }
-  }
-}
-
-double ContinuousFunction::detailsValue(int i) const {
-  assert(i < detailsNumberOfSections());
-  PlotType type = plotType();
-  if (type == PlotType::Line) {
-    double values[k_lineDetailsSections] = {
-        NAN,
-        recordData()->getLine(0),
-        recordData()->getLine(1),
-    };
-    return values[i];
-  }
-  // Using ContinuousFunction's conic representation
-  const Conic conicRepresentation = recordData()->getConic();
-  double cx, cy;
-  if (type == PlotType::Parabola) {
-    conicRepresentation.getSummit(&cx, &cy);
-  } else {
-    conicRepresentation.getCenter(&cx, &cy);
-  }
-  if (type == PlotType::Circle) {
-    double values[k_circleDetailsSections] = {
-        conicRepresentation.getRadius(),
-        cx,
-        cy,
-    };
-    return values[i];
-  }
-  if (type == PlotType::Ellipse) {
-    double values[k_ellipseDetailsSections] = {
-        conicRepresentation.getSemiMajorAxis(),
-        conicRepresentation.getSemiMinorAxis(),
-        conicRepresentation.getLinearEccentricity(),
-        conicRepresentation.getEccentricity(),
-        cx,
-        cy,
-    };
-    return values[i];
-  }
-  if (type == PlotType::Parabola) {
-    double values[k_parabolaDetailsSections] = {
-        conicRepresentation.getParameter(),
-        cx,
-        cy,
-    };
-    return values[i];
-  }
-  assert(type == PlotType::Hyperbola);
-  double values[k_hyperbolaDetailsSections] = {
-      conicRepresentation.getSemiMajorAxis(),
-      conicRepresentation.getSemiMinorAxis(),
-      conicRepresentation.getLinearEccentricity(),
-      conicRepresentation.getEccentricity(),
-      cx,
-      cy,
-  };
-  return values[i];
+Poincare::Conic ContinuousFunction::getConicParameters(Poincare::Context * context) const {
+  assert(isConic());
+  return Conic(expressionEquation(context), context, k_unknownName);
 }
 
 void ContinuousFunction::udpateModel(Context * context) {
@@ -628,35 +471,6 @@ void ContinuousFunction::updatePlotType(Context * context) {
     return recordData()->setPlotType(PlotType::HorizontalLine);
   }
   if (yDeg == 1 && xDeg == 1) {
-    // Compute metrics for details view of Line
-    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian;
-    Poincare::Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-    /* TODO Hugo : Factorize with expressionReduced. Beware of invalid result if
-     * function was previously nammed. */
-    // Compute solution in y :
-    Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int dy = equation.getPolynomialReducedCoefficients(
-        k_ordinateName, coefficients, context, complexFormat, angleUnit,
-        k_defaultUnitFormat, k_defaultSymbolicComputation);
-    assert(dy == yDeg);
-    (void)dy;  // Silence compilation warnings
-    Expression root;
-    Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &root,
-                                      context, complexFormat, angleUnit);
-    // Reduce to another target for coefficient analysis.
-    PoincareHelpers::Reduce(&root, context,
-                            ExpressionNode::ReductionTarget::SystemForAnalysis);
-    // Separate the two line coefficients
-    int d = root.getPolynomialReducedCoefficients(
-        k_unknownName, coefficients, context, complexFormat, angleUnit,
-        k_defaultUnitFormat, k_defaultSymbolicComputation);
-    assert(d == xDeg);
-    (void) d;  // Silence compilation warnings
-    // Approximate and store the two line coefficients
-    recordData()->setLine(coefficients[1].approximateToScalar<double>(
-                              context, complexFormat, angleUnit),
-                          coefficients[0].approximateToScalar<double>(
-                              context, complexFormat, angleUnit));
     return recordData()->setPlotType(PlotType::Line);
   }
   if (yDeg == 1) {
@@ -665,7 +479,6 @@ void ContinuousFunction::updatePlotType(Context * context) {
   if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
     Conic equationConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = equationConic.getConicType();
-    recordData()->setConic(equationConic);
     if (ctype == Conic::Type::Hyperbola) {
       return recordData()->setPlotType(PlotType::Hyperbola);
     } else if (ctype == Conic::Type::Parabola) {

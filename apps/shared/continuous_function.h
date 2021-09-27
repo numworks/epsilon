@@ -94,19 +94,14 @@ public:
   bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
   // If the ContinuousFunction has x for unknown symbol
   bool isAlongX() const { return symbol() == 'x'; }
+  // If the ContinuousFunction is a conic
+  bool isConic() const { return plotType() >= PlotType::Circle && plotType() <= PlotType::Hyperbola; }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
-
-  /* Detail view */
-
-  // Number of sections to display in the ContinuousFunction's detail menu
-  int detailsNumberOfSections() const;
-  // Title of given section in ContinuousFunction's detail menu
-  I18n::Message detailsTitle(int i) const;
-  // Description of given section in ContinuousFunction's detail menu
-  I18n::Message detailsDescription(int i) const;
-  // Value of given section in ContinuousFunction's detail menu
-  double detailsValue(int i) const;
+  // Compute line parameters (slope and intercept) from ContinuousFunction
+  void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
+  // Compute conic parameters from ContinuousFunction
+  Poincare::Conic getConicParameters(Poincare::Context * context) const;
 
   /* Expression */
 
@@ -190,11 +185,6 @@ private:
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   static constexpr Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
   static constexpr Poincare::ExpressionNode::SymbolicComputation k_defaultSymbolicComputation = Poincare::ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
-  static constexpr size_t k_lineDetailsSections = 3;
-  static constexpr size_t k_circleDetailsSections = 3;
-  static constexpr size_t k_ellipseDetailsSections = 6;
-  static constexpr size_t k_parabolaDetailsSections = 3;
-  static constexpr size_t k_hyperbolaDetailsSections = 6;
 
   /* Range */
 
@@ -206,7 +196,9 @@ private:
   /* Expressions */
 
   // Returns the expression representing the equation for computations
-  Poincare::Expression expressionEquation(Poincare::Context * context) const  { return m_model.expressionEquation(this, context); }
+  Poincare::Expression expressionEquation(Poincare::Context * context) const  { // TODO Hugo : Rename expressionEquation and equationExpression
+    return m_model.expressionEquation(this, context);
+  }
   // Returns reduced curve expression derivative
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
 
@@ -234,7 +226,7 @@ private:
   // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
-    RecordDataBuffer(KDColor color) : Shared::Function::RecordDataBuffer(color), m_domain(-INFINITY, INFINITY), m_displayDerivative(false), m_plotType(PlotType::Undefined), m_equationSymbol(Poincare::ExpressionNode::Type::Equal)  {}
+    RecordDataBuffer(KDColor color) : Shared::Function::RecordDataBuffer(color), m_domain(-INFINITY, INFINITY), m_plotType(PlotType::Undefined), m_equationSymbol(Poincare::ExpressionNode::Type::Equal), m_displayDerivative(false) {}
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
     bool displayDerivative() const { return m_displayDerivative; }
@@ -247,20 +239,14 @@ private:
     float tMax() const { return m_domain.max(); }
     void setTMin(float tMin) { m_domain.setMin(tMin); }
     void setTMax(float tMax) { m_domain.setMax(tMax); }
-    void setConic(Poincare::Conic conic) { m_conic = conic; }
-    Poincare::Conic getConic() const { return m_conic; }
-    void setLine(double a, double b) { m_lineA = a; m_lineB = b; }
-    double getLine(size_t paramIndex) const { assert(paramIndex < 2); return paramIndex == 0 ? m_lineA : m_lineB; }
   private:
-    // sizeof - align
-    // TODO Hugo : Use Emscripten types for packed alignment
-    Poincare::Conic m_conic; // 80 - 8
-    double m_lineA; // 8 - 8
-    double m_lineB; // 8 - 8
-    Range1D m_domain; // 8 - 4
-    bool m_displayDerivative; // 1 - 1
-    PlotType m_plotType; // 1 - 1
-    Poincare::ExpressionNode::Type m_equationSymbol; // 1 - 1
+    Range1D m_domain;
+    PlotType m_plotType;
+    Poincare::ExpressionNode::Type m_equationSymbol;
+    bool m_displayDerivative;
+    /* In the record, after the boolean flag about displayDerivative, there is
+     * the expression of the function, directly copied from the pool. */
+    //char m_expression[0];
   };
 
   // Returns metadata size

@@ -131,8 +131,7 @@ def check_redundancy(messages, data, locales):
         if redundancy:
             redundant_names.add(name)
     if (len(redundant_names) > 0):
-        sys.stderr.write("Some localized messages are redundant and can be made universal :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
-        input("Press Enter to continue...")
+        sys.stderr.write("warning: Some localized messages are redundant and can be made universal between locales " + ", ".join(locales) + " :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
 
 def parse_files(files):
     data = {}

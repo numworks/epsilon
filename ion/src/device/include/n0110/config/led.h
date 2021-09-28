@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_N0110_KERNEL_DRIVERS_CONFIG_LED_H
-#define ION_DEVICE_N0110_KERNEL_DRIVERS_CONFIG_LED_H
+#ifndef ION_DEVICE_INCLUDE_N0110_CONFIG_LED_H
+#define ION_DEVICE_INCLUDE_N0110_CONFIG_LED_H
 
 #include <regs/regs.h>
 
@@ -9,6 +9,8 @@ namespace LED {
 namespace Config {
 
 using namespace Regs;
+
+constexpr uint16_t PWMPeriod = 40000;
 
 static constexpr int RedChannel = 1;
 static constexpr int GreenChannel = 2;

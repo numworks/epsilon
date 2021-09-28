@@ -55,7 +55,7 @@
 #define MICROPY_PY_ASYNC_AWAIT (0)
 
 // Whether to support bytearray object
-#define MICROPY_PY_BUILTINS_BYTEARRAY (0)
+#define MICROPY_PY_BUILTINS_BYTEARRAY (1)
 
 // Whether to support frozenset object
 #define MICROPY_PY_BUILTINS_FROZENSET (1)

@@ -223,7 +223,7 @@
 #endif
 
 #ifndef NDARRAY_HAS_TOBYTES
-#define NDARRAY_HAS_TOBYTES             (0)
+#define NDARRAY_HAS_TOBYTES             (1)
 #endif
 
 #ifndef NDARRAY_HAS_TRANSPOSE
@@ -264,7 +264,7 @@
 
 // frombuffer adds 600 bytes to the firmware
 #ifndef ULAB_NUMPY_HAS_FROMBUFFER
-#define ULAB_NUMPY_HAS_FROMBUFFER       (0)
+#define ULAB_NUMPY_HAS_FROMBUFFER       (1)
 #endif
 
 // functions that create an array

@@ -149,15 +149,17 @@ const ToolboxMessageTree NumpyNdarrayModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyFull),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyLinspace),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyLogspace),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyCopy),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyDtype),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyFlat),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyFlatten),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyShape),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyReshape),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpySize),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyTranspose),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpySort),  
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyFromBuffer),  
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyCopy, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyCopyWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyDtype, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyDtypeWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyFlat, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyFlatWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyFlatten, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyFlattenWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyShape, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyShapeWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyReshape, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyReshapeWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpySize, I18n::Message::Default, false, I18n::Message::PythonCommandNumpySizeWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyTranspose, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyTransposeWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpySort, I18n::Message::Default, false, I18n::Message::PythonCommandNumpySortWithoutArg),  
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandNumpyToBytes, I18n::Message::Default, false, I18n::Message::PythonCommandNumpyToBytesWithoutArg)
 };
 
 const ToolboxMessageTree NumpyFunctionsModuleChildren[] = {

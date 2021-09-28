@@ -196,20 +196,21 @@ bool CalculationController::textFieldShouldFinishEditing(TextField * textField,
 bool CalculationController::textFieldDidFinishEditing(TextField * textField,
                                                       const char * text,
                                                       Ion::Events::Event event) {
+  assert(selectedColumn() != 0);
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
-  if (m_calculation->type() != Calculation::Type::FiniteIntegral && selectedColumn() == 2) {
+  int resultColumn = m_calculation->type() == Calculation::Type::FiniteIntegral ? 3 : 2;
+  if (selectedColumn() == resultColumn) {
     if (floatBody < 0.0) {
       floatBody = 0.0;
     }
     if (floatBody > 1.0) {
       floatBody = 1.0;
     }
-  }
-  if (!m_distribution->isContinuous() &&
-      (selectedColumn() == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
+  } else if (!m_distribution->isContinuous()) {
+    assert(selectedColumn() == 1 || (selectedColumn() == 2 && m_calculation->type() == Calculation::Type::FiniteIntegral));
     floatBody = std::round(floatBody);
   }
   m_calculation->setParameterAtIndex(floatBody, selectedColumn() - 1);

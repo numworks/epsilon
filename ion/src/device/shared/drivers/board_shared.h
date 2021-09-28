@@ -27,6 +27,8 @@ enum class Frequency {
 };
 void setFrequency(Frequency f);
 void setFrequencyWithoutSystick(Frequency f);
+void setLowVoltageScaling();
+void setHighVoltageScaling();
 
 KernelHeader * kernelHeader();
 UserlandHeader * userlandHeader();

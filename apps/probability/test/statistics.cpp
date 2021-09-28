@@ -1,8 +1,6 @@
 #include <math.h>
 #include <quiz.h>
 
-#include <iostream>
-
 #include "probability/models/data.h"
 #include "probability/models/statistic/goodness_statistic.h"
 #include "probability/models/statistic/homogeneity_statistic.h"

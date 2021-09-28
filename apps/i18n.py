@@ -36,6 +36,9 @@ message_length_limit_for_type = {
     "default" : 45  # Ion::Display::Width / KDFont::SmallFont->glyphSize().width()
 }
 
+# When building with less locales, redundant messages are not checked for
+default_number_of_locales = 7
+
 def has_glyph(glyph):
     return glyph in codepoints
 
@@ -131,7 +134,8 @@ def check_redundancy(messages, data, locales):
         if redundancy:
             redundant_names.add(name)
     if (len(redundant_names) > 0):
-        sys.stderr.write("warning: Some localized messages are redundant and can be made universal between locales " + ", ".join(locales) + " :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
+        sys.stderr.write("Some localized messages are redundant and can be made universal :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
+        sys.exit(-1)
 
 def parse_files(files):
     data = {}
@@ -161,7 +165,8 @@ def parse_files(files):
                     sys.stderr.write("Error: Message exceeds length limits for " + type + " : " + definition.decode('utf-8') + " (" + name + ")\n")
                     sys.exit(-1)
                 data[locale][name] = definition
-    check_redundancy(messages, data, args.locales)
+    if (len(args.locales) >= default_number_of_locales):
+        check_redundancy(messages, data, args.locales)
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
 
 def parse_codepoints(file):

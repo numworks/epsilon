@@ -10,8 +10,8 @@ ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
   backlight_basic.cpp \
   base64.cpp \
-  board_frequency_prescaler.cpp:-n0120 \
-  board_frequency_vos.cpp:+n0120 \
+  board_frequency_voltage_f.cpp:-n0120 \
+  board_frequency_voltage_h.cpp:+n0120 \
   board_peripherals_clocks_n0110.cpp:+n0110 \
   board_peripherals_clocks_n0120.cpp:+n0120 \
   board_privileged.cpp \

@@ -7,11 +7,13 @@
 
 void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
-  Ion::Backlight::init();
   while (1) {
-    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorRed);
+    Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
     Ion::Timing::msleep(100);
-    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorBlue);
+    if (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {
+      Ion::Power::suspend();
+    }
+    Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
     Ion::Timing::msleep(100);
   }
 }

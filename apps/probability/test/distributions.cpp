@@ -83,8 +83,8 @@ QUIZ_CASE(probability_exponential_distribution) {
   // EXP(1)
   Probability::ExponentialDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
-  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(1), std::exp(-1));
-  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(14), std::exp(-14));
+  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(1), std::exp(-1.f));
+  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(14), std::exp(-14.f));
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 0.23f, 1 - std::exp(-.23f));
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 2.f, 1 - std::exp(-2.f));
 
@@ -100,14 +100,14 @@ QUIZ_CASE(probability_poisson_distribution) {
   // POISSON(1)
   Probability::PoissonDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
-  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(1), std::exp(-1));
-  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(8), std::exp(-1) / 40320 /* 8! */);
+  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(1), std::exp(-1.f));
+  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(8), std::exp(-1.f) / 40320 /* 8! */);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1, 0.7357588823428847);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 4, 0.9963401531726563);
 
   // POISSON(13)
   distribution.setParameterAtIndex(13.0, 0);
-  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(8), std::exp(-13) * std::pow(13, 8) / 40320 /* 8! */, 1e-6);
+  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(8), std::exp(-13.f) * std::pow(13.f, 8.f) / 40320 /* 8! */, 1e-6);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 4, 0.00374018590580994);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 16, 0.8354931476833607);
 }

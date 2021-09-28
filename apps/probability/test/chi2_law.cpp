@@ -3,8 +3,6 @@
 #include <math.h>
 #include <quiz.h>
 
-#include <iostream>
-
 #include "test_helper.h"
 
 LawTestCase chi2Tests[] = {

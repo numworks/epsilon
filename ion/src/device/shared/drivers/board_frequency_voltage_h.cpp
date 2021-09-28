@@ -9,7 +9,7 @@ namespace Board {
 
 using namespace Regs;
 
-static void setLowVoltageScaling() {
+void setLowVoltageScaling() {
   // Select HSI as sysclk source
   RCC.CFGR()->setSW(RCC::CFGR::SW::HSI);
   while(RCC.CFGR()->getSWS() != RCC::CFGR::SW::HSI) {}
@@ -22,7 +22,7 @@ static void setLowVoltageScaling() {
   while (!PWR.D3CR()->getVOSRDY()) {}
 }
 
-static void setHighVoltageScaling() {
+void setHighVoltageScaling() {
   // Increase VOS
   PWR.D3CR()->setVOS(PWR::D3CR::VOS::Scale0);
   // Ensure VOS activation before changing the frequency
@@ -37,12 +37,8 @@ static void setHighVoltageScaling() {
 }
 
 void setFrequencyWithoutSystick(Frequency f) {
-  if (f == Frequency::Low) {
-    setLowVoltageScaling();
-  } else {
-    assert(f == Frequency::High);
-    setHighVoltageScaling();
-  }
+  RCC::Prescaler4Bits prescaler = f == Frequency::Low ? RCC::Prescaler4Bits::DivideBy512 : RCC::Prescaler4Bits::NoDivide;
+  RCC.D1CFGR()->setD1CPRE(prescaler);
 }
 
 }

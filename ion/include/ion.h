@@ -12,6 +12,7 @@
 #include <ion/external_apps.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
+#include <ion/persisting_bytes.h>
 #include <ion/power.h>
 #include <ion/reset.h>
 #include <ion/storage.h>

@@ -1,6 +1,7 @@
 #include <ion.h>
 #include <string.h>
 #include <assert.h>
+#include <poincare/integer.h>
 #include <new>
 #if ION_STORAGE_LOG
 #include<iostream>
@@ -74,27 +75,21 @@ uint32_t Storage::Record::checksum() {
   return Ion::crc32Word(crc32Results, 2);
 }
 
-void Storage::firstAvailableNameStartingWith(const char startingChar, char name[4], const char * extension, int maxNumberOfRecords) {
-  /* With '?' being startingChar, fill name with the first available name for
-   * the extension following this pattern : ?0, ?1, ?2, .. ?10, ?11, .. ?99
-   * Only name with a 3 char length are supported. */
-  name[0] = startingChar;
-  name[2] = 0;
-  name[3] = 0;
+int Storage::firstAvailableNameStartingWith(const char startingChar, char * buffer, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
+  /* With '?' being startingChar, fill buffer with the first available name for
+   * the extension following this pattern : ?0, ?1, ?2, .. ?10, ?11, .. ?99 */
+  buffer[0] = startingChar;
   int id = 0;
-  while (id < maxNumberOfRecords) {
-    if (id < 10) {
-      name[1] = '0' + id%10;
-    } else {
-      name[1] = '0' + (id/10)%10;
-      name[2] = '0' + id%10;
-    }
-    if (recordBaseNamedWithExtension(name, extension).isNull()) {
-      return;
+  while (id <= maxId) {
+    int length = Poincare::Integer(id).serialize(buffer + 1, bufferSize - 1);
+    assert(buffer[1+length] == 0);
+    if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions).isNull()) {
+      return 1+length;
     }
     id++;
   }
   assert(false);
+  return 0;
 }
 
 Storage::Record::Record(const char * basename, int basenameLength, const char * extension, int extensionLength) {

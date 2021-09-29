@@ -36,8 +36,9 @@ EquationStore::EquationStore() :
 }
 
 Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
-  char name[4];
-  Ion::Storage::sharedStorage()->firstAvailableNameStartingWith('e', name, Ion::Storage::eqExtension, k_maxNumberOfEquations);
+  char name[3];
+  const char * const extensions[1] = { Ion::Storage::eqExtension };
+  Ion::Storage::sharedStorage()->firstAvailableNameStartingWith('e', name, 3, extensions, 1, k_maxNumberOfEquations - 1);
   return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
 }
 

@@ -6,8 +6,6 @@
 
 namespace Graph {
 
-// ContinuousFunctionStore stores functions and gives them a color.
-
 class ContinuousFunctionStore : public Shared::FunctionStore {
 public:
   ContinuousFunctionStore() : FunctionStore() {}
@@ -16,20 +14,18 @@ public:
   }
   bool displaysNonCartesianFunctions(int * nbActiveFunctions = nullptr) const;
   bool displaysFunctionsToNormalize(int * nbActiveFunctions = nullptr) const;
-  // TODO Hugo : Remove unused methods here
   int numberOfActiveFunctionsOfSymbolType(Shared::ContinuousFunction::SymbolType symbolType) const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveOfSymbolType, &symbolType);
   }
   int numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType plotType) const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveOfType, &plotType);
   }
-  Ion::Storage::Record activeRecordOfTypeAtIndex(Shared::ContinuousFunction::PlotType plotType, int i) const {
-    return recordSatisfyingTestAtIndex(i, &isFunctionActiveOfType, &plotType);
-  }
   Ion::Storage::Record activeRecordOfSymbolTypeAtIndex(Shared::ContinuousFunction::SymbolType symbolType, int i) const {
     return recordSatisfyingTestAtIndex(i, &isFunctionActiveOfSymbolType, &symbolType);
   }
-  Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record))); }
+  Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const {
+    return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record)));
+  }
   // TODO Hugo : Handle cache
   // Shared::ContinuousFunctionCache * cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? m_functionCaches + i : nullptr; }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
@@ -39,10 +35,6 @@ private:
     // An active function must be defined
     return isFunctionActive(model, context) && static_cast<Shared::ContinuousFunction *>(model)->isActiveInTable();
   }
-  // TODO Hugo : Factorize or delete function_store.cpp, simplify methods
-  const char * modelExtension() const override { return Ion::Storage::funcExtension; }
-  Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
-  Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
   static bool isFunctionActiveOfType(Shared::ExpressionModelHandle * model, void * context) {
     Shared::ContinuousFunction::PlotType plotType = *static_cast<Shared::ContinuousFunction::PlotType *>(context);
     return isFunctionActive(model, context) && plotType == static_cast<Shared::ContinuousFunction *>(model)->plotType();
@@ -51,6 +43,10 @@ private:
     Shared::ContinuousFunction::SymbolType symbolType = *static_cast<Shared::ContinuousFunction::SymbolType *>(context);
     return isFunctionActiveInTable(model, context) && symbolType == static_cast<Shared::ContinuousFunction *>(model)->symbolType();
   }
+  const char * modelExtension() const override { return Ion::Storage::funcExtension; }
+  Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
+
   mutable Shared::ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
   // TODO Hugo : Handle cache
   // mutable Shared::ContinuousFunctionCache m_functionCaches[Shared::ContinuousFunctionCache::k_numberOfAvailableCaches];

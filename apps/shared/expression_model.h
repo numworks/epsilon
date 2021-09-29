@@ -25,7 +25,7 @@ public:
   bool hasValidExpression() { return !m_expression.isUninitialized(); }
 protected:
   // Setters helper
-  static Poincare::Expression BuildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr);
+  virtual Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const;
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
   bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;

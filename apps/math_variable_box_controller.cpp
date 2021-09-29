@@ -82,7 +82,7 @@ int MathVariableBoxController::numberOfRows() const {
     case Page::Expression:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
-      return Storage::sharedStorage()->numberOfNamedFunctions();
+      return Storage::sharedStorage()->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
     case Page::Sequence:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
     default:
@@ -292,7 +292,7 @@ Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   assert(m_currentPage != Page::RootMenu);
   Storage::Record record;
   if (m_currentPage == Page::Function) {
-    record = Storage::sharedStorage()->namedFunctionRecordAtIndex(rowIndex);
+    record = Storage::sharedStorage()->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, extension(), rowIndex);
   } else {
     record = Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
   }

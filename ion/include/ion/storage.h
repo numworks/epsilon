@@ -100,10 +100,13 @@ public:
   void notifyChangeToDelegate(const Record r = Record()) const;
   Record::ErrorStatus notifyFullnessToDelegate() const;
 
+  // Record counters
   int numberOfRecordsWithExtension(const char * extension);
-  // TODO Hugo : Improve workarounds with named functions
-  int numberOfNamedFunctions();
-  void firstAvailableNameStartingWith(const char startingChar, char name[4], const char * extension, int maxNumberOfRecords = 99);
+  // TODO Hugo : Either go with this, or handle a "hidden" status ar Record level
+  int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension);
+
+  // Record names helper
+  void firstAvailableNameStartingWith(const char startingChar, char name[4], const char * extension, int maxNumberOfRecords = 100);
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation
@@ -113,7 +116,7 @@ public:
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
   Record recordWithExtensionAtIndex(const char * extension, int index);
-  Record namedFunctionRecordAtIndex(int index);
+  Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index);
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
   Record recordBaseNamedWithExtensions(const char * baseName, const char * const extension[], size_t numberOfExtensions);

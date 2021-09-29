@@ -238,14 +238,12 @@ int Storage::numberOfRecordsWithExtension(const char * extension) {
   return count;
 }
 
-int Storage::numberOfNamedFunctions() {
+int Storage::numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension) {
   int count = 0;
-  size_t extensionLength = strlen(funcExtension);
+  size_t extensionLength = strlen(extension);
   for (char * p : *this) {
     const char * name = fullNameOfRecordStarting(p);
-    // TODO Hugo : Factorize this with isNamed()
-    // TODO Hugo : Some of this code should be in continuousFunction
-    if (name[0] != '?' && FullNameHasExtension(name, funcExtension, extensionLength)) {
+    if (name[0] != nonStartingChar && FullNameHasExtension(name, extension, extensionLength)) {
       count++;
     }
   }
@@ -277,15 +275,15 @@ Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int 
   return Record(name);
 }
 
-Storage::Record Storage::namedFunctionRecordAtIndex(int index) {
+Storage::Record Storage::recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index) {
   int currentIndex = -1;
   const char * name = nullptr;
-  size_t extensionLength = strlen(funcExtension);
+  size_t extensionLength = strlen(extension);
   char * recordAddress = nullptr;
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
     // TODO Hugo : Some of this code should be in continuousFunction
-    if (currentName[0] != '?' && FullNameHasExtension(currentName, funcExtension, extensionLength)) {
+    if (currentName[0] != nonStartingChar && FullNameHasExtension(currentName, extension, extensionLength)) {
       currentIndex++;
     }
     if (currentIndex == index) {

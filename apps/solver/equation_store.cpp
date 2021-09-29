@@ -36,16 +36,8 @@ EquationStore::EquationStore() :
 }
 
 Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
-  char name[3] = {'e', '?', 0}; // name is going to be e0 or e1 or ... e5
-  int currentNumber = 0;
-  while (currentNumber < k_maxNumberOfEquations) {
-    name[1] = '0'+currentNumber;
-    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::eqExtension).isNull()) {
-      break;
-    }
-    currentNumber++;
-  }
-  assert(currentNumber < k_maxNumberOfEquations);
+  char name[4];
+  Ion::Storage::sharedStorage()->firstAvailableNameStartingWith('e', name, Ion::Storage::eqExtension, k_maxNumberOfEquations);
   return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
 }
 

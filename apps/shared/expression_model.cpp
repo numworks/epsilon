@@ -98,7 +98,7 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
   return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
-   * methods text, setContent (through BuildExpressionFromText), layout and
+   * methods text, setContent (through buildExpressionFromText), layout and
    * also in GlobalContext::expressionForSymbolAbstract and
    * GlobalContext::setExpressionForSymbolAbstract. When getting the
    * expression, the substitutions may probably be gathered here.
@@ -121,7 +121,7 @@ Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol)
 }
 
 Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
-  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol, context);
+  Expression e = buildExpressionFromText(c, symbol, context);
   return setExpressionContent(record, e);
 }
 
@@ -170,44 +170,12 @@ void ExpressionModel::tidy() const {
   m_circular = -1;
 }
 
-Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) {
+Poincare::Expression ExpressionModel::buildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) const {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c, context);
-    // TODO Hugo : Detail that we need this because Expression::Parse cannot find an unknown function name. Also, improve the code here.
-    if (!expressionToStore.isUninitialized() && Poincare::ComparisonOperator::IsComparisonOperatorType(expressionToStore.type())) {
-      constexpr size_t maxBaseNameSize = Poincare::SymbolAbstract::k_maxNameSize;
-      const char * firstParenthesis = UTF8Helper::CodePointSearch(c, CodePoint('(')); // CopyUntilCodePoint
-      const size_t foundBaseNameLength = firstParenthesis - c;
-      if (firstParenthesis[0] != 0 && foundBaseNameLength + 1 <= maxBaseNameSize && foundBaseNameLength > 0 && firstParenthesis[0] != 0) {
-        char baseName[maxBaseNameSize];
-        memcpy(baseName, c, foundBaseNameLength);
-        baseName[foundBaseNameLength] = 0;
-        if (Function::BaseNameCompliant(baseName) == Function::NameNotCompliantError::None) {
-          UTF8Decoder decoder(firstParenthesis);
-          decoder.nextCodePoint();
-          CodePoint newSymbol = decoder.nextCodePoint();
-          if (newSymbol == CodePoint('x') || (expressionToStore.type() == Poincare::ExpressionNode::Type::Equal && (newSymbol == CodePoint('t') || newSymbol == CodePoint(UCodePointGreekSmallLetterTheta)))) {
-            if (decoder.nextCodePoint() == CodePoint(')')) {
-              CodePoint comparisonOperator = decoder.nextCodePoint();
-              if (comparisonOperator == CodePoint('=') || comparisonOperator == CodePoint('<') || comparisonOperator == CodePoint('>') || comparisonOperator == CodePoint(UCodePointInferiorEqual) || comparisonOperator == CodePoint(UCodePointSuperiorEqual)) {
-                // Finally, we have a function assignment situation.
-                // Create the function
-                Poincare::Function function = Poincare::Function::Builder(baseName, foundBaseNameLength, Poincare::Symbol::Builder(newSymbol));
-                // Update the expression
-                expressionToStore.replaceChildAtIndexInPlace(0, function);
-                expressionToStore.childAtIndex(1).replaceSymbolWithExpression(Symbol::Builder(newSymbol), Symbol::Builder(UCodePointUnknown));
-                // Symbol has already been replaced
-                symbol = 0;
-              }
-            }
-          }
-        }
-      }
-    }
-
     if (!expressionToStore.isUninitialized() && symbol != 0) {
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknown));
     }

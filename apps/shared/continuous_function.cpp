@@ -752,7 +752,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
   // TODO Hugo : this line should be replacable with originalEquation (is it worth it ?)
-  Expression newExpression = ExpressionModel::BuildExpressionFromText(c, symbol, context);
+  Expression newExpression = buildExpressionFromText(c, symbol, context);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   // TODO Hugo : Factorize this code
   if (Ion::Storage::FullNameHasExtension(record->fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
@@ -782,6 +782,45 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
     error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
   }
   return error;
+}
+
+Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) const {
+  Expression noContextExpression;
+  // if c = "", we want to reinit the Expression
+  if (c && *c != 0) {
+    /* Compute the expression to store, without replacing symbols. No context is
+     * given so that any unknown function name is parsed as function. */
+    noContextExpression = Expression::Parse(c, nullptr);
+    if (noContextExpression.isUninitialized()) {
+      return noContextExpression;
+    }
+    // Check if the equation is of the form f(x)=...
+    ExpressionNode::Type comparisonType = noContextExpression.type();
+    if (ComparisonOperator::IsComparisonOperatorType(comparisonType) && isValidNamedLeftExpression(noContextExpression.childAtIndex(0), comparisonType)) {
+      Expression functionSymbol = noContextExpression.childAtIndex(0).childAtIndex(0);
+      // Extract the CodePoint function's symbol. We know it is either x, t or θ
+      assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
+      // Override the symbol so that it can be replaced in the right expression
+      if (functionSymbol.isIdenticalTo(Symbol::Builder('x'))) {
+        symbol = 'x';
+      } else if (functionSymbol.isIdenticalTo(Symbol::Builder('t'))) {
+        symbol = 't';
+      } else {
+        assert((functionSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))));
+        symbol = UCodePointGreekSmallLetterTheta;
+      }
+    } else {
+      // Fall back on default ExpressionModel::buildExpressionFromText behavior
+      noContextExpression = Expression();
+    }
+  }
+  Expression expressionToStore = ExpressionModel::buildExpressionFromText(c, symbol, context);
+  if (!noContextExpression.isUninitialized() && !expressionToStore.isUninitialized()) {
+    assert(Poincare::ComparisonOperator::IsComparisonOperatorType(expressionToStore.type()));
+    // Preserve the new function and its symbol
+    expressionToStore.replaceChildAtIndexInPlace(0, noContextExpression.childAtIndex(0));
+  }
+  return expressionToStore;
 }
 
 void ContinuousFunction::Model::tidy() const {

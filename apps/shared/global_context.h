@@ -37,7 +37,7 @@ private:
   // Expression getters
   static const Poincare::Expression ExpressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue = NAN);
   static const Poincare::Expression ExpressionForActualSymbol(Ion::Storage::Record r);
-  static const Poincare::Expression ExpressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
+  static const Poincare::Expression ExpressionForFunction(const Poincare::Expression & parameter, Ion::Storage::Record r);
   static const Poincare::Expression ExpressionForSequence(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue = NAN);
   // Expression setters
   static Ion::Storage::Record::ErrorStatus SetExpressionForActualSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);

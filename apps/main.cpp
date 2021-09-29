@@ -1,19 +1,25 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include <poincare/init.h>
+#include <ion/include/ion/persisting_bytes.h>
 
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
 void ion_main(int argc, const char * const argv[]) {
+  Ion::Power::selectStandbyMode(false);
   // Initialize the backlight
+  Ion::LED::setColor(KDColorRed);
+  Ion::LED::setBlinking(1000, 0.1f);
+  Ion::PersistingBytes::write(1);
+  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
   while (1) {
-    Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
-    Ion::Timing::msleep(100);
     if (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {
+      while (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {}
       Ion::Power::suspend();
+      Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
+      while (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {}
     }
-    Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
     Ion::Timing::msleep(100);
   }
 }

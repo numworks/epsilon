@@ -79,13 +79,13 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
     SetExpressionForActualSymbol(finalExpression, symbol, record);
   } else {
     assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
-    const Symbol childSymbol = static_cast<const Symbol&>(symbol.childAtIndex(0));
-    finalExpression = finalExpression.replaceSymbolWithExpression(childSymbol, Symbol::Builder(UCodePointUnknown));
+    Expression childSymbol = symbol.childAtIndex(0);
+    finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<const Symbol &>(childSymbol), Symbol::Builder(UCodePointUnknown));
     if (!(childSymbol.isIdenticalTo(Symbol::Builder('x')) || childSymbol.isIdenticalTo(Symbol::Builder('t')) || childSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta)))) {
       // Unsupported symbol. Fall back to 'x'
-      Symbol symbolInX = static_cast<const Symbol&>(symbol.clone());
+      Expression symbolInX = symbol.clone();
       symbolInX.replaceChildAtIndexInPlace(0, Symbol::Builder('x'));
-      setExpressionForFunction(finalExpression, symbolInX, record);
+      setExpressionForFunction(finalExpression, static_cast<const SymbolAbstract&>(symbolInX), record);
     } else {
       setExpressionForFunction(finalExpression, symbol, record);
     }

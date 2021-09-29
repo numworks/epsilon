@@ -29,7 +29,8 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctio
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   char name[4];
-  Ion::Storage::sharedStorage()->firstAvailableNameStartingWith(ContinuousFunction::k_unnamedRecordFirstChar, name, modelExtension());
+  const char * const extensions[1] = { modelExtension() };
+  Ion::Storage::sharedStorage()->firstAvailableNameStartingWith(ContinuousFunction::k_unnamedRecordFirstChar, name, 4, extensions, 1, 99);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::RecordDoesNotExist;
   ContinuousFunction newModel = ContinuousFunction::NewModel(&error, name);
   return error;

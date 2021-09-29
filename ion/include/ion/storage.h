@@ -106,7 +106,7 @@ public:
   int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension);
 
   // Record names helper
-  void firstAvailableNameStartingWith(const char startingChar, char name[4], const char * extension, int maxNumberOfRecords = 100);
+  int firstAvailableNameStartingWith(const char startingChar, char * buffer, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId);
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation
@@ -119,8 +119,8 @@ public:
   Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index);
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
-  Record recordBaseNamedWithExtensions(const char * baseName, const char * const extension[], size_t numberOfExtensions);
-  const char * extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extension[], size_t numberOfExtensions);
+  Record recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions);
+  const char * extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions);
 
   // Record destruction
   void destroyAllRecords();

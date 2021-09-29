@@ -50,31 +50,20 @@ int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferS
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'
   };
-  /* First default names are f, g, h, p and then f0, f1... ie, "f[number]",
-   * for instance "f12", that does not exist yet in the storage. */
+  /* First default names the first of theses names f, g, h, p and then f0, f1,
+   * that does not exist yet in the storage. */
   size_t constantNameLength = 1; // 'f', no null-terminating char
   assert(bufferSize > constantNameLength+1);
   // Find the next available name
-  int currentNumber = -k_maxNumberOfDefaultLetterNames;
-  int currentNumberLength = 0;
-  int availableBufferSize = bufferSize - constantNameLength;
-  while (currentNumberLength < availableBufferSize) {
-    // Choose letter and number if required
-    if (currentNumber >= 0) {
-      buffer[0] = k_defaultLetterNames[0];
-      currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
-    } else {
-      buffer[0] = k_defaultLetterNames[k_maxNumberOfDefaultLetterNames+currentNumber];
-      buffer[1] = 0;
-    }
+  buffer[1] = 0;
+  for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
+    buffer[0] = k_defaultLetterNames[i];
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(buffer)) {
-      // Name found
-      break;
+      return constantNameLength;
     }
-    currentNumber++;
   }
-  assert(currentNumberLength >= 0 && currentNumberLength < availableBufferSize);
-  return constantNameLength + currentNumberLength;
+  // f, g, h and p are already taken. Try f0, f1, ...
+  return Ion::Storage::sharedStorage()->firstAvailableNameStartingWith(k_defaultLetterNames[0], buffer, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
 }
 
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {

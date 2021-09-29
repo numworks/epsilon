@@ -116,7 +116,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
   Ion::Storage::Record::ErrorStatus error = ExpressionModelHandle::setContent(c, context);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     udpateModel(context);
-    error = editableModel()->renameRecordIfNeeded(this, c, context, symbol());
+    error = m_model.renameRecordIfNeeded(this, c, context, symbol());
   }
   return error;
 }
@@ -696,7 +696,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName)
         || (record->fullName()[0] != k_unnamedRecordFirstChar
             && memcmp(record->fullName(), functionName, functionNameLength) == 0
-            && record->fullName()[functionNameLength] == '.')) {
+            && record->fullName()[functionNameLength] == Ion::Storage::k_dotChar)) {
       Expression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder('t'))) {
@@ -748,6 +748,40 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
     }
   }
   return m_expressionDerivate;
+}
+
+Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
+  // TODO Hugo : this line should be replacable with originalEquation (is it worth it ?)
+  Expression newExpression = ExpressionModel::BuildExpressionFromText(c, symbol, context);
+  Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
+  // TODO Hugo : Factorize this code
+  if (Ion::Storage::FullNameHasExtension(record->fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
+    if (!newExpression.isUninitialized()
+      && Poincare::ComparisonOperator::IsComparisonOperatorType(newExpression.type())
+      && newExpression.childAtIndex(0).type() == ExpressionNode::Type::Function
+      && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('x'))
+        || (newExpression.type() == ExpressionNode::Type::Equal
+          && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('t'))
+            || newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta)))))
+        ) {
+      Poincare::Expression a = newExpression.childAtIndex(0);
+      Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
+      error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
+      if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
+        return error;
+      }
+      // Reset error, record's name will be resetted.
+      error = Ion::Storage::Record::ErrorStatus::None;
+    } else if (record->fullName()[0] == k_unnamedRecordFirstChar) {
+      // No need to rename anything.
+      return error;
+    }
+    // Rename record with a hidden record name.
+    char name[4];
+    Ion::Storage::sharedStorage()->firstAvailableNameStartingWith(k_unnamedRecordFirstChar, name, Ion::Storage::funcExtension);
+    error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
+  }
+  return error;
 }
 
 void ContinuousFunction::Model::tidy() const {

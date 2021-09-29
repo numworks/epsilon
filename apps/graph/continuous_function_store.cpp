@@ -9,34 +9,27 @@ bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFuncti
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();
   }
-  return numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::Theta) + numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::T) != 0;
+  return numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::Theta)
+       + numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::T)
+       != 0;
 }
 
 bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctions) const {
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();
   }
-  return 0 !=
-    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar) +
-    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric) +
-    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Circle) +
-    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Ellipse) +
-    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Hyperbola) +
-    numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parabola);
+  return numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar)
+       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric)
+       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Circle)
+       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Ellipse)
+       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Hyperbola)
+       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parabola)
+       != 0;
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
-  // TODO Hugo : Maybe handle more than 10 ?
-  char name[3] = {ContinuousFunction::k_unnamedRecordFirstChar, 0, 0}; // name is going to be ?0 or ?1 or ... ?5
-  int currentNumber = 0;
-  while (currentNumber < k_maxNumberOfMemoizedModels) {
-    name[1] = '0'+currentNumber;
-    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, modelExtension()).isNull()) {
-      break;
-    }
-    currentNumber++;
-  }
-  assert(currentNumber < k_maxNumberOfMemoizedModels);
+  char name[4];
+  Ion::Storage::sharedStorage()->firstAvailableNameStartingWith(ContinuousFunction::k_unnamedRecordFirstChar, name, modelExtension());
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::RecordDoesNotExist;
   ContinuousFunction newModel = ContinuousFunction::NewModel(&error, name);
   return error;

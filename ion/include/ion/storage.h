@@ -103,6 +103,7 @@ public:
   int numberOfRecordsWithExtension(const char * extension);
   // TODO Hugo : Improve workarounds with named functions
   int numberOfNamedFunctions();
+  void firstAvailableNameStartingWith(const char startingChar, char name[4], const char * extension, int maxNumberOfRecords = 99);
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation

@@ -158,49 +158,6 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   return error;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
-  Expression newExpression = ExpressionModel::BuildExpressionFromText(c, symbol, context);
-  Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
-  // TODO Hugo : Factorize this code, using ContinuousFunctionStore::addEmptyModel.
-  if (Storage::FullNameHasExtension(record->fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
-    if (!newExpression.isUninitialized()
-      && Poincare::ComparisonOperator::IsComparisonOperatorType(newExpression.type())
-      && newExpression.childAtIndex(0).type() == ExpressionNode::Type::Function
-      && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('x'))
-        || (newExpression.type() == ExpressionNode::Type::Equal
-          && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('t'))
-            || newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta)))))
-        ) {
-      Poincare::Expression a = newExpression.childAtIndex(0);
-      Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
-      error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
-      if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
-        return error;
-      }
-      // Reset error, record's name will be resetted.
-      error = Ion::Storage::Record::ErrorStatus::None;
-    } else if (record->fullName()[0] == '?') {
-      // TODO Hugo : Some of this code should be in continuousFunction
-      // No need to rename anything.
-      return error;
-    }
-    // Reset record name back to default
-    char name[3] = {'?', '?', 0}; // name is going to be ?0 or ?1 or ... ?5
-    int currentNumber = 0;
-    // TODO Hugo : Handle currentNumber exceeding 10
-    while (currentNumber < 10) {
-      name[1] = '0'+currentNumber;
-      if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::funcExtension).isNull()) {
-        break;
-      }
-      currentNumber++;
-    }
-    assert(currentNumber < 10);
-    error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
-  }
-  return error;
-}
-
 void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
   if (!expressionToStore.isUninitialized()) {
     memmove(expressionAddress, expressionToStore.addressInPool(), expressionToStoreSize);
@@ -219,7 +176,7 @@ Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, Co
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c, context);
-
+    // TODO Hugo : Detail that we need this because Expression::Parse cannot find an unknown function name. Also, improve the code here.
     if (!expressionToStore.isUninitialized() && Poincare::ComparisonOperator::IsComparisonOperatorType(expressionToStore.type())) {
       constexpr size_t maxBaseNameSize = Poincare::SymbolAbstract::k_maxNameSize;
       const char * firstParenthesis = UTF8Helper::CodePointSearch(c, CodePoint('(')); // CopyUntilCodePoint

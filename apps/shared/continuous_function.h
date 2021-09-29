@@ -282,17 +282,26 @@ private:
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    // Rename the record if needed. Record pointer might get corrupted.
+    Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Poincare::Context * context, CodePoint symbol);
+    // Tidy the model
     void tidy() const override;
+    // m_hasTwoCurves getter
     bool hasTwoCurves() const { return m_hasTwoCurves; }
+    // m_equationSymbol getter
     Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
+    // m_equationSymbol setter
     void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) const { m_equationSymbol = equationSymbol; }
+    // m_plotType getter
     PlotType plotType() const { return m_plotType; }
   private:
+    // Return address of the record's expression
     void * expressionAddress(const Ion::Storage::Record * record) const override;
+    // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     mutable bool m_hasTwoCurves;
     mutable Poincare::ExpressionNode::Type m_equationSymbol;
-    // TODO Hugo : Avoid this
+    // TODO Hugo : Improve this m_plotType workaround
     mutable PlotType m_plotType;
     mutable Poincare::Expression m_expressionDerivate;
   };

@@ -30,11 +30,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
   } else if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
-    // TODO Hugo : Improve this workaround
-    Symbol symbol = Symbol::Builder(ContinuousFunction(record).symbol());
-    // function name does not matter here
-    Poincare::Function f = Poincare::Function::Builder("f", 1, symbol);
-    return PoincareHelpers::CreateLayout(ExpressionForFunction(f, record));
+    return PoincareHelpers::CreateLayout(ExpressionForFunction(Symbol::Builder(ContinuousFunction(record).symbol()), record));
   } else {
     assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::seqExtension, strlen(Ion::Storage::seqExtension)));
     return Sequence(record).layout();
@@ -82,16 +78,14 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     SetExpressionForActualSymbol(finalExpression, symbol, record);
   } else {
-    assert(symbol.type() == ExpressionNode::Type::Function);
-    Expression child = symbol.childAtIndex(0);
-    assert(child.type() == ExpressionNode::Type::Symbol);
-    Symbol childSymbol = static_cast<Symbol&>(child);
+    assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
+    const Symbol childSymbol = static_cast<const Symbol&>(symbol.childAtIndex(0));
     finalExpression = finalExpression.replaceSymbolWithExpression(childSymbol, Symbol::Builder(UCodePointUnknown));
     if (!(childSymbol.isIdenticalTo(Symbol::Builder('x')) || childSymbol.isIdenticalTo(Symbol::Builder('t')) || childSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta)))) {
       // Unsupported symbol. Fall back to 'x'
-      Expression newSymbol = symbol.clone();
-      newSymbol.replaceChildAtIndexInPlace(0, Symbol::Builder('x'));
-      setExpressionForFunction(finalExpression, static_cast<SymbolAbstract&>(newSymbol), record);
+      Symbol symbolInX = static_cast<const Symbol&>(symbol.clone());
+      symbolInX.replaceChildAtIndexInPlace(0, Symbol::Builder('x'));
+      setExpressionForFunction(finalExpression, symbolInX, record);
     } else {
       setExpressionForFunction(finalExpression, symbol, record);
     }
@@ -102,7 +96,7 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
   } else if (symbol.type() == ExpressionNode::Type::Function) {
-    return ExpressionForFunction(symbol, r);
+    return ExpressionForFunction(symbol.childAtIndex(0), r);
   }
   assert(symbol.type() == ExpressionNode::Type::Sequence);
   return ExpressionForSequence(symbol, r, ctx, unknownSymbolValue);
@@ -117,16 +111,15 @@ const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r
   return Expression::ExpressionFromAddress(d.buffer, d.size);
 }
 
-const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & symbol, Ion::Storage::Record r) {
+const Expression GlobalContext::ExpressionForFunction(const Expression & parameter, Ion::Storage::Record r) {
   if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     return Expression();
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Expression e = ContinuousFunction(r).expressionClone();
-  assert(symbol.type() == ExpressionNode::Type::Function);
   if (!e.isUninitialized()) {
-    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), symbol.childAtIndex(0));
+    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), parameter);
   }
   return e;
 }

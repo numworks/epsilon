@@ -10,6 +10,8 @@ namespace Board {
 using namespace Regs;
 
 void setLowVoltageScaling() {
+#warning This line doesn\'t seem to be effective
+  setFrequencyWithoutSystick(Frequency::Low);
   // Select HSI as sysclk source
   RCC.CFGR()->setSW(RCC::CFGR::SW::HSI);
   while(RCC.CFGR()->getSWS() != RCC::CFGR::SW::HSI) {}
@@ -34,6 +36,7 @@ void setHighVoltageScaling() {
   /* Select PLL as sysclk source */
   RCC.CFGR()->setSW(RCC::CFGR::SW::PLL1);
   while(RCC.CFGR()->getSWS() != RCC::CFGR::SW::PLL1) {}
+  setFrequencyWithoutSystick(Frequency::High);
 }
 
 void setFrequencyWithoutSystick(Frequency f) {

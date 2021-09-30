@@ -24,18 +24,18 @@ define load_isr
 end
 
 # Usage:
-# switch_symbol_file debug bootloader
-# switch_symbol_file release kernel A
+# switch_symbol_file n0110 debug bootloader
+# switch_symbol_file n0120 release kernel A
 
 define switch_symbol_file
 # Discard previous symbol file
   symbol-file
 # Load new symbol file
-  if $argc == 2
-    add-symbol-file output/$arg0/device/n0110/$arg1/$arg1.elf
-  end
   if $argc == 3
-    add-symbol-file output/$arg0/device/n0110/$arg1/$arg1.$arg2.elf
+    add-symbol-file output/$arg1/device/$arg0/$arg2/$arg2.elf
+  end
+  if $argc == 4
+    add-symbol-file output/$arg1/device/$arg0/$arg2/$arg2.$arg3.elf
   end
 end
 

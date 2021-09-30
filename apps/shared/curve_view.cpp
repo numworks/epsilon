@@ -659,11 +659,9 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex) const {
-  // Round to pixel perfect position to avoid landing in the middle of pixels
-  tStart = roundFloatToPixelPerfect(tStart);
-  colorLowerBound = roundFloatToPixelPerfect(colorLowerBound);
-
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex) const {
+  /* ContinuousFunction caching relies on a consistent tStart and tStep. These
+   * values shouldn't be altered here. */
   float previousT = NAN;
   float t = NAN;
   float previousX = NAN;
@@ -707,16 +705,25 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
   } while (!isLastSegment);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex) const {
-  float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex, float cachedTStep) const {
+  float tStart = xMin;
+  float tStep = cachedTStep;
+  if (cachedTStep == 0) {
+    /* cachedTStep isn't given, there are no constraints with cache parameters.
+     * We can then compute tStep and clip tStart. */
+    float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+    tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
+    tStep = pixelWidth();
+    // Round to pixel perfect position to avoid landing in the middle of pixels
+    tStart = roundFloatToPixelPerfect(tStart);
+    colorLowerBound = roundFloatToPixelPerfect(colorLowerBound);
+  }
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-  float tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
   float tEnd = std::isnan(rectRight) ? xMax : std::min(xMax, rectRight);
   assert(!std::isnan(tStart) && !std::isnan(tEnd));
   if (std::isinf(tStart) || std::isinf(tEnd) || tStart > tEnd) {
     return;
   }
-  float tStep = pixelWidth();
   drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaIndex);
 }
 

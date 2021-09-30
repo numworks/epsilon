@@ -113,6 +113,7 @@ int ContinuousFunction::printValue(int index, double cursorT, double cursorX, do
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Context * context) {
+  setCache(nullptr);
   Ion::Storage::Record::ErrorStatus error = ExpressionModelHandle::setContent(c, context);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     udpateModel(context);
@@ -222,14 +223,12 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
 
 void ContinuousFunction::setTMin(float tMin) {
   recordData()->setTMin(tMin);
-  // TODO Hugo : Re-check cache
-  // setCache(nullptr);
+  setCache(nullptr);
 }
 
 void ContinuousFunction::setTMax(float tMax) {
   recordData()->setTMax(tMax);
-  // TODO Hugo : Re-check cache
-  // setCache(nullptr);
+  setCache(nullptr);
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {

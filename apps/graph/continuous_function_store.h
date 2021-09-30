@@ -26,8 +26,7 @@ public:
   Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const {
     return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record)));
   }
-  // TODO Hugo : Handle cache
-  // Shared::ContinuousFunctionCache * cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? m_functionCaches + i : nullptr; }
+  Shared::ContinuousFunctionCache * cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? m_functionCaches + i : nullptr; }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
 
 private:
@@ -48,8 +47,8 @@ private:
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
 
   mutable Shared::ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
-  // TODO Hugo : Handle cache
-  // mutable Shared::ContinuousFunctionCache m_functionCaches[Shared::ContinuousFunctionCache::k_numberOfAvailableCaches];
+  mutable Shared::ContinuousFunctionCache m_functionCaches[Shared::ContinuousFunctionCache::k_numberOfAvailableCaches];
+
 };
 
 }

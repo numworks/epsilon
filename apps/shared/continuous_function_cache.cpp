@@ -10,35 +10,35 @@ constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
 
 // public
 void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
-  // ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
+  ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
 
-  // if (!cache) {
-  //   /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
-  //    * of the function we are trying to draw is greater than the number of
-  //    * available caches, so we just tell the function to not lookup any cache. */
-  //   function->setCache(nullptr);
-  //   return;
-  // }
+  if (!cache) {
+    /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
+     * of the function we are trying to draw is greater than the number of
+     * available caches, so we just tell the function to not lookup any cache. */
+    function->setCache(nullptr);
+    return;
+  }
 
-  // if (tStep < 3 * k_cacheHitTolerance) {
-  //   /* If tStep is lower than twice the tolerance, we risk shifting the index
-  //    * by 1 for cache hits. As an added safety, we add another buffer of
-  //    * k_cacheHitTolerance, raising the threshold for caching to three times
-  //    * the tolerance. */
-  //   function->setCache(nullptr);
-  //   return;
-  // }
-  // if (function->cache() != cache) {
-  //   cache->clear();
-  //   function->setCache(cache);
-  // } else if (tStep != 0.f && tStep != cache->step()) {
-  //   cache->clear();
-  // }
+  if (tStep < 3 * k_cacheHitTolerance) {
+    /* If tStep is lower than twice the tolerance, we risk shifting the index
+     * by 1 for cache hits. As an added safety, we add another buffer of
+     * k_cacheHitTolerance, raising the threshold for caching to three times
+     * the tolerance. */
+    function->setCache(nullptr);
+    return;
+  }
+  if (function->cache() != cache) {
+    cache->clear();
+    function->setCache(cache);
+  } else if (tStep != 0.f && tStep != cache->step()) {
+    cache->clear();
+  }
 
-  // if (function->isAlongX() && tStep != 0) {
-  //   function->cache()->pan(function, tMin);
-  // }
-  // function->cache()->setRange(function, tMin, tStep);
+  if (function->isAlongX() && tStep != 0) {
+    function->cache()->pan(function, tMin);
+  }
+  function->cache()->setRange(function, tMin, tStep);
 }
 
 void ContinuousFunctionCache::clear() {
@@ -47,13 +47,12 @@ void ContinuousFunctionCache::clear() {
   invalidateBetween(0, k_sizeOfCache);
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t) {
-  assert(false);
-  int resIndex = indexForParameter(function, t);
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t, int curveIndex) {
+  int resIndex = indexForParameter(function, t, curveIndex);
   if (resIndex < 0) {
-    // return function->privateEvaluateXYAtParameter(t, context);
+    return function->privateEvaluateXYAtParameter(t, context, curveIndex);
   }
-  return valuesAtIndex(function, context, t, resIndex);
+  return valuesAtIndex(function, context, t, resIndex, curveIndex);
 }
 
 void ContinuousFunctionCache::ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin) {
@@ -81,7 +80,7 @@ void ContinuousFunctionCache::ComputeNonCartesianSteps(float * tStep, float * tC
 // private
 void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   for (int i = iInf; i < iSup; i++) {
-    m_cache[i] = NAN;
+    m_cache[i] = k_magicDefaultValue;
   }
 }
 
@@ -90,14 +89,19 @@ void ContinuousFunctionCache::setRange(ContinuousFunction * function, float tMin
   m_tStep = tStep;
 }
 
-int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * function, float t) const {
+int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * function, float t, int curveIndex) const {
+  if (curveIndex != 0) {
+    /* TODO Hugo : For now, second curves are not cached. It may (or not) be
+     * slightly better to cache both, but it should also be handled in pan. */
+    return -1;
+  }
   float delta = (t - m_tMin) / m_tStep;
   if (delta < 0 || delta > INT_MAX) {
     return -1;
   }
   int res = std::round(delta);
   assert(res >= 0);
-  if ((res >= k_sizeOfCache && function->isAlongX())
+  if ((res >= k_sizeOfCache)
    || (res >= k_sizeOfCache / 2 && !function->isAlongX())
    || std::fabs(res - delta) > k_cacheHitTolerance) {
     return -1;
@@ -106,18 +110,18 @@ int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * functi
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i) {
-  assert(false);
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i, int curveIndex) {
+  assert(curveIndex == 0);
   if (function->isAlongX()) {
-    if (std::isnan(m_cache[i])) {
-      // m_cache[i] = function->privateEvaluateXYAtParameter(t, context).x2();
+    if (k_magicDefaultValue == m_cache[i]) {
+      m_cache[i] = function->privateEvaluateXYAtParameter(t, context, curveIndex).x2();
     }
     return Poincare::Coordinate2D<float>(t, m_cache[i]);
   }
-  if (std::isnan(m_cache[2 * i]) || std::isnan(m_cache[2 * i + 1])) {
-    // Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(t, context);
-    // m_cache[2 * i] = res.x1();
-    // m_cache[2 * i + 1] = res.x2();
+  if (k_magicDefaultValue == m_cache[2 * i] || k_magicDefaultValue == m_cache[2 * i + 1]) {
+    Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(t, context, curveIndex);
+    m_cache[2 * i] = res.x1();
+    m_cache[2 * i + 1] = res.x2();
   }
   return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
 }
@@ -129,16 +133,21 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) 
   }
 
   float dT = (newTMin - m_tMin) / m_tStep;
-  m_tMin = newTMin;
   if (std::fabs(dT) > INT_MAX) {
+    m_tMin = newTMin;
     clear();
     return;
   }
   int dI = std::round(dT);
-  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache || std::fabs(dT - dI) > k_cacheHitTolerance) {
+  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache) {
+    m_tMin = newTMin;
     clear();
     return;
   }
+  /* TODO Hugo : Ensure that it is better than checking for
+   * std::fabs(dT - dI) > k_cacheHitTolerance above */
+  // Pan tMin to the closest cached value from newTMin.
+  m_tMin += dI * m_tStep;
 
   int oldStart = m_startOfCache;
   m_startOfCache = (m_startOfCache + dI) % k_sizeOfCache;

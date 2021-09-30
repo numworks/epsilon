@@ -46,8 +46,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
-      // TODO Hugo : Restore cache
-      // ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
+      ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
       ContinuousFunction::PlotType type = f->plotType();
       Poincare::Expression e = f->expressionReduced(context());
       if (e.isUndefined() || (
@@ -65,28 +64,27 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       if (f->isAlongX()) {
         float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
-        * because cache can be panned for cartesian curves, instead of being
-        * entirely invalidated. */
+         * because cache can be panned for cartesian curves, instead of being
+         * entirely invalidated. */
         tCacheMin = std::isnan(rectLeft) ? tmin : std::max(tmin, rectLeft);
         tCacheStep = pixelWidth();
       } else {
         tCacheMin = tmin;
-        // TODO Hugo : Properly compute tCacheStep and tStepNonCartesian
-        tStepNonCartesian = (tmax - tmin) / 10.0938275501223f;
-        // ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
+        // Compute tCacheStep and tStepNonCartesian
+        ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
       }
-      // ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
+      ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 
       if (type == ContinuousFunction::PlotType::Polar) {
         // Polar
-        drawPolarCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
+        drawPolarCurve(ctx, rect, tCacheMin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
       } else if (type == ContinuousFunction::PlotType::Parametric) {
         // Parametric
-        drawCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
+        drawCurve(ctx, rect, tCacheMin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
@@ -141,11 +139,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             };
           }
         }
-        drawCartesianCurve(ctx, rect, tmin, tmax, xyFloatEvaluation,
-                           f.operator->(), context(), f->color(), true,
-                           record == m_selectedRecord, m_highlightedStart,
-                           m_highlightedEnd, xyDoubleEvaluation,
-                           f->drawDottedCurve(), xyAreaBound, false, areaIndex);
+        drawCartesianCurve(
+            ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
+            context(), f->color(), true, record == m_selectedRecord,
+            m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
+            f->drawDottedCurve(), xyAreaBound, false, areaIndex, tCacheStep);
         if (f->hasTwoCurves()) {
           // Draw the second cartesian curve, which is lesser than the first
           xyDoubleEvaluation = [](double t, void * model, void * context) {
@@ -164,10 +162,10 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             xyAreaBound = xyMinusInfinite;
           }
           drawCartesianCurve(
-              ctx, rect, tmin, tmax, xyFloatEvaluation, f.operator->(),
+              ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
               context(), f->color(), true, record == m_selectedRecord,
               m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
-              f->drawDottedCurve(), xyAreaBound, true, areaIndex);
+              f->drawDottedCurve(), xyAreaBound, true, areaIndex, tCacheStep);
         }
         if (superiorArea || inferiorArea) {
           // We display the superposition of up to 4 areas

@@ -13,6 +13,14 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::LED::setBlinking(1000, 0.1f);
   Ion::PersistingBytes::write(1);
   Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
+  while(1) {
+      Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
+      for (int i = 0; i < 5000; i++) {
+        Ion::Timing::usleep(1000);
+      }
+      Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
+      Ion::Timing::msleep(5000);
+  }
   while (1) {
     if (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {
       while (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {}

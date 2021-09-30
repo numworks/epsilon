@@ -20,13 +20,18 @@ public:
 
   float step() const { return m_tStep; }
   void clear();
-  Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t);
+  Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t, int curveIndex);
   // Sets step parameters for non-cartesian curves
   static void ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin);
 private:
   /* The size of the cache is chosen to optimize the display of cartesian
    * functions */
   static constexpr int k_sizeOfCache = Ion::Display::Width;
+  /* Default value indicates the cache value has been cleared and should be
+   * re-computed. We can't use NAN as it can often be an actual function value.
+   * Worst case scenario : When plotting f(x)=k_magicDefaultValue, nothing can
+   * be cached. This magic float value is -1.7014118346e+38 */
+  static constexpr float k_magicDefaultValue = static_cast<float>(0xff000000);
   /* We need a certain amount of tolerance since we try to evaluate the
    * equality of floats. But the value has to be chosen carefully. Too high of
    * a tolerance causes false positives, which lead to errors in curves
@@ -39,8 +44,8 @@ private:
 
   void invalidateBetween(int iInf, int iSup);
   void setRange(ContinuousFunction * function, float tMin, float tStep);
-  int indexForParameter(const ContinuousFunction * function, float t) const;
-  Poincare::Coordinate2D<float> valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i);
+  int indexForParameter(const ContinuousFunction * function, float t, int curveIndex) const;
+  Poincare::Coordinate2D<float> valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i, int curveIndex);
   void pan(ContinuousFunction * function, float newTMin);
 
   float m_tMin, m_tStep;

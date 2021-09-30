@@ -7,12 +7,14 @@
 #include <poincare/symbol_abstract.h>
 #include <poincare/conic.h>
 #include <poincare/preferences.h>
-
-// TODO Hugo : Emscripten things
+#include "continuous_function_cache.h"
 
 namespace Shared {
 
 class ContinuousFunction : public Function {
+  /* We want the cache to be able to call privateEvaluateXYAtParameter to
+   * bypass cache lookup when memoizing the function's values. */
+  friend class ContinuousFunctionCache;
 public:
   /* ContinuousFunction */
 
@@ -114,15 +116,14 @@ public:
 
   /* Evaluation */
 
-  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context, int i = 0) const {
-    return templatedApproximateAtParameter(t, context, i);
+  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context, int curveIndex = 0) const {
+    return templatedApproximateAtParameter(t, context, curveIndex);
   }
-  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context, int i = 0) const override {
-    // TODO Hugo : cache ?
-    return privateEvaluateXYAtParameter<float>(t, context, i);
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context, int curveIndex = 0) const override {
+    return m_cache ? m_cache->valueForParameter(this, context, t, curveIndex) : privateEvaluateXYAtParameter<float>(t, context, curveIndex);
   }
-  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int i = 0) const override {
-    return privateEvaluateXYAtParameter<double>(t, context, i);
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int curveIndex = 0) const override {
+    return privateEvaluateXYAtParameter<double>(t, context, curveIndex);
   }
 
   /* Derivative */
@@ -177,8 +178,9 @@ public:
 
   /* Cache */
 
-  // TODO Hugo : Consider re-implementing cache
-  // void didBecomeInactive() override { m_cache = nullptr; }
+  ContinuousFunctionCache * cache() const { return m_cache; }
+  void setCache(ContinuousFunctionCache * v) { m_cache = v; }
+  void didBecomeInactive() override { m_cache = nullptr; }
   static constexpr char k_unnamedRecordFirstChar = '?';
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
@@ -312,6 +314,7 @@ private:
   const ExpressionModel * model() const override { return &m_model; }
 
   Model m_model;
+  ContinuousFunctionCache * m_cache;
 };
 
 }

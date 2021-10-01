@@ -18,7 +18,6 @@ public:
   /* WARNING: after calling removeModel or removeAll, the sequence context
    * need to invalidate its cache as the sequences evaluations might have
    * changed */
-  int maxNumberOfModels() const override { return MaxNumberOfSequences; }
   /* If the sequences have been defined in a unusual order, recordAtIndex(0)
    * may not be the record for u. */
   Ion::Storage::Record recordAtNameIndex(int i) const { return Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(k_sequenceNames[i], modelExtension()); }
@@ -32,6 +31,7 @@ public:
   Sequence sequenceAtIndex(int i) { assert(i < MaxNumberOfSequences && i >= 0); return m_sequences[i]; }
 
 private:
+  int maxNumberOfMemoizedModels() const override { return MaxNumberOfSequences; }
   const char * modelExtension() const override { return Ion::Storage::seqExtension; }
   /* We don't use model memoization for two reasons:
    * - the number of Sequence is capped so we keep enough Sequences to store them all.

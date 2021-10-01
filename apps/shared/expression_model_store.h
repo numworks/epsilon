@@ -13,13 +13,11 @@ namespace Shared {
 class ExpressionModelStore {
   // TODO find better name (once we remove ExpressionModelStore?)
 public:
-  constexpr static int k_maxNumberOfMemoizedModels = 10;
-
   ExpressionModelStore();
 
   // Getters
-  // By default, the number of models is not bounded
-  virtual int maxNumberOfModels() const { return -1; }
+  // Override with -1 for an unbounded max number of models.
+  virtual int maxNumberOfModels() const { return maxNumberOfMemoizedModels(); }
   int numberOfModels() const;
   Ion::Storage::Record recordAtIndex(int i) const;
   int numberOfDefinedModels() const {
@@ -39,7 +37,7 @@ public:
   virtual void tidy();
   void storageDidChangeForRecord(const Ion::Storage::Record record) const { resetMemoizedModelsExceptRecord(record); }
 protected:
-  int maxNumberOfMemoizedModels() const { return maxNumberOfModels() < 0 ? k_maxNumberOfMemoizedModels : maxNumberOfModels(); }
+  virtual int maxNumberOfMemoizedModels() const = 0;
   typedef bool (*ModelTest)(ExpressionModelHandle * model, void * context);
   int numberOfModelsSatisfyingTest(ModelTest test, void * context) const;
   Ion::Storage::Record recordSatisfyingTestAtIndex(int i, ModelTest test, void * context) const;
@@ -52,11 +50,10 @@ private:
   virtual ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;
   virtual ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const = 0;
   virtual const char * modelExtension() const = 0;
-  /* Memoization of k_maxNumberOfMemoizedModels. When the required model is not
-   * present, we override the m_oldestMemoizedIndex model. This actually
-   * overrides the oldest memoized model because models are all reset at the
-   * same time. Otherwise, we should use a queue to decide which was the last
-   * memoized model. */
+  /* When the required model is not present, we override the
+   * m_oldestMemoizedIndex model. This actually overrides the oldest memoized
+   * model because models are all reset at the same time. Otherwise, we should
+   * use a queue to decide which was the last memoized model. */
   mutable int m_oldestMemoizedIndex;
 };
 

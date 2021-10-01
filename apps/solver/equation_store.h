@@ -26,7 +26,6 @@ public:
   EquationStore();
 
   /* ExpressionModelStore */
-  int maxNumberOfModels() const override { return k_maxNumberOfEquations; }
   Shared::ExpiringPointer<Equation> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Equation>(static_cast<Equation *>(privateModelForRecord(record))); }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
 
@@ -87,6 +86,7 @@ private:
   static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
 
   // ExpressionModelStore
+  int maxNumberOfMemoizedModels() const override { return k_maxNumberOfEquations; }
   const char * modelExtension() const override { return Ion::Storage::eqExtension; }
   /* We don't really use model memoization as the number of Equation is limited
    * and we keep enough Equations to store them all. */

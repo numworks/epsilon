@@ -77,6 +77,17 @@ bool layoutRepresentsAnEquation(Poincare::Layout l) {
   return !match.isUninitialized();
 }
 
+// Fills buffer with a default polar function equation, such as "f(θ)="
+void polarDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController) {
+  int length = modelsParameterController->defaultName(buffer, bufferSize - 6);
+  buffer[length++] = '(';
+  length += UTF8Decoder::CodePointToChars(UCodePointGreekSmallLetterTheta, buffer + length, bufferSize - length);
+  assert(bufferSize >= length + 3);
+  buffer[length++] = ')';
+  buffer[length++] = '=';
+  buffer[length++] = 0;
+}
+
 // Return true if given layout contains θ
 bool layoutRepresentsPolarFunction(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
@@ -96,13 +107,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
         // Insert "f(θ)=" or, if "f" is taken, another default function name
         constexpr int bufferSize = 10;
         char buffer[bufferSize];
-        int length = m_modelsParameterController.defaultName(buffer, bufferSize - 6);
-        buffer[length++] = '(';
-        length += UTF8Decoder::CodePointToChars(UCodePointGreekSmallLetterTheta, buffer + length, bufferSize - length);
-        assert(bufferSize >= length + 3);
-        buffer[length++] = ')';
-        buffer[length++] = '=';
-        buffer[length++] = 0;
+        polarDefaultFunctionEquation(buffer, bufferSize, &m_modelsParameterController);
         layoutField->handleEventWithText(buffer);
       } else {
         // Insert "y="
@@ -111,6 +116,44 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
     }
   }
   return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
+}
+
+/* TextFieldDelegate */
+
+bool textRepresentsAnEquation(const char * text) {
+  constexpr size_t numberOfSymbols = 5;
+  CodePoint symbols[numberOfSymbols] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
+  for (size_t i = 0; i < numberOfSymbols; i++) {
+    if (UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, symbols[i]), symbols[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool textRepresentsPolarFunction(const char * text) {
+  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, UCodePointGreekSmallLetterTheta), UCodePointGreekSmallLetterTheta);
+}
+
+bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
+    const char * text = textField->text();
+    if (!textRepresentsAnEquation(text)) {
+      // Inserted text must be an equation
+      textField->setCursorLocation(text);
+      if (textRepresentsPolarFunction(text)) {
+        // Insert "f(θ)=" or, if "f" is taken, another default function name
+        constexpr int bufferSize = 10;
+        char buffer[bufferSize];
+        polarDefaultFunctionEquation(buffer, bufferSize, &m_modelsParameterController);
+        textField->handleEventWithText(buffer);
+      } else {
+        // Insert "y="
+        textField->handleEventWithText("y=");
+      }
+    }
+  }
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
 }
 
 /* Responder */

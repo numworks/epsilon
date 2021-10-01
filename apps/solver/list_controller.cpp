@@ -133,10 +133,7 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
       }
     }
   }
-  if (Shared::TextFieldDelegate::textFieldDidReceiveEvent(textField, event)) {
-    return true;
-  }
-  return false;
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {

@@ -404,6 +404,7 @@ float ContinuousFunction::rangeStep() const {
 }
 
 void ContinuousFunction::updatePlotType(Context * context) {
+  setCache(nullptr);
   // Retrieve ContinuousFunction's equation
   Expression equation = expressionEquation(context);
   // Compute equation's degree regarding x and y.

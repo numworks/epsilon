@@ -29,39 +29,18 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   double dir = (direction > 0 ? 1.0 : -1.0);
   double step = function->isAlongX() ? static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
 
-  if (function->plotType() == ContinuousFunction::PlotType::Ellipse || function->plotType() == ContinuousFunction::PlotType::Circle || (function->plotType() == ContinuousFunction::PlotType::Parabola && function->hasTwoCurves())) {
-    assert(secondaryCurveIndex != nullptr && function->hasTwoCurves());
-    if (*secondaryCurveIndex == 1) {
+  bool specialConicCursorMove = false;
+  if (function->isConic() && function->hasTwoCurves()) {
+    assert(secondaryCurveIndex != nullptr);
+    // previousXY will be needed for conic's special horizontal cursor moves.
+    specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex).x2());
+    if (*secondaryCurveIndex == 1 && function->plotType() != ContinuousFunction::PlotType::Hyperbola) {
+      // On the secondary curve, pressing left actually moves the cursor right
       dir *= -1.0;
     }
-    Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
-    if (std::isfinite(xy.x2())) {
-      double t2 = t + dir * step * scrollSpeed;
-      xy = function->evaluateXYAtParameter(t2, App::app()->localContext(), *secondaryCurveIndex);
-      if (std::isnan(xy.x2())) {
-        *secondaryCurveIndex = 1 - *secondaryCurveIndex;
-        t -= dir * step * scrollSpeed;
-      }
-    }
   }
-  if (function->plotType() == ContinuousFunction::PlotType::Hyperbola) {
-    Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
-    if (std::isfinite(xy.x2())) {
-      double t2 = t + dir * step * scrollSpeed;
-      xy = function->evaluateXYAtParameter(t2, App::app()->localContext(), *secondaryCurveIndex);
-      int tries = 0;
-      int maxTries = std::ceil(numberOfStepsInGradUnit * Shared::CurveViewRange::k_maxNumberOfXGridUnits);
-      while (std::isnan(xy.x2()) && tries < maxTries) {
-        tries ++;
-        t2 += dir * step * scrollSpeed;
-        xy = function->evaluateXYAtParameter(t2, App::app()->localContext(), *secondaryCurveIndex);
-      }
-      if (tries < maxTries) {
-        t = t2 - dir * step * scrollSpeed;
-        t = std::max(tMin, std::min(tMax, t));
-      }
-    }
-  }
+
+  // Cursor's default horizontal movement
   t += dir * step * scrollSpeed;
 
   // If possible, round t so that f(x) matches f evaluated at displayed x
@@ -69,6 +48,33 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 
   t = std::max(tMin, std::min(tMax, t));
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+
+  if (specialConicCursorMove && std::isnan(xy.x2())) {
+    if (function->plotType() == ContinuousFunction::PlotType::Hyperbola) {
+      // Hyperbolas have an undefined section along-side the x axis.
+      double previousT = t;
+      int tries = 0;
+      int maxTries = std::ceil(numberOfStepsInGradUnit * Shared::CurveViewRange::k_maxNumberOfXGridUnits);
+      do {
+        // Try to jump out of the undefined section
+        t += dir * step;
+        xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+        tries ++;
+      } while (std::isnan(xy.x2()) && tries < maxTries);
+      if (tries >= maxTries || t < tMin || t > tMax) {
+        // Reset to default t and xy
+        t = previousT;
+        xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+      }
+    } else {
+      /* The cursor would end up out of the conic's bounds, do not move the
+       * cursor and switch to the other secondary curve (with inverted dir) */
+      t = tCursorPosition;
+      *secondaryCurveIndex = 1 - *secondaryCurveIndex;
+      xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+    }
+  }
+
   cursor->moveTo(t, xy.x1(), xy.x2());
   return true;
 }

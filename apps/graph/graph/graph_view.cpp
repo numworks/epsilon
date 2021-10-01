@@ -97,6 +97,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color(), false);
       } else {
         // Cartesian.
+        // 1 - Define the evaluation functions for curve and area
         bool superiorArea = f->drawSuperiorArea();
         bool inferiorArea = f->drawInferiorArea();
         assert(!(superiorArea && inferiorArea));
@@ -123,7 +124,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               return f->evaluateXYAtParameter(t, c, 0);
             };
         if (superiorArea || inferiorArea) {
-          // The drawn area goes from the xyFloatEvaluation to xyAreaBound.
+          /* The drawn area goes from the xyFloatEvaluation to xyAreaBound.
+           * With a single curve, the drawn area is either above or below the
+           * curve. With two curves, the equation was of the form "a*y^2_(...)"
+           * with a strictly positive and _ being either <, <=, > or >=.
+           * With an inferior comparison, the area to color is between both
+           * curves. With a superior comparison, the area is the opposite : both
+           * above the first curve and under the second curve. */
           if (superiorArea) {
             // Superior area ends at +inf
             xyAreaBound = xyInfinite;
@@ -139,6 +146,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             };
           }
         }
+        // 2 - Draw the first curve
         drawCartesianCurve(
             ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
             context(), f->color(), true, record == m_selectedRecord,
@@ -158,9 +166,16 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           };
           xyAreaBound = nullptr;
           if (superiorArea) {
-            // Inferior area ends at -inf
+            // Superior area starts from the second curve and ends at -inf
             xyAreaBound = xyMinusInfinite;
+            /* Note : If the second curve evaluation is NAN, the
+             * superior area must stretch from -inf to inf. Inequations are
+             * currently supported only between polynoms of x and y. Therfore, a
+             * NAN second curve evaluation means the first curve evaluated to
+             * NAN as well, and there is no need to check that the equation is
+             * defined at this value of x. */
           }
+          // 3 - Draw the first curve
           drawCartesianCurve(
               ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
               context(), f->color(), true, record == m_selectedRecord,
@@ -168,14 +183,16 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               f->drawDottedCurve(), xyAreaBound, true, areaIndex, tCacheStep);
         }
         if (superiorArea || inferiorArea) {
-          // We display the superposition of up to 4 areas
+          // We can properly display the superposition of up to 4 areas
           areaIndex++;
         }
-        /* Draw tangent */
+        // 4 - Draw tangent
         if (m_tangent && record == m_selectedRecord) {
-          // TODO Hugo : Use the right cursor here : find i of the scrolled curve
-          float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
-          float tangentParameterB = -tangentParameterA*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
+          assert(!f->hasTwoCurves());
+          /* TODO : We could handle tangent on second curve here by finding out
+           * which of the two curves is selected. */
+          float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context(), 0);
+          float tangentParameterB = -tangentParameterA*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context(), 0).x2();
           // To represent the tangent, we draw segment from and to abscissas at the extremity of the drawn rect
           float minAbscissa = pixelToFloat(Axis::Horizontal, rect.left());
           float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());

@@ -21,7 +21,7 @@ public:
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   // Builder
-  ContinuousFunction(Ion::Storage::Record record = Record()) : Function(record) {}
+  ContinuousFunction(Ion::Storage::Record record = Record()) : Function(record), m_cache(nullptr) {}
 
   /* Symbol and Plot types */
 

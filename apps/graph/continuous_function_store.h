@@ -28,8 +28,12 @@ public:
   }
   Shared::ContinuousFunctionCache * cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? m_functionCaches + i : nullptr; }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+  int maxNumberOfModels() const override { return k_maxNumberOfModels; }
 
 private:
+  // Very large limit, so that records id in name can't exceed two chars.
+  static constexpr int k_maxNumberOfModels = 100;
+  constexpr static int k_maxNumberOfMemoizedModels = 10;
   static bool isFunctionActiveInTable(Shared::ExpressionModelHandle * model, void * context) {
     // An active function must be defined
     return isFunctionActive(model, context) && static_cast<Shared::ContinuousFunction *>(model)->isActiveInTable();
@@ -42,6 +46,7 @@ private:
     Shared::ContinuousFunction::SymbolType symbolType = *static_cast<Shared::ContinuousFunction::SymbolType *>(context);
     return isFunctionActiveInTable(model, context) && symbolType == static_cast<Shared::ContinuousFunction *>(model)->symbolType();
   }
+  int maxNumberOfMemoizedModels() const override { return k_maxNumberOfMemoizedModels; }
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }
   Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;

@@ -40,6 +40,8 @@ public:
   bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
   Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
 private:
+  constexpr static int k_functionCellType = 0;
+  constexpr static int k_addNewModelType = 1;
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
     return ListViewDataSource::cumulatedHeightFromIndex(j);

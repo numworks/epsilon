@@ -9,7 +9,7 @@ namespace Escher {
 
 class EvenOddMessageTextCell : public EvenOddCell {
 public:
-  EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f, KDCoordinate horizontalMargin = k_horizontalMargin);
+  EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = KDContext::k_alignCenter, float verticalAlignment = KDContext::k_alignCenter, KDCoordinate horizontalMargin = k_horizontalMargin);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);

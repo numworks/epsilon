@@ -32,27 +32,26 @@ KDCoordinate ListController::cellWidth() {
 
 int ListController::typeAtIndex(int index) {
   if (isAddEmptyRow(index)) {
-    return 1;
+    return k_addNewModelType;
   }
-  return 0;
+  assert(index >= 0 && index < modelStore()->numberOfModels());
+  return k_functionCellType;
 }
 
 HighlightCell * ListController::reusableCell(int index, int type) {
-  assert(index >= 0 && index < maxNumberOfDisplayableRows());
-  if (type == 0) {
-    return functionCells(index);
+  assert(index >= 0 && index < reusableCellCount(type));
+  if (type == k_addNewModelType) {
+    return &(m_addNewModel);
   }
-  assert(type == 1);
-  return &(m_addNewModel);
+  assert(type == k_functionCellType);
+  return functionCells(index);
 }
 
 int ListController::reusableCellCount(int type) {
-  if (type == 3) {
-    return 2;
-  }
-  if (type > 3) {
+  if (type == k_addNewModelType) {
     return 1;
   }
+  assert(type == k_functionCellType);
   return maxNumberOfDisplayableRows();
 }
 
@@ -62,7 +61,8 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::FunctionTab);
 }
 
-bool layoutRepresentsAnEquality(Poincare::Layout l) {
+// Return true if given layout contains a comparison operator
+bool layoutRepresentsAnEquation(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
       constexpr size_t numberOfSymbols = 5;
@@ -77,6 +77,7 @@ bool layoutRepresentsAnEquality(Poincare::Layout l) {
   return !match.isUninitialized();
 }
 
+// Return true if given layout contains θ
 bool layoutRepresentsPolarFunction(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
     [](Poincare::Layout layout) {
@@ -88,10 +89,11 @@ bool layoutRepresentsPolarFunction(Poincare::Layout l) {
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutRepresentsAnEquality(layoutField->layout())) {
+    if (!layoutRepresentsAnEquation(layoutField->layout())) {
+      // Inserted Layout must be an equation
       layoutField->putCursorLeftOfLayout();
       if (layoutRepresentsPolarFunction(layoutField->layout())) {
-        // Insert "f(θ)=" or, if "f" is taken, another default function name.
+        // Insert "f(θ)=" or, if "f" is taken, another default function name
         constexpr int bufferSize = 10;
         char buffer[bufferSize];
         int length = m_modelsParameterController.defaultName(buffer, bufferSize - 6);
@@ -103,6 +105,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
         buffer[length++] = 0;
         layoutField->handleEventWithText(buffer);
       } else {
+        // Insert "y="
         layoutField->handleEventWithText("y=");
       }
     }
@@ -190,11 +193,12 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
   evenOddCell->setHighlighted(j == selectedRow());
-  if (isAddEmptyRow(j)) {
+  int type = typeAtIndex(j);
+  if (type == k_addNewModelType) {
     evenOddCell->reloadCell();
     return;
   }
-  assert(j >= 0 && j < modelStore()->numberOfModels());
+  assert(type == k_functionCellType);
   FunctionCell * functionCell = static_cast<FunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   functionCell->setLayout(f->layout());

@@ -259,9 +259,9 @@ Don't forget to put your pseudo instead of `{your pseudo, max 15 char}`. If you 
 
 <br>
 
-If you need help, you can join our Discord server here : https://discord.gg/Q9buEMduXG
+If you need help, you can join our Discord server here : https://discord.gg/NFvzdCBTQn
 
-<a href="https://discord.gg/Q9buEMduXG"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86287349-54ef5800-bbe8-11ea-80c1-34eb1f93eebd.png" /></p></a>
+<a href="https://discord.gg/NFvzdCBTQn"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86287349-54ef5800-bbe8-11ea-80c1-34eb1f93eebd.png" /></p></a>
 ---
 ## Useful links
 * [Upsilon external (to install additional apps and wallpapers)](https://lauryy06.github.io/Upsilon-External/)

@@ -7,7 +7,7 @@
 using namespace Poincare;
 
 void assert_reduces_to_formal_expression(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian, Preferences::ComplexFormat complexFormat = Cartesian) {
-  assert_parsed_expression_simplify_to(expression, result, User, angleUnit, Metric, complexFormat, ReplaceAllDefinedSymbolsWithDefinition);
+  assert_parsed_expression_simplify_to(expression, result, User, angleUnit, MetricUnitFormat, complexFormat, ReplaceAllDefinedSymbolsWithDefinition);
 }
 
 QUIZ_CASE(poincare_derivative_formal) {
@@ -58,7 +58,7 @@ QUIZ_CASE(poincare_derivative_formal) {
 }
 
 void assert_reduces_for_approximation(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian) {
-  assert_parsed_expression_simplify_to(expression, result, SystemForApproximation, angleUnit, Metric, Real, ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_parsed_expression_simplify_to(expression, result, SystemForApproximation, angleUnit, MetricUnitFormat, Real, ReplaceAllSymbolsWithDefinitionsOrUndefined);
 }
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {
@@ -80,8 +80,8 @@ void assert_approximate_to(const char * expression, const char * result, Prefere
   /* Reduce significant numbers to 3 to handle platforms discrepancies when
    * computing floats. This allows to expect the same results from both double
    * and float approximations. */
-  assert_expression_approximates_to<float>(expression, result, angleUnit, Metric, Real, 3);
-  assert_expression_approximates_to<double>(expression, result, angleUnit, Metric, Real, 3);
+  assert_expression_approximates_to<float>(expression, result, angleUnit, MetricUnitFormat, Real, 3);
+  assert_expression_approximates_to<double>(expression, result, angleUnit, MetricUnitFormat, Real, 3);
 }
 
 QUIZ_CASE(poincare_derivative_approximation) {

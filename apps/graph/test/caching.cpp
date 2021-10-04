@@ -1,6 +1,7 @@
 #include <quiz.h>
 #include "helper.h"
 #include <cmath>
+#include <apps/shared/global_context.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -21,7 +22,7 @@ void assert_check_cartesian_cache_against_function(ContinuousFunction * function
   float t;
   for (int i = 0; i < Ion::Display::Width; i++) {
     t = tMin + i*cache->step();
-    Coordinate2D<float> cacheValues = cache->valueForParameter(function, context, t);
+    Coordinate2D<float> cacheValues = cache->valueForParameter(function, context, t, 0);
     Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t, context);
     quiz_assert(floatEquals(t, cacheValues.x1()));
     quiz_assert(floatEquals(t, functionValues.x1()));
@@ -71,7 +72,7 @@ void assert_check_polar_cache_against_function(ContinuousFunction * function, Co
   function->setCache(nullptr);
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
     t = tMin + i*cache->step();
-    Coordinate2D<float> cacheValues = cache->valueForParameter(function, context, t);
+    Coordinate2D<float> cacheValues = cache->valueForParameter(function, context, t, 0);
     Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t, context);
     quiz_assert(floatEquals(cacheValues.x1(), functionValues.x1()));
     quiz_assert(floatEquals(cacheValues.x2(), functionValues.x2()));
@@ -90,7 +91,7 @@ void assert_cache_stays_valid(ContinuousFunction::PlotType type, const char * de
 
   CurveViewCursor cursor;
   ContinuousFunction * function = addFunction(definition, type, &functionStore, &globalContext);
-  Coordinate2D<float> origin = function->evaluateXYAtParameter(0.f, &globalContext);
+  Coordinate2D<float> origin = function->evaluateXYAtParameter(0.f, &globalContext, 0);
   cursor.moveTo(0.f, origin.x1(), origin.x2());
 
   if (type == Cartesian) {
@@ -106,22 +107,21 @@ void assert_cache_stays_valid(ContinuousFunction::PlotType type, const char * de
 QUIZ_CASE(graph_caching) {
   Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
   Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+  assert_cache_stays_valid(Cartesian, "f(x)=x");
+  assert_cache_stays_valid(Cartesian, "f(x)=x^2");
+  assert_cache_stays_valid(Cartesian, "f(x)=sin(x)");
+  assert_cache_stays_valid(Cartesian, "f(x)=sin(x)", -1e6f, 2e8f);
+  assert_cache_stays_valid(Cartesian, "f(x)=sin(x^2)");
+  assert_cache_stays_valid(Cartesian, "f(x)=1/x");
+  assert_cache_stays_valid(Cartesian, "f(x)=1/x", -5e-5f, 5e-5f);
+  assert_cache_stays_valid(Cartesian, "f(x)=-ℯ^x");
 
-  assert_cache_stays_valid(Cartesian, "x");
-  assert_cache_stays_valid(Cartesian, "x^2");
-  assert_cache_stays_valid(Cartesian, "sin(x)");
-  assert_cache_stays_valid(Cartesian, "sin(x)", -1e6f, 2e8f);
-  assert_cache_stays_valid(Cartesian, "sin(x^2)");
-  assert_cache_stays_valid(Cartesian, "1/x");
-  assert_cache_stays_valid(Cartesian, "1/x", -5e-5f, 5e-5f);
-  assert_cache_stays_valid(Cartesian, "-ℯ^x");
-
-  assert_cache_stays_valid(Polar, "1", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "θ", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "sin(θ)", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "sin(θ)", 2e-4f, 1e-3f);
-  assert_cache_stays_valid(Polar, "cos(5θ)", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "cos(5θ)", -1e8f, 1e8f);
+  assert_cache_stays_valid(Polar, "f(θ)=1", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "f(θ)=θ", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "f(θ)=sin(θ)", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "f(θ)=sin(θ)", 2e-4f, 1e-3f);
+  assert_cache_stays_valid(Polar, "f(θ)=cos(5θ)", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "f(θ)=cos(5θ)", -1e8f, 1e8f);
 
   Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
 }

@@ -133,21 +133,21 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) 
   }
 
   float dT = (newTMin - m_tMin) / m_tStep;
+  m_tMin = newTMin;
   if (std::fabs(dT) > INT_MAX) {
-    m_tMin = newTMin;
     clear();
     return;
   }
+  /* TODO Hugo : Instead of invalidating the entire cache when
+   * std::fabs(dT - dI) > k_cacheHitTolerance
+   * Incrementing m_tMin by dI * m_tStep could preserve most of computed values
+   * and increase performances as we could still have many cache hits.
+   * m_tMin = newTMin should still be applied at each of the escape cases. */
   int dI = std::round(dT);
-  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache) {
-    m_tMin = newTMin;
+  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache || std::fabs(dT - dI) > k_cacheHitTolerance) {
     clear();
     return;
   }
-  /* TODO Hugo : Ensure that it is better than checking for
-   * std::fabs(dT - dI) > k_cacheHitTolerance above */
-  // Pan tMin to the closest cached value from newTMin.
-  m_tMin += dI * m_tStep;
 
   int oldStart = m_startOfCache;
   m_startOfCache = (m_startOfCache + dI) % k_sizeOfCache;

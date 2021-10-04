@@ -1,10 +1,14 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include <poincare/init.h>
-#include <ion/include/ion/persisting_bytes.h>
 
-#define DUMMY_MAIN 0
+#define DUMMY_MAIN 1
 #if DUMMY_MAIN
+
+#include <kandinsky/ion_context.h>
+#include <poincare/print_int.h>
+#include <ion/include/ion/persisting_bytes.h>
+#include <stdint.h>
 
 void ion_main(int argc, const char * const argv[]) {
   Ion::Power::selectStandbyMode(false);
@@ -13,6 +17,17 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::LED::setBlinking(1000, 0.1f);
   Ion::PersistingBytes::write(1);
   Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
+  Ion::Timing::msleep(2000);
+  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
+  uint64_t startMillis = Ion::Timing::millis();
+  Ion::Timing::msleep(5000);
+  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
+  uint64_t time = Ion::Timing::millis() - startMillis;
+  KDContext * ctx = KDIonContext::sharedContext();
+  char buffer[120];
+  Poincare::PrintInt::Left(time, buffer, 120);
+  ctx->drawString(buffer, KDPointZero);
+  while(1) {}
   while(1) {
       Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
       for (int i = 0; i < 5000; i++) {

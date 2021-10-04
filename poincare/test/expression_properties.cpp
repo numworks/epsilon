@@ -183,7 +183,7 @@ constexpr Poincare::ExpressionNode::Sign Positive = Poincare::ExpressionNode::Si
 constexpr Poincare::ExpressionNode::Sign Negative = Poincare::ExpressionNode::Sign::Negative;
 constexpr Poincare::ExpressionNode::Sign Unknown = Poincare::ExpressionNode::Sign::Unknown;
 
-void assert_reduced_expression_sign(const char * expression, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric) {
+void assert_reduced_expression_sign(const char * expression, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation));
@@ -268,7 +268,7 @@ QUIZ_CASE(poincare_properties_sign) {
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
 
-void assert_sign_sets_to(Expression e, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric) {
+void assert_sign_sets_to(Expression e, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext context;
   ExpressionNode::Sign eSign = e.sign(&context);
   assert(eSign == ExpressionNode::Sign::Positive || eSign == ExpressionNode::Sign::Negative);
@@ -305,14 +305,14 @@ QUIZ_CASE(poincare_properties_set_sign_positive) {
 void assert_expression_is_real(const char * expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  Expression e = parse_expression(expression, &context, false).reduce(ExpressionNode::ReductionContext(&context, Cartesian, Radian, Metric, ExpressionNode::ReductionTarget::SystemForApproximation));
+  Expression e = parse_expression(expression, &context, false).reduce(ExpressionNode::ReductionContext(&context, Cartesian, Radian, MetricUnitFormat, ExpressionNode::ReductionTarget::SystemForApproximation));
   quiz_assert_print_if_failure(e.isReal(&context), expression);
 }
 
 void assert_expression_is_not_real(const char * expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  Expression e = parse_expression(expression, &context, false).reduce(ExpressionNode::ReductionContext(&context, Cartesian, Radian, Metric, ExpressionNode::ReductionTarget::SystemForApproximation));
+  Expression e = parse_expression(expression, &context, false).reduce(ExpressionNode::ReductionContext(&context, Cartesian, Radian, MetricUnitFormat, ExpressionNode::ReductionTarget::SystemForApproximation));
   quiz_assert_print_if_failure(!e.isReal(&context), expression);
 }
 
@@ -346,7 +346,7 @@ QUIZ_CASE(poincare_properties_is_real) {
   assert_expression_is_not_real("(-2)^0.4");
 }
 
-void assert_reduced_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x", Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric) {
+void assert_reduced_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x", Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   Expression result = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, SystemForApproximation));
@@ -486,7 +486,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
 
-void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = Metric, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {
+void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, SystemForAnalysis, symbolicComputation));
@@ -526,9 +526,9 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   const char * coefficient7[] = {"4", 0};
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", coefficient7 );
   const char * coefficient8[] = {"2", "1", 0};
-  assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, Metric, DoNotReplaceAnySymbol);
-  assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, Metric, ReplaceDefinedFunctionsWithDefinitions);
-  assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4, Cartesian, Radian, Metric, ReplaceDefinedFunctionsWithDefinitions);
+  assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, MetricUnitFormat, DoNotReplaceAnySymbol);
+  assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, MetricUnitFormat, ReplaceDefinedFunctionsWithDefinitions);
+  assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4, Cartesian, Radian, MetricUnitFormat, ReplaceDefinedFunctionsWithDefinitions);
 
   // Clear the storage
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -537,7 +537,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
 
 void assert_reduced_expression_unit_is(const char * expression, const char * unit) {
   Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, Metric, SystemForApproximation);
+  ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, MetricUnitFormat, SystemForApproximation);
   Expression e = parse_expression(expression, &globalContext, false);
   Expression u1;
   e = e.reduceAndRemoveUnit(redContext, &u1);
@@ -555,7 +555,7 @@ QUIZ_CASE(poincare_properties_remove_unit) {
   assert_reduced_expression_unit_is("_L^2×3×_s", "_m^6×_s");
 }
 
-void assert_additional_results_compute_to(const char * expression, const char * * results, int length, Preferences::UnitFormat unitFormat = Metric) {
+void assert_additional_results_compute_to(const char * expression, const char * * results, int length, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
   constexpr int maxNumberOfResults = 5;
   assert(length <= maxNumberOfResults);
@@ -592,18 +592,18 @@ QUIZ_CASE(poincare_expression_additional_results) {
   assert_additional_results_compute_to("1234567×_in", array4, 1, Imperial);
   const char * array5[1] = {"1×_yd+7.700787×_in"};
   assert_additional_results_compute_to("1.11×_m", array5, 1, Imperial);
-  assert_additional_results_compute_to("1.11×_m", nullptr, 0, Metric);
+  assert_additional_results_compute_to("1.11×_m", nullptr, 0, MetricUnitFormat);
 
   // Masses
   const char * array6[1] = {"1×_shtn+240×_lb"};
   assert_additional_results_compute_to("1×_lgtn", array6, 1, Imperial);
   const char * array7[1] = {"2×_lb+3.273962×_oz"};
   assert_additional_results_compute_to("1×_kg", array7, 1, Imperial);
-  assert_additional_results_compute_to("1×_kg", nullptr, 0, Metric);
+  assert_additional_results_compute_to("1×_kg", nullptr, 0, MetricUnitFormat);
 
   // Temperatures
   const char * array14[2] = {"-273.15×_°C", "-459.67×_°F"};
-  assert_additional_results_compute_to("0×_K", array14, 2, Metric);
+  assert_additional_results_compute_to("0×_K", array14, 2, MetricUnitFormat);
   const char * array15[2] = {"-279.67×_°F", "-173.15×_°C"};
   assert_additional_results_compute_to("100×_K", array15, 2, Imperial);
   const char * array16[2] = {"12.02×_°F", "262.05×_K"};
@@ -621,11 +621,11 @@ QUIZ_CASE(poincare_expression_additional_results) {
   const char * array10[2] = {"48×_gal+1×_pt+1.5625×_cup", "182.5426×_L"};
   assert_additional_results_compute_to("12345×_tbsp", array10, 2, Imperial);
   const char * array11[2] = {"182.5426×_L"};
-  assert_additional_results_compute_to("12345×_tbsp", array11, 1, Metric);
+  assert_additional_results_compute_to("12345×_tbsp", array11, 1, MetricUnitFormat);
 
   // Speed
   const char * array12[1] = {"3.6×_km×_h^\x12-1\x13"};
-  assert_additional_results_compute_to("1×_m/_s", array12, 1, Metric);
+  assert_additional_results_compute_to("1×_m/_s", array12, 1, MetricUnitFormat);
   const char * array13[2] = {"2.236936×_mi×_h^\x12-1\x13", "3.6×_km×_h^\x12-1\x13"};
   assert_additional_results_compute_to("1×_m/_s", array13, 2, Imperial);
 }

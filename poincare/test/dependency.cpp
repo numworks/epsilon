@@ -12,7 +12,7 @@ void assert_expression_simplify_to_with_dependencies(
     const char * const (&dependencies)[N],
     ExpressionNode::ReductionTarget target = User,
     Preferences::AngleUnit angleUnit = Radian,
-    Preferences::UnitFormat unitFormat = Metric,
+    Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Preferences::ComplexFormat complexFormat = Cartesian,
     ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition,
     ExpressionNode::UnitConversion unitConversion = DefaultUnitConversion)

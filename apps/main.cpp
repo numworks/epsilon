@@ -25,7 +25,7 @@ void ion_main(int argc, const char * const argv[]) {
   uint64_t time = Ion::Timing::millis() - startMillis;
   KDContext * ctx = KDIonContext::sharedContext();
   char buffer[120];
-  Poincare::PrintInt::Left(time, buffer, 120);
+  buffer[Poincare::PrintInt::Left(time, buffer, 120)] = 0;
   ctx->drawString(buffer, KDPointZero);
   while(1) {}
   while(1) {

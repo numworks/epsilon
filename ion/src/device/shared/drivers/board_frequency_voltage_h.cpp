@@ -42,8 +42,8 @@ void setHighVoltageScaling() {
 }
 
 void setFrequencyWithoutSystick(Frequency f) {
-  //RCC::Prescaler4Bits prescaler = f == Frequency::Low ? RCC::Prescaler4Bits::DivideBy512 : RCC::Prescaler4Bits::NoDivide;
-  //RCC.D1CFGR()->setD1CPRE(prescaler);
+  RCC::Prescaler4Bits prescaler = f == Frequency::Low ? RCC::Prescaler4Bits::DivideBy512 : RCC::Prescaler4Bits::NoDivide;
+  RCC.D1CFGR()->setD1CPRE(prescaler);
 }
 
 }

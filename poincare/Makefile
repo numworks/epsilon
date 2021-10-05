@@ -132,6 +132,7 @@ poincare_src += $(addprefix poincare/src/,\
   power.cpp \
   prediction_interval.cpp \
   preferences.cpp \
+  print.cpp \
   print_float.cpp \
   print_int.cpp \
   product.cpp \
@@ -201,6 +202,7 @@ tests_src += $(addprefix poincare/test/,\
   layout_to_expression.cpp\
   parsing.cpp\
   polynomial.cpp\
+  print.cpp\
   print_float.cpp\
   print_int.cpp\
   rational.cpp\

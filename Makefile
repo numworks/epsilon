@@ -106,7 +106,7 @@ include build/rules.mk
 .PHONY: clean
 clean:
 	@echo "CLEAN"
-	$(Q) rm -rf $(BUILD_DIR)
+	$(Q) rm -rf $(BUILD_DIR:/clean=)
 
 .PHONY: cowsay_%
 cowsay_%:

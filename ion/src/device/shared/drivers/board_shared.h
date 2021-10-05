@@ -26,6 +26,8 @@ enum class Frequency {
   High = 1
 };
 void setFrequency(Frequency f);
+void forceFrequency(Frequency f);
+void resetThreadModeFrequency();
 void setFrequencyWithoutSystick(Frequency f);
 void setLowVoltageScaling();
 void setHighVoltageScaling();

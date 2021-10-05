@@ -115,14 +115,15 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool CalculationParameterController::shouldDisplayIntersection() const {
+  // Intersection is only handled between Cartesians, Lines and HorizontalLines
   ContinuousFunctionStore * store = App::app()->functionStore();
-  // TODO Hugo : Maybe update this to handle intersection between all types.
   int intersectableFunctions = 0;
+  // TODO : Handle more types of curves ?
   intersectableFunctions += store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Cartesian);
   intersectableFunctions += store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Line);
   intersectableFunctions += store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::HorizontalLine);
-  // Intersection row is displayed when all functions are cartesian and there are least two of them
-  // TODO: compute intersections between polar/parametric/cartesian functions?
+  /* Intersection row is displayed when all functions are intersectable and
+   * there are least two of them. */
   return intersectableFunctions > 1 && intersectableFunctions == store->numberOfActiveFunctions();
 }
 

@@ -70,6 +70,8 @@ protected:
 
   InteractiveCurveViewRange * interactiveRange() { return m_interactiveRange; }
 
+  // TODO Hugo : Rename this variable and all "secondary" curves related content
+  int m_selectedSecondaryCurveIndex;
 private:
   /* The value 21 is the actual height of the ButtonRow, that is
    * ButtonRowController::ContentView::k_plainStyleHeight + 1.

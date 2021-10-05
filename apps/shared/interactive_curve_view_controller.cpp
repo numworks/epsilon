@@ -33,7 +33,8 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
-  }, this), &m_rangeUnequalView, KDFont::SmallFont)
+  }, this), &m_rangeUnequalView, KDFont::SmallFont),
+  m_selectedSecondaryCurveIndex(0)
 {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
@@ -177,8 +178,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
-  // TODO Hugo : Find and apply relevant secondary index
-  Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), floatBody, textFieldDelegateApp()->localContext(), 0);
+  Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), floatBody, textFieldDelegateApp()->localContext(), m_selectedSecondaryCurveIndex);
   m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
   reloadBannerView();
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());

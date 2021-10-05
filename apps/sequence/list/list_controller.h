@@ -29,7 +29,6 @@ public:
   /* TableViewDataSource */
   int numberOfRows() const override { return this->numberOfExpressionRows(); }
   KDCoordinate rowHeight(int j) override { return ExpressionModelListController::memoizedRowHeight(j); }
-  // TODO Hugo : useful ?
   KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
   int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
   int numberOfColumns() const override { return 2; }

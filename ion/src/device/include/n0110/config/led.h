@@ -10,6 +10,7 @@ namespace Config {
 
 using namespace Regs;
 
+#warning Do same computation than for N0120?
 constexpr uint16_t PWMPeriod = 40000;
 
 static constexpr int RedChannel = 1;

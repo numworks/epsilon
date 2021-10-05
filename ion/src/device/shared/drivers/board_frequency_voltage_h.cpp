@@ -9,8 +9,6 @@ namespace Board {
 
 using namespace Regs;
 
-#warning Frequency calibration: Cf comment in include/N0120/config/clocks.h
-
 void setLowVoltageScaling() {
   // Select HSI as sysclk source
   RCC.CFGR()->setSW(RCC::CFGR::SW::HSI);

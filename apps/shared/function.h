@@ -40,7 +40,6 @@ public:
   virtual bool hasTwoCurves() const { return false; }
 
   // Definition Interval
-  virtual bool shouldClipTRangeToXRange() const { return true; } // Returns true if the function will not be displayed if t is outside x range.
   virtual float tMin() const { return NAN; }
   virtual float tMax() const { return NAN; }
   virtual float rangeStep() const { return NAN; }

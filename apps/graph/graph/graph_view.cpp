@@ -53,8 +53,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             (type == ContinuousFunction::PlotType::Parametric || f->hasTwoCurves()) &&
             e.childAtIndex(0).isUndefined() &&
             e.childAtIndex(1).isUndefined())) {
-        // TODO Hugo : Ensure that two curves can't be undefined
-        assert(!f->hasTwoCurves());
         continue;
       }
       float tmin = f->tMin();
@@ -90,8 +88,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
       } else if (type == ContinuousFunction::PlotType::VerticalLine) {
-        // TODO Hugo : Use the right cursor here
-        float abscissa = f->evaluateXYAtParameter(0.0, context()).x1();
+        float abscissa = f->evaluateXYAtParameter(0.0, context(), 0).x1();
         float minOrdinate = pixelToFloat(Axis::Vertical, rect.top());
         float maxOrdinate = pixelToFloat(Axis::Vertical, rect.bottom());
         drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color(), false);

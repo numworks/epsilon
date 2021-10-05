@@ -54,9 +54,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
-    // TODO Hugo : Maybe create a static helper for plotTypeMessage
-    Shared::ContinuousFunction function = (Shared::ContinuousFunction)m_record;
-    myCell->setAccessoryText(I18n::translate(function.plotTypeMessage()));
+    myCell->setAccessoryText(I18n::translate(Shared::ContinuousFunction::MessageForPlotType(plotType())));
   } else {
     myCell->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);
@@ -81,7 +79,6 @@ MessageTableCellWithMessageWithBuffer * TypeParameterController::reusableCell(in
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {
-  // TODO Hugo : Maybe compare checksum if useful
   m_record = record;
   if (!m_record.isNull()) {
     Shared::ContinuousFunction function = (Shared::ContinuousFunction)m_record;

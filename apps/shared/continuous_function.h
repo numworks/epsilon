@@ -60,12 +60,12 @@ public:
     "First PlotTypes should match SymbolTypes");
   // Return Message corresponding to SymbolType
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
+  // Return Message corresponding to PlotType
+  static I18n::Message MessageForPlotType(PlotType plotType);
   // Return ContinuousFunction's PlotType
   PlotType plotType() const { return recordData()->plotType(); }
   // Return ContinuousFunction's SymbolType
   SymbolType symbolType() const;
-  // Return ContinuousFunction's PlotType message
-  I18n::Message plotTypeMessage() const;
 
   /* Function */
 
@@ -191,8 +191,6 @@ private:
 
   /* Range */
 
-  // Return true if the function will not be displayed if t is outside x range.
-  bool shouldClipTRangeToXRange() const override { return isAlongX(); } // TODO Hugo : Delete this method if unused
   // Return step computed from t range or NAN if isAlongX() is true.
   float rangeStep() const override;
 
@@ -226,7 +224,6 @@ private:
 
   /* Record */
 
-  // TODO Hugo : Padding
   class __attribute__((packed)) RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
     RecordDataBuffer(KDColor color) :

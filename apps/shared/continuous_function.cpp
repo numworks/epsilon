@@ -56,8 +56,8 @@ ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
   return functionPlotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(functionPlotType);
 }
 
-I18n::Message ContinuousFunction::plotTypeMessage() const {
-  const size_t plotTypeIndex = static_cast<size_t>(plotType());
+I18n::Message ContinuousFunction::MessageForPlotType(PlotType plotType) {
+  const size_t plotTypeIndex = static_cast<size_t>(plotType);
   assert(plotTypeIndex < k_numberOfPlotTypes);
   constexpr I18n::Message category[k_numberOfPlotTypes] = {
       I18n::Message::PolarType,          I18n::Message::ParametricType,
@@ -153,10 +153,6 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  // Reduce to another target for coefficient analysis.
-  // TODO Hugo : Ensure reducing again is unnecessary
-  // PoincareHelpers::Reduce(&equation, context,
-  //                         ExpressionNode::ReductionTarget::SystemForAnalysis);
   // Separate the two line coefficients
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat, angleUnit,

@@ -157,7 +157,6 @@ bool ValuesController::isEmpty() const {
 }
 
 I18n::Message ValuesController::emptyMessage() {
-  // TODO Hugo : Use a third message for when functions are just incompatible
   if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }

@@ -16,7 +16,6 @@ namespace Shared {
 
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, rangeVersion),
-  m_selectedSecondaryCurveIndex(0),
   m_calculusButton(this, I18n::Message::GraphCalculus, calculusButtonInvocation(), KDFont::SmallFont),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {

@@ -277,7 +277,6 @@ Storage::Record Storage::recordWithExtensionAtIndexStartingWithout(const char no
   char * recordAddress = nullptr;
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
-    // TODO Hugo : Some of this code should be in continuousFunction
     if (currentName[0] != nonStartingChar && FullNameHasExtension(currentName, extension, extensionLength)) {
       currentIndex++;
     }

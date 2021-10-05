@@ -20,46 +20,61 @@ namespace Config {
  * Note that even booting takes a few seconds, so don't be surprised
  * if the screen is black for a short while upon booting. */
 
-constexpr static int HSE = 8;
-constexpr static int PLL_M = 8;
-constexpr static int PLL_N = 384;
-constexpr static Regs::RCC::PLLCFGR::PLLP PLL_P_Reg = Regs::RCC::PLLCFGR::PLLP::PLLP2;
-constexpr static int PLL_P = ((int)PLL_P_Reg | 1) << 1;
-constexpr static int PLL_Q = 8;
-constexpr static int SYSCLKFrequency = ((HSE/PLL_M)*PLL_N)/PLL_P;
-constexpr static int AHBPrescaler = 1;
-/* To slow down the whole system, we prescale the AHB clock.
- * We could divide the system clock by 512. However, the HCLK clock
- * frequency must be >= 14.2MHz and <=216 MHz which forces the
- * AHBPrescaler to be below 192MHz/14.2MHz~13.5. */
-constexpr static Regs::RCC::CFGR::AHBPrescaler AHBLowFrequencyPrescalerReg = Regs::RCC::CFGR::AHBPrescaler::SysClkDividedBy8;
-constexpr static int AHBLowFrequencyPrescaler = 8;
-constexpr static int HCLKFrequency = SYSCLKFrequency/AHBPrescaler;
-static_assert(HCLKFrequency == 192, "HCLK frequency changed!");
-constexpr static int HCLKLowFrequency = SYSCLKFrequency/AHBLowFrequencyPrescaler;
-constexpr static int AHBFrequency = HCLKFrequency;
-//constexpr static int AHBLowFrequency = HCLKLowFrequency;
-constexpr static Regs::RCC::CFGR::APBPrescaler APB1PrescalerReg = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy4;
-constexpr static int APB1Prescaler = 4;
-constexpr static int APB1Frequency = HCLKFrequency/APB1Prescaler;
-constexpr static int APB1LowFrequency = HCLKLowFrequency/APB1Prescaler;
-constexpr static int APB1TimerFrequency = 2*APB1Frequency;
-constexpr static int APB1TimerLowFrequency = 2*APB1LowFrequency;
+static constexpr int HSE = 8;
+static constexpr int PLL_M = 8;
+static constexpr int PLL_N = 384;
+static constexpr Regs::RCC::PLLCFGR::PLLP PLL_P_Reg = Regs::RCC::PLLCFGR::PLLP::PLLP2;
+static constexpr int PLL_P = ((int)PLL_P_Reg | 1) << 1;
+static constexpr int PLL_Q = 8;
+static constexpr int SYSCLKFrequency = ((HSE/PLL_M)*PLL_N)/PLL_P;
+static constexpr int AHBPrescaler = 1;
+static constexpr int AHBLowFrequencyPrescaler = 8;
+static constexpr Regs::RCC::CFGR::AHBPrescaler AHBLowFrequencyPrescalerReg = Regs::RCC::CFGR::AHBPrescaler::SysClkDividedBy8;
+static constexpr int APB1Prescaler = 4;
+static constexpr Regs::RCC::CFGR::APBPrescaler APB1PrescalerReg = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy4;
+static constexpr Regs::RCC::CFGR::APBPrescaler APB2PrescalerReg = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy2;
 
-constexpr static Regs::RCC::CFGR::APBPrescaler APB2PrescalerReg = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy2;
+enum class ClockSource : uint8_t {
+  PLL,
+  PLL_Prescaled, // Prescaled by a factor of 8
+};
+
+static constexpr ClockSource SuspendClockSource = ClockSource::PLL_Prescaled;
+
+static constexpr float HCLK(ClockSource source) {
+  return SYSCLKFrequency / (source == ClockSource::PLL ? AHBPrescaler : AHBLowFrequencyPrescaler);
+}
+static_assert(HCLK(ClockSource::PLL) == 192, "HCLK frequency changed!");
+
+static constexpr float Systick(ClockSource source) {
+  return HCLK(source);
+}
+
+static constexpr float APB1(ClockSource source) {
+  return HCLK(source) / APB1Prescaler;
+}
+
+static constexpr float APB1Timer(ClockSource source) {
+  return APB1(source) * 2;
+}
+
+static constexpr float AHB(ClockSource source) {
+  return HCLK(source);
+}
 
 /* According to AN4850 about Spread Spectrum clock generation
  * MODPER = round[HSE/(4 x fMOD)] with fMOD the target modulation frequency. */
-constexpr static int fMod = 8; // in KHz. Must be <= 10KHz
-constexpr static uint32_t SSCG_MODPER = HSE*1000/(4*fMod); // *1000 to put HSE in KHz
+static constexpr int fMod = 8; // in KHz. Must be <= 10KHz
+static constexpr uint32_t SSCG_MODPER = HSE*1000/(4*fMod); // *1000 to put HSE in KHz
 /* According to the USB specification 2, "For full-speed only functions, the
  * required data-rate when transmitting (TFDRATE) is 12.000 Mb/s ±0.25%". */
-constexpr static double modulationDepth = 0.25; // Must be (0.25% <= md <= 2%)
+static constexpr double modulationDepth = 0.25; // Must be (0.25% <= md <= 2%)
 // INCSTEP = round[(2^15 -1)xmdxPLLN)/(100x5xMODPER)
-constexpr static uint32_t SSCG_INCSTEP = (32767*modulationDepth*PLL_N)/(1.0*100*5*SSCG_MODPER);
+static constexpr uint32_t SSCG_INCSTEP = (32767*modulationDepth*PLL_N)/(1.0*100*5*SSCG_MODPER);
 static_assert(SSCG_MODPER == 250, "SSCG_MODPER changed");
 static_assert(SSCG_INCSTEP == 25, "SSCG_INCSTEP changed");
 static_assert(SSCG_INCSTEP * SSCG_MODPER < 32767, "Wrong values for the Spread spectrun clock generator");
+
 }
 }
 }

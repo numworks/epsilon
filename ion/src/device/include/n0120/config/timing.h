@@ -6,11 +6,12 @@ namespace Device {
 namespace Timing {
 namespace Config {
 
+/* When sleeping, we set the D1 prescaler to cut the frequency 512. */
 #warning experimental values
 #if NDEBUG
-constexpr static int LoopsPerMillisecond_PLL_Prescaled512 = 146;
+constexpr static int LoopsPerMillisecondLowFrequency = 146;
 #else
-constexpr static int LoopsPerMillisecond_PLL_Prescaled512 = 35;
+constexpr static int LoopsPerMillisecondLowFrequency = 35;
 #endif
 constexpr static int LoopsPerMicrosecond = 86;
 

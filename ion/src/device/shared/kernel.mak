@@ -8,8 +8,8 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
   battery.cpp \
   battery_charge.cpp \
-  board_frequency_voltage_f.cpp:-n0120 \
-  board_frequency_voltage_h.cpp:+n0120 \
+  board_frequency_stm32f.cpp:-n0120 \
+  board_frequency_stm32h.cpp:+n0120 \
   board_privileged.cpp \
   board_privileged_n0110.cpp:+n0110 \
   board_privileged_n0120.cpp:+n0120 \

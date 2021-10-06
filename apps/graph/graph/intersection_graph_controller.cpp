@@ -1,6 +1,7 @@
 #include "intersection_graph_controller.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -25,17 +26,16 @@ void IntersectionGraphController::reloadBannerView() {
   const char * legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(m_record);
-  int numberOfChar = f->nameWithArgument(buffer, bufferSize-2);
-  assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
+  int numberOfChar = f->nameWithArgument(buffer, bufferSize - 2 * strlen(legend));
+  assert(numberOfChar < bufferSize);
+  numberOfChar += Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, legend);
   // keep 1 char for '=';
   ExpiringPointer<ContinuousFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
-  numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize-numberOfChar-1);
+  numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize - numberOfChar - strlen(legend));
   assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits());
-  assert(numberOfChar < bufferSize);
-  buffer[numberOfChar++] = '\0';
+  Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed",
+    legend,
+    m_cursor->y(), Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits());
   bannerView()->ordinateView()->setText(buffer);
   bannerView()->reload();
 }

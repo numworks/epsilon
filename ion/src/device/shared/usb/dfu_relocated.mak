@@ -9,7 +9,7 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/usb/, \
 )
 
 ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \
-  board_ram_n0100.cpp \
+  board_ram_dfu_relocated.cpp \
   reset.cpp \
   reset_n0100.cpp \
   serial_number.cpp \

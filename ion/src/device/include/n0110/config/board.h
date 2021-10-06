@@ -25,7 +25,10 @@ constexpr static uint32_t ITCMInterface = 0x00200000;
 constexpr static uint32_t AXIMInterface = 0x08000000;
 constexpr static uint32_t BootloaderStartAddress = ITCMInterface;
 constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
-constexpr static uint32_t BootloaderTrampolineSize = 0x400; // 1k
+/* Trampoline could be smaller, but its size and position cannot be changed.
+ * Otherwise, newer kernels would become would lose compatibility with older
+ * bootloaders. */
+constexpr static uint32_t BootloaderTrampolineSize = 0x2000; // 8k
 constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
 
 // Slots

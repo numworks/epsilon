@@ -20,15 +20,15 @@ QUIZ_CASE(poincare_print_custom_print) {
   Poincare::Print::customPrintf(buffer, bufferSize, "Hello %s", "NumWorks");
   assert_string_equality(buffer, "Hello NumWorks");
 
-  Poincare::Print::customPrintf(buffer, bufferSize, "%s bar %s", "foo", "baz");
-  assert_string_equality(buffer, "foo bar baz");
+  Poincare::Print::customPrintf(buffer, bufferSize, "%*s bar %*s", "foo", Poincare::Print::StringFormat::Capitalized, "BAz", Poincare::Print::StringFormat::Decapitalized);
+  assert_string_equality(buffer, "Foo bar bAz");
 
   Poincare::Print::customPrintf(buffer, bufferSize, "Hello %i", 123);
   assert_string_equality(buffer, "Hello 123");
 
-  Poincare::Print::customPrintf(buffer, bufferSize, "A float: %*.*ef!", Preferences::PrintFloatMode::Decimal, 7, 0.0123456789f);
+  Poincare::Print::customPrintf(buffer, bufferSize, "A float: %*.*ef!", 0.0123456789f, Preferences::PrintFloatMode::Decimal, 7);
   assert_string_equality(buffer, "A float: 0.01234568!");
 
-  Poincare::Print::customPrintf(buffer, bufferSize, "A double: %*.*ed!",Preferences::PrintFloatMode::Scientific, 4, 0.0123456789);
+  Poincare::Print::customPrintf(buffer, bufferSize, "A double: %*.*ed!", 0.0123456789, Preferences::PrintFloatMode::Scientific, 4);
   assert_string_equality(buffer, "A double: 1.235ᴇ-2!");
 }

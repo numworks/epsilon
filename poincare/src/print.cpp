@@ -18,9 +18,20 @@ int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
     if (*format == '%') {
       assert(*(format + 1) != 0);
       int formatLength = 2;
-      if (*(format + 1) == 's') {
+      if (*(format + 1) == 's' || (*(format + 1) == '*' && *(format + 2) == 's')) {
+        char * insertedText = buffer;
         // Insert text now
         buffer += strlcpy(buffer, va_arg(args, char *), bufferSize - (buffer - origin));
+        if (*(format + 1) == '*') {
+          StringFormat format = static_cast<StringFormat>(va_arg(args, int));
+          if (format == StringFormat::Capitalized) {
+            capitalize(insertedText);
+          } else {
+            assert(format == StringFormat::Decapitalized);
+            decapitalize(insertedText);
+          }
+          formatLength = 3;
+        }
       } else if (*(format + 1) == 'c') {
         // Insert char
         *buffer = static_cast<char>(va_arg(args, int));
@@ -34,14 +45,15 @@ int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
             && *(format + 3) == '*'
             && *(format + 4) == 'e'
             && *(format + 5) != 0);
+        double value = va_arg(args, double);
         Preferences::PrintFloatMode displayMode = static_cast<Preferences::PrintFloatMode>(va_arg(args, int));
         int numberOfSignificantDigits = va_arg(args, int);
         int glyphLength = PrintFloat::glyphLengthForFloatWithPrecision(numberOfSignificantDigits);
         if (*(format + 5) == 'f') {
-          buffer += PrintFloat::ConvertFloatToText(static_cast<float>(va_arg(args, double)), buffer, bufferSize - (buffer - origin), glyphLength, numberOfSignificantDigits, displayMode).CharLength;
+          buffer += PrintFloat::ConvertFloatToText(static_cast<float>(value), buffer, bufferSize - (buffer - origin), glyphLength, numberOfSignificantDigits, displayMode).CharLength;
         } else {
           assert(*(format + 5) == 'd');
-          buffer += PrintFloat::ConvertFloatToText(va_arg(args, double), buffer, bufferSize - (buffer - origin), glyphLength, numberOfSignificantDigits, displayMode).CharLength;
+          buffer += PrintFloat::ConvertFloatToText(value, buffer, bufferSize - (buffer - origin), glyphLength, numberOfSignificantDigits, displayMode).CharLength;
         }
         formatLength = 6;
       }
@@ -57,6 +69,20 @@ int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
   va_end(args);
   *buffer = '\0';
   return buffer - origin;
+}
+
+void capitalize(char * text) {
+  constexpr static int jumpToUpperCase = 'A' - 'a';
+  if (text[0] >= 'a' && text[0] <= 'z') {
+    text[0] += jumpToUpperCase;
+  }
+}
+
+void decapitalize(char * text) {
+  constexpr static int jumpToLowerCase = 'a' - 'A';
+  if (text[0] >= 'A' && text[0] <= 'Z') {
+    text[0] += jumpToLowerCase;
+  }
 }
 
 }

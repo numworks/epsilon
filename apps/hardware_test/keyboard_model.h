@@ -11,7 +11,7 @@ public:
   Ion::Keyboard::Key testedKey() const { return TestedKeys[m_testedKeyIndex]; }
   int testedKeyIndex() const { return m_testedKeyIndex; }
   void setTestedKeyIndex(int i) {
-    assert(i >= 0 && i < NumberOfTestedKeys);
+    assert(i >= 0 && i <= NumberOfTestedKeys);
     m_testedKeyIndex = i;
   }
   bool belongsToTestedKeysSubset(Ion::Keyboard::Key key) const;

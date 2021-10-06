@@ -3,6 +3,7 @@
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <algorithm>
 
 using namespace Shared;
@@ -43,13 +44,8 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);
-  const char * legend = "=";
-  assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
-  double y = function->approximateDerivative(cursor->x(), App::app()->localContext());
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Preferences::sharedPreferences()->numberOfSignificantDigits());
-  assert(numberOfChar < bufferSize);
-  buffer[numberOfChar++] = '\0';
+  Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed",
+    function->approximateDerivative(cursor->x(), App::app()->localContext()), Poincare::Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits());
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();
 }

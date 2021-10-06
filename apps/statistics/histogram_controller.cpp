@@ -3,6 +3,7 @@
 #include "app.h"
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <algorithm>
 #include <cmath>
 #include <assert.h>
@@ -159,53 +160,25 @@ void HistogramController::reloadBannerView() {
   int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   char buffer[bufferSize] = "";
-  int numberOfChar = 0;
 
   // Add Interval Data
-  const char * legend = " [";
+  double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
+  double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
   /* The word Interval is just a bit too long to display two numbers with a sign and maximal precision after it. */
   int intervalPrecision = std::min(precision, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 2);
-  int legendLength = strlen(legend);
-  strlcpy(buffer, legend, bufferSize);
-  numberOfChar += legendLength;
-
-  // Add lower bound
-  if (selectedSeriesIndex() >= 0) {
-    double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, intervalPrecision);
-  }
-
-  numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar - 1);
-
-  // Add upper bound
-  if (selectedSeriesIndex() >= 0) {
-    double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, intervalPrecision);
-  }
-  numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar - 1);
-
-  buffer[numberOfChar++] = '\0';
+  Poincare::Print::customPrintf(buffer, bufferSize, " [%*.*ed;%*.*ed[",
+      lowerBound, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision,  // Add lower bound
+      upperBound, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision); // Add upper bound
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
-  buffer[0] = ' ';
-  numberOfChar = 1;
-  double size = 0;
-  if (selectedSeriesIndex() >= 0) {
-    size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, precision);
-  }
-  buffer[numberOfChar++] = '\0';
+  double size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
+  Poincare::Print::customPrintf(buffer, bufferSize, " %*.*ed", size, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision);
   m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
-  buffer[0] = ' ';
-  numberOfChar = 1;
-  if (selectedSeriesIndex() >= 0) {
-    double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);
-  }
-  buffer[numberOfChar++] = '\0';
+  double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
+  Poincare::Print::customPrintf(buffer, bufferSize, " %*.*ed", frequency, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision);
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();

@@ -1,6 +1,7 @@
 #include "input_controller.h"
 
 #include <escher/stack_view_controller.h>
+#include <poincare/print.h>
 
 #include "probability/app.h"
 #include "probability/constants.h"
@@ -40,40 +41,26 @@ const char * InputController::title() {
     const char * symbol = testToTextSymbol(App::app()->test());
     const char * op = HypothesisParams::strForComparisonOp(
         m_statistic->hypothesisParams()->comparisonOperator());
-    char paramBuffer[Constants::k_shortBufferSize];
-    convertFloatToText(m_statistic->hypothesisParams()->firstParam(),
-                       paramBuffer,
-                       sizeof(paramBuffer));
     if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
-      char alphaBuffer[Constants::k_shortBufferSize];
-      convertFloatToText(m_statistic->threshold(), alphaBuffer, sizeof(alphaBuffer));
-      snprintf(m_titleBuffer,
-               k_titleBufferSize,
-               "H0:%s=%s Ha:%s%s%s α=%s",
-               symbol,
-               paramBuffer,
-               symbol,
-               op,
-               paramBuffer,
-               alphaBuffer);
+      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ef Ha:%s%s%*.*ef α=%*.*ef",
+          symbol,
+          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam(),
+          symbol,
+          op,
+          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam(),
+          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->threshold());
     } else {
-      snprintf(m_titleBuffer,
-               k_titleBufferSize,
-               "H0:%s=%s Ha:%s%s%s",
-               symbol,
-               paramBuffer,
-               symbol,
-               op,
-               paramBuffer);
+      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ef Ha:%s%s%*.*ef",
+          symbol,
+          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam(),
+          symbol,
+          op,
+          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam());
     }
   } else {
     I18n::Message format = titleFormatForTest(App::app()->test(), App::app()->testType());
-    char buffer[30];
-    strlcpy(buffer, I18n::translate(I18n::Message::Interval), sizeof(buffer));
-    decapitalize(buffer);
-
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format), buffer);
-    return m_titleBuffer;
+    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format),
+           I18n::translate(I18n::Message::Interval), Poincare::Print::StringFormat::Decapitalized);
   }
   return m_titleBuffer;
 }
